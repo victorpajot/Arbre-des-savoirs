@@ -12,7 +12,8 @@ permissions:
 
 jobs:
   apk:
-    runs-on: ubuntu-latest
+    # Image figée : le SDK Android y est préinstallé (ANDROID_HOME).
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -31,7 +32,10 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - uses: android-actions/setup-android@v3
+      - name: Vérifier le SDK Android
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls "$ANDROID_HOME/platforms" "$ANDROID_HOME/build-tools"
 
       - name: Valider le contenu et les règles
         run: |
