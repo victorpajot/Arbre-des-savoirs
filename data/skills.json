@@ -124,23 +124,9 @@
    "prerequis": []
   },
   {
-   "id": "sci.atomes",
-   "stat": "savoir",
-   "rang": 2,
-   "nom": {
-    "fr": "Atomes et molécules"
-   },
-   "description": {
-    "fr": "La structure de la matière et le tableau périodique."
-   },
-   "prerequis": [
-    "sci.methode"
-   ]
-  },
-  {
    "id": "sci.cellule",
    "stat": "savoir",
-   "rang": 3,
+   "rang": 2,
    "nom": {
     "fr": "La cellule"
    },
@@ -154,7 +140,7 @@
   {
    "id": "sci.evolution",
    "stat": "savoir",
-   "rang": 4,
+   "rang": 3,
    "nom": {
     "fr": "Évolution"
    },
@@ -162,8 +148,22 @@
     "fr": "Sélection naturelle, mutations, histoire du vivant."
    },
    "prerequis": [
-    "sci.atomes",
-    "sci.cellule"
+    "sci.methode"
+   ]
+  },
+  {
+   "id": "sci.genetique",
+   "stat": "savoir",
+   "rang": 4,
+   "nom": {
+    "fr": "Génétique"
+   },
+   "description": {
+    "fr": "Gènes, allèles, hérédité, ADN et mutations."
+   },
+   "prerequis": [
+    "sci.cellule",
+    "sci.evolution"
    ]
   },
   {
@@ -329,6 +329,171 @@
    "prerequis": [
     "psy.memoire",
     "psy.motivation"
+   ]
+  },
+  {
+   "id": "sci.atomes",
+   "stat": "alchimie",
+   "rang": 1,
+   "nom": {
+    "fr": "Atomes et éléments"
+   },
+   "description": {
+    "fr": "La structure de l'atome, les éléments et le tableau périodique."
+   },
+   "prerequis": []
+  },
+  {
+   "id": "chim.liaisons",
+   "stat": "alchimie",
+   "rang": 2,
+   "nom": {
+    "fr": "Liaisons et molécules"
+   },
+   "description": {
+    "fr": "Comment les atomes s'assemblent : liaisons covalentes, ioniques, polarité."
+   },
+   "prerequis": [
+    "sci.atomes"
+   ]
+  },
+  {
+   "id": "chim.acides",
+   "stat": "alchimie",
+   "rang": 3,
+   "nom": {
+    "fr": "Acides et bases"
+   },
+   "description": {
+    "fr": "Le pH, la neutralisation et les acides du quotidien."
+   },
+   "prerequis": [
+    "sci.atomes"
+   ]
+  },
+  {
+   "id": "chim.reactions",
+   "stat": "alchimie",
+   "rang": 4,
+   "nom": {
+    "fr": "Réactions et oxydoréduction"
+   },
+   "description": {
+    "fr": "Équations, combustion, catalyse, oxydation et réduction."
+   },
+   "prerequis": [
+    "chim.liaisons",
+    "chim.acides"
+   ]
+  },
+  {
+   "id": "astro.systeme",
+   "stat": "cosmos",
+   "rang": 1,
+   "nom": {
+    "fr": "Système solaire"
+   },
+   "description": {
+    "fr": "Le Soleil, les planètes, la Lune et les petits corps."
+   },
+   "prerequis": []
+  },
+  {
+   "id": "astro.etoiles",
+   "stat": "cosmos",
+   "rang": 2,
+   "nom": {
+    "fr": "Étoiles et lumière des astres"
+   },
+   "description": {
+    "fr": "Comment les étoiles brillent, vivent et meurent."
+   },
+   "prerequis": [
+    "astro.systeme"
+   ]
+  },
+  {
+   "id": "astro.orbites",
+   "stat": "cosmos",
+   "rang": 3,
+   "nom": {
+    "fr": "Orbites et gravitation"
+   },
+   "description": {
+    "fr": "Les lois de Kepler, les satellites, les marées, les trous noirs."
+   },
+   "prerequis": [
+    "astro.systeme"
+   ]
+  },
+  {
+   "id": "astro.galaxies",
+   "stat": "cosmos",
+   "rang": 4,
+   "nom": {
+    "fr": "Galaxies et Big Bang"
+   },
+   "description": {
+    "fr": "La Voie lactée, l'expansion de l'Univers et son histoire."
+   },
+   "prerequis": [
+    "astro.etoiles",
+    "astro.orbites"
+   ]
+  },
+  {
+   "id": "elec.circuits",
+   "stat": "etincelle",
+   "rang": 1,
+   "nom": {
+    "fr": "Charges et circuits"
+   },
+   "description": {
+    "fr": "Charges, conducteurs, circuits en série et en dérivation."
+   },
+   "prerequis": []
+  },
+  {
+   "id": "elec.ohm",
+   "stat": "etincelle",
+   "rang": 2,
+   "nom": {
+    "fr": "Tension, intensité et loi d'Ohm"
+   },
+   "description": {
+    "fr": "Volts, ampères, ohms, et la relation qui les lie."
+   },
+   "prerequis": [
+    "elec.circuits"
+   ]
+  },
+  {
+   "id": "elec.puissance",
+   "stat": "etincelle",
+   "rang": 3,
+   "nom": {
+    "fr": "Puissance et énergie électrique"
+   },
+   "description": {
+    "fr": "Watts, kilowattheures, effet Joule et production d'électricité."
+   },
+   "prerequis": [
+    "elec.circuits"
+   ]
+  },
+  {
+   "id": "elec.magnetisme",
+   "stat": "etincelle",
+   "rang": 4,
+   "nom": {
+    "fr": "Magnétisme et induction"
+   },
+   "description": {
+    "fr": "Aimants, boussoles, électroaimants, moteurs et alternateurs."
+   },
+   "prerequis": [
+    "elec.ohm",
+    "elec.puissance"
    ]
   }
  ]

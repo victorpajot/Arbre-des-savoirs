@@ -2,130 +2,757 @@
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "arbre-competences/schema.json",
  "title": "Contenu de l'arbre de compétences",
- "description": "Un seul schéma pour les quatre fichiers de contenu. Chaque fichier est validé contre sa définition dans $defs (regles, skills, questions, succes).",
+ "description": "Un seul schéma pour les fichiers de contenu. Chaque fichier est validé contre sa définition dans $defs (regles, skills, questions, succes, commentaires, objets, avatar).",
  "$defs": {
   "texte": {
    "type": "object",
    "description": "Texte traduit, une clé par langue.",
-   "required": ["fr"],
-   "additionalProperties": {"type": "string", "minLength": 1}
+   "required": [
+    "fr"
+   ],
+   "additionalProperties": {
+    "type": "string",
+    "minLength": 1
+   }
   },
-  "id": {"type": "string", "pattern": "^[a-z0-9]+([.-][a-z0-9]+)*$"},
+  "id": {
+   "type": "string",
+   "pattern": "^[a-z0-9]+([.-][a-z0-9]+)*$"
+  },
   "regles": {
    "type": "object",
-   "required": ["format", "stats", "xp", "quiz", "chrono", "rappels", "aujourdhui"],
+   "required": [
+    "format",
+    "stats",
+    "xp",
+    "quiz",
+    "chrono",
+    "rappels",
+    "aujourdhui"
+   ],
    "properties": {
-    "format": {"const": 1},
+    "format": {
+     "const": 1
+    },
     "stats": {
-     "type": "array", "minItems": 1,
+     "type": "array",
+     "minItems": 1,
      "items": {
-      "type": "object", "required": ["id", "nom", "branche", "couleur", "description"], "additionalProperties": false,
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "branche",
+       "couleur",
+       "description"
+      ],
+      "additionalProperties": false,
       "properties": {
-       "id": {"$ref": "#/$defs/id"}, "nom": {"$ref": "#/$defs/texte"}, "branche": {"$ref": "#/$defs/texte"},
-       "couleur": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}, "description": {"$ref": "#/$defs/texte"}
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "branche": {
+        "$ref": "#/$defs/texte"
+       },
+       "couleur": {
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       }
       }
      }
     },
     "xp": {
-     "type": "object", "required": ["par_bonne_reponse", "bonus_maitrise", "par_rappel_reussi", "paliers_niveau"],
+     "type": "object",
+     "required": [
+      "par_bonne_reponse",
+      "bonus_maitrise",
+      "par_rappel_reussi",
+      "paliers_niveau"
+     ],
      "properties": {
-      "par_bonne_reponse": {"type": "integer", "minimum": 0},
-      "bonus_maitrise": {"type": "integer", "minimum": 0},
-      "par_rappel_reussi": {"type": "integer", "minimum": 0},
-      "paliers_niveau": {"type": "array", "items": {"type": "integer", "minimum": 0}, "minItems": 2}
+      "par_bonne_reponse": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "bonus_maitrise": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "par_rappel_reussi": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "paliers_niveau": {
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "minItems": 2
+      }
      }
     },
     "quiz": {
-     "type": "object", "required": ["questions_par_quiz", "seuil_maitrise"],
-     "properties": {"questions_par_quiz": {"type": "integer", "minimum": 1}, "seuil_maitrise": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}}
+     "type": "object",
+     "required": [
+      "questions_par_quiz",
+      "seuil_maitrise"
+     ],
+     "properties": {
+      "questions_par_quiz": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "seuil_maitrise": {
+       "type": "number",
+       "exclusiveMinimum": 0,
+       "maximum": 1
+      }
+     }
     },
     "chrono": {
-     "type": "object", "required": ["secondes", "bonus_xp_par_bonne_reponse"],
-     "properties": {"secondes": {"type": "integer", "minimum": 5}, "bonus_xp_par_bonne_reponse": {"type": "integer", "minimum": 0}}
+     "type": "object",
+     "required": [
+      "secondes",
+      "bonus_xp_par_bonne_reponse"
+     ],
+     "properties": {
+      "secondes": {
+       "type": "integer",
+       "minimum": 5
+      },
+      "bonus_xp_par_bonne_reponse": {
+       "type": "integer",
+       "minimum": 0
+      }
+     }
     },
     "rappels": {
-     "type": "object", "required": ["intervalles_jours", "questions_par_rappel", "bonnes_reponses_min"],
+     "type": "object",
+     "required": [
+      "intervalles_jours",
+      "questions_par_rappel",
+      "bonnes_reponses_min"
+     ],
      "properties": {
-      "intervalles_jours": {"type": "array", "items": {"type": "integer", "minimum": 1}, "minItems": 1},
-      "questions_par_rappel": {"type": "integer", "minimum": 1},
-      "bonnes_reponses_min": {"type": "integer", "minimum": 1}
+      "intervalles_jours": {
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "minItems": 1
+      },
+      "questions_par_rappel": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "bonnes_reponses_min": {
+       "type": "integer",
+       "minimum": 1
+      }
      }
     },
     "aujourdhui": {
-     "type": "object", "required": ["max_rappels", "suggestion"],
-     "properties": {"max_rappels": {"type": "integer", "minimum": 1}, "suggestion": {"enum": ["stat_la_plus_faible"]}}
+     "type": "object",
+     "required": [
+      "max_rappels",
+      "suggestion"
+     ],
+     "properties": {
+      "max_rappels": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "suggestion": {
+       "enum": [
+        "stat_la_plus_faible"
+       ]
+      }
+     }
     }
    }
   },
   "skills": {
-   "type": "object", "required": ["format", "competences"],
+   "type": "object",
+   "required": [
+    "format",
+    "competences"
+   ],
    "properties": {
-    "format": {"const": 1},
+    "format": {
+     "const": 1
+    },
     "competences": {
-     "type": "array", "minItems": 1,
+     "type": "array",
+     "minItems": 1,
      "items": {
-      "type": "object", "required": ["id", "stat", "rang", "nom", "description", "prerequis"], "additionalProperties": false,
+      "type": "object",
+      "required": [
+       "id",
+       "stat",
+       "rang",
+       "nom",
+       "description",
+       "prerequis"
+      ],
+      "additionalProperties": false,
       "properties": {
-       "id": {"$ref": "#/$defs/id"}, "stat": {"$ref": "#/$defs/id"}, "rang": {"type": "integer", "minimum": 1},
-       "nom": {"$ref": "#/$defs/texte"}, "description": {"$ref": "#/$defs/texte"},
-       "prerequis": {"type": "array", "items": {"$ref": "#/$defs/id"}, "uniqueItems": true}
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "stat": {
+        "$ref": "#/$defs/id"
+       },
+       "rang": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       },
+       "prerequis": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/id"
+        },
+        "uniqueItems": true
+       }
       }
      }
     }
    }
   },
   "questions": {
-   "type": "object", "required": ["format", "questions"],
+   "type": "object",
+   "required": [
+    "format",
+    "questions"
+   ],
    "properties": {
-    "format": {"const": 1},
+    "format": {
+     "const": 1
+    },
     "questions": {
      "type": "array",
      "items": {
-      "type": "object", "required": ["id", "competence", "type", "enonce", "reponse", "explication"],
+      "type": "object",
+      "required": [
+       "id",
+       "competence",
+       "type",
+       "enonce",
+       "reponse",
+       "explication"
+      ],
       "properties": {
-       "id": {"$ref": "#/$defs/id"}, "competence": {"$ref": "#/$defs/id"},
-       "type": {"enum": ["qcm", "vrai_faux", "numerique"]},
-       "enonce": {"$ref": "#/$defs/texte"}, "explication": {"$ref": "#/$defs/texte"},
-       "choix": {"type": "array", "items": {"$ref": "#/$defs/texte"}, "minItems": 2},
-       "reponse": {"type": ["integer", "number", "boolean"]},
-       "tolerance": {"type": "number", "minimum": 0},
-       "unite": {"type": "string"}
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "competence": {
+        "$ref": "#/$defs/id"
+       },
+       "type": {
+        "enum": [
+         "qcm",
+         "vrai_faux",
+         "numerique"
+        ]
+       },
+       "enonce": {
+        "$ref": "#/$defs/texte"
+       },
+       "explication": {
+        "$ref": "#/$defs/texte"
+       },
+       "choix": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/texte"
+        },
+        "minItems": 2
+       },
+       "reponse": {
+        "type": [
+         "integer",
+         "number",
+         "boolean"
+        ]
+       },
+       "tolerance": {
+        "type": "number",
+        "minimum": 0
+       },
+       "unite": {
+        "type": "string"
+       },
+       "illustration": {
+        "$ref": "#/$defs/svg"
+       },
+       "illustration_explication": {
+        "$ref": "#/$defs/svg"
+       }
       },
       "allOf": [
-       {"if": {"properties": {"type": {"const": "qcm"}}}, "then": {"required": ["choix"], "properties": {"reponse": {"type": "integer", "minimum": 0}}}},
-       {"if": {"properties": {"type": {"const": "vrai_faux"}}}, "then": {"properties": {"reponse": {"type": "boolean"}}}},
-       {"if": {"properties": {"type": {"const": "numerique"}}}, "then": {"required": ["tolerance"], "properties": {"reponse": {"type": "number"}}}}
+       {
+        "if": {
+         "properties": {
+          "type": {
+           "const": "qcm"
+          }
+         }
+        },
+        "then": {
+         "required": [
+          "choix"
+         ],
+         "properties": {
+          "reponse": {
+           "type": "integer",
+           "minimum": 0
+          }
+         }
+        }
+       },
+       {
+        "if": {
+         "properties": {
+          "type": {
+           "const": "vrai_faux"
+          }
+         }
+        },
+        "then": {
+         "properties": {
+          "reponse": {
+           "type": "boolean"
+          }
+         }
+        }
+       },
+       {
+        "if": {
+         "properties": {
+          "type": {
+           "const": "numerique"
+          }
+         }
+        },
+        "then": {
+         "required": [
+          "tolerance"
+         ],
+         "properties": {
+          "reponse": {
+           "type": "number"
+          }
+         }
+        }
+       }
       ]
      }
     }
    }
   },
   "succes": {
-   "type": "object", "required": ["format", "succes"],
+   "type": "object",
+   "required": [
+    "format",
+    "succes"
+   ],
    "properties": {
-    "format": {"const": 1},
+    "format": {
+     "const": 1
+    },
     "succes": {
      "type": "array",
      "items": {
-      "type": "object", "required": ["id", "nom", "description", "condition", "cache", "recompense"], "additionalProperties": false,
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "description",
+       "condition",
+       "cache",
+       "recompense"
+      ],
+      "additionalProperties": false,
       "properties": {
-       "id": {"$ref": "#/$defs/id"}, "nom": {"$ref": "#/$defs/texte"}, "description": {"$ref": "#/$defs/texte"},
-       "cache": {"type": "boolean"},
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       },
+       "cache": {
+        "type": "boolean"
+       },
        "condition": {
-        "type": "object", "required": ["type"],
-        "properties": {
-         "type": {"enum": ["competences_maitrisees", "quiz_parfaits", "quiz_rates", "branche_complete", "toutes_branches", "rappels_reussis", "serie_rappels", "duree_maitrise", "niveau_stat", "competences_regagnees", "competences_perdues", "jours_actifs"]},
-         "n": {"type": "integer", "minimum": 1}, "stat": {"$ref": "#/$defs/id"},
-         "jours": {"type": "integer", "minimum": 1}, "niveau": {"type": "integer", "minimum": 1}
-        }
+        "$ref": "#/$defs/condition"
        },
        "recompense": {
-        "type": "object", "required": ["type", "texte", "source"], "additionalProperties": false,
+        "type": "object",
+        "required": [
+         "type",
+         "texte",
+         "source"
+        ],
+        "additionalProperties": false,
         "properties": {
-         "type": {"enum": ["citation", "anecdote"]}, "texte": {"$ref": "#/$defs/texte"},
-         "auteur": {"type": "string"}, "source": {"type": "string", "minLength": 3}
+         "type": {
+          "enum": [
+           "citation",
+           "anecdote"
+          ]
+         },
+         "texte": {
+          "$ref": "#/$defs/texte"
+         },
+         "auteur": {
+          "type": "string"
+         },
+         "source": {
+          "type": "string",
+          "minLength": 3
+         }
         },
-        "if": {"properties": {"type": {"const": "citation"}}}, "then": {"required": ["auteur"]}
+        "if": {
+         "properties": {
+          "type": {
+           "const": "citation"
+          }
+         }
+        },
+        "then": {
+         "required": [
+          "auteur"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "condition": {
+   "type": "object",
+   "required": [
+    "type"
+   ],
+   "additionalProperties": false,
+   "description": "Condition déclarative, évaluée par le moteur (verifierSucces). Les compteurs sont dans la partie.",
+   "properties": {
+    "type": {
+     "enum": [
+      "competences_maitrisees",
+      "competence_maitrisee",
+      "quiz_parfaits",
+      "quiz_parfaits_stat",
+      "quiz_rates",
+      "quiz_eclair_rates",
+      "quiz_zero",
+      "quiz_joues",
+      "quiz_nuit",
+      "quiz_aube",
+      "meme_quiz_rate",
+      "chrono_parfaits",
+      "reponses_eclair_fausses",
+      "branche_complete",
+      "toutes_branches",
+      "rappels_reussis",
+      "rappels_retard",
+      "serie_rappels",
+      "duree_maitrise",
+      "niveau_stat",
+      "niveau_global",
+      "competences_regagnees",
+      "competences_perdues",
+      "jours_actifs",
+      "retours",
+      "mode_test",
+      "succes",
+      "succes_obtenus",
+      "objets"
+     ]
+    },
+    "n": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "stat": {
+     "$ref": "#/$defs/id"
+    },
+    "id": {
+     "$ref": "#/$defs/id"
+    },
+    "jours": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "niveau": {
+     "type": "integer",
+     "minimum": 1
+    }
+   }
+  },
+  "svg": {
+   "type": "string",
+   "pattern": "^<svg[\\s\\S]*</svg>$",
+   "description": "SVG autonome n'utilisant que les classes documentées dans outils/illustrations.py."
+  },
+  "pixels": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "pattern": "^[.A-Za-z]+$"
+   },
+   "minItems": 1,
+   "description": "Image en pixel art : une chaîne par ligne, un caractère par pixel, « . » transparent, le reste renvoie à la palette."
+  },
+  "palette": {
+   "type": "object",
+   "propertyNames": {
+    "pattern": "^[A-Za-z]$"
+   },
+   "additionalProperties": {
+    "type": "string",
+    "pattern": "^#[0-9A-Fa-f]{6}$"
+   }
+  },
+  "commentaires": {
+   "type": "object",
+   "required": [
+    "format",
+    "narrateur",
+    "commentaires"
+   ],
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "narrateur": {
+     "$ref": "#/$defs/texte"
+    },
+    "commentaires": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "contexte",
+       "texte"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "texte": {
+        "$ref": "#/$defs/texte"
+       },
+       "contexte": {
+        "enum": [
+         "accueil",
+         "quiz_parfait_facile",
+         "quiz_parfait",
+         "quiz_reussi",
+         "quiz_rate_facile",
+         "quiz_rate",
+         "quiz_zero",
+         "rappel_reussi",
+         "rappel_perdu",
+         "rappel_retard",
+         "nuit",
+         "mode_test",
+         "eclair",
+         "retour",
+         "retards"
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  "objets": {
+   "type": "object",
+   "required": [
+    "format",
+    "palette",
+    "taille",
+    "objets"
+   ],
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "palette": {
+     "$ref": "#/$defs/palette"
+    },
+    "taille": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "minItems": 2,
+     "maxItems": 2
+    },
+    "objets": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "annee",
+       "notice",
+       "source",
+       "condition",
+       "pixels"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "annee": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "notice": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "condition": {
+        "$ref": "#/$defs/condition"
+       },
+       "pixels": {
+        "$ref": "#/$defs/pixels"
+       }
+      }
+     }
+    }
+   }
+  },
+  "avatar": {
+   "type": "object",
+   "required": [
+    "format",
+    "palette",
+    "taille",
+    "corps",
+    "cheveux",
+    "rangs",
+    "accessoires"
+   ],
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "palette": {
+     "$ref": "#/$defs/palette"
+    },
+    "taille": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "minItems": 2,
+     "maxItems": 2
+    },
+    "corps": {
+     "$ref": "#/$defs/pixels"
+    },
+    "cheveux": {
+     "$ref": "#/$defs/pixels"
+    },
+    "rangs": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "niveau_min",
+       "couleurs",
+       "tenue"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "niveau_min": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "couleurs": {
+        "$ref": "#/$defs/palette"
+       },
+       "tenue": {
+        "$ref": "#/$defs/pixels"
+       }
+      }
+     }
+    },
+    "accessoires": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "emplacement",
+       "condition",
+       "pixels"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "emplacement": {
+        "enum": [
+         "tete",
+         "visage"
+        ]
+       },
+       "condition": {
+        "$ref": "#/$defs/condition"
+       },
+       "pixels": {
+        "$ref": "#/$defs/pixels"
        }
       }
      }

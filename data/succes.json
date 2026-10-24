@@ -199,7 +199,7 @@
     "fr": "Polymathe"
    },
    "description": {
-    "fr": "Maîtriser au moins une compétence dans chacune des 6 branches."
+    "fr": "Maîtriser au moins une compétence dans chacune des 9 branches."
    },
    "condition": {
     "type": "toutes_branches"
@@ -241,11 +241,11 @@
     "fr": "Sur les épaules de géants"
    },
    "description": {
-    "fr": "Maîtriser les 24 compétences."
+    "fr": "Maîtriser les 36 compétences."
    },
    "condition": {
     "type": "competences_maitrisees",
-    "n": 24
+    "n": 36
    },
    "cache": true,
    "recompense": {
@@ -448,6 +448,1019 @@
     },
     "auteur": "Charles Darwin",
     "source": "La Descendance de l'homme, introduction, 1871 (traduction)"
+   }
+  },
+  {
+   "id": "dix-pour-cent",
+   "nom": {
+    "fr": "10 % de cerveau, 100 % de confiance"
+   },
+   "description": {
+    "fr": "Rater un quiz en moins d'une minute. Un record de vitesse, à défaut d'autre chose."
+   },
+   "condition": {
+    "type": "quiz_eclair_rates",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Nous n'utilisons pas « que 10 % de notre cerveau ». L'imagerie montre que toutes ses régions travaillent au cours d'une journée, et une lésion presque n'importe où a des effets. Le mythe est souvent attribué à tort au psychologue William James."
+    },
+    "source": "Barry Beyerstein, « Whence Cometh the Myth that We Only Use 10% of Our Brains? », in Mind Myths, 1999"
+   }
+  },
+  {
+   "id": "einstein-notes",
+   "nom": {
+    "fr": "Einstein avait de bonnes notes"
+   },
+   "description": {
+    "fr": "Réussir un quiz de Logique sans faute. Vous voilà au niveau d'un lycéen suisse de 1896."
+   },
+   "condition": {
+    "type": "quiz_parfaits_stat",
+    "stat": "logique",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Einstein n'a jamais été mauvais en maths. À sa maturité, à Aarau en 1896, il obtient 6 sur 6, la note maximale, en algèbre et en géométrie. Il disait maîtriser le calcul différentiel et intégral avant 15 ans."
+    },
+    "source": "Albrecht Fölsing, Albert Einstein, 1993 ; certificat de maturité d'Aarau, 1896"
+   }
+  },
+  {
+   "id": "grande-muraille",
+   "nom": {
+    "fr": "Vue de l'espace"
+   },
+   "description": {
+    "fr": "Maîtriser les ordres de grandeur. Vous pouvez désormais dire ce qu'on voit de l'espace, et ce qu'on n'y voit pas."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "phys.unites"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "La Grande Muraille n'est pas visible à l'œil nu depuis la Lune, ni même facilement depuis l'orbite basse : elle est longue, mais étroite et de la couleur du sol. Yang Liwei, premier astronaute chinois, a dit en 2003 ne pas l'avoir vue."
+    },
+    "source": "NASA Earth Observatory, « Great Wall », 2005 ; agence Xinhua, octobre 2003"
+   }
+  },
+  {
+   "id": "foudre-deux-fois",
+   "nom": {
+    "fr": "La foudre tombe deux fois"
+   },
+   "description": {
+    "fr": "Perdre deux compétences. Le Comité constate que l'expérience ne suffit pas."
+   },
+   "condition": {
+    "type": "competences_perdues",
+    "n": 2
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "La foudre tombe très souvent au même endroit : l'Empire State Building est frappé une vingtaine de fois par an. Roy Sullivan, garde forestier en Virginie, a été foudroyé sept fois entre 1942 et 1977, et a survécu à chaque fois."
+    },
+    "source": "NOAA National Weather Service, « Lightning Myths » ; Guinness World Records"
+   }
+  },
+  {
+   "id": "coriolis",
+   "nom": {
+    "fr": "L'évier de l'hémisphère Sud"
+   },
+   "description": {
+    "fr": "Maîtriser les orbites. Le Comité vous interdit désormais de croire à l'histoire du lavabo."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "astro.orbites"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "L'eau ne tourne pas dans l'autre sens dans les éviers de l'hémisphère Sud : à cette échelle, la force de Coriolis est bien trop faible face à la forme de la cuve et aux remous. Au MIT en 1962, Ascher Shapiro a dû laisser reposer l'eau d'une cuve de 1,80 m pendant 24 heures pour la mesurer."
+    },
+    "source": "Ascher Shapiro, « Bath-Tub Vortex », Nature, 1962"
+   }
+  },
+  {
+   "id": "carte-langue",
+   "nom": {
+    "fr": "La carte de la langue"
+   },
+   "description": {
+    "fr": "Maîtriser les acides et les bases. Votre langue, elle, les détectait déjà partout."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "chim.acides"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "La « carte de la langue » (le sucré au bout, l'amer au fond) est fausse : toutes les zones perçoivent toutes les saveurs. Elle vient d'une lecture approximative, en 1942, d'une thèse allemande de 1901 qui ne décrivait que de faibles différences de sensibilité."
+    },
+    "source": "Edwin Boring, Sensation and Perception in the History of Experimental Psychology, 1942 ; David Hänig, 1901"
+   }
+  },
+  {
+   "id": "ampoule-partagee",
+   "nom": {
+    "fr": "Ampoule partagée"
+   },
+   "description": {
+    "fr": "Maîtriser la puissance électrique. Comme Edison, vous n'avez pas tout inventé."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "elec.puissance"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Edison n'a pas inventé l'ampoule. Humphry Davy, Warren de la Rue et Joseph Swan l'avaient précédé. Son apport, en 1879, fut un filament de carbone durable et surtout tout le système pour produire et distribuer le courant."
+    },
+    "source": "Robert Friedel et Paul Israel, Edison's Electric Light, 1986"
+   }
+  },
+  {
+   "id": "saisons",
+   "nom": {
+    "fr": "Pas plus près, pas plus chaud"
+   },
+   "description": {
+    "fr": "Maîtriser le Système solaire. Félicitations, vous savez enfin pourquoi il fait froid en hiver."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "astro.systeme"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Les saisons ne viennent pas de la distance au Soleil : la Terre en est au plus près début janvier, en plein hiver de l'hémisphère Nord. C'est l'inclinaison de son axe qui change la hauteur du Soleil et la durée du jour."
+    },
+    "source": "Institut de mécanique céleste et de calcul des éphémérides (IMCCE), Observatoire de Paris"
+   }
+  },
+  {
+   "id": "sang-bleu",
+   "nom": {
+    "fr": "Sang bleu"
+   },
+   "description": {
+    "fr": "Maîtriser la cellule. Le Comité vérifie votre noblesse : elle est rouge, comme tout le monde."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "sci.cellule"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le sang n'est jamais bleu, même dans les veines : il est rouge sombre. Les veines paraissent bleues parce que la peau ne renvoie pas les couleurs de la même façon selon leur profondeur."
+    },
+    "source": "Alwin Kienle et al., « Why do veins appear blue? », Applied Optics, 1996"
+   }
+  },
+  {
+   "id": "vitraux",
+   "nom": {
+    "fr": "Le verre ne coule pas"
+   },
+   "description": {
+    "fr": "Maîtriser les liaisons chimiques. Les vitraux de Chartres peuvent dormir tranquilles."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "chim.liaisons"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Les vitraux anciens sont parfois plus épais en bas, mais ce n'est pas parce que le verre « coule » : les verriers posaient souvent le côté épais en bas. Un calcul de 1998 montre qu'il faudrait bien plus que l'âge de l'Univers pour qu'un vitrail se déforme visiblement."
+    },
+    "source": "Edgar Zanotto, « Do cathedral glasses flow? », American Journal of Physics, 1998"
+   }
+  },
+  {
+   "id": "effet-mozart",
+   "nom": {
+    "fr": "L'effet Mozart"
+   },
+   "description": {
+    "fr": "Réussir un quiz sans faute avec le chrono. Sans musique de fond, le Comité suppose."
+   },
+   "condition": {
+    "type": "chrono_parfaits",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1993, une étude trouve qu'écouter une sonate de Mozart améliore brièvement un test de raisonnement spatial. Les médias en font « Mozart rend les bébés intelligents ». Une méta-analyse de 2010 portant sur près de 40 études ne trouve pas d'effet notable."
+    },
+    "source": "Pietschnig, Voracek et Formann, « Mozart effect–Shmozart effect », Intelligence, 2010"
+   }
+  },
+  {
+   "id": "styles-apprentissage",
+   "nom": {
+    "fr": "Visuel, auditif, kinesthésique"
+   },
+   "description": {
+    "fr": "Réussir 10 rappels. Quel que soit votre « style », c'est la répétition espacée qui marche."
+   },
+   "condition": {
+    "type": "rappels_reussis",
+    "n": 10
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "L'idée qu'on apprend mieux en suivant son « style » (visuel, auditif…) n'a pas résisté aux tests : une revue de 2008 ne trouve aucune preuve solide. La répétition espacée et le fait de se tester, eux, fonctionnent pour tout le monde."
+    },
+    "source": "Pashler, McDaniel, Rohrer et Bjork, « Learning Styles », Psychological Science in the Public Interest, 2008"
+   }
+  },
+  {
+   "id": "eppur",
+   "nom": {
+    "fr": "Et pourtant elle tourne"
+   },
+   "description": {
+    "fr": "Regagner trois compétences perdues. Têtu, comme Galilée. Enfin, comme sa légende."
+   },
+   "condition": {
+    "type": "competences_regagnees",
+    "n": 3
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Galilée n'a sans doute jamais murmuré « Eppur si muove » devant ses juges en 1633. La phrase apparaît pour la première fois plus d'un siècle après, en 1757, sous la plume de Giuseppe Baretti."
+    },
+    "source": "Giuseppe Baretti, The Italian Library, 1757"
+   }
+  },
+  {
+   "id": "perseverance",
+   "nom": {
+    "fr": "Persévérance mal placée"
+   },
+   "description": {
+    "fr": "Rater trois fois de suite le même quiz. Le Comité admire la constance, pas la méthode."
+   },
+   "condition": {
+    "type": "meme_quiz_rate",
+    "n": 3
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "« La folie, c'est de refaire la même chose et d'attendre un résultat différent. » Einstein ne l'a jamais écrit : on n'en trouve aucune trace avant les années 1980, dans des brochures des Narcotiques anonymes."
+    },
+    "source": "Quote Investigator, « Insanity Is Doing the Same Thing Over and Over Again », 2017"
+   }
+  },
+  {
+   "id": "plus-apte",
+   "nom": {
+    "fr": "Survie du plus apte"
+   },
+   "description": {
+    "fr": "Maîtriser l'évolution. Darwin, lui, n'avait pas trouvé la formule."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "sci.evolution"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "« La survie du plus apte » n'est pas de Darwin mais du philosophe Herbert Spencer, en 1864. Darwin l'a adoptée dans les éditions suivantes de L'Origine des espèces. Et « apte » veut dire qui laisse des descendants, pas le plus fort."
+    },
+    "source": "Herbert Spencer, Principles of Biology, 1864"
+   }
+  },
+  {
+   "id": "pois-de-senteur",
+   "nom": {
+    "fr": "Trop beau pour être vrai"
+   },
+   "description": {
+    "fr": "Maîtriser la génétique. Vos résultats, eux, ne sont pas trop parfaits."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "sci.genetique"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1936, le statisticien Ronald Fisher remarque que les résultats de Mendel collent presque trop bien à la théorie. Le débat dure encore : trop de chance, aide d'un assistant zélé, ou simple tri des expériences ?"
+    },
+    "source": "Ronald Fisher, « Has Mendel's work been rediscovered? », Annals of Science, 1936"
+   }
+  },
+  {
+   "id": "cloche",
+   "nom": {
+    "fr": "La cloche de Pavlov"
+   },
+   "description": {
+    "fr": "Réussir 25 rappels. Vous salivez déjà à l'idée du prochain."
+   },
+   "condition": {
+    "type": "rappels_reussis",
+    "n": 25
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dans ses travaux, Pavlov conditionnait surtout ses chiens avec des métronomes, des sifflets ou des stimulations électriques. La cloche omniprésente dans la légende y est rare."
+    },
+    "source": "Daniel Todes, Ivan Pavlov: A Russian Life in Science, 2014"
+   }
+  },
+  {
+   "id": "trente-huit-temoins",
+   "nom": {
+    "fr": "Trente-huit témoins"
+   },
+   "description": {
+    "fr": "Maîtriser l'influence sociale. Vous saurez au moins pourquoi personne n'a bougé."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "psy.influence"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le meurtre de Kitty Genovese (1964) a lancé l'étude de l'effet du témoin, avec « 38 témoins qui n'ont rien fait ». Le chiffre était très exagéré : peu de voisins ont compris ce qui se passait, et certains ont appelé la police. Le New York Times l'a reconnu en 2016."
+    },
+    "source": "Manning, Levine et Collins, American Psychologist, 2007 ; The New York Times, 2016"
+   }
+  },
+  {
+   "id": "miroirs-ardents",
+   "nom": {
+    "fr": "Les miroirs d'Archimède"
+   },
+   "description": {
+    "fr": "Maîtriser les ondes et la lumière. Ne mettez le feu à aucune flotte."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "phys.ondes"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Archimède aurait incendié la flotte romaine avec des miroirs. Le récit n'apparaît que des siècles après. En 2005, des étudiants du MIT ont réussi à enflammer une maquette de navire, immobile, par beau temps et après de longs essais."
+    },
+    "source": "MIT, cours 2.009, « Archimedes Death Ray: Idea Feasibility Testing », 2005"
+   }
+  },
+  {
+   "id": "deux-hemispheres",
+   "nom": {
+    "fr": "Cerveau gauche, cerveau droit"
+   },
+   "description": {
+    "fr": "Jouer 20 quiz. Avec les deux hémisphères, le Comité l'espère."
+   },
+   "condition": {
+    "type": "quiz_joues",
+    "n": 20
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Il n'y a pas de « cerveau gauche » logique et de « cerveau droit » créatif chez les individus. Une étude de 2013 sur plus de 1 000 cerveaux n'a trouvé personne qui utilise davantage un hémisphère que l'autre dans l'ensemble."
+    },
+    "source": "Nielsen et al., « An Evaluation of the Left-Brain vs. Right-Brain Hypothesis », PLOS ONE, 2013"
+   }
+  },
+  {
+   "id": "huit-verres",
+   "nom": {
+    "fr": "Huit verres d'eau"
+   },
+   "description": {
+    "fr": "Jouer 30 jours différents. Pensez à boire, quand la soif vous le dit."
+   },
+   "condition": {
+    "type": "jours_actifs",
+    "n": 30
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "La règle des « huit verres d'eau par jour » ne repose sur aucune étude. Une revue de 2002 n'a trouvé aucune preuve à l'appui ; une bonne partie de l'eau dont nous avons besoin vient déjà des aliments et des boissons."
+    },
+    "source": "Heinz Valtin, « Drink at least eight glasses of water a day. Really? », American Journal of Physiology, 2002"
+   }
+  },
+  {
+   "id": "insomniaque",
+   "nom": {
+    "fr": "Insomniaque érudit"
+   },
+   "description": {
+    "fr": "Terminer un quiz entre 2 h et 5 h du matin. Le Comité, lui, dormait."
+   },
+   "condition": {
+    "type": "quiz_nuit",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1964, le lycéen Randy Gardner est resté éveillé 11 jours. Il a fini par avoir du mal à se concentrer, à se souvenir et à parler. Le sommeil sert notamment à consolider ce qu'on a appris."
+    },
+    "source": "Gulevich, Dement et Johnson, Archives of General Psychiatry, 1966"
+   }
+  },
+  {
+   "id": "leve-tot",
+   "nom": {
+    "fr": "Leçon de cinq heures"
+   },
+   "description": {
+    "fr": "Terminer un quiz entre 5 h et 7 h du matin. Courageux. Imprudent, aussi."
+   },
+   "condition": {
+    "type": "quiz_aube",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Invité en Suède par la reine Christine, Descartes devait lui donner ses leçons à 5 heures du matin, dans le froid. Il meurt d'une pneumonie en février 1650, quelques mois après son arrivée."
+    },
+    "source": "Adrien Baillet, La Vie de Monsieur Des-Cartes, 1691"
+   }
+  },
+  {
+   "id": "voyageur-temporel",
+   "nom": {
+    "fr": "Voyageur temporel"
+   },
+   "description": {
+    "fr": "Utiliser le mode test pour avancer l'horloge. Le Comité a vu. Le Comité note tout."
+   },
+   "condition": {
+    "type": "mode_test",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le 28 juin 2009, Stephen Hawking organise à Cambridge une fête pour voyageurs du temps, avec champagne et petits fours. Il n'envoie les invitations qu'après la fête. Personne n'est venu."
+    },
+    "source": "Stephen Hawking, Into the Universe with Stephen Hawking, Discovery Channel, 2010"
+   }
+  },
+  {
+   "id": "table-rase",
+   "nom": {
+    "fr": "Table rase"
+   },
+   "description": {
+    "fr": "Obtenir zéro à un quiz. Vous avez redécouvert le zéro. Il était déjà pris."
+   },
+   "condition": {
+    "type": "quiz_zero",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le zéro comme nombre à part entière, avec ses règles de calcul, apparaît chez le mathématicien indien Brahmagupta en 628. Il lui fallait bien un nom pour ce genre de score."
+    },
+    "source": "Brahmagupta, Brāhmasphuṭasiddhānta, 628"
+   }
+  },
+  {
+   "id": "neutrinos",
+   "nom": {
+    "fr": "Plus vite que la lumière"
+   },
+   "description": {
+    "fr": "Donner 5 mauvaises réponses en moins de deux secondes chacune. Vitesse : remarquable. Direction : non."
+   },
+   "condition": {
+    "type": "reponses_eclair_fausses",
+    "n": 5
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 2011, l'expérience OPERA annonce des neutrinos plus rapides que la lumière. En 2012, l'explication tombe : un câble de fibre optique mal branché et une horloge décalée."
+    },
+    "source": "Collaboration OPERA, CERN, communiqué de juin 2012"
+   }
+  },
+  {
+   "id": "serendipite",
+   "nom": {
+    "fr": "Sérendipité"
+   },
+   "description": {
+    "fr": "Jouer 50 quiz. À force d'essayer, on finit par trouver."
+   },
+   "condition": {
+    "type": "quiz_joues",
+    "n": 50
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le mot « serendipity » est inventé en 1754 par l'écrivain Horace Walpole, d'après un conte où trois princes de Serendip font des découvertes par hasard et par sagacité."
+    },
+    "source": "Horace Walpole, lettre à Horace Mann, 28 janvier 1754"
+   }
+  },
+  {
+   "id": "procrastination",
+   "nom": {
+    "fr": "Vingt ans de réflexion"
+   },
+   "description": {
+    "fr": "Faire un rappel avec au moins 7 jours de retard. Le Comité vous trouve une excuse."
+   },
+   "condition": {
+    "type": "rappels_retard",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Darwin a esquissé sa théorie de la sélection naturelle dès 1838, mais ne l'a publiée qu'en 1859, poussé par la lettre de Wallace qui avait eu la même idée."
+    },
+    "source": "Charles Darwin, Autobiographie, 1887"
+   }
+  },
+  {
+   "id": "pluton",
+   "nom": {
+    "fr": "Rétrogradé"
+   },
+   "description": {
+    "fr": "Perdre trois compétences. Pluton compatit."
+   },
+   "condition": {
+    "type": "competences_perdues",
+    "n": 3
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le 24 août 2006, l'Union astronomique internationale reclasse Pluton parmi les planètes naines. L'American Dialect Society élit « to pluto » (rétrograder quelqu'un) mot de l'année."
+    },
+    "source": "Union astronomique internationale, résolution B5, 2006 ; American Dialect Society, 2006"
+   }
+  },
+  {
+   "id": "schrodinger",
+   "nom": {
+    "fr": "Ni parti ni revenu"
+   },
+   "description": {
+    "fr": "Revenir jouer après au moins 14 jours d'absence. Le Comité ne savait pas si vous existiez encore."
+   },
+   "condition": {
+    "type": "retours",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Schrödinger a imaginé son chat à la fois mort et vivant pour se moquer d'une interprétation de la physique quantique, pas pour la défendre. Il trouvait la situation absurde."
+    },
+    "source": "Erwin Schrödinger, « Die gegenwärtige Situation in der Quantenmechanik », Naturwissenschaften, 1935"
+   }
+  },
+  {
+   "id": "elephant",
+   "nom": {
+    "fr": "Mémoire d'éléphant"
+   },
+   "description": {
+    "fr": "Réussir 100 rappels. L'expression devient, pour une fois, exacte."
+   },
+   "condition": {
+    "type": "rappels_reussis",
+    "n": 100
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Les éléphants ont réellement une excellente mémoire : au Kenya, les troupeaux menés par les matriarches les plus âgées reconnaissent mieux les cris d'éléphants inconnus et réagissent mieux aux dangers."
+    },
+    "source": "McComb et al., « Matriarchs as Repositories of Social Knowledge », Science, 2001"
+   }
+  },
+  {
+   "id": "preuves-extraordinaires",
+   "nom": {
+    "fr": "Preuves extraordinaires"
+   },
+   "description": {
+    "fr": "Réussir 20 rappels d'affilée. Le Comité exige des preuves. Vous en avez."
+   },
+   "condition": {
+    "type": "serie_rappels",
+    "n": 20
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Des affirmations extraordinaires exigent des preuves extraordinaires."
+    },
+    "auteur": "Carl Sagan",
+    "source": "Cosmos, épisode 12, 1980 (traduction)"
+   }
+  },
+  {
+   "id": "encyclopediste",
+   "nom": {
+    "fr": "Encyclopédiste"
+   },
+   "description": {
+    "fr": "Maîtriser 20 compétences. Diderot aurait voulu vous embaucher."
+   },
+   "condition": {
+    "type": "competences_maitrisees",
+    "n": 20
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "L'Encyclopédie de Diderot et d'Alembert compte 17 volumes de texte et 11 de planches, publiés de 1751 à 1772, malgré deux interdictions. Plus de 140 auteurs y ont contribué."
+    },
+    "source": "Encyclopédie, ou Dictionnaire raisonné des sciences, des arts et des métiers, 1751-1772"
+   }
+  },
+  {
+   "id": "un-an",
+   "nom": {
+    "fr": "Une révolution complète"
+   },
+   "description": {
+    "fr": "Garder une compétence maîtrisée pendant 365 jours. Vous avez fait le tour du Soleil avec elle."
+   },
+   "condition": {
+    "type": "duree_maitrise",
+    "jours": 365
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En un an, la Terre parcourt environ 940 millions de kilomètres autour du Soleil, à près de 30 km par seconde. Votre savoir a tenu le voyage."
+    },
+    "source": "NASA, Earth Fact Sheet"
+   }
+  },
+  {
+   "id": "deux-nobel",
+   "nom": {
+    "fr": "Deux prix Nobel"
+   },
+   "description": {
+    "fr": "Atteindre le niveau global 10. Marie Curie avait mis la barre haut."
+   },
+   "condition": {
+    "type": "niveau_global",
+    "n": 10
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Marie Curie reste la seule personne récompensée par un prix Nobel dans deux sciences différentes : la physique en 1903, la chimie en 1911."
+    },
+    "source": "Fondation Nobel, nobelprize.org"
+   }
+  },
+  {
+   "id": "nous-saurons",
+   "nom": {
+    "fr": "Nous devons savoir"
+   },
+   "description": {
+    "fr": "Atteindre le niveau global 25. Le Comité commence à vous respecter. N'en parlez à personne."
+   },
+   "condition": {
+    "type": "niveau_global",
+    "n": 25
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Nous devons savoir. Nous saurons."
+    },
+    "auteur": "David Hilbert",
+    "source": "Discours de Königsberg, 8 septembre 1930 (traduction)"
+   }
+  },
+  {
+   "id": "wunderkammer",
+   "nom": {
+    "fr": "Wunderkammer"
+   },
+   "description": {
+    "fr": "Obtenir 30 succès. Votre propre cabinet de curiosités se remplit."
+   },
+   "condition": {
+    "type": "succes_obtenus",
+    "n": 30
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Au XVIIe siècle, le savant danois Ole Worm entasse dans son cabinet fossiles, animaux empaillés et objets venus du monde entier. Il démontre au passage que les « cornes de licorne » sont des défenses de narval."
+    },
+    "source": "Ole Worm, Museum Wormianum, 1655"
+   }
+  },
+  {
+   "id": "conservateur",
+   "nom": {
+    "fr": "Conservateur"
+   },
+   "description": {
+    "fr": "Réunir 10 objets dans le cabinet de curiosités. Ne touchez à rien, surtout la bouteille de Leyde."
+   },
+   "condition": {
+    "type": "objets",
+    "n": 10
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le premier musée universitaire, l'Ashmolean d'Oxford, ouvre en 1683 autour du cabinet de curiosités des Tradescant, avec notamment un dodo empaillé, dont il reste aujourd'hui la tête."
+    },
+    "source": "Ashmolean Museum, université d'Oxford"
+   }
+  },
+  {
+   "id": "reve-mendeleiev",
+   "nom": {
+    "fr": "Le rêve de Mendeleïev"
+   },
+   "description": {
+    "fr": "Maîtriser les atomes et les éléments. Sans dormir dessus, si possible."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "sci.atomes"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Mendeleïev aurait vu son tableau en rêve, selon un récit du géologue Alexandre Inostrantsev. Les historiens rappellent surtout qu'il travaillait depuis des mois à classer ses fiches d'éléments, comme un jeu de patience."
+    },
+    "source": "Michael Gordin, A Well-Ordered Thing, 2004"
+   }
+  },
+  {
+   "id": "rien-ne-se-perd",
+   "nom": {
+    "fr": "Rien ne se perd"
+   },
+   "description": {
+    "fr": "Maîtriser les réactions chimiques. Votre XP, elle, peut se perdre."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "chim.reactions"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Car rien ne se crée, ni dans les opérations de l'art, ni dans celles de la nature."
+    },
+    "auteur": "Antoine Lavoisier",
+    "source": "Traité élémentaire de chimie, 1789"
+   }
+  },
+  {
+   "id": "grenouilles",
+   "nom": {
+    "fr": "Les grenouilles de Galvani"
+   },
+   "description": {
+    "fr": "Maîtriser les charges et les circuits. Aucune grenouille n'a été maltraitée. Cette fois."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "elec.circuits"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dans les années 1780, Luigi Galvani voit des cuisses de grenouille se contracter au contact de deux métaux. Il croit à une « électricité animale ». Volta conteste et, pour le prouver, invente la pile."
+    },
+    "source": "Luigi Galvani, De viribus electricitatis in motu musculari, 1791"
+   }
+  },
+  {
+   "id": "ohm",
+   "nom": {
+    "fr": "Accueil glacial"
+   },
+   "description": {
+    "fr": "Maîtriser la loi d'Ohm. Vous l'avez mieux reçue que ses contemporains."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "elec.ohm"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Georg Ohm publie sa loi en 1827. Elle est accueillie froidement en Allemagne, où on la juge trop mathématique. La reconnaissance vient de Londres, avec la médaille Copley de la Royal Society en 1841."
+    },
+    "source": "Royal Society, médaille Copley 1841"
+   }
+  },
+  {
+   "id": "oersted",
+   "nom": {
+    "fr": "La boussole qui bouge"
+   },
+   "description": {
+    "fr": "Maîtriser le magnétisme. Le nord n'est plus tout à fait le même."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "elec.magnetisme"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1820, Hans Christian Ørsted remarque qu'un fil parcouru par un courant fait dévier une aiguille aimantée. Électricité et magnétisme ne feront plus jamais deux disciplines séparées."
+    },
+    "source": "Hans Christian Ørsted, Experimenta circa effectum conflictus electrici in acum magneticam, 1820"
+   }
+  },
+  {
+   "id": "poussieres",
+   "nom": {
+    "fr": "Poussières d'étoiles"
+   },
+   "description": {
+    "fr": "Maîtriser les étoiles. Vous êtes, littéralement, fait de ce que vous venez d'apprendre."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "astro.etoiles"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le carbone, l'oxygène et le fer de notre corps ont été fabriqués dans des étoiles. Le mécanisme est décrit en 1957 dans un article resté célèbre sous les initiales de ses quatre auteurs : B²FH."
+    },
+    "source": "Burbidge, Burbidge, Fowler et Hoyle, Reviews of Modern Physics, 1957"
+   }
+  },
+  {
+   "id": "big-bang",
+   "nom": {
+    "fr": "Un nom pour rire"
+   },
+   "description": {
+    "fr": "Maîtriser les galaxies et le Big Bang. Le nom, lui, était une moquerie."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "astro.galaxies"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Fred Hoyle, qui défendait un Univers éternel, lance l'expression « Big Bang » en 1949 à la radio de la BBC pour décrire la théorie rivale. Le nom moqueur est resté, la théorie aussi."
+    },
+    "source": "Fred Hoyle, émission de la BBC, 28 mars 1949"
+   }
+  },
+  {
+   "id": "branche-alchimie",
+   "nom": {
+    "fr": "Le dernier des magiciens"
+   },
+   "description": {
+    "fr": "Maîtriser les 4 compétences d'Alchimie."
+   },
+   "condition": {
+    "type": "branche_complete",
+    "stat": "alchimie"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Newton n'a pas été le premier de l'âge de la raison. Il a été le dernier des magiciens."
+    },
+    "auteur": "John Maynard Keynes",
+    "source": "« Newton, the Man », 1946 (traduction)"
+   }
+  },
+  {
+   "id": "branche-cosmos",
+   "nom": {
+    "fr": "Colomb avait tort, mais pas pour ça"
+   },
+   "description": {
+    "fr": "Maîtriser les 4 compétences de Cosmos."
+   },
+   "condition": {
+    "type": "branche_complete",
+    "stat": "cosmos"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Au temps de Colomb, les savants savaient la Terre ronde ; Ératosthène l'avait même mesurée vers 240 avant notre ère. Colomb se trompait sur sa taille, qu'il croyait bien plus petite. Le mythe de la Terre plate médiévale vient surtout du XIXe siècle."
+    },
+    "source": "Jeffrey Burton Russell, Inventing the Flat Earth, 1991"
+   }
+  },
+  {
+   "id": "branche-etincelle",
+   "nom": {
+    "fr": "Le cerf-volant"
+   },
+   "description": {
+    "fr": "Maîtriser les 4 compétences d'Étincelle."
+   },
+   "condition": {
+    "type": "branche_complete",
+    "stat": "etincelle"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "L'expérience du cerf-volant de Franklin (1752) n'est connue que par un récit publié quinze ans plus tard par Joseph Priestley. En 1753, Georg Richmann, qui reproduisait ce genre d'expérience à Saint-Pétersbourg, est tué par la foudre."
+    },
+    "source": "Joseph Priestley, The History and Present State of Electricity, 1767"
    }
   }
  ]

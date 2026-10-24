@@ -7,11 +7,13 @@ le jeu mélange les choix à l'affichage.
 import json
 from pathlib import Path
 
+from aides import anecdote, citation, fr, num, qcm, succes, vf
+from illustrations import ENONCE, EXPLICATION
+from pixels import ACCESSOIRES as PIXELS_ACCESSOIRES, CHEVEUX, CORPS, OBJETS as PIXELS_OBJETS, PALETTE, RANGS, verifier
+from questions_nouvelles import Q as Q_NOUVELLES
+from recompenses import ACCESSOIRES, NARRATEUR, OBJETS, SUCCES_V2, commentaires
+
 DATA = Path(__file__).resolve().parent.parent / "data"
-
-
-def fr(t):
-    return {"fr": t}
 
 
 # --- Règles -----------------------------------------------------------------
@@ -23,14 +25,20 @@ REGLES = {
          "description": fr("Calculer, raisonner, estimer les probabilités.")},
         {"id": "mecanique", "nom": fr("Mécanique"), "branche": fr("Physique"), "couleur": "#D9822B",
          "description": fr("Comprendre les forces, l'énergie, la lumière et les ordres de grandeur.")},
-        {"id": "savoir", "nom": fr("Savoir"), "branche": fr("Sciences"), "couleur": "#2E9E6A",
-         "description": fr("La méthode scientifique, la matière et le vivant.")},
+        {"id": "savoir", "nom": fr("Savoir"), "branche": fr("Sciences du vivant"), "couleur": "#2E9E6A",
+         "description": fr("La méthode scientifique, la cellule, l'évolution et la génétique.")},
         {"id": "eloquence", "nom": fr("Éloquence"), "branche": fr("Rhétorique"), "couleur": "#8A4FD1",
          "description": fr("Construire un argument, persuader, repérer les sophismes.")},
         {"id": "lucidite", "nom": fr("Lucidité"), "branche": fr("Biais cognitifs"), "couleur": "#0E95A3",
          "description": fr("Voir les pièges de son propre jugement.")},
         {"id": "empathie", "nom": fr("Empathie"), "branche": fr("Psychologie"), "couleur": "#D04A78",
          "description": fr("Émotions, mémoire, motivation et influence des autres.")},
+        {"id": "alchimie", "nom": fr("Alchimie"), "branche": fr("Chimie"), "couleur": "#C8443A",
+         "description": fr("Les éléments, les liaisons, les acides et les bases, les réactions.")},
+        {"id": "cosmos", "nom": fr("Cosmos"), "branche": fr("Astronomie"), "couleur": "#4F46B8",
+         "description": fr("Le Système solaire, les étoiles, les orbites et l'histoire de l'Univers.")},
+        {"id": "etincelle", "nom": fr("Étincelle"), "branche": fr("Électricité"), "couleur": "#A67C00",
+         "description": fr("Circuits, loi d'Ohm, puissance, magnétisme et induction.")},
     ],
     "xp": {
         "par_bonne_reponse": 10,
@@ -50,76 +58,80 @@ REGLES = {
 
 # --- Compétences ------------------------------------------------------------
 # Dans chaque branche : 1 racine, 2 compétences qui en dépendent, 1 sommet qui dépend des deux.
+# Les ids sont stables : une compétence garde le sien même si elle change de branche (sci.atomes, passée en Alchimie en v2).
 
 BRANCHES = {
-    "logique": ("math", [
-        ("arithmetique", "Arithmétique et fractions", "Les opérations, les priorités de calcul, les fractions et les nombres premiers."),
-        ("proportions", "Proportions et pourcentages", "Règle de trois, échelles, hausses et baisses en pourcentage."),
-        ("probabilites", "Probabilités", "Le hasard, l'indépendance, les paradoxes qui trompent l'intuition."),
-        ("logique", "Logique formelle", "Implication, négation, syllogismes et raisonnement par l'absurde."),
-    ]),
-    "mecanique": ("phys", [
-        ("unites", "Unités et ordres de grandeur", "Le Système international, les préfixes et les tailles du monde."),
-        ("forces", "Forces et mouvement", "Les lois de Newton, la gravitation, l'inertie."),
-        ("energie", "Énergie", "Énergie cinétique et potentielle, puissance, conservation."),
-        ("ondes", "Ondes et lumière", "Son, lumière, fréquences, couleurs et effet Doppler."),
-    ]),
-    "savoir": ("sci", [
-        ("methode", "Méthode scientifique", "Hypothèse, réfutabilité, groupe témoin, reproductibilité."),
-        ("atomes", "Atomes et molécules", "La structure de la matière et le tableau périodique."),
-        ("cellule", "La cellule", "Organites, ADN, division cellulaire."),
-        ("evolution", "Évolution", "Sélection naturelle, mutations, histoire du vivant."),
-    ]),
-    "eloquence": ("rhet", [
-        ("argument", "Structure d'un argument", "Prémisses, conclusion, déduction et induction."),
-        ("figures", "Figures de style", "Métaphore, litote, chiasme, anaphore et les autres."),
-        ("persuasion", "Ethos, pathos, logos", "Les trois leviers de la persuasion selon Aristote."),
-        ("sophismes", "Sophismes", "Les raisonnements fallacieux et comment les nommer."),
-    ]),
-    "lucidite": ("biais", [
-        ("confirmation", "Biais de confirmation", "Chercher ce qui nous donne raison et ignorer le reste."),
-        ("ancrage", "Effet d'ancrage", "Quand un premier chiffre tire nos estimations."),
-        ("disponibilite", "Heuristique de disponibilité", "Juger la fréquence d'un événement par les exemples qui viennent en tête."),
-        ("surconfiance", "Dunning-Kruger et métacognition", "Mesurer ce qu'on sait, et ce qu'on croit savoir."),
-    ]),
-    "empathie": ("psy", [
-        ("emotions", "Émotions", "Les émotions de base, leur rôle et leur régulation."),
-        ("memoire", "Mémoire", "Comment on retient, comment on oublie, comment on se trompe."),
-        ("motivation", "Motivation", "Ce qui nous fait agir et ce qui nous fait procrastiner."),
-        ("influence", "Influence sociale", "Conformisme, obéissance et leviers de persuasion."),
-    ]),
+    "logique": [
+        ("math.arithmetique", "Arithmétique et fractions", "Les opérations, les priorités de calcul, les fractions et les nombres premiers."),
+        ("math.proportions", "Proportions et pourcentages", "Règle de trois, échelles, hausses et baisses en pourcentage."),
+        ("math.probabilites", "Probabilités", "Le hasard, l'indépendance, les paradoxes qui trompent l'intuition."),
+        ("math.logique", "Logique formelle", "Implication, négation, syllogismes et raisonnement par l'absurde."),
+    ],
+    "mecanique": [
+        ("phys.unites", "Unités et ordres de grandeur", "Le Système international, les préfixes et les tailles du monde."),
+        ("phys.forces", "Forces et mouvement", "Les lois de Newton, la gravitation, l'inertie."),
+        ("phys.energie", "Énergie", "Énergie cinétique et potentielle, puissance, conservation."),
+        ("phys.ondes", "Ondes et lumière", "Son, lumière, fréquences, couleurs et effet Doppler."),
+    ],
+    "savoir": [
+        ("sci.methode", "Méthode scientifique", "Hypothèse, réfutabilité, groupe témoin, reproductibilité."),
+        ("sci.cellule", "La cellule", "Organites, ADN, division cellulaire."),
+        ("sci.evolution", "Évolution", "Sélection naturelle, mutations, histoire du vivant."),
+        ("sci.genetique", "Génétique", "Gènes, allèles, hérédité, ADN et mutations."),
+    ],
+    "eloquence": [
+        ("rhet.argument", "Structure d'un argument", "Prémisses, conclusion, déduction et induction."),
+        ("rhet.figures", "Figures de style", "Métaphore, litote, chiasme, anaphore et les autres."),
+        ("rhet.persuasion", "Ethos, pathos, logos", "Les trois leviers de la persuasion selon Aristote."),
+        ("rhet.sophismes", "Sophismes", "Les raisonnements fallacieux et comment les nommer."),
+    ],
+    "lucidite": [
+        ("biais.confirmation", "Biais de confirmation", "Chercher ce qui nous donne raison et ignorer le reste."),
+        ("biais.ancrage", "Effet d'ancrage", "Quand un premier chiffre tire nos estimations."),
+        ("biais.disponibilite", "Heuristique de disponibilité", "Juger la fréquence d'un événement par les exemples qui viennent en tête."),
+        ("biais.surconfiance", "Dunning-Kruger et métacognition", "Mesurer ce qu'on sait, et ce qu'on croit savoir."),
+    ],
+    "empathie": [
+        ("psy.emotions", "Émotions", "Les émotions de base, leur rôle et leur régulation."),
+        ("psy.memoire", "Mémoire", "Comment on retient, comment on oublie, comment on se trompe."),
+        ("psy.motivation", "Motivation", "Ce qui nous fait agir et ce qui nous fait procrastiner."),
+        ("psy.influence", "Influence sociale", "Conformisme, obéissance et leviers de persuasion."),
+    ],
+    "alchimie": [
+        ("sci.atomes", "Atomes et éléments", "La structure de l'atome, les éléments et le tableau périodique."),
+        ("chim.liaisons", "Liaisons et molécules", "Comment les atomes s'assemblent : liaisons covalentes, ioniques, polarité."),
+        ("chim.acides", "Acides et bases", "Le pH, la neutralisation et les acides du quotidien."),
+        ("chim.reactions", "Réactions et oxydoréduction", "Équations, combustion, catalyse, oxydation et réduction."),
+    ],
+    "cosmos": [
+        ("astro.systeme", "Système solaire", "Le Soleil, les planètes, la Lune et les petits corps."),
+        ("astro.etoiles", "Étoiles et lumière des astres", "Comment les étoiles brillent, vivent et meurent."),
+        ("astro.orbites", "Orbites et gravitation", "Les lois de Kepler, les satellites, les marées, les trous noirs."),
+        ("astro.galaxies", "Galaxies et Big Bang", "La Voie lactée, l'expansion de l'Univers et son histoire."),
+    ],
+    "etincelle": [
+        ("elec.circuits", "Charges et circuits", "Charges, conducteurs, circuits en série et en dérivation."),
+        ("elec.ohm", "Tension, intensité et loi d'Ohm", "Volts, ampères, ohms, et la relation qui les lie."),
+        ("elec.puissance", "Puissance et énergie électrique", "Watts, kilowattheures, effet Joule et production d'électricité."),
+        ("elec.magnetisme", "Magnétisme et induction", "Aimants, boussoles, électroaimants, moteurs et alternateurs."),
+    ],
 }
 
 
 def competences():
     out = []
-    for stat, (prefixe, noeuds) in BRANCHES.items():
-        ids = [f"{prefixe}.{n[0]}" for n in noeuds]
+    for stat, noeuds in BRANCHES.items():
+        ids = [n[0] for n in noeuds]
         prerequis = [[], [ids[0]], [ids[0]], [ids[1], ids[2]]]
-        for i, (slug, nom, desc) in enumerate(noeuds):
+        for i, (id, nom, desc) in enumerate(noeuds):
             out.append({
-                "id": ids[i], "stat": stat, "rang": i + 1,
+                "id": id, "stat": stat, "rang": i + 1,
                 "nom": fr(nom), "description": fr(desc), "prerequis": prerequis[i],
             })
     return out
 
 
 # --- Questions --------------------------------------------------------------
-
-def qcm(e, choix, expl):
-    return {"type": "qcm", "enonce": fr(e), "choix": [fr(c) for c in choix], "reponse": 0, "explication": fr(expl)}
-
-
-def vf(e, val, expl):
-    return {"type": "vrai_faux", "enonce": fr(e), "reponse": val, "explication": fr(expl)}
-
-
-def num(e, val, expl, tol=0, unite=""):
-    q = {"type": "numerique", "enonce": fr(e), "reponse": val, "tolerance": tol, "explication": fr(expl)}
-    if unite:
-        q["unite"] = unite
-    return q
-
 
 Q = {}
 
@@ -264,7 +276,7 @@ Q["sci.atomes"] = [
     num("Quel est le numéro atomique du carbone ?", 6, "Le carbone a 6 protons."),
     vf("Un atome est surtout fait de vide.", True, "Si le noyau avait la taille d'une bille, l'atome aurait celle d'un stade."),
     qcm("Quel est l'élément le plus abondant dans l'Univers ?", ["l'hydrogène", "l'hélium", "l'oxygène", "le carbone"], "Environ trois quarts de la matière ordinaire, en masse."),
-    qcm("Quel est le pH d'une solution neutre à 25 °C ?", ["7", "0", "14", "1"], "En dessous de 7, la solution est acide ; au-dessus, basique."),
+    qcm("Quel est le symbole chimique du fer ?", ["Fe", "F", "Fr", "Ir"], "Du latin ferrum. F est le fluor, Fr le francium, Ir l'iridium."),
     vf("Le diamant et le graphite sont tous deux faits de carbone.", True, "Seul l'arrangement des atomes diffère."),
     qcm("Qui a publié un tableau périodique des éléments en 1869 ?", ["Dmitri Mendeleïev", "Antoine Lavoisier", "Marie Curie", "John Dalton"], "Il y laissait des cases vides pour des éléments encore inconnus, découverts ensuite."),
     qcm("Quel gaz est le plus abondant dans l'air ?", ["l'azote", "l'oxygène", "le dioxyde de carbone", "l'argon"], "Environ 78 % d'azote, 21 % d'oxygène."),
@@ -486,26 +498,22 @@ Q["psy.influence"] = [
 
 def questions():
     out = []
-    for comp, qs in Q.items():
+    for comp, qs in {**Q, **Q_NOUVELLES}.items():
         assert len(qs) == 12, (comp, len(qs))
         for i, q in enumerate(qs, 1):
-            out.append({"id": f"{comp}.q{i:02d}", "competence": comp, **q})
+            id = f"{comp}.q{i:02d}"
+            q = {"id": id, "competence": comp, **q}
+            if id in ENONCE:
+                q["illustration"] = ENONCE[id]
+            if id in EXPLICATION:
+                q["illustration_explication"] = EXPLICATION[id]
+            out.append(q)
+    ids = {q["id"] for q in out}
+    assert set(ENONCE) <= ids and set(EXPLICATION) <= ids, (set(ENONCE) | set(EXPLICATION)) - ids
     return out
 
 
 # --- Succès -----------------------------------------------------------------
-
-def succes(id, nom, desc, condition, recompense, cache=True):
-    return {"id": id, "nom": fr(nom), "description": fr(desc), "condition": condition, "cache": cache, "recompense": recompense}
-
-
-def citation(texte, auteur, source):
-    return {"type": "citation", "texte": fr(texte), "auteur": auteur, "source": source}
-
-
-def anecdote(texte, source):
-    return {"type": "anecdote", "texte": fr(texte), "source": source}
-
 
 SUCCES = [
     succes("premier-pas", "Premier pas", "Maîtriser une première compétence.",
@@ -544,7 +552,7 @@ SUCCES = [
            {"type": "branche_complete", "stat": "empathie"},
            citation("Le cœur a ses raisons, que la raison ne connaît point.",
                     "Blaise Pascal", "Pensées, 1670")),
-    succes("polymathe", "Polymathe", "Maîtriser au moins une compétence dans chacune des 6 branches.",
+    succes("polymathe", "Polymathe", "Maîtriser au moins une compétence dans chacune des 9 branches.",
            {"type": "toutes_branches"},
            anecdote("Le mot anglais « scientist » n'existe que depuis 1834. William Whewell l'a proposé, sur le modèle d'« artist », pour désigner ceux qu'on appelait jusque-là des « philosophes de la nature ».",
                     "William Whewell, Quarterly Review, 1834")),
@@ -552,8 +560,8 @@ SUCCES = [
            {"type": "competences_maitrisees", "n": 10},
            citation("Je voudrais aussi qu'on fût soigneux de lui choisir un conducteur qui eût plutôt la tête bien faite que bien pleine.",
                     "Montaigne", "Essais, livre I, chapitre 26, 1580")),
-    succes("arbre-complet", "Sur les épaules de géants", "Maîtriser les 24 compétences.",
-           {"type": "competences_maitrisees", "n": 24},
+    succes("arbre-complet", "Sur les épaules de géants", "Maîtriser les 36 compétences.",
+           {"type": "competences_maitrisees", "n": 36},
            citation("Si j'ai vu plus loin, c'est en me tenant sur les épaules de géants.",
                     "Isaac Newton", "Lettre à Robert Hooke, 5 février 1676")),
     succes("premier-rappel", "Cobaye volontaire", "Réussir un premier rappel.",
@@ -598,13 +606,36 @@ SUCCES = [
 ]
 
 
+def avatar():
+    return {
+        "format": 1,
+        "palette": PALETTE,
+        "taille": [20, 24],
+        "corps": CORPS,
+        "cheveux": CHEVEUX,
+        "rangs": [{"id": r["id"], "nom": fr(r["nom"]), "niveau_min": r["niveau_min"], "couleurs": r["couleurs"], "tenue": r["tenue"]} for r in RANGS],
+        "accessoires": [{"id": id, "nom": fr(nom), "emplacement": PIXELS_ACCESSOIRES[id][0], "condition": cond, "pixels": PIXELS_ACCESSOIRES[id][1]}
+                        for id, nom, cond in ACCESSOIRES],
+    }
+
+
+def cabinet():
+    assert {o["id"] for o in OBJETS} == set(PIXELS_OBJETS), set(PIXELS_OBJETS) ^ {o["id"] for o in OBJETS}
+    return {"format": 1, "palette": PALETTE, "taille": [16, 16],
+            "objets": [{**o, "pixels": PIXELS_OBJETS[o["id"]]} for o in OBJETS]}
+
+
 def main():
+    verifier()
     DATA.mkdir(parents=True, exist_ok=True)
     fichiers = {
         "regles.json": REGLES,
         "skills.json": {"format": 1, "competences": competences()},
         "questions.json": {"format": 1, "questions": questions()},
-        "succes.json": {"format": 1, "succes": SUCCES},
+        "succes.json": {"format": 1, "succes": SUCCES + SUCCES_V2},
+        "commentaires.json": {"format": 1, "narrateur": NARRATEUR, "commentaires": commentaires()},
+        "objets.json": cabinet(),
+        "avatar.json": avatar(),
     }
     for nom, contenu in fichiers.items():
         (DATA / nom).write_text(json.dumps(contenu, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
