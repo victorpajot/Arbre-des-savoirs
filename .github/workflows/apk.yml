@@ -55,8 +55,8 @@ jobs:
           chmod +x gradlew
           set -o pipefail
           # En cas d'échec, les lignes d'erreur remontent en annotations visibles sur la page du run.
-          if ! ./gradlew assembleDebug --no-daemon 2>&1 | tee gradle.log; then
-            grep -E "What went wrong|error:|Error|FAILURE|Could not|> " gradle.log | head -40 | while IFS= read -r l; do echo "::error::$l"; done
+          if ! ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee gradle.log; then
+            grep -E -A2 "What went wrong|Where:|Caused by|error:|Could not|Value is null|at org.gradle.api.internal.provider|build.gradle" gradle.log | head -60 | while IFS= read -r l; do echo "::error::$l"; done
             exit 1
           fi
 
