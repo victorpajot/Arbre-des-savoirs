@@ -1,0 +1,66 @@
+# Fabrique l'APK Android à chaque modification de la branche main,
+# et le publie dans une Release GitHub téléchargeable depuis le téléphone.
+name: APK Android
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Valider le contenu et les règles
+        run: |
+          pip install jsonschema
+          python3 outils/valider.py
+          node outils/test_moteur.js
+
+      - name: Assembler la page dans l'app
+        working-directory: mobile
+        run: |
+          npm ci
+          npm run sync
+
+      - name: Compiler l'APK
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Nommer l'APK
+        run: cp mobile/android/app/build/outputs/apk/debug/app-debug.apk arbre-des-savoirs.apk
+
+      - name: Publier la Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Arbre des savoirs 1.0.${{ github.run_number }}
+          body: |
+            APK à installer directement sur Android (sources inconnues autorisées).
+            Il s'installe par-dessus la version précédente sans perdre la partie.
+          files: arbre-des-savoirs.apk
+          make_latest: true

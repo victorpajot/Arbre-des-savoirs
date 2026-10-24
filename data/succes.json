@@ -1,0 +1,454 @@
+{
+ "format": 1,
+ "succes": [
+  {
+   "id": "premier-pas",
+   "nom": {
+    "fr": "Premier pas"
+   },
+   "description": {
+    "fr": "Maîtriser une première compétence."
+   },
+   "condition": {
+    "type": "competences_maitrisees",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Dans les champs de l'observation, le hasard ne favorise que les esprits préparés."
+    },
+    "auteur": "Louis Pasteur",
+    "source": "Discours inaugural, faculté des sciences de Lille, 7 décembre 1854"
+   }
+  },
+  {
+   "id": "eureka",
+   "nom": {
+    "fr": "Eurêka"
+   },
+   "description": {
+    "fr": "Réussir un quiz sans aucune erreur."
+   },
+   "condition": {
+    "type": "quiz_parfaits",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Selon Vitruve, Archimède aurait compris comment mesurer le volume d'une couronne en entrant dans son bain. Il serait alors sorti dans la rue, nu, en criant « Eurêka ! » (« J'ai trouvé ! »)."
+    },
+    "source": "Vitruve, De l'architecture, livre IX"
+   }
+  },
+  {
+   "id": "petit-gauss",
+   "nom": {
+    "fr": "Le petit Gauss"
+   },
+   "description": {
+    "fr": "Réussir 5 quiz sans erreur."
+   },
+   "condition": {
+    "type": "quiz_parfaits",
+    "n": 5
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Vers 9 ans, Carl Friedrich Gauss aurait calculé en un instant la somme des nombres de 1 à 100, que son maître avait donnée pour occuper la classe. Il aurait vu 50 paires valant chacune 101, soit 5 050. Le récit est sans doute embelli."
+    },
+    "source": "Wolfgang Sartorius von Waltershausen, Gauss zum Gedächtniss, 1856"
+   }
+  },
+  {
+   "id": "branche-logique",
+   "nom": {
+    "fr": "Langue du monde"
+   },
+   "description": {
+    "fr": "Maîtriser les 4 compétences de Logique."
+   },
+   "condition": {
+    "type": "branche_complete",
+    "stat": "logique"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "La philosophie est écrite dans ce très grand livre qui se tient constamment ouvert devant nos yeux, je veux dire l'Univers. […] Il est écrit en langue mathématique."
+    },
+    "auteur": "Galilée",
+    "source": "L'Essayeur (Il Saggiatore), 1623"
+   }
+  },
+  {
+   "id": "branche-mecanique",
+   "nom": {
+    "fr": "Unités de compte"
+   },
+   "description": {
+    "fr": "Maîtriser les 4 compétences de Mécanique."
+   },
+   "condition": {
+    "type": "branche_complete",
+    "stat": "mecanique"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1999, la sonde Mars Climate Orbiter s'est perdue dans l'atmosphère de Mars. Un logiciel donnait ses valeurs en livres-force·seconde, un autre les lisait en newtons·seconde."
+    },
+    "source": "NASA, rapport du Mars Climate Orbiter Mishap Investigation Board, 1999"
+   }
+  },
+  {
+   "id": "branche-savoir",
+   "nom": {
+    "fr": "Heureux hasard"
+   },
+   "description": {
+    "fr": "Maîtriser les 4 compétences de Savoir."
+   },
+   "condition": {
+    "type": "branche_complete",
+    "stat": "savoir"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En septembre 1928, Alexander Fleming rentre de vacances et trouve une boîte de culture envahie par une moisissure. Autour d'elle, les bactéries ont disparu : c'est la découverte de la pénicilline."
+    },
+    "source": "Alexander Fleming, British Journal of Experimental Pathology, 1929"
+   }
+  },
+  {
+   "id": "branche-eloquence",
+   "nom": {
+    "fr": "Cailloux en bouche"
+   },
+   "description": {
+    "fr": "Maîtriser les 4 compétences d'Éloquence."
+   },
+   "condition": {
+    "type": "branche_complete",
+    "stat": "eloquence"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Selon Plutarque, Démosthène, le plus grand orateur d'Athènes, corrigeait son défaut de prononciation en parlant avec des cailloux dans la bouche, et déclamait face à la mer pour couvrir le bruit des vagues."
+    },
+    "source": "Plutarque, Vies parallèles, Vie de Démosthène"
+   }
+  },
+  {
+   "id": "branche-lucidite",
+   "nom": {
+    "fr": "Jus de citron"
+   },
+   "description": {
+    "fr": "Maîtriser les 4 compétences de Lucidité."
+   },
+   "condition": {
+    "type": "branche_complete",
+    "stat": "lucidite"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1995, McArthur Wheeler braque deux banques de Pittsburgh à visage découvert, enduit de jus de citron, persuadé que cela le rend invisible aux caméras. Son histoire ouvre l'article de Dunning et Kruger."
+    },
+    "source": "Kruger et Dunning, « Unskilled and Unaware of It », 1999"
+   }
+  },
+  {
+   "id": "branche-empathie",
+   "nom": {
+    "fr": "Les raisons du cœur"
+   },
+   "description": {
+    "fr": "Maîtriser les 4 compétences d'Empathie."
+   },
+   "condition": {
+    "type": "branche_complete",
+    "stat": "empathie"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Le cœur a ses raisons, que la raison ne connaît point."
+    },
+    "auteur": "Blaise Pascal",
+    "source": "Pensées, 1670"
+   }
+  },
+  {
+   "id": "polymathe",
+   "nom": {
+    "fr": "Polymathe"
+   },
+   "description": {
+    "fr": "Maîtriser au moins une compétence dans chacune des 6 branches."
+   },
+   "condition": {
+    "type": "toutes_branches"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le mot anglais « scientist » n'existe que depuis 1834. William Whewell l'a proposé, sur le modèle d'« artist », pour désigner ceux qu'on appelait jusque-là des « philosophes de la nature »."
+    },
+    "source": "William Whewell, Quarterly Review, 1834"
+   }
+  },
+  {
+   "id": "dix-competences",
+   "nom": {
+    "fr": "Tête bien faite"
+   },
+   "description": {
+    "fr": "Maîtriser 10 compétences."
+   },
+   "condition": {
+    "type": "competences_maitrisees",
+    "n": 10
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Je voudrais aussi qu'on fût soigneux de lui choisir un conducteur qui eût plutôt la tête bien faite que bien pleine."
+    },
+    "auteur": "Montaigne",
+    "source": "Essais, livre I, chapitre 26, 1580"
+   }
+  },
+  {
+   "id": "arbre-complet",
+   "nom": {
+    "fr": "Sur les épaules de géants"
+   },
+   "description": {
+    "fr": "Maîtriser les 24 compétences."
+   },
+   "condition": {
+    "type": "competences_maitrisees",
+    "n": 24
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Si j'ai vu plus loin, c'est en me tenant sur les épaules de géants."
+    },
+    "auteur": "Isaac Newton",
+    "source": "Lettre à Robert Hooke, 5 février 1676"
+   }
+  },
+  {
+   "id": "premier-rappel",
+   "nom": {
+    "fr": "Cobaye volontaire"
+   },
+   "description": {
+    "fr": "Réussir un premier rappel."
+   },
+   "condition": {
+    "type": "rappels_reussis",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Pour étudier l'oubli, Hermann Ebbinghaus a appris par cœur des milliers de syllabes sans sens, comme « DAX » ou « BOK ». Il était le seul sujet de ses propres expériences."
+    },
+    "source": "Hermann Ebbinghaus, Über das Gedächtnis, 1885"
+   }
+  },
+  {
+   "id": "serie-rappels",
+   "nom": {
+    "fr": "Ne pas se tromper soi-même"
+   },
+   "description": {
+    "fr": "Réussir 5 rappels d'affilée."
+   },
+   "condition": {
+    "type": "serie_rappels",
+    "n": 5
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Le premier principe est que vous ne devez pas vous tromper vous-même, et vous êtes la personne la plus facile à tromper."
+    },
+    "auteur": "Richard Feynman",
+    "source": "« Cargo Cult Science », discours à Caltech, 1974 (traduction)"
+   }
+  },
+  {
+   "id": "cinquante-rappels",
+   "nom": {
+    "fr": "Pierre après pierre"
+   },
+   "description": {
+    "fr": "Réussir 50 rappels."
+   },
+   "condition": {
+    "type": "rappels_reussis",
+    "n": 50
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "On fait la science avec des faits, comme on fait une maison avec des pierres ; mais une accumulation de faits n'est pas plus une science qu'un tas de pierres n'est une maison."
+    },
+    "auteur": "Henri Poincaré",
+    "source": "La Science et l'Hypothèse, 1902"
+   }
+  },
+  {
+   "id": "constance",
+   "nom": {
+    "fr": "Constance"
+   },
+   "description": {
+    "fr": "Garder une compétence maîtrisée pendant 180 jours."
+   },
+   "condition": {
+    "type": "duree_maitrise",
+    "jours": 180
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Ce que l'on conçoit bien s'énonce clairement, et les mots pour le dire arrivent aisément."
+    },
+    "auteur": "Nicolas Boileau",
+    "source": "L'Art poétique, chant I, 1674"
+   }
+  },
+  {
+   "id": "niveau-5",
+   "nom": {
+    "fr": "Le serpent qui se mord la queue"
+   },
+   "description": {
+    "fr": "Atteindre le niveau 5 dans une stat."
+   },
+   "condition": {
+    "type": "niveau_stat",
+    "niveau": 5
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "August Kekulé racontait avoir trouvé la structure en anneau du benzène en rêvassant devant le feu : il y aurait vu un serpent qui se mordait la queue."
+    },
+    "source": "Discours d'August Kekulé lors du Benzolfest, Berlin, 1890"
+   }
+  },
+  {
+   "id": "resilience",
+   "nom": {
+    "fr": "Même Erdős"
+   },
+   "description": {
+    "fr": "Regagner une compétence perdue."
+   },
+   "condition": {
+    "type": "competences_regagnees",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1990, Marilyn vos Savant publie la bonne réponse au problème de Monty Hall. Elle reçoit des milliers de lettres l'accusant d'erreur. Le mathématicien Paul Erdős lui-même n'a été convaincu qu'en voyant une simulation."
+    },
+    "source": "Paul Hoffman, The Man Who Loved Only Numbers, 1998"
+   }
+  },
+  {
+   "id": "tour-de-pise",
+   "nom": {
+    "fr": "La tour de Pise"
+   },
+   "description": {
+    "fr": "Échouer à un quiz."
+   },
+   "condition": {
+    "type": "quiz_rates",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Galilée aurait lâché deux boules du haut de la tour de Pise pour montrer qu'elles tombent ensemble. Le récit vient de son disciple Viviani, et la plupart des historiens doutent que l'expérience ait eu lieu."
+    },
+    "source": "Vincenzo Viviani, Racconto istorico della vita di Galileo, 1654"
+   }
+  },
+  {
+   "id": "pomme",
+   "nom": {
+    "fr": "La pomme"
+   },
+   "description": {
+    "fr": "Jouer 7 jours différents."
+   },
+   "condition": {
+    "type": "jours_actifs",
+    "n": 7
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Newton a bien raconté à William Stukeley, en 1726, qu'une pomme tombant dans un jardin l'avait fait réfléchir à la gravitation. La pomme qui lui tombe sur la tête est une invention plus tardive."
+    },
+    "source": "William Stukeley, Memoirs of Sir Isaac Newton's Life, 1752"
+   }
+  },
+  {
+   "id": "lucide",
+   "nom": {
+    "fr": "L'ignorance confiante"
+   },
+   "description": {
+    "fr": "Perdre une compétence lors d'un rappel."
+   },
+   "condition": {
+    "type": "competences_perdues",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "L'ignorance engendre plus souvent la confiance que ne le fait la connaissance."
+    },
+    "auteur": "Charles Darwin",
+    "source": "La Descendance de l'homme, introduction, 1871 (traduction)"
+   }
+  }
+ ]
+}

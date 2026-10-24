@@ -1,0 +1,20 @@
+{
+  "name": "arbre-des-savoirs-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "App Android de l'Arbre des savoirs : la page web emballée avec Capacitor.",
+  "scripts": {
+    "construire": "node construire.js",
+    "sync": "node construire.js && cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "6.2.2",
+    "@capacitor/core": "6.2.2",
+    "@capacitor/filesystem": "6.0.4",
+    "@capacitor/local-notifications": "6.1.3",
+    "@capacitor/share": "6.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "6.2.2"
+  }
+}

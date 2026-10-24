@@ -1,0 +1,335 @@
+{
+ "format": 1,
+ "competences": [
+  {
+   "id": "math.arithmetique",
+   "stat": "logique",
+   "rang": 1,
+   "nom": {
+    "fr": "Arithmétique et fractions"
+   },
+   "description": {
+    "fr": "Les opérations, les priorités de calcul, les fractions et les nombres premiers."
+   },
+   "prerequis": []
+  },
+  {
+   "id": "math.proportions",
+   "stat": "logique",
+   "rang": 2,
+   "nom": {
+    "fr": "Proportions et pourcentages"
+   },
+   "description": {
+    "fr": "Règle de trois, échelles, hausses et baisses en pourcentage."
+   },
+   "prerequis": [
+    "math.arithmetique"
+   ]
+  },
+  {
+   "id": "math.probabilites",
+   "stat": "logique",
+   "rang": 3,
+   "nom": {
+    "fr": "Probabilités"
+   },
+   "description": {
+    "fr": "Le hasard, l'indépendance, les paradoxes qui trompent l'intuition."
+   },
+   "prerequis": [
+    "math.arithmetique"
+   ]
+  },
+  {
+   "id": "math.logique",
+   "stat": "logique",
+   "rang": 4,
+   "nom": {
+    "fr": "Logique formelle"
+   },
+   "description": {
+    "fr": "Implication, négation, syllogismes et raisonnement par l'absurde."
+   },
+   "prerequis": [
+    "math.proportions",
+    "math.probabilites"
+   ]
+  },
+  {
+   "id": "phys.unites",
+   "stat": "mecanique",
+   "rang": 1,
+   "nom": {
+    "fr": "Unités et ordres de grandeur"
+   },
+   "description": {
+    "fr": "Le Système international, les préfixes et les tailles du monde."
+   },
+   "prerequis": []
+  },
+  {
+   "id": "phys.forces",
+   "stat": "mecanique",
+   "rang": 2,
+   "nom": {
+    "fr": "Forces et mouvement"
+   },
+   "description": {
+    "fr": "Les lois de Newton, la gravitation, l'inertie."
+   },
+   "prerequis": [
+    "phys.unites"
+   ]
+  },
+  {
+   "id": "phys.energie",
+   "stat": "mecanique",
+   "rang": 3,
+   "nom": {
+    "fr": "Énergie"
+   },
+   "description": {
+    "fr": "Énergie cinétique et potentielle, puissance, conservation."
+   },
+   "prerequis": [
+    "phys.unites"
+   ]
+  },
+  {
+   "id": "phys.ondes",
+   "stat": "mecanique",
+   "rang": 4,
+   "nom": {
+    "fr": "Ondes et lumière"
+   },
+   "description": {
+    "fr": "Son, lumière, fréquences, couleurs et effet Doppler."
+   },
+   "prerequis": [
+    "phys.forces",
+    "phys.energie"
+   ]
+  },
+  {
+   "id": "sci.methode",
+   "stat": "savoir",
+   "rang": 1,
+   "nom": {
+    "fr": "Méthode scientifique"
+   },
+   "description": {
+    "fr": "Hypothèse, réfutabilité, groupe témoin, reproductibilité."
+   },
+   "prerequis": []
+  },
+  {
+   "id": "sci.atomes",
+   "stat": "savoir",
+   "rang": 2,
+   "nom": {
+    "fr": "Atomes et molécules"
+   },
+   "description": {
+    "fr": "La structure de la matière et le tableau périodique."
+   },
+   "prerequis": [
+    "sci.methode"
+   ]
+  },
+  {
+   "id": "sci.cellule",
+   "stat": "savoir",
+   "rang": 3,
+   "nom": {
+    "fr": "La cellule"
+   },
+   "description": {
+    "fr": "Organites, ADN, division cellulaire."
+   },
+   "prerequis": [
+    "sci.methode"
+   ]
+  },
+  {
+   "id": "sci.evolution",
+   "stat": "savoir",
+   "rang": 4,
+   "nom": {
+    "fr": "Évolution"
+   },
+   "description": {
+    "fr": "Sélection naturelle, mutations, histoire du vivant."
+   },
+   "prerequis": [
+    "sci.atomes",
+    "sci.cellule"
+   ]
+  },
+  {
+   "id": "rhet.argument",
+   "stat": "eloquence",
+   "rang": 1,
+   "nom": {
+    "fr": "Structure d'un argument"
+   },
+   "description": {
+    "fr": "Prémisses, conclusion, déduction et induction."
+   },
+   "prerequis": []
+  },
+  {
+   "id": "rhet.figures",
+   "stat": "eloquence",
+   "rang": 2,
+   "nom": {
+    "fr": "Figures de style"
+   },
+   "description": {
+    "fr": "Métaphore, litote, chiasme, anaphore et les autres."
+   },
+   "prerequis": [
+    "rhet.argument"
+   ]
+  },
+  {
+   "id": "rhet.persuasion",
+   "stat": "eloquence",
+   "rang": 3,
+   "nom": {
+    "fr": "Ethos, pathos, logos"
+   },
+   "description": {
+    "fr": "Les trois leviers de la persuasion selon Aristote."
+   },
+   "prerequis": [
+    "rhet.argument"
+   ]
+  },
+  {
+   "id": "rhet.sophismes",
+   "stat": "eloquence",
+   "rang": 4,
+   "nom": {
+    "fr": "Sophismes"
+   },
+   "description": {
+    "fr": "Les raisonnements fallacieux et comment les nommer."
+   },
+   "prerequis": [
+    "rhet.figures",
+    "rhet.persuasion"
+   ]
+  },
+  {
+   "id": "biais.confirmation",
+   "stat": "lucidite",
+   "rang": 1,
+   "nom": {
+    "fr": "Biais de confirmation"
+   },
+   "description": {
+    "fr": "Chercher ce qui nous donne raison et ignorer le reste."
+   },
+   "prerequis": []
+  },
+  {
+   "id": "biais.ancrage",
+   "stat": "lucidite",
+   "rang": 2,
+   "nom": {
+    "fr": "Effet d'ancrage"
+   },
+   "description": {
+    "fr": "Quand un premier chiffre tire nos estimations."
+   },
+   "prerequis": [
+    "biais.confirmation"
+   ]
+  },
+  {
+   "id": "biais.disponibilite",
+   "stat": "lucidite",
+   "rang": 3,
+   "nom": {
+    "fr": "Heuristique de disponibilité"
+   },
+   "description": {
+    "fr": "Juger la fréquence d'un événement par les exemples qui viennent en tête."
+   },
+   "prerequis": [
+    "biais.confirmation"
+   ]
+  },
+  {
+   "id": "biais.surconfiance",
+   "stat": "lucidite",
+   "rang": 4,
+   "nom": {
+    "fr": "Dunning-Kruger et métacognition"
+   },
+   "description": {
+    "fr": "Mesurer ce qu'on sait, et ce qu'on croit savoir."
+   },
+   "prerequis": [
+    "biais.ancrage",
+    "biais.disponibilite"
+   ]
+  },
+  {
+   "id": "psy.emotions",
+   "stat": "empathie",
+   "rang": 1,
+   "nom": {
+    "fr": "Émotions"
+   },
+   "description": {
+    "fr": "Les émotions de base, leur rôle et leur régulation."
+   },
+   "prerequis": []
+  },
+  {
+   "id": "psy.memoire",
+   "stat": "empathie",
+   "rang": 2,
+   "nom": {
+    "fr": "Mémoire"
+   },
+   "description": {
+    "fr": "Comment on retient, comment on oublie, comment on se trompe."
+   },
+   "prerequis": [
+    "psy.emotions"
+   ]
+  },
+  {
+   "id": "psy.motivation",
+   "stat": "empathie",
+   "rang": 3,
+   "nom": {
+    "fr": "Motivation"
+   },
+   "description": {
+    "fr": "Ce qui nous fait agir et ce qui nous fait procrastiner."
+   },
+   "prerequis": [
+    "psy.emotions"
+   ]
+  },
+  {
+   "id": "psy.influence",
+   "stat": "empathie",
+   "rang": 4,
+   "nom": {
+    "fr": "Influence sociale"
+   },
+   "description": {
+    "fr": "Conformisme, obéissance et leviers de persuasion."
+   },
+   "prerequis": [
+    "psy.memoire",
+    "psy.motivation"
+   ]
+  }
+ ]
+}
