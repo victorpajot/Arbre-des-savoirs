@@ -490,9 +490,10 @@
   function deplacer(contenu, partie, valeur, t, cause) {
     var pl = partie.plateau, R = contenu.plateau.regles, c = partie.compteurs;
     var dur = pl.tours > 0, mult = dur ? R.tour_suivant.multiplicateur_recul : 1;
-    var de = pl.position, etapes = [];
+    var de = pl.position, etapes = [], chemin = [de];
     function poser(n) {
       pl.position = n;
+      chemin.push(n);
       pl.visites[n] = (pl.visites[n] || 0) + 1;
       if (n > pl.atteinte) pl.atteinte = n;
     }
@@ -504,6 +505,7 @@
         pl.tours++;
         pl.atteinte = R.arrivee;
         pl.position = R.depart;
+        chemin.push(R.depart);
         return false;
       }
       poser(cible);
@@ -544,7 +546,8 @@
         }
       }
     }
-    var dep = { de: de, a: pl.position, valeur: valeur, cause: cause, tour: pl.tours, etapes: etapes, t: t };
+    // chemin : les cases où le pion se pose, dans l'ordre, pour l'animer case par case.
+    var dep = { de: de, a: pl.position, valeur: valeur, cause: cause, tour: pl.tours, etapes: etapes, chemin: chemin, t: t };
     pl.historique.unshift({ t: t, de: de, a: pl.position, valeur: valeur, cause: cause, etapes: etapes.map(function (e) { return e.type; }) });
     if (pl.historique.length > MAX_HISTORIQUE) pl.historique.length = MAX_HISTORIQUE;
     partie.maj = t;

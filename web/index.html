@@ -109,6 +109,10 @@ p { margin: 0; }
 .branche .tete .sous { color: var(--muted); font-size: 14px; }
 .branche .tete .niveau { margin-left: auto; font-size: 13px; color: var(--muted); }
 .diamant { position: relative; height: 300px; }
+.diamant.double { height: 780px; }
+.losange-plie { display: flex; flex-direction: column; gap: 4px; text-align: left; margin-top: 4px; padding: 12px 14px; border-radius: 12px;
+  border: 2px dashed color-mix(in srgb, var(--c) 45%, var(--line)); background: color-mix(in srgb, var(--c) 5%, var(--surface)); color: var(--muted); }
+.losange-plie b { font-size: 14px; line-height: 1.35; color: var(--ink); font-weight: 600; }
 .diamant svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .diamant line { stroke: var(--line); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .diamant line.ok { stroke: var(--c); }
@@ -221,6 +225,24 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .bonus-jour .pill { font-family: var(--f-mono); font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--c); color: #fff; flex: none; }
 .bareme { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 14px; }
 .bareme .num { text-align: right; font-weight: 700; }
+#pion { transition: transform 0.17s ease-out; }
+#pion.saut circle { animation: saut 0.19s ease-out; }
+@keyframes saut { 50% { r: 19; } }
+@media (prefers-reduced-motion: reduce) { #pion { transition: none; } #pion.saut circle { animation: none; } }
+.plateau .halo { animation: halo 2.4s ease-in-out infinite; }
+@keyframes halo { 50% { stroke-opacity: 0.12; } }
+@media (prefers-reduced-motion: reduce) { .plateau .halo { animation: none; } }
+.ton-tour { display: flex; flex-direction: column; gap: 8px; }
+.ton-tour .tete h3 { font-size: 17px; }
+.liste-epreuves { display: flex; flex-direction: column; gap: 8px; }
+.epreuve { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: center; width: 100%; padding: 8px 10px; border-radius: 12px;
+  border: 1px solid var(--line); background: var(--surface); text-align: left; min-height: 56px; }
+.epreuve .de { width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 16%, var(--surface));
+  border: 2px solid var(--c); box-shadow: inset -3px -3px 0 color-mix(in srgb, var(--c) 30%, transparent); }
+.epreuve .de b { font-family: var(--f-mono); font-size: 16px; color: var(--ink); }
+.epreuve .de.bonus { border-color: var(--good); }
+.epreuve .txt strong { display: block; font-size: 15px; line-height: 1.25; }
+.epreuve .txt span { font-size: 13px; color: var(--muted); }
 .vaut { font-family: var(--f-mono); font-weight: 700; color: var(--ink); white-space: nowrap; }
 .vaut.bonus { color: var(--good); }
 .trajet { display: flex; flex-direction: column; gap: 6px; }
@@ -447,7 +469,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 
   // --- Sauvegarde -----------------------------------------------------------
   function lireLocal() {
-    try { var s = localStorage.getItem(CLE_LOCALE); return s ? M.migrer(JSON.parse(s)) : null; } catch (e) { return null; }
+    try { var s = localStorage.getItem(CLE_LOCALE); return s ? M.migrer(JSON.parse(s), C) : null; } catch (e) { return null; }
   }
   function sauver() {
     P.maj = Date.now() + (P.decalage || 0);
@@ -472,7 +494,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
         if (!uid) return null;
         var ref = db.doc("data/users/" + uid + "/partie");
         return ref.get().then(function (snap) {
-          var distante = snap.exists ? M.migrer(snap.data()) : null;
+          var distante = snap.exists ? M.migrer(snap.data(), C) : null;
           stockage.ref = ref; stockage.etat = "Ton compte Claude + ce navigateur";
           if (distante && (!P || distante.maj > P.maj)) { P = distante; try { localStorage.setItem(CLE_LOCALE, JSON.stringify(P)); } catch (e) {} rendre(); }
           else sauver();
@@ -551,10 +573,16 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var points = C.stats.map(function (s, i) { return '<circle cx="' + forme[i][0] + '" cy="' + forme[i][1] + '" r="2.2" fill="' + couleur(s.id) + '"/>'; }).join("");
     var noms = avecNoms ? C.stats.map(function (s, i) {
       var p = pt(i, 1.32), anc = Math.abs(p[0] - 50) < 2 ? "middle" : (p[0] < 50 ? "end" : "start");
-      return '<text x="' + p[0] + '" y="' + (p[1] + 2) + '" text-anchor="' + anc + '" font-size="5.2" font-weight="700" fill="' + couleur(s.id) + '">' + esc(tx(s.nom)) + "</text>";
+      var nv = M.niveau(C, xp[s.id]).niveau;
+      return '<text x="' + p[0] + '" y="' + (p[1] + 0.5) + '" text-anchor="' + anc + '" font-size="5.2" font-weight="700" fill="' + couleur(s.id) + '">' + esc(tx(s.nom)) + "</text>" +
+        '<text x="' + p[0] + '" y="' + (p[1] + 6.2) + '" text-anchor="' + anc + '" font-size="4.6" fill="var(--muted)" class="num">niv. <tspan font-weight="700" fill="var(--ink)">' + nv + "</tspan>/" + max + "</text>";
     }).join("") : "";
-    return '<svg class="radar" viewBox="' + (avecNoms ? "-18 0 136 100" : "0 0 100 100") + '" width="' + taille + '" role="img" aria-label="Profil des stats">' + grille + axes +
-      '<polygon points="' + forme.map(function (p) { return p.join(","); }).join(" ") + '" fill="var(--accent)" fill-opacity="0.18" stroke="var(--accent)" stroke-width="1.2" stroke-linejoin="round"/>' + points + noms + "</svg>";
+    // Graduations : un anneau tous les quarts du niveau maximal, numérotés sur l'axe du haut.
+    var graduations = avecNoms ? [0.25, 0.5, 0.75, 1].map(function (f) {
+      return '<text x="51.2" y="' + (pt(0, f)[1] + 1.6) + '" font-size="3.4" fill="var(--muted)" class="num">' + Math.round(max * f) + "</text>";
+    }).join("") : "";
+    return '<svg class="radar" viewBox="' + (avecNoms ? "-20 -4 140 112" : "0 0 100 100") + '" width="' + taille + '" role="img" aria-label="Profil des stats">' + grille + axes +
+      '<polygon points="' + forme.map(function (p) { return p.join(","); }).join(" ") + '" fill="var(--accent)" fill-opacity="0.18" stroke="var(--accent)" stroke-width="1.2" stroke-linejoin="round"/>' + points + graduations + noms + "</svg>";
   }
 
   function ligneComp(k, sous, bouton) {
@@ -589,7 +617,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     return t;
   }
   function svgPlateau() {
-    var pl = P.plateau, mq = M.masqueActuel(C, P), cle = pl.atteinte + "/" + pl.tours + "/" + (mq ? mq.id : "");
+    var pl = P.plateau, cle = pl.atteinte + "/" + pl.tours;
     if (cachePlateau.cle !== cle) {
       var c = "";
       C.plateau.cases.forEach(function (k, i) {
@@ -606,14 +634,16 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
         if (sp && sp.type === "eureka" && connue) c += '<text x="' + (x + 4) + '" y="' + (y + 35) + '" font-size="9" fill="#E0A800">★</text>';
         c += "</g>";
       });
-      var centre = SPIRALE[63], m = M.masqueActuel(C, P);
-      if (m) c += '<g aria-hidden="true"><rect x="' + (centre[0] * 40 + 1) + '" y="' + (centre[1] * 40 + 1) + '" width="38" height="38" rx="5" fill="var(--parchemin)"/>' +
-        '<svg x="' + (centre[0] * 40 + 4) + '" y="' + (centre[1] * 40 + 2) + '" width="32" height="36" viewBox="0 0 40 48" class="pix">' + pixels(m.base, C.ia.palette, null, 0, 0, 1) + pixels(m.expressions.neutre, C.ia.palette, null, 0, 0, 1) + "</svg></g>";
+      var centre = SPIRALE[63], ob = objectifTour(), cx0 = centre[0] * 40, cy0 = centre[1] * 40;
+      if (ob) c += '<g data-n="objectif" style="cursor:pointer" aria-hidden="true"><rect x="' + (cx0 - 3) + '" y="' + (cy0 - 3) + '" width="46" height="46" rx="8" fill="none" stroke="#E0A800" stroke-opacity="0.35" stroke-width="7" class="halo"/>' +
+        '<rect x="' + (cx0 - 2) + '" y="' + (cy0 - 2) + '" width="44" height="44" rx="7" fill="var(--parchemin)" stroke="#C99A1E" stroke-width="2.5"/>' +
+        '<svg x="' + (cx0 + 3) + '" y="' + (cy0 + 3) + '" width="34" height="34" viewBox="0 0 32 32" class="pix">' + pixels(ob.pixels, C.cabinet.palette, null, 0, 0, 1) + "</svg>" +
+        '<circle cx="' + (cx0 + 39) + '" cy="' + (cy0 + 1) + '" r="6.5" fill="#C99A1E"/><text x="' + (cx0 + 39) + '" y="' + (cy0 + 4) + '" text-anchor="middle" font-size="8" font-weight="700" font-family="JetBrains Mono, monospace" fill="#fff">' + ob.tour + "</text></g>";
       cachePlateau = { cle: cle, svg: c };
     }
-    var pos = SPIRALE[pl.position - 1], px = pos[0] * 40 + 20, py = pos[1] * 40 + 20;
-    var pion = '<g aria-hidden="true"><circle cx="' + px + '" cy="' + py + '" r="15" fill="var(--parchemin)" stroke="var(--accent)" stroke-width="3"/>' +
-      '<svg x="' + (px - 13) + '" y="' + (py - 13) + '" width="26" height="26" viewBox="8 1 24 24" class="pix">' + pixelsAvatar(0, 0) + "</svg></g>";
+    var pos = SPIRALE[(animPion ? animPion.chemin[0] : pl.position) - 1];
+    var pion = '<g id="pion" data-n="pion" style="cursor:pointer" transform="translate(' + (pos[0] * 40 + 20) + " " + (pos[1] * 40 + 20) + ')"><circle r="17" fill="var(--parchemin)" stroke="var(--accent)" stroke-width="3"/>' +
+      '<svg x="-14" y="-14" width="28" height="28" viewBox="8 1 24 24" class="pix">' + pixelsAvatar(0, 0) + "</svg></g>";
     return '<svg class="grille" viewBox="0 0 320 320" role="img" aria-label="Plateau de l\'histoire : ton pion est sur la case ' + pl.position + " sur " + C.plateau.cases.length + '">' + cachePlateau.svg + pion + "</svg>";
   }
   function valeurTexte(k, type) {
@@ -621,12 +651,90 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     if (!v) return "";
     return '<span class="vaut' + (v.duJour ? " bonus" : "") + '">+' + v.total + " case" + (v.total > 1 ? "s" : "") + "</span>";
   }
+  // Objectif de la case centrale : la relique du tour en cours (le dernier objectif reste au-delà du septième tour).
+  function objectifTour() {
+    var obs = C.plateau.objectifs || [];
+    if (!obs.length) return null;
+    var o = obs[Math.min(P.plateau.tours, obs.length - 1)], r = C.objetParId ? C.objetParId[o.relique] : C.cabinet.objets.filter(function (x) { return x.id === o.relique; })[0];
+    return r ? { tour: P.plateau.tours + 1, nom: o.nom, relique: r, pixels: r.pixels } : null;
+  }
+  function ouvrirObjectif() {
+    var ob = objectifTour(); if (!ob) return;
+    var dejaVu = P.objets[ob.relique.id];
+    feuilleSimple('<div class="eyebrow">Case centrale · objectif du tour ' + ob.tour + '</div><h2>' + esc(tx(ob.nom)) + '</h2><div class="vitrine" style="width:120px;height:120px;margin:4px auto;padding:12px">' + svgObjet(ob.relique, false, 96) + "</div>" +
+      "<p>Atteins la case " + C.plateau.regles.arrivee + " pour terminer le tour. L'objectif rejoint alors ton cabinet, avec un succès et un nouveau masque pour l'IA.</p>" +
+      (dejaVu ? '<p class="note">' + esc(tx(ob.relique.notice)) + '</p><p class="meta">Source : ' + esc(ob.relique.source) + "</p>" : '<p class="meta">Sa notice reste scellée jusqu\'à l\'arrivée.</p>') +
+      '<p class="meta">Chaque tour change l\'objectif. Il en reste ' + Math.max(0, (C.plateau.objectifs || []).length - ob.tour) + " après celui-ci.</p>", tx(ob.nom));
+  }
+  // Épreuves jouables maintenant, de la plus payante à la moins payante.
+  function epreuvesDuTour() {
+    var t = maintenant(), out = [];
+    M.rappelsDus(C, P, t).forEach(function (k) { out.push({ k: k, type: "rappel", v: M.valeurEpreuve(C, P, { type: "rappel", comp: k.id }, t) }); });
+    M.disponibles(C, P, t).forEach(function (k) { out.push({ k: k, type: "quiz", v: M.valeurEpreuve(C, P, { type: "quiz", comp: k.id }, t) }); });
+    return out.filter(function (e) { return e.v; }).sort(function (a, b) { return b.v.total - a.v.total || (a.type === "rappel" ? -1 : 1); });
+  }
+  function ligneEpreuve(e) {
+    var s = stat(e.k.stat), pl = P.plateau, bloque = pl.prison ? "prison" : pl.quarantaine ? "quarantaine" : "";
+    var b = el('<button type="button" class="epreuve" style="--c:' + couleur(e.k.stat) + '"><span class="de' + (e.v.duJour ? " bonus" : "") + '"><b>+' + e.v.total + "</b></span><span class=\"txt\"><strong>" + esc(tx(e.k.nom)) + "</strong><span>" +
+      (e.type === "rappel" ? "Rappel" : "Quiz de rang " + e.k.rang) + " · " + esc(tx(s.nom)) + (e.type === "rappel" ? " · recul de " + (-e.v.echec) + " si raté" : "") + "</span></span></button>");
+    if (bloque) b.title = bloque === "prison" ? "Ton pion est en prison" : "Ton pion est en quarantaine";
+    b.onclick = function () { fermerFeuille(); lancerQuiz(e.k.id, e.type); };
+    return b;
+  }
+  function blocTonTour() {
+    var ep = epreuvesDuTour(), b = el('<div class="ton-tour"><div class="tete"><h3>Ton tour</h3><span class="num">' + ep.length + " épreuve" + (ep.length > 1 ? "s" : "") + "</span></div></div>");
+    if (!ep.length) { b.appendChild(el('<p class="vide">Rien à jouer pour l\'instant : tes compétences ouvertes sont maîtrisées et aucun rappel n\'est dû.</p>')); return b; }
+    var pos = P.plateau.position, arr = C.plateau.regles.arrivee;
+    ep.slice(0, 3).forEach(function (e) {
+      var l = ligneEpreuve(e), cible = Math.min(arr, pos + e.v.total);
+      l.querySelector(".txt > span").insertAdjacentHTML("beforeend", " · vers la case " + cible);
+      b.appendChild(l);
+    });
+    if (ep.length > 3) { var tout = el('<button type="button" class="btn sec">Voir les ' + ep.length + " épreuves</button>"); tout.onclick = ouvrirTonTour; b.appendChild(tout); }
+    return b;
+  }
+  function ouvrirTonTour() {
+    var ep = epreuvesDuTour(), pl = P.plateau;
+    feuilleSimple('<div class="eyebrow">Case ' + pl.position + " · " + esc(tx(C.plateau.cases[pl.position - 1].titre)) + "</div><h2>Ton tour</h2><p class=\"note\">Pas de dé : choisis l'épreuve, sa face indique de combien de cases elle fait avancer ton pion si tu la réussis.</p>" +
+      (pl.prison ? '<p class="etat-pion">En prison : seul un quiz parfait te fera bouger.</p>' : pl.quarantaine ? '<p class="etat-pion">Quarantaine : la prochaine épreuve réussie ne fera pas avancer ton pion.</p>' : "") +
+      '<div class="liste-epreuves"></div>', "Ton tour");
+    var z = feuille.querySelector(".liste-epreuves");
+    if (!ep.length) z.appendChild(el('<p class="vide">Aucune épreuve jouable pour l\'instant.</p>'));
+    ep.forEach(function (e) { z.appendChild(ligneEpreuve(e)); });
+  }
+  // Fait avancer le pion case par case le long du chemin du dernier déplacement.
+  var animPion = null;
+  function animerPion() {
+    var dep = animPion; animPion = null;
+    var g = document.getElementById("pion");
+    if (!dep || !g) return;
+    var R = C.plateau.regles, cases = [dep.chemin[0]];
+    for (var i = 1; i < dep.chemin.length; i++) {
+      var de = cases[cases.length - 1], a = dep.chemin[i];
+      if (de === R.arrivee && a === R.depart) { cases.push(a); continue; }
+      while (de !== a) { de += a > de ? 1 : -1; cases.push(de); }
+    }
+    function poser(n) { var p = SPIRALE[n - 1]; g.setAttribute("transform", "translate(" + (p[0] * 40 + 20) + " " + (p[1] * 40 + 20) + ")"); }
+    var reduit = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduit || cases.length < 2) { poser(cases[cases.length - 1]); return; }
+    var svg = g.ownerSVGElement; if (svg && svg.scrollIntoView) svg.scrollIntoView({ block: "center", behavior: "smooth" });
+    var j = 0;
+    setTimeout(function pas() {
+      j++; poser(cases[j]); g.classList.remove("saut"); void g.getBBox(); g.classList.add("saut");
+      if (j < cases.length - 1) setTimeout(pas, 190);
+    }, 450);
+  }
   function blocPlateau() {
     var pl = P.plateau, t = maintenant(), k = C.plateau.cases[pl.position - 1], st = stat(M.bonusDuJour(C, P, t));
     var b = el('<section class="bloc plateau"><div class="tete"><h2>Plateau de l\'histoire</h2><span class="num">' + (pl.tours ? "Tour " + (pl.tours + 1) + " · " : "") + "case " + pl.position + " / " + C.plateau.cases.length + "</span></div></section>");
     var grille = el("<div>" + svgPlateau() + "</div>");
-    grille.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-n]"); if (g) ouvrirCase(+g.getAttribute("data-n")); };
+    grille.onclick = function (ev) {
+      var g = ev.target.closest && ev.target.closest("[data-n]"); if (!g) return;
+      var n = g.getAttribute("data-n");
+      if (n === "pion") ouvrirTonTour(); else if (n === "objectif") ouvrirObjectif(); else ouvrirCase(+n);
+    };
     b.appendChild(grille);
+    b.appendChild(blocTonTour());
     var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</span><b>" + esc(tx(k.titre)) + "</b><span>Lire l'histoire de la case</span></span></button>");
     act.onclick = function () { ouvrirCase(k.n); };
     b.appendChild(act);
@@ -750,6 +858,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 
   // --- Vue Arbre ------------------------------------------------------------
   var POS = [[50, 13], [26, 50], [74, 50], [50, 87]];
+  // Deux losanges empilés : le sommet du premier ouvre la racine du second.
+  var POS2 = POS.map(function (p) { return [p[0], p[1] * 0.46]; }).concat(POS.map(function (p) { return [p[0], 54 + p[1] * 0.46]; }));
   function libelleEtat(st) {
     if (st.etat === "verrouillee") return "Verrouillée";
     if (st.etat === "disponible") return st.dejaPerdue ? "Perdue, à regagner" : "Disponible";
@@ -764,19 +874,29 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       var b = el('<section class="bloc branche" style="--c:' + couleur(s.id) + '"><div class="tete"><div><h2>' + esc(tx(s.nom)) + '</h2><div class="sous">' + esc(tx(s.branche)) + '</div></div><span class="niveau num">niv. ' + nv.niveau + '</span></div><div class="diamant"></div></section>');
       var d = b.querySelector(".diamant");
       var lignes = "";
-      comps.forEach(function (k, i) {
+      // Le second losange reste plié tant que le sommet du premier n'est pas maîtrisé.
+      var ouvert = comps.length > 4 && (M.debloque(C, P, comps[3].id) || comps.slice(4).some(function (k) { return P.competences[k.id]; }));
+      var pos = ouvert ? POS2 : POS, visibles = ouvert ? comps : comps.slice(0, 4);
+      if (ouvert) d.classList.add("double");
+      visibles.forEach(function (k, i) {
         k.prerequis.forEach(function (p) {
           var j = comps.indexOf(C.parId[p]);
-          lignes += '<line x1="' + POS[j][0] + '" y1="' + POS[j][1] + '" x2="' + POS[i][0] + '" y2="' + POS[i][1] + '"' + (M.debloque(C, P, p) ? ' class="ok"' : "") + "/>";
+          lignes += '<line x1="' + pos[j][0] + '" y1="' + pos[j][1] + '" x2="' + pos[i][0] + '" y2="' + pos[i][1] + '"' + (M.debloque(C, P, p) ? ' class="ok"' : "") + "/>";
         });
       });
       d.appendChild(el('<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' + lignes + "</svg>"));
-      comps.forEach(function (k, i) {
+      visibles.forEach(function (k, i) {
         var st = M.statut(C, P, k.id, t);
-        var n = el('<button type="button" class="noeud ' + st.etat + (st.gelee ? " gelee" : "") + '" style="left:' + POS[i][0] + "%;top:" + POS[i][1] + '%"><b>' + esc(tx(k.nom)) + '</b><span class="etat">' + libelleEtat(st) + "</span></button>");
+        var n = el('<button type="button" class="noeud ' + st.etat + (st.gelee ? " gelee" : "") + '" style="left:' + pos[i][0] + "%;top:" + pos[i][1] + '%"><b>' + esc(tx(k.nom)) + '</b><span class="etat">' + libelleEtat(st) + "</span></button>");
         n.onclick = function () { ouvrirFeuille(k.id); };
         d.appendChild(n);
       });
+      if (!ouvert && comps.length > 4) {
+        var pli = el('<button type="button" class="losange-plie"><span class="eyebrow">Second losange · rangs 5 à 8</span><b>' + comps.slice(4).map(function (k) { return esc(tx(k.nom)); }).join(" · ") +
+          '</b><span class="meta">S\'ouvre quand « ' + esc(tx(comps[3].nom)) + " » est maîtrisée.</span></button>");
+        pli.onclick = function () { ouvrirFeuille(comps[4].id); };
+        b.appendChild(pli);
+      }
       v.appendChild(b);
     });
     return v;
@@ -954,7 +1074,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     z.appendChild(bloc);
   }
   function importer(texte) {
-    var p = null; try { p = M.migrer(JSON.parse(texte)); } catch (e) {}
+    var p = null; try { p = M.migrer(JSON.parse(texte), C); } catch (e) {}
     if (!p) { toast("Ce fichier n'est pas une sauvegarde de l'Arbre des savoirs."); return; }
     P = p; sauver(); vue = "aujourdhui"; rendre(); toast("Sauvegarde importée");
   }
@@ -1148,7 +1268,12 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     quiz = { id: id, mode: mode, qs: qs, i: 0, res: [], repondu: false, fin: null, chrono: !!(P.options && P.options.chrono), minuteur: null, debut: Date.now(), debutQuestion: 0 };
     rendreQuiz();
   }
-  function fermerQuiz() { if (quiz) clearInterval(quiz.minuteur); quiz = null; var q = document.querySelector(".quiz"); if (q) q.remove(); rendre(); }
+  function fermerQuiz() {
+    var dep = quiz && quiz.fin && quiz.fin.plateau;
+    if (quiz) clearInterval(quiz.minuteur); quiz = null; var q = document.querySelector(".quiz"); if (q) q.remove();
+    if (dep && dep.chemin && dep.chemin.length > 1) { vue = "aujourdhui"; animPion = dep; }
+    rendre(); if (animPion) { window.scrollTo(0, 0); animerPion(); }
+  }
 
   function rendreQuiz() {
     var ancien = document.querySelector(".quiz"); if (ancien) ancien.remove();

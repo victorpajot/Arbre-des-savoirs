@@ -15,6 +15,7 @@ import bibliotheque
 import ia
 import icones32
 import masques
+import objectifs
 import objets32
 import philosophes
 import plateau
@@ -644,7 +645,7 @@ def avatar():
 
 
 def tous_objets():
-    return OBJETS + [objet(*o) for o in philosophes.OBJETS]
+    return OBJETS + [objet(*o) for o in philosophes.OBJETS] + [objet(*o) for o in objectifs.objets()]
 
 
 def cabinet():
@@ -656,7 +657,7 @@ def cabinet():
 
 
 def tous_succes():
-    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES
+    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES + objectifs.SUCCES
 
 
 def commentaires():
@@ -718,6 +719,7 @@ def jeu_plateau():
         "taille": [icones32.N, icones32.N],
         "icones": {k: v for k, v in icones.items() if k in utilisees},
         "cases": cases,
+        "objectifs": objectifs.objectifs(),
     }
 
 

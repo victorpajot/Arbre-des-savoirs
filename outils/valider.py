@@ -146,6 +146,10 @@ def main():
     if annees != sorted(annees):
         erreurs.append("plateau.json : les cases doivent suivre l'ordre chronologique")
 
+    objets_ids = {o["id"] for o in contenu["objets"]["objets"]}
+    for o in contenu["plateau"].get("objectifs", []):
+        if o["relique"] not in objets_ids:
+            erreurs.append(f"plateau.json objectif {o['tour']} : relique inconnue {o['relique']}")
     ev = contenu["frise"]["evenements"]
     if len({e["id"] for e in ev}) != len(ev):
         erreurs.append("frise.json : id en double")
