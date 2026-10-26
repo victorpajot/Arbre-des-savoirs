@@ -200,7 +200,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.ok(casesFrise.every(e => P.evenements[e.id]), "toutes les dates du plateau sont sur la frise");
     assert.ok(C3.livres.filter(l => l.condition.type === "case_atteinte").every(l => P.livres[l.id]), "livres du plateau débloqués");
     assert.ok(P.succes["epoque-xxe"]);
-    assert.equal(M.masqueActuel(C3, P).id, "finale", "un tour complet débloque le dernier masque");
+    assert.equal(M.masqueActuel(C3, P).id, "promethee", "un tour complet débloque le masque de Prométhée");
   }
 
   // Masques par paliers de succès, annoncés au changement
@@ -208,9 +208,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const P = M.nouvellePartie(t0);
     M.verifierRecompenses(C3, P, t0);
     assert.equal(P.masque, "theatre");
-    C3.succes.slice(0, 8).forEach(s => { P.succes[s.id] = t0; });
+    for (let i = 0; i < 8; i++) P.succes["test-" + i] = t0;
     const rec = M.verifierRecompenses(C3, P, t0);
-    assert.equal(rec.masque.id, "peste"); assert.equal(P.masque, "peste");
+    assert.deepEqual(rec.masques.map(m => m.id), ["talos", "golem"]); assert.equal(P.masque, "golem");
+    // Choisir un masque déjà gagné, refuser un masque verrouillé, revenir au dernier gagné
+    assert.ok(M.choisirMasque(C3, P, "talos")); assert.equal(M.masqueActuel(C3, P).id, "talos");
+    assert.ok(!M.choisirMasque(C3, P, "alphago")); assert.equal(M.masqueActuel(C3, P).id, "talos");
+    P.succes["nains-geants"] = t0;
+    assert.equal(M.verifierRecompenses(C3, P, t0).masque.id, "alphago");
+    assert.equal(M.masqueActuel(C3, P).id, "talos", "le choix du joueur prime sur un nouveau masque");
+    M.choisirMasque(C3, P, null); assert.equal(M.masqueActuel(C3, P).id, "alphago");
     assert.equal(M.expression(C3, "quiz_rate"), "moqueuse");
   }
 

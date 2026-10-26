@@ -1233,18 +1233,33 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     v.appendChild(bloc);
     return v;
   }
+  function conditionMasque(m) {
+    var c = m.condition;
+    if (!c) return "Dès le début";
+    if (c.type === "succes_obtenus") return c.n + " succès";
+    if (c.type === "succes") {
+      var sc = C.succes.filter(function (x) { return x.id === c.id; })[0];
+      if (sc && sc.condition.type === "tours_plateau") return sc.condition.n > 1 ? sc.condition.n + " tours du plateau" : "1 tour du plateau";
+      return sc ? (P.succes[sc.id] || !sc.cache ? "Succès « " + tx(sc.nom) + " »" : "Un succès caché") : "Un succès";
+    }
+    return "Plus tard";
+  }
   function blocMasques(n) {
-    var actuel = M.masqueActuel(C, P), tours = P.plateau.tours;
-    var suivant = C.ia.masques.filter(function (m) { return !(n >= m.seuil || (m.tours && tours >= m.tours)); })[0];
-    var b = el('<div class="bloc"><h2>Les masques de l\'IA</h2><p class="note">L\'IA change de visage à mesure que tu gagnes des succès.' + (suivant ? " Prochain masque à " + suivant.seuil + " succès" + (suivant.tours ? ", ou au premier tour complet du plateau" : "") + "." : " Tu les as tous vus.") + '</p><div class="masques"></div></div>');
+    var actuel = M.masqueActuel(C, P), nb = C.ia.masques.filter(function (m) { return M.masqueDebloque(P, m.id); }).length;
+    var b = el('<div class="bloc"><h2>Les masques de l\'IA</h2><p class="note">' + nb + " sur " + C.ia.masques.length + ". L'IA change de visage à mesure que tu gagnes des succès et que tu termines des tours du plateau. Touche un masque gagné pour le lui faire porter.</p><div class=\"masques\"></div></div>");
     var g = b.querySelector(".masques");
     C.ia.masques.forEach(function (m) {
-      var ok = n >= m.seuil || (m.tours && tours >= m.tours);
-      var bt = el('<button type="button" class="m' + (ok ? "" : " verrou") + (actuel && actuel.id === m.id ? " actuel" : "") + '"><span class="vitrine">' + svgMasque(m, "neutre", 52, !ok) + "</span><span>" + (ok ? esc(tx(m.nom)) : m.seuil + " succès") + "</span></button>");
+      var ok = M.masqueDebloque(P, m.id);
+      var bt = el('<button type="button" class="m' + (ok ? "" : " verrou") + (actuel && actuel.id === m.id ? " actuel" : "") + '"><span class="vitrine">' + svgMasque(m, "neutre", 52, !ok) + "</span><span>" + esc(ok ? tx(m.nom) : conditionMasque(m)) + "</span></button>");
       bt.onclick = function () {
+        var porte = actuel && actuel.id === m.id;
         feuilleSimple('<div class="vitrine" style="padding:16px">' + svgMasque(m, ok ? "moqueuse" : "neutre", 120, !ok) + "</div>" +
-          (ok ? '<div class="eyebrow">Masque de l\'IA</div><h2>' + esc(tx(m.nom)) + "</h2><p>" + esc(tx(m.notice)) + "</p>"
-            : "<h2>Masque à venir</h2><p class=\"meta\">Il apparaîtra à " + m.seuil + " succès" + (m.tours ? ", ou dès ton premier tour complet du plateau" : "") + ".</p>"), ok ? tx(m.nom) : "Masque à venir");
+          (ok ? '<div class="eyebrow">Masque de l\'IA</div><h2>' + esc(tx(m.nom)) + "</h2><p>" + esc(tx(m.notice)) + '</p><p class="meta">Source : ' + esc(m.source) + "</p>" +
+              (porte ? (P.masqueChoisi ? '<button type="button" class="btn large" data-a="auto">Revenir au dernier masque gagné</button>' : '<p class="meta">L\'IA le porte en ce moment.</p>')
+                     : '<button type="button" class="btn large" data-a="porter">Lui faire porter ce masque</button>')
+            : "<h2>Masque à venir</h2><p class=\"meta\">Condition : " + esc(conditionMasque(m)) + ".</p>"), ok ? tx(m.nom) : "Masque à venir",
+          { porter: function () { M.choisirMasque(C, P, m.id); sauver(); fermerFeuille(); rendre(); toast("L'IA porte le masque : " + tx(m.nom)); },
+            auto: function () { M.choisirMasque(C, P, null); sauver(); fermerFeuille(); rendre(); toast("L'IA reprend son dernier masque"); } });
       };
       g.appendChild(bt);
     });

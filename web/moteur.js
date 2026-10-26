@@ -113,6 +113,8 @@
       evenements: {},
       livres: {},
       masque: null,
+      masques: {},
+      masqueChoisi: null,
       plateau: nouveauPlateau(),
       derniereVisite: t,
       retour: null,
@@ -155,6 +157,8 @@
     out.evenements = p.evenements || {};
     out.livres = p.livres || {};
     out.masque = p.masque || null;
+    out.masques = p.masques || {};
+    out.masqueChoisi = p.masqueChoisi || null;
     out.plateau = Object.assign(nouveauPlateau(), p.plateau || {});
     out.derniereVisite = p.derniereVisite || p.maj || out.cree;
     out.options = Object.assign({ chrono: false }, p.options || {});
@@ -667,11 +671,23 @@
         });
       });
     }
-    var m = masqueActuel(contenu, partie);
-    if (m && m.id !== partie.masque) {
-      // Le premier masque n'est pas une transformation : on le pose sans l'annoncer.
-      if (partie.masque) out.masque = m;
-      partie.masque = m.id;
+    if (contenu.ia) {
+      // Un masque nouvellement débloqué devient le visage de l'IA, sauf si le joueur en a choisi un autre.
+      // Le tout premier (ou le rattrapage d'une ancienne partie) se pose sans être annoncé.
+      partie.masques = partie.masques || {};
+      var deja = Object.keys(partie.masques).length, nouveaux = [];
+      contenu.ia.masques.forEach(function (m) {
+        if (!partie.masques[m.id] && (!m.condition || conditionRemplie(contenu, partie, m.condition, t))) { partie.masques[m.id] = t; nouveaux.push(m); }
+      });
+      if (nouveaux.length) {
+        // Plusieurs d'un coup : un masque gagné par un succès précis l'emporte sur un palier.
+        var precis = nouveaux.filter(function (m) { return m.condition && m.condition.type === "succes"; });
+        var dernier = (precis.length ? precis : nouveaux)[(precis.length ? precis : nouveaux).length - 1];
+        if (deja) { out.masque = dernier; out.masques = nouveaux; }
+        if (!partie.masqueChoisi) partie.masque = dernier.id;
+      }
+      var m = masqueActuel(contenu, partie);
+      if (m) partie.masque = m.id;
     }
     if (out.succes.length || out.objets.length || out.accessoires.length || out.evenements.length || out.livres.length || out.masque) partie.maj = t;
     return out;
@@ -691,11 +707,30 @@
   }
 
   // Masque de l'IA : le dernier dont le palier de succès est atteint (ou débloqué par les tours du plateau).
+  // Visage de l'IA : le masque choisi, sinon le dernier débloqué.
   function masqueActuel(contenu, partie) {
     if (!contenu.ia) return null;
-    var n = Object.keys(partie.succes).length, tours = partie.plateau ? partie.plateau.tours : 0, out = null;
-    contenu.ia.masques.forEach(function (m) { if (n >= m.seuil || (m.tours && tours >= m.tours)) out = m; });
-    return out;
+    var vus = partie.masques || {}, parId = {};
+    contenu.ia.masques.forEach(function (m) { parId[m.id] = m; });
+    if (partie.masqueChoisi && vus[partie.masqueChoisi] && parId[partie.masqueChoisi]) return parId[partie.masqueChoisi];
+    if (partie.masque && vus[partie.masque] && parId[partie.masque]) return parId[partie.masque];
+    var out = null, tMax = -1;
+    contenu.ia.masques.forEach(function (m) { if (vus[m.id] != null && vus[m.id] >= tMax) { tMax = vus[m.id]; out = m; } });
+    return out || contenu.ia.masques[0];
+  }
+
+  function masqueDebloque(partie, id) { return !!(partie.masques && partie.masques[id] != null); }
+
+  // Le joueur peut faire porter à l'IA n'importe quel masque déjà débloqué ; null revient au dernier gagné.
+  function choisirMasque(contenu, partie, id) {
+    if (id && !masqueDebloque(partie, id)) return false;
+    partie.masqueChoisi = id || null;
+    if (id) partie.masque = id;
+    else {
+      partie.masque = null;
+      var m = masqueActuel(contenu, partie); partie.masque = m ? m.id : null;
+    }
+    return true;
   }
 
   function expression(contenu, contexte) {
@@ -776,7 +811,7 @@
     rangAvatar: rangAvatar,
     replique: replique,
     repliqueDuJour: repliqueDuJour,
-    masqueActuel: masqueActuel,
+    masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, choisirMasque: choisirMasque,
     expression: expression,
     bonusDuJour: bonusDuJour,
     valeurEpreuve: valeurEpreuve,

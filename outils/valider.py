@@ -83,6 +83,7 @@ def main():
     conditions += [(f"avatar.json {a['id']}", a["condition"]) for a in contenu["avatar"]["accessoires"]]
     conditions += [(f"frise.json {e['id']}", e["condition"]) for e in contenu["frise"]["evenements"]]
     conditions += [(f"bibliotheque.json {l['id']}", l["condition"]) for l in contenu["bibliotheque"]["livres"]]
+    conditions += [(f"ia.json {m['id']}", m["condition"]) for m in contenu["ia"]["masques"] if m.get("condition")]
     nb_cases = len(contenu["plateau"]["cases"])
     for ou, cond in conditions:
         if cond.get("stat") and cond["stat"] not in stats:
@@ -111,14 +112,19 @@ def main():
     narr = contenu["ia"]
     if attendus - set(narr["expressions"]):
         erreurs.append(f"ia.json : pas d'expression pour {sorted(attendus - set(narr['expressions']))}")
-    seuils = [m["seuil"] for m in narr["masques"]]
-    if seuils[0] != 0 or seuils != sorted(seuils):
-        erreurs.append("ia.json : les seuils des masques doivent partir de 0 et croître")
+    if narr["masques"][0].get("condition"):
+        erreurs.append("ia.json : le premier masque doit être porté dès le début, sans condition")
+    seuils = [m["condition"]["n"] for m in narr["masques"] if m.get("condition", {}).get("type") == "succes_obtenus"]
+    precis = [m for m in narr["masques"] if m.get("condition", {}).get("type") in ("succes", "tours_plateau")]
+    if len(seuils) + 1 < 12 or len(precis) < 12:
+        erreurs.append(f"ia.json : {len(seuils) + 1} masques par paliers et {len(precis)} par succès précis, 12 de chaque attendus")
+    if seuils != sorted(seuils):
+        erreurs.append("ia.json : les paliers des masques doivent croître")
     for m in narr["masques"]:
         verifier_pixels(f"ia.json {m['id']}", m["base"], narr["taille"], narr["palette"], erreurs)
         for e, img in m["expressions"].items():
             verifier_pixels(f"ia.json {m['id']} {e}", img, narr["taille"], narr["palette"], erreurs)
-    if max(seuils) > len(succes):
+    if seuils and max(seuils) > len(succes):
         erreurs.append(f"ia.json : seuil de masque {max(seuils)} au-delà des {len(succes)} succès")
 
     pl = contenu["plateau"]

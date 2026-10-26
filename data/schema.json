@@ -818,7 +818,7 @@
    "additionalProperties": false,
    "properties": {
     "format": {
-     "const": 1
+     "const": 2
     },
     "nom": {
      "$ref": "#/$defs/texte"
@@ -850,15 +850,14 @@
     },
     "masques": {
      "type": "array",
-     "minItems": 1,
+     "minItems": 24,
      "items": {
       "type": "object",
       "required": [
        "id",
        "nom",
-       "seuil",
-       "tours",
        "notice",
+       "source",
        "base",
        "expressions"
       ],
@@ -869,16 +868,6 @@
        },
        "nom": {
         "$ref": "#/$defs/texte"
-       },
-       "seuil": {
-        "type": "integer",
-        "minimum": 0,
-        "description": "Nombre de succès qui débloque ce masque."
-       },
-       "tours": {
-        "type": "integer",
-        "minimum": 0,
-        "description": "Si non nul, ce nombre de tours du plateau débloque aussi le masque."
        },
        "notice": {
         "$ref": "#/$defs/texte"
@@ -898,6 +887,14 @@
         "additionalProperties": {
          "$ref": "#/$defs/pixels"
         }
+       },
+       "condition": {
+        "$ref": "#/$defs/condition",
+        "description": "Ce qui débloque le masque. Absente : le masque est là dès le début."
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
        }
       }
      }

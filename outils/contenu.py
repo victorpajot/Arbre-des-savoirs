@@ -668,13 +668,13 @@ def narrateur():
     """L'IA : ses masques (un par palier de succès) et l'expression prise selon le contexte."""
     calques = {m["id"]: m for m in masques.calques()}
     return {
-        "format": 1,
+        "format": 2,
         "nom": fr(ia.NOM),
         "palette": PALETTE,
         "taille": [40, 48],
         "expressions": ia.EXPRESSIONS,
-        "masques": [{"id": m["id"], "nom": fr(m["nom"]), "seuil": m["seuil"], "tours": m.get("tour", 0), "notice": fr(m["notice"]),
-                     "base": calques[m["id"]]["base"], "expressions": calques[m["id"]]["expressions"]} for m in masques.MASQUES],
+        "masques": [{"id": m["id"], "nom": fr(m["nom"]), **({"condition": m["condition"]} if m["condition"] else {}), "notice": fr(m["notice"]),
+                     "source": m["source"], "base": calques[m["id"]]["base"], "expressions": calques[m["id"]]["expressions"]} for m in masques.MASQUES],
     }
 
 
