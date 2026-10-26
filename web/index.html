@@ -2056,14 +2056,15 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     C.frise.epoques.forEach(function (e) { if ((e.debut == null || a >= e.debut) && (e.fin == null || a <= e.fin)) out = out || e.id; });
     return out;
   }
-  function ouvrirLivre(l) {
+  // `seul` : ouvert depuis une récompense, le livre s'affiche sans navigation vers les autres.
+  function ouvrirLivre(l, seul) {
     var ok = !!P.livres[l.id], s = stat(l.stat);
     var dispo = C.livres.filter(function (x) { return P.livres[x.id]; }), i = dispo.indexOf(l);
     var html = '<div class="livre-fiche" style="--c:' + l.couleur + ';display:flex;flex-direction:column;gap:12px"><div class="tete"><div class="couv"><span class="vitrine">' + svgSprite(l.embleme, 44, null, !ok) + "</span></div><div>" +
       '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(formatAnnee(l.annee)) + " · " + esc(tx(s.nom)) + "</div><h2>" + (ok ? esc(tx(l.titre)) : "Livre à découvrir") + "</h2>" + (ok ? '<p class="meta">' + esc(l.auteur) + "</p>" : "") + "</div></div>";
     if (ok) {
       html += "<p>" + esc(tx(l.resume)) + "</p><h3>Pourquoi il a compté</h3><p>" + esc(tx(l.importance)) + "</p><h3>L'anecdote</h3><p>" + esc(tx(l.anecdote)) + '</p><div id="ia-livre"></div><p class="meta">Référence : ' + esc(l.source) + "</p>";
-      if (dispo.length > 1) html += '<div class="nav"><button type="button" class="btn sec" data-a="prec"' + (i <= 0 ? " disabled" : "") + '>← Précédent</button><button type="button" class="btn sec" data-a="suiv"' + (i >= dispo.length - 1 ? " disabled" : "") + ">Suivant →</button></div>";
+      if (!seul && dispo.length > 1) html += '<div class="nav"><button type="button" class="btn sec" data-a="prec"' + (i <= 0 ? " disabled" : "") + '>← Précédent</button><button type="button" class="btn sec" data-a="suiv"' + (i >= dispo.length - 1 ? " disabled" : "") + ">Suivant →</button></div>";
     } else {
       html += '<p class="meta">Pour le placer sur l\'étagère : ' + esc(commentObtenir(l.condition)) + "</p>";
     }
@@ -2756,7 +2757,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     });
     (r.nouveauxLivres || []).forEach(function (l) {
       var c = carteRecompense("Nouveau livre à la bibliothèque", '<span class="vitrine" style="padding:8px;background:' + l.couleur + ';border-radius:12px">' + svgSprite(l.embleme, 64) + "</span>", tx(l.titre), l.auteur + ", " + formatAnnee(l.annee), null, l.couleur);
-      var bt = el('<button type="button" class="btn">Ouvrir le livre</button>'); bt.onclick = function () { ouvrirLivre(l); };
+      var bt = el('<button type="button" class="btn">Ouvrir le livre</button>'); bt.onclick = function () { ouvrirLivre(l, true); };
       c.appendChild(bt); out.push(c);
     });
     (r.nouveauxSavants || []).forEach(function (sv) {
