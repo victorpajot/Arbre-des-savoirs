@@ -626,3 +626,50 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.verifierRecompenses(C9, P, t0).objets.length, 0, "une seule fois");
   console.log("OK : v8 pièges, téléportation, révision forcée, cases cadeau");
 }
+
+// v9 : jeu de Mendeleïev (atomes sauvages, combat en trois questions, tableau périodique)
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
+  const CA = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const t0 = new Date(2026, 9, 28, 10, 0).getTime();
+  let P = M.nouvellePartie(t0); P.plateau.ennemis = {};
+  // S'arrêter sur la case 53 fait apparaître un atome ; la traverser aussi (54 est un eurêka qui relance).
+  P.plateau.position = 51;
+  let dep = M.deplacer(CA, P, 2, t0, "test");
+  assert.equal(dep.a, 53); assert.equal(dep.etapes[0].type, "atome"); assert.equal(dep.etapes[0].case, 53);
+  assert.equal(P.sauvages.length, 1);
+  const s = M.atomeSauvage(CA, P); assert.ok(s.element.symbole);
+  // Les trois questions : une seule bonne réponse chacune, quatre choix distincts.
+  for (let k = 0; k < 40; k++) {
+    P.sauvages[0].z = 1 + (k * 7) % 118;
+    const cb = M.tirerCombat(CA, P, Math.random);
+    assert.equal(cb.questions.length, 3);
+    cb.questions.forEach(q => {
+      assert.equal(new Set(q.choix).size, q.choix.length, q.enonce + " " + q.choix);
+      assert.ok(q.choix.length === 4, q.enonce + " " + q.choix);
+      assert.ok(q.reponse >= 0);
+    });
+    assert.equal(cb.questions[0].choix[cb.questions[0].reponse], cb.element.symbole);
+  }
+  P.sauvages[0].z = 26;
+  // Une seule bonne réponse : l'atome s'enfuit.
+  let r = M.terminerCombat(CA, P, 1, t0);
+  assert.ok(!r.capture); assert.equal(P.sauvages.length, 0); assert.ok(!M.estCapture(P, 26)); assert.equal(P.compteurs.atomesEnfuis, 1);
+  // Deux bonnes réponses : capturé, premier succès.
+  P.sauvages.push({ z: 26, case: 53, depuis: t0 });
+  r = M.terminerCombat(CA, P, 2, t0 + 1);
+  assert.ok(r.capture && r.premiere); assert.ok(M.estCapture(P, 26));
+  assert.ok(r.recompenses.succes.some(x => x.id === "atome-1"));
+  // Un atome capturé ne réapparaît pas tant qu'il en reste d'autres ; trois au plus en attente.
+  for (let k = 0; k < 4; k++) { P.plateau.position = 52; dep = M.deplacer(CA, P, 1, t0 + 10 + k, "test"); }
+  assert.equal(P.sauvages.length, 3); assert.equal(dep.etapes[0].type, "atome_plein");
+  assert.ok(P.sauvages.every(x => x.z !== 26)); assert.equal(new Set(P.sauvages.map(x => x.z)).size, 3);
+  // Famille complète : les gaz nobles.
+  [2, 10, 18, 36, 54, 86, 118].forEach(z => { P.atomes[z] = { capture: t0, rencontres: 1, fuites: 0 }; });
+  assert.ok(M.verifierSucces(CA, P, t0 + 100).some(x => x.id === "gaz-nobles"));
+  // Migration : une ancienne partie gagne un tableau vide.
+  const vieux = M.migrer(JSON.parse(JSON.stringify(Object.assign(M.nouvellePartie(t0), { atomes: undefined, sauvages: undefined }))));
+  assert.deepEqual(vieux.atomes, {}); assert.deepEqual(vieux.sauvages, []);
+  console.log("OK : v9 jeu de Mendeleïev, atomes sauvages, combat, tableau périodique");
+}

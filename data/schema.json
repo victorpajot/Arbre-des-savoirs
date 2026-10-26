@@ -516,7 +516,10 @@
       "rang_maitrise",
       "ennemi_vaincu",
       "duels_gagnes",
-      "cadeaux_offerts"
+      "cadeaux_offerts",
+      "atomes_captures",
+      "atomes_enfuis",
+      "famille_capturee"
      ]
     },
     "n": {
@@ -545,6 +548,9 @@
     "rang": {
      "type": "integer",
      "minimum": 1
+    },
+    "famille": {
+     "$ref": "#/$defs/id"
     }
    }
   },
@@ -647,7 +653,10 @@
          "revision_reussie",
          "revision_ratee",
          "jouer_revision",
-         "cadeau_case"
+         "cadeau_case",
+         "atome_apparait",
+         "atome_capture",
+         "atome_fuite"
         ]
        },
        "reference": {
@@ -1404,7 +1413,8 @@
            "retour_epoque",
            "teleport",
            "revision",
-           "cadeau"
+           "cadeau",
+           "mendeleiev"
           ]
          },
          "n": {
@@ -1794,6 +1804,167 @@
        "source": {
         "type": "string",
         "minLength": 3
+       }
+      }
+     }
+    }
+   }
+  },
+  "atomes": {
+   "type": "object",
+   "description": "v9 : le jeu de Mendeleïev. Les 118 éléments, à capturer sur les cases Mendeleïev du plateau.",
+   "required": [
+    "format",
+    "regles",
+    "familles",
+    "raretes",
+    "elements"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "regles": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "questions",
+      "seuil",
+      "attente_max"
+     ],
+     "properties": {
+      "questions": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "seuil": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "attente_max": {
+       "type": "integer",
+       "minimum": 1,
+       "description": "Atomes sauvages en attente de combat, au plus."
+      }
+     }
+    },
+    "familles": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "nom",
+       "couleur"
+      ],
+      "properties": {
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "couleur": {
+        "type": "string",
+        "pattern": "^#[0-9A-F]{6}$"
+       }
+      }
+     }
+    },
+    "raretes": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "nom",
+       "poids"
+      ],
+      "properties": {
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "poids": {
+        "type": "integer",
+        "minimum": 1
+       }
+      }
+     }
+    },
+    "elements": {
+     "type": "array",
+     "minItems": 118,
+     "maxItems": 118,
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "z",
+       "symbole",
+       "nom",
+       "masse",
+       "stable",
+       "famille",
+       "periode",
+       "groupe",
+       "rarete",
+       "ou",
+       "anecdote",
+       "source"
+      ],
+      "properties": {
+       "z": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "symbole": {
+        "type": "string",
+        "pattern": "^[A-Z][a-z]?$"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "masse": {
+        "type": "number",
+        "exclusiveMinimum": 0
+       },
+       "stable": {
+        "type": "boolean",
+        "description": "Faux : masse de l'isotope le plus stable (entier)."
+       },
+       "famille": {
+        "$ref": "#/$defs/id"
+       },
+       "periode": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 7
+       },
+       "groupe": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 18,
+        "description": "0 : lanthanide ou actinide, rangé sous le tableau."
+       },
+       "rarete": {
+        "enum": [
+         "commun",
+         "peu_commun",
+         "rare",
+         "legendaire"
+        ]
+       },
+       "ou": {
+        "type": "array",
+        "minItems": 2,
+        "items": {
+         "$ref": "#/$defs/texte"
+        }
+       },
+       "anecdote": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 5
        }
       }
      }

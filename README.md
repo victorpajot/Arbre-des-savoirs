@@ -1,4 +1,4 @@
-# Arbre des savoirs, v7
+# Arbre des savoirs, v9
 
 Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
@@ -6,12 +6,20 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
 | Dossier | Contenu |
 | --- | --- |
-| `data/` | Le contenu du jeu, généré par `outils/contenu.py` : `regles.json`, `skills.json`, `questions.json`, `succes.json`, `commentaires.json` (les répliques de l'IA), `ia.json` (ses masques), `objets.json` (le cabinet de curiosités), `avatar.json`, `plateau.json`, `frise.json`, `bibliotheque.json`, plus `schema.json` qui les valide. |
+| `data/` | Le contenu du jeu, généré par `outils/contenu.py` : `regles.json`, `skills.json`, `questions.json`, `succes.json`, `commentaires.json` (les répliques de l'IA), `ia.json` (ses masques), `objets.json` (le cabinet de curiosités), `avatar.json`, `plateau.json`, `frise.json`, `bibliotheque.json`, `ennemis.json`, `atomes.json` (les 118 éléments du jeu de Mendeleïev), plus `schema.json` qui les valide. |
 | `web/moteur.js` | Les règles pures (XP, maîtrise, rappels, perte, gel, succès). Aucun affichage, aucun stockage. |
 | `web/index.html` | L'interface web. |
 | `outils/contenu.py` | Source du contenu : régénère `data/` (`python3 outils/contenu.py`). Il assemble `questions_nouvelles.py` (questions v2), `approfondissement_sciences.py` et `approfondissement_humain.py` (second losange, rangs 5 à 8), `philosophes.py` (branche Sagesse), `illustrations.py` (schémas SVG), `recompenses.py` (succès v2, objets, accessoires), `plateau.py` (63 cases, dates de la frise, succès du plateau), `bibliotheque.py` (32 livres), `ia.py` (répliques) et le pixel art (`dessin.py`, `objets32.py`, `avatar40.py`, `masques.py`, `masques_v4.py`, `savants.py`, `objectifs.py`, `icones32.py`, chacun exécutable pour produire une planche d'aperçu PNG). |
 | `outils/valider.py` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
 | `outils/test_moteur.js` | Test du cycle quiz, rappel, perte, regain (`node outils/test_moteur.js`). |
+
+## Nouveautés de la v9 (jeu de Mendeleïev)
+
+- Cinq cases Mendeleïev sur le plateau (10, 31, 48, 53, 55), chacune justifiée par l'histoire de sa case. Les traverser ou s'y arrêter fait apparaître un atome sauvage, dont on ne connaît que le nom. Trois au plus attendent leur combat, sur l'accueil.
+- Combat en trois questions : symbole, masse atomique, lieu où on le croise. Deux bonnes réponses le capturent ; sinon il s'enfuit et pourra revenir. Les leurres sont tirés pour ne jamais partager de mot avec la bonne réponse.
+- Le tableau périodique, onglet Atomes des Collections, sert de Pokédex : 118 éléments en quatre raretés (commun, peu commun, rare, légendaire pour les superlourds), une fiche par atome capturé (masse, famille, trois lieux du quotidien, anecdote, source de la Royal Society of Chemistry).
+- Dix succès (premier atome, 10, 30, 63 comme en 1869, 92, 118, familles complètes, fuites) et des répliques de l'IA pour l'apparition, la capture et la fuite. Contenu dans `outils/mendeleiev.py`.
+- Les flèches de téléportation longent la route au lieu de traverser les cases.
 
 ## Nouveautés de la v8 (plateau ludique)
 

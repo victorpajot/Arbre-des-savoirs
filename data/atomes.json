@@ -1,0 +1,3327 @@
+{
+ "format": 1,
+ "regles": {
+  "questions": 3,
+  "seuil": 2,
+  "attente_max": 3
+ },
+ "familles": {
+  "alcalin": {
+   "nom": {
+    "fr": "Métal alcalin"
+   },
+   "couleur": "#E4573D"
+  },
+  "alcalino": {
+   "nom": {
+    "fr": "Métal alcalino-terreux"
+   },
+   "couleur": "#F08A3C"
+  },
+  "transition": {
+   "nom": {
+    "fr": "Métal de transition"
+   },
+   "couleur": "#E9B949"
+  },
+  "pauvre": {
+   "nom": {
+    "fr": "Métal pauvre"
+   },
+   "couleur": "#8FB65A"
+  },
+  "metalloide": {
+   "nom": {
+    "fr": "Métalloïde"
+   },
+   "couleur": "#3FA796"
+  },
+  "nonmetal": {
+   "nom": {
+    "fr": "Non-métal"
+   },
+   "couleur": "#3E8ED0"
+  },
+  "halogene": {
+   "nom": {
+    "fr": "Halogène"
+   },
+   "couleur": "#5B6CD6"
+  },
+  "gaznoble": {
+   "nom": {
+    "fr": "Gaz noble"
+   },
+   "couleur": "#9461C9"
+  },
+  "lanthanide": {
+   "nom": {
+    "fr": "Lanthanide"
+   },
+   "couleur": "#D45D9E"
+  },
+  "actinide": {
+   "nom": {
+    "fr": "Actinide"
+   },
+   "couleur": "#B0486E"
+  },
+  "inconnu": {
+   "nom": {
+    "fr": "Propriétés inconnues"
+   },
+   "couleur": "#7E8691"
+  }
+ },
+ "raretes": {
+  "commun": {
+   "nom": {
+    "fr": "Commun"
+   },
+   "poids": 50
+  },
+  "peu_commun": {
+   "nom": {
+    "fr": "Peu commun"
+   },
+   "poids": 30
+  },
+  "rare": {
+   "nom": {
+    "fr": "Rare"
+   },
+   "poids": 15
+  },
+  "legendaire": {
+   "nom": {
+    "fr": "Légendaire"
+   },
+   "poids": 5
+  }
+ },
+ "elements": [
+  {
+   "z": 1,
+   "symbole": "H",
+   "nom": {
+    "fr": "Hydrogène"
+   },
+   "masse": 1.008,
+   "stable": true,
+   "famille": "nonmetal",
+   "periode": 1,
+   "groupe": 1,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "l'eau du robinet"
+    },
+    {
+     "fr": "le Soleil, qui en brûle 600 millions de tonnes par seconde"
+    },
+    {
+     "fr": "les bus à pile à combustible"
+    }
+   ],
+   "anecdote": {
+    "fr": "C'est l'élément le plus abondant de l'Univers : environ trois atomes sur quatre. Cavendish l'appelait « air inflammable »."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/1/hydrogen"
+  },
+  {
+   "z": 2,
+   "symbole": "He",
+   "nom": {
+    "fr": "Hélium"
+   },
+   "masse": 4.0026,
+   "stable": true,
+   "famille": "gaznoble",
+   "periode": 1,
+   "groupe": 18,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les ballons de fête"
+    },
+    {
+     "fr": "la voix de canard"
+    },
+    {
+     "fr": "le refroidissement des IRM"
+    }
+   ],
+   "anecdote": {
+    "fr": "Découvert dans le spectre du Soleil en 1868, avant d'être trouvé sur Terre. D'où son nom, d'après Hélios."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/2/helium"
+  },
+  {
+   "z": 3,
+   "symbole": "Li",
+   "nom": {
+    "fr": "Lithium"
+   },
+   "masse": 6.94,
+   "stable": true,
+   "famille": "alcalin",
+   "periode": 2,
+   "groupe": 1,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les batteries de téléphone"
+    },
+    {
+     "fr": "certains régulateurs de l'humeur"
+    },
+    {
+     "fr": "les voitures électriques"
+    }
+   ],
+   "anecdote": {
+    "fr": "Il est si léger qu'il flotte sur l'huile. Il faut d'ailleurs le conserver dans l'huile, car il réagit avec l'air humide."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/3/lithium"
+  },
+  {
+   "z": 4,
+   "symbole": "Be",
+   "nom": {
+    "fr": "Béryllium"
+   },
+   "masse": 9.0122,
+   "stable": true,
+   "famille": "alcalino",
+   "periode": 2,
+   "groupe": 2,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les émeraudes"
+    },
+    {
+     "fr": "les miroirs du télescope James Webb"
+    },
+    {
+     "fr": "les fenêtres des tubes à rayons X"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les miroirs du télescope James Webb sont en béryllium doré : léger, rigide, et stable au grand froid."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/4/beryllium"
+  },
+  {
+   "z": 5,
+   "symbole": "B",
+   "nom": {
+    "fr": "Bore"
+   },
+   "masse": 10.81,
+   "stable": true,
+   "famille": "metalloide",
+   "periode": 2,
+   "groupe": 13,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "le verre Pyrex"
+    },
+    {
+     "fr": "les combinaisons de lavage au borax"
+    },
+    {
+     "fr": "les détecteurs de neutrons au bore"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le verre borosilicaté supporte les chocs thermiques : c'est pour ça qu'on peut passer un plat Pyrex du four au plan de travail."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/5/boron"
+  },
+  {
+   "z": 6,
+   "symbole": "C",
+   "nom": {
+    "fr": "Carbone"
+   },
+   "masse": 12.011,
+   "stable": true,
+   "famille": "nonmetal",
+   "periode": 2,
+   "groupe": 14,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "la mine de crayon"
+    },
+    {
+     "fr": "les diamants"
+    },
+    {
+     "fr": "tout ce qui est vivant"
+    }
+   ],
+   "anecdote": {
+    "fr": "Graphite et diamant sont faits du même atome, rangé autrement. L'un s'écrase sur le papier, l'autre raye le verre."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/6/carbon"
+  },
+  {
+   "z": 7,
+   "symbole": "N",
+   "nom": {
+    "fr": "Azote"
+   },
+   "masse": 14.007,
+   "stable": true,
+   "famille": "nonmetal",
+   "periode": 2,
+   "groupe": 15,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "l'air qu'on respire, aux quatre cinquièmes"
+    },
+    {
+     "fr": "les engrais"
+    },
+    {
+     "fr": "les sachets de chips gonflés"
+    }
+   ],
+   "anecdote": {
+    "fr": "Lavoisier l'a nommé « azote », « privé de vie », parce qu'une souris n'y survivait pas. Il compose pourtant 78 % de l'air."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/7/nitrogen"
+  },
+  {
+   "z": 8,
+   "symbole": "O",
+   "nom": {
+    "fr": "Oxygène"
+   },
+   "masse": 15.999,
+   "stable": true,
+   "famille": "nonmetal",
+   "periode": 2,
+   "groupe": 16,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "chaque respiration"
+    },
+    {
+     "fr": "la couche d'ozone"
+    },
+    {
+     "fr": "les bouteilles des plongeurs"
+    }
+   ],
+   "anecdote": {
+    "fr": "C'est l'élément le plus abondant de la croûte terrestre, en masse : presque la moitié."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/8/oxygen"
+  },
+  {
+   "z": 9,
+   "symbole": "F",
+   "nom": {
+    "fr": "Fluor"
+   },
+   "masse": 18.998,
+   "stable": true,
+   "famille": "halogene",
+   "periode": 2,
+   "groupe": 17,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "le dentifrice"
+    },
+    {
+     "fr": "les poêles antiadhésives"
+    },
+    {
+     "fr": "les gaz de climatiseurs"
+    }
+   ],
+   "anecdote": {
+    "fr": "Si réactif qu'il a blessé ou tué plusieurs chimistes. Moissan l'isole enfin en 1886 et reçoit le Nobel en 1906."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/9/fluorine"
+  },
+  {
+   "z": 10,
+   "symbole": "Ne",
+   "nom": {
+    "fr": "Néon"
+   },
+   "masse": 20.18,
+   "stable": true,
+   "famille": "gaznoble",
+   "periode": 2,
+   "groupe": 18,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les enseignes lumineuses rouges"
+    },
+    {
+     "fr": "les lasers hélium-néon"
+    },
+    {
+     "fr": "les tubes indicateurs"
+    }
+   ],
+   "anecdote": {
+    "fr": "Seul le néon pur brille en rouge-orangé. Les autres couleurs des « néons » viennent d'autres gaz ou de poudres."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/10/neon"
+  },
+  {
+   "z": 11,
+   "symbole": "Na",
+   "nom": {
+    "fr": "Sodium"
+   },
+   "masse": 22.99,
+   "stable": true,
+   "famille": "alcalin",
+   "periode": 3,
+   "groupe": 1,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "le sel de table, avec le chlore"
+    },
+    {
+     "fr": "les lampadaires orange"
+    },
+    {
+     "fr": "le bicarbonate de soude"
+    }
+   ],
+   "anecdote": {
+    "fr": "Jeté dans l'eau, il file, fond et peut exploser. Davy l'a isolé en 1807 avec une pile électrique."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/11/sodium"
+  },
+  {
+   "z": 12,
+   "symbole": "Mg",
+   "nom": {
+    "fr": "Magnésium"
+   },
+   "masse": 24.305,
+   "stable": true,
+   "famille": "alcalino",
+   "periode": 3,
+   "groupe": 2,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les flashs photo d'autrefois"
+    },
+    {
+     "fr": "la chlorophylle des feuilles"
+    },
+    {
+     "fr": "les jantes de voiture légères"
+    }
+   ],
+   "anecdote": {
+    "fr": "Au cœur de chaque molécule de chlorophylle, il y a un atome de magnésium."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/12/magnesium"
+  },
+  {
+   "z": 13,
+   "symbole": "Al",
+   "nom": {
+    "fr": "Aluminium"
+   },
+   "masse": 26.982,
+   "stable": true,
+   "famille": "pauvre",
+   "periode": 3,
+   "groupe": 13,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les canettes"
+    },
+    {
+     "fr": "le papier d'alu"
+    },
+    {
+     "fr": "les avions"
+    }
+   ],
+   "anecdote": {
+    "fr": "Au XIXe siècle, il valait plus cher que l'or. Napoléon III réservait ses couverts en aluminium à ses invités de marque."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/13/aluminium"
+  },
+  {
+   "z": 14,
+   "symbole": "Si",
+   "nom": {
+    "fr": "Silicium"
+   },
+   "masse": 28.085,
+   "stable": true,
+   "famille": "metalloide",
+   "periode": 3,
+   "groupe": 14,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les puces des ordinateurs"
+    },
+    {
+     "fr": "le sable"
+    },
+    {
+     "fr": "les panneaux solaires"
+    }
+   ],
+   "anecdote": {
+    "fr": "Deuxième élément de la croûte terrestre, après l'oxygène. Le sable de plage, c'est surtout de la silice."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/14/silicon"
+  },
+  {
+   "z": 15,
+   "symbole": "P",
+   "nom": {
+    "fr": "Phosphore"
+   },
+   "masse": 30.974,
+   "stable": true,
+   "famille": "nonmetal",
+   "periode": 3,
+   "groupe": 15,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les allumettes"
+    },
+    {
+     "fr": "l'ADN"
+    },
+    {
+     "fr": "les os, avec le calcium"
+    }
+   ],
+   "anecdote": {
+    "fr": "Brand l'a découvert en 1669 en faisant bouillir des seaux d'urine. Il cherchait la pierre philosophale."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/15/phosphorus"
+  },
+  {
+   "z": 16,
+   "symbole": "S",
+   "nom": {
+    "fr": "Soufre"
+   },
+   "masse": 32.06,
+   "stable": true,
+   "famille": "nonmetal",
+   "periode": 3,
+   "groupe": 16,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "l'odeur d'œuf pourri"
+    },
+    {
+     "fr": "les volcans"
+    },
+    {
+     "fr": "la poudre noire"
+    }
+   ],
+   "anecdote": {
+    "fr": "La Bible l'appelle « pierre de feu », le brimstone anglais. L'odeur d'œuf pourri, c'est le sulfure d'hydrogène."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/16/sulfur"
+  },
+  {
+   "z": 17,
+   "symbole": "Cl",
+   "nom": {
+    "fr": "Chlore"
+   },
+   "masse": 35.45,
+   "stable": true,
+   "famille": "halogene",
+   "periode": 3,
+   "groupe": 17,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "l'eau des piscines"
+    },
+    {
+     "fr": "l'eau de Javel"
+    },
+    {
+     "fr": "le sel de cuisine, avec le sodium"
+    }
+   ],
+   "anecdote": {
+    "fr": "Gaz vert et toxique, il a servi d'arme à Ypres en 1915. Il désinfecte aussi l'eau potable de milliards de personnes."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/17/chlorine"
+  },
+  {
+   "z": 18,
+   "symbole": "Ar",
+   "nom": {
+    "fr": "Argon"
+   },
+   "masse": 39.95,
+   "stable": true,
+   "famille": "gaznoble",
+   "periode": 3,
+   "groupe": 18,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les ampoules à incandescence"
+    },
+    {
+     "fr": "la soudure"
+    },
+    {
+     "fr": "le double vitrage isolant"
+    }
+   ],
+   "anecdote": {
+    "fr": "Son nom vient du grec « paresseux » : il ne réagit avec presque rien. Il fait pourtant près de 1 % de l'air."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/18/argon"
+  },
+  {
+   "z": 19,
+   "symbole": "K",
+   "nom": {
+    "fr": "Potassium"
+   },
+   "masse": 39.098,
+   "stable": true,
+   "famille": "alcalin",
+   "periode": 4,
+   "groupe": 1,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les bananes"
+    },
+    {
+     "fr": "les engrais potassiques"
+    },
+    {
+     "fr": "le sel de régime"
+    }
+   ],
+   "anecdote": {
+    "fr": "Son symbole K vient du latin kalium. Davy l'a isolé en 1807, quelques jours avant le sodium."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/19/potassium"
+  },
+  {
+   "z": 20,
+   "symbole": "Ca",
+   "nom": {
+    "fr": "Calcium"
+   },
+   "masse": 40.078,
+   "stable": true,
+   "famille": "alcalino",
+   "periode": 4,
+   "groupe": 2,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les os et les dents"
+    },
+    {
+     "fr": "le calcaire dans la bouilloire"
+    },
+    {
+     "fr": "la craie"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le corps humain en contient environ un kilo, presque tout dans le squelette."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/20/calcium"
+  },
+  {
+   "z": 21,
+   "symbole": "Sc",
+   "nom": {
+    "fr": "Scandium"
+   },
+   "masse": 44.956,
+   "stable": true,
+   "famille": "transition",
+   "periode": 4,
+   "groupe": 3,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "certains cadres de vélo de course"
+    },
+    {
+     "fr": "les lampes de stade"
+    },
+    {
+     "fr": "les battes de baseball en alliage"
+    }
+   ],
+   "anecdote": {
+    "fr": "Une des cases vides de Mendeleïev, qu'il appelait « éka-bore ». Nilson le découvre en 1879."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/21/scandium"
+  },
+  {
+   "z": 22,
+   "symbole": "Ti",
+   "nom": {
+    "fr": "Titane"
+   },
+   "masse": 47.867,
+   "stable": true,
+   "famille": "transition",
+   "periode": 4,
+   "groupe": 4,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les prothèses de hanche"
+    },
+    {
+     "fr": "la peinture blanche"
+    },
+    {
+     "fr": "la crème solaire minérale"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le blanc de titane est le pigment blanc le plus utilisé au monde : peinture, papier, dentifrice."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/22/titanium"
+  },
+  {
+   "z": 23,
+   "symbole": "V",
+   "nom": {
+    "fr": "Vanadium"
+   },
+   "masse": 50.942,
+   "stable": true,
+   "famille": "transition",
+   "periode": 4,
+   "groupe": 5,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les clés à molette en acier chrome-vanadium"
+    },
+    {
+     "fr": "certaines batteries de réseau"
+    },
+    {
+     "fr": "les ascidies, qui le concentrent"
+    }
+   ],
+   "anecdote": {
+    "fr": "Henry Ford utilisait de l'acier au vanadium dans la Ford T, plus léger et plus résistant."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/23/vanadium"
+  },
+  {
+   "z": 24,
+   "symbole": "Cr",
+   "nom": {
+    "fr": "Chrome"
+   },
+   "masse": 51.996,
+   "stable": true,
+   "famille": "transition",
+   "periode": 4,
+   "groupe": 6,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "l'acier inoxydable"
+    },
+    {
+     "fr": "les pare-chocs chromés"
+    },
+    {
+     "fr": "la couleur verte de l'émeraude"
+    }
+   ],
+   "anecdote": {
+    "fr": "Son nom vient du grec « couleur » : ses composés sont verts, jaunes, orange. Le rubis lui doit son rouge."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/24/chromium"
+  },
+  {
+   "z": 25,
+   "symbole": "Mn",
+   "nom": {
+    "fr": "Manganèse"
+   },
+   "masse": 54.938,
+   "stable": true,
+   "famille": "transition",
+   "periode": 4,
+   "groupe": 7,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les piles alcalines"
+    },
+    {
+     "fr": "les rails de chemin de fer"
+    },
+    {
+     "fr": "les peintures préhistoriques noires"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les artistes de la préhistoire ont peint des grottes avec du noir de manganèse, il y a des dizaines de milliers d'années."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/25/manganese"
+  },
+  {
+   "z": 26,
+   "symbole": "Fe",
+   "nom": {
+    "fr": "Fer"
+   },
+   "masse": 55.845,
+   "stable": true,
+   "famille": "transition",
+   "periode": 4,
+   "groupe": 8,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "le sang, dans l'hémoglobine"
+    },
+    {
+     "fr": "la tour Eiffel"
+    },
+    {
+     "fr": "le noyau de la Terre"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le noyau terrestre est surtout fait de fer. Les étoiles ne savent pas fusionner au-delà : il marque la fin de leur vie."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/26/iron"
+  },
+  {
+   "z": 27,
+   "symbole": "Co",
+   "nom": {
+    "fr": "Cobalt"
+   },
+   "masse": 58.933,
+   "stable": true,
+   "famille": "transition",
+   "periode": 4,
+   "groupe": 9,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "le bleu des faïences"
+    },
+    {
+     "fr": "les batteries lithium-ion"
+    },
+    {
+     "fr": "la vitamine B12"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les mineurs allemands accusaient le kobold, un lutin, de leur gâcher le minerai. Le cobalt en a gardé le nom."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/27/cobalt"
+  },
+  {
+   "z": 28,
+   "symbole": "Ni",
+   "nom": {
+    "fr": "Nickel"
+   },
+   "masse": 58.693,
+   "stable": true,
+   "famille": "transition",
+   "periode": 4,
+   "groupe": 10,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les pièces de monnaie"
+    },
+    {
+     "fr": "les cordes de guitare électrique"
+    },
+    {
+     "fr": "les allergies aux bijoux"
+    }
+   ],
+   "anecdote": {
+    "fr": "Encore un lutin : Kupfernickel, « le cuivre du diable », ce minerai qui ressemblait à du cuivre sans en donner."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/28/nickel"
+  },
+  {
+   "z": 29,
+   "symbole": "Cu",
+   "nom": {
+    "fr": "Cuivre"
+   },
+   "masse": 63.546,
+   "stable": true,
+   "famille": "transition",
+   "periode": 4,
+   "groupe": 11,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les fils électriques"
+    },
+    {
+     "fr": "la statue de la Liberté"
+    },
+    {
+     "fr": "les casseroles de chef"
+    }
+   ],
+   "anecdote": {
+    "fr": "La statue de la Liberté était couleur cuivre à son arrivée. Le vert-de-gris l'a recouverte en une trentaine d'années."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/29/copper"
+  },
+  {
+   "z": 30,
+   "symbole": "Zn",
+   "nom": {
+    "fr": "Zinc"
+   },
+   "masse": 65.38,
+   "stable": true,
+   "famille": "transition",
+   "periode": 4,
+   "groupe": 12,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les toits de Paris"
+    },
+    {
+     "fr": "l'acier galvanisé"
+    },
+    {
+     "fr": "les crèmes pour bébé"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les toits gris de Paris sont en zinc, posés en masse lors des travaux d'Haussmann."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/30/zinc"
+  },
+  {
+   "z": 31,
+   "symbole": "Ga",
+   "nom": {
+    "fr": "Gallium"
+   },
+   "masse": 69.723,
+   "stable": true,
+   "famille": "pauvre",
+   "periode": 4,
+   "groupe": 13,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les LED bleues"
+    },
+    {
+     "fr": "la cuillère qui fond dans le thé"
+    },
+    {
+     "fr": "les puces des téléphones"
+    }
+   ],
+   "anecdote": {
+    "fr": "Il fond à 30 °C, donc dans la main. Mendeleïev avait prédit sa masse et sa densité sous le nom d'éka-aluminium."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/31/gallium"
+  },
+  {
+   "z": 32,
+   "symbole": "Ge",
+   "nom": {
+    "fr": "Germanium"
+   },
+   "masse": 72.63,
+   "stable": true,
+   "famille": "metalloide",
+   "periode": 4,
+   "groupe": 14,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les premiers transistors"
+    },
+    {
+     "fr": "les fibres optiques"
+    },
+    {
+     "fr": "les lentilles des caméras thermiques"
+    }
+   ],
+   "anecdote": {
+    "fr": "Encore une prédiction de Mendeleïev, l'éka-silicium. Winkler le trouve en 1886 et le nomme d'après l'Allemagne."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/32/germanium"
+  },
+  {
+   "z": 33,
+   "symbole": "As",
+   "nom": {
+    "fr": "Arsenic"
+   },
+   "masse": 74.922,
+   "stable": true,
+   "famille": "metalloide",
+   "periode": 4,
+   "groupe": 15,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les romans d'Agatha Christie"
+    },
+    {
+     "fr": "le vert de Scheele des papiers peints"
+    },
+    {
+     "fr": "certains riz, à l'état de traces"
+    }
+   ],
+   "anecdote": {
+    "fr": "La « poudre de succession » des empoisonneurs. Le test de Marsh, en 1836, a permis de le détecter dans les cadavres."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/33/arsenic"
+  },
+  {
+   "z": 34,
+   "symbole": "Se",
+   "nom": {
+    "fr": "Sélénium"
+   },
+   "masse": 78.971,
+   "stable": true,
+   "famille": "nonmetal",
+   "periode": 4,
+   "groupe": 16,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les noix du Brésil"
+    },
+    {
+     "fr": "les shampooings antipelliculaires"
+    },
+    {
+     "fr": "les vieilles photocopieuses"
+    }
+   ],
+   "anecdote": {
+    "fr": "Deux ou trois noix du Brésil suffisent à couvrir le besoin quotidien en sélénium. Une poignée, c'est trop."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/34/selenium"
+  },
+  {
+   "z": 35,
+   "symbole": "Br",
+   "nom": {
+    "fr": "Brome"
+   },
+   "masse": 79.904,
+   "stable": true,
+   "famille": "halogene",
+   "periode": 4,
+   "groupe": 17,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "la pourpre des empereurs romains"
+    },
+    {
+     "fr": "les vieux tirages photo argentiques au bromure"
+    },
+    {
+     "fr": "les spas, comme désinfectant"
+    }
+   ],
+   "anecdote": {
+    "fr": "Un des deux seuls éléments liquides à température ambiante, avec le mercure. Son nom veut dire « puanteur »."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/35/bromine"
+  },
+  {
+   "z": 36,
+   "symbole": "Kr",
+   "nom": {
+    "fr": "Krypton"
+   },
+   "masse": 83.798,
+   "stable": true,
+   "famille": "gaznoble",
+   "periode": 4,
+   "groupe": 18,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les lampes de flash photo"
+    },
+    {
+     "fr": "les fenêtres isolantes haut de gamme"
+    },
+    {
+     "fr": "Superman, en version kryptonite"
+    }
+   ],
+   "anecdote": {
+    "fr": "De 1960 à 1983, le mètre était défini par une raie orange du krypton 86."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/36/krypton"
+  },
+  {
+   "z": 37,
+   "symbole": "Rb",
+   "nom": {
+    "fr": "Rubidium"
+   },
+   "masse": 85.468,
+   "stable": true,
+   "famille": "alcalin",
+   "periode": 5,
+   "groupe": 1,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les horloges atomiques des satellites GPS"
+    },
+    {
+     "fr": "les feux d'artifice violets"
+    },
+    {
+     "fr": "les laboratoires d'atomes froids"
+    }
+   ],
+   "anecdote": {
+    "fr": "Il s'enflamme spontanément à l'air. Les horloges au rubidium donnent l'heure à bord des satellites GPS."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/37/rubidium"
+  },
+  {
+   "z": 38,
+   "symbole": "Sr",
+   "nom": {
+    "fr": "Strontium"
+   },
+   "masse": 87.62,
+   "stable": true,
+   "famille": "alcalino",
+   "periode": 5,
+   "groupe": 2,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les feux d'artifice rouges"
+    },
+    {
+     "fr": "les dentifrices pour dents sensibles"
+    },
+    {
+     "fr": "les fusées de détresse"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Strontian, un village écossais. Le rouge des feux d'artifice, c'est lui."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/38/strontium"
+  },
+  {
+   "z": 39,
+   "symbole": "Y",
+   "nom": {
+    "fr": "Yttrium"
+   },
+   "masse": 88.906,
+   "stable": true,
+   "famille": "transition",
+   "periode": 5,
+   "groupe": 3,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les anciens écrans cathodiques rouges"
+    },
+    {
+     "fr": "les lasers YAG"
+    },
+    {
+     "fr": "les supraconducteurs à haute température"
+    }
+   ],
+   "anecdote": {
+    "fr": "Ytterby, une carrière suédoise, a donné son nom à quatre éléments : yttrium, ytterbium, terbium et erbium."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/39/yttrium"
+  },
+  {
+   "z": 40,
+   "symbole": "Zr",
+   "nom": {
+    "fr": "Zirconium"
+   },
+   "masse": 91.224,
+   "stable": true,
+   "famille": "transition",
+   "periode": 5,
+   "groupe": 4,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les gaines du combustible nucléaire"
+    },
+    {
+     "fr": "les couronnes dentaires en zircone"
+    },
+    {
+     "fr": "les faux diamants"
+    }
+   ],
+   "anecdote": {
+    "fr": "La zircone cubique imite si bien le diamant qu'il faut un appareil pour les distinguer."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/40/zirconium"
+  },
+  {
+   "z": 41,
+   "symbole": "Nb",
+   "nom": {
+    "fr": "Niobium"
+   },
+   "masse": 92.906,
+   "stable": true,
+   "famille": "transition",
+   "periode": 5,
+   "groupe": 5,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les aimants des IRM"
+    },
+    {
+     "fr": "les piercings hypoallergéniques"
+    },
+    {
+     "fr": "les gazoducs en acier allié"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les aimants supraconducteurs du LHC et des IRM sont bobinés en fil de niobium-titane."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/41/niobium"
+  },
+  {
+   "z": 42,
+   "symbole": "Mo",
+   "nom": {
+    "fr": "Molybdène"
+   },
+   "masse": 95.95,
+   "stable": true,
+   "famille": "transition",
+   "periode": 5,
+   "groupe": 6,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les outils en acier rapide"
+    },
+    {
+     "fr": "les lubrifiants au bisulfure"
+    },
+    {
+     "fr": "les nodules des légumineuses"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les bactéries qui fixent l'azote de l'air ont besoin d'une enzyme au molybdène."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/42/molybdenum"
+  },
+  {
+   "z": 43,
+   "symbole": "Tc",
+   "nom": {
+    "fr": "Technétium"
+   },
+   "masse": 98,
+   "stable": false,
+   "famille": "transition",
+   "periode": 5,
+   "groupe": 7,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les scintigraphies des hôpitaux"
+    },
+    {
+     "fr": "les étoiles géantes rouges"
+    },
+    {
+     "fr": "les cases vides de Mendeleïev"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le premier élément fabriqué par l'humain, en 1937. Son nom vient du grec « artificiel »."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/43/technetium"
+  },
+  {
+   "z": 44,
+   "symbole": "Ru",
+   "nom": {
+    "fr": "Ruthénium"
+   },
+   "masse": 101.07,
+   "stable": true,
+   "famille": "transition",
+   "periode": 5,
+   "groupe": 8,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les cellules solaires à colorant"
+    },
+    {
+     "fr": "les têtes de disques durs"
+    },
+    {
+     "fr": "les contacts électriques"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après la Ruthénie, nom latin de la Russie, par Karl Klaus en 1844."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/44/ruthenium"
+  },
+  {
+   "z": 45,
+   "symbole": "Rh",
+   "nom": {
+    "fr": "Rhodium"
+   },
+   "masse": 102.91,
+   "stable": true,
+   "famille": "transition",
+   "periode": 5,
+   "groupe": 9,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "le reflet des bijoux en or blanc"
+    },
+    {
+     "fr": "les disques de rhodium des musiciens"
+    },
+    {
+     "fr": "les miroirs des projecteurs"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les disques de rhodium récompensent les artistes les plus vendeurs : plus rare que le platine."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/45/rhodium"
+  },
+  {
+   "z": 46,
+   "symbole": "Pd",
+   "nom": {
+    "fr": "Palladium"
+   },
+   "masse": 106.42,
+   "stable": true,
+   "famille": "transition",
+   "periode": 5,
+   "groupe": 10,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "l'or blanc"
+    },
+    {
+     "fr": "les éponges à hydrogène"
+    },
+    {
+     "fr": "les pots catalytiques des voitures essence"
+    }
+   ],
+   "anecdote": {
+    "fr": "Il absorbe jusqu'à 900 fois son volume d'hydrogène, comme une éponge."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/46/palladium"
+  },
+  {
+   "z": 47,
+   "symbole": "Ag",
+   "nom": {
+    "fr": "Argent"
+   },
+   "masse": 107.87,
+   "stable": true,
+   "famille": "transition",
+   "periode": 5,
+   "groupe": 11,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les couverts du dimanche"
+    },
+    {
+     "fr": "les pellicules photo"
+    },
+    {
+     "fr": "les miroirs"
+    }
+   ],
+   "anecdote": {
+    "fr": "Meilleur conducteur de l'électricité de tous les métaux, devant le cuivre. Son symbole vient du latin argentum."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/47/silver"
+  },
+  {
+   "z": 48,
+   "symbole": "Cd",
+   "nom": {
+    "fr": "Cadmium"
+   },
+   "masse": 112.41,
+   "stable": true,
+   "famille": "transition",
+   "periode": 5,
+   "groupe": 12,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "le jaune des tableaux de Monet"
+    },
+    {
+     "fr": "les anciennes piles rechargeables"
+    },
+    {
+     "fr": "les cellules solaires au tellurure de cadmium"
+    }
+   ],
+   "anecdote": {
+    "fr": "Au Japon, la maladie itai-itai, « aïe-aïe », a été causée par du cadmium rejeté par des mines."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/48/cadmium"
+  },
+  {
+   "z": 49,
+   "symbole": "In",
+   "nom": {
+    "fr": "Indium"
+   },
+   "masse": 114.82,
+   "stable": true,
+   "famille": "pauvre",
+   "periode": 5,
+   "groupe": 13,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les écrans tactiles"
+    },
+    {
+     "fr": "les joints sous vide"
+    },
+    {
+     "fr": "les soudures sans plomb"
+    }
+   ],
+   "anecdote": {
+    "fr": "Une fine couche d'oxyde d'indium-étain, transparente et conductrice, permet à l'écran de sentir votre doigt."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/49/indium"
+  },
+  {
+   "z": 50,
+   "symbole": "Sn",
+   "nom": {
+    "fr": "Étain"
+   },
+   "masse": 118.71,
+   "stable": true,
+   "famille": "pauvre",
+   "periode": 5,
+   "groupe": 14,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les boîtes de conserve"
+    },
+    {
+     "fr": "les soldats de plomb, qui sont souvent en étain"
+    },
+    {
+     "fr": "le bronze, avec le cuivre"
+    }
+   ],
+   "anecdote": {
+    "fr": "Plié, il « crie » : un craquement dû au frottement des cristaux. Son symbole vient du latin stannum."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/50/tin"
+  },
+  {
+   "z": 51,
+   "symbole": "Sb",
+   "nom": {
+    "fr": "Antimoine"
+   },
+   "masse": 121.76,
+   "stable": true,
+   "famille": "metalloide",
+   "periode": 5,
+   "groupe": 15,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "le khôl des Égyptiens"
+    },
+    {
+     "fr": "les retardateurs de flamme"
+    },
+    {
+     "fr": "les caractères d'imprimerie"
+    }
+   ],
+   "anecdote": {
+    "fr": "L'alliage de Gutenberg (plomb, étain, antimoine) se dilate en refroidissant : les lettres restent nettes."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/51/antimony"
+  },
+  {
+   "z": 52,
+   "symbole": "Te",
+   "nom": {
+    "fr": "Tellure"
+   },
+   "masse": 127.6,
+   "stable": true,
+   "famille": "metalloide",
+   "periode": 5,
+   "groupe": 16,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les modules thermoélectriques des glacières"
+    },
+    {
+     "fr": "les DVD réinscriptibles"
+    },
+    {
+     "fr": "l'haleine aillée des chimistes"
+    }
+   ],
+   "anecdote": {
+    "fr": "En manipuler donne une haleine d'ail pendant des semaines. Son nom vient de Tellus, la Terre."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/52/tellurium"
+  },
+  {
+   "z": 53,
+   "symbole": "I",
+   "nom": {
+    "fr": "Iode"
+   },
+   "masse": 126.9,
+   "stable": true,
+   "famille": "halogene",
+   "periode": 5,
+   "groupe": 17,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "le sel iodé"
+    },
+    {
+     "fr": "la teinture d'iode"
+    },
+    {
+     "fr": "les algues"
+    }
+   ],
+   "anecdote": {
+    "fr": "Courtois le découvre en 1811 en brûlant des algues pour fabriquer de la poudre. Il s'en échappe une vapeur violette."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/53/iodine"
+  },
+  {
+   "z": 54,
+   "symbole": "Xe",
+   "nom": {
+    "fr": "Xénon"
+   },
+   "masse": 131.29,
+   "stable": true,
+   "famille": "gaznoble",
+   "periode": 5,
+   "groupe": 18,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les phares de voiture au xénon"
+    },
+    {
+     "fr": "les moteurs ioniques des sondes"
+    },
+    {
+     "fr": "l'anesthésie"
+    }
+   ],
+   "anecdote": {
+    "fr": "Gaz « noble », mais pas si noble : Bartlett lui fait former un composé en 1962, à la surprise générale."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/54/xenon"
+  },
+  {
+   "z": 55,
+   "symbole": "Cs",
+   "nom": {
+    "fr": "Césium"
+   },
+   "masse": 132.91,
+   "stable": true,
+   "famille": "alcalin",
+   "periode": 6,
+   "groupe": 1,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "la définition de la seconde"
+    },
+    {
+     "fr": "les horloges atomiques"
+    },
+    {
+     "fr": "les forages pétroliers"
+    }
+   ],
+   "anecdote": {
+    "fr": "Depuis 1967, une seconde, c'est 9 192 631 770 oscillations de l'atome de césium 133."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/55/caesium"
+  },
+  {
+   "z": 56,
+   "symbole": "Ba",
+   "nom": {
+    "fr": "Baryum"
+   },
+   "masse": 137.33,
+   "stable": true,
+   "famille": "alcalino",
+   "periode": 6,
+   "groupe": 2,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les radios de l'estomac"
+    },
+    {
+     "fr": "les feux d'artifice verts"
+    },
+    {
+     "fr": "les bougies d'allumage"
+    }
+   ],
+   "anecdote": {
+    "fr": "Avant une radio de l'estomac, on boit une bouillie de sulfate de baryum, opaque aux rayons X."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/56/barium"
+  },
+  {
+   "z": 57,
+   "symbole": "La",
+   "nom": {
+    "fr": "Lanthane"
+   },
+   "masse": 138.91,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les objectifs d'appareil photo"
+    },
+    {
+     "fr": "les batteries des voitures hybrides"
+    },
+    {
+     "fr": "les briquets à pierre"
+    }
+   ],
+   "anecdote": {
+    "fr": "Son nom veut dire « caché » : il s'était dissimulé dans un minerai de cérium jusqu'en 1839."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/57/lanthanum"
+  },
+  {
+   "z": 58,
+   "symbole": "Ce",
+   "nom": {
+    "fr": "Cérium"
+   },
+   "masse": 140.12,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les pierres à briquet"
+    },
+    {
+     "fr": "les fours autonettoyants"
+    },
+    {
+     "fr": "le polissage du verre"
+    }
+   ],
+   "anecdote": {
+    "fr": "Frotté, le ferrocérium projette des étincelles à plus de 3 000 °C : c'est la pierre du briquet."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/58/cerium"
+  },
+  {
+   "z": 59,
+   "symbole": "Pr",
+   "nom": {
+    "fr": "Praséodyme"
+   },
+   "masse": 140.91,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les lunettes de soudeur"
+    },
+    {
+     "fr": "le verre jaune-vert"
+    },
+    {
+     "fr": "les moteurs d'avion en alliage"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les lunettes au didyme des souffleurs de verre filtrent la lumière jaune du sodium. Le didyme cachait deux éléments."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/59/praseodymium"
+  },
+  {
+   "z": 60,
+   "symbole": "Nd",
+   "nom": {
+    "fr": "Néodyme"
+   },
+   "masse": 144.24,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les écouteurs"
+    },
+    {
+     "fr": "les aimants du frigo trop puissants"
+    },
+    {
+     "fr": "les moteurs de voiture électrique"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les aimants néodyme-fer-bore sont les plus puissants vendus dans le commerce. Ils pincent les doigts."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/60/neodymium"
+  },
+  {
+   "z": 61,
+   "symbole": "Pm",
+   "nom": {
+    "fr": "Prométhium"
+   },
+   "masse": 145,
+   "stable": false,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les anciennes peintures lumineuses"
+    },
+    {
+     "fr": "les piles atomiques des stimulateurs cardiaques d'autrefois"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le seul lanthanide sans isotope stable. Nommé d'après Prométhée, qui vola le feu aux dieux."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/61/promethium"
+  },
+  {
+   "z": 62,
+   "symbole": "Sm",
+   "nom": {
+    "fr": "Samarium"
+   },
+   "masse": 150.36,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les aimants des guitares électriques"
+    },
+    {
+     "fr": "les traitements du cancer des os"
+    },
+    {
+     "fr": "les casques audio"
+    }
+   ],
+   "anecdote": {
+    "fr": "Premier élément nommé d'après une personne, indirectement : le minerai samarskite, du colonel russe Samarsky."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/62/samarium"
+  },
+  {
+   "z": 63,
+   "symbole": "Eu",
+   "nom": {
+    "fr": "Europium"
+   },
+   "masse": 151.96,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les billets en euros, sous lampe UV"
+    },
+    {
+     "fr": "le rouge des écrans"
+    },
+    {
+     "fr": "les ampoules basse consommation"
+    }
+   ],
+   "anecdote": {
+    "fr": "Sous lumière ultraviolette, les billets en euros luisent. L'europium fait partie des luminophores."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/63/europium"
+  },
+  {
+   "z": 64,
+   "symbole": "Gd",
+   "nom": {
+    "fr": "Gadolinium"
+   },
+   "masse": 157.25,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les produits de contraste des IRM"
+    },
+    {
+     "fr": "les écrans de radiographie"
+    },
+    {
+     "fr": "les réfrigérateurs magnétiques"
+    }
+   ],
+   "anecdote": {
+    "fr": "Premier élément nommé d'après un chimiste, Johan Gadolin, via le minerai gadolinite."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/64/gadolinium"
+  },
+  {
+   "z": 65,
+   "symbole": "Tb",
+   "nom": {
+    "fr": "Terbium"
+   },
+   "masse": 158.93,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "le vert des écrans"
+    },
+    {
+     "fr": "les haut-parleurs sans membrane"
+    },
+    {
+     "fr": "les billets de banque"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le Terfenol-D, alliage au terbium, se déforme dans un champ magnétique : il fait vibrer une table comme un haut-parleur."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/65/terbium"
+  },
+  {
+   "z": 66,
+   "symbole": "Dy",
+   "nom": {
+    "fr": "Dysprosium"
+   },
+   "masse": 162.5,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les aimants des voitures électriques"
+    },
+    {
+     "fr": "les aimants des éoliennes en mer"
+    },
+    {
+     "fr": "les lampes de cinéma"
+    }
+   ],
+   "anecdote": {
+    "fr": "Son nom veut dire « difficile à obtenir ». Lecoq de Boisbaudran a fait plus de trente précipitations pour l'isoler."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/66/dysprosium"
+  },
+  {
+   "z": 67,
+   "symbole": "Ho",
+   "nom": {
+    "fr": "Holmium"
+   },
+   "masse": 164.93,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les lasers de chirurgie urinaire"
+    },
+    {
+     "fr": "les pôles des aimants les plus forts"
+    },
+    {
+     "fr": "les verres colorés jaunes"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Holmia, Stockholm en latin. Il a le plus fort moment magnétique de tous les éléments."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/67/holmium"
+  },
+  {
+   "z": 68,
+   "symbole": "Er",
+   "nom": {
+    "fr": "Erbium"
+   },
+   "masse": 167.26,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les fibres optiques d'Internet"
+    },
+    {
+     "fr": "les lasers de dermatologie"
+    },
+    {
+     "fr": "le verre rose"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les amplificateurs à fibre dopée à l'erbium relancent les signaux d'Internet sous les océans."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/68/erbium"
+  },
+  {
+   "z": 69,
+   "symbole": "Tm",
+   "nom": {
+    "fr": "Thulium"
+   },
+   "masse": 168.93,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les appareils de radiographie portables"
+    },
+    {
+     "fr": "les billets en euros"
+    },
+    {
+     "fr": "les lasers chirurgicaux"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Thulé, l'île mythique du grand Nord. C'est l'une des terres rares les moins abondantes."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/69/thulium"
+  },
+  {
+   "z": 70,
+   "symbole": "Yb",
+   "nom": {
+    "fr": "Ytterbium"
+   },
+   "masse": 173.05,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les horloges atomiques optiques"
+    },
+    {
+     "fr": "les lasers industriels"
+    },
+    {
+     "fr": "les jauges de contrainte"
+    }
+   ],
+   "anecdote": {
+    "fr": "Quatrième élément nommé d'après le village d'Ytterby. Les Suédois sont fiers de leur carrière."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/70/ytterbium"
+  },
+  {
+   "z": 71,
+   "symbole": "Lu",
+   "nom": {
+    "fr": "Lutécium"
+   },
+   "masse": 174.97,
+   "stable": true,
+   "famille": "lanthanide",
+   "periode": 6,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les scanners TEP des hôpitaux"
+    },
+    {
+     "fr": "certains traitements du cancer"
+    },
+    {
+     "fr": "le raffinage du pétrole"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Lutèce, le nom latin de Paris, par Georges Urbain en 1907."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/71/lutetium"
+  },
+  {
+   "z": 72,
+   "symbole": "Hf",
+   "nom": {
+    "fr": "Hafnium"
+   },
+   "masse": 178.49,
+   "stable": true,
+   "famille": "transition",
+   "periode": 6,
+   "groupe": 4,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les transistors des processeurs récents"
+    },
+    {
+     "fr": "les barres de contrôle des sous-marins"
+    },
+    {
+     "fr": "les buses de découpe plasma"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Hafnia, Copenhague en latin. Il se cachait dans le zirconium, son quasi-jumeau."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/72/hafnium"
+  },
+  {
+   "z": 73,
+   "symbole": "Ta",
+   "nom": {
+    "fr": "Tantale"
+   },
+   "masse": 180.95,
+   "stable": true,
+   "famille": "transition",
+   "periode": 6,
+   "groupe": 5,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les condensateurs des téléphones"
+    },
+    {
+     "fr": "les implants crâniens"
+    },
+    {
+     "fr": "les verres de lunettes fines"
+    }
+   ],
+   "anecdote": {
+    "fr": "Comme Tantale aux Enfers, il plonge dans l'acide sans jamais en absorber : il résiste à presque tous."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/73/tantalum"
+  },
+  {
+   "z": 74,
+   "symbole": "W",
+   "nom": {
+    "fr": "Tungstène"
+   },
+   "masse": 183.84,
+   "stable": true,
+   "famille": "transition",
+   "periode": 6,
+   "groupe": 6,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les ampoules à filament"
+    },
+    {
+     "fr": "les forets à béton"
+    },
+    {
+     "fr": "les fléchettes de compétition"
+    }
+   ],
+   "anecdote": {
+    "fr": "Son symbole W vient de wolfram, « l'écume du loup » : le minerai dévorait l'étain des fondeurs."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/74/tungsten"
+  },
+  {
+   "z": 75,
+   "symbole": "Re",
+   "nom": {
+    "fr": "Rhénium"
+   },
+   "masse": 186.21,
+   "stable": true,
+   "famille": "transition",
+   "periode": 6,
+   "groupe": 7,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les turbines des réacteurs d'avion"
+    },
+    {
+     "fr": "l'essence sans plomb, au raffinage"
+    },
+    {
+     "fr": "les thermocouples"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le dernier élément stable découvert, en 1925, par Ida Tacke, Walter Noddack et Otto Berg. Nommé d'après le Rhin."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/75/rhenium"
+  },
+  {
+   "z": 76,
+   "symbole": "Os",
+   "nom": {
+    "fr": "Osmium"
+   },
+   "masse": 190.23,
+   "stable": true,
+   "famille": "transition",
+   "periode": 6,
+   "groupe": 8,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les pointes de stylos plume anciens"
+    },
+    {
+     "fr": "les aiguilles de gramophone"
+    },
+    {
+     "fr": "les contacts électriques durs"
+    }
+   ],
+   "anecdote": {
+    "fr": "L'élément le plus dense de tous. Son oxyde sent fort, d'où son nom, du grec « odeur »."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/76/osmium"
+  },
+  {
+   "z": 77,
+   "symbole": "Ir",
+   "nom": {
+    "fr": "Iridium"
+   },
+   "masse": 192.22,
+   "stable": true,
+   "famille": "transition",
+   "periode": 6,
+   "groupe": 9,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les bougies d'allumage haut de gamme"
+    },
+    {
+     "fr": "l'ancien mètre étalon"
+    },
+    {
+     "fr": "la couche de la fin des dinosaures"
+    }
+   ],
+   "anecdote": {
+    "fr": "En 1980, Alvarez trouve trop d'iridium dans une couche de 66 millions d'années : la trace d'un astéroïde."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/77/iridium"
+  },
+  {
+   "z": 78,
+   "symbole": "Pt",
+   "nom": {
+    "fr": "Platine"
+   },
+   "masse": 195.08,
+   "stable": true,
+   "famille": "transition",
+   "periode": 6,
+   "groupe": 10,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les pots catalytiques"
+    },
+    {
+     "fr": "les médicaments de chimiothérapie"
+    },
+    {
+     "fr": "les bijoux de mariage"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les conquistadors le jetaient à la rivière : « platina », « petit argent », gâchait leur or."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/78/platinum"
+  },
+  {
+   "z": 79,
+   "symbole": "Au",
+   "nom": {
+    "fr": "Or"
+   },
+   "masse": 196.97,
+   "stable": true,
+   "famille": "transition",
+   "periode": 6,
+   "groupe": 11,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les alliances"
+    },
+    {
+     "fr": "les connecteurs des cartes électroniques"
+    },
+    {
+     "fr": "les médailles olympiques, en fine couche"
+    }
+   ],
+   "anecdote": {
+    "fr": "Tout l'or extrait dans l'histoire tiendrait dans un cube d'environ 22 mètres de côté."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/79/gold"
+  },
+  {
+   "z": 80,
+   "symbole": "Hg",
+   "nom": {
+    "fr": "Mercure"
+   },
+   "masse": 200.59,
+   "stable": true,
+   "famille": "transition",
+   "periode": 6,
+   "groupe": 12,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les anciens thermomètres"
+    },
+    {
+     "fr": "les plombages amalgames"
+    },
+    {
+     "fr": "les lampes fluorescentes"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les chapeliers l'utilisaient pour traiter le feutre. « Fou comme un chapelier » vient de là."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/80/mercury"
+  },
+  {
+   "z": 81,
+   "symbole": "Tl",
+   "nom": {
+    "fr": "Thallium"
+   },
+   "masse": 204.38,
+   "stable": true,
+   "famille": "pauvre",
+   "periode": 6,
+   "groupe": 13,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les poisons des romans policiers"
+    },
+    {
+     "fr": "la mort-aux-rats d'autrefois"
+    },
+    {
+     "fr": "certains verres optiques"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le « poison des empoisonneurs » : sans goût, sans odeur. Agatha Christie l'utilise dans Le Cheval pâle."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/81/thallium"
+  },
+  {
+   "z": 82,
+   "symbole": "Pb",
+   "nom": {
+    "fr": "Plomb"
+   },
+   "masse": 207.2,
+   "stable": true,
+   "famille": "pauvre",
+   "periode": 6,
+   "groupe": 14,
+   "rarete": "commun",
+   "ou": [
+    {
+     "fr": "les batteries de voiture"
+    },
+    {
+     "fr": "les tabliers de radiologie"
+    },
+    {
+     "fr": "les anciennes canalisations"
+    }
+   ],
+   "anecdote": {
+    "fr": "Son symbole vient de plumbum. Les plombiers lui doivent leur nom : les Romains faisaient leurs tuyaux en plomb."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/82/lead"
+  },
+  {
+   "z": 83,
+   "symbole": "Bi",
+   "nom": {
+    "fr": "Bismuth"
+   },
+   "masse": 208.98,
+   "stable": true,
+   "famille": "pauvre",
+   "periode": 6,
+   "groupe": 15,
+   "rarete": "peu_commun",
+   "ou": [
+    {
+     "fr": "les médicaments contre les maux d'estomac"
+    },
+    {
+     "fr": "les cristaux en escalier irisés"
+    },
+    {
+     "fr": "les fards à paupières nacrés"
+    }
+   ],
+   "anecdote": {
+    "fr": "Longtemps considéré comme stable, il est en fait radioactif, avec une demi-vie plus d'un milliard de fois plus longue que l'âge de l'Univers."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/83/bismuth"
+  },
+  {
+   "z": 84,
+   "symbole": "Po",
+   "nom": {
+    "fr": "Polonium"
+   },
+   "masse": 209,
+   "stable": false,
+   "famille": "metalloide",
+   "periode": 6,
+   "groupe": 16,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les brosses antistatiques"
+    },
+    {
+     "fr": "la fumée de tabac, à l'état de traces"
+    },
+    {
+     "fr": "l'affaire Litvinenko"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le premier élément découvert par Marie et Pierre Curie, en 1898. Elle l'a nommé d'après sa Pologne natale."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/84/polonium"
+  },
+  {
+   "z": 85,
+   "symbole": "At",
+   "nom": {
+    "fr": "Astate"
+   },
+   "masse": 210,
+   "stable": false,
+   "famille": "halogene",
+   "periode": 6,
+   "groupe": 17,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "la recherche sur le cancer de la thyroïde"
+    },
+    {
+     "fr": "l'écorce terrestre, quelques grammes en tout"
+    }
+   ],
+   "anecdote": {
+    "fr": "Il y en aurait moins de trente grammes dans toute l'écorce terrestre à un instant donné."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/85/astatine"
+  },
+  {
+   "z": 86,
+   "symbole": "Rn",
+   "nom": {
+    "fr": "Radon"
+   },
+   "masse": 222,
+   "stable": false,
+   "famille": "gaznoble",
+   "periode": 6,
+   "groupe": 18,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les caves en terrain granitique"
+    },
+    {
+     "fr": "les maisons de Bretagne mal ventilées"
+    },
+    {
+     "fr": "les sources thermales radioactives"
+    }
+   ],
+   "anecdote": {
+    "fr": "Deuxième cause de cancer du poumon après le tabac. Il suffit souvent d'aérer."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/86/radon"
+  },
+  {
+   "z": 87,
+   "symbole": "Fr",
+   "nom": {
+    "fr": "Francium"
+   },
+   "masse": 223,
+   "stable": false,
+   "famille": "alcalin",
+   "periode": 7,
+   "groupe": 1,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "le laboratoire de Marguerite Perey"
+    },
+    {
+     "fr": "les pièges magnéto-optiques"
+    }
+   ],
+   "anecdote": {
+    "fr": "Découvert en 1939 par Marguerite Perey, assistante de Marie Curie, et nommé d'après la France."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/87/francium"
+  },
+  {
+   "z": 88,
+   "symbole": "Ra",
+   "nom": {
+    "fr": "Radium"
+   },
+   "masse": 226,
+   "stable": false,
+   "famille": "alcalino",
+   "periode": 7,
+   "groupe": 2,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les aiguilles lumineuses des vieilles montres"
+    },
+    {
+     "fr": "les crèmes de beauté des années 1930"
+    },
+    {
+     "fr": "les malles de Marie Curie"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les « Radium Girls » peignaient les cadrans en affinant le pinceau avec les lèvres. Beaucoup en sont mortes."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/88/radium"
+  },
+  {
+   "z": 89,
+   "symbole": "Ac",
+   "nom": {
+    "fr": "Actinium"
+   },
+   "masse": 227,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les thérapies alpha ciblées"
+    },
+    {
+     "fr": "la lueur bleue des sources fortes"
+    }
+   ],
+   "anecdote": {
+    "fr": "Si radioactif qu'il luit en bleu dans le noir. Il a donné son nom à toute la famille des actinides."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/89/actinium"
+  },
+  {
+   "z": 90,
+   "symbole": "Th",
+   "nom": {
+    "fr": "Thorium"
+   },
+   "masse": 232.04,
+   "stable": true,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les manchons des lampes de camping"
+    },
+    {
+     "fr": "les électrodes de soudure"
+    },
+    {
+     "fr": "certains projets de réacteurs"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Thor. Les manchons des lampes à gaz en contenaient, ce qui les rendait légèrement radioactifs."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/90/thorium"
+  },
+  {
+   "z": 91,
+   "symbole": "Pa",
+   "nom": {
+    "fr": "Protactinium"
+   },
+   "masse": 231.04,
+   "stable": true,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "la datation des sédiments marins"
+    },
+    {
+     "fr": "les résidus de pechblende"
+    }
+   ],
+   "anecdote": {
+    "fr": "Lise Meitner et Otto Hahn l'isolent en 1918. Son nom veut dire « avant l'actinium », dont il est le parent."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/91/protactinium"
+  },
+  {
+   "z": 92,
+   "symbole": "U",
+   "nom": {
+    "fr": "Uranium"
+   },
+   "masse": 238.03,
+   "stable": true,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les centrales nucléaires"
+    },
+    {
+     "fr": "le verre vaseline qui luit en vert"
+    },
+    {
+     "fr": "les quilles de voilier lestées"
+    }
+   ],
+   "anecdote": {
+    "fr": "En 1896, Becquerel découvre la radioactivité grâce à des sels d'uranium oubliés sur une plaque photographique."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/92/uranium"
+  },
+  {
+   "z": 93,
+   "symbole": "Np",
+   "nom": {
+    "fr": "Neptunium"
+   },
+   "masse": 237,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les détecteurs de neutrons rapides"
+    },
+    {
+     "fr": "les déchets de centrale"
+    }
+   ],
+   "anecdote": {
+    "fr": "Après l'uranium, nommé d'après Uranus, venait la planète suivante : Neptune."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/93/neptunium"
+  },
+  {
+   "z": 94,
+   "symbole": "Pu",
+   "nom": {
+    "fr": "Plutonium"
+   },
+   "masse": 244,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les sondes Voyager, pour l'électricité"
+    },
+    {
+     "fr": "les rovers martiens"
+    },
+    {
+     "fr": "les bombes de 1945"
+    }
+   ],
+   "anecdote": {
+    "fr": "Les sondes Voyager tirent encore leur électricité de la chaleur du plutonium, à plus de vingt milliards de kilomètres."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/94/plutonium"
+  },
+  {
+   "z": 95,
+   "symbole": "Am",
+   "nom": {
+    "fr": "Américium"
+   },
+   "masse": 243,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les détecteurs de fumée"
+    },
+    {
+     "fr": "les jauges d'épaisseur"
+    },
+    {
+     "fr": "les laboratoires de Berkeley"
+    }
+   ],
+   "anecdote": {
+    "fr": "Il y en a un fragment dans la plupart des détecteurs de fumée ioniques. Moins d'un microgramme."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/95/americium"
+  },
+  {
+   "z": 96,
+   "symbole": "Cm",
+   "nom": {
+    "fr": "Curium"
+   },
+   "masse": 247,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les spectromètres des rovers martiens"
+    },
+    {
+     "fr": "les piles atomiques des sondes"
+    },
+    {
+     "fr": "la mémoire des Curie"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé en hommage à Marie et Pierre Curie. Les rovers martiens l'emportent pour analyser les roches."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/96/curium"
+  },
+  {
+   "z": 97,
+   "symbole": "Bk",
+   "nom": {
+    "fr": "Berkélium"
+   },
+   "masse": 247,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "la ville de Berkeley"
+    },
+    {
+     "fr": "la fabrication de la tennessine"
+    }
+   ],
+   "anecdote": {
+    "fr": "Il a fallu des mois de réacteur pour en produire 22 milligrammes, envoyés en Russie pour créer la tennessine."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/97/berkelium"
+  },
+  {
+   "z": 98,
+   "symbole": "Cf",
+   "nom": {
+    "fr": "Californium"
+   },
+   "masse": 251,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "le démarrage des réacteurs nucléaires"
+    },
+    {
+     "fr": "les détecteurs d'or et de pétrole"
+    },
+    {
+     "fr": "la Californie, évidemment"
+    }
+   ],
+   "anecdote": {
+    "fr": "L'un des éléments les plus chers au monde : des dizaines de millions de dollars le gramme."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/98/californium"
+  },
+  {
+   "z": 99,
+   "symbole": "Es",
+   "nom": {
+    "fr": "Einsteinium"
+   },
+   "masse": 252,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les retombées de la première bombe H"
+    },
+    {
+     "fr": "le réacteur à haut flux d'Oak Ridge"
+    }
+   ],
+   "anecdote": {
+    "fr": "Découvert dans les débris de la première bombe à hydrogène, en 1952. Nommé d'après Einstein, qui n'y était pour rien."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/99/einsteinium"
+  },
+  {
+   "z": 100,
+   "symbole": "Fm",
+   "nom": {
+    "fr": "Fermium"
+   },
+   "masse": 257,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "les coraux de l'atoll d'Enewetak après Ivy Mike"
+    },
+    {
+     "fr": "la mémoire d'Enrico Fermi"
+    }
+   ],
+   "anecdote": {
+    "fr": "Lui aussi sorti des débris d'Ivy Mike. Nommé d'après Enrico Fermi, qui a construit la première pile atomique."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/100/fermium"
+  },
+  {
+   "z": 101,
+   "symbole": "Md",
+   "nom": {
+    "fr": "Mendélévium"
+   },
+   "masse": 258,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "le cyclotron de 1955, un atome à la fois"
+    },
+    {
+     "fr": "ce jeu"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Mendeleïev. Les premiers ont été produits un atome à la fois, dix-sept en tout, en 1955."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/101/mendelevium"
+  },
+  {
+   "z": 102,
+   "symbole": "No",
+   "nom": {
+    "fr": "Nobélium"
+   },
+   "masse": 259,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "l'Institut Nobel de Stockholm"
+    },
+    {
+     "fr": "les querelles de priorité"
+    }
+   ],
+   "anecdote": {
+    "fr": "Sa découverte a été disputée pendant des décennies entre Suédois, Américains et Soviétiques."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/102/nobelium"
+  },
+  {
+   "z": 103,
+   "symbole": "Lr",
+   "nom": {
+    "fr": "Lawrencium"
+   },
+   "masse": 266,
+   "stable": false,
+   "famille": "actinide",
+   "periode": 7,
+   "groupe": 0,
+   "rarete": "rare",
+   "ou": [
+    {
+     "fr": "la mémoire d'Ernest Lawrence"
+    },
+    {
+     "fr": "la dernière case des actinides"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Ernest Lawrence, l'inventeur du cyclotron, la machine qui a fabriqué tant d'éléments."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/103/lawrencium"
+  },
+  {
+   "z": 104,
+   "symbole": "Rf",
+   "nom": {
+    "fr": "Rutherfordium"
+   },
+   "masse": 267,
+   "stable": false,
+   "famille": "transition",
+   "periode": 7,
+   "groupe": 4,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "la guerre des transfermiens"
+    },
+    {
+     "fr": "la mémoire d'Ernest Rutherford"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le premier des « superlourds ». Son nom a été disputé pendant trente ans."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/104/rutherfordium"
+  },
+  {
+   "z": 105,
+   "symbole": "Db",
+   "nom": {
+    "fr": "Dubnium"
+   },
+   "masse": 268,
+   "stable": false,
+   "famille": "transition",
+   "periode": 7,
+   "groupe": 5,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "la ville de Dubna, sur la Volga"
+    },
+    {
+     "fr": "les cibles d'américium bombardées au néon"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Dubna, la ville russe dont le laboratoire a créé une bonne partie des éléments lourds."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/105/dubnium"
+  },
+  {
+   "z": 106,
+   "symbole": "Sg",
+   "nom": {
+    "fr": "Seaborgium"
+   },
+   "masse": 269,
+   "stable": false,
+   "famille": "transition",
+   "periode": 7,
+   "groupe": 6,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "la mémoire de Glenn Seaborg"
+    },
+    {
+     "fr": "le courrier de Glenn Seaborg"
+    }
+   ],
+   "anecdote": {
+    "fr": "Seaborg a reçu un élément de son vivant. Il recevait son courrier, disait-il, « à l'adresse seaborgium »."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/106/seaborgium"
+  },
+  {
+   "z": 107,
+   "symbole": "Bh",
+   "nom": {
+    "fr": "Bohrium"
+   },
+   "masse": 270,
+   "stable": false,
+   "famille": "transition",
+   "periode": 7,
+   "groupe": 7,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "la mémoire de Niels Bohr"
+    },
+    {
+     "fr": "les cibles de bismuth bombardées au chrome"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Niels Bohr. Quelques atomes à la fois, qui ne vivent que quelques secondes."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/107/bohrium"
+  },
+  {
+   "z": 108,
+   "symbole": "Hs",
+   "nom": {
+    "fr": "Hassium"
+   },
+   "masse": 269,
+   "stable": false,
+   "famille": "transition",
+   "periode": 7,
+   "groupe": 8,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "le Land de Hesse"
+    },
+    {
+     "fr": "les cibles de plomb bombardées au fer"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après la Hesse, la région allemande du laboratoire qui l'a créé."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/108/hassium"
+  },
+  {
+   "z": 109,
+   "symbole": "Mt",
+   "nom": {
+    "fr": "Meitnérium"
+   },
+   "masse": 278,
+   "stable": false,
+   "famille": "inconnu",
+   "periode": 7,
+   "groupe": 9,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "la mémoire de Lise Meitner"
+    },
+    {
+     "fr": "les cibles de bismuth bombardées au fer"
+    }
+   ],
+   "anecdote": {
+    "fr": "Hommage à Lise Meitner, qui a expliqué la fission nucléaire. Le Nobel était allé à Otto Hahn seul."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/109/meitnerium"
+  },
+  {
+   "z": 110,
+   "symbole": "Ds",
+   "nom": {
+    "fr": "Darmstadtium"
+   },
+   "masse": 281,
+   "stable": false,
+   "famille": "inconnu",
+   "periode": 7,
+   "groupe": 10,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "la ville de Darmstadt"
+    },
+    {
+     "fr": "les cibles de plomb bombardées au nickel"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Darmstadt. Il vit quelques secondes, ce qui est long pour sa catégorie."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/110/darmstadtium"
+  },
+  {
+   "z": 111,
+   "symbole": "Rg",
+   "nom": {
+    "fr": "Roentgenium"
+   },
+   "masse": 282,
+   "stable": false,
+   "famille": "inconnu",
+   "periode": 7,
+   "groupe": 11,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "la mémoire de Wilhelm Röntgen"
+    },
+    {
+     "fr": "les cibles de bismuth bombardées au nickel"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après Röntgen, qui a découvert les rayons X en 1895, un siècle avant sa création."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/111/roentgenium"
+  },
+  {
+   "z": 112,
+   "symbole": "Cn",
+   "nom": {
+    "fr": "Copernicium"
+   },
+   "masse": 285,
+   "stable": false,
+   "famille": "inconnu",
+   "periode": 7,
+   "groupe": 12,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "la mémoire de Copernic"
+    },
+    {
+     "fr": "les cibles de plomb bombardées au zinc"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé le 19 février 2010, jour anniversaire de Copernic. Peut-être liquide, voire gazeux."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/112/copernicium"
+  },
+  {
+   "z": 113,
+   "symbole": "Nh",
+   "nom": {
+    "fr": "Nihonium"
+   },
+   "masse": 286,
+   "stable": false,
+   "famille": "pauvre",
+   "periode": 7,
+   "groupe": 13,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "le RIKEN, au Japon"
+    },
+    {
+     "fr": "les cibles de bismuth bombardées au zinc"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le premier élément découvert en Asie. Nihon veut dire Japon. Il a fallu neuf ans pour en voir trois atomes."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/113/nihonium"
+  },
+  {
+   "z": 114,
+   "symbole": "Fl",
+   "nom": {
+    "fr": "Flérovium"
+   },
+   "masse": 289,
+   "stable": false,
+   "famille": "pauvre",
+   "periode": 7,
+   "groupe": 14,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "le laboratoire Flerov"
+    },
+    {
+     "fr": "les cibles de plutonium bombardées au calcium"
+    }
+   ],
+   "anecdote": {
+    "fr": "Nommé d'après le laboratoire Flerov. Il pourrait être aussi inerte qu'un gaz noble, malgré sa famille."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/114/flerovium"
+  },
+  {
+   "z": 115,
+   "symbole": "Mc",
+   "nom": {
+    "fr": "Moscovium"
+   },
+   "masse": 290,
+   "stable": false,
+   "famille": "pauvre",
+   "periode": 7,
+   "groupe": 15,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "l'oblast de Moscou"
+    },
+    {
+     "fr": "les cibles d'américium bombardées au calcium"
+    }
+   ],
+   "anecdote": {
+    "fr": "Quelques centaines de millisecondes d'existence. Assez pour être nommé en 2016."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/115/moscovium"
+  },
+  {
+   "z": 116,
+   "symbole": "Lv",
+   "nom": {
+    "fr": "Livermorium"
+   },
+   "masse": 293,
+   "stable": false,
+   "famille": "pauvre",
+   "periode": 7,
+   "groupe": 16,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "le laboratoire Lawrence Livermore"
+    },
+    {
+     "fr": "les cibles de curium bombardées au calcium"
+    }
+   ],
+   "anecdote": {
+    "fr": "Une collaboration russo-américaine, nommée d'après le laboratoire Lawrence Livermore."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/116/livermorium"
+  },
+  {
+   "z": 117,
+   "symbole": "Ts",
+   "nom": {
+    "fr": "Tennessine"
+   },
+   "masse": 294,
+   "stable": false,
+   "famille": "halogene",
+   "periode": 7,
+   "groupe": 17,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "l'État du Tennessee"
+    },
+    {
+     "fr": "les cibles de berkélium bombardées au calcium"
+    }
+   ],
+   "anecdote": {
+    "fr": "Fabriqué en bombardant du berkélium américain avec du calcium à Dubna. Un des éléments les plus internationaux."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/117/tennessine"
+  },
+  {
+   "z": 118,
+   "symbole": "Og",
+   "nom": {
+    "fr": "Oganesson"
+   },
+   "masse": 294,
+   "stable": false,
+   "famille": "gaznoble",
+   "periode": 7,
+   "groupe": 18,
+   "rarete": "legendaire",
+   "ou": [
+    {
+     "fr": "la dernière case du tableau, pour l'instant"
+    },
+    {
+     "fr": "les cibles de californium bombardées au calcium"
+    }
+   ],
+   "anecdote": {
+    "fr": "Le plus lourd élément connu, nommé d'après Iouri Oganessian, encore vivant lors du baptême en 2016. Cinq atomes observés."
+   },
+   "source": "Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/118/oganesson"
+  }
+ ]
+}

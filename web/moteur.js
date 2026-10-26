@@ -45,6 +45,7 @@
       evenements: extras.frise ? extras.frise.evenements : [],
       frise: extras.frise || null,
       livres: extras.bibliotheque ? extras.bibliotheque.livres : [],
+      atomes: extras.atomes || null,
       parId: {},
       parStat: {},
       questionsPar: {},
@@ -118,6 +119,7 @@
         quizJoues: 0, quizEclairRates: 0, quizZero: 0, quizNuit: 0, quizAube: 0, chronoParfaits: 0,
         reponsesEclairFausses: 0, rappelsRetard: 0, retours: 0, modeTest: 0, parfaitsParStat: {},
         eurekas: 0, sortiesPrison: 0, reculs: 0, duelsGagnes: 0, duelsPerdus: 0, cadeaux: 0,
+        atomesCaptures: 0, atomesEnfuis: 0,
       },
       jours: [],
       journal: [],
@@ -132,6 +134,8 @@
       duel: null,
       cadeaux: { jour: null, donnes: {} },
       objetIA: null,
+      atomes: {},
+      sauvages: [],
       plateau: nouveauPlateau(),
       derniereVisite: t,
       retour: null,
@@ -190,6 +194,9 @@
     out.duel = p.duel || null;
     out.cadeaux = Object.assign({ jour: null, donnes: {} }, p.cadeaux || {});
     out.objetIA = p.objetIA || null;
+    // v9 : tableau périodique (z → fiche) et atomes sauvages en attente de combat.
+    out.atomes = p.atomes || {};
+    out.sauvages = p.sauvages || [];
     out.plateau = Object.assign(nouveauPlateau(), p.plateau || {});
     out.derniereVisite = p.derniereVisite || p.maj || out.cree;
     out.options = Object.assign({ chrono: false }, p.options || {});
@@ -558,7 +565,7 @@
     var vus = {}, out = [];
     dep.etapes.forEach(function (e) {
       var ctx = { prison_liberation: "prison_liberation", prison: "prison", bloque_prison: "prison", eureka: "eureka", recul: "piege",
-        retour_epoque: "retour_epoque", teleport: "teleport", cadeau: "cadeau_case", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi" }[e.type];
+        retour_epoque: "retour_epoque", teleport: "teleport", cadeau: "cadeau_case", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi", atome: "atome_apparait" }[e.type];
       if (ctx && !vus[ctx]) { vus[ctx] = 1; out.unshift(ctx); }
     });
     if (dep.a !== dep.de && dep.valeur > 0) out.push("plateau_avance");
@@ -594,7 +601,10 @@
     function avancer(n) {
       var cible = pl.position + n;
       // v7 : un ennemi sur la route arrête le pion et lance un duel ; il reste `reste` cases à faire après la victoire.
+      // v9 : chaque case Mendeleïev croisée (ou atteinte) fait apparaître un atome sauvage.
       for (var e = pl.position + 1; e <= Math.min(cible, R.arrivee - 1); e++) {
+        var spE = specialDe(contenu, partie, e);
+        if (spE && spE.type === "mendeleiev" && contenu.atomes) etapes.push(apparition(contenu, partie, e, t));
         if (ennemis[e]) {
           poser(e);
           partie.duel = { ennemi: ennemis[e], case: e, reste: cible - e, pret: true, depuis: t };
@@ -757,6 +767,109 @@
     return out;
   }
 
+  // --- Jeu de Mendeleïev (v9) -----------------------------------------------
+  // Passer sur une case Mendeleïev fait apparaître un atome sauvage, qui attend son combat (au plus
+  // `attente_max` à la fois). Le combat : trois questions (symbole, masse, où on le croise) ; `seuil`
+  // bonnes réponses le capturent, sinon il s'enfuit et pourra revenir. Le tableau périodique sert de Pokédex.
+
+  function estCapture(partie, z) { return !!(partie.atomes && partie.atomes[z] && partie.atomes[z].capture); }
+  function ficheAtome(partie, z) {
+    partie.atomes = partie.atomes || {};
+    return partie.atomes[z] || (partie.atomes[z] = { capture: null, rencontres: 0, fuites: 0 });
+  }
+  function elementZ(contenu, z) { return contenu.atomes ? contenu.atomes.elements[z - 1] : null; }
+
+  // L'atome sauvage : un élément pas encore capturé ni déjà en attente, tiré selon sa rareté.
+  // Tirage déterministe (date, case, journal) comme les cases cadeau. Tout est capturé : n'importe lequel revient.
+  function tirerAtome(contenu, partie, n, t) {
+    var A = contenu.atomes, attente = (partie.sauvages || []).map(function (x) { return x.z; });
+    var libres = A.elements.filter(function (e) { return !estCapture(partie, e.z) && attente.indexOf(e.z) < 0; });
+    if (!libres.length) libres = A.elements.filter(function (e) { return attente.indexOf(e.z) < 0; });
+    if (!libres.length) return null;
+    var poids = libres.map(function (e) { return A.raretes[e.rarete].poids; }), total = poids.reduce(function (a, b) { return a + b; }, 0);
+    var x = hacher(String(t) + "|" + n + "|" + partie.journal.length + "|" + attente.length) % total;
+    for (var i = 0; i < libres.length; i++) { x -= poids[i]; if (x < 0) return libres[i]; }
+    return libres[libres.length - 1];
+  }
+  function apparition(contenu, partie, n, t) {
+    if (!contenu.atomes) return { type: "atome_vide", case: n };
+    partie.sauvages = partie.sauvages || [];
+    if (partie.sauvages.length >= contenu.atomes.regles.attente_max) return { type: "atome_plein", case: n };
+    var e = tirerAtome(contenu, partie, n, t);
+    if (!e) return { type: "atome_vide", case: n };
+    partie.sauvages.push({ z: e.z, case: n, depuis: t });
+    ficheAtome(partie, e.z).rencontres++;
+    return { type: "atome", case: n, z: e.z };
+  }
+  function atomeSauvage(contenu, partie) {
+    var s = partie.sauvages && partie.sauvages[0];
+    return s && contenu.atomes ? { z: s.z, case: s.case, element: elementZ(contenu, s.z), attente: partie.sauvages.length } : null;
+  }
+
+  function texteMasse(e) { return e.stable ? e.masse.toFixed(1).replace(".", ",") : "[" + e.masse + "]"; }
+  function sansAccents(x) { return x.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+  function mots(x) {
+    return sansAccents(x.toLowerCase()).split(/[^a-z]+/).filter(function (m) { return m.length >= 6; }).map(function (m) { return m.slice(0, 6); });
+  }
+
+  // Les trois questions du combat en cours, choix mélangés. Rien n'est enregistré : on peut les retirer.
+  function tirerCombat(contenu, partie, alea) {
+    var s = atomeSauvage(contenu, partie); if (!s) return null;
+    alea = alea || Math.random;
+    var A = contenu.atomes.elements, e = s.element, nom = e.nom.fr;
+    function finir(type, enonce, bonne, faux) {
+      var choix = melanger([bonne].concat(faux.slice(0, 3)), alea);
+      return { type: type, enonce: enonce, choix: choix, reponse: choix.indexOf(bonne) };
+    }
+    // Symbole : des symboles réels de même initiale, puis des faux tirés des lettres du nom.
+    var initiale = e.symbole[0], reels = A.filter(function (x) { return x.z !== e.z && x.symbole[0] === initiale; }).map(function (x) { return x.symbole; });
+    var lettres = sansAccents(nom).toLowerCase().replace(/[^a-z]/g, ""), faux = [];
+    for (var i = 1; i < lettres.length; i++) {
+      var f = lettres[0].toUpperCase() + lettres[i];
+      if (f !== e.symbole && faux.indexOf(f) < 0) faux.push(f);
+    }
+    var pS = melanger(reels, alea).slice(0, 2);
+    melanger(faux, alea).forEach(function (f) { if (pS.length < 3 && pS.indexOf(f) < 0) pS.push(f); });
+    melanger(A.map(function (x) { return x.symbole; }), alea).forEach(function (f) { if (pS.length < 3 && f !== e.symbole && pS.indexOf(f) < 0) pS.push(f); });
+    var q1 = finir("symbole", "Quel est le symbole de l'atome « " + nom + " » ?", e.symbole, pS);
+    // Masse : celles d'éléments voisins, assez éloignées pour ne pas se confondre.
+    // Les superlourds ont des masses proches : l'écart exigé baisse si les voisins manquent.
+    var pM = [], prises = [e.masse];
+    [0.08, 0.04, 0.02].forEach(function (ecart) {
+      melanger(A.filter(function (x) { return x.z !== e.z && Math.abs(x.z - e.z) <= 14 + (ecart < 0.08 ? 30 : 0); }), alea).forEach(function (x) {
+        var tx = texteMasse(x);
+        if (pM.length < 3 && pM.indexOf(tx) < 0 && tx !== texteMasse(e) && prises.every(function (m) { return Math.abs(m - x.masse) / m >= ecart; })) { pM.push(tx); prises.push(x.masse); }
+      });
+    });
+    var q2 = finir("masse", "Quelle est la masse atomique de « " + nom + " » ?", texteMasse(e), pM);
+    // Où : un lieu de cet atome, et des lieux d'autres familles sans mot commun avec les siens.
+    var siens = {}; e.ou.forEach(function (o) { mots(o.fr).forEach(function (m) { siens[m] = 1; }); });
+    var bonne = e.ou[Math.floor(alea() * e.ou.length)].fr, pO = [];
+    // Hydrogène, carbone, azote, oxygène sont partout dans le vivant : leurs leurres viennent des métaux lourds.
+    var organique = [1, 6, 7, 8].indexOf(e.z) >= 0;
+    melanger(A.filter(function (x) { return x.famille !== e.famille && Math.abs(x.z - e.z) > 4 && (!organique || (x.z > 20 && [25, 26, 27, 29, 30, 34, 42, 53].indexOf(x.z) < 0)); }), alea).forEach(function (x) {
+      if (pO.length >= 3) return;
+      var o = x.ou[Math.floor(alea() * x.ou.length)].fr;
+      if (!mots(o).some(function (m) { return siens[m]; })) pO.push(o);
+    });
+    var q3 = finir("ou", "Où croise-t-on surtout cet atome ?", bonne, pO);
+    return { z: e.z, element: e, questions: [q1, q2, q3] };
+  }
+
+  // `bonnes` : nombre de bonnes réponses. Renvoie {capture, element, bonnes, total, premiere, fiche, recompenses}.
+  function terminerCombat(contenu, partie, bonnes, t) {
+    var s = atomeSauvage(contenu, partie); if (!s) return null;
+    var R = contenu.atomes.regles, c = partie.compteurs, f = ficheAtome(partie, s.z);
+    partie.sauvages.shift();
+    var capture = bonnes >= R.seuil, premiere = capture && !f.capture;
+    if (capture) { if (!f.capture) { f.capture = t; c.atomesCaptures = (c.atomesCaptures || 0) + 1; } }
+    else { f.fuites++; c.atomesEnfuis = (c.atomesEnfuis || 0) + 1; }
+    var rec = verifierRecompenses(contenu, partie, t);
+    partie.maj = t;
+    return { capture: capture, element: s.element, bonnes: bonnes, total: R.questions, premiere: premiere, fiche: f, recompenses: rec,
+      captures: Object.keys(partie.atomes).filter(function (z) { return partie.atomes[z].capture; }).length };
+  }
+
   // --- Cadeaux à l'IA (v7) ---------------------------------------------------
   // Un cadeau par jour, une fois par objet. L'IA répond selon l'objet, garde parfois l'objet sur son masque,
   // et s'en sert sur le plateau : le pion avance ou recule, une case spéciale change de place, un ennemi arrive, ou rien.
@@ -786,7 +899,7 @@
       for (var n = pl.position + 1; n < R.arrivee; n++) devant.push(n);
       devant.forEach(function (n) {
         var sp = specialDe(contenu, partie, n);
-        if (sp && sp.type !== "retour_epoque" && sp.type !== "teleport") speciales.push(n); else if (!sp && !ennemis[n]) libres.push(n);
+        if (sp && sp.type !== "retour_epoque" && sp.type !== "teleport" && sp.type !== "mendeleiev") speciales.push(n); else if (!sp && !ennemis[n]) libres.push(n);
       });
       if (speciales.length && libres.length) {
         var a = speciales[Math.floor(alea() * speciales.length)], b = libres[Math.floor(alea() * libres.length)];
@@ -889,6 +1002,11 @@
       case "ennemi_vaincu": return !!(partie.bestiaire && partie.bestiaire[cond.id] && partie.bestiaire[cond.id].victoires);
       case "duels_gagnes": return (c.duelsGagnes || 0) >= cond.n;
       case "cadeaux_offerts": return (c.cadeaux || 0) >= cond.n;
+      case "atomes_captures": return Object.keys(partie.atomes || {}).filter(function (z) { return partie.atomes[z].capture; }).length >= cond.n;
+      case "atomes_enfuis": return (c.atomesEnfuis || 0) >= cond.n;
+      case "famille_capturee":
+        if (!contenu.atomes) return false;
+        return contenu.atomes.elements.every(function (e) { return e.famille !== cond.famille || estCapture(partie, e.z); });
       case "eurekas": return c.eurekas >= cond.n;
       case "reculs": return c.reculs >= cond.n;
       default: return false;
@@ -1235,6 +1353,7 @@
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,

@@ -433,6 +433,11 @@ import pieges  # noqa: E402
 REPLIQUES.update({k: [sans(l[1]) if isinstance(l, tuple) else l for l in v] for k, v in pieges.REPLIQUES.items()})
 EXPRESSIONS.update(pieges.TONS)
 
+# v9 : le jeu de Mendeleïev (atomes sauvages, capture, fuite).
+import mendeleiev  # noqa: E402
+REPLIQUES.update({k: [sans(l[1]) if isinstance(l, tuple) else l for l in v] for k, v in mendeleiev.REPLIQUES.items()})
+EXPRESSIONS.update(mendeleiev.TONS)
+
 # v7 : surnom que l'IA donne au joueur, affiché sous le rang. Il suit son humeur (dernier résultat),
 # ou juste après un succès, ce succès ({succes}). Groupes nominaux épicènes : le joueur peut être n'importe qui.
 SURNOMS = {

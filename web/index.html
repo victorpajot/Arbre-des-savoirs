@@ -418,6 +418,65 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .fiche-en.inconnu svg { color: var(--muted); opacity: .45; }
 .stats-en { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
 .stats-en .v { color: var(--good); font-weight: 700; }
+/* v9 : jeu de Mendeleïev */
+.tuile-atome { --c: #7E8691; position: relative; flex: none; aspect-ratio: 1; border-radius: 16%; background: var(--c); color: #fff; display: grid; place-items: center; overflow: hidden;
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, #fff 30%, transparent), 0 6px 0 color-mix(in srgb, var(--c) 60%, #000); container-type: inline-size; }
+.tuile-atome .z { position: absolute; left: 9%; top: 6%; font-weight: 700; font-size: 13cqw; }
+.tuile-atome .sym { position: relative; font-family: var(--f-display); font-weight: 800; font-size: 40cqw; line-height: 1; text-shadow: 0 2px 0 rgba(0,0,0,.25); z-index: 1; }
+.tuile-atome .nm { position: absolute; left: 0; right: 0; bottom: 18%; text-align: center; font-size: 11cqw; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 6%; }
+.tuile-atome .ma { position: absolute; left: 0; right: 0; bottom: 5%; text-align: center; font-size: 10cqw; opacity: .9; }
+.tuile-atome .orbites { position: absolute; inset: 6%; width: 88%; height: 88%; opacity: .45; animation: tourner 9s linear infinite; }
+.tuile-atome.cache { --c: #3A3F4B; }
+.tuile-atome.cache .sym { color: #fff; opacity: .9; }
+.tuile-atome.pop { animation: capture .7s cubic-bezier(.2,.9,.3,1.5) both; }
+.tuile-atome.fuite { animation: fuir 1s ease-in .2s both; }
+@keyframes tourner { to { transform: rotate(360deg); } }
+@keyframes capture { 0% { transform: scale(.3) rotate(-25deg); opacity: 0; } 60% { transform: scale(1.12) rotate(4deg); opacity: 1; } 100% { transform: none; } }
+@keyframes fuir { 0% { transform: none; } 30% { transform: translateX(-8px); } 100% { transform: translate(140%, -60%) rotate(30deg) scale(.4); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .tuile-atome .orbites, .tuile-atome.pop, .tuile-atome.fuite { animation: none; } }
+.rarete { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.rarete.legendaire { background: #F2C14E; color: #3B2A00; border-color: #C99A1C; }
+.rarete.rare { background: color-mix(in srgb, #9461C9 18%, var(--surface)); color: #6A3FA0; border-color: #9461C9; }
+.rarete.peu_commun { color: var(--ink); }
+.sauvage { display: flex; flex-direction: row; gap: 14px; align-items: center; }
+.sauvage.bloc { border: 2px solid color-mix(in srgb, #1565C0 55%, var(--line)); }
+.sauvage h2 { margin: 2px 0 4px; }
+.sauvage .meta { margin: 4px 0 0; }
+.sauvage .btn { margin-top: 10px; }
+.quiz.atome { --c: #1565C0; }
+.apparition { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; padding-top: 8px; }
+.apparition .herbe { position: relative; width: 100%; display: grid; place-items: center; padding: 18px 0 8px; border-radius: 18px;
+  background: radial-gradient(ellipse 45% 18% at 50% 88%, color-mix(in srgb, #2E9D5B 45%, transparent), transparent 70%), color-mix(in srgb, #1565C0 8%, var(--surface)); }
+.apparition .herbe .tuile-atome { animation: surgir .6s cubic-bezier(.2,.9,.3,1.5) .2s both; }
+@keyframes surgir { from { transform: translateY(40px) scale(.5); opacity: 0; } to { transform: none; opacity: 1; } }
+.apparition h2 { margin: 0; font-size: 26px; }
+.combat-q .enonce { font-family: var(--f-display); font-weight: 600; }
+.combat-q .choix.grille { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.combat-q .choix.grille button { min-height: 56px; font-size: 18px; font-weight: 700; }
+.combat-q .choix.grille.long button { font-size: 15px; font-weight: 500; grid-column: span 2; }
+.verdict-atome { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.verdict-atome .grand { font-family: var(--f-display); font-weight: 800; font-size: 34px; }
+.verdict-atome.capture .grand { color: var(--good); }
+.verdict-atome.fuite .grand { color: #D94141; }
+.fiche-atome { display: grid; gap: 8px; text-align: left; width: 100%; }
+.fiche-atome ul { margin: 0; padding-left: 20px; }
+.fiche-atome cite { font-size: 13px; color: var(--muted); font-style: normal; overflow-wrap: anywhere; }
+.tableau-per { display: grid; grid-template-columns: repeat(18, minmax(0, 1fr)); gap: 2px; container-type: inline-size; margin-top: 12px; }
+.tableau-per .el { aspect-ratio: 1; border: 0; padding: 0; border-radius: 3px; background: var(--surface-2); color: var(--muted); font: inherit; font-size: 2.3cqw; line-height: 1; cursor: pointer;
+  display: grid; place-items: center; position: relative; min-width: 0; }
+.tableau-per .el b { font-size: 2.9cqw; }
+.tableau-per .el.pris { background: var(--c); color: #fff; }
+.tableau-per .el.vu { box-shadow: inset 0 0 0 1px var(--muted); color: var(--ink); }
+.tableau-per .el.attend::after { content: "!"; position: absolute; top: -2px; right: 0; font-weight: 800; color: #D94141; font-size: 3cqw; }
+.tableau-per .serie { font-size: 2.2cqw; color: var(--muted); display: grid; place-items: center; border: 1px dashed var(--line); border-radius: 3px; aspect-ratio: 1; }
+.tableau-per .serie.nu { border: 0; }
+.tableau-per .espace { grid-column: 1 / -1; height: 6px; }
+.familles-per { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.familles-per span { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+.familles-per i { width: 10px; height: 10px; border-radius: 3px; background: var(--c); }
+.compteur-per { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.compteur-per .barre { flex-basis: 100%; height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+.compteur-per .barre i { display: block; height: 100%; background: #1565C0; border-radius: 4px; }
 .stats-en .d { color: #D94141; font-weight: 700; }
 .comite .masque { position: relative; }
 .comite .tenu-ia { position: absolute; right: -6px; bottom: -4px; background: var(--parchemin, #F7EBD0); border-radius: 6px; padding: 1px; box-shadow: 0 1px 3px rgba(0,0,0,.2); line-height: 0; }
@@ -860,7 +919,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   }
   var TEINTE_EPOQUE = { antiquite: "#C9A227", "moyen-age": "#A04B57", renaissance: "#2F8C78", classique: "#4A6CC2", xixe: "#9A6534", xxe: "#7A4FB8" };
   var COULEURS_CASES = ["#FF9FC6", "#FFD447", "#FF9F45", "#6EC3F4", "#7FD68C", "#BFA2F5"];
-  var COULEUR_SPECIAL = { eureka: "#E0A800", avance: "#2E9D5B", recul: "#D94141", teleport: "#7A3FD1", retour_epoque: "#7A3FD1", revision: "#14899E", cadeau: "#C2185B", prison: "#5D6470", quarantaine: "#D9721F" };
+  var COULEUR_SPECIAL = { eureka: "#E0A800", avance: "#2E9D5B", recul: "#D94141", teleport: "#7A3FD1", retour_epoque: "#7A3FD1", revision: "#14899E", cadeau: "#C2185B", mendeleiev: "#1565C0", prison: "#5D6470", quarantaine: "#D9721F" };
   var BORD_SPECIAL = COULEUR_SPECIAL;
   // Pictogramme blanc d'une règle spéciale, centré sur (0, 0), environ 10 × 10.
   var PICTO_SPECIAL = {
@@ -872,6 +931,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     cadeau: '<path d="M-4.5,-1.5 H4.5 V4.5 H-4.5 Z M-5,-3.8 H5 V-1.5 H-5 Z M0,-3.8 V4.5" fill="none" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/><path d="M0,-3.8 Q-3.5,-7 -3.6,-4.4 M0,-3.8 Q3.5,-7 3.6,-4.4" fill="none" stroke="#fff" stroke-width="1.2"/>',
     prison: '<path d="M-4,-4.5 H4 M-4,4.5 H4 M-2.4,-4.5 V4.5 M0,-4.5 V4.5 M2.4,-4.5 V4.5" stroke="#fff" stroke-width="1.4"/>',
     quarantaine: '<path d="M0,-4.5 V4.5 M-4.5,0 H4.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
+    mendeleiev: '<g fill="none" stroke="#fff" stroke-width="1.1"><ellipse rx="5.2" ry="2"/><ellipse rx="5.2" ry="2" transform="rotate(60)"/><ellipse rx="5.2" ry="2" transform="rotate(-60)"/></g><circle r="1.4" fill="#fff"/>',
   };
   PICTO_SPECIAL.retour_epoque = PICTO_SPECIAL.teleport;
 
@@ -1158,15 +1218,23 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     });
   }
   // Flèche courbe d'un piège de téléportation vers sa case d'arrivée.
+  // v8 : la flèche d'un piège de téléportation longe le parcours, à côté de la route, sans traverser de case.
+  // Elle reste du même côté de bout en bout : celui qui passe à l'extérieur du virage, loin du centre du plateau.
   function flecheTeleport(de, vers, couleur) {
-    var a = centreCase(de), b = centreCase(vers), mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
-    var dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, k = Math.min(70, l * 0.45);
-    var cx = mx - dy / l * k, cy = my + dx / l * k;
-    if (cx < 10 || cx > MONDE[0] - 10) { cx = mx + dy / l * k; cy = my - dx / l * k; }
-    var ang = Math.atan2(b[1] - cy, b[0] - cx), fin = [b[0] - Math.cos(ang) * 13, b[1] - Math.sin(ang) * 13];
-    var d = "M" + a[0].toFixed(1) + "," + a[1].toFixed(1) + " Q" + cx.toFixed(1) + "," + cy.toFixed(1) + " " + fin[0].toFixed(1) + "," + fin[1].toFixed(1);
-    return '<g class="teleport" aria-hidden="true"><path d="' + d + '" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" opacity="0.85"/>' +
-      '<path d="' + d + '" fill="none" stroke="' + couleur + '" stroke-width="2.6" stroke-dasharray="5 4" stroke-linecap="round"/>' +
+    var s0 = abscisse(de), s1 = abscisse(vers), ECART_F = LARGEUR_ROUTE / 2 + 9;
+    function decale(s, d, cote) { var p = pointRoute(s); return [p[0] + Math.sin(p[2]) * d * cote, p[1] - Math.cos(p[2]) * d * cote]; }
+    function trace(cote) {
+      var pts = [decale(s0, LARGEUR_ROUTE / 2 - 3, cote)];
+      for (var s = s0 - 8; s > s1 + 8; s -= 4) pts.push(decale(s, ECART_F, cote));
+      pts.push(decale(s1 + 4, ECART_F - 3, cote), decale(s1, LARGEUR_ROUTE / 2 + 1, cote));
+      return pts;
+    }
+    var cotes = [1, -1].map(function (k) { var t = trace(k), score = 0; t.forEach(function (q) { score += Math.abs(q[0] - MONDE[0] / 2) - (q[0] < 4 || q[0] > MONDE[0] - 4 || q[1] < 4 ? 400 : 0); }); return { t: t, score: score }; });
+    var pts = cotes[0].score >= cotes[1].score ? cotes[0].t : cotes[1].t;
+    var d = pts.map(function (q, i) { return (i ? "L" : "M") + q[0].toFixed(1) + "," + q[1].toFixed(1); }).join(" ");
+    var fin = pts[pts.length - 1], av = pts[pts.length - 3], ang = Math.atan2(fin[1] - av[1], fin[0] - av[0]);
+    return '<g class="teleport" aria-hidden="true"><path d="' + d + '" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>' +
+      '<path d="' + d + '" fill="none" stroke="' + couleur + '" stroke-width="2.6" stroke-dasharray="5 4" stroke-linecap="round" stroke-linejoin="round"/>' +
       '<path d="M0,0 L-8,-4.5 L-8,4.5 Z" fill="' + couleur + '" stroke="#fff" stroke-width="1.2" stroke-linejoin="round" transform="translate(' + fin[0].toFixed(1) + " " + fin[1].toFixed(1) + ") rotate(" + (ang * 180 / Math.PI).toFixed(1) + ')"/></g>';
   }
   // `bilan` : toujours zoomé sur le pion, sans tenir compte de la caméra de l'accueil.
@@ -1465,6 +1533,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     perso.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); perso.onclick(); } };
     v.appendChild(perso);
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
+    if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
     if (C.plateau) v.appendChild(boutonJouer());
     var bf = blocFarce(); if (bf) v.appendChild(bf);
     if (C.plateau) v.appendChild(blocPlateau());
@@ -1822,17 +1891,18 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   function vueCollections() {
     var v = el('<div class="vue"></div>');
     var comptes = { objets: [Object.keys(P.objets).length, C.objets.length], frise: [Object.keys(P.evenements).length, C.evenements.length], livres: [Object.keys(P.livres).length, C.livres.length],
-      bestiaire: [Object.keys(P.bestiaire || {}).length, C.ennemis.length] };
+      bestiaire: [Object.keys(P.bestiaire || {}).length, C.ennemis.length],
+      atomes: [C.atomes ? C.atomes.elements.filter(function (e) { return M.estCapture(P, e.z); }).length : 0, C.atomes ? C.atomes.elements.length : 0] };
     var cpt = comptes[collection];
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">Histoire des sciences</div><h1>Collections</h1></div><div class="num" style="font-size:20px;font-weight:700">' + cpt[0] + " / " + cpt[1] + "</div></div>"));
     var seg = el('<div class="segments" role="group" aria-label="Collection"></div>');
-    [["frise", "Frise"], ["livres", "Bibliothèque"], ["objets", "Objets"]].concat(C.ennemis.length ? [["bestiaire", "Bestiaire"]] : []).forEach(function (c) {
+    [["frise", "Frise"], ["livres", "Livres"], ["objets", "Objets"]].concat(C.ennemis.length ? [["bestiaire", "Bestiaire"]] : []).concat(C.atomes ? [["atomes", "Atomes"]] : []).forEach(function (c) {
       var bt = el('<button type="button" aria-pressed="' + (collection === c[0]) + '">' + c[1] + "</button>");
       bt.onclick = function () { collection = c[0]; rendre(); };
       seg.appendChild(bt);
     });
     v.appendChild(seg);
-    v.appendChild(collection === "frise" ? blocFrise() : collection === "livres" ? blocBibliotheque() : collection === "bestiaire" ? blocBestiaire() : blocCabinet());
+    v.appendChild(collection === "frise" ? blocFrise() : collection === "livres" ? blocBibliotheque() : collection === "bestiaire" ? blocBestiaire() : collection === "atomes" ? blocTableau() : blocCabinet());
     return v;
   }
   function blocCabinet() {
@@ -2148,6 +2218,173 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     return wrap;
   }
 
+
+  // --- Jeu de Mendeleïev (v9) ----------------------------------------------------
+  // Atomes sauvages des cases Mendeleïev : un combat en trois questions, deux bonnes réponses pour capturer.
+  // Le tableau périodique, dans Collections, sert de Pokédex.
+  function couleurFamille(e) { return C.atomes.familles[e.famille].couleur; }
+  function tuileAtome(e, cache, taille, classe) {
+    var orb = '<svg class="orbites" viewBox="-50 -50 100 100" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="2.2"><ellipse rx="46" ry="17"/><ellipse rx="46" ry="17" transform="rotate(60)"/><ellipse rx="46" ry="17" transform="rotate(-60)"/></g>' +
+      '<circle cx="46" cy="0" r="4.5" fill="#fff"/><circle cx="-23" cy="-39.8" r="4.5" fill="#fff"/><circle cx="-23" cy="39.8" r="4.5" fill="#fff"/></svg>';
+    return '<div class="tuile-atome' + (cache ? " cache" : "") + (classe ? " " + classe : "") + '" style="width:' + taille + "px" + (cache ? "" : ";--c:" + couleurFamille(e)) + '" role="img" aria-label="' +
+      esc(cache ? "Atome inconnu" : tx(e.nom) + ", symbole " + e.symbole) + '">' + orb + '<span class="z">' + (cache ? "?" : e.z) + '</span><b class="sym">' + (cache ? "?" : esc(e.symbole)) + "</b>" +
+      (taille >= 90 ? '<span class="nm">' + esc(tx(e.nom)) + '</span><span class="ma">' + (cache ? "???" : esc(M.texteMasse(e))) + "</span>" : "") + "</div>";
+  }
+  function badgeRarete(e) { return '<span class="rarete ' + e.rarete + '">' + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</span>"; }
+  function nbCaptures() { return C.atomes.elements.filter(function (e) { return M.estCapture(P, e.z); }).length; }
+
+  // Bloc de l'accueil : l'atome qui attend son combat.
+  function blocSauvage() {
+    var s = M.atomeSauvage(C, P), e = s.element;
+    var b = el('<div class="bloc sauvage">' + tuileAtome(e, true, 76) + '<div style="flex:1;min-width:0"><div class="eyebrow">Case ' + s.case + " · atome sauvage</div><h2>" + esc(tx(e.nom)) + "</h2>" + badgeRarete(e) +
+      '<p class="meta">' + (s.attente > 1 ? (s.attente - 1) + " autre" + (s.attente > 2 ? "s attendent" : " attend") + " derrière lui." : "Trois questions, deux bonnes réponses pour le capturer.") + "</p>" +
+      '<button type="button" class="btn">Combattre</button></div></div>');
+    b.querySelector(".btn").onclick = lancerCombat;
+    return b;
+  }
+
+  var combat = null;
+  function lancerCombat() {
+    var s = M.atomeSauvage(C, P); if (!s) return;
+    var cb = M.tirerCombat(C, P);
+    combat = { s: s, e: s.element, qs: cb.questions, phase: "apparition", i: 0, res: [], repondu: false, fin: null, etape: 0, replique: M.replique(C, P, ["atome_apparait"]) };
+    sauver(); rendreCombat();
+  }
+  function fermerCombat() {
+    var fini = combat && combat.fin;
+    combat = null; var z = document.querySelector(".quiz.atome"); if (z) z.remove();
+    if (fini) window.scrollTo(0, 0);
+    rendre();
+  }
+  function rendreCombat() {
+    var ancien = document.querySelector(".quiz.atome"); if (ancien) ancien.remove();
+    if (!combat) return;
+    var e = combat.e;
+    var z = el('<div class="quiz atome" role="dialog" aria-modal="true" aria-label="Combat contre un atome sauvage"><div class="in"></div></div>'), inn = z.querySelector(".in");
+    document.getElementById("couche").appendChild(z);
+    if (combat.phase === "apparition") {
+      var sc = el('<div class="apparition"><div class="herbe">' + tuileAtome(e, true, 150) + '</div><div class="eyebrow">Case ' + combat.s.case + ' · Mendeleïev</div><h2>Un atome sauvage apparaît !</h2><p style="margin:0">C\'est <b>' + esc(tx(e.nom)) + "</b>. " + badgeRarete(e) + '</p><p class="meta" style="margin:0">Symbole, masse, lieu : trois questions. Deux bonnes réponses, et il rejoint ton tableau périodique.</p><div class="arbitre" style="width:100%"></div></div>');
+      var m = comite(combat.replique, true); if (m) sc.querySelector(".arbitre").appendChild(m);
+      inn.appendChild(sc);
+      var go = el('<button type="button" class="btn large">Combattre</button>'); go.onclick = function () { combat.phase = "q"; rendreCombat(); };
+      var plus = el('<button type="button" class="btn sec large">Plus tard</button>'); plus.onclick = fermerCombat;
+      inn.appendChild(go); inn.appendChild(plus); go.focus();
+      return;
+    }
+    if (combat.phase === "fin") { inn.appendChild(bilanCombat()); var b0 = z.querySelector(".btn"); if (b0) b0.focus({ preventScroll: true }); return; }
+    var q = combat.qs[combat.i], seuil = C.atomes.regles.seuil, bonnes = combat.res.filter(Boolean).length;
+    var haut = el('<div class="haut">' + tuileAtome(e, true, 44) + '<div class="titre"><span class="eyebrow" style="color:#1565C0">Question ' + (combat.i + 1) + " sur " + combat.qs.length + "</span><b>" + esc(tx(e.nom)) + ' sauvage</b></div><button type="button" class="fermer" aria-label="Laisser le combat pour plus tard">×</button></div>');
+    // Partir ne compte pas : l'atome attend toujours.
+    haut.querySelector(".fermer").onclick = fermerCombat;
+    inn.appendChild(haut);
+    var pts = el('<div class="points"></div>');
+    combat.qs.forEach(function (_, i) { var r = combat.res[i]; pts.appendChild(el('<i class="' + (r === true ? "ok" : r === false ? "ko" : (i === combat.i ? "cur" : "")) + '"></i>')); });
+    inn.appendChild(pts);
+    var corps = el('<div class="combat-q" style="display:flex;flex-direction:column;gap:14px"><p class="enonce">' + esc(q.enonce) + '</p><div class="choix grille' + (q.type === "ou" ? " long" : "") + '"></div><div class="retour-z"></div></div>');
+    var zr = corps.querySelector(".choix"), retour = corps.querySelector(".retour-z");
+    q.choix.forEach(function (c, ci) {
+      var b = el('<button type="button"></button>'); b.textContent = c;
+      b.onclick = function () {
+        if (combat.repondu) return;
+        var ok = ci === q.reponse; combat.repondu = true; combat.res.push(ok);
+        zr.querySelectorAll("button").forEach(function (x, i) { x.disabled = true; if (i === q.reponse) x.classList.add("bon"); });
+        if (!ok) b.classList.add("faux");
+        var n = combat.res.filter(Boolean).length, reste = combat.qs.length - combat.res.length;
+        var etat = n >= seuil ? "Il est déjà à ta merci." : n + reste < seuil ? "Il prépare sa fuite." : "Encore " + (seuil - n) + " bonne" + (seuil - n > 1 ? "s" : "") + " réponse" + (seuil - n > 1 ? "s" : "") + " pour le capturer.";
+        var expl = q.type === "symbole" ? "Son symbole : " + e.symbole + "." : q.type === "masse" ? "Masse atomique : " + M.texteMasse(e) + (e.stable ? " (en unités de masse atomique)." : ", celle de son isotope le plus stable : il n'en a aucun qui dure.") : "On le croise surtout dans " + e.ou.map(function (o) { return tx(o); }).join(", ") + ".";
+        retour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + "</b>" + esc(expl) + '<p class="meta" style="margin:6px 0 0">' + esc(etat) + "</p></div>"));
+        var dernier = combat.i === combat.qs.length - 1;
+        var s = el('<button type="button" class="btn large">' + (dernier ? "Lancer la capture" : "Question suivante") + "</button>");
+        s.onclick = function () {
+          if (!dernier) { combat.i++; combat.repondu = false; rendreCombat(); return; }
+          combat.fin = M.terminerCombat(C, P, combat.res.filter(Boolean).length, maintenant());
+          combat.fin.replique = M.replique(C, P, [combat.fin.capture ? "atome_capture" : "atome_fuite"]);
+          combat.phase = "fin"; combat.etape = 0; sauver(); rendreCombat();
+        };
+        retour.appendChild(el('<div style="height:12px"></div>')); retour.appendChild(s); s.focus();
+      };
+      zr.appendChild(b);
+    });
+    inn.appendChild(corps);
+    zr.querySelector("button").focus();
+  }
+  function ficheAtomeHtml(e) {
+    return '<div class="fiche-atome"><div class="bareme"><span>Numéro atomique</span><span class="num">' + e.z + '</span><span>Masse atomique</span><span class="num">' + esc(M.texteMasse(e)) + "</span><span>Famille</span><span>" + esc(tx(C.atomes.familles[e.famille].nom)) +
+      "</span><span>Rareté</span><span>" + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</span></div><b>Où on le croise</b><ul>" + e.ou.map(function (o) { return "<li>" + esc(tx(o)) + "</li>"; }).join("") + "</ul><p style=\"margin:0\">" + esc(tx(e.anecdote)) + "</p><cite>Source : " + esc(e.source) + "</cite></div>";
+  }
+  function bilanCombat() {
+    var r = combat.fin, e = r.element, rec = r.recompenses || {};
+    var recs = combat.recs || (combat.recs = recompensesBilan({ nouveauxSucces: rec.succes, masque: rec.masque, nouveauxObjets: rec.objets, nouveauxLivres: rec.livres,
+      nouveauxSavants: rec.savants, nouveauxAccessoires: rec.accessoires, nouveauxEvenements: rec.evenements }));
+    var etapes = ["verdict"]; recs.forEach(function (_, i) { etapes.push("recompense:" + i); });
+    var i = combat.etape = Math.min(combat.etape, etapes.length - 1), nom = etapes[i];
+    var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
+    if (etapes.length > 1) wrap.appendChild(el('<div class="etapes-bilan"><span class="pts">' + etapes.map(function (_, j) { return '<i class="' + (j <= i ? "vu" : "") + '"></i>'; }).join("") + "</span></div>"));
+    var z = el('<div class="etape"></div>');
+    if (nom === "verdict") {
+      z.appendChild(el('<div class="verdict-atome ' + (r.capture ? "capture" : "fuite") + '">' + tuileAtome(e, false, 150, r.capture ? "pop" : "fuite") + '<div class="grand">' + (r.capture ? "Capturé !" : "Il s'est enfui") + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" +
+        '<p class="meta" style="margin:0">' + (r.capture ? (r.premiere ? "Nouveau : " : "Déjà dans ton tableau : ") + r.captures + " atome" + (r.captures > 1 ? "s" : "") + " sur " + C.atomes.elements.length + "." : "Il reviendra sur une case Mendeleïev. Il a désormais une fiche à ton nom.") + "</p>" + ficheAtomeHtml(e) + "</div>"));
+      var m = comite(r.replique); if (m) z.appendChild(m);
+    } else {
+      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
+    }
+    wrap.appendChild(z);
+    var suite = etapes[i + 1], encore = !suite && M.atomeSauvage(C, P);
+    var bt = el('<button type="button" class="btn large">' + (suite ? "Récompense" : encore ? "Atome suivant !" : "Continuer") + "</button>");
+    bt.onclick = function () {
+      if (suite) { combat.etape = i + 1; rendreCombat(); return; }
+      if (encore) { combat = null; lancerCombat(); } else fermerCombat();
+    };
+    wrap.appendChild(bt);
+    if (!suite) {
+      var vt = el('<button type="button" class="btn sec large">Voir le tableau périodique</button>');
+      vt.onclick = function () { combat = null; var q = document.querySelector(".quiz.atome"); if (q) q.remove(); vue = "collections"; collection = "atomes"; rendre(); window.scrollTo(0, 0); };
+      wrap.appendChild(vt);
+    }
+    return wrap;
+  }
+
+  // Le tableau périodique : 18 colonnes, lanthanides et actinides sous le tableau.
+  function blocTableau() {
+    var A = C.atomes, n = nbCaptures(), attente = (P.sauvages || []).map(function (x) { return x.z; });
+    var cases = C.plateau.cases.filter(function (k) { return k.special && k.special.type === "mendeleiev"; }).map(function (k) { return k.n; });
+    var b = el('<div class="bloc"><div class="compteur-per"><b>Tableau périodique</b><span class="num">' + n + " / " + A.elements.length + '</span><span class="barre"><i style="width:' + (100 * n / A.elements.length).toFixed(1) + '%"></i></span></div>' +
+      '<p class="note">Passe sur une case Mendeleïev (' + cases.join(", ") + ") pour faire apparaître un atome sauvage. Trois questions, deux bonnes réponses, et il prend sa place ici. Les éléments légendaires sont les plus rares.</p>" +
+      '<div class="tableau-per" role="grid" aria-label="Tableau périodique"></div><div class="familles-per"></div></div>');
+    var g = b.querySelector(".tableau-per");
+    A.elements.forEach(function (e) {
+      var pris = M.estCapture(P, e.z), f = P.atomes && P.atomes[e.z], vu = !pris && f && f.rencontres;
+      var col = e.groupe, lig = e.periode;
+      if (!col) { col = 3 + (e.z >= 89 ? e.z - 89 : e.z - 57); lig = e.z >= 89 ? 10 : 9; }
+      var c = el('<button type="button" class="el' + (pris ? " pris" : vu ? " vu" : "") + (attente.indexOf(e.z) >= 0 ? " attend" : "") + '" style="grid-column:' + col + ";grid-row:" + lig + ";--c:" + couleurFamille(e) + '" aria-label="' +
+        esc(pris ? tx(e.nom) + ", capturé" : vu ? tx(e.nom) + ", enfui" : "Élément " + e.z + ", inconnu") + '">' + (pris || vu ? "<b>" + esc(e.symbole) + "</b>" : e.z) + "</button>");
+      c.onclick = function () { ouvrirAtome(e); };
+      g.appendChild(c);
+    });
+    g.appendChild(el('<span class="serie" style="grid-column:3;grid-row:6" title="Lanthanides, 57 à 71">*</span>'));
+    g.appendChild(el('<span class="serie" style="grid-column:3;grid-row:7" title="Actinides, 89 à 103">**</span>'));
+    g.appendChild(el('<span class="espace" style="grid-row:8"></span>'));
+    g.appendChild(el('<span class="serie nu" style="grid-column:2;grid-row:9">*</span>'));
+    g.appendChild(el('<span class="serie nu" style="grid-column:2;grid-row:10">**</span>'));
+    var fam = b.querySelector(".familles-per");
+    Object.keys(A.familles).forEach(function (k) {
+      var tous = A.elements.filter(function (e) { return e.famille === k; }), pris = tous.filter(function (e) { return M.estCapture(P, e.z); }).length;
+      fam.appendChild(el('<span style="--c:' + A.familles[k].couleur + '"><i></i>' + esc(tx(A.familles[k].nom)) + " " + pris + "/" + tous.length + "</span>"));
+    });
+    return b;
+  }
+  function ouvrirAtome(e) {
+    var f = P.atomes && P.atomes[e.z], pris = M.estCapture(P, e.z);
+    if (pris) {
+      feuilleSimple('<div class="vitrine" style="padding:16px">' + tuileAtome(e, false, 140) + '</div><div class="eyebrow">' + esc(tx(C.atomes.familles[e.famille].nom)) + " · capturé le " + esc(dateCourte(f.capture)) + "</div><h2>" + esc(tx(e.nom)) + "</h2>" + ficheAtomeHtml(e) +
+        '<p class="meta">Rencontré ' + f.rencontres + " fois, enfui " + f.fuites + " fois.</p>", tx(e.nom));
+    } else if (f && f.rencontres) {
+      feuilleSimple('<div class="vitrine" style="padding:16px">' + tuileAtome(e, true, 120) + '</div><div class="eyebrow">Élément ' + e.z + " · " + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</div><h2>" + esc(tx(e.nom)) + '</h2><p>Rencontré ' + f.rencontres + " fois, enfui " + f.fuites + " fois. Sa fiche reste cachée tant qu'il n'est pas capturé.</p>", tx(e.nom));
+    } else {
+      feuilleSimple('<div class="vitrine" style="padding:16px">' + tuileAtome(e, true, 120) + '</div><div class="eyebrow">Élément ' + e.z + "</div><h2>Atome inconnu</h2><p class=\"meta\">Rareté : " + esc(tx(C.atomes.raretes[e.rarete].nom).toLowerCase()) + ". Croise une case Mendeleïev pour le rencontrer.</p>", "Atome inconnu");
+    }
+  }
+
   // Bestiaire : les ennemis rencontrés, avec l'historique des duels. Les autres restent des silhouettes.
   function blocBestiaire() {
     var b = el('<div class="bloc"><p class="note">Les ennemis du plateau. Chacun garde une case jusqu\'à ce que tu le battes, et revient au tour suivant.</p><div class="bestiaire"></div></div>');
@@ -2424,6 +2661,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     revision: function (e) { return "Révision forcée, case " + e.case + " : l'IA veut revoir « " + tx(C.parId[e.comp].nom) + " ». Ton pion attend."; },
     revision_vide: function () { return "Révision forcée… mais tu ne maîtrises encore rien. L'IA soupire et te laisse passer."; },
     bloque_revision: function (e) { return "Révision forcée en attente (« " + tx(C.parId[e.comp].nom) + " ») : ton pion ne bouge pas."; },
+    atome: function (e) { return "Case Mendeleïev " + e.case + " : un atome sauvage apparaît (" + tx(C.atomes.elements[e.z - 1].nom) + ")."; },
+    atome_plein: function (e) { return "Case Mendeleïev " + e.case + " : trois atomes t'attendent déjà. Celui-ci repart, vexé."; },
     duel_attente: function (e) { return tx(C.ennemiParId[e.ennemi].nom) + " te bloque toujours. Le duel reprend, pour " + e.reste + " case" + (e.reste > 1 ? "s" : "") + "."; },
   };
   function blocDeplacement(dep, rep, avecPlateau) {
@@ -2552,9 +2791,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   }
 
   var FICHIERS = ["regles.json", "skills.json", "questions.json", "succes.json", "commentaires.json", "objets.json", "avatar.json",
-    "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json"];
+    "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json"];
   Promise.all(FICHIERS.map(charger)).then(function (d) {
-    C = M.indexerContenu(d[0], d[1], d[2], d[3], { commentaires: d[4], objets: d[5], avatar: d[6], ia: d[7], plateau: d[8], frise: d[9], bibliotheque: d[10], ennemis: d[11] });
+    C = M.indexerContenu(d[0], d[1], d[2], d[3], { commentaires: d[4], objets: d[5], avatar: d[6], ia: d[7], plateau: d[8], frise: d[9], bibliotheque: d[10], ennemis: d[11], atomes: d[12] });
     P = lireLocal() || M.nouvellePartie(Date.now());
     visite();
     try { localStorage.setItem(CLE_LOCALE, JSON.stringify(P)); } catch (e) {}

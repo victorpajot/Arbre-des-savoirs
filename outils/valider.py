@@ -12,7 +12,7 @@ DATA = Path(__file__).resolve().parent.parent / "data"
 FICHIERS = [("regles.json", "regles"), ("skills.json", "skills"), ("questions.json", "questions"),
             ("succes.json", "succes"), ("commentaires.json", "commentaires"), ("objets.json", "objets"),
             ("avatar.json", "avatar"), ("ia.json", "ia"), ("plateau.json", "plateau"), ("frise.json", "frise"),
-            ("bibliotheque.json", "bibliotheque"), ("ennemis.json", "ennemis")]
+            ("bibliotheque.json", "bibliotheque"), ("ennemis.json", "ennemis"), ("atomes.json", "atomes")]
 
 
 def charger(nom):
@@ -95,7 +95,7 @@ def main():
             erreurs.append(f"{ou} : succès inconnu {cond.get('id')}")
         if cond["type"] in ("case_atteinte", "case_visitee") and not 1 <= cond.get("n", 0) <= nb_cases:
             erreurs.append(f"{ou} : case hors du plateau {cond.get('n')}")
-        besoin = {"competence_maitrisee": "id", "succes": "id", "ennemi_vaincu": "id", "branche_complete": "stat", "quiz_parfaits_stat": "stat",
+        besoin = {"competence_maitrisee": "id", "succes": "id", "ennemi_vaincu": "id", "famille_capturee": "famille", "branche_complete": "stat", "quiz_parfaits_stat": "stat",
                   "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None}.get(cond["type"], "n")
         if besoin and besoin not in cond:
             erreurs.append(f"{ou} : la condition {cond['type']} demande « {besoin} »")
@@ -154,6 +154,26 @@ def main():
     for s in contenu["succes"]["succes"]:
         if s["condition"]["type"] == "ennemi_vaincu" and s["condition"]["id"] not in ids_en:
             erreurs.append(f"succes.json {s['id']} : ennemi inconnu")
+    # v9 : atomes du jeu de Mendeleïev.
+    at = contenu["atomes"]
+    for i, e in enumerate(at["elements"], 1):
+        if e["z"] != i:
+            erreurs.append(f"atomes.json : {e['symbole']} numéroté {e['z']}, {i} attendu")
+        if e["famille"] not in at["familles"]:
+            erreurs.append(f"atomes.json {e['symbole']} : famille inconnue {e['famille']}")
+        if e["stable"] != (not float(e["masse"]).is_integer()):
+            erreurs.append(f"atomes.json {e['symbole']} : masse entière réservée aux éléments sans isotope stable")
+    if len({e["symbole"] for e in at["elements"]}) != len(at["elements"]):
+        erreurs.append("atomes.json : deux éléments avec le même symbole")
+    lieux = [o["fr"] for e in at["elements"] for o in e["ou"]]
+    if len(set(lieux)) != len(lieux):
+        erreurs.append("atomes.json : un même lieu sert à deux éléments, la question « où » serait ambiguë")
+    for s in contenu["succes"]["succes"]:
+        cond = s["condition"]
+        if cond["type"] == "famille_capturee" and cond["famille"] not in at["familles"]:
+            erreurs.append(f"succes.json {s['id']} : famille inconnue")
+    if not any(c.get("special", {}).get("type") == "mendeleiev" for c in pl["cases"]):
+        erreurs.append("plateau.json : aucune case Mendeleïev")
     for i, c in enumerate(pl["cases"], 1):
         if c["n"] != i:
             erreurs.append(f"plateau.json : case {c['id']} numérotée {c['n']}, {i} attendu")
