@@ -339,14 +339,15 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .illus .jaune { fill: #F2B632; }
 .retour .illus { margin-top: 8px; }
 /* v5 : plateau routier */
-.plateau .route { fill: none; stroke: var(--line); stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; }
-.plateau .route.faite { stroke: color-mix(in srgb, var(--accent) 45%, var(--line)); }
-.plateau .route-axe { fill: none; stroke: var(--surface); stroke-width: 1.4; stroke-dasharray: 3 5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9; }
-.plateau .fleche { fill: var(--muted); }
-.plateau .fleche.faite { fill: var(--accent); }
 .plateau .liseret { animation: liseret 2.2s ease-in-out infinite; }
 @keyframes liseret { 50% { stroke-opacity: 0.25; } }
-.plateau .avenir { stroke-dasharray: 4 3; }
+.plateau .avenir { animation: avenir 1.6s ease-in-out infinite; }
+@keyframes avenir { 50% { stroke-opacity: 0.15; } }
+.plateau .scintille { animation: scintille 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes scintille { 50% { opacity: 0.25; transform: scale(0.6); } }
+.grille-cadre .ciel-ia { position: absolute; left: 8px; bottom: 10px; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgb(255 255 255 / 0.85); color: #1E1A2B; pointer-events: none; }
+.revision-f { display: flex; flex-direction: column; gap: 8px; }
+@media (prefers-reduced-motion: reduce) { .plateau .avenir, .plateau .scintille { animation: none; } }
 @media (prefers-reduced-motion: reduce) { .plateau .liseret { animation: none; } }
 /* v5 : bouton Jouer */
 .jouer { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; width: 100%; padding: 12px 14px; border: 0; border-radius: 16px;
@@ -816,41 +817,190 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   }
 
   // --- Plateau ----------------------------------------------------------------
-  // Spirale de 8 × 8 cases, du coin haut gauche vers le centre, dans le sens des aiguilles d'une montre.
-  var SPIRALE = (function () {
-    var out = [], h = 0, b = 7, g = 0, d = 7;
-    while (h <= b && g <= d) {
-      for (var x = g; x <= d; x++) out.push([x, h]); h++;
-      for (var y = h; y <= b; y++) out.push([d, y]); d--;
-      for (x = d; x >= g; x--) out.push([x, b]); b--;
-      for (y = b; y >= h; y--) out.push([g, y]); g++;
+  // v8 : une route sinueuse façon jeu de l'oie illustré. Six allers-retours ondulés reliés par des virages,
+  // des cases multicolores numérotées, et un décor qui change avec l'humeur de l'IA.
+  var MONDE = [360, 640], RANGEES = 6, Y0 = 46, ECART = 100, X_G = 70, X_D = 290, VAGUE = 8, LARGEUR_ROUTE = 30;
+  var ROUTE = (function () {
+    var pts = [], r = ECART / 2, i, k;
+    for (i = 0; i < RANGEES; i++) {
+      var y = Y0 + i * ECART, versD = i % 2 === 0;
+      for (k = 0; k <= 60; k++) {
+        var u = k / 60, x = versD ? X_G + u * (X_D - X_G) : X_D - u * (X_D - X_G);
+        pts.push([x, y + VAGUE * Math.sin(u * Math.PI * 3)]);
+      }
+      if (i < RANGEES - 1) for (k = 1; k < 32; k++) {
+        var a = -Math.PI / 2 + k / 32 * Math.PI;
+        pts.push([(versD ? X_D : X_G) + (versD ? 1 : -1) * r * Math.cos(a), y + r + r * Math.sin(a)]);
+      }
     }
+    var L = [0];
+    for (i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    return { pts: pts, L: L, total: L[L.length - 1] };
+  })();
+  // Point de la route à l'abscisse curviligne s : [x, y, angle].
+  function pointRoute(s) {
+    var L = ROUTE.L, p = ROUTE.pts, lo = 0, hi = L.length - 1;
+    s = Math.max(0, Math.min(ROUTE.total, s));
+    while (hi - lo > 1) { var m = (lo + hi) >> 1; if (L[m] <= s) lo = m; else hi = m; }
+    var k = (s - L[lo]) / ((L[hi] - L[lo]) || 1), a = p[lo], b = p[hi];
+    return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, Math.atan2(b[1] - a[1], b[0] - a[0])];
+  }
+  function pasCase() { return (ROUTE.total - 48) / C.plateau.cases.length; }
+  function abscisse(n) { return n > C.plateau.cases.length ? ROUTE.total - 20 : 4 + (n - 0.5) * pasCase(); }
+  function centreCase(n) { var p = pointRoute(abscisse(n)); return [p[0], p[1]]; }
+  function morceauRoute(s0, s1) {
+    var out = [], n = Math.max(2, Math.ceil((s1 - s0) / 3));
+    for (var i = 0; i <= n; i++) { var p = pointRoute(s0 + (s1 - s0) * i / n); out.push(p[0].toFixed(1) + "," + p[1].toFixed(1)); }
+    return out.join(" ");
+  }
+  var TEINTE_EPOQUE = { antiquite: "#C9A227", "moyen-age": "#A04B57", renaissance: "#2F8C78", classique: "#4A6CC2", xixe: "#9A6534", xxe: "#7A4FB8" };
+  var COULEURS_CASES = ["#FF9FC6", "#FFD447", "#FF9F45", "#6EC3F4", "#7FD68C", "#BFA2F5"];
+  var COULEUR_SPECIAL = { eureka: "#E0A800", avance: "#2E9D5B", recul: "#D94141", teleport: "#7A3FD1", retour_epoque: "#7A3FD1", revision: "#14899E", prison: "#5D6470", quarantaine: "#D9721F" };
+  var BORD_SPECIAL = COULEUR_SPECIAL;
+  // Pictogramme blanc d'une règle spéciale, centré sur (0, 0), environ 10 × 10.
+  var PICTO_SPECIAL = {
+    eureka: '<path d="M0,-5 L1.5,-1.6 L5,-1.5 L2.3,0.8 L3.1,4.6 L0,2.6 L-3.1,4.6 L-2.3,0.8 L-5,-1.5 L-1.5,-1.6 Z" fill="#fff"/>',
+    avance: '<path d="M-4,-4 L0,0 L-4,4 M0,-4 L4,0 L0,4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    recul: '<path d="M4,-4 L0,0 L4,4 M0,-4 L-4,0 L0,4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    teleport: '<path d="M0.3,0 A1.2,1.2 0 1 1 -1.6,-0.8 A2.6,2.6 0 1 1 2.6,1.6 A4,4 0 1 1 -4.2,-1.2" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>',
+    revision: '<path d="M-4.5,-3.5 Q-2,-4.6 0,-3 Q2,-4.6 4.5,-3.5 V3.6 Q2,2.5 0,4 Q-2,2.5 -4.5,3.6 Z M0,-3 V4" fill="none" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/>',
+    prison: '<path d="M-4,-4.5 H4 M-4,4.5 H4 M-2.4,-4.5 V4.5 M0,-4.5 V4.5 M2.4,-4.5 V4.5" stroke="#fff" stroke-width="1.4"/>',
+    quarantaine: '<path d="M0,-4.5 V4.5 M-4.5,0 H4.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
+  };
+  PICTO_SPECIAL.retour_epoque = PICTO_SPECIAL.teleport;
+
+  // Décor : un ciel par humeur de l'IA. Les motifs se logent entre les rangées et dans les virages.
+  var DECORS = {
+    neutre: { nom: "nuit étoilée", haut: "#22305E", bas: "#0D1330", fond: "scintille", motifs: ["planete", "asteroide", "comete", "fusee", "planeteAnneau", "ovni", "asteroide", "etoile"] },
+    impressionnee: { nom: "grand ciel bleu", haut: "#7CC8F5", bas: "#FFF1C9", fond: "oiseaux", motifs: ["nuage", "montgolfiere", "nuage", "arcEnCiel", "cerfVolant", "nuage", "soleil"] },
+    moqueuse: { nom: "fête foraine", haut: "#FFF4DE", bas: "#FFDDEB", fond: "confettis", motifs: ["etoile", "planeteBonbon", "fusee", "comete", "ovni", "etoile", "planeteAnneau"] },
+    decue: { nom: "orage", haut: "#6E7789", bas: "#2B303D", fond: "pluie", motifs: ["nuageNoir", "eclair", "asteroide", "nuageNoir", "goutte", "eclair"] },
+  };
+  DECORS.impatiente = DECORS.neutre;
+  var NOM_HUMEUR = { neutre: "neutre", impressionnee: "impressionnée", moqueuse: "moqueuse", decue: "déçue", impatiente: "impatiente" };
+  function aleaDecor(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+  var MOTIFS = {
+    etoile: function (x, y, s, i) {
+      var c = ["#FFC93C", "#FF7EB6", "#7FD68C", "#6EC3F4"][i % 4], p = [];
+      for (var k = 0; k < 10; k++) { var r = k % 2 ? s * 0.42 : s, a = -Math.PI / 2 + k * Math.PI / 5; p.push((x + r * Math.cos(a)).toFixed(1) + "," + (y + r * Math.sin(a)).toFixed(1)); }
+      return '<polygon points="' + p.join(" ") + '" fill="' + c + '" stroke="#2B2B33" stroke-width="1.2" stroke-linejoin="round"/>';
+    },
+    planete: function (x, y, s, i) {
+      var c = [["#5AA9E6", "#2F6FB3"], ["#E8875A", "#B4502E"], ["#7FD68C", "#3E8E4E"]][i % 3];
+      return '<circle cx="' + x + '" cy="' + y + '" r="' + s + '" fill="' + c[0] + '"/><path d="M' + (x - s) + "," + y + " A" + s + "," + s + " 0 0 0 " + (x + s) + "," + y + " A" + s + "," + (s * 0.55) + " 0 0 1 " + (x - s) + "," + y + 'Z" fill="' + c[1] + '" opacity="0.55"/><circle cx="' + (x - s * 0.35) + '" cy="' + (y - s * 0.35) + '" r="' + (s * 0.22) + '" fill="#fff" opacity="0.35"/>';
+    },
+    planeteAnneau: function (x, y, s, i) {
+      var c = ["#F2B35C", "#C99AF0", "#F28B82"][i % 3];
+      return '<ellipse cx="' + x + '" cy="' + y + '" rx="' + (s * 1.7) + '" ry="' + (s * 0.45) + '" fill="none" stroke="#F7E3B5" stroke-width="2.4" transform="rotate(-18 ' + x + " " + y + ')"/>' +
+        '<circle cx="' + x + '" cy="' + y + '" r="' + s + '" fill="' + c + '"/><path d="M' + (x - s * 0.9) + "," + (y - s * 0.3) + " H" + (x + s * 0.9) + " M" + (x - s * 0.95) + "," + (y + s * 0.25) + " H" + (x + s * 0.95) + '" stroke="#fff" stroke-opacity="0.35" stroke-width="2"/>' +
+        '<path d="M' + (x - s * 1.62) + "," + (y + s * 0.05) + " A" + (s * 1.7) + "," + (s * 0.45) + " -18 0 0 " + (x + s * 1.62) + "," + (y - s * 0.05) + '" fill="none" stroke="#F7E3B5" stroke-width="2.4" transform="rotate(-18 ' + x + " " + y + ')"/>';
+    },
+    planeteBonbon: function (x, y, s) {
+      return '<circle cx="' + x + '" cy="' + y + '" r="' + s + '" fill="#FF9FC6" stroke="#2B2B33" stroke-width="1.2"/><path d="M' + (x - s * 0.8) + "," + (y - s * 0.5) + " Q" + x + "," + (y - s * 0.1) + " " + (x + s * 0.8) + "," + (y - s * 0.55) + " M" + (x - s * 0.95) + "," + (y + s * 0.2) + " Q" + x + "," + (y + s * 0.6) + " " + (x + s * 0.95) + "," + (y + s * 0.15) + '" fill="none" stroke="#FF7A1A" stroke-width="' + (s * 0.22) + '" stroke-linecap="round"/>';
+    },
+    asteroide: function (x, y, s, i) {
+      var p = [];
+      for (var k = 0; k < 9; k++) { var a = k / 9 * Math.PI * 2, r = s * (0.8 + 0.3 * aleaDecor(i * 9 + k)); p.push((x + r * Math.cos(a)).toFixed(1) + "," + (y + r * Math.sin(a)).toFixed(1)); }
+      return '<polygon points="' + p.join(" ") + '" fill="#8B8F99" stroke="#4A4E57" stroke-width="1.2" stroke-linejoin="round"/><circle cx="' + (x - s * 0.3) + '" cy="' + (y - s * 0.1) + '" r="' + (s * 0.22) + '" fill="#5D616B"/><circle cx="' + (x + s * 0.35) + '" cy="' + (y + s * 0.3) + '" r="' + (s * 0.14) + '" fill="#5D616B"/>';
+    },
+    comete: function (x, y, s) {
+      return '<path d="M' + (x - s * 2.6) + "," + (y + s * 1.5) + " L" + (x - s * 0.2) + "," + (y - s * 0.75) + " L" + (x + s * 0.7) + "," + (y + s * 0.4) + ' Z" fill="#FFB347" opacity="0.75"/><circle cx="' + x + '" cy="' + y + '" r="' + (s * 0.75) + '" fill="#FFD447" stroke="#E07B1A" stroke-width="1.4"/>';
+    },
+    fusee: function (x, y, s) {
+      return '<g transform="rotate(35 ' + x + " " + y + ')"><path d="M' + (x - s * 0.35) + "," + (y + s) + " L" + x + "," + (y + s * 1.7) + " L" + (x + s * 0.35) + "," + (y + s) + 'Z" fill="#FF7A1A"/>' +
+        '<path d="M' + (x - s * 0.5) + "," + (y + s * 0.5) + " L" + (x - s * 0.95) + "," + (y + s * 1.1) + " L" + (x - s * 0.45) + "," + (y + s) + "Z M" + (x + s * 0.5) + "," + (y + s * 0.5) + " L" + (x + s * 0.95) + "," + (y + s * 1.1) + " L" + (x + s * 0.45) + "," + (y + s) + 'Z" fill="#D94141"/>' +
+        '<path d="M' + x + "," + (y - s * 1.3) + " C" + (x + s * 0.7) + "," + (y - s * 0.6) + " " + (x + s * 0.55) + "," + (y + s * 0.6) + " " + (x + s * 0.45) + "," + (y + s) + " H" + (x - s * 0.45) + " C" + (x - s * 0.55) + "," + (y + s * 0.6) + " " + (x - s * 0.7) + "," + (y - s * 0.6) + " " + x + "," + (y - s * 1.3) + 'Z" fill="#F4F4F8" stroke="#2B2B33" stroke-width="1.2"/>' +
+        '<circle cx="' + x + '" cy="' + (y - s * 0.2) + '" r="' + (s * 0.28) + '" fill="#6EC3F4" stroke="#2B2B33" stroke-width="1.2"/></g>';
+    },
+    ovni: function (x, y, s) {
+      return '<ellipse cx="' + x + '" cy="' + (y - s * 0.25) + '" rx="' + (s * 0.55) + '" ry="' + (s * 0.5) + '" fill="#B8F0D0" stroke="#2B2B33" stroke-width="1.2"/><circle cx="' + (x - s * 0.15) + '" cy="' + (y - s * 0.35) + '" r="' + (s * 0.12) + '" fill="#2B2B33"/><circle cx="' + (x + s * 0.2) + '" cy="' + (y - s * 0.35) + '" r="' + (s * 0.12) + '" fill="#2B2B33"/>' +
+        '<ellipse cx="' + x + '" cy="' + (y + s * 0.15) + '" rx="' + (s * 1.3) + '" ry="' + (s * 0.38) + '" fill="#9AA0A8" stroke="#2B2B33" stroke-width="1.2"/><circle cx="' + (x - s * 0.7) + '" cy="' + (y + s * 0.18) + '" r="' + (s * 0.1) + '" fill="#FFD447"/><circle cx="' + x + '" cy="' + (y + s * 0.26) + '" r="' + (s * 0.1) + '" fill="#FFD447"/><circle cx="' + (x + s * 0.7) + '" cy="' + (y + s * 0.18) + '" r="' + (s * 0.1) + '" fill="#FFD447"/>';
+    },
+    nuage: function (x, y, s, i, sombre) {
+      var f = sombre ? "#9AA3B5" : "#FFFFFF", o = sombre ? 0.9 : 0.92;
+      return '<g fill="' + f + '" opacity="' + o + '"><circle cx="' + (x - s * 0.6) + '" cy="' + (y + s * 0.1) + '" r="' + (s * 0.5) + '"/><circle cx="' + x + '" cy="' + (y - s * 0.2) + '" r="' + (s * 0.7) + '"/><circle cx="' + (x + s * 0.65) + '" cy="' + (y + s * 0.1) + '" r="' + (s * 0.45) + '"/><rect x="' + (x - s * 1.1) + '" y="' + (y + s * 0.05) + '" width="' + (s * 2.2) + '" height="' + (s * 0.55) + '" rx="' + (s * 0.27) + '"/></g>';
+    },
+    nuageNoir: function (x, y, s, i) { return MOTIFS.nuage(x, y, s, i, true); },
+    soleil: function (x, y, s) {
+      var r = "";
+      for (var k = 0; k < 12; k++) { var a = k / 12 * Math.PI * 2; r += "M" + (x + s * 1.2 * Math.cos(a)).toFixed(1) + "," + (y + s * 1.2 * Math.sin(a)).toFixed(1) + " L" + (x + s * 1.55 * Math.cos(a)).toFixed(1) + "," + (y + s * 1.55 * Math.sin(a)).toFixed(1) + " "; }
+      return '<path d="' + r + '" stroke="#FFB020" stroke-width="2.4" stroke-linecap="round"/><circle cx="' + x + '" cy="' + y + '" r="' + s + '" fill="#FFD447" stroke="#FFB020" stroke-width="2"/>';
+    },
+    arcEnCiel: function (x, y, s) {
+      return ["#F25C54", "#FFB347", "#FFD447", "#7FD68C", "#6EC3F4", "#9B7BEA"].map(function (c, k) {
+        var r = s * 1.5 - k * 2.6;
+        return '<path d="M' + (x - r) + "," + (y + s * 0.6) + " A" + r + "," + r + " 0 0 1 " + (x + r) + "," + (y + s * 0.6) + '" fill="none" stroke="' + c + '" stroke-width="2.8"/>';
+      }).join("");
+    },
+    montgolfiere: function (x, y, s) {
+      return '<path d="M' + (x - s * 0.35) + "," + (y + s * 0.7) + " L" + (x - s * 0.2) + "," + (y + s * 1.1) + " M" + (x + s * 0.35) + "," + (y + s * 0.7) + " L" + (x + s * 0.2) + "," + (y + s * 1.1) + '" stroke="#5E3B1C" stroke-width="1"/>' +
+        '<rect x="' + (x - s * 0.22) + '" y="' + (y + s * 1.1) + '" width="' + (s * 0.44) + '" height="' + (s * 0.35) + '" rx="1.5" fill="#9A6534"/>' +
+        '<path d="M' + x + "," + (y - s) + " C" + (x + s * 1.1) + "," + (y - s) + " " + (x + s * 0.8) + "," + (y + s * 0.4) + " " + (x + s * 0.35) + "," + (y + s * 0.75) + " H" + (x - s * 0.35) + " C" + (x - s * 0.8) + "," + (y + s * 0.4) + " " + (x - s * 1.1) + "," + (y - s) + " " + x + "," + (y - s) + 'Z" fill="#F25C54" stroke="#2B2B33" stroke-width="1.2"/>' +
+        '<path d="M' + x + "," + (y - s) + " C" + (x + s * 0.35) + "," + (y - s * 0.6) + " " + (x + s * 0.3) + "," + (y + s * 0.3) + " " + x + "," + (y + s * 0.75) + " C" + (x - s * 0.3) + "," + (y + s * 0.3) + " " + (x - s * 0.35) + "," + (y - s * 0.6) + " " + x + "," + (y - s) + 'Z" fill="#FFD447"/>';
+    },
+    cerfVolant: function (x, y, s) {
+      return '<path d="M' + x + "," + (y + s * 0.9) + " q" + (s * 0.4) + "," + (s * 0.4) + " 0," + (s * 0.8) + " t0," + (s * 0.8) + '" fill="none" stroke="#2B2B33" stroke-width="1"/><path d="M' + x + "," + (y - s) + " L" + (x + s * 0.7) + "," + y + " L" + x + "," + (y + s * 0.9) + " L" + (x - s * 0.7) + "," + y + 'Z" fill="#6EC3F4" stroke="#2B2B33" stroke-width="1.2"/><path d="M' + x + "," + (y - s) + " V" + (y + s * 0.9) + " M" + (x - s * 0.7) + "," + y + " H" + (x + s * 0.7) + '" stroke="#2B2B33" stroke-width="0.8"/>';
+    },
+    eclair: function (x, y, s) {
+      return '<path d="M' + (x + s * 0.2) + "," + (y - s * 1.2) + " L" + (x - s * 0.6) + "," + (y + s * 0.1) + " L" + (x - s * 0.05) + "," + (y + s * 0.1) + " L" + (x - s * 0.4) + "," + (y + s * 1.2) + " L" + (x + s * 0.65) + "," + (y - s * 0.25) + " L" + (x + s * 0.05) + "," + (y - s * 0.25) + ' Z" fill="#FFD447" stroke="#B8862B" stroke-width="1.2" stroke-linejoin="round"/>';
+    },
+    goutte: function (x, y, s) {
+      return '<path d="M' + x + "," + (y - s) + " C" + (x + s * 0.2) + "," + (y - s * 0.4) + " " + (x + s * 0.7) + "," + y + " " + (x + s * 0.7) + "," + (y + s * 0.35) + " A" + (s * 0.7) + "," + (s * 0.7) + " 0 0 1 " + (x - s * 0.7) + "," + (y + s * 0.35) + " C" + (x - s * 0.7) + "," + y + " " + (x - s * 0.2) + "," + (y - s * 0.4) + " " + x + "," + (y - s) + 'Z" fill="#6EC3F4" stroke="#2A6F99" stroke-width="1.2"/>';
+    },
+  };
+  // Petits éléments semés sur tout le fond.
+  function fondDecor(type) {
+    var c = "", i, x, y;
+    for (i = 0; i < 70; i++) {
+      x = aleaDecor(i) * MONDE[0]; y = aleaDecor(i + 500) * MONDE[1];
+      if (type === "scintille") c += i % 7 ? '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (0.5 + aleaDecor(i + 900) * 1.1).toFixed(2) + '" fill="#fff" opacity="' + (0.4 + aleaDecor(i + 70) * 0.6).toFixed(2) + '"/>'
+        : '<path class="scintille" d="M' + x.toFixed(1) + "," + (y - 4).toFixed(1) + " Q" + x.toFixed(1) + "," + y.toFixed(1) + " " + (x + 4).toFixed(1) + "," + y.toFixed(1) + " Q" + x.toFixed(1) + "," + y.toFixed(1) + " " + x.toFixed(1) + "," + (y + 4).toFixed(1) + " Q" + x.toFixed(1) + "," + y.toFixed(1) + " " + (x - 4).toFixed(1) + "," + y.toFixed(1) + " Q" + x.toFixed(1) + "," + y.toFixed(1) + " " + x.toFixed(1) + "," + (y - 4).toFixed(1) + 'Z" fill="#CFE8FF"/>';
+      else if (type === "confettis") c += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="4" height="2" rx="0.6" fill="' + COULEURS_CASES[i % COULEURS_CASES.length] + '" transform="rotate(' + Math.round(aleaDecor(i + 3) * 180) + " " + x.toFixed(1) + " " + y.toFixed(1) + ')"/>';
+      else if (type === "pluie") c += '<path class="pluie" d="M' + x.toFixed(1) + "," + y.toFixed(1) + " l-2.5,7" + '" stroke="#B9D4F0" stroke-width="1" stroke-linecap="round" opacity="0.55"/>';
+      else if (type === "oiseaux" && i < 9) c += '<path d="M' + x.toFixed(1) + "," + y.toFixed(1) + " q2.5,-2.5 5,0 q2.5,-2.5 5,0" + '" fill="none" stroke="#2B2B33" stroke-width="1.1" stroke-linecap="round" opacity="0.6"/>';
+    }
+    return c;
+  }
+  // Emplacements libres : trois entre chaque paire de rangées, un dans chaque virage, quelques-uns en marge.
+  var EMPLACEMENTS_DECOR = (function () {
+    var out = [], r;
+    for (r = 0; r < RANGEES - 1; r++) {
+      var y = Y0 + r * ECART + ECART / 2;
+      out.push([112 + (r % 2) * 14, y, 15], [182, y - 2, 13], [250 - (r % 2) * 14, y + 1, 15]);
+      out.push([r % 2 === 0 ? X_D + 6 : X_G - 6, y, 13]);
+    }
+    out.push([24, 16, 9], [338, 30, 10], [336, MONDE[1] - 26, 11], [178, MONDE[1] - 14, 8]);
     return out;
   })();
-  var TEINTE_EPOQUE = { antiquite: "#C9A227", "moyen-age": "#A04B57", renaissance: "#2F8C78", classique: "#4A6CC2", xixe: "#9A6534", xxe: "#7A4FB8" };
-  var BORD_SPECIAL = { eureka: "#E0A800", avance: "var(--good)", recul: "var(--bad)", retour_epoque: "var(--bad)", prison: "var(--warn)", quarantaine: "var(--warn)" };
+  function decorPlateau(ton) {
+    var d = DECORS[ton] || DECORS.neutre;
+    var c = '<defs><linearGradient id="ciel-' + ton + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + d.haut + '"/><stop offset="1" stop-color="' + d.bas + '"/></linearGradient></defs>' +
+      '<rect x="0" y="0" width="' + MONDE[0] + '" height="' + MONDE[1] + '" fill="url(#ciel-' + ton + ')"/>' + fondDecor(d.fond);
+    EMPLACEMENTS_DECOR.forEach(function (e, i) {
+      var m = d.motifs[Math.floor(aleaDecor(i * 3 + 41) * d.motifs.length)];
+      c += '<g class="motif">' + MOTIFS[m](e[0], e[1], e[2], i) + "</g>";
+    });
+    return c;
+  }
   function caseConnue(n) { return P.plateau.tours > 0 || n <= P.plateau.atteinte; }
   function nomEpoque(id) { var e = C.plateau.epoques.filter(function (x) { return x.id === id; })[0]; return e ? tx(e.nom) : ""; }
   function texteRegle(sp) {
     if (!sp) return "";
     var R = C.plateau.regles, dur = P.plateau.tours > 0, n = sp.n;
     if (dur && (sp.type === "recul" || sp.type === "quarantaine")) n *= R.tour_suivant.multiplicateur_recul;
-    var t = tx(R.textes[sp.type]).replace("{n}", n);
+    var t = tx(R.textes[sp.type]).replace("{n}", n).replace("{vers}", sp.vers);
     if (sp.type === "retour_epoque") t = "Retour à la case " + sp.vers + ", " + tx(C.plateau.cases[sp.vers - 1].titre) + ".";
+    if (sp.type === "teleport") t = "Téléportation : retour à la case " + sp.vers + ", " + tx(C.plateau.cases[sp.vers - 1].titre) + ".";
     if (sp.type === "prison" && dur) t = t.replace("un quiz parfait", R.tour_suivant.quiz_parfaits_prison + " quiz parfaits");
     return t;
   }
-  // v5 : les cases sont posées sur une route qui s'enroule vers l'objectif. La route parcourue prend la couleur
-  // d'accent, des flèches donnent le sens, les cases visitées sont teintées et les prochaines cases cerclées.
-  var PAS = 40, TUILE = 32, BORD = (PAS - TUILE) / 2;
-  function centreCase(n) { var p = SPIRALE[n - 1]; return [p[0] * PAS + PAS / 2, p[1] * PAS + PAS / 2]; }
   function portee() {
     var ep = epreuvesDuTour();
     return ep.length ? Math.min(8, ep[0].v.total + (C.plateau.regles.bonus.jouer || 0)) : 0;
   }
-  // v7 : le plateau s'ouvre zoomé sur quatre cases autour du pion. On le fait glisser au doigt,
+  // v7 : le plateau s'ouvre zoomé autour du pion. On le fait glisser au doigt,
   // « Vue d'ensemble » le montre en entier, et la caméra suit le pion quand il avance.
-  var ETENDUE = [-2, -14, 324, 336], CADRE = 168, camera = { large: false, x: null, y: null };
+  var ETENDUE = [0, 0, MONDE[0], MONDE[1]], CADRE = 180, camera = { large: false, x: null, y: null };
   function borner(x, y) {
     return [Math.max(ETENDUE[0], Math.min(ETENDUE[0] + ETENDUE[2] - CADRE, x)), Math.max(ETENDUE[1], Math.min(ETENDUE[1] + ETENDUE[3] - CADRE, y))];
   }
@@ -866,62 +1016,71 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       if (k < 1) requestAnimationFrame(f);
     });
   }
+  // Flèche courbe d'un piège de téléportation vers sa case d'arrivée.
+  function flecheTeleport(de, vers, couleur) {
+    var a = centreCase(de), b = centreCase(vers), mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+    var dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, k = Math.min(70, l * 0.45);
+    var cx = mx - dy / l * k, cy = my + dx / l * k;
+    if (cx < 10 || cx > MONDE[0] - 10) { cx = mx + dy / l * k; cy = my - dx / l * k; }
+    var ang = Math.atan2(b[1] - cy, b[0] - cx), fin = [b[0] - Math.cos(ang) * 13, b[1] - Math.sin(ang) * 13];
+    var d = "M" + a[0].toFixed(1) + "," + a[1].toFixed(1) + " Q" + cx.toFixed(1) + "," + cy.toFixed(1) + " " + fin[0].toFixed(1) + "," + fin[1].toFixed(1);
+    return '<g class="teleport" aria-hidden="true"><path d="' + d + '" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" opacity="0.85"/>' +
+      '<path d="' + d + '" fill="none" stroke="' + couleur + '" stroke-width="2.6" stroke-dasharray="5 4" stroke-linecap="round"/>' +
+      '<path d="M0,0 L-8,-4.5 L-8,4.5 Z" fill="' + couleur + '" stroke="#fff" stroke-width="1.2" stroke-linejoin="round" transform="translate(' + fin[0].toFixed(1) + " " + fin[1].toFixed(1) + ") rotate(" + (ang * 180 / Math.PI).toFixed(1) + ')"/></g>';
+  }
   // `bilan` : toujours zoomé sur le pion, sans tenir compte de la caméra de l'accueil.
   function svgPlateau(bilan) {
-    var pl = P.plateau, nb = C.plateau.cases.length, loin = portee(), ennemis = M.ennemisPlateau(C, P);
-    var cle = [pl.atteinte, pl.tours, pl.position, loin, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {})].join("/");
+    var pl = P.plateau, nb = C.plateau.cases.length, loin = portee(), ennemis = M.ennemisPlateau(C, P), ton = M.humeur(P);
+    var cle = [pl.atteinte, pl.tours, pl.position, loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {})].join("/");
     if (cachePlateau.cle !== cle) {
-      var c = "", pts = [];
-      for (var n = 1; n <= nb + 1; n++) pts.push(centreCase(n).join(","));
-      var faits = pts.slice(0, pl.position);
-      c += '<polyline class="route" points="' + pts.join(" ") + '"/>';
-      if (faits.length > 1) c += '<polyline class="route faite" points="' + faits.join(" ") + '"/>';
-      c += '<polyline class="route-axe" points="' + pts.join(" ") + '"/>';
-      // Flèches dans chaque espace entre deux cases, dans le sens de la marche.
-      for (n = 1; n <= nb; n++) {
-        var a = centreCase(n), b = centreCase(n + 1), mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
-        var ang = Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
-        c += '<path class="fleche' + (n < pl.position ? " faite" : "") + '" d="M-2.6,-3.4 L2.8,0 L-2.6,3.4 Z" transform="translate(' + mx + " " + my + ") rotate(" + ang + ')"/>';
-      }
-      C.plateau.cases.forEach(function (k, i) {
-        var xy = SPIRALE[i], x = xy[0] * PAS + BORD, y = xy[1] * PAS + BORD, connue = caseConnue(k.n), sp = M.specialDe(C, P, k.n);
-        var vue = k.n < pl.position, ici = k.n === pl.position, proche = k.n > pl.position && k.n <= pl.position + loin;
-        var trait = proche ? "var(--accent)" : sp ? BORD_SPECIAL[sp.type] : "var(--line)";
-        c += '<g data-n="' + k.n + '" style="cursor:pointer"><rect x="' + x + '" y="' + y + '" width="' + TUILE + '" height="' + TUILE + '" rx="5" fill="var(--surface)" stroke="' + trait + '" stroke-width="' + (proche ? 1.8 : sp ? 2.2 : 1) + '"' + (proche && !sp ? ' class="avenir"' : "") + "/>";
-        if (vue || ici) c += '<rect x="' + x + '" y="' + y + '" width="' + TUILE + '" height="' + TUILE + '" rx="5" fill="' + TEINTE_EPOQUE[k.epoque] + '" fill-opacity="0.2"/>';
-        c += '<rect x="' + (x + 2) + '" y="' + y + '" width="' + (TUILE - 4) + '" height="3.5" rx="1.7" fill="' + TEINTE_EPOQUE[k.epoque] + '"/>';
+      var c = decorPlateau(ton), pas = pasCase(), fleches = "";
+      var toute = morceauRoute(0, ROUTE.total);
+      c += '<polyline points="' + toute + '" fill="none" stroke="#000" stroke-opacity="0.22" stroke-width="' + (LARGEUR_ROUTE + 8) + '" stroke-linejoin="round" stroke-linecap="round" transform="translate(0 3)"/>' +
+        '<polyline points="' + toute + '" fill="none" stroke="#fff" stroke-width="' + (LARGEUR_ROUTE + 6) + '" stroke-linejoin="round" stroke-linecap="round"/>';
+      C.plateau.cases.forEach(function (k) {
+        var n = k.n, s = abscisse(n), p = pointRoute(s), x = p[0], y = p[1], connue = caseConnue(n), sp = M.specialDe(C, P, n);
+        var ici = n === pl.position, proche = n > pl.position && n <= pl.position + loin, vue = n < pl.position;
+        var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : COULEURS_CASES[(n - 1) % COULEURS_CASES.length];
+        var encre = sp && connue ? "#fff" : "#1E1A2B";
+        c += '<g data-n="' + n + '" style="cursor:pointer"><polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="' + fond + '" stroke-width="' + LARGEUR_ROUTE + '" stroke-linejoin="round"/>';
+        if (vue) c += '<polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="' + LARGEUR_ROUTE + '"/>';
+        if (proche) c += '<polyline class="avenir" points="' + morceauRoute(s - pas / 2 + 3, s + pas / 2 - 3) + '" fill="none" stroke="#fff" stroke-width="' + (LARGEUR_ROUTE - 7) + '" stroke-opacity="0.5"/>';
         if (connue) {
-          var g = grilleSprite(k.icone);
-          c += '<svg x="' + (x + 9) + '" y="' + (y + 8) + '" width="22" height="22" viewBox="0 0 32 32" class="pix"' + (vue ? ' opacity="0.75"' : "") + ">" + pixels(g, C.cabinet.palette, null, 0, 0, 1) + "</svg>" +
-            '<text x="' + (x + 2.5) + '" y="' + (y + 11) + '" font-size="7" font-weight="700" font-family="JetBrains Mono, monospace" fill="var(--muted)">' + k.n + "</text>";
+          c += '<svg x="' + (x - 9).toFixed(1) + '" y="' + (y - 13).toFixed(1) + '" width="18" height="18" viewBox="0 0 32 32" class="pix">' + pixels(grilleSprite(k.icone), C.cabinet.palette, null, 0, 0, 1) + "</svg>" +
+            '<text x="' + x.toFixed(1) + '" y="' + (y + 12).toFixed(1) + '" text-anchor="middle" font-size="7.5" font-weight="800" font-family="JetBrains Mono, monospace" fill="' + encre + '">' + n + "</text>";
+          if (sp) c += '<g transform="translate(' + (x + 11).toFixed(1) + " " + (y - 13).toFixed(1) + ')"><circle r="6.8" fill="' + COULEUR_SPECIAL[sp.type] + '" stroke="#fff" stroke-width="1.6"/><g transform="scale(0.85)">' + (PICTO_SPECIAL[sp.type] || "") + "</g></g>";
+          if (sp && sp.vers && (sp.type === "teleport" || sp.type === "retour_epoque")) fleches += flecheTeleport(n, sp.vers, COULEUR_SPECIAL[sp.type]);
         } else {
-          c += '<text x="' + (x + TUILE / 2) + '" y="' + (y + 21) + '" text-anchor="middle" font-size="10" font-weight="700" font-family="JetBrains Mono, monospace" fill="var(--muted)" opacity="0.7">' + k.n + "</text>";
+          c += '<text x="' + x.toFixed(1) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="middle" font-size="12" font-weight="800" font-family="JetBrains Mono, monospace" fill="#1E1A2B" opacity="0.75">' + n + "</text>";
         }
-        if (sp && sp.type === "eureka" && connue) c += '<text x="' + (x + 2.5) + '" y="' + (y + 30) + '" font-size="8" fill="#E0A800">★</text>';
-        // v7 : l'ennemi qui garde la case. Si le pion est dessus (duel en attente), il se range dans le coin.
-        var en = ennemis[k.n] && C.ennemiParId[ennemis[k.n]];
+        // v7 : l'ennemi qui garde la case. Si le pion est dessus (duel en attente), il se range sur le bord.
+        var en = ennemis[n] && C.ennemiParId[ennemis[n]];
         if (en) {
-          var coin = ici, r0 = coin ? 8 : 13, ex = x + (coin ? TUILE - 3 : TUILE / 2), ey = y + (coin ? 3 : TUILE / 2);
-          c += '<circle cx="' + ex + '" cy="' + ey + '" r="' + r0 + '" fill="var(--surface)" stroke="#D94141" stroke-width="2"/>' +
-            '<svg x="' + (ex - r0 + 1.5) + '" y="' + (ey - r0 + 1.5) + '" width="' + (2 * r0 - 3) + '" height="' + (2 * r0 - 3) + '" viewBox="8 1 24 24" class="pix">' + pixelsEnnemi(en) + "</svg>";
+          var r0 = ici ? 8 : 13, ex = x + (ici ? 13 : 0), ey = y - (ici ? 13 : 0);
+          c += '<circle cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="' + r0 + '" fill="#fff" stroke="#D94141" stroke-width="2"/>' +
+            '<svg x="' + (ex - r0 + 1.5).toFixed(1) + '" y="' + (ey - r0 + 1.5).toFixed(1) + '" width="' + (2 * r0 - 3) + '" height="' + (2 * r0 - 3) + '" viewBox="8 1 24 24" class="pix">' + pixelsEnnemi(en) + "</svg>";
         }
         c += "</g>";
       });
-      // Départ : un fanion au-dessus de la première case.
+      c += fleches;
+      // Départ : un panneau planté au bord de la première case.
       var d0 = centreCase(1);
-      c += '<g aria-hidden="true"><rect x="' + (d0[0] - 18) + '" y="-12" width="36" height="11" rx="5.5" fill="var(--good)"/><text x="' + d0[0] + '" y="-4" text-anchor="middle" font-size="7" font-weight="700" fill="#fff" letter-spacing="0.6">DÉPART</text></g>';
-      var centre = SPIRALE[nb], ob = objectifTour(), cx0 = centre[0] * PAS, cy0 = centre[1] * PAS;
-      if (ob) c += '<g data-n="objectif" style="cursor:pointer" aria-hidden="true"><rect x="' + (cx0 - 3) + '" y="' + (cy0 - 3) + '" width="46" height="46" rx="8" fill="none" stroke="#E0A800" stroke-opacity="0.35" stroke-width="7" class="halo"/>' +
-        '<rect x="' + (cx0 - 2) + '" y="' + (cy0 - 2) + '" width="44" height="44" rx="7" fill="var(--parchemin)" stroke="#C99A1E" stroke-width="3" class="liseret"/>' +
-        '<svg x="' + (cx0 + 3) + '" y="' + (cy0 + 3) + '" width="34" height="34" viewBox="0 0 32 32" class="pix">' + pixels(ob.pixels, C.cabinet.palette, null, 0, 0, 1) + "</svg>" +
-        '<circle cx="' + (cx0 + 39) + '" cy="' + (cy0 + 1) + '" r="6.5" fill="#C99A1E"/><text x="' + (cx0 + 39) + '" y="' + (cy0 + 4) + '" text-anchor="middle" font-size="8" font-weight="700" font-family="JetBrains Mono, monospace" fill="#fff">' + ob.tour + "</text></g>";
+      c += '<g aria-hidden="true"><path d="M' + (d0[0] - 14) + "," + (d0[1] - 16) + " V" + (d0[1] - 36) + '" stroke="#6E4429" stroke-width="2.4"/><g transform="rotate(-8 ' + (d0[0] - 14) + " " + (d0[1] - 36) + ')"><rect x="' + (d0[0] - 34) + '" y="' + (d0[1] - 44) + '" width="44" height="14" rx="3" fill="#2E9D5B" stroke="#fff" stroke-width="1.5"/>' +
+        '<text x="' + (d0[0] - 12) + '" y="' + (d0[1] - 34) + '" text-anchor="middle" font-size="7.5" font-weight="800" fill="#fff" letter-spacing="0.6">DÉPART</text></g></g>';
+      // Arrivée : la relique du tour au bout de la route.
+      var ob = objectifTour(), fin = centreCase(nb + 1);
+      if (ob) c += '<g data-n="objectif" style="cursor:pointer" aria-hidden="true"><circle cx="' + fin[0] + '" cy="' + fin[1] + '" r="27" fill="none" stroke="#FFD447" stroke-opacity="0.45" stroke-width="7" class="halo"/>' +
+        '<circle cx="' + fin[0] + '" cy="' + fin[1] + '" r="23" fill="var(--parchemin)" stroke="#C99A1E" stroke-width="3.2" class="liseret"/>' +
+        '<svg x="' + (fin[0] - 16) + '" y="' + (fin[1] - 16) + '" width="32" height="32" viewBox="0 0 32 32" class="pix">' + pixels(ob.pixels, C.cabinet.palette, null, 0, 0, 1) + "</svg>" +
+        '<circle cx="' + (fin[0] + 18) + '" cy="' + (fin[1] - 18) + '" r="7" fill="#C99A1E" stroke="#fff" stroke-width="1.4"/><text x="' + (fin[0] + 18) + '" y="' + (fin[1] - 15) + '" text-anchor="middle" font-size="8" font-weight="700" font-family="JetBrains Mono, monospace" fill="#fff">' + ob.tour + "</text>" +
+        '<g transform="rotate(6 ' + fin[0] + " " + (fin[1] - 34) + ')"><rect x="' + (fin[0] - 24) + '" y="' + (fin[1] - 44) + '" width="48" height="14" rx="3" fill="#D94141" stroke="#fff" stroke-width="1.5"/><text x="' + fin[0] + '" y="' + (fin[1] - 34) + '" text-anchor="middle" font-size="7.5" font-weight="800" fill="#fff" letter-spacing="0.6">ARRIVÉE</text></g></g>';
       cachePlateau = { cle: cle, svg: c };
     }
     var ici = animPion ? animPion.chemin[0] : pl.position, pos = centreCase(ici);
     var large = !bilan && camera.large, vb = large ? ETENDUE.join(" ") : boiteVue(!bilan && camera.x != null ? [camera.x, camera.y] : cadrePion(ici));
-    var pion = '<g id="pion" data-n="pion" style="cursor:pointer" transform="translate(' + pos[0] + " " + pos[1] + ')"><circle r="16" fill="var(--parchemin)" stroke="var(--accent)" stroke-width="3"/>' +
+    var pion = '<g id="pion" data-n="pion" style="cursor:pointer" transform="translate(' + pos[0].toFixed(1) + " " + pos[1].toFixed(1) + ')"><ellipse cx="0" cy="15" rx="13" ry="4" fill="#000" opacity="0.25"/><circle r="16" fill="var(--parchemin)" stroke="var(--accent)" stroke-width="3"/>' +
       '<svg x="-13" y="-13" width="26" height="26" viewBox="8 1 24 24" class="pix">' + pixelsAvatar(0, 0) + "</svg></g>";
-    return '<svg class="grille' + (large ? "" : " zoom") + '" viewBox="' + vb + '" role="img" aria-label="Plateau de l\'histoire : une route en spirale du départ, en haut à gauche, jusqu\'à l\'objectif au centre. Ton pion est sur la case ' + pl.position + " sur " + nb + '">' + cachePlateau.svg + pion + "</svg>";
+    return '<svg class="grille' + (large ? "" : " zoom") + '" viewBox="' + vb + '" role="img" aria-label="Plateau de l\'histoire : une route sinueuse du départ, en haut à gauche, jusqu\'à l\'arrivée, en bas. Décor : ' + (DECORS[ton] || DECORS.neutre).nom + ", l'IA est " + (NOM_HUMEUR[ton] || ton) + ". Ton pion est sur la case " + pl.position + " sur " + nb + '">' + cachePlateau.svg + pion + "</svg>";
   }
   function valeurTexte(k, type) {
     var v = M.valeurEpreuve(C, P, { type: type, comp: k.id }, maintenant());
@@ -955,7 +1114,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   function boutonJouer() {
     var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? C.plateau.regles.bonus.jouer || 0 : 0;
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + '</span><span><b>Jouer</b><span class="s">' +
-      (c ? (c.type === "rappel" ? "Un rappel t'attend. " : "") + "L'IA choisit l'épreuve." : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus ? '<span class="pill">+' + bonus + "</span>" : "") + "</button>");
+      (c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + "L'IA choisit l'épreuve." : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus ? '<span class="pill">+' + bonus + "</span>" : "") + "</button>");
     if (!c) b.disabled = true;
     b.onclick = ouvrirJouer;
     return b;
@@ -966,7 +1125,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(s.nom) }); sauver();
     feuilleSimple('<div class="choix-ia"><div class="eyebrow">L\'IA a choisi</div><div id="ia-jouer"></div>' +
       '<div class="epreuve" style="--c:' + couleur(k.stat) + '"><span class="de' + (v.duJour ? " bonus" : "") + '"><b>+' + (v.total + bonus) + '</b></span><span class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" +
-      (c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · dont +" + bonus + " pour le bouton Jouer</span></span></div>" +
+      (c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · dont +" + bonus + " pour le bouton Jouer</span></span></div>" +
       '<button type="button" class="btn large" data-a="go">C\'est parti</button><p class="meta">Tu peux aussi choisir toi-même une compétence dans l\'arbre, sans ce bonus.</p></div>', "L'IA a choisi", {
       go: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true }); },
     });
@@ -1012,6 +1171,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
         cam.appendChild(el('<button type="button" data-cam="large">Vue d\'ensemble</button>'));
       }
       grille.appendChild(cam);
+      var ton = M.humeur(P);
+      grille.appendChild(el('<div class="ciel-ia" aria-hidden="true">' + esc((DECORS[ton] || DECORS.neutre).nom) + " · l'IA est " + esc(NOM_HUMEUR[ton] || ton) + "</div>"));
     }
     majGrille();
     // Glisser au doigt ou à la souris quand le plateau est zoomé. Au-delà de 6 px, ce n'est plus un clic.
@@ -1057,6 +1218,12 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</span><b>" + esc(tx(k.titre)) + "</b><span>Lire l'histoire de la case</span></span></button>");
     act.onclick = function () { ouvrirCase(k.n); };
     b.appendChild(act);
+    var rv = M.revisionEnCours(P);
+    if (rv) {
+      var kr = C.parId[rv.comp], br = el('<div class="revision-f"><p class="etat-pion">Révision forcée : l\'IA veut revoir « ' + esc(tx(kr.nom)) + " ». Ton pion ne bouge plus avant cette révision.</p></div>");
+      var go = el('<button type="button" class="btn">Réviser maintenant</button>'); go.onclick = function () { lancerQuiz(kr.id, "rappel"); };
+      br.appendChild(go); b.appendChild(br);
+    }
     if (pl.prison) b.appendChild(el('<p class="etat-pion">Assigné à résidence : ton pion ne bougera plus avant ' + (pl.prison > 1 ? pl.prison + " quiz parfaits" : "un quiz parfait") + ".</p>"));
     else if (pl.quarantaine) b.appendChild(el('<p class="etat-pion">Quarantaine : ' + (pl.quarantaine > 1 ? "tes " + pl.quarantaine + " prochaines épreuves réussies" : "ta prochaine épreuve réussie") + " ne ferai" + (pl.quarantaine > 1 ? "ent" : "t") + " pas avancer ton pion.</p>"));
     var regles = el('<button type="button" class="btn sec">Règles et barème</button>'); regles.onclick = ouvrirRegles;
@@ -1069,7 +1236,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     if (connue) {
       var spN = M.specialDe(C, P, n);
       html += '<div class="eyebrow">Case ' + n + " · " + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</div><h2>" + esc(tx(k.titre)) + "</h2>" +
-        (spN ? '<p class="etat-pion">' + esc(texteRegle(spN)) + "</p>" : "") + "<p>" + esc(tx(k.histoire)) + '</p><div id="ia-case"></div><p class="meta">Source : ' + esc(k.source) + "</p>";
+        (spN ? '<p class="etat-pion">' + esc(texteRegle(spN)) + (spN.raison ? "<br><span class=\"meta\">" + esc(tx(spN.raison)) + "</span>" : "") + "</p>" : "") + "<p>" + esc(tx(k.histoire)) + '</p><div id="ia-case"></div><p class="meta">Source : ' + esc(k.source) + "</p>";
     } else {
       html += '<div class="eyebrow">Case ' + n + " · " + esc(nomEpoque(k.epoque)) + "</div><h2>Case à découvrir</h2><p class=\"meta\">Fais avancer ton pion jusqu'ici pour lire son histoire. Elle s'ajoutera aussi à la frise.</p>";
     }
@@ -2057,7 +2224,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var dep = quiz.fin.plateau;
     if (dep) {
       var ctx = dep.contextes.filter(function (c) { return c !== "plateau_avance"; });
-      var recul = dep.etapes.filter(function (e) { return e.type === "recul" || e.type === "retour_epoque"; })[0];
+      var recul = dep.etapes.filter(function (e) { return e.type === "recul" || e.type === "retour_epoque" || e.type === "teleport"; })[0];
       if (ctx.length) quiz.fin.repliquePlateau = M.replique(C, P, ctx, null, { n: recul ? recul.n : Math.abs(dep.a - dep.de) });
     }
     sauver(); rendreQuiz();
@@ -2076,6 +2243,10 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     bloque_quarantaine: function () { return "Quarantaine : cette épreuve ne fait pas avancer ton pion."; },
     tour_fini: function (e) { return "Arrivée ! Tour " + e.tour + " terminé : retour au feu, en plus dur."; },
     ennemi: function (e) { return "Case " + e.case + " : " + nomEn(C.ennemiParId[e.ennemi]) + " te barre la route. Gagne le duel pour faire les " + e.reste + " case" + (e.reste > 1 ? "s" : "") + " qui restent."; },
+    teleport: function (e) { return "Téléportation, case " + e.case + " : retour à la case " + e.vers + "."; },
+    revision: function (e) { return "Révision forcée, case " + e.case + " : l'IA veut revoir « " + tx(C.parId[e.comp].nom) + " ». Ton pion attend."; },
+    revision_vide: function () { return "Révision forcée… mais tu ne maîtrises encore rien. L'IA soupire et te laisse passer."; },
+    bloque_revision: function (e) { return "Révision forcée en attente (« " + tx(C.parId[e.comp].nom) + " ») : ton pion ne bouge pas."; },
     duel_attente: function (e) { return tx(C.ennemiParId[e.ennemi].nom) + " te bloque toujours. Le duel reprend, pour " + e.reste + " case" + (e.reste > 1 ? "s" : "") + "."; },
   };
   function blocDeplacement(dep, rep, avecPlateau) {
@@ -2103,7 +2274,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       if (r.issue === "maitrisee") { titre = "Compétence maîtrisée"; texte = "Premier rappel " + dansJours(r.prochainRappel) + "."; gain = '<span class="gain plus">+' + r.xp + " XP " + esc(tx(s.nom)) + "</span>"; }
       else { titre = "Pas encore"; texte = "Il faut " + besoin + " bonnes réponses sur " + r.total + ". Les explications t'aideront pour le prochain essai."; }
     } else {
-      if (r.issue === "reussi") { titre = "Rappel réussi"; texte = "Prochain rappel le " + dateCourte(r.prochainRappel) + ", " + dansJours(r.prochainRappel) + "."; gain = '<span class="gain plus">+' + r.xp + " XP " + esc(tx(s.nom)) + "</span>"; }
+      if (r.revision && r.issue === "reussi") { titre = "Révision réussie"; texte = "Le souvenir tient. Prochain rappel le " + dateCourte(r.prochainRappel) + ", " + dansJours(r.prochainRappel) + ". Ton pion repart."; gain = '<span class="gain plus">+' + r.xp + " XP " + esc(tx(s.nom)) + "</span>"; }
+      else if (r.issue === "revision_ratee") { titre = "Révision ratée"; texte = "Tu gardes la compétence, mais son rappel est dû dès maintenant. Réussis-le vite pour ne pas la perdre."; }
+      else if (r.issue === "reussi") { titre = "Rappel réussi"; texte = "Prochain rappel le " + dateCourte(r.prochainRappel) + ", " + dansJours(r.prochainRappel) + "."; gain = '<span class="gain plus">+' + r.xp + " XP " + esc(tx(s.nom)) + "</span>"; }
       else { titre = "Compétence perdue"; texte = "Il fallait " + C.regles.rappels.bonnes_reponses_min + " bonnes réponses. Repasse le quiz complet pour la regagner."; gain = '<span class="gain moins">−' + r.xpPerdue + " XP " + esc(tx(s.nom)) + "</span>"; }
     }
     // v6 : trois temps, une chose à la fois. 1. le verdict et l'IA, 2. les récompenses une par une, 3. le pion qui avance.

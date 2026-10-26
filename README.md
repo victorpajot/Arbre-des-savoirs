@@ -13,6 +13,12 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 | `outils/valider.py` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
 | `outils/test_moteur.js` | Test du cycle quiz, rappel, perte, regain (`node outils/test_moteur.js`). |
 
+## Nouveautés de la v8 (plateau ludique)
+
+- Plateau en route sinueuse façon jeu de l'oie illustré : six allers-retours ondulés, cases multicolores numérotées, panneaux Départ et Arrivée, flèches de téléportation.
+- Le décor suit l'humeur de l'IA : nuit étoilée (neutre), grand ciel bleu (impressionnée), fête foraine (moqueuse), orage (déçue).
+- Huit nouvelles cases pièges (`outils/pieges.py`), chacune justifiée par l'histoire de sa case : reculs, téléportations en arrière, et révisions forcées. Une révision forcée bloque le pion jusqu'à ce qu'on révise la compétence maîtrisée dont le rappel est le plus lointain ; ratée, la compétence n'est pas perdue mais son rappel devient dû.
+
 ## Nouveautés de la v7 (lot 3)
 
 - Frise en cylindre vue de côté : passé à gauche, futur à droite, dates non découvertes en ombres, glisser pour tourner, appui sur la date du centre pour la lire, sauts d'époque.

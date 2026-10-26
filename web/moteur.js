@@ -410,14 +410,21 @@
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
     var reussi = bonnes >= r.rappels.bonnes_reponses_min;
     var retard = Math.max(0, joursEntre(e.prochainRappel, t));
+    // v8 : une révision forcée ne fait pas monter le palier, et la rater ne fait pas perdre la compétence :
+    // son rappel devient dû, tout de suite.
+    var rv = revisionEnCours(partie), revision = !!(rv && rv.comp === id);
+    if (revision) partie.revision = null;
     retenirQuestions(e, resultats.map(function (x) { return x.id; }));
     marquerJour(partie, t);
     var nuit = compterSession(partie, resultats, t);
     if (retard >= 7) partie.compteurs.rappelsRetard++;
     var xp = 0, xpPerdue = 0;
-    if (reussi) {
+    if (revision && !reussi) {
+      e.prochainRappel = t;
+      partie.compteurs.serieRappels = 0;
+    } else if (reussi) {
       var iv = r.rappels.intervalles_jours;
-      e.palier = (e.palier || 0) + 1;
+      if (!revision) e.palier = (e.palier || 0) + 1;
       e.prochainRappel = ajouterJours(t, iv[Math.min(e.palier, iv.length - 1)]);
       xp = xpRappel(contenu, e.palier) + bonusChrono(contenu, resultats);
       e.xp = (e.xp || 0) + xp;
@@ -434,20 +441,21 @@
       partie.compteurs.perdues++;
       partie.compteurs.serieRappels = 0;
     }
-    noter(partie, t, { type: "rappel", comp: id, bonnes: bonnes, total: resultats.length, xp: reussi ? xp : -xpPerdue, source: "rappel" });
+    noter(partie, t, { type: "rappel", comp: id, bonnes: bonnes, total: resultats.length, xp: reussi ? xp : -xpPerdue, source: revision ? "revision" : "rappel" });
     partie.maj = t;
     var contextes = [];
-    if (!reussi) contextes.push("rappel_perdu");
+    if (revision) contextes.push(reussi ? "revision_reussie" : "revision_ratee");
+    else if (!reussi) contextes.push("rappel_perdu");
     if (nuit) contextes.push("nuit");
-    if (reussi && retard >= 3) contextes.push("rappel_retard");
-    if (reussi) contextes.push("rappel_reussi");
+    if (!revision && reussi && retard >= 3) contextes.push("rappel_retard");
+    if (!revision && reussi) contextes.push("rappel_reussi");
     var jouer = !!(infos && infos.jouer);
-    var dep = jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false, jouer: jouer }, t);
+    var dep = revision && !reussi ? null : jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false, jouer: jouer }, t);
     var rec = verifierRecompenses(contenu, partie, t);
     if (reussi) ajouterButin(contenu, partie, rec, { type: "rappel", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
-    var fa = reussi ? null : tenterFarce(contenu, partie, t, infos && infos.alea);
-    return { issue: reussi ? "reussi" : "perdue", bonnes: bonnes, total: resultats.length, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
+    var fa = reussi || revision ? null : tenterFarce(contenu, partie, t, infos && infos.alea);
+    return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : "perdue", bonnes: bonnes, total: resultats.length, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer };
   }
@@ -550,11 +558,24 @@
     var vus = {}, out = [];
     dep.etapes.forEach(function (e) {
       var ctx = { prison_liberation: "prison_liberation", prison: "prison", bloque_prison: "prison", eureka: "eureka", recul: "piege",
-        retour_epoque: "retour_epoque", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi" }[e.type];
+        retour_epoque: "retour_epoque", teleport: "teleport", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi" }[e.type];
       if (ctx && !vus[ctx]) { vus[ctx] = 1; out.unshift(ctx); }
     });
     if (dep.a !== dep.de && dep.valeur > 0) out.push("plateau_avance");
     return out;
+  }
+
+  // v8 : case « révision forcée ». L'IA choisit la compétence maîtrisée dont le rappel est le plus lointain :
+  // celle qu'on croyait rangée pour longtemps. Le pion reste bloqué jusqu'à la révision.
+  function compARevisier(contenu, partie, t) {
+    var m = contenu.competences.filter(function (k) { return estMaitrisee(partie, k.id); });
+    if (!m.length) return null;
+    return m.sort(function (a, b) { return partie.competences[b.id].prochainRappel - partie.competences[a.id].prochainRappel; })[0];
+  }
+  function revisionEnCours(partie) {
+    var r = partie.revision;
+    if (r && !estMaitrisee(partie, r.comp)) { partie.revision = null; return null; }
+    return r || null;
   }
 
   // Déplace le pion de `valeur` cases (négatif : recul simple, sans effet de case).
@@ -601,6 +622,7 @@
     } else if (valeur > 0) {
       if (pl.prison > 0) etapes.push({ type: "bloque_prison", reste: pl.prison });
       else if (pl.quarantaine > 0) { pl.quarantaine--; etapes.push({ type: "bloque_quarantaine", reste: pl.quarantaine }); }
+      else if (revisionEnCours(partie)) etapes.push({ type: "bloque_revision", comp: partie.revision.comp });
       else if (partie.duel && partie.duel.case === pl.position && cause !== "duel") {
         // Un duel perdu reprend à l'épreuve réussie suivante, qui vaut alors pour la suite du trajet.
         partie.duel.reste = valeur; partie.duel.pret = true;
@@ -617,11 +639,18 @@
             poser(Math.max(R.depart, pl.position - sp.n * mult));
             c.reculs++;
             etapes.push({ type: "recul", case: avant, n: avant - pl.position, cause: "piege" });
-          } else if (sp.type === "retour_epoque") {
+          } else if (sp.type === "retour_epoque" || sp.type === "teleport") {
             var depuis = pl.position;
             poser(sp.vers);
             c.reculs++;
-            etapes.push({ type: "retour_epoque", case: depuis, n: depuis - sp.vers });
+            etapes.push({ type: sp.type, case: depuis, n: depuis - sp.vers, vers: sp.vers });
+          } else if (sp.type === "revision") {
+            var cible = compARevisier(contenu, partie, t);
+            if (cible) {
+              partie.revision = { comp: cible.id, case: pl.position, depuis: t };
+              c.revisions = (c.revisions || 0) + 1;
+              etapes.push({ type: "revision", case: pl.position, comp: cible.id });
+            } else etapes.push({ type: "revision_vide", case: pl.position });
           } else if (sp.type === "quarantaine") {
             pl.quarantaine = sp.n * mult;
             etapes.push({ type: "quarantaine", case: pl.position, n: pl.quarantaine });
@@ -750,7 +779,7 @@
       for (var n = pl.position + 1; n < R.arrivee; n++) devant.push(n);
       devant.forEach(function (n) {
         var sp = specialDe(contenu, partie, n);
-        if (sp && sp.type !== "retour_epoque") speciales.push(n); else if (!sp && !ennemis[n]) libres.push(n);
+        if (sp && sp.type !== "retour_epoque" && sp.type !== "teleport") speciales.push(n); else if (!sp && !ennemis[n]) libres.push(n);
       });
       if (speciales.length && libres.length) {
         var a = speciales[Math.floor(alea() * speciales.length)], b = libres[Math.floor(alea() * libres.length)];
@@ -1059,6 +1088,8 @@
   // Un rappel dû passe d'abord (le plus en retard). Sinon, parmi les quiz ouverts, l'IA tire une raison :
   // la stat la plus faible ou le hasard. Le choix reste le même tant qu'on n'a pas joué.
   function choixIA(contenu, partie, t) {
+    var rv = revisionEnCours(partie);
+    if (rv) return { comp: contenu.parId[rv.comp], type: "rappel", raison: "revision" };
     var dus = rappelsDus(contenu, partie, t);
     if (dus.length) return { comp: dus[0], type: "rappel", raison: "rappel" };
     var dispo = disponibles(contenu, partie, t);
@@ -1178,7 +1209,7 @@
     replique: replique,
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    choixIA: choixIA, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,

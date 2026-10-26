@@ -428,6 +428,11 @@ REPLIQUES.update({
     ],
 })
 
+# v8 : cases pièges du plateau ludique (téléportation, révision forcée).
+import pieges  # noqa: E402
+REPLIQUES.update({k: [sans(l[1]) if isinstance(l, tuple) else l for l in v] for k, v in pieges.REPLIQUES.items()})
+EXPRESSIONS.update(pieges.TONS)
+
 # v7 : surnom que l'IA donne au joueur, affiché sous le rang. Il suit son humeur (dernier résultat),
 # ou juste après un succès, ce succès ({succes}). Groupes nominaux épicènes : le joueur peut être n'importe qui.
 SURNOMS = {

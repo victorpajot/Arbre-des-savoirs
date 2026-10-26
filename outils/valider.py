@@ -164,7 +164,7 @@ def main():
         sp = c.get("special")
         if sp and sp["type"] in ("avance", "recul", "quarantaine") and "n" not in sp:
             erreurs.append(f"plateau.json {c['id']} : la règle {sp['type']} demande « n »")
-        if sp and sp["type"] == "retour_epoque" and not 1 <= sp.get("vers", 0) < i:
+        if sp and sp["type"] in ("retour_epoque", "teleport") and not 1 <= sp.get("vers", 0) < i:
             erreurs.append(f"plateau.json {c['id']} : retour d'époque vers une case invalide")
     if pl["regles"]["arrivee"] != len(pl["cases"]):
         erreurs.append("plateau.json : l'arrivée doit être la dernière case")

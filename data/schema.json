@@ -641,7 +641,12 @@
          "farce",
          "ennemi",
          "duel_gagne",
-         "duel_perdu"
+         "duel_perdu",
+         "teleport",
+         "revision",
+         "revision_reussie",
+         "revision_ratee",
+         "jouer_revision"
         ]
        },
        "reference": {
@@ -1395,7 +1400,9 @@
            "recul",
            "quarantaine",
            "prison",
-           "retour_epoque"
+           "retour_epoque",
+           "teleport",
+           "revision"
           ]
          },
          "n": {
@@ -1405,6 +1412,9 @@
          "vers": {
           "type": "integer",
           "minimum": 1
+         },
+         "raison": {
+          "$ref": "#/$defs/texte"
          }
         }
        }

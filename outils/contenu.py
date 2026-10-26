@@ -21,6 +21,7 @@ import philosophes
 import pionniers
 import ennemis
 import cadeaux
+import pieges
 import bibliotheque_v7
 import plateau
 import savants
@@ -713,6 +714,10 @@ def jeu_plateau():
             special = {"type": "eureka"}
         if special and special["type"] == "retour_epoque":
             special = {"type": "retour_epoque", "vers": plateau.debut_epoque(plateau.epoque(annee))}
+        if n in pieges.PIEGES:
+            assert special is None or special["type"] == "eureka", (n, special)
+            regle, raison = pieges.PIEGES[n]
+            special = dict(regle, raison=fr(raison))
         case = {"n": n, "id": id, "annee": annee, "titre": fr(titre), "stat": stat, "epoque": plateau.epoque(annee),
                 "icone": icone_case(c, icones, objets), "histoire": fr(histoire), "replique": fr(replique), "source": source}
         if special:
@@ -733,7 +738,7 @@ def jeu_plateau():
             "butin": {"rappel": 0.4, "quiz_base": 0.4, "quiz_par_rang": 0.05, "lots": LOTS},
             "echec": {"quiz": 0, "rappel": -2},
             "tour_suivant": {"multiplicateur_recul": 2, "quiz_parfaits_prison": 2},
-            "textes": {k: fr(v) for k, v in plateau.REGLES_SPECIALES.items()},
+            "textes": {k: fr(v) for k, v in {**plateau.REGLES_SPECIALES, **pieges.TEXTES}.items()},
         },
         "epoques": [{"id": id, "nom": fr(nom), "debut": d, "fin": f, "icone": plateau.PICTO_EPOQUE[id]} for id, nom, d, f in plateau.EPOQUES],
         "palette": PALETTE,

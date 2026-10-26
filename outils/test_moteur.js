@@ -163,8 +163,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(P.plateau.quarantaine, 1, "Fibonacci + 3 mène à la peste");
     dep = M.deplacer(C3, P, 4, t0, "test");
     assert.equal(dep.a, dep.de, "quarantaine : une épreuve réussie sans bouger");
-    dep = M.deplacer(C3, P, 4, t0, "test");
-    assert.equal(dep.a, dep.de + 4);
+    dep = M.deplacer(C3, P, 3, t0, "test");
+    assert.equal(dep.a, dep.de + 3);
     [P, dep] = sur(num("galilee-proces"), 2);
     assert.equal(P.plateau.prison, 1);
     assert.equal(M.deplacer(C3, P, 3, t0, "test").a, num("galilee-proces"), "prison : on ne bouge plus");
@@ -447,7 +447,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     for (let j = 0; j < 400 && P.plateau.tours < 8; j++) {
       M.verifierRecompenses(C6, P, t);
       const faire = M.rappelsDus(C6, P, t).map(k => ({ comp: k, type: "rappel" }));
-      for (let n = 0; n < 3; n++) { const c = M.choixIA(C6, P, t); if (c && c.type === "quiz") faire.push(c); }
+      for (let n = 0; n < 3; n++) { const c = M.choixIA(C6, P, t); if (c && (c.type === "quiz" || c.raison === "revision")) faire.push(c); }
       for (const c of faire) {
         if (c.type === "quiz" && !M.disponibles(C6, P, t).some(k => k.id === c.comp.id)) continue;
         const avant = butin(), reliques = Object.keys(P.objets).filter(id => !lot["objets:" + id]).length;
@@ -577,4 +577,43 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.specialDe(C8, G, c.effet.de), null);
   assert.equal(M.specialDe(C8, G, c.effet.vers).type, c.effet.regle);
   console.log("OK : v7 ennemis, duels, bestiaire, cadeaux à l'IA");
+}
+
+// v8 : cases pièges (recul, téléportation, révision forcée)
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json") };
+  const C9 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const t0 = new Date(2026, 9, 28, 10, 0).getTime(), J = 86400000;
+  const sur = (n, pas, P) => { P = P || M.nouvellePartie(t0); P.plateau.ennemis = {}; P.plateau.position = n - pas; return [P, M.deplacer(C9, P, pas, t0, "test")]; };
+  // Téléportation : Montaigne renvoie chez Averroès.
+  let [P, dep] = sur(32, 2);
+  assert.equal(dep.a, 24); assert.equal(dep.etapes[0].type, "teleport"); assert.equal(dep.etapes[0].n, 8);
+  // Recul : le zéro de Brahmagupta.
+  [P, dep] = sur(21, 1);
+  assert.equal(dep.a, 19); assert.equal(dep.etapes[0].type, "recul");
+  // Révision forcée sans compétence maîtrisée : rien.
+  [P, dep] = sur(11, 1);
+  assert.equal(dep.etapes[0].type, "revision_vide"); assert.equal(P.revision, undefined);
+  // Avec deux compétences maîtrisées : l'IA prend celle dont le rappel est le plus lointain.
+  P = M.nouvellePartie(t0);
+  P.competences["math.arithmetique"] = { maitrise: true, palier: 2, xp: 90, prochainRappel: t0 + 3 * J, maitriseDepuis: t0 - 9 * J };
+  P.competences["math.probabilites"] = { maitrise: true, palier: 3, xp: 90, prochainRappel: t0 + 20 * J, maitriseDepuis: t0 - 30 * J };
+  [P, dep] = sur(11, 1, P);
+  assert.equal(P.revision.comp, "math.probabilites");
+  assert.equal(M.choixIA(C9, P, t0).raison, "revision");
+  dep = M.deplacer(C9, P, 3, t0, "quiz");
+  assert.equal(dep.a, 11, "bloqué tant que la révision n'est pas faite"); assert.equal(dep.etapes[0].type, "bloque_revision");
+  const qs = M.tirerQuestions(C9, P, "math.probabilites", 3);
+  let r = M.terminerRappel(C9, P, "math.probabilites", qs.map(q => ({ id: q.id, correct: true })), t0);
+  assert.ok(r.revision); assert.equal(P.revision, null); assert.equal(P.competences["math.probabilites"].palier, 3, "pas de palier gagné");
+  assert.ok(r.contextes.includes("revision_reussie")); assert.ok(r.plateau.a > 11);
+  // Révision ratée : la compétence reste, son rappel devient dû.
+  [P, dep] = sur(42, 1, P);
+  const cible = P.revision.comp;
+  r = M.terminerRappel(C9, P, cible, M.tirerQuestions(C9, P, cible, 3).map(q => ({ id: q.id, correct: false })), t0 + 1000);
+  assert.ok(P.competences[cible].maitrise, "pas de perte"); assert.equal(P.competences[cible].prochainRappel, t0 + 1000);
+  assert.equal(r.plateau, null); assert.ok(r.contextes.includes("revision_ratee"));
+  assert.ok(M.rappelsDus(C9, P, t0 + 2000).some(k => k.id === cible));
+  console.log("OK : v8 pièges, téléportation, révision forcée");
 }

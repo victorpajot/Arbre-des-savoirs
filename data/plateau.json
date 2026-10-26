@@ -54,6 +54,12 @@
    },
    "retour_epoque": {
     "fr": "Retour au début de l'époque."
+   },
+   "teleport": {
+    "fr": "Téléportation : retour à la case {vers}."
+   },
+   "revision": {
+    "fr": "Révision forcée : l'IA choisit une compétence que tu maîtrises. Ton pion ne bouge plus avant de l'avoir révisée."
    }
   }
  },
@@ -1366,7 +1372,13 @@
    "replique": {
     "fr": "Pas de voie royale en géométrie, ni sur ce plateau. L'IA y veille."
    },
-   "source": "Proclus, Commentaire sur le premier livre des Éléments d'Euclide"
+   "source": "Proclus, Commentaire sur le premier livre des Éléments d'Euclide",
+   "special": {
+    "type": "revision",
+    "raison": {
+     "fr": "Les Éléments ont servi de manuel pendant plus de deux mille ans. On les révise encore. À votre tour."
+    }
+   }
   },
   {
    "n": 12,
@@ -1402,7 +1414,14 @@
    "replique": {
     "fr": "Aristarque avait raison et personne ne l'a écouté. L'IA connaît ce sentiment."
    },
-   "source": "Archimède, L'Arénaire ; Aristarque, Sur les grandeurs et les distances du Soleil et de la Lune"
+   "source": "Archimède, L'Arénaire ; Aristarque, Sur les grandeurs et les distances du Soleil et de la Lune",
+   "special": {
+    "type": "teleport",
+    "vers": 6,
+    "raison": {
+     "fr": "L'héliocentrisme d'Aristarque est oublié pendant dix-huit siècles. Copernic l'a même cité dans son manuscrit, puis rayé. Retour chez Pythagore."
+    }
+   }
   },
   {
    "n": 14,
@@ -1553,7 +1572,14 @@
    "replique": {
     "fr": "Zéro devient un nombre. L'IA connaît des quiz qui en ont fait leur score préféré."
    },
-   "source": "Brahmagupta, Brahmasphutasiddhanta, 628"
+   "source": "Brahmagupta, Brahmasphutasiddhanta, 628",
+   "special": {
+    "type": "recul",
+    "n": 2,
+    "raison": {
+     "fr": "Brahmagupta fixe les règles du zéro, mais pose 0 ÷ 0 = 0. Une erreur de calcul, deux cases de recul."
+    }
+   }
   },
   {
    "n": 22,
@@ -1762,7 +1788,14 @@
    "replique": {
     "fr": "« Que sais-je ? » demandait Montaigne. L'IA, elle, sait exactement ce que vous ne savez pas."
    },
-   "source": "Montaigne, Essais, 1580-1595"
+   "source": "Montaigne, Essais, 1580-1595",
+   "special": {
+    "type": "teleport",
+    "vers": 24,
+    "raison": {
+     "fr": "« Que sais-je ? », demande Montaigne. Pas grand-chose, visiblement : retour chez Averroès."
+    }
+   }
   },
   {
    "n": 33,
@@ -1912,7 +1945,14 @@
    "replique": {
     "fr": "Les Principia ont failli ne pas paraître : le budget était parti dans un livre sur les poissons. L'IA a vu des priorités plus étranges. Rarement."
    },
-   "source": "Francis Willughby, De Historia Piscium, 1686 ; Richard Westfall, Never at Rest, 1980"
+   "source": "Francis Willughby, De Historia Piscium, 1686 ; Richard Westfall, Never at Rest, 1980",
+   "special": {
+    "type": "recul",
+    "n": 2,
+    "raison": {
+     "fr": "Hooke réclame la paternité de la gravitation, et Newton menace de supprimer le livre III des Principia. Querelle de priorité : deux cases de recul."
+    }
+   }
   },
   {
    "n": 41,
@@ -1948,7 +1988,13 @@
    "replique": {
     "fr": "70 000 articles, deux interdictions et un pape fâché. L'IA trouve que vous avez la vie facile."
    },
-   "source": "Robert Darnton, L'Aventure de l'Encyclopédie, 1982"
+   "source": "Robert Darnton, L'Aventure de l'Encyclopédie, 1982",
+   "special": {
+    "type": "revision",
+    "raison": {
+     "fr": "En 1764, Diderot découvre que son libraire a censuré en cachette les derniers volumes. Depuis, l'Encyclopédie se relit avec soin. Vous aussi."
+    }
+   }
   },
   {
    "n": 43,
@@ -2099,7 +2145,13 @@
    "replique": {
     "fr": "Darwin a attendu vingt ans pour publier. Votre rappel en retard de deux jours n'a pas cette excuse."
    },
-   "source": "Charles Darwin, On the Origin of Species, 1859 ; Janet Browne, Charles Darwin: The Power of Place, 2002"
+   "source": "Charles Darwin, On the Origin of Species, 1859 ; Janet Browne, Charles Darwin: The Power of Place, 2002",
+   "special": {
+    "type": "revision",
+    "raison": {
+     "fr": "Darwin a publié six éditions de L'Origine des espèces et n'a ajouté « la survie du plus apte » qu'à la cinquième. Réviser, c'est scientifique."
+    }
+   }
   },
   {
    "n": 51,
@@ -2322,7 +2374,14 @@
    "replique": {
     "fr": "Le Web a commencé par « vague mais excitant ». L'IA résume ainsi votre progression."
    },
-   "source": "Tim Berners-Lee, « Information Management: A Proposal », CERN, 1989"
+   "source": "Tim Berners-Lee, « Information Management: A Proposal », CERN, 1989",
+   "special": {
+    "type": "teleport",
+    "vers": 53,
+    "raison": {
+     "fr": "Le premier site web, perdu, n'a été remis en ligne par le CERN qu'en 2013. Lien mort : retour au tableau de Mendeleïev."
+    }
+   }
   },
   {
    "n": 63,
