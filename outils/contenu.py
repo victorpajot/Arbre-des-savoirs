@@ -23,6 +23,7 @@ import ennemis
 import cadeaux
 import pieges
 import mendeleiev
+import brillants
 import bibliotheque_v7
 import bibliotheque_v8
 import plateau
@@ -658,7 +659,9 @@ def avatar():
 
 
 def tous_objets():
-    return OBJETS + [objet(*o) for o in philosophes.OBJETS] + [objet(*o) for o in objectifs.objets()]
+    # v10 : les objets brillants, faits pour être offerts à l'IA.
+    neufs = [objet(id, nom, annee, notice, source, {"type": "competence_maitrisee", "id": comp}) for id, nom, annee, notice, source, comp, _, _ in brillants.OBJETS]
+    return OBJETS + [objet(*o) for o in philosophes.OBJETS] + [objet(*o) for o in objectifs.objets()] + neufs
 
 
 def cabinet():
@@ -670,8 +673,10 @@ def cabinet():
 
 
 def cadeau(id):
-    effet, n, garde, texte = cadeaux.CADEAUX[id]
-    out = {"effet": effet, "garde": garde, "texte": fr(texte)}
+    neufs = {o[0]: o for o in brillants.OBJETS}
+    effet, n, garde, texte = neufs[id][6] if id in neufs else cadeaux.CADEAUX[id]
+    # v10 : l'éclat de l'objet (1 terne, 2 brillant, 3 éblouissant) fait monter la faveur de l'IA.
+    out = {"effet": effet, "garde": garde, "texte": fr(texte), "eclat": neufs[id][7] if id in neufs else brillants.ECLAT.get(id, 1)}
     if n:
         out["n"] = n
     return out
@@ -694,6 +699,7 @@ def narrateur():
         "palette": PALETTE,
         "taille": [40, 48],
         "expressions": ia.EXPRESSIONS,
+        "faveur": {**brillants.FAVEUR, "paliers": [{**p, "nom": fr(p["nom"]), "effet": fr(p["effet"])} for p in brillants.FAVEUR["paliers"]]},
         "masques": [{"id": m["id"], "nom": fr(m["nom"]), **({"condition": m["condition"]} if m["condition"] else {}), "notice": fr(m["notice"]),
                      "source": m["source"], "tons": masques.TONS[m["id"]], "base": calques[m["id"]]["base"], "expressions": calques[m["id"]]["expressions"]} for m in masques.MASQUES],
     }

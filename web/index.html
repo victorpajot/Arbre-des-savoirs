@@ -477,6 +477,32 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .compteur-per { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .compteur-per .barre { flex-basis: 100%; height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
 .compteur-per .barre i { display: block; height: 100%; background: #1565C0; border-radius: 4px; }
+/* v10 : faveur de l'IA, personnage à onglets */
+.comite.cliquable { cursor: pointer; }
+.faveur-mini { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 13px; color: var(--muted); font-style: normal; }
+.faveur-mini .jauge { flex: none; width: 56px; height: 7px; border-radius: 4px; background: var(--surface-2); overflow: hidden; border: 1px solid var(--line); }
+.faveur-mini .jauge i { display: block; height: 100%; background: var(--c); }
+.faveur-mini span:last-child { color: var(--ink); }
+.bloc.faveur { border: 2px solid color-mix(in srgb, var(--c) 55%, var(--line)); }
+.tete-f { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; }
+.tete-f h2 { margin: 2px 0 0; color: var(--c); }
+.tete-f .num { font-size: 30px; font-weight: 800; }
+.tete-f .num small { font-size: 14px; color: var(--muted); font-weight: 600; }
+.jauge-f { position: relative; display: flex; height: 14px; border-radius: 7px; overflow: hidden; }
+.jauge-f span { background: color-mix(in srgb, var(--z) 70%, var(--surface)); }
+.jauge-f i { position: absolute; top: -2px; bottom: -2px; width: 4px; margin-left: -2px; background: var(--ink); border-radius: 2px; box-shadow: 0 0 0 2px var(--surface); }
+.paliers-f { display: flex; flex-wrap: wrap; gap: 6px; }
+.paliers-f span { font-size: 12px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.paliers-f span.ici { border-color: var(--z); color: var(--ink); background: color-mix(in srgb, var(--z) 14%, var(--surface)); }
+.etoiles { letter-spacing: 1px; font-style: normal; }
+.etoiles i { font-style: normal; color: var(--line); }
+.etoiles i.on { color: #E0A800; text-shadow: 0 0 4px rgb(242 193 78 / .7); }
+.eclat-l { margin: 0; font-weight: 600; }
+.objet.pris-ia { opacity: .6; }
+.objet .meta { font-size: 11px; margin: 0; }
+.gain-faveur { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, #E0A800 14%, var(--surface)); border: 1px solid color-mix(in srgb, #E0A800 45%, var(--line)); margin: 10px 0; }
+.gain-faveur b { font-size: 22px; color: #B07D00; }
+.gain-faveur span:last-child { flex-basis: 100%; font-size: 13px; color: var(--muted); }
 .stats-en .d { color: #D94141; font-weight: 700; }
 .comite .masque { position: relative; }
 .comite .tenu-ia { position: absolute; right: -6px; bottom: -4px; background: var(--parchemin, #F7EBD0); border-radius: 6px; padding: 1px; box-shadow: 0 1px 3px rgba(0,0,0,.2); line-height: 0; }
@@ -601,7 +627,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   var M = window.Moteur;
   var CLE_LOCALE = "arbre-competences.partie";
   var C = null, P = null, vue = "aujourdhui", quiz = null, feuille = null, ecrire = null;
-  var friseCentre = null, collection = "frise", filtreFrise = null, cachePlateau = { cle: null, svg: "" };
+  var friseCentre = null, collection = "frise", ongletPerso = "stats", filtreFrise = null, cachePlateau = { cle: null, svg: "" };
   var JOUR_MS = 86400000;
   var stockage = { compte: false, db: null, ref: null, minuteur: null, etat: "Ce navigateur" };
   // Dans l'app Android (Capacitor), les plugins natifs remplacent ce que la page web demande à Claude.
@@ -1523,12 +1549,21 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   // --- Vue Aujourd'hui ------------------------------------------------------
   function vueAujourdhui() {
     var t = maintenant(), v = el('<div class="vue"></div>');
-    v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + esc(dateLongue(t)) + '</div><h1>Aujourd\'hui</h1></div>' + (P.decalage ? '<span class="horloge">Mode test</span>' : "") + "</div>"));
+    v.appendChild(el('<div class="entete"><div><h1>Aujourd\'hui</h1></div>' + (P.decalage ? '<span class="horloge">Mode test</span>' : "") + "</div>"));
     var ng = M.niveauGlobal(C, P), nbMait = C.competences.filter(function (k) { return M.estMaitrisee(P, k.id); }).length;
-    var mot = comite(M.repliqueDuJour(C, P, t)); if (mot) v.appendChild(mot);
+    var mot = comite(M.repliqueDuJour(C, P, t));
+    // v10 : la bulle de l'IA ouvre sa fiche, dans l'onglet IA du personnage ; sa faveur s'affiche dessous.
+    function versIA() { vue = "perso"; ongletPerso = "ia"; rendre(); window.scrollTo(0, 0); }
+    if (mot) {
+      mot.classList.add("cliquable"); mot.setAttribute("role", "button"); mot.setAttribute("tabindex", "0"); mot.setAttribute("aria-label", "Ouvrir la fiche de l'IA");
+      var fm = faveurMini(t); if (fm) mot.querySelector("div").appendChild(fm);
+      mot.onclick = versIA;
+      mot.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); versIA(); } };
+      v.appendChild(mot);
+    }
     var sn = M.surnom(C, P, t);
     var perso = el('<div class="bloc perso-v5" role="button" tabindex="0" aria-label="Ouvrir la fiche du personnage"><div class="perso"><div class="avatar-cadre rang-' + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + '</div><div><div class="niv"><small>Niveau</small><span class="num">' + ng + '</span></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div>" + (sn ? '<p class="surnom">' + esc(sn.texte) + '<small>d\'après l\'IA</small></p>' : "") + '<p class="meta">' + nbMait + " compétence" + (nbMait > 1 ? "s" : "") + " maîtrisée" + (nbMait > 1 ? "s" : "") + " sur " + C.competences.length + "</p></div></div></div>");
-    perso.onclick = function () { vue = "perso"; rendre(); window.scrollTo(0, 0); };
+    perso.onclick = function () { vue = "perso"; ongletPerso = "stats"; rendre(); window.scrollTo(0, 0); };
     perso.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); perso.onclick(); } };
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
     if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
@@ -1703,8 +1738,21 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted)">niveau <b style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + "</b></div></div>"));
     var bs = el('<div class="bloc"><h2>Branches</h2><p class="note">Le niveau de chaque branche monte avec ses compétences maîtrisées et ses rappels réussis. Une pastille par compétence : pleine si maîtrisée, cerclée si ouverte.</p><div class="fiches"></div></div>');
     C.stats.slice().sort(function (a, b) { return (M.arbreOuvert(C, P, b.id) - M.arbreOuvert(C, P, a.id)) || xp[b.id] - xp[a.id]; }).forEach(function (s) { bs.querySelector(".fiches").appendChild(ficheBranche(s, xp[s.id])); });
-    v.appendChild(bs);
-    v.appendChild(blocAvatar());
+    // v10 : le personnage se range en onglets ; l'IA et les ennemis y ont leur place.
+    var onglets = [["stats", "Stats"], ["avatar", "Avatar"]].concat(C.ia ? [["ia", "IA"]] : []).concat(C.ennemis.length ? [["ennemis", "Ennemis"]] : []).concat([["reglages", "Réglages"]]);
+    if (!onglets.some(function (o) { return o[0] === ongletPerso; })) ongletPerso = "stats";
+    var seg = el('<div class="segments" role="group" aria-label="Rubrique du personnage"></div>');
+    onglets.forEach(function (o) {
+      var bt = el('<button type="button" aria-pressed="' + (ongletPerso === o[0]) + '">' + o[1] + "</button>");
+      bt.onclick = function () { ongletPerso = o[0]; rendre(); };
+      seg.appendChild(bt);
+    });
+    v.appendChild(seg);
+    if (ongletPerso === "stats") v.appendChild(bs);
+    if (ongletPerso === "avatar") v.appendChild(blocAvatar());
+    if (ongletPerso === "ia") { v.appendChild(blocFaveur()); v.appendChild(blocCadeauxIA()); v.appendChild(blocMasques(Object.keys(P.succes).length)); }
+    if (ongletPerso === "ennemis") v.appendChild(blocBestiaire());
+    if (ongletPerso !== "reglages") return v;
 
     var opt = el('<div class="bloc"><h2>Options</h2><label class="interrupteur" for="opt-chrono"><span><b>Chrono</b><br><span class="note">' + C.regles.chrono.secondes + ' secondes par question. Chaque bonne réponse rapporte ' + C.regles.chrono.bonus_xp_par_bonne_reponse + ' XP de plus.</span></span><input type="checkbox" id="opt-chrono"></label></div>');
     var cb = opt.querySelector("input"); cb.checked = !!(P.options && P.options.chrono);
@@ -1896,13 +1944,13 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var cpt = comptes[collection];
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">Histoire des sciences</div><h1>Collections</h1></div><div class="num" style="font-size:20px;font-weight:700">' + cpt[0] + " / " + cpt[1] + "</div></div>"));
     var seg = el('<div class="segments" role="group" aria-label="Collection"></div>');
-    [["frise", "Frise"], ["livres", "Livres"], ["objets", "Objets"]].concat(C.ennemis.length ? [["bestiaire", "Bestiaire"]] : []).concat(C.atomes ? [["atomes", "Atomes"]] : []).forEach(function (c) {
+    [["frise", "Frise"], ["livres", "Livres"], ["objets", "Objets"]].concat(C.atomes ? [["atomes", "Atomes"]] : []).forEach(function (c) {
       var bt = el('<button type="button" aria-pressed="' + (collection === c[0]) + '">' + c[1] + "</button>");
       bt.onclick = function () { collection = c[0]; rendre(); };
       seg.appendChild(bt);
     });
     v.appendChild(seg);
-    v.appendChild(collection === "frise" ? blocFrise() : collection === "livres" ? blocBibliotheque() : collection === "bestiaire" ? blocBestiaire() : collection === "atomes" ? blocTableau() : blocCabinet());
+    v.appendChild(collection === "frise" ? blocFrise() : collection === "livres" ? blocBibliotheque() : collection === "atomes" ? blocTableau() : blocCabinet());
     return v;
   }
   function blocCabinet() {
@@ -2086,8 +2134,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       html += '<div class="eyebrow">' + esc(annee || "Cabinet de curiosités") + "</div><h2>" + esc(tx(o.nom)) + "</h2><p>" + esc(tx(o.notice)) + '</p><p class="meta">Source : ' + esc(o.source) + "</p>" +
         '<button type="button" class="btn large" data-a="main">' + (tenu ? "Le reposer dans sa vitrine" : "Le donner à mon avatar") + "</button>";
       var cp = M.cadeauPossible(C, P, o.id, maintenant());
-      if (cp.ok) html += '<button type="button" class="btn sec large" data-a="offrir">Offrir à l\'IA</button><p class="meta">Un cadeau par jour. L\'IA s\'en sert sur le plateau, pour le meilleur ou pour rire.</p>';
-      else if (cp.raison === "deja") html += '<p class="meta">Déjà offert à l\'IA' + (P.objetIA === o.id ? ", qui le garde près de son masque." : ".") + "</p>";
+      if (o.cadeau) html += '<p class="eclat-l">' + etoilesEclat(o.cadeau.eclat) + " " + esc(NOM_ECLAT[o.cadeau.eclat || 1]) + "</p>";
+      if (cp.ok) html += '<button type="button" class="btn sec large" data-a="offrir">Offrir à l\'IA</button><p class="meta">Un cadeau par jour. Plus il brille, plus sa faveur remonte' + (P.cadeaux.donnes[o.id] ? " ; déjà offert une fois, il ne compte que pour moitié" : "") + ". Elle s\'en sert aussi sur le plateau, pour le meilleur ou pour rire.</p>";
+      else if (cp.raison === "recent") html += '<p class="meta">Offert récemment à l\'IA' + (P.objetIA === o.id ? ", qui le garde près de son masque" : "") + ". Elle s\'en lasse : tu pourras le lui offrir de nouveau dans " + cp.jours + " jour" + (cp.jours > 1 ? "s" : "") + ".</p>";
       else if (cp.raison === "jour") html += '<p class="meta">Tu as déjà fait un cadeau à l\'IA aujourd\'hui. Reviens demain.</p>';
     } else {
       html += "<h2>Vitrine vide</h2><p class=\"meta\">Pour l'obtenir : " + esc(commentObtenir(o.condition)) + "</p>";
@@ -2424,13 +2473,60 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       (r.garde ? '<p class="meta">Elle le garde : tu le verras près de son masque. Il reste dans ton cabinet.</p>' : '<p class="meta">Elle te le rend, avec un soupir.</p>') +
       '<p class="etat-pion">' + esc(ligne) + "</p>" + (ef.type === "ennemi" ? '<div class="garde-case">' + teteEnnemi(ef.ennemi, 44) + "<p>" + esc(tx(ef.ennemi.titre)) + "</p></div>" : "") + '<div id="dep-cadeau"></div>';
     feuilleSimple(html, "Cadeau à l'IA");
-    feuille.querySelector("#ia-cadeau").appendChild(comite({ contexte: "cadeau", texte: r.texte, expression: TON_CADEAU[ef.type], aparte: false }));
+    var zc = feuille.querySelector("#ia-cadeau");
+    var avis = M.replique(C, P, [r.repete ? "cadeau_repete" : r.eclat >= 3 ? "cadeau_eblouissant" : r.eclat === 2 ? "cadeau_brillant" : "cadeau_terne"]);
+    if (avis) { avis.aparte = false; zc.appendChild(comite(avis)); }
+    if (r.faveur) zc.appendChild(el('<div class="gain-faveur"><b>+' + r.gain + "</b> de faveur" + (r.repete ? " (moitié : déjà offert)" : "") + " · " + etoilesEclat(r.eclat) + "<span>" + Math.round(r.avant.valeur) + " → " + Math.round(r.faveur.valeur) + " : " + esc(tx(r.faveur.palier.nom).toLowerCase()) + "</span></div>"));
+    zc.appendChild(comite({ contexte: "cadeau", texte: r.texte, expression: TON_CADEAU[ef.type], aparte: false }, true));
     if (r.plateau && r.plateau.a !== r.plateau.de) {
       var zd = feuille.querySelector("#dep-cadeau");
       zd.appendChild(blocDeplacement(r.plateau, null, true));
       setTimeout(function () { animerPion(zd); }, 60);
     }
     rendre();
+  }
+
+
+  // --- Faveur de l'IA (v10) ------------------------------------------------------
+  var NOM_ECLAT = { 1: "Terne : elle fera la moue", 2: "Brillant : elle apprécie", 3: "Éblouissant : elle adore" };
+  function etoilesEclat(n) { n = n || 1; var s = ""; for (var i = 1; i <= 3; i++) s += '<i class="' + (i <= n ? "on" : "") + '">✦</i>'; return '<span class="etoiles" aria-label="Éclat ' + n + ' sur 3">' + s + "</span>"; }
+  var COULEUR_PALIER = { comblee: "#2E9D5B", contente: "#3D63D9", boudeuse: "#D9721F", furieuse: "#D94141" };
+  function piegesIA() {
+    var sp = P.plateau.speciaux || {};
+    return Object.keys(sp).filter(function (n) { return sp[n] && sp[n].ia && +n > P.plateau.position; }).map(Number);
+  }
+  // Ligne sous la bulle de l'accueil : la faveur, et ce qu'elle coûte.
+  function faveurMini(t) {
+    var f = M.faveurIA(C, P, t); if (!f) return null;
+    var pg = piegesIA();
+    return el('<p class="faveur-mini" style="--c:' + COULEUR_PALIER[f.palier.id] + '"><span class="jauge"><i style="width:' + f.valeur + '%"></i></span><span>' + esc(tx(f.palier.nom)) + " · " + Math.round(f.valeur) + "/100" +
+      (pg.length ? " · piège case " + pg.join(", ") : f.cadeauDuJour ? " · cadeau reçu" : " · offrez-lui quelque chose qui brille") + "</span></p>");
+  }
+  function blocFaveur() {
+    var t = maintenant(), f = M.faveurIA(C, P, t), F = C.ia.faveur;
+    var b = el('<div class="bloc faveur" style="--c:' + COULEUR_PALIER[f.palier.id] + '"><div class="tete-f"><div><div class="eyebrow">Faveur de l\'IA</div><h2>' + esc(tx(f.palier.nom)) + '</h2></div><span class="num">' + Math.round(f.valeur) + '<small>/100</small></span></div>' +
+      '<div class="jauge-f">' + F.paliers.slice().reverse().map(function (p, i, a) { var fin = i < a.length - 1 ? a[i + 1].min : 100; return '<span style="flex:' + (fin - p.min) + ";--z:" + COULEUR_PALIER[p.id] + '"></span>'; }).join("") + '<i style="left:' + f.valeur + '%"></i></div>' +
+      '<p style="margin:0">' + esc(tx(f.palier.effet)) + "</p>" +
+      '<p class="note">Elle perd ' + F.baisse_par_jour + " points par jour. " + (f.cadeauDuJour ? "Elle a eu son cadeau aujourd'hui." : "Pas encore de cadeau aujourd'hui : demain, elle sera à " + Math.round(f.demain) + ".") +
+      " Ce qu'elle préfère : ce qui brille ou en fait trop. Un objet terne rapporte " + F.gains["1"] + " points, un objet brillant " + F.gains["2"] + ", un objet éblouissant " + F.gains["3"] + ".</p>" +
+      '<div class="paliers-f">' + F.paliers.map(function (p) { return '<span class="' + (p.id === f.palier.id ? "ici" : "") + '" style="--z:' + COULEUR_PALIER[p.id] + '"><b>' + esc(tx(p.nom)) + "</b> dès " + p.min + "</span>"; }).join("") + "</div></div>");
+    var pg = piegesIA();
+    if (pg.length) b.appendChild(el('<p class="etat-pion">Elle a posé un piège devant ton pion, case ' + pg.join(", ") + ". Il partira à la fin du tour.</p>"));
+    return b;
+  }
+  function blocCadeauxIA() {
+    var t = maintenant(), f = M.faveurIA(C, P, t);
+    var miens = C.objets.filter(function (o) { return P.objets[o.id] && o.cadeau; }).sort(function (a, b) { return (b.cadeau.eclat || 1) - (a.cadeau.eclat || 1); });
+    var b = el('<div class="bloc"><h2>Lui faire un cadeau</h2><p class="note">' + (f.cadeauDuJour ? "Un cadeau par jour : reviens demain." : miens.length ? "Un cadeau par jour. Touche un objet de ton cabinet pour l'offrir. Les plus brillants en premier." : "Ton cabinet est vide. Gagne des objets en maîtrisant des compétences, puis reviens la gâter.") + '</p><div class="cabinet"></div></div>');
+    var g = b.querySelector(".cabinet");
+    miens.forEach(function (o) {
+      var cp = M.cadeauPossible(C, P, o.id, t);
+      var bt = el('<button type="button" class="objet' + (cp.ok ? "" : " pris-ia") + '"><span class="vitrine">' + svgObjet(o, false, 56) + "</span><span>" + esc(tx(o.nom)) + "</span>" + etoilesEclat(o.cadeau.eclat) +
+        '<span class="meta">' + (cp.ok ? (P.cadeaux.donnes[o.id] ? "à moitié prix" : "à offrir") : cp.raison === "recent" ? "dans " + cp.jours + " j" : "demain") + "</span></button>");
+      bt.onclick = function () { ouvrirObjet(o); };
+      g.appendChild(bt);
+    });
+    return b;
   }
 
   // --- Vue Succès -----------------------------------------------------------
@@ -2440,7 +2536,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">Citations et anecdotes</div><h1>Succès</h1></div><div class="num" style="font-size:20px;font-weight:700">' + n + " / " + C.succes.length + "</div></div>"));
     var obtenus = C.succes.filter(function (s) { return P.succes[s.id]; }).sort(function (a, b) { return P.succes[b.id] - P.succes[a.id]; });
     var autres = C.succes.filter(function (s) { return !P.succes[s.id]; });
-    if (C.ia) v.appendChild(blocMasques(n));
     var bloc = el('<div class="bloc"></div>');
     obtenus.forEach(function (s) { bloc.appendChild(carteSucces(s, true)); });
     autres.filter(function (s) { return !s.cache; }).forEach(function (s) { bloc.appendChild(carteSucces(s, false)); });
@@ -2789,6 +2884,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   function visite() {
     var a = M.noterVisite(C, P, maintenant()), b = M.verifierRecompenses(C, P, maintenant());
     if (C.plateau) M.bonusDuJour(C, P, maintenant());
+    if (C.ia && C.ia.faveur) M.piegeIA(C, P, maintenant());
     sauver();
   }
 

@@ -136,6 +136,8 @@
       objetIA: null,
       atomes: {},
       sauvages: [],
+      faveur: null,
+      colere: null,
       plateau: nouveauPlateau(),
       derniereVisite: t,
       retour: null,
@@ -197,6 +199,9 @@
     // v9 : tableau périodique (z → fiche) et atomes sauvages en attente de combat.
     out.atomes = p.atomes || {};
     out.sauvages = p.sauvages || [];
+    // v10 : faveur de l'IA (posée au premier besoin) et jour de son dernier piège.
+    out.faveur = p.faveur || null;
+    out.colere = p.colere || null;
     out.plateau = Object.assign(nouveauPlateau(), p.plateau || {});
     out.derniereVisite = p.derniereVisite || p.maj || out.cree;
     out.options = Object.assign({ chrono: false }, p.options || {});
@@ -515,8 +520,10 @@
     // v6 : une épreuve vaut le rang de sa compétence, quiz comme rappel.
     var base = r.valeurs.quiz_rang[String(k.rang)];
     var duJour = k.stat === bonusDuJour(contenu, partie, t) ? r.bonus.du_jour : 0;
+    // v10 : comblée, l'IA ajoute une case ; furieuse, elle en retire une (jamais moins d'une).
+    var fav = faveurIA(contenu, partie, t), faveur = fav ? fav.palier.avance : 0;
     return {
-      base: base, duJour: duJour, total: base + duJour,
+      base: base, duJour: duJour, faveur: faveur, total: Math.max(1, base + duJour + faveur),
       parfait: epreuve.type === "quiz" ? r.bonus.parfait : 0,
       chrono: epreuve.type === "quiz" ? r.bonus.chrono : 0,
       echec: epreuve.type === "rappel" ? r.echec.rappel : r.echec.quiz,
@@ -877,7 +884,9 @@
   function cadeauPossible(contenu, partie, id, t) {
     var o = (contenu.objets || []).filter(function (x) { return x.id === id; })[0];
     if (!o || !o.cadeau || !partie.objets[id]) return { ok: false, raison: "inconnu" };
-    if (partie.cadeaux.donnes[id]) return { ok: false, raison: "deja" };
+    // v10 : un objet déjà offert peut l'être de nouveau après quelques jours ; l'IA s'en lasse et n'en donne que la moitié.
+    var F = contenu.ia && contenu.ia.faveur, dernier = partie.cadeaux.donnes[id];
+    if (dernier && (!F || joursEntre(dernier, t) < F.lassitude_jours)) return { ok: false, raison: "recent", jours: F ? F.lassitude_jours - joursEntre(dernier, t) : null };
     if (partie.cadeaux.jour === cleJour(t)) return { ok: false, raison: "jour" };
     return { ok: true, objet: o };
   }
@@ -886,6 +895,12 @@
     var p = cadeauPossible(contenu, partie, id, t); if (!p.ok) return null;
     alea = alea || Math.random;
     var o = p.objet, cd = o.cadeau, pl = partie.plateau, R = contenu.plateau ? contenu.plateau.regles : null;
+    var repete = !!partie.cadeaux.donnes[id], avant = faveurIA(contenu, partie, t), gain = 0;
+    if (avant) {
+      gain = contenu.ia.faveur.gains[String(cd.eclat || 1)] || 0;
+      if (repete) gain = Math.round(gain / 2);
+      partie.faveur = { valeur: Math.min(100, avant.valeur + gain), maj: t };
+    }
     partie.cadeaux.jour = cleJour(t);
     partie.cadeaux.donnes[id] = t;
     partie.compteurs.cadeaux = (partie.compteurs.cadeaux || 0) + 1;
@@ -922,7 +937,33 @@
     if (dep) dep.contextes = contextesPlateau(dep);
     var rec = verifierRecompenses(contenu, partie, t);
     partie.maj = t;
-    return { objet: o, texte: cd.texte, garde: !!cd.garde, effet: effet, plateau: dep, recompenses: rec };
+    return { objet: o, texte: cd.texte, garde: !!cd.garde, effet: effet, plateau: dep, recompenses: rec,
+      eclat: cd.eclat || 1, repete: repete, gain: gain, avant: avant, faveur: faveurIA(contenu, partie, t) };
+  }
+
+  // --- Faveur de l'IA (v10) ----------------------------------------------------
+  // Une jauge de 0 à 100, qui baisse chaque jour. Les cadeaux la font remonter selon leur éclat.
+  // Le palier (comblée, contente, boudeuse, furieuse) change le butin, l'avancée et, furieuse, pose des pièges.
+  function faveurIA(contenu, partie, t) {
+    var F = contenu.ia && contenu.ia.faveur; if (!F) return null;
+    if (!partie.faveur) partie.faveur = { valeur: F.depart, maj: t };
+    var jours = Math.max(0, joursEntre(partie.faveur.maj, t));
+    var valeur = Math.max(0, partie.faveur.valeur - F.baisse_par_jour * jours);
+    var palier = F.paliers.filter(function (p) { return valeur >= p.min; })[0] || F.paliers[F.paliers.length - 1];
+    return { valeur: valeur, palier: palier, demain: Math.max(0, valeur - F.baisse_par_jour), cadeauDuJour: partie.cadeaux.jour === cleJour(t) };
+  }
+  // Furieuse, l'IA pose chaque jour un piège sur une case libre juste devant le pion. Renvoie la case, ou null.
+  function piegeIA(contenu, partie, t) {
+    var fav = faveurIA(contenu, partie, t);
+    if (!fav || fav.palier.id !== "furieuse" || !contenu.plateau || partie.colere === cleJour(t)) return null;
+    var pl = partie.plateau, R = contenu.plateau.regles, en = ennemisPlateau(contenu, partie), libres = [];
+    for (var n = pl.position + 1; n <= Math.min(pl.position + 5, R.arrivee - 1); n++) if (!specialDe(contenu, partie, n) && !en[n]) libres.push(n);
+    partie.colere = cleJour(t);
+    if (!libres.length) return null;
+    var c = libres[hacher(cleJour(t) + "|" + pl.position) % libres.length], P = contenu.ia.faveur.piege;
+    pl.speciaux[c] = { type: P.type, n: P.n, ia: true, raison: { fr: "Posé par l'IA, furieuse qu'on l'oublie. Un cadeau qui brille la calmerait." } };
+    partie.maj = t;
+    return c;
   }
 
   // --- Aujourd'hui -----------------------------------------------------------
@@ -1106,7 +1147,8 @@
   function tirerButin(contenu, partie, epreuve, t, alea) {
     alea = alea || Math.random;
     var ouvert = butinOuvert(contenu, partie);
-    if (!ouvert.length || alea() >= chanceButin(contenu, epreuve)) return null;
+    var fav = epreuve.type === "duel" ? null : faveurIA(contenu, partie, t);
+    if (!ouvert.length || alea() >= chanceButin(contenu, epreuve) * (fav ? fav.palier.butin : 1)) return null;
     var b = ouvert[Math.floor(alea() * ouvert.length)];
     partie[b.famille][b.chose.id] = t;
     delete partie.gagnables[cleButin(b.famille, b.chose.id)];
@@ -1312,6 +1354,11 @@
     var ctx = "accueil";
     if (partie.retour && joursEntre(partie.retour, t) === 0) ctx = "retour";
     else if (rappelsDus(contenu, partie, t).some(function (k) { return joursEntre(partie.competences[k.id].prochainRappel, t) >= 3; })) ctx = "retards";
+    else {
+      // v10 : hors des jours ordinaires, l'IA parle de ce qu'elle ressent pour vous.
+      var fav = faveurIA(contenu, partie, t);
+      if (fav && fav.palier.id !== "contente" && contenu.commentairesPar["faveur_" + fav.palier.id]) ctx = "faveur_" + fav.palier.id;
+    }
     var lignes = contenu.commentairesPar[ctx] || contenu.commentairesPar.accueil;
     if (!lignes || !lignes.length) return null;
     return habiller(contenu, lignes[Math.floor(debutJour(t) / JOUR) % lignes.length]);
@@ -1353,6 +1400,7 @@
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    faveurIA: faveurIA, piegeIA: piegeIA,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,

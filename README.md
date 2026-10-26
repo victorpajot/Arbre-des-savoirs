@@ -1,4 +1,4 @@
-# Arbre des savoirs, v9
+# Arbre des savoirs, v10
 
 Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
@@ -12,6 +12,13 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 | `outils/contenu.py` | Source du contenu : régénère `data/` (`python3 outils/contenu.py`). Il assemble `questions_nouvelles.py` (questions v2), `approfondissement_sciences.py` et `approfondissement_humain.py` (second losange, rangs 5 à 8), `philosophes.py` (branche Sagesse), `illustrations.py` (schémas SVG), `recompenses.py` (succès v2, objets, accessoires), `plateau.py` (63 cases, dates de la frise, succès du plateau), `bibliotheque.py` (32 livres), `ia.py` (répliques) et le pixel art (`dessin.py`, `objets32.py`, `avatar40.py`, `masques.py`, `masques_v4.py`, `savants.py`, `objectifs.py`, `icones32.py`, chacun exécutable pour produire une planche d'aperçu PNG). |
 | `outils/valider.py` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
 | `outils/test_moteur.js` | Test du cycle quiz, rappel, perte, regain (`node outils/test_moteur.js`). |
+
+## Nouveautés de la v10 (faveur de l'IA)
+
+- L'IA a une jauge de faveur de 0 à 100, qui perd 8 points par jour. Un cadeau par jour la fait remonter selon l'éclat de l'objet : 12 points s'il est terne, 25 s'il brille, 45 s'il éblouit ou en fait trop. Un objet déjà offert peut l'être de nouveau après 14 jours, pour moitié moins.
+- Quatre paliers : comblée (butin plus fréquent, une case de plus par épreuve réussie), contente (règles ordinaires), boudeuse (moitié moins de butin), furieuse (plus de butin, une case de moins, et chaque jour un piège posé devant le pion).
+- Neuf objets brillants tirés de l'histoire des sciences (`outils/brillants.py`) : couronne de Hiéron, miroir ardent d'Archimède, nez de Tycho Brahe, lampe de la cathédrale de Pise, diamant de Lavoisier, feuille d'or de Rutherford, verre à l'uranium, bobine de Tesla, médailles Nobel dissoutes par Hevesy. 55 objets en tout.
+- Le menu Personnage passe en onglets : Stats, Avatar, IA (faveur, cadeaux, masques), Ennemis (l'ancien bestiaire), Réglages. Sur l'accueil, la date disparaît et la bulle de l'IA ouvre son onglet, avec sa faveur affichée dessous.
 
 ## Nouveautés de la v9 (jeu de Mendeleïev)
 

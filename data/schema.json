@@ -656,7 +656,15 @@
          "cadeau_case",
          "atome_apparait",
          "atome_capture",
-         "atome_fuite"
+         "atome_fuite",
+         "cadeau_eblouissant",
+         "cadeau_brillant",
+         "cadeau_terne",
+         "cadeau_repete",
+         "faveur_boudeuse",
+         "faveur_furieuse",
+         "faveur_comblee",
+         "piege_ia"
         ]
        },
        "reference": {
@@ -840,7 +848,8 @@
         "required": [
          "effet",
          "garde",
-         "texte"
+         "texte",
+         "eclat"
         ],
         "additionalProperties": false,
         "properties": {
@@ -864,6 +873,12 @@
          },
          "texte": {
           "$ref": "#/$defs/texte"
+         },
+         "eclat": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "description": "v10 : éclat de l'objet, 3 pour ce qui brille ou en fait trop. Plus il est grand, plus la faveur de l'IA monte."
          }
         }
        }
@@ -1148,6 +1163,84 @@
         "maximum": 7,
         "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
        }
+      }
+     }
+    },
+    "faveur": {
+     "type": "object",
+     "description": "v10 : la faveur de l'IA, de 0 à 100. Elle baisse chaque jour ; les cadeaux la font remonter selon leur éclat.",
+     "additionalProperties": false,
+     "required": [
+      "depart",
+      "baisse_par_jour",
+      "gains",
+      "lassitude_jours",
+      "paliers",
+      "piege"
+     ],
+     "properties": {
+      "depart": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 100
+      },
+      "baisse_par_jour": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "gains": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+       }
+      },
+      "lassitude_jours": {
+       "type": "integer",
+       "minimum": 1,
+       "description": "Un objet déjà offert peut l'être de nouveau après ce délai, pour moitié moins."
+      },
+      "paliers": {
+       "type": "array",
+       "minItems": 2,
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "id",
+         "min",
+         "nom",
+         "butin",
+         "avance",
+         "effet"
+        ],
+        "properties": {
+         "id": {
+          "$ref": "#/$defs/id"
+         },
+         "min": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "nom": {
+          "$ref": "#/$defs/texte"
+         },
+         "butin": {
+          "type": "number",
+          "minimum": 0
+         },
+         "avance": {
+          "type": "integer"
+         },
+         "effet": {
+          "$ref": "#/$defs/texte"
+         }
+        }
+       }
+      },
+      "piege": {
+       "type": "object",
+       "description": "Piège posé chaque jour devant le pion quand l'IA est furieuse."
       }
      }
     }

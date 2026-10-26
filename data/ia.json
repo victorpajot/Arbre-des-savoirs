@@ -112,7 +112,79 @@
   "revision_ratee": "decue",
   "atome_apparait": "neutre",
   "atome_capture": "impressionnee",
-  "atome_fuite": "moqueuse"
+  "atome_fuite": "moqueuse",
+  "cadeau_eblouissant": "impressionnee",
+  "cadeau_brillant": "neutre",
+  "cadeau_terne": "decue",
+  "cadeau_repete": "moqueuse",
+  "faveur_boudeuse": "impatiente",
+  "faveur_furieuse": "moqueuse",
+  "faveur_comblee": "impressionnee",
+  "piege_ia": "moqueuse"
+ },
+ "faveur": {
+  "depart": 60,
+  "baisse_par_jour": 8,
+  "gains": {
+   "1": 12,
+   "2": 25,
+   "3": 45
+  },
+  "lassitude_jours": 14,
+  "paliers": [
+   {
+    "id": "comblee",
+    "min": 75,
+    "nom": {
+     "fr": "Comblée"
+    },
+    "butin": 1.5,
+    "avance": 1,
+    "effet": {
+     "fr": "Butin plus fréquent, et une case de plus à chaque épreuve réussie."
+    }
+   },
+   {
+    "id": "contente",
+    "min": 45,
+    "nom": {
+     "fr": "Contente"
+    },
+    "butin": 1,
+    "avance": 0,
+    "effet": {
+     "fr": "Le jeu suit ses règles ordinaires."
+    }
+   },
+   {
+    "id": "boudeuse",
+    "min": 20,
+    "nom": {
+     "fr": "Boudeuse"
+    },
+    "butin": 0.5,
+    "avance": 0,
+    "effet": {
+     "fr": "Deux fois moins de butin. Elle traîne des pieds."
+    }
+   },
+   {
+    "id": "furieuse",
+    "min": 0,
+    "nom": {
+     "fr": "Furieuse"
+    },
+    "butin": 0,
+    "avance": -1,
+    "effet": {
+     "fr": "Plus aucun butin, une case de moins à chaque épreuve réussie, et chaque jour un piège posé devant ton pion."
+    }
+   }
+  ],
+  "piege": {
+   "type": "recul",
+   "n": 2
+  }
  },
  "masques": [
   {

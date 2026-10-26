@@ -567,7 +567,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   let c = M.donnerObjet(C8, G, "plaque-hubble", t0);
   assert.equal(c.effet.type, "avance"); assert.equal(G.plateau.position, 4);
   assert.equal(M.donnerObjet(C8, G, "boulier", t0 + 1000), null, "un seul cadeau par jour");
-  assert.equal(M.cadeauPossible(C8, G, "plaque-hubble", t0 + 86400000).raison, "deja");
+  assert.equal(M.cadeauPossible(C8, G, "plaque-hubble", t0 + 86400000).raison, "recent");
   c = M.donnerObjet(C8, G, "boulier", t0 + 86400000);
   assert.equal(G.objetIA, "boulier", "l'IA garde le boulier");
   c = M.donnerObjet(C8, G, "alambic", t0 + 2 * 86400000, () => 0);
@@ -672,4 +672,44 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const vieux = M.migrer(JSON.parse(JSON.stringify(Object.assign(M.nouvellePartie(t0), { atomes: undefined, sauvages: undefined }))));
   assert.deepEqual(vieux.atomes, {}); assert.deepEqual(vieux.sauvages, []);
   console.log("OK : v9 jeu de Mendeleïev, atomes sauvages, combat, tableau périodique");
+}
+
+// v10 : faveur de l'IA, cadeaux qui brillent, pièges de l'IA furieuse
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
+  const CF = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const F = X.ia.faveur, t0 = new Date(2026, 9, 28, 10, 0).getTime(), J = 86400000;
+  let P = M.nouvellePartie(t0); P.plateau.ennemis = {};
+  let f = M.faveurIA(CF, P, t0);
+  assert.equal(f.valeur, F.depart); assert.equal(f.palier.id, "contente");
+  // Elle baisse chaque jour sans cadeau.
+  f = M.faveurIA(CF, P, t0 + 3 * J); assert.equal(f.valeur, F.depart - 3 * F.baisse_par_jour); assert.equal(f.palier.id, "boudeuse");
+  f = M.faveurIA(CF, P, t0 + 6 * J); assert.equal(f.palier.id, "furieuse");
+  // Furieuse : butin nul, une case de moins, et un piège par jour devant le pion.
+  const tF = t0 + 6 * J;
+  P.competences["math.probabilites"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: tF + J, maitriseDepuis: t0 };
+  const v = M.valeurEpreuve(CF, P, { type: "quiz", comp: "math.probabilites" }, tF);
+  assert.equal(v.faveur, -1);
+  P.plateau.position = 2;
+  const c = M.piegeIA(CF, P, tF);
+  assert.ok(c > 2 && c <= 7); assert.equal(M.specialDe(CF, P, c).type, "recul"); assert.ok(M.specialDe(CF, P, c).ia);
+  assert.equal(M.piegeIA(CF, P, tF + 1000), null, "un seul piège par jour");
+  // Un cadeau éblouissant la fait remonter.
+  const brillant = X.objets.objets.find(o => o.cadeau.eclat === 3), terne = X.objets.objets.find(o => o.cadeau.eclat === 1);
+  P.objets[brillant.id] = t0; P.objets[terne.id] = t0;
+  let r = M.donnerObjet(CF, P, brillant.id, tF, () => 0.5);
+  assert.equal(r.eclat, 3); assert.equal(r.gain, F.gains["3"]); assert.equal(r.faveur.valeur, Math.min(100, r.avant.valeur + F.gains["3"]));
+  assert.equal(M.cadeauPossible(CF, P, terne.id, tF + 1000).raison, "jour", "un cadeau par jour");
+  // Le même objet : pas avant le délai de lassitude, puis pour moitié moins.
+  assert.equal(M.cadeauPossible(CF, P, brillant.id, tF + 3 * J).raison, "recent");
+  r = M.donnerObjet(CF, P, brillant.id, tF + F.lassitude_jours * J, () => 0.5);
+  assert.ok(r.repete); assert.equal(r.gain, Math.round(F.gains["3"] / 2));
+  // Comblée : une case de plus.
+  P.faveur = { valeur: 90, maj: tF }; assert.equal(M.faveurIA(CF, P, tF).palier.id, "comblee");
+  assert.equal(M.valeurEpreuve(CF, P, { type: "quiz", comp: "math.probabilites" }, tF).faveur, 1);
+  assert.ok(M.repliqueDuJour(CF, P, tF).contexte === "faveur_comblee");
+  const vieux = M.migrer(JSON.parse(JSON.stringify(Object.assign(M.nouvellePartie(t0), { faveur: undefined }))));
+  assert.equal(vieux.faveur, null);
+  console.log("OK : v10 faveur de l'IA, cadeaux brillants, pièges de l'IA");
 }
