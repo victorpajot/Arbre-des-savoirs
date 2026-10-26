@@ -195,6 +195,14 @@ def main():
     if av["rangs"][0]["niveau_min"] != 0:
         erreurs.append("avatar.json : le premier rang doit commencer au niveau 0")
 
+    # v7 : chaque arbre hors fondamentaux s'ouvre par un succès de pionnier.
+    fond = set(contenu["regles"].get("arbres_fondamentaux", []))
+    ouverts = {x["ouvre"] for x in contenu["succes"]["succes"] if "ouvre" in x}
+    ids_stats = {s["id"] for s in contenu["regles"]["stats"]}
+    if fond and (ids_stats - fond - ouverts):
+        erreurs.append(f"succes.json : aucun pionnier n'ouvre {sorted(ids_stats - fond - ouverts)}")
+    if (fond | ouverts) - ids_stats:
+        erreurs.append(f"arbres inconnus : {sorted((fond | ouverts) - ids_stats)}")
     if erreurs:
         print("\n".join(erreurs))
         sys.exit(1)

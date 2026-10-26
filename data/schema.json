@@ -185,6 +185,14 @@
        ]
       }
      }
+    },
+    "arbres_fondamentaux": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "uniqueItems": true,
+     "description": "v7 : arbres ouverts dès le départ."
     }
    }
   },
@@ -449,6 +457,10 @@
           "auteur"
          ]
         }
+       },
+       "ouvre": {
+        "type": "string",
+        "description": "v7 : arbre (stat) que ce succès ouvre."
        }
       }
      }
@@ -666,6 +678,63 @@
         ]
        },
        "texte": {
+        "$ref": "#/$defs/texte"
+       }
+      }
+     }
+    },
+    "surnoms": {
+     "type": "object",
+     "description": "Surnoms que l'IA donne au joueur selon son humeur ; « succes » contient {succes}.",
+     "required": [
+      "neutre",
+      "moqueuse",
+      "impressionnee",
+      "decue",
+      "impatiente",
+      "succes"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "neutre": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
+        "$ref": "#/$defs/texte"
+       }
+      },
+      "moqueuse": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
+        "$ref": "#/$defs/texte"
+       }
+      },
+      "impressionnee": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
+        "$ref": "#/$defs/texte"
+       }
+      },
+      "decue": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
+        "$ref": "#/$defs/texte"
+       }
+      },
+      "impatiente": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
+        "$ref": "#/$defs/texte"
+       }
+      },
+      "succes": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
         "$ref": "#/$defs/texte"
        }
       }

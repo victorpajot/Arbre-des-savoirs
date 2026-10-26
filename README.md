@@ -1,4 +1,4 @@
-# Arbre des savoirs, v6
+# Arbre des savoirs, v7
 
 Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
@@ -12,6 +12,13 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 | `outils/contenu.py` | Source du contenu : régénère `data/` (`python3 outils/contenu.py`). Il assemble `questions_nouvelles.py` (questions v2), `approfondissement_sciences.py` et `approfondissement_humain.py` (second losange, rangs 5 à 8), `philosophes.py` (branche Sagesse), `illustrations.py` (schémas SVG), `recompenses.py` (succès v2, objets, accessoires), `plateau.py` (63 cases, dates de la frise, succès du plateau), `bibliotheque.py` (32 livres), `ia.py` (répliques) et le pixel art (`dessin.py`, `objets32.py`, `avatar40.py`, `masques.py`, `masques_v4.py`, `savants.py`, `objectifs.py`, `icones32.py`, chacun exécutable pour produire une planche d'aperçu PNG). |
 | `outils/valider.py` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
 | `outils/test_moteur.js` | Test du cycle quiz, rappel, perte, regain (`node outils/test_moteur.js`). |
+
+## Nouveautés de la v7 (lot 1)
+
+- Trois arbres ouverts au départ : Logique, Mécanique, Savoir (`regles.arbres_fondamentaux`). Les sept autres s'ouvrent par un succès pionnier (`succes[].ouvre`, généré par `outils/pionniers.py`) : Cicéron (2 compétences maîtrisées), Lavoisier (3), Galilée (4), Bacon (5), Faraday (6), William James (7), Socrate (9). Une partie existante garde les arbres où elle a déjà joué. Mode test : « Ouvrir tous les arbres ».
+- Accueil : le rang et un surnom donné par l'IA (`commentaires.surnoms`), selon son humeur après la dernière épreuve, ou le succès du jour. Les pastilles de stats disparaissent.
+- Personnage : les fiches de branche d'abord. Collections : Frise, Bibliothèque, Objets.
+- Plateau zoomé sur le pion, qu'on fait glisser au doigt ; « Vue d'ensemble » et « Recentrer ». La caméra suit le pion dans le bilan.
 
 ## Nouveautés de la v6
 

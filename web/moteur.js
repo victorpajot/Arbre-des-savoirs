@@ -32,6 +32,8 @@
       avatar: extras.avatar || null,
       narrateur: extras.commentaires ? extras.commentaires.narrateur : null,
       apartes: extras.commentaires && extras.commentaires.apartes ? extras.commentaires.apartes : [],
+      surnoms: extras.commentaires && extras.commentaires.surnoms ? extras.commentaires.surnoms : null,
+      parSucces: {},
       ia: extras.ia || null,
       plateau: extras.plateau || null,
       evenements: extras.frise ? extras.frise.evenements : [],
@@ -47,6 +49,7 @@
       (c.commentairesPar[r.contexte] = c.commentairesPar[r.contexte] || []).push(r);
     });
     c.stats.forEach(function (s) { c.parStat[s.id] = []; });
+    c.succes.forEach(function (s) { c.parSucces[s.id] = s; });
     c.competences.forEach(function (k) {
       c.parId[k.id] = k;
       (c.parStat[k.stat] = c.parStat[k.stat] || []).push(k);
@@ -185,12 +188,25 @@
     return !!(e && e.maitrise);
   }
 
+  // v7 : un arbre est ouvert s'il est fondamental, si son succès de pionnier est obtenu, si le joueur
+  // y a déjà joué (anciennes parties) ou si l'option de démo ouvre tout.
+  function arbreOuvert(contenu, partie, stat) {
+    var fond = contenu.regles.arbres_fondamentaux;
+    if (!fond || fond.indexOf(stat) >= 0) return true;
+    if (partie.options && partie.options.tousArbres) return true;
+    if (contenu.succes.some(function (s) { return s.ouvre === stat && partie.succes[s.id]; })) return true;
+    return (contenu.parStat[stat] || []).some(function (k) { return !!partie.competences[k.id]; });
+  }
+  function pionnierDe(contenu, stat) { return contenu.succes.filter(function (s) { return s.ouvre === stat; })[0] || null; }
+
   // Statut affiché d'une compétence.
   // verrouillee : prérequis manquants ; disponible : quiz jouable ;
   // maitrisee / a_reviser : acquise, rappel à venir ou dû ;
   // gelee (drapeau) : acquise mais un prérequis a été perdu, elle ne débloque plus rien.
+  // fermee : l'arbre de la compétence n'est pas encore ouvert (v7).
   function statut(contenu, partie, id, t) {
     var k = contenu.parId[id];
+    if (!arbreOuvert(contenu, partie, k.stat)) return { etat: "fermee", gelee: false };
     var prerequisOk = k.prerequis.every(function (p) { return debloque(contenu, partie, p); });
     var e = etatComp(partie, id);
     if (e && e.maitrise) {
@@ -840,6 +856,29 @@
     return out;
   }
 
+  // v7 : surnom donné par l'IA. Il suit son humeur (le dernier résultat) ou, juste après un succès, ce succès.
+  function humeur(partie) {
+    var j = partie.journal[partie.journal.length - 1];
+    if (!j) return "neutre";
+    if (j.type === "rappel") return j.xp < 0 ? "decue" : "impressionnee";
+    if (j.xp <= 0) return "moqueuse";
+    return j.bonnes === j.total ? "impressionnee" : "neutre";
+  }
+  function surnom(contenu, partie, t) {
+    var S = contenu.surnoms; if (!S) return null;
+    var dernier = null, tMax = -1;
+    Object.keys(partie.succes).forEach(function (id) { if (partie.succes[id] > tMax) { tMax = partie.succes[id]; dernier = id; } });
+    var fin = partie.journal[partie.journal.length - 1];
+    var jT = fin ? fin.t : -1;
+    var h = hacher(cleJour(t) + "|" + partie.journal.length);
+    if (dernier && tMax >= jT && joursEntre(tMax, t) <= 1 && contenu.parSucces && contenu.parSucces[dernier]) {
+      var sc = contenu.parSucces[dernier], m = S.succes[h % S.succes.length];
+      return { texte: m.fr.replace("{succes}", sc.nom.fr), ton: "impressionnee", succes: sc };
+    }
+    var ton = humeur(partie), l = S[ton] || S.neutre;
+    return { texte: l[h % l.length].fr, ton: ton };
+  }
+
   // --- Bouton « Jouer » : l'IA choisit l'épreuve ------------------------------
   // Un rappel dû passe d'abord (le plus en retard). Sinon, parmi les quiz ouverts, l'IA tire une raison :
   // la stat la plus faible ou le hasard. Le choix reste le même tant qu'on n'a pas joué.
@@ -963,7 +1002,7 @@
     replique: replique,
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
+    choixIA: choixIA, arbreOuvert: arbreOuvert, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,
     valeurEpreuve: valeurEpreuve,

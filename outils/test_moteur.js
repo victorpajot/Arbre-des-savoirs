@@ -478,3 +478,38 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   }
   console.log("OK : v6 butin par lots, avance au rang, savant automatique");
 }
+
+// v7 : trois arbres fondamentaux, les autres s'ouvrent par un succès pionnier ; surnom de l'IA
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json") };
+  const C7 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const t0 = new Date(2026, 10, 2, 10, 0).getTime();
+  const P = M.nouvellePartie(t0);
+  assert.deepEqual(C7.stats.filter(s => M.arbreOuvert(C7, P, s.id)).map(s => s.id).sort(), ["logique", "mecanique", "savoir"]);
+  assert.equal(M.statut(C7, P, "rhet.argument", t0).etat, "fermee");
+  assert.ok(!M.disponibles(C7, P, t0).some(c => c.stat === "eloquence"), "pas de quiz dans un arbre fermé");
+  assert.equal(M.pionnierDe(C7, "eloquence").id, "pionnier-ciceron");
+  P.options.tousArbres = true;
+  assert.equal(M.statut(C7, P, "rhet.argument", t0).etat !== "fermee", true, "mode test : tout est ouvert");
+  P.options.tousArbres = false;
+  P.succes["pionnier-ciceron"] = t0;
+  assert.ok(M.arbreOuvert(C7, P, "eloquence"));
+  const Q = M.nouvellePartie(t0);
+  Q.competences["rhet.argument"] = { xp: 10 };
+  assert.ok(M.arbreOuvert(C7, Q, "eloquence"), "une partie existante garde ses arbres");
+
+  // Surnom : humeur selon la dernière entrée du journal, ou le succès tout juste obtenu
+  const R = M.nouvellePartie(t0);
+  assert.equal(M.surnom(C7, R, t0).ton, "neutre");
+  R.journal.push({ type: "quiz", bonnes: 5, total: 5, xp: 30, t: t0 - 5000 });
+  R.journal.push({ type: "quiz", bonnes: 0, total: 5, xp: 0, t: t0 - 1000 });
+  assert.equal(M.surnom(C7, R, t0).ton, "moqueuse", "la dernière entrée compte");
+  R.journal.push({ type: "rappel", bonnes: 0, total: 3, xp: -10, t: t0 });
+  assert.equal(M.surnom(C7, R, t0).ton, "decue");
+  R.succes["pionnier-ciceron"] = t0;
+  const s = M.surnom(C7, R, t0);
+  assert.ok(s.succes && s.texte.indexOf(s.succes.nom.fr) >= 0, "surnom tiré du succès");
+  assert.ok(M.surnom(C7, R, t0 + 3 * 86400000).succes == null, "le succès s'efface après un jour");
+  console.log("OK : v7 arbres fondamentaux, pionniers, surnom de l'IA");
+}

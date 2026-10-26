@@ -404,6 +404,25 @@ EXPRESSIONS = {
 }
 
 
+# v7 : surnom que l'IA donne au joueur, affiché sous le rang. Il suit son humeur (dernier résultat),
+# ou juste après un succès, ce succès ({succes}). Groupes nominaux épicènes : le joueur peut être n'importe qui.
+SURNOMS = {
+    "neutre": ["Esprit en rodage", "Curiosité ambulante", "Stagiaire du Savoir", "Candidature à l'étude",
+               "Promesse à confirmer", "Cerveau en préchauffage", "Lecture en cours", "Recrue du Comité"],
+    "moqueuse": ["Tour de Pise ambulante", "Phlogistique sur pattes", "Éponge imperméable", "Génie en sommeil profond",
+                 "Bibliothèque fermée pour travaux", "Spécialiste du presque", "Boussole qui indique le sud",
+                 "Expérience non reproductible"],
+    "impressionnee": ["Petite lumière des Lumières", "Encyclopédie en devenir", "Terreur des quiz", "Sans-faute ambulant",
+                      "Fierté du Comité", "Synapse en feu", "Machine à bonnes réponses", "Erreur statistique (dans le bon sens)"],
+    "decue": ["Mémoire de poisson rouge", "Passoire à souvenirs", "Ex-spécialiste", "Amnésie en cours",
+              "Savoir à durée limitée", "Ancienne gloire", "Courbe de l'oubli incarnée", "Cerveau en fuite"],
+    "impatiente": ["Rappel en souffrance", "Retard chronique", "Absence remarquée", "Fantôme du Comité",
+                   "Promesse non tenue", "Disparition inquiétante", "Rendez-vous manqué", "Sablier oublié"],
+    "succes": ["Titulaire de « {succes} »", "Décoration toute fraîche : « {succes} »", "Médaille « {succes} » au revers",
+               "Couronne « {succes} », encore tiède", "Auréole « {succes} » (provisoire)"],
+}
+
+
 def repliques():
     out = []
     for contexte, lignes in REPLIQUES.items():
@@ -411,6 +430,10 @@ def repliques():
             out.append({"id": f"{contexte.replace('_', '-')}.{i:02d}", "contexte": contexte,
                         "texte": fr(texte), "reference": not isinstance(texte, sans)})
     return out
+
+
+def surnoms():
+    return {ton: [fr(t) for t in lignes] for ton, lignes in SURNOMS.items()}
 
 
 def apartes():

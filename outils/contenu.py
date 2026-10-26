@@ -18,6 +18,7 @@ import masques
 import objectifs
 import objets32
 import philosophes
+import pionniers
 import plateau
 import savants
 from dessin import EMPLACEMENTS, PALETTE
@@ -32,6 +33,8 @@ DATA = Path(__file__).resolve().parent.parent / "data"
 
 REGLES = {
     "format": 1,
+    # v7 : arbres ouverts dès le départ ; les autres s'ouvrent par un succès de pionnier (pionniers.py).
+    "arbres_fondamentaux": pionniers.FONDAMENTAUX,
     "stats": [
         {"id": "logique", "nom": fr("Logique"), "branche": fr("Mathématiques"), "couleur": "#3D63D9",
          "description": fr("Calculer, raisonner, estimer les probabilités.")},
@@ -661,11 +664,11 @@ def cabinet():
 
 
 def tous_succes():
-    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES + objectifs.SUCCES
+    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES + objectifs.SUCCES + pionniers.SUCCES
 
 
 def commentaires():
-    return {"format": 3, "narrateur": fr(ia.NOM), "commentaires": ia.repliques(), "apartes": ia.apartes()}
+    return {"format": 3, "narrateur": fr(ia.NOM), "commentaires": ia.repliques(), "apartes": ia.apartes(), "surnoms": ia.surnoms()}
 
 
 def narrateur():
