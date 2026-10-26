@@ -712,8 +712,11 @@ def jeu_plateau():
         "format": 1,
         "regles": {
             "depart": 1, "arrivee": len(cases),
-            "valeurs": {"rappel": 1, "quiz_rang": {"1": 2, "2": 3, "3": 3, "4": 4, "5": 4, "6": 5, "7": 5, "8": 6}},
-            "bonus": {"parfait": 1, "chrono": 1, "du_jour": 2, "jouer": 2},
+            # v6 : une épreuve réussie fait avancer d'autant de cases que le rang de sa compétence, rappels compris.
+            "valeurs": {"rappel": 1, "quiz_rang": {str(r): r for r in range(1, 9)}},
+            "bonus": {"parfait": 0, "chrono": 0, "du_jour": 0, "jouer": 2},
+            # v6 : butin. Chance qu'une épreuve réussie fasse tomber un objet, un livre, un accessoire ou un masque.
+            "butin": {"rappel": 0.4, "quiz_base": 0.4, "quiz_par_rang": 0.05, "lots": LOTS},
             "echec": {"quiz": 0, "rappel": -2},
             "tour_suivant": {"multiplicateur_recul": 2, "quiz_parfaits_prison": 2},
             "textes": {k: fr(v) for k, v in plateau.REGLES_SPECIALES.items()},
@@ -750,6 +753,44 @@ def livres():
     return {"format": 1, "livres": out}
 
 
+# v6 : le butin est réparti en lots, un par tour du plateau. Le lot N ne tombe qu'à partir du tour N.
+LOTS = 7
+
+
+def assigner_lots(fichiers):
+    """Classe chaque objet, livre, accessoire et masque par difficulté de sa condition, puis le range dans un lot."""
+    comps = {k["id"]: k["rang"] for k in fichiers["skills.json"]["competences"]}
+    succes = {x["id"]: x for x in fichiers["succes.json"]["succes"]}
+
+    def difficulte(cond, prof=0):
+        if not cond or prof > 4:
+            return 0
+        t = cond["type"]
+        if t == "competence_maitrisee":
+            return comps.get(cond["id"], 4)
+        if t in ("case_atteinte", "case_visitee"):
+            return cond["n"] / 9
+        if t == "succes":
+            return difficulte(succes[cond["id"]]["condition"], prof + 1)
+        if t == "succes_obtenus":
+            return cond["n"] / 11
+        if t == "tours_plateau":
+            return 1 + cond["n"]
+        if t == "branche_complete":
+            return 4.5
+        return 3
+
+    familles = [(fichiers["objets.json"]["objets"], lambda x: x["condition"]["type"] != "tours_plateau"),
+                (fichiers["bibliotheque.json"]["livres"], lambda x: True),
+                (fichiers["avatar.json"]["accessoires"], lambda x: True),
+                (fichiers["ia.json"]["masques"], lambda x: "condition" in x)]
+    for liste, eligible in familles:
+        elus = [x for x in liste if eligible(x)]
+        tries = sorted(enumerate(elus), key=lambda p: (difficulte(p[1].get("condition")), p[0]))
+        for rang, (_, x) in enumerate(tries):
+            x["lot"] = 1 + rang * LOTS // len(tries)
+
+
 def main():
     DATA.mkdir(parents=True, exist_ok=True)
     fichiers = {
@@ -765,6 +806,7 @@ def main():
         "frise.json": frise(),
         "bibliotheque.json": livres(),
     }
+    assigner_lots(fichiers)
     for nom, contenu in fichiers.items():
         (DATA / nom).write_text(json.dumps(contenu, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         print(nom, "écrit")

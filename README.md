@@ -1,4 +1,4 @@
-# Arbre des savoirs, v5
+# Arbre des savoirs, v6
 
 Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
@@ -12,6 +12,16 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 | `outils/contenu.py` | Source du contenu : régénère `data/` (`python3 outils/contenu.py`). Il assemble `questions_nouvelles.py` (questions v2), `approfondissement_sciences.py` et `approfondissement_humain.py` (second losange, rangs 5 à 8), `philosophes.py` (branche Sagesse), `illustrations.py` (schémas SVG), `recompenses.py` (succès v2, objets, accessoires), `plateau.py` (63 cases, dates de la frise, succès du plateau), `bibliotheque.py` (32 livres), `ia.py` (répliques) et le pixel art (`dessin.py`, `objets32.py`, `avatar40.py`, `masques.py`, `masques_v4.py`, `savants.py`, `objectifs.py`, `icones32.py`, chacun exécutable pour produire une planche d'aperçu PNG). |
 | `outils/valider.py` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
 | `outils/test_moteur.js` | Test du cycle quiz, rappel, perte, regain (`node outils/test_moteur.js`). |
+
+## Nouveautés de la v6
+
+- **Bilan en trois temps** : le verdict et la réplique de l'IA, puis chaque récompense seule et animée, puis un plateau réduit où le pion avance case par case. « Passer » mène directement au plateau.
+- **Butin rare** : objets, livres, accessoires et masques ne se donnent plus d'office. Leur condition les rend « gagnables » (`partie.gagnables`), puis chaque épreuve réussie a une chance d'en faire tomber un seul (`plateau.regles.butin` : 40 % pour un rappel, de 45 % au rang 1 à 80 % au rang 8). Chaque butin appartient à un lot de 1 à 7 (`lot`, attribué par `assigner_lots` dans `contenu.py` selon la difficulté de sa condition) et ne tombe qu'à partir du tour de même numéro. Les reliques des tours restent données d'office. En simulation, la collection est complète entre le tour 12 et le tour 28. Moteur : `tirerButin`, `butinOuvert`, `chanceButin`.
+- **Deux façons de jouer** : le bouton Jouer, ou une compétence choisie dans l'arbre. Une épreuve réussie fait avancer d'autant de cases que son rang, rappels compris, et de 2 de plus par Jouer. Les bonus sans faute, chrono et du jour ne comptent plus sur le plateau.
+- **Stats** : sur l'accueil, dix pastilles de niveau ; dans Personnage, une fiche par branche avec son niveau, son titre (Novice, Apprenti…), une pastille par compétence et ce qu'il reste à faire.
+- **Savant incarné** : le dernier débloqué par les succès (`savantActuel`). Les accessoires restent au choix.
+- **Accueil** : la réplique de l'IA en tête, puis le personnage, Jouer et le plateau.
+- **Sauvegarde** : même format (4). Les acquis restent ; le butin s'applique aux déblocages à venir.
 
 ## Nouveautés de la v5
 

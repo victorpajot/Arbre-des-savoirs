@@ -117,6 +117,7 @@
       masque: null,
       masques: {},
       farce: null,
+      gagnables: {},
       plateau: nouveauPlateau(),
       derniereVisite: t,
       retour: null,
@@ -133,6 +134,7 @@
   // v2 → v3 : plateau (départ à la case du feu), frise, bibliothèque, masque de l'IA, répliques retenues par contexte.
   // v3 → v4 : les rappels déjà réussis sont repayés au nouveau barème (XP croissante par étape) ; avatar savant.
   // v5 (même format) : le masque choisi par le joueur disparaît, la farce de l'IA apparaît.
+  // v6 (même format) : butin en attente ; le savant incarné se déduit des succès.
   // `contenu` (facultatif) fournit le barème ; sans lui, celui par défaut.
   function migrer(p, contenu) {
     if (!p || typeof p !== "object" || typeof p.format !== "number") return null;
@@ -165,6 +167,8 @@
     // v5 : l'IA choisit seule son masque ; l'ancien choix du joueur est oublié.
     delete out.masqueChoisi;
     out.farce = p.farce || null;
+    // v6 : butin en attente (conditions remplies, pas encore tombé). Ce qui est déjà gagné reste acquis.
+    out.gagnables = p.gagnables || {};
     out.plateau = Object.assign(nouveauPlateau(), p.plateau || {});
     out.derniereVisite = p.derniereVisite || p.maj || out.cree;
     out.options = Object.assign({ chrono: false }, p.options || {});
@@ -349,6 +353,7 @@
     var jouer = !!(infos && infos.jouer);
     var dep = jouerPlateau(contenu, partie, { type: "quiz", comp: id }, { reussi: reussi, parfait: parfait, chrono: chrono, jouer: jouer }, t);
     var rec = verifierRecompenses(contenu, partie, t);
+    if (reussi) ajouterButin(contenu, partie, rec, { type: "quiz", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     var fa = reussi ? null : tenterFarce(contenu, partie, t, infos && infos.alea);
     return { issue: reussi ? "maitrisee" : "echec", bonnes: bonnes, total: total, xp: xp, prochainRappel: e.prochainRappel,
@@ -405,6 +410,7 @@
     var jouer = !!(infos && infos.jouer);
     var dep = jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false, jouer: jouer }, t);
     var rec = verifierRecompenses(contenu, partie, t);
+    if (reussi) ajouterButin(contenu, partie, rec, { type: "rappel", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     var fa = reussi ? null : tenterFarce(contenu, partie, t, infos && infos.alea);
     return { issue: reussi ? "reussi" : "perdue", bonnes: bonnes, total: resultats.length, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
@@ -457,7 +463,8 @@
   function valeurEpreuve(contenu, partie, epreuve, t) {
     if (!contenu.plateau) return null;
     var r = contenu.plateau.regles, k = contenu.parId[epreuve.comp];
-    var base = epreuve.type === "rappel" ? r.valeurs.rappel : r.valeurs.quiz_rang[String(k.rang)];
+    // v6 : une épreuve vaut le rang de sa compétence, quiz comme rappel.
+    var base = r.valeurs.quiz_rang[String(k.rang)];
     var duJour = k.stat === bonusDuJour(contenu, partie, t) ? r.bonus.du_jour : 0;
     return {
       base: base, duJour: duJour, total: base + duJour,
@@ -661,50 +668,103 @@
     }
   }
 
-  // Débloque succès, objets du cabinet et accessoires d'avatar. Certains dépendent des autres
-  // (« 30 succès », « 10 objets », un accessoire lié à un succès) : on boucle jusqu'à stabilité.
+  // v6 : objets, livres, accessoires et masques forment le butin. Les reliques des tours (sans `lot`) et le
+  // premier masque restent donnés d'office ; le reste devient « gagnable » quand sa condition est remplie,
+  // puis tombe au hasard après une épreuve réussie (voir tirerButin).
+  var FAMILLES_BUTIN = ["objets", "livres", "accessoires", "masques"];
+  function listeFamille(contenu, f) {
+    if (f === "objets") return contenu.objets;
+    if (f === "livres") return contenu.livres || [];
+    if (f === "accessoires") return contenu.avatar ? contenu.avatar.accessoires : [];
+    if (f === "masques") return contenu.ia ? contenu.ia.masques : [];
+    return [];
+  }
+  function estButin(x) { return typeof x.lot === "number"; }
+  // Un même identifiant peut exister dans deux familles (les Principia : relique et livre).
+  function cleButin(f, id) { return f + ":" + id; }
+  function possede(partie, f, id) { var r = partie[f] || (partie[f] = {}); return r[id] != null; }
+
+  // Débloque succès, savants, dates de la frise, reliques ; range le butin dont la condition est remplie.
+  // Certains dépendent des autres (« 30 succès », « 10 objets ») : on boucle jusqu'à stabilité.
   function verifierRecompenses(contenu, partie, t) {
-    var out = { succes: [], objets: [], accessoires: [], savants: [], evenements: [], livres: [], masque: null };
-    var familles = [
+    var out = { succes: [], objets: [], accessoires: [], savants: [], evenements: [], livres: [], masque: null, gagnables: [] };
+    partie.gagnables = partie.gagnables || {};
+    partie.masques = partie.masques || {};
+    var directes = [
       ["succes", contenu.succes, partie.succes],
-      ["objets", contenu.objets, partie.objets],
-      ["accessoires", contenu.avatar ? contenu.avatar.accessoires : [], partie.accessoires],
       ["savants", contenu.avatar && contenu.avatar.savants ? contenu.avatar.savants : [], partie.savants || (partie.savants = {})],
       ["evenements", contenu.evenements, partie.evenements],
-      ["livres", contenu.livres, partie.livres],
     ];
     var change = true;
     while (change) {
       change = false;
-      familles.forEach(function (f) {
+      directes.forEach(function (f) {
         f[1].forEach(function (x) {
-          if (!f[2][x.id] && conditionRemplie(contenu, partie, x.condition, t)) {
-            f[2][x.id] = t;
-            out[f[0]].push(x);
-            change = true;
-          }
+          if (!f[2][x.id] && conditionRemplie(contenu, partie, x.condition, t)) { f[2][x.id] = t; out[f[0]].push(x); change = true; }
+        });
+      });
+      FAMILLES_BUTIN.forEach(function (f) {
+        listeFamille(contenu, f).forEach(function (x) {
+          if (possede(partie, f, x.id) || partie.gagnables[cleButin(f, x.id)]) return;
+          if (x.condition && !conditionRemplie(contenu, partie, x.condition, t)) return;
+          if (estButin(x)) { partie.gagnables[cleButin(f, x.id)] = { famille: f, id: x.id, depuis: t }; out.gagnables.push(x); return; }
+          // Hors butin : reliques des tours, premier masque de l'IA.
+          partie[f][x.id] = t; change = true;
+          if (f === "masques") partie.masque = x.id; else out[f].push(x);
         });
       });
     }
-    if (contenu.ia) {
-      // Un masque nouvellement débloqué devient le dernier gagné : l'IA l'étrenne quand le ton s'y prête.
-      // Le tout premier (ou le rattrapage d'une ancienne partie) se pose sans être annoncé.
-      partie.masques = partie.masques || {};
-      var deja = Object.keys(partie.masques).length, nouveaux = [];
-      contenu.ia.masques.forEach(function (m) {
-        if (!partie.masques[m.id] && (!m.condition || conditionRemplie(contenu, partie, m.condition, t))) { partie.masques[m.id] = t; nouveaux.push(m); }
+    var m = masqueActuel(contenu, partie);
+    if (m) partie.masque = m.id;
+    if (out.succes.length || out.objets.length || out.savants.length || out.evenements.length || out.gagnables.length) partie.maj = t;
+    return out;
+  }
+
+  // Chance qu'une épreuve réussie fasse tomber un butin : un rappel, ou un quiz selon son rang.
+  function chanceButin(contenu, epreuve) {
+    var b = contenu.plateau && contenu.plateau.regles.butin;
+    if (!b) return 0;
+    if (epreuve.type === "rappel") return b.rappel;
+    var k = contenu.parId[epreuve.comp];
+    return Math.min(1, b.quiz_base + b.quiz_par_rang * (k ? k.rang : 1));
+  }
+  // Butin qui peut tomber maintenant : gagnable, et dont le lot est ouvert (lot N à partir du tour N).
+  function butinOuvert(contenu, partie) {
+    var tour = (partie.plateau ? partie.plateau.tours : 0) + 1, out = [];
+    FAMILLES_BUTIN.forEach(function (f) {
+      listeFamille(contenu, f).forEach(function (x) {
+        if (partie.gagnables && partie.gagnables[cleButin(f, x.id)] && !possede(partie, f, x.id) && x.lot <= tour) out.push({ famille: f, chose: x });
       });
-      if (nouveaux.length) {
-        // Plusieurs d'un coup : un masque gagné par un succès précis l'emporte sur un palier.
-        var precis = nouveaux.filter(function (m) { return m.condition && m.condition.type === "succes"; });
-        var dernier = (precis.length ? precis : nouveaux)[(precis.length ? precis : nouveaux).length - 1];
-        if (deja) { out.masque = dernier; out.masques = nouveaux; }
-        partie.masque = dernier.id;
-      }
-      var m = masqueActuel(contenu, partie);
-      if (m) partie.masque = m.id;
-    }
-    if (out.succes.length || out.objets.length || out.accessoires.length || out.savants.length || out.evenements.length || out.livres.length || out.masque) partie.maj = t;
+    });
+    return out;
+  }
+  // Après une épreuve réussie : au plus un butin, tiré au hasard. `alea` (facultatif) pour les tests.
+  function tirerButin(contenu, partie, epreuve, t, alea) {
+    alea = alea || Math.random;
+    var ouvert = butinOuvert(contenu, partie);
+    if (!ouvert.length || alea() >= chanceButin(contenu, epreuve)) return null;
+    var b = ouvert[Math.floor(alea() * ouvert.length)];
+    partie[b.famille][b.chose.id] = t;
+    delete partie.gagnables[cleButin(b.famille, b.chose.id)];
+    if (b.famille === "masques") partie.masque = b.chose.id;
+    partie.maj = t;
+    return b;
+  }
+  // Intègre le butin tombé au résultat d'une épreuve, avec ce qu'il débloque à son tour (« 10 objets »…).
+  function ajouterButin(contenu, partie, rec, epreuve, t, alea) {
+    var b = tirerButin(contenu, partie, epreuve, t, alea);
+    if (!b) return null;
+    if (b.famille === "masques") rec.masque = b.chose; else rec[b.famille].push(b.chose);
+    var suite = verifierRecompenses(contenu, partie, t);
+    ["succes", "objets", "accessoires", "savants", "evenements", "livres"].forEach(function (f) { rec[f] = rec[f].concat(suite[f]); });
+    return b;
+  }
+
+  // v6 : l'avatar incarne le dernier savant débloqué (par ses succès), sans choix du joueur.
+  function savantActuel(contenu, partie) {
+    if (!contenu.avatar || !contenu.avatar.savants) return null;
+    var vus = partie.savants || {}, out = null, tMax = -1;
+    contenu.avatar.savants.forEach(function (s) { if (vus[s.id] != null && vus[s.id] >= tMax) { tMax = vus[s.id]; out = s; } });
     return out;
   }
 
@@ -782,7 +842,7 @@
 
   // --- Bouton « Jouer » : l'IA choisit l'épreuve ------------------------------
   // Un rappel dû passe d'abord (le plus en retard). Sinon, parmi les quiz ouverts, l'IA tire une raison :
-  // le bonus du jour, la stat la plus faible ou le hasard. Le choix reste le même tant qu'on n'a pas joué.
+  // la stat la plus faible ou le hasard. Le choix reste le même tant qu'on n'a pas joué.
   function choixIA(contenu, partie, t) {
     var dus = rappelsDus(contenu, partie, t);
     if (dus.length) return { comp: dus[0], type: "rappel", raison: "rappel" };
@@ -790,9 +850,6 @@
     if (!dispo.length) return null;
     var graine = hacher(cleJour(t) + "|" + partie.journal.length + "|" + (partie.cree || 0));
     var raisons = [];
-    var bonus = contenu.plateau ? bonusDuJour(contenu, partie, t) : null;
-    var dansBonus = dispo.filter(function (k) { return k.stat === bonus; });
-    if (dansBonus.length) raisons.push({ raison: "bonus", liste: dansBonus });
     var sug = suggestion(contenu, partie, t);
     if (sug) raisons.push({ raison: "faible", liste: [sug] });
     raisons.push({ raison: "hasard", liste: dispo });
@@ -906,7 +963,7 @@
     replique: replique,
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
+    choixIA: choixIA, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,
     valeurEpreuve: valeurEpreuve,

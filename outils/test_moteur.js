@@ -17,8 +17,9 @@ assert.deepEqual(r.nouveauxSucces.map(s => s.id), ["tour-de-pise"]);
 r = M.terminerQuiz(C, P, "math.arithmetique", res("math.arithmetique", 5, 5), t);
 assert.equal(r.issue, "maitrisee"); assert.equal(r.xp, 70);
 assert.deepEqual(r.nouveauxSucces.map(s => s.id).sort(), ["einstein-notes", "eureka", "premier-pas"]);
-assert.deepEqual(r.nouveauxObjets.map(o => o.id), ["boulier"]);
-assert.deepEqual(r.nouveauxAccessoires.map(a => a.id), ["lunettes-rondes", "coiffure-einstein"]);
+// v6 : objets et accessoires deviennent du butin gagnable ; ici, sans plateau, aucun ne tombe
+assert.deepEqual(r.nouveauxObjets, []);
+assert.ok(P.gagnables["objets:boulier"] && P.gagnables["accessoires:lunettes-rondes"] && P.gagnables["accessoires:coiffure-einstein"]);
 assert.ok(r.contextes.includes("quiz_parfait_facile"));
 assert.equal(M.statut(C, P, "math.proportions", t).etat, "disponible");
 assert.equal(M.rappelsDus(C, P, t).length, 0);
@@ -83,14 +84,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.statut(C, P3, "sci.genetique", t0).etat, "verrouillee");
   assert.equal(M.statut(C, P3, "chim.liaisons", t0).etat, "disponible");
   const rec = M.verifierRecompenses(C, P3, t0);
-  assert.ok(rec.objets.some(o => o.id === "tableau-mendeleiev"));
+  assert.ok(rec.gagnables.some(o => o.id === "tableau-mendeleiev"));
   // Quiz raté en 20 s, à 3 h du matin, avec des réponses éclair : la panoplie moqueuse
   const nuit = new Date(2026, 9, 25, 3, 0).getTime();
   const qs = M.tirerQuestions(C, P3, "chim.liaisons", 5).map(q => ({ id: q.id, correct: false, ms: 900 }));
   let r3 = M.terminerQuiz(C, P3, "chim.liaisons", qs, nuit, { duree: 20000 });
   const ids = r3.nouveauxSucces.map(s => s.id);
   for (const id of ["dix-pour-cent", "insomniaque", "table-rase", "neutrinos", "tour-de-pise"]) assert.ok(ids.includes(id), id);
-  assert.ok(r3.nouveauxAccessoires.some(a => a.id === "chapeau-alu"));
+  assert.ok(P3.gagnables["accessoires:chapeau-alu"], "chapeau gagnable après la panoplie moqueuse");
   assert.deepEqual(r3.contextes.slice(0, 2), ["quiz_zero", "nuit"]);
   const rep = M.replique(C, P3, r3.contextes, () => 0);
   assert.equal(rep.contexte, "quiz_zero"); assert.equal(P3.repliques.quiz_zero[0], rep.id);
@@ -198,9 +199,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const rec = M.verifierRecompenses(C3, P, t0);
     const casesFrise = C3.evenements.filter(e => e.case);
     assert.ok(casesFrise.every(e => P.evenements[e.id]), "toutes les dates du plateau sont sur la frise");
-    assert.ok(C3.livres.filter(l => l.condition.type === "case_atteinte").every(l => P.livres[l.id]), "livres du plateau débloqués");
+    assert.ok(C3.livres.filter(l => l.condition.type === "case_atteinte").every(l => P.livres[l.id] || P.gagnables["livres:" + l.id]), "livres du plateau gagnables");
     assert.ok(P.succes["epoque-xxe"]);
-    assert.equal(M.masqueActuel(C3, P).id, "promethee", "un tour complet débloque le masque de Prométhée");
+    assert.ok(P.masques.promethee || P.gagnables["masques:promethee"], "un tour complet rend gagnable le masque de Prométhée");
   }
 
   // Masques par paliers de succès, annoncés au changement
@@ -210,10 +211,11 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(P.masque, "theatre");
     for (let i = 0; i < 8; i++) P.succes["test-" + i] = t0;
     const rec = M.verifierRecompenses(C3, P, t0);
-    assert.deepEqual(rec.masques.map(m => m.id), ["talos", "golem"]); assert.equal(P.masque, "golem");
-    P.succes["nains-geants"] = t0;
-    assert.equal(M.verifierRecompenses(C3, P, t0).masque.id, "alphago");
-    assert.equal(M.masqueActuel(C3, P).id, "alphago");
+    assert.deepEqual(rec.gagnables.map(m => m.id), ["talos", "golem"]); assert.equal(P.masque, "theatre");
+    const ouverts = M.butinOuvert(C3, P).map(b => b.chose.id);
+    const b = M.tirerButin(C3, P, { type: "rappel" }, t0, () => 0);
+    assert.equal(b.famille, "masques"); assert.ok(ouverts.includes(b.chose.id));
+    assert.equal(M.masqueActuel(C3, P).id, b.chose.id, "le masque tombé devient le dernier gagné");
     assert.equal(M.expression(C3, "quiz_rate"), "moqueuse");
   }
 
@@ -246,7 +248,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(M.xpParStat(C3, P).empathie, 80);
     const rec = M.verifierRecompenses(C3, P, t0);
     assert.ok(rec.evenements.some(e => e.id === "ebbinghaus") && rec.evenements.some(e => e.id === "feu"));
-    assert.ok(rec.livres.some(l => l.id === "memoire"));
+    assert.ok(rec.gagnables.some(l => l.id === "memoire"));
     assert.equal(rec.masque, null, "le premier masque se pose sans annonce");
   }
   console.log("OK : v3 plateau (barème, cases spéciales, tour complet), frise, bibliothèque, masques, répliques, migration v2 → v3");
@@ -343,7 +345,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   {
     const P = M.nouvellePartie(t0);
     const c = M.choixIA(C5, P, t0);
-    assert.equal(c.type, "quiz"); assert.ok(["bonus", "faible", "hasard"].includes(c.raison));
+    assert.equal(c.type, "quiz"); assert.ok(["faible", "hasard"].includes(c.raison));
     assert.equal(M.choixIA(C5, P, t0).comp.id, c.comp.id, "même choix tant qu'on n'a pas joué");
     const r = M.terminerQuiz(C5, P, c.comp.id, juste(P, c.comp.id, 5, 5), t0, { jouer: true });
     const sans = M.valeurEpreuve(C5, P, { type: "quiz", comp: c.comp.id }, t0).total + C5.plateau.regles.bonus.parfait;
@@ -363,6 +365,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(M.masquePourTon(C5, P, "moqueuse", "a").id, "theatre");
     for (let i = 0; i < 30; i++) P.succes["test-" + i] = t0;
     M.verifierRecompenses(C5, P, t0);
+    Object.values(P.gagnables).forEach(g => { if (g.famille === "masques") P.masques[g.id] = t0; });
     const portes = {};
     ["moqueuse", "decue", "impressionnee", "impatiente", "neutre"].forEach(ton => {
       for (let i = 0; i < 30; i++) {
@@ -412,4 +415,66 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.ok(!("masqueChoisi" in p)); assert.equal(p.farce, null); assert.equal(p.competences["math.arithmetique"].xp, 90);
   }
   console.log("OK : v5 bouton Jouer, masques selon le ton, apartés, farces, migration");
+}
+
+// v6 : butin rare par lots de tour, avance au rang, savant incarné automatique
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json") };
+  const C6 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const t0 = new Date(2026, 9, 28, 10, 0).getTime();
+  const juste = (P, id, n, ok) => M.tirerQuestions(C6, P, id, n).map((q, i) => ({ id: q.id, correct: i < ok }));
+
+  // Avance = rang de la compétence ; +2 par le bouton Jouer
+  {
+    const k3 = C6.competences.filter(k => k.rang === 3)[0];
+    const P = M.nouvellePartie(t0);
+    assert.equal(M.valeurEpreuve(C6, P, { type: "quiz", comp: k3.id }, t0).total, 3);
+    assert.equal(M.valeurEpreuve(C6, P, { type: "rappel", comp: k3.id }, t0).total, 3);
+    const k1 = C6.competences.filter(k => k.rang === 1)[0];
+    const r = M.terminerQuiz(C6, P, k1.id, juste(P, k1.id, 5, 5), t0, { jouer: true, alea: () => 0.99 });
+    assert.equal(r.plateau.valeur, 3, "rang 1 + 2 pour Jouer, sans bonus parfait");
+  }
+
+  // Simulation : au plus un butin par épreuve, aucun lot avant son tour, collection incomplète au tour 7
+  {
+    let seed = 7; const rnd = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
+    const P = M.nouvellePartie(t0); let t = t0;
+    const butin = () => ["objets", "livres", "accessoires", "masques"].reduce((n, f) => n + Object.keys(P[f]).length, 0);
+    const lot = {}; ["objets", "livres"].forEach(f => C6[f].forEach(x => { if (x.lot) lot[f + ":" + x.id] = x.lot; }));
+    C6.avatar.accessoires.forEach(x => { lot["accessoires:" + x.id] = x.lot; }); C6.ia.masques.forEach(x => { if (x.lot) lot["masques:" + x.id] = x.lot; });
+    let collectionAuTour7 = null;
+    for (let j = 0; j < 400 && P.plateau.tours < 8; j++) {
+      M.verifierRecompenses(C6, P, t);
+      const faire = M.rappelsDus(C6, P, t).map(k => ({ comp: k, type: "rappel" }));
+      for (let n = 0; n < 3; n++) { const c = M.choixIA(C6, P, t); if (c && c.type === "quiz") faire.push(c); }
+      for (const c of faire) {
+        if (c.type === "quiz" && !M.disponibles(C6, P, t).some(k => k.id === c.comp.id)) continue;
+        const avant = butin(), reliques = Object.keys(P.objets).filter(id => !lot["objets:" + id]).length;
+        const q = M.tirerQuestions(C6, P, c.comp.id, c.type === "rappel" ? 3 : 5).map(x => ({ id: x.id, correct: rnd() < 0.85 }));
+        (c.type === "rappel" ? M.terminerRappel : M.terminerQuiz)(C6, P, c.comp.id, q, t, { jouer: true, alea: rnd });
+        const nouvellesReliques = Object.keys(P.objets).filter(id => !lot["objets:" + id]).length - reliques;
+        assert.ok(butin() - avant - nouvellesReliques <= 1, "au plus un butin par épreuve");
+        ["objets", "livres", "accessoires", "masques"].forEach(f => Object.keys(P[f]).forEach(id => {
+          const l = lot[f + ":" + id];
+          if (l && P[f][id] === t) assert.ok(l <= P.plateau.tours + 1, id + " (lot " + l + ") tombé au tour " + (P.plateau.tours + 1));
+        }));
+        if (P.plateau.tours === 7 && collectionAuTour7 == null) collectionAuTour7 = butin();
+      }
+      t += 86400000;
+    }
+    const total = C6.objets.length + C6.livres.length + C6.avatar.accessoires.length + C6.ia.masques.length;
+    assert.ok(collectionAuTour7 != null && collectionAuTour7 < total, "collection incomplète après 7 tours (" + collectionAuTour7 + "/" + total + ")");
+  }
+
+  // Savant : le dernier débloqué, sans choix du joueur
+  {
+    const P = M.nouvellePartie(t0);
+    assert.equal(M.savantActuel(C6, P), null);
+    P.savants.hypatie = t0; P.savants.archimede = t0 + 1000;
+    assert.equal(M.savantActuel(C6, P).id, "archimede");
+    P.avatar.savant = "hypatie";
+    assert.equal(M.savantActuel(C6, P).id, "archimede", "le choix manuel est ignoré");
+  }
+  console.log("OK : v6 butin par lots, avance au rang, savant automatique");
 }

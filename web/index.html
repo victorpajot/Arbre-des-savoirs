@@ -363,6 +363,33 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .mini-stats .j .barre i { display: block; height: 100%; background: var(--c); border-radius: 3px; }
 .bloc.perso-v5 { cursor: pointer; }
 .bloc.perso-v5 .perso { margin: 0; }
+/* v6 : stats */
+.pastilles { display: flex; justify-content: space-between; gap: 2px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.pastille-stat { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10.5px; color: var(--muted); min-width: 0; flex: 1; }
+.pastille-stat .rond { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 14px; color: #fff; background: var(--c); }
+.pastille-stat.zero .rond { background: transparent; color: var(--c); border: 2px solid var(--c); opacity: 0.6; }
+.fiches { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fiche-branche { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 12px; background: var(--surface-2); border-top: 4px solid var(--c); }
+.fiche-branche .haut-f { display: flex; justify-content: space-between; gap: 6px; align-items: flex-start; }
+.fiche-branche b { display: block; color: var(--c); font-size: 15px; line-height: 1.2; }
+.fiche-branche .haut-f span { font-size: 11px; color: var(--muted); }
+.fiche-branche .niv-f { text-align: right; line-height: 1; }
+.fiche-branche .niv-f .num { font-family: var(--f-display); font-size: 30px; font-weight: 800; }
+.fiche-branche .niv-f small { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
+.fiche-branche .pips { display: flex; gap: 4px; }
+.fiche-branche .pips i { flex: 1; height: 8px; border-radius: 4px; background: var(--line); }
+.fiche-branche .pips i.ouvert { background: transparent; box-shadow: inset 0 0 0 1.5px var(--c); }
+.fiche-branche .pips i.ok { background: var(--c); }
+.fiche-branche .note { font-size: 12px; line-height: 1.35; }
+/* v6 : bilan en étapes */
+.etapes-bilan { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.etapes-bilan .pts { display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); }
+.etapes-bilan .pts i { width: 24px; height: 5px; border-radius: 3px; background: var(--line); }
+.etapes-bilan .pts i.vu { background: var(--accent); }
+.etapes-bilan .passer { border: 0; background: none; color: var(--muted); font-weight: 700; padding: 8px; }
+.etape { display: flex; flex-direction: column; gap: 14px; }
+@media (prefers-reduced-motion: no-preference) { .etape { animation: apparait 0.35s ease-out both; } }
+.plateau-bilan svg.grille { display: block; width: 100%; height: auto; }
 /* v5 : farce */
 .farce { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; padding: 12px; border-radius: 12px; background: color-mix(in srgb, var(--warn) 12%, var(--surface)); border-left: 4px solid var(--warn); }
 .farce .avatar-cadre { padding: 2px; }
@@ -521,6 +548,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   function savantIncarne() {
     var f = farce();
     if (f && f.type === "savant") return savantParId(f.id);
+    // v6 : le dernier savant débloqué par les succès, sans choix du joueur.
+    return M.savantActuel(C, P);
     var id = P.avatar && P.avatar.savant;
     return id && P.savants && P.savants[id] && C.avatar.savants ? C.avatar.savants.filter(function (s) { return s.id === id; })[0] || null : null;
   }
@@ -677,34 +706,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     });
   }
 
-  function radar(taille, avecNoms) {
-    var xp = M.xpParStat(C, P), n = C.stats.length, cx = 50, cy = 50, R = avecNoms ? 30 : 42;
-    var max = C.regles.xp.paliers_niveau.length - 1;
-    function pt(i, f) { var a = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + Math.cos(a) * R * f, cy + Math.sin(a) * R * f]; }
-    var grille = [0.25, 0.5, 0.75, 1].map(function (f) {
-      return '<polygon points="' + C.stats.map(function (s, i) { return pt(i, f).join(","); }).join(" ") + '" fill="none" stroke="var(--line)" stroke-width="0.6"/>';
-    }).join("");
-    var axes = C.stats.map(function (s, i) { var p = pt(i, 1); return '<line x1="50" y1="50" x2="' + p[0] + '" y2="' + p[1] + '" stroke="var(--line)" stroke-width="0.6"/>'; }).join("");
-    var forme = C.stats.map(function (s, i) {
-      var nv = M.niveau(C, xp[s.id]);
-      var frac = nv.suivant ? (nv.xp - nv.debut) / (nv.suivant - nv.debut) : 0;
-      return pt(i, Math.max(0.06, Math.min(1, (nv.niveau + frac) / max)));
-    });
-    var points = C.stats.map(function (s, i) { return '<circle cx="' + forme[i][0] + '" cy="' + forme[i][1] + '" r="2.2" fill="' + couleur(s.id) + '"/>'; }).join("");
-    var noms = avecNoms ? C.stats.map(function (s, i) {
-      var p = pt(i, 1.32), anc = Math.abs(p[0] - 50) < 2 ? "middle" : (p[0] < 50 ? "end" : "start");
-      var nv = M.niveau(C, xp[s.id]).niveau;
-      return '<text x="' + p[0] + '" y="' + (p[1] + 0.5) + '" text-anchor="' + anc + '" font-size="5.2" font-weight="700" fill="' + couleur(s.id) + '">' + esc(tx(s.nom)) + "</text>" +
-        '<text x="' + p[0] + '" y="' + (p[1] + 6.2) + '" text-anchor="' + anc + '" font-size="4.6" fill="var(--muted)" class="num">niv. <tspan font-weight="700" fill="var(--ink)">' + nv + "</tspan>/" + max + "</text>";
-    }).join("") : "";
-    // Graduations : un anneau tous les quarts du niveau maximal, numérotés sur l'axe du haut.
-    var graduations = avecNoms ? [0.25, 0.5, 0.75, 1].map(function (f) {
-      return '<text x="51.2" y="' + (pt(0, f)[1] + 1.6) + '" font-size="3.4" fill="var(--muted)" class="num">' + Math.round(max * f) + "</text>";
-    }).join("") : "";
-    return '<svg class="radar" viewBox="' + (avecNoms ? "-20 -4 140 112" : "0 0 100 100") + '" width="' + taille + '" role="img" aria-label="Profil des stats">' + grille + axes +
-      '<polygon points="' + forme.map(function (p) { return p.join(","); }).join(" ") + '" fill="var(--accent)" fill-opacity="0.18" stroke="var(--accent)" stroke-width="1.2" stroke-linejoin="round"/>' + points + graduations + noms + "</svg>";
-  }
-
   function ligneComp(k, sous, bouton) {
     var row = el('<div class="ligne" style="--c:' + couleur(k.stat) + '"><span class="pastille"></span><div class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" + sous + "</span></div></div>");
     if (bouton) row.appendChild(bouton);
@@ -818,35 +819,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     M.disponibles(C, P, t).forEach(function (k) { out.push({ k: k, type: "quiz", v: M.valeurEpreuve(C, P, { type: "quiz", comp: k.id }, t) }); });
     return out.filter(function (e) { return e.v; }).sort(function (a, b) { return b.v.total - a.v.total || (a.type === "rappel" ? -1 : 1); });
   }
-  function ligneEpreuve(e) {
-    var s = stat(e.k.stat), pl = P.plateau, bloque = pl.prison ? "prison" : pl.quarantaine ? "quarantaine" : "";
-    var b = el('<button type="button" class="epreuve" style="--c:' + couleur(e.k.stat) + '"><span class="de' + (e.v.duJour ? " bonus" : "") + '"><b>+' + e.v.total + "</b></span><span class=\"txt\"><strong>" + esc(tx(e.k.nom)) + "</strong><span>" +
-      (e.type === "rappel" ? "Rappel" : "Quiz de rang " + e.k.rang) + " · " + esc(tx(s.nom)) + (e.type === "rappel" ? " · recul de " + (-e.v.echec) + " si raté" : "") + "</span></span></button>");
-    if (bloque) b.title = bloque === "prison" ? "Ton pion est en prison" : "Ton pion est en quarantaine";
-    b.onclick = function () { fermerFeuille(); lancerQuiz(e.k.id, e.type); };
-    return b;
-  }
-  function blocTonTour() {
-    var ep = epreuvesDuTour(), b = el('<div class="ton-tour"><div class="tete"><h3>Ton tour</h3><span class="num">' + ep.length + " épreuve" + (ep.length > 1 ? "s" : "") + "</span></div></div>");
-    if (!ep.length) { b.appendChild(el('<p class="vide">Rien à jouer pour l\'instant : tes compétences ouvertes sont maîtrisées et aucun rappel n\'est dû.</p>')); return b; }
-    var pos = P.plateau.position, arr = C.plateau.regles.arrivee;
-    ep.slice(0, 3).forEach(function (e) {
-      var l = ligneEpreuve(e), cible = Math.min(arr, pos + e.v.total);
-      l.querySelector(".txt > span").insertAdjacentHTML("beforeend", " · vers la case " + cible);
-      b.appendChild(l);
-    });
-    if (ep.length > 3) { var tout = el('<button type="button" class="btn sec">Voir les ' + ep.length + " épreuves</button>"); tout.onclick = ouvrirTonTour; b.appendChild(tout); }
-    return b;
-  }
-  function ouvrirTonTour() {
-    var ep = epreuvesDuTour(), pl = P.plateau;
-    feuilleSimple('<div class="eyebrow">Case ' + pl.position + " · " + esc(tx(C.plateau.cases[pl.position - 1].titre)) + "</div><h2>Ton tour</h2><p class=\"note\">Pas de dé : choisis l'épreuve, sa face indique de combien de cases elle fait avancer ton pion si tu la réussis.</p>" +
-      (pl.prison ? '<p class="etat-pion">En prison : seul un quiz parfait te fera bouger.</p>' : pl.quarantaine ? '<p class="etat-pion">Quarantaine : la prochaine épreuve réussie ne fera pas avancer ton pion.</p>' : "") +
-      '<div class="liste-epreuves"></div>', "Ton tour");
-    var z = feuille.querySelector(".liste-epreuves");
-    if (!ep.length) z.appendChild(el('<p class="vide">Aucune épreuve jouable pour l\'instant.</p>'));
-    ep.forEach(function (e) { z.appendChild(ligneEpreuve(e)); });
-  }
   // v5 : bouton « Jouer ». L'IA choisit l'épreuve, l'annonce, et la réussir rapporte des cases en plus.
   var ICONE_JOUER = '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>';
   function boutonJouer() {
@@ -864,7 +836,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     feuilleSimple('<div class="choix-ia"><div class="eyebrow">L\'IA a choisi</div><div id="ia-jouer"></div>' +
       '<div class="epreuve" style="--c:' + couleur(k.stat) + '"><span class="de' + (v.duJour ? " bonus" : "") + '"><b>+' + (v.total + bonus) + '</b></span><span class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" +
       (c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · dont +" + bonus + " pour le bouton Jouer</span></span></div>" +
-      '<button type="button" class="btn large" data-a="go">C\'est parti</button><p class="meta">Tu peux toujours choisir toi-même une épreuve sur le plateau, sans ce bonus.</p></div>', "L'IA a choisi", {
+      '<button type="button" class="btn large" data-a="go">C\'est parti</button><p class="meta">Tu peux aussi choisir toi-même une compétence dans l\'arbre, sans ce bonus.</p></div>', "L'IA a choisi", {
       go: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true }); },
     });
     feuille.querySelector("#ia-jouer").appendChild(comite(rep, true));
@@ -872,9 +844,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 
   // Fait avancer le pion case par case le long du chemin du dernier déplacement.
   var animPion = null;
-  function animerPion() {
+  function animerPion(racine) {
     var dep = animPion; animPion = null;
-    var g = document.getElementById("pion");
+    var g = (racine || document).querySelector("#pion");
     if (!dep || !g) return;
     var R = C.plateau.regles, cases = [dep.chemin[0]];
     for (var i = 1; i < dep.chemin.length; i++) {
@@ -885,7 +857,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     function poser(n) { var p = centreCase(n); g.setAttribute("transform", "translate(" + p[0] + " " + p[1] + ")"); }
     var reduit = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduit || cases.length < 2) { poser(cases[cases.length - 1]); return; }
-    var svg = g.ownerSVGElement; if (svg && svg.scrollIntoView) svg.scrollIntoView({ block: "center", behavior: "smooth" });
+    var svg = g.ownerSVGElement; if (!racine && svg && svg.scrollIntoView) svg.scrollIntoView({ block: "center", behavior: "smooth" });
     var j = 0;
     setTimeout(function pas() {
       j++; poser(cases[j]); g.classList.remove("saut"); void g.getBBox(); g.classList.add("saut");
@@ -899,16 +871,14 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     grille.onclick = function (ev) {
       var g = ev.target.closest && ev.target.closest("[data-n]"); if (!g) return;
       var n = g.getAttribute("data-n");
-      if (n === "pion") ouvrirTonTour(); else if (n === "objectif") ouvrirObjectif(); else ouvrirCase(+n);
+      if (n === "pion") ouvrirJouer(); else if (n === "objectif") ouvrirObjectif(); else ouvrirCase(+n);
     };
     b.appendChild(grille);
-    b.appendChild(blocTonTour());
     var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</span><b>" + esc(tx(k.titre)) + "</b><span>Lire l'histoire de la case</span></span></button>");
     act.onclick = function () { ouvrirCase(k.n); };
     b.appendChild(act);
     if (pl.prison) b.appendChild(el('<p class="etat-pion">Assigné à résidence : ton pion ne bougera plus avant ' + (pl.prison > 1 ? pl.prison + " quiz parfaits" : "un quiz parfait") + ".</p>"));
     else if (pl.quarantaine) b.appendChild(el('<p class="etat-pion">Quarantaine : ' + (pl.quarantaine > 1 ? "tes " + pl.quarantaine + " prochaines épreuves réussies" : "ta prochaine épreuve réussie") + " ne ferai" + (pl.quarantaine > 1 ? "ent" : "t") + " pas avancer ton pion.</p>"));
-    b.appendChild(el('<p class="bonus-jour" style="--c:' + couleur(st.id) + '"><span class="pill">+' + C.plateau.regles.bonus.du_jour + '</span><span>Bonus du jour : <b style="color:' + couleur(st.id) + '">' + esc(tx(st.nom)) + "</b>. Ses épreuves rapportent " + C.plateau.regles.bonus.du_jour + " cases de plus.</span></p>"));
     var regles = el('<button type="button" class="btn sec">Règles et barème</button>'); regles.onclick = ouvrirRegles;
     b.appendChild(regles);
     return b;
@@ -928,19 +898,16 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   }
   function ouvrirRegles() {
     var R = C.plateau.regles, rangs = R.valeurs.quiz_rang, st = stat(M.bonusDuJour(C, P, maintenant()));
-    var html = '<div class="eyebrow">Plateau de l\'histoire</div><h2>Règles et barème</h2><p>Pas de dé : chaque épreuve réussie fait avancer ton pion d\'un nombre de cases fixé par l\'IA. Du feu, case ' + R.depart + ", jusqu'à l'IA, case " + R.arrivee + ".</p>" +
-      '<div class="bareme"><span>Rappel réussi</span><span class="num">+' + R.valeurs.rappel + "</span>" +
-      Object.keys(rangs).map(function (r) { return "<span>Quiz de rang " + r + " réussi</span><span class=\"num\">+" + rangs[r] + "</span>"; }).join("") +
-      "<span>Quiz sans faute</span><span class=\"num\">+" + R.bonus.parfait + "</span><span>Quiz réussi avec le chrono</span><span class=\"num\">+" + R.bonus.chrono + "</span>" +
-      "<span>Branche du bonus du jour (" + esc(tx(st.nom)) + ")</span><span class=\"num\">+" + R.bonus.du_jour + "</span>" +
+    var html = '<div class="eyebrow">Plateau de l\'histoire</div><h2>Règles et barème</h2><p>Pas de dé : chaque épreuve réussie fait avancer ton pion d\'autant de cases que le rang de sa compétence. Du feu, case ' + R.depart + ", jusqu'à l'IA, case " + R.arrivee + ".</p>" +
+      '<div class="bareme"><span>Épreuve réussie depuis l\'arbre</span><span class="num">+ rang</span><span>Épreuve réussie par Jouer</span><span class="num">+ rang + ' + (R.bonus.jouer || 0) + "</span>" +
       "<span>Quiz raté</span><span class=\"num\">" + R.echec.quiz + "</span><span>Rappel raté</span><span class=\"num\">" + R.echec.rappel + "</span></div>" +
+      '<p class="meta">Butin : une épreuve réussie a une chance de faire tomber un objet, un livre, un accessoire ou un masque, plus grande pour les rangs élevés. Le butin est réparti sur ' + ((R.butin && R.butin.lots) || 7) + " tours du plateau.</p>" +
       "<h3 style=\"font-size:17px\">Cases spéciales</h3>" +
       C.plateau.cases.filter(function (k) { return k.special; }).filter(function (k, i, a) { return k.special.type !== "eureka" || a.filter(function (x) { return x.special.type === "eureka"; })[0] === k; }).map(function (k) {
         var nom = k.special.type === "eureka" ? "Eurêka, cases " + C.plateau.cases.filter(function (x) { return x.special && x.special.type === "eureka"; }).map(function (x) { return x.n; }).join(", ") : "Case " + k.n + ", " + tx(k.titre);
         return '<p class="meta"><b style="color:var(--ink)">' + esc(nom) + "</b> : " + esc(texteRegle(k.special)) + "</p>";
       }).join("") +
-      '<p class="meta">Arrivée : tu termines le tour et repars du feu. Au tour suivant, les pièges et la quarantaine comptent double, et la prison demande ' + R.tour_suivant.quiz_parfaits_prison + " quiz parfaits.</p>" +
-      '<div id="ia-bonus"></div>';
+      '<p class="meta">Arrivée : tu termines le tour et repars du feu. Au tour suivant, les pièges et la quarantaine comptent double, et la prison demande ' + R.tour_suivant.quiz_parfaits_prison + " quiz parfaits.</p>";
     if (P.plateau.historique.length) {
       html += '<h3 style="font-size:17px">Derniers déplacements</h3><div class="trajet">' + P.plateau.historique.slice(0, 8).map(function (h) {
         var d = h.a - h.de;
@@ -948,7 +915,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       }).join("") + "</div>";
     }
     feuilleSimple(html, "Règles du plateau");
-    feuille.querySelector("#ia-bonus").appendChild(comite(ligneDuJour("bonus_du_jour", { stat: tx(st.nom) }), true));
   }
   function formatAnnee(a) {
     if (a == null) return "";
@@ -967,6 +933,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var t = maintenant(), v = el('<div class="vue"></div>');
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + esc(dateLongue(t)) + '</div><h1>Aujourd\'hui</h1></div>' + (P.decalage ? '<span class="horloge">Mode test</span>' : "") + "</div>"));
     var ng = M.niveauGlobal(C, P), nbMait = C.competences.filter(function (k) { return M.estMaitrisee(P, k.id); }).length;
+    var mot = comite(M.repliqueDuJour(C, P, t)); if (mot) v.appendChild(mot);
     var perso = el('<div class="bloc perso-v5" role="button" tabindex="0" aria-label="Ouvrir la fiche du personnage"><div class="perso"><div class="avatar-cadre rang-' + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + '</div><div><div class="niv"><small>Niveau</small><span class="num">' + ng + '</span></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div><p>" + nbMait + " compétence" + (nbMait > 1 ? "s" : "") + " maîtrisée" + (nbMait > 1 ? "s" : "") + " sur " + C.competences.length + "</p></div></div></div>");
     perso.appendChild(miniStats());
     perso.onclick = function () { vue = "perso"; rendre(); window.scrollTo(0, 0); };
@@ -974,7 +941,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     v.appendChild(perso);
     if (C.plateau) v.appendChild(boutonJouer());
     var bf = blocFarce(); if (bf) v.appendChild(bf);
-    var mot = comite(M.repliqueDuJour(C, P, t)); if (mot) v.appendChild(mot);
     if (C.plateau) v.appendChild(blocPlateau());
 
     if (!P.journal.length) {
@@ -983,7 +949,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
         "<li>Réussis un quiz (4 bonnes réponses sur 5) pour maîtriser une compétence et gagner de l'XP.</li>" +
         "<li>Les compétences maîtrisées reviennent en rappel après 1, 3, 7, 14, 30, 90 puis 180 jours.</li>" +
         "<li>Rate un rappel et la compétence est perdue, avec son XP. Il faudra la regagner.</li>" +
-        "<li>Chaque épreuve réussie fait avancer ton pion sur le plateau de l'histoire, du feu jusqu'à l'IA. Les cases débloquent la frise, la bibliothèque et des succès.</li></ol></div>"));
+        "<li>Pour jouer : le bouton Jouer, où l'IA choisit l'épreuve, ou une compétence choisie dans l'arbre. Réussie, elle fait avancer ton pion d'autant de cases que son rang, et de 2 de plus par Jouer.</li>" +
+        "<li>Chaque épreuve réussie peut faire tomber un objet, un livre, un accessoire ou un masque. Pas toujours : il faudra plusieurs tours du plateau pour tout réunir.</li></ol></div>"));
     }
 
     if (NATIF && !routine()) {
@@ -993,50 +960,37 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       v.appendChild(bR);
     }
 
-    var dus = M.rappelsDus(C, P, t);
-    var bRappels = el('<div class="bloc"><h2>Rappels du jour</h2></div>');
-    if (dus.length) {
-      dus.forEach(function (k) {
-        var e = P.competences[k.id];
-        var b = el('<button type="button" class="btn">Réviser</button>'); b.onclick = function () { lancerQuiz(k.id, "rappel"); };
-        var r = retard(e.prochainRappel);
-        bRappels.appendChild(ligneComp(k, (r.indexOf("retard") >= 0 ? '<span class="retard">' + r + "</span>" : r) + " · rappel " + ((e.palier || 0) + 1) + " · " + valeurTexte(k, "rappel"), b));
-      });
-    } else {
-      var proch = M.prochainsRappels(C, P, t, 1)[0];
-      bRappels.appendChild(el('<p class="vide">' + (proch ? "Aucun rappel aujourd'hui. Prochain : " + esc(tx(proch.nom)) + ", " + dansJours(P.competences[proch.id].prochainRappel) + "." : "Aucun rappel pour l'instant. Ils apparaîtront ici après ta première compétence maîtrisée.") + "</p>"));
-    }
-    v.appendChild(bRappels);
-
-    var sug = M.suggestion(C, P, t);
-    var bSug = el('<div class="bloc"><h2>Pour progresser</h2></div>');
-    if (sug) {
-      var s = stat(sug.stat);
-      bSug.appendChild(el('<p class="note">Ta stat la plus faible avec une compétence ouverte : <b style="color:' + couleur(s.id) + '">' + esc(tx(s.nom)) + "</b>.</p>"));
-      var b2 = el('<button type="button" class="btn">Quiz</button>'); b2.onclick = function () { lancerQuiz(sug.id, "quiz"); };
-      bSug.appendChild(ligneComp(sug, valeurTexte(sug, "quiz") + " · " + esc(tx(sug.description)), b2));
-      var autres = M.disponibles(C, P, t).filter(function (k) { return k.id !== sug.id; }).length;
-      if (autres) {
-        var lien = el('<button type="button" class="btn sec">Voir les ' + autres + " autre" + (autres > 1 ? "s" : "") + " compétence" + (autres > 1 ? "s" : "") + " ouverte" + (autres > 1 ? "s" : "") + "</button>");
-        lien.onclick = function () { vue = "arbre"; rendre(); window.scrollTo(0, 0); };
-        bSug.appendChild(lien);
-      }
-    } else {
-      bSug.appendChild(el('<p class="vide">Toutes les compétences ouvertes sont maîtrisées. Garde-les par tes rappels.</p>'));
-    }
-    v.appendChild(bSug);
     return v;
   }
 
-  // v5 : stats visibles dès l'accueil, radar compact et une jauge par stat.
+  // v6 : stats lisibles. Un niveau par branche, avec un titre, ses compétences maîtrisées et ce qu'il reste à faire.
+  var TITRES = [[0, "Profane"], [1, "Novice"], [3, "Apprenti"], [6, "Adepte"], [10, "Expert"], [14, "Maître"], [18, "Sommité"]];
+  function titreNiveau(n) { var t = TITRES[0][1]; TITRES.forEach(function (x) { if (n >= x[0]) t = x[1]; }); return t; }
+  function abrege(nom) { return nom.length <= 4 ? nom : nom.slice(0, 3) + "."; }
+  // Accueil : dix pastilles, une par branche, avec son niveau.
   function miniStats() {
-    var xp = M.xpParStat(C, P), b = el('<div class="mini-stats">' + radar(104, false) + '<div class="jauges"></div></div>'), z = b.querySelector(".jauges");
+    var xp = M.xpParStat(C, P), b = el('<div class="pastilles" aria-label="Niveau de chaque branche"></div>');
     C.stats.forEach(function (s) {
-      var nv = M.niveau(C, xp[s.id]), pc = nv.suivant ? Math.round((nv.xp - nv.debut) / (nv.suivant - nv.debut) * 100) : 100;
-      z.appendChild(el('<div class="j" style="--c:' + couleur(s.id) + '"><div class="l"><span>' + esc(tx(s.nom)) + '</span><span class="num">' + nv.niveau + '</span></div><span class="barre"><i style="width:' + Math.max(4, pc) + '%"></i></span></div>'));
+      var nv = M.niveau(C, xp[s.id]).niveau;
+      b.appendChild(el('<div class="pastille-stat' + (nv ? "" : " zero") + '" style="--c:' + couleur(s.id) + '" title="' + esc(tx(s.nom)) + ", niveau " + nv + '"><span class="rond num">' + nv + "</span><span>" + esc(abrege(tx(s.nom))) + "</span></div>"));
     });
     return b;
   }
+  // Personnage : une fiche par branche.
+  function ficheBranche(s, xp) {
+    var nv = M.niveau(C, xp), comps = C.parStat[s.id], faites = comps.filter(function (k) { return M.estMaitrisee(P, k.id); }).length;
+    var R = C.regles, xpQuiz = R.quiz.questions_par_quiz * R.xp.par_bonne_reponse + R.xp.bonus_maitrise, xpRap = M.xpRappel(C, 2);
+    var reste = nv.suivant ? nv.suivant - nv.xp : 0, phrase;
+    if (!nv.suivant) phrase = "Niveau maximal. L'IA prend des notes.";
+    else {
+      var nq = Math.max(1, Math.ceil(reste / xpQuiz)), nr = Math.max(1, Math.ceil(reste / xpRap));
+      phrase = "Niveau " + (nv.niveau + 1) + " : encore " + (faites < comps.length ? nq + " compétence" + (nq > 1 ? "s" : "") + " à maîtriser, ou " : "") + nr + " rappel" + (nr > 1 ? "s" : "") + " réussi" + (nr > 1 ? "s" : "") + ".";
+    }
+    var pips = comps.map(function (k) { var st = M.statut(C, P, k.id, maintenant()).etat; return '<i class="' + (M.estMaitrisee(P, k.id) ? "ok" : st === "disponible" ? "ouvert" : "") + '" title="' + esc(tx(k.nom)) + '"></i>'; }).join("");
+    return el('<div class="fiche-branche" style="--c:' + couleur(s.id) + '"><div class="haut-f"><div><b>' + esc(tx(s.nom)) + '</b><span>' + esc(tx(s.branche)) + '</span></div><div class="niv-f"><span class="num">' + nv.niveau + "</span><small>" + titreNiveau(nv.niveau) + '</small></div></div>' +
+      '<div class="pips" aria-label="' + faites + " compétences maîtrisées sur " + comps.length + '">' + pips + '</div><p class="note">' + faites + " / " + comps.length + " compétences. " + esc(phrase) + "</p></div>");
+  }
+
   // v5 : la farce en cours, avec de quoi la défaire.
   function blocFarce() {
     var f = farce(); if (!f) return null;
@@ -1105,9 +1059,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     }
     if (C.plateau && (st.etat === "disponible" || st.etat === "a_reviser")) {
       var v = M.valeurEpreuve(C, P, { type: st.etat === "disponible" ? "quiz" : "rappel", comp: id }, t);
-      lignes.push(st.etat === "disponible"
-        ? "Plateau : +" + v.total + " cases si tu réussis" + (v.duJour ? " (dont " + v.duJour + " de bonus du jour)" : "") + ", +" + v.parfait + " sans faute, +" + v.chrono + " avec le chrono."
-        : "Plateau : +" + v.total + " case" + (v.total > 1 ? "s" : "") + " si tu réussis" + (v.duJour ? " (bonus du jour compris)" : "") + ", recul de " + (-v.echec) + " cases si tu rates.");
+      lignes.push("Plateau : ton pion avance de " + v.total + " case" + (v.total > 1 ? "s" : "") + " si tu réussis, le rang de la compétence" +
+        (st.etat === "a_reviser" ? ", et recule de " + (-v.echec) + " cases si tu rates." : "."));
     }
     var bouton = "";
     if (st.etat === "disponible") bouton = '<button type="button" class="btn large" data-a="quiz">Passer le quiz</button>';
@@ -1131,13 +1084,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var t = maintenant(), v = el('<div class="vue"></div>'), xp = M.xpParStat(C, P);
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted)">niveau <b style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + "</b></div></div>"));
     v.appendChild(blocAvatar());
-    v.appendChild(el('<div class="bloc" style="align-items:center">' + radar("100%", true) + "</div>"));
-    var bs = el('<div class="bloc"><h2>Stats</h2></div>');
-    C.stats.forEach(function (s) {
-      var nv = M.niveau(C, xp[s.id]);
-      var pc = nv.suivant ? Math.round((nv.xp - nv.debut) / (nv.suivant - nv.debut) * 100) : 100;
-      bs.appendChild(el('<div class="stat" style="--c:' + couleur(s.id) + '"><div class="nom">' + esc(tx(s.nom)) + " <span>" + esc(tx(s.branche)) + '</span></div><div class="lv">niv. ' + nv.niveau + '</div><div class="jauge"><i style="width:' + pc + '%"></i></div><div class="xp num">' + nv.xp + " XP" + (nv.suivant ? " · niveau suivant à " + nv.suivant : " · niveau max") + "</div></div>"));
-    });
+    var bs = el('<div class="bloc"><h2>Branches</h2><p class="note">Le niveau de chaque branche monte avec ses compétences maîtrisées et ses rappels réussis. Une pastille par compétence : pleine si maîtrisée, cerclée si ouverte.</p><div class="fiches"></div></div>');
+    C.stats.slice().sort(function (a, b) { return xp[b.id] - xp[a.id]; }).forEach(function (s) { bs.querySelector(".fiches").appendChild(ficheBranche(s, xp[s.id])); });
     v.appendChild(bs);
 
     var opt = el('<div class="bloc"><h2>Options</h2><label class="interrupteur" for="opt-chrono"><span><b>Chrono</b><br><span class="note">' + C.regles.chrono.secondes + ' secondes par question. Chaque bonne réponse rapporte ' + C.regles.chrono.bonus_xp_par_bonne_reponse + ' XP de plus.</span></span><input type="checkbox" id="opt-chrono"></label></div>');
@@ -1251,10 +1199,10 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   }
   function blocSavants() {
     var liste = C.avatar.savants, n = liste.filter(function (s) { return P.savants[s.id]; }).length, actuel = savantIncarne();
-    var b = el('<div><div class="eyebrow">Savants · ' + n + " sur " + liste.length + '</div><p class="note">Incarne un savant débloqué. Ton rang reste visible au cadre.</p><div class="savants"></div></div>');
+    var b = el('<div><div class="eyebrow">Savants · ' + n + " sur " + liste.length + '</div><p class="note">Ton avatar incarne le dernier savant que tes succès ont débloqué. Ton rang reste visible au cadre.</p><div class="savants"></div></div>');
     var g = b.querySelector(".savants");
     var toi = el('<button type="button"' + (actuel ? "" : ' class="actuel"') + ">" + '<svg class="pix" viewBox="0 0 40 48" width="44" height="53" aria-hidden="true">' + pixels(C.avatar.corps, C.avatar.palette, null, 0, 0, 1) + pixels(M.rangAvatar(C, P).tenue, C.avatar.palette, M.rangAvatar(C, P).couleurs, 0, 0, 1) + pixels(C.avatar.cheveux, C.avatar.palette, null, 0, 0, 1) + "</svg><span>Toi</span></button>");
-    toi.onclick = function () { P.avatar.savant = null; sauver(); rendre(); };
+    toi.disabled = true;
     g.appendChild(toi);
     liste.forEach(function (s) {
       var ok = !!P.savants[s.id];
@@ -1268,10 +1216,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var ok = !!P.savants[s.id], porte = savantIncarne() && savantIncarne().id === s.id;
     feuilleSimple('<div class="vitrine" style="padding:12px;width:132px;margin:0 auto">' + svgSavant(s, 108, !ok) + "</div>" +
       (ok ? '<div class="eyebrow">' + esc(s.annees) + "</div><h2>" + esc(tx(s.nom)) + "</h2><p>" + esc(tx(s.notice)) + '</p><p class="meta">Source : ' + esc(s.source) + "</p>" +
-          (porte ? '<button type="button" class="btn sec large" data-a="quitter">Redevenir toi-même</button>' : '<button type="button" class="btn large" data-a="incarner">Incarner ' + esc(tx(s.nom)) + "</button>")
-        : "<h2>Savant à débloquer</h2><p class=\"meta\">" + esc(conditionTexte(s.condition)) + ".</p>"), ok ? tx(s.nom) : "Savant à débloquer",
-      { incarner: function () { P.avatar.savant = s.id; sauver(); fermerFeuille(); rendre(); toast("Tu incarnes " + tx(s.nom)); },
-        quitter: function () { P.avatar.savant = null; sauver(); fermerFeuille(); rendre(); } });
+          (porte ? '<p class="note">Ton avatar l\'incarne en ce moment.</p>' : "")
+        : "<h2>Savant à débloquer</h2><p class=\"meta\">" + esc(conditionTexte(s.condition)) + ".</p>"), ok ? tx(s.nom) : "Savant à débloquer");
   }
 
   function exporter() {
@@ -1523,10 +1469,11 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     rendreQuiz();
   }
   function fermerQuiz() {
-    var dep = quiz && quiz.fin && quiz.fin.plateau;
+    var fini = quiz && quiz.fin;
     if (quiz) clearInterval(quiz.minuteur); quiz = null; var q = document.querySelector(".quiz"); if (q) q.remove();
-    if (dep && dep.chemin && dep.chemin.length > 1) { vue = "aujourdhui"; animPion = dep; }
-    rendre(); if (animPion) { window.scrollTo(0, 0); animerPion(); }
+    animPion = null;
+    if (fini) { vue = "aujourdhui"; window.scrollTo(0, 0); }
+    rendre();
   }
 
   function rendreQuiz() {
@@ -1669,11 +1616,12 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     bloque_quarantaine: function () { return "Quarantaine : cette épreuve ne fait pas avancer ton pion."; },
     tour_fini: function (e) { return "Arrivée ! Tour " + e.tour + " terminé : retour au feu, en plus dur."; },
   };
-  function blocDeplacement(dep, rep) {
+  function blocDeplacement(dep, rep, avecPlateau) {
     var d = dep.a - dep.de, fini = dep.etapes.some(function (e) { return e.type === "tour_fini"; });
     var titre = fini ? "Tour complet !" : d > 0 ? "Le pion avance de " + d + " case" + (d > 1 ? "s" : "") : d < 0 ? "Le pion recule de " + (-d) + " case" + (d < -1 ? "s" : "") : "Le pion reste sur place";
     var b = el('<div class="bloc plateau"><div class="tete"><h2>' + esc(titre) + '</h2><span class="num">case ' + dep.de + " → " + dep.a + '</span></div><div class="trajet"></div></div>');
     var tj = b.querySelector(".trajet"), v = dep.valeurs;
+    if (avecPlateau) { animPion = dep.chemin && dep.chemin.length > 1 ? dep : null; var g = el('<div class="plateau-bilan">' + svgPlateau() + "</div>"); b.insertBefore(g, tj); }
     if (dep.valeur > 0) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>Épreuve réussie" + (v && v.duJour ? ", bonus du jour compris" : "") +
       (dep.bonusJouer ? ", dont +" + dep.bonusJouer + " pour avoir laissé l'IA choisir" : dep.valeur > (v ? v.total : 0) ? ", avec bonus" : "") + ".</span></div>"));
     dep.etapes.forEach(function (e) { var f = NOM_ETAPE[e.type]; if (f) tj.appendChild(el('<div class="pas"><b>·</b><span>' + esc(f(e)) + "</span></div>")); });
@@ -1695,16 +1643,31 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       if (r.issue === "reussi") { titre = "Rappel réussi"; texte = "Prochain rappel le " + dateCourte(r.prochainRappel) + ", " + dansJours(r.prochainRappel) + "."; gain = '<span class="gain plus">+' + r.xp + " XP " + esc(tx(s.nom)) + "</span>"; }
       else { titre = "Compétence perdue"; texte = "Il fallait " + C.regles.rappels.bonnes_reponses_min + " bonnes réponses. Repasse le quiz complet pour la regagner."; gain = '<span class="gain moins">−' + r.xpPerdue + " XP " + esc(tx(s.nom)) + "</span>"; }
     }
-    var b = el('<div class="bilan"><div class="eyebrow" style="color:' + couleur(k.stat) + '">' + esc(tx(k.nom)) + '</div><div class="grand">' + titre + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" + gain + "<p>" + esc(texte) + "</p></div>");
+    // v6 : trois temps, une chose à la fois. 1. le verdict et l'IA, 2. les récompenses une par une, 3. le pion qui avance.
+    var recs = quiz.recs || (quiz.recs = recompensesBilan(r));
+    var etapes = ["verdict"];
+    recs.forEach(function (_, i) { etapes.push("recompense:" + i); });
+    if (r.plateau) etapes.push("plateau");
+    var e = quiz.etape = Math.min(quiz.etape || 0, etapes.length - 1), nom = etapes[e], dernier = e === etapes.length - 1;
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
-    var fermer = el('<button type="button" class="btn large">Continuer</button>'); fermer.onclick = fermerQuiz;
-    wrap.appendChild(fermer);
-    wrap.appendChild(b);
-    var mot = comite(r.replique); if (mot) wrap.appendChild(mot);
-    if (r.plateau) wrap.appendChild(blocDeplacement(r.plateau, r.repliquePlateau));
-    var recs = recompensesBilan(r);
-    if (recs.length) wrap.appendChild(sequenceRecompenses(recs));
-    wrap.appendChild(wrap.firstChild);
+    var tete = el('<div class="etapes-bilan"><span class="pts">' + etapes.map(function (_, i) { return '<i class="' + (i <= e ? "vu" : "") + '"></i>'; }).join("") + "</span></div>");
+    if (!dernier) { var passer = el('<button type="button" class="passer">Passer</button>'); passer.onclick = function () { quiz.etape = etapes.length - 1; rendreQuiz(); }; tete.appendChild(passer); }
+    wrap.appendChild(tete);
+    var z = el('<div class="etape"></div>');
+    if (nom === "verdict") {
+      z.appendChild(el('<div class="bilan"><div class="eyebrow" style="color:' + couleur(k.stat) + '">' + esc(tx(k.nom)) + '</div><div class="grand">' + titre + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" + gain + "<p>" + esc(texte) + "</p></div>"));
+      var mot = comite(r.replique); if (mot) z.appendChild(mot);
+    } else if (nom.indexOf("recompense:") === 0) {
+      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
+    } else {
+      z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
+    }
+    wrap.appendChild(z);
+    var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite.indexOf("recompense:") === 0 ? (e === 0 ? (recs.length > 1 ? "Voir les " + recs.length + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
+    var bt = el('<button type="button" class="btn large">' + libelle + "</button>");
+    bt.onclick = function () { if (!suite) fermerQuiz(); else { quiz.etape = e + 1; rendreQuiz(); } };
+    wrap.appendChild(bt);
+    if (nom === "plateau") setTimeout(function () { animerPion(z); }, 50);
     return wrap;
   }
 
@@ -1746,15 +1709,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     (r.nouveauxAccessoires || []).forEach(function (a) {
       out.push(carteRecompense("Nouvel accessoire", svgRogne(a.pixels, C.avatar.palette, 80), tx(a.nom), "À essayer sur ton avatar, dans l'onglet Personnage.", null));
     });
-    if ((r.nouveauxEvenements || []).length) {
-      var ev = r.nouveauxEvenements.slice().sort(function (a, b) { return a.annee - b.annee; }), n = ev.length;
-      var liste = '<div class="frise">' + ev.map(function (e, i) {
-        return '<button type="button" class="evt" data-i="' + i + '" style="--c:' + couleur(e.stat) + '"><span class="an">' + esc(formatAnnee(e.annee)) + '</span><span class="axe"></span><span class="corps"><b>' + esc(tx(e.titre)) + "</b><span>" + esc(tx(e.phrase)) + "</span></span></button>";
-      }).join("") + "</div>";
-      var cf = carteRecompense("Sur la frise", '<span class="num" style="font-size:40px;font-weight:800">' + n + "</span>", n + " date" + (n > 1 ? "s" : "") + " de plus", ev.map(function (e) { return formatAnnee(e.annee); }).join(" · "), { titre: n > 1 ? "Voir les dates" : "Voir la date", html: liste });
-      cf.querySelectorAll(".evt").forEach(function (b) { b.onclick = function () { ouvrirEvenement(ev[+b.getAttribute("data-i")]); }; });
-      out.push(cf);
-    }
     if (r.farce) {
       var cfa = carteRecompense("Farce de l'IA", '<span class="avatar-cadre">' + svgAvatar(80) + "</span>", "Nouveau look", "Jusqu'à demain, ou jusqu'à ce que vous le rendiez.", null, "var(--warn)");
       var m = comite(r.repliqueFarce, true); if (m) { m.style.width = "100%"; cfa.appendChild(m); }
@@ -1764,25 +1718,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     }
     return out;
   }
-  function sequenceRecompenses(cartes) {
-    var i = 0, n = cartes.length;
-    var b = el('<div class="sequence"><div class="compte"><h2>' + (n > 1 ? n + " récompenses" : "Une récompense") + '</h2><span class="points-seq"></span></div><div class="scene"></div><div class="nav-seq"></div></div>');
-    var pts = b.querySelector(".points-seq"), scene = b.querySelector(".scene"), nav = b.querySelector(".nav-seq");
-    function montrer() {
-      scene.innerHTML = ""; var c = cartes[i]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); scene.appendChild(c);
-      pts.innerHTML = cartes.map(function (_, j) { return '<i class="' + (j <= i ? "vu" : "") + '"></i>'; }).join("");
-      nav.innerHTML = "";
-      if (n < 2) return;
-      var prec = el('<button type="button" class="btn sec" aria-label="Récompense précédente">‹</button>'); prec.disabled = i === 0;
-      prec.onclick = function () { i--; montrer(); };
-      var suiv = el('<button type="button" class="btn">' + (i < n - 1 ? "Suivante · " + (i + 2) + " / " + n : "Revoir depuis la première") + "</button>");
-      suiv.onclick = function () { i = i < n - 1 ? i + 1 : 0; montrer(); };
-      nav.appendChild(prec); nav.appendChild(suiv);
-    }
-    montrer();
-    return b;
-  }
-
   // --- Boucle ---------------------------------------------------------------
   function rendre() {
     if (!C || !P) return;

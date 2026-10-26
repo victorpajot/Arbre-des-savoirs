@@ -737,6 +737,12 @@
        },
        "pixels": {
         "$ref": "#/$defs/pixels"
+       },
+       "lot": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 7,
+        "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
        }
       }
      }
@@ -840,6 +846,12 @@
        },
        "pixels": {
         "$ref": "#/$defs/pixels"
+       },
+       "lot": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 7,
+        "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
        }
       }
      }
@@ -1006,6 +1018,12 @@
           "impatiente"
          ]
         }
+       },
+       "lot": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 7,
+        "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
        }
       }
      }
@@ -1037,7 +1055,8 @@
       "bonus",
       "echec",
       "tour_suivant",
-      "textes"
+      "textes",
+      "butin"
      ],
      "properties": {
       "depart": {
@@ -1100,6 +1119,37 @@
        "type": "object",
        "additionalProperties": {
         "$ref": "#/$defs/texte"
+       }
+      },
+      "butin": {
+       "type": "object",
+       "required": [
+        "rappel",
+        "quiz_base",
+        "quiz_par_rang",
+        "lots"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "rappel": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "quiz_base": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "quiz_par_rang": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "lots": {
+         "type": "integer",
+         "minimum": 1
+        }
        }
       }
      }
@@ -1469,6 +1519,12 @@
        },
        "reaction": {
         "$ref": "#/$defs/texte"
+       },
+       "lot": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 7,
+        "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
        }
       }
      }
