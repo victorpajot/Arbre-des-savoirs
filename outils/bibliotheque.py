@@ -14,7 +14,7 @@ def comp(id):
 
 
 def branche(stat):
-    return {"type": "branche_complete", "stat": stat}
+    return {"type": "branche_complete", "stat": stat, "rang_max": 4}
 
 
 # (id, titre, auteur, année, stat, emblème, couleur de couverture, condition, résumé, pourquoi il a compté, anecdote, source, réaction de l'IA)

@@ -95,6 +95,15 @@
         "minimum": 0
        },
        "minItems": 2
+      },
+      "rappel_par_etape": {
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "minItems": 1,
+       "description": "XP d'un rappel réussi selon l'étape atteinte (1 à n) ; au-delà, la dernière valeur."
       }
      }
     },
@@ -490,7 +499,9 @@
       "tours_plateau",
       "sorties_prison",
       "eurekas",
-      "reculs"
+      "reculs",
+      "branches_completes",
+      "rang_maitrise"
      ]
     },
     "n": {
@@ -508,6 +519,15 @@
      "minimum": 1
     },
     "niveau": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "rang_max": {
+     "type": "integer",
+     "minimum": 1,
+     "description": "Avec branche_complete : ne compter que les compétences de rang inférieur ou égal."
+    },
+    "rang": {
      "type": "integer",
      "minimum": 1
     }

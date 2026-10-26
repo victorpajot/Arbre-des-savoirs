@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 
 from aides import anecdote, citation, fr, num, qcm, succes, vf
+import approfondissement_humain
+import approfondissement_sciences
 import avatar40
 import bibliotheque
 import ia
@@ -54,7 +56,10 @@ REGLES = {
         "par_bonne_reponse": 10,
         "bonus_maitrise": 20,
         "par_rappel_reussi": 5,
-        "paliers_niveau": [0, 60, 140, 240, 360, 500, 660, 840, 1040, 1260],
+        # XP d'un rappel réussi selon l'étape atteinte : garder un savoir longtemps rapporte de plus en plus.
+        "rappel_par_etape": [5, 10, 15, 20, 30, 40, 50],
+        "paliers_niveau": [0, 50, 110, 180, 260, 350, 450, 560, 680, 810, 950,
+                           1100, 1260, 1430, 1610, 1800, 2000, 2210, 2430, 2660, 2900],
     },
     "quiz": {"questions_par_quiz": 5, "seuil_maitrise": 0.8},
     "chrono": {"secondes": 30, "bonus_xp_par_bonne_reponse": 5},
@@ -127,13 +132,18 @@ BRANCHES = {
     ],
     "sagesse": philosophes.BRANCHE,
 }
+# v4 : second losange, rangs 5 à 8.
+for _module in (approfondissement_sciences, approfondissement_humain):
+    for _stat, _noeuds in _module.BRANCHES.items():
+        BRANCHES[_stat] = BRANCHES[_stat] + _module.BRANCHES[_stat]
 
 
 def competences():
     out = []
     for stat, noeuds in BRANCHES.items():
         ids = [n[0] for n in noeuds]
-        prerequis = [[], [ids[0]], [ids[0]], [ids[1], ids[2]]]
+        # Deux losanges : 1 → 2, 3 → 4, puis 4 → 5 → 6, 7 → 8.
+        prerequis = [[], [ids[0]], [ids[0]], [ids[1], ids[2]], [ids[3]], [ids[4]], [ids[4]], [ids[5], ids[6]]][:len(ids)]
         for i, (id, nom, desc) in enumerate(noeuds):
             out.append({
                 "id": id, "stat": stat, "rang": i + 1,
@@ -509,7 +519,7 @@ Q["psy.influence"] = [
 
 def questions():
     out = []
-    for comp, qs in {**Q, **Q_NOUVELLES, **philosophes.Q}.items():
+    for comp, qs in {**Q, **Q_NOUVELLES, **philosophes.Q, **approfondissement_sciences.Q, **approfondissement_humain.Q}.items():
         assert len(qs) == 12, (comp, len(qs))
         for i, q in enumerate(qs, 1):
             id = f"{comp}.q{i:02d}"
@@ -539,28 +549,28 @@ SUCCES = [
            {"type": "quiz_parfaits", "n": 5},
            anecdote("Vers 9 ans, Carl Friedrich Gauss aurait calculé en un instant la somme des nombres de 1 à 100, que son maître avait donnée pour occuper la classe. Il aurait vu 50 paires valant chacune 101, soit 5 050. Le récit est sans doute embelli.",
                     "Wolfgang Sartorius von Waltershausen, Gauss zum Gedächtniss, 1856")),
-    succes("branche-logique", "Langue du monde", "Maîtriser les 4 compétences de Logique.",
-           {"type": "branche_complete", "stat": "logique"},
+    succes("branche-logique", "Langue du monde", "Maîtriser le premier losange de Logique.",
+           {"type": "branche_complete", "stat": "logique", "rang_max": 4},
            citation("La philosophie est écrite dans ce très grand livre qui se tient constamment ouvert devant nos yeux, je veux dire l'Univers. […] Il est écrit en langue mathématique.",
                     "Galilée", "L'Essayeur (Il Saggiatore), 1623")),
-    succes("branche-mecanique", "Unités de compte", "Maîtriser les 4 compétences de Mécanique.",
-           {"type": "branche_complete", "stat": "mecanique"},
+    succes("branche-mecanique", "Unités de compte", "Maîtriser le premier losange de Mécanique.",
+           {"type": "branche_complete", "stat": "mecanique", "rang_max": 4},
            anecdote("En 1999, la sonde Mars Climate Orbiter s'est perdue dans l'atmosphère de Mars. Un logiciel donnait ses valeurs en livres-force·seconde, un autre les lisait en newtons·seconde.",
                     "NASA, rapport du Mars Climate Orbiter Mishap Investigation Board, 1999")),
-    succes("branche-savoir", "Heureux hasard", "Maîtriser les 4 compétences de Savoir.",
-           {"type": "branche_complete", "stat": "savoir"},
+    succes("branche-savoir", "Heureux hasard", "Maîtriser le premier losange de Savoir.",
+           {"type": "branche_complete", "stat": "savoir", "rang_max": 4},
            anecdote("En septembre 1928, Alexander Fleming rentre de vacances et trouve une boîte de culture envahie par une moisissure. Autour d'elle, les bactéries ont disparu : c'est la découverte de la pénicilline.",
                     "Alexander Fleming, British Journal of Experimental Pathology, 1929")),
-    succes("branche-eloquence", "Cailloux en bouche", "Maîtriser les 4 compétences d'Éloquence.",
-           {"type": "branche_complete", "stat": "eloquence"},
+    succes("branche-eloquence", "Cailloux en bouche", "Maîtriser le premier losange d'Éloquence.",
+           {"type": "branche_complete", "stat": "eloquence", "rang_max": 4},
            anecdote("Selon Plutarque, Démosthène, le plus grand orateur d'Athènes, corrigeait son défaut de prononciation en parlant avec des cailloux dans la bouche, et déclamait face à la mer pour couvrir le bruit des vagues.",
                     "Plutarque, Vies parallèles, Vie de Démosthène")),
-    succes("branche-lucidite", "Jus de citron", "Maîtriser les 4 compétences de Lucidité.",
-           {"type": "branche_complete", "stat": "lucidite"},
+    succes("branche-lucidite", "Jus de citron", "Maîtriser le premier losange de Lucidité.",
+           {"type": "branche_complete", "stat": "lucidite", "rang_max": 4},
            anecdote("En 1995, McArthur Wheeler braque deux banques de Pittsburgh à visage découvert, enduit de jus de citron, persuadé que cela le rend invisible aux caméras. Son histoire ouvre l'article de Dunning et Kruger.",
                     "Kruger et Dunning, « Unskilled and Unaware of It », 1999")),
-    succes("branche-empathie", "Les raisons du cœur", "Maîtriser les 4 compétences d'Empathie.",
-           {"type": "branche_complete", "stat": "empathie"},
+    succes("branche-empathie", "Les raisons du cœur", "Maîtriser le premier losange d'Empathie.",
+           {"type": "branche_complete", "stat": "empathie", "rang_max": 4},
            citation("Le cœur a ses raisons, que la raison ne connaît point.",
                     "Blaise Pascal", "Pensées, 1670")),
     succes("polymathe", "Polymathe", "Maîtriser au moins une compétence dans chacune des 10 branches.",
@@ -571,8 +581,8 @@ SUCCES = [
            {"type": "competences_maitrisees", "n": 10},
            citation("Je voudrais aussi qu'on fût soigneux de lui choisir un conducteur qui eût plutôt la tête bien faite que bien pleine.",
                     "Montaigne", "Essais, livre I, chapitre 26, 1580")),
-    succes("arbre-complet", "Sur les épaules de géants", "Maîtriser les 40 compétences.",
-           {"type": "competences_maitrisees", "n": 40},
+    succes("arbre-complet", "Sur les épaules de géants", "Maîtriser les 80 compétences.",
+           {"type": "competences_maitrisees", "n": 80},
            citation("Si j'ai vu plus loin, c'est en me tenant sur les épaules de géants.",
                     "Isaac Newton", "Lettre à Robert Hooke, 5 février 1676")),
     succes("premier-rappel", "Cobaye volontaire", "Réussir un premier rappel.",
@@ -697,7 +707,7 @@ def jeu_plateau():
         "format": 1,
         "regles": {
             "depart": 1, "arrivee": len(cases),
-            "valeurs": {"rappel": 1, "quiz_rang": {"1": 2, "2": 3, "3": 3, "4": 4}},
+            "valeurs": {"rappel": 1, "quiz_rang": {"1": 2, "2": 3, "3": 3, "4": 4, "5": 4, "6": 5, "7": 5, "8": 6}},
             "bonus": {"parfait": 1, "chrono": 1, "du_jour": 2},
             "echec": {"quiz": 0, "rappel": -2},
             "tour_suivant": {"multiplicateur_recul": 2, "quiz_parfaits_prison": 2},
@@ -716,7 +726,7 @@ def frise():
     for i, c in enumerate(plateau.CASES):
         evenements.append({"id": c[0], "annee": c[1], "titre": fr(c[2]), "phrase": fr(c[3]), "stat": c[4], "epoque": plateau.epoque(c[1]),
                            "source": c[8], "case": i + 1, "condition": {"type": "case_atteinte", "n": i + 1}})
-    for id, annee, titre, phrase, stat, comp, detail, source in plateau.DATES:
+    for id, annee, titre, phrase, stat, comp, detail, source in plateau.DATES + approfondissement_sciences.DATES + approfondissement_humain.DATES:
         evenements.append({"id": id, "annee": annee, "titre": fr(titre), "phrase": fr(phrase), "stat": stat, "epoque": plateau.epoque(annee),
                            "detail": fr(detail), "source": source, "condition": {"type": "competence_maitrisee", "id": comp}})
     evenements.sort(key=lambda e: e["annee"])

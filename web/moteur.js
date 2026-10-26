@@ -6,7 +6,7 @@
 (function (racine) {
   "use strict";
 
-  var FORMAT_PARTIE = 3;
+  var FORMAT_PARTIE = 4;
   var JOUR = 86400000;
   var MAX_JOURNAL = 200;
   var MAX_RECENTES = 6;
@@ -100,7 +100,7 @@
       succes: {},
       objets: {},
       accessoires: {},
-      avatar: { tete: null, visage: null, main: null },
+      avatar: { tete: null, visage: null, main: null, savant: null },
       compteurs: {
         quizParfaits: 0, quizRates: 0, rappelsReussis: 0, serieRappels: 0, perdues: 0, regagnees: 0,
         quizJoues: 0, quizEclairRates: 0, quizZero: 0, quizNuit: 0, quizAube: 0, chronoParfaits: 0,
@@ -127,7 +127,9 @@
   // Remet une partie lue (stockage, import) au format courant.
   // v1 → v2 : nouveaux compteurs, objets, accessoires et avatar ; la progression reste intacte.
   // v2 → v3 : plateau (départ à la case du feu), frise, bibliothèque, masque de l'IA, répliques retenues par contexte.
-  function migrer(p) {
+  // v3 → v4 : les rappels déjà réussis sont repayés au nouveau barème (XP croissante par étape) ; avatar savant.
+  // `contenu` (facultatif) fournit le barème ; sans lui, celui par défaut.
+  function migrer(p, contenu) {
     if (!p || typeof p !== "object" || typeof p.format !== "number") return null;
     if (p.format > FORMAT_PARTIE) return null;
     var base = nouvellePartie(p.cree || Date.now());
@@ -138,7 +140,15 @@
     out.succes = p.succes || {};
     out.objets = p.objets || {};
     out.accessoires = p.accessoires || {};
-    out.avatar = Object.assign({ tete: null, visage: null, main: null }, p.avatar || {});
+    out.avatar = Object.assign({ tete: null, visage: null, main: null, savant: null }, p.avatar || {});
+    if (p.format < 4) {
+      var c4 = contenu || { regles: { xp: { rappel_par_etape: [5, 10, 15, 20, 30, 40, 50], par_rappel_reussi: 5 } } };
+      Object.keys(out.competences).forEach(function (id) {
+        var e = out.competences[id];
+        if (!e.maitrise || !e.palier) return;
+        for (var i = 1; i <= e.palier; i++) e.xp = (e.xp || 0) + xpRappel(c4, i) - 5;
+      });
+    }
     out.jours = p.jours || [];
     out.journal = p.journal || [];
     out.repliques = Array.isArray(p.repliques) || !p.repliques ? {} : p.repliques;
@@ -334,6 +344,13 @@
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes };
   }
 
+  // XP d'un rappel réussi qui mène à l'étape `palier` (1 = premier rappel).
+  function xpRappel(contenu, palier) {
+    var t = contenu.regles.xp.rappel_par_etape;
+    if (!t || !t.length) return contenu.regles.xp.par_rappel_reussi;
+    return t[Math.min(Math.max(palier, 1), t.length) - 1];
+  }
+
   // Termine un rappel. Réussi : l'intervalle suivant s'allonge. Raté : la compétence est perdue.
   function terminerRappel(contenu, partie, id, resultats, t) {
     var r = contenu.regles;
@@ -350,7 +367,7 @@
       var iv = r.rappels.intervalles_jours;
       e.palier = (e.palier || 0) + 1;
       e.prochainRappel = ajouterJours(t, iv[Math.min(e.palier, iv.length - 1)]);
-      xp = r.xp.par_rappel_reussi + bonusChrono(contenu, resultats);
+      xp = xpRappel(contenu, e.palier) + bonusChrono(contenu, resultats);
       e.xp = (e.xp || 0) + xp;
       partie.compteurs.rappelsReussis++;
       partie.compteurs.serieRappels++;
@@ -600,7 +617,9 @@
       case "objets": return Object.keys(partie.objets).length >= cond.n;
       case "quiz_parfaits": return c.quizParfaits >= cond.n;
       case "quiz_rates": return c.quizRates >= cond.n;
-      case "branche_complete": return contenu.parStat[cond.stat].every(function (k) { return estMaitrisee(partie, k.id); });
+      case "branche_complete": return contenu.parStat[cond.stat].every(function (k) { return (cond.rang_max && k.rang > cond.rang_max) || estMaitrisee(partie, k.id); });
+      case "branches_completes": return contenu.stats.filter(function (s) { return contenu.parStat[s.id].every(function (k) { return estMaitrisee(partie, k.id); }); }).length >= cond.n;
+      case "rang_maitrise": return maitrisees.some(function (k) { return k.rang >= cond.rang; });
       case "toutes_branches": return contenu.stats.every(function (s) { return contenu.parStat[s.id].some(function (k) { return estMaitrisee(partie, k.id); }); });
       case "rappels_reussis": return c.rappelsReussis >= cond.n;
       case "serie_rappels": return c.serieRappels >= cond.n;
@@ -733,7 +752,7 @@
     debloque: debloque,
     estMaitrisee: estMaitrisee,
     xpParStat: xpParStat,
-    niveau: niveau,
+    niveau: niveau, xpRappel: xpRappel,
     niveauGlobal: niveauGlobal,
     melanger: melanger,
     tirerQuestions: tirerQuestions,

@@ -73,9 +73,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
                    "sci.methode": { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + jour, xp: 60 } },
     options: { chrono: false } };
   const P3 = M.migrer(JSON.parse(JSON.stringify(v1)));
-  assert.equal(P3.format, 3);
+  assert.equal(P3.format, 4);
   assert.equal(P3.compteurs.quizParfaits, 1); assert.equal(P3.compteurs.quizJoues, 0);
-  assert.deepEqual(P3.avatar, { tete: null, visage: null, main: null });
+  assert.deepEqual(P3.avatar, { tete: null, visage: null, main: null, savant: null });
   // Atomes compte désormais pour Alchimie ; Évolution n'est pas gelée par la nouvelle branche Savoir
   const xp = M.xpParStat(C, P3);
   assert.equal(xp.alchimie, 70); assert.equal(xp.savoir, 120);
@@ -235,7 +235,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       compteurs: { quizParfaits: 2, quizRates: 1, rappelsReussis: 0, serieRappels: 0, perdues: 0, regagnees: 0, quizJoues: 3 },
       competences: { "psy.memoire": { maitrise: true, maitriseDepuis: t0, palier: 1, prochainRappel: t0 + 3 * 86400000, xp: 80 } } };
     const P = M.migrer(JSON.parse(JSON.stringify(v2)));
-    assert.equal(P.format, 3);
+    assert.equal(P.format, 4);
     assert.deepEqual(Object.keys(P.succes), ["premier-pas", "eureka"]);
     assert.equal(P.avatar.main, "boulier"); assert.equal(P.options.chrono, true);
     assert.equal(P.compteurs.quizJoues, 3); assert.equal(P.compteurs.eurekas, 0);
@@ -247,4 +247,66 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(rec.masque, null, "le premier masque se pose sans annonce");
   }
   console.log("OK : v3 plateau (barème, cases spéciales, tour complet), frise, bibliothèque, masques, répliques, migration v2 → v3");
+}
+
+// v4 : second losange, XP de rappel croissante, 20 niveaux, migration v3 → v4
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json") };
+  const C4 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const t0 = new Date(2026, 9, 26, 10, 0).getTime();
+  const tous = (P, id, ok) => M.tirerQuestions(C4, P, id, 5).map((q, i) => ({ id: q.id, correct: i < ok }));
+  assert.deepEqual([1, 2, 7, 12].map(i => M.xpRappel(C4, i)), [5, 10, 50, 50]);
+  assert.equal(C4.parStat.logique.length, 8);
+  assert.equal(C4.regles.xp.paliers_niveau.length - 1, 20);
+
+  // Le second losange s'ouvre quand le sommet du premier est maîtrisé
+  {
+    const P = M.nouvellePartie(t0);
+    const L = C4.parStat.logique.map(k => k.id);
+    for (const id of L.slice(0, 4)) M.terminerQuiz(C4, P, id, tous(P, id, 5), t0);
+    assert.equal(M.statut(C4, P, L[4], t0).etat, "disponible");
+    assert.equal(M.statut(C4, P, L[5], t0).etat, "verrouillee");
+    assert.ok(P.succes["branche-logique"], "le premier losange suffit au succès de branche");
+    const r = M.terminerQuiz(C4, P, L[4], tous(P, L[4], 5), t0);
+    assert.ok(r.nouveauxSucces.some(s => s.id === "plus-ultra"));
+    assert.equal(M.statut(C4, P, L[7], t0).etat, "verrouillee");
+    for (const id of L.slice(5)) M.terminerQuiz(C4, P, id, tous(P, id, 5), t0);
+    assert.ok(P.succes["nains-geants"] && P.succes["cultiver-jardin"]);
+  }
+
+  // Un an de jeu accéléré : une branche complète, tous les rappels réussis à l'heure, dépasse le niveau 10
+  {
+    const P = M.nouvellePartie(t0);
+    const L = C4.parStat.logique.map(k => k.id);
+    let t = t0;
+    for (let jourN = 0; jourN < 365; jourN++, t += jour) {
+      // une nouvelle compétence par semaine tant qu'il en reste
+      if (jourN % 7 === 0) {
+        const k = L.find(id => M.statut(C4, P, id, t).etat === "disponible");
+        if (k) M.terminerQuiz(C4, P, k, tous(P, k, 5), t);
+      }
+      for (const rap of M.rappelsDus(C4, P, t)) {
+        const id = rap.id || rap;
+        M.terminerRappel(C4, P, id, M.tirerQuestions(C4, P, id, 3).map(q => ({ id: q.id, correct: true })), t);
+      }
+    }
+    const n = M.niveau(C4, M.xpParStat(C4, P).logique).niveau;
+    assert.ok(n > 10, "niveau après un an : " + n);
+    console.log("OK : un an de jeu sur une branche, niveau " + n + " sur 20");
+  }
+
+  // Migration v3 → v4 : l'XP des rappels déjà faits est recalculée au nouveau barème
+  {
+    const v3 = { format: 3, cree: t0, maj: t0, decalage: 0, succes: {}, objets: {}, accessoires: {}, avatar: { tete: null, visage: null, main: null },
+      jours: [], journal: [], repliques: {}, options: {},
+      competences: { "biais.confirmation": { maitrise: true, maitriseDepuis: t0, palier: 4, prochainRappel: t0 + jour, xp: 90 },
+                     "biais.ancrage": { maitrise: false, palier: 0, xp: 0 } } };
+    const P = M.migrer(JSON.parse(JSON.stringify(v3)), C4);
+    assert.equal(P.format, 4); assert.equal(P.avatar.savant, null);
+    assert.equal(P.competences["biais.confirmation"].xp, 90 + 0 + 5 + 10 + 15);
+    assert.equal(P.competences["biais.ancrage"].xp, 0);
+    assert.equal(M.migrer(JSON.parse(JSON.stringify(P)), C4).competences["biais.confirmation"].xp, 120, "pas de double crédit");
+  }
+  console.log("OK : v4 second losange, XP de rappel, migration v3 → v4");
 }

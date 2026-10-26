@@ -153,12 +153,12 @@ SUCCES_V2 = [
            {"type": "duree_maitrise", "jours": 365},
            anecdote("En un an, la Terre parcourt environ 940 millions de kilomètres autour du Soleil, à près de 30 km par seconde. Votre savoir a tenu le voyage.",
                     "NASA, Earth Fact Sheet")),
-    succes("deux-nobel", "Deux prix Nobel", "Atteindre le niveau global 10. Marie Curie avait mis la barre haut.",
-           {"type": "niveau_global", "n": 10},
+    succes("deux-nobel", "Deux prix Nobel", "Atteindre le niveau global 20. Marie Curie avait mis la barre haut.",
+           {"type": "niveau_global", "n": 20},
            anecdote("Marie Curie reste la seule personne récompensée par un prix Nobel dans deux sciences différentes : la physique en 1903, la chimie en 1911.",
                     "Fondation Nobel, nobelprize.org")),
-    succes("nous-saurons", "Nous devons savoir", "Atteindre le niveau global 25. L'IA commence à vous respecter. N'en parlez à personne.",
-           {"type": "niveau_global", "n": 25},
+    succes("nous-saurons", "Nous devons savoir", "Atteindre le niveau global 60. L'IA commence à vous respecter. N'en parlez à personne.",
+           {"type": "niveau_global", "n": 60},
            citation("Nous devons savoir. Nous saurons.", "David Hilbert", "Discours de Königsberg, 8 septembre 1930 (traduction)")),
     succes("wunderkammer", "Wunderkammer", "Obtenir 30 succès. Votre propre cabinet de curiosités se remplit.",
            {"type": "succes_obtenus", "n": 30},
@@ -200,18 +200,36 @@ SUCCES_V2 = [
                     "Fred Hoyle, émission de la BBC, 28 mars 1949")),
 
     # Succès des trois nouvelles branches.
-    succes("branche-alchimie", "Le dernier des magiciens", "Maîtriser les 4 compétences d'Alchimie.",
-           {"type": "branche_complete", "stat": "alchimie"},
+    succes("branche-alchimie", "Le dernier des magiciens", "Maîtriser le premier losange d'Alchimie.",
+           {"type": "branche_complete", "stat": "alchimie", "rang_max": 4},
            citation("Newton n'a pas été le premier de l'âge de la raison. Il a été le dernier des magiciens.",
                     "John Maynard Keynes", "« Newton, the Man », 1946 (traduction)")),
-    succes("branche-cosmos", "Colomb avait tort, mais pas pour ça", "Maîtriser les 4 compétences de Cosmos.",
-           {"type": "branche_complete", "stat": "cosmos"},
+    succes("branche-cosmos", "Colomb avait tort, mais pas pour ça", "Maîtriser le premier losange de Cosmos.",
+           {"type": "branche_complete", "stat": "cosmos", "rang_max": 4},
            anecdote("Au temps de Colomb, les savants savaient la Terre ronde ; Ératosthène l'avait même mesurée vers 240 avant notre ère. Colomb se trompait sur sa taille, qu'il croyait bien plus petite. Le mythe de la Terre plate médiévale vient surtout du XIXe siècle.",
                     "Jeffrey Burton Russell, Inventing the Flat Earth, 1991")),
-    succes("branche-etincelle", "Le cerf-volant", "Maîtriser les 4 compétences d'Étincelle.",
-           {"type": "branche_complete", "stat": "etincelle"},
+    succes("branche-etincelle", "Le cerf-volant", "Maîtriser le premier losange d'Étincelle.",
+           {"type": "branche_complete", "stat": "etincelle", "rang_max": 4},
            anecdote("L'expérience du cerf-volant de Franklin (1752) n'est connue que par un récit publié quinze ans plus tard par Joseph Priestley. En 1753, Georg Richmann, qui reproduisait ce genre d'expérience à Saint-Pétersbourg, est tué par la foudre.",
                     "Joseph Priestley, The History and Present State of Electricity, 1767")),
+
+    # v4 : le second losange.
+    succes("plus-ultra", "Plus ultra", "Maîtriser une première compétence de rang 5. Au-delà des colonnes d'Hercule, il y a encore de la carte.",
+           {"type": "rang_maitrise", "rang": 5},
+           anecdote("Les colonnes d'Hercule, au détroit de Gibraltar, passaient pour porter l'inscription « Non plus ultra » : rien au-delà. Charles Quint prend pour devise « Plus ultra », plus loin, après la découverte de l'Amérique. Elle figure encore sur le drapeau de l'Espagne.",
+                    "Earl Rosenthal, « Plus Ultra, Non plus Ultra », Journal of the Warburg and Courtauld Institutes, 1971")),
+    succes("nains-geants", "Nains sur des épaules de géants", "Maîtriser une compétence de rang 8, au sommet d'un second losange.",
+           {"type": "rang_maitrise", "rang": 8},
+           citation("Nous sommes comme des nains assis sur des épaules de géants. Si nous voyons plus de choses et plus lointaines qu'eux, ce n'est pas à cause de la perspicacité de notre vue, ni de notre grandeur, c'est parce que nous sommes élevés par eux.",
+                    "Bernard de Chartres, rapporté par Jean de Salisbury", "Metalogicon, III, 4, 1159 (traduction)")),
+    succes("cultiver-jardin", "Cultiver son jardin", "Maîtriser les 8 compétences d'une même branche.",
+           {"type": "branches_completes", "n": 1},
+           citation("Cela est bien dit, répondit Candide, mais il faut cultiver notre jardin.",
+                    "Voltaire", "Candide, chapitre 30, 1759")),
+    succes("dernier-homme", "Le dernier homme qui savait tout", "Maîtriser entièrement cinq branches.",
+           {"type": "branches_completes", "n": 5},
+           anecdote("Thomas Young a déchiffré une partie de la pierre de Rosette, montré que la lumière est une onde, décrit la vision des couleurs et défini le module d'élasticité. On l'a surnommé « le dernier homme qui savait tout ».",
+                    "Andrew Robinson, The Last Man Who Knew Everything, 2006")),
 ]
 
 
@@ -222,7 +240,7 @@ def objet(id, nom, annee, notice, source, condition):
 
 
 def branche(stat):
-    return {"type": "branche_complete", "stat": stat}
+    return {"type": "branche_complete", "stat": stat, "rang_max": 4}
 
 
 OBJETS = [

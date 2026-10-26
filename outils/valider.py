@@ -49,7 +49,13 @@ def main():
             if p not in comps:
                 erreurs.append(f"skills.json {c['id']} : prérequis inconnu {p}")
 
+    for st in stats:
+        rangs = sorted(c["rang"] for c in comps.values() if c["stat"] == st)
+        if rangs != list(range(1, 9)):
+            erreurs.append(f"skills.json : la branche {st} doit avoir les rangs 1 à 8, elle a {rangs}")
+
     ids = set()
+    enonces = {}
     par_comp = {}
     illustrees = 0
     for q in contenu["questions"]["questions"]:
@@ -59,6 +65,10 @@ def main():
         if q["competence"] not in comps:
             erreurs.append(f"questions.json {q['id']} : compétence inconnue")
         par_comp[q["competence"]] = par_comp.get(q["competence"], 0) + 1
+        e = q["enonce"]["fr"] if isinstance(q["enonce"], dict) else q["enonce"]
+        if e in enonces:
+            erreurs.append(f"questions.json {q['id']} : même énoncé que {enonces[e]}")
+        enonces[e] = q["id"]
         if q["type"] == "qcm" and not 0 <= q["reponse"] < len(q["choix"]):
             erreurs.append(f"questions.json {q['id']} : réponse hors des choix")
         illustrees += "illustration" in q or "illustration_explication" in q
@@ -84,7 +94,7 @@ def main():
         if cond["type"] in ("case_atteinte", "case_visitee") and not 1 <= cond.get("n", 0) <= nb_cases:
             erreurs.append(f"{ou} : case hors du plateau {cond.get('n')}")
         besoin = {"competence_maitrisee": "id", "succes": "id", "branche_complete": "stat", "quiz_parfaits_stat": "stat",
-                  "duree_maitrise": "jours", "niveau_stat": "niveau", "toutes_branches": None}.get(cond["type"], "n")
+                  "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None}.get(cond["type"], "n")
         if besoin and besoin not in cond:
             erreurs.append(f"{ou} : la condition {cond['type']} demande « {besoin} »")
 

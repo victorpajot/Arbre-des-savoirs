@@ -71,11 +71,12 @@
     "fr": "Langue du monde"
    },
    "description": {
-    "fr": "Maîtriser les 4 compétences de Logique."
+    "fr": "Maîtriser le premier losange de Logique."
    },
    "condition": {
     "type": "branche_complete",
-    "stat": "logique"
+    "stat": "logique",
+    "rang_max": 4
    },
    "cache": true,
    "recompense": {
@@ -93,11 +94,12 @@
     "fr": "Unités de compte"
    },
    "description": {
-    "fr": "Maîtriser les 4 compétences de Mécanique."
+    "fr": "Maîtriser le premier losange de Mécanique."
    },
    "condition": {
     "type": "branche_complete",
-    "stat": "mecanique"
+    "stat": "mecanique",
+    "rang_max": 4
    },
    "cache": true,
    "recompense": {
@@ -114,11 +116,12 @@
     "fr": "Heureux hasard"
    },
    "description": {
-    "fr": "Maîtriser les 4 compétences de Savoir."
+    "fr": "Maîtriser le premier losange de Savoir."
    },
    "condition": {
     "type": "branche_complete",
-    "stat": "savoir"
+    "stat": "savoir",
+    "rang_max": 4
    },
    "cache": true,
    "recompense": {
@@ -135,11 +138,12 @@
     "fr": "Cailloux en bouche"
    },
    "description": {
-    "fr": "Maîtriser les 4 compétences d'Éloquence."
+    "fr": "Maîtriser le premier losange d'Éloquence."
    },
    "condition": {
     "type": "branche_complete",
-    "stat": "eloquence"
+    "stat": "eloquence",
+    "rang_max": 4
    },
    "cache": true,
    "recompense": {
@@ -156,11 +160,12 @@
     "fr": "Jus de citron"
    },
    "description": {
-    "fr": "Maîtriser les 4 compétences de Lucidité."
+    "fr": "Maîtriser le premier losange de Lucidité."
    },
    "condition": {
     "type": "branche_complete",
-    "stat": "lucidite"
+    "stat": "lucidite",
+    "rang_max": 4
    },
    "cache": true,
    "recompense": {
@@ -177,11 +182,12 @@
     "fr": "Les raisons du cœur"
    },
    "description": {
-    "fr": "Maîtriser les 4 compétences d'Empathie."
+    "fr": "Maîtriser le premier losange d'Empathie."
    },
    "condition": {
     "type": "branche_complete",
-    "stat": "empathie"
+    "stat": "empathie",
+    "rang_max": 4
    },
    "cache": true,
    "recompense": {
@@ -241,11 +247,11 @@
     "fr": "Sur les épaules de géants"
    },
    "description": {
-    "fr": "Maîtriser les 40 compétences."
+    "fr": "Maîtriser les 80 compétences."
    },
    "condition": {
     "type": "competences_maitrisees",
-    "n": 40
+    "n": 80
    },
    "cache": true,
    "recompense": {
@@ -1172,11 +1178,11 @@
     "fr": "Deux prix Nobel"
    },
    "description": {
-    "fr": "Atteindre le niveau global 10. Marie Curie avait mis la barre haut."
+    "fr": "Atteindre le niveau global 20. Marie Curie avait mis la barre haut."
    },
    "condition": {
     "type": "niveau_global",
-    "n": 10
+    "n": 20
    },
    "cache": true,
    "recompense": {
@@ -1193,11 +1199,11 @@
     "fr": "Nous devons savoir"
    },
    "description": {
-    "fr": "Atteindre le niveau global 25. L'IA commence à vous respecter. N'en parlez à personne."
+    "fr": "Atteindre le niveau global 60. L'IA commence à vous respecter. N'en parlez à personne."
    },
    "condition": {
     "type": "niveau_global",
-    "n": 25
+    "n": 60
    },
    "cache": true,
    "recompense": {
@@ -1405,11 +1411,12 @@
     "fr": "Le dernier des magiciens"
    },
    "description": {
-    "fr": "Maîtriser les 4 compétences d'Alchimie."
+    "fr": "Maîtriser le premier losange d'Alchimie."
    },
    "condition": {
     "type": "branche_complete",
-    "stat": "alchimie"
+    "stat": "alchimie",
+    "rang_max": 4
    },
    "cache": true,
    "recompense": {
@@ -1427,11 +1434,12 @@
     "fr": "Colomb avait tort, mais pas pour ça"
    },
    "description": {
-    "fr": "Maîtriser les 4 compétences de Cosmos."
+    "fr": "Maîtriser le premier losange de Cosmos."
    },
    "condition": {
     "type": "branche_complete",
-    "stat": "cosmos"
+    "stat": "cosmos",
+    "rang_max": 4
    },
    "cache": true,
    "recompense": {
@@ -1448,11 +1456,12 @@
     "fr": "Le cerf-volant"
    },
    "description": {
-    "fr": "Maîtriser les 4 compétences d'Étincelle."
+    "fr": "Maîtriser le premier losange d'Étincelle."
    },
    "condition": {
     "type": "branche_complete",
-    "stat": "etincelle"
+    "stat": "etincelle",
+    "rang_max": 4
    },
    "cache": true,
    "recompense": {
@@ -1461,6 +1470,92 @@
      "fr": "L'expérience du cerf-volant de Franklin (1752) n'est connue que par un récit publié quinze ans plus tard par Joseph Priestley. En 1753, Georg Richmann, qui reproduisait ce genre d'expérience à Saint-Pétersbourg, est tué par la foudre."
     },
     "source": "Joseph Priestley, The History and Present State of Electricity, 1767"
+   }
+  },
+  {
+   "id": "plus-ultra",
+   "nom": {
+    "fr": "Plus ultra"
+   },
+   "description": {
+    "fr": "Maîtriser une première compétence de rang 5. Au-delà des colonnes d'Hercule, il y a encore de la carte."
+   },
+   "condition": {
+    "type": "rang_maitrise",
+    "rang": 5
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Les colonnes d'Hercule, au détroit de Gibraltar, passaient pour porter l'inscription « Non plus ultra » : rien au-delà. Charles Quint prend pour devise « Plus ultra », plus loin, après la découverte de l'Amérique. Elle figure encore sur le drapeau de l'Espagne."
+    },
+    "source": "Earl Rosenthal, « Plus Ultra, Non plus Ultra », Journal of the Warburg and Courtauld Institutes, 1971"
+   }
+  },
+  {
+   "id": "nains-geants",
+   "nom": {
+    "fr": "Nains sur des épaules de géants"
+   },
+   "description": {
+    "fr": "Maîtriser une compétence de rang 8, au sommet d'un second losange."
+   },
+   "condition": {
+    "type": "rang_maitrise",
+    "rang": 8
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Nous sommes comme des nains assis sur des épaules de géants. Si nous voyons plus de choses et plus lointaines qu'eux, ce n'est pas à cause de la perspicacité de notre vue, ni de notre grandeur, c'est parce que nous sommes élevés par eux."
+    },
+    "auteur": "Bernard de Chartres, rapporté par Jean de Salisbury",
+    "source": "Metalogicon, III, 4, 1159 (traduction)"
+   }
+  },
+  {
+   "id": "cultiver-jardin",
+   "nom": {
+    "fr": "Cultiver son jardin"
+   },
+   "description": {
+    "fr": "Maîtriser les 8 compétences d'une même branche."
+   },
+   "condition": {
+    "type": "branches_completes",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Cela est bien dit, répondit Candide, mais il faut cultiver notre jardin."
+    },
+    "auteur": "Voltaire",
+    "source": "Candide, chapitre 30, 1759"
+   }
+  },
+  {
+   "id": "dernier-homme",
+   "nom": {
+    "fr": "Le dernier homme qui savait tout"
+   },
+   "description": {
+    "fr": "Maîtriser entièrement cinq branches."
+   },
+   "condition": {
+    "type": "branches_completes",
+    "n": 5
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Thomas Young a déchiffré une partie de la pierre de Rosette, montré que la lumière est une onde, décrit la vision des couleurs et défini le module d'élasticité. On l'a surnommé « le dernier homme qui savait tout »."
+    },
+    "source": "Andrew Robinson, The Last Man Who Knew Everything, 2006"
    }
   },
   {
@@ -1554,11 +1649,12 @@
     "fr": "Ce que je sais"
    },
    "description": {
-    "fr": "Maîtriser les 4 compétences de Sagesse. Vous savez maintenant que vous ne savez rien, mais avec des références."
+    "fr": "Maîtriser le premier losange de Sagesse. Vous savez maintenant que vous ne savez rien, mais avec des références."
    },
    "condition": {
     "type": "branche_complete",
-    "stat": "sagesse"
+    "stat": "sagesse",
+    "rang_max": 4
    },
    "cache": true,
    "recompense": {

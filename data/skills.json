@@ -57,6 +57,63 @@
    ]
   },
   {
+   "id": "math.algebre",
+   "stat": "logique",
+   "rang": 5,
+   "nom": {
+    "fr": "Algèbre et équations"
+   },
+   "description": {
+    "fr": "Inconnues, équations, identités remarquables et systèmes."
+   },
+   "prerequis": [
+    "math.logique"
+   ]
+  },
+  {
+   "id": "math.statistiques",
+   "stat": "logique",
+   "rang": 6,
+   "nom": {
+    "fr": "Statistiques"
+   },
+   "description": {
+    "fr": "Moyenne, médiane, écart type, corrélation et échantillons."
+   },
+   "prerequis": [
+    "math.algebre"
+   ]
+  },
+  {
+   "id": "math.geometrie",
+   "stat": "logique",
+   "rang": 7,
+   "nom": {
+    "fr": "Géométrie et trigonométrie"
+   },
+   "description": {
+    "fr": "Angles, aires, volumes, Pythagore, sinus et cosinus."
+   },
+   "prerequis": [
+    "math.algebre"
+   ]
+  },
+  {
+   "id": "math.infini",
+   "stat": "logique",
+   "rang": 8,
+   "nom": {
+    "fr": "Suites, limites et infini"
+   },
+   "description": {
+    "fr": "Suites, séries, limites et les paradoxes de l'infini."
+   },
+   "prerequis": [
+    "math.statistiques",
+    "math.geometrie"
+   ]
+  },
+  {
    "id": "phys.unites",
    "stat": "mecanique",
    "rang": 1,
@@ -109,6 +166,63 @@
    "prerequis": [
     "phys.forces",
     "phys.energie"
+   ]
+  },
+  {
+   "id": "phys.fluides",
+   "stat": "mecanique",
+   "rang": 5,
+   "nom": {
+    "fr": "Pression et fluides"
+   },
+   "description": {
+    "fr": "Pression, poussée d'Archimède, flottaison et écoulements."
+   },
+   "prerequis": [
+    "phys.ondes"
+   ]
+  },
+  {
+   "id": "phys.thermo",
+   "stat": "mecanique",
+   "rang": 6,
+   "nom": {
+    "fr": "Chaleur et thermodynamique"
+   },
+   "description": {
+    "fr": "Température, chaleur, entropie et machines thermiques."
+   },
+   "prerequis": [
+    "phys.fluides"
+   ]
+  },
+  {
+   "id": "phys.relativite",
+   "stat": "mecanique",
+   "rang": 7,
+   "nom": {
+    "fr": "Relativité"
+   },
+   "description": {
+    "fr": "Vitesse de la lumière, temps dilaté, E = mc² et gravitation d'Einstein."
+   },
+   "prerequis": [
+    "phys.fluides"
+   ]
+  },
+  {
+   "id": "phys.quantique",
+   "stat": "mecanique",
+   "rang": 8,
+   "nom": {
+    "fr": "Physique quantique"
+   },
+   "description": {
+    "fr": "Photons, dualité onde-particule, incertitude et atomes."
+   },
+   "prerequis": [
+    "phys.thermo",
+    "phys.relativite"
    ]
   },
   {
@@ -167,6 +281,63 @@
    ]
   },
   {
+   "id": "sci.corps",
+   "stat": "savoir",
+   "rang": 5,
+   "nom": {
+    "fr": "Le corps humain"
+   },
+   "description": {
+    "fr": "Organes, circulation, respiration, digestion et squelette."
+   },
+   "prerequis": [
+    "sci.genetique"
+   ]
+  },
+  {
+   "id": "sci.immunite",
+   "stat": "savoir",
+   "rang": 6,
+   "nom": {
+    "fr": "Microbes et immunité"
+   },
+   "description": {
+    "fr": "Bactéries, virus, vaccins, antibiotiques et défenses du corps."
+   },
+   "prerequis": [
+    "sci.corps"
+   ]
+  },
+  {
+   "id": "sci.ecologie",
+   "stat": "savoir",
+   "rang": 7,
+   "nom": {
+    "fr": "Écosystèmes"
+   },
+   "description": {
+    "fr": "Chaînes alimentaires, cycles de la matière, biodiversité et climat."
+   },
+   "prerequis": [
+    "sci.corps"
+   ]
+  },
+  {
+   "id": "sci.biotech",
+   "stat": "savoir",
+   "rang": 8,
+   "nom": {
+    "fr": "Biotechnologies"
+   },
+   "description": {
+    "fr": "ADN recombinant, PCR, CRISPR, clonage et vaccins à ARN."
+   },
+   "prerequis": [
+    "sci.immunite",
+    "sci.ecologie"
+   ]
+  },
+  {
    "id": "rhet.argument",
    "stat": "eloquence",
    "rang": 1,
@@ -219,6 +390,63 @@
    "prerequis": [
     "rhet.figures",
     "rhet.persuasion"
+   ]
+  },
+  {
+   "id": "rhet.debat",
+   "stat": "eloquence",
+   "rang": 5,
+   "nom": {
+    "fr": "Réfuter et débattre"
+   },
+   "description": {
+    "fr": "Contre-exemples, concessions, règles du débat loyal et pièges de la réfutation."
+   },
+   "prerequis": [
+    "rhet.sophismes"
+   ]
+  },
+  {
+   "id": "rhet.narration",
+   "stat": "eloquence",
+   "rang": 6,
+   "nom": {
+    "fr": "Raconter"
+   },
+   "description": {
+    "fr": "Structure d'un récit, suspense, voyage du héros et pouvoir des histoires."
+   },
+   "prerequis": [
+    "rhet.debat"
+   ]
+  },
+  {
+   "id": "rhet.discours",
+   "stat": "eloquence",
+   "rang": 7,
+   "nom": {
+    "fr": "Grands discours"
+   },
+   "description": {
+    "fr": "De Périclès à Malala : les discours qui ont changé quelque chose."
+   },
+   "prerequis": [
+    "rhet.debat"
+   ]
+  },
+  {
+   "id": "rhet.propagande",
+   "stat": "eloquence",
+   "rang": 8,
+   "nom": {
+    "fr": "Propagande et manipulation"
+   },
+   "description": {
+    "fr": "Répétition, novlangue, astroturfing et comment s'en protéger."
+   },
+   "prerequis": [
+    "rhet.narration",
+    "rhet.discours"
    ]
   },
   {
@@ -277,6 +505,63 @@
    ]
   },
   {
+   "id": "biais.decision",
+   "stat": "lucidite",
+   "rang": 5,
+   "nom": {
+    "fr": "Décisions et pertes"
+   },
+   "description": {
+    "fr": "Aversion à la perte, coûts irrécupérables, statu quo et nudges."
+   },
+   "prerequis": [
+    "biais.surconfiance"
+   ]
+  },
+  {
+   "id": "biais.statistiques",
+   "stat": "lucidite",
+   "rang": 6,
+   "nom": {
+    "fr": "Pièges statistiques"
+   },
+   "description": {
+    "fr": "Paradoxe de Simpson, régression vers la moyenne, faux positifs."
+   },
+   "prerequis": [
+    "biais.decision"
+   ]
+  },
+  {
+   "id": "biais.croyances",
+   "stat": "lucidite",
+   "rang": 7,
+   "nom": {
+    "fr": "Croyances et complots"
+   },
+   "description": {
+    "fr": "Paréidolie, intentionnalité, prophéties ratées et faux souvenirs."
+   },
+   "prerequis": [
+    "biais.decision"
+   ]
+  },
+  {
+   "id": "biais.outils",
+   "stat": "lucidite",
+   "rang": 8,
+   "nom": {
+    "fr": "Boîte à outils de l'esprit critique"
+   },
+   "description": {
+    "fr": "Pré-mortem, lecture latérale, probabilités et zététique."
+   },
+   "prerequis": [
+    "biais.statistiques",
+    "biais.croyances"
+   ]
+  },
+  {
    "id": "psy.emotions",
    "stat": "empathie",
    "rang": 1,
@@ -329,6 +614,63 @@
    "prerequis": [
     "psy.memoire",
     "psy.motivation"
+   ]
+  },
+  {
+   "id": "psy.cerveau",
+   "stat": "empathie",
+   "rang": 5,
+   "nom": {
+    "fr": "Le cerveau"
+   },
+   "description": {
+    "fr": "Neurones, aires du langage, plasticité et mythes tenaces."
+   },
+   "prerequis": [
+    "psy.influence"
+   ]
+  },
+  {
+   "id": "psy.developpement",
+   "stat": "empathie",
+   "rang": 6,
+   "nom": {
+    "fr": "Développement de l'enfant"
+   },
+   "description": {
+    "fr": "Piaget, Vygotski, attachement et théorie de l'esprit."
+   },
+   "prerequis": [
+    "psy.cerveau"
+   ]
+  },
+  {
+   "id": "psy.personnalite",
+   "stat": "empathie",
+   "rang": 7,
+   "nom": {
+    "fr": "Personnalité"
+   },
+   "description": {
+    "fr": "Big Five, MBTI, héritabilité et vieilles théories du caractère."
+   },
+   "prerequis": [
+    "psy.cerveau"
+   ]
+  },
+  {
+   "id": "psy.bienetre",
+   "stat": "empathie",
+   "rang": 8,
+   "nom": {
+    "fr": "Bien-être et stress"
+   },
+   "description": {
+    "fr": "Stress, sommeil, adaptation hédonique et ce qui rend heureux."
+   },
+   "prerequis": [
+    "psy.developpement",
+    "psy.personnalite"
    ]
   },
   {
@@ -387,6 +729,63 @@
    ]
   },
   {
+   "id": "chim.etats",
+   "stat": "alchimie",
+   "rang": 5,
+   "nom": {
+    "fr": "États de la matière"
+   },
+   "description": {
+    "fr": "Solide, liquide, gaz, changements d'état et lois des gaz."
+   },
+   "prerequis": [
+    "chim.reactions"
+   ]
+  },
+  {
+   "id": "chim.organique",
+   "stat": "alchimie",
+   "rang": 6,
+   "nom": {
+    "fr": "Chimie organique"
+   },
+   "description": {
+    "fr": "Le carbone, les hydrocarbures, les polymères et les molécules du vivant."
+   },
+   "prerequis": [
+    "chim.etats"
+   ]
+  },
+  {
+   "id": "chim.quotidien",
+   "stat": "alchimie",
+   "rang": 7,
+   "nom": {
+    "fr": "Chimie du quotidien"
+   },
+   "description": {
+    "fr": "Cuisine, savon, médicaments, piles et matériaux."
+   },
+   "prerequis": [
+    "chim.etats"
+   ]
+  },
+  {
+   "id": "chim.noyau",
+   "stat": "alchimie",
+   "rang": 8,
+   "nom": {
+    "fr": "Radioactivité et noyau"
+   },
+   "description": {
+    "fr": "Isotopes, demi-vie, fission, fusion et datation."
+   },
+   "prerequis": [
+    "chim.organique",
+    "chim.quotidien"
+   ]
+  },
+  {
    "id": "astro.systeme",
    "stat": "cosmos",
    "rang": 1,
@@ -439,6 +838,63 @@
    "prerequis": [
     "astro.etoiles",
     "astro.orbites"
+   ]
+  },
+  {
+   "id": "astro.observer",
+   "stat": "cosmos",
+   "rang": 5,
+   "nom": {
+    "fr": "Observer le ciel"
+   },
+   "description": {
+    "fr": "Constellations, saisons, télescopes et unités de distance."
+   },
+   "prerequis": [
+    "astro.galaxies"
+   ]
+  },
+  {
+   "id": "astro.espace",
+   "stat": "cosmos",
+   "rang": 6,
+   "nom": {
+    "fr": "Conquête spatiale"
+   },
+   "description": {
+    "fr": "Fusées, satellites, missions habitées et sondes lointaines."
+   },
+   "prerequis": [
+    "astro.observer"
+   ]
+  },
+  {
+   "id": "astro.exoplanetes",
+   "stat": "cosmos",
+   "rang": 7,
+   "nom": {
+    "fr": "Exoplanètes et vie ailleurs"
+   },
+   "description": {
+    "fr": "Détecter d'autres mondes et chercher la vie."
+   },
+   "prerequis": [
+    "astro.observer"
+   ]
+  },
+  {
+   "id": "astro.sombre",
+   "stat": "cosmos",
+   "rang": 8,
+   "nom": {
+    "fr": "Matière et énergie noires"
+   },
+   "description": {
+    "fr": "Ce qui manque dans l'Univers : la masse invisible et l'accélération."
+   },
+   "prerequis": [
+    "astro.espace",
+    "astro.exoplanetes"
    ]
   },
   {
@@ -497,6 +953,63 @@
    ]
   },
   {
+   "id": "elec.em",
+   "stat": "etincelle",
+   "rang": 5,
+   "nom": {
+    "fr": "Ondes électromagnétiques"
+   },
+   "description": {
+    "fr": "Radio, micro-ondes, infrarouge, rayons X : le spectre de Maxwell."
+   },
+   "prerequis": [
+    "elec.magnetisme"
+   ]
+  },
+  {
+   "id": "elec.electronique",
+   "stat": "etincelle",
+   "rang": 6,
+   "nom": {
+    "fr": "Électronique"
+   },
+   "description": {
+    "fr": "Diodes, transistors, condensateurs et circuits intégrés."
+   },
+   "prerequis": [
+    "elec.em"
+   ]
+  },
+  {
+   "id": "elec.energies",
+   "stat": "etincelle",
+   "rang": 7,
+   "nom": {
+    "fr": "Réseau et énergies"
+   },
+   "description": {
+    "fr": "Centrales, renouvelables, stockage et transport du courant."
+   },
+   "prerequis": [
+    "elec.em"
+   ]
+  },
+  {
+   "id": "elec.numerique",
+   "stat": "etincelle",
+   "rang": 8,
+   "nom": {
+    "fr": "Du transistor à l'ordinateur"
+   },
+   "description": {
+    "fr": "Binaire, portes logiques, processeurs et mémoire."
+   },
+   "prerequis": [
+    "elec.electronique",
+    "elec.energies"
+   ]
+  },
+  {
    "id": "philo.antiquite",
    "stat": "sagesse",
    "rang": 1,
@@ -549,6 +1062,63 @@
    "prerequis": [
     "philo.medievale",
     "philo.classique"
+   ]
+  },
+  {
+   "id": "philo.ethique",
+   "stat": "sagesse",
+   "rang": 5,
+   "nom": {
+    "fr": "Éthique"
+   },
+   "description": {
+    "fr": "Utilitarisme, Kant, vertus et dilemmes du tramway."
+   },
+   "prerequis": [
+    "philo.moderne"
+   ]
+  },
+  {
+   "id": "philo.politique",
+   "stat": "sagesse",
+   "rang": 6,
+   "nom": {
+    "fr": "Philosophie politique"
+   },
+   "description": {
+    "fr": "État, contrat social, séparation des pouvoirs et justice."
+   },
+   "prerequis": [
+    "philo.ethique"
+   ]
+  },
+  {
+   "id": "philo.esprit",
+   "stat": "sagesse",
+   "rang": 7,
+   "nom": {
+    "fr": "Philosophie de l'esprit"
+   },
+   "description": {
+    "fr": "Corps et esprit, conscience, test de Turing et chambre chinoise."
+   },
+   "prerequis": [
+    "philo.ethique"
+   ]
+  },
+  {
+   "id": "philo.sciences",
+   "stat": "sagesse",
+   "rang": 8,
+   "nom": {
+    "fr": "Philosophie des sciences"
+   },
+   "description": {
+    "fr": "Induction, démarcation, Duhem-Quine et reproductibilité."
+   },
+   "prerequis": [
+    "philo.politique",
+    "philo.esprit"
    ]
   }
  ]

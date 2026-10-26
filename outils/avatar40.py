@@ -265,10 +265,10 @@ TENUES = {
 
 RANGS = [
     {"id": "etudiant", "nom": "Étudiant", "niveau_min": 0, "couleurs": couleurs_rang("#3D63D9", "#2F3B59", "#F2C14E")},
-    {"id": "assistant", "nom": "Assistant", "niveau_min": 5, "couleurs": couleurs_rang("#EEF0F4", "#2F3B59", "#3D63D9")},
-    {"id": "chercheur", "nom": "Chercheur", "niveau_min": 15, "couleurs": couleurs_rang("#EEF0F4", "#5D6470", "#D94141")},
-    {"id": "professeur", "nom": "Professeur", "niveau_min": 30, "couleurs": couleurs_rang("#7A5230", "#3B3B3B", "#E8DDC0")},
-    {"id": "academicien", "nom": "Membre de l'Académie", "niveau_min": 50, "couleurs": couleurs_rang("#2E6B3F", "#1E1E24", "#F2C14E")},
+    {"id": "assistant", "nom": "Assistant", "niveau_min": 10, "couleurs": couleurs_rang("#EEF0F4", "#2F3B59", "#3D63D9")},
+    {"id": "chercheur", "nom": "Chercheur", "niveau_min": 30, "couleurs": couleurs_rang("#EEF0F4", "#5D6470", "#D94141")},
+    {"id": "professeur", "nom": "Professeur", "niveau_min": 60, "couleurs": couleurs_rang("#7A5230", "#3B3B3B", "#E8DDC0")},
+    {"id": "academicien", "nom": "Membre de l'Académie", "niveau_min": 100, "couleurs": couleurs_rang("#2E6B3F", "#1E1E24", "#F2C14E")},
 ]
 
 ACCESSOIRES = {

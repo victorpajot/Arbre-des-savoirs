@@ -143,8 +143,8 @@ SUCCES = [
            maitriser("philo.moderne"),
            citation("Le critère de la scientificité d'une théorie réside dans la possibilité de l'invalider, de la réfuter ou encore de la tester.",
                     "Karl Popper", "Conjectures et réfutations, 1963 (traduction)")),
-    succes("branche-sagesse", "Ce que je sais", "Maîtriser les 4 compétences de Sagesse. Vous savez maintenant que vous ne savez rien, mais avec des références.",
-           {"type": "branche_complete", "stat": "sagesse"},
+    succes("branche-sagesse", "Ce que je sais", "Maîtriser le premier losange de Sagesse. Vous savez maintenant que vous ne savez rien, mais avec des références.",
+           {"type": "branche_complete", "stat": "sagesse", "rang_max": 4},
            citation("Je sais que je ne sais rien.",
                     "Socrate, d'après Platon", "Apologie de Socrate, 21d (formule résumée)")),
     succes("caverne", "Sortie de caverne", "Réussir 3 quiz de Sagesse sans faute. Vous voyez enfin les objets, pas leurs ombres.",
@@ -176,5 +176,5 @@ OBJETS = [
      "Friedrich Nietzsche, Crépuscule des idoles, préface, 1888", maitriser("philo.moderne")),
     ("lanterne-diogene", "Lanterne de Diogène", -350,
      "Diogène parcourait Athènes en plein jour avec une lanterne allumée, en disant : « Je cherche un homme. »",
-     "Diogène Laërce, Vies et doctrines des philosophes illustres, livre VI", {"type": "branche_complete", "stat": "sagesse"}),
+     "Diogène Laërce, Vies et doctrines des philosophes illustres, livre VI", {"type": "branche_complete", "stat": "sagesse", "rang_max": 4}),
 ]
