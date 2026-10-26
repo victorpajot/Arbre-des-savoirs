@@ -20,6 +20,7 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 - Le tableau périodique, onglet Atomes des Collections, sert de Pokédex : 118 éléments en quatre raretés (commun, peu commun, rare, légendaire pour les superlourds), une fiche par atome capturé (masse, famille, trois lieux du quotidien, anecdote, source de la Royal Society of Chemistry).
 - Dix succès (premier atome, 10, 30, 63 comme en 1869, 92, 118, familles complètes, fuites) et des répliques de l'IA pour l'apparition, la capture et la fuite. Contenu dans `outils/mendeleiev.py`.
 - Les flèches de téléportation longent la route au lieu de traverser les cases.
+- Les cartes de récompense affichent directement leur texte (notice, anecdote, citation), sans bouton à déplier.
 
 ## Nouveautés de la v8 (plateau ludique)
 
