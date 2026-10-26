@@ -81,6 +81,7 @@ def main():
     conditions = [(f"succes.json {s['id']}", s["condition"]) for s in contenu["succes"]["succes"]]
     conditions += [(f"objets.json {o['id']}", o["condition"]) for o in contenu["objets"]["objets"]]
     conditions += [(f"avatar.json {a['id']}", a["condition"]) for a in contenu["avatar"]["accessoires"]]
+    conditions += [(f"avatar.json {sv['id']}", sv["condition"]) for sv in contenu["avatar"].get("savants", [])]
     conditions += [(f"frise.json {e['id']}", e["condition"]) for e in contenu["frise"]["evenements"]]
     conditions += [(f"bibliotheque.json {l['id']}", l["condition"]) for l in contenu["bibliotheque"]["livres"]]
     conditions += [(f"ia.json {m['id']}", m["condition"]) for m in contenu["ia"]["masques"] if m.get("condition")]
@@ -185,6 +186,10 @@ def main():
         if set(av.get("emplacements", "")) - set(r["couleurs"]):
             erreurs.append(f"avatar.json {r['id']} : couleurs de rang manquantes")
     calques += [(a["id"], a["pixels"], "") for a in av["accessoires"]]
+    for sv in av.get("savants", []):
+        calques += [(sv["id"], sv["base"], "".join(sv["couleurs"])), (sv["id"] + " cheveux", sv["cheveux"], "")]
+    if len(av.get("savants", [])) < 20:
+        erreurs.append(f"avatar.json : {len(av.get('savants', []))} savants, 20 attendus")
     for nom, img, extra in calques:
         verifier_pixels(f"avatar.json {nom}", img, av["taille"], av["palette"], erreurs, extra)
     if av["rangs"][0]["niveau_min"] != 0:
@@ -195,7 +200,7 @@ def main():
         sys.exit(1)
     print(f"OK : {len(stats)} stats, {len(comps)} compétences, {len(ids)} questions ({illustrees} illustrées), "
           f"{len(succes)} succès, {len(contenu['commentaires']['commentaires'])} répliques, "
-          f"{len(cab['objets'])} objets, {len(av['rangs'])} rangs et {len(av['accessoires'])} accessoires d'avatar, "
+          f"{len(cab['objets'])} objets, {len(av['rangs'])} rangs et {len(av['accessoires'])} accessoires d'avatar, {len(av.get('savants', []))} savants, "
           f"{len(narr['masques'])} masques, {len(pl['cases'])} cases, {len(ev)} dates, {len(contenu['bibliotheque']['livres'])} livres")
 
 

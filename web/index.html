@@ -297,6 +297,16 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .vitrine { background: var(--parchemin); border-radius: 10px; display: grid; place-items: center; }
 .avatar-cadre { background: linear-gradient(180deg, var(--surface-2), color-mix(in srgb, var(--accent) 14%, var(--surface-2))); border-radius: 14px; display: grid; place-items: center; padding: 10px; }
 .perso .avatar-cadre { padding: 6px; }
+/* Le rang se lit au cadre : couleur du bord et fond de plus en plus précieux. */
+.avatar-cadre { --rang: var(--accent); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--rang) 70%, transparent); background: linear-gradient(180deg, var(--surface-2), color-mix(in srgb, var(--rang) 18%, var(--surface-2))); }
+.avatar-cadre.rang-assistant { --rang: #7C8CB0; }
+.avatar-cadre.rang-chercheur { --rang: #D94141; }
+.avatar-cadre.rang-professeur { --rang: #9A6534; box-shadow: inset 0 0 0 3px #9A6534; }
+.avatar-cadre.rang-academicien { --rang: #C99A1E; box-shadow: inset 0 0 0 3px #C99A1E, inset 0 0 0 5px color-mix(in srgb, #2E6B3F 60%, transparent); }
+.savants { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; }
+.savants button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 4px; border-radius: 12px; background: var(--surface-2); border: 0; font-size: 11px; line-height: 1.2; text-align: center; }
+.savants button.verrou { color: var(--muted); }
+.savants button.actuel { box-shadow: 0 0 0 2px var(--accent); }
 .rang { font-family: var(--f-display); font-weight: 700; font-size: 15px; color: var(--accent); }
 .equip { display: flex; flex-direction: column; gap: 8px; }
 .equip .slot { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
@@ -420,17 +430,22 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   function accessoire(id) { return id && P.accessoires[id] ? C.avatar.accessoires.filter(function (a) { return a.id === id; })[0] || null : null; }
   function objetTenu() { var id = P.avatar && P.avatar.main; return id && P.objets[id] ? C.objets.filter(function (o) { return o.id === id; })[0] || null : null; }
   // Avatar : corps, tenue du rang, cheveux (ou accessoire de tête), accessoire de visage, objet tenu à la main.
+  function savantIncarne() {
+    var id = P.avatar && P.avatar.savant;
+    return id && P.savants && P.savants[id] && C.avatar.savants ? C.avatar.savants.filter(function (s) { return s.id === id; })[0] || null : null;
+  }
+  // Un savant incarné remplace corps, tenue et cheveux ; les accessoires de tête deviennent des déguisements.
   function pixelsAvatar(ox, oy) {
-    var A = C.avatar, rang = M.rangAvatar(C, P), eq = P.avatar || {}, pal = A.palette;
+    var A = C.avatar, rang = M.rangAvatar(C, P), eq = P.avatar || {}, pal = A.palette, sv = savantIncarne();
     var tete = accessoire(eq.tete), visage = accessoire(eq.visage);
-    var c = pixels(A.corps, pal, null, ox, oy, 1) + pixels(rang.tenue, pal, rang.couleurs, ox, oy, 1);
-    if (!tete) c += pixels(A.cheveux, pal, null, ox, oy, 1);
+    var c = sv ? pixels(sv.base, pal, sv.couleurs, ox, oy, 1) : pixels(A.corps, pal, null, ox, oy, 1) + pixels(rang.tenue, pal, rang.couleurs, ox, oy, 1);
+    if (!tete) c += pixels(sv ? sv.cheveux : A.cheveux, pal, null, ox, oy, 1);
     if (visage) c += pixels(visage.pixels, pal, null, ox, oy, 1);
     if (tete) c += pixels(tete.pixels, pal, null, ox, oy, 1);
     return c;
   }
   function svgAvatar(taille) {
-    var rang = M.rangAvatar(C, P), objet = objetTenu();
+    var rang = M.rangAvatar(C, P), objet = savantIncarne() ? null : objetTenu();
     var c = pixelsAvatar(3, 0);
     if (objet) c += pixels(objet.pixels, C.cabinet.palette, null, 33, 24, 0.5);
     return '<svg class="pix" viewBox="0 0 52 48" width="' + taille + '" height="' + Math.round(taille * 48 / 52) + '" role="img" aria-label="Ton avatar, rang ' + esc(tx(rang.nom)) + '">' + c + "</svg>";
@@ -799,7 +814,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var t = maintenant(), v = el('<div class="vue"></div>');
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + esc(dateLongue(t)) + '</div><h1>Aujourd\'hui</h1></div>' + (P.decalage ? '<span class="horloge">Mode test</span>' : "") + "</div>"));
     var ng = M.niveauGlobal(C, P), nbMait = C.competences.filter(function (k) { return M.estMaitrisee(P, k.id); }).length;
-    var perso = el('<div class="bloc perso"><div class="avatar-cadre">' + svgAvatar(84) + '</div><div><div class="niv"><small>Niveau</small><span class="num">' + ng + '</span></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div><p>" + nbMait + " compétence" + (nbMait > 1 ? "s" : "") + " maîtrisée" + (nbMait > 1 ? "s" : "") + " sur " + C.competences.length + "</p></div></div>");
+    var perso = el('<div class="bloc perso"><div class="avatar-cadre rang-' + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + '</div><div><div class="niv"><small>Niveau</small><span class="num">' + ng + '</span></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div><p>" + nbMait + " compétence" + (nbMait > 1 ? "s" : "") + " maîtrisée" + (nbMait > 1 ? "s" : "") + " sur " + C.competences.length + "</p></div></div>");
     perso.style.cursor = "pointer"; perso.onclick = function () { vue = "perso"; rendre(); };
     v.appendChild(perso);
     var mot = comite(M.repliqueDuJour(C, P, t)); if (mot) v.appendChild(mot);
@@ -1018,16 +1033,18 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 
   function blocAvatar() {
     var rangs = C.avatar.rangs, rang = M.rangAvatar(C, P), suivant = rangs[rangs.indexOf(rang) + 1];
-    var b = el('<div class="bloc"><div style="display:grid;grid-template-columns:128px 1fr;gap:16px;align-items:center"><div class="avatar-cadre">' + svgAvatar(112) +
+    var b = el('<div class="bloc"><div style="display:grid;grid-template-columns:128px 1fr;gap:16px;align-items:center"><div class="avatar-cadre rang-' + rang.id + '">' + svgAvatar(112) +
       '</div><div><div class="eyebrow">Rang</div><div class="rang" style="font-size:22px">' + esc(tx(rang.nom)) + '</div><p class="note">' +
       (suivant ? "Prochain rang, " + esc(tx(suivant.nom)) + ", au niveau global " + suivant.niveau_min + "." : "Le rang le plus haut. L'IA s'incline.") + "</p></div></div>" +
       '<div class="equip"></div></div>');
-    var eq = b.querySelector(".equip");
+    var eq = b.querySelector(".equip"), sv = savantIncarne();
+    if (sv) b.querySelector(".rang").insertAdjacentHTML("afterend", '<div class="note" style="margin-top:2px">en <b>' + esc(tx(sv.nom)) + "</b></div>");
     var slots = [
-      { id: "tete", nom: "Tête", choix: C.avatar.accessoires.filter(function (a) { return a.emplacement === "tete" && P.accessoires[a.id]; }) },
+      { id: "tete", nom: sv ? "Déguisement" : "Tête", choix: C.avatar.accessoires.filter(function (a) { return a.emplacement === "tete" && P.accessoires[a.id]; }) },
       { id: "visage", nom: "Visage", choix: C.avatar.accessoires.filter(function (a) { return a.emplacement === "visage" && P.accessoires[a.id]; }) },
-      { id: "main", nom: "En main", choix: C.objets.filter(function (o) { return P.objets[o.id]; }) },
+      { id: "main", nom: "En main", choix: sv ? [] : C.objets.filter(function (o) { return P.objets[o.id]; }) },
     ];
+    if (C.avatar.savants) b.appendChild(blocSavants());
     var rien = slots.every(function (sl) { return !sl.choix.length; });
     if (rien) { eq.appendChild(el('<p class="note">Les accessoires se gagnent avec certains succès, les objets dans le Cabinet. Ton avatar les portera ici.</p>')); return b; }
     slots.forEach(function (sl) {
@@ -1042,6 +1059,43 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       eq.appendChild(ligne);
     });
     return b;
+  }
+
+  function conditionTexte(c) {
+    if (c.type === "competence_maitrisee") return "Maîtriser « " + tx(C.parId[c.id].nom) + " »";
+    if (c.type === "succes") {
+      var sc = C.succes.filter(function (x) { return x.id === c.id; })[0];
+      return sc ? (P.succes[sc.id] || !sc.cache ? "Succès « " + tx(sc.nom) + " »" : "Un succès caché") : "Un succès";
+    }
+    return "Plus tard";
+  }
+  function svgSavant(s, taille, verrou) {
+    var pal = C.avatar.palette, c = pixels(s.base, pal, s.couleurs, 0, 0, 1) + pixels(s.cheveux, pal, null, 0, 0, 1);
+    return '<svg class="pix" viewBox="0 0 40 48" width="' + taille + '" height="' + Math.round(taille * 1.2) + '" aria-hidden="true"' + (verrou ? ' style="filter:brightness(0) invert(.5) opacity(.45)"' : "") + ">" + c + "</svg>";
+  }
+  function blocSavants() {
+    var liste = C.avatar.savants, n = liste.filter(function (s) { return P.savants[s.id]; }).length, actuel = savantIncarne();
+    var b = el('<div><div class="eyebrow">Savants · ' + n + " sur " + liste.length + '</div><p class="note">Incarne un savant débloqué. Ton rang reste visible au cadre.</p><div class="savants"></div></div>');
+    var g = b.querySelector(".savants");
+    var toi = el('<button type="button"' + (actuel ? "" : ' class="actuel"') + ">" + '<svg class="pix" viewBox="0 0 40 48" width="44" height="53" aria-hidden="true">' + pixels(C.avatar.corps, C.avatar.palette, null, 0, 0, 1) + pixels(M.rangAvatar(C, P).tenue, C.avatar.palette, M.rangAvatar(C, P).couleurs, 0, 0, 1) + pixels(C.avatar.cheveux, C.avatar.palette, null, 0, 0, 1) + "</svg><span>Toi</span></button>");
+    toi.onclick = function () { P.avatar.savant = null; sauver(); rendre(); };
+    g.appendChild(toi);
+    liste.forEach(function (s) {
+      var ok = !!P.savants[s.id];
+      var bt = el('<button type="button" class="' + (ok ? "" : "verrou") + (actuel && actuel.id === s.id ? " actuel" : "") + '">' + svgSavant(s, 44, !ok) + "<span>" + esc(ok ? tx(s.nom) : "?") + "</span></button>");
+      bt.onclick = function () { ouvrirSavant(s); };
+      g.appendChild(bt);
+    });
+    return b;
+  }
+  function ouvrirSavant(s) {
+    var ok = !!P.savants[s.id], porte = savantIncarne() && savantIncarne().id === s.id;
+    feuilleSimple('<div class="vitrine" style="padding:12px;width:132px;margin:0 auto">' + svgSavant(s, 108, !ok) + "</div>" +
+      (ok ? '<div class="eyebrow">' + esc(s.annees) + "</div><h2>" + esc(tx(s.nom)) + "</h2><p>" + esc(tx(s.notice)) + '</p><p class="meta">Source : ' + esc(s.source) + "</p>" +
+          (porte ? '<button type="button" class="btn sec large" data-a="quitter">Redevenir toi-même</button>' : '<button type="button" class="btn large" data-a="incarner">Incarner ' + esc(tx(s.nom)) + "</button>")
+        : "<h2>Savant à débloquer</h2><p class=\"meta\">" + esc(conditionTexte(s.condition)) + ".</p>"), ok ? tx(s.nom) : "Savant à débloquer",
+      { incarner: function () { P.avatar.savant = s.id; sauver(); fermerFeuille(); rendre(); toast("Tu incarnes " + tx(s.nom)); },
+        quitter: function () { P.avatar.savant = null; sauver(); fermerFeuille(); rendre(); } });
   }
 
   function exporter() {
@@ -1480,6 +1534,11 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     (r.nouveauxObjets || []).forEach(function (o) {
       wrap.appendChild(el('<div class="bloc"><h2>Nouvel objet au cabinet</h2><div style="display:grid;grid-template-columns:88px 1fr;gap:14px;align-items:center"><span class="vitrine" style="padding:10px">' + svgObjet(o, false, 64) +
         "</span><div><b>" + esc(tx(o.nom)) + '</b><p class="note">' + esc(tx(o.notice)) + "</p></div></div></div>"));
+    });
+    (r.nouveauxSavants || []).forEach(function (sv) {
+      var bs2 = el('<div class="bloc"><h2>Nouveau savant jouable</h2><div style="display:grid;grid-template-columns:88px 1fr;gap:14px;align-items:center"><span class="vitrine" style="padding:6px">' + svgSavant(sv, 72) +
+        "</span><div><b>" + esc(tx(sv.nom)) + '</b><p class="note">' + esc(sv.annees) + ". À incarner dans l'onglet Personnage.</p></div></div></div>");
+      wrap.appendChild(bs2);
     });
     if ((r.nouveauxAccessoires || []).length) {
       wrap.appendChild(el('<div class="bloc"><h2>Nouvel accessoire</h2><p>' + r.nouveauxAccessoires.map(function (a) { return "<b>" + esc(tx(a.nom)) + "</b>"; }).join(", ") +

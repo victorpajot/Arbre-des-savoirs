@@ -702,17 +702,18 @@
   "avatar": {
    "type": "object",
    "required": [
+    "accessoires",
+    "cheveux",
+    "corps",
     "format",
     "palette",
-    "taille",
-    "corps",
-    "cheveux",
     "rangs",
-    "accessoires"
+    "savants",
+    "taille"
    ],
    "properties": {
     "format": {
-     "const": 2
+     "const": 3
     },
     "palette": {
      "$ref": "#/$defs/palette"
@@ -802,6 +803,56 @@
     "emplacements": {
      "type": "string",
      "description": "Caractères dont la couleur dépend du rang."
+    },
+    "savants": {
+     "type": "array",
+     "minItems": 20,
+     "description": "Savants jouables : ils remplacent le corps, la tenue et les cheveux de l'avatar. Les accessoires de visage restent portables, ceux de tête deviennent des déguisements.",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "nom",
+       "annees",
+       "condition",
+       "notice",
+       "source",
+       "couleurs",
+       "base",
+       "cheveux"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "annees": {
+        "type": "string"
+       },
+       "condition": {
+        "$ref": "#/$defs/condition"
+       },
+       "notice": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "couleurs": {
+        "$ref": "#/$defs/palette"
+       },
+       "base": {
+        "$ref": "#/$defs/pixels"
+       },
+       "cheveux": {
+        "$ref": "#/$defs/pixels"
+       }
+      }
+     }
     }
    }
   },

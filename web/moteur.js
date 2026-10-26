@@ -100,6 +100,7 @@
       succes: {},
       objets: {},
       accessoires: {},
+      savants: {},
       avatar: { tete: null, visage: null, main: null, savant: null },
       compteurs: {
         quizParfaits: 0, quizRates: 0, rappelsReussis: 0, serieRappels: 0, perdues: 0, regagnees: 0,
@@ -142,6 +143,7 @@
     out.succes = p.succes || {};
     out.objets = p.objets || {};
     out.accessoires = p.accessoires || {};
+    out.savants = p.savants || {};
     out.avatar = Object.assign({ tete: null, visage: null, main: null, savant: null }, p.avatar || {});
     if (p.format < 4) {
       var c4 = contenu || { regles: { xp: { rappel_par_etape: [5, 10, 15, 20, 30, 40, 50], par_rappel_reussi: 5 } } };
@@ -344,7 +346,7 @@
     var rec = verifierRecompenses(contenu, partie, t);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     return { issue: reussi ? "maitrisee" : "echec", bonnes: bonnes, total: total, xp: xp, prochainRappel: e.prochainRappel,
-      nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires,
+      nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes };
   }
 
@@ -397,7 +399,7 @@
     var rec = verifierRecompenses(contenu, partie, t);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     return { issue: reussi ? "reussi" : "perdue", bonnes: bonnes, total: resultats.length, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
-      retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires,
+      retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes };
   }
 
@@ -410,7 +412,7 @@
       partie.retour = t;
       return verifierRecompenses(contenu, partie, t);
     }
-    return { succes: [], objets: [], accessoires: [], evenements: [], livres: [], masque: null };
+    return { succes: [], objets: [], accessoires: [], savants: [], evenements: [], livres: [], masque: null };
   }
 
   // Mode test : avance l'horloge du jeu de `jours` jours (0 = retour à l'heure réelle).
@@ -650,11 +652,12 @@
   // Débloque succès, objets du cabinet et accessoires d'avatar. Certains dépendent des autres
   // (« 30 succès », « 10 objets », un accessoire lié à un succès) : on boucle jusqu'à stabilité.
   function verifierRecompenses(contenu, partie, t) {
-    var out = { succes: [], objets: [], accessoires: [], evenements: [], livres: [], masque: null };
+    var out = { succes: [], objets: [], accessoires: [], savants: [], evenements: [], livres: [], masque: null };
     var familles = [
       ["succes", contenu.succes, partie.succes],
       ["objets", contenu.objets, partie.objets],
       ["accessoires", contenu.avatar ? contenu.avatar.accessoires : [], partie.accessoires],
+      ["savants", contenu.avatar && contenu.avatar.savants ? contenu.avatar.savants : [], partie.savants || (partie.savants = {})],
       ["evenements", contenu.evenements, partie.evenements],
       ["livres", contenu.livres, partie.livres],
     ];
@@ -689,7 +692,7 @@
       var m = masqueActuel(contenu, partie);
       if (m) partie.masque = m.id;
     }
-    if (out.succes.length || out.objets.length || out.accessoires.length || out.evenements.length || out.livres.length || out.masque) partie.maj = t;
+    if (out.succes.length || out.objets.length || out.accessoires.length || out.savants.length || out.evenements.length || out.livres.length || out.masque) partie.maj = t;
     return out;
   }
 

@@ -317,3 +317,20 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   }
   console.log("OK : v4 second losange, XP de rappel, migration v3 → v4");
 }
+
+// v4 : savants jouables
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json") };
+  const C4 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const t0 = new Date(2026, 9, 26, 10, 0).getTime();
+  const P = M.nouvellePartie(t0);
+  assert.equal(C4.avatar.savants.length, 20);
+  assert.deepEqual(M.verifierRecompenses(C4, P, t0).savants, []);
+  // Hypatie arrive avec l'astronomie d'observation
+  P.competences["astro.observer"] = { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + 86400000, xp: 70 };
+  const rec = M.verifierRecompenses(C4, P, t0);
+  assert.deepEqual(rec.savants.map(s => s.id), ["hypatie"]);
+  assert.ok(P.savants.hypatie);
+  console.log("OK : v4 savants débloqués par leur histoire");
+}

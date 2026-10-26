@@ -19,6 +19,7 @@ import objectifs
 import objets32
 import philosophes
 import plateau
+import savants
 from dessin import EMPLACEMENTS, PALETTE
 from illustrations import ENONCE, EXPLICATION
 from questions_nouvelles import Q as Q_NOUVELLES
@@ -631,7 +632,7 @@ SUCCES = [
 def avatar():
     c = avatar40.calques()
     return {
-        "format": 2,
+        "format": 3,
         "palette": PALETTE,
         "emplacements": EMPLACEMENTS,
         "taille": [avatar40.L, avatar40.H],
@@ -641,6 +642,9 @@ def avatar():
                   for r in avatar40.RANGS],
         "accessoires": [{"id": id, "nom": fr(nom), "emplacement": c["accessoires"][id][0], "condition": cond, "pixels": c["accessoires"][id][1]}
                         for id, nom, cond in ACCESSOIRES],
+        # v4 : savants jouables, qui remplacent l'avatar ; le rang se lit alors au cadre.
+        "savants": [{"id": s[0], "nom": fr(s[1]), "annees": s[2], "condition": s[9], "notice": fr(s[10]), "source": s[11],
+                     "couleurs": s[5], "base": cq["base"], "cheveux": cq["cheveux"]} for s, cq in zip(savants.SAVANTS, savants.calques())],
     }
 
 
