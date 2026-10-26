@@ -13,6 +13,13 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 | `outils/valider.py` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
 | `outils/test_moteur.js` | Test du cycle quiz, rappel, perte, regain (`node outils/test_moteur.js`). |
 
+## Nouveautés de la v7 (lot 2)
+
+- Ennemis du plateau (`data/ennemis.json`, généré par `outils/ennemis.py`) : sept archétypes de la bêtise humaine et deux figures historiques (Lyssenko, Mesmer), posés au début de chaque tour ; le Charlatan attend en réserve. Passer sur un ennemi arrête le pion et lance un duel : cinq affirmations vraies ou fausses (80 au total, chacune avec son origine et une source), sans-faute obligatoire. Victoire : l'ennemi quitte le plateau jusqu'au tour suivant, le pion finit son trajet, un butin tombe, un succès à la première victoire. Défaite : le pion reste et le duel reprend à l'épreuve réussie suivante.
+- Écran VS : l'avatar glisse de la gauche, l'ennemi de la droite, l'IA arbitre (contextes `ennemi`, `duel_gagne`, `duel_perdu`).
+- Bestiaire (onglet Collections) : victoires, défaites, meilleure série et dernier duel par ennemi ; silhouettes pour ceux qu'on n'a pas croisés.
+- Cadeaux à l'IA : depuis la fiche d'un objet, un par jour et une fois par objet (`objets[].cadeau`, `outils/cadeaux.py`). L'IA répond, garde parfois l'objet près de son masque, et fait avancer ou reculer le pion, déplace une case spéciale, ajoute un ennemi, ou rien.
+
 ## Nouveautés de la v7 (lot 1)
 
 - Trois arbres ouverts au départ : Logique, Mécanique, Savoir (`regles.arbres_fondamentaux`). Les sept autres s'ouvrent par un succès pionnier (`succes[].ouvre`, généré par `outils/pionniers.py`) : Cicéron (2 compétences maîtrisées), Lavoisier (3), Galilée (4), Bacon (5), Faraday (6), William James (7), Socrate (9). Une partie existante garde les arbres où elle a déjà joué. Mode test : « Ouvrir tous les arbres ».

@@ -401,8 +401,32 @@ EXPRESSIONS = {
     "rappel_perdu": "decue", "retards": "impatiente", "rappel_retard": "impatiente", "nuit": "impatiente",
     "jouer_rappel": "impatiente", "jouer_bonus": "neutre", "jouer_faible": "moqueuse", "jouer_hasard": "moqueuse",
     "farce": "moqueuse",
+    "ennemi": "moqueuse", "duel_gagne": "impressionnee", "duel_perdu": "moqueuse",
 }
 
+
+# v7 : l'IA arbitre les duels contre les ennemis du plateau.
+REPLIQUES.update({
+    "ennemi": [
+        "Un ennemi vous barre la route. Cinq affirmations, aucune erreur permise. Comme au procès de Galilée, mais avec des règles.",
+        "La commission de 1784 a démasqué Mesmer avec des bandeaux sur les yeux. Vous avez le droit de garder les vôtres ouverts. Servez-vous-en.",
+        "Le doute méthodique de Descartes est autorisé pendant ce duel. Recommandé, même.",
+        "Arbitrage officiel. Je compte les points, je ne prends pas parti. Enfin, un peu.",
+        sans("Duel ! Lui d'un côté, vous de l'autre, moi au milieu. Ne me décevez pas, je déteste perdre par procuration."),
+    ],
+    "duel_gagne": [
+        "Victoire. Carl Sagan disait que les affirmations extraordinaires demandent des preuves extraordinaires. Vous en aviez cinq.",
+        "Hume : le sage proportionne sa croyance à l'évidence. Vous venez de proportionner.",
+        "Les historiens ont mis un siècle à enterrer le mythe de la Terre plate médiévale. Vous, cinq questions.",
+        sans("Cinq sur cinq. Je note dans mon registre : esprit critique, présent."),
+    ],
+    "duel_perdu": [
+        "Perdu. Selon la loi de Brandolini, réfuter une ânerie demande dix fois plus d'énergie que de la produire. Rechargez.",
+        "Un mensonge fait le tour du monde avant que la vérité ait mis ses chaussures. La phrase est attribuée à Mark Twain, à tort. Lacez les vôtres.",
+        "Même Newton a cru à l'alchimie. Vous êtes en bonne compagnie, mais du mauvais côté du plateau.",
+        sans("Une seule erreur, et il reste planté là. Il ne bougera pas tant que vous ne l'aurez pas battu."),
+    ],
+})
 
 # v7 : surnom que l'IA donne au joueur, affiché sous le rang. Il suit son humeur (dernier résultat),
 # ou juste après un succès, ce succès ({succes}). Groupes nominaux épicènes : le joueur peut être n'importe qui.

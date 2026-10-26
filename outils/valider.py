@@ -12,7 +12,7 @@ DATA = Path(__file__).resolve().parent.parent / "data"
 FICHIERS = [("regles.json", "regles"), ("skills.json", "skills"), ("questions.json", "questions"),
             ("succes.json", "succes"), ("commentaires.json", "commentaires"), ("objets.json", "objets"),
             ("avatar.json", "avatar"), ("ia.json", "ia"), ("plateau.json", "plateau"), ("frise.json", "frise"),
-            ("bibliotheque.json", "bibliotheque")]
+            ("bibliotheque.json", "bibliotheque"), ("ennemis.json", "ennemis")]
 
 
 def charger(nom):
@@ -95,7 +95,7 @@ def main():
             erreurs.append(f"{ou} : succès inconnu {cond.get('id')}")
         if cond["type"] in ("case_atteinte", "case_visitee") and not 1 <= cond.get("n", 0) <= nb_cases:
             erreurs.append(f"{ou} : case hors du plateau {cond.get('n')}")
-        besoin = {"competence_maitrisee": "id", "succes": "id", "branche_complete": "stat", "quiz_parfaits_stat": "stat",
+        besoin = {"competence_maitrisee": "id", "succes": "id", "ennemi_vaincu": "id", "branche_complete": "stat", "quiz_parfaits_stat": "stat",
                   "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None}.get(cond["type"], "n")
         if besoin and besoin not in cond:
             erreurs.append(f"{ou} : la condition {cond['type']} demande « {besoin} »")
@@ -132,6 +132,28 @@ def main():
     sprites = set(pl["icones"]) | {o["id"] for o in contenu["objets"]["objets"]}
     for nom, img in pl["icones"].items():
         verifier_pixels(f"plateau.json icône {nom}", img, pl["taille"], pl["palette"], erreurs)
+    en = contenu["ennemis"]
+    ids_en = {e["id"] for e in en["ennemis"]}
+    for e in en["ennemis"]:
+        verifier_pixels(f"ennemis.json {e['id']}", e["base"], [40, 48], contenu["avatar"]["palette"], erreurs, "!X*~Z+Q")
+        verifier_pixels(f"ennemis.json {e['id']} cheveux", e["cheveux"], [40, 48], contenu["avatar"]["palette"], erreurs)
+    for n, e in en["placement"].items():
+        if e not in ids_en:
+            erreurs.append(f"ennemis.json : ennemi inconnu {e} case {n}")
+        if not 1 < int(n) < len(pl["cases"]) or pl["cases"][int(n) - 1].get("special"):
+            erreurs.append(f"ennemis.json : case {n} interdite (départ, arrivée ou case spéciale)")
+    if en["reserve"] not in ids_en or en["reserve"] in en["placement"].values():
+        erreurs.append("ennemis.json : réserve invalide")
+    for e in ids_en:
+        nb = sum(1 for m in en["mythes"] if m["ennemi"] == e)
+        if nb < en["questions_par_duel"]:
+            erreurs.append(f"ennemis.json : {e} n'a que {nb} affirmations")
+    for m in en["mythes"]:
+        if m["ennemi"] not in ids_en:
+            erreurs.append(f"ennemis.json {m['id']} : ennemi inconnu")
+    for s in contenu["succes"]["succes"]:
+        if s["condition"]["type"] == "ennemi_vaincu" and s["condition"]["id"] not in ids_en:
+            erreurs.append(f"succes.json {s['id']} : ennemi inconnu")
     for i, c in enumerate(pl["cases"], 1):
         if c["n"] != i:
             erreurs.append(f"plateau.json : case {c['id']} numérotée {c['n']}, {i} attendu")
@@ -209,7 +231,7 @@ def main():
     print(f"OK : {len(stats)} stats, {len(comps)} compétences, {len(ids)} questions ({illustrees} illustrées), "
           f"{len(succes)} succès, {len(contenu['commentaires']['commentaires'])} répliques, "
           f"{len(cab['objets'])} objets, {len(av['rangs'])} rangs et {len(av['accessoires'])} accessoires d'avatar, {len(av.get('savants', []))} savants, "
-          f"{len(narr['masques'])} masques, {len(pl['cases'])} cases, {len(ev)} dates, {len(contenu['bibliotheque']['livres'])} livres")
+          f"{len(narr['masques'])} masques, {len(pl['cases'])} cases, {len(ev)} dates, {len(contenu['bibliotheque']['livres'])} livres, {len(contenu['ennemis']['ennemis'])} ennemis, {len(contenu['ennemis']['mythes'])} affirmations de duel")
 
 
 if __name__ == "__main__":

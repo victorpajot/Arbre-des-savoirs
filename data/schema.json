@@ -513,7 +513,10 @@
       "eurekas",
       "reculs",
       "branches_completes",
-      "rang_maitrise"
+      "rang_maitrise",
+      "ennemi_vaincu",
+      "duels_gagnes",
+      "cadeaux_offerts"
      ]
     },
     "n": {
@@ -635,7 +638,10 @@
          "jouer_bonus",
          "jouer_faible",
          "jouer_hasard",
-         "farce"
+         "farce",
+         "ennemi",
+         "duel_gagne",
+         "duel_perdu"
         ]
        },
        "reference": {
@@ -812,6 +818,39 @@
         "minimum": 1,
         "maximum": 7,
         "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
+       },
+       "cadeau": {
+        "type": "object",
+        "description": "v7 : ce que fait l'IA quand on lui offre cet objet.",
+        "required": [
+         "effet",
+         "garde",
+         "texte"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "effet": {
+          "enum": [
+           "avance",
+           "recule",
+           "echange",
+           "ennemi",
+           "rien"
+          ]
+         },
+         "n": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+         },
+         "garde": {
+          "type": "boolean",
+          "description": "L'IA garde l'objet sur son masque."
+         },
+         "texte": {
+          "$ref": "#/$defs/texte"
+         }
+        }
        }
       }
      }
@@ -1594,6 +1633,150 @@
         "minimum": 1,
         "maximum": 7,
         "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
+       }
+      }
+     }
+    }
+   }
+  },
+  "ennemis": {
+   "type": "object",
+   "description": "v7 : ennemis du plateau et affirmations de leurs duels.",
+   "required": [
+    "format",
+    "placement",
+    "reserve",
+    "questions_par_duel",
+    "ennemis",
+    "mythes"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "placement": {
+     "type": "object",
+     "description": "Case (numéro en texte) → ennemi, au début de chaque tour.",
+     "additionalProperties": {
+      "$ref": "#/$defs/id"
+     }
+    },
+    "reserve": {
+     "$ref": "#/$defs/id"
+    },
+    "questions_par_duel": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ennemis": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "nom",
+       "titre",
+       "figure",
+       "description",
+       "couleurs",
+       "base",
+       "cheveux",
+       "defi",
+       "victoire",
+       "defaite",
+       "source"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "titre": {
+        "$ref": "#/$defs/texte"
+       },
+       "figure": {
+        "enum": [
+         "archetype",
+         "historique"
+        ]
+       },
+       "annees": {
+        "type": "string"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       },
+       "couleurs": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "string",
+         "pattern": "^#[0-9A-Fa-f]{6}$"
+        }
+       },
+       "base": {
+        "$ref": "#/$defs/pixels"
+       },
+       "cheveux": {
+        "$ref": "#/$defs/pixels"
+       },
+       "defi": {
+        "$ref": "#/$defs/texte"
+       },
+       "victoire": {
+        "$ref": "#/$defs/texte"
+       },
+       "defaite": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       }
+      }
+     }
+    },
+    "mythes": {
+     "type": "array",
+     "minItems": 5,
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "ennemi",
+       "vrai",
+       "affirmation",
+       "explication",
+       "origine",
+       "source"
+      ],
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "ennemi": {
+        "$ref": "#/$defs/id"
+       },
+       "vrai": {
+        "type": "boolean"
+       },
+       "affirmation": {
+        "$ref": "#/$defs/texte"
+       },
+       "explication": {
+        "$ref": "#/$defs/texte"
+       },
+       "origine": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
        }
       }
      }

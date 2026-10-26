@@ -34,6 +34,12 @@
       apartes: extras.commentaires && extras.commentaires.apartes ? extras.commentaires.apartes : [],
       surnoms: extras.commentaires && extras.commentaires.surnoms ? extras.commentaires.surnoms : null,
       parSucces: {},
+      ennemis: extras.ennemis ? extras.ennemis.ennemis : [],
+      ennemiParId: {},
+      mythes: extras.ennemis ? extras.ennemis.mythes : [],
+      placement: extras.ennemis ? extras.ennemis.placement : null,
+      reserve: extras.ennemis ? extras.ennemis.reserve : null,
+      questionsDuel: extras.ennemis ? extras.ennemis.questions_par_duel : 5,
       ia: extras.ia || null,
       plateau: extras.plateau || null,
       evenements: extras.frise ? extras.frise.evenements : [],
@@ -50,6 +56,7 @@
     });
     c.stats.forEach(function (s) { c.parStat[s.id] = []; });
     c.succes.forEach(function (s) { c.parSucces[s.id] = s; });
+    c.ennemis.forEach(function (e) { c.ennemiParId[e.id] = e; });
     c.competences.forEach(function (k) {
       c.parId[k.id] = k;
       (c.parStat[k.stat] = c.parStat[k.stat] || []).push(k);
@@ -110,7 +117,7 @@
         quizParfaits: 0, quizRates: 0, rappelsReussis: 0, serieRappels: 0, perdues: 0, regagnees: 0,
         quizJoues: 0, quizEclairRates: 0, quizZero: 0, quizNuit: 0, quizAube: 0, chronoParfaits: 0,
         reponsesEclairFausses: 0, rappelsRetard: 0, retours: 0, modeTest: 0, parfaitsParStat: {},
-        eurekas: 0, sortiesPrison: 0, reculs: 0,
+        eurekas: 0, sortiesPrison: 0, reculs: 0, duelsGagnes: 0, duelsPerdus: 0, cadeaux: 0,
       },
       jours: [],
       journal: [],
@@ -121,6 +128,10 @@
       masques: {},
       farce: null,
       gagnables: {},
+      bestiaire: {},
+      duel: null,
+      cadeaux: { jour: null, donnes: {} },
+      objetIA: null,
       plateau: nouveauPlateau(),
       derniereVisite: t,
       retour: null,
@@ -129,7 +140,8 @@
   }
 
   function nouveauPlateau() {
-    return { position: 1, atteinte: 1, tours: 0, visites: { 1: 1 }, prison: 0, quarantaine: 0, historique: [], bonus: null };
+    // v7 : ennemis (case → id, posés au début de chaque tour) et cases spéciales déplacées par l'IA (case → règle ou null).
+    return { position: 1, atteinte: 1, tours: 0, visites: { 1: 1 }, prison: 0, quarantaine: 0, historique: [], bonus: null, ennemis: null, speciaux: {} };
   }
 
   // Remet une partie lue (stockage, import) au format courant.
@@ -138,6 +150,7 @@
   // v3 → v4 : les rappels déjà réussis sont repayés au nouveau barème (XP croissante par étape) ; avatar savant.
   // v5 (même format) : le masque choisi par le joueur disparaît, la farce de l'IA apparaît.
   // v6 (même format) : butin en attente ; le savant incarné se déduit des succès.
+  // v7 (même format) : bestiaire, duel en cours, cadeaux à l'IA ; les ennemis du plateau sont posés au premier besoin.
   // `contenu` (facultatif) fournit le barème ; sans lui, celui par défaut.
   function migrer(p, contenu) {
     if (!p || typeof p !== "object" || typeof p.format !== "number") return null;
@@ -172,6 +185,11 @@
     out.farce = p.farce || null;
     // v6 : butin en attente (conditions remplies, pas encore tombé). Ce qui est déjà gagné reste acquis.
     out.gagnables = p.gagnables || {};
+    // v7 : ennemis, duels et cadeaux à l'IA.
+    out.bestiaire = p.bestiaire || {};
+    out.duel = p.duel || null;
+    out.cadeaux = Object.assign({ jour: null, donnes: {} }, p.cadeaux || {});
+    out.objetIA = p.objetIA || null;
     out.plateau = Object.assign(nouveauPlateau(), p.plateau || {});
     out.derniereVisite = p.derniereVisite || p.maj || out.cree;
     out.options = Object.assign({ chrono: false }, p.options || {});
@@ -493,6 +511,19 @@
   function caseN(contenu, n) {
     return contenu.plateau.cases[n - 1];
   }
+  // v7 : la règle spéciale d'une case, en tenant compte des cases que l'IA a déplacées.
+  function specialDe(contenu, partie, n) {
+    var sp = partie.plateau.speciaux;
+    if (sp && Object.prototype.hasOwnProperty.call(sp, n)) return sp[n];
+    return caseN(contenu, n).special || null;
+  }
+  // v7 : ennemis du plateau (case → id), posés au début de chaque tour.
+  function ennemisPlateau(contenu, partie) {
+    var pl = partie.plateau;
+    if (!contenu.placement) return {};
+    if (!pl.ennemis) pl.ennemis = Object.assign({}, contenu.placement);
+    return pl.ennemis;
+  }
 
   // Applique le résultat d'une épreuve au pion. `issue` : {reussi, parfait, chrono, jouer}.
   // `jouer` : l'épreuve a été lancée par le bouton « Jouer », l'IA l'a choisie ; réussie, elle rapporte un bonus.
@@ -519,7 +550,7 @@
     var vus = {}, out = [];
     dep.etapes.forEach(function (e) {
       var ctx = { prison_liberation: "prison_liberation", prison: "prison", bloque_prison: "prison", eureka: "eureka", recul: "piege",
-        retour_epoque: "retour_epoque", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini" }[e.type];
+        retour_epoque: "retour_epoque", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi" }[e.type];
       if (ctx && !vus[ctx]) { vus[ctx] = 1; out.unshift(ctx); }
     });
     if (dep.a !== dep.de && dep.valeur > 0) out.push("plateau_avance");
@@ -538,13 +569,24 @@
       pl.visites[n] = (pl.visites[n] || 0) + 1;
       if (n > pl.atteinte) pl.atteinte = n;
     }
+    var ennemis = ennemisPlateau(contenu, partie);
     function avancer(n) {
       var cible = pl.position + n;
+      // v7 : un ennemi sur la route arrête le pion et lance un duel ; il reste `reste` cases à faire après la victoire.
+      for (var e = pl.position + 1; e <= Math.min(cible, R.arrivee - 1); e++) {
+        if (ennemis[e]) {
+          poser(e);
+          partie.duel = { ennemi: ennemis[e], case: e, reste: cible - e, pret: true, depuis: t };
+          etapes.push({ type: "ennemi", case: e, ennemi: ennemis[e], reste: cible - e });
+          return false;
+        }
+      }
       if (cible >= R.arrivee) {
         poser(R.arrivee);
         etapes.push({ type: "tour_fini", tour: pl.tours + 1 });
         pl.tours++;
         pl.atteinte = R.arrivee;
+        pl.ennemis = null; pl.speciaux = {}; ennemis = ennemisPlateau(contenu, partie);
         pl.position = R.depart;
         chemin.push(R.depart);
         return false;
@@ -555,14 +597,18 @@
     if (valeur < 0 && pl.prison > 0) etapes.push({ type: "bloque_prison", reste: pl.prison });
     else if (valeur < 0) {
       poser(Math.max(R.depart, pl.position + valeur));
-      if (pl.position < de) { c.reculs++; etapes.push({ type: "recul", n: de - pl.position, cause: "echec" }); }
+      if (pl.position < de) { c.reculs++; etapes.push({ type: "recul", n: de - pl.position, cause: cause === "cadeau" ? "cadeau" : "echec" }); }
     } else if (valeur > 0) {
       if (pl.prison > 0) etapes.push({ type: "bloque_prison", reste: pl.prison });
       else if (pl.quarantaine > 0) { pl.quarantaine--; etapes.push({ type: "bloque_quarantaine", reste: pl.quarantaine }); }
-      else {
+      else if (partie.duel && partie.duel.case === pl.position && cause !== "duel") {
+        // Un duel perdu reprend à l'épreuve réussie suivante, qui vaut alors pour la suite du trajet.
+        partie.duel.reste = valeur; partie.duel.pret = true;
+        etapes.push({ type: "duel_attente", case: pl.position, ennemi: partie.duel.ennemi, reste: valeur });
+      } else {
         var pas = valeur, garde = 0;
         while (avancer(pas) && garde++ < MAX_ENCHAINEMENT) {
-          var sp = caseN(contenu, pl.position).special;
+          var sp = specialDe(contenu, partie, pl.position);
           if (!sp) break;
           if (sp.type === "eureka") { c.eurekas++; etapes.push({ type: "eureka", case: pl.position, n: pas }); continue; }
           if (sp.type === "avance") { pas = sp.n; etapes.push({ type: "avance", case: pl.position, n: sp.n }); continue; }
@@ -587,6 +633,8 @@
         }
       }
     }
+    // Le pion a quitté la case de l'ennemi (recul) : le duel est oublié.
+    if (partie.duel && partie.duel.case !== pl.position) partie.duel = null;
     // chemin : les cases où le pion se pose, dans l'ordre, pour l'animer case par case.
     var dep = { de: de, a: pl.position, valeur: valeur, cause: cause, tour: pl.tours, etapes: etapes, chemin: chemin, t: t };
     pl.historique.unshift({ t: t, de: de, a: pl.position, valeur: valeur, cause: cause, etapes: etapes.map(function (e) { return e.type; }) });
@@ -602,6 +650,130 @@
     partie.compteurs.modeTest++;
     dep.recompenses = verifierRecompenses(contenu, partie, t);
     return dep;
+  }
+
+  // --- Duels (v7) -----------------------------------------------------------
+  // Passer sur un ennemi arrête le pion. Le duel : cinq affirmations à juger, vraies ou fausses, toutes justes pour gagner.
+  // Gagné : l'ennemi quitte le plateau jusqu'au tour suivant, le pion finit son trajet, un butin tombe à coup sûr.
+  // Perdu : le pion reste, et le duel reprend à la prochaine épreuve réussie.
+
+  function ficheBestiaire(partie, id) {
+    partie.bestiaire = partie.bestiaire || {};
+    return partie.bestiaire[id] || (partie.bestiaire[id] = { victoires: 0, defaites: 0, serie: 0, meilleure: 0, dernier: null, vus: [] });
+  }
+
+  // Les affirmations du duel en cours : d'abord celles que le joueur n'a pas encore vues, dans un ordre mêlé.
+  function tirerDuel(contenu, partie, t, alea) {
+    var d = partie.duel; if (!d) return [];
+    alea = alea || Math.random;
+    var f = ficheBestiaire(partie, d.ennemi), toutes = contenu.mythes.filter(function (m) { return m.ennemi === d.ennemi; });
+    var neuves = toutes.filter(function (m) { return f.vus.indexOf(m.id) < 0; });
+    if (neuves.length < contenu.questionsDuel) { f.vus = []; neuves = toutes; }
+    var choix = melanger(neuves, alea).slice(0, contenu.questionsDuel);
+    f.vus = f.vus.concat(choix.map(function (m) { return m.id; }));
+    return choix;
+  }
+
+  // Butin garanti d'une victoire : un butin ouvert, ou à défaut un butin gagnable du lot suivant.
+  function butinDuel(contenu, partie, t, alea) {
+    var b = tirerButin(contenu, partie, { type: "duel" }, t, alea);
+    if (b) return b;
+    var tour = partie.plateau.tours + 2, proches = [];
+    FAMILLES_BUTIN.forEach(function (f) {
+      listeFamille(contenu, f).forEach(function (x) {
+        if (partie.gagnables && partie.gagnables[cleButin(f, x.id)] && !possede(partie, f, x.id) && x.lot <= tour) proches.push({ famille: f, chose: x });
+      });
+    });
+    if (!proches.length) return null;
+    b = proches[Math.floor((alea || Math.random)() * proches.length)];
+    partie[b.famille][b.chose.id] = t;
+    delete partie.gagnables[cleButin(b.famille, b.chose.id)];
+    if (b.famille === "masques") partie.masque = b.chose.id;
+    return b;
+  }
+
+  // `resultats` : [{id, correct}]. Renvoie {gagne, ennemi, bonnes, total, plateau, recompenses, butin, premiere, fiche}.
+  function terminerDuel(contenu, partie, resultats, t, alea) {
+    var d = partie.duel; if (!d) return null;
+    var e = contenu.ennemiParId[d.ennemi], f = ficheBestiaire(partie, d.ennemi), c = partie.compteurs;
+    var bonnes = resultats.filter(function (x) { return x.correct; }).length, gagne = resultats.length > 0 && bonnes === resultats.length;
+    f.dernier = t;
+    var out = { gagne: gagne, ennemi: e, bonnes: bonnes, total: resultats.length, plateau: null, recompenses: null, butin: null, premiere: false, fiche: f };
+    if (gagne) {
+      f.victoires++; f.serie++; f.meilleure = Math.max(f.meilleure, f.serie);
+      c.duelsGagnes = (c.duelsGagnes || 0) + 1;
+      out.premiere = f.victoires === 1;
+      delete ennemisPlateau(contenu, partie)[d.case];
+      partie.duel = null;
+      var dep = deplacer(contenu, partie, d.reste, t, "duel");
+      dep.contextes = contextesPlateau(dep);
+      out.plateau = dep;
+      out.butin = butinDuel(contenu, partie, t, alea);
+      out.recompenses = verifierRecompenses(contenu, partie, t);
+      if (out.butin) { if (out.butin.famille === "masques") out.recompenses.masque = out.butin.chose; else out.recompenses[out.butin.famille].push(out.butin.chose); }
+    } else {
+      f.defaites++; f.serie = 0;
+      c.duelsPerdus = (c.duelsPerdus || 0) + 1;
+      d.pret = false;
+      out.recompenses = verifierRecompenses(contenu, partie, t);
+    }
+    partie.maj = t;
+    return out;
+  }
+
+  // --- Cadeaux à l'IA (v7) ---------------------------------------------------
+  // Un cadeau par jour, une fois par objet. L'IA répond selon l'objet, garde parfois l'objet sur son masque,
+  // et s'en sert sur le plateau : le pion avance ou recule, une case spéciale change de place, un ennemi arrive, ou rien.
+
+  function cadeauPossible(contenu, partie, id, t) {
+    var o = (contenu.objets || []).filter(function (x) { return x.id === id; })[0];
+    if (!o || !o.cadeau || !partie.objets[id]) return { ok: false, raison: "inconnu" };
+    if (partie.cadeaux.donnes[id]) return { ok: false, raison: "deja" };
+    if (partie.cadeaux.jour === cleJour(t)) return { ok: false, raison: "jour" };
+    return { ok: true, objet: o };
+  }
+
+  function donnerObjet(contenu, partie, id, t, alea) {
+    var p = cadeauPossible(contenu, partie, id, t); if (!p.ok) return null;
+    alea = alea || Math.random;
+    var o = p.objet, cd = o.cadeau, pl = partie.plateau, R = contenu.plateau ? contenu.plateau.regles : null;
+    partie.cadeaux.jour = cleJour(t);
+    partie.cadeaux.donnes[id] = t;
+    partie.compteurs.cadeaux = (partie.compteurs.cadeaux || 0) + 1;
+    if (cd.garde) partie.objetIA = id;
+    var effet = { type: cd.effet }, dep = null;
+    if (R && cd.effet === "avance") { dep = deplacer(contenu, partie, cd.n, t, "cadeau"); effet.n = cd.n; }
+    else if (R && cd.effet === "recule") { dep = deplacer(contenu, partie, -cd.n, t, "cadeau"); effet.n = cd.n; }
+    else if (R && cd.effet === "echange") {
+      // Une case spéciale devant le pion change de place avec une case ordinaire devant lui.
+      var ennemis = ennemisPlateau(contenu, partie), devant = [], speciales = [], libres = [];
+      for (var n = pl.position + 1; n < R.arrivee; n++) devant.push(n);
+      devant.forEach(function (n) {
+        var sp = specialDe(contenu, partie, n);
+        if (sp && sp.type !== "retour_epoque") speciales.push(n); else if (!sp && !ennemis[n]) libres.push(n);
+      });
+      if (speciales.length && libres.length) {
+        var a = speciales[Math.floor(alea() * speciales.length)], b = libres[Math.floor(alea() * libres.length)];
+        var spA = specialDe(contenu, partie, a);
+        pl.speciaux[a] = null; pl.speciaux[b] = spA;
+        effet.de = a; effet.vers = b; effet.regle = spA.type;
+      } else effet.type = "rien";
+    } else if (R && cd.effet === "ennemi") {
+      var en = ennemisPlateau(contenu, partie), presents = Object.keys(en).map(function (k) { return en[k]; });
+      var absents = contenu.ennemis.map(function (x) { return x.id; }).filter(function (x) { return presents.indexOf(x) < 0; });
+      if (absents.indexOf(contenu.reserve) >= 0) absents = [contenu.reserve];
+      var cases = [];
+      for (var m = pl.position + 3; m <= Math.min(pl.position + 12, R.arrivee - 1); m++) if (!en[m] && !specialDe(contenu, partie, m)) cases.push(m);
+      if (absents.length && cases.length) {
+        var c = cases[Math.floor(alea() * cases.length)];
+        en[c] = absents[Math.floor(alea() * absents.length)];
+        effet.case = c; effet.ennemi = contenu.ennemiParId[en[c]];
+      } else effet.type = "rien";
+    }
+    if (dep) dep.contextes = contextesPlateau(dep);
+    var rec = verifierRecompenses(contenu, partie, t);
+    partie.maj = t;
+    return { objet: o, texte: cd.texte, garde: !!cd.garde, effet: effet, plateau: dep, recompenses: rec };
   }
 
   // --- Aujourd'hui -----------------------------------------------------------
@@ -678,6 +850,9 @@
       case "case_visitee": return (partie.plateau.visites[cond.n] || 0) > 0;
       case "tours_plateau": return partie.plateau.tours >= cond.n;
       case "sorties_prison": return c.sortiesPrison >= cond.n;
+      case "ennemi_vaincu": return !!(partie.bestiaire && partie.bestiaire[cond.id] && partie.bestiaire[cond.id].victoires);
+      case "duels_gagnes": return (c.duelsGagnes || 0) >= cond.n;
+      case "cadeaux_offerts": return (c.cadeaux || 0) >= cond.n;
       case "eurekas": return c.eurekas >= cond.n;
       case "reculs": return c.reculs >= cond.n;
       default: return false;
@@ -741,6 +916,7 @@
     var b = contenu.plateau && contenu.plateau.regles.butin;
     if (!b) return 0;
     if (epreuve.type === "rappel") return b.rappel;
+    if (epreuve.type === "duel") return 1;
     var k = contenu.parId[epreuve.comp];
     return Math.min(1, b.quiz_base + b.quiz_par_rang * (k ? k.rang : 1));
   }
@@ -1002,7 +1178,8 @@
     replique: replique,
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, arbreOuvert: arbreOuvert, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
+    choixIA: choixIA, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,
     valeurEpreuve: valeurEpreuve,

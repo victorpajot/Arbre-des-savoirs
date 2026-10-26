@@ -513,3 +513,68 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(M.surnom(C7, R, t0 + 3 * 86400000).succes == null, "le succès s'efface après un jour");
   console.log("OK : v7 arbres fondamentaux, pionniers, surnom de l'IA");
 }
+
+// v7 lot 2 : ennemis sur la route, duels, bestiaire, cadeaux à l'IA
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json") };
+  const C8 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const t0 = new Date(2026, 10, 3, 10, 0).getTime();
+  const P = M.nouvellePartie(t0);
+  P.plateau.position = 5;
+  // Le sophiste attend case 7 : un pas de 4 s'arrête dessus, il reste 2 cases.
+  let dep = M.avancerPion(C8, P, 4, t0);
+  assert.equal(P.plateau.position, 7);
+  assert.deepEqual([P.duel.ennemi, P.duel.reste, P.duel.pret], ["sophiste", 2, true]);
+  assert.ok(dep.etapes.some(e => e.type === "ennemi"));
+  let qs = M.tirerDuel(C8, P, t0, Math.random);
+  assert.equal(qs.length, 5);
+  assert.ok(qs.every(m => m.ennemi === "sophiste"));
+  // Défaite : le pion reste, le duel attend la prochaine épreuve réussie.
+  let r = M.terminerDuel(C8, P, qs.map((m, i) => ({ id: m.id, correct: i > 0 })), t0);
+  assert.equal(r.gagne, false);
+  assert.equal(P.plateau.position, 7);
+  assert.equal(P.duel.pret, false);
+  assert.equal(P.bestiaire.sophiste.defaites, 1);
+  dep = M.avancerPion(C8, P, 3, t0 + 1000);
+  assert.equal(P.plateau.position, 7, "le pion ne passe pas sans duel");
+  assert.deepEqual([P.duel.reste, P.duel.pret], [3, true]);
+  // Victoire : l'ennemi part, le pion finit son trajet, succès et butin.
+  const qs2 = M.tirerDuel(C8, P, t0, Math.random);
+  assert.ok(qs2.every(m => !qs.some(q => q.id === m.id)), "d'abord des affirmations jamais vues");
+  r = M.terminerDuel(C8, P, qs2.map(m => ({ id: m.id, correct: true })), t0 + 2000, () => 0);
+  assert.ok(r.gagne && r.premiere);
+  assert.equal(P.plateau.position, 10);
+  assert.equal(P.duel, null);
+  assert.ok(P.succes["vaincu-sophiste"]);
+  assert.ok(!M.ennemisPlateau(C8, P)[7], "l'ennemi vaincu quitte le plateau");
+  assert.deepEqual([P.bestiaire.sophiste.victoires, P.bestiaire.sophiste.serie, P.bestiaire.sophiste.meilleure], [1, 1, 1]);
+  // Un recul fait oublier le duel.
+  P.plateau.position = 13; M.avancerPion(C8, P, 4, t0);
+  assert.equal(P.duel.ennemi, "platiste");
+  M.avancerPion(C8, P, -2, t0);
+  assert.equal(P.duel, null);
+  // Fin de tour : les ennemis reviennent.
+  P.duel = null; P.plateau.position = 62; delete M.ennemisPlateau(C8, P)[61];
+  M.avancerPion(C8, P, 3, t0);
+  assert.equal(P.plateau.tours, 1);
+  assert.equal(M.ennemisPlateau(C8, P)[7], "sophiste");
+
+  // Cadeaux : un par jour, une fois par objet.
+  const G = M.nouvellePartie(t0);
+  G.objets = { "plaque-hubble": t0, "boulier": t0, "alambic": t0, "des-pascal": t0 };
+  let c = M.donnerObjet(C8, G, "plaque-hubble", t0);
+  assert.equal(c.effet.type, "avance"); assert.equal(G.plateau.position, 4);
+  assert.equal(M.donnerObjet(C8, G, "boulier", t0 + 1000), null, "un seul cadeau par jour");
+  assert.equal(M.cadeauPossible(C8, G, "plaque-hubble", t0 + 86400000).raison, "deja");
+  c = M.donnerObjet(C8, G, "boulier", t0 + 86400000);
+  assert.equal(G.objetIA, "boulier", "l'IA garde le boulier");
+  c = M.donnerObjet(C8, G, "alambic", t0 + 2 * 86400000, () => 0);
+  assert.equal(c.effet.type, "ennemi"); assert.equal(c.effet.ennemi.id, "charlatan", "le charlatan sort de la réserve");
+  assert.equal(M.ennemisPlateau(C8, G)[c.effet.case], "charlatan");
+  c = M.donnerObjet(C8, G, "des-pascal", t0 + 3 * 86400000, () => 0);
+  assert.equal(c.effet.type, "echange");
+  assert.equal(M.specialDe(C8, G, c.effet.de), null);
+  assert.equal(M.specialDe(C8, G, c.effet.vers).type, c.effet.regle);
+  console.log("OK : v7 ennemis, duels, bestiaire, cadeaux à l'IA");
+}

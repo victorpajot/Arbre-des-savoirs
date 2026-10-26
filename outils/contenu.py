@@ -19,6 +19,8 @@ import objectifs
 import objets32
 import philosophes
 import pionniers
+import ennemis
+import cadeaux
 import plateau
 import savants
 from dessin import EMPLACEMENTS, PALETTE
@@ -660,11 +662,19 @@ def cabinet():
     liste = tous_objets()
     assert {o["id"] for o in liste} == set(pixels), set(pixels) ^ {o["id"] for o in liste}
     return {"format": 2, "palette": PALETTE, "taille": [objets32.N, objets32.N],
-            "objets": [{**o, "pixels": pixels[o["id"]]} for o in liste]}
+            "objets": [{**o, "pixels": pixels[o["id"]], "cadeau": cadeau(o["id"])} for o in liste]}
+
+
+def cadeau(id):
+    effet, n, garde, texte = cadeaux.CADEAUX[id]
+    out = {"effet": effet, "garde": garde, "texte": fr(texte)}
+    if n:
+        out["n"] = n
+    return out
 
 
 def tous_succes():
-    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES + objectifs.SUCCES + pionniers.SUCCES
+    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES + objectifs.SUCCES + pionniers.SUCCES + ennemis.succes()
 
 
 def commentaires():
@@ -808,6 +818,7 @@ def main():
         "plateau.json": jeu_plateau(),
         "frise.json": frise(),
         "bibliotheque.json": livres(),
+        "ennemis.json": ennemis.donnees(),
     }
     assigner_lots(fichiers)
     for nom, contenu in fichiers.items():

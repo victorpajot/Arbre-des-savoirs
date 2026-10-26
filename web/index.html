@@ -253,8 +253,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .trajet .pas b { font-family: var(--f-mono); min-width: 54px; flex: none; }
 
 /* Collections */
-.segments { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); }
-.segments button { border: 0; background: transparent; border-radius: 9px; min-height: 40px; font-weight: 700; font-size: 14px; color: var(--muted); }
+.segments { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); grid-auto-flow: column; gap: 4px; padding: 4px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); }
+.segments button { border: 0; background: transparent; border-radius: 9px; min-height: 40px; font-weight: 700; font-size: 13px; padding: 0 2px; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
 .segments button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
 .filtres { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin: 0 -2px; }
 .filtres button { flex: none; border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 12px; min-height: 34px; font-size: 13px; }
@@ -369,6 +369,52 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .bloc.perso-v5 .surnom { margin: 4px 0 2px; font-family: var(--f-display); font-weight: 600; font-size: 17px; color: var(--ink); line-height: 1.3; }
 .bloc.perso-v5 .surnom small { display: block; font-style: normal; font-family: inherit; font-size: 12px; color: var(--muted); margin-top: 2px; }
 .bloc.perso-v5 .meta { margin: 0; }
+/* v7 : ennemis, duels, bestiaire, cadeaux */
+.pix.miroir { transform: scaleX(-1); }
+.defi { display: flex; flex-direction: column; gap: 10px; }
+.defi.bloc { border: 2px solid color-mix(in srgb, #D94141 55%, var(--line)); }
+.defi-haut { display: flex; align-items: center; gap: 14px; }
+.defi-haut h2 { margin: 2px 0 0; }
+.defi .titre-en { margin: 2px 0 0; color: #D94141; font-weight: 600; }
+.defi .rangee { display: flex; gap: 10px; flex-wrap: wrap; }
+.defi .rangee .btn { flex: 1; }
+.garde-case { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, #D94141 10%, var(--surface-2)); margin-bottom: 10px; }
+.garde-case p { margin: 0; }
+.quiz.duel .vitrine-en { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #D94141; display: grid; place-items: center; background: var(--surface); flex: none; }
+.quiz.duel .enonce { font-family: var(--f-display); font-weight: 600; }
+.quiz.duel .retour .origine { font-size: 14px; color: var(--muted); }
+.quiz.duel .retour .origine b { color: var(--ink); }
+.quiz.duel .retour cite { display: block; font-size: 13px; color: var(--muted); font-style: normal; margin-top: 6px; }
+.vs-scene { display: flex; flex-direction: column; gap: 16px; padding-top: 8px; }
+.vs-scene .arbitre { animation: tomber .5s ease-out both; }
+.arene { position: relative; display: flex; justify-content: space-between; align-items: flex-end; min-height: 190px; padding: 0 4px; overflow: hidden; }
+.arene .cote { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 42%; }
+.arene .cote b { font-family: var(--f-display); font-size: 15px; text-align: center; }
+.arene .cote.g { animation: glisserG .7s cubic-bezier(.2,.9,.3,1.2) .35s both; }
+.arene .cote.d { animation: glisserD .7s cubic-bezier(.2,.9,.3,1.2) .35s both; }
+.arene .vs { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); font-family: var(--f-display); font-weight: 800; font-size: 56px; color: #D94141;
+  text-shadow: 3px 3px 0 var(--ink); animation: vsPop .5s cubic-bezier(.2,.9,.3,1.6) 1s both; }
+.vs-scene .bulle { margin: 0; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); font-style: italic; animation: tomber .4s ease-out 1.4s both; }
+@keyframes glisserG { from { transform: translateX(-140%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes glisserD { from { transform: translateX(140%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes vsPop { from { transform: translate(-50%, -50%) scale(3); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+@keyframes tomber { from { transform: translateY(-12px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .arene .cote, .arene .vs, .vs-scene .bulle, .vs-scene .arbitre { animation: none; } }
+.verdict-duel .duo { display: flex; justify-content: center; align-items: flex-end; gap: 18px; margin-bottom: 6px; }
+.verdict-duel .vaincu { transform: scaleX(-1) rotate(-90deg) translateX(-10px); opacity: .7; }
+.verdict-duel.gagne .grand { color: var(--good); }
+.verdict-duel.perdu .grand { color: #D94141; }
+.verdict-duel .bulle { font-style: italic; }
+.bestiaire { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.fiche-en { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font: inherit; text-align: left; cursor: pointer; min-width: 0; }
+.fiche-en > span { display: grid; gap: 4px; min-width: 0; }
+.fiche-en b { font-size: 14px; line-height: 1.2; }
+.fiche-en.inconnu svg { color: var(--muted); opacity: .45; }
+.stats-en { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.stats-en .v { color: var(--good); font-weight: 700; }
+.stats-en .d { color: #D94141; font-weight: 700; }
+.comite .masque { position: relative; }
+.comite .tenu-ia { position: absolute; right: -6px; bottom: -4px; background: var(--parchemin, #F7EBD0); border-radius: 6px; padding: 1px; box-shadow: 0 1px 3px rgba(0,0,0,.2); line-height: 0; }
 .fermes { display: grid; gap: 8px; margin-top: 10px; }
 .arbre-ferme { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--c) 55%, var(--line)); background: var(--surface-2); color: var(--ink); font: inherit; cursor: pointer; }
 .arbre-ferme .cadenas { flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
@@ -542,6 +588,19 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     if (!verrou) c += pixels(m.expressions[expr] || m.expressions.neutre, A.palette, null, 0, 0, 1);
     return '<svg class="pix" viewBox="0 0 40 48" width="' + largeur + '" height="' + Math.round(largeur * 1.2) + '" role="img" aria-label="' + esc(verrou ? "Masque à venir" : tx(m.nom)) + '">' + c + "</svg>";
   }
+  // v7 : un ennemi, dessiné comme un savant (corps de l'avatar, tenue, coiffure).
+  function pixelsEnnemi(e, silhouette) {
+    var pal = C.avatar.palette;
+    return pixels(e.base, pal, e.couleurs, 0, 0, 1, silhouette) + pixels(e.cheveux, pal, null, 0, 0, 1, silhouette);
+  }
+  // Nom d'un ennemi au milieu d'une phrase : « le Sophiste », mais « Franz Anton Mesmer ».
+  function nomEn(e) { var n = tx(e.nom); return e.figure === "archetype" ? n.charAt(0).toLowerCase() + n.slice(1) : n; }
+  function svgEnnemi(e, taille, silhouette, classe) {
+    return '<svg class="pix' + (classe ? " " + classe : "") + '" viewBox="0 0 40 48" width="' + taille + '" height="' + Math.round(taille * 1.2) + '" role="img" aria-label="' + esc(silhouette ? "Ennemi inconnu" : tx(e.nom)) + '">' + pixelsEnnemi(e, silhouette) + "</svg>";
+  }
+  function teteEnnemi(e, taille) {
+    return '<svg class="pix" viewBox="8 1 24 24" width="' + taille + '" height="' + taille + '" aria-hidden="true">' + pixelsEnnemi(e) + "</svg>";
+  }
   function accessoire(id, force) { return id && (force || P.accessoires[id]) ? C.avatar.accessoires.filter(function (a) { return a.id === id; })[0] || null : null; }
   function farce() { return M.farceActive(P, maintenant()); }
   function savantParId(id) { return C.avatar.savants ? C.avatar.savants.filter(function (s) { return s.id === id; })[0] || null : null; }
@@ -592,7 +651,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var expr = rep.expression || M.expression(C, rep.contexte);
     var graine = (rep.id || tx(rep.texte).slice(0, 40)) + "|" + M.cleJour(maintenant()) + "|" + P.journal.length;
     var m = (rep.masque && C.ia.masques.filter(function (x) { return x.id === rep.masque; })[0]) || M.masquePourTon(C, P, expr, graine);
-    var b = el('<div class="comite' + (petit ? " petit" : "") + '"><span class="masque">' + (m ? svgMasque(m, expr, petit ? 34 : 44) : "") + '</span><div><div class="qui"></div><p></p></div></div>');
+    var tenuIA = P.objetIA && C.objets.filter(function (o) { return o.id === P.objetIA; })[0];
+    var b = el('<div class="comite' + (petit ? " petit" : "") + '"><span class="masque">' + (m ? svgMasque(m, expr, petit ? 34 : 44) : "") + (tenuIA ? '<span class="tenu-ia">' + svgObjet(tenuIA, false, petit ? 16 : 20) + "</span>" : "") + '</span><div><div class="qui"></div><p></p></div></div>');
     b.querySelector(".qui").innerHTML = esc(tx(C.narrateur) || "L'IA") + (m ? " <i>· " + esc(tx(m.nom)) + "</i>" : "");
     b.querySelector("p").textContent = tx(rep.texte);
     var a = rep.aparte === false ? null : M.aparte(C, P, expr, graine);
@@ -776,7 +836,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   }
   // `bilan` : toujours zoomé sur le pion, sans tenir compte de la caméra de l'accueil.
   function svgPlateau(bilan) {
-    var pl = P.plateau, nb = C.plateau.cases.length, loin = portee(), cle = [pl.atteinte, pl.tours, pl.position, loin].join("/");
+    var pl = P.plateau, nb = C.plateau.cases.length, loin = portee(), ennemis = M.ennemisPlateau(C, P);
+    var cle = [pl.atteinte, pl.tours, pl.position, loin, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {})].join("/");
     if (cachePlateau.cle !== cle) {
       var c = "", pts = [];
       for (var n = 1; n <= nb + 1; n++) pts.push(centreCase(n).join(","));
@@ -791,7 +852,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
         c += '<path class="fleche' + (n < pl.position ? " faite" : "") + '" d="M-2.6,-3.4 L2.8,0 L-2.6,3.4 Z" transform="translate(' + mx + " " + my + ") rotate(" + ang + ')"/>';
       }
       C.plateau.cases.forEach(function (k, i) {
-        var xy = SPIRALE[i], x = xy[0] * PAS + BORD, y = xy[1] * PAS + BORD, connue = caseConnue(k.n), sp = k.special;
+        var xy = SPIRALE[i], x = xy[0] * PAS + BORD, y = xy[1] * PAS + BORD, connue = caseConnue(k.n), sp = M.specialDe(C, P, k.n);
         var vue = k.n < pl.position, ici = k.n === pl.position, proche = k.n > pl.position && k.n <= pl.position + loin;
         var trait = proche ? "var(--accent)" : sp ? BORD_SPECIAL[sp.type] : "var(--line)";
         c += '<g data-n="' + k.n + '" style="cursor:pointer"><rect x="' + x + '" y="' + y + '" width="' + TUILE + '" height="' + TUILE + '" rx="5" fill="var(--surface)" stroke="' + trait + '" stroke-width="' + (proche ? 1.8 : sp ? 2.2 : 1) + '"' + (proche && !sp ? ' class="avenir"' : "") + "/>";
@@ -805,6 +866,13 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
           c += '<text x="' + (x + TUILE / 2) + '" y="' + (y + 21) + '" text-anchor="middle" font-size="10" font-weight="700" font-family="JetBrains Mono, monospace" fill="var(--muted)" opacity="0.7">' + k.n + "</text>";
         }
         if (sp && sp.type === "eureka" && connue) c += '<text x="' + (x + 2.5) + '" y="' + (y + 30) + '" font-size="8" fill="#E0A800">★</text>';
+        // v7 : l'ennemi qui garde la case. Si le pion est dessus (duel en attente), il se range dans le coin.
+        var en = ennemis[k.n] && C.ennemiParId[ennemis[k.n]];
+        if (en) {
+          var coin = ici, r0 = coin ? 8 : 13, ex = x + (coin ? TUILE - 3 : TUILE / 2), ey = y + (coin ? 3 : TUILE / 2);
+          c += '<circle cx="' + ex + '" cy="' + ey + '" r="' + r0 + '" fill="var(--surface)" stroke="#D94141" stroke-width="2"/>' +
+            '<svg x="' + (ex - r0 + 1.5) + '" y="' + (ey - r0 + 1.5) + '" width="' + (2 * r0 - 3) + '" height="' + (2 * r0 - 3) + '" viewBox="8 1 24 24" class="pix">' + pixelsEnnemi(en) + "</svg>";
+        }
         c += "</g>";
       });
       // Départ : un fanion au-dessus de la première case.
@@ -967,11 +1035,14 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var k = C.plateau.cases[n - 1], connue = caseConnue(n), ici = P.plateau.position === n;
     var html = '<div class="vitrine" style="padding:16px">' + svgSprite(k.icone, 120, tx(k.titre), !connue) + "</div>";
     if (connue) {
+      var spN = M.specialDe(C, P, n);
       html += '<div class="eyebrow">Case ' + n + " · " + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</div><h2>" + esc(tx(k.titre)) + "</h2>" +
-        (k.special ? '<p class="etat-pion">' + esc(texteRegle(k.special)) + "</p>" : "") + "<p>" + esc(tx(k.histoire)) + '</p><div id="ia-case"></div><p class="meta">Source : ' + esc(k.source) + "</p>";
+        (spN ? '<p class="etat-pion">' + esc(texteRegle(spN)) + "</p>" : "") + "<p>" + esc(tx(k.histoire)) + '</p><div id="ia-case"></div><p class="meta">Source : ' + esc(k.source) + "</p>";
     } else {
       html += '<div class="eyebrow">Case ' + n + " · " + esc(nomEpoque(k.epoque)) + "</div><h2>Case à découvrir</h2><p class=\"meta\">Fais avancer ton pion jusqu'ici pour lire son histoire. Elle s'ajoutera aussi à la frise.</p>";
     }
+    var enC = M.ennemisPlateau(C, P)[n] && C.ennemiParId[M.ennemisPlateau(C, P)[n]];
+    if (enC) html = '<div class="garde-case">' + teteEnnemi(enC, 44) + "<p><b>" + esc(tx(enC.nom)) + "</b> garde cette case. Passer ici déclenche un duel : cinq affirmations, vraies ou fausses, sans erreur.</p></div>" + html;
     feuilleSimple(html, connue ? tx(k.titre) : "Case " + n);
     var z = feuille.querySelector("#ia-case");
     if (z) z.appendChild(comite({ contexte: "plateau_avance", texte: k.replique, expression: ici ? "moqueuse" : "neutre" }, true));
@@ -1019,6 +1090,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     perso.onclick = function () { vue = "perso"; rendre(); window.scrollTo(0, 0); };
     perso.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); perso.onclick(); } };
     v.appendChild(perso);
+    if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
     if (C.plateau) v.appendChild(boutonJouer());
     var bf = blocFarce(); if (bf) v.appendChild(bf);
     if (C.plateau) v.appendChild(blocPlateau());
@@ -1375,17 +1447,18 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   }
   function vueCollections() {
     var v = el('<div class="vue"></div>');
-    var comptes = { objets: [Object.keys(P.objets).length, C.objets.length], frise: [Object.keys(P.evenements).length, C.evenements.length], livres: [Object.keys(P.livres).length, C.livres.length] };
+    var comptes = { objets: [Object.keys(P.objets).length, C.objets.length], frise: [Object.keys(P.evenements).length, C.evenements.length], livres: [Object.keys(P.livres).length, C.livres.length],
+      bestiaire: [Object.keys(P.bestiaire || {}).length, C.ennemis.length] };
     var cpt = comptes[collection];
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">Histoire des sciences</div><h1>Collections</h1></div><div class="num" style="font-size:20px;font-weight:700">' + cpt[0] + " / " + cpt[1] + "</div></div>"));
     var seg = el('<div class="segments" role="group" aria-label="Collection"></div>');
-    [["frise", "Frise"], ["livres", "Bibliothèque"], ["objets", "Objets"]].forEach(function (c) {
+    [["frise", "Frise"], ["livres", "Bibliothèque"], ["objets", "Objets"]].concat(C.ennemis.length ? [["bestiaire", "Bestiaire"]] : []).forEach(function (c) {
       var bt = el('<button type="button" aria-pressed="' + (collection === c[0]) + '">' + c[1] + "</button>");
       bt.onclick = function () { collection = c[0]; rendre(); };
       seg.appendChild(bt);
     });
     v.appendChild(seg);
-    v.appendChild(collection === "frise" ? blocFrise() : collection === "livres" ? blocBibliotheque() : blocCabinet());
+    v.appendChild(collection === "frise" ? blocFrise() : collection === "livres" ? blocBibliotheque() : collection === "bestiaire" ? blocBestiaire() : blocCabinet());
     return v;
   }
   function blocCabinet() {
@@ -1492,12 +1565,185 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     if (ok) {
       html += '<div class="eyebrow">' + esc(annee || "Cabinet de curiosités") + "</div><h2>" + esc(tx(o.nom)) + "</h2><p>" + esc(tx(o.notice)) + '</p><p class="meta">Source : ' + esc(o.source) + "</p>" +
         '<button type="button" class="btn large" data-a="main">' + (tenu ? "Le reposer dans sa vitrine" : "Le donner à mon avatar") + "</button>";
+      var cp = M.cadeauPossible(C, P, o.id, maintenant());
+      if (cp.ok) html += '<button type="button" class="btn sec large" data-a="offrir">Offrir à l\'IA</button><p class="meta">Un cadeau par jour. L\'IA s\'en sert sur le plateau, pour le meilleur ou pour rire.</p>';
+      else if (cp.raison === "deja") html += '<p class="meta">Déjà offert à l\'IA' + (P.objetIA === o.id ? ", qui le garde près de son masque." : ".") + "</p>";
+      else if (cp.raison === "jour") html += '<p class="meta">Tu as déjà fait un cadeau à l\'IA aujourd\'hui. Reviens demain.</p>';
     } else {
       html += "<h2>Vitrine vide</h2><p class=\"meta\">Pour l'obtenir : " + esc(commentObtenir(o.condition)) + "</p>";
     }
     feuilleSimple(html, ok ? tx(o.nom) : "Vitrine vide", {
       main: function () { P.avatar.main = tenu ? null : o.id; sauver(); fermerFeuille(); rendre(); toast(tenu ? "Objet reposé" : tx(o.nom) + " : dans les mains de ton avatar"); },
+      offrir: function () { offrirObjet(o); },
     });
+  }
+
+
+  // --- Duels (v7) ---------------------------------------------------------------
+  // Le défi : l'ennemi qui barre la route, avec de quoi l'affronter tout de suite ou plus tard.
+  function blocDefi(accueil) {
+    var d = P.duel, e = d && C.ennemiParId[d.ennemi]; if (!e) return el("<div></div>");
+    var f = P.bestiaire && P.bestiaire[e.id];
+    var b = el('<div class="defi' + (accueil ? " bloc" : "") + '"><div class="defi-haut">' + svgEnnemi(e, accueil ? 64 : 112, false, "miroir") + '<div><div class="eyebrow">' + (d.pret ? "Case " + d.case + " · duel" : "Case " + d.case + " · en embuscade") + "</div><h2>" + esc(tx(e.nom)) + '</h2><p class="titre-en">' + esc(tx(e.titre)) + "</p></div></div>" +
+      (accueil ? "" : '<p class="note">' + esc(tx(e.description)) + "</p>") +
+      (f && (f.victoires || f.defaites) ? '<p class="meta">Déjà affronté : ' + f.victoires + " victoire" + (f.victoires > 1 ? "s" : "") + ", " + f.defaites + " défaite" + (f.defaites > 1 ? "s" : "") + ".</p>" : "") +
+      (d.pret ? '<p class="meta">Cinq affirmations, vraies ou fausses. Il faut un sans-faute pour passer et faire les ' + d.reste + " case" + (d.reste > 1 ? "s" : "") + " qui restent.</p>"
+        : '<p class="meta">Le duel reprendra à ta prochaine épreuve réussie.</p>') +
+      (d.pret ? '<div class="rangee"><button type="button" class="btn large" data-a="duel">Affronter</button>' + (accueil ? "" : '<button type="button" class="btn sec large" data-a="plus-tard">Plus tard</button>') + "</div>" : "") + "</div>");
+    b.onclick = function (ev) {
+      var a = ev.target.closest && ev.target.closest("[data-a]"); if (!a) return;
+      if (a.getAttribute("data-a") === "duel") { if (quiz) { quiz = null; var q = document.querySelector(".quiz"); if (q) q.remove(); } lancerDuel(); }
+      else fermerQuiz();
+    };
+    return b;
+  }
+
+  var duel = null;
+  function lancerDuel() {
+    if (!P.duel || !P.duel.pret) return;
+    var e = C.ennemiParId[P.duel.ennemi];
+    duel = { ennemi: e, phase: "vs", qs: M.tirerDuel(C, P, maintenant()), i: 0, res: [], repondu: false, fin: null, etape: 0,
+      replique: M.replique(C, P, ["ennemi"]) };
+    sauver();
+    rendreDuel();
+  }
+  function fermerDuel() {
+    var fini = duel && duel.fin;
+    duel = null; var z = document.querySelector(".quiz.duel"); if (z) z.remove();
+    animPion = null;
+    if (fini) { vue = "aujourdhui"; window.scrollTo(0, 0); }
+    rendre();
+  }
+  function rendreDuel() {
+    var ancien = document.querySelector(".quiz.duel"); if (ancien) ancien.remove();
+    if (!duel) return;
+    var e = duel.ennemi;
+    var z = el('<div class="quiz duel" style="--c:#D94141" role="dialog" aria-modal="true" aria-label="Duel contre ' + esc(tx(e.nom)) + '"><div class="in"></div></div>'), inn = z.querySelector(".in");
+    document.getElementById("couche").appendChild(z);
+    if (duel.phase === "vs") {
+      var sc = el('<div class="vs-scene"><div class="arbitre"></div><div class="arene"><div class="cote g">' + svgAvatar(120) + '<b>Toi</b></div><div class="vs" aria-hidden="true">VS</div><div class="cote d">' + svgEnnemi(e, 104, false, "miroir") + "<b>" + esc(tx(e.nom)) + '</b></div></div><p class="bulle"></p></div>');
+      var m = comite(duel.replique, true); if (m) sc.querySelector(".arbitre").appendChild(m);
+      sc.querySelector(".bulle").textContent = "« " + tx(e.defi) + " »";
+      inn.appendChild(sc);
+      var go = el('<button type="button" class="btn large">Au combat</button>'); go.onclick = function () { duel.phase = "q"; rendreDuel(); };
+      var fuir = el('<button type="button" class="btn sec large">Pas maintenant</button>'); fuir.onclick = fermerDuel;
+      inn.appendChild(go); inn.appendChild(fuir);
+      go.focus();
+      return;
+    }
+    if (duel.phase === "fin") { inn.appendChild(bilanDuel()); var b0 = z.querySelector(".btn"); if (b0) b0.focus(); return; }
+    var q = duel.qs[duel.i];
+    var haut = el('<div class="haut"><span class="vitrine-en">' + teteEnnemi(e, 40) + '</span><div class="titre"><span class="eyebrow" style="color:#D94141">Duel · affirmation ' + (duel.i + 1) + " sur " + duel.qs.length + "</span><b>" + esc(tx(e.nom)) + '</b></div><button type="button" class="fermer" aria-label="Abandonner le duel">×</button></div>');
+    // Abandonner ne compte pas : le duel reste à faire.
+    haut.querySelector(".fermer").onclick = fermerDuel;
+    inn.appendChild(haut);
+    var pts = el('<div class="points"></div>');
+    duel.qs.forEach(function (_, i) { var r = duel.res[i]; pts.appendChild(el('<i class="' + (r ? (r.correct ? "ok" : "ko") : (i === duel.i ? "cur" : "")) + '"></i>')); });
+    inn.appendChild(pts);
+    inn.appendChild(el('<p class="enonce">« ' + esc(tx(q.affirmation)) + " »</p>"));
+    var zr = el('<div class="choix"></div>'), retour = el("<div></div>");
+    [[true, "Vrai"], [false, "Faux : idée reçue"]].forEach(function (c) {
+      var b = el('<button type="button">' + c[1] + "</button>");
+      b.onclick = function () {
+        if (duel.repondu) return;
+        var ok = c[0] === q.vrai; duel.repondu = true; duel.res.push({ id: q.id, correct: ok });
+        zr.querySelectorAll("button").forEach(function (x, i) { x.disabled = true; if ((i === 0) === q.vrai) x.classList.add("bon"); });
+        if (!ok) b.classList.add("faux");
+        retour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + (q.vrai ? "C'est vrai." : "C'est une idée reçue.") + "</b><p>" + esc(tx(q.explication)) + '</p><p class="origine"><b>' + (q.vrai ? "Comment on le sait" : "D'où ça vient") + "</b> " + esc(tx(q.origine)) + '</p><cite>Source : ' + esc(q.source) + "</cite></div>"));
+        var dernier = duel.i === duel.qs.length - 1;
+        var s = el('<button type="button" class="btn large">' + (dernier ? "Verdict" : "Affirmation suivante") + "</button>");
+        s.onclick = function () {
+          if (!dernier) { duel.i++; duel.repondu = false; rendreDuel(); return; }
+          duel.fin = M.terminerDuel(C, P, duel.res, maintenant());
+          duel.fin.replique = M.replique(C, P, [duel.fin.gagne ? "duel_gagne" : "duel_perdu"]);
+          if (duel.fin.plateau) duel.fin.repliquePlateau = M.replique(C, P, duel.fin.plateau.contextes);
+          duel.phase = "fin"; duel.etape = 0; sauver(); rendreDuel();
+        };
+        retour.appendChild(el('<div style="height:12px"></div>')); retour.appendChild(s); s.focus();
+      };
+      zr.appendChild(b);
+    });
+    inn.appendChild(zr); inn.appendChild(retour);
+    zr.querySelector("button").focus();
+  }
+  function bilanDuel() {
+    var r = duel.fin, e = r.ennemi, f = r.fiche, rec = r.recompenses || {};
+    var recs = duel.recs || (duel.recs = recompensesBilan({ nouveauxSucces: rec.succes, masque: rec.masque, nouveauxObjets: rec.objets, nouveauxLivres: rec.livres,
+      nouveauxSavants: rec.savants, nouveauxAccessoires: rec.accessoires, nouveauxEvenements: rec.evenements }));
+    var etapes = ["verdict"]; recs.forEach(function (_, i) { etapes.push("recompense:" + i); }); if (r.plateau) etapes.push("plateau");
+    var i = duel.etape = Math.min(duel.etape, etapes.length - 1), nom = etapes[i];
+    var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
+    wrap.appendChild(el('<div class="etapes-bilan"><span class="pts">' + etapes.map(function (_, j) { return '<i class="' + (j <= i ? "vu" : "") + '"></i>'; }).join("") + "</span></div>"));
+    var z = el('<div class="etape"></div>');
+    if (nom === "verdict") {
+      z.appendChild(el('<div class="bilan verdict-duel ' + (r.gagne ? "gagne" : "perdu") + '"><div class="duo">' + svgAvatar(r.gagne ? 92 : 64) + svgEnnemi(e, r.gagne ? 56 : 84, false, "miroir" + (r.gagne ? " vaincu" : "")) + '</div><div class="grand">' + (r.gagne ? "Victoire" : "Défaite") + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" +
+        '<p class="bulle"></p><p class="meta">Contre ' + esc(nomEn(e)) + " : " + f.victoires + " victoire" + (f.victoires > 1 ? "s" : "") + ", " + f.defaites + " défaite" + (f.defaites > 1 ? "s" : "") + ", meilleure série " + f.meilleure + ".</p>" +
+        (r.gagne ? "" : '<p class="note">Ton pion reste case ' + P.plateau.position + ". Le duel reprendra à ta prochaine épreuve réussie.</p>") + "</div>"));
+      z.querySelector(".bulle").textContent = tx(e.nom) + " : « " + tx(r.gagne ? e.victoire : e.defaite) + " »";
+      var m = comite(r.replique); if (m) z.appendChild(m);
+      if (r.gagne && !r.butin) z.appendChild(el('<p class="meta">Pas de butin à gagner pour l\'instant : maîtrise d\'autres compétences pour en ouvrir.</p>'));
+    } else if (nom.indexOf("recompense:") === 0) {
+      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
+    } else {
+      z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
+    }
+    wrap.appendChild(z);
+    var suite = etapes[i + 1];
+    var bt = el('<button type="button" class="btn large">' + (!suite ? (P.duel && P.duel.pret ? "Ennemi suivant !" : "Continuer") : suite === "plateau" ? "Voir le plateau" : "Récompense") + "</button>");
+    bt.onclick = function () {
+      if (suite) { duel.etape = i + 1; rendreDuel(); return; }
+      if (P.duel && P.duel.pret) { duel = null; lancerDuel(); } else fermerDuel();
+    };
+    wrap.appendChild(bt);
+    if (nom === "plateau") setTimeout(function () { animerPion(z); }, 50);
+    return wrap;
+  }
+
+  // Bestiaire : les ennemis rencontrés, avec l'historique des duels. Les autres restent des silhouettes.
+  function blocBestiaire() {
+    var b = el('<div class="bloc"><p class="note">Les ennemis du plateau. Chacun garde une case jusqu\'à ce que tu le battes, et revient au tour suivant.</p><div class="bestiaire"></div></div>');
+    var g = b.querySelector(".bestiaire"), presents = M.ennemisPlateau(C, P);
+    C.ennemis.forEach(function (e) {
+      var f = P.bestiaire && P.bestiaire[e.id], vu = !!f;
+      var ou = Object.keys(presents).filter(function (n) { return presents[n] === e.id; })[0];
+      var c = el('<button type="button" class="fiche-en' + (vu ? "" : " inconnu") + '">' + svgEnnemi(e, 56, !vu) + "<span><b>" + (vu ? esc(tx(e.nom)) : "???") + "</b>" +
+        (vu ? '<span class="stats-en"><span class="v">' + f.victoires + ' V</span><span class="d">' + f.defaites + " D</span><span>série " + f.meilleure + "</span></span>" : '<span class="meta">' + (ou ? "Quelque part case " + ou : "Pas encore apparu") + "</span>") + "</span></button>");
+      c.onclick = function () { ouvrirEnnemi(e); };
+      g.appendChild(c);
+    });
+    return b;
+  }
+  function ouvrirEnnemi(e) {
+    var f = P.bestiaire && P.bestiaire[e.id];
+    if (!f) { feuilleSimple('<div class="vitrine" style="padding:16px">' + svgEnnemi(e, 96, true) + "</div><h2>Ennemi inconnu</h2><p class=\"meta\">Croise-le sur le plateau pour le découvrir.</p>", "Ennemi inconnu"); return; }
+    var ou = Object.keys(M.ennemisPlateau(C, P)).filter(function (n) { return M.ennemisPlateau(C, P)[n] === e.id; })[0];
+    feuilleSimple('<div class="vitrine" style="padding:16px">' + svgEnnemi(e, 112, false, "miroir") + '</div><div class="eyebrow">' + esc(tx(e.titre)) + (e.annees ? " · " + esc(e.annees) : "") + "</div><h2>" + esc(tx(e.nom)) + "</h2><p>" + esc(tx(e.description)) + '</p><p class="meta">Source : ' + esc(e.source) + "</p>" +
+      '<div class="bareme"><span>Victoires</span><span class="num">' + f.victoires + '</span><span>Défaites</span><span class="num">' + f.defaites + '</span><span>Meilleure série</span><span class="num">' + f.meilleure + '</span><span>Dernier duel</span><span class="num">' + (f.dernier ? esc(dateCourte(f.dernier)) : "—") + "</span></div>" +
+      '<p class="meta">' + (ou ? "Il garde la case " + ou + "." : "Il n'est plus sur le plateau ce tour-ci.") + "</p>", tx(e.nom));
+  }
+
+  // --- Cadeaux à l'IA (v7) ---------------------------------------------------------
+  var TON_CADEAU = { avance: "impressionnee", recule: "moqueuse", echange: "moqueuse", ennemi: "moqueuse", rien: "neutre" };
+  function offrirObjet(o) {
+    var t = maintenant(), r = M.donnerObjet(C, P, o.id, t); if (!r) return;
+    sauver();
+    var ef = r.effet, ligne = "";
+    if (ef.type === "avance") ligne = "Ton pion avance de " + ef.n + " case" + (ef.n > 1 ? "s" : "") + ".";
+    else if (ef.type === "recule") ligne = "Ton pion recule de " + ef.n + " case" + (ef.n > 1 ? "s" : "") + ".";
+    else if (ef.type === "echange") ligne = "La case " + ef.de + " perd sa règle spéciale, la case " + ef.vers + " la récupère : " + texteRegle(M.specialDe(C, P, ef.vers)).charAt(0).toLowerCase() + texteRegle(M.specialDe(C, P, ef.vers)).slice(1);
+    else if (ef.type === "ennemi") ligne = tx(ef.ennemi.nom) + " s'installe case " + ef.case + ".";
+    else ligne = "Le plateau ne bouge pas.";
+    var html = '<div class="eyebrow">Cadeau à l\'IA</div><h2>' + esc(tx(o.nom)) + '</h2><div id="ia-cadeau"></div>' +
+      (r.garde ? '<p class="meta">Elle le garde : tu le verras près de son masque. Il reste dans ton cabinet.</p>' : '<p class="meta">Elle te le rend, avec un soupir.</p>') +
+      '<p class="etat-pion">' + esc(ligne) + "</p>" + (ef.type === "ennemi" ? '<div class="garde-case">' + teteEnnemi(ef.ennemi, 44) + "<p>" + esc(tx(ef.ennemi.titre)) + "</p></div>" : "") + '<div id="dep-cadeau"></div>';
+    feuilleSimple(html, "Cadeau à l'IA");
+    feuille.querySelector("#ia-cadeau").appendChild(comite({ contexte: "cadeau", texte: r.texte, expression: TON_CADEAU[ef.type], aparte: false }));
+    if (r.plateau && r.plateau.a !== r.plateau.de) {
+      var zd = feuille.querySelector("#dep-cadeau");
+      zd.appendChild(blocDeplacement(r.plateau, null, true));
+      setTimeout(function () { animerPion(zd); }, 60);
+    }
+    rendre();
   }
 
   // --- Vue Succès -----------------------------------------------------------
@@ -1713,7 +1959,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   var NOM_ETAPE = {
     eureka: function (e) { return "Eurêka, case " + e.case + " : tu rejoues " + e.n + " cases."; },
     avance: function (e) { return "Raccourci, case " + e.case + " : +" + e.n + " cases."; },
-    recul: function (e) { return e.cause === "echec" ? "Rappel raté : recul de " + e.n + " cases." : "Piège, case " + e.case + " : recul de " + e.n + " cases."; },
+    recul: function (e) { return e.cause === "cadeau" ? "L'IA fait reculer ton pion de " + e.n + " case" + (e.n > 1 ? "s" : "") + "." : e.cause === "echec" ? "Rappel raté : recul de " + e.n + " cases." : "Piège, case " + e.case + " : recul de " + e.n + " cases."; },
     retour_epoque: function (e) { return "Guillotine, case " + e.case + " : retour " + e.n + " cases en arrière."; },
     quarantaine: function (e) { return "Quarantaine : " + (e.n > 1 ? "tes " + e.n + " prochaines épreuves réussies" : "ta prochaine épreuve réussie") + " ne te feront pas avancer."; },
     prison: function (e) { return "Prison : plus un pas avant " + (e.n > 1 ? e.n + " quiz parfaits" : "un quiz parfait") + "."; },
@@ -1722,6 +1968,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     bloque_prison: function () { return "Assigné à résidence : ton pion ne bouge pas."; },
     bloque_quarantaine: function () { return "Quarantaine : cette épreuve ne fait pas avancer ton pion."; },
     tour_fini: function (e) { return "Arrivée ! Tour " + e.tour + " terminé : retour au feu, en plus dur."; },
+    ennemi: function (e) { return "Case " + e.case + " : " + nomEn(C.ennemiParId[e.ennemi]) + " te barre la route. Gagne le duel pour faire les " + e.reste + " case" + (e.reste > 1 ? "s" : "") + " qui restent."; },
+    duel_attente: function (e) { return tx(C.ennemiParId[e.ennemi].nom) + " te bloque toujours. Le duel reprend, pour " + e.reste + " case" + (e.reste > 1 ? "s" : "") + "."; },
   };
   function blocDeplacement(dep, rep, avecPlateau) {
     var d = dep.a - dep.de, fini = dep.etapes.some(function (e) { return e.type === "tour_fini"; });
@@ -1729,7 +1977,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var b = el('<div class="bloc plateau"><div class="tete"><h2>' + esc(titre) + '</h2><span class="num">case ' + dep.de + " → " + dep.a + '</span></div><div class="trajet"></div></div>');
     var tj = b.querySelector(".trajet"), v = dep.valeurs;
     if (avecPlateau) { animPion = dep.chemin && dep.chemin.length > 1 ? dep : null; camera.x = camera.y = null; var g = el('<div class="plateau-bilan">' + svgPlateau(true) + "</div>"); b.insertBefore(g, tj); }
-    if (dep.valeur > 0) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>Épreuve réussie" + (v && v.duJour ? ", bonus du jour compris" : "") +
+    if (dep.valeur > 0 && (dep.cause === "cadeau" || dep.cause === "duel")) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>" + (dep.cause === "cadeau" ? "Cadeau de l'IA." : "Duel gagné : la fin du trajet.") + "</span></div>"));
+    else if (dep.valeur > 0) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>Épreuve réussie" + (v && v.duJour ? ", bonus du jour compris" : "") +
       (dep.bonusJouer ? ", dont +" + dep.bonusJouer + " pour avoir laissé l'IA choisir" : dep.valeur > (v ? v.total : 0) ? ", avec bonus" : "") + ".</span></div>"));
     dep.etapes.forEach(function (e) { var f = NOM_ETAPE[e.type]; if (f) tj.appendChild(el('<div class="pas"><b>·</b><span>' + esc(f(e)) + "</span></div>")); });
     var k = C.plateau.cases[dep.a - 1];
@@ -1755,6 +2004,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var etapes = ["verdict"];
     recs.forEach(function (_, i) { etapes.push("recompense:" + i); });
     if (r.plateau) etapes.push("plateau");
+    if (P.duel && P.duel.pret && r.plateau && r.plateau.etapes.some(function (x) { return x.type === "ennemi" || x.type === "duel_attente"; })) etapes.push("duel");
     var e = quiz.etape = Math.min(quiz.etape || 0, etapes.length - 1), nom = etapes[e], dernier = e === etapes.length - 1;
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
     var tete = el('<div class="etapes-bilan"><span class="pts">' + etapes.map(function (_, i) { return '<i class="' + (i <= e ? "vu" : "") + '"></i>'; }).join("") + "</span></div>");
@@ -1766,11 +2016,14 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       var mot = comite(r.replique); if (mot) z.appendChild(mot);
     } else if (nom.indexOf("recompense:") === 0) {
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
+    } else if (nom === "duel") {
+      z.appendChild(blocDefi());
     } else {
       z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
     }
     wrap.appendChild(z);
-    var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite.indexOf("recompense:") === 0 ? (e === 0 ? (recs.length > 1 ? "Voir les " + recs.length + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
+    if (nom === "duel") return wrap;
+    var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite.indexOf("recompense:") === 0 ? (e === 0 ? (recs.length > 1 ? "Voir les " + recs.length + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
     var bt = el('<button type="button" class="btn large">' + libelle + "</button>");
     bt.onclick = function () { if (!suite) fermerQuiz(); else { quiz.etape = e + 1; rendreQuiz(); } };
     wrap.appendChild(bt);
@@ -1842,9 +2095,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   }
 
   var FICHIERS = ["regles.json", "skills.json", "questions.json", "succes.json", "commentaires.json", "objets.json", "avatar.json",
-    "ia.json", "plateau.json", "frise.json", "bibliotheque.json"];
+    "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json"];
   Promise.all(FICHIERS.map(charger)).then(function (d) {
-    C = M.indexerContenu(d[0], d[1], d[2], d[3], { commentaires: d[4], objets: d[5], avatar: d[6], ia: d[7], plateau: d[8], frise: d[9], bibliotheque: d[10] });
+    C = M.indexerContenu(d[0], d[1], d[2], d[3], { commentaires: d[4], objets: d[5], avatar: d[6], ia: d[7], plateau: d[8], frise: d[9], bibliotheque: d[10], ennemis: d[11] });
     P = lireLocal() || M.nouvellePartie(Date.now());
     visite();
     try { localStorage.setItem(CLE_LOCALE, JSON.stringify(P)); } catch (e) {}
