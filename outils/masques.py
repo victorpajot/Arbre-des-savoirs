@@ -299,3 +299,33 @@ if __name__ == "__main__":
                         img[y][x] = ch
             images[m["id"] + " " + e] = ["".join(l) for l in img]
     apercu(images, sys.argv[1], colonnes=5, echelle=5)
+
+
+# v5 : tons que chaque masque sait porter. L'IA choisit son masque parmi ceux qui vont au ton de sa réplique.
+TONS = {
+    "theatre": ["neutre", "moqueuse", "impressionnee", "decue", "impatiente"],
+    "promethee": ["impressionnee", "impatiente"],
+    "talos": ["impatiente", "decue"],
+    "heron": ["impressionnee", "neutre"],
+    "tete-airain": ["moqueuse", "neutre"],
+    "homoncule": ["moqueuse", "impatiente"],
+    "golem": ["decue", "neutre"],
+    "peste": ["decue", "impatiente"],
+    "automate": ["neutre", "impressionnee"],
+    "turc": ["moqueuse", "neutre"],
+    "ecrivain": ["neutre", "impressionnee"],
+    "creature": ["decue", "impatiente"],
+    "machine-analytique": ["neutre", "impressionnee"],
+    "robot-capek": ["impatiente", "decue"],
+    "bombe": ["impatiente", "neutre"],
+    "tubes": ["neutre", "moqueuse"],
+    "perceptron": ["decue", "moqueuse"],
+    "unimate": ["impatiente", "neutre"],
+    "eliza": ["neutre", "decue"],
+    "shakey": ["moqueuse", "decue"],
+    "deep-blue": ["moqueuse", "impressionnee"],
+    "kismet": ["impressionnee", "moqueuse"],
+    "alphago": ["impressionnee", "moqueuse"],
+    "finale": ["moqueuse", "impressionnee", "impatiente"],
+}
+assert set(TONS) == {m["id"] for m in MASQUES}

@@ -562,11 +562,12 @@
    "required": [
     "format",
     "narrateur",
-    "commentaires"
+    "commentaires",
+    "apartes"
    ],
    "properties": {
     "format": {
-     "const": 2
+     "const": 3
     },
     "narrateur": {
      "$ref": "#/$defs/texte"
@@ -617,12 +618,55 @@
          "quarantaine",
          "retour_epoque",
          "tour_fini",
-         "bonus_du_jour"
+         "bonus_du_jour",
+         "jouer_rappel",
+         "jouer_bonus",
+         "jouer_faible",
+         "jouer_hasard",
+         "farce"
         ]
        },
        "reference": {
         "type": "boolean",
         "description": "La réplique fait référence à l'histoire des sciences."
+       }
+      }
+     }
+    },
+    "apartes": {
+     "type": "array",
+     "minItems": 10,
+     "description": "Apartés de l'IA qui se sert d'un objet ou d'un livre débloqué, selon le ton.",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "sorte",
+       "ton",
+       "texte"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "sorte": {
+        "enum": [
+         "objet",
+         "livre"
+        ]
+       },
+       "ton": {
+        "enum": [
+         "neutre",
+         "moqueuse",
+         "impressionnee",
+         "decue",
+         "impatiente"
+        ]
+       },
+       "texte": {
+        "$ref": "#/$defs/texte"
        }
       }
      }
@@ -910,7 +954,8 @@
        "notice",
        "source",
        "base",
-       "expressions"
+       "expressions",
+       "tons"
       ],
       "additionalProperties": false,
       "properties": {
@@ -946,6 +991,21 @@
        "source": {
         "type": "string",
         "minLength": 3
+       },
+       "tons": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "description": "Tons de réplique que ce masque sait porter.",
+        "items": {
+         "enum": [
+          "neutre",
+          "moqueuse",
+          "impressionnee",
+          "decue",
+          "impatiente"
+         ]
+        }
        }
       }
      }
@@ -1009,7 +1069,8 @@
        "required": [
         "parfait",
         "chrono",
-        "du_jour"
+        "du_jour",
+        "jouer"
        ],
        "additionalProperties": {
         "type": "integer"

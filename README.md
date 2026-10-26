@@ -1,4 +1,4 @@
-# Arbre des savoirs, v4
+# Arbre des savoirs, v5
 
 Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
@@ -12,6 +12,16 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 | `outils/contenu.py` | Source du contenu : régénère `data/` (`python3 outils/contenu.py`). Il assemble `questions_nouvelles.py` (questions v2), `approfondissement_sciences.py` et `approfondissement_humain.py` (second losange, rangs 5 à 8), `philosophes.py` (branche Sagesse), `illustrations.py` (schémas SVG), `recompenses.py` (succès v2, objets, accessoires), `plateau.py` (63 cases, dates de la frise, succès du plateau), `bibliotheque.py` (32 livres), `ia.py` (répliques) et le pixel art (`dessin.py`, `objets32.py`, `avatar40.py`, `masques.py`, `masques_v4.py`, `savants.py`, `objectifs.py`, `icones32.py`, chacun exécutable pour produire une planche d'aperçu PNG). |
 | `outils/valider.py` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
 | `outils/test_moteur.js` | Test du cycle quiz, rappel, perte, regain (`node outils/test_moteur.js`). |
+
+## Nouveautés de la v5
+
+- **Plateau lisible** : les cases sont posées sur une route en spirale, fléchée dans le sens de la marche, du fanion « Départ » à l'objectif central. La route parcourue et les cases visitées prennent la couleur, les prochaines cases atteignables sont cerclées en pointillé. Le liseré de l'objectif clignote doucement (coupé si le mouvement réduit est demandé).
+- **Bouton « Jouer »** : l'IA choisit l'épreuve (un rappel dû d'abord, sinon le bonus du jour, la stat la plus faible ou le hasard) et l'annonce. Réussie, l'épreuve rapporte +2 cases (`plateau.regles.bonus.jouer`). Moteur : `choixIA`.
+- **L'IA agit seule** : le joueur ne choisit plus son masque. Chaque masque porte des tons (`ia.json`, `tons`) ; l'IA prend un masque gagné qui va au ton de sa réplique (`masquePourTon`). Environ une réplique sur deux, elle se sert d'un objet ou d'un livre débloqué (`commentaires.json`, `apartes` ; moteur : `aparte`).
+- **Farces** : après une épreuve ratée, une fois sur trois, l'IA déguise l'avatar pour 24 h (accessoire ou savant gagné). Bouton « Rendre mon visage ». Moteur : `tenterFarce`, `farceActive`, `rendreVisage`.
+- **Succès** : les récompenses d'un bilan défilent une par une, avec une petite animation ; citations et notices sont repliées. « Ouvrir le livre » s'ouvre au-dessus du bilan et « Retour au bilan » y ramène.
+- **Stats sur l'accueil** : radar compact et une jauge par stat sous l'avatar.
+- **Sauvegarde** : même format (4). Le masque choisi par le joueur est simplement oublié à la lecture.
 
 ## Nouveautés de la v4
 

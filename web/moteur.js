@@ -31,6 +31,7 @@
       cabinet: extras.objets || null,
       avatar: extras.avatar || null,
       narrateur: extras.commentaires ? extras.commentaires.narrateur : null,
+      apartes: extras.commentaires && extras.commentaires.apartes ? extras.commentaires.apartes : [],
       ia: extras.ia || null,
       plateau: extras.plateau || null,
       evenements: extras.frise ? extras.frise.evenements : [],
@@ -115,7 +116,7 @@
       livres: {},
       masque: null,
       masques: {},
-      masqueChoisi: null,
+      farce: null,
       plateau: nouveauPlateau(),
       derniereVisite: t,
       retour: null,
@@ -131,6 +132,7 @@
   // v1 → v2 : nouveaux compteurs, objets, accessoires et avatar ; la progression reste intacte.
   // v2 → v3 : plateau (départ à la case du feu), frise, bibliothèque, masque de l'IA, répliques retenues par contexte.
   // v3 → v4 : les rappels déjà réussis sont repayés au nouveau barème (XP croissante par étape) ; avatar savant.
+  // v5 (même format) : le masque choisi par le joueur disparaît, la farce de l'IA apparaît.
   // `contenu` (facultatif) fournit le barème ; sans lui, celui par défaut.
   function migrer(p, contenu) {
     if (!p || typeof p !== "object" || typeof p.format !== "number") return null;
@@ -160,7 +162,9 @@
     out.livres = p.livres || {};
     out.masque = p.masque || null;
     out.masques = p.masques || {};
-    out.masqueChoisi = p.masqueChoisi || null;
+    // v5 : l'IA choisit seule son masque ; l'ancien choix du joueur est oublié.
+    delete out.masqueChoisi;
+    out.farce = p.farce || null;
     out.plateau = Object.assign(nouveauPlateau(), p.plateau || {});
     out.derniereVisite = p.derniereVisite || p.maj || out.cree;
     out.options = Object.assign({ chrono: false }, p.options || {});
@@ -342,12 +346,14 @@
     if (reussi) contextes.push(parfait ? (k.rang === 1 ? "quiz_parfait_facile" : "quiz_parfait") : "quiz_reussi");
     else contextes.push(k.rang === 1 ? "quiz_rate_facile" : "quiz_rate");
     var chrono = resultats.length > 0 && resultats.every(function (x) { return x.chrono; });
-    var dep = jouerPlateau(contenu, partie, { type: "quiz", comp: id }, { reussi: reussi, parfait: parfait, chrono: chrono }, t);
+    var jouer = !!(infos && infos.jouer);
+    var dep = jouerPlateau(contenu, partie, { type: "quiz", comp: id }, { reussi: reussi, parfait: parfait, chrono: chrono, jouer: jouer }, t);
     var rec = verifierRecompenses(contenu, partie, t);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
+    var fa = reussi ? null : tenterFarce(contenu, partie, t, infos && infos.alea);
     return { issue: reussi ? "maitrisee" : "echec", bonnes: bonnes, total: total, xp: xp, prochainRappel: e.prochainRappel,
       nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
-      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes };
+      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer };
   }
 
   // XP d'un rappel réussi qui mène à l'étape `palier` (1 = premier rappel).
@@ -358,7 +364,8 @@
   }
 
   // Termine un rappel. Réussi : l'intervalle suivant s'allonge. Raté : la compétence est perdue.
-  function terminerRappel(contenu, partie, id, resultats, t) {
+  // `infos` (facultatif) : {jouer, alea}, comme pour terminerQuiz.
+  function terminerRappel(contenu, partie, id, resultats, t, infos) {
     var r = contenu.regles;
     var e = partie.competences[id];
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
@@ -395,12 +402,14 @@
     if (nuit) contextes.push("nuit");
     if (reussi && retard >= 3) contextes.push("rappel_retard");
     if (reussi) contextes.push("rappel_reussi");
-    var dep = jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false }, t);
+    var jouer = !!(infos && infos.jouer);
+    var dep = jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false, jouer: jouer }, t);
     var rec = verifierRecompenses(contenu, partie, t);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
+    var fa = reussi ? null : tenterFarce(contenu, partie, t, infos && infos.alea);
     return { issue: reussi ? "reussi" : "perdue", bonnes: bonnes, total: resultats.length, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
-      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes };
+      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer };
   }
 
   // À appeler à chaque ouverture de l'app : repère un retour après une longue absence.
@@ -462,11 +471,13 @@
     return contenu.plateau.cases[n - 1];
   }
 
-  // Applique le résultat d'une épreuve au pion. `issue` : {reussi, parfait, chrono}.
+  // Applique le résultat d'une épreuve au pion. `issue` : {reussi, parfait, chrono, jouer}.
+  // `jouer` : l'épreuve a été lancée par le bouton « Jouer », l'IA l'a choisie ; réussie, elle rapporte un bonus.
   function jouerPlateau(contenu, partie, epreuve, issue, t) {
     if (!contenu.plateau) return null;
     var v = valeurEpreuve(contenu, partie, epreuve, t), pl = partie.plateau, c = partie.compteurs;
-    var valeur = issue.reussi ? v.total + (issue.parfait ? v.parfait : 0) + (issue.chrono ? v.chrono : 0) : v.echec;
+    var bonusJouer = issue.reussi && issue.jouer ? (contenu.plateau.regles.bonus.jouer || 0) : 0;
+    var valeur = issue.reussi ? v.total + (issue.parfait ? v.parfait : 0) + (issue.chrono ? v.chrono : 0) + bonusJouer : v.echec;
     var etapes = [];
     if (pl.prison > 0 && issue.parfait) {
       pl.prison--;
@@ -477,6 +488,7 @@
     dep.etapes = etapes.concat(dep.etapes);
     dep.contextes = contextesPlateau(dep);
     dep.valeurs = v;
+    dep.bonusJouer = bonusJouer;
     return dep;
   }
 
@@ -675,7 +687,7 @@
       });
     }
     if (contenu.ia) {
-      // Un masque nouvellement débloqué devient le visage de l'IA, sauf si le joueur en a choisi un autre.
+      // Un masque nouvellement débloqué devient le dernier gagné : l'IA l'étrenne quand le ton s'y prête.
       // Le tout premier (ou le rattrapage d'une ancienne partie) se pose sans être annoncé.
       partie.masques = partie.masques || {};
       var deja = Object.keys(partie.masques).length, nouveaux = [];
@@ -687,7 +699,7 @@
         var precis = nouveaux.filter(function (m) { return m.condition && m.condition.type === "succes"; });
         var dernier = (precis.length ? precis : nouveaux)[(precis.length ? precis : nouveaux).length - 1];
         if (deja) { out.masque = dernier; out.masques = nouveaux; }
-        if (!partie.masqueChoisi) partie.masque = dernier.id;
+        partie.masque = dernier.id;
       }
       var m = masqueActuel(contenu, partie);
       if (m) partie.masque = m.id;
@@ -709,13 +721,11 @@
     return rang;
   }
 
-  // Masque de l'IA : le dernier dont le palier de succès est atteint (ou débloqué par les tours du plateau).
-  // Visage de l'IA : le masque choisi, sinon le dernier débloqué.
+  // Dernier masque gagné par l'IA (ou débloqué par les tours du plateau).
   function masqueActuel(contenu, partie) {
     if (!contenu.ia) return null;
     var vus = partie.masques || {}, parId = {};
     contenu.ia.masques.forEach(function (m) { parId[m.id] = m; });
-    if (partie.masqueChoisi && vus[partie.masqueChoisi] && parId[partie.masqueChoisi]) return parId[partie.masqueChoisi];
     if (partie.masque && vus[partie.masque] && parId[partie.masque]) return parId[partie.masque];
     var out = null, tMax = -1;
     contenu.ia.masques.forEach(function (m) { if (vus[m.id] != null && vus[m.id] >= tMax) { tMax = vus[m.id]; out = m; } });
@@ -724,17 +734,98 @@
 
   function masqueDebloque(partie, id) { return !!(partie.masques && partie.masques[id] != null); }
 
-  // Le joueur peut faire porter à l'IA n'importe quel masque déjà débloqué ; null revient au dernier gagné.
-  function choisirMasque(contenu, partie, id) {
-    if (id && !masqueDebloque(partie, id)) return false;
-    partie.masqueChoisi = id || null;
-    if (id) partie.masque = id;
-    else {
-      partie.masque = null;
-      var m = masqueActuel(contenu, partie); partie.masque = m ? m.id : null;
-    }
-    return true;
+  // Hachage stable d'une chaîne : même graine, même choix, d'un affichage à l'autre.
+  function hacher(texte) {
+    var h = 2166136261;
+    for (var i = 0; i < texte.length; i++) { h ^= texte.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+    return h;
   }
+
+  // v5 : l'IA choisit elle-même son masque, parmi ceux qu'elle a gagnés et qui vont au ton de la réplique.
+  // Le dernier masque gagné passe en premier tant qu'il va au ton : elle l'étrenne.
+  function masquePourTon(contenu, partie, ton, graine) {
+    if (!contenu.ia) return null;
+    var gagnes = contenu.ia.masques.filter(function (m) { return masqueDebloque(partie, m.id); });
+    if (!gagnes.length) return contenu.ia.masques[0];
+    var neuf = masqueActuel(contenu, partie), vus = partie.masques || {};
+    if (neuf && (neuf.tons || []).indexOf(ton) >= 0 && vus[neuf.id] === Math.max.apply(null, gagnes.map(function (m) { return vus[m.id]; })) &&
+        hacher(String(graine || "")) % 2 === 0) return neuf;
+    var aptes = gagnes.filter(function (m) { return !m.tons || m.tons.indexOf(ton) >= 0; });
+    var liste = aptes.length ? aptes : gagnes;
+    return liste[hacher(ton + "|" + (graine || "")) % liste.length];
+  }
+
+  // v5 : aparté où l'IA se sert d'un objet ou d'un livre débloqué. Une réplique sur deux environ en a un.
+  // Renvoie {texte, objet} ou {texte, livre}, ou null.
+  function aparte(contenu, partie, ton, graine) {
+    var lignes = contenu.apartes || [];
+    if (!lignes.length) return null;
+    var h = hacher("aparte|" + (graine || ""));
+    if (h % 2) return null;
+    var objets = contenu.objets.filter(function (o) { return partie.objets[o.id]; });
+    var livres = (contenu.livres || []).filter(function (l) { return partie.livres && partie.livres[l.id]; });
+    if (!objets.length && !livres.length) return null;
+    var sorte = !livres.length ? "objet" : !objets.length ? "livre" : (h >>> 3) % 3 === 0 ? "livre" : "objet";
+    var choix = lignes.filter(function (l) { return l.sorte === sorte && l.ton === ton; });
+    if (!choix.length) choix = lignes.filter(function (l) { return l.sorte === sorte && l.ton === "neutre"; });
+    if (!choix.length) return null;
+    var ligne = choix[(h >>> 5) % choix.length];
+    var chose = sorte === "objet" ? objets[(h >>> 9) % objets.length] : livres[(h >>> 9) % livres.length];
+    var nom = sorte === "objet" ? chose.nom.fr : chose.titre.fr;
+    if (sorte === "objet") nom = nom.charAt(0).toLowerCase() + nom.slice(1);
+    var texte = ligne.texte.fr.replace(/\{(objet|livre)\}/g, nom);
+    texte = texte.charAt(0).toUpperCase() + texte.slice(1);
+    var out = { id: ligne.id, texte: { fr: texte } };
+    out[sorte] = chose;
+    return out;
+  }
+
+  // --- Bouton « Jouer » : l'IA choisit l'épreuve ------------------------------
+  // Un rappel dû passe d'abord (le plus en retard). Sinon, parmi les quiz ouverts, l'IA tire une raison :
+  // le bonus du jour, la stat la plus faible ou le hasard. Le choix reste le même tant qu'on n'a pas joué.
+  function choixIA(contenu, partie, t) {
+    var dus = rappelsDus(contenu, partie, t);
+    if (dus.length) return { comp: dus[0], type: "rappel", raison: "rappel" };
+    var dispo = disponibles(contenu, partie, t);
+    if (!dispo.length) return null;
+    var graine = hacher(cleJour(t) + "|" + partie.journal.length + "|" + (partie.cree || 0));
+    var raisons = [];
+    var bonus = contenu.plateau ? bonusDuJour(contenu, partie, t) : null;
+    var dansBonus = dispo.filter(function (k) { return k.stat === bonus; });
+    if (dansBonus.length) raisons.push({ raison: "bonus", liste: dansBonus });
+    var sug = suggestion(contenu, partie, t);
+    if (sug) raisons.push({ raison: "faible", liste: [sug] });
+    raisons.push({ raison: "hasard", liste: dispo });
+    var r = raisons[graine % raisons.length];
+    return { comp: r.liste[(graine >>> 4) % r.liste.length], type: "quiz", raison: r.raison };
+  }
+
+  // --- Farces de l'IA --------------------------------------------------------
+  var DUREE_FARCE = JOUR;
+  var CHANCE_FARCE = 1 / 3;
+  // Après une épreuve ratée, une fois sur trois : l'IA déguise l'avatar pour 24 h (accessoire ou savant).
+  function tenterFarce(contenu, partie, t, alea) {
+    if (!contenu.avatar) return null;
+    alea = alea || Math.random;
+    if (alea() >= CHANCE_FARCE) return null;
+    var pool = [];
+    (contenu.avatar.accessoires || []).forEach(function (a) { pool.push({ type: "accessoire", id: a.id, emplacement: a.emplacement }); });
+    (contenu.avatar.savants || []).forEach(function (s) { if (partie.savants && partie.savants[s.id]) pool.push({ type: "savant", id: s.id }); });
+    var av = partie.avatar || {}, actuelle = farceActive(partie, t);
+    pool = pool.filter(function (f) {
+      if (actuelle && actuelle.id === f.id) return false;
+      return f.type === "savant" ? av.savant !== f.id : av[f.emplacement] !== f.id;
+    });
+    if (!pool.length) return null;
+    var f = pool[Math.floor(alea() * pool.length)];
+    partie.farce = { type: f.type, id: f.id, emplacement: f.emplacement || null, depuis: t, jusqua: t + DUREE_FARCE };
+    return partie.farce;
+  }
+  function farceActive(partie, t) {
+    var f = partie.farce;
+    return f && t < f.jusqua ? f : null;
+  }
+  function rendreVisage(partie) { partie.farce = null; }
 
   function expression(contenu, contexte) {
     return (contenu.ia && contenu.ia.expressions[contexte]) || "neutre";
@@ -814,7 +905,8 @@
     rangAvatar: rangAvatar,
     replique: replique,
     repliqueDuJour: repliqueDuJour,
-    masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, choisirMasque: choisirMasque,
+    masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
+    choixIA: choixIA, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,
     valeurEpreuve: valeurEpreuve,

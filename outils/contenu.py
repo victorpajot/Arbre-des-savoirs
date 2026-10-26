@@ -665,7 +665,7 @@ def tous_succes():
 
 
 def commentaires():
-    return {"format": 2, "narrateur": fr(ia.NOM), "commentaires": ia.repliques()}
+    return {"format": 3, "narrateur": fr(ia.NOM), "commentaires": ia.repliques(), "apartes": ia.apartes()}
 
 
 def narrateur():
@@ -678,7 +678,7 @@ def narrateur():
         "taille": [40, 48],
         "expressions": ia.EXPRESSIONS,
         "masques": [{"id": m["id"], "nom": fr(m["nom"]), **({"condition": m["condition"]} if m["condition"] else {}), "notice": fr(m["notice"]),
-                     "source": m["source"], "base": calques[m["id"]]["base"], "expressions": calques[m["id"]]["expressions"]} for m in masques.MASQUES],
+                     "source": m["source"], "tons": masques.TONS[m["id"]], "base": calques[m["id"]]["base"], "expressions": calques[m["id"]]["expressions"]} for m in masques.MASQUES],
     }
 
 
@@ -713,7 +713,7 @@ def jeu_plateau():
         "regles": {
             "depart": 1, "arrivee": len(cases),
             "valeurs": {"rappel": 1, "quiz_rang": {"1": 2, "2": 3, "3": 3, "4": 4, "5": 4, "6": 5, "7": 5, "8": 6}},
-            "bonus": {"parfait": 1, "chrono": 1, "du_jour": 2},
+            "bonus": {"parfait": 1, "chrono": 1, "du_jour": 2, "jouer": 2},
             "echec": {"quiz": 0, "rappel": -2},
             "tour_suivant": {"multiplicateur_recul": 2, "quiz_parfaits_prison": 2},
             "textes": {k: fr(v) for k, v in plateau.REGLES_SPECIALES.items()},

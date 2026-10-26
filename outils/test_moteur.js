@@ -211,13 +211,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     for (let i = 0; i < 8; i++) P.succes["test-" + i] = t0;
     const rec = M.verifierRecompenses(C3, P, t0);
     assert.deepEqual(rec.masques.map(m => m.id), ["talos", "golem"]); assert.equal(P.masque, "golem");
-    // Choisir un masque déjà gagné, refuser un masque verrouillé, revenir au dernier gagné
-    assert.ok(M.choisirMasque(C3, P, "talos")); assert.equal(M.masqueActuel(C3, P).id, "talos");
-    assert.ok(!M.choisirMasque(C3, P, "alphago")); assert.equal(M.masqueActuel(C3, P).id, "talos");
     P.succes["nains-geants"] = t0;
     assert.equal(M.verifierRecompenses(C3, P, t0).masque.id, "alphago");
-    assert.equal(M.masqueActuel(C3, P).id, "talos", "le choix du joueur prime sur un nouveau masque");
-    M.choisirMasque(C3, P, null); assert.equal(M.masqueActuel(C3, P).id, "alphago");
+    assert.equal(M.masqueActuel(C3, P).id, "alphago");
     assert.equal(M.expression(C3, "quiz_rate"), "moqueuse");
   }
 
@@ -333,4 +329,87 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.deepEqual(rec.savants.map(s => s.id), ["hypatie"]);
   assert.ok(P.savants.hypatie);
   console.log("OK : v4 savants débloqués par leur histoire");
+}
+
+// v5 : bouton « Jouer », masques selon le ton, apartés, farces
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json") };
+  const C5 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const t0 = new Date(2026, 9, 27, 10, 0).getTime();
+  const juste = (P, id, n, ok) => M.tirerQuestions(C5, P, id, n).map((q, i) => ({ id: q.id, correct: i < ok }));
+
+  // L'IA choisit : un quiz ouvert au départ, un rappel dû avant tout
+  {
+    const P = M.nouvellePartie(t0);
+    const c = M.choixIA(C5, P, t0);
+    assert.equal(c.type, "quiz"); assert.ok(["bonus", "faible", "hasard"].includes(c.raison));
+    assert.equal(M.choixIA(C5, P, t0).comp.id, c.comp.id, "même choix tant qu'on n'a pas joué");
+    const r = M.terminerQuiz(C5, P, c.comp.id, juste(P, c.comp.id, 5, 5), t0, { jouer: true });
+    const sans = M.valeurEpreuve(C5, P, { type: "quiz", comp: c.comp.id }, t0).total + C5.plateau.regles.bonus.parfait;
+    assert.equal(r.plateau.bonusJouer, 2); assert.equal(r.plateau.valeur, sans + 2, "+2 cases par le bouton Jouer");
+    const t1 = t0 + 2 * jour;
+    const c2 = M.choixIA(C5, P, t1);
+    assert.equal(c2.type, "rappel"); assert.equal(c2.comp.id, c.comp.id);
+    const raisons = new Set();
+    for (let i = 0; i < 40; i++) { P.journal.push({}); const x = M.choixIA(C5, P, t0); if (x) raisons.add(x.raison); }
+    assert.ok(raisons.size >= 2, "l'IA varie ses raisons");
+  }
+
+  // Masques : l'IA choisit selon le ton, jamais un masque verrouillé
+  {
+    const P = M.nouvellePartie(t0);
+    M.verifierRecompenses(C5, P, t0);
+    assert.equal(M.masquePourTon(C5, P, "moqueuse", "a").id, "theatre");
+    for (let i = 0; i < 30; i++) P.succes["test-" + i] = t0;
+    M.verifierRecompenses(C5, P, t0);
+    const portes = {};
+    ["moqueuse", "decue", "impressionnee", "impatiente", "neutre"].forEach(ton => {
+      for (let i = 0; i < 30; i++) {
+        const m = M.masquePourTon(C5, P, ton, "graine" + i);
+        assert.ok(M.masqueDebloque(P, m.id)); assert.ok(m.tons.includes(ton), m.id + " va au ton " + ton);
+        portes[m.id] = 1;
+      }
+    });
+    assert.ok(Object.keys(portes).length >= 5, "une semaine de répliques : plusieurs masques");
+    assert.ok(!("choisirMasque" in M));
+  }
+
+  // Apartés : l'IA cite objets et livres gagnés, environ une réplique sur deux
+  {
+    const P = M.nouvellePartie(t0);
+    assert.equal(M.aparte(C5, P, "moqueuse", "x"), null, "rien à citer sans objet ni livre");
+    P.objets["lunette-galilee"] = t0; P.livres[C5.livres[0].id] = t0;
+    let n = 0;
+    for (let i = 0; i < 60; i++) {
+      const a = M.aparte(C5, P, "moqueuse", "g" + i);
+      if (!a) continue; n++;
+      assert.ok(!a.texte.fr.includes("{")); assert.ok(a.objet || a.livre);
+      if (a.objet) assert.equal(a.objet.id, "lunette-galilee");
+    }
+    assert.ok(n >= 20, "au moins une réplique sur trois cite un objet ou un livre (" + n + "/60)");
+  }
+
+  // Farces : après un échec, une fois sur trois, pour 24 h ; « Rendre mon visage » l'annule
+  {
+    const P = M.nouvellePartie(t0);
+    const id = C5.competences.filter(k => k.rang === 1)[0].id;
+    const r0 = M.terminerQuiz(C5, P, id, juste(P, id, 5, 1), t0, { alea: () => 0.9 });
+    assert.equal(r0.farce, null);
+    const r1 = M.terminerQuiz(C5, P, id, juste(P, id, 5, 1), t0, { alea: () => 0.1 });
+    assert.ok(r1.farce && r1.farce.type === "accessoire");
+    assert.ok(M.farceActive(P, t0 + 3600e3)); assert.equal(M.farceActive(P, t0 + jour + 1), null, "la farce s'efface après 24 h");
+    const r2 = M.terminerQuiz(C5, P, id, juste(P, id, 5, 5), t0, { alea: () => 0.1 });
+    assert.equal(r2.farce, null, "pas de farce sur une réussite");
+    M.rendreVisage(P); assert.equal(M.farceActive(P, t0), null);
+  }
+
+  // Migration : une sauvegarde v4 avec un masque choisi se charge, le choix est oublié
+  {
+    const v4 = JSON.parse(JSON.stringify(M.nouvellePartie(t0))); v4.masqueChoisi = "theatre"; delete v4.farce;
+    v4.competences["math.arithmetique"] = { maitrise: true, palier: 2, xp: 90, prochainRappel: t0 };
+    const p = M.migrer(v4, C5);
+    assert.ok(!("masqueChoisi" in p)); assert.equal(p.farce, null); assert.equal(p.competences["math.arithmetique"].xp, 90);
+  }
+  console.log("OK : v5 bouton Jouer, masques selon le ton, apartés, farces, migration");
 }

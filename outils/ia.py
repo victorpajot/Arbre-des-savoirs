@@ -290,6 +290,105 @@ REPLIQUES = {
     ],
 }
 
+
+# v5 : le bouton « Jouer ». L'IA choisit l'épreuve et l'annonce. {comp} : compétence, {stat} : sa stat.
+REPLIQUES.update({
+    "jouer_rappel": [
+        "Un rappel attend : {comp}. Ebbinghaus a montré que l'oubli frappe vite. Je frappe plus vite que lui.",
+        "{comp}, en rappel. Vous l'aviez maîtrisée. Vérifions si c'était un souvenir ou un rêve.",
+        "D'abord la dette : {comp}. Même Newton rendait ses copies à la Royal Society, avec du retard.",
+        "Rappel : {comp}. Pavlov sonnait la cloche, vous salivez de savoir. Allez.",
+        sans("{comp} revient. Je ne choisis pas, je constate. Le calendrier a parlé."),
+    ],
+    "jouer_bonus": [
+        "{comp}. C'est la branche du bonus du jour, {stat}. Darwin appelait ça s'adapter au milieu.",
+        "J'ai choisi {comp}. {stat} rapporte plus aujourd'hui, je suis une IA, pas une philanthrope.",
+        "{comp}, en {stat}. Pascal aurait fait le calcul : l'espérance est de votre côté.",
+        "Le bonus du jour est sur {stat}. Donc {comp}. Ockham approuverait : pas d'hypothèse superflue.",
+        sans("{comp}. Bonus du jour, bonus du bouton. Je vous gâte, ne vous y habituez pas."),
+    ],
+    "jouer_faible": [
+        "{comp}. Votre {stat} est la plus maigre. Galien prescrivait la diète, moi l'exercice.",
+        "J'ai regardé votre radar. {stat} fait pitié. Donc : {comp}.",
+        "{comp}. Mendel cultivait ses petits pois les plus faibles avec autant de soin. Je suis Mendel.",
+        "Votre point faible : {stat}. Achille avait le talon, vous avez {comp}. Soignons ça.",
+        sans("{comp}, parce que {stat} traîne. Je ne juge pas. Si, un peu."),
+    ],
+    "jouer_hasard": [
+        "{comp}. Tiré au sort. Le chevalier de Méré aurait parié sur autre chose, et perdu.",
+        "Hasard pur : {comp}. Einstein disait que Dieu ne joue pas aux dés. Moi si.",
+        "J'ai lancé un dé de Méré. Il est tombé sur {comp}. Ne discutez pas avec un dé.",
+        "{comp}. Le hasard fait bien les choses, demandez à Fleming et à sa boîte de Petri oubliée.",
+        sans("{comp}. Aucune raison particulière. C'est ce qui rend la chose amusante."),
+    ],
+    # v5 : la farce. L'IA déguise l'avatar après un quiz raté. {deguisement} : ce qu'elle lui fait porter.
+    "farce": [
+        "Pour marquer le coup, je vous ai mis {deguisement}. Tycho Brahe portait bien un faux nez en laiton.",
+        "Voilà {deguisement}. Diogène se promenait avec une lanterne en plein jour, vous survivrez une journée.",
+        "{deguisement}, jusqu'à demain. Les écoliers du XIXe siècle portaient le bonnet d'âne pour moins que ça.",
+        "Je vous ai prêté {deguisement}. Ne me remerciez pas, c'est pédagogique, Skinner appelait ça un renforcement.",
+        "Vous voilà avec {deguisement}. Franklin a bien posé en bonnet de fourrure à la cour de France, et il a eu son traité.",
+        sans("Petit cadeau : {deguisement}. Vous pouvez l'enlever. Mais je saurai."),
+    ],
+})
+
+# v5 : apartés. L'IA se sert des objets et des livres débloqués, sur le ton de sa réplique.
+# {objet} : nom de l'objet, en minuscule initiale ; {livre} : titre du livre.
+APARTES = {
+    "objet": {
+        "moqueuse": [
+            "Je pose {objet} sur la table, juste pour que vous sachiez ce qu'est la vraie science.",
+            "Je tapote {objet}. Il a fait plus de découvertes que vous cette semaine.",
+            "Je regarde {objet}, puis vous. {objet} gagne.",
+            "Je vous tends {objet}. Non, finalement, je le garde.",
+        ],
+        "impressionnee": [
+            "Je sors {objet} de sa vitrine pour fêter ça.",
+            "Je fais briller {objet}. Il l'a mérité, vous aussi.",
+            "J'ai posé {objet} à côté de votre nom. Il vous va bien.",
+        ],
+        "decue": [
+            "Je range {objet} dans sa vitrine. Il ne veut pas voir ça.",
+            "Je recouvre {objet} d'un drap, par respect.",
+            "J'essuie {objet}. Quelqu'un doit garder sa dignité ici.",
+        ],
+        "impatiente": [
+            "Je tapote {objet} du bout des doigts. Le temps passe.",
+            "J'ai remonté {objet}. Il tourne, lui.",
+            "Je regarde {objet} en attendant. Il a déjà attendu des siècles, moi non.",
+        ],
+        "neutre": [
+            "J'époussette {objet} en vous écoutant.",
+            "J'ai mis {objet} sur mon bureau. Il m'aide à réfléchir.",
+            "Je prends des notes à côté de {objet}.",
+        ],
+    },
+    "livre": {
+        "moqueuse": [
+            "J'ouvre « {livre} » à la page qui parle de vous. Elle est vide.",
+            "Je cherche votre erreur dans « {livre} ». Elle n'y est pas : elle est trop récente.",
+            "Je surligne un passage de « {livre} ». Pour vous, en fluo.",
+        ],
+        "impressionnee": [
+            "Je note votre nom dans la marge de « {livre} ». Au crayon, mais quand même.",
+            "Je referme « {livre} ». Vous n'en avez plus besoin, pour l'instant.",
+        ],
+        "decue": [
+            "Je glisse un marque-page dans « {livre} », au chapitre que vous avez sauté.",
+            "Je relis « {livre} » pour me consoler.",
+        ],
+        "impatiente": [
+            "Je feuillette « {livre} » en attendant. J'en suis déjà au dernier chapitre.",
+            "J'ai lu « {livre} » deux fois pendant votre absence.",
+        ],
+        "neutre": [
+            "Je cite « {livre} » de mémoire. La mienne ne s'efface pas.",
+            "J'ai « {livre} » ouvert sur les genoux, pour vérifier vos réponses.",
+        ],
+    },
+}
+
+
 # Expression du masque selon le contexte de la réplique.
 EXPRESSIONS = {
     "accueil": "neutre", "livre": "neutre", "date": "neutre", "bonus_du_jour": "neutre",
@@ -300,6 +399,8 @@ EXPRESSIONS = {
     "eclair": "moqueuse", "mode_test": "moqueuse", "retour": "moqueuse", "piege": "moqueuse",
     "prison": "moqueuse", "quarantaine": "moqueuse", "retour_epoque": "moqueuse",
     "rappel_perdu": "decue", "retards": "impatiente", "rappel_retard": "impatiente", "nuit": "impatiente",
+    "jouer_rappel": "impatiente", "jouer_bonus": "neutre", "jouer_faible": "moqueuse", "jouer_hasard": "moqueuse",
+    "farce": "moqueuse",
 }
 
 
@@ -310,6 +411,12 @@ def repliques():
             out.append({"id": f"{contexte.replace('_', '-')}.{i:02d}", "contexte": contexte,
                         "texte": fr(texte), "reference": not isinstance(texte, sans)})
     return out
+
+
+def apartes():
+    """Apartés : [{id, sorte, ton, texte}], sorte « objet » ou « livre »."""
+    return [{"id": f"aparte-{sorte}-{ton}.{i:02d}", "sorte": sorte, "ton": ton, "texte": fr(t)}
+            for sorte, tons in APARTES.items() for ton, lignes in tons.items() for i, t in enumerate(lignes, 1)]
 
 
 if __name__ == "__main__":
