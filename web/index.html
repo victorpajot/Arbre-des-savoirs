@@ -201,7 +201,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .horloge { font-size: 13px; color: var(--warn); font-weight: 700; }
 
 /* Narrateur */
-.comite { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px 12px 10px; border-radius: 12px; background: var(--surface-2); border-left: 4px solid var(--accent); text-align: left; }
+.comite { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px 12px 10px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 13%, var(--surface)); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-left: 5px solid var(--accent); text-align: left; }
 .comite .masque { flex: none; width: 46px; height: 55px; border-radius: 10px; background: var(--parchemin); display: grid; place-items: center; overflow: hidden; }
 .comite p { font-size: 15px; }
 .comite .qui { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
@@ -212,9 +212,10 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 
 /* Plateau */
 .plateau svg.grille { display: block; width: 100%; height: auto; touch-action: manipulation; }
-.grille-cadre svg.grille.zoom { touch-action: none; cursor: grab; border-radius: 12px; background: var(--surface-2); }
+.grille-cadre svg.grille.libre { aspect-ratio: 2 / 3; touch-action: none; cursor: grab; border-radius: 12px; background: #1E1A2B; overscroll-behavior: contain; }
 .grille-cadre { position: relative; user-select: none; -webkit-user-select: none; }
 .grille-cadre .cam { position: absolute; right: 8px; bottom: 32px; display: flex; gap: 6px; }
+.grille-cadre .cam button[data-cam="plus"], .grille-cadre .cam button[data-cam="moins"] { width: 38px; padding: 0; font-size: 20px; line-height: 1; }
 .grille-cadre .cam button { font: inherit; font-size: 13px; font-weight: 600; padding: 8px 12px; min-height: 36px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.12); cursor: pointer; }
 .plateau .tete { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
 .plateau .tete h2 { font-size: 19px; }
@@ -911,7 +912,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   function plancheAtlas() {
     var or = "#D9B45A", c = '<defs><linearGradient id="ciel-neutre" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B2A4E"/><stop offset="1" stop-color="#0B1328"/></linearGradient>' +
       '<radialGradient id="soleil-atlas"><stop offset="0" stop-color="#FFE7A0"/><stop offset="1" stop-color="#D9A33A"/></radialGradient></defs>' +
-      '<rect width="' + MONDE[0] + '" height="' + MONDE[1] + '" fill="url(#ciel-neutre)"/>', cx = 180, cy = 330, i, k;
+      '<rect x="-40" width="' + (MONDE[0] + 80) + '" height="' + MONDE[1] + '" fill="url(#ciel-neutre)"/>', cx = 180, cy = 330, i, k;
     for (i = 0; i < 90; i++) {
       var sx = aleaDecor(i) * MONDE[0], sy = aleaDecor(i + 500) * MONDE[1];
       c += i % 9 ? '<circle cx="' + f1(sx) + '" cy="' + f1(sy) + '" r="' + (0.4 + aleaDecor(i + 900)).toFixed(2) + '" fill="#F4E7C3" opacity="' + (0.35 + aleaDecor(i + 70) * 0.5).toFixed(2) + '"/>' : '<g class="scintille">' + etoileGravee(sx, sy, 3.2, "#F4E7C3") + "</g>";
@@ -963,7 +964,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   // --- Carnet de Léonard : papier vieilli, écriture en miroir, études de proportions et de machines.
   function plancheCarnet() {
     var encre = "#6B4A2B", c = '<defs><radialGradient id="ciel-impressionnee" cx="0.5" cy="0.5" r="0.75"><stop offset="0.55" stop-color="#EEDFBD"/><stop offset="1" stop-color="#CDB283"/></radialGradient></defs>' +
-      '<rect width="' + MONDE[0] + '" height="' + MONDE[1] + '" fill="url(#ciel-impressionnee)"/>', i, k;
+      '<rect x="-40" width="' + (MONDE[0] + 80) + '" height="' + MONDE[1] + '" fill="url(#ciel-impressionnee)"/>', i, k;
     for (i = 0; i < 40; i++) c += '<circle cx="' + f1(aleaDecor(i + 40) * MONDE[0]) + '" cy="' + f1(aleaDecor(i + 140) * MONDE[1]) + '" r="' + f1(1 + aleaDecor(i + 240) * 6) + '" fill="#8C5A1E" opacity="' + (0.04 + aleaDecor(i) * 0.06).toFixed(2) + '"/>';
     // Lignes d'écriture en miroir : des mots tracés à la plume, de droite à gauche.
     function ecriture(x0, y0, lignes, larg) {
@@ -1023,7 +1024,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   function plancheEncyclopedie() {
     var encre = "#2B2622", c = '<defs><linearGradient id="ciel-moqueuse" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5EEDD"/><stop offset="1" stop-color="#E7DCC2"/></linearGradient>' +
       '<pattern id="hachures" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0,0 V2.4" stroke="' + encre + '" stroke-width="0.6"/></pattern></defs>' +
-      '<rect width="' + MONDE[0] + '" height="' + MONDE[1] + '" fill="url(#ciel-moqueuse)"/>' +
+      '<rect x="-40" width="' + (MONDE[0] + 80) + '" height="' + MONDE[1] + '" fill="url(#ciel-moqueuse)"/>' +
       '<rect x="5" y="5" width="' + (MONDE[0] - 10) + '" height="' + (MONDE[1] - 10) + '" fill="none" stroke="' + encre + '" stroke-width="1.4"/><rect x="9" y="9" width="' + (MONDE[0] - 18) + '" height="' + (MONDE[1] - 18) + '" fill="none" stroke="' + encre + '" stroke-width="0.5"/>';
     var g = '<g stroke="' + encre + '" stroke-width="0.9" fill="none" stroke-linejoin="round">', fig = 0;
     function legende(x, y) { fig++; return texteSvg(x, y, "Fig. " + fig + ".", 6.5, encre, { italique: 1 }); }
@@ -1077,7 +1078,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   // --- Tableau noir : équations à la craie, schémas, et une erreur barrée.
   function plancheTableau() {
     var craie = "#EDEDE2", c = '<defs><linearGradient id="ciel-decue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34433B"/><stop offset="1" stop-color="#1D2622"/></linearGradient></defs>' +
-      '<rect width="' + MONDE[0] + '" height="' + MONDE[1] + '" fill="url(#ciel-decue)"/><rect x="2" y="2" width="' + (MONDE[0] - 4) + '" height="' + (MONDE[1] - 4) + '" fill="none" stroke="#7A5418" stroke-width="5"/>', i;
+      '<rect x="-40" width="' + (MONDE[0] + 80) + '" height="' + MONDE[1] + '" fill="url(#ciel-decue)"/><rect x="2" y="2" width="' + (MONDE[0] - 4) + '" height="' + (MONDE[1] - 4) + '" fill="none" stroke="#7A5418" stroke-width="5"/>', i;
     for (i = 0; i < 14; i++) c += '<ellipse cx="' + f1(aleaDecor(i + 7) * MONDE[0]) + '" cy="' + f1(aleaDecor(i + 77) * MONDE[1]) + '" rx="' + f1(18 + aleaDecor(i + 3) * 40) + '" ry="' + f1(6 + aleaDecor(i + 9) * 10) + '" fill="' + craie + '" opacity="0.045" transform="rotate(' + Math.round(aleaDecor(i + 5) * 40 - 20) + ')"/>';
     var main = "'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive";
     function eq(x, y, t, taille, rot) { return texteSvg(x, y, t, taille || 10, craie, { famille: main, opacite: 0.82, rot: rot || 0 }); }
@@ -1125,9 +1126,22 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var ep = epreuvesDuTour();
     return ep.length ? Math.min(8, ep[0].v.total + (C.plateau.regles.bonus.jouer || 0)) : 0;
   }
-  // v7 : le plateau s'ouvre zoomé autour du pion. On le fait glisser au doigt,
-  // « Vue d'ensemble » le montre en entier, et la caméra suit le pion quand il avance.
-  var ETENDUE = [0, 0, MONDE[0], MONDE[1]], CADRE = 180, camera = { large: true, x: null, y: null };
+  // Bilan : le plateau est cadré sur le pion (carré de CADRE unités) et la caméra le suit quand il avance.
+  var ETENDUE = [0, 0, MONDE[0], MONDE[1]], CADRE = 180;
+  // v8 : caméra libre de l'accueil. On zoome au pincement, à la molette ou aux boutons + et −, et on se déplace
+  // au doigt, sans que la page bouge. Le cadre a toujours le même format (2 × 3) ; la vue d'ensemble montre tout.
+  var RATIO_VUE = 1.5, LARGEUR_MAX = MONDE[1] / RATIO_VUE, LARGEUR_MIN = 120;
+  var camera = { w: LARGEUR_MAX, cx: null, cy: null };
+  function vueCamera() {
+    var w = Math.max(LARGEUR_MIN, Math.min(LARGEUR_MAX, camera.w)), h = w * RATIO_VUE;
+    var cx = camera.cx == null ? MONDE[0] / 2 : camera.cx, cy = camera.cy == null ? MONDE[1] / 2 : camera.cy;
+    cx = w >= MONDE[0] ? MONDE[0] / 2 : Math.max(w / 2, Math.min(MONDE[0] - w / 2, cx));
+    cy = h >= MONDE[1] ? MONDE[1] / 2 : Math.max(h / 2, Math.min(MONDE[1] - h / 2, cy));
+    camera.w = w; camera.cx = cx; camera.cy = cy;
+    return [cx - w / 2, cy - h / 2, w, h];
+  }
+  function texteVue() { return vueCamera().map(function (v) { return v.toFixed(1); }).join(" "); }
+  function vueEnsemble() { return camera.w >= LARGEUR_MAX - 0.5; }
   function borner(x, y) {
     return [Math.max(ETENDUE[0], Math.min(ETENDUE[0] + ETENDUE[2] - CADRE, x)), Math.max(ETENDUE[1], Math.min(ETENDUE[1] + ETENDUE[3] - CADRE, y))];
   }
@@ -1204,13 +1218,13 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       cachePlateau = { cle: cle, svg: c };
     }
     var ici = animPion ? animPion.chemin[0] : pl.position, pos = centreCase(ici);
-    var large = !bilan && camera.large, vb = large ? ETENDUE.join(" ") : boiteVue(!bilan && camera.x != null ? [camera.x, camera.y] : cadrePion(ici));
+    var vb = bilan ? boiteVue(cadrePion(ici)) : texteVue();
     // v8 : le pion se repère d'un coup d'œil, même en vue d'ensemble : halo qui pulse, double contour, flèche au-dessus.
     var pion = '<g id="pion" data-n="pion" style="cursor:pointer" transform="translate(' + pos[0].toFixed(1) + " " + pos[1].toFixed(1) + ')"><circle r="25" fill="#FFD447" opacity="0.45" class="halo-pion"/><ellipse cx="0" cy="17" rx="14" ry="4" fill="#000" opacity="0.3"/>' +
       '<circle r="19.5" fill="#1E1A2B"/><circle r="17.5" fill="var(--parchemin)" stroke="#FFD447" stroke-width="3.5"/>' +
       '<path class="fleche-pion" d="M0,-24 L-6,-33 H6 Z" fill="#FFD447" stroke="#1E1A2B" stroke-width="1.6" stroke-linejoin="round"/>' +
       '<svg x="-14.5" y="-14.5" width="29" height="29" viewBox="8 1 24 24" class="pix">' + pixelsAvatar(0, 0) + "</svg></g>";
-    return '<svg class="grille' + (large ? "" : " zoom") + '" viewBox="' + vb + '" role="img" aria-label="Plateau de l\'histoire : une route sinueuse du départ, en haut à gauche, jusqu\'à l\'arrivée, en bas. Décor : ' + (DECORS[ton] || DECORS.neutre).nom + ", l'IA est " + (NOM_HUMEUR[ton] || ton) + ". Ton pion est sur la case " + pl.position + " sur " + nb + '">' + cachePlateau.svg + pion + "</svg>";
+    return '<svg class="grille' + (bilan ? " zoom" : " libre") + '" viewBox="' + vb + '" role="img" aria-label="Plateau de l\'histoire : une route sinueuse du départ, en haut à gauche, jusqu\'à l\'arrivée, en bas. Décor : ' + (DECORS[ton] || DECORS.neutre).nom + ", l'IA est " + (NOM_HUMEUR[ton] || ton) + ". Ton pion est sur la case " + pl.position + " sur " + nb + '">' + cachePlateau.svg + pion + "</svg>";
   }
   function valeurTexte(k, type) {
     var v = M.valeurEpreuve(C, P, { type: type, comp: k.id }, maintenant());
@@ -1294,50 +1308,81 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var grille = el('<div class="grille-cadre"></div>'), glisse = false, finGlisse = 0;
     function majGrille() {
       grille.innerHTML = svgPlateau();
-      var cam = el('<div class="cam"></div>');
-      if (camera.large) cam.appendChild(el('<button type="button" data-cam="zoom">Zoomer sur mon pion</button>'));
-      else {
-        if (camera.x != null) cam.appendChild(el('<button type="button" data-cam="centre">Recentrer</button>'));
-        cam.appendChild(el('<button type="button" data-cam="large">Vue d\'ensemble</button>'));
-      }
+      var cam = el('<div class="cam"><button type="button" data-cam="moins" aria-label="Dézoomer">−</button><button type="button" data-cam="plus" aria-label="Zoomer">+</button>' +
+        (vueEnsemble() ? '<button type="button" data-cam="pion">Mon pion</button>' : '<button type="button" data-cam="large">Vue d\'ensemble</button>') + "</div>");
       grille.appendChild(cam);
       var ton = M.humeur(P);
       grille.appendChild(el('<div class="ciel-ia" aria-hidden="true">' + "Fond : " + esc((DECORS[ton] || DECORS.neutre).nom) + ", car l'IA est " + esc(NOM_HUMEUR[ton] || ton) + "</div>"));
     }
     majGrille();
-    // Glisser au doigt ou à la souris quand le plateau est zoomé. Au-delà de 6 px, ce n'est plus un clic.
-    var appui = null;
+    function svgLibre() { return grille.querySelector("svg.libre"); }
+    function appliquer() {
+      var svg = svgLibre(); if (svg) svg.setAttribute("viewBox", texteVue());
+      var cam = grille.querySelector(".cam"), bt = cam && cam.querySelector('[data-cam="large"], [data-cam="pion"]');
+      if (bt && (bt.getAttribute("data-cam") === "pion") !== vueEnsemble()) {
+        bt.outerHTML = vueEnsemble() ? '<button type="button" data-cam="pion">Mon pion</button>' : '<button type="button" data-cam="large">Vue d\'ensemble</button>';
+      }
+    }
+    // Zoom autour d'un point de l'écran (px, py) : ce point du plateau reste sous le doigt.
+    function zoomer(facteur, px, py) {
+      var svg = svgLibre(); if (!svg) return;
+      var r = svg.getBoundingClientRect(), v = vueCamera();
+      var fx = px == null ? 0.5 : (px - r.left) / r.width, fy = py == null ? 0.5 : (py - r.top) / r.height;
+      var wx = v[0] + fx * v[2], wy = v[1] + fy * v[3], w = Math.max(LARGEUR_MIN, Math.min(LARGEUR_MAX, v[2] * facteur));
+      camera.w = w; camera.cx = wx - fx * w + w / 2; camera.cy = wy - fy * w * RATIO_VUE + w * RATIO_VUE / 2;
+      appliquer();
+    }
+    // Un doigt : on se déplace ; deux doigts : on zoome. Au-delà de 6 px, ce n'est plus un appui.
+    var doigts = {}, geste = null;
+    function etatGeste() {
+      var ids = Object.keys(doigts), v = vueCamera(), svg = svgLibre();
+      if (!ids.length || !svg) { geste = null; return; }
+      var a = doigts[ids[0]], b = ids[1] ? doigts[ids[1]] : null;
+      geste = { v: v, rect: svg.getBoundingClientRect(), mx: b ? (a.x + b.x) / 2 : a.x, my: b ? (a.y + b.y) / 2 : a.y, d: b ? Math.hypot(a.x - b.x, a.y - b.y) : 0, deux: !!b, x0: a.x, y0: a.y };
+    }
     grille.addEventListener("pointerdown", function (ev) {
-      var svg = grille.querySelector("svg.zoom"); if (!svg || ev.target.closest(".cam")) return;
-      var d = svg.getAttribute("viewBox").split(" ").map(Number);
-      appui = { id: ev.pointerId, x: ev.clientX, y: ev.clientY, vx: d[0], vy: d[1], echelle: CADRE / svg.getBoundingClientRect().width, svg: svg };
-      glisse = false;
+      if (!ev.target.closest("svg.libre")) return;
+      doigts[ev.pointerId] = { x: ev.clientX, y: ev.clientY };
+      etatGeste();
+      if (geste && geste.deux) glisse = true; else glisse = false;
     });
     grille.addEventListener("pointermove", function (ev) {
-      if (!appui || ev.pointerId !== appui.id) return;
-      var dx = ev.clientX - appui.x, dy = ev.clientY - appui.y;
-      if (!glisse && Math.abs(dx) + Math.abs(dy) < 6) return;
+      if (!doigts[ev.pointerId] || !geste) return;
+      doigts[ev.pointerId] = { x: ev.clientX, y: ev.clientY };
+      var ids = Object.keys(doigts), a = doigts[ids[0]], b = ids[1] ? doigts[ids[1]] : null, g = geste, r = g.rect;
+      var mx = b ? (a.x + b.x) / 2 : a.x, my = b ? (a.y + b.y) / 2 : a.y;
+      if (!glisse && Math.abs(mx - g.mx) + Math.abs(my - g.my) < 6) return;
       if (!glisse) { glisse = true; try { grille.setPointerCapture(ev.pointerId); } catch (e) {} }
-      var c = borner(appui.vx - dx * appui.echelle, appui.vy - dy * appui.echelle);
-      camera.x = c[0]; camera.y = c[1];
-      appui.svg.setAttribute("viewBox", boiteVue(c));
+      var w = g.v[2];
+      if (g.deux && b) w = Math.max(LARGEUR_MIN, Math.min(LARGEUR_MAX, g.v[2] * g.d / Math.max(20, Math.hypot(a.x - b.x, a.y - b.y))));
+      var fx = (g.mx - r.left) / r.width, fy = (g.my - r.top) / r.height, wx = g.v[0] + fx * g.v[2], wy = g.v[1] + fy * g.v[3];
+      var nfx = (mx - r.left) / r.width, nfy = (my - r.top) / r.height;
+      camera.w = w; camera.cx = wx - nfx * w + w / 2; camera.cy = wy - nfy * w * RATIO_VUE + w * RATIO_VUE / 2;
+      appliquer();
     });
     function lacher(ev) {
-      if (!appui || ev.pointerId !== appui.id) return;
-      appui = null;
-      if (!glisse) return;
-      finGlisse = Date.now(); glisse = false;
-      var cam = grille.querySelector(".cam");
-      if (!cam.querySelector('[data-cam="centre"]')) cam.insertBefore(el('<button type="button" data-cam="centre">Recentrer</button>'), cam.firstChild);
+      if (!doigts[ev.pointerId]) return;
+      delete doigts[ev.pointerId];
+      if (glisse) finGlisse = Date.now();
+      etatGeste();
+      if (!geste) glisse = false;
     }
     grille.addEventListener("pointerup", lacher);
     grille.addEventListener("pointercancel", lacher);
+    grille.addEventListener("wheel", function (ev) {
+      if (!ev.target.closest("svg.libre")) return;
+      ev.preventDefault();
+      zoomer(Math.exp(ev.deltaY * 0.0015), ev.clientX, ev.clientY);
+    }, { passive: false });
     grille.onclick = function (ev) {
       var bc = ev.target.closest && ev.target.closest("[data-cam]");
       if (bc) {
         var a = bc.getAttribute("data-cam");
-        camera.large = a === "large"; camera.x = camera.y = null;
-        majGrille(); return;
+        if (a === "plus") zoomer(1 / 1.5);
+        else if (a === "moins") zoomer(1.5);
+        else if (a === "large") { camera.w = LARGEUR_MAX; camera.cx = camera.cy = null; appliquer(); }
+        else if (a === "pion") { var p = centreCase(P.plateau.position); camera.w = 190; camera.cx = p[0]; camera.cy = p[1]; appliquer(); }
+        return;
       }
       if (Date.now() - finGlisse < 350) return;
       var g = ev.target.closest && ev.target.closest("[data-n]"); if (!g) return;
@@ -2386,7 +2431,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var titre = fini ? "Tour complet !" : d > 0 ? "Le pion avance de " + d + " case" + (d > 1 ? "s" : "") : d < 0 ? "Le pion recule de " + (-d) + " case" + (d < -1 ? "s" : "") : "Le pion reste sur place";
     var b = el('<div class="bloc plateau"><div class="tete"><h2>' + esc(titre) + '</h2><span class="num">case ' + dep.de + " → " + dep.a + '</span></div><div class="trajet"></div></div>');
     var tj = b.querySelector(".trajet"), v = dep.valeurs;
-    if (avecPlateau) { animPion = dep.chemin && dep.chemin.length > 1 ? dep : null; camera.x = camera.y = null; var g = el('<div class="plateau-bilan">' + svgPlateau(true) + "</div>"); b.insertBefore(g, tj); }
+    if (avecPlateau) { animPion = dep.chemin && dep.chemin.length > 1 ? dep : null; var g = el('<div class="plateau-bilan">' + svgPlateau(true) + "</div>"); b.insertBefore(g, tj); }
     if (dep.valeur > 0 && (dep.cause === "cadeau" || dep.cause === "duel")) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>" + (dep.cause === "cadeau" ? "Cadeau de l'IA." : "Duel gagné : la fin du trajet.") + "</span></div>"));
     else if (dep.valeur > 0) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>Épreuve réussie" + (v && v.duJour ? ", bonus du jour compris" : "") +
       (dep.bonusJouer ? ", dont +" + dep.bonusJouer + " pour avoir laissé l'IA choisir" : dep.valeur > (v ? v.total : 0) ? ", avec bonus" : "") + ".</span></div>"));
