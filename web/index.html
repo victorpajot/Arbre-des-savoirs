@@ -214,7 +214,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .plateau svg.grille { display: block; width: 100%; height: auto; touch-action: manipulation; }
 .grille-cadre svg.grille.zoom { touch-action: none; cursor: grab; border-radius: 12px; background: var(--surface-2); }
 .grille-cadre { position: relative; user-select: none; -webkit-user-select: none; }
-.grille-cadre .cam { position: absolute; right: 8px; bottom: 8px; display: flex; gap: 6px; }
+.grille-cadre .cam { position: absolute; right: 8px; bottom: 32px; display: flex; gap: 6px; }
 .grille-cadre .cam button { font: inherit; font-size: 13px; font-weight: 600; padding: 8px 12px; min-height: 36px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.12); cursor: pointer; }
 .plateau .tete { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
 .plateau .tete h2 { font-size: 19px; }
@@ -342,12 +342,16 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .plateau .liseret { animation: liseret 2.2s ease-in-out infinite; }
 @keyframes liseret { 50% { stroke-opacity: 0.25; } }
 .plateau .avenir { animation: avenir 1.6s ease-in-out infinite; }
+.plateau .halo-pion { animation: halo-pion 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes halo-pion { 50% { opacity: 0.12; transform: scale(1.25); } }
+.plateau .fleche-pion { animation: fleche-pion 1.2s ease-in-out infinite; }
+@keyframes fleche-pion { 50% { transform: translateY(-3px); } }
 @keyframes avenir { 50% { stroke-opacity: 0.15; } }
 .plateau .scintille { animation: scintille 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
 @keyframes scintille { 50% { opacity: 0.25; transform: scale(0.6); } }
-.grille-cadre .ciel-ia { position: absolute; left: 8px; bottom: 10px; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgb(255 255 255 / 0.85); color: #1E1A2B; pointer-events: none; }
+.grille-cadre .ciel-ia { margin-top: 6px; text-align: center; font-size: 12px; font-weight: 600; color: var(--muted); pointer-events: none; }
 .revision-f { display: flex; flex-direction: column; gap: 8px; }
-@media (prefers-reduced-motion: reduce) { .plateau .avenir, .plateau .scintille { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .plateau .avenir, .plateau .scintille, .plateau .halo-pion, .plateau .fleche-pion { animation: none; } }
 @media (prefers-reduced-motion: reduce) { .plateau .liseret { animation: none; } }
 /* v5 : bouton Jouer */
 .jouer { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; width: 100%; padding: 12px 14px; border: 0; border-radius: 16px;
@@ -855,7 +859,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   }
   var TEINTE_EPOQUE = { antiquite: "#C9A227", "moyen-age": "#A04B57", renaissance: "#2F8C78", classique: "#4A6CC2", xixe: "#9A6534", xxe: "#7A4FB8" };
   var COULEURS_CASES = ["#FF9FC6", "#FFD447", "#FF9F45", "#6EC3F4", "#7FD68C", "#BFA2F5"];
-  var COULEUR_SPECIAL = { eureka: "#E0A800", avance: "#2E9D5B", recul: "#D94141", teleport: "#7A3FD1", retour_epoque: "#7A3FD1", revision: "#14899E", prison: "#5D6470", quarantaine: "#D9721F" };
+  var COULEUR_SPECIAL = { eureka: "#E0A800", avance: "#2E9D5B", recul: "#D94141", teleport: "#7A3FD1", retour_epoque: "#7A3FD1", revision: "#14899E", cadeau: "#C2185B", prison: "#5D6470", quarantaine: "#D9721F" };
   var BORD_SPECIAL = COULEUR_SPECIAL;
   // Pictogramme blanc d'une règle spéciale, centré sur (0, 0), environ 10 × 10.
   var PICTO_SPECIAL = {
@@ -864,159 +868,246 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     recul: '<path d="M4,-4 L0,0 L4,4 M0,-4 L-4,0 L0,4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
     teleport: '<path d="M0.3,0 A1.2,1.2 0 1 1 -1.6,-0.8 A2.6,2.6 0 1 1 2.6,1.6 A4,4 0 1 1 -4.2,-1.2" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>',
     revision: '<path d="M-4.5,-3.5 Q-2,-4.6 0,-3 Q2,-4.6 4.5,-3.5 V3.6 Q2,2.5 0,4 Q-2,2.5 -4.5,3.6 Z M0,-3 V4" fill="none" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/>',
+    cadeau: '<path d="M-4.5,-1.5 H4.5 V4.5 H-4.5 Z M-5,-3.8 H5 V-1.5 H-5 Z M0,-3.8 V4.5" fill="none" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/><path d="M0,-3.8 Q-3.5,-7 -3.6,-4.4 M0,-3.8 Q3.5,-7 3.6,-4.4" fill="none" stroke="#fff" stroke-width="1.2"/>',
     prison: '<path d="M-4,-4.5 H4 M-4,4.5 H4 M-2.4,-4.5 V4.5 M0,-4.5 V4.5 M2.4,-4.5 V4.5" stroke="#fff" stroke-width="1.4"/>',
     quarantaine: '<path d="M0,-4.5 V4.5 M-4.5,0 H4.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
   };
   PICTO_SPECIAL.retour_epoque = PICTO_SPECIAL.teleport;
 
-  // Décor : un ciel par humeur de l'IA. Les motifs se logent entre les rangées et dans les virages.
+  // v8 : le fond est une planche ancienne, tracée au trait, qui change avec l'humeur de l'IA.
+  // Atlas céleste (neutre), carnet de Léonard (impressionnée), planche de l'Encyclopédie (moqueuse),
+  // tableau noir de physicien (déçue). La route est posée par-dessus, comme un jeu imprimé sur une gravure.
   var DECORS = {
-    // Tous les motifs viennent de l'histoire des sciences : astronomie, conquête du ciel, laboratoire, électricité.
-    neutre: { nom: "nuit des astronomes", haut: "#22305E", bas: "#0D1330", fond: "scintille", motifs: ["planete", "lunette", "comete", "fusee", "planeteAnneau", "satellite", "asteroide"] },
-    impressionnee: { nom: "ciel des pionniers", haut: "#7CC8F5", bas: "#FFF1C9", fond: "", motifs: ["nuage", "montgolfiere", "biplan", "arcEnCiel", "nuage", "soleil", "montgolfiere"] },
-    moqueuse: { nom: "laboratoire en fête", haut: "#FFF4DE", bas: "#FFDDEB", fond: "confettis", motifs: ["atome", "molecule", "fiole", "adn", "engrenage", "atome", "fiole"] },
-    decue: { nom: "orage de Franklin", haut: "#6E7789", bas: "#2B303D", fond: "pluie", motifs: ["nuageNoir", "eclair", "bouteilleLeyde", "nuageNoir", "eclair", "goutte"] },
+    neutre: { nom: "atlas céleste" },
+    impressionnee: { nom: "carnet de Léonard" },
+    moqueuse: { nom: "planche de l'Encyclopédie" },
+    decue: { nom: "tableau noir du physicien" },
   };
   DECORS.impatiente = DECORS.neutre;
   var NOM_HUMEUR = { neutre: "neutre", impressionnee: "impressionnée", moqueuse: "moqueuse", decue: "déçue", impatiente: "impatiente" };
   function aleaDecor(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
-  var MOTIFS = {
-    lunette: function (x, y, s) {
-      return '<path d="M' + x + "," + (y + s * 0.1) + " L" + (x - s * 0.7) + "," + (y + s * 1.2) + " M" + x + "," + (y + s * 0.1) + " L" + (x + s * 0.7) + "," + (y + s * 1.2) + " M" + x + "," + (y + s * 0.1) + " V" + (y + s * 1.25) + '" stroke="#C99260" stroke-width="1.6" stroke-linecap="round"/>' +
-        '<g transform="rotate(-32 ' + x + " " + y + ')"><rect x="' + (x - s * 1.2) + '" y="' + (y - s * 0.22) + '" width="' + (s * 2.2) + '" height="' + (s * 0.44) + '" rx="' + (s * 0.1) + '" fill="#B8862B" stroke="#4A2C1C" stroke-width="1.1"/>' +
-        '<rect x="' + (x + s * 0.95) + '" y="' + (y - s * 0.3) + '" width="' + (s * 0.35) + '" height="' + (s * 0.6) + '" rx="1" fill="#7A5418" stroke="#4A2C1C" stroke-width="1.1"/><path d="M' + (x - s * 0.5) + "," + (y - s * 0.22) + " V" + (y + s * 0.22) + '" stroke="#F2C14E" stroke-width="1.4"/></g>';
-    },
-    satellite: function (x, y, s) {
-      return '<path d="M' + (x - s * 0.3) + "," + (y + s * 0.2) + " L" + (x - s * 1.6) + "," + (y + s * 1.1) + " M" + (x - s * 0.1) + "," + (y + s * 0.35) + " L" + (x - s * 1.1) + "," + (y + s * 1.5) + " M" + (x - s * 0.35) + "," + (y - s * 0.05) + " L" + (x - s * 1.7) + "," + (y + s * 0.5) + " M" + (x + s * 0.05) + "," + (y + s * 0.4) + " L" + (x - s * 0.4) + "," + (y + s * 1.7) + '" stroke="#C9CED6" stroke-width="1.1" stroke-linecap="round"/>' +
-        '<circle cx="' + x + '" cy="' + y + '" r="' + (s * 0.55) + '" fill="#C9CED6" stroke="#5D6470" stroke-width="1.2"/><circle cx="' + (x - s * 0.18) + '" cy="' + (y - s * 0.2) + '" r="' + (s * 0.16) + '" fill="#fff" opacity="0.7"/>';
-    },
-    biplan: function (x, y, s) {
-      return '<g transform="rotate(-6 ' + x + " " + y + ')"><rect x="' + (x - s * 1.5) + '" y="' + (y - s * 0.45) + '" width="' + (s * 3) + '" height="' + (s * 0.22) + '" rx="1" fill="#F7EBD0" stroke="#5E3B1C" stroke-width="1"/>' +
-        '<rect x="' + (x - s * 1.5) + '" y="' + (y + s * 0.25) + '" width="' + (s * 3) + '" height="' + (s * 0.22) + '" rx="1" fill="#F7EBD0" stroke="#5E3B1C" stroke-width="1"/>' +
-        '<path d="M' + (x - s * 1.2) + "," + (y - s * 0.23) + " V" + (y + s * 0.25) + " M" + (x - s * 0.4) + "," + (y - s * 0.23) + " V" + (y + s * 0.25) + " M" + (x + s * 0.4) + "," + (y - s * 0.23) + " V" + (y + s * 0.25) + " M" + (x + s * 1.2) + "," + (y - s * 0.23) + " V" + (y + s * 0.25) + " M" + x + "," + (y + s * 0.47) + " L" + (x + s * 1.9) + "," + (y + s * 0.2) + '" stroke="#5E3B1C" stroke-width="1"/>' +
-        '<rect x="' + (x + s * 1.8) + '" y="' + (y - s * 0.05) + '" width="' + (s * 0.45) + '" height="' + (s * 0.5) + '" fill="#F7EBD0" stroke="#5E3B1C" stroke-width="1"/><rect x="' + (x - s * 0.15) + '" y="' + (y - s * 0.05) + '" width="' + (s * 0.3) + '" height="' + (s * 0.22) + '" fill="#9A6534"/></g>';
-    },
-    atome: function (x, y, s, i) {
-      var c = ["#3D63D9", "#D94141", "#2E9D5B"][i % 3], o = "";
-      [0, 60, 120].forEach(function (a) { o += '<ellipse cx="' + x + '" cy="' + y + '" rx="' + (s * 1.25) + '" ry="' + (s * 0.42) + '" fill="none" stroke="' + c + '" stroke-width="1.6" transform="rotate(' + a + " " + x + " " + y + ')"/>'; });
-      return o + '<circle cx="' + x + '" cy="' + y + '" r="' + (s * 0.28) + '" fill="#F28B82" stroke="#2B2B33" stroke-width="1"/><circle cx="' + (x + s * 1.25) + '" cy="' + y + '" r="' + (s * 0.13) + '" fill="' + c + '"/><circle cx="' + (x - s * 0.62) + '" cy="' + (y - s * 0.95) + '" r="' + (s * 0.13) + '" fill="' + c + '"/>';
-    },
-    molecule: function (x, y, s) {
-      var p = [[0, 0, 0.42, "#2B2B33"], [-0.95, -0.55, 0.3, "#F4F4F8"], [0.95, -0.55, 0.3, "#F4F4F8"], [0, 1.05, 0.34, "#D94141"]], o = "";
-      p.slice(1).forEach(function (q) { o += '<path d="M' + x + "," + y + " L" + (x + q[0] * s) + "," + (y + q[1] * s) + '" stroke="#5D6470" stroke-width="' + (s * 0.16) + '"/>'; });
-      p.forEach(function (q) { o += '<circle cx="' + (x + q[0] * s) + '" cy="' + (y + q[1] * s) + '" r="' + (q[2] * s) + '" fill="' + q[3] + '" stroke="#2B2B33" stroke-width="1"/>'; });
-      return o;
-    },
-    fiole: function (x, y, s, i) {
-      var c = ["#7FD68C", "#FF9FC6", "#6EC3F4"][i % 3];
-      return '<path d="M' + (x - s * 0.22) + "," + (y - s * 1.1) + " V" + (y - s * 0.3) + " L" + (x - s * 0.9) + "," + (y + s * 0.9) + " Q" + (x - s * 0.95) + "," + (y + s * 1.1) + " " + (x - s * 0.7) + "," + (y + s * 1.1) + " H" + (x + s * 0.7) + " Q" + (x + s * 0.95) + "," + (y + s * 1.1) + " " + (x + s * 0.9) + "," + (y + s * 0.9) + " L" + (x + s * 0.22) + "," + (y - s * 0.3) + " V" + (y - s * 1.1) + 'Z" fill="#fff" fill-opacity="0.7" stroke="#2B2B33" stroke-width="1.2" stroke-linejoin="round"/>' +
-        '<path d="M' + (x - s * 0.6) + "," + (y + s * 0.4) + " H" + (x + s * 0.6) + " L" + (x + s * 0.88) + "," + (y + s * 0.92) + " Q" + (x + s * 0.9) + "," + (y + s * 1.05) + " " + (x + s * 0.7) + "," + (y + s * 1.05) + " H" + (x - s * 0.7) + " Q" + (x - s * 0.9) + "," + (y + s * 1.05) + " " + (x - s * 0.88) + "," + (y + s * 0.92) + 'Z" fill="' + c + '"/><circle cx="' + (x + s * 0.1) + '" cy="' + (y - s * 1.45) + '" r="' + (s * 0.14) + '" fill="' + c + '"/><circle cx="' + (x - s * 0.15) + '" cy="' + (y - s * 1.75) + '" r="' + (s * 0.1) + '" fill="' + c + '"/>';
-    },
-    adn: function (x, y, s) {
-      var a = "", b = "", barres = "";
-      for (var k = 0; k <= 16; k++) {
-        var t = k / 16, yy = y - s * 1.3 + t * s * 2.6, dx = Math.sin(t * Math.PI * 2) * s * 0.6;
-        a += (k ? " L" : "M") + (x + dx).toFixed(1) + "," + yy.toFixed(1); b += (k ? " L" : "M") + (x - dx).toFixed(1) + "," + yy.toFixed(1);
-        if (k % 2 === 1) barres += '<path d="M' + (x + dx).toFixed(1) + "," + yy.toFixed(1) + " H" + (x - dx).toFixed(1) + '" stroke="' + ["#FFD447", "#7FD68C"][(k >> 1) % 2] + '" stroke-width="1.6"/>';
-      }
-      return barres + '<path d="' + a + '" fill="none" stroke="#3D63D9" stroke-width="2"/><path d="' + b + '" fill="none" stroke="#D94141" stroke-width="2"/>';
-    },
-    engrenage: function (x, y, s, i) {
-      var p = [], n = 8, c = ["#B8862B", "#9AA0A8"][i % 2];
-      for (var k = 0; k < n * 2; k++) { var a = k * Math.PI / n, r = k % 2 ? s * 0.78 : s; p.push((x + r * Math.cos(a - 0.12)).toFixed(1) + "," + (y + r * Math.sin(a - 0.12)).toFixed(1), (x + r * Math.cos(a + 0.12)).toFixed(1) + "," + (y + r * Math.sin(a + 0.12)).toFixed(1)); }
-      return '<polygon points="' + p.join(" ") + '" fill="' + c + '" stroke="#4A2C1C" stroke-width="1.1" stroke-linejoin="round"/><circle cx="' + x + '" cy="' + y + '" r="' + (s * 0.3) + '" fill="#FFF4DE" stroke="#4A2C1C" stroke-width="1.1"/>';
-    },
-    bouteilleLeyde: function (x, y, s) {
-      return '<path d="M' + x + "," + (y - s * 1.5) + " V" + (y - s * 0.6) + '" stroke="#9AA0A8" stroke-width="1.6"/><circle cx="' + x + '" cy="' + (y - s * 1.6) + '" r="' + (s * 0.2) + '" fill="#C9CED6" stroke="#2B2B33" stroke-width="1"/>' +
-        '<path d="M' + (x - s * 0.6) + "," + (y - s * 0.6) + " H" + (x + s * 0.6) + " V" + (y + s * 1.1) + " Q" + x + "," + (y + s * 1.3) + " " + (x - s * 0.6) + "," + (y + s * 1.1) + 'Z" fill="#D8F4FC" fill-opacity="0.8" stroke="#2B2B33" stroke-width="1.1"/>' +
-        '<path d="M' + (x - s * 0.6) + "," + (y + s * 0.2) + " H" + (x + s * 0.6) + " V" + (y + s * 1.1) + " Q" + x + "," + (y + s * 1.3) + " " + (x - s * 0.6) + "," + (y + s * 1.1) + 'Z" fill="#C99260" stroke="#2B2B33" stroke-width="1.1"/>';
-    },
-    planete: function (x, y, s, i) {
-      var c = [["#5AA9E6", "#2F6FB3"], ["#E8875A", "#B4502E"], ["#7FD68C", "#3E8E4E"]][i % 3];
-      return '<circle cx="' + x + '" cy="' + y + '" r="' + s + '" fill="' + c[0] + '"/><path d="M' + (x - s) + "," + y + " A" + s + "," + s + " 0 0 0 " + (x + s) + "," + y + " A" + s + "," + (s * 0.55) + " 0 0 1 " + (x - s) + "," + y + 'Z" fill="' + c[1] + '" opacity="0.55"/><circle cx="' + (x - s * 0.35) + '" cy="' + (y - s * 0.35) + '" r="' + (s * 0.22) + '" fill="#fff" opacity="0.35"/>';
-    },
-    planeteAnneau: function (x, y, s, i) {
-      var c = ["#F2B35C", "#C99AF0", "#F28B82"][i % 3];
-      return '<ellipse cx="' + x + '" cy="' + y + '" rx="' + (s * 1.7) + '" ry="' + (s * 0.45) + '" fill="none" stroke="#F7E3B5" stroke-width="2.4" transform="rotate(-18 ' + x + " " + y + ')"/>' +
-        '<circle cx="' + x + '" cy="' + y + '" r="' + s + '" fill="' + c + '"/><path d="M' + (x - s * 0.9) + "," + (y - s * 0.3) + " H" + (x + s * 0.9) + " M" + (x - s * 0.95) + "," + (y + s * 0.25) + " H" + (x + s * 0.95) + '" stroke="#fff" stroke-opacity="0.35" stroke-width="2"/>' +
-        '<path d="M' + (x - s * 1.62) + "," + (y + s * 0.05) + " A" + (s * 1.7) + "," + (s * 0.45) + " -18 0 0 " + (x + s * 1.62) + "," + (y - s * 0.05) + '" fill="none" stroke="#F7E3B5" stroke-width="2.4" transform="rotate(-18 ' + x + " " + y + ')"/>';
-    },
-    asteroide: function (x, y, s, i) {
-      var p = [];
-      for (var k = 0; k < 9; k++) { var a = k / 9 * Math.PI * 2, r = s * (0.8 + 0.3 * aleaDecor(i * 9 + k)); p.push((x + r * Math.cos(a)).toFixed(1) + "," + (y + r * Math.sin(a)).toFixed(1)); }
-      return '<polygon points="' + p.join(" ") + '" fill="#8B8F99" stroke="#4A4E57" stroke-width="1.2" stroke-linejoin="round"/><circle cx="' + (x - s * 0.3) + '" cy="' + (y - s * 0.1) + '" r="' + (s * 0.22) + '" fill="#5D616B"/><circle cx="' + (x + s * 0.35) + '" cy="' + (y + s * 0.3) + '" r="' + (s * 0.14) + '" fill="#5D616B"/>';
-    },
-    comete: function (x, y, s) {
-      return '<path d="M' + (x - s * 2.6) + "," + (y + s * 1.5) + " L" + (x - s * 0.2) + "," + (y - s * 0.75) + " L" + (x + s * 0.7) + "," + (y + s * 0.4) + ' Z" fill="#FFB347" opacity="0.75"/><circle cx="' + x + '" cy="' + y + '" r="' + (s * 0.75) + '" fill="#FFD447" stroke="#E07B1A" stroke-width="1.4"/>';
-    },
-    fusee: function (x, y, s) {
-      return '<g transform="rotate(35 ' + x + " " + y + ')"><path d="M' + (x - s * 0.35) + "," + (y + s) + " L" + x + "," + (y + s * 1.7) + " L" + (x + s * 0.35) + "," + (y + s) + 'Z" fill="#FF7A1A"/>' +
-        '<path d="M' + (x - s * 0.5) + "," + (y + s * 0.5) + " L" + (x - s * 0.95) + "," + (y + s * 1.1) + " L" + (x - s * 0.45) + "," + (y + s) + "Z M" + (x + s * 0.5) + "," + (y + s * 0.5) + " L" + (x + s * 0.95) + "," + (y + s * 1.1) + " L" + (x + s * 0.45) + "," + (y + s) + 'Z" fill="#D94141"/>' +
-        '<path d="M' + x + "," + (y - s * 1.3) + " C" + (x + s * 0.7) + "," + (y - s * 0.6) + " " + (x + s * 0.55) + "," + (y + s * 0.6) + " " + (x + s * 0.45) + "," + (y + s) + " H" + (x - s * 0.45) + " C" + (x - s * 0.55) + "," + (y + s * 0.6) + " " + (x - s * 0.7) + "," + (y - s * 0.6) + " " + x + "," + (y - s * 1.3) + 'Z" fill="#F4F4F8" stroke="#2B2B33" stroke-width="1.2"/>' +
-        '<circle cx="' + x + '" cy="' + (y - s * 0.2) + '" r="' + (s * 0.28) + '" fill="#6EC3F4" stroke="#2B2B33" stroke-width="1.2"/></g>';
-    },
-    nuage: function (x, y, s, i, sombre) {
-      var f = sombre ? "#9AA3B5" : "#FFFFFF", o = sombre ? 0.9 : 0.92;
-      return '<g fill="' + f + '" opacity="' + o + '"><circle cx="' + (x - s * 0.6) + '" cy="' + (y + s * 0.1) + '" r="' + (s * 0.5) + '"/><circle cx="' + x + '" cy="' + (y - s * 0.2) + '" r="' + (s * 0.7) + '"/><circle cx="' + (x + s * 0.65) + '" cy="' + (y + s * 0.1) + '" r="' + (s * 0.45) + '"/><rect x="' + (x - s * 1.1) + '" y="' + (y + s * 0.05) + '" width="' + (s * 2.2) + '" height="' + (s * 0.55) + '" rx="' + (s * 0.27) + '"/></g>';
-    },
-    nuageNoir: function (x, y, s, i) { return MOTIFS.nuage(x, y, s, i, true); },
-    soleil: function (x, y, s) {
-      var r = "";
-      for (var k = 0; k < 12; k++) { var a = k / 12 * Math.PI * 2; r += "M" + (x + s * 1.2 * Math.cos(a)).toFixed(1) + "," + (y + s * 1.2 * Math.sin(a)).toFixed(1) + " L" + (x + s * 1.55 * Math.cos(a)).toFixed(1) + "," + (y + s * 1.55 * Math.sin(a)).toFixed(1) + " "; }
-      return '<path d="' + r + '" stroke="#FFB020" stroke-width="2.4" stroke-linecap="round"/><circle cx="' + x + '" cy="' + y + '" r="' + s + '" fill="#FFD447" stroke="#FFB020" stroke-width="2"/>';
-    },
-    arcEnCiel: function (x, y, s) {
-      return ["#F25C54", "#FFB347", "#FFD447", "#7FD68C", "#6EC3F4", "#9B7BEA"].map(function (c, k) {
-        var r = s * 1.5 - k * 2.6;
-        return '<path d="M' + (x - r) + "," + (y + s * 0.6) + " A" + r + "," + r + " 0 0 1 " + (x + r) + "," + (y + s * 0.6) + '" fill="none" stroke="' + c + '" stroke-width="2.8"/>';
-      }).join("");
-    },
-    montgolfiere: function (x, y, s) {
-      return '<path d="M' + (x - s * 0.35) + "," + (y + s * 0.7) + " L" + (x - s * 0.2) + "," + (y + s * 1.1) + " M" + (x + s * 0.35) + "," + (y + s * 0.7) + " L" + (x + s * 0.2) + "," + (y + s * 1.1) + '" stroke="#5E3B1C" stroke-width="1"/>' +
-        '<rect x="' + (x - s * 0.22) + '" y="' + (y + s * 1.1) + '" width="' + (s * 0.44) + '" height="' + (s * 0.35) + '" rx="1.5" fill="#9A6534"/>' +
-        '<path d="M' + x + "," + (y - s) + " C" + (x + s * 1.1) + "," + (y - s) + " " + (x + s * 0.8) + "," + (y + s * 0.4) + " " + (x + s * 0.35) + "," + (y + s * 0.75) + " H" + (x - s * 0.35) + " C" + (x - s * 0.8) + "," + (y + s * 0.4) + " " + (x - s * 1.1) + "," + (y - s) + " " + x + "," + (y - s) + 'Z" fill="#F25C54" stroke="#2B2B33" stroke-width="1.2"/>' +
-        '<path d="M' + x + "," + (y - s) + " C" + (x + s * 0.35) + "," + (y - s * 0.6) + " " + (x + s * 0.3) + "," + (y + s * 0.3) + " " + x + "," + (y + s * 0.75) + " C" + (x - s * 0.3) + "," + (y + s * 0.3) + " " + (x - s * 0.35) + "," + (y - s * 0.6) + " " + x + "," + (y - s) + 'Z" fill="#FFD447"/>';
-    },
-    eclair: function (x, y, s) {
-      return '<path d="M' + (x + s * 0.2) + "," + (y - s * 1.2) + " L" + (x - s * 0.6) + "," + (y + s * 0.1) + " L" + (x - s * 0.05) + "," + (y + s * 0.1) + " L" + (x - s * 0.4) + "," + (y + s * 1.2) + " L" + (x + s * 0.65) + "," + (y - s * 0.25) + " L" + (x + s * 0.05) + "," + (y - s * 0.25) + ' Z" fill="#FFD447" stroke="#B8862B" stroke-width="1.2" stroke-linejoin="round"/>';
-    },
-    goutte: function (x, y, s) {
-      return '<path d="M' + x + "," + (y - s) + " C" + (x + s * 0.2) + "," + (y - s * 0.4) + " " + (x + s * 0.7) + "," + y + " " + (x + s * 0.7) + "," + (y + s * 0.35) + " A" + (s * 0.7) + "," + (s * 0.7) + " 0 0 1 " + (x - s * 0.7) + "," + (y + s * 0.35) + " C" + (x - s * 0.7) + "," + y + " " + (x - s * 0.2) + "," + (y - s * 0.4) + " " + x + "," + (y - s) + 'Z" fill="#6EC3F4" stroke="#2A6F99" stroke-width="1.2"/>';
-    },
-  };
-  // Petits éléments semés sur tout le fond.
-  function fondDecor(type) {
-    var c = "", i, x, y;
-    for (i = 0; i < 70; i++) {
-      x = aleaDecor(i) * MONDE[0]; y = aleaDecor(i + 500) * MONDE[1];
-      if (type === "scintille") c += i % 7 ? '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (0.5 + aleaDecor(i + 900) * 1.1).toFixed(2) + '" fill="#fff" opacity="' + (0.4 + aleaDecor(i + 70) * 0.6).toFixed(2) + '"/>'
-        : '<path class="scintille" d="M' + x.toFixed(1) + "," + (y - 4).toFixed(1) + " Q" + x.toFixed(1) + "," + y.toFixed(1) + " " + (x + 4).toFixed(1) + "," + y.toFixed(1) + " Q" + x.toFixed(1) + "," + y.toFixed(1) + " " + x.toFixed(1) + "," + (y + 4).toFixed(1) + " Q" + x.toFixed(1) + "," + y.toFixed(1) + " " + (x - 4).toFixed(1) + "," + y.toFixed(1) + " Q" + x.toFixed(1) + "," + y.toFixed(1) + " " + x.toFixed(1) + "," + (y - 4).toFixed(1) + 'Z" fill="#CFE8FF"/>';
-      else if (type === "confettis") c += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="4" height="2" rx="0.6" fill="' + COULEURS_CASES[i % COULEURS_CASES.length] + '" transform="rotate(' + Math.round(aleaDecor(i + 3) * 180) + " " + x.toFixed(1) + " " + y.toFixed(1) + ')"/>';
-      else if (type === "pluie") c += '<path class="pluie" d="M' + x.toFixed(1) + "," + y.toFixed(1) + " l-2.5,7" + '" stroke="#B9D4F0" stroke-width="1" stroke-linecap="round" opacity="0.55"/>';
-      else if (type === "oiseaux" && i < 9) c += '<path d="M' + x.toFixed(1) + "," + y.toFixed(1) + " q2.5,-2.5 5,0 q2.5,-2.5 5,0" + '" fill="none" stroke="#2B2B33" stroke-width="1.1" stroke-linecap="round" opacity="0.6"/>';
-    }
-    return c;
+  // Centre des bandes libres entre deux rangées de la route.
+  function bande(i) { return Y0 + i * ECART + ECART / 2; }
+  function f1(x) { return (+x).toFixed(1); }
+  function texteSvg(x, y, t, taille, couleur, opts) {
+    opts = opts || {};
+    return '<text x="' + f1(x) + '" y="' + f1(y) + '" font-size="' + taille + '" fill="' + couleur + '" font-family="' + (opts.famille || "Georgia, 'Times New Roman', serif") + '"' +
+      (opts.italique ? ' font-style="italic"' : "") + (opts.gras ? ' font-weight="700"' : "") + (opts.milieu ? ' text-anchor="middle"' : "") +
+      (opts.espace ? ' letter-spacing="' + opts.espace + '"' : "") + (opts.opacite ? ' opacity="' + opts.opacite + '"' : "") +
+      (opts.rot ? ' transform="rotate(' + opts.rot + " " + f1(x) + " " + f1(y) + ')"' : "") + ">" + t + "</text>";
   }
-  // Emplacements libres : trois entre chaque paire de rangées, un dans chaque virage, quelques-uns en marge.
-  var EMPLACEMENTS_DECOR = (function () {
-    var out = [], r;
-    for (r = 0; r < RANGEES - 1; r++) {
-      var y = Y0 + r * ECART + ECART / 2;
-      out.push([112 + (r % 2) * 14, y, 15], [182, y - 2, 13], [250 - (r % 2) * 14, y + 1, 15]);
-      out.push([r % 2 === 0 ? X_D + 6 : X_G - 6, y, 13]);
+  // Cartouche du titre de la planche, dans la marge du bas.
+  function cartouche(titre, sous, encre, fond) {
+    var x = 106, y = MONDE[1] - 30, w = 168;
+    return '<g opacity="0.95"><path d="M' + (x - w / 2) + "," + (y - 13) + " H" + (x + w / 2) + " l7,13 l-7,13 H" + (x - w / 2) + " l-7,-13 Z" + '" fill="' + fond + '" stroke="' + encre + '" stroke-width="1"/>' +
+      '<path d="M' + (x - w / 2 + 4) + "," + (y - 10) + " H" + (x + w / 2 - 4) + " M" + (x - w / 2 + 4) + "," + (y + 10) + " H" + (x + w / 2 - 4) + '" stroke="' + encre + '" stroke-width="0.5"/>' +
+      texteSvg(x, y - 1, titre, 8.5, encre, { milieu: 1, gras: 1, espace: 1.6 }) + texteSvg(x, y + 7.5, sous, 6, encre, { milieu: 1, italique: 1 }) + "</g>";
+  }
+  function etoileGravee(x, y, r, c) {
+    return '<path d="M' + f1(x) + "," + f1(y - r) + " Q" + f1(x) + "," + f1(y) + " " + f1(x + r) + "," + f1(y) + " Q" + f1(x) + "," + f1(y) + " " + f1(x) + "," + f1(y + r) + " Q" + f1(x) + "," + f1(y) + " " + f1(x - r) + "," + f1(y) + " Q" + f1(x) + "," + f1(y) + " " + f1(x) + "," + f1(y - r) + 'Z" fill="' + c + '"/>';
+  }
+
+  // --- Atlas céleste : système de Copernic, cercles gradués, constellations nommées en latin.
+  function plancheAtlas() {
+    var or = "#D9B45A", c = '<defs><linearGradient id="ciel-neutre" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B2A4E"/><stop offset="1" stop-color="#0B1328"/></linearGradient>' +
+      '<radialGradient id="soleil-atlas"><stop offset="0" stop-color="#FFE7A0"/><stop offset="1" stop-color="#D9A33A"/></radialGradient></defs>' +
+      '<rect width="' + MONDE[0] + '" height="' + MONDE[1] + '" fill="url(#ciel-neutre)"/>', cx = 180, cy = 330, i, k;
+    for (i = 0; i < 90; i++) {
+      var sx = aleaDecor(i) * MONDE[0], sy = aleaDecor(i + 500) * MONDE[1];
+      c += i % 9 ? '<circle cx="' + f1(sx) + '" cy="' + f1(sy) + '" r="' + (0.4 + aleaDecor(i + 900)).toFixed(2) + '" fill="#F4E7C3" opacity="' + (0.35 + aleaDecor(i + 70) * 0.5).toFixed(2) + '"/>' : '<g class="scintille">' + etoileGravee(sx, sy, 3.2, "#F4E7C3") + "</g>";
     }
-    out.push([24, 16, 9], [338, 30, 10], [336, MONDE[1] - 26, 11], [178, MONDE[1] - 14, 8]);
-    return out;
-  })();
-  function decorPlateau(ton) {
-    var d = DECORS[ton] || DECORS.neutre;
-    var c = '<defs><linearGradient id="ciel-' + ton + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + d.haut + '"/><stop offset="1" stop-color="' + d.bas + '"/></linearGradient></defs>' +
-      '<rect x="0" y="0" width="' + MONDE[0] + '" height="' + MONDE[1] + '" fill="url(#ciel-' + ton + ')"/>' + fondDecor(d.fond);
-    EMPLACEMENTS_DECOR.forEach(function (e, i) {
-      var m = d.motifs[(i * 5 + 2) % d.motifs.length];
-      c += '<g class="motif">' + MOTIFS[m](e[0], e[1], e[2], i) + "</g>";
+    // Méridiens et cercles gradués.
+    for (k = 0; k < 24; k++) { var a = k * Math.PI / 12; c += '<path d="M' + f1(cx + 58 * Math.cos(a)) + "," + f1(cy + 58 * Math.sin(a)) + " L" + f1(cx + 330 * Math.cos(a)) + "," + f1(cy + 330 * Math.sin(a)) + '" stroke="' + or + '" stroke-width="0.4" opacity="0.18"/>'; }
+    var orbites = [["Mercurius", 58, 200], ["Venus", 98, 330], ["Terra", 140, 25], ["Mars", 186, 150], ["Iupiter", 236, 250], ["Saturnus", 290, 300]];
+    orbites.forEach(function (o, j) {
+      c += '<circle cx="' + cx + '" cy="' + cy + '" r="' + o[1] + '" fill="none" stroke="' + or + '" stroke-width="' + (j === 2 ? 0.9 : 0.6) + '" opacity="0.45"' + (j % 2 ? ' stroke-dasharray="1.5 2.5"' : "") + "/>";
+      for (k = 0; k < 72; k++) { var b = k * Math.PI / 36, l = k % 6 ? 2 : 4; c += '<path d="M' + f1(cx + o[1] * Math.cos(b)) + "," + f1(cy + o[1] * Math.sin(b)) + " L" + f1(cx + (o[1] + l) * Math.cos(b)) + "," + f1(cy + (o[1] + l) * Math.sin(b)) + '" stroke="' + or + '" stroke-width="0.4" opacity="0.35"/>'; }
+      var ang = o[2] * Math.PI / 180, px = cx + o[1] * Math.cos(ang), py = cy + o[1] * Math.sin(ang);
+      c += '<circle cx="' + f1(px) + '" cy="' + f1(py) + '" r="' + (j === 4 ? 6 : j === 5 ? 5 : 3.6) + '" fill="#0B1328" stroke="' + or + '" stroke-width="1"/>';
+      if (j === 5) c += '<ellipse cx="' + f1(px) + '" cy="' + f1(py) + '" rx="10" ry="2.8" fill="none" stroke="' + or + '" stroke-width="0.9" transform="rotate(-20 ' + f1(px) + " " + f1(py) + ')"/>';
+      if (j === 2) c += '<circle cx="' + f1(px) + '" cy="' + f1(py) + '" r="9" fill="none" stroke="' + or + '" stroke-width="0.5" stroke-dasharray="1 1.5"/><circle cx="' + f1(px + 9) + '" cy="' + f1(py) + '" r="1.6" fill="' + or + '"/>';
+      c += texteSvg(px + 8, py - 6, o[0], 7.5, or, { italique: 1, opacite: 0.9 });
     });
-    return c;
+    // Le Soleil au centre, à visage, comme sur les atlas baroques.
+    for (k = 0; k < 16; k++) { var r = k * Math.PI / 8; c += '<path d="M' + f1(cx + 15 * Math.cos(r)) + "," + f1(cy + 15 * Math.sin(r)) + " L" + f1(cx + (k % 2 ? 22 : 27) * Math.cos(r)) + "," + f1(cy + (k % 2 ? 22 : 27) * Math.sin(r)) + '" stroke="' + or + '" stroke-width="1.4"/>'; }
+    c += '<circle cx="' + cx + '" cy="' + cy + '" r="14" fill="url(#soleil-atlas)" stroke="#8C5A1E" stroke-width="0.8"/><path d="M' + (cx - 5) + "," + (cy - 2) + " q2,-2 3,0 M" + (cx + 2) + "," + (cy - 2) + " q2,-2 3,0 M" + (cx - 4) + "," + (cy + 5) + ' q4,3 8,0" fill="none" stroke="#8C5A1E" stroke-width="0.9"/>' + texteSvg(cx, cy + 40, "SOL", 7, or, { milieu: 1, espace: 2 });
+    // Anneau du zodiaque, à moitié hors de la page.
+    c += '<circle cx="' + cx + '" cy="' + cy + '" r="318" fill="none" stroke="' + or + '" stroke-width="0.8" opacity="0.5"/><circle cx="' + cx + '" cy="' + cy + '" r="336" fill="none" stroke="' + or + '" stroke-width="0.8" opacity="0.5"/>';
+    ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"].forEach(function (z, j) {
+      var a0 = j * Math.PI / 6, a1 = a0 + Math.PI / 12;
+      c += '<path d="M' + f1(cx + 318 * Math.cos(a0)) + "," + f1(cy + 318 * Math.sin(a0)) + " L" + f1(cx + 336 * Math.cos(a0)) + "," + f1(cy + 336 * Math.sin(a0)) + '" stroke="' + or + '" stroke-width="0.8" opacity="0.5"/>' +
+        texteSvg(cx + 327 * Math.cos(a1), cy + 327 * Math.sin(a1) + 3, z, 9, or, { milieu: 1, opacite: 0.75 });
+    });
+    // Constellations, dans les bandes libres.
+    var constel = [
+      ["Ursa Maior", 120, bande(0) - 6, [[0, 0], [14, 3], [27, 1], [38, 6], [44, 16], [60, 15], [58, 3]], [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 3]]],
+      ["Cassiopeia", 214, bande(1) - 8, [[0, 0], [10, 14], [20, 4], [31, 16], [40, 2]], [[0, 1], [1, 2], [2, 3], [3, 4]]],
+      ["Orion", 98, bande(2) - 14, [[0, 0], [24, 2], [8, 13], [12, 15], [16, 17], [2, 30], [26, 28]], [[0, 2], [1, 4], [2, 3], [3, 4], [2, 5], [4, 6]]],
+      ["Cygnus", 232, bande(3) - 14, [[16, 0], [16, 12], [16, 30], [0, 8], [32, 16]], [[0, 1], [1, 2], [3, 1], [1, 4]]],
+      ["Lyra", 128, bande(4) - 10, [[0, 0], [6, 9], [14, 9], [4, 22], [12, 22]], [[0, 1], [0, 2], [1, 2], [1, 3], [2, 4], [3, 4]]],
+    ];
+    constel.forEach(function (k0) {
+      var ox = k0[1], oy = k0[2];
+      k0[4].forEach(function (e) { var p = k0[3][e[0]], q = k0[3][e[1]]; c += '<path d="M' + (ox + p[0]) + "," + (oy + p[1]) + " L" + (ox + q[0]) + "," + (oy + q[1]) + '" stroke="#F4E7C3" stroke-width="0.6" opacity="0.55"/>'; });
+      k0[3].forEach(function (p, j) { c += etoileGravee(ox + p[0], oy + p[1], j % 3 ? 2.6 : 3.6, "#FFF3CF"); });
+      c += texteSvg(ox, oy + 40, k0[0], 7.5, "#F4E7C3", { italique: 1, opacite: 0.8 });
+    });
+    // Rose des vents dans un virage.
+    var rx = X_D + 4, ry = bande(2);
+    c += '<g opacity="0.85"><circle cx="' + rx + '" cy="' + ry + '" r="15" fill="none" stroke="' + or + '" stroke-width="0.7"/>';
+    for (k = 0; k < 8; k++) { var q2 = k * Math.PI / 4, lg = k % 2 ? 9 : 19; c += '<path d="M' + rx + "," + ry + " L" + f1(rx + lg * Math.cos(q2 - 0.18)) + "," + f1(ry + lg * Math.sin(q2 - 0.18)) + " L" + f1(rx + lg * 1.05 * Math.cos(q2)) + "," + f1(ry + lg * 1.05 * Math.sin(q2)) + ' Z" fill="' + (k % 2 ? "#8C6A2A" : or) + '"/>'; }
+    c += texteSvg(rx, ry - 22, "N", 7, or, { milieu: 1, gras: 1 }) + "</g>";
+    return c + cartouche("SYSTEMA MUNDI", "Atlas des cieux, d'après Copernic", or, "#0B1328");
+  }
+
+  // --- Carnet de Léonard : papier vieilli, écriture en miroir, études de proportions et de machines.
+  function plancheCarnet() {
+    var encre = "#6B4A2B", c = '<defs><radialGradient id="ciel-impressionnee" cx="0.5" cy="0.5" r="0.75"><stop offset="0.55" stop-color="#EEDFBD"/><stop offset="1" stop-color="#CDB283"/></radialGradient></defs>' +
+      '<rect width="' + MONDE[0] + '" height="' + MONDE[1] + '" fill="url(#ciel-impressionnee)"/>', i, k;
+    for (i = 0; i < 40; i++) c += '<circle cx="' + f1(aleaDecor(i + 40) * MONDE[0]) + '" cy="' + f1(aleaDecor(i + 140) * MONDE[1]) + '" r="' + f1(1 + aleaDecor(i + 240) * 6) + '" fill="#8C5A1E" opacity="' + (0.04 + aleaDecor(i) * 0.06).toFixed(2) + '"/>';
+    // Lignes d'écriture en miroir : des mots tracés à la plume, de droite à gauche.
+    function ecriture(x0, y0, lignes, larg) {
+      var o = "";
+      for (var l = 0; l < lignes; l++) {
+        var x = x0 + larg, y = y0 + l * 6.5, n = 0;
+        while (x > x0 + 6) {
+          var mot = 6 + aleaDecor(x * 7 + y + n) * 14, d = "M" + f1(x) + "," + f1(y);
+          for (var s = 0; s < mot; s += 2.4) d += " q-0.6,-" + f1(1 + aleaDecor(s + x) * 2.2) + " -1.2,0 q-0.6," + f1(0.6 + aleaDecor(s * 3 + y) * 1.4) + " -1.2,0";
+          o += '<path d="' + d + '" fill="none" stroke="' + encre + '" stroke-width="0.55" opacity="0.55"/>';
+          x -= mot + 3.5; n++;
+        }
+      }
+      return o;
+    }
+    c += ecriture(206, bande(0) - 12, 4, 80) + ecriture(80, bande(1) - 16, 3, 70) + ecriture(196, bande(3) + 6, 3, 80) + ecriture(76, bande(4) - 2, 3, 74) + ecriture(250, 8, 1, 90) + ecriture(80, MONDE[1] - 18, 2, 90);
+    // Icosaèdre en fil de fer, comme les planches pour Pacioli.
+    var phi = (1 + Math.sqrt(5)) / 2, V = [[-1, phi, 0], [1, phi, 0], [-1, -phi, 0], [1, -phi, 0], [0, -1, phi], [0, 1, phi], [0, -1, -phi], [0, 1, -phi], [phi, 0, -1], [phi, 0, 1], [-phi, 0, -1], [-phi, 0, 1]];
+    var ca = Math.cos(0.5), sa = Math.sin(0.5), cb = Math.cos(0.35), sb = Math.sin(0.35);
+    var P2 = V.map(function (v) { var x = v[0] * ca - v[2] * sa, z = v[0] * sa + v[2] * ca, y = v[1] * cb - z * sb; return [118 + x * 13, bande(0) + 2 + y * 13]; });
+    for (i = 0; i < 12; i++) for (k = i + 1; k < 12; k++) {
+      var dv = Math.hypot(V[i][0] - V[k][0], V[i][1] - V[k][1], V[i][2] - V[k][2]);
+      if (Math.abs(dv - 2) < 0.01) c += '<path d="M' + f1(P2[i][0]) + "," + f1(P2[i][1]) + " L" + f1(P2[k][0]) + "," + f1(P2[k][1]) + '" stroke="' + encre + '" stroke-width="0.8"/>';
+    }
+    c += texteSvg(118, bande(0) + 34, "ycosaedron", 6.5, encre, { milieu: 1, italique: 1 });
+    // Étude de proportions : cercle, carré et figure aux bras levés.
+    var vx = 180, vy = bande(2) - 2, R = 34;
+    c += '<g stroke="' + encre + '" fill="none" stroke-width="0.9"><circle cx="' + vx + '" cy="' + vy + '" r="' + R + '"/><rect x="' + (vx - 28) + '" y="' + (vy - 22) + '" width="56" height="56"/>' +
+      '<circle cx="' + vx + '" cy="' + (vy - 15) + '" r="4.5"/><path d="M' + vx + "," + (vy - 10) + " V" + (vy + 10) + " M" + vx + "," + (vy + 10) + " L" + (vx - 7) + "," + (vy + 34) + " M" + vx + "," + (vy + 10) + " L" + (vx + 7) + "," + (vy + 34) +
+      " M" + vx + "," + (vy + 10) + " L" + (vx - 20) + "," + (vy + 28) + " M" + vx + "," + (vy + 10) + " L" + (vx + 20) + "," + (vy + 28) + " M" + vx + "," + (vy - 6) + " H" + (vx - 28) + " M" + vx + "," + (vy - 6) + " H" + (vx + 28) +
+      " M" + vx + "," + (vy - 6) + " L" + (vx - 26) + "," + (vy - 20) + " M" + vx + "," + (vy - 6) + " L" + (vx + 26) + "," + (vy - 20) + '"/>' +
+      '<path d="M' + (vx - 28) + "," + (vy - 22) + " L" + (vx + 28) + "," + (vy + 34) + " M" + (vx + 28) + "," + (vy - 22) + " L" + (vx - 28) + "," + (vy + 34) + '" stroke-width="0.35" stroke-dasharray="2 2"/></g>';
+    // Aile d'ornithoptère.
+    var ox = 232, oy = bande(1) + 2;
+    c += '<g stroke="' + encre + '" fill="none" stroke-width="0.8"><path d="M' + ox + "," + oy + " C" + (ox + 20) + "," + (oy - 22) + " " + (ox + 52) + "," + (oy - 20) + " " + (ox + 66) + "," + (oy - 6) + '"/>';
+    for (k = 0; k < 5; k++) { var tx0 = ox + 14 + k * 11; c += '<path d="M' + ox + "," + oy + " Q" + (tx0 - 4) + "," + (oy - 6) + " " + tx0 + "," + (oy + 8 - k) + '"/>'; }
+    c += '<path d="M' + ox + "," + oy + " Q" + (ox + 30) + "," + (oy + 14) + " " + (ox + 66) + "," + (oy - 6) + '" stroke-dasharray="2 1.6"/></g>' + texteSvg(ox + 40, oy + 22, "ucello", 6.5, encre, { italique: 1 });
+    // Engrenages qui s'entraînent.
+    function roue(x, y, r, n, ph) {
+      var p = [];
+      for (var j = 0; j < n * 2; j++) { var a = j * Math.PI / n + ph, rr = j % 2 ? r * 0.82 : r; p.push(f1(x + rr * Math.cos(a - 0.1)) + "," + f1(y + rr * Math.sin(a - 0.1)), f1(x + rr * Math.cos(a + 0.1)) + "," + f1(y + rr * Math.sin(a + 0.1))); }
+      return '<polygon points="' + p.join(" ") + '" fill="none" stroke="' + encre + '" stroke-width="0.8"/><circle cx="' + x + '" cy="' + y + '" r="' + f1(r * 0.25) + '" fill="none" stroke="' + encre + '" stroke-width="0.8"/>' +
+        '<path d="M' + f1(x - r * 0.6) + "," + y + " H" + f1(x + r * 0.6) + " M" + x + "," + f1(y - r * 0.6) + " V" + f1(y + r * 0.6) + '" stroke="' + encre + '" stroke-width="0.5"/>';
+    }
+    c += roue(104, bande(3) + 2, 17, 12, 0) + roue(131, bande(3) + 13, 10, 8, 0.2) + texteSvg(104, bande(3) + 30, "rote dentate", 6.5, encre, { italique: 1 });
+    // Spirale d'or dans ses rectangles.
+    var gx = 216, gy = bande(4) - 18, L = 46, sq = [[0, 0, 28.4], [28.4, 0, 17.6], [35.0, 17.6, 10.8], [28.4, 24.4, 6.6]];
+    c += '<g stroke="' + encre + '" fill="none" stroke-width="0.7"><rect x="' + gx + '" y="' + gy + '" width="' + L + '" height="28.4"/>';
+    sq.forEach(function (q) { c += '<rect x="' + f1(gx + q[0]) + '" y="' + f1(gy + q[1]) + '" width="' + q[2] + '" height="' + q[2] + '" stroke-width="0.4"/>'; });
+    c += '<path d="M' + gx + "," + (gy + 28.4) + " A28.4,28.4 0 0 1 " + f1(gx + 28.4) + "," + gy + " A17.6,17.6 0 0 1 " + f1(gx + 46) + "," + f1(gy + 17.6) + " A10.8,10.8 0 0 1 " + f1(gx + 35.2) + "," + f1(gy + 28.4) + " A6.6,6.6 0 0 1 " + f1(gx + 28.6) + "," + f1(gy + 21.8) + '" stroke-width="1"/></g>';
+    // Tache d'encre.
+    c += '<path d="M302,' + (bande(4) + 10) + ' c4,-6 12,-4 11,2 c6,1 4,9 -2,8 c-1,6 -10,5 -10,-1 c-5,-1 -4,-8 1,-9z" fill="' + encre + '" opacity="0.35"/>';
+    return c + cartouche("CODICE · STUDI", "Carnet de Léonard : proportions et machines", encre, "#EADBB8");
+  }
+
+  // --- Planche de l'Encyclopédie : gravure du laboratoire de chimie, figures numérotées, table des rapports.
+  function plancheEncyclopedie() {
+    var encre = "#2B2622", c = '<defs><linearGradient id="ciel-moqueuse" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5EEDD"/><stop offset="1" stop-color="#E7DCC2"/></linearGradient>' +
+      '<pattern id="hachures" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0,0 V2.4" stroke="' + encre + '" stroke-width="0.6"/></pattern></defs>' +
+      '<rect width="' + MONDE[0] + '" height="' + MONDE[1] + '" fill="url(#ciel-moqueuse)"/>' +
+      '<rect x="5" y="5" width="' + (MONDE[0] - 10) + '" height="' + (MONDE[1] - 10) + '" fill="none" stroke="' + encre + '" stroke-width="1.4"/><rect x="9" y="9" width="' + (MONDE[0] - 18) + '" height="' + (MONDE[1] - 18) + '" fill="none" stroke="' + encre + '" stroke-width="0.5"/>';
+    var g = '<g stroke="' + encre + '" stroke-width="0.9" fill="none" stroke-linejoin="round">', fig = 0;
+    function legende(x, y) { fig++; return texteSvg(x, y, "Fig. " + fig + ".", 6.5, encre, { italique: 1 }); }
+    // Fourneau et alambic.
+    var ax = 102, ay = bande(0) + 20;
+    g += '<rect x="' + (ax - 16) + '" y="' + (ay - 14) + '" width="32" height="18" fill="url(#hachures)"/><rect x="' + (ax - 16) + '" y="' + (ay - 14) + '" width="32" height="18"/><path d="M' + (ax - 6) + "," + (ay + 4) + " v-7 a6,6 0 0 1 12,0 v7" + '" fill="#F5EEDD"/>' +
+      '<path d="M' + (ax - 11) + "," + (ay - 14) + " q0,-14 11,-16 q11,2 11,16" + '" fill="#F5EEDD"/><path d="M' + (ax - 4) + "," + (ay - 30) + " q4,-10 10,-2 l26,10" + '"/><path d="M' + (ax + 6) + "," + (ay - 31) + " l28,12" + '"/>' +
+      '<path d="M' + (ax + 34) + "," + (ay - 18) + " v14 h10 v-14" + '" fill="#F5EEDD"/>';
+    g += "</g>" + legende(ax - 16, ay + 13) + '<g stroke="' + encre + '" stroke-width="0.9" fill="none" stroke-linejoin="round">';
+    // Balance de précision.
+    var bx = 248, by = bande(0) + 16;
+    g += '<path d="M' + bx + "," + (by + 4) + " v-30 M" + (bx - 26) + "," + (by - 24) + " H" + (bx + 26) + " M" + (bx - 10) + "," + (by + 4) + " h20" + '"/><path d="M' + bx + "," + (by - 26) + " l-3,-5 h6 z" + '"/>' +
+      '<path d="M' + (bx - 26) + "," + (by - 24) + " l-8,14 h16 z M" + (bx + 26) + "," + (by - 24) + " l-8,14 h16 z" + '" stroke-width="0.6"/><path d="M' + (bx - 34) + "," + (by - 10) + " q8,5 16,0 M" + (bx + 18) + "," + (by - 10) + " q8,5 16,0" + '" fill="url(#hachures)"/>';
+    g += "</g>" + legende(bx + 30, by + 4) + '<g stroke="' + encre + '" stroke-width="0.9" fill="none" stroke-linejoin="round">';
+    // Cornue sur son support.
+    var cx = 196, cy = bande(1) + 6;
+    g += '<circle cx="' + cx + '" cy="' + cy + '" r="11" fill="#F5EEDD"/><path d="M' + (cx + 8) + "," + (cy - 7) + " L" + (cx + 40) + "," + (cy + 6) + " M" + (cx + 10) + "," + (cy - 3) + " L" + (cx + 40) + "," + (cy + 9) + '"/>' +
+      '<path d="M' + (cx - 9) + "," + (cy + 9) + " h18 M" + (cx - 7) + "," + (cy + 9) + " l-4,13 M" + (cx + 7) + "," + (cy + 9) + " l4,13" + '"/><path d="M' + (cx - 9) + "," + (cy + 2) + " a10,9 0 0 0 18,0" + '" fill="url(#hachures)" stroke-width="0.4"/>';
+    g += "</g>" + legende(cx - 14, cy + 30) + '<g stroke="' + encre + '" stroke-width="0.9" fill="none" stroke-linejoin="round">';
+    // Cloche à vide et sa pompe.
+    var kx = 104, ky = bande(2) + 16;
+    g += '<path d="M' + (kx - 16) + "," + ky + " v-18 a16,16 0 0 1 32,0 v18 z" + '" fill="#F5EEDD"/><path d="M' + (kx - 22) + "," + ky + " h44" + '" stroke-width="1.6"/><path d="M' + kx + "," + (ky - 34) + " v-4" + '"/>' +
+      '<path d="M' + (kx + 22) + "," + ky + " h10 v-28 m-4,0 h8 M" + (kx + 28) + "," + (ky - 28) + " v-6" + '"/><path d="M' + (kx - 6) + "," + (ky - 8) + " l6,-12 l6,12" + '" stroke-width="0.6"/>';
+    g += "</g>" + legende(kx - 22, ky + 10) + '<g stroke="' + encre + '" stroke-width="0.9" fill="none" stroke-linejoin="round">';
+    // Mortier et pilon.
+    var mx = 252, my = bande(2) + 10;
+    g += '<path d="M' + (mx - 14) + "," + (my - 6) + " h28 q-2,16 -14,16 q-12,0 -14,-16 z" + '" fill="url(#hachures)"/><path d="M' + (mx - 14) + "," + (my - 6) + " h28 q-2,16 -14,16 q-12,0 -14,-16 z" + '"/><path d="M' + (mx + 2) + "," + (my - 2) + " l14,-20" + '" stroke-width="2.2"/>';
+    g += "</g>" + legende(mx + 16, my + 10);
+    // Table des rapports de Geoffroy (1718) : les affinités chimiques, en symboles.
+    var tx = 108, ty = bande(3) - 14;
+    var simples = ["☉", "☽", "♂", "♀", "☿", "♄", "♃", "△", "▽", "⊕", "☉", "☽"];
+    for (var r = 0; r < 3; r++) for (var col = 0; col < 8; col++) {
+      var x = tx + col * 18, y = ty + r * 12;
+      c += '<rect x="' + x + '" y="' + y + '" width="18" height="12" fill="' + (r === 0 ? "#E7DCC2" : "none") + '" stroke="' + encre + '" stroke-width="0.6"/>' + texteSvg(x + 9, y + 9, simples[(col * 3 + r * 5) % simples.length], 8, encre, { milieu: 1 });
+    }
+    c += texteSvg(tx + 72, ty + 46, "Table des différents rapports observés en chimie", 6.3, encre, { milieu: 1, italique: 1 });
+    // Fioles et matras alignés sur une étagère.
+    var ex = 80, ey = bande(4) + 14;
+    g += '<g stroke="' + encre + '" stroke-width="0.9" fill="#F5EEDD" stroke-linejoin="round"><path d="M' + (ex - 8) + "," + ey + " H" + (ex + 120) + '" stroke-width="1.4"/>';
+    for (var f = 0; f < 5; f++) {
+      var fx = ex + f * 26;
+      g += f % 2 ? '<path d="M' + (fx - 3) + "," + (ey - 26) + " v10 l-8,14 q-1,2 2,2 h18 q3,0 2,-2 l-8,-14 v-10 z" + '"/><path d="M' + (fx - 9) + "," + (ey - 6) + " h18 l2,4 q0,2 -2,2 h-18 q-2,0 -2,-2 z" + '" fill="url(#hachures)" stroke="none"/>'
+        : '<circle cx="' + fx + '" cy="' + (ey - 9) + '" r="9"/><path d="M' + (fx - 2.5) + "," + (ey - 18) + " v-10 h5 v10" + '"/><path d="M' + (fx - 8) + "," + (ey - 6) + " a9,9 0 0 0 16,0 z" + '" fill="url(#hachures)" stroke="none"/>';
+    }
+    g += "</g>";
+    c += g + legende(ex + 124, ey);
+    c += texteSvg(234, 22, "CHYMIE", 8, encre, { milieu: 1, gras: 1, espace: 3 });
+    return c + cartouche("PLANCHE I", "Laboratoire et table des rapports, Encyclopédie", encre, "#F5EEDD");
+  }
+
+  // --- Tableau noir : équations à la craie, schémas, et une erreur barrée.
+  function plancheTableau() {
+    var craie = "#EDEDE2", c = '<defs><linearGradient id="ciel-decue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34433B"/><stop offset="1" stop-color="#1D2622"/></linearGradient></defs>' +
+      '<rect width="' + MONDE[0] + '" height="' + MONDE[1] + '" fill="url(#ciel-decue)"/><rect x="2" y="2" width="' + (MONDE[0] - 4) + '" height="' + (MONDE[1] - 4) + '" fill="none" stroke="#7A5418" stroke-width="5"/>', i;
+    for (i = 0; i < 14; i++) c += '<ellipse cx="' + f1(aleaDecor(i + 7) * MONDE[0]) + '" cy="' + f1(aleaDecor(i + 77) * MONDE[1]) + '" rx="' + f1(18 + aleaDecor(i + 3) * 40) + '" ry="' + f1(6 + aleaDecor(i + 9) * 10) + '" fill="' + craie + '" opacity="0.045" transform="rotate(' + Math.round(aleaDecor(i + 5) * 40 - 20) + ')"/>';
+    var main = "'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive";
+    function eq(x, y, t, taille, rot) { return texteSvg(x, y, t, taille || 10, craie, { famille: main, opacite: 0.82, rot: rot || 0 }); }
+    c += eq(96, bande(0) - 2, "E = mc²", 13, -4) + eq(196, bande(0) + 8, "iħ ∂ψ/∂t = Ĥψ", 10, 2) + eq(92, bande(1) + 10, "∇ · E = ρ / ε₀", 10, -2) +
+      eq(206, bande(1) - 4, "Δx · Δp ≥ ħ/2", 10, 3) + eq(212, bande(2) + 22, "S = k log W", 10, -3) + eq(88, bande(3) + 4, "F = G m₁m₂ / r²", 10, 2) +
+      eq(214, bande(3) + 16, "PV = nRT", 10, -2) + eq(160, bande(4) + 14, 'e<tspan dy="-5" font-size="8">iπ</tspan><tspan dy="5"> + 1 = 0</tspan>', 11, 1) + eq(250, 20, "c = 299 792 458 m/s", 8, 0);
+    // L'erreur barrée.
+    c += eq(84, bande(4) - 2, "2 + 2 = 5", 11, -3) + '<path d="M80,' + (bande(4) - 6) + " L136," + (bande(4) - 9) + '" stroke="#F28B82" stroke-width="1.6" opacity="0.8"/>' + eq(140, bande(4) - 5, "non !", 8, -6);
+    // Sinusoïde, cône de lumière, diagramme de Feynman, atome de Bohr.
+    var d = "M" + 120 + "," + (bande(2) - 6);
+    for (i = 1; i <= 60; i++) d += " L" + f1(120 + i * 1.1) + "," + f1(bande(2) - 6 + Math.sin(i / 60 * Math.PI * 4) * 7);
+    c += '<g stroke="' + craie + '" fill="none" stroke-width="1" opacity="0.7" stroke-linecap="round"><path d="' + d + '"/><path d="M116,' + (bande(2) - 6) + " H192 M120," + (bande(2) - 18) + " V" + (bande(2) + 6) + '" stroke-width="0.6"/>';
+    var lx = X_D + 4, ly = bande(0);
+    c += '<path d="M' + (lx - 14) + "," + (ly - 16) + " L" + (lx + 14) + "," + (ly + 16) + " M" + (lx + 14) + "," + (ly - 16) + " L" + (lx - 14) + "," + (ly + 16) + '"/><ellipse cx="' + lx + '" cy="' + (ly - 16) + '" rx="14" ry="3.5"/><ellipse cx="' + lx + '" cy="' + (ly + 16) + '" rx="14" ry="3.5"/>';
+    var fx = X_G - 4, fy = bande(1);
+    c += '<path d="M' + (fx - 14) + "," + (fy - 14) + " L" + (fx - 4) + "," + fy + " L" + (fx - 14) + "," + (fy + 14) + " M" + (fx + 14) + "," + (fy - 14) + " L" + (fx + 4) + "," + fy + " L" + (fx + 14) + "," + (fy + 14) + '"/>';
+    var w = "M" + (fx - 4) + "," + fy; for (i = 1; i <= 8; i++) w += " q0.5," + (i % 2 ? -3 : 3) + " 1," + 0; c += '<path d="' + w + '"/>';
+    var bx = X_D + 4, by = bande(3) + 2;
+    c += '<circle cx="' + bx + '" cy="' + by + '" r="3" fill="' + craie + '"/><circle cx="' + bx + '" cy="' + by + '" r="9"/><circle cx="' + bx + '" cy="' + by + '" r="16"/><circle cx="' + (bx + 16) + '" cy="' + by + '" r="1.8" fill="' + craie + '"/><circle cx="' + (bx - 6.4) + '" cy="' + (by - 6.4) + '" r="1.5" fill="' + craie + '"/>';
+    var pyx = X_G - 10, pyy = bande(2) + 12;
+    c += '<path d="M' + pyx + "," + pyy + " h24 v-18 z" + '"/></g>' + eq(pyx - 2, pyy + 10, "a²+b²=c²", 7, 0);
+    // Une craie et un chiffon sur le rebord.
+    c += '<rect x="300" y="' + (MONDE[1] - 16) + '" width="14" height="4" rx="2" fill="' + craie + '" opacity="0.9"/><rect x="20" y="' + (MONDE[1] - 18) + '" width="22" height="8" rx="2" fill="#8E8E86" opacity="0.8"/>';
+    return c + cartouche("TABLEAU NOIR", "Équations qui ont changé la physique", "#EDEDE2", "#24302A");
+  }
+  var cachePlanches = {};
+  function decorPlateau(ton) {
+    var t = DECORS[ton] && ton !== "impatiente" ? ton : "neutre";
+    if (!cachePlanches[t]) cachePlanches[t] = { neutre: plancheAtlas, impressionnee: plancheCarnet, moqueuse: plancheEncyclopedie, decue: plancheTableau }[t]();
+    return cachePlanches[t];
   }
   function caseConnue(n) { return P.plateau.tours > 0 || n <= P.plateau.atteinte; }
   function nomEpoque(id) { var e = C.plateau.epoques.filter(function (x) { return x.id === id; })[0]; return e ? tx(e.nom) : ""; }
@@ -1036,7 +1127,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   }
   // v7 : le plateau s'ouvre zoomé autour du pion. On le fait glisser au doigt,
   // « Vue d'ensemble » le montre en entier, et la caméra suit le pion quand il avance.
-  var ETENDUE = [0, 0, MONDE[0], MONDE[1]], CADRE = 180, camera = { large: false, x: null, y: null };
+  var ETENDUE = [0, 0, MONDE[0], MONDE[1]], CADRE = 180, camera = { large: true, x: null, y: null };
   function borner(x, y) {
     return [Math.max(ETENDUE[0], Math.min(ETENDUE[0] + ETENDUE[2] - CADRE, x)), Math.max(ETENDUE[1], Math.min(ETENDUE[1] + ETENDUE[3] - CADRE, y))];
   }
@@ -1114,8 +1205,11 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     }
     var ici = animPion ? animPion.chemin[0] : pl.position, pos = centreCase(ici);
     var large = !bilan && camera.large, vb = large ? ETENDUE.join(" ") : boiteVue(!bilan && camera.x != null ? [camera.x, camera.y] : cadrePion(ici));
-    var pion = '<g id="pion" data-n="pion" style="cursor:pointer" transform="translate(' + pos[0].toFixed(1) + " " + pos[1].toFixed(1) + ')"><ellipse cx="0" cy="15" rx="13" ry="4" fill="#000" opacity="0.25"/><circle r="16" fill="var(--parchemin)" stroke="var(--accent)" stroke-width="3"/>' +
-      '<svg x="-13" y="-13" width="26" height="26" viewBox="8 1 24 24" class="pix">' + pixelsAvatar(0, 0) + "</svg></g>";
+    // v8 : le pion se repère d'un coup d'œil, même en vue d'ensemble : halo qui pulse, double contour, flèche au-dessus.
+    var pion = '<g id="pion" data-n="pion" style="cursor:pointer" transform="translate(' + pos[0].toFixed(1) + " " + pos[1].toFixed(1) + ')"><circle r="25" fill="#FFD447" opacity="0.45" class="halo-pion"/><ellipse cx="0" cy="17" rx="14" ry="4" fill="#000" opacity="0.3"/>' +
+      '<circle r="19.5" fill="#1E1A2B"/><circle r="17.5" fill="var(--parchemin)" stroke="#FFD447" stroke-width="3.5"/>' +
+      '<path class="fleche-pion" d="M0,-24 L-6,-33 H6 Z" fill="#FFD447" stroke="#1E1A2B" stroke-width="1.6" stroke-linejoin="round"/>' +
+      '<svg x="-14.5" y="-14.5" width="29" height="29" viewBox="8 1 24 24" class="pix">' + pixelsAvatar(0, 0) + "</svg></g>";
     return '<svg class="grille' + (large ? "" : " zoom") + '" viewBox="' + vb + '" role="img" aria-label="Plateau de l\'histoire : une route sinueuse du départ, en haut à gauche, jusqu\'à l\'arrivée, en bas. Décor : ' + (DECORS[ton] || DECORS.neutre).nom + ", l'IA est " + (NOM_HUMEUR[ton] || ton) + ". Ton pion est sur la case " + pl.position + " sur " + nb + '">' + cachePlateau.svg + pion + "</svg>";
   }
   function valeurTexte(k, type) {
@@ -1208,7 +1302,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       }
       grille.appendChild(cam);
       var ton = M.humeur(P);
-      grille.appendChild(el('<div class="ciel-ia" aria-hidden="true">' + esc((DECORS[ton] || DECORS.neutre).nom) + " · l'IA est " + esc(NOM_HUMEUR[ton] || ton) + "</div>"));
+      grille.appendChild(el('<div class="ciel-ia" aria-hidden="true">' + "Fond : " + esc((DECORS[ton] || DECORS.neutre).nom) + ", car l'IA est " + esc(NOM_HUMEUR[ton] || ton) + "</div>"));
     }
     majGrille();
     // Glisser au doigt ou à la souris quand le plateau est zoomé. Au-delà de 6 px, ce n'est plus un clic.
@@ -2279,6 +2373,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     bloque_quarantaine: function () { return "Quarantaine : cette épreuve ne fait pas avancer ton pion."; },
     tour_fini: function (e) { return "Arrivée ! Tour " + e.tour + " terminé : retour au feu, en plus dur."; },
     ennemi: function (e) { return "Case " + e.case + " : " + nomEn(C.ennemiParId[e.ennemi]) + " te barre la route. Gagne le duel pour faire les " + e.reste + " case" + (e.reste > 1 ? "s" : "") + " qui restent."; },
+    cadeau: function (e) { return "Case cadeau " + e.case + " : un " + ({ objets: "objet", livres: "livre", accessoires: "accessoire", masques: "masque" }[e.famille] || "trésor") + " rejoint ta collection, sans épreuve."; },
+    cadeau_vide: function (e) { return "Case cadeau " + e.case + " : le cabinet est vide pour ce tour. L'IA promet de se rattraper."; },
     teleport: function (e) { return "Téléportation, case " + e.case + " : retour à la case " + e.vers + "."; },
     revision: function (e) { return "Révision forcée, case " + e.case + " : l'IA veut revoir « " + tx(C.parId[e.comp].nom) + " ». Ton pion attend."; },
     revision_vide: function () { return "Révision forcée… mais tu ne maîtrises encore rien. L'IA soupire et te laisse passer."; },

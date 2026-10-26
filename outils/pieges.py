@@ -24,11 +24,17 @@ PIEGES = {
     40: ({"type": "recul", "n": 2}, "Hooke réclame la paternité de la gravitation, et Newton menace de supprimer le livre III des Principia. Querelle de priorité : deux cases de recul."),
     42: ({"type": "revision"}, "En 1764, Diderot découvre que son libraire a censuré en cachette les derniers volumes. Depuis, l'Encyclopédie se relit avec soin. Vous aussi."),
     50: ({"type": "revision"}, "Darwin a publié six éditions de L'Origine des espèces et n'a ajouté « la survie du plus apte » qu'à la cinquième. Réviser, c'est scientifique."),
+    5: ({"type": "cadeau"}, "Thalès, raconte Aristote, loua tous les pressoirs à olives avant une récolte abondante et fit fortune. Il vous en reverse une part."),
+    23: ({"type": "cadeau"}, "Ibn al-Haytham aurait, selon ses biographes, feint la folie pour échapper au calife et écrire en paix. Vous n'avez rien à feindre : servez-vous."),
+    37: ({"type": "cadeau"}, "Pascal et Fermat inventent le calcul des probabilités pour partager équitablement les mises d'une partie interrompue. Cette fois, le partage tombe de votre côté."),
+    47: ({"type": "cadeau"}, "Jenner n'a jamais fait breveter la vaccine : il voulait qu'elle profite à tous. Il vous fait le même genre de cadeau."),
+    58: ({"type": "cadeau"}, "Hubble montre que l'Univers s'agrandit. Votre cabinet aussi."),
     62: ({"type": "teleport", "vers": 53}, "Le premier site web, perdu, n'a été remis en ligne par le CERN qu'en 2013. Lien mort : retour au tableau de Mendeleïev."),
 }
 
 TEXTES = {
     "teleport": "Téléportation : retour à la case {vers}.",
+    "cadeau": "Case cadeau : pas d'épreuve, un objet rejoint ton cabinet.",
     "revision": "Révision forcée : l'IA choisit une compétence que tu maîtrises. Ton pion ne bouge plus avant de l'avoir révisée.",
 }
 
@@ -45,6 +51,11 @@ REPLIQUES = {
         sans("Vous croyiez cette compétence rangée au chaud ? Je la ressors. Montrez-moi qu'elle est toujours là."),
         sans("Pas un pas de plus avant une petite révision. Considérez-moi comme votre conscience, mais avec un chronomètre."),
     ],
+    "cadeau_case": [
+        "Un cadeau. Ne vous habituez pas : les mécènes de Galilée lui demandaient des lunes de Jupiter en échange.",
+        "Un objet pour votre cabinet. Les Médicis collectionnaient les savants, moi je collectionne vos progrès. Les deux sont rares.",
+        sans("Tenez. Pas de quiz, pas de condition. Je suis d'humeur généreuse, profitez-en, ça ne dure jamais."),
+    ],
     "jouer_revision": [
         "J'ai choisi pour vous : la révision que vous me devez. Pas de négociation, je suis une case du plateau.",
         sans("Votre pion attend cette révision. Moi aussi. Allons-y."),
@@ -59,4 +70,4 @@ REPLIQUES = {
     ],
 }
 
-TONS = {"jouer_revision": "moqueuse", "teleport": "moqueuse", "revision": "moqueuse", "revision_reussie": "impressionnee", "revision_ratee": "decue"}
+TONS = {"cadeau_case": "impressionnee", "jouer_revision": "moqueuse", "teleport": "moqueuse", "revision": "moqueuse", "revision_reussie": "impressionnee", "revision_ratee": "decue"}

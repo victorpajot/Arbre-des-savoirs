@@ -558,7 +558,7 @@
     var vus = {}, out = [];
     dep.etapes.forEach(function (e) {
       var ctx = { prison_liberation: "prison_liberation", prison: "prison", bloque_prison: "prison", eureka: "eureka", recul: "piege",
-        retour_epoque: "retour_epoque", teleport: "teleport", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi" }[e.type];
+        retour_epoque: "retour_epoque", teleport: "teleport", cadeau: "cadeau_case", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi" }[e.type];
       if (ctx && !vus[ctx]) { vus[ctx] = 1; out.unshift(ctx); }
     });
     if (dep.a !== dep.de && dep.valeur > 0) out.push("plateau_avance");
@@ -644,6 +644,13 @@
             poser(sp.vers);
             c.reculs++;
             etapes.push({ type: sp.type, case: depuis, n: depuis - sp.vers, vers: sp.vers });
+          } else if (sp.type === "cadeau") {
+            var cad = tirerCadeau(contenu, partie, t);
+            if (cad) {
+              (partie.cadeauxCase || (partie.cadeauxCase = [])).push({ famille: cad.famille, id: cad.chose.id });
+              c.cadeauxCase = (c.cadeauxCase || 0) + 1;
+              etapes.push({ type: "cadeau", case: pl.position, famille: cad.famille, id: cad.chose.id });
+            } else etapes.push({ type: "cadeau_vide", case: pl.position });
           } else if (sp.type === "revision") {
             var cible = compARevisier(contenu, partie, t);
             if (cible) {
@@ -910,6 +917,13 @@
     var out = { succes: [], objets: [], accessoires: [], savants: [], evenements: [], livres: [], masque: null, gagnables: [] };
     partie.gagnables = partie.gagnables || {};
     partie.masques = partie.masques || {};
+    // v8 : les cadeaux des cases, déjà rangés, rejoignent le résultat pour être montrés au joueur.
+    (partie.cadeauxCase || []).forEach(function (c) {
+      var x = listeFamille(contenu, c.famille).filter(function (y) { return y.id === c.id; })[0];
+      if (!x) return;
+      if (c.famille === "masques") out.masque = x; else out[c.famille].push(x);
+    });
+    partie.cadeauxCase = [];
     var directes = [
       ["succes", contenu.succes, partie.succes],
       ["savants", contenu.avatar && contenu.avatar.savants ? contenu.avatar.savants : [], partie.savants || (partie.savants = {})],
@@ -958,6 +972,17 @@
       });
     });
     return out;
+  }
+  // v8 : case cadeau. Un objet du cabinet tombe sans épreuve ; à défaut, n'importe quel autre butin ouvert.
+  function tirerCadeau(contenu, partie, t) {
+    var ouvert = butinOuvert(contenu, partie), objets = ouvert.filter(function (b) { return b.famille === "objets"; });
+    var liste = objets.length ? objets : ouvert;
+    if (!liste.length) return null;
+    var b = liste[hacher(String(t) + "|" + partie.plateau.position + "|" + partie.journal.length) % liste.length];
+    partie[b.famille][b.chose.id] = t;
+    delete partie.gagnables[cleButin(b.famille, b.chose.id)];
+    if (b.famille === "masques") partie.masque = b.chose.id;
+    return b;
   }
   // Après une épreuve réussie : au plus un butin, tiré au hasard. `alea` (facultatif) pour les tests.
   function tirerButin(contenu, partie, epreuve, t, alea) {

@@ -16,8 +16,9 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 ## Nouveautés de la v8 (plateau ludique)
 
 - Plateau en route sinueuse façon jeu de l'oie illustré : six allers-retours ondulés, cases multicolores numérotées, panneaux Départ et Arrivée, flèches de téléportation.
-- Le décor suit l'humeur de l'IA, avec des motifs tirés de l'histoire des sciences : nuit des astronomes (neutre), ciel des pionniers (impressionnée), laboratoire en fête (moqueuse), orage de Franklin (déçue).
-- 19 livres de plus pour l'Antiquité et le Moyen Âge (`outils/bibliotheque_v8.py`), débloqués sur les premières cases du plateau : 99 livres en tout.
+- Le fond est une planche ancienne qui suit l'humeur de l'IA : atlas céleste (neutre), carnet de Léonard (impressionnée), planche de l'Encyclopédie (moqueuse), tableau noir du physicien (déçue). Le plateau s'ouvre en vue d'ensemble ; le pion a un halo, un double contour et une flèche.
+- Cinq cases cadeau (5, 23, 37, 47, 58) : un objet du cabinet tombe sans épreuve.
+- 19 livres de plus pour l'Antiquité et le Moyen Âge (`outils/bibliotheque_v8.py`), débloqués sur les premières cases du plateau, et 10 livres de la Renaissance : 109 livres en tout.
 - Huit nouvelles cases pièges (`outils/pieges.py`), chacune justifiée par l'histoire de sa case : reculs, téléportations en arrière, et révisions forcées. Une révision forcée bloque le pion jusqu'à ce qu'on révise la compétence maîtrisée dont le rappel est le plus lointain ; ratée, la compétence n'est pas perdue mais son rappel devient dû.
 
 ## Nouveautés de la v7 (lot 3)

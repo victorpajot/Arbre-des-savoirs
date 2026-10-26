@@ -452,9 +452,10 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
         if (c.type === "quiz" && !M.disponibles(C6, P, t).some(k => k.id === c.comp.id)) continue;
         const avant = butin(), reliques = Object.keys(P.objets).filter(id => !lot["objets:" + id]).length;
         const q = M.tirerQuestions(C6, P, c.comp.id, c.type === "rappel" ? 3 : 5).map(x => ({ id: x.id, correct: rnd() < 0.85 }));
-        (c.type === "rappel" ? M.terminerRappel : M.terminerQuiz)(C6, P, c.comp.id, q, t, { jouer: true, alea: rnd });
+        const res = (c.type === "rappel" ? M.terminerRappel : M.terminerQuiz)(C6, P, c.comp.id, q, t, { jouer: true, alea: rnd });
         const nouvellesReliques = Object.keys(P.objets).filter(id => !lot["objets:" + id]).length - reliques;
-        assert.ok(butin() - avant - nouvellesReliques <= 1, "au plus un butin par épreuve");
+        const cadeaux = res.plateau ? res.plateau.etapes.filter(e => e.type === "cadeau").length : 0;
+        assert.ok(butin() - avant - nouvellesReliques <= 1 + cadeaux, "au plus un butin par épreuve, plus les cases cadeau");
         ["objets", "livres", "accessoires", "masques"].forEach(f => Object.keys(P[f]).forEach(id => {
           const l = lot[f + ":" + id];
           if (l && P[f][id] === t) assert.ok(l <= P.plateau.tours + 1, id + " (lot " + l + ") tombé au tour " + (P.plateau.tours + 1));
@@ -615,5 +616,13 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(P.competences[cible].maitrise, "pas de perte"); assert.equal(P.competences[cible].prochainRappel, t0 + 1000);
   assert.equal(r.plateau, null); assert.ok(r.contextes.includes("revision_ratee"));
   assert.ok(M.rappelsDus(C9, P, t0 + 2000).some(k => k.id === cible));
-  console.log("OK : v8 pièges, téléportation, révision forcée");
+  // Case cadeau : un objet sans épreuve, montré dans les récompenses.
+  P = M.nouvellePartie(t0); M.verifierRecompenses(C9, P, t0);
+  P.gagnables["objets:boulier"] = { famille: "objets", id: "boulier", depuis: t0 };
+  [P, dep] = sur(5, 2, P);
+  assert.equal(dep.etapes[0].type, "cadeau"); assert.ok(P.objets[dep.etapes[0].id]);
+  const rec = M.verifierRecompenses(C9, P, t0);
+  assert.ok(rec.objets.some(o => o.id === dep.etapes[0].id), "le cadeau apparaît dans les récompenses");
+  assert.equal(M.verifierRecompenses(C9, P, t0).objets.length, 0, "une seule fois");
+  console.log("OK : v8 pièges, téléportation, révision forcée, cases cadeau");
 }
