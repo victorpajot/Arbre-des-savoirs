@@ -23,6 +23,7 @@ import ennemis
 import cadeaux
 import pieges
 import bibliotheque_v7
+import bibliotheque_v8
 import plateau
 import savants
 from dessin import EMPLACEMENTS, PALETTE
@@ -724,8 +725,8 @@ def jeu_plateau():
             case["special"] = special
         cases.append(case)
     # Les emblèmes des livres puisent aussi dans les icônes du plateau.
-    utilisees = {c["icone"] for c in cases} | set(plateau.PICTO_EPOQUE.values()) | {l[5] for l in bibliotheque.LIVRES}
-    manquants = {l[5] for l in bibliotheque.LIVRES} - set(icones) - set(objets)
+    utilisees = {c["icone"] for c in cases} | set(plateau.PICTO_EPOQUE.values()) | {l[5] for l in bibliotheque.LIVRES + bibliotheque_v7.LIVRES + bibliotheque_v8.LIVRES}
+    manquants = {l[5] for l in bibliotheque.LIVRES + bibliotheque_v7.LIVRES + bibliotheque_v8.LIVRES} - set(icones) - set(objets)
     assert not manquants, manquants
     return {
         "format": 1,
@@ -764,13 +765,13 @@ def frise():
 
 def livres():
     out = []
-    for id, titre, auteur, annee, stat, embleme, couleur, cond, resume, importance, anec, source, reaction in bibliotheque.LIVRES + bibliotheque_v7.LIVRES:
-        # v7 : chaque livre est rattaché à une compétence, une par livre.
-        competence = bibliotheque_v7.THEMES.get(id) or cond["id"]
+    for id, titre, auteur, annee, stat, embleme, couleur, cond, resume, importance, anec, source, reaction in bibliotheque.LIVRES + bibliotheque_v7.LIVRES + bibliotheque_v8.LIVRES:
+        # v7 : chaque livre est rattaché à une compétence ; v8 : une compétence peut en avoir plusieurs.
+        competence = bibliotheque_v7.THEMES.get(id) or bibliotheque_v8.COMPETENCES.get(id) or cond["id"]
         out.append({"id": id, "titre": fr(titre), "auteur": auteur, "annee": annee, "stat": stat, "embleme": embleme, "couleur": couleur,
                     "condition": cond, "competence": competence, "resume": fr(resume), "importance": fr(importance), "anecdote": fr(anec), "source": source,
                     "reaction": fr(reaction)})
-    assert len({l["competence"] for l in out}) == len(out), "deux livres pour la même compétence"
+    assert len({l["id"] for l in out}) == len(out), "deux livres avec le même id"
     out.sort(key=lambda l: l["annee"])
     return {"format": 1, "livres": out}
 

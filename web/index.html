@@ -871,19 +871,65 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 
   // Décor : un ciel par humeur de l'IA. Les motifs se logent entre les rangées et dans les virages.
   var DECORS = {
-    neutre: { nom: "nuit étoilée", haut: "#22305E", bas: "#0D1330", fond: "scintille", motifs: ["planete", "asteroide", "comete", "fusee", "planeteAnneau", "ovni", "asteroide", "etoile"] },
-    impressionnee: { nom: "grand ciel bleu", haut: "#7CC8F5", bas: "#FFF1C9", fond: "oiseaux", motifs: ["nuage", "montgolfiere", "nuage", "arcEnCiel", "cerfVolant", "nuage", "soleil"] },
-    moqueuse: { nom: "fête foraine", haut: "#FFF4DE", bas: "#FFDDEB", fond: "confettis", motifs: ["etoile", "planeteBonbon", "fusee", "comete", "ovni", "etoile", "planeteAnneau"] },
-    decue: { nom: "orage", haut: "#6E7789", bas: "#2B303D", fond: "pluie", motifs: ["nuageNoir", "eclair", "asteroide", "nuageNoir", "goutte", "eclair"] },
+    // Tous les motifs viennent de l'histoire des sciences : astronomie, conquête du ciel, laboratoire, électricité.
+    neutre: { nom: "nuit des astronomes", haut: "#22305E", bas: "#0D1330", fond: "scintille", motifs: ["planete", "lunette", "comete", "fusee", "planeteAnneau", "satellite", "asteroide"] },
+    impressionnee: { nom: "ciel des pionniers", haut: "#7CC8F5", bas: "#FFF1C9", fond: "", motifs: ["nuage", "montgolfiere", "biplan", "arcEnCiel", "nuage", "soleil", "montgolfiere"] },
+    moqueuse: { nom: "laboratoire en fête", haut: "#FFF4DE", bas: "#FFDDEB", fond: "confettis", motifs: ["atome", "molecule", "fiole", "adn", "engrenage", "atome", "fiole"] },
+    decue: { nom: "orage de Franklin", haut: "#6E7789", bas: "#2B303D", fond: "pluie", motifs: ["nuageNoir", "eclair", "bouteilleLeyde", "nuageNoir", "eclair", "goutte"] },
   };
   DECORS.impatiente = DECORS.neutre;
   var NOM_HUMEUR = { neutre: "neutre", impressionnee: "impressionnée", moqueuse: "moqueuse", decue: "déçue", impatiente: "impatiente" };
   function aleaDecor(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
   var MOTIFS = {
-    etoile: function (x, y, s, i) {
-      var c = ["#FFC93C", "#FF7EB6", "#7FD68C", "#6EC3F4"][i % 4], p = [];
-      for (var k = 0; k < 10; k++) { var r = k % 2 ? s * 0.42 : s, a = -Math.PI / 2 + k * Math.PI / 5; p.push((x + r * Math.cos(a)).toFixed(1) + "," + (y + r * Math.sin(a)).toFixed(1)); }
-      return '<polygon points="' + p.join(" ") + '" fill="' + c + '" stroke="#2B2B33" stroke-width="1.2" stroke-linejoin="round"/>';
+    lunette: function (x, y, s) {
+      return '<path d="M' + x + "," + (y + s * 0.1) + " L" + (x - s * 0.7) + "," + (y + s * 1.2) + " M" + x + "," + (y + s * 0.1) + " L" + (x + s * 0.7) + "," + (y + s * 1.2) + " M" + x + "," + (y + s * 0.1) + " V" + (y + s * 1.25) + '" stroke="#C99260" stroke-width="1.6" stroke-linecap="round"/>' +
+        '<g transform="rotate(-32 ' + x + " " + y + ')"><rect x="' + (x - s * 1.2) + '" y="' + (y - s * 0.22) + '" width="' + (s * 2.2) + '" height="' + (s * 0.44) + '" rx="' + (s * 0.1) + '" fill="#B8862B" stroke="#4A2C1C" stroke-width="1.1"/>' +
+        '<rect x="' + (x + s * 0.95) + '" y="' + (y - s * 0.3) + '" width="' + (s * 0.35) + '" height="' + (s * 0.6) + '" rx="1" fill="#7A5418" stroke="#4A2C1C" stroke-width="1.1"/><path d="M' + (x - s * 0.5) + "," + (y - s * 0.22) + " V" + (y + s * 0.22) + '" stroke="#F2C14E" stroke-width="1.4"/></g>';
+    },
+    satellite: function (x, y, s) {
+      return '<path d="M' + (x - s * 0.3) + "," + (y + s * 0.2) + " L" + (x - s * 1.6) + "," + (y + s * 1.1) + " M" + (x - s * 0.1) + "," + (y + s * 0.35) + " L" + (x - s * 1.1) + "," + (y + s * 1.5) + " M" + (x - s * 0.35) + "," + (y - s * 0.05) + " L" + (x - s * 1.7) + "," + (y + s * 0.5) + " M" + (x + s * 0.05) + "," + (y + s * 0.4) + " L" + (x - s * 0.4) + "," + (y + s * 1.7) + '" stroke="#C9CED6" stroke-width="1.1" stroke-linecap="round"/>' +
+        '<circle cx="' + x + '" cy="' + y + '" r="' + (s * 0.55) + '" fill="#C9CED6" stroke="#5D6470" stroke-width="1.2"/><circle cx="' + (x - s * 0.18) + '" cy="' + (y - s * 0.2) + '" r="' + (s * 0.16) + '" fill="#fff" opacity="0.7"/>';
+    },
+    biplan: function (x, y, s) {
+      return '<g transform="rotate(-6 ' + x + " " + y + ')"><rect x="' + (x - s * 1.5) + '" y="' + (y - s * 0.45) + '" width="' + (s * 3) + '" height="' + (s * 0.22) + '" rx="1" fill="#F7EBD0" stroke="#5E3B1C" stroke-width="1"/>' +
+        '<rect x="' + (x - s * 1.5) + '" y="' + (y + s * 0.25) + '" width="' + (s * 3) + '" height="' + (s * 0.22) + '" rx="1" fill="#F7EBD0" stroke="#5E3B1C" stroke-width="1"/>' +
+        '<path d="M' + (x - s * 1.2) + "," + (y - s * 0.23) + " V" + (y + s * 0.25) + " M" + (x - s * 0.4) + "," + (y - s * 0.23) + " V" + (y + s * 0.25) + " M" + (x + s * 0.4) + "," + (y - s * 0.23) + " V" + (y + s * 0.25) + " M" + (x + s * 1.2) + "," + (y - s * 0.23) + " V" + (y + s * 0.25) + " M" + x + "," + (y + s * 0.47) + " L" + (x + s * 1.9) + "," + (y + s * 0.2) + '" stroke="#5E3B1C" stroke-width="1"/>' +
+        '<rect x="' + (x + s * 1.8) + '" y="' + (y - s * 0.05) + '" width="' + (s * 0.45) + '" height="' + (s * 0.5) + '" fill="#F7EBD0" stroke="#5E3B1C" stroke-width="1"/><rect x="' + (x - s * 0.15) + '" y="' + (y - s * 0.05) + '" width="' + (s * 0.3) + '" height="' + (s * 0.22) + '" fill="#9A6534"/></g>';
+    },
+    atome: function (x, y, s, i) {
+      var c = ["#3D63D9", "#D94141", "#2E9D5B"][i % 3], o = "";
+      [0, 60, 120].forEach(function (a) { o += '<ellipse cx="' + x + '" cy="' + y + '" rx="' + (s * 1.25) + '" ry="' + (s * 0.42) + '" fill="none" stroke="' + c + '" stroke-width="1.6" transform="rotate(' + a + " " + x + " " + y + ')"/>'; });
+      return o + '<circle cx="' + x + '" cy="' + y + '" r="' + (s * 0.28) + '" fill="#F28B82" stroke="#2B2B33" stroke-width="1"/><circle cx="' + (x + s * 1.25) + '" cy="' + y + '" r="' + (s * 0.13) + '" fill="' + c + '"/><circle cx="' + (x - s * 0.62) + '" cy="' + (y - s * 0.95) + '" r="' + (s * 0.13) + '" fill="' + c + '"/>';
+    },
+    molecule: function (x, y, s) {
+      var p = [[0, 0, 0.42, "#2B2B33"], [-0.95, -0.55, 0.3, "#F4F4F8"], [0.95, -0.55, 0.3, "#F4F4F8"], [0, 1.05, 0.34, "#D94141"]], o = "";
+      p.slice(1).forEach(function (q) { o += '<path d="M' + x + "," + y + " L" + (x + q[0] * s) + "," + (y + q[1] * s) + '" stroke="#5D6470" stroke-width="' + (s * 0.16) + '"/>'; });
+      p.forEach(function (q) { o += '<circle cx="' + (x + q[0] * s) + '" cy="' + (y + q[1] * s) + '" r="' + (q[2] * s) + '" fill="' + q[3] + '" stroke="#2B2B33" stroke-width="1"/>'; });
+      return o;
+    },
+    fiole: function (x, y, s, i) {
+      var c = ["#7FD68C", "#FF9FC6", "#6EC3F4"][i % 3];
+      return '<path d="M' + (x - s * 0.22) + "," + (y - s * 1.1) + " V" + (y - s * 0.3) + " L" + (x - s * 0.9) + "," + (y + s * 0.9) + " Q" + (x - s * 0.95) + "," + (y + s * 1.1) + " " + (x - s * 0.7) + "," + (y + s * 1.1) + " H" + (x + s * 0.7) + " Q" + (x + s * 0.95) + "," + (y + s * 1.1) + " " + (x + s * 0.9) + "," + (y + s * 0.9) + " L" + (x + s * 0.22) + "," + (y - s * 0.3) + " V" + (y - s * 1.1) + 'Z" fill="#fff" fill-opacity="0.7" stroke="#2B2B33" stroke-width="1.2" stroke-linejoin="round"/>' +
+        '<path d="M' + (x - s * 0.6) + "," + (y + s * 0.4) + " H" + (x + s * 0.6) + " L" + (x + s * 0.88) + "," + (y + s * 0.92) + " Q" + (x + s * 0.9) + "," + (y + s * 1.05) + " " + (x + s * 0.7) + "," + (y + s * 1.05) + " H" + (x - s * 0.7) + " Q" + (x - s * 0.9) + "," + (y + s * 1.05) + " " + (x - s * 0.88) + "," + (y + s * 0.92) + 'Z" fill="' + c + '"/><circle cx="' + (x + s * 0.1) + '" cy="' + (y - s * 1.45) + '" r="' + (s * 0.14) + '" fill="' + c + '"/><circle cx="' + (x - s * 0.15) + '" cy="' + (y - s * 1.75) + '" r="' + (s * 0.1) + '" fill="' + c + '"/>';
+    },
+    adn: function (x, y, s) {
+      var a = "", b = "", barres = "";
+      for (var k = 0; k <= 16; k++) {
+        var t = k / 16, yy = y - s * 1.3 + t * s * 2.6, dx = Math.sin(t * Math.PI * 2) * s * 0.6;
+        a += (k ? " L" : "M") + (x + dx).toFixed(1) + "," + yy.toFixed(1); b += (k ? " L" : "M") + (x - dx).toFixed(1) + "," + yy.toFixed(1);
+        if (k % 2 === 1) barres += '<path d="M' + (x + dx).toFixed(1) + "," + yy.toFixed(1) + " H" + (x - dx).toFixed(1) + '" stroke="' + ["#FFD447", "#7FD68C"][(k >> 1) % 2] + '" stroke-width="1.6"/>';
+      }
+      return barres + '<path d="' + a + '" fill="none" stroke="#3D63D9" stroke-width="2"/><path d="' + b + '" fill="none" stroke="#D94141" stroke-width="2"/>';
+    },
+    engrenage: function (x, y, s, i) {
+      var p = [], n = 8, c = ["#B8862B", "#9AA0A8"][i % 2];
+      for (var k = 0; k < n * 2; k++) { var a = k * Math.PI / n, r = k % 2 ? s * 0.78 : s; p.push((x + r * Math.cos(a - 0.12)).toFixed(1) + "," + (y + r * Math.sin(a - 0.12)).toFixed(1), (x + r * Math.cos(a + 0.12)).toFixed(1) + "," + (y + r * Math.sin(a + 0.12)).toFixed(1)); }
+      return '<polygon points="' + p.join(" ") + '" fill="' + c + '" stroke="#4A2C1C" stroke-width="1.1" stroke-linejoin="round"/><circle cx="' + x + '" cy="' + y + '" r="' + (s * 0.3) + '" fill="#FFF4DE" stroke="#4A2C1C" stroke-width="1.1"/>';
+    },
+    bouteilleLeyde: function (x, y, s) {
+      return '<path d="M' + x + "," + (y - s * 1.5) + " V" + (y - s * 0.6) + '" stroke="#9AA0A8" stroke-width="1.6"/><circle cx="' + x + '" cy="' + (y - s * 1.6) + '" r="' + (s * 0.2) + '" fill="#C9CED6" stroke="#2B2B33" stroke-width="1"/>' +
+        '<path d="M' + (x - s * 0.6) + "," + (y - s * 0.6) + " H" + (x + s * 0.6) + " V" + (y + s * 1.1) + " Q" + x + "," + (y + s * 1.3) + " " + (x - s * 0.6) + "," + (y + s * 1.1) + 'Z" fill="#D8F4FC" fill-opacity="0.8" stroke="#2B2B33" stroke-width="1.1"/>' +
+        '<path d="M' + (x - s * 0.6) + "," + (y + s * 0.2) + " H" + (x + s * 0.6) + " V" + (y + s * 1.1) + " Q" + x + "," + (y + s * 1.3) + " " + (x - s * 0.6) + "," + (y + s * 1.1) + 'Z" fill="#C99260" stroke="#2B2B33" stroke-width="1.1"/>';
     },
     planete: function (x, y, s, i) {
       var c = [["#5AA9E6", "#2F6FB3"], ["#E8875A", "#B4502E"], ["#7FD68C", "#3E8E4E"]][i % 3];
@@ -894,9 +940,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       return '<ellipse cx="' + x + '" cy="' + y + '" rx="' + (s * 1.7) + '" ry="' + (s * 0.45) + '" fill="none" stroke="#F7E3B5" stroke-width="2.4" transform="rotate(-18 ' + x + " " + y + ')"/>' +
         '<circle cx="' + x + '" cy="' + y + '" r="' + s + '" fill="' + c + '"/><path d="M' + (x - s * 0.9) + "," + (y - s * 0.3) + " H" + (x + s * 0.9) + " M" + (x - s * 0.95) + "," + (y + s * 0.25) + " H" + (x + s * 0.95) + '" stroke="#fff" stroke-opacity="0.35" stroke-width="2"/>' +
         '<path d="M' + (x - s * 1.62) + "," + (y + s * 0.05) + " A" + (s * 1.7) + "," + (s * 0.45) + " -18 0 0 " + (x + s * 1.62) + "," + (y - s * 0.05) + '" fill="none" stroke="#F7E3B5" stroke-width="2.4" transform="rotate(-18 ' + x + " " + y + ')"/>';
-    },
-    planeteBonbon: function (x, y, s) {
-      return '<circle cx="' + x + '" cy="' + y + '" r="' + s + '" fill="#FF9FC6" stroke="#2B2B33" stroke-width="1.2"/><path d="M' + (x - s * 0.8) + "," + (y - s * 0.5) + " Q" + x + "," + (y - s * 0.1) + " " + (x + s * 0.8) + "," + (y - s * 0.55) + " M" + (x - s * 0.95) + "," + (y + s * 0.2) + " Q" + x + "," + (y + s * 0.6) + " " + (x + s * 0.95) + "," + (y + s * 0.15) + '" fill="none" stroke="#FF7A1A" stroke-width="' + (s * 0.22) + '" stroke-linecap="round"/>';
     },
     asteroide: function (x, y, s, i) {
       var p = [];
@@ -911,10 +954,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
         '<path d="M' + (x - s * 0.5) + "," + (y + s * 0.5) + " L" + (x - s * 0.95) + "," + (y + s * 1.1) + " L" + (x - s * 0.45) + "," + (y + s) + "Z M" + (x + s * 0.5) + "," + (y + s * 0.5) + " L" + (x + s * 0.95) + "," + (y + s * 1.1) + " L" + (x + s * 0.45) + "," + (y + s) + 'Z" fill="#D94141"/>' +
         '<path d="M' + x + "," + (y - s * 1.3) + " C" + (x + s * 0.7) + "," + (y - s * 0.6) + " " + (x + s * 0.55) + "," + (y + s * 0.6) + " " + (x + s * 0.45) + "," + (y + s) + " H" + (x - s * 0.45) + " C" + (x - s * 0.55) + "," + (y + s * 0.6) + " " + (x - s * 0.7) + "," + (y - s * 0.6) + " " + x + "," + (y - s * 1.3) + 'Z" fill="#F4F4F8" stroke="#2B2B33" stroke-width="1.2"/>' +
         '<circle cx="' + x + '" cy="' + (y - s * 0.2) + '" r="' + (s * 0.28) + '" fill="#6EC3F4" stroke="#2B2B33" stroke-width="1.2"/></g>';
-    },
-    ovni: function (x, y, s) {
-      return '<ellipse cx="' + x + '" cy="' + (y - s * 0.25) + '" rx="' + (s * 0.55) + '" ry="' + (s * 0.5) + '" fill="#B8F0D0" stroke="#2B2B33" stroke-width="1.2"/><circle cx="' + (x - s * 0.15) + '" cy="' + (y - s * 0.35) + '" r="' + (s * 0.12) + '" fill="#2B2B33"/><circle cx="' + (x + s * 0.2) + '" cy="' + (y - s * 0.35) + '" r="' + (s * 0.12) + '" fill="#2B2B33"/>' +
-        '<ellipse cx="' + x + '" cy="' + (y + s * 0.15) + '" rx="' + (s * 1.3) + '" ry="' + (s * 0.38) + '" fill="#9AA0A8" stroke="#2B2B33" stroke-width="1.2"/><circle cx="' + (x - s * 0.7) + '" cy="' + (y + s * 0.18) + '" r="' + (s * 0.1) + '" fill="#FFD447"/><circle cx="' + x + '" cy="' + (y + s * 0.26) + '" r="' + (s * 0.1) + '" fill="#FFD447"/><circle cx="' + (x + s * 0.7) + '" cy="' + (y + s * 0.18) + '" r="' + (s * 0.1) + '" fill="#FFD447"/>';
     },
     nuage: function (x, y, s, i, sombre) {
       var f = sombre ? "#9AA3B5" : "#FFFFFF", o = sombre ? 0.9 : 0.92;
@@ -937,9 +976,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
         '<rect x="' + (x - s * 0.22) + '" y="' + (y + s * 1.1) + '" width="' + (s * 0.44) + '" height="' + (s * 0.35) + '" rx="1.5" fill="#9A6534"/>' +
         '<path d="M' + x + "," + (y - s) + " C" + (x + s * 1.1) + "," + (y - s) + " " + (x + s * 0.8) + "," + (y + s * 0.4) + " " + (x + s * 0.35) + "," + (y + s * 0.75) + " H" + (x - s * 0.35) + " C" + (x - s * 0.8) + "," + (y + s * 0.4) + " " + (x - s * 1.1) + "," + (y - s) + " " + x + "," + (y - s) + 'Z" fill="#F25C54" stroke="#2B2B33" stroke-width="1.2"/>' +
         '<path d="M' + x + "," + (y - s) + " C" + (x + s * 0.35) + "," + (y - s * 0.6) + " " + (x + s * 0.3) + "," + (y + s * 0.3) + " " + x + "," + (y + s * 0.75) + " C" + (x - s * 0.3) + "," + (y + s * 0.3) + " " + (x - s * 0.35) + "," + (y - s * 0.6) + " " + x + "," + (y - s) + 'Z" fill="#FFD447"/>';
-    },
-    cerfVolant: function (x, y, s) {
-      return '<path d="M' + x + "," + (y + s * 0.9) + " q" + (s * 0.4) + "," + (s * 0.4) + " 0," + (s * 0.8) + " t0," + (s * 0.8) + '" fill="none" stroke="#2B2B33" stroke-width="1"/><path d="M' + x + "," + (y - s) + " L" + (x + s * 0.7) + "," + y + " L" + x + "," + (y + s * 0.9) + " L" + (x - s * 0.7) + "," + y + 'Z" fill="#6EC3F4" stroke="#2B2B33" stroke-width="1.2"/><path d="M' + x + "," + (y - s) + " V" + (y + s * 0.9) + " M" + (x - s * 0.7) + "," + y + " H" + (x + s * 0.7) + '" stroke="#2B2B33" stroke-width="0.8"/>';
     },
     eclair: function (x, y, s) {
       return '<path d="M' + (x + s * 0.2) + "," + (y - s * 1.2) + " L" + (x - s * 0.6) + "," + (y + s * 0.1) + " L" + (x - s * 0.05) + "," + (y + s * 0.1) + " L" + (x - s * 0.4) + "," + (y + s * 1.2) + " L" + (x + s * 0.65) + "," + (y - s * 0.25) + " L" + (x + s * 0.05) + "," + (y - s * 0.25) + ' Z" fill="#FFD447" stroke="#B8862B" stroke-width="1.2" stroke-linejoin="round"/>';
@@ -977,7 +1013,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var c = '<defs><linearGradient id="ciel-' + ton + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + d.haut + '"/><stop offset="1" stop-color="' + d.bas + '"/></linearGradient></defs>' +
       '<rect x="0" y="0" width="' + MONDE[0] + '" height="' + MONDE[1] + '" fill="url(#ciel-' + ton + ')"/>' + fondDecor(d.fond);
     EMPLACEMENTS_DECOR.forEach(function (e, i) {
-      var m = d.motifs[Math.floor(aleaDecor(i * 3 + 41) * d.motifs.length)];
+      var m = d.motifs[(i * 5 + 2) % d.motifs.length];
       c += '<g class="motif">' + MOTIFS[m](e[0], e[1], e[2], i) + "</g>";
     });
     return c;
