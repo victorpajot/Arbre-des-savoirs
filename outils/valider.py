@@ -189,6 +189,9 @@ def main():
         if "case" not in e and "detail" not in e:
             erreurs.append(f"frise.json {e['id']} : ni case ni détail")
 
+    rattachees = [l["competence"] for l in contenu["bibliotheque"]["livres"]]
+    if sorted(rattachees) != sorted(comps):
+        erreurs.append(f"bibliotheque.json : il faut un livre par compétence ({len(set(rattachees))} sur {len(comps)})")
     for l in contenu["bibliotheque"]["livres"]:
         if l["embleme"] not in sprites:
             erreurs.append(f"bibliotheque.json {l['id']} : emblème inconnu {l['embleme']}")

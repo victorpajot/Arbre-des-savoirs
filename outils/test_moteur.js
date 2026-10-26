@@ -323,7 +323,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const C4 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const t0 = new Date(2026, 9, 26, 10, 0).getTime();
   const P = M.nouvellePartie(t0);
-  assert.equal(C4.avatar.savants.length, 20);
+  assert.equal(C4.avatar.savants.length, 40, "v7 : quarante savants");
   assert.deepEqual(M.verifierRecompenses(C4, P, t0).savants, []);
   // Hypatie arrive avec l'astronomie d'observation
   P.competences["astro.observer"] = { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + 86400000, xp: 70 };

@@ -21,6 +21,7 @@ import philosophes
 import pionniers
 import ennemis
 import cadeaux
+import bibliotheque_v7
 import plateau
 import savants
 from dessin import EMPLACEMENTS, PALETTE
@@ -758,10 +759,13 @@ def frise():
 
 def livres():
     out = []
-    for id, titre, auteur, annee, stat, embleme, couleur, cond, resume, importance, anec, source, reaction in bibliotheque.LIVRES:
+    for id, titre, auteur, annee, stat, embleme, couleur, cond, resume, importance, anec, source, reaction in bibliotheque.LIVRES + bibliotheque_v7.LIVRES:
+        # v7 : chaque livre est rattaché à une compétence, une par livre.
+        competence = bibliotheque_v7.THEMES.get(id) or cond["id"]
         out.append({"id": id, "titre": fr(titre), "auteur": auteur, "annee": annee, "stat": stat, "embleme": embleme, "couleur": couleur,
-                    "condition": cond, "resume": fr(resume), "importance": fr(importance), "anecdote": fr(anec), "source": source,
+                    "condition": cond, "competence": competence, "resume": fr(resume), "importance": fr(importance), "anecdote": fr(anec), "source": source,
                     "reaction": fr(reaction)})
+    assert len({l["competence"] for l in out}) == len(out), "deux livres pour la même compétence"
     out.sort(key=lambda l: l["annee"])
     return {"format": 1, "livres": out}
 

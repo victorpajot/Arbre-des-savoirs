@@ -13,6 +13,12 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 | `outils/valider.py` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
 | `outils/test_moteur.js` | Test du cycle quiz, rappel, perte, regain (`node outils/test_moteur.js`). |
 
+## Nouveautés de la v7 (lot 3)
+
+- Frise en cylindre vue de côté : passé à gauche, futur à droite, dates non découvertes en ombres, glisser pour tourner, appui sur la date du centre pour la lire, sauts d'époque.
+- Bibliothèque de 80 livres, un par compétence (`outils/bibliotheque_v7.py`), débloqués en maîtrisant la compétence.
+- 40 savants jouables : 20 nouveaux, avec davantage de femmes et de figures non européennes.
+
 ## Nouveautés de la v7 (lot 2)
 
 - Ennemis du plateau (`data/ennemis.json`, généré par `outils/ennemis.py`) : sept archétypes de la bêtise humaine et deux figures historiques (Lyssenko, Mesmer), posés au début de chaque tour ; le Charlatan attend en réserve. Passer sur un ennemi arrête le pion et lance un duel : cinq affirmations vraies ou fausses (80 au total, chacune avec son origine et une source), sans-faute obligatoire. Victoire : l'ennemi quitte le plateau jusqu'au tour suivant, le pion finit son trajet, un butin tombe, un succès à la première victoire. Défaite : le pion reste et le duel reprend à l'épreuve réussie suivante.

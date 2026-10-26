@@ -1581,7 +1581,8 @@
        "importance",
        "anecdote",
        "source",
-       "reaction"
+       "reaction",
+       "competence"
       ],
       "additionalProperties": false,
       "properties": {
@@ -1633,6 +1634,10 @@
         "minimum": 1,
         "maximum": 7,
         "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
+       },
+       "competence": {
+        "$ref": "#/$defs/id",
+        "description": "v7 : la compétence à laquelle le livre est rattaché (un livre par compétence)."
        }
       }
      }
