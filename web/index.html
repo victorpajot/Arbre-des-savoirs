@@ -1530,7 +1530,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var perso = el('<div class="bloc perso-v5" role="button" tabindex="0" aria-label="Ouvrir la fiche du personnage"><div class="perso"><div class="avatar-cadre rang-' + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + '</div><div><div class="niv"><small>Niveau</small><span class="num">' + ng + '</span></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div>" + (sn ? '<p class="surnom">' + esc(sn.texte) + '<small>d\'après l\'IA</small></p>' : "") + '<p class="meta">' + nbMait + " compétence" + (nbMait > 1 ? "s" : "") + " maîtrisée" + (nbMait > 1 ? "s" : "") + " sur " + C.competences.length + "</p></div></div></div>");
     perso.onclick = function () { vue = "perso"; rendre(); window.scrollTo(0, 0); };
     perso.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); perso.onclick(); } };
-    v.appendChild(perso);
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
     if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
     if (C.plateau) v.appendChild(boutonJouer());
@@ -1554,6 +1553,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       v.appendChild(bR);
     }
 
+    // Le personnage vient en dernier, sous le plateau.
+    v.appendChild(perso);
     return v;
   }
 
