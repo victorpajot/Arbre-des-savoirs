@@ -8,10 +8,18 @@ import json
 from pathlib import Path
 
 from aides import anecdote, citation, fr, num, qcm, succes, vf
+import avatar40
+import bibliotheque
+import ia
+import icones32
+import masques
+import objets32
+import philosophes
+import plateau
+from dessin import EMPLACEMENTS, PALETTE
 from illustrations import ENONCE, EXPLICATION
-from pixels import ACCESSOIRES as PIXELS_ACCESSOIRES, CHEVEUX, CORPS, OBJETS as PIXELS_OBJETS, PALETTE, RANGS, verifier
 from questions_nouvelles import Q as Q_NOUVELLES
-from recompenses import ACCESSOIRES, NARRATEUR, OBJETS, SUCCES_V2, commentaires
+from recompenses import ACCESSOIRES, OBJETS, SUCCES_V2, objet
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 
@@ -39,6 +47,8 @@ REGLES = {
          "description": fr("Le Système solaire, les étoiles, les orbites et l'histoire de l'Univers.")},
         {"id": "etincelle", "nom": fr("Étincelle"), "branche": fr("Électricité"), "couleur": "#A67C00",
          "description": fr("Circuits, loi d'Ohm, puissance, magnétisme et induction.")},
+        {"id": philosophes.STAT["id"], "nom": fr(philosophes.STAT["nom"]), "branche": fr(philosophes.STAT["branche"]),
+         "couleur": philosophes.STAT["couleur"], "description": fr(philosophes.STAT["description"])},
     ],
     "xp": {
         "par_bonne_reponse": 10,
@@ -115,6 +125,7 @@ BRANCHES = {
         ("elec.puissance", "Puissance et énergie électrique", "Watts, kilowattheures, effet Joule et production d'électricité."),
         ("elec.magnetisme", "Magnétisme et induction", "Aimants, boussoles, électroaimants, moteurs et alternateurs."),
     ],
+    "sagesse": philosophes.BRANCHE,
 }
 
 
@@ -498,7 +509,7 @@ Q["psy.influence"] = [
 
 def questions():
     out = []
-    for comp, qs in {**Q, **Q_NOUVELLES}.items():
+    for comp, qs in {**Q, **Q_NOUVELLES, **philosophes.Q}.items():
         assert len(qs) == 12, (comp, len(qs))
         for i, q in enumerate(qs, 1):
             id = f"{comp}.q{i:02d}"
@@ -552,7 +563,7 @@ SUCCES = [
            {"type": "branche_complete", "stat": "empathie"},
            citation("Le cœur a ses raisons, que la raison ne connaît point.",
                     "Blaise Pascal", "Pensées, 1670")),
-    succes("polymathe", "Polymathe", "Maîtriser au moins une compétence dans chacune des 9 branches.",
+    succes("polymathe", "Polymathe", "Maîtriser au moins une compétence dans chacune des 10 branches.",
            {"type": "toutes_branches"},
            anecdote("Le mot anglais « scientist » n'existe que depuis 1834. William Whewell l'a proposé, sur le modèle d'« artist », pour désigner ceux qu'on appelait jusque-là des « philosophes de la nature ».",
                     "William Whewell, Quarterly Review, 1834")),
@@ -560,8 +571,8 @@ SUCCES = [
            {"type": "competences_maitrisees", "n": 10},
            citation("Je voudrais aussi qu'on fût soigneux de lui choisir un conducteur qui eût plutôt la tête bien faite que bien pleine.",
                     "Montaigne", "Essais, livre I, chapitre 26, 1580")),
-    succes("arbre-complet", "Sur les épaules de géants", "Maîtriser les 36 compétences.",
-           {"type": "competences_maitrisees", "n": 36},
+    succes("arbre-complet", "Sur les épaules de géants", "Maîtriser les 40 compétences.",
+           {"type": "competences_maitrisees", "n": 40},
            citation("Si j'ai vu plus loin, c'est en me tenant sur les épaules de géants.",
                     "Isaac Newton", "Lettre à Robert Hooke, 5 février 1676")),
     succes("premier-rappel", "Cobaye volontaire", "Réussir un premier rappel.",
@@ -607,35 +618,136 @@ SUCCES = [
 
 
 def avatar():
+    c = avatar40.calques()
     return {
-        "format": 1,
+        "format": 2,
         "palette": PALETTE,
-        "taille": [20, 24],
-        "corps": CORPS,
-        "cheveux": CHEVEUX,
-        "rangs": [{"id": r["id"], "nom": fr(r["nom"]), "niveau_min": r["niveau_min"], "couleurs": r["couleurs"], "tenue": r["tenue"]} for r in RANGS],
-        "accessoires": [{"id": id, "nom": fr(nom), "emplacement": PIXELS_ACCESSOIRES[id][0], "condition": cond, "pixels": PIXELS_ACCESSOIRES[id][1]}
+        "emplacements": EMPLACEMENTS,
+        "taille": [avatar40.L, avatar40.H],
+        "corps": c["corps"],
+        "cheveux": c["cheveux"],
+        "rangs": [{"id": r["id"], "nom": fr(r["nom"]), "niveau_min": r["niveau_min"], "couleurs": r["couleurs"], "tenue": c["tenues"][r["id"]]}
+                  for r in avatar40.RANGS],
+        "accessoires": [{"id": id, "nom": fr(nom), "emplacement": c["accessoires"][id][0], "condition": cond, "pixels": c["accessoires"][id][1]}
                         for id, nom, cond in ACCESSOIRES],
     }
 
 
+def tous_objets():
+    return OBJETS + [objet(*o) for o in philosophes.OBJETS]
+
+
 def cabinet():
-    assert {o["id"] for o in OBJETS} == set(PIXELS_OBJETS), set(PIXELS_OBJETS) ^ {o["id"] for o in OBJETS}
-    return {"format": 1, "palette": PALETTE, "taille": [16, 16],
-            "objets": [{**o, "pixels": PIXELS_OBJETS[o["id"]]} for o in OBJETS]}
+    pixels = objets32.objets()
+    liste = tous_objets()
+    assert {o["id"] for o in liste} == set(pixels), set(pixels) ^ {o["id"] for o in liste}
+    return {"format": 2, "palette": PALETTE, "taille": [objets32.N, objets32.N],
+            "objets": [{**o, "pixels": pixels[o["id"]]} for o in liste]}
+
+
+def tous_succes():
+    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES
+
+
+def commentaires():
+    return {"format": 2, "narrateur": fr(ia.NOM), "commentaires": ia.repliques()}
+
+
+def narrateur():
+    """L'IA : ses masques (un par palier de succès) et l'expression prise selon le contexte."""
+    calques = {m["id"]: m for m in masques.calques()}
+    return {
+        "format": 1,
+        "nom": fr(ia.NOM),
+        "palette": PALETTE,
+        "taille": [40, 48],
+        "expressions": ia.EXPRESSIONS,
+        "masques": [{"id": m["id"], "nom": fr(m["nom"]), "seuil": m["seuil"], "tours": m.get("tour", 0), "notice": fr(m["notice"]),
+                     "base": calques[m["id"]]["base"], "expressions": calques[m["id"]]["expressions"]} for m in masques.MASQUES],
+    }
+
+
+def icone_case(c, icones, objets):
+    ill = c[5] or plateau.PICTO_EPOQUE[plateau.epoque(c[1])]
+    assert ill in icones or ill in objets, ill
+    return ill
+
+
+def jeu_plateau():
+    icones = icones32.icones()
+    objets = objets32.objets()
+    cases = []
+    for i, c in enumerate(plateau.CASES):
+        id, annee, titre, phrase, stat, ill, histoire, replique, source, special = c
+        n = i + 1
+        if special is None and n % 9 == 0 and n < len(plateau.CASES):
+            special = {"type": "eureka"}
+        if special and special["type"] == "retour_epoque":
+            special = {"type": "retour_epoque", "vers": plateau.debut_epoque(plateau.epoque(annee))}
+        case = {"n": n, "id": id, "annee": annee, "titre": fr(titre), "stat": stat, "epoque": plateau.epoque(annee),
+                "icone": icone_case(c, icones, objets), "histoire": fr(histoire), "replique": fr(replique), "source": source}
+        if special:
+            case["special"] = special
+        cases.append(case)
+    # Les emblèmes des livres puisent aussi dans les icônes du plateau.
+    utilisees = {c["icone"] for c in cases} | set(plateau.PICTO_EPOQUE.values()) | {l[5] for l in bibliotheque.LIVRES}
+    manquants = {l[5] for l in bibliotheque.LIVRES} - set(icones) - set(objets)
+    assert not manquants, manquants
+    return {
+        "format": 1,
+        "regles": {
+            "depart": 1, "arrivee": len(cases),
+            "valeurs": {"rappel": 1, "quiz_rang": {"1": 2, "2": 3, "3": 3, "4": 4}},
+            "bonus": {"parfait": 1, "chrono": 1, "du_jour": 2},
+            "echec": {"quiz": 0, "rappel": -2},
+            "tour_suivant": {"multiplicateur_recul": 2, "quiz_parfaits_prison": 2},
+            "textes": {k: fr(v) for k, v in plateau.REGLES_SPECIALES.items()},
+        },
+        "epoques": [{"id": id, "nom": fr(nom), "debut": d, "fin": f, "icone": plateau.PICTO_EPOQUE[id]} for id, nom, d, f in plateau.EPOQUES],
+        "palette": PALETTE,
+        "taille": [icones32.N, icones32.N],
+        "icones": {k: v for k, v in icones.items() if k in utilisees},
+        "cases": cases,
+    }
+
+
+def frise():
+    evenements = []
+    for i, c in enumerate(plateau.CASES):
+        evenements.append({"id": c[0], "annee": c[1], "titre": fr(c[2]), "phrase": fr(c[3]), "stat": c[4], "epoque": plateau.epoque(c[1]),
+                           "source": c[8], "case": i + 1, "condition": {"type": "case_atteinte", "n": i + 1}})
+    for id, annee, titre, phrase, stat, comp, detail, source in plateau.DATES:
+        evenements.append({"id": id, "annee": annee, "titre": fr(titre), "phrase": fr(phrase), "stat": stat, "epoque": plateau.epoque(annee),
+                           "detail": fr(detail), "source": source, "condition": {"type": "competence_maitrisee", "id": comp}})
+    evenements.sort(key=lambda e: e["annee"])
+    return {"format": 1, "epoques": [{"id": id, "nom": fr(nom), "debut": d, "fin": f} for id, nom, d, f in plateau.EPOQUES],
+            "evenements": evenements}
+
+
+def livres():
+    out = []
+    for id, titre, auteur, annee, stat, embleme, couleur, cond, resume, importance, anec, source, reaction in bibliotheque.LIVRES:
+        out.append({"id": id, "titre": fr(titre), "auteur": auteur, "annee": annee, "stat": stat, "embleme": embleme, "couleur": couleur,
+                    "condition": cond, "resume": fr(resume), "importance": fr(importance), "anecdote": fr(anec), "source": source,
+                    "reaction": fr(reaction)})
+    out.sort(key=lambda l: l["annee"])
+    return {"format": 1, "livres": out}
 
 
 def main():
-    verifier()
     DATA.mkdir(parents=True, exist_ok=True)
     fichiers = {
         "regles.json": REGLES,
         "skills.json": {"format": 1, "competences": competences()},
         "questions.json": {"format": 1, "questions": questions()},
-        "succes.json": {"format": 1, "succes": SUCCES + SUCCES_V2},
-        "commentaires.json": {"format": 1, "narrateur": NARRATEUR, "commentaires": commentaires()},
+        "succes.json": {"format": 1, "succes": tous_succes()},
+        "commentaires.json": commentaires(),
         "objets.json": cabinet(),
         "avatar.json": avatar(),
+        "ia.json": narrateur(),
+        "plateau.json": jeu_plateau(),
+        "frise.json": frise(),
+        "bibliotheque.json": livres(),
     }
     for nom, contenu in fichiers.items():
         (DATA / nom).write_text(json.dumps(contenu, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

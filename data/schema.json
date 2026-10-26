@@ -484,7 +484,13 @@
       "mode_test",
       "succes",
       "succes_obtenus",
-      "objets"
+      "objets",
+      "case_atteinte",
+      "case_visitee",
+      "tours_plateau",
+      "sorties_prison",
+      "eurekas",
+      "reculs"
      ]
     },
     "n": {
@@ -516,15 +522,15 @@
    "type": "array",
    "items": {
     "type": "string",
-    "pattern": "^[.A-Za-z]+$"
+    "pattern": "^[.A-Za-z0-9!*~+]+$"
    },
    "minItems": 1,
-   "description": "Image en pixel art : une chaîne par ligne, un caractère par pixel, « . » transparent, le reste renvoie à la palette."
+   "description": "Image en pixel art : une chaîne par ligne, un caractère par pixel, « . » transparent, le reste renvoie à la palette (lettres et chiffres) ou aux couleurs du rang (! X * ~ Z + Q)."
   },
   "palette": {
    "type": "object",
    "propertyNames": {
-    "pattern": "^[A-Za-z]$"
+    "pattern": "^[A-Za-z0-9!*~+]$"
    },
    "additionalProperties": {
     "type": "string",
@@ -540,7 +546,7 @@
    ],
    "properties": {
     "format": {
-     "const": 1
+     "const": 2
     },
     "narrateur": {
      "$ref": "#/$defs/texte"
@@ -579,8 +585,24 @@
          "mode_test",
          "eclair",
          "retour",
-         "retards"
+         "retards",
+         "livre",
+         "date",
+         "masque",
+         "plateau_avance",
+         "eureka",
+         "piege",
+         "prison",
+         "prison_liberation",
+         "quarantaine",
+         "retour_epoque",
+         "tour_fini",
+         "bonus_du_jour"
         ]
+       },
+       "reference": {
+        "type": "boolean",
+        "description": "La réplique fait référence à l'histoire des sciences."
        }
       }
      }
@@ -597,7 +619,7 @@
    ],
    "properties": {
     "format": {
-     "const": 1
+     "const": 2
     },
     "palette": {
      "$ref": "#/$defs/palette"
@@ -670,7 +692,7 @@
    ],
    "properties": {
     "format": {
-     "const": 1
+     "const": 2
     },
     "palette": {
      "$ref": "#/$defs/palette"
@@ -753,6 +775,545 @@
        },
        "pixels": {
         "$ref": "#/$defs/pixels"
+       }
+      }
+     }
+    },
+    "emplacements": {
+     "type": "string",
+     "description": "Caractères dont la couleur dépend du rang."
+    }
+   }
+  },
+  "ia": {
+   "type": "object",
+   "required": [
+    "format",
+    "nom",
+    "palette",
+    "taille",
+    "expressions",
+    "masques"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "nom": {
+     "$ref": "#/$defs/texte"
+    },
+    "palette": {
+     "$ref": "#/$defs/palette"
+    },
+    "taille": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "minItems": 2,
+     "maxItems": 2
+    },
+    "expressions": {
+     "type": "object",
+     "description": "Expression du masque pour chaque contexte de réplique.",
+     "additionalProperties": {
+      "enum": [
+       "neutre",
+       "moqueuse",
+       "impressionnee",
+       "decue",
+       "impatiente"
+      ]
+     }
+    },
+    "masques": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "seuil",
+       "tours",
+       "notice",
+       "base",
+       "expressions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "seuil": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Nombre de succès qui débloque ce masque."
+       },
+       "tours": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Si non nul, ce nombre de tours du plateau débloque aussi le masque."
+       },
+       "notice": {
+        "$ref": "#/$defs/texte"
+       },
+       "base": {
+        "$ref": "#/$defs/pixels"
+       },
+       "expressions": {
+        "type": "object",
+        "required": [
+         "neutre",
+         "moqueuse",
+         "impressionnee",
+         "decue",
+         "impatiente"
+        ],
+        "additionalProperties": {
+         "$ref": "#/$defs/pixels"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "plateau": {
+   "type": "object",
+   "required": [
+    "format",
+    "regles",
+    "epoques",
+    "palette",
+    "taille",
+    "icones",
+    "cases"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "regles": {
+     "type": "object",
+     "required": [
+      "depart",
+      "arrivee",
+      "valeurs",
+      "bonus",
+      "echec",
+      "tour_suivant",
+      "textes"
+     ],
+     "properties": {
+      "depart": {
+       "type": "integer"
+      },
+      "arrivee": {
+       "type": "integer"
+      },
+      "valeurs": {
+       "type": "object",
+       "required": [
+        "rappel",
+        "quiz_rang"
+       ],
+       "properties": {
+        "rappel": {
+         "type": "integer"
+        },
+        "quiz_rang": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "integer"
+         }
+        }
+       }
+      },
+      "bonus": {
+       "type": "object",
+       "required": [
+        "parfait",
+        "chrono",
+        "du_jour"
+       ],
+       "additionalProperties": {
+        "type": "integer"
+       }
+      },
+      "echec": {
+       "type": "object",
+       "required": [
+        "quiz",
+        "rappel"
+       ],
+       "additionalProperties": {
+        "type": "integer"
+       }
+      },
+      "tour_suivant": {
+       "type": "object",
+       "required": [
+        "multiplicateur_recul",
+        "quiz_parfaits_prison"
+       ],
+       "additionalProperties": {
+        "type": "integer"
+       }
+      },
+      "textes": {
+       "type": "object",
+       "additionalProperties": {
+        "$ref": "#/$defs/texte"
+       }
+      }
+     }
+    },
+    "epoques": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "debut",
+       "fin",
+       "icone"
+      ],
+      "properties": {
+       "id": {
+        "enum": [
+         "antiquite",
+         "moyen-age",
+         "renaissance",
+         "classique",
+         "xixe",
+         "xxe"
+        ]
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "debut": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "fin": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "icone": {
+        "$ref": "#/$defs/id"
+       }
+      }
+     }
+    },
+    "palette": {
+     "$ref": "#/$defs/palette"
+    },
+    "taille": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "minItems": 2,
+     "maxItems": 2
+    },
+    "icones": {
+     "type": "object",
+     "additionalProperties": {
+      "$ref": "#/$defs/pixels"
+     }
+    },
+    "cases": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "object",
+      "required": [
+       "n",
+       "id",
+       "annee",
+       "titre",
+       "stat",
+       "epoque",
+       "icone",
+       "histoire",
+       "replique",
+       "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "n": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "annee": {
+        "type": "integer"
+       },
+       "titre": {
+        "$ref": "#/$defs/texte"
+       },
+       "stat": {
+        "$ref": "#/$defs/id"
+       },
+       "epoque": {
+        "enum": [
+         "antiquite",
+         "moyen-age",
+         "renaissance",
+         "classique",
+         "xixe",
+         "xxe"
+        ]
+       },
+       "icone": {
+        "$ref": "#/$defs/id"
+       },
+       "histoire": {
+        "$ref": "#/$defs/texte"
+       },
+       "replique": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "special": {
+        "type": "object",
+        "required": [
+         "type"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "type": {
+          "enum": [
+           "eureka",
+           "avance",
+           "recul",
+           "quarantaine",
+           "prison",
+           "retour_epoque"
+          ]
+         },
+         "n": {
+          "type": "integer",
+          "minimum": 1
+         },
+         "vers": {
+          "type": "integer",
+          "minimum": 1
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "frise": {
+   "type": "object",
+   "required": [
+    "format",
+    "epoques",
+    "evenements"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "epoques": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "debut",
+       "fin"
+      ],
+      "properties": {
+       "id": {
+        "enum": [
+         "antiquite",
+         "moyen-age",
+         "renaissance",
+         "classique",
+         "xixe",
+         "xxe"
+        ]
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "debut": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "fin": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "evenements": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "annee",
+       "titre",
+       "phrase",
+       "stat",
+       "epoque",
+       "source",
+       "condition"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "annee": {
+        "type": "integer"
+       },
+       "titre": {
+        "$ref": "#/$defs/texte"
+       },
+       "phrase": {
+        "$ref": "#/$defs/texte"
+       },
+       "stat": {
+        "$ref": "#/$defs/id"
+       },
+       "epoque": {
+        "enum": [
+         "antiquite",
+         "moyen-age",
+         "renaissance",
+         "classique",
+         "xixe",
+         "xxe"
+        ]
+       },
+       "detail": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "case": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Case du plateau dont l'histoire sert de détail."
+       },
+       "condition": {
+        "$ref": "#/$defs/condition"
+       }
+      }
+     }
+    }
+   }
+  },
+  "bibliotheque": {
+   "type": "object",
+   "required": [
+    "format",
+    "livres"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "livres": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "titre",
+       "auteur",
+       "annee",
+       "stat",
+       "embleme",
+       "couleur",
+       "condition",
+       "resume",
+       "importance",
+       "anecdote",
+       "source",
+       "reaction"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "titre": {
+        "$ref": "#/$defs/texte"
+       },
+       "auteur": {
+        "type": "string",
+        "minLength": 2
+       },
+       "annee": {
+        "type": "integer"
+       },
+       "stat": {
+        "$ref": "#/$defs/id"
+       },
+       "embleme": {
+        "$ref": "#/$defs/id",
+        "description": "Sprite d'objet (objets.json) ou d'icône (plateau.json)."
+       },
+       "couleur": {
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$"
+       },
+       "condition": {
+        "$ref": "#/$defs/condition"
+       },
+       "resume": {
+        "$ref": "#/$defs/texte"
+       },
+       "importance": {
+        "$ref": "#/$defs/texte"
+       },
+       "anecdote": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "reaction": {
+        "$ref": "#/$defs/texte"
        }
       }
      }

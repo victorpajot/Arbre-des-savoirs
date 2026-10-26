@@ -495,6 +495,61 @@
     "elec.ohm",
     "elec.puissance"
    ]
+  },
+  {
+   "id": "philo.antiquite",
+   "stat": "sagesse",
+   "rang": 1,
+   "nom": {
+    "fr": "Philosophes de l'Antiquité"
+   },
+   "description": {
+    "fr": "Présocratiques, Socrate, Platon, Aristote, stoïciens et épicuriens."
+   },
+   "prerequis": []
+  },
+  {
+   "id": "philo.medievale",
+   "stat": "sagesse",
+   "rang": 2,
+   "nom": {
+    "fr": "Moyen Âge et Renaissance"
+   },
+   "description": {
+    "fr": "Averroès, Thomas d'Aquin, Ockham, Machiavel, Érasme et Montaigne."
+   },
+   "prerequis": [
+    "philo.antiquite"
+   ]
+  },
+  {
+   "id": "philo.classique",
+   "stat": "sagesse",
+   "rang": 3,
+   "nom": {
+    "fr": "Âge classique et Lumières"
+   },
+   "description": {
+    "fr": "Descartes, Spinoza, Locke, Hume, Voltaire, Rousseau et Kant."
+   },
+   "prerequis": [
+    "philo.antiquite"
+   ]
+  },
+  {
+   "id": "philo.moderne",
+   "stat": "sagesse",
+   "rang": 4,
+   "nom": {
+    "fr": "Philosophes modernes"
+   },
+   "description": {
+    "fr": "Nietzsche, Russell, Popper, Kuhn, Sartre, Beauvoir et Arendt."
+   },
+   "prerequis": [
+    "philo.medievale",
+    "philo.classique"
+   ]
   }
  ]
 }

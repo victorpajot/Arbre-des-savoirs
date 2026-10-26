@@ -73,7 +73,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
                    "sci.methode": { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + jour, xp: 60 } },
     options: { chrono: false } };
   const P3 = M.migrer(JSON.parse(JSON.stringify(v1)));
-  assert.equal(P3.format, 2);
+  assert.equal(P3.format, 3);
   assert.equal(P3.compteurs.quizParfaits, 1); assert.equal(P3.compteurs.quizJoues, 0);
   assert.deepEqual(P3.avatar, { tete: null, visage: null, main: null });
   // Atomes compte désormais pour Alchimie ; Évolution n'est pas gelée par la nouvelle branche Savoir
@@ -93,7 +93,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(r3.nouveauxAccessoires.some(a => a.id === "chapeau-alu"));
   assert.deepEqual(r3.contextes.slice(0, 2), ["quiz_zero", "nuit"]);
   const rep = M.replique(C, P3, r3.contextes, () => 0);
-  assert.equal(rep.contexte, "quiz_zero"); assert.equal(P3.repliques[0], rep.id);
+  assert.equal(rep.contexte, "quiz_zero"); assert.equal(P3.repliques.quiz_zero[0], rep.id);
   assert.notEqual(M.replique(C, P3, ["quiz_zero"], () => 0).id, rep.id);
   // Trois échecs d'affilée sur le même quiz
   M.terminerQuiz(C, P3, "chim.liaisons", qs, nuit);
@@ -106,4 +106,145 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Rang d'avatar
   assert.equal(M.rangAvatar(C, P3).id, "etudiant");
   console.log("OK : migration v1 → v2, nouvelles branches, succès moqueurs, objets, accessoires, narrateur");
+}
+
+// v3 : plateau, frise, bibliothèque, masques et répliques de l'IA
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json") };
+  const C3 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const R = C3.plateau.regles, cases = C3.plateau.cases;
+  const t0 = new Date(2026, 9, 26, 10, 0).getTime();
+  const tous = (P, id, ok, chrono) => M.tirerQuestions(C3, P, id, 5).map((q, i) => ({ id: q.id, correct: i < ok, chrono: !!chrono }));
+
+  // Barème annoncé = barème appliqué, avec et sans bonus du jour
+  {
+    const P = M.nouvellePartie(t0);
+    const bonus = M.bonusDuJour(C3, P, t0);
+    assert.equal(M.bonusDuJour(C3, P, t0 + 3600000), bonus, "bonus stable dans la journée");
+    for (const id of ["math.arithmetique", "phys.unites", "philo.antiquite"]) {
+      const Q = M.nouvellePartie(t0);
+      const v = M.valeurEpreuve(C3, Q, { type: "quiz", comp: id }, t0);
+      assert.equal(v.base, R.valeurs.quiz_rang["1"]);
+      assert.equal(v.duJour, C3.parId[id].stat === M.bonusDuJour(C3, Q, t0) ? R.bonus.du_jour : 0);
+      const r = M.terminerQuiz(C3, Q, id, tous(Q, id, 4), t0);
+      assert.equal(r.plateau.a - r.plateau.de, v.total, id + " : réussi, non parfait");
+      assert.equal(r.plateau.valeurs.total, v.total);
+    }
+    const Q = M.nouvellePartie(t0);
+    const v = M.valeurEpreuve(C3, Q, { type: "quiz", comp: "math.arithmetique" }, t0);
+    let r = M.terminerQuiz(C3, Q, "math.arithmetique", tous(Q, "math.arithmetique", 3), t0);
+    assert.equal(r.plateau.a, 1, "quiz raté : on reste sur place");
+    r = M.terminerQuiz(C3, Q, "math.arithmetique", tous(Q, "math.arithmetique", 5, true), t0);
+    assert.equal(r.plateau.valeur, v.total + R.bonus.parfait + R.bonus.chrono, "parfait et chrono");
+  }
+
+  // Rappel raté : recul de 2 cases, jamais avant le départ
+  {
+    const P = M.nouvellePartie(t0);
+    M.terminerQuiz(C3, P, "math.arithmetique", tous(P, "math.arithmetique", 4), t0);
+    const avant = P.plateau.position;
+    const r = M.terminerRappel(C3, P, "math.arithmetique", tous(P, "math.arithmetique", 0).slice(0, 3), t0 + 86400000);
+    assert.equal(r.plateau.a, Math.max(1, avant + R.echec.rappel));
+    assert.equal(P.compteurs.reculs, 1);
+  }
+
+  // Chaque case spéciale applique sa règle
+  {
+    const sur = (n, pas) => { const P = M.nouvellePartie(t0); P.plateau.position = n - pas; return [P, M.deplacer(C3, P, pas, t0, "test")]; };
+    const num = id => cases.find(c => c.id === id).n;
+    let [P, dep] = sur(9, 3);
+    assert.equal(dep.a, 12, "Eurêka : on rejoue la même distance"); assert.equal(P.compteurs.eurekas, 1);
+    [P, dep] = sur(num("incendie"), 1);
+    assert.equal(dep.a, num("incendie") - 3, "incendie : recul de 3");
+    [P, dep] = sur(num("fibonacci"), 1);
+    assert.equal(dep.etapes[0].type, "avance"); assert.equal(dep.a, num("fibonacci") + 3);
+    assert.equal(P.plateau.quarantaine, 1, "Fibonacci + 3 mène à la peste");
+    dep = M.deplacer(C3, P, 4, t0, "test");
+    assert.equal(dep.a, dep.de, "quarantaine : une épreuve réussie sans bouger");
+    dep = M.deplacer(C3, P, 4, t0, "test");
+    assert.equal(dep.a, dep.de + 4);
+    [P, dep] = sur(num("galilee-proces"), 2);
+    assert.equal(P.plateau.prison, 1);
+    assert.equal(M.deplacer(C3, P, 3, t0, "test").a, num("galilee-proces"), "prison : on ne bouge plus");
+    const r = M.terminerQuiz(C3, P, "math.arithmetique", tous(P, "math.arithmetique", 5), t0);
+    assert.equal(P.plateau.prison, 0); assert.ok(r.plateau.contextes.includes("prison_liberation"));
+    assert.ok(r.plateau.a > num("galilee-proces"), "libéré par un quiz parfait, et on avance");
+    assert.ok(r.nouveauxSucces.some(s => s.id === "eppur-si-muove"));
+    [P, dep] = sur(num("guillotine"), 1);
+    assert.equal(dep.a, cases[num("guillotine") - 1].special.vers, "guillotine : retour au début de l'époque");
+    [P, dep] = sur(num("solvay"), 3);
+    assert.equal(dep.a, num("solvay") - 4);
+    // Deuxième tour : pièges doublés, prison à deux quiz parfaits
+    P = M.nouvellePartie(t0); P.plateau.tours = 1; P.plateau.position = num("solvay") - 3;
+    assert.equal(M.deplacer(C3, P, 3, t0, "test").a, num("solvay") - 8);
+    P.plateau.position = num("galilee-proces") - 2; M.deplacer(C3, P, 2, t0, "test");
+    assert.equal(P.plateau.prison, 2);
+  }
+
+  // Du feu à l'IA en mode test, puis un nouveau tour
+  {
+    const P = M.nouvellePartie(t0);
+    let garde = 0, fini = null;
+    while (!fini && garde++ < 200) {
+      const dep = M.avancerPion(C3, P, 2 + (garde % 3), t0);
+      if (P.plateau.prison) P.plateau.prison = 0; // le test ne passe pas de quiz : on ouvre la porte
+      if (dep.etapes.some(e => e.type === "tour_fini")) fini = dep;
+    }
+    assert.ok(fini, "arrivée atteinte");
+    assert.equal(P.plateau.tours, 1); assert.equal(P.plateau.position, R.depart);
+    assert.ok(fini.contextes.includes("tour_fini"));
+    assert.ok(P.succes["tour-complet"]);
+    const rec = M.verifierRecompenses(C3, P, t0);
+    const casesFrise = C3.evenements.filter(e => e.case);
+    assert.ok(casesFrise.every(e => P.evenements[e.id]), "toutes les dates du plateau sont sur la frise");
+    assert.ok(C3.livres.filter(l => l.condition.type === "case_atteinte").every(l => P.livres[l.id]), "livres du plateau débloqués");
+    assert.ok(P.succes["epoque-xxe"]);
+    assert.equal(M.masqueActuel(C3, P).id, "finale", "un tour complet débloque le dernier masque");
+  }
+
+  // Masques par paliers de succès, annoncés au changement
+  {
+    const P = M.nouvellePartie(t0);
+    M.verifierRecompenses(C3, P, t0);
+    assert.equal(P.masque, "theatre");
+    C3.succes.slice(0, 8).forEach(s => { P.succes[s.id] = t0; });
+    const rec = M.verifierRecompenses(C3, P, t0);
+    assert.equal(rec.masque.id, "peste"); assert.equal(P.masque, "peste");
+    assert.equal(M.expression(C3, "quiz_rate"), "moqueuse");
+  }
+
+  // Répliques : pas de redite avant d'avoir épuisé le contexte, jetons remplacés
+  {
+    const P = M.nouvellePartie(t0);
+    const n = C3.commentairesPar.eureka.length, vues = new Set();
+    for (let i = 0; i < n; i++) vues.add(M.replique(C3, P, ["eureka"]).id);
+    assert.equal(vues.size, n);
+    const der = P.repliques.eureka[0];
+    assert.notEqual(M.replique(C3, P, ["eureka"]).id, der, "pas d'enchaînement au changement de cycle");
+    const b = M.replique(C3, P, ["bonus_du_jour"], Math.random, { stat: "Sagesse" });
+    assert.ok(b.texte.fr.includes("Sagesse") && !b.texte.fr.includes("{"));
+    assert.ok(["neutre", "moqueuse", "impressionnee", "decue", "impatiente"].includes(b.expression));
+  }
+
+  // Migration v2 → v3 : rien de perdu, plateau au départ, dates et livres rattrapés
+  {
+    const v2 = { format: 2, cree: t0, maj: t0, decalage: 0, succes: { "premier-pas": t0, "eureka": t0 }, objets: { boulier: t0 },
+      accessoires: { "lunettes-rondes": t0 }, avatar: { tete: null, visage: "lunettes-rondes", main: "boulier" },
+      jours: ["2026-10-24"], journal: [], repliques: ["accueil.01"], derniereVisite: t0, retour: null, options: { chrono: true },
+      compteurs: { quizParfaits: 2, quizRates: 1, rappelsReussis: 0, serieRappels: 0, perdues: 0, regagnees: 0, quizJoues: 3 },
+      competences: { "psy.memoire": { maitrise: true, maitriseDepuis: t0, palier: 1, prochainRappel: t0 + 3 * 86400000, xp: 80 } } };
+    const P = M.migrer(JSON.parse(JSON.stringify(v2)));
+    assert.equal(P.format, 3);
+    assert.deepEqual(Object.keys(P.succes), ["premier-pas", "eureka"]);
+    assert.equal(P.avatar.main, "boulier"); assert.equal(P.options.chrono, true);
+    assert.equal(P.compteurs.quizJoues, 3); assert.equal(P.compteurs.eurekas, 0);
+    assert.equal(P.plateau.position, 1); assert.deepEqual(P.repliques, {});
+    assert.equal(M.xpParStat(C3, P).empathie, 80);
+    const rec = M.verifierRecompenses(C3, P, t0);
+    assert.ok(rec.evenements.some(e => e.id === "ebbinghaus") && rec.evenements.some(e => e.id === "feu"));
+    assert.ok(rec.livres.some(l => l.id === "memoire"));
+    assert.equal(rec.masque, null, "le premier masque se pose sans annonce");
+  }
+  console.log("OK : v3 plateau (barème, cases spéciales, tour complet), frise, bibliothèque, masques, répliques, migration v2 → v3");
 }

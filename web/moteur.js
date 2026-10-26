@@ -6,18 +6,19 @@
 (function (racine) {
   "use strict";
 
-  var FORMAT_PARTIE = 2;
+  var FORMAT_PARTIE = 3;
   var JOUR = 86400000;
   var MAX_JOURNAL = 200;
   var MAX_RECENTES = 6;
-  var MAX_REPLIQUES = 12;
+  var MAX_HISTORIQUE = 30;   // déplacements gardés sur le plateau
+  var MAX_ENCHAINEMENT = 12; // cases spéciales enchaînées au plus en un déplacement
   var ECLAIR_MS = 2000;       // réponse fausse plus rapide que ça : « éclair »
   var QUIZ_ECLAIR_MS = 60000; // quiz raté plus vite que ça
   var ABSENCE_RETOUR = 14;    // jours sans visite qui comptent comme un retour
 
   // --- Contenu ---------------------------------------------------------------
 
-  // `extras` (facultatif) : { commentaires, objets, avatar }, les fichiers du même nom.
+  // `extras` (facultatif) : { commentaires, objets, avatar, ia, plateau, frise, bibliotheque }, les fichiers du même nom.
   function indexerContenu(regles, skills, questions, succes, extras) {
     extras = extras || {};
     var c = {
@@ -30,6 +31,11 @@
       cabinet: extras.objets || null,
       avatar: extras.avatar || null,
       narrateur: extras.commentaires ? extras.commentaires.narrateur : null,
+      ia: extras.ia || null,
+      plateau: extras.plateau || null,
+      evenements: extras.frise ? extras.frise.evenements : [],
+      frise: extras.frise || null,
+      livres: extras.bibliotheque ? extras.bibliotheque.livres : [],
       parId: {},
       parStat: {},
       questionsPar: {},
@@ -99,18 +105,28 @@
         quizParfaits: 0, quizRates: 0, rappelsReussis: 0, serieRappels: 0, perdues: 0, regagnees: 0,
         quizJoues: 0, quizEclairRates: 0, quizZero: 0, quizNuit: 0, quizAube: 0, chronoParfaits: 0,
         reponsesEclairFausses: 0, rappelsRetard: 0, retours: 0, modeTest: 0, parfaitsParStat: {},
+        eurekas: 0, sortiesPrison: 0, reculs: 0,
       },
       jours: [],
       journal: [],
-      repliques: [],
+      repliques: {},
+      evenements: {},
+      livres: {},
+      masque: null,
+      plateau: nouveauPlateau(),
       derniereVisite: t,
       retour: null,
       options: { chrono: false },
     };
   }
 
+  function nouveauPlateau() {
+    return { position: 1, atteinte: 1, tours: 0, visites: { 1: 1 }, prison: 0, quarantaine: 0, historique: [], bonus: null };
+  }
+
   // Remet une partie lue (stockage, import) au format courant.
   // v1 → v2 : nouveaux compteurs, objets, accessoires et avatar ; la progression reste intacte.
+  // v2 → v3 : plateau (départ à la case du feu), frise, bibliothèque, masque de l'IA, répliques retenues par contexte.
   function migrer(p) {
     if (!p || typeof p !== "object" || typeof p.format !== "number") return null;
     if (p.format > FORMAT_PARTIE) return null;
@@ -125,7 +141,11 @@
     out.avatar = Object.assign({ tete: null, visage: null, main: null }, p.avatar || {});
     out.jours = p.jours || [];
     out.journal = p.journal || [];
-    out.repliques = p.repliques || [];
+    out.repliques = Array.isArray(p.repliques) || !p.repliques ? {} : p.repliques;
+    out.evenements = p.evenements || {};
+    out.livres = p.livres || {};
+    out.masque = p.masque || null;
+    out.plateau = Object.assign(nouveauPlateau(), p.plateau || {});
     out.derniereVisite = p.derniereVisite || p.maj || out.cree;
     out.options = Object.assign({ chrono: false }, p.options || {});
     out.format = FORMAT_PARTIE;
@@ -305,9 +325,13 @@
     if (nuit) contextes.push("nuit");
     if (reussi) contextes.push(parfait ? (k.rang === 1 ? "quiz_parfait_facile" : "quiz_parfait") : "quiz_reussi");
     else contextes.push(k.rang === 1 ? "quiz_rate_facile" : "quiz_rate");
+    var chrono = resultats.length > 0 && resultats.every(function (x) { return x.chrono; });
+    var dep = jouerPlateau(contenu, partie, { type: "quiz", comp: id }, { reussi: reussi, parfait: parfait, chrono: chrono }, t);
     var rec = verifierRecompenses(contenu, partie, t);
+    if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     return { issue: reussi ? "maitrisee" : "echec", bonnes: bonnes, total: total, xp: xp, prochainRappel: e.prochainRappel,
-      nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, contextes: contextes };
+      nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires,
+      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes };
   }
 
   // Termine un rappel. Réussi : l'intervalle suivant s'allonge. Raté : la compétence est perdue.
@@ -348,9 +372,12 @@
     if (nuit) contextes.push("nuit");
     if (reussi && retard >= 3) contextes.push("rappel_retard");
     if (reussi) contextes.push("rappel_reussi");
+    var dep = jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false }, t);
     var rec = verifierRecompenses(contenu, partie, t);
+    if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     return { issue: reussi ? "reussi" : "perdue", bonnes: bonnes, total: resultats.length, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
-      retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, contextes: contextes };
+      retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires,
+      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes };
   }
 
   // À appeler à chaque ouverture de l'app : repère un retour après une longue absence.
@@ -362,7 +389,7 @@
       partie.retour = t;
       return verifierRecompenses(contenu, partie, t);
     }
-    return { succes: [], objets: [], accessoires: [] };
+    return { succes: [], objets: [], accessoires: [], evenements: [], livres: [], masque: null };
   }
 
   // Mode test : avance l'horloge du jeu de `jours` jours (0 = retour à l'heure réelle).
@@ -372,6 +399,148 @@
       partie.compteurs.modeTest++;
     } else partie.decalage = 0;
     return verifierRecompenses(contenu, partie, maintenant(partie));
+  }
+
+  // --- Plateau ---------------------------------------------------------------
+  // Un jeu de l'oie de 63 cases, du feu à l'IA. Pas de dé : chaque épreuve réussie vaut un
+  // nombre de cases fixé par plateau.json. Les cases spéciales reprennent les règles de l'oie.
+
+  // Bonus du jour : une stat, choisie une fois par jour parmi les plus délaissées.
+  function bonusDuJour(contenu, partie, t) {
+    var pl = partie.plateau, cle = cleJour(t);
+    if (pl.bonus && pl.bonus.jour === cle) return pl.bonus.stat;
+    var xp = xpParStat(contenu, partie);
+    var jouables = contenu.stats.filter(function (s) {
+      return contenu.parStat[s.id].some(function (k) { var st = statut(contenu, partie, k.id, t).etat; return st === "disponible" || st === "a_reviser"; });
+    });
+    if (!jouables.length) jouables = contenu.stats.slice();
+    jouables.sort(function (a, b) { return xp[a.id] - xp[b.id]; });
+    var candidats = jouables.slice(0, 3);
+    var stat = candidats[Math.floor(debutJour(t) / JOUR) % candidats.length].id;
+    pl.bonus = { jour: cle, stat: stat };
+    return stat;
+  }
+
+  // Ce que rapporte une épreuve, tel qu'annoncé avant de la jouer. `epreuve` : {type: "quiz"|"rappel", comp}.
+  function valeurEpreuve(contenu, partie, epreuve, t) {
+    if (!contenu.plateau) return null;
+    var r = contenu.plateau.regles, k = contenu.parId[epreuve.comp];
+    var base = epreuve.type === "rappel" ? r.valeurs.rappel : r.valeurs.quiz_rang[String(k.rang)];
+    var duJour = k.stat === bonusDuJour(contenu, partie, t) ? r.bonus.du_jour : 0;
+    return {
+      base: base, duJour: duJour, total: base + duJour,
+      parfait: epreuve.type === "quiz" ? r.bonus.parfait : 0,
+      chrono: epreuve.type === "quiz" ? r.bonus.chrono : 0,
+      echec: epreuve.type === "rappel" ? r.echec.rappel : r.echec.quiz,
+    };
+  }
+
+  function caseN(contenu, n) {
+    return contenu.plateau.cases[n - 1];
+  }
+
+  // Applique le résultat d'une épreuve au pion. `issue` : {reussi, parfait, chrono}.
+  function jouerPlateau(contenu, partie, epreuve, issue, t) {
+    if (!contenu.plateau) return null;
+    var v = valeurEpreuve(contenu, partie, epreuve, t), pl = partie.plateau, c = partie.compteurs;
+    var valeur = issue.reussi ? v.total + (issue.parfait ? v.parfait : 0) + (issue.chrono ? v.chrono : 0) : v.echec;
+    var etapes = [];
+    if (pl.prison > 0 && issue.parfait) {
+      pl.prison--;
+      etapes.push({ type: pl.prison ? "prison_reste" : "prison_liberation" });
+      if (!pl.prison) c.sortiesPrison++;
+    }
+    var dep = deplacer(contenu, partie, valeur, t, epreuve.type);
+    dep.etapes = etapes.concat(dep.etapes);
+    dep.contextes = contextesPlateau(dep);
+    dep.valeurs = v;
+    return dep;
+  }
+
+  function contextesPlateau(dep) {
+    var vus = {}, out = [];
+    dep.etapes.forEach(function (e) {
+      var ctx = { prison_liberation: "prison_liberation", prison: "prison", bloque_prison: "prison", eureka: "eureka", recul: "piege",
+        retour_epoque: "retour_epoque", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini" }[e.type];
+      if (ctx && !vus[ctx]) { vus[ctx] = 1; out.unshift(ctx); }
+    });
+    if (dep.a !== dep.de && dep.valeur > 0) out.push("plateau_avance");
+    return out;
+  }
+
+  // Déplace le pion de `valeur` cases (négatif : recul simple, sans effet de case).
+  // Mode test : on peut l'appeler directement pour parcourir le plateau.
+  function deplacer(contenu, partie, valeur, t, cause) {
+    var pl = partie.plateau, R = contenu.plateau.regles, c = partie.compteurs;
+    var dur = pl.tours > 0, mult = dur ? R.tour_suivant.multiplicateur_recul : 1;
+    var de = pl.position, etapes = [];
+    function poser(n) {
+      pl.position = n;
+      pl.visites[n] = (pl.visites[n] || 0) + 1;
+      if (n > pl.atteinte) pl.atteinte = n;
+    }
+    function avancer(n) {
+      var cible = pl.position + n;
+      if (cible >= R.arrivee) {
+        poser(R.arrivee);
+        etapes.push({ type: "tour_fini", tour: pl.tours + 1 });
+        pl.tours++;
+        pl.atteinte = R.arrivee;
+        pl.position = R.depart;
+        return false;
+      }
+      poser(cible);
+      return true;
+    }
+    if (valeur < 0 && pl.prison > 0) etapes.push({ type: "bloque_prison", reste: pl.prison });
+    else if (valeur < 0) {
+      poser(Math.max(R.depart, pl.position + valeur));
+      if (pl.position < de) { c.reculs++; etapes.push({ type: "recul", n: de - pl.position, cause: "echec" }); }
+    } else if (valeur > 0) {
+      if (pl.prison > 0) etapes.push({ type: "bloque_prison", reste: pl.prison });
+      else if (pl.quarantaine > 0) { pl.quarantaine--; etapes.push({ type: "bloque_quarantaine", reste: pl.quarantaine }); }
+      else {
+        var pas = valeur, garde = 0;
+        while (avancer(pas) && garde++ < MAX_ENCHAINEMENT) {
+          var sp = caseN(contenu, pl.position).special;
+          if (!sp) break;
+          if (sp.type === "eureka") { c.eurekas++; etapes.push({ type: "eureka", case: pl.position, n: pas }); continue; }
+          if (sp.type === "avance") { pas = sp.n; etapes.push({ type: "avance", case: pl.position, n: sp.n }); continue; }
+          if (sp.type === "recul") {
+            var avant = pl.position;
+            poser(Math.max(R.depart, pl.position - sp.n * mult));
+            c.reculs++;
+            etapes.push({ type: "recul", case: avant, n: avant - pl.position, cause: "piege" });
+          } else if (sp.type === "retour_epoque") {
+            var depuis = pl.position;
+            poser(sp.vers);
+            c.reculs++;
+            etapes.push({ type: "retour_epoque", case: depuis, n: depuis - sp.vers });
+          } else if (sp.type === "quarantaine") {
+            pl.quarantaine = sp.n * mult;
+            etapes.push({ type: "quarantaine", case: pl.position, n: pl.quarantaine });
+          } else if (sp.type === "prison") {
+            pl.prison = dur ? R.tour_suivant.quiz_parfaits_prison : 1;
+            etapes.push({ type: "prison", case: pl.position, n: pl.prison });
+          }
+          break;
+        }
+      }
+    }
+    var dep = { de: de, a: pl.position, valeur: valeur, cause: cause, tour: pl.tours, etapes: etapes, t: t };
+    pl.historique.unshift({ t: t, de: de, a: pl.position, valeur: valeur, cause: cause, etapes: etapes.map(function (e) { return e.type; }) });
+    if (pl.historique.length > MAX_HISTORIQUE) pl.historique.length = MAX_HISTORIQUE;
+    partie.maj = t;
+    return dep;
+  }
+
+  // Mode test : avance le pion sans épreuve, puis débloque ce qui doit l'être.
+  function avancerPion(contenu, partie, n, t) {
+    var dep = deplacer(contenu, partie, n, t, "test");
+    dep.contextes = contextesPlateau(dep);
+    partie.compteurs.modeTest++;
+    dep.recompenses = verifierRecompenses(contenu, partie, t);
+    return dep;
   }
 
   // --- Aujourd'hui -----------------------------------------------------------
@@ -442,6 +611,12 @@
       case "competences_regagnees": return c.regagnees >= cond.n;
       case "competences_perdues": return c.perdues >= cond.n;
       case "jours_actifs": return partie.jours.length >= cond.n;
+      case "case_atteinte": return partie.plateau.tours > 0 || partie.plateau.atteinte >= cond.n;
+      case "case_visitee": return (partie.plateau.visites[cond.n] || 0) > 0;
+      case "tours_plateau": return partie.plateau.tours >= cond.n;
+      case "sorties_prison": return c.sortiesPrison >= cond.n;
+      case "eurekas": return c.eurekas >= cond.n;
+      case "reculs": return c.reculs >= cond.n;
       default: return false;
     }
   }
@@ -449,11 +624,13 @@
   // Débloque succès, objets du cabinet et accessoires d'avatar. Certains dépendent des autres
   // (« 30 succès », « 10 objets », un accessoire lié à un succès) : on boucle jusqu'à stabilité.
   function verifierRecompenses(contenu, partie, t) {
-    var out = { succes: [], objets: [], accessoires: [] };
+    var out = { succes: [], objets: [], accessoires: [], evenements: [], livres: [], masque: null };
     var familles = [
       ["succes", contenu.succes, partie.succes],
       ["objets", contenu.objets, partie.objets],
       ["accessoires", contenu.avatar ? contenu.avatar.accessoires : [], partie.accessoires],
+      ["evenements", contenu.evenements, partie.evenements],
+      ["livres", contenu.livres, partie.livres],
     ];
     var change = true;
     while (change) {
@@ -468,7 +645,13 @@
         });
       });
     }
-    if (out.succes.length || out.objets.length || out.accessoires.length) partie.maj = t;
+    var m = masqueActuel(contenu, partie);
+    if (m && m.id !== partie.masque) {
+      // Le premier masque n'est pas une transformation : on le pose sans l'annoncer.
+      if (partie.masque) out.masque = m;
+      partie.masque = m.id;
+    }
+    if (out.succes.length || out.objets.length || out.accessoires.length || out.evenements.length || out.livres.length || out.masque) partie.maj = t;
     return out;
   }
 
@@ -485,18 +668,44 @@
     return rang;
   }
 
-  // Choisit une réplique du narrateur pour le premier contexte de la liste qui en a,
-  // en évitant les dernières déjà entendues. Retient le choix dans la partie.
-  function replique(contenu, partie, contextes, alea) {
+  // Masque de l'IA : le dernier dont le palier de succès est atteint (ou débloqué par les tours du plateau).
+  function masqueActuel(contenu, partie) {
+    if (!contenu.ia) return null;
+    var n = Object.keys(partie.succes).length, tours = partie.plateau ? partie.plateau.tours : 0, out = null;
+    contenu.ia.masques.forEach(function (m) { if (n >= m.seuil || (m.tours && tours >= m.tours)) out = m; });
+    return out;
+  }
+
+  function expression(contenu, contexte) {
+    return (contenu.ia && contenu.ia.expressions[contexte]) || "neutre";
+  }
+
+  // Remplace {stat}, {n}… dans le texte d'une réplique, sans toucher au contenu.
+  function habiller(contenu, ligne, vars) {
+    var texte = {};
+    Object.keys(ligne.texte).forEach(function (l) {
+      texte[l] = ligne.texte[l].replace(/\{(\w+)\}/g, function (m, k) { return vars && vars[k] != null ? vars[k] : m; });
+    });
+    return { id: ligne.id, contexte: ligne.contexte, texte: texte, expression: expression(contenu, ligne.contexte) };
+  }
+
+  // Choisit une réplique pour le premier contexte de la liste qui en a. Dans chaque contexte,
+  // aucune réplique ne revient avant que toutes aient été dites. Retient le choix dans la partie.
+  function replique(contenu, partie, contextes, alea, vars) {
     alea = alea || Math.random;
     for (var i = 0; i < contextes.length; i++) {
-      var lignes = contenu.commentairesPar[contextes[i]];
+      var ctx = contextes[i], lignes = contenu.commentairesPar[ctx];
       if (!lignes || !lignes.length) continue;
-      var fraiches = lignes.filter(function (l) { return partie.repliques.indexOf(l.id) < 0; });
-      var choix = (fraiches.length ? fraiches : lignes)[Math.floor(alea() * (fraiches.length || lignes.length))];
-      partie.repliques.unshift(choix.id);
-      partie.repliques.length = Math.min(partie.repliques.length, MAX_REPLIQUES);
-      return choix;
+      var vues = partie.repliques[ctx] || [];
+      var fraiches = lignes.filter(function (l) { return vues.indexOf(l.id) < 0; });
+      if (!fraiches.length) {
+        // Contexte épuisé : on repart de zéro, sauf la dernière dite, pour ne pas l'enchaîner.
+        vues = vues.slice(0, 1);
+        fraiches = lignes.filter(function (l) { return vues.indexOf(l.id) < 0; });
+      }
+      var choix = fraiches[Math.floor(alea() * fraiches.length)];
+      partie.repliques[ctx] = [choix.id].concat(vues);
+      return habiller(contenu, choix, vars);
     }
     return null;
   }
@@ -508,7 +717,7 @@
     else if (rappelsDus(contenu, partie, t).some(function (k) { return joursEntre(partie.competences[k.id].prochainRappel, t) >= 3; })) ctx = "retards";
     var lignes = contenu.commentairesPar[ctx] || contenu.commentairesPar.accueil;
     if (!lignes || !lignes.length) return null;
-    return lignes[Math.floor(debutJour(t) / JOUR) % lignes.length];
+    return habiller(contenu, lignes[Math.floor(debutJour(t) / JOUR) % lignes.length]);
   }
 
   var Moteur = {
@@ -545,6 +754,13 @@
     rangAvatar: rangAvatar,
     replique: replique,
     repliqueDuJour: repliqueDuJour,
+    masqueActuel: masqueActuel,
+    expression: expression,
+    bonusDuJour: bonusDuJour,
+    valeurEpreuve: valeurEpreuve,
+    deplacer: deplacer,
+    avancerPion: avancerPion,
+    cleJour: cleJour,
   };
 
   if (typeof module === "object" && module.exports) module.exports = Moteur;

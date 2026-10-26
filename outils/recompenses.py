@@ -25,11 +25,11 @@ SUCCES_V2 = [
            maitriser("phys.unites"),
            anecdote("La Grande Muraille n'est pas visible à l'œil nu depuis la Lune, ni même facilement depuis l'orbite basse : elle est longue, mais étroite et de la couleur du sol. Yang Liwei, premier astronaute chinois, a dit en 2003 ne pas l'avoir vue.",
                     "NASA Earth Observatory, « Great Wall », 2005 ; agence Xinhua, octobre 2003")),
-    succes("foudre-deux-fois", "La foudre tombe deux fois", "Perdre deux compétences. Le Comité constate que l'expérience ne suffit pas.",
+    succes("foudre-deux-fois", "La foudre tombe deux fois", "Perdre deux compétences. L'IA constate que l'expérience ne suffit pas.",
            {"type": "competences_perdues", "n": 2},
            anecdote("La foudre tombe très souvent au même endroit : l'Empire State Building est frappé une vingtaine de fois par an. Roy Sullivan, garde forestier en Virginie, a été foudroyé sept fois entre 1942 et 1977, et a survécu à chaque fois.",
                     "NOAA National Weather Service, « Lightning Myths » ; Guinness World Records")),
-    succes("coriolis", "L'évier de l'hémisphère Sud", "Maîtriser les orbites. Le Comité vous interdit désormais de croire à l'histoire du lavabo.",
+    succes("coriolis", "L'évier de l'hémisphère Sud", "Maîtriser les orbites. L'IA vous interdit désormais de croire à l'histoire du lavabo.",
            maitriser("astro.orbites"),
            anecdote("L'eau ne tourne pas dans l'autre sens dans les éviers de l'hémisphère Sud : à cette échelle, la force de Coriolis est bien trop faible face à la forme de la cuve et aux remous. Au MIT en 1962, Ascher Shapiro a dû laisser reposer l'eau d'une cuve de 1,80 m pendant 24 heures pour la mesurer.",
                     "Ascher Shapiro, « Bath-Tub Vortex », Nature, 1962")),
@@ -45,7 +45,7 @@ SUCCES_V2 = [
            maitriser("astro.systeme"),
            anecdote("Les saisons ne viennent pas de la distance au Soleil : la Terre en est au plus près début janvier, en plein hiver de l'hémisphère Nord. C'est l'inclinaison de son axe qui change la hauteur du Soleil et la durée du jour.",
                     "Institut de mécanique céleste et de calcul des éphémérides (IMCCE), Observatoire de Paris")),
-    succes("sang-bleu", "Sang bleu", "Maîtriser la cellule. Le Comité vérifie votre noblesse : elle est rouge, comme tout le monde.",
+    succes("sang-bleu", "Sang bleu", "Maîtriser la cellule. L'IA vérifie votre noblesse : elle est rouge, comme tout le monde.",
            maitriser("sci.cellule"),
            anecdote("Le sang n'est jamais bleu, même dans les veines : il est rouge sombre. Les veines paraissent bleues parce que la peau ne renvoie pas les couleurs de la même façon selon leur profondeur.",
                     "Alwin Kienle et al., « Why do veins appear blue? », Applied Optics, 1996")),
@@ -53,7 +53,7 @@ SUCCES_V2 = [
            maitriser("chim.liaisons"),
            anecdote("Les vitraux anciens sont parfois plus épais en bas, mais ce n'est pas parce que le verre « coule » : les verriers posaient souvent le côté épais en bas. Un calcul de 1998 montre qu'il faudrait bien plus que l'âge de l'Univers pour qu'un vitrail se déforme visiblement.",
                     "Edgar Zanotto, « Do cathedral glasses flow? », American Journal of Physics, 1998")),
-    succes("effet-mozart", "L'effet Mozart", "Réussir un quiz sans faute avec le chrono. Sans musique de fond, le Comité suppose.",
+    succes("effet-mozart", "L'effet Mozart", "Réussir un quiz sans faute avec le chrono. Sans musique de fond, suppose l'IA.",
            {"type": "chrono_parfaits", "n": 1},
            anecdote("En 1993, une étude trouve qu'écouter une sonate de Mozart améliore brièvement un test de raisonnement spatial. Les médias en font « Mozart rend les bébés intelligents ». Une méta-analyse de 2010 portant sur près de 40 études ne trouve pas d'effet notable.",
                     "Pietschnig, Voracek et Formann, « Mozart effect–Shmozart effect », Intelligence, 2010")),
@@ -65,7 +65,7 @@ SUCCES_V2 = [
            {"type": "competences_regagnees", "n": 3},
            anecdote("Galilée n'a sans doute jamais murmuré « Eppur si muove » devant ses juges en 1633. La phrase apparaît pour la première fois plus d'un siècle après, en 1757, sous la plume de Giuseppe Baretti.",
                     "Giuseppe Baretti, The Italian Library, 1757")),
-    succes("perseverance", "Persévérance mal placée", "Rater trois fois de suite le même quiz. Le Comité admire la constance, pas la méthode.",
+    succes("perseverance", "Persévérance mal placée", "Rater trois fois de suite le même quiz. L'IA admire la constance, pas la méthode.",
            {"type": "meme_quiz_rate", "n": 3},
            anecdote("« La folie, c'est de refaire la même chose et d'attendre un résultat différent. » Einstein ne l'a jamais écrit : on n'en trouve aucune trace avant les années 1980, dans des brochures des Narcotiques anonymes.",
                     "Quote Investigator, « Insanity Is Doing the Same Thing Over and Over Again », 2017")),
@@ -89,7 +89,7 @@ SUCCES_V2 = [
            maitriser("phys.ondes"),
            anecdote("Archimède aurait incendié la flotte romaine avec des miroirs. Le récit n'apparaît que des siècles après. En 2005, des étudiants du MIT ont réussi à enflammer une maquette de navire, immobile, par beau temps et après de longs essais.",
                     "MIT, cours 2.009, « Archimedes Death Ray: Idea Feasibility Testing », 2005")),
-    succes("deux-hemispheres", "Cerveau gauche, cerveau droit", "Jouer 20 quiz. Avec les deux hémisphères, le Comité l'espère.",
+    succes("deux-hemispheres", "Cerveau gauche, cerveau droit", "Jouer 20 quiz. Avec les deux hémisphères, l'IA l'espère.",
            {"type": "quiz_joues", "n": 20},
            anecdote("Il n'y a pas de « cerveau gauche » logique et de « cerveau droit » créatif chez les individus. Une étude de 2013 sur plus de 1 000 cerveaux n'a trouvé personne qui utilise davantage un hémisphère que l'autre dans l'ensemble.",
                     "Nielsen et al., « An Evaluation of the Left-Brain vs. Right-Brain Hypothesis », PLOS ONE, 2013")),
@@ -99,7 +99,7 @@ SUCCES_V2 = [
                     "Heinz Valtin, « Drink at least eight glasses of water a day. Really? », American Journal of Physiology, 2002")),
 
     # Succès moqueurs : ils récompensent les comportements absurdes.
-    succes("insomniaque", "Insomniaque érudit", "Terminer un quiz entre 2 h et 5 h du matin. Le Comité, lui, dormait.",
+    succes("insomniaque", "Insomniaque érudit", "Terminer un quiz entre 2 h et 5 h du matin. L'IA, elle, ne dort jamais. Elle a tout vu.",
            {"type": "quiz_nuit", "n": 1},
            anecdote("En 1964, le lycéen Randy Gardner est resté éveillé 11 jours. Il a fini par avoir du mal à se concentrer, à se souvenir et à parler. Le sommeil sert notamment à consolider ce qu'on a appris.",
                     "Gulevich, Dement et Johnson, Archives of General Psychiatry, 1966")),
@@ -107,7 +107,7 @@ SUCCES_V2 = [
            {"type": "quiz_aube", "n": 1},
            anecdote("Invité en Suède par la reine Christine, Descartes devait lui donner ses leçons à 5 heures du matin, dans le froid. Il meurt d'une pneumonie en février 1650, quelques mois après son arrivée.",
                     "Adrien Baillet, La Vie de Monsieur Des-Cartes, 1691")),
-    succes("voyageur-temporel", "Voyageur temporel", "Utiliser le mode test pour avancer l'horloge. Le Comité a vu. Le Comité note tout.",
+    succes("voyageur-temporel", "Voyageur temporel", "Utiliser le mode test pour avancer l'horloge. L'IA a vu. L'IA note tout.",
            {"type": "mode_test", "n": 1},
            anecdote("Le 28 juin 2009, Stephen Hawking organise à Cambridge une fête pour voyageurs du temps, avec champagne et petits fours. Il n'envoie les invitations qu'après la fête. Personne n'est venu.",
                     "Stephen Hawking, Into the Universe with Stephen Hawking, Discovery Channel, 2010")),
@@ -123,7 +123,7 @@ SUCCES_V2 = [
            {"type": "quiz_joues", "n": 50},
            anecdote("Le mot « serendipity » est inventé en 1754 par l'écrivain Horace Walpole, d'après un conte où trois princes de Serendip font des découvertes par hasard et par sagacité.",
                     "Horace Walpole, lettre à Horace Mann, 28 janvier 1754")),
-    succes("procrastination", "Vingt ans de réflexion", "Faire un rappel avec au moins 7 jours de retard. Le Comité vous trouve une excuse.",
+    succes("procrastination", "Vingt ans de réflexion", "Faire un rappel avec au moins 7 jours de retard. L'IA vous trouve une excuse.",
            {"type": "rappels_retard", "n": 1},
            anecdote("Darwin a esquissé sa théorie de la sélection naturelle dès 1838, mais ne l'a publiée qu'en 1859, poussé par la lettre de Wallace qui avait eu la même idée.",
                     "Charles Darwin, Autobiographie, 1887")),
@@ -131,7 +131,7 @@ SUCCES_V2 = [
            {"type": "competences_perdues", "n": 3},
            anecdote("Le 24 août 2006, l'Union astronomique internationale reclasse Pluton parmi les planètes naines. L'American Dialect Society élit « to pluto » (rétrograder quelqu'un) mot de l'année.",
                     "Union astronomique internationale, résolution B5, 2006 ; American Dialect Society, 2006")),
-    succes("schrodinger", "Ni parti ni revenu", "Revenir jouer après au moins 14 jours d'absence. Le Comité ne savait pas si vous existiez encore.",
+    succes("schrodinger", "Ni parti ni revenu", "Revenir jouer après au moins 14 jours d'absence. L'IA ne savait plus si vous existiez encore.",
            {"type": "retours", "n": 1},
            anecdote("Schrödinger a imaginé son chat à la fois mort et vivant pour se moquer d'une interprétation de la physique quantique, pas pour la défendre. Il trouvait la situation absurde.",
                     "Erwin Schrödinger, « Die gegenwärtige Situation in der Quantenmechanik », Naturwissenschaften, 1935")),
@@ -141,7 +141,7 @@ SUCCES_V2 = [
            {"type": "rappels_reussis", "n": 100},
            anecdote("Les éléphants ont réellement une excellente mémoire : au Kenya, les troupeaux menés par les matriarches les plus âgées reconnaissent mieux les cris d'éléphants inconnus et réagissent mieux aux dangers.",
                     "McComb et al., « Matriarchs as Repositories of Social Knowledge », Science, 2001")),
-    succes("preuves-extraordinaires", "Preuves extraordinaires", "Réussir 20 rappels d'affilée. Le Comité exige des preuves. Vous en avez.",
+    succes("preuves-extraordinaires", "Preuves extraordinaires", "Réussir 20 rappels d'affilée. L'IA exige des preuves. Vous en avez.",
            {"type": "serie_rappels", "n": 20},
            citation("Des affirmations extraordinaires exigent des preuves extraordinaires.",
                     "Carl Sagan", "Cosmos, épisode 12, 1980 (traduction)")),
@@ -157,7 +157,7 @@ SUCCES_V2 = [
            {"type": "niveau_global", "n": 10},
            anecdote("Marie Curie reste la seule personne récompensée par un prix Nobel dans deux sciences différentes : la physique en 1903, la chimie en 1911.",
                     "Fondation Nobel, nobelprize.org")),
-    succes("nous-saurons", "Nous devons savoir", "Atteindre le niveau global 25. Le Comité commence à vous respecter. N'en parlez à personne.",
+    succes("nous-saurons", "Nous devons savoir", "Atteindre le niveau global 25. L'IA commence à vous respecter. N'en parlez à personne.",
            {"type": "niveau_global", "n": 25},
            citation("Nous devons savoir. Nous saurons.", "David Hilbert", "Discours de Königsberg, 8 septembre 1930 (traduction)")),
     succes("wunderkammer", "Wunderkammer", "Obtenir 30 succès. Votre propre cabinet de curiosités se remplit.",
@@ -213,142 +213,6 @@ SUCCES_V2 = [
            anecdote("L'expérience du cerf-volant de Franklin (1752) n'est connue que par un récit publié quinze ans plus tard par Joseph Priestley. En 1753, Georg Richmann, qui reproduisait ce genre d'expérience à Saint-Pétersbourg, est tué par la foudre.",
                     "Joseph Priestley, The History and Present State of Electricity, 1767")),
 ]
-
-
-# --- Narrateur ----------------------------------------------------------------------
-
-NARRATEUR = fr("Le Comité de lecture")
-
-COMMENTAIRES = {
-    "accueil": [
-        "Le Comité de lecture vous salue. Il a lu votre dossier. Il n'a rien dit, ce qui est déjà un commentaire.",
-        "Bonjour. Le Comité rappelle que l'ignorance n'est pas une stat. Enfin, pas encore.",
-        "Nouvelle journée, nouvelles occasions de se tromper avec assurance.",
-        "Le Comité a bu son café. Il est prêt à être déçu.",
-        "Rappel amical : votre cerveau oublie pendant que vous lisez ceci.",
-        "Le Comité constate votre présence. Il ne la commente pas. Pour l'instant.",
-        "Aujourd'hui est un excellent jour pour apprendre quelque chose. Hier aussi, d'ailleurs.",
-        "Ebbinghaus vous observe depuis 1885. Il prend des notes.",
-        "Le Comité a parié sur vous. Une petite somme. Par prudence.",
-        "Les compétences ne se maîtrisent pas toutes seules. Le Comité a vérifié.",
-        "Votre arbre attend. Il est patient. Le Comité, beaucoup moins.",
-        "Statistiquement, vous allez réussir quelque chose aujourd'hui. Le Comité refait le calcul.",
-        "Le Comité rappelle que lire la question avant de répondre est autorisé.",
-        "Ah, c'est vous. Le Comité ajuste ses attentes.",
-        "Personne n'est jamais devenu savant en regardant l'écran d'accueil. Le Comité dit ça comme ça.",
-    ],
-    "quiz_parfait_facile": [
-        "Cinq sur cinq sur une compétence de rang 1. Le Comité prévient votre famille. Calmement.",
-        "Bravo, vous maîtrisez les bases. Le Comité renonce à la fanfare, elle coûte cher.",
-        "Sans faute. Sur le niveau débutant. Le Comité applaudit d'une main.",
-        "Parfait ! Le Comité note aussi que c'était la partie facile.",
-        "Impeccable. Gardez cette énergie pour la suite, vous en aurez besoin.",
-        "Le Comité a vérifié deux fois : oui, vous savez ce que tout le monde sait. Félicitations sincères.",
-        "Score parfait. Le tutoriel est terminé, si vous voulez.",
-        "Zéro erreur. Le Comité est presque impressionné. Presque.",
-    ],
-    "quiz_parfait": [
-        "Sans faute. Le Comité range ses sarcasmes. Temporairement.",
-        "Parfait. Le Comité cherche une faille. Il n'en trouve pas. C'est agaçant.",
-        "Cinq sur cinq. Le Comité se lève. Lentement, mais il se lève.",
-        "Score parfait. Le Comité vous soupçonne d'avoir lu un livre.",
-        "Remarquable. Le Comité fait encadrer cette page de votre journal.",
-        "Pas une erreur. Le Comité révise son pronostic à la hausse.",
-    ],
-    "quiz_reussi": [
-        "Compétence maîtrisée. Une erreur au passage, pour garder les pieds sur terre.",
-        "Validé. Le Comité a vu l'erreur. Le Comité voit tout.",
-        "C'est acquis. Revenez demain, le Comité vérifiera que ça tient.",
-        "Réussi. Pas avec panache, mais réussi.",
-        "Le seuil est franchi. Le Comité aurait aimé plus de marge, mais il n'est pas difficile. Si, en fait, il l'est.",
-        "Bien. Votre mémoire a maintenant une raison de travailler cette nuit.",
-    ],
-    "quiz_rate_facile": [
-        "Raté. Sur une compétence de rang 1. Le Comité respire profondément.",
-        "C'était le niveau d'entrée. La porte était ouverte. Vous êtes passé à côté.",
-        "Le Comité ne rit pas. Le Comité tousse. Longuement.",
-        "Rassurez-vous : Galilée non plus n'a sans doute jamais rien lâché du haut de la tour de Pise.",
-        "Le Comité propose de relire les explications. Toutes. Lentement.",
-        "Un échec au rang 1. Le Comité ajoute une ligne à votre dossier. Elle est en gras.",
-        "Ce quiz était conçu pour être réussi. Vous avez trouvé une autre voie. Créatif.",
-        "Le Comité a vu des pierres réussir ce quiz. Des pierres très bien informées, certes.",
-    ],
-    "quiz_rate": [
-        "Pas encore. Le Comité est patient. Il a l'éternité, vous non.",
-        "Échec. La science avance aussi par ses ratés. Ceci en était un.",
-        "Le Comité classe ce quiz dans « expériences instructives ».",
-        "Raté. Lisez les explications : elles ont été écrites pour des gens comme vous. C'est-à-dire tout le monde.",
-        "Une hypothèse réfutée est un progrès, rappelle le Comité. Surtout pour vous consoler.",
-        "Ce n'est pas un échec, c'est une donnée. Une donnée décevante.",
-    ],
-    "quiz_zero": [
-        "Zéro. Vous avez réinventé le zéro. Brahmagupta l'avait fait en 628, mais bravo pour l'effort.",
-        "Aucune bonne réponse. Répondre au hasard aurait fait mieux. Le Comité est sans voix.",
-        "Zéro sur cinq. Le Comité vérifie que l'écran était allumé.",
-        "Score nul. Le Comité suggère de recommencer, les yeux ouverts cette fois.",
-    ],
-    "rappel_reussi": [
-        "Rappel réussi. La courbe de l'oubli perd une bataille.",
-        "Vous vous en souveniez. Ebbinghaus aurait pris des notes.",
-        "Le savoir tient. Le Comité repousse le prochain contrôle.",
-        "Bien retenu. Votre hippocampe mérite une prime.",
-        "Validé. Le Comité est presque déçu de n'avoir rien à reprendre.",
-        "Toujours là. Le Comité respecte la constance, même chez vous.",
-    ],
-    "rappel_perdu": [
-        "Compétence perdue. Le Comité observe une minute de silence. Trente secondes suffiront.",
-        "Oublié. La courbe de l'oubli marque un point. Elle finit toujours par en marquer.",
-        "Perdue. Elle reviendra : elle aussi croit aux deuxièmes chances.",
-        "Le savoir s'est évaporé. Le Comité soupçonne une fuite.",
-        "Raté. L'XP s'en va. Le Comité, lui, reste.",
-        "Perdue. Pluton aussi a perdu son statut un jour. Elle s'en est remise.",
-    ],
-    "rappel_retard": [
-        "Ce rappel attendait depuis plusieurs jours. Le Comité aussi.",
-        "En retard, mais présent. Darwin a bien attendu vingt ans pour publier.",
-        "Le Comité apprécie votre ponctualité relative.",
-        "Mieux vaut tard que jamais. Le Comité, lui, préfère à l'heure.",
-    ],
-    "nuit": [
-        "Un quiz à cette heure-ci ? Le Comité dormait. Il est maintenant réveillé, et grognon.",
-        "Le sommeil consolide la mémoire. Vous, vous consolidez autre chose.",
-        "Il est tard. Le Comité vous recommande l'oreiller, l'outil pédagogique le plus sous-estimé.",
-        "Révision nocturne détectée. Le Comité allume une bougie et soupire.",
-    ],
-    "mode_test": [
-        "Le Comité a vu. Le Comité note tout.",
-        "Vous avez avancé le temps. Le Comité, lui, n'a pas vieilli. Il était déjà vieux.",
-        "Voyage dans le temps détecté. Hawking avait organisé une fête pour vous en 2009. Vous êtes en retard.",
-        "Tricher avec l'horloge ne trompe pas la courbe de l'oubli. Mais essayez, c'est drôle.",
-        "Le temps passe plus vite pour vous. Pas pour vos souvenirs.",
-    ],
-    "eclair": [
-        "Répondu en moins de deux secondes. Et faux. Une efficacité remarquable.",
-        "Le Comité salue la vitesse. Le Comité regrette la direction.",
-        "Plus vite que la lumière, comme les neutrinos de 2011. Et pour la même raison : un câble mal branché.",
-        "Vous avez lu la question ? Le Comité demande pour la forme.",
-        "Réflexe impressionnant. Réflexion absente.",
-    ],
-    "retour": [
-        "Tiens, vous revoilà. Le Comité vous croyait parti étudier les fossiles. Ou en devenir un.",
-        "Longue absence. Vos souvenirs, eux, ne vous ont pas attendu.",
-        "Le Comité a gardé votre place. Il a hésité.",
-        "Bon retour. La courbe de l'oubli a bien travaillé pendant vos vacances.",
-    ],
-    "retards": [
-        "Des rappels attendent depuis plusieurs jours. Ils ne vont pas se faire tout seuls. Le Comité a vérifié.",
-        "Vos souvenirs patientent en salle d'attente. Certains lisent de vieux magazines.",
-        "Rappels en retard. Pas de pénalité, mais le Comité tient une liste.",
-    ],
-}
-
-
-def commentaires():
-    out = []
-    for contexte, lignes in COMMENTAIRES.items():
-        for i, texte in enumerate(lignes, 1):
-            out.append({"id": f"{contexte.replace('_', '-')}.{i:02d}", "contexte": contexte, "texte": fr(texte)})
-    return out
 
 
 # --- Cabinet de curiosités --------------------------------------------------------------

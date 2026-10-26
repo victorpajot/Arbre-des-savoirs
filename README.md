@@ -1,4 +1,4 @@
-# Arbre des savoirs, v2
+# Arbre des savoirs, v3
 
 Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
@@ -6,18 +6,28 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
 | Dossier | Contenu |
 | --- | --- |
-| `data/` | Le contenu du jeu, généré par `outils/contenu.py` : `regles.json`, `skills.json`, `questions.json`, `succes.json`, `commentaires.json` (le narrateur), `objets.json` (le cabinet de curiosités), `avatar.json`, plus `schema.json` qui les valide. |
+| `data/` | Le contenu du jeu, généré par `outils/contenu.py` : `regles.json`, `skills.json`, `questions.json`, `succes.json`, `commentaires.json` (les répliques de l'IA), `ia.json` (ses masques), `objets.json` (le cabinet de curiosités), `avatar.json`, `plateau.json`, `frise.json`, `bibliotheque.json`, plus `schema.json` qui les valide. |
 | `web/moteur.js` | Les règles pures (XP, maîtrise, rappels, perte, gel, succès). Aucun affichage, aucun stockage. |
 | `web/index.html` | L'interface web. |
-| `outils/contenu.py` | Source du contenu : régénère `data/` (`python3 outils/contenu.py`). Il assemble `questions_nouvelles.py` (questions v2), `illustrations.py` (schémas SVG), `recompenses.py` (succès v2, narrateur, objets, accessoires) et `pixels.py` (pixel art). |
+| `outils/contenu.py` | Source du contenu : régénère `data/` (`python3 outils/contenu.py`). Il assemble `questions_nouvelles.py` (questions v2), `philosophes.py` (branche Sagesse), `illustrations.py` (schémas SVG), `recompenses.py` (succès v2, objets, accessoires), `plateau.py` (63 cases, dates de la frise, succès du plateau), `bibliotheque.py` (32 livres), `ia.py` (répliques) et le pixel art (`dessin.py`, `objets32.py`, `avatar40.py`, `masques.py`, `icones32.py`, chacun exécutable pour produire une planche d'aperçu PNG). |
 | `outils/valider.py` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
 | `outils/test_moteur.js` | Test du cycle quiz, rappel, perte, regain (`node outils/test_moteur.js`). |
+
+## Nouveautés de la v3
+
+- **Plateau de l'histoire** : un jeu de l'oie de 63 cases, du feu à l'IA, chacune avec son histoire sourcée et sa réplique. Pas de dé : rappel réussi +1, quiz de rang 1 +2, rangs 2 et 3 +3, rang 4 +4 ; +1 sans faute, +1 avec le chrono, +2 sur la branche du bonus du jour. Quiz raté : sur place ; rappel raté : 2 cases en arrière. Cases spéciales : Eurêka (multiples de 9, on rejoue la même distance), incendie d'Alexandrie, Fibonacci, peste, procès de Galilée, guillotine, Solvay. L'arrivée relance un tour où les pièges comptent double.
+- **Collections** (remplace l'onglet Cabinet) : Objets, Frise (103 dates en 6 époques, filtrables par branche) et Bibliothèque (32 livres sur des étagères, résumé, importance, anecdote, réaction de l'IA).
+- **L'IA** remplace le Comité de lecture : 208 répliques (89 % citent l'histoire des sciences), 27 contextes, jamais deux fois la même avant d'avoir épuisé le contexte. Six masques débloqués par paliers de succès, chacun avec cinq expressions.
+- **Sagesse (Philosophes)** : 10e branche, découpée par époques, 48 questions, 8 succès, 5 objets.
+- Pixel art doublé : objets et icônes en 32 × 32, avatar et masques en 40 × 48, avec modelé et contour.
+- 93 succès. Sauvegarde au format 3 ; `migrer()` reprend une partie v2 sans perte (le pion part du feu, dates et livres déjà mérités sont rattrapés).
+- Mode test : boutons « Pion +6 / +20 cases » dans l'onglet Personnage.
 
 ## Nouveautés de la v2
 
 - 9 branches et 36 compétences : Alchimie (chimie), Cosmos (astronomie) et Étincelle (électricité) rejoignent les six premières ; Savoir se recentre sur le vivant (la génétique remplace les atomes, qui passent en Alchimie avec leur XP).
 - 432 questions, dont 23 avec un schéma (champ `illustration`, ou `illustration_explication` quand le schéma donnerait la réponse).
-- Le Comité de lecture, narrateur moqueur : 90 répliques déclenchées par le contexte (quiz facile réussi ou raté, zéro, réponse fausse en moins de 2 s, quiz nocturne, mode test, retour après absence).
+- Le Comité de lecture (devenu l'IA en v3), narrateur moqueur : 90 répliques déclenchées par le contexte (quiz facile réussi ou raté, zéro, réponse fausse en moins de 2 s, quiz nocturne, mode test, retour après absence).
 - 69 succès, tous cachés et sourcés, dont une série de mythes démontés.
 - Avatar en pixel art : 5 rangs selon le niveau global, 11 accessoires gagnés par des succès, et un objet du cabinet à tenir en main.
 - Cabinet de curiosités : 34 objets de l'histoire des sciences, chacun avec sa notice et sa source.
@@ -36,4 +46,4 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
 - **Mobile** : embarquer `data/` dans l'app (ou le télécharger à jour) et porter `moteur.js` tel quel (React Native, Capacitor) ou fonction par fonction. La routine du matin = `rappelsDus()` + `suggestion()`, déclenchée par une notification locale.
 - **Unreal** : chaque fichier contient un tableau plat d'objets à id texte stable. Le pixel art est stocké en lignes de caractères + palette : une texture se reconstruit pixel par pixel. Les schémas SVG n'utilisent que des classes (liste dans `outils/illustrations.py`). Un struct par type (`FCompetence`, `FQuestion`, `FSucces`) et un import JSON en DataTable suffisent ; les textes sont des objets `{"fr": "..."}` à aplatir en colonne par langue si besoin.
-- **Sauvegarde** : un objet JSON versionné (`format: 2`) ; `migrer()` le met à niveau. Le même fichier exporté depuis le web peut être importé ailleurs.
+- **Sauvegarde** : un objet JSON versionné (`format: 3`) ; `migrer()` le met à niveau. Le même fichier exporté depuis le web peut être importé ailleurs.

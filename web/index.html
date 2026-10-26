@@ -26,6 +26,7 @@
   --s-alchimie: #C2402F;
   --s-cosmos: #4F46B8;
   --s-etincelle: #9A7200;
+  --s-sagesse: #8B5E34;
   --parchemin: #F3E9D2;
   --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
   --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
@@ -38,7 +39,7 @@
     --bg: #0E1120; --surface: #171B2C; --surface-2: #1E2336; --ink: #E9EBF3; --muted: #9AA1B6; --line: #2B3149;
     --accent: #9AA9FF; --accent-ink: #0E1120; --good: #4CC98A; --warn: #F0A43A; --bad: #FF6B70;
     --s-logique: #7E9BFF; --s-mecanique: #F0A55A; --s-savoir: #5CCB92; --s-eloquence: #B98CF5; --s-lucidite: #4FC6D2; --s-empathie: #F27BA4;
-    --s-alchimie: #FF7F6E; --s-cosmos: #A49CFF; --s-etincelle: #F2C14E; --parchemin: #E9DDC0;
+    --s-alchimie: #FF7F6E; --s-cosmos: #A49CFF; --s-etincelle: #F2C14E; --s-sagesse: #D9A66B; --parchemin: #E9DDC0;
     color-scheme: dark;
   }
 }
@@ -46,7 +47,7 @@
   --bg: #0E1120; --surface: #171B2C; --surface-2: #1E2336; --ink: #E9EBF3; --muted: #9AA1B6; --line: #2B3149;
   --accent: #9AA9FF; --accent-ink: #0E1120; --good: #4CC98A; --warn: #F0A43A; --bad: #FF6B70;
   --s-logique: #7E9BFF; --s-mecanique: #F0A55A; --s-savoir: #5CCB92; --s-eloquence: #B98CF5; --s-lucidite: #4FC6D2; --s-empathie: #F27BA4;
-  --s-alchimie: #FF7F6E; --s-cosmos: #A49CFF; --s-etincelle: #F2C14E; --parchemin: #E9DDC0;
+  --s-alchimie: #FF7F6E; --s-cosmos: #A49CFF; --s-etincelle: #F2C14E; --s-sagesse: #D9A66B; --parchemin: #E9DDC0;
   color-scheme: dark;
 }
 html, body { height: 100%; }
@@ -197,10 +198,77 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .horloge { font-size: 13px; color: var(--warn); font-weight: 700; }
 
 /* Narrateur */
-.comite { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 12px; background: var(--surface-2); border-left: 4px solid var(--accent); text-align: left; }
-.comite .sceau { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-family: var(--f-display); font-weight: 800; font-size: 13px; }
+.comite { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px 12px 10px; border-radius: 12px; background: var(--surface-2); border-left: 4px solid var(--accent); text-align: left; }
+.comite .masque { flex: none; width: 46px; height: 55px; border-radius: 10px; background: var(--parchemin); display: grid; place-items: center; overflow: hidden; }
 .comite p { font-size: 15px; }
 .comite .qui { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.comite .qui i { font-style: normal; font-weight: 400; text-transform: none; letter-spacing: 0; }
+.comite.petit { padding: 10px 12px 10px 8px; }
+.comite.petit .masque { width: 36px; height: 43px; }
+.comite.petit p { font-size: 14px; }
+
+/* Plateau */
+.plateau svg.grille { display: block; width: 100%; height: auto; touch-action: manipulation; }
+.plateau .tete { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.plateau .tete h2 { font-size: 19px; }
+.plateau .tete .num { color: var(--muted); font-size: 13px; }
+.case-act { display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: center; padding: 10px; border-radius: 12px; background: var(--surface-2); border: 0; text-align: left; width: 100%; }
+.case-act .vitrine { width: 56px; height: 56px; }
+.case-act b { display: block; font-size: 16px; line-height: 1.25; }
+.case-act span { font-size: 13px; color: var(--muted); }
+.etat-pion { font-size: 14px; padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, var(--warn) 14%, var(--surface)); border-left: 4px solid var(--warn); }
+.bonus-jour { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.bonus-jour .pill { font-family: var(--f-mono); font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--c); color: #fff; flex: none; }
+.bareme { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 14px; }
+.bareme .num { text-align: right; font-weight: 700; }
+.vaut { font-family: var(--f-mono); font-weight: 700; color: var(--ink); white-space: nowrap; }
+.vaut.bonus { color: var(--good); }
+.trajet { display: flex; flex-direction: column; gap: 6px; }
+.trajet .pas { display: flex; gap: 8px; align-items: baseline; font-size: 14px; }
+.trajet .pas b { font-family: var(--f-mono); min-width: 54px; flex: none; }
+
+/* Collections */
+.segments { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); }
+.segments button { border: 0; background: transparent; border-radius: 9px; min-height: 40px; font-weight: 700; font-size: 14px; color: var(--muted); }
+.segments button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
+.filtres { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin: 0 -2px; }
+.filtres button { flex: none; border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 12px; min-height: 34px; font-size: 13px; }
+.filtres button[aria-pressed="true"] { border-color: var(--c, var(--accent)); background: color-mix(in srgb, var(--c, var(--accent)) 16%, var(--surface)); font-weight: 700; }
+.frise { display: flex; flex-direction: column; }
+.epoque-t { display: flex; align-items: center; gap: 10px; padding: 18px 0 8px; position: sticky; top: 0; background: var(--surface); z-index: 1; }
+.epoque-t:first-child { padding-top: 4px; }
+.epoque-t h3 { font-size: 17px; flex: 1; }
+.epoque-t .num { font-size: 12px; color: var(--muted); }
+.evt { display: grid; grid-template-columns: 84px 18px 1fr; align-items: stretch; border: 0; background: transparent; text-align: left; padding: 0; width: 100%; }
+.evt .an { font-family: var(--f-mono); font-size: 12.5px; font-weight: 700; text-align: right; padding: 10px 0 0; line-height: 1.3; color: var(--ink); }
+.evt .axe { position: relative; }
+.evt .axe::before { content: ""; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--line); }
+.evt .axe::after { content: ""; position: absolute; left: 3px; top: 13px; width: 12px; height: 12px; border-radius: 50%; background: var(--c); border: 2px solid var(--surface); }
+.evt .corps { padding: 8px 4px 10px 6px; }
+.evt .corps b { display: block; font-size: 15px; line-height: 1.3; }
+.evt .corps span { display: block; font-size: 13.5px; color: var(--muted); line-height: 1.4; }
+.evt.verrou .an, .evt.verrou .corps b { color: var(--muted); }
+.evt.verrou .axe::after { background: var(--surface); border-color: var(--line); }
+.evt.nouveau .corps b::after { content: "Nouveau"; margin-left: 8px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-ink); background: var(--accent); padding: 1px 6px; border-radius: 6px; vertical-align: 2px; }
+.etagere { display: flex; flex-direction: column; gap: 0; }
+.rayon { display: flex; align-items: flex-end; gap: 4px; padding: 10px 8px 0; min-height: 150px; border-bottom: 10px solid #7A5230; box-shadow: 0 6px 0 -2px #4E3320; margin-bottom: 18px; overflow-x: auto; }
+.dos { flex: none; width: 38px; border: 0; border-radius: 3px 3px 0 0; padding: 8px 0; color: #FFF8E8; background: var(--c);
+  box-shadow: inset 3px 0 0 rgb(255 255 255 / 0.18), inset -4px 0 0 rgb(0 0 0 / 0.25);
+  background-image: linear-gradient(transparent 12px, rgb(242 193 78 / 0.85) 12px, rgb(242 193 78 / 0.85) 15px, transparent 15px, transparent calc(100% - 16px), rgb(242 193 78 / 0.85) calc(100% - 16px), rgb(242 193 78 / 0.85) calc(100% - 13px), transparent calc(100% - 13px));
+  display: flex; align-items: center; justify-content: center; position: relative; }
+.dos span { writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--f-display); font-weight: 700; font-size: 12px; line-height: 1.1; max-height: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dos.verrou { background: color-mix(in srgb, var(--muted) 35%, var(--surface-2)); color: var(--muted); background-image: none; }
+.dos .neuf { position: absolute; top: -6px; right: -4px; width: 12px; height: 12px; border-radius: 50%; background: var(--warn); border: 2px solid var(--surface); }
+.livre-fiche .tete { display: grid; grid-template-columns: 84px 1fr; gap: 14px; align-items: center; }
+.livre-fiche .couv { width: 84px; height: 112px; border-radius: 4px 8px 8px 4px; background: var(--c); display: grid; place-items: center; box-shadow: inset 6px 0 0 rgb(0 0 0 / 0.22); }
+.livre-fiche .couv .vitrine { width: 56px; height: 56px; }
+.livre-fiche h3 { font-size: 15px; margin-top: 4px; }
+.livre-fiche .nav { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.masques { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; }
+.masques .m { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-size: 12px; line-height: 1.25; padding: 8px; border-radius: 12px; background: var(--surface-2); border: 0; }
+.masques .m .vitrine { width: 64px; height: 76px; }
+.masques .m.verrou { color: var(--muted); }
+.masques .m.actuel { box-shadow: 0 0 0 2px var(--accent); }
 
 /* Pixel art */
 .pix { display: block; image-rendering: pixelated; shape-rendering: crispEdges; }
@@ -252,6 +320,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   var M = window.Moteur;
   var CLE_LOCALE = "arbre-competences.partie";
   var C = null, P = null, vue = "aujourdhui", quiz = null, feuille = null, ecrire = null;
+  var collection = "objets", filtreFrise = null, cachePlateau = { cle: null, svg: "" };
+  var JOUR_MS = 86400000;
   var stockage = { compte: false, db: null, ref: null, minuteur: null, etat: "Ce navigateur" };
   // Dans l'app Android (Capacitor), les plugins natifs remplacent ce que la page web demande à Claude.
   var NATIF = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
@@ -263,7 +333,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     { id: "aujourdhui", nom: "Aujourd'hui", icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>' },
     { id: "arbre", nom: "Arbre", icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="4.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><circle cx="12" cy="19.5" r="2.5"/><path d="M10.5 6.5 7.5 10M13.5 6.5l3 3.5M7.5 14l3 3.5M16.5 14l-3 3.5"/></svg>' },
     { id: "perso", nom: "Personnage", icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z"/><path d="M12 7l4.5 2.6v4.8L12 17l-4.5-2.6V9.6z"/></svg>' },
-    { id: "cabinet", nom: "Cabinet", icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="3" width="17" height="18" rx="1.5"/><path d="M3.5 12h17M12 3v18"/><circle cx="7.5" cy="8" r="1.4"/><path d="M15 9.5l2-3 2 3z"/><path d="M6 17.5h3M15.5 15.5v3"/></svg>' },
+    { id: "collections", nom: "Collections", icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 3.5h3.5v17H4zM9.5 3.5H13v17H9.5z"/><path d="m15 5.2 3.3-.9 3.2 15.6-3.3.8z"/><path d="M4 7.5h3.5M9.5 16.5H13"/></svg>' },
     { id: "succes", nom: "Succès", icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7 3h10v5a5 5 0 0 1-10 0z"/><path d="M7 5H4a3 3 0 0 0 3 4M17 5h3a3 3 0 0 1-3 4M12 13v4M8 21h8l-1-4H9z"/></svg>' },
   ];
 
@@ -306,30 +376,60 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     return out;
   }
   function svgObjet(o, verrou, taille) {
-    return '<svg class="pix" viewBox="0 0 16 16" width="' + taille + '" height="' + taille + '" role="img" aria-label="' + esc(verrou ? "Vitrine vide" : tx(o.nom)) + '">' +
+    var n = C.cabinet.taille[0];
+    return '<svg class="pix" viewBox="0 0 ' + n + " " + n + '" width="' + taille + '" height="' + taille + '" role="img" aria-label="' + esc(verrou ? "Vitrine vide" : tx(o.nom)) + '">' +
       pixels(o.pixels, C.cabinet.palette, null, 0, 0, 1, verrou) + "</svg>";
+  }
+  // Un sprite 32 × 32 : objet du cabinet ou icône du plateau.
+  function grilleSprite(id) {
+    var o = C.objets.filter(function (x) { return x.id === id; })[0];
+    return o ? o.pixels : (C.plateau && C.plateau.icones[id]) || null;
+  }
+  function svgSprite(id, taille, label, verrou) {
+    var g = grilleSprite(id); if (!g) return "";
+    return '<svg class="pix" viewBox="0 0 32 32" width="' + taille + '" height="' + taille + '"' + (label ? ' role="img" aria-label="' + esc(label) + '"' : ' aria-hidden="true"') + ">" +
+      pixels(g, C.cabinet.palette, null, 0, 0, 1, verrou) + "</svg>";
+  }
+  function svgMasque(m, expr, largeur, verrou) {
+    var A = C.ia, c = pixels(m.base, A.palette, null, 0, 0, 1, verrou);
+    if (!verrou) c += pixels(m.expressions[expr] || m.expressions.neutre, A.palette, null, 0, 0, 1);
+    return '<svg class="pix" viewBox="0 0 40 48" width="' + largeur + '" height="' + Math.round(largeur * 1.2) + '" role="img" aria-label="' + esc(verrou ? "Masque à venir" : tx(m.nom)) + '">' + c + "</svg>";
   }
   function accessoire(id) { return id && P.accessoires[id] ? C.avatar.accessoires.filter(function (a) { return a.id === id; })[0] || null : null; }
   function objetTenu() { var id = P.avatar && P.avatar.main; return id && P.objets[id] ? C.objets.filter(function (o) { return o.id === id; })[0] || null : null; }
   // Avatar : corps, tenue du rang, cheveux (ou accessoire de tête), accessoire de visage, objet tenu à la main.
-  function svgAvatar(taille) {
+  function pixelsAvatar(ox, oy) {
     var A = C.avatar, rang = M.rangAvatar(C, P), eq = P.avatar || {}, pal = A.palette;
-    var tete = accessoire(eq.tete), visage = accessoire(eq.visage), objet = objetTenu();
-    var c = pixels(A.corps, pal, null, 3, 0, 1) + pixels(rang.tenue, pal, rang.couleurs, 3, 0, 1);
-    if (!tete) c += pixels(A.cheveux, pal, null, 3, 0, 1);
-    if (visage) c += pixels(visage.pixels, pal, null, 3, 0, 1);
-    if (tete) c += pixels(tete.pixels, pal, null, 3, 0, 1);
-    if (objet) c += pixels(objet.pixels, C.cabinet.palette, null, 17.5, 11, 0.5);
-    return '<svg class="pix" viewBox="0 0 26 24" width="' + taille + '" height="' + Math.round(taille * 24 / 26) + '" role="img" aria-label="Ton avatar, rang ' + esc(tx(rang.nom)) + '">' + c + "</svg>";
+    var tete = accessoire(eq.tete), visage = accessoire(eq.visage);
+    var c = pixels(A.corps, pal, null, ox, oy, 1) + pixels(rang.tenue, pal, rang.couleurs, ox, oy, 1);
+    if (!tete) c += pixels(A.cheveux, pal, null, ox, oy, 1);
+    if (visage) c += pixels(visage.pixels, pal, null, ox, oy, 1);
+    if (tete) c += pixels(tete.pixels, pal, null, ox, oy, 1);
+    return c;
+  }
+  function svgAvatar(taille) {
+    var rang = M.rangAvatar(C, P), objet = objetTenu();
+    var c = pixelsAvatar(3, 0);
+    if (objet) c += pixels(objet.pixels, C.cabinet.palette, null, 33, 24, 0.5);
+    return '<svg class="pix" viewBox="0 0 52 48" width="' + taille + '" height="' + Math.round(taille * 48 / 52) + '" role="img" aria-label="Ton avatar, rang ' + esc(tx(rang.nom)) + '">' + c + "</svg>";
   }
 
   // --- Narrateur ------------------------------------------------------------
-  function comite(rep) {
+  // L'IA parle derrière son masque du moment, dont l'expression suit le contexte de la réplique.
+  function comite(rep, petit) {
     if (!rep) return null;
-    var b = el('<div class="comite"><span class="sceau" aria-hidden="true">CL</span><div><div class="qui"></div><p></p></div></div>');
-    b.querySelector(".qui").textContent = tx(C.narrateur) || "Le Comité de lecture";
+    var m = M.masqueActuel(C, P), expr = rep.expression || M.expression(C, rep.contexte);
+    var b = el('<div class="comite' + (petit ? " petit" : "") + '"><span class="masque">' + (m ? svgMasque(m, expr, petit ? 34 : 44) : "") + '</span><div><div class="qui"></div><p></p></div></div>');
+    b.querySelector(".qui").innerHTML = esc(tx(C.narrateur) || "L'IA") + (m ? " <i>· " + esc(tx(m.nom)) + "</i>" : "");
     b.querySelector("p").textContent = tx(rep.texte);
     return b;
+  }
+  // Réplique fixe pour la journée dans un contexte, sans rien retenir dans la partie.
+  function ligneDuJour(ctx, vars) {
+    var l = C.commentairesPar[ctx]; if (!l || !l.length) return null;
+    var r = l[Math.floor(M.debutJour(maintenant()) / JOUR_MS) % l.length];
+    var t = tx(r.texte).replace(/\{(\w+)\}/g, function (x, k) { return vars && vars[k] != null ? vars[k] : x; });
+    return { id: r.id, contexte: ctx, texte: { fr: t } };
   }
 
   // Feuille du bas pour un contenu quelconque (objet du cabinet, etc.).
@@ -463,6 +563,129 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     return row;
   }
 
+  // --- Plateau ----------------------------------------------------------------
+  // Spirale de 8 × 8 cases, du coin haut gauche vers le centre, dans le sens des aiguilles d'une montre.
+  var SPIRALE = (function () {
+    var out = [], h = 0, b = 7, g = 0, d = 7;
+    while (h <= b && g <= d) {
+      for (var x = g; x <= d; x++) out.push([x, h]); h++;
+      for (var y = h; y <= b; y++) out.push([d, y]); d--;
+      for (x = d; x >= g; x--) out.push([x, b]); b--;
+      for (y = b; y >= h; y--) out.push([g, y]); g++;
+    }
+    return out;
+  })();
+  var TEINTE_EPOQUE = { antiquite: "#C9A227", "moyen-age": "#A04B57", renaissance: "#2F8C78", classique: "#4A6CC2", xixe: "#9A6534", xxe: "#7A4FB8" };
+  var BORD_SPECIAL = { eureka: "#E0A800", avance: "var(--good)", recul: "var(--bad)", retour_epoque: "var(--bad)", prison: "var(--warn)", quarantaine: "var(--warn)" };
+  function caseConnue(n) { return P.plateau.tours > 0 || n <= P.plateau.atteinte; }
+  function nomEpoque(id) { var e = C.plateau.epoques.filter(function (x) { return x.id === id; })[0]; return e ? tx(e.nom) : ""; }
+  function texteRegle(sp) {
+    if (!sp) return "";
+    var R = C.plateau.regles, dur = P.plateau.tours > 0, n = sp.n;
+    if (dur && (sp.type === "recul" || sp.type === "quarantaine")) n *= R.tour_suivant.multiplicateur_recul;
+    var t = tx(R.textes[sp.type]).replace("{n}", n);
+    if (sp.type === "retour_epoque") t = "Retour à la case " + sp.vers + ", " + tx(C.plateau.cases[sp.vers - 1].titre) + ".";
+    if (sp.type === "prison" && dur) t = t.replace("un quiz parfait", R.tour_suivant.quiz_parfaits_prison + " quiz parfaits");
+    return t;
+  }
+  function svgPlateau() {
+    var pl = P.plateau, mq = M.masqueActuel(C, P), cle = pl.atteinte + "/" + pl.tours + "/" + (mq ? mq.id : "");
+    if (cachePlateau.cle !== cle) {
+      var c = "";
+      C.plateau.cases.forEach(function (k, i) {
+        var xy = SPIRALE[i], x = xy[0] * 40, y = xy[1] * 40, connue = caseConnue(k.n), sp = k.special;
+        c += '<g data-n="' + k.n + '" style="cursor:pointer"><rect x="' + (x + 1) + '" y="' + (y + 1) + '" width="38" height="38" rx="5" fill="var(--surface-2)" stroke="' + (sp ? BORD_SPECIAL[sp.type] : "var(--line)") + '" stroke-width="' + (sp ? 2.2 : 1) + '"/>' +
+          '<rect x="' + (x + 1) + '" y="' + (y + 1) + '" width="38" height="4" rx="2" fill="' + TEINTE_EPOQUE[k.epoque] + '"/>';
+        if (connue) {
+          var g = grilleSprite(k.icone);
+          c += '<svg x="' + (x + 12) + '" y="' + (y + 11) + '" width="26" height="26" viewBox="0 0 32 32" class="pix">' + pixels(g, C.cabinet.palette, null, 0, 0, 1) + "</svg>" +
+            '<text x="' + (x + 4) + '" y="' + (y + 13) + '" font-size="8" font-weight="700" font-family="JetBrains Mono, monospace" fill="var(--muted)">' + k.n + "</text>";
+        } else {
+          c += '<text x="' + (x + 20) + '" y="' + (y + 25) + '" text-anchor="middle" font-size="11" font-weight="700" font-family="JetBrains Mono, monospace" fill="var(--muted)" opacity="0.7">' + k.n + "</text>";
+        }
+        if (sp && sp.type === "eureka" && connue) c += '<text x="' + (x + 4) + '" y="' + (y + 35) + '" font-size="9" fill="#E0A800">★</text>';
+        c += "</g>";
+      });
+      var centre = SPIRALE[63], m = M.masqueActuel(C, P);
+      if (m) c += '<g aria-hidden="true"><rect x="' + (centre[0] * 40 + 1) + '" y="' + (centre[1] * 40 + 1) + '" width="38" height="38" rx="5" fill="var(--parchemin)"/>' +
+        '<svg x="' + (centre[0] * 40 + 4) + '" y="' + (centre[1] * 40 + 2) + '" width="32" height="36" viewBox="0 0 40 48" class="pix">' + pixels(m.base, C.ia.palette, null, 0, 0, 1) + pixels(m.expressions.neutre, C.ia.palette, null, 0, 0, 1) + "</svg></g>";
+      cachePlateau = { cle: cle, svg: c };
+    }
+    var pos = SPIRALE[pl.position - 1], px = pos[0] * 40 + 20, py = pos[1] * 40 + 20;
+    var pion = '<g aria-hidden="true"><circle cx="' + px + '" cy="' + py + '" r="15" fill="var(--parchemin)" stroke="var(--accent)" stroke-width="3"/>' +
+      '<svg x="' + (px - 13) + '" y="' + (py - 13) + '" width="26" height="26" viewBox="8 1 24 24" class="pix">' + pixelsAvatar(0, 0) + "</svg></g>";
+    return '<svg class="grille" viewBox="0 0 320 320" role="img" aria-label="Plateau de l\'histoire : ton pion est sur la case ' + pl.position + " sur " + C.plateau.cases.length + '">' + cachePlateau.svg + pion + "</svg>";
+  }
+  function valeurTexte(k, type) {
+    var v = M.valeurEpreuve(C, P, { type: type, comp: k.id }, maintenant());
+    if (!v) return "";
+    return '<span class="vaut' + (v.duJour ? " bonus" : "") + '">+' + v.total + " case" + (v.total > 1 ? "s" : "") + "</span>";
+  }
+  function blocPlateau() {
+    var pl = P.plateau, t = maintenant(), k = C.plateau.cases[pl.position - 1], st = stat(M.bonusDuJour(C, P, t));
+    var b = el('<section class="bloc plateau"><div class="tete"><h2>Plateau de l\'histoire</h2><span class="num">' + (pl.tours ? "Tour " + (pl.tours + 1) + " · " : "") + "case " + pl.position + " / " + C.plateau.cases.length + "</span></div></section>");
+    var grille = el("<div>" + svgPlateau() + "</div>");
+    grille.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-n]"); if (g) ouvrirCase(+g.getAttribute("data-n")); };
+    b.appendChild(grille);
+    var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</span><b>" + esc(tx(k.titre)) + "</b><span>Lire l'histoire de la case</span></span></button>");
+    act.onclick = function () { ouvrirCase(k.n); };
+    b.appendChild(act);
+    if (pl.prison) b.appendChild(el('<p class="etat-pion">Assigné à résidence : ton pion ne bougera plus avant ' + (pl.prison > 1 ? pl.prison + " quiz parfaits" : "un quiz parfait") + ".</p>"));
+    else if (pl.quarantaine) b.appendChild(el('<p class="etat-pion">Quarantaine : ' + (pl.quarantaine > 1 ? "tes " + pl.quarantaine + " prochaines épreuves réussies" : "ta prochaine épreuve réussie") + " ne ferai" + (pl.quarantaine > 1 ? "ent" : "t") + " pas avancer ton pion.</p>"));
+    b.appendChild(el('<p class="bonus-jour" style="--c:' + couleur(st.id) + '"><span class="pill">+' + C.plateau.regles.bonus.du_jour + '</span><span>Bonus du jour : <b style="color:' + couleur(st.id) + '">' + esc(tx(st.nom)) + "</b>. Ses épreuves rapportent " + C.plateau.regles.bonus.du_jour + " cases de plus.</span></p>"));
+    var regles = el('<button type="button" class="btn sec">Règles et barème</button>'); regles.onclick = ouvrirRegles;
+    b.appendChild(regles);
+    return b;
+  }
+  function ouvrirCase(n) {
+    var k = C.plateau.cases[n - 1], connue = caseConnue(n), ici = P.plateau.position === n;
+    var html = '<div class="vitrine" style="padding:16px">' + svgSprite(k.icone, 120, tx(k.titre), !connue) + "</div>";
+    if (connue) {
+      html += '<div class="eyebrow">Case ' + n + " · " + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</div><h2>" + esc(tx(k.titre)) + "</h2>" +
+        (k.special ? '<p class="etat-pion">' + esc(texteRegle(k.special)) + "</p>" : "") + "<p>" + esc(tx(k.histoire)) + '</p><div id="ia-case"></div><p class="meta">Source : ' + esc(k.source) + "</p>";
+    } else {
+      html += '<div class="eyebrow">Case ' + n + " · " + esc(nomEpoque(k.epoque)) + "</div><h2>Case à découvrir</h2><p class=\"meta\">Fais avancer ton pion jusqu'ici pour lire son histoire. Elle s'ajoutera aussi à la frise.</p>";
+    }
+    feuilleSimple(html, connue ? tx(k.titre) : "Case " + n);
+    var z = feuille.querySelector("#ia-case");
+    if (z) z.appendChild(comite({ contexte: "plateau_avance", texte: k.replique, expression: ici ? "moqueuse" : "neutre" }, true));
+  }
+  function ouvrirRegles() {
+    var R = C.plateau.regles, rangs = R.valeurs.quiz_rang, st = stat(M.bonusDuJour(C, P, maintenant()));
+    var html = '<div class="eyebrow">Plateau de l\'histoire</div><h2>Règles et barème</h2><p>Pas de dé : chaque épreuve réussie fait avancer ton pion d\'un nombre de cases fixé par l\'IA. Du feu, case ' + R.depart + ", jusqu'à l'IA, case " + R.arrivee + ".</p>" +
+      '<div class="bareme"><span>Rappel réussi</span><span class="num">+' + R.valeurs.rappel + "</span>" +
+      Object.keys(rangs).map(function (r) { return "<span>Quiz de rang " + r + " réussi</span><span class=\"num\">+" + rangs[r] + "</span>"; }).join("") +
+      "<span>Quiz sans faute</span><span class=\"num\">+" + R.bonus.parfait + "</span><span>Quiz réussi avec le chrono</span><span class=\"num\">+" + R.bonus.chrono + "</span>" +
+      "<span>Branche du bonus du jour (" + esc(tx(st.nom)) + ")</span><span class=\"num\">+" + R.bonus.du_jour + "</span>" +
+      "<span>Quiz raté</span><span class=\"num\">" + R.echec.quiz + "</span><span>Rappel raté</span><span class=\"num\">" + R.echec.rappel + "</span></div>" +
+      "<h3 style=\"font-size:17px\">Cases spéciales</h3>" +
+      C.plateau.cases.filter(function (k) { return k.special; }).filter(function (k, i, a) { return k.special.type !== "eureka" || a.filter(function (x) { return x.special.type === "eureka"; })[0] === k; }).map(function (k) {
+        var nom = k.special.type === "eureka" ? "Eurêka, cases " + C.plateau.cases.filter(function (x) { return x.special && x.special.type === "eureka"; }).map(function (x) { return x.n; }).join(", ") : "Case " + k.n + ", " + tx(k.titre);
+        return '<p class="meta"><b style="color:var(--ink)">' + esc(nom) + "</b> : " + esc(texteRegle(k.special)) + "</p>";
+      }).join("") +
+      '<p class="meta">Arrivée : tu termines le tour et repars du feu. Au tour suivant, les pièges et la quarantaine comptent double, et la prison demande ' + R.tour_suivant.quiz_parfaits_prison + " quiz parfaits.</p>" +
+      '<div id="ia-bonus"></div>';
+    if (P.plateau.historique.length) {
+      html += '<h3 style="font-size:17px">Derniers déplacements</h3><div class="trajet">' + P.plateau.historique.slice(0, 8).map(function (h) {
+        var d = h.a - h.de;
+        return '<div class="pas"><b>' + (d > 0 ? "+" + d : d === 0 ? "0" : d) + "</b><span>" + esc(dateCourte(h.t)) + " · " + (h.cause === "rappel" ? "rappel" : h.cause === "test" ? "mode test" : "quiz") + " · case " + h.de + " → " + h.a + "</span></div>";
+      }).join("") + "</div>";
+    }
+    feuilleSimple(html, "Règles du plateau");
+    feuille.querySelector("#ia-bonus").appendChild(comite(ligneDuJour("bonus_du_jour", { stat: tx(st.nom) }), true));
+  }
+  function formatAnnee(a) {
+    if (a == null) return "";
+    if (a < 0) return (a <= -10000 ? "vers " : "") + (-a).toLocaleString("fr-FR") + " av. J.-C.";
+    return String(a);
+  }
+  var ROMAIN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI"];
+  function siecle(a) {
+    if (a <= -10000) return "Préhistoire";
+    if (a < 0) { var s = Math.ceil(-a / 100); return s > 21 ? "vers " + Math.round(-a / 1000) + " 000 av. J.-C." : ROMAIN[s] + "e s. av. J.-C."; }
+    return ROMAIN[Math.floor(a / 100) + 1] + "e siècle";
+  }
+
   // --- Vue Aujourd'hui ------------------------------------------------------
   function vueAujourdhui() {
     var t = maintenant(), v = el('<div class="vue"></div>');
@@ -472,13 +695,15 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     perso.style.cursor = "pointer"; perso.onclick = function () { vue = "perso"; rendre(); };
     v.appendChild(perso);
     var mot = comite(M.repliqueDuJour(C, P, t)); if (mot) v.appendChild(mot);
+    if (C.plateau) v.appendChild(blocPlateau());
 
     if (!P.journal.length) {
       v.appendChild(el('<div class="bloc intro"><h2>Comment ça marche</h2><ol>' +
         "<li>Chaque branche du savoir nourrit une stat de ton personnage.</li>" +
         "<li>Réussis un quiz (4 bonnes réponses sur 5) pour maîtriser une compétence et gagner de l'XP.</li>" +
         "<li>Les compétences maîtrisées reviennent en rappel après 1, 3, 7, 14, 30, 90 puis 180 jours.</li>" +
-        "<li>Rate un rappel et la compétence est perdue, avec son XP. Il faudra la regagner.</li></ol></div>"));
+        "<li>Rate un rappel et la compétence est perdue, avec son XP. Il faudra la regagner.</li>" +
+        "<li>Chaque épreuve réussie fait avancer ton pion sur le plateau de l'histoire, du feu jusqu'à l'IA. Les cases débloquent la frise, la bibliothèque et des succès.</li></ol></div>"));
     }
 
     if (NATIF && !routine()) {
@@ -495,7 +720,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
         var e = P.competences[k.id];
         var b = el('<button type="button" class="btn">Réviser</button>'); b.onclick = function () { lancerQuiz(k.id, "rappel"); };
         var r = retard(e.prochainRappel);
-        bRappels.appendChild(ligneComp(k, (r.indexOf("retard") >= 0 ? '<span class="retard">' + r + "</span>" : r) + " · rappel " + ((e.palier || 0) + 1) + " · 3 questions", b));
+        bRappels.appendChild(ligneComp(k, (r.indexOf("retard") >= 0 ? '<span class="retard">' + r + "</span>" : r) + " · rappel " + ((e.palier || 0) + 1) + " · " + valeurTexte(k, "rappel"), b));
       });
     } else {
       var proch = M.prochainsRappels(C, P, t, 1)[0];
@@ -509,7 +734,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       var s = stat(sug.stat);
       bSug.appendChild(el('<p class="note">Ta stat la plus faible avec une compétence ouverte : <b style="color:' + couleur(s.id) + '">' + esc(tx(s.nom)) + "</b>.</p>"));
       var b2 = el('<button type="button" class="btn">Quiz</button>'); b2.onclick = function () { lancerQuiz(sug.id, "quiz"); };
-      bSug.appendChild(ligneComp(sug, esc(tx(sug.description)), b2));
+      bSug.appendChild(ligneComp(sug, valeurTexte(sug, "quiz") + " · " + esc(tx(sug.description)), b2));
       var autres = M.disponibles(C, P, t).filter(function (k) { return k.id !== sug.id; }).length;
       if (autres) {
         var lien = el('<button type="button" class="btn sec">Voir les ' + autres + " autre" + (autres > 1 ? "s" : "") + " compétence" + (autres > 1 ? "s" : "") + " ouverte" + (autres > 1 ? "s" : "") + "</button>");
@@ -567,6 +792,12 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       lignes.push("Rappel " + ((e.palier || 0) + 1) + " sur " + iv.length + (iv.length ? "+" : "") + " · " + (st.etat === "a_reviser" ? retard(e.prochainRappel) : "prévu le " + dateCourte(e.prochainRappel) + ", " + dansJours(e.prochainRappel)) + ".");
       lignes.push("Elle rapporte " + (e.xp || 0) + " XP à " + tx(s.nom) + ".");
       if (st.gelee) lignes.push("Gelée : un prérequis a été perdu. Elle reste acquise, mais ne débloque plus rien tant qu'il n'est pas regagné.");
+    }
+    if (C.plateau && (st.etat === "disponible" || st.etat === "a_reviser")) {
+      var v = M.valeurEpreuve(C, P, { type: st.etat === "disponible" ? "quiz" : "rappel", comp: id }, t);
+      lignes.push(st.etat === "disponible"
+        ? "Plateau : +" + v.total + " cases si tu réussis" + (v.duJour ? " (dont " + v.duJour + " de bonus du jour)" : "") + ", +" + v.parfait + " sans faute, +" + v.chrono + " avec le chrono."
+        : "Plateau : +" + v.total + " case" + (v.total > 1 ? "s" : "") + " si tu réussis" + (v.duJour ? " (bonus du jour compris)" : "") + ", recul de " + (-v.echec) + " cases si tu rates.");
     }
     var bouton = "";
     if (st.etat === "disponible") bouton = '<button type="button" class="btn large" data-a="quiz">Passer le quiz</button>';
@@ -638,6 +869,20 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
           (mot ? " « " + tx(mot.texte) + " »" : "") + (rec.succes.length ? " Succès : " + rec.succes.map(function (x) { return tx(x.nom); }).join(", ") + "." : ""));
       };
     });
+    if (C.plateau) {
+      var tp = el('<div class="rangee"><button type="button" class="btn sec" data-c="6">Pion +6 cases</button><button type="button" class="btn sec" data-c="20">Pion +20 cases</button></div>');
+      tp.querySelectorAll("[data-c]").forEach(function (b) {
+        b.onclick = function () {
+          var dep = M.avancerPion(C, P, +b.getAttribute("data-c"), maintenant()), rec = dep.recompenses;
+          sauver(); rendre();
+          var n = rec.evenements.length, l = rec.livres.length;
+          toast("Pion case " + dep.a + (dep.etapes.length ? " (" + dep.etapes.map(function (e) { return e.type.replace("_", " "); }).join(", ") + ")" : "") + "." +
+            (n ? " " + n + " date" + (n > 1 ? "s" : "") + " sur la frise." : "") + (l ? " " + l + " livre" + (l > 1 ? "s" : "") + "." : "") +
+            (rec.succes.length ? " Succès : " + rec.succes.map(function (x) { return tx(x.nom); }).join(", ") + "." : ""));
+        };
+      });
+      test.appendChild(tp);
+    }
     v.appendChild(test);
 
     var raz = el('<div class="bloc"><h2>Recommencer</h2><p class="note">Efface toute la progression, sur ce navigateur et sur ton compte.</p><div class="rangee" id="raz"><button type="button" class="btn sec">Recommencer à zéro</button></div></div>');
@@ -655,7 +900,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var rangs = C.avatar.rangs, rang = M.rangAvatar(C, P), suivant = rangs[rangs.indexOf(rang) + 1];
     var b = el('<div class="bloc"><div style="display:grid;grid-template-columns:128px 1fr;gap:16px;align-items:center"><div class="avatar-cadre">' + svgAvatar(112) +
       '</div><div><div class="eyebrow">Rang</div><div class="rang" style="font-size:22px">' + esc(tx(rang.nom)) + '</div><p class="note">' +
-      (suivant ? "Prochain rang, " + esc(tx(suivant.nom)) + ", au niveau global " + suivant.niveau_min + "." : "Le rang le plus haut. Le Comité s'incline.") + "</p></div></div>" +
+      (suivant ? "Prochain rang, " + esc(tx(suivant.nom)) + ", au niveau global " + suivant.niveau_min + "." : "Le rang le plus haut. L'IA s'incline.") + "</p></div></div>" +
       '<div class="equip"></div></div>');
     var eq = b.querySelector(".equip");
     var slots = [
@@ -714,25 +959,128 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     P = p; sauver(); vue = "aujourdhui"; rendre(); toast("Sauvegarde importée");
   }
 
-  // --- Vue Cabinet ----------------------------------------------------------
+  // --- Vue Collections : objets, frise, bibliothèque ------------------------------
   function commentObtenir(cond) {
     if (cond.type === "competence_maitrisee") return "Maîtriser « " + tx(C.parId[cond.id].nom) + " ».";
     if (cond.type === "branche_complete") return "Maîtriser toute la branche " + tx(stat(cond.stat).nom) + ".";
+    if (cond.type === "case_atteinte" || cond.type === "case_visitee") {
+      var k = C.plateau.cases[cond.n - 1];
+      return (cond.type === "case_atteinte" ? "Atteindre" : "S'arrêter sur") + " la case " + cond.n + " du plateau" + (caseConnue(cond.n) ? ", " + tx(k.titre) : "") + ".";
+    }
+    if (cond.type === "succes") { var sc = C.succes.filter(function (x) { return x.id === cond.id; })[0]; return "Obtenir le succès « " + tx(sc.nom) + " »."; }
     return "Continuer à jouer.";
   }
-  function vueCabinet() {
-    var v = el('<div class="vue"></div>'), n = Object.keys(P.objets).length;
-    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Histoire des sciences</div><h1>Cabinet</h1></div><div class="num" style="font-size:20px;font-weight:700">' + n + " / " + C.objets.length + "</div></div>"));
+  function vueCollections() {
+    var v = el('<div class="vue"></div>');
+    var comptes = { objets: [Object.keys(P.objets).length, C.objets.length], frise: [Object.keys(P.evenements).length, C.evenements.length], livres: [Object.keys(P.livres).length, C.livres.length] };
+    var cpt = comptes[collection];
+    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Histoire des sciences</div><h1>Collections</h1></div><div class="num" style="font-size:20px;font-weight:700">' + cpt[0] + " / " + cpt[1] + "</div></div>"));
+    var seg = el('<div class="segments" role="group" aria-label="Collection"></div>');
+    [["objets", "Objets"], ["frise", "Frise"], ["livres", "Bibliothèque"]].forEach(function (c) {
+      var bt = el('<button type="button" aria-pressed="' + (collection === c[0]) + '">' + c[1] + "</button>");
+      bt.onclick = function () { collection = c[0]; rendre(); };
+      seg.appendChild(bt);
+    });
+    v.appendChild(seg);
+    v.appendChild(collection === "frise" ? blocFrise() : collection === "livres" ? blocBibliotheque() : blocCabinet());
+    return v;
+  }
+  function blocCabinet() {
+    var n = Object.keys(P.objets).length;
     var b = el('<div class="bloc"><p class="note">' + (n ? "Touche un objet pour lire son histoire, ou pour le donner à ton avatar." : "Chaque objet se gagne en maîtrisant une compétence ou une branche entière. Les vitrines attendent.") + '</p><div class="cabinet"></div></div>');
     var g = b.querySelector(".cabinet");
     C.objets.forEach(function (o) {
       var ok = !!P.objets[o.id];
-      var bt = el('<button type="button" class="objet' + (ok ? "" : " verrou") + '"><span class="vitrine">' + svgObjet(o, !ok, 56) + "</span><span>" + (ok ? esc(tx(o.nom)) : "Vitrine vide") + "</span></button>");
+      var bt = el('<button type="button" class="objet' + (ok ? "" : " verrou") + '"><span class="vitrine">' + svgObjet(o, !ok, 64) + "</span><span>" + (ok ? esc(tx(o.nom)) : "Vitrine vide") + "</span></button>");
       bt.onclick = function () { ouvrirObjet(o); };
       g.appendChild(bt);
     });
-    v.appendChild(b);
-    return v;
+    return b;
+  }
+
+  function blocFrise() {
+    var t = maintenant(), b = el('<div class="bloc"></div>');
+    b.appendChild(el('<p class="note">Les dates s\'ajoutent quand ton pion atteint une case du plateau, ou quand tu maîtrises une compétence.</p>'));
+    var fl = el('<div class="filtres" role="group" aria-label="Filtrer par branche"></div>');
+    [null].concat(C.stats.map(function (s) { return s.id; })).forEach(function (id) {
+      var bt = el('<button type="button" aria-pressed="' + (filtreFrise === id) + '"' + (id ? ' style="--c:' + couleur(id) + '"' : "") + ">" + (id ? esc(tx(stat(id).nom)) : "Tout") + "</button>");
+      bt.onclick = function () { filtreFrise = id; rendre(); };
+      fl.appendChild(bt);
+    });
+    b.appendChild(fl);
+    var fr = el('<div class="frise"></div>');
+    C.frise.epoques.forEach(function (ep) {
+      var evs = C.evenements.filter(function (e) { return e.epoque === ep.id && (!filtreFrise || e.stat === filtreFrise); });
+      if (!evs.length) return;
+      var nb = evs.filter(function (e) { return P.evenements[e.id]; }).length;
+      var picto = C.plateau.epoques.filter(function (x) { return x.id === ep.id; })[0];
+      fr.appendChild(el('<div class="epoque-t">' + (picto ? svgSprite(picto.icone, 28) : "") + "<h3>" + esc(tx(ep.nom)) + '</h3><span class="num">' + nb + " / " + evs.length + "</span></div>"));
+      evs.forEach(function (e) {
+        var ok = !!P.evenements[e.id], neuf = ok && t - P.evenements[e.id] < JOUR_MS;
+        var bt = el('<button type="button" class="evt' + (ok ? "" : " verrou") + (neuf ? " nouveau" : "") + '" style="--c:' + couleur(e.stat) + '"><span class="an">' + esc(ok ? formatAnnee(e.annee) : siecle(e.annee)) +
+          '</span><span class="axe"></span><span class="corps"><b>' + (ok ? esc(tx(e.titre)) : "???") + "</b><span>" + (ok ? esc(tx(e.phrase)) : esc(commentObtenir(e.condition))) + "</span></span></button>");
+        bt.onclick = function () { ouvrirEvenement(e); };
+        fr.appendChild(bt);
+      });
+    });
+    b.appendChild(fr);
+    return b;
+  }
+  function ouvrirEvenement(e) {
+    var ok = !!P.evenements[e.id], s = stat(e.stat), k = e.case ? C.plateau.cases[e.case - 1] : null;
+    var html = "";
+    if (ok) {
+      if (k) html += '<div class="vitrine" style="padding:14px">' + svgSprite(k.icone, 96, tx(e.titre)) + "</div>";
+      html += '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(formatAnnee(e.annee)) + " · " + esc(tx(s.nom)) + (k ? " · case " + k.n : "") + "</div><h2>" + esc(tx(e.titre)) + "</h2><p><b>" + esc(tx(e.phrase)) + "</b></p><p>" + esc(tx(k ? k.histoire : e.detail)) + '</p><p class="meta">Source : ' + esc(e.source) + "</p>";
+    } else {
+      html += '<div class="eyebrow">' + esc(siecle(e.annee)) + "</div><h2>Date à découvrir</h2><p class=\"meta\">Pour l'ajouter à la frise : " + esc(commentObtenir(e.condition)) + "</p>";
+    }
+    feuilleSimple(html, ok ? tx(e.titre) : "Date à découvrir");
+  }
+
+  function hauteurDos(id) { var h = 0; for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 997; return 112 + (h % 5) * 8; }
+  function blocBibliotheque() {
+    var b = el('<div class="bloc"><p class="note">Les livres arrivent sur l\'étagère au fil du plateau et des compétences. Touche un dos pour lire le résumé.</p><div class="etagere"></div></div>');
+    var et = b.querySelector(".etagere"), lus = P.lus || {};
+    C.frise.epoques.forEach(function (ep) {
+      var livres = C.livres.filter(function (l) { return C.plateau && epoqueAnnee(l.annee) === ep.id; });
+      if (!livres.length) return;
+      et.appendChild(el('<div class="eyebrow">' + esc(tx(ep.nom)) + " · " + livres.filter(function (l) { return P.livres[l.id]; }).length + " / " + livres.length + "</div>"));
+      var rayon = el('<div class="rayon"></div>');
+      livres.forEach(function (l) {
+        var ok = !!P.livres[l.id];
+        var bt = el('<button type="button" class="dos' + (ok ? "" : " verrou") + '" style="--c:' + l.couleur + ";height:" + hauteurDos(l.id) + 'px" aria-label="' + esc(ok ? tx(l.titre) + ", " + l.auteur : "Livre à découvrir") + '"><span>' + (ok ? esc(tx(l.titre)) : "?") + "</span>" + (ok && !lus[l.id] ? '<i class="neuf" aria-hidden="true"></i>' : "") + "</button>");
+        bt.onclick = function () { ouvrirLivre(l); };
+        rayon.appendChild(bt);
+      });
+      et.appendChild(rayon);
+    });
+    return b;
+  }
+  function epoqueAnnee(a) {
+    var out = null;
+    C.frise.epoques.forEach(function (e) { if ((e.debut == null || a >= e.debut) && (e.fin == null || a <= e.fin)) out = out || e.id; });
+    return out;
+  }
+  function ouvrirLivre(l) {
+    var ok = !!P.livres[l.id], s = stat(l.stat);
+    var dispo = C.livres.filter(function (x) { return P.livres[x.id]; }), i = dispo.indexOf(l);
+    var html = '<div class="livre-fiche" style="--c:' + l.couleur + ';display:flex;flex-direction:column;gap:12px"><div class="tete"><div class="couv"><span class="vitrine">' + svgSprite(l.embleme, 44, null, !ok) + "</span></div><div>" +
+      '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(formatAnnee(l.annee)) + " · " + esc(tx(s.nom)) + "</div><h2>" + (ok ? esc(tx(l.titre)) : "Livre à découvrir") + "</h2>" + (ok ? '<p class="meta">' + esc(l.auteur) + "</p>" : "") + "</div></div>";
+    if (ok) {
+      html += "<p>" + esc(tx(l.resume)) + "</p><h3>Pourquoi il a compté</h3><p>" + esc(tx(l.importance)) + "</p><h3>L'anecdote</h3><p>" + esc(tx(l.anecdote)) + '</p><div id="ia-livre"></div><p class="meta">Référence : ' + esc(l.source) + "</p>";
+      if (dispo.length > 1) html += '<div class="nav"><button type="button" class="btn sec" data-a="prec"' + (i <= 0 ? " disabled" : "") + '>← Précédent</button><button type="button" class="btn sec" data-a="suiv"' + (i >= dispo.length - 1 ? " disabled" : "") + ">Suivant →</button></div>";
+    } else {
+      html += '<p class="meta">Pour le placer sur l\'étagère : ' + esc(commentObtenir(l.condition)) + "</p>";
+    }
+    html += "</div>";
+    if (ok && !(P.lus && P.lus[l.id])) { P.lus = P.lus || {}; P.lus[l.id] = maintenant(); sauver(); rendre(); }
+    feuilleSimple(html, ok ? tx(l.titre) : "Livre à découvrir", {
+      prec: function () { if (i > 0) ouvrirLivre(dispo[i - 1]); },
+      suiv: function () { if (i < dispo.length - 1) ouvrirLivre(dispo[i + 1]); },
+    });
+    var z = feuille.querySelector("#ia-livre");
+    if (z) z.appendChild(comite({ contexte: "livre", texte: l.reaction, expression: "moqueuse" }, true));
   }
   function ouvrirObjet(o) {
     var ok = !!P.objets[o.id], tenu = P.avatar.main === o.id;
@@ -756,6 +1104,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">Citations et anecdotes</div><h1>Succès</h1></div><div class="num" style="font-size:20px;font-weight:700">' + n + " / " + C.succes.length + "</div></div>"));
     var obtenus = C.succes.filter(function (s) { return P.succes[s.id]; }).sort(function (a, b) { return P.succes[b.id] - P.succes[a.id]; });
     var autres = C.succes.filter(function (s) { return !P.succes[s.id]; });
+    if (C.ia) v.appendChild(blocMasques(n));
     var bloc = el('<div class="bloc"></div>');
     obtenus.forEach(function (s) { bloc.appendChild(carteSucces(s, true)); });
     autres.filter(function (s) { return !s.cache; }).forEach(function (s) { bloc.appendChild(carteSucces(s, false)); });
@@ -763,6 +1112,23 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     if (caches) bloc.appendChild(el('<div class="succes verrou"><h3>' + caches + " succès à découvrir</h3><p class=\"desc\">Ils sont cachés : chacun se révèle, avec sa citation ou son anecdote, au moment où tu l'obtiens.</p></div>"));
     v.appendChild(bloc);
     return v;
+  }
+  function blocMasques(n) {
+    var actuel = M.masqueActuel(C, P), tours = P.plateau.tours;
+    var suivant = C.ia.masques.filter(function (m) { return !(n >= m.seuil || (m.tours && tours >= m.tours)); })[0];
+    var b = el('<div class="bloc"><h2>Les masques de l\'IA</h2><p class="note">L\'IA change de visage à mesure que tu gagnes des succès.' + (suivant ? " Prochain masque à " + suivant.seuil + " succès" + (suivant.tours ? ", ou au premier tour complet du plateau" : "") + "." : " Tu les as tous vus.") + '</p><div class="masques"></div></div>');
+    var g = b.querySelector(".masques");
+    C.ia.masques.forEach(function (m) {
+      var ok = n >= m.seuil || (m.tours && tours >= m.tours);
+      var bt = el('<button type="button" class="m' + (ok ? "" : " verrou") + (actuel && actuel.id === m.id ? " actuel" : "") + '"><span class="vitrine">' + svgMasque(m, "neutre", 52, !ok) + "</span><span>" + (ok ? esc(tx(m.nom)) : m.seuil + " succès") + "</span></button>");
+      bt.onclick = function () {
+        feuilleSimple('<div class="vitrine" style="padding:16px">' + svgMasque(m, ok ? "moqueuse" : "neutre", 120, !ok) + "</div>" +
+          (ok ? '<div class="eyebrow">Masque de l\'IA</div><h2>' + esc(tx(m.nom)) + "</h2><p>" + esc(tx(m.notice)) + "</p>"
+            : "<h2>Masque à venir</h2><p class=\"meta\">Il apparaîtra à " + m.seuil + " succès" + (m.tours ? ", ou dès ton premier tour complet du plateau" : "") + ".</p>"), ok ? tx(m.nom) : "Masque à venir");
+      };
+      g.appendChild(bt);
+    });
+    return b;
   }
   function carteSucces(s, obtenu) {
     if (!obtenu && s.cache) return el('<div class="succes verrou"><h3>Succès caché</h3><p class="desc">Il se débloquera en jouant.</p></div>');
@@ -898,9 +1264,42 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var t = maintenant();
     quiz.fin = quiz.mode === "rappel" ? M.terminerRappel(C, P, quiz.id, quiz.res, t) : M.terminerQuiz(C, P, quiz.id, quiz.res, t, { duree: Date.now() - quiz.debut });
     quiz.fin.replique = M.replique(C, P, quiz.fin.contextes);
+    var dep = quiz.fin.plateau;
+    if (dep) {
+      var ctx = dep.contextes.filter(function (c) { return c !== "plateau_avance"; });
+      var recul = dep.etapes.filter(function (e) { return e.type === "recul" || e.type === "retour_epoque"; })[0];
+      if (ctx.length) quiz.fin.repliquePlateau = M.replique(C, P, ctx, null, { n: recul ? recul.n : Math.abs(dep.a - dep.de) });
+    }
     sauver(); rendreQuiz();
   }
 
+  var NOM_ETAPE = {
+    eureka: function (e) { return "Eurêka, case " + e.case + " : tu rejoues " + e.n + " cases."; },
+    avance: function (e) { return "Raccourci, case " + e.case + " : +" + e.n + " cases."; },
+    recul: function (e) { return e.cause === "echec" ? "Rappel raté : recul de " + e.n + " cases." : "Piège, case " + e.case + " : recul de " + e.n + " cases."; },
+    retour_epoque: function (e) { return "Guillotine, case " + e.case + " : retour " + e.n + " cases en arrière."; },
+    quarantaine: function (e) { return "Quarantaine : " + (e.n > 1 ? "tes " + e.n + " prochaines épreuves réussies" : "ta prochaine épreuve réussie") + " ne te feront pas avancer."; },
+    prison: function (e) { return "Prison : plus un pas avant " + (e.n > 1 ? e.n + " quiz parfaits" : "un quiz parfait") + "."; },
+    prison_reste: function () { return "Un quiz parfait de plus : encore un pour sortir."; },
+    prison_liberation: function () { return "Quiz parfait : tu sors de prison."; },
+    bloque_prison: function () { return "Assigné à résidence : ton pion ne bouge pas."; },
+    bloque_quarantaine: function () { return "Quarantaine : cette épreuve ne fait pas avancer ton pion."; },
+    tour_fini: function (e) { return "Arrivée ! Tour " + e.tour + " terminé : retour au feu, en plus dur."; },
+  };
+  function blocDeplacement(dep, rep) {
+    var d = dep.a - dep.de, fini = dep.etapes.some(function (e) { return e.type === "tour_fini"; });
+    var titre = fini ? "Tour complet !" : d > 0 ? "Le pion avance de " + d + " case" + (d > 1 ? "s" : "") : d < 0 ? "Le pion recule de " + (-d) + " case" + (d < -1 ? "s" : "") : "Le pion reste sur place";
+    var b = el('<div class="bloc plateau"><div class="tete"><h2>' + esc(titre) + '</h2><span class="num">case ' + dep.de + " → " + dep.a + '</span></div><div class="trajet"></div></div>');
+    var tj = b.querySelector(".trajet"), v = dep.valeurs;
+    if (dep.valeur > 0) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>Épreuve réussie" + (v && v.duJour ? ", bonus du jour compris" : "") + (dep.valeur > (v ? v.total : 0) ? ", avec bonus" : "") + ".</span></div>"));
+    dep.etapes.forEach(function (e) { var f = NOM_ETAPE[e.type]; if (f) tj.appendChild(el('<div class="pas"><b>·</b><span>' + esc(f(e)) + "</span></div>")); });
+    var k = C.plateau.cases[dep.a - 1];
+    var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">Case ' + k.n + " · " + esc(formatAnnee(k.annee)) + "</span><b>" + esc(tx(k.titre)) + "</b><span>" + esc(tx(k.replique)) + "</span></span></button>");
+    act.onclick = function () { ouvrirCase(k.n); };
+    b.appendChild(act);
+    var m = comite(rep, true); if (m) b.appendChild(m);
+    return b;
+  }
   function bilan() {
     var r = quiz.fin, k = C.parId[quiz.id], s = stat(k.stat);
     var titre, texte, gain = "";
@@ -918,6 +1317,26 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     wrap.appendChild(fermer);
     wrap.appendChild(b);
     var mot = comite(r.replique); if (mot) wrap.appendChild(mot);
+    if (r.plateau) wrap.appendChild(blocDeplacement(r.plateau, r.repliquePlateau));
+    if (r.masque) {
+      wrap.appendChild(el('<div class="bloc"><h2>L\'IA change de masque</h2><div style="display:grid;grid-template-columns:88px 1fr;gap:14px;align-items:center"><span class="vitrine" style="padding:8px">' + svgMasque(r.masque, "moqueuse", 72) +
+        "</span><div><b>" + esc(tx(r.masque.nom)) + '</b><p class="note">' + esc(tx(r.masque.notice)) + "</p></div></div></div>"));
+    }
+    (r.nouveauxLivres || []).forEach(function (l) {
+      var bl = el('<div class="bloc"><h2>Nouveau livre à la bibliothèque</h2><div style="display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:center"><span class="vitrine" style="padding:6px;background:' + l.couleur + '">' + svgSprite(l.embleme, 48) +
+        "</span><div><b>" + esc(tx(l.titre)) + '</b><p class="note">' + esc(l.auteur) + ", " + esc(formatAnnee(l.annee)) + '</p></div></div><button type="button" class="btn sec">Lire le résumé</button></div>');
+      bl.querySelector("button").onclick = function () { ouvrirLivre(l); };
+      wrap.appendChild(bl);
+    });
+    if ((r.nouveauxEvenements || []).length) {
+      var be = el('<div class="bloc"><h2>Sur la frise</h2><div class="frise"></div></div>'), fz = be.querySelector(".frise");
+      r.nouveauxEvenements.slice().sort(function (a, b) { return a.annee - b.annee; }).forEach(function (e) {
+        var bt = el('<button type="button" class="evt" style="--c:' + couleur(e.stat) + '"><span class="an">' + esc(formatAnnee(e.annee)) + '</span><span class="axe"></span><span class="corps"><b>' + esc(tx(e.titre)) + "</b><span>" + esc(tx(e.phrase)) + "</span></span></button>");
+        bt.onclick = function () { ouvrirEvenement(e); };
+        fz.appendChild(bt);
+      });
+      wrap.appendChild(be);
+    }
     (r.nouveauxObjets || []).forEach(function (o) {
       wrap.appendChild(el('<div class="bloc"><h2>Nouvel objet au cabinet</h2><div style="display:grid;grid-template-columns:88px 1fr;gap:14px;align-items:center"><span class="vitrine" style="padding:10px">' + svgObjet(o, false, 64) +
         "</span><div><b>" + esc(tx(o.nom)) + '</b><p class="note">' + esc(tx(o.notice)) + "</p></div></div></div>"));
@@ -939,7 +1358,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   function rendre() {
     if (!C || !P) return;
     var app = document.getElementById("app"); app.innerHTML = "";
-    app.appendChild(vue === "arbre" ? vueArbre() : vue === "perso" ? vuePerso() : vue === "cabinet" ? vueCabinet() : vue === "succes" ? vueSucces() : vueAujourdhui());
+    app.appendChild(vue === "arbre" ? vueArbre() : vue === "perso" ? vuePerso() : vue === "collections" ? vueCollections() : vue === "succes" ? vueSucces() : vueAujourdhui());
     rendreOnglets();
   }
 
@@ -947,12 +1366,14 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 
   function visite() {
     var a = M.noterVisite(C, P, maintenant()), b = M.verifierRecompenses(C, P, maintenant());
-    if (a.succes.length || b.succes.length || b.objets.length || b.accessoires.length) sauver();
+    if (C.plateau) M.bonusDuJour(C, P, maintenant());
+    sauver();
   }
 
-  var FICHIERS = ["regles.json", "skills.json", "questions.json", "succes.json", "commentaires.json", "objets.json", "avatar.json"];
+  var FICHIERS = ["regles.json", "skills.json", "questions.json", "succes.json", "commentaires.json", "objets.json", "avatar.json",
+    "ia.json", "plateau.json", "frise.json", "bibliotheque.json"];
   Promise.all(FICHIERS.map(charger)).then(function (d) {
-    C = M.indexerContenu(d[0], d[1], d[2], d[3], { commentaires: d[4], objets: d[5], avatar: d[6] });
+    C = M.indexerContenu(d[0], d[1], d[2], d[3], { commentaires: d[4], objets: d[5], avatar: d[6], ia: d[7], plateau: d[8], frise: d[9], bibliotheque: d[10] });
     P = lireLocal() || M.nouvellePartie(Date.now());
     visite();
     try { localStorage.setItem(CLE_LOCALE, JSON.stringify(P)); } catch (e) {}
