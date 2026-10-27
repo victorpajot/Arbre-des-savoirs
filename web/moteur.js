@@ -487,6 +487,7 @@
     var jouer = !!(infos && infos.jouer);
     var dep = jouerPlateau(contenu, partie, { type: "quiz", comp: id }, { reussi: reussi, parfait: parfait, chrono: chrono, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
     var ag = agacerIA(contenu, partie, resultats.length - bonnes, !reussi, t);
+    lotExceptionnel(partie, dep);
     var rec = verifierRecompenses(contenu, partie, t);
     if (reussi) ajouterButin(contenu, partie, rec, { type: "quiz", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
@@ -557,6 +558,7 @@
     var jouer = !!(infos && infos.jouer);
     var dep = revision && !reussi ? null : jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
     var ag = agacerIA(contenu, partie, resultats.length - bonnes, !reussi, t);
+    lotExceptionnel(partie, dep);
     var rec = verifierRecompenses(contenu, partie, t);
     if (reussi) ajouterButin(contenu, partie, rec, { type: "rappel", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
@@ -830,7 +832,18 @@
       // v9 : chaque case Mendeleïev croisée (ou atteinte) fait apparaître un atome sauvage.
       for (var j = pl.idx + 1; j <= Math.min(cible, der - 1); j++) {
         var e = pl.route[j], spE = specialDe(contenu, partie, e);
-        if (spE && spE.type === "mendeleiev" && contenu.atomes) etapes.push(apparition(contenu, partie, e, t));
+        if (spE && spE.type === "mendeleiev" && contenu.atomes) {
+          // v19 : un atome qui apparaît arrête le pion sur sa case ; le reste du trajet attend le combat (ou qu'on le laisse partir).
+          var ap = apparition(contenu, partie, e, t);
+          if (ap.type === "atome") {
+            poser(j);
+            ap.reste = cible - j; ap.arret = true;
+            partie.sauvages[partie.sauvages.length - 1].reste = cible - j;
+            etapes.push(ap);
+            return false;
+          }
+          etapes.push(ap);
+        }
         if (ennemis[e]) {
           poser(j);
           partie.duel = { ennemi: ennemis[e], case: e, reste: cible - j, pret: true, depuis: t };
@@ -861,6 +874,8 @@
       poser(Math.max(0, pl.idx + valeur));
       if (pl.idx < deI) { c.reculs++; etapes.push({ type: "recul", n: deI - pl.idx, cause: cause === "cadeau" ? "cadeau" : "echec" }); }
     } else if (valeur > 0) {
+      // Le pion repart d'une autre façon : les atomes qui l'avaient arrêté ne retiennent plus de trajet.
+      if (cause !== "atome") (partie.sauvages || []).forEach(function (x) { x.reste = 0; });
       if (pl.prison > 0) etapes.push({ type: "bloque_prison", reste: pl.prison });
       else if (pl.quarantaine > 0) { pl.quarantaine--; etapes.push({ type: "bloque_quarantaine", reste: pl.quarantaine }); }
       else if (revisionEnCours(partie)) etapes.push({ type: "bloque_revision", comp: partie.revision.comp });
@@ -969,7 +984,7 @@
         if (partie.gagnables && partie.gagnables[cleButin(f, x.id)] && !possede(partie, f, x.id) && x.lot <= tour) proches.push({ famille: f, chose: x });
       });
     });
-    var lot = lotDe(partie, t);
+    var lot = lotDe(partie, t); if (lotPlein(lot)) return null;
     proches = horsLot(lot, proches);
     if (!proches.length) return null;
     b = proches[Math.floor((alea || Math.random)() * proches.length)];
@@ -995,10 +1010,12 @@
       delete ennemisPlateau(contenu, partie)[d.case];
       partie.duel = null;
       partie.plateau.coups = (partie.plateau.coups || 0) + 1;
+      partie.lot.cap = SUCCES_DUEL;
       out.butin = butinDuel(contenu, partie, t, alea);
       var dep = deplacer(contenu, partie, d.reste, t, "duel");
       dep.contextes = contextesPlateau(dep);
       out.plateau = dep;
+      lotExceptionnel(partie, dep);
       out.recompenses = verifierRecompenses(contenu, partie, t);
       if (out.butin) { if (out.butin.famille === "masques") out.recompenses.masque = out.butin.chose; else out.recompenses[out.butin.famille].push(out.butin.chose); }
     } else {
@@ -1060,7 +1077,7 @@
   }
   function atomeSauvage(contenu, partie) {
     var s = partie.sauvages && partie.sauvages[0];
-    return s && contenu.atomes ? { z: s.z, case: s.case, element: elementZ(contenu, s.z), attente: partie.sauvages.length } : null;
+    return s && contenu.atomes ? { z: s.z, case: s.case, element: elementZ(contenu, s.z), attente: partie.sauvages.length, reste: s.reste || 0 } : null;
   }
 
   function texteMasse(e) { return e.stable ? e.masse.toFixed(1).replace(".", ",") : "[" + e.masse + "]"; }
@@ -1120,10 +1137,27 @@
     if (capture) { if (!f.capture) { f.capture = t; c.atomesCaptures = (c.atomesCaptures || 0) + 1; } }
     else { f.fuites++; c.atomesEnfuis = (c.atomesEnfuis || 0) + 1; }
     var ag = agacerIA(contenu, partie, R.questions - bonnes, !capture, t);
+    var dep = suiteTrajet(contenu, partie, s, t);
     var rec = verifierRecompenses(contenu, partie, t);
     partie.maj = t;
-    return { capture: capture, element: s.element, bonnes: bonnes, total: R.questions, premiere: premiere, fiche: f, recompenses: rec, agacement: ag,
+    return { plateau: dep, capture: capture, element: s.element, bonnes: bonnes, total: R.questions, premiere: premiere, fiche: f, recompenses: rec, agacement: ag,
       captures: Object.keys(partie.atomes).filter(function (z) { return partie.atomes[z].capture; }).length };
+  }
+
+  // v19 : l'atome a arrêté le pion ; capturé, enfui ou laissé partir, le pion finit son trajet.
+  function suiteTrajet(contenu, partie, s, t) {
+    if (!s.reste || !contenu.plateau || partie.plateau.position !== s.case) return null;
+    var dep = deplacer(contenu, partie, s.reste, t, "atome");
+    dep.contextes = contextesPlateau(dep);
+    return dep;
+  }
+  // Le laisser partir : pas de combat, pas de fuite comptée. Il pourra revenir.
+  function laisserPartir(contenu, partie, t) {
+    var s = atomeSauvage(contenu, partie); if (!s) return null;
+    partie.sauvages.shift();
+    var dep = suiteTrajet(contenu, partie, s, t);
+    partie.maj = t;
+    return { element: s.element, plateau: dep, recompenses: verifierRecompenses(contenu, partie, t) };
   }
 
   // --- Cadeaux à l'IA (v7) ---------------------------------------------------
@@ -1495,13 +1529,19 @@
   // v15 : au plus un savant, un livre ou un objet par épreuve. Le reste attend l'épreuve suivante.
   // `partie.lot` compte ce qui est tombé pendant l'épreuve datée `t` ; hors épreuve, chaque appel a son propre lot.
   var FAMILLES_LOT = { savants: 1, objets: 1, livres: 1 };
-  // v19 : au plus SUCCES_PAR_EPREUVE succès par épreuve (ou par visite). Les autres attendent les épreuves suivantes :
-  // leurs conditions restent remplies, ils tombent plus tard. Ceux du thème de l'épreuve passent en premier.
-  var SUCCES_PAR_EPREUVE = 4;
-  function ouvrirLot(partie, t, theme) { partie.lot = { t: t, n: 0, s: 0, theme: theme || null }; }
-  function lotDe(partie, t) { return partie.lot && partie.lot.t === t ? partie.lot : { t: t, n: 0, s: 0, theme: null }; }
+  // v19 : au plus RECOMPENSES_PAR_EPREUVE récompenses par épreuve (ou par visite), succès compris. Les autres attendent
+  // les épreuves suivantes : leurs conditions restent remplies, elles tombent plus tard. Le thème de l'épreuve passe d'abord.
+  // Quatre seulement pour un exploit : un tour complet du plateau ; trois pour un duel gagné.
+  var RECOMPENSES_PAR_EPREUVE = 2, SUCCES_EXPLOIT = 4, SUCCES_DUEL = 3;
+  function lotExceptionnel(partie, dep) {
+    if (partie.lot && dep && dep.etapes && dep.etapes.some(function (e) { return e.type === "tour_fini"; })) partie.lot.cap = SUCCES_EXPLOIT;
+  }
+  function ouvrirLot(partie, t, theme) { partie.lot = { t: t, n: 0, r: 0, theme: theme || null }; }
+  function lotDe(partie, t) { return partie.lot && partie.lot.t === t ? partie.lot : { t: t, n: 0, r: 0, theme: null }; }
   function horsLot(lot, liste) { return lot.n ? liste.filter(function (b) { return !FAMILLES_LOT[b.famille]; }) : liste; }
-  function compterLot(lot, famille) { if (FAMILLES_LOT[famille]) lot.n++; }
+  function compterLot(lot, famille) { if (FAMILLES_LOT[famille]) lot.n++; if (famille !== "evenements") lot.r = (lot.r || 0) + 1; }
+  // v19 : tout ce qu'une épreuve montre à la fin (succès, savants, masques, objets, livres, accessoires, cadeaux) compte.
+  function lotPlein(lot) { return (lot.r || 0) >= (lot.cap || RECOMPENSES_PAR_EPREUVE); }
   function listeFamille(contenu, f) {
     if (f === "objets") return contenu.objets;
     if (f === "livres") return contenu.livres || [];
@@ -1520,34 +1560,37 @@
     var out = { succes: [], objets: [], accessoires: [], savants: [], evenements: [], livres: [], masque: null, gagnables: [], credits: [] };
     partie.gagnables = partie.gagnables || {};
     partie.masques = partie.masques || {};
+    var nCadeaux = 0;
     // v8 : les cadeaux des cases, déjà rangés, rejoignent le résultat pour être montrés au joueur.
     (partie.cadeauxCase || []).forEach(function (c) {
       var x = listeFamille(contenu, c.famille).filter(function (y) { return y.id === c.id; })[0];
       if (!x) return;
       if (c.famille === "masques") out.masque = x; else out[c.famille].push(x);
+      nCadeaux++;
     });
     partie.cadeauxCase = [];
     var lot = lotDe(partie, t);
+    lot.r = (lot.r || 0) + nCadeaux;
     var directes = [
-      ["succes", contenu.succes, partie.succes],
       ["savants", contenu.avatar && contenu.avatar.savants ? contenu.avatar.savants : [], partie.savants || (partie.savants = {})],
+      ["succes", contenu.succes, partie.succes],
       ["evenements", contenu.evenements, partie.evenements],
     ];
     var change = true;
-    lot.s = lot.s || 0;
     while (change) {
       change = false;
       directes.forEach(function (f) {
         var liste = f[1];
         if (f[0] === "succes") {
-          var place = SUCCES_PAR_EPREUVE - lot.s;
+          var place = (lot.cap || RECOMPENSES_PAR_EPREUVE) - (lot.r || 0);
           liste = place <= 0 ? [] : liste.filter(function (x) { return !f[2][x.id] && conditionRemplie(contenu, partie, x.condition, t); });
           if (lot.theme) liste = liste.filter(function (x) { return themeDe(x) === lot.theme; }).concat(liste.filter(function (x) { return themeDe(x) !== lot.theme; }));
+          // Les pionniers ouvrent un arbre : ils ne font jamais la queue.
+          liste = liste.filter(function (x) { return x.ouvre; }).concat(liste.filter(function (x) { return !x.ouvre; }));
           liste = liste.slice(0, Math.max(0, place));
-          lot.s += liste.length;
         }
         liste.forEach(function (x) {
-          if (f[2][x.id] || (FAMILLES_LOT[f[0]] && lot.n) || !conditionRemplie(contenu, partie, x.condition, t)) return;
+          if (f[2][x.id] || (FAMILLES_LOT[f[0]] && lot.n) || (f[0] !== "evenements" && lotPlein(lot)) || !conditionRemplie(contenu, partie, x.condition, t)) return;
           if (f[0] === "evenements" && !dateAtteinte(contenu, partie, x)) return;
           f[2][x.id] = t; out[f[0]].push(x); change = true; compterLot(lot, f[0]);
           if (f[0] === "succes") { var cr = crediterSucces(contenu, partie, x); if (cr) out.credits.push(cr); }
@@ -1559,7 +1602,7 @@
           if (x.condition && !conditionRemplie(contenu, partie, x.condition, t)) return;
           if (estButin(x)) { partie.gagnables[cleButin(f, x.id)] = { famille: f, id: x.id, depuis: t }; out.gagnables.push(x); return; }
           // Hors butin : reliques des tours, premier masque de l'IA.
-          if (FAMILLES_LOT[f] && lot.n) return;
+          if ((FAMILLES_LOT[f] && lot.n) || lotPlein(lot)) return;
           partie[f][x.id] = t; change = true; compterLot(lot, f);
           if (f === "masques") partie.masque = x.id; else out[f].push(x);
         });
@@ -1662,7 +1705,8 @@
   // Après une épreuve réussie : au plus un butin, tiré au hasard. `alea` (facultatif) pour les tests.
   function tirerButin(contenu, partie, epreuve, t, alea) {
     alea = alea || Math.random;
-    var lot = lotDe(partie, t), ouvert = horsLot(lot, butinOuvert(contenu, partie));
+    var lot = lotDe(partie, t); if (lotPlein(lot)) return null;
+    var ouvert = horsLot(lot, butinOuvert(contenu, partie));
     var fav = epreuve.type === "duel" ? null : faveurIA(contenu, partie, t);
     var assure = partie.butinAssure && epreuve.type !== "duel" && ouvert.length;
     if (assure) partie.butinAssure = false;
@@ -2005,7 +2049,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,

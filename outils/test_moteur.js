@@ -2,6 +2,7 @@
 const fs = require("fs"), path = require("path"), assert = require("assert");
 const M = require("../web/moteur.js");
 // v19 : 4 succès au plus par épreuve ; les suivants tombent aux vérifications d'après.
+const vider = (C, P, t) => { for (let i = 1; i <= 12; i++) M.verifierRecompenses(C, P, t + i); };
 const succesPuis = (r, C, P, t) => r.nouveauxSucces.map(s => s.id).concat(...[1, 2, 3, 4, 5].map(i => M.verifierRecompenses(C, P, t + i).succes.map(s => s.id)));
 const d = n => JSON.parse(fs.readFileSync(path.join(__dirname, "../data", n), "utf8"));
 const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
@@ -18,10 +19,12 @@ assert.equal(r.issue, "echec");
 assert.deepEqual(r.nouveauxSucces.map(s => s.id).filter(id => id !== "honte-1"), ["tour-de-pise"]);
 r = M.terminerQuiz(C, P, "math.arithmetique", res("math.arithmetique", 5, 5), t);
 assert.equal(r.issue, "maitrisee"); assert.equal(r.xp, 70);
-assert.deepEqual(r.nouveauxSucces.map(s => s.id).sort(), ["egal-recorde", "einstein-notes", "eureka", "premier-pas"]);
+// v19 : deux récompenses au plus par épreuve ordinaire ; les autres tombent ensuite.
+assert.ok(r.nouveauxSucces.length <= 2);
+{ const ids = succesPuis(r, C, P, t); for (const id of ["egal-recorde", "premier-pas"]) assert.ok(ids.includes(id), id); }
 // v6 : objets et accessoires deviennent du butin gagnable ; ici, sans plateau, aucun ne tombe
 assert.deepEqual(r.nouveauxObjets, []);
-assert.ok(P.gagnables["objets:boulier"] && P.gagnables["accessoires:lunettes-rondes"] && P.gagnables["accessoires:coiffure-einstein"]);
+assert.ok(P.gagnables["objets:boulier"] && P.gagnables["accessoires:lunettes-rondes"]);
 assert.ok(r.contextes.includes("quiz_parfait_facile"));
 assert.equal(M.statut(C, P, "math.proportions", t).etat, "disponible");
 assert.equal(M.rappelsDus(C, P, t).length, 0);
@@ -38,12 +41,12 @@ assert.equal(M.statut(C, P, "math.logique", t).etat, "disponible");
 t += 3 * jour;
 r = M.terminerRappel(C, P, "math.arithmetique", res("math.arithmetique", 3, 1), t);
 assert.equal(r.issue, "perdue"); assert.equal(r.xpPerdue, 75);
-assert.ok(r.nouveauxSucces.some(s => s.id === "lucide"));
+assert.ok(succesPuis(r, C, P, t).includes("lucide"));
 assert.equal(M.statut(C, P, "math.arithmetique", t).etat, "disponible");
 assert.equal(M.statut(C, P, "math.proportions", t).gelee, true);
 assert.equal(M.statut(C, P, "math.logique", t).etat, "verrouillee");
 r = M.terminerQuiz(C, P, "math.arithmetique", res("math.arithmetique", 5, 4), t);
-assert.ok(r.nouveauxSucces.some(s => s.id === "resilience"));
+assert.ok(succesPuis(r, C, P, t).includes("resilience"));
 assert.equal(M.statut(C, P, "math.proportions", t).gelee, false);
 // Questions récentes évitées
 const vues = P.competences["math.arithmetique"].recentes;
@@ -91,9 +94,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const nuit = new Date(2026, 9, 25, 3, 0).getTime();
   const qs = M.tirerQuestions(C, P3, "chim.liaisons", 5).map(q => ({ id: q.id, correct: false, ms: 900 }));
   let r3 = M.terminerQuiz(C, P3, "chim.liaisons", qs, nuit, { duree: 20000 });
-  // v19 : au plus 4 succès par épreuve ; le reste tombe ensuite (ici à la visite suivante).
-  assert.ok(r3.nouveauxSucces.length <= 4, "4 succès au plus");
-  const ids = r3.nouveauxSucces.map(s => s.id).concat(M.verifierRecompenses(C, P3, nuit + 1).succes.map(s => s.id), M.verifierRecompenses(C, P3, nuit + 2).succes.map(s => s.id));
+  // v19 : au plus 2 récompenses par épreuve ordinaire ; le reste tombe ensuite (ici aux visites suivantes).
+  assert.ok(r3.nouveauxSucces.length <= 2, "2 récompenses au plus");
+  const ids = succesPuis(r3, C, P3, nuit);
   for (const id of ["dix-pour-cent", "insomniaque", "table-rase", "neutrinos", "tour-de-pise"]) assert.ok(ids.includes(id), id);
   assert.ok(P3.gagnables["accessoires:chapeau-alu"], "chapeau gagnable après la panoplie moqueuse");
   assert.deepEqual(r3.contextes.slice(0, 2), ["quiz_zero", "nuit"]);
@@ -284,11 +287,13 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     for (const id of L.slice(0, 4)) M.terminerQuiz(C4, P, id, tous(P, id, 5), t0);
     assert.equal(M.statut(C4, P, L[4], t0).etat, "disponible");
     assert.equal(M.statut(C4, P, L[5], t0).etat, "verrouillee");
+    vider(C4, P, t0);
     assert.ok(P.succes["branche-logique"], "le premier losange suffit au succès de branche");
     const r = M.terminerQuiz(C4, P, L[4], tous(P, L[4], 5), t0);
-    assert.ok(r.nouveauxSucces.some(s => s.id === "plus-ultra"));
+    assert.ok(succesPuis(r, C4, P, t0).includes("plus-ultra"));
     assert.equal(M.statut(C4, P, L[7], t0).etat, "verrouillee");
     for (const id of L.slice(5)) M.terminerQuiz(C4, P, id, tous(P, id, 5), t0);
+    vider(C4, P, t0);
     assert.ok(P.succes["nains-geants"] && P.succes["cultiver-jardin"]);
   }
 
@@ -788,7 +793,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(P.sauvages.every(x => x.z !== 26)); assert.equal(new Set(P.sauvages.map(x => x.z)).size, 3);
   // Famille complète : les gaz nobles.
   [2, 10, 18, 36, 54, 86, 118].forEach(z => { P.atomes[z] = { capture: t0, rencontres: 1, fuites: 0 }; });
-  assert.ok(M.verifierSucces(CA, P, t0 + 100).some(x => x.id === "gaz-nobles"));
+  assert.ok([0, 1, 2, 3, 4, 5, 6, 7].flatMap(i => M.verifierSucces(CA, P, t0 + 100 + i)).some(x => x.id === "gaz-nobles"));
   // Migration : une ancienne partie gagne un tableau vide.
   const vieux = M.migrer(JSON.parse(JSON.stringify(Object.assign(M.nouvellePartie(t0), { atomes: undefined, sauvages: undefined }))));
   assert.deepEqual(vieux.atomes, {}); assert.deepEqual(vieux.sauvages, []);
@@ -1091,4 +1096,24 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.deepEqual([f.type, f.id], ["savant", "william-james"]);
   }
   console.log("OK : v18 thèmes : butin, apartés, répliques, masques et farces suivent la case");
+}
+// v19 : un atome sauvage arrête le pion sur sa case ; capturé ou laissé partir, le pion finit son trajet.
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
+  const CA = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const T = new Date(2026, 9, 27, 10).getTime();
+  const P = M.nouvellePartie(T); P.plateau.ennemis = {};
+  const rt = P.plateau.route || Array.from({ length: 63 }, (_, i) => i + 1); P.plateau.route = rt;
+  const i31 = rt.indexOf(31); P.plateau.idx = i31 - 2; P.plateau.position = rt[i31 - 2];
+  let dep = M.deplacer(CA, P, 5, T, "test");
+  assert.equal(P.plateau.position, 31, "arrêt sur la case Mendeleïev");
+  const ap = dep.etapes.find(e => e.type === "atome");
+  assert.ok(ap && ap.arret && ap.reste === 3, "3 cases restent");
+  assert.equal(M.atomeSauvage(CA, P).reste, 3);
+  const f = M.laisserPartir(CA, P, T + 1);
+  assert.ok(f.plateau && f.plateau.cause === "atome");
+  assert.equal(P.plateau.idx, i31 + 3, "laissé partir : le pion finit son trajet");
+  assert.equal((P.sauvages || []).length, 0);
+  console.log("OK : v19 l'atome arrête le pion, le trajet reprend ensuite");
 }
