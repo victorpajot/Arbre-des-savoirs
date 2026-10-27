@@ -170,7 +170,11 @@ p { margin: 0; }
 .points i { flex: 1; height: 6px; border-radius: 3px; background: var(--line); }
 .points i.ok { background: var(--good); }
 .points i.ko { background: var(--bad); }
-.points i.cur { background: var(--c, var(--accent)); }
+/* v15 : la question en cours n'emprunte plus la couleur de l'arbre (rouge en Alchimie, en duel) : encre, plus épaisse, qui respire. */
+.points { align-items: center; }
+.points i.cur { height: 10px; border-radius: 5px; background: var(--ink); animation: curPulse 1.4s ease-in-out infinite alternate; }
+@keyframes curPulse { from { opacity: 0.55; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .points i.cur { animation: none; } }
 .chrono { display: flex; align-items: center; gap: 10px; font-family: var(--f-mono); font-size: 14px; color: var(--muted); }
 .chrono .barre { flex: 1; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
 .chrono .barre i { display: block; height: 100%; background: var(--c, var(--accent)); transition: width 0.25s linear; }
@@ -429,6 +433,19 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 @keyframes vsPop { from { transform: translate(-50%, -50%) scale(3); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 @keyframes tomber { from { transform: translateY(-12px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .arene .cote, .arene .vs, .vs-scene .bulle, .vs-scene .arbitre { animation: none; } }
+/* v15 : l'arène est rouge sombre, quel que soit le thème, et des flammes montent du bas pendant l'annonce du combat. */
+.quiz.rouge { --bg: #2A080D; --surface: #3E1018; --surface-2: #4A1520; --ink: #FCEDEA; --muted: #E7B9B2; --line: #6B2530; --accent: #F2C14E; --accent-ink: #2A080D; --good: #5CD68B; --bad: #FF7A6B;
+  background: radial-gradient(120% 70% at 50% 110%, #8E1F1A 0%, #4A0E14 45%, #2A080D 80%); color: var(--ink); }
+.quiz.rouge .in { position: relative; z-index: 1; }
+.quiz.rouge .arene .vs { text-shadow: 3px 3px 0 #000, 0 0 18px #FF7A2E; color: #FF5A3C; }
+.flammes { position: fixed; left: 0; right: 0; bottom: 0; height: 34vh; pointer-events: none; z-index: 0; overflow: hidden; }
+.flammes i { position: absolute; bottom: -30px; width: var(--w, 70px); height: var(--h, 160px); left: var(--x, 50%); margin-left: calc(var(--w, 70px) / -2);
+  border-radius: 50% 50% 22% 22% / 62% 62% 38% 38%; background: radial-gradient(60% 75% at 50% 82%, #FFF3B0 0%, #FFC23D 22%, #FF6A1F 50%, rgba(200,30,20,0.6) 72%, transparent 76%);
+  filter: blur(3px); mix-blend-mode: screen; transform-origin: 50% 100%; opacity: 0.85; animation: flamme var(--d, 1.4s) ease-in-out var(--t, 0s) infinite alternate; }
+.flammes i.braise { width: 5px; height: 5px; border-radius: 50%; filter: none; margin: 0; background: #FFB347; box-shadow: 0 0 6px #FF7A2E; animation: braise var(--d, 3s) linear var(--t, 0s) infinite; bottom: 0; }
+@keyframes flamme { 0% { transform: scale(1, 1) skewX(0deg); opacity: 0.75; } 35% { transform: scale(0.92, 1.12) skewX(4deg); opacity: 0.95; } 70% { transform: scale(1.06, 0.9) skewX(-5deg); opacity: 0.8; } 100% { transform: scale(0.96, 1.18) skewX(3deg); opacity: 0.9; } }
+@keyframes braise { from { transform: translate(0, 0); opacity: 0; } 10% { opacity: 1; } to { transform: translate(var(--dx, 20px), -32vh); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .flammes i { animation: none; } .flammes i.braise { display: none; } }
 .verdict-duel .duo { display: flex; justify-content: center; align-items: flex-end; gap: 18px; margin-bottom: 6px; }
 .verdict-duel .vaincu { transform: scaleX(-1) rotate(-90deg) translateX(-10px); opacity: .7; }
 .verdict-duel.gagne .grand { color: var(--good); }
@@ -2320,6 +2337,18 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     return b;
   }
 
+  // v15 : un rideau de flammes en bas de l'arène, avec des braises qui montent.
+  function flammes() {
+    var h = "";
+    for (var i = 0; i < 11; i++) {
+      var x = 4 + i * 9.2 + ((i * 37) % 7) - 3;
+      h += '<i style="--x:' + x.toFixed(1) + "%;--w:" + (60 + (i * 53) % 50) + "px;--h:" + (110 + (i * 71) % 110) + "px;--d:" + (0.9 + ((i * 29) % 9) / 10).toFixed(1) + "s;--t:-" + ((i * 17) % 10) / 10 + 's"></i>';
+    }
+    for (var j = 0; j < 12; j++) {
+      h += '<i class="braise" style="--x:' + (5 + (j * 41) % 90) + "%;--dx:" + (((j * 23) % 60) - 30) + "px;--d:" + (2.2 + ((j * 13) % 20) / 10).toFixed(1) + "s;--t:-" + ((j * 7) % 30) / 10 + 's"></i>';
+    }
+    return el('<div class="flammes" aria-hidden="true">' + h + "</div>");
+  }
   var duel = null;
   function lancerDuel() {
     if (!P.duel || !P.duel.pret) return;
@@ -2340,7 +2369,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var ancien = document.querySelector(".quiz.duel"); if (ancien) ancien.remove();
     if (!duel) return;
     var e = duel.ennemi;
-    var z = el('<div class="quiz duel" style="--c:#D94141" role="dialog" aria-modal="true" aria-label="Duel contre ' + esc(tx(e.nom)) + '"><div class="in"></div></div>'), inn = z.querySelector(".in");
+    var z = el('<div class="quiz duel rouge" style="--c:#D94141" role="dialog" aria-modal="true" aria-label="Duel contre ' + esc(tx(e.nom)) + '"><div class="in"></div></div>'), inn = z.querySelector(".in");
     document.getElementById("couche").appendChild(z);
     if (duel.phase === "vs") {
       var sc = el('<div class="vs-scene"><div class="arbitre"></div><div class="arene"><div class="cote g">' + svgAvatar(120) + '<b>Toi</b></div><div class="vs" aria-hidden="true">VS</div><div class="cote d">' + svgEnnemi(e, 104, false, "miroir") + "<b>" + esc(tx(e.nom)) + '</b></div></div><p class="bulle"></p></div>');
@@ -2350,6 +2379,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       var go = el('<button type="button" class="btn large">Au combat</button>'); go.onclick = function () { duel.phase = "q"; rendreDuel(); };
       var fuir = el('<button type="button" class="btn sec large">Pas maintenant</button>'); fuir.onclick = fermerDuel;
       inn.appendChild(go); inn.appendChild(fuir);
+      z.appendChild(flammes());
       go.focus();
       return;
     }
@@ -2590,7 +2620,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
 
   // Bestiaire : les ennemis rencontrés, avec l'historique des duels. Les autres restent des silhouettes.
   function blocBestiaire() {
-    var b = el('<div class="bloc"><p class="note">Les ennemis du plateau. Chacun garde une case jusqu\'à ce que tu le battes, et revient au tour suivant.</p><div class="bestiaire"></div></div>');
+    var b = el('<div class="bloc"><p class="note">Les ennemis du plateau. Chacun garde une case jusqu\'à ce que tu le battes. À chaque tour, l\'IA en poste sept, choisit lesquels et les déplace.</p><div class="bestiaire"></div></div>');
     var g = b.querySelector(".bestiaire"), presents = M.ennemisPlateau(C, P);
     C.ennemis.forEach(function (e) {
       var f = P.bestiaire && P.bestiaire[e.id], vu = !!f;
@@ -2924,7 +2954,11 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var k = C.parId[quiz.id], s = stat(k.stat);
     var z = el('<div class="quiz" role="dialog" aria-modal="true" aria-label="' + (quiz.mode === "rappel" ? "Rappel" : "Quiz") + '" style="--c:' + couleur(k.stat) + '"><div class="in"></div></div>');
     var inn = z.querySelector(".in");
-    if (quiz.fin) { inn.appendChild(bilan()); document.getElementById("couche").appendChild(z); z.querySelector("button").focus(); return; }
+    if (quiz.fin) {
+      inn.appendChild(bilan());
+      // v15 : l'étape « Un ennemi ! » du bilan passe dans l'arène rouge, flammes comprises.
+      if (inn.querySelector(".defi")) { z.classList.add("rouge"); z.appendChild(flammes()); }
+      document.getElementById("couche").appendChild(z); z.querySelector("button").focus(); return; }
     var cur = quiz.qs[quiz.i], q = cur.q;
     var haut = el('<div class="haut"><div class="titre"><span class="eyebrow" style="color:' + couleur(k.stat) + '">' + (quiz.mode === "rappel" ? "Rappel" : "Quiz") + " · " + esc(tx(s.nom)) + "</span><b>" + esc(tx(k.nom)) + '</b></div><button type="button" class="fermer" aria-label="Quitter">×</button></div>');
     haut.querySelector(".fermer").onclick = function () {
@@ -3075,7 +3109,9 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var titre = fini ? "Tour complet !" : d > 0 ? "Le pion avance de " + d + " case" + (d > 1 ? "s" : "") : d < 0 ? "Le pion recule de " + (-d) + " case" + (d < -1 ? "s" : "") : "Le pion reste sur place";
     var b = el('<div class="bloc plateau"><div class="tete"><h2>' + esc(titre) + '</h2><span class="num">case ' + dep.de + " → " + dep.a + '</span></div><div class="trajet"></div></div>');
     var tj = b.querySelector(".trajet"), v = dep.valeurs;
-    if (avecPlateau) { animPion = dep.chemin && dep.chemin.length > 1 ? dep : null; var g = el('<div class="plateau-bilan">' + svgPlateau(true) + "</div>"); b.insertBefore(g, tj); }
+    // v15 : pion bloqué par un ennemi (duel à reprendre) : pas de trajet, mais la rencontre se rejoue sur la case.
+    var rejoue = dep.etapes.some(function (e) { return e.type === "duel_attente"; });
+    if (avecPlateau) { animPion = (dep.chemin && dep.chemin.length > 1) || rejoue ? dep : null; var g = el('<div class="plateau-bilan">' + svgPlateau(true) + "</div>"); b.insertBefore(g, tj); }
     if (dep.valeur > 0 && (dep.cause === "cadeau" || dep.cause === "duel")) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>" + (dep.cause === "cadeau" ? "Cadeau de l'IA." : "Duel gagné : la fin du trajet.") + "</span></div>"));
     else if (dep.valeur > 0) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>Épreuve réussie" + (v && v.duJour ? ", bonus du jour compris" : "") +
       (dep.bonusJouer ? ", dont +" + dep.bonusJouer + " pour avoir laissé l'IA choisir" : dep.valeur > (v ? v.total : 0) ? ", avec bonus" : "") + ".</span></div>"));

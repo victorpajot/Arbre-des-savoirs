@@ -566,7 +566,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   P.duel = null; P.plateau.position = 62; delete M.ennemisPlateau(C8, P)[61];
   M.avancerPion(C8, P, 3, t0);
   assert.equal(P.plateau.tours, 1);
-  assert.equal(M.ennemisPlateau(C8, P)[7], "sophiste");
+  // v15 : sept ennemis reviennent, choisis par l'IA, sur des postes décalés ; jamais la réserve ni une case spéciale.
+  {
+    const en = M.ennemisPlateau(C8, P), cases = Object.keys(en).map(Number), ids = Object.values(en);
+    assert.equal(cases.length, 7); assert.equal(new Set(ids).size, 7);
+    assert.ok(!ids.includes(C8.reserve));
+    assert.ok(cases.every(n => n > 2 && n < 63 && !M.specialDe(C8, P, n)));
+    assert.notDeepEqual(cases.sort((a, b) => a - b), [7, 15, 26, 34, 44, 52, 61], "les postes glissent");
+    const nouveaux = ids.filter(id => !P.bestiaire[id]).length;
+    assert.ok(nouveaux >= 5, "l'IA préfère les ennemis jamais affrontés");
+  }
 
   // Cadeaux : un par jour, une fois par objet.
   const G = M.nouvellePartie(t0);

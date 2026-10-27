@@ -602,8 +602,31 @@
   function ennemisPlateau(contenu, partie) {
     var pl = partie.plateau;
     if (!contenu.placement) return {};
-    if (!pl.ennemis) pl.ennemis = Object.assign({}, contenu.placement);
+    if (!pl.ennemis) pl.ennemis = placerEnnemis(contenu, partie);
     return pl.ennemis;
+  }
+  // v15 : au premier tour, le placement d'origine. Ensuite, l'IA choisit ses sept ennemis parmi tous (ceux que
+  // le joueur n'a jamais affrontés d'abord, puis ceux qui l'ont battu), et les postes glissent de quelques cases.
+  function placerEnnemis(contenu, partie) {
+    var pl = partie.plateau, base = contenu.placement, tour = pl.tours || 0;
+    if (!tour || !contenu.plateau) return Object.assign({}, base);
+    var R = contenu.plateau.regles, graine = (partie.cree || 0) + "|" + tour;
+    var postes = Object.keys(base).map(Number).sort(function (a, b) { return a - b; });
+    var bete = partie.bestiaire || {};
+    var choisis = contenu.ennemis.filter(function (e) { return e.id !== contenu.reserve; }).map(function (e) {
+      var f = bete[e.id], vu = f && (f.victoires || f.defaites);
+      return { id: e.id, score: (vu ? 0 : 1000) + (f ? f.defaites * 60 : 0) + hacher(graine + "|" + e.id) % 400 };
+    }).sort(function (a, b) { return b.score - a.score; }).slice(0, postes.length).map(function (x) { return x.id; });
+    choisis.sort(function (a, b) { return hacher(graine + "|ordre|" + a) - hacher(graine + "|ordre|" + b); });
+    var decalage = (tour * 3) % 9 - 4, out = {};
+    postes.forEach(function (n, i) {
+      var visee = n + decalage;
+      for (var d = 0; d < 8; d++) {
+        var c = visee + (d % 2 ? -1 : 1) * Math.ceil(d / 2);
+        if (c > R.depart + 1 && c < R.arrivee && !out[c] && !specialDe(contenu, partie, c)) { out[c] = choisis[i]; return; }
+      }
+    });
+    return out;
   }
 
   // Applique le résultat d'une épreuve au pion. `issue` : {reussi, parfait, chrono, jouer}.
