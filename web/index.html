@@ -270,6 +270,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 /* Collections */
 .segments { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); grid-auto-flow: column; gap: 4px; padding: 4px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); }
 .segments button { border: 0; background: transparent; border-radius: 9px; min-height: 40px; font-weight: 700; font-size: 13px; padding: 0 2px; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
+/* v19 : six onglets ou plus : deux rangées de trois, pour garder les noms entiers. */
+.segments.deux-rangs { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: row; }
 .segments button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / 0.12); }
 .filtres { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin: 0 -2px; }
 .filtres button { flex: none; border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 12px; min-height: 34px; font-size: 13px; }
@@ -418,6 +420,16 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .case-jouer { --c: var(--accent); margin: 0 0 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
 .case-jouer .vitrine.grande { display: grid; place-items: center; padding: 16px; margin-bottom: 10px; border-radius: 16px; background: color-mix(in srgb, var(--c) 16%, transparent); }
 .case-jouer h2 { margin: 2px 0 6px; }
+.boutique .solde { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 17px; }
+.boutique .solde b { font-size: 30px; }
+.boutique h3 { margin: 16px 0 6px; }
+.boutique .rayons { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.boutique .article { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 14px; background: var(--surface-2, color-mix(in srgb, var(--ink) 5%, transparent)); }
+.boutique .article .txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.boutique .article .txt b { font-size: 16px; }
+.boutique .article .txt span { font-size: 15px; color: var(--muted); line-height: 1.4; }
+.boutique .article .txt .stock { font-size: 13px; font-family: var(--f-mono); }
+.boutique .article .btn { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; padding: 10px 14px; }
 /* v19 : la case est libre ! Le couvercle (croix ou atome) s'envole, la case se dévoile avec son thème. */
 .liberee { --c: var(--accent); display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 18px 16px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
 .liberee .scene-lib { position: relative; width: 168px; height: 168px; display: grid; place-items: center; border-radius: 24px; background: color-mix(in srgb, var(--c) 16%, transparent); overflow: visible; }
@@ -1727,7 +1739,7 @@ svg.grille .interro { transition: opacity .3s; }
     var ici = C.plateau.cases[P.plateau.position - 1], atI = atomeSur(ici.n), enI = !atI && ennemiSur(ici.n);
     var bandeau = enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + '</div><div class="eyebrow">Ton pion est case ' + ici.n + ' · Ennemi</div><h2>' + esc(tx(enI.nom)) + ' garde la case</h2><p>Bats-le pour voir ce qu\'il y a dessous.</p></div>' : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + '</div><div class="eyebrow">Ton pion est case ' + ici.n + ' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>' : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
       '<div class="eyebrow">Ton pion est case ' + ici.n + " · " + esc(formatAnnee(ici.annee)) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + esc(tx(ici.histoire)) + "</p>" +
-      (kc && kc.stat ? '<p class="arbre-case"><b>' + (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : c.raison === "ouvre_arbre" ? "Arbre " + esc(tx(sc.nom)) + " encore fermé : réussis ce quiz pour l'ouvrir." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</b></p>" : "") + galerieTheme(ici.stat) + "</div>";
+      (c.achat ? '<p class="arbre-case" style="--c:' + couleur(c.stat) + '"><b>Faveur achetée : arbre ' + esc(tx(stat(c.stat).nom)) + ", encore " + M.arbreAchete(P).restant + " épreuve" + (M.arbreAchete(P).restant > 1 ? "s" : "") + ".</b></p>" : "") + (kc && kc.stat && !c.achat ? '<p class="arbre-case"><b>' + (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : c.raison === "ouvre_arbre" ? "Arbre " + esc(tx(sc.nom)) + " encore fermé : réussis ce quiz pour l'ouvrir." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</b></p>" : "") + galerieTheme(ici.stat) + "</div>";
     feuilleSimple('<div class="choix-ia">' + bandeau + '<div class="eyebrow">L\'IA a choisi</div><div id="ia-jouer"></div>' +
       '<div class="epreuve" style="--c:' + couleur(k.stat) + '"><span class="de' + (v.duJour ? " bonus" : "") + '"><b>+' + (bMin === bonus ? v.total + bonus : (v.total + bMin) + "–" + (v.total + bonus)) + '</b></span><span class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" +
       (c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · bonus du bouton Jouer : " + texteBonusJouer() + ", tiré au hasard</span></span></div>" +
@@ -2187,13 +2199,13 @@ svg.grille .interro { transition: opacity .3s; }
   // --- Vue Personnage -------------------------------------------------------
   function vuePerso() {
     var t = maintenant(), v = el('<div class="vue"></div>'), xp = M.xpParStat(C, P);
-    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted)">niveau <b style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + '</b> · ' + svgBourse(22) + ' crédits <b style="font-size:24px;color:var(--ink)">' + P.credits.solde + "</b></div></div>"));
+    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted);display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span>niveau <b style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + '</b></span><span style="display:inline-flex;align-items:center;gap:4px">' + svgBourse(22) + ' <b style="font-size:24px;color:var(--ink)">' + P.credits.solde + "</b> crédits</span></div></div>"));
     var bs = el('<div class="bloc"><h2>Branches</h2><p class="note">Le niveau de chaque branche monte avec ses compétences maîtrisées et ses rappels réussis. Une pastille par compétence : pleine si maîtrisée, cerclée si ouverte.</p><div class="fiches"></div></div>');
     C.stats.slice().sort(function (a, b) { return (M.arbreOuvert(C, P, b.id) - M.arbreOuvert(C, P, a.id)) || xp[b.id] - xp[a.id]; }).forEach(function (s) { bs.querySelector(".fiches").appendChild(ficheBranche(s, xp[s.id])); });
     // v10 : le personnage se range en onglets ; l'IA et les ennemis y ont leur place.
-    var onglets = [["avatar", "Avatar"], ["stats", "Stats"]].concat(C.ia ? [["ia", "IA"]] : []).concat(C.ennemis.length ? [["ennemis", "Ennemis"]] : []).concat([["reglages", "Réglages"]]);
+    var onglets = [["avatar", "Avatar"], ["stats", "Stats"]].concat(C.ia ? [["ia", "IA"]] : []).concat(M.boutique(C) ? [["boutique", "Boutique"]] : []).concat(C.ennemis.length ? [["ennemis", "Ennemis"]] : []).concat([["reglages", "Réglages"]]);
     if (!onglets.some(function (o) { return o[0] === ongletPerso; })) ongletPerso = "avatar";
-    var seg = el('<div class="segments" role="group" aria-label="Rubrique du personnage"></div>');
+    var seg = el('<div class="segments' + (onglets.length > 5 ? " deux-rangs" : "") + '" role="group" aria-label="Rubrique du personnage"></div>');
     onglets.forEach(function (o) {
       var bt = el('<button type="button" aria-pressed="' + (ongletPerso === o[0]) + '">' + o[1] + "</button>");
       bt.onclick = function () { ongletPerso = o[0]; rendre(); };
@@ -2204,6 +2216,7 @@ svg.grille .interro { transition: opacity .3s; }
     if (ongletPerso === "avatar") v.appendChild(blocAvatar());
     if (ongletPerso === "ia") { v.appendChild(blocIA()); v.appendChild(blocFaveur()); v.appendChild(blocCadeauxIA()); v.appendChild(blocCorruption()); v.appendChild(blocMasques(Object.keys(P.succes).length)); }
     if (ongletPerso === "ennemis") v.appendChild(blocBestiaire());
+    if (ongletPerso === "boutique") v.appendChild(blocBoutique());
     if (ongletPerso !== "reglages") return v;
 
     var opt = el('<div class="bloc"><h2>Options</h2><label class="interrupteur" for="opt-chrono"><span><b>Chrono</b><br><span class="note">' + C.regles.chrono.secondes + ' secondes par question. Chaque bonne réponse rapporte ' + C.regles.chrono.bonus_xp_par_bonne_reponse + ' XP de plus.</span></span><input type="checkbox" id="opt-chrono"></label></div>');
@@ -3276,6 +3289,63 @@ svg.grille .interro { transition: opacity .3s; }
     return "Ses goûts ? À toi de les découvrir en lui offrant des objets.";
   }
   // v16 : la corrompre avec les crédits des succès. Un pot-de-vin par jour ; elle retient son record.
+  // v19 : la boutique de l'IA. Tout s'achète à l'aveugle avec les crédits.
+  var ARTICLES = [
+    ["objet", "Objet mystère", "Un objet du cabinet que tu n'as pas encore.", "#8A5A2B"],
+    ["livre", "Livre mystère", "Un livre de la bibliothèque, au hasard.", "#2E5E8C"],
+    ["accessoire", "Accessoire mystère", "De quoi habiller ton avatar.", "#7A3FD1"],
+    ["masque", "Masque pour l'IA", "Un masque qu'elle n'a pas. Ça la rend heureuse.", "#C2185B"],
+  ];
+  var PARCOURS = [
+    ["chasser", "Chasser un ennemi", "Le prochain ennemi sur ta route s'en va. Même celui qui te bloque.", "#D94141"],
+    ["convoquer", "Convoquer un ennemi", "Un ennemi de plus devant ton pion. Plus de duels, plus de butin.", "#5D6470"],
+    ["arbre", "Faveur d'un arbre", "Pour tes prochaines épreuves par Jouer, l'IA pioche dans l'arbre de ton choix.", "#2E9D5B"],
+  ];
+  function paquet(c, rond) {
+    return '<svg viewBox="0 0 48 48" width="52" height="52" aria-hidden="true">' + (rond ? '<circle cx="24" cy="24" r="21" fill="' + c + '" stroke="#fff" stroke-width="3"/>' :
+      '<rect x="5" y="9" width="38" height="33" rx="5" fill="' + c + '"/><rect x="5" y="9" width="38" height="9" rx="3" fill="#000" opacity=".18"/><rect x="21" y="9" width="6" height="33" fill="#FFD447"/>') +
+      '<text x="24" y="' + (rond ? 31 : 36) + '" text-anchor="middle" font-size="20" font-weight="900" fill="#fff" font-family="var(--f-display)">?</text></svg>';
+  }
+  function blocBoutique() {
+    var B = M.boutique(C), cr = P.credits, ach = M.arbreAchete(P);
+    var b = el('<div class="bloc boutique"><h2>La boutique de l\'IA</h2><p class="solde">' + svgBourse(36) + '<b class="num">' + cr.solde + "</b> crédit" + (cr.solde > 1 ? "s" : "") + "</p>" +
+      '<p class="note">Tout s\'achète à l\'aveugle : tu paies, l\'IA tire au hasard parmi ce que tu n\'as pas encore.</p><div class="rayons"></div><h3>Ton parcours</h3>' +
+      (ach ? '<p class="note">Faveur en cours : arbre ' + esc(tx(stat(ach.stat).nom)) + ", encore " + ach.restant + " épreuve" + (ach.restant > 1 ? "s" : "") + ".</p>" : "") + '<div class="rayons parcours"></div></div>');
+    function ligne(a, zone, rond) {
+      var prix = B.prix[a[0]], stock = M.enRayon(C, P, a[0]).length, peut = cr.solde >= prix && stock > 0;
+      var r = el('<div class="article"><span class="vis">' + paquet(a[3], rond) + '</span><span class="txt"><b>' + esc(a[1]) + "</b><span>" + esc(a[2]) + "</span>" +
+        '<span class="stock">' + (stock ? (a[0] === "chasser" ? stock + " sur ta route" : FAMILLES_STOCK[a[0]] ? stock + " en rayon" : "disponible") : a[0] === "chasser" ? "aucun ennemi devant toi" : "rien en rayon") + '</span></span><button type="button" class="btn"' + (peut ? "" : " disabled") + ">" + svgBourse(18) + " " + prix + "</button></div>");
+      r.querySelector("button").onclick = function () { if (a[0] === "arbre") choisirArbreAchat(); else acheterUI(a[0]); };
+      b.querySelector(zone).appendChild(r);
+    }
+    ARTICLES.forEach(function (a) { ligne(a, ".rayons"); });
+    if (C.plateau) PARCOURS.forEach(function (a) { ligne(a, ".parcours", true); });
+    return b;
+  }
+  var FAMILLES_STOCK = { objet: 1, livre: 1, accessoire: 1, masque: 1, chasser: 1 };
+  function choisirArbreAchat() {
+    var html = '<div class="eyebrow">Boutique · Faveur d\'un arbre</div><h2>Quel arbre ?</h2><p class="meta">Pour tes ' + M.boutique(C).arbre_epreuves + ' prochaines épreuves lancées par Jouer, l\'IA pioche dans cet arbre, quelle que soit la case.</p><div class="arbres-une">', actions = {};
+    M.enRayon(C, P, "arbre").forEach(function (st) {
+      html += '<button type="button" class="arbre-une" style="--c:' + couleur(st.id) + '" data-a="ach-' + st.id + '"><b>' + esc(tx(st.nom)) + "</b><span>" + M.boutique(C).prix.arbre + " crédits</span></button>";
+      actions["ach-" + st.id] = function () { acheterUI("arbre", st.id); };
+    });
+    feuilleSimple(html + "</div>", "Faveur d'un arbre", actions);
+  }
+  function acheterUI(article, choix) {
+    var r = M.acheter(C, P, article, maintenant(), choix);
+    if (!r.ok) { toast(r.raison === "solde" ? "Pas assez de crédits." : r.raison === "vide" ? "Plus rien en rayon." : "Achat impossible."); return; }
+    sauver();
+    var carte = null;
+    if (r.famille === "masques") carte = recompensesBilan({ masque: r.chose })[0];
+    else if (r.famille) { var o = {}; o[{ objets: "nouveauxObjets", livres: "nouveauxLivres", accessoires: "nouveauxAccessoires" }[r.famille]] = [r.chose]; carte = recompensesBilan(o)[0]; }
+    var txt = article === "chasser" ? tx(r.ennemi.nom) + " quitte la case " + r.case + ". La voie est libre." :
+      article === "convoquer" ? tx(r.ennemi.nom) + " t'attend case " + r.case + "." :
+      article === "arbre" ? "Arbre " + tx(stat(r.stat).nom) + " : l'IA y pioche pour tes " + M.boutique(C).arbre_epreuves + " prochaines épreuves par Jouer." : "";
+    feuilleSimple('<div class="eyebrow">Boutique</div><h2>Acheté : −' + r.prix + ' crédits</h2><div id="achat-carte"></div>' + (txt ? '<p class="etat-pion">' + esc(txt) + "</p>" : "") + '<div id="achat-ia"></div>', "Achat");
+    if (carte) { carte.classList.add("anim"); feuille.querySelector("#achat-carte").appendChild(carte); }
+    if (r.mot) { var m = comite({ texte: r.mot, contexte: "pot_genereux", aparte: false }, true); if (m) feuille.querySelector("#achat-ia").appendChild(m); }
+    rendre();
+  }
   function blocCorruption() {
     var t = maintenant(), cr = P.credits, pp = M.potPossible(C, P, 1, t), deja = cr.jour === cleJourUI(t);
     var b = el('<div class="bloc corruption"><h2>La corrompre</h2><p class="solde">' + svgBourse(36) + '<b class="num">' + cr.solde + "</b> crédit" + (cr.solde > 1 ? "s" : "") + "<span>gagnés avec tes succès : " + cr.gagnes + "</span></p>" +

@@ -1118,3 +1118,25 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal((P.sauvages || []).length, 0);
   console.log("OK : v19 l'atome arrête le pion, le trajet reprend ensuite");
 }
+// v19 : la boutique de l'IA. Achats à l'aveugle, parmi ce qu'on n'a pas ; parcours modifiable.
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
+  const CB = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const T = new Date(2026, 9, 27, 11).getTime();
+  const P = M.nouvellePartie(T); P.credits.solde = 30;
+  assert.equal(M.acheter(CB, P, "objet", T).raison, "solde");
+  P.credits.solde = 1000;
+  const avant = M.enRayon(CB, P, "objet").length;
+  const r = M.acheter(CB, P, "objet", T);
+  assert.ok(r.ok && P.objets[r.chose.id]); assert.equal(P.credits.solde, 960); assert.equal(M.enRayon(CB, P, "objet").length, avant - 1);
+  const m = M.acheter(CB, P, "masque", T + 1); assert.ok(m.ok && P.masques[m.chose.id] != null);
+  // Chasser : le prochain ennemi quitte la route ; convoquer : un ennemi de plus devant le pion.
+  const en = M.ennemisPlateau(CB, P), nb = Object.keys(en).length;
+  const ch = M.acheter(CB, P, "chasser", T + 2); assert.ok(ch.ok && !M.ennemisPlateau(CB, P)[ch.case]);
+  const cv = M.acheter(CB, P, "convoquer", T + 3); assert.ok(cv.ok); assert.equal(Object.keys(M.ennemisPlateau(CB, P)).length, nb);
+  // Faveur d'un arbre : l'IA pioche dedans pour les prochaines épreuves.
+  const a = M.acheter(CB, P, "arbre", T + 4, "mecanique"); assert.ok(a.ok);
+  const c = M.choixIA(CB, P, T + 4); assert.equal(c.comp.stat, "mecanique"); assert.ok(c.achat);
+  console.log("OK : v19 boutique de l'IA, achats à l'aveugle et parcours");
+}

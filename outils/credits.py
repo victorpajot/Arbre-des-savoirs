@@ -103,6 +103,44 @@ REPLIQUES = {
         "Sous Vespasien, Rome taxait même l'urine des latrines : l'argent n'a pas d'odeur. Votre radinerie, si. Petit piège devant vous.",
     ],
 }
+# v19 : la boutique de l'IA. Tout s'achète à l'aveugle : on paie, elle tire au hasard parmi ce qu'on n'a pas.
+BOUTIQUE = {
+    "prix": {"objet": 40, "livre": 40, "accessoire": 20, "masque": 100, "chasser": 50, "convoquer": 50, "arbre": 50},
+    "faveur_masque": 25,
+    "arbre_epreuves": 5,
+    "mots": {
+        "objet": [
+            sans("Un objet mystère. Je ne vous dis pas lequel : le suspense, ça se paie aussi."),
+            "Les cabinets de curiosités de la Renaissance achetaient des cornes de licorne. C'étaient des dents de narval. Le vôtre est authentique. Probablement.",
+            sans("Emballé, pesé, vendu. Pas de retour, pas d'échange, pas de réclamation."),
+        ],
+        "livre": [
+            sans("Un livre au hasard. Si c'est un pavé, considérez que vous en avez eu pour votre argent."),
+            "Gutenberg a fait faillite deux ans après sa bible : son associé a gardé la presse. Moi, je garde vos crédits. Voici votre livre.",
+        ],
+        "accessoire": [
+            sans("Un accessoire. Ça ne vous rendra pas plus intelligent, mais vous aurez l'air de l'être."),
+            sans("Vingt crédits pour paraître savant. C'est moins cher qu'un diplôme, et presque aussi utile."),
+        ],
+        "masque": [
+            sans("Un masque neuf, pour moi ? Vous savez parler aux intelligences artificielles."),
+            "Les acteurs grecs changeaient de masque pour changer de rôle. Avec celui-ci, je joue la reconnaissance. Ne vous y habituez pas.",
+        ],
+        "chasser": [
+            sans("Je le chasse. Pas pour vous : il encombrait ma route."),
+            "Les rois de France vendaient des lettres de cachet. Moi, je vends des lettres de renvoi. L'ennemi est parti.",
+        ],
+        "convoquer": [
+            sans("Vous payez pour qu'on vous barre la route ? J'adore les clients comme vous."),
+            sans("Un ennemi de plus, livré devant votre pion. Gagnez le duel : le butin est meilleur."),
+        ],
+        "arbre": [
+            sans("Entendu : pour les prochaines épreuves, je pioche dans cet arbre. Vous m'avez achetée, pas convaincue."),
+            sans("Un arbre favori ? Cinq épreuves, pas une de plus. Ensuite, je reprends mes caprices."),
+        ],
+        "vide": [sans("Plus rien en rayon. Revenez quand j'aurai réassorti, c'est-à-dire jamais.")],
+    },
+}
 TONS = {"ultimatum": "moqueuse", "ultimatum_paye": "impressionnee", "ultimatum_refuse": "moqueuse", "pot_premier": "impressionnee", "pot_genereux": "impressionnee", "pot_egal": "impatiente", "pot_radin": "moqueuse"}
 
 
@@ -126,4 +164,5 @@ def donnees():
         "pots": POTS,
         "agacement": AGACEMENT,
         "ultimatum": ULTIMATUM,
+        "boutique": {**BOUTIQUE, "mots": {k: mots(v) for k, v in BOUTIQUE["mots"].items()}},
     }

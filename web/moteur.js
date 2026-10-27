@@ -485,6 +485,7 @@
     else contextes.push(k.rang === 1 ? "quiz_rate_facile" : "quiz_rate");
     var chrono = resultats.length > 0 && resultats.every(function (x) { return x.chrono; });
     var jouer = !!(infos && infos.jouer);
+    if (jouer) consommerArbre(partie, k.stat);
     var dep = jouerPlateau(contenu, partie, { type: "quiz", comp: id }, { reussi: reussi, parfait: parfait, chrono: chrono, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
     var ag = agacerIA(contenu, partie, resultats.length - bonnes, !reussi, t);
     lotExceptionnel(partie, dep);
@@ -556,6 +557,7 @@
     if (!revision && reussi && retard >= 3) contextes.push("rappel_retard");
     if (!revision && reussi) contextes.push("rappel_reussi");
     var jouer = !!(infos && infos.jouer);
+    if (jouer && contenu.parId[id]) consommerArbre(partie, contenu.parId[id].stat);
     var dep = revision && !reussi ? null : jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
     var ag = agacerIA(contenu, partie, resultats.length - bonnes, !reussi, t);
     lotExceptionnel(partie, dep);
@@ -1163,6 +1165,77 @@
     var dep = suiteTrajet(contenu, partie, s, t);
     partie.maj = t;
     return { element: s.element, plateau: dep, recompenses: verifierRecompenses(contenu, partie, t) };
+  }
+
+  // --- Boutique de l'IA (v19) -------------------------------------------------
+  // Tout s'achète à l'aveugle avec les crédits : on paie, l'IA tire au hasard parmi ce qu'on n'a pas encore.
+  // Le parcours aussi : chasser le prochain ennemi, en convoquer un, ou faire piocher l'IA dans un arbre.
+  var FAMILLE_ARTICLE = { objet: "objets", livre: "livres", accessoire: "accessoires", masque: "masques" };
+  function boutique(contenu) { return contenu.ia && contenu.ia.credits && contenu.ia.credits.boutique; }
+  function enRayon(contenu, partie, article) {
+    var f = FAMILLE_ARTICLE[article];
+    if (f) return listeFamille(contenu, f).filter(function (x) { return (estButin(x) || f === "masques") && !possede(partie, f, x.id); });
+    if (!contenu.plateau || !contenu.placement) return [];
+    var pl = partie.plateau, en = ennemisPlateau(contenu, partie), rt = route(contenu, partie);
+    if (article === "chasser") return rt.slice(pl.idx).filter(function (n) { return en[n]; });
+    if (article === "convoquer") {
+      var pris = Object.keys(en).map(function (n) { return en[n]; });
+      return contenu.ennemis.filter(function (e) { return pris.indexOf(e.id) < 0; }).length && casesLibres(contenu, partie).length ? [1] : [];
+    }
+    if (article === "arbre") return contenu.stats.filter(function (st) { return arbreOuvert(contenu, partie, st.id); });
+    return [];
+  }
+  // Cases devant le pion où poser un ennemi : ni spéciales, ni déjà gardées, ni la dernière.
+  function casesLibres(contenu, partie) {
+    var pl = partie.plateau, en = ennemisPlateau(contenu, partie), rt = route(contenu, partie);
+    return rt.slice(pl.idx + 2, rt.length - 1).filter(function (n) { return !en[n] && !specialDe(contenu, partie, n) && !(partie.sauvages || []).some(function (x) { return x.case === n; }); });
+  }
+  // `choix` : l'arbre favori (article « arbre »). Renvoie {ok, article, prix, chose, famille, ennemi, case, stat, mot} ou {ok: false, raison}.
+  function acheter(contenu, partie, article, t, choix) {
+    var B = boutique(contenu); if (!B || B.prix[article] == null) return { ok: false, raison: "inconnu" };
+    var prix = B.prix[article], cr = partie.credits;
+    if (cr.solde < prix) return { ok: false, raison: "solde" };
+    var rayon = enRayon(contenu, partie, article);
+    if (!rayon.length) return { ok: false, raison: "vide" };
+    var graine = "boutique|" + article + "|" + t + "|" + (partie.journal ? partie.journal.length : 0), out = { ok: true, article: article, prix: prix };
+    var f = FAMILLE_ARTICLE[article], pl = partie.plateau;
+    if (f) {
+      var x = rayon[tirage(graine, rayon.length)];
+      partie[f][x.id] = t; out.chose = x; out.famille = f;
+      if (partie.gagnables) delete partie.gagnables[cleButin(f, x.id)];
+      if (f === "masques") {
+        partie.masque = x.id;
+        var fav = faveurIA(contenu, partie, t);
+        if (fav) partie.faveur = { valeur: Math.min(100, fav.valeur + (B.faveur_masque || 0)), maj: t };
+      }
+    } else if (article === "chasser") {
+      var n = rayon[0], en = ennemisPlateau(contenu, partie);
+      out.ennemi = contenu.ennemiParId[en[n]]; out.case = n;
+      delete en[n];
+      if (partie.duel && partie.duel.case === n) partie.duel = null;
+    } else if (article === "convoquer") {
+      var en2 = ennemisPlateau(contenu, partie), pris = Object.keys(en2).map(function (k) { return en2[k]; });
+      var libres = contenu.ennemis.filter(function (e) { return pris.indexOf(e.id) < 0; }), cases = casesLibres(contenu, partie);
+      var e = libres[tirage(graine + "|e", libres.length)], c = cases[Math.min(cases.length - 1, tirage(graine + "|c", Math.min(4, cases.length)))];
+      en2[c] = e.id; out.ennemi = e; out.case = c;
+    } else if (article === "arbre") {
+      var st = rayon.filter(function (x) { return x.id === choix; })[0];
+      if (!st) return { ok: false, raison: "arbre" };
+      pl.arbreAchete = { stat: st.id, restant: B.arbre_epreuves || 5 };
+      out.stat = st.id;
+    }
+    cr.solde -= prix;
+    cr.achats = (cr.achats || 0) + 1;
+    var mots = (B.mots && B.mots[article]) || [];
+    if (mots.length) out.mot = mots[tirage(graine + "|mot", mots.length)];
+    partie.maj = t;
+    return out;
+  }
+  // L'arbre acheté : il remplace celui de la case pour le choix de l'IA, le temps de quelques épreuves.
+  function arbreAchete(partie) { var a = partie.plateau && partie.plateau.arbreAchete; return a && a.restant > 0 ? a : null; }
+  function consommerArbre(partie, stat) {
+    var a = arbreAchete(partie);
+    if (a && a.stat === stat) { a.restant--; if (a.restant <= 0) partie.plateau.arbreAchete = null; }
   }
 
   // --- Cadeaux à l'IA (v7) ---------------------------------------------------
@@ -1873,17 +1946,18 @@
     // v15 : la case où se tient le pion dicte l'arbre. Les rappels dus passent toujours d'abord (ceux de cet arbre
     // en tête, l'oubli n'attend pas), puis un quiz de cet arbre ; sinon l'ancien choix, annoncé comme hors case.
     var k = contenu.plateau && partie.plateau && contenu.plateau.cases[partie.plateau.position - 1];
-    var st = k && k.stat;
+    var ach = arbreAchete(partie);
+    var st = ach ? ach.stat : k && k.stat;
     if (dus.length) {
       var dusIci = dus.filter(function (c) { return c.stat === st; });
-      return { comp: (dusIci[0] || dus[0]), type: "rappel", raison: "rappel", stat: dusIci.length ? st : null, kase: k || null };
+      return { comp: (dusIci[0] || dus[0]), type: "rappel", raison: "rappel", stat: dusIci.length ? st : null, kase: k || null, achat: !!(ach && dusIci.length) };
     }
     var porte = st && porteArbre(contenu, partie, st);
     if (porte) return { comp: porte, type: "quiz", raison: "ouvre_arbre", stat: st, kase: k };
     if (!dispo.length) return null;
     if (st) {
       var ici = dispo.filter(function (c) { return c.stat === st; });
-      if (ici.length) return { comp: ici[graine % ici.length], type: "quiz", raison: "case", stat: st, kase: k };
+      if (ici.length) return { comp: ici[graine % ici.length], type: "quiz", raison: "case", stat: st, kase: k, achat: !!ach };
     }
     if (st) return { comp: dispo[graine % dispo.length], type: "quiz", raison: "hors_case", stat: st, kase: k };
     var raisons = [];
@@ -2054,7 +2128,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,

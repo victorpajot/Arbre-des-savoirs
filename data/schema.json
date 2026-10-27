@@ -1747,6 +1747,41 @@
         "type": "number",
         "minimum": 0
        }
+      },
+      "boutique": {
+       "type": "object",
+       "description": "v19 : boutique de l'IA (prix, faveur d'un masque acheté, nombre d'épreuves d'un arbre favori, répliques).",
+       "required": [
+        "prix",
+        "faveur_masque",
+        "arbre_epreuves",
+        "mots"
+       ],
+       "properties": {
+        "prix": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "integer",
+          "minimum": 0
+         }
+        },
+        "faveur_masque": {
+         "type": "integer"
+        },
+        "arbre_epreuves": {
+         "type": "integer",
+         "minimum": 1
+        },
+        "mots": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "array",
+          "items": {
+           "type": "object"
+          }
+         }
+        }
+       }
       }
      }
     }
