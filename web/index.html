@@ -751,7 +751,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   var M = window.Moteur;
   var CLE_LOCALE = "arbre-competences.partie";
   var C = null, P = null, vue = "aujourdhui", quiz = null, feuille = null, ecrire = null;
-  var friseToutes = false, friseCentre = null, collection = "frise", ongletPerso = "stats", filtreFrise = null, cachePlateau = { cle: null, svg: "" };
+  var friseToutes = false, friseCentre = null, collection = "frise", ongletPerso = "avatar", filtreFrise = null, cachePlateau = { cle: null, svg: "" };
   var JOUR_MS = 86400000;
   var stockage = { compte: false, db: null, ref: null, minuteur: null, etat: "Ce navigateur" };
   // Dans l'app Android (Capacitor), les plugins natifs remplacent ce que la page web demande à Claude.
@@ -1790,7 +1790,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   // --- Vue Aujourd'hui ------------------------------------------------------
   function vueAujourdhui() {
     var t = maintenant(), v = el('<div class="vue"></div>');
-    v.appendChild(el('<div class="entete"><div><h1>Aujourd\'hui</h1></div>' + (P.decalage ? '<span class="horloge">Mode test</span>' : "") + "</div>"));
+    // v15 : plus de titre « Aujourd'hui » en tête de l'accueil ; seul le mode test s'y signale.
+    if (P.decalage) v.appendChild(el('<div class="entete"><span class="horloge">Mode test</span></div>'));
     var ng = M.niveauGlobal(C, P), nbMait = C.competences.filter(function (k) { return M.estMaitrisee(P, k.id); }).length;
     var rdj = M.repliqueDuJour(C, P, t), mot = comite(rdj);
     if (mot && rdj) mot.setAttribute("data-contexte", rdj.contexte);
@@ -1805,7 +1806,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     }
     var sn = M.surnom(C, P, t);
     var perso = el('<div class="bloc perso-v5" role="button" tabindex="0" aria-label="Ouvrir la fiche du personnage"><div class="perso"><div class="avatar-cadre rang-' + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + '</div><div><div class="niv"><small>Niveau</small><span class="num">' + ng + '</span></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div>" + (sn ? '<p class="surnom">' + esc(sn.texte) + '<small>d\'après l\'IA</small></p>' : "") + '<p class="meta">' + nbMait + " compétence" + (nbMait > 1 ? "s" : "") + " maîtrisée" + (nbMait > 1 ? "s" : "") + " sur " + C.competences.length + "</p></div></div></div>");
-    perso.onclick = function () { vue = "perso"; ongletPerso = "stats"; rendre(); window.scrollTo(0, 0); };
+    perso.onclick = function () { vue = "perso"; ongletPerso = "avatar"; rendre(); window.scrollTo(0, 0); };
     perso.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); perso.onclick(); } };
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
     if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
@@ -1981,8 +1982,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var bs = el('<div class="bloc"><h2>Branches</h2><p class="note">Le niveau de chaque branche monte avec ses compétences maîtrisées et ses rappels réussis. Une pastille par compétence : pleine si maîtrisée, cerclée si ouverte.</p><div class="fiches"></div></div>');
     C.stats.slice().sort(function (a, b) { return (M.arbreOuvert(C, P, b.id) - M.arbreOuvert(C, P, a.id)) || xp[b.id] - xp[a.id]; }).forEach(function (s) { bs.querySelector(".fiches").appendChild(ficheBranche(s, xp[s.id])); });
     // v10 : le personnage se range en onglets ; l'IA et les ennemis y ont leur place.
-    var onglets = [["stats", "Stats"], ["avatar", "Avatar"]].concat(C.ia ? [["ia", "IA"]] : []).concat(C.ennemis.length ? [["ennemis", "Ennemis"]] : []).concat([["reglages", "Réglages"]]);
-    if (!onglets.some(function (o) { return o[0] === ongletPerso; })) ongletPerso = "stats";
+    var onglets = [["avatar", "Avatar"], ["stats", "Stats"]].concat(C.ia ? [["ia", "IA"]] : []).concat(C.ennemis.length ? [["ennemis", "Ennemis"]] : []).concat([["reglages", "Réglages"]]);
+    if (!onglets.some(function (o) { return o[0] === ongletPerso; })) ongletPerso = "avatar";
     var seg = el('<div class="segments" role="group" aria-label="Rubrique du personnage"></div>');
     onglets.forEach(function (o) {
       var bt = el('<button type="button" aria-pressed="' + (ongletPerso === o[0]) + '">' + o[1] + "</button>");
