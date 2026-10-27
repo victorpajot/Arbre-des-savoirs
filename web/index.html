@@ -418,6 +418,18 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .case-jouer { --c: var(--accent); margin: 0 0 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
 .case-jouer .vitrine.grande { display: grid; place-items: center; padding: 16px; margin-bottom: 10px; border-radius: 16px; background: color-mix(in srgb, var(--c) 16%, transparent); }
 .case-jouer h2 { margin: 2px 0 6px; }
+/* v19 : la case est libre ! Le couvercle (croix ou atome) s'envole, la case se dévoile avec son thème. */
+.liberee { --c: var(--accent); display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 18px 16px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); }
+.liberee .scene-lib { position: relative; width: 168px; height: 168px; display: grid; place-items: center; border-radius: 24px; background: color-mix(in srgb, var(--c) 16%, transparent); overflow: visible; }
+.liberee .sous { opacity: 0; filter: blur(6px); transform: scale(.7); animation: devoiler .7s .9s ease-out forwards; }
+.liberee .couvercle { position: absolute; inset: 0; display: grid; place-items: center; animation: envol 1.1s .35s ease-in forwards; }
+.liberee .grand { font-family: var(--f-display); font-size: 28px; font-weight: 800; color: var(--c); opacity: 0; animation: tomber .5s 1.4s ease-out forwards; }
+.liberee .suite-lib { opacity: 0; animation: tomber .5s 1.8s ease-out forwards; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.liberee .suite-lib p { margin: 0; font-size: 16px; line-height: 1.5; text-align: left; }
+.liberee .eyebrow { margin: 0; }
+@keyframes envol { 0% { transform: none; opacity: 1; } 30% { transform: scale(1.15) rotate(-8deg); } 100% { transform: translateY(-120px) scale(.2) rotate(40deg); opacity: 0; } }
+@keyframes devoiler { to { opacity: 1; filter: none; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .liberee .sous, .liberee .grand, .liberee .suite-lib { animation: none; opacity: 1; filter: none; transform: none; } .liberee .couvercle { display: none; } }
 .titre-arbre-sv { display: flex; align-items: center; justify-content: space-between; margin: 14px 0 6px; }
 .succes .pastille-theme { margin: 2px 0 4px; font-size: 12px; }
 .galerie-theme { --c: var(--accent); margin: 12px 0 4px; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, var(--c) 9%, transparent); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); text-align: left; }
@@ -2745,7 +2757,10 @@ svg.grille .interro { transition: opacity .3s; }
     var r = duel.fin, e = r.ennemi, f = r.fiche, rec = r.recompenses || {};
     var recs = duel.recs || (duel.recs = recompensesBilan({ nouveauxSucces: rec.succes, masque: rec.masque, nouveauxObjets: rec.objets, nouveauxLivres: rec.livres,
       nouveauxSavants: rec.savants, nouveauxAccessoires: rec.accessoires, nouveauxEvenements: rec.evenements, theme: duel.ennemi.theme }));
-    var etapes = ["verdict"]; recs.forEach(function (_, i) { etapes.push("recompense:" + i); }); if (r.plateau) etapes.push("plateau");
+    var etapes = ["verdict"];
+    var caseLibre = r.gagne && r.plateau ? r.plateau.de : null;
+    if (caseLibre) etapes.push("libre");
+    recs.forEach(function (_, i) { etapes.push("recompense:" + i); }); if (r.plateau) etapes.push("plateau");
     var arret = atomeArret(r.plateau);
     var i = duel.etape = Math.min(duel.etape, etapes.length - 1), nom = etapes[i];
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
@@ -2759,6 +2774,8 @@ svg.grille .interro { transition: opacity .3s; }
       var m = comite(r.replique); if (m) z.appendChild(m);
       ligneAgacement(z, r.agacement);
       if (r.gagne && !r.butin) z.appendChild(el('<p class="meta">Pas de butin à gagner pour l\'instant : maîtrise d\'autres compétences pour en ouvrir.</p>'));
+    } else if (nom === "libre") {
+      var cl = carteLiberee(caseLibre, "ennemi"); if (cl) z.appendChild(cl);
     } else if (nom.indexOf("recompense:") === 0) {
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
     } else {
@@ -2769,7 +2786,7 @@ svg.grille .interro { transition: opacity .3s; }
     if (!suite && arret) boutonAtome(wrap, arret, fermerDuel);
     else if (!suite && !(P.duel && P.duel.pret)) finEpreuve(wrap, fermerDuel);
     else {
-      var bt = el('<button type="button" class="btn large">' + (!suite ? "Ennemi suivant !" : suite === "plateau" ? "Voir le plateau" : "Récompense") + "</button>");
+      var bt = el('<button type="button" class="btn large">' + (!suite ? "Ennemi suivant !" : suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : "Récompense") + "</button>");
       bt.onclick = function () {
         if (suite) { duel.etape = i + 1; rendreDuel(); return; }
         duel = null; lancerDuel();
@@ -2795,6 +2812,17 @@ svg.grille .interro { transition: opacity .3s; }
   function badgeRarete(e) { return '<span class="rarete ' + e.rarete + '">' + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</span>"; }
   // v19 : sur une case où attend un atome, on ne voit que lui : l'histoire de la case reste cachée.
   function atomeSur(n) { return (P.sauvages || []).filter(function (x) { return x.case === n; })[0] || null; }
+  // v19 : la case est libre ! Après un duel gagné ou un atome réglé, la case cachée se dévoile, avec son thème.
+  function carteLiberee(n, quoi) {
+    var k = C.plateau.cases[n - 1]; if (!k) return null;
+    var couv = quoi === "atome"
+      ? '<svg viewBox="-12 -12 24 24" width="120" height="120" aria-hidden="true"><circle r="10.5" fill="' + COULEUR_SPECIAL.mendeleiev + '" stroke="#fff" stroke-width="2"/><g transform="scale(1.55)">' + PICTO_SPECIAL.mendeleiev + "</g></svg>"
+      : '<svg viewBox="-12 -12 24 24" width="120" height="120" aria-hidden="true"><circle r="10.5" fill="#D94141" stroke="#fff" stroke-width="2"/><path d="M-4.6,-4.6 L4.6,4.6 M4.6,-4.6 L-4.6,4.6" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/></svg>';
+    var b = el('<div class="liberee"' + (k.stat ? ' style="--c:' + couleur(k.stat) + '"' : "") + '><div class="eyebrow">Case ' + k.n + " · " + esc(formatAnnee(k.annee)) + '</div>' +
+      '<div class="scene-lib"><div class="sous">' + svgSprite(k.icone, 120, tx(k.titre)) + '</div><div class="couvercle">' + couv + "</div></div>" +
+      '<div class="grand">La case est libre !</div><div class="suite-lib"><h3>' + esc(tx(k.titre)) + "</h3>" + (k.stat ? pastilleTheme(k.stat) : "") + "<p>" + esc(tx(k.histoire)) + "</p></div></div>");
+    return b;
+  }
   // v19 : l'atome qui a arrêté le pion pendant ce trajet (s'il attend toujours son combat).
   function atomeArret(dep) {
     var ap = dep ? dep.etapes.filter(function (x) { return x.type === "atome" && x.arret; })[0] : null;
@@ -2907,7 +2935,10 @@ svg.grille .interro { transition: opacity .3s; }
     var r = combat.fin, e = r.element, rec = r.recompenses || {};
     var recs = combat.recs || (combat.recs = recompensesBilan({ nouveauxSucces: rec.succes, masque: rec.masque, nouveauxObjets: rec.objets, nouveauxLivres: rec.livres,
       nouveauxSavants: rec.savants, nouveauxAccessoires: rec.accessoires, nouveauxEvenements: rec.evenements, theme: "alchimie" }));
-    var etapes = ["verdict"]; recs.forEach(function (_, i) { etapes.push("recompense:" + i); }); if (r.plateau) etapes.push("plateau");
+    var etapes = ["verdict"];
+    var caseLibre = combat.s && combat.s.case && !atomeSur(combat.s.case) && C.plateau.cases[combat.s.case - 1] ? combat.s.case : null;
+    if (caseLibre) etapes.push("libre");
+    recs.forEach(function (_, i) { etapes.push("recompense:" + i); }); if (r.plateau) etapes.push("plateau");
     var i = combat.etape = Math.min(combat.etape, etapes.length - 1), nom = etapes[i];
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
     if (etapes.length > 1) wrap.appendChild(el('<div class="etapes-bilan"><span class="pts">' + etapes.map(function (_, j) { return '<i class="' + (j <= i ? "vu" : "") + '"></i>'; }).join("") + "</span></div>"));
@@ -2920,6 +2951,8 @@ svg.grille .interro { transition: opacity .3s; }
         '<p class="meta" style="margin:0">' + (r.capture ? (r.premiere ? "Nouveau : " : "Déjà dans ton tableau : ") + r.captures + " atome" + (r.captures > 1 ? "s" : "") + " sur " + C.atomes.elements.length + "." : "Il reviendra sur une case Mendeleïev. Il a désormais une fiche à ton nom.") + "</p>" + ficheAtomeHtml(e) + "</div>"));
       var m = comite(r.replique); if (m) z.appendChild(m);
       ligneAgacement(z, r.agacement);
+    } else if (nom === "libre") {
+      var cl = carteLiberee(caseLibre, "atome"); if (cl) z.appendChild(cl);
     } else if (nom === "plateau") {
       z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
       setTimeout(function () { animerPion(z); }, 50);
@@ -2931,7 +2964,7 @@ svg.grille .interro { transition: opacity .3s; }
     if (arretA) { boutonAtome(wrap, arretA, function () { combat = null; var q = document.querySelector(".quiz.atome"); if (q) q.remove(); }); return wrap; }
     if (!suite && !encore) finEpreuve(wrap, fermerCombat);
     else {
-      var bt = el('<button type="button" class="btn large">' + (suite === "plateau" ? "Voir le plateau" : suite ? "Récompense" : "Atome suivant !") + "</button>");
+      var bt = el('<button type="button" class="btn large">' + (suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : suite ? "Récompense" : "Atome suivant !") + "</button>");
       bt.onclick = function () {
         if (suite) { combat.etape = i + 1; rendreCombat(); return; }
         combat = null; lancerCombat();
