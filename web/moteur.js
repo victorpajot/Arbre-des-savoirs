@@ -1271,14 +1271,29 @@
     return Math.min(1, b.quiz_base + b.quiz_par_rang * (k ? k.rang : 1));
   }
   // Butin qui peut tomber maintenant : gagnable, et dont le lot est ouvert (lot N à partir du tour N).
+  // v15 : pas d'anachronisme. Un livre ne tombe que s'il est paru avant la fin de l'époque de la case du pion.
   function butinOuvert(contenu, partie) {
-    var tour = (partie.plateau ? partie.plateau.tours : 0) + 1, out = [];
+    var tour = (partie.plateau ? partie.plateau.tours : 0) + 1, out = [], fin = finEpoqueCase(contenu, partie);
     FAMILLES_BUTIN.forEach(function (f) {
       listeFamille(contenu, f).forEach(function (x) {
+        if (f === "livres" && fin != null && Number(x.annee) > fin) return;
         if (partie.gagnables && partie.gagnables[cleButin(f, x.id)] && !possede(partie, f, x.id) && x.lot <= tour) out.push({ famille: f, chose: x });
       });
     });
     return out;
+  }
+  function epoqueCase(contenu, partie) {
+    var P = contenu.plateau, k = P && partie.plateau && P.cases[partie.plateau.position - 1];
+    return k ? (P.epoques || []).filter(function (e) { return e.id === k.epoque; })[0] || null : null;
+  }
+  function finEpoqueCase(contenu, partie) { var e = epoqueCase(contenu, partie); return e ? e.fin : null; }
+  // Si le sort tombe sur un livre, l'IA prend de préférence un livre de l'époque de la case, sinon le plus récent permis.
+  function livreDeLaCase(contenu, partie, ouvert, alea) {
+    var e = epoqueCase(contenu, partie), livres = ouvert.filter(function (b) { return b.famille === "livres"; });
+    if (!e || !livres.length) return null;
+    var ici = livres.filter(function (b) { var a = Number(b.chose.annee); return (e.debut == null || a >= e.debut) && (e.fin == null || a <= e.fin); });
+    if (ici.length) return ici[Math.floor(alea() * ici.length)];
+    return livres.slice().sort(function (a, b) { return Number(b.chose.annee) - Number(a.chose.annee); })[0];
   }
   // v8 : case cadeau. Un objet du cabinet tombe sans épreuve ; à défaut, n'importe quel autre butin ouvert.
   function tirerCadeau(contenu, partie, t) {
@@ -1301,6 +1316,7 @@
     var mult = epreuve.type === "duel" ? 1 : reglesDuJour(contenu, partie, t).butin;
     if (!assure && (!ouvert.length || alea() >= chanceButin(contenu, epreuve) * (fav ? fav.palier.butin : 1) * mult)) return null;
     var b = ouvert[Math.floor(alea() * ouvert.length)];
+    if (b.famille === "livres") b = livreDeLaCase(contenu, partie, ouvert, alea) || b;
     partie[b.famille][b.chose.id] = t;
     delete partie.gagnables[cleButin(b.famille, b.chose.id)];
     if (b.famille === "masques") partie.masque = b.chose.id;

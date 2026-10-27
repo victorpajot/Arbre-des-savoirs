@@ -353,6 +353,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const t1 = t0 + 2 * jour;
     const c2 = M.choixIA(C5, P, t1);
     assert.equal(c2.type, "rappel"); assert.equal(c2.comp.id, c.comp.id);
+    // v15 : pas de livre anachronique ; un livre tiré vient de l'époque de la case quand il y en a.
+    {
+      const B = M.nouvellePartie(t0); B.plateau.position = 4;
+      C5.livres.forEach(l => { B.gagnables["livres:" + l.id] = { famille: "livres", id: l.id, depuis: t0 }; });
+      assert.ok(M.butinOuvert(C5, B).filter(b => b.famille === "livres").every(b => Number(b.chose.annee) <= 475), "rien après l'Antiquité en case 4");
+      for (let i = 0; i < 20; i++) {
+        const b = M.tirerButin(C5, B, { type: "duel" }, t0, () => 0.01 * i);
+        if (b && b.famille === "livres") assert.ok(Number(b.chose.annee) <= 475);
+      }
+    }
     // v15 : la case du pion dicte l'arbre de l'épreuve ; arbre sans rien de jouable, l'IA improvise hors case.
     const Q = M.nouvellePartie(t0);
     C5.plateau.cases.forEach(k => {
