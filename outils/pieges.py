@@ -54,6 +54,16 @@ REPLIQUES = {
         sans("Vous avez survolé des cases sans les lire. Je vous y renvoie. Lisez, cette fois."),
         sans("Amnésie programmée. Je l'ai programmée, d'ailleurs."),
     ],
+    "route_raccourcie": [
+        "Un raccourci. Ératosthène a mesuré la Terre avec une ombre et un puits ; je mesure vos progrès et je coupe court.",
+        sans("Quiz parfait. Je retire quelques cases devant vous : ne vous y habituez pas, c'est exceptionnel."),
+        sans("Vous allez trop bien. Je raccourcis la route avant de changer d'avis."),
+    ],
+    "route_detour": [
+        "Un détour. Ebbinghaus le savait en 1885 : ce qu'on a vu en courant s'oublie vite. Je vous remets devant ce que vous avez survolé.",
+        sans("Vous êtes passé un peu vite sur certaines cases. Je les replace devant vous. Arrêtez-vous, cette fois."),
+        sans("Raté. Alors on revoit le chemin, et pas en accéléré."),
+    ],
     "revision": [
         "Révision forcée. Selon Roediger et Karpicke, en 2006, se tester fait mieux retenir que relire. Donc je vous teste.",
         "Ebbinghaus oubliait plus de la moitié de ses syllabes en une heure. Je préfère vérifier ce qu'il vous reste.",
@@ -79,4 +89,4 @@ REPLIQUES = {
     ],
 }
 
-TONS = {"oubli": "moqueuse", "cadeau_case": "impressionnee", "jouer_revision": "moqueuse", "teleport": "moqueuse", "revision": "moqueuse", "revision_reussie": "impressionnee", "revision_ratee": "decue"}
+TONS = {"route_raccourcie": "impressionnee", "route_detour": "moqueuse", "oubli": "moqueuse", "cadeau_case": "impressionnee", "jouer_revision": "moqueuse", "teleport": "moqueuse", "revision": "moqueuse", "revision_reussie": "impressionnee", "revision_ratee": "decue"}

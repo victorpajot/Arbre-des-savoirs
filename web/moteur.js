@@ -153,7 +153,7 @@
     // v7 : ennemis (case → id, posés au début de chaque tour) et cases spéciales déplacées par l'IA (case → règle ou null).
     // v15 : `visites` = cases où le pion s'est arrêté (les seules dévoilées) ; `arrets` = celles du tour en cours ;
     // `coups` = épreuves jouées dans ce tour, `meilleur` = le tour le plus court.
-    return { position: 1, atteinte: 1, tours: 0, visites: { 1: 1 }, arrets: { 1: 1 }, coups: 0, meilleur: null,
+    return { position: 1, idx: 0, route: null, remanie: null, atteinte: 1, tours: 0, visites: { 1: 1 }, arrets: { 1: 1 }, coups: 0, meilleur: null,
       prison: 0, quarantaine: 0, historique: [], bonus: null, ennemis: null, speciaux: {} };
   }
 
@@ -686,25 +686,84 @@
     dep.valeurs = v;
     dep.bonusJouer = bonusJouer;
     dep.uneCase = !!unPas;
+    var retouche = remanierRoute(contenu, partie, issue, t, issue.alea);
+    if (retouche) { dep.etapes.push(retouche); dep.contextes = contextesPlateau(dep); }
     return dep;
   }
 
   // v15 : la case où l'IA (ou un ennemi) renvoie le pion : la plus ancienne, parmi les OUBLI_FENETRE cases derrière lui,
   // où il ne s'est jamais arrêté ; si tout y est dévoilé, la plus ancienne où il ne s'est pas arrêté dans ce tour.
   var OUBLI_FENETRE = 15;
+  // `avant` et le résultat sont des places sur la route du tour.
   function caseOubliee(contenu, partie, avant) {
-    var pl = partie.plateau, R = contenu.plateau.regles, d = Math.max(R.depart + 1, avant - OUBLI_FENETRE);
-    for (var n = d; n < avant; n++) if (!pl.visites[n]) return n;
-    for (n = d; n < avant; n++) if (!(pl.arrets && pl.arrets[n])) return n;
+    var pl = partie.plateau, rt = route(contenu, partie), d = Math.max(1, avant - OUBLI_FENETRE);
+    for (var j = d; j < avant; j++) if (!pl.visites[rt[j]]) return j;
+    for (j = d; j < avant; j++) if (!(pl.arrets && pl.arrets[rt[j]])) return j;
     return null;
   }
+  // v15 : la route du tour, de la case départ à l'arrivée. Sans retouche de l'IA, toutes les cases dans l'ordre.
+  function route(contenu, partie) {
+    var pl = partie.plateau, R = contenu.plateau.regles;
+    if (!pl.route) { pl.route = []; for (var n = R.depart; n <= R.arrivee; n++) pl.route.push(n); }
+    if (pl.idx == null || pl.route[pl.idx] !== pl.position) {
+      pl.idx = pl.route.indexOf(pl.position);
+      if (pl.idx < 0) { pl.idx = 0; pl.position = pl.route[0]; }
+    }
+    return pl.route;
+  }
+  // Place, derrière `ici`, où renvoie une téléportation vers la case `vers` (à défaut, la dernière case plus ancienne).
+  function placeVers(rt, ici, vers) {
+    for (var j = ici - 1; j >= 0; j--) if (rt[j] === vers) return j;
+    for (j = ici - 1; j >= 0; j--) if (rt[j] <= vers) return j;
+    return 0;
+  }
+  // Les cases de la route entre les places ici + a et ici + b (sans l'arrivée).
+  function devantPion(contenu, partie, a, b) {
+    var rt = route(contenu, partie), i = partie.plateau.idx, out = [];
+    for (var j = i + a; j <= Math.min(i + b, rt.length - 2); j++) out.push(rt[j]);
+    return out;
+  }
+  // v15 : exceptionnellement (une fois sur douze, au plus une fois par tour), l'IA retouche la route :
+  // après un quiz parfait, elle retire une ou deux cases ordinaires devant le pion ; après un échec,
+  // elle remet juste devant lui une ou deux cases qu'il a survolées sans s'y arrêter.
+  var REMANIE_CHANCE = 12;
+  function remanierRoute(contenu, partie, issue, t, alea) {
+    var pl = partie.plateau;
+    if (!contenu.plateau || pl.remanie === pl.tours || !(issue.parfait || !issue.reussi)) return null;
+    if (alea ? alea() >= 1 / REMANIE_CHANCE : hacher(String(t) + "|route|" + partie.journal.length) % REMANIE_CHANCE) return null;
+    var rt = route(contenu, partie), i = pl.idx, en = ennemisPlateau(contenu, partie), g = String(t) + "|" + i;
+    function ordinaire(n) { return !specialDe(contenu, partie, n) && !en[n]; }
+    var nb = 1 + hacher(g + "|nb") % 2, cases = [];
+    if (issue.parfait) {
+      var places = [];
+      for (var j = i + 2; j <= Math.min(i + 9, rt.length - 2); j++) if (ordinaire(rt[j])) places.push(j);
+      places.sort(function (a, b) { return hacher(g + "|" + a) - hacher(g + "|" + b); });
+      places = places.slice(0, nb).sort(function (a, b) { return b - a; });
+      places.forEach(function (j) { cases.unshift(rt[j]); rt.splice(j, 1); });
+      if (!cases.length) return null;
+      cases.sort(function (a, b) { return a - b; });
+      pl.remanie = pl.tours;
+      return { type: "raccourci", cases: cases, longueur: rt.length };
+    }
+    var devant = rt.slice(i + 1), vues = {};
+    for (j = 1; j < i; j++) {
+      var n = rt[j];
+      if (!pl.visites[n] && ordinaire(n) && devant.indexOf(n) < 0 && !vues[n]) { vues[n] = 1; cases.push(n); }
+    }
+    cases = cases.slice(0, nb);
+    if (!cases.length) return null;
+    rt.splice.apply(rt, [i + 1, 0].concat(cases));
+    pl.remanie = pl.tours;
+    return { type: "detour", cases: cases, longueur: rt.length };
+  }
+  function routeTour(contenu, partie) { return route(contenu, partie); }
   function caseDecouverte(partie, n) { return !!(partie.plateau.visites[n] || partie.plateau.position === n); }
 
   function contextesPlateau(dep) {
     var vus = {}, out = [];
     dep.etapes.forEach(function (e) {
       var ctx = { prison_liberation: "prison_liberation", prison: "prison", bloque_prison: "prison", eureka: "eureka", recul: "piege",
-        retour_epoque: "retour_epoque", teleport: "teleport", oubli: "oubli", renvoi: "oubli", cadeau: "cadeau_case", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi", atome: "atome_apparait" }[e.type];
+        retour_epoque: "retour_epoque", teleport: "teleport", oubli: "oubli", renvoi: "oubli", raccourci: "route_raccourcie", detour: "route_detour", cadeau: "cadeau_case", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi", atome: "atome_apparait" }[e.type];
       if (ctx && !vus[ctx]) { vus[ctx] = 1; out.unshift(ctx); }
     });
     if (dep.a !== dep.de && dep.valeur > 0) out.push("plateau_avance");
@@ -729,10 +788,14 @@
   function deplacer(contenu, partie, valeur, t, cause) {
     var pl = partie.plateau, R = contenu.plateau.regles, c = partie.compteurs;
     var dur = pl.tours > 0, mult = dur ? R.tour_suivant.multiplicateur_recul : 1;
-    var de = pl.position, etapes = [], chemin = [de];
-    function poser(n) {
-      pl.position = n;
-      chemin.push(n);
+    // v15 : le pion avance sur la route du tour (pl.route, liste de cases que l'IA peut raccourcir ou rallonger) ;
+    // pl.idx est sa place sur la route, pl.position la case où il se tient.
+    var der = route(contenu, partie).length - 1;
+    var de = pl.position, deI = pl.idx, etapes = [], chemin = [de], places = [pl.idx + 1];
+    function poser(i) {
+      var n = pl.route[i];
+      pl.idx = i; pl.position = n;
+      chemin.push(n); places.push(i + 1);
       pl.visites[n] = (pl.visites[n] || 0) + 1;
       (pl.arrets || (pl.arrets = {}))[n] = 1;
       if (n > pl.atteinte) pl.atteinte = n;
@@ -741,21 +804,21 @@
     // v11 : un masque peut écarter les ennemis pour la journée.
     var ennemis = rj.ennemis === "absents" ? {} : ennemisPlateau(contenu, partie);
     function avancer(n) {
-      var cible = pl.position + n;
+      var cible = pl.idx + n;
       // v7 : un ennemi sur la route arrête le pion et lance un duel ; il reste `reste` cases à faire après la victoire.
       // v9 : chaque case Mendeleïev croisée (ou atteinte) fait apparaître un atome sauvage.
-      for (var e = pl.position + 1; e <= Math.min(cible, R.arrivee - 1); e++) {
-        var spE = specialDe(contenu, partie, e);
+      for (var j = pl.idx + 1; j <= Math.min(cible, der - 1); j++) {
+        var e = pl.route[j], spE = specialDe(contenu, partie, e);
         if (spE && spE.type === "mendeleiev" && contenu.atomes) etapes.push(apparition(contenu, partie, e, t));
         if (ennemis[e]) {
-          poser(e);
-          partie.duel = { ennemi: ennemis[e], case: e, reste: cible - e, pret: true, depuis: t };
-          etapes.push({ type: "ennemi", case: e, ennemi: ennemis[e], reste: cible - e });
+          poser(j);
+          partie.duel = { ennemi: ennemis[e], case: e, reste: cible - j, pret: true, depuis: t };
+          etapes.push({ type: "ennemi", case: e, ennemi: ennemis[e], reste: cible - j });
           return false;
         }
       }
-      if (cible >= R.arrivee) {
-        poser(R.arrivee);
+      if (cible >= der) {
+        poser(der);
         var coups = pl.coups || 0, record = coups > 0 && (pl.meilleur == null || coups < pl.meilleur);
         etapes.push({ type: "tour_fini", tour: pl.tours + 1, coups: coups, record: record, ancien: pl.meilleur });
         if (record) pl.meilleur = coups;
@@ -764,8 +827,9 @@
         pl.tours++;
         pl.atteinte = R.arrivee;
         pl.ennemis = null; pl.speciaux = {}; ennemis = rj.ennemis === "absents" ? {} : ennemisPlateau(contenu, partie);
-        pl.position = R.depart;
-        chemin.push(R.depart);
+        pl.route = null; der = route(contenu, partie).length - 1;
+        pl.idx = 0; pl.position = R.depart;
+        chemin.push(R.depart); places.push(1);
         return false;
       }
       poser(cible);
@@ -773,8 +837,8 @@
     }
     if (valeur < 0 && pl.prison > 0) etapes.push({ type: "bloque_prison", reste: pl.prison });
     else if (valeur < 0) {
-      poser(Math.max(R.depart, pl.position + valeur));
-      if (pl.position < de) { c.reculs++; etapes.push({ type: "recul", n: de - pl.position, cause: cause === "cadeau" ? "cadeau" : "echec" }); }
+      poser(Math.max(0, pl.idx + valeur));
+      if (pl.idx < deI) { c.reculs++; etapes.push({ type: "recul", n: deI - pl.idx, cause: cause === "cadeau" ? "cadeau" : "echec" }); }
     } else if (valeur > 0) {
       if (pl.prison > 0) etapes.push({ type: "bloque_prison", reste: pl.prison });
       else if (pl.quarantaine > 0) { pl.quarantaine--; etapes.push({ type: "bloque_quarantaine", reste: pl.quarantaine }); }
@@ -793,19 +857,19 @@
           if (rj.pieges === "neutres" && (sp.type === "recul" || sp.type === "teleport" || sp.type === "retour_epoque" || sp.type === "oubli")) {
             etapes.push({ type: "piege_evite", case: pl.position, regle: sp.type });
           } else if (sp.type === "recul") {
-            var avant = pl.position;
-            poser(Math.max(R.depart, pl.position - sp.n * mult));
+            var avant = pl.position, avantI = pl.idx;
+            poser(Math.max(0, pl.idx - sp.n * mult));
             c.reculs++;
-            etapes.push({ type: "recul", case: avant, n: avant - pl.position, cause: "piege" });
+            etapes.push({ type: "recul", case: avant, n: avantI - pl.idx, cause: "piege" });
           } else if (sp.type === "retour_epoque" || sp.type === "teleport") {
-            var depuis = pl.position;
-            poser(sp.vers);
+            var depuis = pl.position, depuisI = pl.idx;
+            poser(placeVers(pl.route, pl.idx, sp.vers));
             c.reculs++;
-            etapes.push({ type: sp.type, case: depuis, n: depuis - sp.vers, vers: sp.vers });
+            etapes.push({ type: sp.type, case: depuis, n: depuisI - pl.idx, vers: pl.position });
           } else if (sp.type === "oubli") {
             // v15 : retour à la première case jamais dévoilée (à défaut, la première pas encore foulée dans ce tour).
-            var ici = pl.position, vers = caseOubliee(contenu, partie, ici);
-            if (vers) { poser(vers); c.reculs++; etapes.push({ type: "oubli", case: ici, n: ici - vers, vers: vers }); }
+            var ici = pl.position, iciI = pl.idx, vers = caseOubliee(contenu, partie, iciI);
+            if (vers != null) { poser(vers); c.reculs++; etapes.push({ type: "oubli", case: ici, n: iciI - vers, vers: pl.position }); }
             else etapes.push({ type: "oubli_vide", case: ici });
           } else if (sp.type === "cadeau") {
             var cad = tirerCadeau(contenu, partie, t);
@@ -835,7 +899,8 @@
     // Le pion a quitté la case de l'ennemi (recul) : le duel est oublié.
     if (partie.duel && partie.duel.case !== pl.position) partie.duel = null;
     // chemin : les cases où le pion se pose, dans l'ordre, pour l'animer case par case.
-    var dep = { de: de, a: pl.position, valeur: valeur, cause: cause, tour: pl.tours, etapes: etapes, chemin: chemin, t: t };
+    // places : les mêmes, en rang sur la route (1 = départ), pour le dessin.
+    var dep = { de: de, a: pl.position, valeur: valeur, cause: cause, tour: pl.tours, etapes: etapes, chemin: chemin, places: places, t: t };
     pl.historique.unshift({ t: t, de: de, a: pl.position, valeur: valeur, cause: cause, etapes: etapes.map(function (e) { return e.type; }) });
     if (pl.historique.length > MAX_HISTORIQUE) pl.historique.length = MAX_HISTORIQUE;
     partie.maj = t;
@@ -921,13 +986,14 @@
       partie.plateau.coups = (partie.plateau.coups || 0) + 1;
       // v15 : certains ennemis renvoient le pion à la première case qu'il n'a pas encore vue. Le duel est levé ;
       // l'ennemi garde son poste et attend le prochain passage.
-      var vers = e.renvoi ? caseOubliee(contenu, partie, d.case) : null;
-      if (vers) {
-        var pl = partie.plateau;
-        pl.position = vers; pl.visites[vers] = (pl.visites[vers] || 0) + 1; (pl.arrets || (pl.arrets = {}))[vers] = 1;
+      route(contenu, partie);
+      var pl = partie.plateau, ici = pl.idx, j = e.renvoi ? caseOubliee(contenu, partie, ici) : null;
+      if (j != null) {
+        var vers = pl.route[j];
+        pl.idx = j; pl.position = vers; pl.visites[vers] = (pl.visites[vers] || 0) + 1; (pl.arrets || (pl.arrets = {}))[vers] = 1;
         c.reculs++; partie.duel = null;
-        out.plateau = { de: d.case, a: vers, chemin: [d.case, vers], valeur: 0, cause: "renvoi",
-          etapes: [{ type: "renvoi", case: d.case, ennemi: e.id, vers: vers, n: d.case - vers }] };
+        out.plateau = { de: d.case, a: vers, chemin: [d.case, vers], places: [ici + 1, j + 1], valeur: 0, cause: "renvoi",
+          etapes: [{ type: "renvoi", case: d.case, ennemi: e.id, vers: vers, n: ici - j }] };
         out.plateau.contextes = contextesPlateau(out.plateau);
       }
       out.recompenses = verifierRecompenses(contenu, partie, t);
@@ -1071,7 +1137,7 @@
     else if (R && cd.effet === "echange") {
       // Une case spéciale devant le pion change de place avec une case ordinaire devant lui.
       var ennemis = ennemisPlateau(contenu, partie), devant = [], speciales = [], libres = [];
-      for (var n = pl.position + 1; n < R.arrivee; n++) devant.push(n);
+      devant = devantPion(contenu, partie, 1, Infinity);
       devant.forEach(function (n) {
         var sp = specialDe(contenu, partie, n);
         if (sp && sp.type !== "retour_epoque" && sp.type !== "teleport" && sp.type !== "mendeleiev") speciales.push(n); else if (!sp && !ennemis[n]) libres.push(n);
@@ -1087,7 +1153,7 @@
       var absents = contenu.ennemis.map(function (x) { return x.id; }).filter(function (x) { return presents.indexOf(x) < 0; });
       if (absents.indexOf(contenu.reserve) >= 0) absents = [contenu.reserve];
       var cases = [];
-      for (var m = pl.position + 3; m <= Math.min(pl.position + 12, R.arrivee - 1); m++) if (!en[m] && !specialDe(contenu, partie, m)) cases.push(m);
+      devantPion(contenu, partie, 3, 12).forEach(function (m) { if (!en[m] && !specialDe(contenu, partie, m)) cases.push(m); });
       if (absents.length && cases.length) {
         var c = cases[Math.floor(alea() * cases.length)];
         en[c] = absents[Math.floor(alea() * absents.length)];
@@ -1117,7 +1183,7 @@
     var fav = faveurIA(contenu, partie, t);
     if (!fav || fav.palier.id !== "furieuse" || !contenu.plateau || partie.colere === cleJour(t)) return null;
     var pl = partie.plateau, R = contenu.plateau.regles, en = ennemisPlateau(contenu, partie), libres = [];
-    for (var n = pl.position + 1; n <= Math.min(pl.position + 5, R.arrivee - 1); n++) if (!specialDe(contenu, partie, n) && !en[n]) libres.push(n);
+    devantPion(contenu, partie, 1, 5).forEach(function (n) { if (!specialDe(contenu, partie, n) && !en[n]) libres.push(n); });
     partie.colere = cleJour(t);
     if (!libres.length) return null;
     var c = libres[hacher(cleJour(t) + "|" + pl.position) % libres.length], P = contenu.ia.faveur.piege;
@@ -1150,7 +1216,7 @@
       var presents = Object.keys(en).map(function (k) { return en[k]; });
       var absents = contenu.ennemis.map(function (x) { return x.id; }).filter(function (x) { return presents.indexOf(x) < 0; });
       var cases = [];
-      for (var c = pl.position + 2; c <= Math.min(pl.position + 8, R.arrivee - 1); c++) if (!en[c] && !specialDe(contenu, partie, c)) cases.push(c);
+      devantPion(contenu, partie, 2, 8).forEach(function (c) { if (!en[c] && !specialDe(contenu, partie, c)) cases.push(c); });
       if (absents.length && cases.length) {
         var k = cases[hacher(jour + "|case") % cases.length];
         en[k] = absents[hacher(jour + "|ennemi") % absents.length];
@@ -1653,6 +1719,8 @@
     lireNombre: lireNombre,
     corriger: corriger,
     terminerQuiz: terminerQuiz,
+    routeTour: routeTour,
+    remanierRoute: remanierRoute,
     caseDecouverte: caseDecouverte,
     caseOubliee: caseOubliee,
     epreuvePerdue: epreuvePerdue,

@@ -1053,8 +1053,22 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var k = (s - L[lo]) / ((L[hi] - L[lo]) || 1), a = p[lo], b = p[hi];
     return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, Math.atan2(b[1] - a[1], b[0] - a[0])];
   }
-  function pasCase() { return (ROUTE.total - 48) / C.plateau.cases.length; }
-  function abscisse(n) { return n > C.plateau.cases.length ? ROUTE.total - 20 : 4 + (n - 0.5) * pasCase(); }
+  // v15 : le dessin suit la route du tour (que l'IA peut raccourcir ou rallonger) : on y place les cases par rang,
+  // la « place » (1 = départ). placeDe(n) : la place de la case n, de préférence celle du pion ou devant lui.
+  function laRoute() { return M.routeTour(C, P); }
+  function placeDe(n) {
+    var rt = laRoute(), i = P.plateau.idx;
+    if (rt[i] === n) return i + 1;
+    for (var j = i + 1; j < rt.length; j++) if (rt[j] === n) return j + 1;
+    var k = rt.lastIndexOf(n); return k >= 0 ? k + 1 : n;
+  }
+  function placeVersUI(rt, i, vers) {
+    for (var j = i - 1; j >= 0; j--) if (rt[j] === vers) return j + 1;
+    for (j = i - 1; j >= 0; j--) if (rt[j] <= vers) return j + 1;
+    return 1;
+  }
+  function pasCase() { return (ROUTE.total - 48) / laRoute().length; }
+  function abscisse(n) { return n > laRoute().length ? ROUTE.total - 20 : 4 + (n - 0.5) * pasCase(); }
   function centreCase(n) { var p = pointRoute(abscisse(n)); return [p[0], p[1]]; }
   function morceauRoute(s0, s1) {
     var out = [], n = Math.max(2, Math.ceil((s1 - s0) / 3));
@@ -1394,8 +1408,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   }
   // v13 : un ennemi se voit de loin. Portrait cerclé de rouge, épinglé au-dessus de sa case, avec un liseré qui pulse.
   // Si le pion est sur sa case (duel en attente), l'épingle se range sur le côté.
-  function epingleEnnemi(en, n, ici) {
-    var p = centreCase(n), ex = p[0] + (ici ? 20 : 0), ey = p[1] - (ici ? 20 : 25);
+  function epingleEnnemi(en, n, ici, place) {
+    var p = centreCase(place), ex = p[0] + (ici ? 20 : 0), ey = p[1] - (ici ? 20 : 25);
     return '<g data-n="' + n + '" class="garde" style="cursor:pointer" transform="translate(' + ex.toFixed(1) + " " + ey.toFixed(1) + ')">' +
       '<circle r="17" fill="none" stroke="#D94141" stroke-width="3" class="garde-pulse"/>' +
       (ici ? "" : '<path d="M-5.5,11 L0,20 L5.5,11 Z" fill="#D94141" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>') +
@@ -1405,10 +1419,11 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   }
   // v13 : à la fin du trajet, projecteur sur la case d'arrivée. Le plateau passe en gris, le pion s'efface,
   // la case grandit avec son étiquette ; si un ennemi la garde, il bondit avec un bandeau « VS ».
-  function projecteur(svg, n) {
-    var sc = svg.querySelector(".scene"), g = svg.querySelector('.monde g[data-n="' + n + '"]:not(.garde)'), pion = svg.querySelector("#pion");
+  function projecteur(svg, place) {
+    var n = laRoute()[place - 1];
+    var sc = svg.querySelector(".scene"), g = svg.querySelector('.monde g[data-p="' + place + '"]'), pion = svg.querySelector("#pion");
     var k = C.plateau.cases[n - 1]; if (!sc || !g || !k) return;
-    var p = centreCase(n), en = M.ennemisPlateau(C, P)[n] && C.ennemiParId[M.ennemisPlateau(C, P)[n]];
+    var p = centreCase(place), en = M.ennemisPlateau(C, P)[n] && C.ennemiParId[M.ennemisPlateau(C, P)[n]];
     var titre = tx(k.titre); if (titre.length > 30) titre = titre.slice(0, 29) + "…";
     var lw = Math.max(96, Math.min(150, titre.length * 4.6 + 18));
     // v15 : au bord de la vue, la case agrandie, son étiquette et le VS sortaient du cadre. On les ramène dedans.
@@ -1445,31 +1460,34 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   // `bilan` : toujours zoomé sur le pion, sans tenir compte de la caméra de l'accueil.
   function svgPlateau(bilan) {
     var pl = P.plateau, nb = C.plateau.cases.length, loin = portee(), ennemis = M.ennemisPlateau(C, P), ton = M.humeur(P);
-    var cle = [pl.atteinte, pl.tours, pl.position, loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {}), C.stats.filter(function (s) { return M.arbreOuvert(C, P, s.id); }).length].join("/");
+    var rt = laRoute(); nb = rt.length;
+    var cle = [pl.atteinte, pl.tours, pl.position, pl.idx, rt.join(","), loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {}), C.stats.filter(function (s) { return M.arbreOuvert(C, P, s.id); }).length].join("/");
     if (cachePlateau.cle !== cle) {
       var c = decorPlateau(ton), pas = pasCase(), fleches = "", gardes = "";
       var toute = morceauRoute(0, ROUTE.total);
       c += '<polyline points="' + toute + '" fill="none" stroke="#000" stroke-opacity="0.22" stroke-width="' + (LARGEUR_ROUTE + 8) + '" stroke-linejoin="round" stroke-linecap="round" transform="translate(0 3)"/>' +
         '<polyline points="' + toute + '" fill="none" stroke="#fff" stroke-width="' + (LARGEUR_ROUTE + 6) + '" stroke-linejoin="round" stroke-linecap="round"/>';
-      C.plateau.cases.forEach(function (k) {
-        var n = k.n, s = abscisse(n), p = pointRoute(s), x = p[0], y = p[1], connue = caseConnue(n), sp = M.specialDe(C, P, n);
-        var ici = n === pl.position, proche = n > pl.position && n <= pl.position + loin, vue = n < pl.position;
+      rt.forEach(function (n, i) {
+        var k = C.plateau.cases[n - 1], place = i + 1, s = abscisse(place), p = pointRoute(s), x = p[0], y = p[1], connue = caseConnue(n), sp = M.specialDe(C, P, n);
+        var ici = i === pl.idx, proche = i > pl.idx && i <= pl.idx + loin, vue = i < pl.idx;
         var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : couleurCase(k);
         var encre = sp && connue ? "#fff" : "#1E1A2B";
-        c += '<g data-n="' + n + '" style="cursor:pointer"><polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="' + fond + '" stroke-width="' + LARGEUR_ROUTE + '" stroke-linejoin="round"/>';
+        c += '<g data-n="' + n + '" data-p="' + place + '" style="cursor:pointer"><polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="' + fond + '" stroke-width="' + LARGEUR_ROUTE + '" stroke-linejoin="round"/>';
         if (vue) c += '<polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="' + LARGEUR_ROUTE + '"/>';
+        // v15 : case remise sur la route par l'IA (hors de l'ordre chronologique) : liseré pointillé.
+        if (i > pl.idx && n < rt[i - 1]) c += '<polyline points="' + morceauRoute(s - pas / 2 + 3, s + pas / 2 - 3) + '" fill="none" stroke="#1E1A2B" stroke-width="' + (LARGEUR_ROUTE - 4) + '" stroke-opacity="0.55" stroke-dasharray="3 3"/>';
         if (proche) c += '<polyline class="avenir" points="' + morceauRoute(s - pas / 2 + 3, s + pas / 2 - 3) + '" fill="none" stroke="#fff" stroke-width="' + (LARGEUR_ROUTE - 7) + '" stroke-opacity="0.5"/>';
         if (connue) {
           c += '<svg x="' + (x - 9).toFixed(1) + '" y="' + (y - 13).toFixed(1) + '" width="18" height="18" viewBox="0 0 32 32" class="pix">' + pixels(grilleSprite(k.icone), C.cabinet.palette, null, 0, 0, 1) + "</svg>" +
             '<text x="' + x.toFixed(1) + '" y="' + (y + 12).toFixed(1) + '" text-anchor="middle" font-size="7.5" font-weight="800" font-family="JetBrains Mono, monospace" fill="' + encre + '">' + n + "</text>";
           if (sp) c += '<g transform="translate(' + (x + 11).toFixed(1) + " " + (y - 13).toFixed(1) + ')"><circle r="6.8" fill="' + COULEUR_SPECIAL[sp.type] + '" stroke="#fff" stroke-width="1.6"/><g transform="scale(0.85)">' + (PICTO_SPECIAL[sp.type] || "") + "</g></g>";
-          if (sp && sp.vers && (sp.type === "teleport" || sp.type === "retour_epoque")) fleches += flecheTeleport(n, sp.vers, COULEUR_SPECIAL[sp.type]);
+          if (sp && sp.vers && (sp.type === "teleport" || sp.type === "retour_epoque")) fleches += flecheTeleport(place, placeVersUI(rt, i, sp.vers), COULEUR_SPECIAL[sp.type]);
         } else {
           c += '<text x="' + x.toFixed(1) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="middle" font-size="12" font-weight="800" font-family="JetBrains Mono, monospace" fill="#1E1A2B" opacity="0.75">' + n + "</text>";
         }
         // v13 : l'ennemi qui garde la case est une épingle au-dessus d'elle, dessinée après toutes les cases pour rester devant.
         var en = ennemis[n] && C.ennemiParId[ennemis[n]];
-        if (en) gardes += epingleEnnemi(en, n, ici);
+        if (en && i >= pl.idx) gardes += epingleEnnemi(en, n, ici, place);
         c += "</g>";
       });
       c += fleches + gardes;
@@ -1486,7 +1504,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         '<g transform="rotate(6 ' + fin[0] + " " + (fin[1] - 34) + ')"><rect x="' + (fin[0] - 24) + '" y="' + (fin[1] - 44) + '" width="48" height="14" rx="3" fill="#D94141" stroke="#fff" stroke-width="1.5"/><text x="' + fin[0] + '" y="' + (fin[1] - 34) + '" text-anchor="middle" font-size="7.5" font-weight="800" fill="#fff" letter-spacing="0.6">ARRIVÉE</text></g></g>';
       cachePlateau = { cle: cle, svg: c };
     }
-    var ici = animPion ? animPion.chemin[0] : pl.position, pos = centreCase(ici);
+    var ici = animPion && animPion.places ? animPion.places[0] : pl.idx + 1, pos = centreCase(ici);
     var vb = bilan ? boiteVue(cadrePion(ici)) : texteVue();
     // v8 : le pion se repère d'un coup d'œil, même en vue d'ensemble : halo qui pulse, double contour, flèche au-dessus.
     var pion = '<g id="pion" data-n="pion" style="cursor:pointer" transform="translate(' + pos[0].toFixed(1) + " " + pos[1].toFixed(1) + ')"><circle r="25" fill="#FFD447" opacity="0.45" class="halo-pion"/><ellipse cx="0" cy="17" rx="14" ry="4" fill="#000" opacity="0.3"/>' +
@@ -1558,10 +1576,11 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var dep = animPion; animPion = null;
     var g = (racine || document).querySelector("#pion");
     if (!dep || !g) return;
-    var R = C.plateau.regles, cases = [dep.chemin[0]];
-    for (var i = 1; i < dep.chemin.length; i++) {
-      var de = cases[cases.length - 1], a = dep.chemin[i];
-      if (de === R.arrivee && a === R.depart) { cases.push(a); continue; }
+    // Les places sur la route ; au bout du tour, le pion saute de l'arrivée au départ.
+    var chemin = dep.places || dep.chemin, cases = [chemin[0]];
+    for (var i = 1; i < chemin.length; i++) {
+      var de = cases[cases.length - 1], a = chemin[i];
+      if (a === 1 && de > 2) { cases.push(a); continue; }
       while (de !== a) { de += a > de ? 1 : -1; cases.push(de); }
     }
     var svgP = g.ownerSVGElement, suivre = svgP && svgP.classList.contains("zoom");
@@ -1582,7 +1601,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   }
   function blocPlateau() {
     var pl = P.plateau, t = maintenant(), k = C.plateau.cases[pl.position - 1], st = stat(M.bonusDuJour(C, P, t));
-    var b = el('<section class="bloc plateau"><div class="tete"><h2>Plateau de l\'histoire</h2><span class="num">' + (pl.tours ? "Tour " + (pl.tours + 1) + " · " : "") + "case " + pl.position + " / " + C.plateau.cases.length + "</span></div>" +
+    var b = el('<section class="bloc plateau"><div class="tete"><h2>Plateau de l\'histoire</h2><span class="num">' + (pl.tours ? "Tour " + (pl.tours + 1) + " · " : "") + "case " + pl.position + " · étape " + (pl.idx + 1) + " / " + M.routeTour(C, P).length + "</span></div>" +
       // v15 : le compteur du tour, pour viser le parcours le plus court.
       '<p class="compteur-tour"><b>' + (pl.coups || 0) + "</b> épreuve" + ((pl.coups || 0) > 1 ? "s" : "") + " dans ce tour" + (pl.meilleur ? " · record : <b>" + pl.meilleur + "</b>" : " · pas encore de record") + "</p></section>");
     var grille = el('<div class="grille-cadre"></div>'), glisse = false, finGlisse = 0;
@@ -1664,7 +1683,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         if (a === "plus") zoomer(1 / 1.5);
         else if (a === "moins") zoomer(1.5);
         else if (a === "large") { camera.w = LARGEUR_MAX; camera.cx = camera.cy = null; appliquer(); }
-        else if (a === "pion") { var p = centreCase(P.plateau.position); camera.w = 190; camera.cx = p[0]; camera.cy = p[1]; appliquer(); }
+        else if (a === "pion") { var p = centreCase(P.plateau.idx + 1); camera.w = 190; camera.cx = p[0]; camera.cy = p[1]; appliquer(); }
         return;
       }
       if (Date.now() - finGlisse < 350) return;
@@ -2493,7 +2512,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     if (nom === "verdict") {
       z.appendChild(el('<div class="bilan verdict-duel ' + (r.gagne ? "gagne" : "perdu") + '"><div class="duo">' + svgAvatar(r.gagne ? 92 : 64) + svgEnnemi(e, r.gagne ? 56 : 84, false, "miroir" + (r.gagne ? " vaincu" : "")) + '</div><div class="grand">' + (r.gagne ? "Victoire" : "Défaite") + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" +
         '<p class="bulle"></p><p class="meta">Contre ' + esc(nomEn(e)) + " : " + f.victoires + " victoire" + (f.victoires > 1 ? "s" : "") + ", " + f.defaites + " défaite" + (f.defaites > 1 ? "s" : "") + ", meilleure série " + f.meilleure + ".</p>" +
-        (r.gagne ? "" : '<p class="note">Ton pion reste case ' + P.plateau.position + ". Le duel reprendra à ta prochaine épreuve réussie.</p>") + "</div>"));
+        (r.gagne ? "" : r.plateau ? '<p class="note">' + esc(tx(e.nom)) + " te renvoie case " + P.plateau.position + ". Il garde son poste et t'attend au prochain passage.</p>" : '<p class="note">Ton pion reste case ' + P.plateau.position + ". Le duel reprendra à ta prochaine épreuve réussie.</p>") + "</div>"));
       z.querySelector(".bulle").textContent = tx(e.nom) + " : « " + tx(r.gagne ? e.victoire : e.defaite) + " »";
       var m = comite(r.replique); if (m) z.appendChild(m);
       if (r.gagne && !r.butin) z.appendChild(el('<p class="meta">Pas de butin à gagner pour l\'instant : maîtrise d\'autres compétences pour en ouvrir.</p>'));
@@ -3174,6 +3193,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     prison_liberation: function () { return "Quiz parfait : tu sors de prison."; },
     bloque_prison: function () { return "Assigné à résidence : ton pion ne bouge pas."; },
     bloque_quarantaine: function () { return "Quarantaine : cette épreuve ne fait pas avancer ton pion."; },
+    raccourci: function (e) { return "L'IA, ravie, retire " + (e.cases.length > 1 ? "les cases " + e.cases.join(" et ") : "la case " + e.cases[0]) + " de ta route : " + e.longueur + " étapes en tout."; },
+    detour: function (e) { return "L'IA, déçue, remet devant toi " + (e.cases.length > 1 ? "les cases " + e.cases.join(" et ") + ", survolées" : "la case " + e.cases[0] + ", survolée") + " sans t'y arrêter : " + e.longueur + " étapes en tout."; },
     tour_fini: function (e) { return "Arrivée ! Tour " + e.tour + " terminé en " + e.coups + " épreuve" + (e.coups > 1 ? "s" : "") + (e.record ? (e.ancien ? ", nouveau record (avant : " + e.ancien + ")" : ", ton premier record") : e.ancien ? " (record : " + e.ancien + ")" : "") + ". Retour au feu, en plus dur."; },
     oubli: function (e) { return "Trou de mémoire, case " + e.case + " : retour à la case " + e.vers + ", la plus ancienne que tu n'as jamais vue parmi les 15 dernières."; },
     oubli_vide: function (e) { return "Trou de mémoire, case " + e.case + " : tu as tout vu derrière toi. L'IA cherche, ne trouve rien, et boude."; },

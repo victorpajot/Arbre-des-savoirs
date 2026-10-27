@@ -934,3 +934,28 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(du.total, 5);
   console.log("OK : v15 cases cachées, trou de mémoire, renvoi, compteur du tour, un seul pas");
 }
+
+{
+  // v15 : l'IA retouche exceptionnellement la route : raccourci après un quiz parfait, détour par les cases survolées après un échec.
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json") };
+  const CP = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const T = Date.UTC(2026, 0, 5, 9), jamais = () => 0.99, toujours = () => 0;
+  let P = M.nouvellePartie(T);
+  assert.equal(M.routeTour(CP, P).length, 63);
+  assert.equal(M.remanierRoute(CP, P, { reussi: true, parfait: true }, T, jamais), null, "rare : pas à chaque fois");
+  const r = M.remanierRoute(CP, P, { reussi: true, parfait: true }, T, toujours);
+  assert.ok(r && r.type === "raccourci" && r.cases.length >= 1 && M.routeTour(CP, P).length === 63 - r.cases.length);
+  assert.ok(r.cases.every(n => M.routeTour(CP, P).indexOf(n) < 0), "cases retirées de la route");
+  assert.equal(M.remanierRoute(CP, P, { reussi: false }, T, toujours), null, "au plus une fois par tour");
+  P = M.nouvellePartie(T); P.plateau.ennemis = {};
+  M.deplacer(CP, P, 6, T, "test");
+  const ici = P.plateau.position;
+  const dt = M.remanierRoute(CP, P, { reussi: false }, T, toujours);
+  assert.ok(dt && dt.type === "detour" && dt.cases.every(n => n < ici && !P.plateau.visites[n]));
+  const rt = M.routeTour(CP, P);
+  assert.deepEqual(rt.slice(P.plateau.idx + 1, P.plateau.idx + 1 + dt.cases.length), dt.cases, "remises juste devant le pion");
+  const dep = M.deplacer(CP, P, 1, T, "test");
+  assert.equal(dep.a, dt.cases[0], "le pion s'y arrête au pas suivant");
+  console.log("OK : v15 route retouchée par l'IA, rarement");
+}
