@@ -343,6 +343,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const t0 = new Date(2026, 9, 27, 10, 0).getTime();
   const juste = (P, id, n, ok) => M.tirerQuestions(C5, P, id, n).map((q, i) => ({ id: q.id, correct: i < ok }));
 
+  // Une seule case : l'arbre choisi par le joueur, rien dans un arbre fermé
+  {
+    const P = M.nouvellePartie(t0);
+    const ouverts = C5.stats.filter(s => M.arbreOuvert(C5, P, s.id)), ferme = C5.stats.find(s => !M.arbreOuvert(C5, P, s.id));
+    ouverts.forEach(s => { const c = M.choixArbre(C5, P, t0, s.id); if (c) assert.equal(c.comp.stat, s.id, "compétence de l'arbre choisi"); });
+    assert.ok(ouverts.some(s => M.choixArbre(C5, P, t0, s.id)), "au moins un arbre jouable au départ");
+    if (ferme) assert.equal(M.choixArbre(C5, P, t0, ferme.id), null, "arbre fermé : rien");
+    console.log("OK : une seule case, arbre au choix");
+  }
+
   // L'IA choisit : un quiz ouvert au départ, un rappel dû avant tout
   {
     const P = M.nouvellePartie(t0);

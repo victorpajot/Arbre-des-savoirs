@@ -1621,6 +1621,17 @@
     return { comp: r.liste[(graine >>> 4) % r.liste.length], type: "quiz", raison: r.raison };
   }
 
+  // Avancer d'une seule case : le joueur choisit l'arbre, l'IA y prend un rappel dû, sinon un quiz disponible.
+  function choixArbre(contenu, partie, t, stat) {
+    if (revisionEnCours(partie) || !arbreOuvert(contenu, partie, stat)) return null;
+    var dus = rappelsDus(contenu, partie, t).filter(function (c) { return c.stat === stat; });
+    if (dus.length) return { comp: dus[0], type: "rappel", raison: "choix_arbre", stat: stat };
+    var ici = disponibles(contenu, partie, t).filter(function (c) { return c.stat === stat; });
+    if (!ici.length) return null;
+    var graine = hacher(cleJour(t) + "|" + partie.journal.length + "|" + stat);
+    return { comp: ici[graine % ici.length], type: "quiz", raison: "choix_arbre", stat: stat };
+  }
+
   // --- Farces de l'IA --------------------------------------------------------
   var DUREE_FARCE = JOUR;
   var CHANCE_FARCE = 1 / 3;
@@ -1739,7 +1750,7 @@
     replique: replique,
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    choixIA: choixIA, choixArbre: choixArbre, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,

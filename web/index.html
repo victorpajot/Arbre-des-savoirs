@@ -190,6 +190,7 @@ p { margin: 0; }
 .saisie { display: flex; gap: 10px; align-items: center; }
 .saisie input { flex: 1; min-width: 0; border: 2px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px 14px; font-size: 20px; font-family: var(--f-mono); }
 .saisie .unite { color: var(--muted); font-family: var(--f-mono); }
+.choix .saisie .btn { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 999px; text-align: center; min-height: 48px; padding: 10px 18px; }
 .retour { border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 4px; background: var(--surface); border-left: 5px solid var(--good); }
 .retour.ko { border-left-color: var(--bad); }
 .retour b { font-size: 16px; }
@@ -416,6 +417,10 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .case-jouer h2 { margin: 2px 0 6px; }
 .case-jouer p { font-size: 17px; line-height: 1.55; margin: 0 0 8px; }
 .case-jouer .arbre-case { font-size: 16px; padding: 8px 12px; border-left: 5px solid var(--c); border-radius: 8px; background: color-mix(in srgb, var(--c) 12%, transparent); }
+.arbres-une { display: grid; gap: 8px; margin-top: 10px; }
+.arbre-une { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 12px 14px; border: 0; border-left: 6px solid var(--c); border-radius: 12px; background: color-mix(in srgb, var(--c) 14%, transparent); color: var(--ink); font: inherit; font-size: 16px; cursor: pointer; }
+.arbre-une span { font-size: 15px; color: var(--muted); }
+.arbre-une:disabled { opacity: .45; cursor: default; }
 .case-dicte .vitrine { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: color-mix(in srgb, var(--c) 30%, #fff); }
 /* v5 : stats sur l'accueil */
 .mini-stats { display: grid; grid-template-columns: 104px 1fr; gap: 12px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
@@ -1584,11 +1589,26 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       (c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · dont +" + bonus + " pour le bouton Jouer</span></span></div>" +
       '<button type="button" class="btn large" data-a="go">C\'est parti</button>' +
       '<button type="button" class="btn sec large" data-a="un">Avancer d\'une seule case</button>' +
-      '<p class="meta">Une seule case : pas de bonus, mais ton pion s\'arrête sur la case suivante et la dévoile. Tu peux aussi choisir toi-même une compétence dans l\'arbre, sans ce bonus.</p></div>', "L'IA a choisi", {
+      '<p class="meta">Une seule case : tu choisis l\'arbre, pas de bonus, et ton pion s\'arrête sur la case suivante pour la dévoiler. Tu peux aussi choisir toi-même une compétence dans l\'arbre, sans ce bonus.</p></div>', "L'IA a choisi", {
       go: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true }); },
-      un: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true, uneCase: true }); },
+      un: function () { if (c.raison === "revision") { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true, uneCase: true }); } else choisirArbreUneCase(); },
     });
     feuille.querySelector("#ia-jouer").appendChild(comite(rep, true));
+  }
+
+  // Une seule case : le joueur choisit l'arbre, l'IA choisit la compétence dedans.
+  function choisirArbreUneCase() {
+    var t = maintenant(), html = '<div class="eyebrow">Avancer d\'une seule case</div><h2>Quel arbre ?</h2><p class="meta">Choisis l\'arbre qui t\'intéresse : l\'IA y prend un rappel à faire, sinon un quiz. Réussi, ton pion avance d\'une case, sans bonus.</p><div class="arbres-une">';
+    var choix = {};
+    C.stats.filter(function (s) { return M.arbreOuvert(C, P, s.id); }).forEach(function (s) {
+      var c = M.choixArbre(C, P, t, s.id); choix[s.id] = c;
+      html += '<button type="button" class="arbre-une" style="--c:' + couleur(s.id) + '" data-a="arbre-' + s.id + '"' + (c ? "" : " disabled") + "><b>" + esc(tx(s.nom)) + "</b><span>" +
+        (c ? (c.type === "rappel" ? "Rappel : " : "Quiz : ") + esc(tx(c.comp.nom)) : "Rien à jouer pour l'instant") + "</span></button>";
+    });
+    html += "</div>";
+    var actions = {};
+    Object.keys(choix).forEach(function (id) { if (choix[id]) actions["arbre-" + id] = function () { fermerFeuille(); lancerQuiz(choix[id].comp.id, choix[id].type, { jouer: true, uneCase: true }); }; });
+    feuilleSimple(html, "Quel arbre ?", actions);
   }
 
   // Fait avancer le pion case par case le long du chemin du dernier déplacement.
