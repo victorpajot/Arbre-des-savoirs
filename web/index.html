@@ -343,6 +343,16 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .illus .fond { fill: var(--surface); }
 .illus .jaune { fill: #F2B632; }
 .retour .illus { margin-top: 8px; }
+.illus.figure { margin: 8px 0 0; }
+.illus.figure svg { max-height: 380px; }
+.illus.figure .h { stroke: var(--surface); stroke-width: 3.5px; paint-order: stroke; stroke-linejoin: round; }
+.illus.figure { cursor: zoom-in; }
+.zoom-fig { position: fixed; inset: 0; z-index: 200; background: var(--bg); overflow: auto; padding: 16px; cursor: zoom-out; }
+.zoom-fig svg { display: block; width: 900px; max-width: none; height: auto; }
+.zoom-fig .t { fill: var(--ink); font-family: var(--f-body); } .zoom-fig .tm { fill: var(--muted); font-family: var(--f-body); }
+.zoom-fig .lm { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+.zoom-fig .h { stroke: var(--bg); stroke-width: 3.5px; paint-order: stroke; stroke-linejoin: round; }
+.illus.figure figcaption { margin: 6px 0 0; font-size: 13px; color: var(--muted); text-align: center; }
 /* v13 : épingles d'ennemis et projecteur sur la case d'arrivée */
 .plateau .garde-pulse { animation: garde-pulse 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
 @keyframes garde-pulse { 50% { transform: scale(1.22); stroke-opacity: 0.25; } }
@@ -2697,11 +2707,24 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   // --- Le mur de la honte (v12) ------------------------------------------------------
   // Les questions ratées du jour, rangées par thème, avec la fiche de révision de chaque thème (schéma compris).
   // On ne peut les retenter qu'à partir du lendemain : c'est le rappel espacé qui ancre, pas la relecture.
+  // v15 : planche figurative (cellule, atome…) tirée de data/skills.json, pas de l'utilisateur.
+  function htmlFigure(id, legende) {
+    var f = id && C.figures[id]; if (!f) return "";
+    return '<figure class="illus figure">' + f.svg + (legende ? "<figcaption>" + esc(f.titre) + "</figcaption>" : "") + "</figure>";
+  }
+  // Un schéma touché s'ouvre en grand, défilable : les légendes restent lisibles sur téléphone.
+  document.addEventListener("click", function (ev) {
+    var f = ev.target.closest && ev.target.closest(".illus.figure");
+    if (!f || f.closest(".zoom-fig")) return;
+    var z = el('<div class="zoom-fig" role="dialog" aria-modal="true" aria-label="Schéma agrandi">' + f.querySelector("svg").outerHTML + "</div>");
+    z.addEventListener("click", function () { z.remove(); });
+    document.body.appendChild(z);
+  });
   function htmlFiche(k) {
     var f = k.fiche; if (!f) return "";
     // Les schémas viennent du contenu du jeu (data/skills.json), pas de l'utilisateur.
     return '<div class="fiche-rev"><ul>' + f.essentiel.map(function (x) { return "<li>" + esc(tx(x)) + "</li>"; }).join("") + "</ul>" +
-      '<div class="illus">' + f.schema + "</div>" +
+      '<div class="illus">' + f.schema + "</div>" + (f.figures || []).map(function (id) { return htmlFigure(id, true); }).join("") +
       '<p class="piege-h"><b>Le piège</b>' + esc(tx(f.piege)) + '</p><p class="meta" style="margin:0">Source : ' + esc(f.source) + "</p></div>";
   }
   function texteReponse(q, v) {
@@ -2728,6 +2751,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       c.appendChild(el('<p class="rep-h">' + (donnee ? "Ta réponse : <s>" + esc(donnee) + "</s><br>" : "") + "Bonne réponse : <b>" + esc(bonneReponse(q)) + "</b></p>"));
       c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>"));
       if (q.illustration_explication) c.appendChild(el('<div class="illus">' + q.illustration_explication + "</div>"));
+      if (q.figure) c.appendChild(el(htmlFigure(q.figure)));
     }
     if (!retenter || e.efface) {
       corrige();
@@ -3057,7 +3081,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       var rep = q.type === "qcm" ? tx(q.choix[q.reponse]) : (q.type === "vrai_faux" ? (q.reponse ? "Vrai" : "Faux") : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""));
       var tempsEcoule = quiz.tempsEcoule; quiz.tempsEcoule = false;
       zoneRetour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Juste." + (quiz.chrono ? " +" + C.regles.chrono.bonus_xp_par_bonne_reponse + " XP de bonus chrono." : "") : (tempsEcoule ? "Temps écoulé. " : "Raté. ") + "Réponse : " + esc(rep) + ".") + "</b><p>" + esc(tx(q.explication)) + "</p>" +
-        (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + "</div>"));
+        (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + htmlFigure(q.figure) + "</div>"));
       var pq = portraitQuestion(q);
       if (pq) zoneRetour.appendChild(pq);
       if (M.estEclair(quiz.res[quiz.res.length - 1])) {

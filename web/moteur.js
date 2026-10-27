@@ -25,6 +25,7 @@
       regles: regles,
       stats: regles.stats,
       competences: skills.competences,
+      figures: skills.figures || {},
       questions: questions.questions,
       succes: succes.succes,
       objets: extras.objets ? extras.objets.objets : [],

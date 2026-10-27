@@ -49,6 +49,15 @@ def main():
             if p not in comps:
                 erreurs.append(f"skills.json {c['id']} : prérequis inconnu {p}")
 
+    figs = contenu["skills"].get("figures", {})
+    for c in comps.values():
+        for f in c["fiche"].get("figures", []):
+            if f not in figs:
+                erreurs.append(f"skills.json {c['id']} : figure inconnue {f}")
+    for q in contenu["questions"]["questions"]:
+        if q.get("figure") and q["figure"] not in figs:
+            erreurs.append(f"questions.json {q['id']} : figure inconnue {q['figure']}")
+
     for st in stats:
         rangs = sorted(c["rang"] for c in comps.values() if c["stat"] == st)
         if rangs != list(range(1, 9)):

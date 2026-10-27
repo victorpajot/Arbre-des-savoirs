@@ -25,6 +25,7 @@ import pieges
 import mendeleiev
 import brillants
 import fiches
+import figures
 import honte
 import masques_regles
 import objets_v11
@@ -157,7 +158,11 @@ for _module in (approfondissement_sciences, approfondissement_humain):
 
 def fiche(id):
     f = fiches.FICHES[id]
-    return {"essentiel": [fr(x) for x in f["essentiel"]], "piege": fr(f["piege"]), "schema": f["schema"], "source": f["source"]}
+    out = {"essentiel": [fr(x) for x in f["essentiel"]], "piege": fr(f["piege"]), "schema": f["schema"], "source": f["source"]}
+    # v15 : planches figuratives (cellule, atome, cerveau…) en plus du schéma de la fiche.
+    if id in figures.COMPETENCES:
+        out["figures"] = figures.COMPETENCES[id]
+    return out
 
 
 def competences():
@@ -553,6 +558,8 @@ def questions():
                 q["illustration"] = ENONCE[id]
             if id in EXPLICATION:
                 q["illustration_explication"] = EXPLICATION[id]
+            if id in figures.QUESTIONS:
+                q["figure"] = figures.QUESTIONS[id]
             # v15 : bonne réponse = une personne qui a un portrait → portrait et biographie au retour.
             if q.get("type") == "qcm":
                 rep = q["choix"][q["reponse"]]
@@ -562,6 +569,7 @@ def questions():
             out.append(q)
     ids = {q["id"] for q in out}
     assert set(ENONCE) <= ids and set(EXPLICATION) <= ids, (set(ENONCE) | set(EXPLICATION)) - ids
+    assert set(figures.QUESTIONS) <= ids, set(figures.QUESTIONS) - ids
     return out
 
 
@@ -868,7 +876,8 @@ def main():
     DATA.mkdir(parents=True, exist_ok=True)
     fichiers = {
         "regles.json": REGLES,
-        "skills.json": {"format": 1, "competences": competences()},
+        "skills.json": {"format": 1, "competences": competences(),
+                        "figures": {k: {"titre": figures.TITRES[k], "svg": v} for k, v in figures.FIGURES.items()}},
         "questions.json": {"format": 1, "questions": questions()},
         "succes.json": {"format": 1, "succes": tous_succes()},
         "commentaires.json": commentaires(),

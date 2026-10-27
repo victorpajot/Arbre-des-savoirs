@@ -272,8 +272,38 @@
          "source": {
           "type": "string",
           "minLength": 3
+         },
+         "figures": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+           "type": "string",
+           "pattern": "^[a-z_]+$"
+          }
          }
         }
+       }
+      }
+     }
+    },
+    "figures": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "object",
+      "required": [
+       "titre",
+       "svg"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "titre": {
+        "type": "string",
+        "minLength": 3
+       },
+       "svg": {
+        "type": "string",
+        "pattern": "^<svg"
        }
       }
      }
@@ -368,6 +398,10 @@
           "$ref": "#/$defs/id"
          }
         }
+       },
+       "figure": {
+        "type": "string",
+        "pattern": "^[a-z_]+$"
        }
       },
       "allOf": [
