@@ -490,10 +490,11 @@
     var rec = verifierRecompenses(contenu, partie, t);
     if (reussi) ajouterButin(contenu, partie, rec, { type: "quiz", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
-    var fa = reussi ? null : tenterFarce(contenu, partie, t, infos && infos.alea);
+    var fa = reussi ? null : tenterFarce(contenu, partie, t, infos && infos.alea, k.stat);
     return { issue: reussi ? "maitrisee" : "echec", bonnes: bonnes, total: total, xp: xp, prochainRappel: e.prochainRappel,
       nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
-      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits };
+      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
+      theme: contenu.parId[id] ? contenu.parId[id].stat : null };
   }
 
   // XP d'un rappel réussi qui mène à l'étape `palier` (1 = premier rappel).
@@ -559,10 +560,11 @@
     var rec = verifierRecompenses(contenu, partie, t);
     if (reussi) ajouterButin(contenu, partie, rec, { type: "rappel", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
-    var fa = reussi || revision ? null : tenterFarce(contenu, partie, t, infos && infos.alea);
+    var fa = reussi || revision ? null : tenterFarce(contenu, partie, t, infos && infos.alea, contenu.parId[id] && contenu.parId[id].stat);
     return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : "perdue", bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
-      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits };
+      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
+      theme: contenu.parId[id] ? contenu.parId[id].stat : null };
   }
 
   // À appeler à chaque ouverture de l'app : repère un retour après une longue absence.
@@ -656,11 +658,19 @@
     }).sort(function (a, b) { return b.score - a.score; }).slice(0, postes.length).map(function (x) { return x.id; });
     choisis.sort(function (a, b) { return hacher(graine + "|ordre|" + a) - hacher(graine + "|ordre|" + b); });
     var decalage = (tour * 3) % 9 - 4, out = {};
+    var libre = function (c) { return c > R.depart + 1 && c < R.arrivee && !out[c] && !specialDe(contenu, partie, c); };
+    var parId = {}; contenu.ennemis.forEach(function (e) { parId[e.id] = e; });
     postes.forEach(function (n, i) {
+      // v18 : l'ennemi se poste sur une case de son thème, la plus proche de son poste ; sinon, près du poste.
+      var th = themeDe(parId[choisis[i]]), ici = th ? contenu.plateau.cases.filter(function (k) { return k.stat === th && libre(k.n); }) : [];
+      if (ici.length) {
+        ici.sort(function (a, b) { return Math.abs(a.n - n - decalage) - Math.abs(b.n - n - decalage) || a.n - b.n; });
+        out[ici[0].n] = choisis[i]; return;
+      }
       var visee = n + decalage;
       for (var d = 0; d < 8; d++) {
         var c = visee + (d % 2 ? -1 : 1) * Math.ceil(d / 2);
-        if (c > R.depart + 1 && c < R.arrivee && !out[c] && !specialDe(contenu, partie, c)) { out[c] = choisis[i]; return; }
+        if (libre(c)) { out[c] = choisis[i]; return; }
       }
     });
     return out;
@@ -951,7 +961,7 @@
 
   // Butin garanti d'une victoire : un butin ouvert, ou à défaut un butin gagnable du lot suivant.
   function butinDuel(contenu, partie, t, alea) {
-    var b = tirerButin(contenu, partie, { type: "duel" }, t, alea);
+    var b = tirerButin(contenu, partie, { type: "duel", ennemi: partie.duel && partie.duel.ennemi }, t, alea);
     if (b) return b;
     var tour = partie.plateau.tours + 2, proches = [];
     FAMILLES_BUTIN.forEach(function (f) {
@@ -1584,11 +1594,36 @@
     return k ? (P.epoques || []).filter(function (e) { return e.id === k.epoque; })[0] || null : null;
   }
   function finEpoqueCase(contenu, partie) { var e = epoqueCase(contenu, partie); return e ? e.fin : null; }
+  // --- v18 : le thème. La case du pion donne le ton : butin, cadeaux, apartés, masques, farces et répliques ---
+  // Le thème d'une chose : son champ `theme` (objets, savants, masques, ennemis, succès), sinon son arbre (livres).
+  function themeDe(x) { return x ? x.theme || x.stat || null : null; }
+  // Le thème de la case où se tient le pion.
+  function themeCase(contenu, partie) {
+    var k = contenu.plateau && partie.plateau && contenu.plateau.cases[partie.plateau.position - 1];
+    return k ? k.stat || null : null;
+  }
+  // Le thème d'une épreuve : l'arbre de sa compétence, celui de l'ennemi d'un duel, sinon celui de la case.
+  function themeEpreuve(contenu, partie, epreuve) {
+    if (epreuve && epreuve.comp && contenu.parId[epreuve.comp]) return contenu.parId[epreuve.comp].stat;
+    if (epreuve && epreuve.ennemi && contenu.ennemiParId && contenu.ennemiParId[epreuve.ennemi]) return themeDe(contenu.ennemiParId[epreuve.ennemi]);
+    return themeCase(contenu, partie);
+  }
+  // Trois fois sur quatre, quand c'est possible, on puise dans ce qui est du thème. Tiré par hachage, pour
+  // ne pas déranger les tirages au sort ; `de` donne l'élément à comparer (par défaut la chose elle-même).
+  var PART_THEME = 4;
+  function duTheme(liste, theme, graine, de) {
+    if (!theme || !liste.length) return liste;
+    var ici = liste.filter(function (x) { return themeDe(de ? de(x) : x) === theme; });
+    return ici.length && hacher("theme|" + graine) % PART_THEME ? ici : liste;
+  }
+
   // Si le sort tombe sur un livre, l'IA prend de préférence un livre de l'époque de la case, sinon le plus récent permis.
-  function livreDeLaCase(contenu, partie, ouvert, alea) {
+  // v18 : et, parmi eux, de préférence un livre du thème.
+  function livreDeLaCase(contenu, partie, ouvert, alea, theme) {
     var e = epoqueCase(contenu, partie), livres = ouvert.filter(function (b) { return b.famille === "livres"; });
     if (!e || !livres.length) return null;
     var ici = livres.filter(function (b) { var a = Number(b.chose.annee); return (e.debut == null || a >= e.debut) && (e.fin == null || a <= e.fin); });
+    ici = duTheme(ici, theme, "livre|" + partie.journal.length, function (b) { return b.chose; });
     if (ici.length) return ici[Math.floor(alea() * ici.length)];
     return livres.slice().sort(function (a, b) { return Number(b.chose.annee) - Number(a.chose.annee); })[0];
   }
@@ -1596,6 +1631,9 @@
   function tirerCadeau(contenu, partie, t) {
     var lot = lotDe(partie, t), ouvert = horsLot(lot, butinOuvert(contenu, partie)), objets = ouvert.filter(function (b) { return b.famille === "objets"; });
     var liste = objets.length ? objets : ouvert;
+    // v18 : un objet du thème de la case, si le cabinet en a un en attente.
+    var th = themeCase(contenu, partie), ici = th ? liste.filter(function (b) { return themeDe(b.chose) === th; }) : [];
+    if (ici.length) liste = ici;
     if (!liste.length) return null;
     var b = liste[hacher(String(t) + "|" + partie.plateau.position + "|" + partie.journal.length) % liste.length];
     partie[b.famille][b.chose.id] = t; compterLot(lot, b.famille);
@@ -1612,8 +1650,10 @@
     if (assure) partie.butinAssure = false;
     var mult = epreuve.type === "duel" ? 1 : reglesDuJour(contenu, partie, t).butin;
     if (!assure && (!ouvert.length || alea() >= chanceButin(contenu, epreuve) * (fav ? fav.palier.butin : 1) * mult)) return null;
-    var b = ouvert[Math.floor(alea() * ouvert.length)];
-    if (b.famille === "livres") b = livreDeLaCase(contenu, partie, ouvert, alea) || b;
+    // v18 : trois fois sur quatre, le butin vient du thème de l'épreuve quand il y en a un en attente.
+    var th = themeEpreuve(contenu, partie, epreuve), pool = duTheme(ouvert, th, t + "|" + partie.journal.length, function (x) { return x.chose; });
+    var b = pool[Math.floor(alea() * pool.length)];
+    if (b.famille === "livres") b = livreDeLaCase(contenu, partie, ouvert, alea, themeDe(b.chose)) || b;
     partie[b.famille][b.chose.id] = t; compterLot(lot, b.famille);
     delete partie.gagnables[cleButin(b.famille, b.chose.id)];
     if (b.famille === "masques") partie.masque = b.chose.id;
@@ -1673,9 +1713,19 @@
 
   // v5 : l'IA choisit elle-même son masque, parmi ceux qu'elle a gagnés et qui vont au ton de la réplique.
   // Le dernier masque gagné passe en premier tant qu'il va au ton : elle l'étrenne.
-  function masquePourTon(contenu, partie, ton, graine) {
+  // v18 : `theme` (facultatif) : parmi les masques qui conviennent, elle prend de préférence un masque du thème.
+  function masquePourTon(contenu, partie, ton, graine, theme) {
     if (!contenu.ia) return null;
     var gagnes = contenu.ia.masques.filter(function (m) { return masqueDebloque(partie, m.id); });
+    if (theme && gagnes.length) {
+      var choix = masquePourTon(contenu, partie, ton, graine, null), gt = graine + "|" + theme;
+      if (themeDe(choix) === theme) return choix;
+      var mj = partie.masquesJour, jour = mj && mj.ids && mj.ids.length && mj.jour === cleJour(partie.maj || Date.now());
+      var cands = (jour ? gagnes.filter(function (m) { return mj.ids.indexOf(m.id) >= 0; }) : gagnes).filter(function (m) { return themeDe(m) === theme; });
+      var bons = cands.filter(function (m) { return !m.tons || m.tons.indexOf(ton) >= 0; });
+      if (bons.length && hacher("masque|" + gt) % PART_THEME) return bons[hacher(ton + "|" + gt) % bons.length];
+      return choix;
+    }
     if (!gagnes.length) return contenu.ia.masques[0];
     // v11 : elle ne parle qu'avec les masques qu'elle a choisis pour la journée.
     var mj = partie.masquesJour;
@@ -1693,13 +1743,18 @@
 
   // v5 : aparté où l'IA se sert d'un objet ou d'un livre débloqué. Une réplique sur deux environ en a un.
   // Renvoie {texte, objet} ou {texte, livre}, ou null.
-  function aparte(contenu, partie, ton, graine) {
+  // v18 : `theme` (facultatif) : elle sort de préférence un objet ou un livre du thème.
+  function aparte(contenu, partie, ton, graine, theme) {
     var lignes = contenu.apartes || [];
     if (!lignes.length) return null;
     var h = hacher("aparte|" + (graine || ""));
     if (h % 2) return null;
     var objets = contenu.objets.filter(function (o) { return partie.objets[o.id]; });
     var livres = (contenu.livres || []).filter(function (l) { return partie.livres && partie.livres[l.id]; });
+    if (theme) {
+      var oT = objets.filter(function (o) { return themeDe(o) === theme; }), lT = livres.filter(function (l) { return themeDe(l) === theme; });
+      if ((oT.length || lT.length) && (h >>> 13) % PART_THEME) { objets = oT; livres = lT; }
+    }
     if (!objets.length && !livres.length) return null;
     var sorte = !livres.length ? "objet" : !objets.length ? "livre" : (h >>> 3) % 3 === 0 ? "livre" : "objet";
     var choix = lignes.filter(function (l) { return l.sorte === sorte && l.ton === ton; });
@@ -1787,7 +1842,8 @@
   var DUREE_FARCE = JOUR;
   var CHANCE_FARCE = 1 / 3;
   // Après une épreuve ratée, une fois sur trois : l'IA déguise l'avatar pour 24 h (accessoire ou savant).
-  function tenterFarce(contenu, partie, t, alea) {
+  // v18 : `theme` (facultatif) : un savant du thème de l'épreuve ratée, quand il y en a un, a la priorité.
+  function tenterFarce(contenu, partie, t, alea, theme) {
     if (!contenu.avatar) return null;
     alea = alea || Math.random;
     if (alea() >= CHANCE_FARCE) return null;
@@ -1800,6 +1856,11 @@
       return f.type === "savant" ? av.savant !== f.id : av[f.emplacement] !== f.id;
     });
     if (!pool.length) return null;
+    if (theme) {
+      var parId = {}; (contenu.avatar.savants || []).forEach(function (s) { parId[s.id] = s; });
+      var ici = pool.filter(function (f) { return f.type === "savant" && themeDe(parId[f.id]) === theme; });
+      if (ici.length) pool = ici;
+    }
     var f = pool[Math.floor(alea() * pool.length)];
     partie.farce = { type: f.type, id: f.id, emplacement: f.emplacement || null, depuis: t, jusqua: t + DUREE_FARCE };
     return partie.farce;
@@ -1823,14 +1884,32 @@
     return { id: ligne.id, contexte: ligne.contexte, texte: texte, expression: expression(contenu, ligne.contexte) };
   }
 
+  // v18 : répliques propres à un arbre. Une réussite, un échec ou une annonce d'épreuve sur un thème a ses lignes
+  // « theme_reussi@cosmos »… ; l'IA les prend trois fois sur cinq, le reste du temps elle garde ses lignes générales.
+  var GROUPE_THEME = {
+    quiz_reussi: "reussi", quiz_parfait: "reussi", quiz_parfait_facile: "reussi", rappel_reussi: "reussi", rappel_retard: "reussi",
+    revision_reussie: "reussi", duel_gagne: "reussi",
+    quiz_rate: "rate", quiz_rate_facile: "rate", quiz_zero: "rate", rappel_perdu: "rate", revision_ratee: "rate", duel_perdu: "rate",
+    jouer_case: "jouer", jouer_hasard: "jouer", jouer_faible: "jouer", jouer_rappel: "jouer", jouer_bonus: "jouer", jouer_ouvre_arbre: "jouer",
+    jouer_choix_arbre: "jouer", jouer_revision: "jouer",
+  };
+  function lignesTheme(contenu, partie, ctx, theme) {
+    var g = theme && GROUPE_THEME[ctx], cle = g && "theme_" + g + "@" + theme, l = cle && contenu.commentairesPar[cle];
+    if (!l || !l.length || hacher(ctx + "|" + theme + "|" + partie.journal.length + "|" + (partie.repliques[cle] || []).length) % 5 >= 3) return null;
+    return { cle: cle, lignes: l };
+  }
+
   // Choisit une réplique pour le premier contexte de la liste qui en a. Dans chaque contexte,
   // aucune réplique ne revient avant que toutes aient été dites. Retient le choix dans la partie.
-  function replique(contenu, partie, contextes, alea, vars) {
+  // v18 : `theme` (facultatif), l'arbre de l'épreuve ; la réplique le garde, pour le masque et l'aparté.
+  function replique(contenu, partie, contextes, alea, vars, theme) {
     alea = alea || Math.random;
     for (var i = 0; i < contextes.length; i++) {
       var ctx = contextes[i], lignes = contenu.commentairesPar[ctx];
       if (!lignes || !lignes.length) continue;
-      var vues = partie.repliques[ctx] || [];
+      var lt = lignesTheme(contenu, partie, ctx, theme), cle = ctx;
+      if (lt) { lignes = lt.lignes; cle = lt.cle; }
+      var vues = partie.repliques[cle] || [];
       var fraiches = lignes.filter(function (l) { return vues.indexOf(l.id) < 0; });
       if (!fraiches.length) {
         // Contexte épuisé : on repart de zéro, sauf la dernière dite, pour ne pas l'enchaîner.
@@ -1838,8 +1917,12 @@
         fraiches = lignes.filter(function (l) { return vues.indexOf(l.id) < 0; });
       }
       var choix = fraiches[Math.floor(alea() * fraiches.length)];
-      partie.repliques[ctx] = [choix.id].concat(vues);
-      return habiller(contenu, choix, vars);
+      partie.repliques[cle] = [choix.id].concat(vues);
+      var out = habiller(contenu, choix, vars);
+      // Une ligne d'arbre garde le contexte d'origine : l'expression du masque suit le moment, pas le thème.
+      if (lt) { out.contexte = ctx; out.expression = expression(contenu, ctx); }
+      if (theme) out.theme = theme;
+      return out;
     }
     return null;
   }
@@ -1900,6 +1983,7 @@
     rangAvatar: rangAvatar,
     replique: replique,
     repliqueDuJour: repliqueDuJour,
+    themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,

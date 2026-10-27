@@ -18,7 +18,7 @@ def sans(texte):
 
 # Cases du plateau qui font apparaître un atome quand le pion passe dessus, avec la raison affichée.
 CASES = {
-    10: "Aristote ne croyait qu'à quatre éléments : l'eau, l'air, la terre et le feu. Il en manquait cent quatorze. Un atome sauvage vient le lui rappeler.",
+    7: "Démocrite imaginait des atomes insécables, crochus ou lisses, de toutes les formes. Il en existe cent dix-huit sortes, et aucune n'est insécable. Un atome sauvage sort du vide pour le lui dire.",
     31: "Vésale ouvre le corps humain : soixante pour cent d'eau, un peu de calcium, une pincée de fer. Les atomes s'échappent de la table de dissection.",
     48: "La pile de Volta empile du zinc et du cuivre. Davy s'en sert dès 1807 pour isoler le sodium et le potassium. Un atome s'échappe de l'électrolyse.",
     53: "Mendeleïev laisse des cases vides pour des éléments encore inconnus, et prédit leurs propriétés. Le gallium lui donne raison en 1875. Un atome sort de sa case.",

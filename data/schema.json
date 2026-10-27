@@ -576,6 +576,9 @@
           "type": "string"
          }
         }
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
        }
       }
      }
@@ -1067,6 +1070,9 @@
           "minimum": 1
          }
         }
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
        }
       }
      }
@@ -1181,6 +1187,9 @@
         "minimum": 1,
         "maximum": 7,
         "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
        }
       }
      }
@@ -1235,6 +1244,9 @@
        },
        "cheveux": {
         "$ref": "#/$defs/pixels"
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
        }
       }
      }
@@ -1280,6 +1292,9 @@
        },
        "cheveux": {
         "$ref": "#/$defs/pixels"
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
        }
       }
      }
@@ -1447,6 +1462,9 @@
        },
        "texte_regles": {
         "$ref": "#/$defs/texte"
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
        }
       }
      }
@@ -2120,6 +2138,9 @@
        },
        "condition": {
         "$ref": "#/$defs/condition"
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
        }
       }
      }
@@ -2212,6 +2233,9 @@
        "competence": {
         "$ref": "#/$defs/id",
         "description": "v7 : la compétence à laquelle le livre est rattaché (un livre par compétence)."
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
        }
       }
      }
@@ -2318,6 +2342,9 @@
        },
        "renvoi": {
         "$ref": "#/$defs/texte"
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
        }
       }
      }
@@ -2525,6 +2552,21 @@
      }
     }
    }
+  },
+  "theme": {
+   "description": "v18 : l'arbre auquel la chose se rattache ; la case du pion donne le ton.",
+   "enum": [
+    "logique",
+    "mecanique",
+    "savoir",
+    "eloquence",
+    "lucidite",
+    "empathie",
+    "alchimie",
+    "cosmos",
+    "etincelle",
+    "sagesse"
+   ]
   }
  }
 }

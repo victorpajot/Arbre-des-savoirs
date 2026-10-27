@@ -132,7 +132,8 @@ ENNEMIS = [
 ]
 
 # Le huitième (le Charlatan) reste en réserve : il arrive par un cadeau à l'IA.
-PLACEMENT = {"7": "sophiste", "15": "platiste", "26": "influenceur", "34": "astrologue", "44": "mesmer", "52": "lyssenko", "61": "complotiste"}
+# v18 : au premier tour, chacun attend sur une case de son thème (themes.py).
+from themes import PLACEMENT
 RESERVE = "charlatan"
 
 # ennemi, vrai, affirmation, explication, origine, source

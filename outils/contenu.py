@@ -29,6 +29,7 @@ import fiches
 import figures
 import symboles
 import succes_pixels
+import themes
 import honte
 import masques_regles
 import objets_v11
@@ -896,6 +897,8 @@ def main():
         "atomes.json": mendeleiev.donnees(),
     }
     assigner_lots(fichiers)
+    # v18 : le thème de chaque chose, pour que la case du pion donne le ton.
+    themes.poser(fichiers)
     for nom, contenu in fichiers.items():
         (DATA / nom).write_text(json.dumps(contenu, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         print(nom, "écrit")

@@ -626,10 +626,10 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const C8 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const t0 = new Date(2026, 10, 3, 10, 0).getTime();
   const P = M.nouvellePartie(t0);
-  P.plateau.position = 5;
-  // Le sophiste attend case 7 : un pas de 4 s'arrête dessus, il reste 2 cases.
+  P.plateau.position = 2;
+  // v18 : le sophiste attend case 4 (l'écriture) : un pas de 4 s'arrête dessus, il reste 2 cases.
   let dep = M.avancerPion(C8, P, 4, t0);
-  assert.equal(P.plateau.position, 7);
+  assert.equal(P.plateau.position, 4);
   assert.deepEqual([P.duel.ennemi, P.duel.reste, P.duel.pret], ["sophiste", 2, true]);
   assert.ok(dep.etapes.some(e => e.type === "ennemi"));
   let qs = M.tirerDuel(C8, P, t0, Math.random);
@@ -638,21 +638,21 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Défaite : le pion reste, le duel attend la prochaine épreuve réussie.
   let r = M.terminerDuel(C8, P, qs.map((m, i) => ({ id: m.id, correct: i > 0 })), t0);
   assert.equal(r.gagne, false);
-  assert.equal(P.plateau.position, 7);
+  assert.equal(P.plateau.position, 4);
   assert.equal(P.duel.pret, false);
   assert.equal(P.bestiaire.sophiste.defaites, 1);
   dep = M.avancerPion(C8, P, 3, t0 + 1000);
-  assert.equal(P.plateau.position, 7, "le pion ne passe pas sans duel");
+  assert.equal(P.plateau.position, 4, "le pion ne passe pas sans duel");
   assert.deepEqual([P.duel.reste, P.duel.pret], [3, true]);
   // Victoire : l'ennemi part, le pion finit son trajet, succès et butin.
   const qs2 = M.tirerDuel(C8, P, t0, Math.random);
   assert.ok(qs2.every(m => !qs.some(q => q.id === m.id)), "d'abord des affirmations jamais vues");
   r = M.terminerDuel(C8, P, qs2.map(m => ({ id: m.id, correct: true })), t0 + 2000, () => 0);
   assert.ok(r.gagne && r.premiere);
-  assert.equal(P.plateau.position, 10);
+  assert.equal(P.plateau.position, 7);
   assert.equal(P.duel, null);
   assert.ok(P.succes["vaincu-sophiste"]);
-  assert.ok(!M.ennemisPlateau(C8, P)[7], "l'ennemi vaincu quitte le plateau");
+  assert.ok(!M.ennemisPlateau(C8, P)[4], "l'ennemi vaincu quitte le plateau");
   assert.deepEqual([P.bestiaire.sophiste.victoires, P.bestiaire.sophiste.serie, P.bestiaire.sophiste.meilleure], [1, 1, 1]);
   // Un recul fait oublier le duel.
   P.plateau.position = 13; M.avancerPion(C8, P, 4, t0);
@@ -669,7 +669,10 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(cases.length, 7); assert.equal(new Set(ids).size, 7);
     assert.ok(!ids.includes(C8.reserve));
     assert.ok(cases.every(n => n > 2 && n < 63 && !M.specialDe(C8, P, n)));
-    assert.notDeepEqual(cases.sort((a, b) => a - b), [7, 15, 26, 34, 44, 52, 61], "les postes glissent");
+    assert.notDeepEqual(cases.sort((a, b) => a - b), [4, 15, 34, 39, 43, 52, 61], "les postes glissent");
+    // v18 : chacun se poste sur une case de son thème quand il en reste une de libre.
+    const surTheme = Object.keys(en).filter(n => C8.plateau.cases[n - 1].stat === C8.ennemiParId[en[n]].theme).length;
+    assert.ok(surTheme >= 6, "ennemis sur les cases de leur thème : " + surTheme);
     const nouveaux = ids.filter(id => !P.bestiaire[id]).length;
     assert.ok(nouveaux >= 5, "l'IA préfère les ennemis jamais affrontés");
   }

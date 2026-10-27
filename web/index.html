@@ -968,12 +968,14 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     if (!rep) return null;
     var expr = rep.expression || M.expression(C, rep.contexte);
     var graine = (rep.id || tx(rep.texte).slice(0, 40)) + "|" + M.cleJour(maintenant()) + "|" + P.journal.length;
-    var m = (rep.masque && C.ia.masques.filter(function (x) { return x.id === rep.masque; })[0]) || M.masquePourTon(C, P, expr, graine);
+    // v18 : le thème de la réplique (l'arbre de l'épreuve), sinon celui de la case du pion, guide le masque et l'aparté.
+    var theme = rep.theme || M.themeCase(C, P);
+    var m = (rep.masque && C.ia.masques.filter(function (x) { return x.id === rep.masque; })[0]) || M.masquePourTon(C, P, expr, graine, theme);
     var tenuIA = P.objetIA && C.objets.filter(function (o) { return o.id === P.objetIA; })[0];
     var b = el('<div class="comite' + (petit ? " petit" : "") + '"><span class="masque">' + (m ? svgMasque(m, expr, petit ? 34 : 44) : "") + (tenuIA ? '<span class="tenu-ia">' + svgObjet(tenuIA, false, petit ? 16 : 20) + "</span>" : "") + '</span><div><div class="qui"></div><p></p></div></div>');
     b.querySelector(".qui").innerHTML = esc(tx(C.narrateur) || "L'IA") + (m ? " <i>· " + esc(tx(m.nom)) + "</i>" : "");
     b.querySelector("p").textContent = tx(rep.texte);
-    var a = rep.aparte === false ? null : M.aparte(C, P, expr, graine);
+    var a = rep.aparte === false ? null : M.aparte(C, P, expr, graine, theme);
     if (a) {
       var vis = a.objet ? '<span class="vitrine">' + svgObjet(a.objet, false, 26) + "</span>" : '<span class="vitrine" style="background:' + a.livre.couleur + '">' + svgSprite(a.livre.embleme, 24) + "</span>";
       var ap = el('<p class="aparte">' + vis + "<span></span></p>");
@@ -1640,7 +1642,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var k = c.comp, s = stat(k.stat), v = M.valeurEpreuve(C, P, { type: c.type, comp: k.id }, t), bonus = C.plateau.regles.bonus.jouer || 0;
     // v15 : la case du pion annonce l'arbre de l'épreuve ; « hors case » quand cet arbre n'a rien à jouer.
     var sc = c.stat ? stat(c.stat) : s, kc = c.kase;
-    var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(sc.nom), "case": kc ? tx(kc.titre) : "" }); sauver();
+    var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(sc.nom), "case": kc ? tx(kc.titre) : "" }, c.raison === "hors_case" ? null : k.stat); sauver();
     // La case du pion en grand, avec son histoire, avant l'épreuve.
     var ici = C.plateau.cases[P.plateau.position - 1];
     var bandeau = '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
@@ -2560,7 +2562,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     if (!P.duel || !P.duel.pret) return;
     var e = C.ennemiParId[P.duel.ennemi];
     duel = { ennemi: e, phase: "vs", qs: M.tirerDuel(C, P, maintenant()), i: 0, res: [], repondu: false, fin: null, etape: 0,
-      replique: M.replique(C, P, ["ennemi"]) };
+      replique: M.replique(C, P, ["ennemi"], null, null, e.theme) };
     sauver();
     rendreDuel();
   }
@@ -2620,7 +2622,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         s.onclick = function () {
           if (!dernier) { duel.i++; duel.repondu = false; rendreDuel(); return; }
           duel.fin = M.terminerDuel(C, P, duel.res, maintenant(), undefined, duel.qs.length);
-          duel.fin.replique = M.replique(C, P, [duel.fin.gagne ? "duel_gagne" : "duel_perdu"]);
+          duel.fin.replique = M.replique(C, P, [duel.fin.gagne ? "duel_gagne" : "duel_perdu"], null, null, duel.ennemi.theme);
           if (duel.fin.plateau) duel.fin.repliquePlateau = M.replique(C, P, duel.fin.plateau.contextes);
           duel.phase = "fin"; duel.etape = 0; sauver(); rendreDuel();
         };
@@ -2697,7 +2699,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   function lancerCombat() {
     var s = M.atomeSauvage(C, P); if (!s) return;
     var cb = M.tirerCombat(C, P);
-    combat = { s: s, e: s.element, qs: cb.questions, phase: "apparition", i: 0, res: [], repondu: false, fin: null, etape: 0, replique: M.replique(C, P, ["atome_apparait"]) };
+    combat = { s: s, e: s.element, qs: cb.questions, phase: "apparition", i: 0, res: [], repondu: false, fin: null, etape: 0, replique: M.replique(C, P, ["atome_apparait"], null, null, "alchimie") };
     sauver(); rendreCombat();
   }
   function fermerCombat() {
@@ -2749,7 +2751,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         s.onclick = function () {
           if (!dernier) { combat.i++; combat.repondu = false; rendreCombat(); return; }
           combat.fin = M.terminerCombat(C, P, combat.res.filter(Boolean).length, maintenant());
-          combat.fin.replique = M.replique(C, P, [combat.fin.capture ? "atome_capture" : "atome_fuite"]);
+          combat.fin.replique = M.replique(C, P, [combat.fin.capture ? "atome_capture" : "atome_fuite"], null, null, "alchimie");
           combat.phase = "fin"; combat.etape = 0; sauver(); rendreCombat();
         };
         retour.appendChild(el('<div style="height:12px"></div>')); retour.appendChild(s); s.focus();
@@ -3398,10 +3400,10 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var t = maintenant();
     quiz.fin = quiz.mode === "rappel" ? M.terminerRappel(C, P, quiz.id, quiz.res, t, { jouer: quiz.jouer, uneCase: quiz.uneCase, total: quiz.qs.length })
       : M.terminerQuiz(C, P, quiz.id, quiz.res, t, { duree: Date.now() - quiz.debut, jouer: quiz.jouer, uneCase: quiz.uneCase, total: quiz.qs.length });
-    quiz.fin.replique = M.replique(C, P, quiz.fin.contextes);
+    quiz.fin.replique = M.replique(C, P, quiz.fin.contextes, null, null, quiz.fin.theme);
     // Le masque tout juste gagné, l'IA l'étrenne pour l'annoncer.
     if (quiz.fin.replique && quiz.fin.masque && quiz.fin.replique.contexte === "masque") quiz.fin.replique.masque = quiz.fin.masque.id;
-    if (quiz.fin.farce) quiz.fin.repliqueFarce = M.replique(C, P, ["farce"], null, { deguisement: nomDeguisement(quiz.fin.farce) });
+    if (quiz.fin.farce) quiz.fin.repliqueFarce = M.replique(C, P, ["farce"], null, { deguisement: nomDeguisement(quiz.fin.farce) }, quiz.fin.theme);
     var dep = quiz.fin.plateau;
     if (dep) {
       var ctx = dep.contextes.filter(function (c) { return c !== "plateau_avance"; });
