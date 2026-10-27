@@ -1495,7 +1495,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   function boutonJouer() {
     var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? C.plateau.regles.bonus.jouer || 0 : 0;
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + '</span><span><b>Jouer</b><span class="s">' +
-      (c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + (c.raison === "case" ? "Case " + esc(tx(stat(c.stat).nom)) + " : l'IA y choisit l'épreuve." : "L'IA choisit l'épreuve.") : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus ? '<span class="pill">+' + bonus + "</span>" : "") + "</button>");
+      (c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + (c.raison === "case" ? "Case " + esc(tx(stat(c.stat).nom)) + " : l'IA y choisit l'épreuve." : c.raison === "ouvre_arbre" ? "Case " + esc(tx(stat(c.stat).nom)) + " : un arbre fermé à ouvrir." : "L'IA choisit l'épreuve.") : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus ? '<span class="pill">+' + bonus + "</span>" : "") + "</button>");
     if (!c) b.disabled = true;
     b.onclick = ouvrirJouer;
     return b;
@@ -1507,7 +1507,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var sc = c.stat ? stat(c.stat) : s, kc = c.kase;
     var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(sc.nom), "case": kc ? tx(kc.titre) : "" }); sauver();
     var bandeau = kc && kc.stat ? '<div class="case-dicte" style="--c:' + couleur(kc.stat) + '"><span class="vitrine">' + svgSprite(kc.icone, 28) + '</span><span><b>Case ' + kc.n + " · " + esc(tx(kc.titre)) + "</b><br>" +
-      (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</span></div>" : "";
+      (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : c.raison === "ouvre_arbre" ? "Arbre " + esc(tx(sc.nom)) + " encore fermé : réussis ce quiz pour l'ouvrir." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</span></div>" : "";
     feuilleSimple('<div class="choix-ia"><div class="eyebrow">L\'IA a choisi</div>' + bandeau + '<div id="ia-jouer"></div>' +
       '<div class="epreuve" style="--c:' + couleur(k.stat) + '"><span class="de' + (v.duJour ? " bonus" : "") + '"><b>+' + (v.total + bonus) + '</b></span><span class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" +
       (c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · dont +" + bonus + " pour le bouton Jouer</span></span></div>" +
@@ -2947,7 +2947,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       var ordre = q.type === "qcm" ? M.melanger(q.choix.map(function (_, i) { return i; }), Math.random) : null;
       return { q: q, ordre: ordre };
     });
-    quiz = { id: id, mode: mode, jouer: !!(opts && opts.jouer), qs: qs, i: 0, res: [], repondu: false, fin: null, chrono: !!(P.options && P.options.chrono), minuteur: null, debut: Date.now(), debutQuestion: 0 };
+    quiz = { id: id, mode: mode, jouer: !!(opts && opts.jouer), qs: qs, i: 0, res: [], repondu: false, fin: null, chrono: !!(P.options && P.options.chrono), minuteur: null, debut: Date.now(), debutQuestion: 0,
+      arbreFerme: !M.arbreOuvert(C, P, C.parId[id].stat) };
     rendreQuiz();
   }
   function fermerQuiz() {
@@ -3161,6 +3162,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     if (nom === "verdict") {
       z.appendChild(el('<div class="bilan"><div class="eyebrow" style="color:' + couleur(k.stat) + '">' + esc(tx(k.nom)) + '</div><div class="grand">' + titre + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" + gain + "<p>" + esc(texte) + "</p></div>"));
       var mot = comite(r.replique); if (mot) z.appendChild(mot);
+      // v15 : quiz lancé sur une case d'arbre fermé, réussi : l'arbre s'ouvre.
+      if (quiz.arbreFerme && M.arbreOuvert(C, P, k.stat)) z.appendChild(el('<div class="case-dicte" style="--c:' + couleur(k.stat) + '"><span><b>Arbre ' + esc(tx(stat(k.stat).nom)) + " ouvert !</b><br>Ses compétences sont jouables, et ses cases du plateau lanceront ses quiz.</span></div>"));
     } else if (nom.indexOf("recompense:") === 0) {
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
     } else if (nom === "duel") {

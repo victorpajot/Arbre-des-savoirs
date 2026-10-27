@@ -322,6 +322,12 @@ REPLIQUES.update({
         "{case}. Le décor est planté, l'épreuve suit : {comp}. Brecht appelait ça la distanciation, j'appelle ça la cohérence.",
         sans("Case {stat}, quiz {stat}. {comp}. Je vous laisse admirer la rigueur."),
     ],
+    "jouer_ouvre_arbre": [
+        "{case}. Un arbre que vous n'avez jamais ouvert : {stat}. Première leçon, {comp}. Réussissez, et la porte reste ouverte. Champollion n'a eu besoin que d'une pierre.",
+        "La case dit {stat}, et cet arbre vous est fermé. Je vous en tends la clé : {comp}. Comme Ariane, je fournis le fil, pas les jambes.",
+        "Vous entrez en {stat} par la petite porte : {comp}. Euclide disait qu'il n'y a pas de voie royale. Il y a des cases.",
+        sans("Arbre fermé, case ouverte. {comp}, et {stat} est à vous. Ratez, et je referme. Doucement, mais je referme."),
+    ],
     "jouer_hors_case": [
         "{case} réclame du {stat}, mais l'arbre n'a rien à vous proposer. J'improvise : {comp}. Darwin appelait ça s'adapter.",
         sans("Rien à jouer en {stat} pour l'instant. Faute de grives, on mange des merles : {comp}."),
@@ -414,7 +420,7 @@ EXPRESSIONS = {
     "prison": "moqueuse", "quarantaine": "moqueuse", "retour_epoque": "moqueuse",
     "rappel_perdu": "decue", "retards": "impatiente", "rappel_retard": "impatiente", "nuit": "impatiente",
     "jouer_rappel": "impatiente", "jouer_bonus": "neutre", "jouer_faible": "moqueuse", "jouer_hasard": "moqueuse",
-    "jouer_case": "neutre", "jouer_hors_case": "moqueuse",
+    "jouer_case": "neutre", "jouer_hors_case": "moqueuse", "jouer_ouvre_arbre": "impressionnee",
     "farce": "moqueuse",
     "ennemi": "moqueuse", "duel_gagne": "impressionnee", "duel_perdu": "moqueuse",
 }

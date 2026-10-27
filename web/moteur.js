@@ -233,7 +233,15 @@
     if (!fond || fond.indexOf(stat) >= 0) return true;
     if (partie.options && partie.options.tousArbres) return true;
     if (contenu.succes.some(function (s) { return s.ouvre === stat && partie.succes[s.id]; })) return true;
-    return (contenu.parStat[stat] || []).some(function (k) { return !!partie.competences[k.id]; });
+    // v15 : il faut l'avoir maîtrisée au moins une fois (un quiz raté sur une case d'arbre fermé n'ouvre rien).
+    return (contenu.parStat[stat] || []).some(function (k) { var e = partie.competences[k.id]; return !!(e && (e.maitrise || e.maitriseDepuis || e.xp)); });
+  }
+  // v15 : sur une case d'arbre fermé, l'IA propose le premier quiz de cet arbre ; le réussir l'ouvre.
+  function porteArbre(contenu, partie, stat) {
+    if (arbreOuvert(contenu, partie, stat)) return null;
+    return (contenu.parStat[stat] || []).filter(function (k) {
+      return k.rang === 1 && k.prerequis.every(function (p) { return contenu.parId[p] && contenu.parId[p].stat !== stat ? debloque(contenu, partie, p) : true; });
+    })[0] || null;
   }
   function pionnierDe(contenu, stat) { return contenu.succes.filter(function (s) { return s.ouvre === stat; })[0] || null; }
 
@@ -1459,6 +1467,8 @@
       var dusIci = dus.filter(function (c) { return c.stat === st; });
       return { comp: (dusIci[0] || dus[0]), type: "rappel", raison: "rappel", stat: dusIci.length ? st : null, kase: k || null };
     }
+    var porte = st && porteArbre(contenu, partie, st);
+    if (porte) return { comp: porte, type: "quiz", raison: "ouvre_arbre", stat: st, kase: k };
     if (!dispo.length) return null;
     if (st) {
       var ici = dispo.filter(function (c) { return c.stat === st; });

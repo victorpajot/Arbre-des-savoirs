@@ -353,6 +353,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const t1 = t0 + 2 * jour;
     const c2 = M.choixIA(C5, P, t1);
     assert.equal(c2.type, "rappel"); assert.equal(c2.comp.id, c.comp.id);
+    // v15 : une case d'arbre fermé lance son premier quiz ; raté, l'arbre reste fermé ; réussi, il s'ouvre.
+    {
+      const O = M.nouvellePartie(t0); O.plateau.position = 4;
+      const x = M.choixIA(C5, O, t0);
+      assert.equal(x.raison, "ouvre_arbre"); assert.equal(x.stat, "eloquence");
+      M.terminerQuiz(C5, O, x.comp.id, juste(O, x.comp.id, 5, 0), t0);
+      assert.ok(!M.arbreOuvert(C5, O, "eloquence"), "raté : toujours fermé");
+      O.plateau.position = 4;
+      M.terminerQuiz(C5, O, x.comp.id, juste(O, x.comp.id, 5, 5), t0 + 1000);
+      assert.ok(M.arbreOuvert(C5, O, "eloquence"), "réussi : ouvert");
+    }
     // v15 : pas de livre anachronique ; un livre tiré vient de l'époque de la case quand il y en a.
     {
       const B = M.nouvellePartie(t0); B.plateau.position = 4;
@@ -369,7 +380,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       Q.plateau.position = k.n;
       const x = M.choixIA(C5, Q, t0);
       const jouable = M.disponibles(C5, Q, t0).some(c => c.stat === k.stat);
-      assert.equal(x.raison, jouable ? "case" : "hors_case", "case " + k.n);
+      const ferme = !M.arbreOuvert(C5, Q, k.stat);
+      assert.equal(x.raison, ferme ? "ouvre_arbre" : jouable ? "case" : "hors_case", "case " + k.n);
+      if (ferme) { assert.equal(x.comp.stat, k.stat); assert.equal(x.comp.rang, 1); }
       if (jouable) assert.equal(x.comp.stat, k.stat, "épreuve de l'arbre de la case " + k.n);
       assert.equal(x.kase.n, k.n);
     });
