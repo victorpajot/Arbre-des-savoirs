@@ -369,9 +369,10 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 @keyframes voile-ombre { to { opacity: 0.62; } }
 .quiz.honte-dessus { z-index: 32; }
 .plateau .grille-cadre.en-geste svg * { animation-play-state: paused !important; }
-.plateau #pion { transition: opacity .3s ease; }
+.plateau #pion { transition: transform .17s ease-out, opacity .15s ease; }
 .plateau #pion.efface { opacity: 0; }
-.plateau .scene .vedette { transform-box: fill-box; transform-origin: center; animation: vedette 2.4s ease-in-out forwards; }
+.plateau .a-reveler svg, .plateau .a-reveler image { visibility: hidden; }
+.plateau .scene .vedette { transform-box: fill-box; transform-origin: center; animation: vedette 2.4s .15s ease-in-out both; }
 @keyframes vedette { 0% { transform: scale(1); } 25% { transform: scale(1.9); } 40% { transform: scale(1.7); } 55% { transform: scale(1.85); } 70%, 100% { transform: scale(1.75); } }
 .plateau .scene .etiquette-case { animation: etiquette .5s .25s ease-out both; }
 @keyframes etiquette { from { opacity: 0; transform: translateY(6px); } }
@@ -1397,7 +1398,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   function borner(x, y) {
     return [Math.max(ETENDUE[0], Math.min(ETENDUE[0] + ETENDUE[2] - CADRE, x)), Math.max(ETENDUE[1], Math.min(ETENDUE[1] + ETENDUE[3] - CADRE, y))];
   }
-  function cadrePion(n) { var p = centreCase(n); return borner(p[0] - CADRE / 2, p[1] - CADRE / 2); }
+  function cadrePion(n) { var p = centreCase(n); return borner(p[0] - CADRE / 2, p[1] - 14 - CADRE / 2); }
   function boiteVue(c) { return c[0].toFixed(1) + " " + c[1].toFixed(1) + " " + CADRE + " " + CADRE; }
   function glisserVue(svg, cible, ms) {
     var d = svg.getAttribute("viewBox").split(" ").map(Number), t0 = null;
@@ -1432,7 +1433,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   // v13 : un ennemi se voit de loin. Portrait cerclé de rouge, épinglé au-dessus de sa case, avec un liseré qui pulse.
   // Si le pion est sur sa case (duel en attente), l'épingle se range sur le côté.
   function epingleEnnemi(en, n, ici, place) {
-    var p = centreCase(place), ex = p[0] + (ici ? 20 : 0), ey = p[1] - (ici ? 20 : 25);
+    var p = centreCase(place), ex = p[0] + (ici ? 24 : 0), ey = ici ? (p[1] > 70 ? p[1] - 40 : p[1] + 28) : p[1] - 25;
     return '<g data-n="' + n + '" class="garde" style="cursor:pointer" transform="translate(' + ex.toFixed(1) + " " + ey.toFixed(1) + ')">' +
       '<circle r="17" fill="none" stroke="#D94141" stroke-width="3" class="garde-pulse"/>' +
       (ici ? "" : '<path d="M-5.5,11 L0,20 L5.5,11 Z" fill="#D94141" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>') +
@@ -1530,10 +1531,10 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var ici = animPion && animPion.places ? animPion.places[0] : pl.idx + 1, pos = centreCase(ici);
     var vb = bilan ? boiteVue(cadrePion(ici)) : texteVue();
     // v8 : le pion se repère d'un coup d'œil, même en vue d'ensemble : halo qui pulse, double contour, flèche au-dessus.
-    var pion = '<g id="pion" data-n="pion" style="cursor:pointer" transform="translate(' + pos[0].toFixed(1) + " " + pos[1].toFixed(1) + ')"><circle r="25" fill="#FFD447" opacity="0.45" class="halo-pion"/><ellipse cx="0" cy="17" rx="14" ry="4" fill="#000" opacity="0.3"/>' +
+    var pion = '<g id="pion" data-n="pion" style="cursor:pointer" transform="translate(' + pos[0].toFixed(1) + " " + pos[1].toFixed(1) + ')"><g transform="translate(0 -17) scale(0.82)"><circle r="25" fill="#FFD447" opacity="0.45" class="halo-pion"/><ellipse cx="0" cy="17" rx="14" ry="4" fill="#000" opacity="0.3"/>' +
       '<circle r="19.5" fill="#1E1A2B"/><circle r="17.5" fill="var(--parchemin)" stroke="#FFD447" stroke-width="3.5"/>' +
       '<path class="fleche-pion" d="M0,-24 L-6,-33 H6 Z" fill="#FFD447" stroke="#1E1A2B" stroke-width="1.6" stroke-linejoin="round"/>' +
-      '<svg x="-14.5" y="-14.5" width="29" height="29" viewBox="8 1 24 24" class="pix">' + pixelsAvatar(0, 0) + "</svg></g>";
+      '<svg x="-14.5" y="-14.5" width="29" height="29" viewBox="8 1 24 24" class="pix">' + pixelsAvatar(0, 0) + "</svg></g></g>";
     return '<svg class="grille' + (bilan ? " zoom" : " libre") + '" viewBox="' + vb + '" role="img" aria-label="Plateau de l\'histoire : une route sinueuse du départ, en haut à gauche, jusqu\'à l\'arrivée, en bas. Décor : ' + (DECORS[ton] || DECORS.neutre).nom + ", l'IA est " + (NOM_HUMEUR[ton] || ton) + ". Ton pion est sur la case " + pl.position + " sur " + nb + '">' + '<g class="monde">' + cachePlateau.svg + '</g><g class="scene"></g>' + pion + "</svg>";
   }
   function valeurTexte(k, type) {
@@ -1633,11 +1634,13 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var fin = cases[cases.length - 1];
     if (reduit || cases.length < 2) { poser(fin); if (svgP) projecteur(svgP, fin); return; }
     var svg = g.ownerSVGElement; if (!racine && svg && svg.scrollIntoView) svg.scrollIntoView({ block: "center", behavior: "smooth" });
+    var cible = svgP && svgP.querySelector('.monde g[data-p="' + fin + '"]');
+    if (cible) cible.classList.add("a-reveler");
     var j = 0;
     setTimeout(function pas() {
       j++; poser(cases[j], 180); g.classList.remove("saut"); void g.getBBox(); g.classList.add("saut");
       if (j < cases.length - 1) setTimeout(pas, 190);
-      else setTimeout(function () { projecteur(svgP, fin); }, 320);
+      else setTimeout(function () { if (cible) cible.classList.remove("a-reveler"); projecteur(svgP, fin); }, 320);
     }, 450);
   }
   function blocPlateau() {
@@ -3286,7 +3289,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     oubli: function (e) { return "Trou de mémoire, case " + e.case + " : retour à la case " + e.vers + ", la plus ancienne que tu n'as jamais vue parmi les 15 dernières."; },
     oubli_vide: function (e) { return "Trou de mémoire, case " + e.case + " : tu as tout vu derrière toi. L'IA cherche, ne trouve rien, et boude."; },
     renvoi: function (e) { return tx(C.ennemiParId[e.ennemi].nom) + " te renvoie à la case " + e.vers + " : « " + tx(C.ennemiParId[e.ennemi].renvoi) + " »"; },
-    ennemi: function (e) { return "Case " + e.case + " : " + nomEn(C.ennemiParId[e.ennemi]) + " te barre la route. Gagne le duel pour faire les " + e.reste + " case" + (e.reste > 1 ? "s" : "") + " qui restent."; },
+    ennemi: function (e) { return "Case " + e.case + " : " + nomEn(C.ennemiParId[e.ennemi]) + " te barre la route. " + (e.reste > 1 ? "Gagne le duel pour faire les " + e.reste + " cases qui restent." : e.reste === 1 ? "Gagne le duel pour faire la case qui reste." : "Gagne le duel pour passer."); },
     cadeau: function (e) { return "Case cadeau " + e.case + " : un " + ({ objets: "objet", livres: "livre", accessoires: "accessoire", masques: "masque" }[e.famille] || "trésor") + " rejoint ta collection, sans épreuve."; },
     cadeau_vide: function (e) { return "Case cadeau " + e.case + " : le cabinet est vide pour ce tour. L'IA promet de se rattraper."; },
     teleport: function (e) { return "Téléportation, case " + e.case + " : retour à la case " + e.vers + "."; },
