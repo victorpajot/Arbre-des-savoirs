@@ -173,3 +173,10 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 - Frise : au premier tour, une date de compétence attend que le pion ait atteint son époque.
 - « Avancer d'une seule case » : le joueur choisit l'arbre. Feuille Jouer ouverte sur la case du pion, en grand.
 - Pion posé au-dessus de sa case, qui reste lisible ; silhouette et flash quand un avatar change.
+
+## v17 : succès illustrés, ultimatum
+
+- Chaque succès a son image en pixel art (`outils/succes_pixels.py` : 33 dessins neufs, sinon objet, case, ennemi ou savant).
+- Carte de succès : « +20 crédits −10 (décision de l'IA) = 10 crédits ».
+- Crédits affichés à côté du niveau. Ultimatum de l'IA : payer (exigence suivante ×1,5) ou refuser (elle verse la somme, retire 2 vrais niveaux).
+- Plateau : plus d'animations en boucle dans le bilan ni sur Android, dessin repeint après le projecteur.
