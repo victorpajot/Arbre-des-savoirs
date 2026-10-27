@@ -122,3 +122,9 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 - **Mobile** : embarquer `data/` dans l'app (ou le télécharger à jour) et porter `moteur.js` tel quel (React Native, Capacitor) ou fonction par fonction. La routine du matin = `rappelsDus()` + `suggestion()`, déclenchée par une notification locale.
 - **Unreal** : chaque fichier contient un tableau plat d'objets à id texte stable. Le pixel art est stocké en lignes de caractères + palette : une texture se reconstruit pixel par pixel. Les schémas SVG n'utilisent que des classes (liste dans `outils/illustrations.py`). Un struct par type (`FCompetence`, `FQuestion`, `FSucces`) et un import JSON en DataTable suffisent ; les textes sont des objets `{"fr": "..."}` à aplatir en colonne par langue si besoin.
 - **Sauvegarde** : un objet JSON versionné (`format: 4`) ; `migrer()` le met à niveau. Le même fichier exporté depuis le web peut être importé ailleurs.
+
+## v11 : les masques de l'IA changent les règles
+
+- Chaque matin, l'IA choisit de 1 à 3 masques parmi ceux qu'elle a gagnés, selon sa faveur : comblée, des masques cléments ou neutres ; furieuse, des masques cruels. Leurs règles s'additionnent jusqu'au lendemain (`outils/masques_regles.py`) : butin, cases d'avance, nombre de questions du quiz, ennemis absents ou en renfort, pièges désarmés, recul d'un rappel raté, seuil de capture d'un atome.
+- Fiche IA : son visage du jour et son portrait en tête, puis ses masques du jour avec leurs règles.
+- Objets : « Offrir à l'IA » en premier ; chaque objet a une citation de sa source (`outils/objets_v11.py`), affichée quand on l'offre ou qu'on le donne à son avatar. Un objet tenu donne un coup de pouce sur environ une épreuve réussie sur quatre (case, butin assuré ou faveur).

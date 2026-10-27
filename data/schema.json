@@ -807,7 +807,9 @@
        "notice",
        "source",
        "condition",
-       "pixels"
+       "pixels",
+       "citation",
+       "bonus"
       ],
       "additionalProperties": false,
       "properties": {
@@ -881,9 +883,56 @@
           "description": "v10 : éclat de l'objet, 3 pour ce qui brille ou en fait trop. Plus il est grand, plus la faveur de l'IA monte."
          }
         }
+       },
+       "citation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "verbatim",
+         "texte",
+         "source"
+        ],
+        "properties": {
+         "verbatim": {
+          "type": "boolean",
+          "description": "Faux : résumé de la source, affiché « D'après »."
+         },
+         "texte": {
+          "$ref": "#/$defs/texte"
+         },
+         "source": {
+          "type": "string",
+          "minLength": 3
+         }
+        }
+       },
+       "bonus": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "type"
+        ],
+        "properties": {
+         "type": {
+          "enum": [
+           "case",
+           "butin",
+           "faveur"
+          ]
+         },
+         "n": {
+          "type": "integer",
+          "minimum": 1
+         }
+        }
        }
       }
      }
+    },
+    "chance_bonus": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
     }
    }
   },
@@ -1105,7 +1154,10 @@
        "source",
        "base",
        "expressions",
-       "tons"
+       "tons",
+       "caractere",
+       "regles",
+       "texte_regles"
       ],
       "additionalProperties": false,
       "properties": {
@@ -1162,6 +1214,51 @@
         "minimum": 1,
         "maximum": 7,
         "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
+       },
+       "caractere": {
+        "enum": [
+         "clement",
+         "neutre",
+         "cruel"
+        ]
+       },
+       "regles": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "v11 : règles que le masque impose les jours où l'IA le porte (voir outils/masques_regles.py).",
+        "properties": {
+         "butin": {
+          "type": "number",
+          "minimum": 0
+         },
+         "avance": {
+          "type": "integer"
+         },
+         "questions": {
+          "type": "integer"
+         },
+         "ennemis": {
+          "enum": [
+           "absents",
+           "renfort"
+          ]
+         },
+         "pieges": {
+          "enum": [
+           "neutres"
+          ]
+         },
+         "echec": {
+          "type": "number",
+          "minimum": 0
+         },
+         "atome": {
+          "type": "integer"
+         }
+        }
+       },
+       "texte_regles": {
+        "$ref": "#/$defs/texte"
        }
       }
      }
@@ -1243,6 +1340,36 @@
        "description": "Piège posé chaque jour devant le pion quand l'IA est furieuse."
       }
      }
+    },
+    "masques_jour": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "max",
+      "selon_faveur"
+     ],
+     "properties": {
+      "max": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "selon_faveur": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "array",
+        "items": {
+         "enum": [
+          "clement",
+          "neutre",
+          "cruel"
+         ]
+        }
+       }
+      }
+     }
+    },
+    "portrait": {
+     "type": "object"
     }
    }
   },

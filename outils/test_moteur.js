@@ -713,3 +713,79 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(vieux.faveur, null);
   console.log("OK : v10 faveur de l'IA, cadeaux brillants, pièges de l'IA");
 }
+
+// v11 : les masques du jour changent les règles, les objets tenus donnent des coups de pouce
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
+  const CM = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const t0 = new Date(2026, 9, 28, 10, 0).getTime(), J = 86400000, Q = CM.regles.quiz.questions_par_quiz;
+  const parId = {}; X.ia.masques.forEach(m => { parId[m.id] = m; });
+  assert.ok(X.ia.masques.every(m => m.caractere && m.regles && m.texte_regles));
+  assert.ok(X.objets.objets.every(o => o.citation && o.citation.texte && o.citation.source && o.bonus));
+  let P = M.nouvellePartie(t0);
+  X.ia.masques.forEach(m => { P.masques[m.id] = t0; });
+  // 1 à 3 masques par jour, stables dans la journée, tirés parmi les caractères que permet la faveur.
+  const vus = new Set();
+  for (let k = 0; k < 30; k++) {
+    const t = t0 + k * J; P.faveur = { valeur: 90, maj: t };
+    const ms = M.masquesDuJour(CM, P, t);
+    assert.ok(ms.length >= 1 && ms.length <= 3); vus.add(ms.length);
+    assert.ok(ms.every(m => m.caractere !== "cruel"), "comblée : pas de masque cruel");
+    assert.deepEqual(M.masquesDuJour(CM, P, t + 3600000).map(m => m.id), ms.map(m => m.id));
+  }
+  assert.ok(vus.size > 1, "le nombre de masques varie d'un jour à l'autre");
+  const tF = t0 + 40 * J; P.faveur = { valeur: 5, maj: tF };
+  assert.ok(M.masquesDuJour(CM, P, tF).every(m => m.caractere === "cruel"), "furieuse : masques cruels");
+  // Règles cumulées.
+  const imposer = (ids, t) => { P.masquesJour = { jour: M.cleJour(t), ids, renfort: null }; };
+  const t1 = t0 + 50 * J; P.faveur = { valeur: 50, maj: t1 };
+  imposer(["promethee", "golem", "tete-airain"], t1);
+  let rj = M.reglesDuJour(CM, P, t1);
+  assert.equal(rj.butin, 4); assert.equal(rj.avance, -1); assert.equal(rj.questions, -1); assert.equal(rj.echec, 2);
+  assert.equal(M.questionsQuiz(CM, P, t1), Q - 1);
+  imposer(["finale", "turc"], t1); assert.equal(M.questionsQuiz(CM, P, t1), Math.min(8, Q + 3));
+  imposer(["homoncule"], t1); assert.equal(M.seuilAtome(CM, P, t1), Math.max(1, X.atomes.regles.seuil - 1));
+  imposer(["tubes"], t1); assert.equal(M.seuilAtome(CM, P, t1), Math.min(X.atomes.regles.questions, X.atomes.regles.seuil + 1));
+  // Héron : une case de plus à l'épreuve réussie.
+  P.competences["math.probabilites"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: t1 + J, maitriseDepuis: t0 };
+  imposer(["theatre"], t1); const base = M.valeurEpreuve(CM, P, { type: "quiz", comp: "math.probabilites" }, t1).total;
+  imposer(["heron"], t1); assert.equal(M.valeurEpreuve(CM, P, { type: "quiz", comp: "math.probabilites" }, t1).total, base + 1);
+  // Perceptron : un piège de recul est sans effet.
+  const R = X.plateau.regles;
+  let caseRecul = null;
+  for (let c = R.depart + 1; c < R.arrivee; c++) { const sp = M.specialDe(CM, P, c); if (sp && sp.type === "recul") { caseRecul = c; break; } }
+  P.plateau.ennemis = {}; P.plateau.position = caseRecul - 1;
+  imposer(["perceptron"], t1);
+  let dep = M.deplacer(CM, P, 1, t1, "test");
+  assert.ok(dep.etapes.some(e => e.type === "piege_evite")); assert.equal(P.plateau.position, caseRecul);
+  // Bombe : les ennemis ne barrent plus la route.
+  P.plateau.position = R.depart; P.plateau.ennemis = { [R.depart + 1]: CM.ennemis[0].id };
+  imposer(["bombe"], t1); dep = M.deplacer(CM, P, 1, t1, "test");
+  assert.equal(P.plateau.position, R.depart + 1); assert.ok(!P.duel, "pas de duel quand les ennemis sont absents");
+  // Talos : un ennemi de renfort se poste devant le pion.
+  const t2 = t0 + 60 * J; P.faveur = { valeur: 50, maj: t2 }; P.plateau.position = R.depart + 1; P.plateau.ennemis = {};
+  P.masquesJour = null;
+  const garde = X.ia.masques.filter(m => m.id !== "talos").map(m => m.id);
+  garde.forEach(id => { delete P.masques[id]; }); P.masques.talos = t0;
+  const ms = M.masquesDuJour(CM, P, t2);
+  assert.deepEqual(ms.map(m => m.id), ["talos"]);
+  const rf = P.masquesJour.renfort; assert.ok(rf && rf.case >= P.plateau.position + 2 && rf.case <= P.plateau.position + 8);
+  assert.equal(P.plateau.ennemis[rf.case], rf.ennemi);
+  // Objet tenu : bonus parfois, butin assuré au tirage suivant.
+  const P2 = M.nouvellePartie(t0); P2.plateau.ennemis = {};
+  const obj = X.objets.objets.find(o => o.bonus.type === "case");
+  P2.objets[obj.id] = t0; P2.avatar.main = obj.id;
+  P2.competences["math.probabilites"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: t0 + 99 * J, maitriseDepuis: t0 };
+  let bonus = 0;
+  for (let k = 0; k < 40; k++) {
+    P2.plateau.position = R.depart;
+    const r = M.jouerPlateau(CM, P2, { type: "quiz", comp: "math.probabilites" }, { reussi: true }, t0 + k * 1000);
+    if (r.etapes.some(e => e.type === "bonus_objet")) bonus++;
+  }
+  assert.ok(bonus > 2 && bonus < 25, "bonus de l'objet de temps en temps (" + bonus + "/40)");
+  // Migration.
+  const vieux = M.migrer(JSON.parse(JSON.stringify(Object.assign(M.nouvellePartie(t0), { masquesJour: undefined, butinAssure: undefined }))));
+  assert.equal(vieux.masquesJour, null); assert.equal(vieux.butinAssure, false);
+  console.log("OK : v11 masques du jour, règles cumulées, renfort, objets tenus");
+}

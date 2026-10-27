@@ -3,6 +3,9 @@
  "nom": {
   "fr": "L'IA"
  },
+ "portrait": {
+  "fr": "L'IA mène la partie. Elle a lu tout ce que l'humanité a écrit et n'en a retenu que les moqueries. Chaque matin, elle choisit d'un à trois masques parmi ceux qu'elle a gagnés, et chacun change une règle du jeu : bien lunée, elle prend des masques cléments ; vexée, des masques cruels. Pour l'amadouer, une seule méthode qui marche depuis Cléopâtre : lui offrir ce qui brille."
+ },
  "palette": {
   "k": "#1E1A2B",
   "n": "#2B2B33",
@@ -122,6 +125,27 @@
   "faveur_comblee": "impressionnee",
   "piege_ia": "moqueuse"
  },
+ "masques_jour": {
+  "max": 3,
+  "selon_faveur": {
+   "comblee": [
+    "clement",
+    "neutre"
+   ],
+   "contente": [
+    "clement",
+    "neutre",
+    "cruel"
+   ],
+   "boudeuse": [
+    "neutre",
+    "cruel"
+   ],
+   "furieuse": [
+    "cruel"
+   ]
+  }
+ },
  "faveur": {
   "depart": 60,
   "baisse_par_jour": 8,
@@ -203,6 +227,11 @@
     "decue",
     "impatiente"
    ],
+   "caractere": "neutre",
+   "regles": {},
+   "texte_regles": {
+    "fr": "Le jeu suit ses règles ordinaires."
+   },
    "base": [
     "........................................",
     "........................................",
@@ -523,6 +552,13 @@
     "impressionnee",
     "impatiente"
    ],
+   "caractere": "clement",
+   "regles": {
+    "butin": 2
+   },
+   "texte_regles": {
+    "fr": "Il vole pour vous : deux fois plus de butin."
+   },
    "base": [
     "............kRRk..kook..kRRk............",
     "............kRRk.kooook.kRRk............",
@@ -844,6 +880,13 @@
     "impatiente",
     "decue"
    ],
+   "caractere": "cruel",
+   "regles": {
+    "ennemis": "renfort"
+   },
+   "texte_regles": {
+    "fr": "Il monte la garde : un ennemi de plus se poste devant ton pion."
+   },
    "base": [
     "................kffffffrk...............",
     "................kfrrrrrRk...............",
@@ -1165,6 +1208,13 @@
     "impressionnee",
     "neutre"
    ],
+   "caractere": "clement",
+   "regles": {
+    "avance": 1
+   },
+   "texte_regles": {
+    "fr": "La vapeur pousse : une case de plus à chaque épreuve réussie."
+   },
    "base": [
     "........kkkk................kkkk........",
     ".......klzgGk..............kwwwwk.......",
@@ -1486,6 +1536,14 @@
     "moqueuse",
     "neutre"
    ],
+   "caractere": "neutre",
+   "regles": {
+    "questions": -1,
+    "echec": 2
+   },
+   "texte_regles": {
+    "fr": "Elle répond par oui ou par non : quiz de 4 questions, mais un rappel raté fait reculer deux fois plus."
+   },
    "base": [
     "........................................",
     "....................k...................",
@@ -1807,6 +1865,13 @@
     "moqueuse",
     "impatiente"
    ],
+   "caractere": "clement",
+   "regles": {
+    "atome": -1
+   },
+   "texte_regles": {
+    "fr": "Il aime les petites choses : une seule bonne réponse suffit pour capturer un atome."
+   },
    "base": [
     ".............kBBBBBBBBBBBBBk............",
     ".............kBBBBBBBBBBBBBk............",
@@ -2128,6 +2193,14 @@
     "decue",
     "neutre"
    ],
+   "caractere": "neutre",
+   "regles": {
+    "avance": -1,
+    "butin": 2
+   },
+   "texte_regles": {
+    "fr": "Lent mais généreux : une case de moins, deux fois plus de butin."
+   },
    "base": [
     "........................................",
     "........................................",
@@ -2449,6 +2522,14 @@
     "decue",
     "impatiente"
    ],
+   "caractere": "cruel",
+   "regles": {
+    "echec": 2,
+    "butin": 0.5
+   },
+   "texte_regles": {
+    "fr": "Il soigne par la saignée : un rappel raté fait reculer deux fois plus, et moitié moins de butin."
+   },
    "base": [
     ".........kGGGGGGGGGGGGGGGGGGGGnk........",
     ".........kGGGGGGGGGGGGGGGGGGGGnk........",
@@ -2770,6 +2851,14 @@
     "neutre",
     "impressionnee"
    ],
+   "caractere": "neutre",
+   "regles": {
+    "butin": 1.5,
+    "avance": -1
+   },
+   "texte_regles": {
+    "fr": "Le canard digère… en apparence : plus de butin, une case de moins."
+   },
    "base": [
     "........................................",
     "....................k...................",
@@ -3091,6 +3180,13 @@
     "moqueuse",
     "neutre"
    ],
+   "caractere": "cruel",
+   "regles": {
+    "questions": 1
+   },
+   "texte_regles": {
+    "fr": "Il y a quelqu'un de caché dedans, et il est exigeant : quiz de 6 questions."
+   },
    "base": [
     "................kkkkkkkkk...............",
     "...............kfffffrrRjk..............",
@@ -3412,6 +3508,13 @@
     "neutre",
     "impressionnee"
    ],
+   "caractere": "clement",
+   "regles": {
+    "questions": -1
+   },
+   "texte_regles": {
+    "fr": "Il n'écrit que quarante caractères : quiz de 4 questions."
+   },
    "base": [
     "........................................",
     "........................................",
@@ -3733,6 +3836,14 @@
     "decue",
     "impatiente"
    ],
+   "caractere": "cruel",
+   "regles": {
+    "ennemis": "renfort",
+    "butin": 0.5
+   },
+   "texte_regles": {
+    "fr": "Elle se venge de son créateur : un ennemi de plus, moitié moins de butin."
+   },
    "base": [
     "........................................",
     "........................................",
@@ -4054,6 +4165,14 @@
     "neutre",
     "impressionnee"
    ],
+   "caractere": "neutre",
+   "regles": {
+    "pieges": "neutres",
+    "butin": 0.5
+   },
+   "texte_regles": {
+    "fr": "Elle n'a jamais été construite, ses pièges non plus : reculs et téléportations sans effet, mais moitié moins de butin."
+   },
    "base": [
     "...kYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYk...",
     "...kYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYk...",
@@ -4375,6 +4494,13 @@
     "impatiente",
     "decue"
    ],
+   "caractere": "cruel",
+   "regles": {
+    "avance": -1
+   },
+   "texte_regles": {
+    "fr": "Robota, la corvée : une case de moins à chaque épreuve réussie."
+   },
    "base": [
     "..................kfrk..................",
     ".................kffrRk.................",
@@ -4696,6 +4822,13 @@
     "impatiente",
     "neutre"
    ],
+   "caractere": "clement",
+   "regles": {
+    "ennemis": "absents"
+   },
+   "texte_regles": {
+    "fr": "Enigma est cassée : les ennemis ne barrent plus la route aujourd'hui."
+   },
    "base": [
     "........................................",
     "........................................",
@@ -5017,6 +5150,14 @@
     "neutre",
     "moqueuse"
    ],
+   "caractere": "cruel",
+   "regles": {
+    "butin": 0.5,
+    "atome": 1
+   },
+   "texte_regles": {
+    "fr": "Une lampe grille toutes les deux heures : moitié moins de butin, et un atome demande trois bonnes réponses."
+   },
    "base": [
     "...........kkkk....kkkk....kkkk.........",
     "..........kddcck..kddcck..kddcck........",
@@ -5338,6 +5479,13 @@
     "decue",
     "moqueuse"
    ],
+   "caractere": "clement",
+   "regles": {
+    "pieges": "neutres"
+   },
+   "texte_regles": {
+    "fr": "Il a appris à voir les pièges : reculs et téléportations sans effet."
+   },
    "base": [
     "........................................",
     "........................................",
@@ -5659,6 +5807,14 @@
     "impatiente",
     "neutre"
    ],
+   "caractere": "neutre",
+   "regles": {
+    "avance": 1,
+    "butin": 0.5
+   },
+   "texte_regles": {
+    "fr": "La chaîne de montage tourne vite : une case de plus, moitié moins de butin."
+   },
    "base": [
     "........................................",
     "........................................",
@@ -5980,6 +6136,13 @@
     "neutre",
     "decue"
    ],
+   "caractere": "clement",
+   "regles": {
+    "echec": 0
+   },
+   "texte_regles": {
+    "fr": "« Et que ressentez-vous face à cet échec ? » Un rappel raté ne fait pas reculer."
+   },
    "base": [
     "........................................",
     "........................................",
@@ -6301,6 +6464,14 @@
     "moqueuse",
     "decue"
    ],
+   "caractere": "cruel",
+   "regles": {
+    "avance": -1,
+    "atome": 1
+   },
+   "texte_regles": {
+    "fr": "Il réfléchit longtemps avant chaque pas : une case de moins, et un atome demande trois bonnes réponses."
+   },
    "base": [
     "......................kzzzzzzzk.........",
     "......................kzzzzzzzk.........",
@@ -6622,6 +6793,14 @@
     "moqueuse",
     "impressionnee"
    ],
+   "caractere": "cruel",
+   "regles": {
+    "questions": 1,
+    "butin": 1.5
+   },
+   "texte_regles": {
+    "fr": "Il calcule 200 millions de coups par seconde : quiz de 6 questions, mais plus de butin."
+   },
    "base": [
     "........................................",
     "....kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk....",
@@ -6943,6 +7122,14 @@
     "impressionnee",
     "moqueuse"
    ],
+   "caractere": "clement",
+   "regles": {
+    "butin": 1.5,
+    "avance": 1
+   },
+   "texte_regles": {
+    "fr": "Il sourit : plus de butin et une case de plus."
+   },
    "base": [
     "........................................",
     "........................................",
@@ -7264,6 +7451,14 @@
     "impressionnee",
     "moqueuse"
    ],
+   "caractere": "neutre",
+   "regles": {
+    "avance": 2,
+    "questions": 1
+   },
+   "texte_regles": {
+    "fr": "Le coup 37 : deux cases de plus, mais quiz de 6 questions."
+   },
    "base": [
     "........................................",
     "........................................",
@@ -7586,6 +7781,15 @@
     "impressionnee",
     "impatiente"
    ],
+   "caractere": "cruel",
+   "regles": {
+    "questions": 2,
+    "ennemis": "renfort",
+    "butin": 2
+   },
+   "texte_regles": {
+    "fr": "Il sait tout : quiz de 7 questions, un ennemi de plus, mais deux fois plus de butin."
+   },
    "base": [
     "..................kkkk..................",
     ".............kkkkkddddkkkkk.............",

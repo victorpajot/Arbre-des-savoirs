@@ -24,6 +24,8 @@ import cadeaux
 import pieges
 import mendeleiev
 import brillants
+import masques_regles
+import objets_v11
 import bibliotheque_v7
 import bibliotheque_v8
 import plateau
@@ -669,7 +671,19 @@ def cabinet():
     liste = tous_objets()
     assert {o["id"] for o in liste} == set(pixels), set(pixels) ^ {o["id"] for o in liste}
     return {"format": 2, "palette": PALETTE, "taille": [objets32.N, objets32.N],
-            "objets": [{**o, "pixels": pixels[o["id"]], "cadeau": cadeau(o["id"])} for o in liste]}
+            # v11 : la source citée quand on offre ou qu'on porte l'objet, et son bonus quand l'avatar le tient.
+            "chance_bonus": objets_v11.CHANCE_BONUS,
+            "objets": [{**o, "pixels": pixels[o["id"]], "cadeau": cadeau(o["id"]), "citation": citation_objet(o["id"]), "bonus": bonus_objet(o["id"])} for o in liste]}
+
+
+def citation_objet(id):
+    verbatim, texte, source = objets_v11.CITATIONS[id]
+    return {"verbatim": verbatim, "texte": fr(texte), "source": source}
+
+
+def bonus_objet(id):
+    t, n = objets_v11.bonus(id, cadeau(id)["eclat"])
+    return {"type": t, "n": n} if n else {"type": t}
 
 
 def cadeau(id):
@@ -690,18 +704,25 @@ def commentaires():
     return {"format": 3, "narrateur": fr(ia.NOM), "commentaires": ia.repliques(), "apartes": ia.apartes(), "surnoms": ia.surnoms()}
 
 
+def regles_masque(id):
+    car, regles, texte = masques_regles.REGLES[id]
+    return {"caractere": car, "regles": regles, "texte_regles": fr(texte)}
+
+
 def narrateur():
     """L'IA : ses masques (un par palier de succès) et l'expression prise selon le contexte."""
     calques = {m["id"]: m for m in masques.calques()}
     return {
         "format": 2,
         "nom": fr(ia.NOM),
+        "portrait": fr(masques_regles.PORTRAIT),
         "palette": PALETTE,
         "taille": [40, 48],
         "expressions": ia.EXPRESSIONS,
+        "masques_jour": {"max": 3, "selon_faveur": masques_regles.SELON_FAVEUR},
         "faveur": {**brillants.FAVEUR, "paliers": [{**p, "nom": fr(p["nom"]), "effet": fr(p["effet"])} for p in brillants.FAVEUR["paliers"]]},
         "masques": [{"id": m["id"], "nom": fr(m["nom"]), **({"condition": m["condition"]} if m["condition"] else {}), "notice": fr(m["notice"]),
-                     "source": m["source"], "tons": masques.TONS[m["id"]], "base": calques[m["id"]]["base"], "expressions": calques[m["id"]]["expressions"]} for m in masques.MASQUES],
+                     "source": m["source"], "tons": masques.TONS[m["id"]], **regles_masque(m["id"]), "base": calques[m["id"]]["base"], "expressions": calques[m["id"]]["expressions"]} for m in masques.MASQUES],
     }
 
 

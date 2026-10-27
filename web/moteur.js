@@ -138,6 +138,8 @@
       sauvages: [],
       faveur: null,
       colere: null,
+      masquesJour: null,
+      butinAssure: false,
       plateau: nouveauPlateau(),
       derniereVisite: t,
       retour: null,
@@ -202,6 +204,9 @@
     // v10 : faveur de l'IA (posée au premier besoin) et jour de son dernier piège.
     out.faveur = p.faveur || null;
     out.colere = p.colere || null;
+    // v11 : masques choisis par l'IA pour la journée, et butin promis par l'objet tenu.
+    out.masquesJour = p.masquesJour || null;
+    out.butinAssure = !!p.butinAssure;
     out.plateau = Object.assign(nouveauPlateau(), p.plateau || {});
     out.derniereVisite = p.derniereVisite || p.maj || out.cree;
     out.options = Object.assign({ chrono: false }, p.options || {});
@@ -522,11 +527,14 @@
     var duJour = k.stat === bonusDuJour(contenu, partie, t) ? r.bonus.du_jour : 0;
     // v10 : comblée, l'IA ajoute une case ; furieuse, elle en retire une (jamais moins d'une).
     var fav = faveurIA(contenu, partie, t), faveur = fav ? fav.palier.avance : 0;
+    // v11 : les masques du jour ajoutent ou retirent des cases, et durcissent ou adoucissent le rappel raté.
+    var rj = reglesDuJour(contenu, partie, t), echec = epreuve.type === "rappel" ? r.echec.rappel : r.echec.quiz;
+    if (epreuve.type === "rappel") echec = Math.round(echec * rj.echec);
     return {
-      base: base, duJour: duJour, faveur: faveur, total: Math.max(1, base + duJour + faveur),
+      base: base, duJour: duJour, faveur: faveur, masques: rj.avance, total: Math.max(1, base + duJour + faveur + rj.avance),
       parfait: epreuve.type === "quiz" ? r.bonus.parfait : 0,
       chrono: epreuve.type === "quiz" ? r.bonus.chrono : 0,
-      echec: epreuve.type === "rappel" ? r.echec.rappel : r.echec.quiz,
+      echec: echec,
     };
   }
 
@@ -555,6 +563,15 @@
     var bonusJouer = issue.reussi && issue.jouer ? (contenu.plateau.regles.bonus.jouer || 0) : 0;
     var valeur = issue.reussi ? v.total + (issue.parfait ? v.parfait : 0) + (issue.chrono ? v.chrono : 0) + bonusJouer : v.echec;
     var etapes = [];
+    // v11 : l'objet tenu par l'avatar donne parfois un coup de pouce après une épreuve réussie.
+    var tenu = issue.reussi && partie.avatar && partie.avatar.main && (contenu.objets || []).filter(function (o) { return o.id === partie.avatar.main; })[0];
+    if (tenu && tenu.bonus && hacher(String(t) + "|" + tenu.id + "|" + partie.journal.length) % 100 < 100 * ((contenu.cabinet && contenu.cabinet.chance_bonus) || 0)) {
+      var bo = tenu.bonus;
+      if (bo.type === "case") valeur += bo.n;
+      else if (bo.type === "butin") partie.butinAssure = true;
+      else if (bo.type === "faveur") { var fv = faveurIA(contenu, partie, t); if (fv) partie.faveur = { valeur: Math.min(100, fv.valeur + bo.n), maj: t }; }
+      etapes.push({ type: "bonus_objet", objet: tenu.id, bonus: bo.type, n: bo.n || 0 });
+    }
     if (pl.prison > 0 && issue.parfait) {
       pl.prison--;
       etapes.push({ type: pl.prison ? "prison_reste" : "prison_liberation" });
@@ -604,7 +621,9 @@
       pl.visites[n] = (pl.visites[n] || 0) + 1;
       if (n > pl.atteinte) pl.atteinte = n;
     }
-    var ennemis = ennemisPlateau(contenu, partie);
+    var rj = reglesDuJour(contenu, partie, t);
+    // v11 : un masque peut écarter les ennemis pour la journée.
+    var ennemis = rj.ennemis === "absents" ? {} : ennemisPlateau(contenu, partie);
     function avancer(n) {
       var cible = pl.position + n;
       // v7 : un ennemi sur la route arrête le pion et lance un duel ; il reste `reste` cases à faire après la victoire.
@@ -624,7 +643,7 @@
         etapes.push({ type: "tour_fini", tour: pl.tours + 1 });
         pl.tours++;
         pl.atteinte = R.arrivee;
-        pl.ennemis = null; pl.speciaux = {}; ennemis = ennemisPlateau(contenu, partie);
+        pl.ennemis = null; pl.speciaux = {}; ennemis = rj.ennemis === "absents" ? {} : ennemisPlateau(contenu, partie);
         pl.position = R.depart;
         chemin.push(R.depart);
         return false;
@@ -651,7 +670,9 @@
           if (!sp) break;
           if (sp.type === "eureka") { c.eurekas++; etapes.push({ type: "eureka", case: pl.position, n: pas }); continue; }
           if (sp.type === "avance") { pas = sp.n; etapes.push({ type: "avance", case: pl.position, n: sp.n }); continue; }
-          if (sp.type === "recul") {
+          if (rj.pieges === "neutres" && (sp.type === "recul" || sp.type === "teleport" || sp.type === "retour_epoque")) {
+            etapes.push({ type: "piege_evite", case: pl.position, regle: sp.type });
+          } else if (sp.type === "recul") {
             var avant = pl.position;
             poser(Math.max(R.depart, pl.position - sp.n * mult));
             c.reculs++;
@@ -868,7 +889,7 @@
     var s = atomeSauvage(contenu, partie); if (!s) return null;
     var R = contenu.atomes.regles, c = partie.compteurs, f = ficheAtome(partie, s.z);
     partie.sauvages.shift();
-    var capture = bonnes >= R.seuil, premiere = capture && !f.capture;
+    var capture = bonnes >= seuilAtome(contenu, partie, t), premiere = capture && !f.capture;
     if (capture) { if (!f.capture) { f.capture = t; c.atomesCaptures = (c.atomesCaptures || 0) + 1; } }
     else { f.fuites++; c.atomesEnfuis = (c.atomesEnfuis || 0) + 1; }
     var rec = verifierRecompenses(contenu, partie, t);
@@ -964,6 +985,60 @@
     pl.speciaux[c] = { type: P.type, n: P.n, ia: true, raison: { fr: "Posé par l'IA, furieuse qu'on l'oublie. Un cadeau qui brille la calmerait." } };
     partie.maj = t;
     return c;
+  }
+
+  // --- Masques du jour (v11) --------------------------------------------------
+  // Chaque jour, l'IA choisit de 1 à 3 masques parmi ceux qu'elle a gagnés, selon sa faveur :
+  // comblée, des masques cléments ; furieuse, des masques cruels. Leurs règles s'additionnent.
+  function masquesDuJour(contenu, partie, t) {
+    if (!contenu.ia || !contenu.ia.masques_jour) return [];
+    var jour = cleJour(t), parId = {};
+    contenu.ia.masques.forEach(function (m) { parId[m.id] = m; });
+    var mj = partie.masquesJour;
+    if (mj && mj.jour === jour) return mj.ids.map(function (id) { return parId[id]; }).filter(Boolean);
+    var fav = faveurIA(contenu, partie, t), permis = contenu.ia.masques_jour.selon_faveur[fav ? fav.palier.id : "contente"] || ["neutre"];
+    var gagnes = contenu.ia.masques.filter(function (m) { return masqueDebloque(partie, m.id); });
+    var aptes = gagnes.filter(function (m) { return permis.indexOf(m.caractere) >= 0; });
+    if (!aptes.length) aptes = gagnes.filter(function (m) { return m.caractere === "neutre"; });
+    if (!aptes.length) aptes = [contenu.ia.masques[0]];
+    var tries = aptes.slice().sort(function (a, b) { return hacher(jour + "|" + a.id) - hacher(jour + "|" + b.id); });
+    var n = 1 + hacher(jour + "|nombre") % Math.min(contenu.ia.masques_jour.max, tries.length);
+    var choisis = tries.slice(0, n);
+    partie.masquesJour = { jour: jour, ids: choisis.map(function (m) { return m.id; }), renfort: null };
+    // Un masque « renfort » poste un ennemi absent sur une case libre devant le pion.
+    if (choisis.some(function (m) { return m.regles && m.regles.ennemis === "renfort"; }) && contenu.plateau && contenu.placement) {
+      var pl = partie.plateau, R = contenu.plateau.regles, en = ennemisPlateau(contenu, partie);
+      var presents = Object.keys(en).map(function (k) { return en[k]; });
+      var absents = contenu.ennemis.map(function (x) { return x.id; }).filter(function (x) { return presents.indexOf(x) < 0; });
+      var cases = [];
+      for (var c = pl.position + 2; c <= Math.min(pl.position + 8, R.arrivee - 1); c++) if (!en[c] && !specialDe(contenu, partie, c)) cases.push(c);
+      if (absents.length && cases.length) {
+        var k = cases[hacher(jour + "|case") % cases.length];
+        en[k] = absents[hacher(jour + "|ennemi") % absents.length];
+        partie.masquesJour.renfort = { case: k, ennemi: en[k] };
+      }
+    }
+    return choisis;
+  }
+  // Les règles cumulées des masques du jour.
+  function reglesDuJour(contenu, partie, t) {
+    var out = { butin: 1, avance: 0, questions: 0, ennemis: null, pieges: null, echec: 1, atome: 0 };
+    masquesDuJour(contenu, partie, t).forEach(function (m) {
+      var g = m.regles || {};
+      if (g.butin != null) out.butin *= g.butin;
+      if (g.echec != null) out.echec *= g.echec;
+      out.avance += g.avance || 0; out.questions += g.questions || 0; out.atome += g.atome || 0;
+      if (g.ennemis === "absents" || (g.ennemis && !out.ennemis)) out.ennemis = g.ennemis;
+      if (g.pieges) out.pieges = g.pieges;
+    });
+    return out;
+  }
+  function questionsQuiz(contenu, partie, t) {
+    return Math.max(3, Math.min(8, contenu.regles.quiz.questions_par_quiz + reglesDuJour(contenu, partie, t).questions));
+  }
+  function seuilAtome(contenu, partie, t) {
+    var A = contenu.atomes; if (!A) return 0;
+    return Math.max(1, Math.min(A.regles.questions, A.regles.seuil + reglesDuJour(contenu, partie, t).atome));
   }
 
   // --- Aujourd'hui -----------------------------------------------------------
@@ -1148,7 +1223,10 @@
     alea = alea || Math.random;
     var ouvert = butinOuvert(contenu, partie);
     var fav = epreuve.type === "duel" ? null : faveurIA(contenu, partie, t);
-    if (!ouvert.length || alea() >= chanceButin(contenu, epreuve) * (fav ? fav.palier.butin : 1)) return null;
+    var assure = partie.butinAssure && epreuve.type !== "duel" && ouvert.length;
+    if (assure) partie.butinAssure = false;
+    var mult = epreuve.type === "duel" ? 1 : reglesDuJour(contenu, partie, t).butin;
+    if (!assure && (!ouvert.length || alea() >= chanceButin(contenu, epreuve) * (fav ? fav.palier.butin : 1) * mult)) return null;
     var b = ouvert[Math.floor(alea() * ouvert.length)];
     partie[b.famille][b.chose.id] = t;
     delete partie.gagnables[cleButin(b.famille, b.chose.id)];
@@ -1213,6 +1291,12 @@
     if (!contenu.ia) return null;
     var gagnes = contenu.ia.masques.filter(function (m) { return masqueDebloque(partie, m.id); });
     if (!gagnes.length) return contenu.ia.masques[0];
+    // v11 : elle ne parle qu'avec les masques qu'elle a choisis pour la journée.
+    var mj = partie.masquesJour;
+    if (mj && mj.ids && mj.ids.length && mj.jour === cleJour(partie.maj || Date.now())) {
+      var duJour = gagnes.filter(function (m) { return mj.ids.indexOf(m.id) >= 0; });
+      if (duJour.length) { var bons = duJour.filter(function (m) { return !m.tons || m.tons.indexOf(ton) >= 0; }); return (bons.length ? bons : duJour)[hacher(ton + "|" + (graine || "")) % (bons.length ? bons : duJour).length]; }
+    }
     var neuf = masqueActuel(contenu, partie), vus = partie.masques || {};
     if (neuf && (neuf.tons || []).indexOf(ton) >= 0 && vus[neuf.id] === Math.max.apply(null, gagnes.map(function (m) { return vus[m.id]; })) &&
         hacher(String(graine || "")) % 2 === 0) return neuf;
@@ -1400,7 +1484,7 @@
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
-    faveurIA: faveurIA, piegeIA: piegeIA,
+    faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
@@ -1409,6 +1493,7 @@
     deplacer: deplacer,
     avancerPion: avancerPion,
     cleJour: cleJour,
+    jouerPlateau: jouerPlateau,
   };
 
   if (typeof module === "object" && module.exports) module.exports = Moteur;
