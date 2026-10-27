@@ -1451,7 +1451,9 @@ svg.grille .interro { transition: opacity .3s; }
   }
   // v15 : seules les cases où le pion s'est arrêté sont dévoilées ; celles qu'il survole restent cachées.
   // v19 : un atome sauvage qui attend sur une case la recouvre : on ne la voit pas tant qu'il est là.
-  function caseConnue(n) { return M.caseDecouverte(P, n) && !atomeSur(n); }
+  // Pareil pour un ennemi qui la garde : la case reste cachée tant qu'il n'est pas vaincu.
+  function ennemiSur(n) { var id = C.plateau && M.ennemisPlateau(C, P)[n]; return id ? C.ennemiParId[id] || null : null; }
+  function caseConnue(n) { return M.caseDecouverte(P, n) && !atomeSur(n) && !ennemiSur(n); }
   function nomEpoque(id) { var e = C.plateau.epoques.filter(function (x) { return x.id === id; })[0]; return e ? tx(e.nom) : ""; }
   function texteRegle(sp) {
     if (!sp) return "";
@@ -1552,9 +1554,11 @@ svg.grille .interro { transition: opacity .3s; }
     var k = C.plateau.cases[n - 1]; if (!sc || !g || !k) return;
     var p = centreCase(place), en = M.ennemisPlateau(C, P)[n] && C.ennemiParId[M.ennemisPlateau(C, P)[n]];
     var atP = atomeSur(n);
-    var titre = atP ? "Un atome sauvage" : tx(k.titre); if (titre.length > 30) titre = titre.slice(0, 29) + "…";
+    var enP = !atP && ennemiSur(n);
+    var titre = atP ? "Un atome sauvage" : enP ? tx(enP.nom) : tx(k.titre); if (titre.length > 30) titre = titre.slice(0, 29) + "…";
     var lw = Math.max(96, Math.min(150, titre.length * 4.6 + 18));
     if (atP) lw = Math.max(lw, 124);
+    if (enP) lw = Math.max(lw, 100);
     // v15 : au bord de la vue, la case agrandie, son étiquette et le VS sortaient du cadre. On les ramène dedans.
     var vb = (svg.getAttribute("viewBox") || "").split(/[ ,]+/).map(Number);
     if (vb.length === 4 && vb[2] > 0) {
@@ -1570,9 +1574,9 @@ svg.grille .interro { transition: opacity .3s; }
     var h = '<rect class="voile-ombre" ' + tout + ' fill="' + (en ? "#3A0D12" : "#14101F") + '"/>' +
       '<rect class="voile-flash" ' + tout + ' fill="' + (en ? "#D94141" : "#FFD447") + '"/>' +
       '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="30" fill="' + (en ? "#D94141" : "#FFD447") + '" opacity="0.35" class="halo-vedette"/>' +
-      '<g transform="translate(' + (dx || 0).toFixed(1) + " " + (dy || 0).toFixed(1) + ')"><g class="vedette">' + (atP ? cacherIcone(g.innerHTML) : g.innerHTML) + "</g></g>" +
+      '<g transform="translate(' + (dx || 0).toFixed(1) + " " + (dy || 0).toFixed(1) + ')"><g class="vedette">' + (atP || enP ? cacherIcone(g.innerHTML) : g.innerHTML) + "</g></g>" +
       '<g class="etiquette-case"><rect x="' + (p[0] - lw / 2).toFixed(1) + '" y="' + ly.toFixed(1) + '" width="' + lw.toFixed(1) + '" height="27" rx="7" fill="#1E1A2B" stroke="' + (en ? "#D94141" : "#FFD447") + '" stroke-width="2"/>' +
-      '<text x="' + p[0].toFixed(1) + '" y="' + (ly + 11).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="800" font-family="JetBrains Mono, monospace" fill="' + (en ? "#FF9C9C" : "#FFD447") + '">CASE ' + n + " · " + (atP ? "MENDELEÏEV" : esc(formatAnnee(k.annee))) + "</text>" +
+      '<text x="' + p[0].toFixed(1) + '" y="' + (ly + 11).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="800" font-family="JetBrains Mono, monospace" fill="' + (en ? "#FF9C9C" : "#FFD447") + '">CASE ' + n + " · " + (atP ? "MENDELEÏEV" : enP ? "ENNEMI" : esc(formatAnnee(k.annee))) + "</text>" +
       '<text x="' + p[0].toFixed(1) + '" y="' + (ly + 22).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">' + esc(titre) + "</text></g>";
     if (en) h += '<g class="vs-ennemi" transform="translate(' + p[0].toFixed(1) + " " + (p[1] - 44).toFixed(1) + ')"><g class="bond">' +
       '<circle r="24" fill="#fff" stroke="#D94141" stroke-width="4"/><svg x="-21" y="-21" width="42" height="42" viewBox="8 1 24 24" class="pix">' + pixelsEnnemi(en) + "</svg>" +
@@ -1600,7 +1604,7 @@ svg.grille .interro { transition: opacity .3s; }
         var k = C.plateau.cases[n - 1], place = i + 1, s = abscisse(place), p = pointRoute(s), x = p[0], y = p[1], connue = caseConnue(n), sp = M.specialDe(C, P, n);
         var ici = i === pl.idx, proche = i > pl.idx && i <= pl.idx + loin, vue = i < pl.idx;
         var atC = atomeSur(n);
-        var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : atC ? "#BBD3F2" : couleurCase(k);
+        var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : atC ? "#BBD3F2" : ennemis[n] && M.caseDecouverte(P, n) ? "#F2C4C4" : couleurCase(k);
         var encre = sp && connue ? "#fff" : "#1E1A2B";
         c += '<g data-n="' + n + '" data-p="' + place + '" style="cursor:pointer"><polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="' + fond + '" stroke-width="' + LARGEUR_ROUTE + '" stroke-linejoin="round"/>';
         if (vue) c += '<polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="' + LARGEUR_ROUTE + '"/>';
@@ -1701,8 +1705,8 @@ svg.grille .interro { transition: opacity .3s; }
     var sc = c.stat ? stat(c.stat) : s, kc = c.kase;
     var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(sc.nom), "case": kc ? tx(kc.titre) : "" }, c.raison === "hors_case" ? null : c.stat || (c.type === "quiz" ? k.stat : null)); sauver();
     // La case du pion en grand, avec son histoire, avant l'épreuve.
-    var ici = C.plateau.cases[P.plateau.position - 1], atI = atomeSur(ici.n);
-    var bandeau = atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + '</div><div class="eyebrow">Ton pion est case ' + ici.n + ' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>' : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
+    var ici = C.plateau.cases[P.plateau.position - 1], atI = atomeSur(ici.n), enI = !atI && ennemiSur(ici.n);
+    var bandeau = enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + '</div><div class="eyebrow">Ton pion est case ' + ici.n + ' · Ennemi</div><h2>' + esc(tx(enI.nom)) + ' garde la case</h2><p>Bats-le pour voir ce qu\'il y a dessous.</p></div>' : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + '</div><div class="eyebrow">Ton pion est case ' + ici.n + ' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>' : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
       '<div class="eyebrow">Ton pion est case ' + ici.n + " · " + esc(formatAnnee(ici.annee)) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + esc(tx(ici.histoire)) + "</p>" +
       (kc && kc.stat ? '<p class="arbre-case"><b>' + (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : c.raison === "ouvre_arbre" ? "Arbre " + esc(tx(sc.nom)) + " encore fermé : réussis ce quiz pour l'ouvrir." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</b></p>" : "") + galerieTheme(ici.stat) + "</div>";
     feuilleSimple('<div class="choix-ia">' + bandeau + '<div class="eyebrow">L\'IA a choisi</div><div id="ia-jouer"></div>' +
@@ -3594,7 +3598,12 @@ svg.grille .interro { transition: opacity .3s; }
     else if (dep.valeur > 0) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>Épreuve réussie" + (v && v.duJour ? ", bonus du jour compris" : "") +
       (dep.bonusJouer ? ", dont +" + dep.bonusJouer + " pour avoir laissé l'IA choisir" : dep.valeur > (v ? v.total : 0) ? ", avec bonus" : "") + ".</span></div>"));
     dep.etapes.forEach(function (e) { var f = NOM_ETAPE[e.type]; if (f) tj.appendChild(el('<div class="pas"><b>·</b><span>' + esc(f(e)) + "</span></div>")); });
-    var k = C.plateau.cases[dep.a - 1], at = atomeSur(dep.a);
+    var k = C.plateau.cases[dep.a - 1], at = atomeSur(dep.a), enB = !at && ennemiSur(dep.a);
+    if (enB) {
+      b.appendChild(el('<div class="case-act" style="cursor:default"><span class="vitrine">' + teteEnnemi(enB, 44) + '</span><span><span class="num">Case ' + k.n + " · Ennemi</span><b>" + esc(tx(enB.nom)) + "</b><span>Il garde la case. Ce qu'il y a dessous, tu le verras quand il sera vaincu.</span></span></div>"));
+      var me = comite(rep, true); if (me) b.appendChild(me);
+      return b;
+    }
     if (at) {
       b.appendChild(el('<div class="case-act" style="cursor:default"><span class="vitrine">' + tuileAtome(C.atomes.elements[at.z - 1], true, 44) + '</span><span><span class="num">Case ' + k.n + " · Mendeleïev</span><b>Un atome sauvage</b><span>Il bloque la case. Ce qu'il y a dessous attendra.</span></span></div>"));
       var ma = comite(rep, true); if (ma) b.appendChild(ma);
