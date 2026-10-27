@@ -24,6 +24,8 @@ import cadeaux
 import pieges
 import mendeleiev
 import brillants
+import fiches
+import honte
 import masques_regles
 import objets_v11
 import bibliotheque_v7
@@ -152,6 +154,11 @@ for _module in (approfondissement_sciences, approfondissement_humain):
         BRANCHES[_stat] = BRANCHES[_stat] + _module.BRANCHES[_stat]
 
 
+def fiche(id):
+    f = fiches.FICHES[id]
+    return {"essentiel": [fr(x) for x in f["essentiel"]], "piege": fr(f["piege"]), "schema": f["schema"], "source": f["source"]}
+
+
 def competences():
     out = []
     for stat, noeuds in BRANCHES.items():
@@ -161,7 +168,7 @@ def competences():
         for i, (id, nom, desc) in enumerate(noeuds):
             out.append({
                 "id": id, "stat": stat, "rang": i + 1,
-                "nom": fr(nom), "description": fr(desc), "prerequis": prerequis[i],
+                "nom": fr(nom), "description": fr(desc), "prerequis": prerequis[i], "fiche": fiche(id),
             })
     return out
 
@@ -697,7 +704,7 @@ def cadeau(id):
 
 
 def tous_succes():
-    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES + objectifs.SUCCES + pionniers.SUCCES + ennemis.succes() + mendeleiev.succes()
+    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES + objectifs.SUCCES + pionniers.SUCCES + ennemis.succes() + mendeleiev.succes() + honte.succes()
 
 
 def commentaires():

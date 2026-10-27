@@ -140,6 +140,7 @@
       colere: null,
       masquesJour: null,
       butinAssure: false,
+      oublis: [],
       plateau: nouveauPlateau(),
       derniereVisite: t,
       retour: null,
@@ -207,6 +208,8 @@
     // v11 : masques choisis par l'IA pour la journée, et butin promis par l'objet tenu.
     out.masquesJour = p.masquesJour || null;
     out.butinAssure = !!p.butinAssure;
+    // v12 : questions ratées, épinglées au mur de la honte.
+    out.oublis = p.oublis || [];
     out.plateau = Object.assign(nouveauPlateau(), p.plateau || {});
     out.derniereVisite = p.derniereVisite || p.maj || out.cree;
     out.options = Object.assign({ chrono: false }, p.options || {});
@@ -329,6 +332,52 @@
     return resultats.filter(function (x) { return x.correct && x.chrono; }).length * contenu.regles.chrono.bonus_xp_par_bonne_reponse;
   }
 
+  // v12 : le mur de la honte. Chaque réponse fausse y est épinglée, avec la réponse donnée ; 30 jours de mémoire.
+  var HONTE_JOURS = 30, HONTE_MAX = 300;
+  function epinglerOublis(partie, comp, resultats, t, src) {
+    var ratees = resultats.filter(function (x) { return !x.correct; });
+    if (!ratees.length) return;
+    var o = partie.oublis || (partie.oublis = []);
+    ratees.forEach(function (x) { o.push({ t: t, q: x.id, comp: comp, rep: x.rep === undefined ? null : x.rep, src: src, efface: null, essais: 0 }); });
+    partie.compteurs.hontes = (partie.compteurs.hontes || 0) + ratees.length;
+    var limite = t - HONTE_JOURS * JOUR;
+    partie.oublis = o.filter(function (e) { return e.t >= limite; }).slice(-HONTE_MAX);
+  }
+  // Le mur : ratées du jour (une par question, la plus récente) et des jours précédents. Chaque entrée garde son index.
+  function murDeLaHonte(contenu, partie, t, joursAvant) {
+    var aujourdhui = [], avant = [], vus = {};
+    var o = partie.oublis || [];
+    for (var i = o.length - 1; i >= 0; i--) {
+      var e = o[i], j = joursEntre(e.t, t);
+      if (!contenu.questionParId || !contenu.questionParId[e.q]) continue;
+      var cle = j + "|" + e.q;
+      if (vus[cle]) continue;
+      vus[cle] = true;
+      var x = { index: i, entree: e, question: contenu.questionParId[e.q], jours: j };
+      if (j === 0) aujourdhui.push(x);
+      else if (j <= (joursAvant == null ? 7 : joursAvant)) avant.push(x);
+    }
+    var aRetenter = avant.filter(function (x) { return !x.entree.efface; });
+    // Une question ratée plusieurs jours de suite ne se retente qu'une fois : la plus récente.
+    var dejaVue = {};
+    aRetenter = aRetenter.filter(function (x) { if (dejaVue[x.entree.q]) return false; dejaVue[x.entree.q] = true; return true; });
+    return { aujourdhui: aujourdhui, avant: avant, restantes: aujourdhui.filter(function (x) { return !x.entree.efface; }).length, aRetenter: aRetenter.length };
+  }
+  // Retenter une question du mur, à partir du lendemain : se souvenir après une nuit, c'est ça qui ancre.
+  // Réussie : elle est effacée (réhabilitée), avec toutes ses épingles précédentes.
+  function retenterOubli(contenu, partie, index, correct, t) {
+    var e = partie.oublis && partie.oublis[index];
+    if (!e || e.efface || joursEntre(e.t, t) < 1) return null;
+    e.essais = (e.essais || 0) + 1;
+    if (correct) {
+      partie.oublis.forEach(function (x) { if (x.q === e.q && !x.efface && x.t <= e.t) x.efface = t; });
+      partie.compteurs.hontesEffacees = (partie.compteurs.hontesEffacees || 0) + 1;
+    }
+    partie.maj = t;
+    var rec = verifierRecompenses(contenu, partie, t);
+    return { efface: !!correct, essais: e.essais, replique: replique(contenu, partie, [correct ? "honte_effacee" : "honte_ratee"]), nouveauxSucces: rec.succes };
+  }
+
   function noter(partie, t, entree) {
     entree.t = t;
     partie.journal.push(entree);
@@ -394,6 +443,7 @@
       partie.compteurs.quizRates++;
     }
     noter(partie, t, { type: "quiz", comp: id, bonnes: bonnes, total: total, xp: xp, source: "quiz" });
+    epinglerOublis(partie, id, resultats, t, "quiz");
     partie.maj = t;
     var contextes = [];
     if (bonnes === 0) contextes.push("quiz_zero");
@@ -459,6 +509,7 @@
       partie.compteurs.serieRappels = 0;
     }
     noter(partie, t, { type: "rappel", comp: id, bonnes: bonnes, total: resultats.length, xp: reussi ? xp : -xpPerdue, source: revision ? "revision" : "rappel" });
+    epinglerOublis(partie, id, resultats, t, revision ? "revision" : "rappel");
     partie.maj = t;
     var contextes = [];
     if (revision) contextes.push(reussi ? "revision_reussie" : "revision_ratee");
@@ -1120,6 +1171,8 @@
       case "cadeaux_offerts": return (c.cadeaux || 0) >= cond.n;
       case "atomes_captures": return Object.keys(partie.atomes || {}).filter(function (z) { return partie.atomes[z].capture; }).length >= cond.n;
       case "atomes_enfuis": return (c.atomesEnfuis || 0) >= cond.n;
+      case "hontes": return (c.hontes || 0) >= cond.n;
+      case "hontes_effacees": return (c.hontesEffacees || 0) >= cond.n;
       case "famille_capturee":
         if (!contenu.atomes) return false;
         return contenu.atomes.elements.every(function (e) { return e.famille !== cond.famille || estCapture(partie, e.z); });
@@ -1443,6 +1496,8 @@
       var fav = faveurIA(contenu, partie, t);
       if (fav && fav.palier.id !== "contente" && contenu.commentairesPar["faveur_" + fav.palier.id]) ctx = "faveur_" + fav.palier.id;
     }
+    // v12 : des questions ratées aujourd'hui et pas encore effacées : l'IA vous envoie au mur de la honte.
+    if (ctx !== "retour" && contenu.commentairesPar.mur_honte && murDeLaHonte(contenu, partie, t, 0).restantes) ctx = "mur_honte";
     var lignes = contenu.commentairesPar[ctx] || contenu.commentairesPar.accueil;
     if (!lignes || !lignes.length) return null;
     return habiller(contenu, lignes[Math.floor(debutJour(t) / JOUR) % lignes.length]);
@@ -1494,6 +1549,8 @@
     avancerPion: avancerPion,
     cleJour: cleJour,
     jouerPlateau: jouerPlateau,
+    murDeLaHonte: murDeLaHonte,
+    retenterOubli: retenterOubli,
   };
 
   if (typeof module === "object" && module.exports) module.exports = Moteur;

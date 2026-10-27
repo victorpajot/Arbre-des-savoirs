@@ -483,6 +483,31 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .faveur-mini .jauge { flex: none; width: 56px; height: 7px; border-radius: 4px; background: var(--surface-2); overflow: hidden; border: 1px solid var(--line); }
 .faveur-mini .jauge i { display: block; height: 100%; background: var(--c); }
 .faveur-mini span:last-child { color: var(--ink); }
+/* v12 : le mur de la honte */
+.mur-tete { display: flex; align-items: center; gap: 10px; }
+.mur-tete .retour-v { border: 0; background: var(--surface-2); color: var(--ink); border-radius: 99px; padding: 8px 14px; font-weight: 700; }
+.compteurs-h { display: flex; gap: 8px; flex-wrap: wrap; }
+.compteurs-h span { background: var(--surface-2); border-radius: 99px; padding: 4px 12px; font-size: 13px; }
+.compteurs-h b { font-variant-numeric: tabular-nums; }
+.theme-h { border-left: 5px solid var(--c); }
+.oubli { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; background: var(--surface); position: relative; }
+.oubli .enonce-h { font-weight: 700; margin: 0; }
+.oubli .rep-h { margin: 0; font-size: 14px; }
+.oubli .rep-h s { color: var(--bad); }
+.oubli .rep-h b { color: var(--good); }
+.oubli .expl-h { margin: 0; font-size: 14px; color: var(--muted); }
+.oubli.efface { opacity: 0.75; }
+.oubli .tampon { align-self: flex-end; transform: rotate(-4deg); border: 2px solid var(--good); color: var(--good); font-weight: 800; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; }
+.oubli .clous { font-size: 12px; color: var(--muted); }
+.fiche-rev { display: flex; flex-direction: column; gap: 10px; }
+.fiche-rev ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.fiche-rev .piege-h { background: color-mix(in srgb, var(--warn) 14%, var(--surface)); border-left: 4px solid var(--warn); border-radius: 0 10px 10px 0; padding: 10px 12px; margin: 0; font-size: 14px; }
+.fiche-rev .piege-h b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
+details.fiche-d { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 10px 0; }
+details.fiche-d summary { font-weight: 700; cursor: pointer; }
+details.fiche-d[open] summary { margin-bottom: 10px; }
+.bloc.honte-a { border: 2px dashed color-mix(in srgb, var(--bad) 55%, var(--line)); }
+.bloc.honte-a .rangee { margin-top: 8px; }
 .ia-tete { display: flex; gap: 14px; align-items: flex-start; }
 .ia-tete .vitrine { flex: none; width: 112px; height: 134px; border-radius: 14px; background: var(--surface-2); display: grid; place-items: center; }
 .ia-tete h1 { margin: 0; font-size: 26px; }
@@ -1570,9 +1595,10 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var t = maintenant(), v = el('<div class="vue"></div>');
     v.appendChild(el('<div class="entete"><div><h1>Aujourd\'hui</h1></div>' + (P.decalage ? '<span class="horloge">Mode test</span>' : "") + "</div>"));
     var ng = M.niveauGlobal(C, P), nbMait = C.competences.filter(function (k) { return M.estMaitrisee(P, k.id); }).length;
-    var mot = comite(M.repliqueDuJour(C, P, t));
+    var rdj = M.repliqueDuJour(C, P, t), mot = comite(rdj);
+    if (mot && rdj) mot.setAttribute("data-contexte", rdj.contexte);
     // v10 : la bulle de l'IA ouvre sa fiche, dans l'onglet IA du personnage ; sa faveur s'affiche dessous.
-    function versIA() { vue = "perso"; ongletPerso = "ia"; rendre(); window.scrollTo(0, 0); }
+    function versIA() { if (mot && mot.getAttribute("data-contexte") === "mur_honte") { ouvrirHonte(); return; } vue = "perso"; ongletPerso = "ia"; rendre(); window.scrollTo(0, 0); }
     if (mot) {
       mot.classList.add("cliquable"); mot.setAttribute("role", "button"); mot.setAttribute("tabindex", "0"); mot.setAttribute("aria-label", "Ouvrir la fiche de l'IA");
       var fm = faveurMini(t); if (fm) mot.querySelector("div").appendChild(fm);
@@ -1587,6 +1613,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
     if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
     if (C.plateau) v.appendChild(boutonJouer());
+    var bh = blocHonte(); if (bh) v.appendChild(bh);
     var bf = blocFarce(); if (bf) v.appendChild(bf);
     if (C.plateau) v.appendChild(blocPlateau());
 
@@ -1739,7 +1766,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     if (st.etat === "a_reviser") bouton = '<button type="button" class="btn large" data-a="rappel">Faire le rappel</button>';
     var f = el('<div class="voile"><div class="feuille" role="dialog" aria-modal="true" aria-label="' + esc(tx(k.nom)) + '" style="--c:' + couleur(k.stat) + '">' +
       '<div class="eyebrow" style="color:' + couleur(k.stat) + '">' + esc(tx(s.nom)) + " · " + esc(tx(s.branche)) + "</div><h2>" + esc(tx(k.nom)) + "</h2><p>" + esc(tx(k.description)) + "</p>" +
-      lignes.map(function (l) { return '<p class="meta">' + esc(l) + "</p>"; }).join("") + bouton +
+      lignes.map(function (l) { return '<p class="meta">' + esc(l) + "</p>"; }).join("") +
+      (k.fiche && st.etat !== "fermee" && st.etat !== "verrouillee" ? '<details class="fiche-d"><summary>Fiche de révision</summary>' + htmlFiche(k) + "</details>" : "") + bouton +
       '<button type="button" class="btn sec large" data-a="fermer">Fermer</button></div></div>');
     f.onclick = function (ev) {
       var a = ev.target.getAttribute && ev.target.getAttribute("data-a");
@@ -2525,6 +2553,117 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   }
 
 
+  // --- Le mur de la honte (v12) ------------------------------------------------------
+  // Les questions ratées du jour, rangées par thème, avec la fiche de révision de chaque thème (schéma compris).
+  // On ne peut les retenter qu'à partir du lendemain : c'est le rappel espacé qui ancre, pas la relecture.
+  function htmlFiche(k) {
+    var f = k.fiche; if (!f) return "";
+    // Les schémas viennent du contenu du jeu (data/skills.json), pas de l'utilisateur.
+    return '<div class="fiche-rev"><ul>' + f.essentiel.map(function (x) { return "<li>" + esc(tx(x)) + "</li>"; }).join("") + "</ul>" +
+      '<div class="illus">' + f.schema + "</div>" +
+      '<p class="piege-h"><b>Le piège</b>' + esc(tx(f.piege)) + '</p><p class="meta" style="margin:0">Source : ' + esc(f.source) + "</p></div>";
+  }
+  function texteReponse(q, v) {
+    if (v === null || v === undefined || v === "") return null;
+    if (q.type === "qcm") return q.choix[v] ? tx(q.choix[v]) : null;
+    if (q.type === "vrai_faux") return v === true || v === "true" ? "Vrai" : "Faux";
+    return String(v).replace(".", ",") + (q.unite ? " " + q.unite : "");
+  }
+  function bonneReponse(q) { return q.type === "qcm" ? tx(q.choix[q.reponse]) : q.type === "vrai_faux" ? (q.reponse ? "Vrai" : "Faux") : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""); }
+  function ouvrirHonte() { fermerFeuille(); vue = "honte"; rendre(); window.scrollTo(0, 0); }
+  // Carte d'une question du mur. `retenter` : la réponse reste cachée tant qu'on n'a pas répondu.
+  function carteOubli(x, retenter) {
+    var q = x.question, e = x.entree, donnee = texteReponse(q, e.rep);
+    var c = el('<div class="oubli' + (e.efface ? " efface" : "") + '">' + (e.efface ? '<span class="tampon">Réhabilitée</span>' : "") + '<p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
+    if (q.illustration) c.appendChild(el('<div class="illus">' + q.illustration + "</div>"));
+    function corrige() {
+      c.appendChild(el('<p class="rep-h">' + (donnee ? "Ta réponse : <s>" + esc(donnee) + "</s><br>" : "") + "Bonne réponse : <b>" + esc(bonneReponse(q)) + "</b></p>"));
+      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>"));
+      if (q.illustration_explication) c.appendChild(el('<div class="illus">' + q.illustration_explication + "</div>"));
+    }
+    if (!retenter || e.efface) {
+      corrige();
+      if (!e.efface && x.jours === 0) c.appendChild(el('<p class="clous">Retentable dès demain : réussis-la pour l\'effacer du mur.</p>'));
+      return c;
+    }
+    var zone = el('<div class="choix"></div>'), fait = false;
+    function repondre(v, b) {
+      if (fait) return; fait = true;
+      var ok = M.corriger(q, v), r = M.retenterOubli(C, P, x.index, ok, maintenant()); sauver();
+      zone.querySelectorAll("button, input").forEach(function (z) { z.disabled = true; });
+      if (b && !ok) b.classList.add("faux");
+      zone.querySelectorAll("button[data-v]").forEach(function (z) { if (z.getAttribute("data-v") === String(q.reponse)) z.classList.add("bon"); });
+      donnee = texteReponse(q, v);
+      if (ok) { c.classList.add("efface"); c.insertBefore(el('<span class="tampon">Réhabilitée</span>'), c.firstChild); donnee = null; }
+      corrige();
+      var m = r && comite(r.replique, true); if (m) c.appendChild(m);
+      if (r && r.nouveauxSucces && r.nouveauxSucces.length) r.nouveauxSucces.forEach(function (s) { toast("Succès : " + tx(s.nom)); });
+    }
+    if (q.type === "qcm") M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
+      var b = el('<button type="button" data-v="' + i + '">' + esc(tx(q.choix[i])) + "</button>"); b.onclick = function () { repondre(i, b); }; zone.appendChild(b);
+    });
+    else if (q.type === "vrai_faux") [true, false].forEach(function (v) {
+      var b = el('<button type="button" data-v="' + v + '">' + (v ? "Vrai" : "Faux") + "</button>"); b.onclick = function () { repondre(v, b); }; zone.appendChild(b);
+    });
+    else {
+      var f = el('<form class="saisie"><input inputmode="decimal" autocomplete="off" aria-label="Ta réponse" placeholder="Ta réponse">' + (q.unite ? '<span class="unite">' + esc(q.unite) + "</span>" : "") + '<button type="submit" class="btn">Valider</button></form>');
+      f.onsubmit = function (ev) { ev.preventDefault(); var val = f.querySelector("input").value; if (isNaN(M.lireNombre(val))) { toast("Écris un nombre, par exemple 42 ou 3,5."); return; } repondre(val, null); };
+      zone.appendChild(f);
+    }
+    c.appendChild(zone);
+    if (e.essais) c.appendChild(el('<p class="clous">Déjà retentée ' + e.essais + " fois.</p>"));
+    return c;
+  }
+  function parTheme(liste) {
+    var ordre = [], groupes = {};
+    liste.forEach(function (x) { var id = x.question.competence; if (!groupes[id]) { groupes[id] = []; ordre.push(id); } groupes[id].push(x); });
+    return ordre.map(function (id) { return { k: C.parId[id], items: groupes[id] }; });
+  }
+  function vueHonte() {
+    var t = maintenant(), mur = M.murDeLaHonte(C, P, t), v = el('<div class="vue"></div>');
+    var tete = el('<div class="entete"><div><div class="eyebrow">Révisions, selon l\'IA</div><h1>Le mur de la honte</h1></div></div>');
+    var ret = el('<button type="button" class="btn sec" aria-label="Retour à l\'accueil">← Accueil</button>'); ret.onclick = function () { vue = "aujourdhui"; rendre(); window.scrollTo(0, 0); };
+    tete.appendChild(ret); v.appendChild(tete);
+    var effacees = mur.aujourdhui.filter(function (x) { return x.entree.efface; }).length;
+    var mot = comite(M.replique(C, P, [mur.aujourdhui.length || mur.aRetenter ? "mur_honte" : "honte_vide"]));
+    if (mot) v.appendChild(mot);
+    v.appendChild(el('<div class="compteurs-h"><span><b>' + mur.aujourdhui.length + "</b> ratée" + (mur.aujourdhui.length > 1 ? "s" : "") + " aujourd'hui</span><span><b>" + mur.aRetenter + "</b> à retenter</span><span><b>" + (P.compteurs.hontesEffacees || 0) + "</b> réhabilitée" + ((P.compteurs.hontesEffacees || 0) > 1 ? "s" : "") + " en tout</span></div>"));
+    // Les jours précédents d'abord : ce sont elles qu'on peut effacer aujourd'hui.
+    var aRetenter = [], vues = {};
+    mur.avant.forEach(function (x) { if (!x.entree.efface && !vues[x.entree.q]) { vues[x.entree.q] = true; aRetenter.push(x); } });
+    if (aRetenter.length) {
+      var br = el('<div class="bloc"><h2>À retenter</h2><p class="note">Ratées ces derniers jours. Une bonne réponse, et l\'IA retire le clou. Elle garde le trou.</p></div>');
+      aRetenter.forEach(function (x) {
+        var k = C.parId[x.question.competence];
+        br.appendChild(el('<div class="eyebrow" style="color:' + couleur(k.stat) + ';margin-top:6px">' + esc(tx(k.nom)) + " · " + (x.jours === 1 ? "hier" : "il y a " + x.jours + " jours") + "</div>"));
+        br.appendChild(carteOubli(x, true));
+      });
+      v.appendChild(br);
+    }
+    if (!mur.aujourdhui.length) {
+      v.appendChild(el('<div class="bloc"><h2>Aujourd\'hui</h2><p class="note">Aucune question ratée aujourd\'hui. Soit tu es brillant, soit tu n\'as pas joué. L\'IA a son avis.</p></div>'));
+    } else {
+      parTheme(mur.aujourdhui).forEach(function (g) {
+        var b = el('<div class="bloc theme-h" style="--c:' + couleur(g.k.stat) + '"><div class="eyebrow" style="color:' + couleur(g.k.stat) + '">' + esc(tx(stat(g.k.stat).nom)) + " · ratée" + (g.items.length > 1 ? "s" : "") + " aujourd'hui : " + g.items.length + "</div><h2>" + esc(tx(g.k.nom)) + "</h2></div>");
+        g.items.forEach(function (x) { b.appendChild(carteOubli(x, false)); });
+        if (g.k.fiche) { b.appendChild(el('<h3 style="margin:8px 0 0">Ce qu\'il faut retenir</h3>')); b.appendChild(el(htmlFiche(g.k))); }
+        v.appendChild(b);
+      });
+    }
+    if (effacees && mur.aujourdhui.length === effacees) v.appendChild(el('<p class="note">Toutes réhabilitées. Le mur est propre, pour l\'instant.</p>'));
+    return v;
+  }
+  // Sur l'accueil : le mur, tant qu'il y a des ratées du jour ou des questions à retenter.
+  function blocHonte() {
+    var mur = M.murDeLaHonte(C, P, maintenant());
+    if (!mur.aujourdhui.length && !mur.aRetenter) return null;
+    var b = el('<div class="bloc honte-a"><div class="eyebrow">L\'IA t\'y envoie</div><h2>Le mur de la honte</h2><p class="note" style="margin:0">' +
+      [mur.aujourdhui.length ? mur.aujourdhui.length + " question" + (mur.aujourdhui.length > 1 ? "s" : "") + " ratée" + (mur.aujourdhui.length > 1 ? "s" : "") + " aujourd'hui, avec les fiches et les schémas de leurs thèmes" : "",
+        mur.aRetenter ? mur.aRetenter + " à retenter pour les effacer" : ""].filter(Boolean).join(" ; ") + '.</p><div class="rangee"><button type="button" class="btn">Voir le mur</button></div></div>');
+    b.querySelector("button").onclick = ouvrirHonte;
+    return b;
+  }
+
   // --- Faveur de l'IA (v10) ------------------------------------------------------
   var NOM_ECLAT = { 1: "Terne : elle fera la moue", 2: "Brillant : elle apprécie", 3: "Éblouissant : elle adore" };
   // v11 : les masques du jour changent le nombre de questions et le seuil de capture.
@@ -2721,7 +2860,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
       if (quiz.repondu) return;
       var ok = M.corriger(q, valeur);
       clearInterval(quiz.minuteur);
-      quiz.repondu = true; quiz.res.push({ id: q.id, correct: ok, chrono: quiz.chrono, ms: Date.now() - quiz.debutQuestion });
+      quiz.repondu = true; quiz.res.push({ id: q.id, correct: ok, chrono: quiz.chrono, ms: Date.now() - quiz.debutQuestion, rep: valeur });
       zoneRep.querySelectorAll("button").forEach(function (b) {
         b.disabled = true;
         var v = b.getAttribute("data-v");
@@ -2892,6 +3031,14 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
     var bt = el('<button type="button" class="btn large">' + libelle + "</button>");
     bt.onclick = function () { if (!suite) fermerQuiz(); else { quiz.etape = e + 1; rendreQuiz(); } };
     wrap.appendChild(bt);
+    // v12 : des réponses fausses ? L'IA les a épinglées au mur de la honte.
+    var ratees = r.total - r.bonnes;
+    if (ratees > 0 && !suite) {
+      var bm = el('<button type="button" class="btn sec large">Le mur de la honte (' + ratees + ")</button>");
+      bm.onclick = function () { fermerQuiz(); ouvrirHonte(); };
+      wrap.appendChild(bm);
+    }
+    if (nom === "verdict" && ratees > 0) z.appendChild(el('<p class="note" style="margin:0;text-align:center">' + ratees + " réponse" + (ratees > 1 ? "s" : "") + " fausse" + (ratees > 1 ? "s" : "") + " épinglée" + (ratees > 1 ? "s" : "") + " au mur de la honte, avec une fiche pour réviser.</p>"));
     if (nom === "plateau") setTimeout(function () { animerPion(z); }, 50);
     return wrap;
   }
@@ -2948,7 +3095,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   function rendre() {
     if (!C || !P) return;
     var app = document.getElementById("app"); app.innerHTML = "";
-    app.appendChild(vue === "arbre" ? vueArbre() : vue === "perso" ? vuePerso() : vue === "collections" ? vueCollections() : vue === "succes" ? vueSucces() : vueAujourdhui());
+    app.appendChild(vue === "arbre" ? vueArbre() : vue === "perso" ? vuePerso() : vue === "collections" ? vueCollections() : vue === "succes" ? vueSucces() : vue === "honte" ? vueHonte() : vueAujourdhui());
     rendreOnglets();
   }
 

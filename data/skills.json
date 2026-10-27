@@ -11,7 +11,28 @@
    "description": {
     "fr": "Les opérations, les priorités de calcul, les fractions et les nombres premiers."
    },
-   "prerequis": []
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Priorités : parenthèses, puissances, puis multiplications et divisions (de gauche à droite), puis additions et soustractions."
+     },
+     {
+      "fr": "Pour additionner des fractions, on les met au même dénominateur : 3/4 + 1/8 = 6/8 + 1/8 = 7/8. On n'additionne jamais les dénominateurs."
+     },
+     {
+      "fr": "Diviser par une fraction, c'est multiplier par son inverse : 2 ÷ 1/2 = 4."
+     },
+     {
+      "fr": "Un nombre premier a exactement deux diviseurs, 1 et lui-même. 1 n'est donc pas premier ; 2 est le seul premier pair."
+     }
+    ],
+    "piege": {
+     "fr": "6 ÷ 2 × 3 vaut 9, pas 1 : à priorité égale, on calcule de gauche à droite."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 100\" role=\"img\" aria-label=\"Une barre coupée en 4 dont 3 parts colorées, une barre coupée en 8 dont 1 part colorée\"><text class=\"t\" x=\"20\" y=\"30\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">3/4</text><text class=\"t\" x=\"20\" y=\"80\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">1/8</text><rect class=\"a\" x=\"70\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"130\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"190\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"250\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\"/><rect class=\"a\" x=\"70\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"100\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"130\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"160\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"190\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"220\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"250\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"280\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/></svg>",
+    "source": "Programme de mathématiques du cycle 4, Éduscol"
+   }
   },
   {
    "id": "math.proportions",
@@ -25,7 +46,28 @@
    },
    "prerequis": [
     "math.arithmetique"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "La règle de trois marche quand deux grandeurs sont proportionnelles : si 3 kg coûtent 12 €, 5 kg coûtent 5 × 12 / 3 = 20 €."
+     },
+     {
+      "fr": "Une hausse de t % multiplie par (1 + t/100), une baisse par (1 − t/100). On enchaîne les évolutions en multipliant les coefficients."
+     },
+     {
+      "fr": "+50 % puis −50 % ne ramène pas au départ : 1,5 × 0,5 = 0,75, soit une baisse de 25 %."
+     },
+     {
+      "fr": "Point de pourcentage et pourcentage diffèrent : passer de 10 % à 12 %, c'est +2 points, mais +20 %."
+     }
+    ],
+    "piege": {
+     "fr": "Une baisse de 20 % ne se rattrape pas par une hausse de 20 % : il faut +25 %."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Hausse de 50 % puis baisse de 50 % : on finit à 75\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"63.3\" width=\"74.7\" height=\"66.7\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"57.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">100</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">départ</text><rect class=\"f2\" x=\"132.7\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">150</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+50 %</text><rect class=\"a\" x=\"219.3\" y=\"80.0\" width=\"74.7\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">75</text><text class=\"tm\" x=\"256.6666666666667\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">puis −50 %</text></svg>",
+    "source": "INSEE, « Évolutions et pourcentages », fiche méthode"
+   }
   },
   {
    "id": "math.probabilites",
@@ -39,7 +81,28 @@
    },
    "prerequis": [
     "math.arithmetique"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Probabilité = cas favorables ÷ cas possibles, à condition que les cas soient équiprobables."
+     },
+     {
+      "fr": "Deux événements indépendants : on multiplie leurs probabilités. Deux pile de suite : 1/2 × 1/2 = 1/4."
+     },
+     {
+      "fr": "Le hasard n'a pas de mémoire : après dix pile, le onzième lancer a toujours une chance sur deux (erreur du joueur)."
+     },
+     {
+      "fr": "Monty Hall : changer de porte fait gagner 2 fois sur 3, car l'animateur sait où est la voiture et n'ouvre jamais celle-là."
+     }
+    ],
+    "piege": {
+     "fr": "Avec deux dés, 7 est la somme la plus probable (6 issues sur 36), pas 12 (1 sur 36)."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 232\" role=\"img\" aria-label=\"Tableau des 36 résultats possibles avec deux dés\"><text class=\"tm\" x=\"52\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"24\" y=\"47\" font-size=\"13\" text-anchor=\"middle\">1</text><rect class=\"f2\" x=\"38\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"82\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">2</text><text class=\"tm\" x=\"24\" y=\"77\" font-size=\"13\" text-anchor=\"middle\">2</text><rect class=\"f2\" x=\"68\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"112\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">3</text><text class=\"tm\" x=\"24\" y=\"107\" font-size=\"13\" text-anchor=\"middle\">3</text><rect class=\"f2\" x=\"98\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"142\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">4</text><text class=\"tm\" x=\"24\" y=\"137\" font-size=\"13\" text-anchor=\"middle\">4</text><rect class=\"f2\" x=\"128\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"172\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">5</text><text class=\"tm\" x=\"24\" y=\"167\" font-size=\"13\" text-anchor=\"middle\">5</text><rect class=\"f2\" x=\"158\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"202\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">6</text><text class=\"tm\" x=\"24\" y=\"197\" font-size=\"13\" text-anchor=\"middle\">6</text><rect class=\"f2\" x=\"188\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"130\" y=\"222\" font-size=\"12\" text-anchor=\"middle\">36 issues équiprobables (dé 1 × dé 2)</text></svg>",
+    "source": "Feller, An Introduction to Probability Theory and Its Applications, 1968"
+   }
   },
   {
    "id": "math.logique",
@@ -54,7 +117,28 @@
    "prerequis": [
     "math.proportions",
     "math.probabilites"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "« Si A alors B » est faux dans un seul cas : A vrai et B faux."
+     },
+     {
+      "fr": "La contraposée « si non B alors non A » est équivalente. La réciproque « si B alors A » ne l'est pas."
+     },
+     {
+      "fr": "Nier « tous les cygnes sont blancs », c'est dire « au moins un cygne n'est pas blanc », pas « aucun cygne n'est blanc »."
+     },
+     {
+      "fr": "Raisonnement par l'absurde : on suppose le contraire de ce qu'on veut prouver et on aboutit à une contradiction."
+     }
+    ],
+    "piege": {
+     "fr": "Affirmer le conséquent : « s'il pleut, le sol est mouillé ; le sol est mouillé, donc il pleut » est invalide."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 148\" role=\"img\" aria-label=\"Table de vérité de l'implication\"><text class=\"t\" x=\"63.333333333333336\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A</text><text class=\"t\" x=\"170.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">B</text><text class=\"t\" x=\"276.6666666666667\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">si A alors B</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"63.333333333333336\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">vrai</text><rect class=\"a\" x=\"10\" y=\"62\" width=\"320\" height=\"24\" rx=\"4\" opacity=\"0.25\"/><text class=\"t\" x=\"63.333333333333336\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">faux</text><text class=\"t\" x=\"63.333333333333336\" y=\"105\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">vrai</text><text class=\"t\" x=\"63.333333333333336\" y=\"131\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">vrai</text></svg>",
+    "source": "Copi, Introduction to Logic, 14e éd."
+   }
   },
   {
    "id": "math.algebre",
@@ -68,7 +152,28 @@
    },
    "prerequis": [
     "math.logique"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Résoudre une équation : faire la même opération des deux côtés jusqu'à isoler l'inconnue."
+     },
+     {
+      "fr": "Identités remarquables : (a + b)² = a² + 2ab + b², (a − b)² = a² − 2ab + b², (a + b)(a − b) = a² − b²."
+     },
+     {
+      "fr": "(a + b)² n'est pas a² + b² : on oublie le double produit 2ab."
+     },
+     {
+      "fr": "Un système de deux équations à deux inconnues se résout par substitution ou par combinaison."
+     }
+    ],
+    "piege": {
+     "fr": "Diviser les deux côtés par x fait perdre la solution x = 0 : on factorise plutôt."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Résoudre 3x + 5 = 20 étape par étape\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x + 5 = 20</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x = 15</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">x = 5</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">on retire 5, puis on divise par 3</text></svg>",
+    "source": "Programme de mathématiques de seconde, Éduscol"
+   }
   },
   {
    "id": "math.statistiques",
@@ -82,7 +187,28 @@
    },
    "prerequis": [
     "math.algebre"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "La moyenne est sensible aux valeurs extrêmes ; la médiane coupe la population en deux moitiés et y résiste."
+     },
+     {
+      "fr": "Quand Bill Gates entre dans un bar, la moyenne des fortunes explose ; la médiane ne bouge presque pas."
+     },
+     {
+      "fr": "L'écart type mesure la dispersion autour de la moyenne."
+     },
+     {
+      "fr": "Corrélation n'est pas causalité : glaces et noyades montent ensemble l'été, à cause de la chaleur."
+     }
+    ],
+    "piege": {
+     "fr": "Un salaire moyen supérieur au salaire médian ne veut pas dire que la plupart gagnent plus que la moyenne : c'est l'inverse."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Cinq valeurs : médiane 2, moyenne 4 tirée par la valeur 12\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"121.7\" width=\"40.0\" height=\"8.3\" rx=\"3\"/><text class=\"t\" x=\"66.0\" y=\"115.66666666666667\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"66.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">A</text><rect class=\"f2\" x=\"98.0\" y=\"113.3\" width=\"40.0\" height=\"16.7\" rx=\"3\"/><text class=\"t\" x=\"118.0\" y=\"107.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"118.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">B</text><rect class=\"f2\" x=\"150.0\" y=\"113.3\" width=\"40.0\" height=\"16.7\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"107.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">C</text><rect class=\"f2\" x=\"202.0\" y=\"105.0\" width=\"40.0\" height=\"25.0\" rx=\"3\"/><text class=\"t\" x=\"222.0\" y=\"99.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3</text><text class=\"tm\" x=\"222.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">D</text><rect class=\"a\" x=\"254.0\" y=\"30.0\" width=\"40.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"274.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">12</text><text class=\"tm\" x=\"274.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">E</text></svg>",
+    "source": "INSEE, « Moyenne et médiane », définitions"
+   }
   },
   {
    "id": "math.geometrie",
@@ -96,7 +222,28 @@
    },
    "prerequis": [
     "math.algebre"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Pythagore : dans un triangle rectangle, le carré de l'hypoténuse vaut la somme des carrés des deux autres côtés (3, 4, 5)."
+     },
+     {
+      "fr": "Aire du disque π r², périmètre 2 π r ; volume de la sphère 4/3 π r³."
+     },
+     {
+      "fr": "Doubler les longueurs multiplie les aires par 4 et les volumes par 8."
+     },
+     {
+      "fr": "Dans un triangle rectangle : sinus = opposé / hypoténuse, cosinus = adjacent / hypoténuse, tangente = opposé / adjacent."
+     }
+    ],
+    "piege": {
+     "fr": "La somme des angles d'un triangle vaut 180°, mais seulement sur un plan : sur une sphère, elle dépasse 180°."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Agrandir une figure : longueurs, aires et volumes\"><text class=\"t\" x=\"50.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">côté ×</text><text class=\"t\" x=\"130.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">longueur</text><text class=\"t\" x=\"210.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">aire</text><text class=\"t\" x=\"290.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">volume</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"50.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"130.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 2</text><text class=\"tm\" x=\"210.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 4</text><text class=\"tm\" x=\"290.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 8</text><text class=\"t\" x=\"50.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3</text><text class=\"tm\" x=\"130.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 3</text><text class=\"tm\" x=\"210.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 9</text><text class=\"tm\" x=\"290.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 27</text></svg>",
+    "source": "Euclide, Éléments, livre I, proposition 47"
+   }
   },
   {
    "id": "math.infini",
@@ -111,7 +258,28 @@
    "prerequis": [
     "math.statistiques",
     "math.geometrie"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Une suite géométrique de raison inférieure à 1 en valeur absolue tend vers 0 ; sa somme peut être finie : 1/2 + 1/4 + 1/8 + … = 1."
+     },
+     {
+      "fr": "0,999… = 1 exactement : c'est la même somme infinie écrite autrement."
+     },
+     {
+      "fr": "La série harmonique 1 + 1/2 + 1/3 + … diverge, même si ses termes tendent vers 0."
+     },
+     {
+      "fr": "Cantor : il y a autant d'entiers pairs que d'entiers, mais strictement plus de réels que d'entiers."
+     }
+    ],
+    "piege": {
+     "fr": "Que les termes tendent vers 0 ne suffit pas pour qu'une somme infinie soit finie."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Les sommes 1/2 + 1/4 + … s'approchent de 1 sans le dépasser\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"80.0\" width=\"53.0\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"72.5\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,5</text><text class=\"tm\" x=\"72.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">1/2</text><rect class=\"f2\" x=\"111.0\" y=\"55.0\" width=\"53.0\" height=\"75.0\" rx=\"3\"/><text class=\"t\" x=\"137.5\" y=\"49.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,75</text><text class=\"tm\" x=\"137.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/4</text><rect class=\"f2\" x=\"176.0\" y=\"42.5\" width=\"53.0\" height=\"87.5\" rx=\"3\"/><text class=\"t\" x=\"202.5\" y=\"36.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,875</text><text class=\"tm\" x=\"202.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/8</text><rect class=\"a\" x=\"241.0\" y=\"36.2\" width=\"53.0\" height=\"93.8\" rx=\"3\"/><text class=\"t\" x=\"267.5\" y=\"30.25\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,9375</text><text class=\"tm\" x=\"267.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/16</text></svg>",
+    "source": "Cantor, Beiträge zur Begründung der transfiniten Mengenlehre, 1895"
+   }
   },
   {
    "id": "phys.unites",
@@ -123,7 +291,28 @@
    "description": {
     "fr": "Le Système international, les préfixes et les tailles du monde."
    },
-   "prerequis": []
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Sept unités de base du SI : mètre, kilogramme, seconde, ampère, kelvin, mole, candela. Depuis 2019, toutes sont définies par des constantes."
+     },
+     {
+      "fr": "Préfixes : kilo 10³, méga 10⁶, giga 10⁹, téra 10¹² ; milli 10⁻³, micro 10⁻⁶, nano 10⁻⁹."
+     },
+     {
+      "fr": "Un ordre de grandeur, c'est la puissance de 10 la plus proche : un humain ≈ 1 m, une cellule ≈ 10 µm, un atome ≈ 0,1 nm."
+     },
+     {
+      "fr": "Le poids (newtons) n'est pas la masse (kilogrammes) : sur la Lune, la masse ne change pas, le poids est divisé par six."
+     }
+    ],
+    "piege": {
+     "fr": "1 km² vaut 1 000 000 m², pas 1 000 : on élève aussi le préfixe au carré."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Les tailles du monde en puissances de 10\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">atome</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">10⁻¹⁰ m</text><circle class=\"f\" cx=\"102.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"102.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">cellule</text><text class=\"tm\" x=\"102.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">10⁻⁵ m</text><circle class=\"a\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"170.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">humain</text><text class=\"t\" x=\"170.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1 m</text><circle class=\"f\" cx=\"238.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"238.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Terre</text><text class=\"tm\" x=\"238.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">10⁷ m</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">galaxie</text><text class=\"tm\" x=\"306.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">10²¹ m</text><text class=\"tm\" x=\"16\" y=\"118\" font-size=\"11\" text-anchor=\"start\">petit</text><text class=\"tm\" x=\"324\" y=\"118\" font-size=\"11\" text-anchor=\"end\">grand</text></svg>",
+    "source": "BIPM, Le Système international d'unités, 9e éd., 2019"
+   }
   },
   {
    "id": "phys.forces",
@@ -137,7 +326,28 @@
    },
    "prerequis": [
     "phys.unites"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "1re loi : sans force nette, un objet garde sa vitesse. Le mouvement n'a pas besoin d'une force pour continuer."
+     },
+     {
+      "fr": "2e loi : F = m × a. La même force accélère moins un objet plus massif."
+     },
+     {
+      "fr": "3e loi : action et réaction sont égales et opposées, et s'appliquent à deux objets différents."
+     },
+     {
+      "fr": "Dans le vide, une plume et un marteau tombent ensemble (David Scott sur la Lune, 1971)."
+     }
+    ],
+    "piege": {
+     "fr": "Un objet lancé n'emporte pas de « force du lancer » : une fois lâché, seuls le poids et l'air agissent."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Première loi de Newton : sans force nette, la vitesse ne change pas\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"149.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"84.5\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">force nette</text><text class=\"t\" x=\"84.5\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">nulle</text><line class=\"al\" x1=\"162.0\" y1=\"52.0\" x2=\"178.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M171.9 55.4 L178.0 52.0 L171.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"181.0\" y=\"20\" width=\"149.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"255.5\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">vitesse</text><text class=\"t\" x=\"255.5\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">constante</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">F = m × a : la force change la vitesse, pas le fait d'avancer</text></svg>",
+    "source": "Newton, Philosophiae Naturalis Principia Mathematica, 1687"
+   }
   },
   {
    "id": "phys.energie",
@@ -151,7 +361,28 @@
    },
    "prerequis": [
     "phys.unites"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Énergie cinétique ½ m v² : doubler la vitesse quadruple l'énergie, et la distance de freinage."
+     },
+     {
+      "fr": "Énergie potentielle de pesanteur m g h : elle se transforme en énergie cinétique pendant une chute."
+     },
+     {
+      "fr": "L'énergie se conserve : elle change de forme (chaleur, mouvement, lumière) mais ne disparaît pas."
+     },
+     {
+      "fr": "La puissance est un débit d'énergie : 1 watt = 1 joule par seconde."
+     }
+    ],
+    "piege": {
+     "fr": "À 100 km/h, l'énergie n'est pas deux fois celle à 50 km/h mais quatre fois."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Énergie cinétique selon la vitesse (base 1 à 30 km/h)\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"121.0\" width=\"74.7\" height=\"9.0\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"114.990990990991\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">30 km/h</text><rect class=\"f2\" x=\"132.7\" y=\"104.8\" width=\"74.7\" height=\"25.2\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"98.77477477477477\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2,8</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">50 km/h</text><rect class=\"a\" x=\"219.3\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">11,1</text><text class=\"tm\" x=\"256.6666666666667\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">100 km/h</text></svg>",
+    "source": "Feynman, Leçons sur la physique, tome 1, chapitre 4"
+   }
   },
   {
    "id": "phys.ondes",
@@ -166,7 +397,28 @@
    "prerequis": [
     "phys.forces",
     "phys.energie"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Une onde transporte de l'énergie sans transporter de matière. Vitesse = longueur d'onde × fréquence."
+     },
+     {
+      "fr": "Le son a besoin d'un milieu (≈ 340 m/s dans l'air) ; la lumière traverse le vide (≈ 300 000 km/s)."
+     },
+     {
+      "fr": "Lumière visible : de 400 nm (violet) à 700 nm (rouge). Plus courte longueur d'onde, plus d'énergie."
+     },
+     {
+      "fr": "Effet Doppler : une source qui s'approche paraît plus aiguë, qui s'éloigne plus grave."
+     }
+    ],
+    "piege": {
+     "fr": "Le ciel est bleu parce que l'air diffuse davantage les courtes longueurs d'onde, pas parce qu'il reflète la mer."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 100\" role=\"img\" aria-label=\"Spectre visible du violet (400 nm) au rouge (700 nm)\"><defs><linearGradient id=\"spectre\" x1=\"0\" x2=\"1\"><stop offset=\"0\" stop-color=\"#7A2BD9\"/><stop offset=\"0.18\" stop-color=\"#2B4BE0\"/><stop offset=\"0.36\" stop-color=\"#18A9C9\"/><stop offset=\"0.52\" stop-color=\"#2EB04A\"/><stop offset=\"0.68\" stop-color=\"#F2D22E\"/><stop offset=\"0.84\" stop-color=\"#F2852E\"/><stop offset=\"1\" stop-color=\"#D92B2B\"/></linearGradient></defs><rect x=\"20\" y=\"30\" width=\"300\" height=\"40\" rx=\"6\" fill=\"url(#spectre)\"/><text class=\"tm\" x=\"20\" y=\"92\" font-size=\"12\" text-anchor=\"start\">400 nm</text><text class=\"tm\" x=\"320\" y=\"92\" font-size=\"12\" text-anchor=\"end\">700 nm</text><text class=\"tm\" x=\"170\" y=\"20\" font-size=\"12\" text-anchor=\"middle\">longueur d'onde croissante →</text></svg>",
+    "source": "Hecht, Optics, 5e éd."
+   }
   },
   {
    "id": "phys.fluides",
@@ -180,7 +432,28 @@
    },
    "prerequis": [
     "phys.ondes"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Pression = force ÷ surface. Une aiguille perce parce que sa surface est minuscule."
+     },
+     {
+      "fr": "Sous l'eau, la pression augmente d'environ 1 bar tous les 10 mètres."
+     },
+     {
+      "fr": "Archimède : tout corps plongé reçoit une poussée vers le haut égale au poids du fluide déplacé."
+     },
+     {
+      "fr": "Un objet flotte si sa masse volumique moyenne est inférieure à celle du liquide : un paquebot d'acier est plein d'air."
+     }
+    ],
+    "piege": {
+     "fr": "Un glaçon qui fond dans un verre plein ne le fait pas déborder : il déplaçait déjà son poids d'eau."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Pression sous l'eau, en bars\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"105.0\" width=\"53.0\" height=\"25.0\" rx=\"3\"/><text class=\"t\" x=\"72.5\" y=\"99.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1 bar</text><text class=\"tm\" x=\"72.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">surface</text><rect class=\"f2\" x=\"111.0\" y=\"80.0\" width=\"53.0\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"137.5\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2 bar</text><text class=\"tm\" x=\"137.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">10 m</text><rect class=\"f2\" x=\"176.0\" y=\"55.0\" width=\"53.0\" height=\"75.0\" rx=\"3\"/><text class=\"t\" x=\"202.5\" y=\"49.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3 bar</text><text class=\"tm\" x=\"202.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">20 m</text><rect class=\"a\" x=\"241.0\" y=\"30.0\" width=\"53.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"267.5\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">4 bar</text><text class=\"tm\" x=\"267.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">30 m</text></svg>",
+    "source": "Archimède, Des corps flottants, IIIe s. av. J.-C."
+   }
   },
   {
    "id": "phys.thermo",
@@ -194,7 +467,28 @@
    },
    "prerequis": [
     "phys.fluides"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Température et chaleur diffèrent : la température mesure l'agitation, la chaleur est un transfert d'énergie."
+     },
+     {
+      "fr": "La chaleur va spontanément du chaud vers le froid (deuxième principe)."
+     },
+     {
+      "fr": "L'entropie d'un système isolé ne diminue pas : c'est pourquoi un œuf cassé ne se recolle pas."
+     },
+     {
+      "fr": "Une machine thermique ne convertit jamais toute la chaleur en travail : le rendement de Carnot fixe la limite."
+     }
+    ],
+    "piege": {
+     "fr": "Le métal paraît plus froid que le bois à la même température : il conduit plus vite la chaleur de la main."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Une machine thermique prend de la chaleur au chaud, en rend une partie au froid\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">source</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chaude</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">machine</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">source</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">froide</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">seule la différence est convertie en travail</text></svg>",
+    "source": "Carnot, Réflexions sur la puissance motrice du feu, 1824"
+   }
   },
   {
    "id": "phys.relativite",
@@ -208,7 +502,28 @@
    },
    "prerequis": [
     "phys.fluides"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "La vitesse de la lumière dans le vide est la même pour tous les observateurs : 299 792 458 m/s."
+     },
+     {
+      "fr": "Le temps passe plus lentement pour une horloge en mouvement rapide (dilatation du temps)."
+     },
+     {
+      "fr": "E = mc² : la masse est une forme d'énergie ; un peu de masse contient énormément d'énergie."
+     },
+     {
+      "fr": "Relativité générale : la gravitation courbe l'espace-temps. Les GPS corrigent environ 38 µs par jour."
+     }
+    ],
+    "piege": {
+     "fr": "Rien de massif ne peut atteindre la vitesse de la lumière : l'énergie nécessaire devient infinie."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Le facteur de dilatation du temps explose près de la vitesse de la lumière\"><polyline class=\"l\" points=\"40,16 40,150 324,150\"/><path class=\"al\" d=\"M40 140 C 180 138, 260 120, 300 20\" fill=\"none\" stroke-width=\"3\"/><circle class=\"a\" cx=\"300\" cy=\"40\" r=\"4\"/><text class=\"t\" x=\"300\" y=\"27.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">c</text><text class=\"tm\" x=\"46\" y=\"14\" font-size=\"11\" text-anchor=\"start\">dilatation</text><text class=\"tm\" x=\"322\" y=\"166\" font-size=\"11\" text-anchor=\"end\">vitesse → c</text></svg>",
+    "source": "Einstein, Zur Elektrodynamik bewegter Körper, 1905"
+   }
   },
   {
    "id": "phys.quantique",
@@ -223,7 +538,28 @@
    "prerequis": [
     "phys.thermo",
     "phys.relativite"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "La lumière est faite de photons ; l'énergie d'un photon est proportionnelle à sa fréquence (E = h f)."
+     },
+     {
+      "fr": "Dualité onde-particule : électrons et photons font des interférences, comme des ondes, et arrivent un par un, comme des grains."
+     },
+     {
+      "fr": "Principe d'incertitude : on ne peut connaître à la fois exactement la position et la vitesse d'une particule."
+     },
+     {
+      "fr": "Dans un atome, l'électron n'a que certains niveaux d'énergie ; il émet un photon en descendant d'un niveau."
+     }
+    ],
+    "piege": {
+     "fr": "L'incertitude n'est pas un défaut des instruments : c'est une propriété de la nature."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Expérience des fentes d'Young : des particules qui interfèrent\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">photon</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">deux</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">fentes</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">franges</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">d'interférence</text></svg>",
+    "source": "Feynman, Leçons sur la physique, tome 3, chapitre 1"
+   }
   },
   {
    "id": "sci.methode",
@@ -235,7 +571,28 @@
    "description": {
     "fr": "Hypothèse, réfutabilité, groupe témoin, reproductibilité."
    },
-   "prerequis": []
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Une hypothèse scientifique doit pouvoir être réfutée par une observation (Popper)."
+     },
+     {
+      "fr": "Groupe témoin : on compare avec un groupe identique qui ne reçoit pas le traitement, si possible en double aveugle."
+     },
+     {
+      "fr": "Un résultat compte quand il est reproduit par d'autres équipes."
+     },
+     {
+      "fr": "Une théorie scientifique n'est pas une simple supposition : c'est un cadre éprouvé qui explique beaucoup d'observations."
+     }
+    ],
+    "piege": {
+     "fr": "Mille observations favorables ne prouvent pas une hypothèse ; une seule observation contraire et solide peut la réfuter."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 210\" role=\"img\" aria-label=\"Le cycle de la méthode scientifique\"><ellipse class=\"lm\" cx=\"170\" cy=\"105\" rx=\"112\" ry=\"76\" fill=\"none\" stroke-dasharray=\"4 5\"/><line class=\"al\" x1=\"222.5\" y1=\"37.9\" x2=\"247.8\" y2=\"50.3\" stroke-width=\"2\"/><path class=\"al\" d=\"M240.8 50.6 L247.8 50.3 L243.8 44.6\" stroke-width=\"2\"/><line class=\"al\" x1=\"280.3\" y1=\"118.2\" x2=\"270.6\" y2=\"138.3\" stroke-width=\"2\"/><path class=\"al\" d=\"M270.3 131.4 L270.6 138.3 L276.3 134.3\" stroke-width=\"2\"/><line class=\"al\" x1=\"185.6\" y1=\"180.3\" x2=\"154.4\" y2=\"180.3\" stroke-width=\"2\"/><path class=\"al\" d=\"M160.5 176.9 L154.4 180.3 L160.5 183.6\" stroke-width=\"2\"/><line class=\"al\" x1=\"69.4\" y1=\"138.3\" x2=\"59.7\" y2=\"118.2\" stroke-width=\"2\"/><path class=\"al\" d=\"M65.4 122.3 L59.7 118.2 L59.3 125.2\" stroke-width=\"2\"/><line class=\"al\" x1=\"92.2\" y1=\"50.3\" x2=\"117.5\" y2=\"37.9\" stroke-width=\"2\"/><path class=\"al\" d=\"M113.4 43.6 L117.5 37.9 L110.5 37.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"122.0\" y=\"12.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170.0\" y=\"32.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">question</text><rect class=\"f\" x=\"228.5\" y=\"64.5\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"276.5183298250572\" y=\"85.4\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">hypothèse</text><rect class=\"f\" x=\"187.8\" y=\"149.5\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"235.831948256757\" y=\"170.3\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">expérience</text><rect class=\"f\" x=\"56.2\" y=\"149.5\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"104.16805174324303\" y=\"170.3\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">analyse</text><rect class=\"f\" x=\"15.5\" y=\"64.5\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"63.48167017494279\" y=\"85.4\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">réplication</text></svg>",
+    "source": "Popper, La Logique de la découverte scientifique, 1934"
+   }
   },
   {
    "id": "sci.cellule",
@@ -249,7 +606,28 @@
    },
    "prerequis": [
     "sci.methode"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "La cellule est l'unité du vivant. Les procaryotes (bactéries) n'ont pas de noyau ; les eucaryotes en ont un."
+     },
+     {
+      "fr": "Le noyau contient l'ADN ; les mitochondries produisent l'énergie (ATP) ; les ribosomes fabriquent les protéines."
+     },
+     {
+      "fr": "Les cellules végétales ont en plus une paroi et des chloroplastes pour la photosynthèse."
+     },
+     {
+      "fr": "Mitose : une cellule donne deux cellules identiques. Méiose : elle donne quatre gamètes avec moitié moins de chromosomes."
+     }
+    ],
+    "piege": {
+     "fr": "Les mitochondries ne fabriquent pas l'énergie à partir de rien : elles la tirent du glucose et de l'oxygène."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 430 96\" role=\"img\" aria-label=\"De l'ADN à la protéine\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"53.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">ADN</text><text class=\"t\" x=\"53.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">(noyau)</text><line class=\"al\" x1=\"99.0\" y1=\"52.0\" x2=\"115.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M108.9 55.4 L115.0 52.0 L108.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"118.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"161.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">ARN</text><text class=\"t\" x=\"161.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">messager</text><line class=\"al\" x1=\"207.0\" y1=\"52.0\" x2=\"223.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M216.9 55.4 L223.0 52.0 L216.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"226.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"269.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">ribosome</text><line class=\"al\" x1=\"315.0\" y1=\"52.0\" x2=\"331.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M324.9 55.4 L331.0 52.0 L324.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"334.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"377.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">protéine</text></svg>",
+    "source": "Alberts et al., Biologie moléculaire de la cellule, 6e éd."
+   }
   },
   {
    "id": "sci.evolution",
@@ -263,7 +641,28 @@
    },
    "prerequis": [
     "sci.methode"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Sélection naturelle : les individus porteurs de variations avantageuses laissent plus de descendants."
+     },
+     {
+      "fr": "Les mutations sont aléatoires ; la sélection, elle, ne l'est pas."
+     },
+     {
+      "fr": "L'humain ne descend pas du chimpanzé : ils partagent un ancêtre commun, il y a 6 à 7 millions d'années."
+     },
+     {
+      "fr": "L'évolution agit sur des populations sur des générations, pas sur un individu pendant sa vie."
+     }
+    ],
+    "piege": {
+     "fr": "La girafe n'a pas allongé son cou à force de l'étirer : c'est Lamarck, et c'est faux."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Le principe de la sélection naturelle\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">variations</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">sélection</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">descendants</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">mieux adaptés</text></svg>",
+    "source": "Darwin, L'Origine des espèces, 1859"
+   }
   },
   {
    "id": "sci.genetique",
@@ -278,7 +677,28 @@
    "prerequis": [
     "sci.cellule",
     "sci.evolution"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Un gène existe en plusieurs versions, les allèles. On en reçoit un de chaque parent."
+     },
+     {
+      "fr": "Un allèle dominant s'exprime dès qu'il est présent ; un allèle récessif seulement en double exemplaire."
+     },
+     {
+      "fr": "Deux parents Aa ont une chance sur quatre d'avoir un enfant aa."
+     },
+     {
+      "fr": "L'ADN humain compte environ 3 milliards de paires de bases et 20 000 gènes codant des protéines."
+     }
+    ],
+    "piege": {
+     "fr": "Dominant ne veut pas dire fréquent : la polydactylie est dominante et rare."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 170\" role=\"img\" aria-label=\"Tableau de croisement de deux parents Aa\"><text class=\"t\" x=\"110\" y=\"26\" font-size=\"18\" text-anchor=\"middle\" font-weight=\"700\">A</text><text class=\"t\" x=\"52\" y=\"80\" font-size=\"18\" text-anchor=\"middle\" font-weight=\"700\">A</text><text class=\"t\" x=\"180\" y=\"26\" font-size=\"18\" text-anchor=\"middle\" font-weight=\"700\">a</text><text class=\"t\" x=\"52\" y=\"140\" font-size=\"18\" text-anchor=\"middle\" font-weight=\"700\">a</text><rect class=\"f2\" x=\"78\" y=\"42\" width=\"64\" height=\"54\" rx=\"6\"/><text class=\"t\" x=\"110\" y=\"76\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">AA</text><rect class=\"f2\" x=\"78\" y=\"102\" width=\"64\" height=\"54\" rx=\"6\"/><text class=\"t\" x=\"110\" y=\"136\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">aA</text><rect class=\"f2\" x=\"148\" y=\"42\" width=\"64\" height=\"54\" rx=\"6\"/><text class=\"t\" x=\"180\" y=\"76\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">Aa</text><rect class=\"a\" x=\"148\" y=\"102\" width=\"64\" height=\"54\" rx=\"6\" opacity=\"0.45\"/><text class=\"t\" x=\"180\" y=\"136\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">aa</text><text class=\"tm\" x=\"260\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">parent 2 →</text><text class=\"t\" x=\"260\" y=\"136\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">aa : 1 case / 4</text></svg>",
+    "source": "Mendel, Versuche über Pflanzen-Hybriden, 1866"
+   }
   },
   {
    "id": "sci.corps",
@@ -292,7 +712,28 @@
    },
    "prerequis": [
     "sci.genetique"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Le cœur a deux circuits : la petite circulation vers les poumons, la grande vers le reste du corps."
+     },
+     {
+      "fr": "Les échanges d'oxygène se font dans les alvéoles pulmonaires, environ 70 m² de surface."
+     },
+     {
+      "fr": "La digestion chimique commence dans la bouche et l'essentiel de l'absorption se fait dans l'intestin grêle."
+     },
+     {
+      "fr": "Un adulte a 206 os ; un nouveau-né en a davantage, qui fusionnent en grandissant."
+     }
+    ],
+    "piege": {
+     "fr": "Le sang n'est jamais bleu : il est rouge sombre dans les veines, la couleur bleue vient de la peau qui filtre la lumière."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 210\" role=\"img\" aria-label=\"La double circulation sanguine\"><ellipse class=\"lm\" cx=\"170\" cy=\"105\" rx=\"112\" ry=\"76\" fill=\"none\" stroke-dasharray=\"4 5\"/><text class=\"tm\" x=\"170\" y=\"109.2\" font-size=\"12\" text-anchor=\"middle\">sang</text><line class=\"al\" x1=\"237.4\" y1=\"44.3\" x2=\"259.5\" y2=\"59.3\" stroke-width=\"2\"/><path class=\"al\" d=\"M252.5 58.6 L259.5 59.3 L256.3 53.1\" stroke-width=\"2\"/><line class=\"al\" x1=\"259.5\" y1=\"150.7\" x2=\"237.4\" y2=\"165.7\" stroke-width=\"2\"/><path class=\"al\" d=\"M240.6 159.5 L237.4 165.7 L244.3 165.0\" stroke-width=\"2\"/><line class=\"al\" x1=\"102.6\" y1=\"165.7\" x2=\"80.5\" y2=\"150.7\" stroke-width=\"2\"/><path class=\"al\" d=\"M87.5 151.4 L80.5 150.7 L83.7 156.9\" stroke-width=\"2\"/><line class=\"al\" x1=\"80.5\" y1=\"59.3\" x2=\"102.6\" y2=\"44.3\" stroke-width=\"2\"/><path class=\"al\" d=\"M99.4 50.5 L102.6 44.3 L95.7 45.0\" stroke-width=\"2\"/><rect class=\"f\" x=\"122.0\" y=\"12.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170.0\" y=\"32.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">cœur droit</text><rect class=\"f\" x=\"234.0\" y=\"88.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"282.0\" y=\"108.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">poumons</text><rect class=\"f\" x=\"122.0\" y=\"164.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170.0\" y=\"184.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">cœur gauche</text><rect class=\"f\" x=\"10.0\" y=\"88.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"58.0\" y=\"108.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">organes</text></svg>",
+    "source": "Marieb, Anatomie et physiologie humaines, 11e éd."
+   }
   },
   {
    "id": "sci.immunite",
@@ -306,7 +747,28 @@
    },
    "prerequis": [
     "sci.corps"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Les bactéries sont des cellules vivantes ; les virus ne se reproduisent qu'à l'intérieur d'une cellule."
+     },
+     {
+      "fr": "Les antibiotiques tuent les bactéries mais sont sans effet sur les virus."
+     },
+     {
+      "fr": "Un vaccin entraîne le système immunitaire avec un fragment ou une version inoffensive du microbe ; la mémoire immunitaire reste."
+     },
+     {
+      "fr": "Immunité collective : quand assez de gens sont immunisés, le microbe ne circule plus et protège ceux qui ne peuvent pas être vaccinés."
+     }
+    ],
+    "piege": {
+     "fr": "Prendre des antibiotiques contre un rhume ne sert à rien et favorise les bactéries résistantes."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" role=\"img\" aria-label=\"Bactérie et virus comparés\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Bactérie</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Virus</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"132\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">cellule vivante</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">≈ 1 µm</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">antibiotiques : oui</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">parasite de cellule</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">≈ 0,1 µm</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">antibiotiques : non</text></svg>",
+    "source": "Institut Pasteur, fiches maladies et vaccins"
+   }
   },
   {
    "id": "sci.ecologie",
@@ -320,7 +782,28 @@
    },
    "prerequis": [
     "sci.corps"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Chaîne alimentaire : producteurs (plantes), consommateurs, décomposeurs."
+     },
+     {
+      "fr": "À chaque maillon, environ 90 % de l'énergie est perdue : il faut beaucoup d'herbe pour un lion."
+     },
+     {
+      "fr": "La matière circule en cycles (carbone, eau, azote) ; l'énergie, elle, vient du Soleil et se dissipe."
+     },
+     {
+      "fr": "L'effet de serre est naturel et vital ; c'est son renforcement par nos émissions qui réchauffe le climat."
+     }
+    ],
+    "piege": {
+     "fr": "Les décomposeurs ne sont pas les « éboueurs » optionnels : sans eux, les cycles de la matière s'arrêtent."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Énergie disponible à chaque maillon (environ 10 % transmis)\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">10000</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">plantes</text><rect class=\"f2\" x=\"132.7\" y=\"120.0\" width=\"74.7\" height=\"10.0\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"114.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1000</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">herbivores</text><rect class=\"a\" x=\"219.3\" y=\"129.0\" width=\"74.7\" height=\"1.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"123.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">100</text><text class=\"tm\" x=\"256.6666666666667\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">carnivores</text></svg>",
+    "source": "Odum, Fundamentals of Ecology, 1953"
+   }
   },
   {
    "id": "sci.biotech",
@@ -335,7 +818,28 @@
    "prerequis": [
     "sci.immunite",
     "sci.ecologie"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "La PCR copie un fragment d'ADN des millions de fois par cycles de chauffage et refroidissement."
+     },
+     {
+      "fr": "CRISPR-Cas9 coupe l'ADN à un endroit précis guidé par un ARN : c'est un ciseau programmable."
+     },
+     {
+      "fr": "Un vaccin à ARN messager donne aux cellules la recette d'une protéine du virus ; l'ARN est dégradé en quelques jours et n'entre pas dans le noyau."
+     },
+     {
+      "fr": "Cloner, c'est obtenir un organisme génétiquement identique (la brebis Dolly, 1996)."
+     }
+    ],
+    "piege": {
+     "fr": "Un vaccin à ARN ne modifie pas l'ADN : il n'entre pas dans le noyau."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 210\" role=\"img\" aria-label=\"Un cycle de PCR : chaque tour double le nombre de copies\"><ellipse class=\"lm\" cx=\"170\" cy=\"105\" rx=\"112\" ry=\"76\" fill=\"none\" stroke-dasharray=\"4 5\"/><text class=\"tm\" x=\"170\" y=\"109.2\" font-size=\"12\" text-anchor=\"middle\">× 2</text><line class=\"al\" x1=\"258.2\" y1=\"58.2\" x2=\"273.9\" y2=\"76.6\" stroke-width=\"2\"/><path class=\"al\" d=\"M267.3 74.1 L273.9 76.6 L272.4 69.7\" stroke-width=\"2\"/><line class=\"al\" x1=\"185.6\" y1=\"180.3\" x2=\"154.4\" y2=\"180.3\" stroke-width=\"2\"/><path class=\"al\" d=\"M160.5 176.9 L154.4 180.3 L160.5 183.6\" stroke-width=\"2\"/><line class=\"al\" x1=\"66.1\" y1=\"76.6\" x2=\"81.8\" y2=\"58.2\" stroke-width=\"2\"/><path class=\"al\" d=\"M80.3 65.0 L81.8 58.2 L75.2 60.7\" stroke-width=\"2\"/><rect class=\"f\" x=\"122.0\" y=\"12.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170.0\" y=\"26.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">dénaturer</text><text class=\"t\" x=\"170.0\" y=\"38.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">95 °C</text><rect class=\"f\" x=\"219.0\" y=\"126.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"266.99484522385717\" y=\"140.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">hybrider</text><text class=\"t\" x=\"266.99484522385717\" y=\"152.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">55 °C</text><rect class=\"f\" x=\"25.0\" y=\"126.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"73.00515477614289\" y=\"140.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">allonger</text><text class=\"t\" x=\"73.00515477614289\" y=\"152.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">72 °C</text></svg>",
+    "source": "Doudna et Charpentier, Science, 2012"
+   }
   },
   {
    "id": "rhet.argument",
@@ -347,7 +851,28 @@
    "description": {
     "fr": "Prémisses, conclusion, déduction et induction."
    },
-   "prerequis": []
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Un argument : des prémisses qui soutiennent une conclusion."
+     },
+     {
+      "fr": "Déduction : si les prémisses sont vraies et la forme valide, la conclusion est forcément vraie."
+     },
+     {
+      "fr": "Induction : on généralise à partir de cas ; la conclusion est probable, jamais certaine."
+     },
+     {
+      "fr": "Un argument peut être valide avec des prémisses fausses : « tous les chats volent, Félix est un chat, donc Félix vole »."
+     }
+    ],
+    "piege": {
+     "fr": "Valide n'est pas vrai : la validité porte sur la forme, la vérité sur le contenu."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Structure d'un argument\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">prémisse 1</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">prémisse 2</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">conclusion</text></svg>",
+    "source": "Aristote, Premiers Analytiques"
+   }
   },
   {
    "id": "rhet.figures",
@@ -361,7 +886,28 @@
    },
    "prerequis": [
     "rhet.argument"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Métaphore : comparaison sans outil (« cet homme est un lion ») ; comparaison : avec « comme »."
+     },
+     {
+      "fr": "Litote : dire moins pour suggérer plus (« va, je ne te hais point »). Euphémisme : adoucir (« il nous a quittés »)."
+     },
+     {
+      "fr": "Anaphore : répétition en début de phrase (« I have a dream »)."
+     },
+     {
+      "fr": "Chiasme : structure croisée A-B / B-A (« il faut manger pour vivre et non vivre pour manger »)."
+     }
+    ],
+    "piege": {
+     "fr": "Litote et euphémisme se confondent souvent : la litote renforce, l'euphémisme atténue."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 160\" role=\"img\" aria-label=\"Schéma du chiasme : manger, vivre, puis vivre, manger\"><text class=\"t\" x=\"70\" y=\"40\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">manger</text><text class=\"t\" x=\"250\" y=\"40\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">vivre</text><text class=\"t\" x=\"70\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">vivre</text><text class=\"t\" x=\"250\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">manger</text><line class=\"al\" x1=\"105\" y1=\"48\" x2=\"215\" y2=\"106\" stroke-width=\"2\"/><line class=\"al\" x1=\"215\" y1=\"48\" x2=\"105\" y2=\"106\" stroke-width=\"2\"/><text class=\"tm\" x=\"160\" y=\"150\" font-size=\"12\" text-anchor=\"middle\">A — B / B — A : les termes se croisent</text></svg>",
+    "source": "Fontanier, Les Figures du discours, 1827"
+   }
   },
   {
    "id": "rhet.persuasion",
@@ -375,7 +921,28 @@
    },
    "prerequis": [
     "rhet.argument"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Ethos : la crédibilité de l'orateur."
+     },
+     {
+      "fr": "Pathos : les émotions qu'il suscite chez le public."
+     },
+     {
+      "fr": "Logos : la force des raisons et des preuves."
+     },
+     {
+      "fr": "Un bon discours combine les trois ; la manipulation joue sur l'ethos et le pathos en l'absence de logos."
+     }
+    ],
+    "piege": {
+     "fr": "L'ethos ne se décrète pas : c'est le public qui accorde ou non sa confiance."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 184\" role=\"img\" aria-label=\"Les trois leviers de la persuasion selon Aristote\"><polygon class=\"f2\" points=\"170,22 72,160 268,160\"/><text class=\"tm\" x=\"170\" y=\"116.2\" font-size=\"12\" text-anchor=\"middle\">persuader</text><rect class=\"f\" x=\"110\" y=\"5\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170\" y=\"19.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">ethos</text><text class=\"t\" x=\"170\" y=\"33.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">crédibilité</text><rect class=\"f\" x=\"12\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"72\" y=\"157.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">pathos</text><text class=\"t\" x=\"72\" y=\"171.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">émotion</text><rect class=\"f\" x=\"208\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"268\" y=\"157.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">logos</text><text class=\"t\" x=\"268\" y=\"171.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">raison</text></svg>",
+    "source": "Aristote, Rhétorique, livre I"
+   }
   },
   {
    "id": "rhet.sophismes",
@@ -390,7 +957,28 @@
    "prerequis": [
     "rhet.figures",
     "rhet.persuasion"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Homme de paille : déformer la position adverse pour la réfuter plus facilement."
+     },
+     {
+      "fr": "Ad hominem : attaquer la personne plutôt que l'argument."
+     },
+     {
+      "fr": "Faux dilemme : ne présenter que deux options quand il en existe d'autres."
+     },
+     {
+      "fr": "Pente glissante : affirmer sans preuve qu'un premier pas mène fatalement au pire."
+     }
+    ],
+    "piege": {
+     "fr": "Toute attaque personnelle n'est pas un ad hominem : signaler un conflit d'intérêts peut être pertinent."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Quatre sophismes et leur mécanisme\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Ce qu'on fait</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Son nom</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"164\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">déformer l'idée</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">viser la personne</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">deux choix seulement</text><rect class=\"f2\" x=\"14\" y=\"128\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"144.8\" font-size=\"11\" text-anchor=\"middle\">tout va déraper</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">homme de paille</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">ad hominem</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">faux dilemme</text><rect class=\"f\" x=\"178\" y=\"128\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"144.8\" font-size=\"11\" text-anchor=\"middle\">pente glissante</text></svg>",
+    "source": "Schopenhauer, L'Art d'avoir toujours raison, 1864"
+   }
   },
   {
    "id": "rhet.debat",
@@ -404,7 +992,28 @@
    },
    "prerequis": [
     "rhet.sophismes"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Un contre-exemple suffit à réfuter une affirmation universelle."
+     },
+     {
+      "fr": "Concéder un point renforce la crédibilité et recentre le débat sur l'essentiel."
+     },
+     {
+      "fr": "Principe de charité : réfuter la version la plus solide de l'argument adverse (l'homme d'acier)."
+     },
+     {
+      "fr": "Loi de Brandolini : réfuter une ânerie demande bien plus d'énergie que la produire."
+     }
+    ],
+    "piege": {
+     "fr": "Gagner un débat n'est pas avoir raison : on peut réfuter un mauvais défenseur d'une bonne idée."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Une réfutation loyale en trois temps\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">reformuler</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">concéder</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">réfuter</text></svg>",
+    "source": "Rapoport, règles reprises par Dennett, Intuition Pumps, 2013"
+   }
   },
   {
    "id": "rhet.narration",
@@ -418,7 +1027,28 @@
    },
    "prerequis": [
     "rhet.debat"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Schéma narratif : situation initiale, élément perturbateur, péripéties, dénouement, situation finale."
+     },
+     {
+      "fr": "Le voyage du héros (Campbell) : appel, refus, mentor, épreuves, retour transformé."
+     },
+     {
+      "fr": "Le suspense vient de ce que le public sait et que le personnage ignore (Hitchcock et la bombe sous la table)."
+     },
+     {
+      "fr": "On retient mieux une information racontée qu'une liste de faits."
+     }
+    ],
+    "piege": {
+     "fr": "Le fusil de Tchekhov : un détail montré au début doit servir plus tard, sinon il distrait."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 430 96\" role=\"img\" aria-label=\"Le schéma narratif\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"53.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">situation</text><text class=\"t\" x=\"53.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">initiale</text><line class=\"al\" x1=\"99.0\" y1=\"52.0\" x2=\"115.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M108.9 55.4 L115.0 52.0 L108.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"118.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"161.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">élément</text><text class=\"t\" x=\"161.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">perturbateur</text><line class=\"al\" x1=\"207.0\" y1=\"52.0\" x2=\"223.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M216.9 55.4 L223.0 52.0 L216.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"226.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"269.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">péripéties</text><line class=\"al\" x1=\"315.0\" y1=\"52.0\" x2=\"331.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M324.9 55.4 L331.0 52.0 L324.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"334.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"377.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">dénouement</text></svg>",
+    "source": "Campbell, Le Héros aux mille et un visages, 1949"
+   }
   },
   {
    "id": "rhet.discours",
@@ -432,7 +1062,28 @@
    },
    "prerequis": [
     "rhet.debat"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Périclès, oraison funèbre (431 av. J.-C.) : l'éloge de la démocratie athénienne."
+     },
+     {
+      "fr": "Lincoln à Gettysburg (1863) : 272 mots, deux minutes, « du peuple, par le peuple, pour le peuple »."
+     },
+     {
+      "fr": "Martin Luther King, « I have a dream » (1963) : une anaphore construite en partie en improvisation."
+     },
+     {
+      "fr": "Malala Yousafzai à l'ONU (2013) : « un enfant, un professeur, un livre et un stylo peuvent changer le monde »."
+     }
+    ],
+    "piege": {
+     "fr": "Le passage « I have a dream » ne figurait pas dans le texte préparé : Mahalia Jackson lui a crié de parler du rêve."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Quelques grands discours dans le temps\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Périclès</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">−431</text><circle class=\"f\" cx=\"102.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"102.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Lincoln</text><text class=\"tm\" x=\"102.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1863</text><circle class=\"f\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"170.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Churchill</text><text class=\"tm\" x=\"170.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1940</text><circle class=\"a\" cx=\"238.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"238.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">King</text><text class=\"t\" x=\"238.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1963</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Malala</text><text class=\"tm\" x=\"306.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">2013</text></svg>",
+    "source": "Thucydide, La Guerre du Péloponnèse, II, 35-46 ; Library of Congress"
+   }
   },
   {
    "id": "rhet.propagande",
@@ -447,7 +1098,28 @@
    "prerequis": [
     "rhet.narration",
     "rhet.discours"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Répétition : plus on entend une affirmation, plus elle paraît vraie (effet de vérité illusoire)."
+     },
+     {
+      "fr": "Novlangue : appauvrir ou retourner les mots pour rendre certaines pensées difficiles (Orwell, 1984)."
+     },
+     {
+      "fr": "Astroturfing : simuler un mouvement spontané de citoyens avec de faux comptes ou des groupes payés."
+     },
+     {
+      "fr": "Se protéger : chercher la source, croiser, se demander à qui profite le message."
+     }
+    ],
+    "piege": {
+     "fr": "Savoir qu'une affirmation est fausse ne protège pas complètement de l'effet de répétition."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Plus une phrase est répétée, plus elle paraît vraie\"><polyline class=\"l\" points=\"40,16 40,150 324,150\"/><path class=\"al\" d=\"M40 130 C 120 90, 200 60, 320 45\" fill=\"none\" stroke-width=\"3\"/><text class=\"tm\" x=\"46\" y=\"14\" font-size=\"11\" text-anchor=\"start\">crédibilité ressentie</text><text class=\"tm\" x=\"322\" y=\"166\" font-size=\"11\" text-anchor=\"end\">répétitions</text></svg>",
+    "source": "Hasher, Goldstein et Toppino, Journal of Verbal Learning and Verbal Behavior, 1977"
+   }
   },
   {
    "id": "biais.confirmation",
@@ -459,7 +1131,28 @@
    "description": {
     "fr": "Chercher ce qui nous donne raison et ignorer le reste."
    },
-   "prerequis": []
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "On cherche, retient et interprète les informations qui confirment ce qu'on croit déjà."
+     },
+     {
+      "fr": "Tâche de Wason : pour tester « voyelle → nombre pair », il faut retourner E et 7. Presque tout le monde retourne E et 4."
+     },
+     {
+      "fr": "Le 4 ne peut pas réfuter la règle ; le 7 si, s'il cache une voyelle."
+     },
+     {
+      "fr": "Antidote : chercher activement ce qui prouverait qu'on a tort."
+     }
+    ],
+    "piege": {
+     "fr": "Accumuler des exemples favorables ne teste rien : seul un test qui pourrait échouer est informatif."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 336 132\" role=\"img\" aria-label=\"Tâche de Wason résolue : retourner E et 7\"><rect class=\"a\" x=\"16\" y=\"12\" width=\"64\" height=\"88\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"48\" y=\"68\" font-size=\"34\" text-anchor=\"middle\" font-weight=\"700\">E</text><text class=\"t\" x=\"48\" y=\"120\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">à retourner</text><rect class=\"f\" x=\"96\" y=\"12\" width=\"64\" height=\"88\" rx=\"8\" stroke-width=\"2\"/><text class=\"t\" x=\"128\" y=\"68\" font-size=\"34\" text-anchor=\"middle\" font-weight=\"700\">K</text><text class=\"tm\" x=\"128\" y=\"120\" font-size=\"12\" text-anchor=\"middle\">inutile</text><rect class=\"f\" x=\"176\" y=\"12\" width=\"64\" height=\"88\" rx=\"8\" stroke-width=\"2\"/><text class=\"t\" x=\"208\" y=\"68\" font-size=\"34\" text-anchor=\"middle\" font-weight=\"700\">4</text><text class=\"tm\" x=\"208\" y=\"120\" font-size=\"12\" text-anchor=\"middle\">inutile</text><rect class=\"a\" x=\"256\" y=\"12\" width=\"64\" height=\"88\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"288\" y=\"68\" font-size=\"34\" text-anchor=\"middle\" font-weight=\"700\">7</text><text class=\"t\" x=\"288\" y=\"120\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">à retourner</text></svg>",
+    "source": "Wason, Quarterly Journal of Experimental Psychology, 1968"
+   }
   },
   {
    "id": "biais.ancrage",
@@ -473,7 +1166,28 @@
    },
    "prerequis": [
     "biais.confirmation"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Un premier chiffre, même absurde, tire les estimations suivantes vers lui."
+     },
+     {
+      "fr": "Tversky et Kahneman : après une roue truquée tombée sur 10 ou 65, les estimations de la part des pays africains à l'ONU étaient de 25 % ou 45 %."
+     },
+     {
+      "fr": "Les prix barrés et les premières offres d'une négociation exploitent l'ancrage."
+     },
+     {
+      "fr": "Même les experts y cèdent : des juges influencés par un dé dans leurs peines (Englich, 2006)."
+     }
+    ],
+    "piege": {
+     "fr": "Savoir que l'ancre est absurde ne suffit pas à s'en libérer."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Estimation médiane selon le chiffre de la roue\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"74.4\" width=\"118.0\" height=\"55.6\" rx=\"3\"/><text class=\"t\" x=\"105.0\" y=\"68.44444444444444\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">25 %</text><text class=\"tm\" x=\"105.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">roue sur 10</text><rect class=\"a\" x=\"176.0\" y=\"30.0\" width=\"118.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"235.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">45 %</text><text class=\"tm\" x=\"235.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">roue sur 65</text></svg>",
+    "source": "Tversky et Kahneman, Science, 1974"
+   }
   },
   {
    "id": "biais.disponibilite",
@@ -487,7 +1201,28 @@
    },
    "prerequis": [
     "biais.confirmation"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "On juge la fréquence d'un événement par la facilité avec laquelle des exemples viennent en tête."
+     },
+     {
+      "fr": "Les accidents d'avion, très médiatisés, paraissent plus fréquents que les accidents de voiture, bien plus meurtriers."
+     },
+     {
+      "fr": "Après un fait divers, on surestime le risque correspondant."
+     },
+     {
+      "fr": "Antidote : chercher les chiffres de base plutôt que les anecdotes."
+     }
+    ],
+    "piege": {
+     "fr": "Ce dont on parle beaucoup n'est pas ce qui arrive souvent."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Morts par milliard de km parcourus (ordre de grandeur, Europe)\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"30.0\" width=\"118.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"105.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3</text><text class=\"tm\" x=\"105.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">voiture</text><rect class=\"a\" x=\"176.0\" y=\"126.7\" width=\"118.0\" height=\"3.3\" rx=\"3\"/><text class=\"t\" x=\"235.0\" y=\"120.66666666666667\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,1</text><text class=\"tm\" x=\"235.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">avion</text></svg>",
+    "source": "Tversky et Kahneman, Cognitive Psychology, 1973"
+   }
   },
   {
    "id": "biais.surconfiance",
@@ -502,7 +1237,28 @@
    "prerequis": [
     "biais.ancrage",
     "biais.disponibilite"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Effet Dunning-Kruger : les moins compétents surestiment davantage leur niveau, faute de savoir ce qu'ils ignorent."
+     },
+     {
+      "fr": "Les plus compétents ont tendance à se sous-estimer légèrement."
+     },
+     {
+      "fr": "La courbe en « montagne de la stupidité » qui circule sur Internet n'est pas dans l'article original."
+     },
+     {
+      "fr": "Métacognition : s'entraîner à dire « je suis sûr à 70 % » et vérifier si on a raison 7 fois sur 10."
+     }
+    ],
+    "piege": {
+     "fr": "Dunning-Kruger ne dit pas que les ignorants se croient experts : ils se placent au-dessus de la moyenne, pas au sommet."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Score qu'on s'attribue (percentile) selon son vrai niveau\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"a\" x=\"46.0\" y=\"47.3\" width=\"53.0\" height=\"82.7\" rx=\"3\"/><text class=\"t\" x=\"72.5\" y=\"41.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">62</text><text class=\"tm\" x=\"72.5\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">quart</text><text class=\"tm\" x=\"72.5\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">inférieur</text><rect class=\"f2\" x=\"111.0\" y=\"50.0\" width=\"53.0\" height=\"80.0\" rx=\"3\"/><text class=\"t\" x=\"137.5\" y=\"44.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">60</text><text class=\"tm\" x=\"137.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">2e</text><rect class=\"f2\" x=\"176.0\" y=\"42.0\" width=\"53.0\" height=\"88.0\" rx=\"3\"/><text class=\"t\" x=\"202.5\" y=\"36.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">66</text><text class=\"tm\" x=\"202.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">3e</text><rect class=\"f2\" x=\"241.0\" y=\"30.0\" width=\"53.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"267.5\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">75</text><text class=\"tm\" x=\"267.5\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">quart</text><text class=\"tm\" x=\"267.5\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">supérieur</text></svg>",
+    "source": "Kruger et Dunning, Journal of Personality and Social Psychology, 1999"
+   }
   },
   {
    "id": "biais.decision",
@@ -516,7 +1272,28 @@
    },
    "prerequis": [
     "biais.surconfiance"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Aversion à la perte : perdre 100 € fait environ deux fois plus mal que gagner 100 € ne fait plaisir."
+     },
+     {
+      "fr": "Coûts irrécupérables : ce qui est dépensé est perdu quoi qu'on fasse ; seul l'avenir doit guider la décision."
+     },
+     {
+      "fr": "Biais de statu quo : on garde l'option par défaut, d'où l'efficacité des nudges."
+     },
+     {
+      "fr": "Le don d'organes est bien plus fréquent dans les pays où il est l'option par défaut."
+     }
+    ],
+    "piege": {
+     "fr": "« On a déjà trop investi pour arrêter » est l'erreur du Concorde."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Fonction de valeur : les pertes pèsent plus lourd que les gains\"><polyline class=\"l\" points=\"40,16 40,150 324,150\"/><path class=\"al\" d=\"M40 150 C 130 140, 165 120, 180 85 C 195 62, 250 50, 320 44\" fill=\"none\" stroke-width=\"3\"/><text class=\"tm\" x=\"95\" y=\"131.8\" font-size=\"11\" text-anchor=\"middle\">pertes</text><text class=\"tm\" x=\"265\" y=\"35.9\" font-size=\"11\" text-anchor=\"middle\">gains</text><circle class=\"a\" cx=\"180\" cy=\"85\" r=\"4\"/><text class=\"t\" x=\"180\" y=\"72.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0</text><text class=\"tm\" x=\"46\" y=\"14\" font-size=\"11\" text-anchor=\"start\">valeur ressentie</text><text class=\"tm\" x=\"322\" y=\"166\" font-size=\"11\" text-anchor=\"end\">gains →</text></svg>",
+    "source": "Kahneman et Tversky, Econometrica, 1979"
+   }
   },
   {
    "id": "biais.statistiques",
@@ -530,7 +1307,28 @@
    },
    "prerequis": [
     "biais.decision"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Paradoxe de Simpson : une tendance vraie dans chaque groupe peut s'inverser quand on les regroupe."
+     },
+     {
+      "fr": "Régression vers la moyenne : après un résultat extrême, le suivant est souvent plus ordinaire, sans aucune cause."
+     },
+     {
+      "fr": "Faux positifs : un test fiable à 99 % sur une maladie rare donne surtout des faux positifs."
+     },
+     {
+      "fr": "Toujours demander : sur combien ? par rapport à quoi ?"
+     }
+    ],
+    "piege": {
+     "fr": "Après une engueulade, les pilotes s'améliorent et après un compliment ils baissent : c'est la régression, pas la pédagogie."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Test fiable à 99 % sur une maladie touchant 1 personne sur 1 000\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"a\" x=\"46.0\" y=\"120.0\" width=\"118.0\" height=\"10.0\" rx=\"3\"/><text class=\"t\" x=\"105.0\" y=\"114.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"105.0\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">vrais</text><text class=\"tm\" x=\"105.0\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">positifs</text><rect class=\"f2\" x=\"176.0\" y=\"30.0\" width=\"118.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"235.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">10</text><text class=\"tm\" x=\"235.0\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">faux</text><text class=\"tm\" x=\"235.0\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">positifs</text></svg>",
+    "source": "Gigerenzer, Calculated Risks, 2002"
+   }
   },
   {
    "id": "biais.croyances",
@@ -544,7 +1342,28 @@
    },
    "prerequis": [
     "biais.decision"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Paréidolie : voir des visages ou des formes dans le hasard (le visage sur Mars)."
+     },
+     {
+      "fr": "Biais d'intentionnalité : voir une volonté derrière des événements accidentels."
+     },
+     {
+      "fr": "Quand une prophétie échoue, les croyants les plus engagés renforcent souvent leur croyance (Festinger, 1956)."
+     },
+     {
+      "fr": "Les souvenirs se reconstruisent : on peut implanter de faux souvenirs détaillés (Loftus)."
+     }
+    ],
+    "piege": {
+     "fr": "Être sûr de son souvenir n'est pas un gage qu'il soit exact."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Du hasard au complot : le biais d'intentionnalité\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">coïncidence</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">intention</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">supposée</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">complot</text></svg>",
+    "source": "Festinger, Riecken et Schachter, When Prophecy Fails, 1956"
+   }
   },
   {
    "id": "biais.outils",
@@ -559,7 +1378,28 @@
    "prerequis": [
     "biais.statistiques",
     "biais.croyances"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Pré-mortem : imaginer que le projet a échoué et chercher pourquoi, avant de commencer."
+     },
+     {
+      "fr": "Lecture latérale : pour juger un site, ouvrir d'autres onglets sur sa source plutôt que le lire en profondeur."
+     },
+     {
+      "fr": "Raisonner en probabilités : « je suis sûr à 80 % » plutôt que oui ou non."
+     },
+     {
+      "fr": "Rasoir d'Occam : à pouvoir explicatif égal, préférer l'hypothèse la plus simple."
+     }
+    ],
+    "piege": {
+     "fr": "Une affirmation extraordinaire demande des preuves extraordinaires (Sagan)."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Trois questions avant de croire une information\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">qui</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">parle ?</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">quelle</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">preuve ?</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">qu'en disent</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">les autres ?</text></svg>",
+    "source": "Wineburg et McGrew, Stanford History Education Group, 2017"
+   }
   },
   {
    "id": "psy.emotions",
@@ -571,7 +1411,28 @@
    "description": {
     "fr": "Les émotions de base, leur rôle et leur régulation."
    },
-   "prerequis": []
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Ekman a décrit six émotions de base reconnues dans de nombreuses cultures : joie, tristesse, peur, colère, dégoût, surprise."
+     },
+     {
+      "fr": "Les émotions préparent à l'action : la peur accélère le cœur pour fuir."
+     },
+     {
+      "fr": "Nommer son émotion aide à la réguler (affect labeling)."
+     },
+     {
+      "fr": "Réévaluer la situation calme mieux qu'étouffer l'émotion."
+     }
+    ],
+    "piege": {
+     "fr": "La théorie universelle d'Ekman est aujourd'hui discutée : la lecture des visages dépend aussi du contexte et de la culture."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 184\" role=\"img\" aria-label=\"Une émotion relie une situation à une préparation à l'action\"><polygon class=\"f2\" points=\"170,22 72,160 268,160\"/><text class=\"tm\" x=\"170\" y=\"116.2\" font-size=\"12\" text-anchor=\"middle\">réévaluer</text><rect class=\"f\" x=\"110\" y=\"5\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170\" y=\"26.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">situation</text><rect class=\"f\" x=\"12\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"72\" y=\"164.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">émotion</text><rect class=\"f\" x=\"208\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"268\" y=\"164.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">action</text></svg>",
+    "source": "Ekman, Emotions Revealed, 2003"
+   }
   },
   {
    "id": "psy.memoire",
@@ -585,7 +1446,28 @@
    },
    "prerequis": [
     "psy.emotions"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Mémoire de travail : quelques éléments pendant quelques secondes. Mémoire à long terme : quasi illimitée."
+     },
+     {
+      "fr": "On oublie vite au début puis plus lentement (Ebbinghaus)."
+     },
+     {
+      "fr": "Les rappels espacés et les tests de récupération ancrent bien mieux que la relecture."
+     },
+     {
+      "fr": "Chaque rappel reconstruit le souvenir et peut le modifier."
+     }
+    ],
+    "piege": {
+     "fr": "Relire et surligner donnent une impression de maîtrise ; se tester est bien plus efficace."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 176\" role=\"img\" aria-label=\"Courbe de l'oubli : chute rapide au début, puis plus lente\"><polyline class=\"l\" points=\"40,20 40,150 320,150\"/><path class=\"al\" fill=\"none\" stroke-width=\"3\" d=\"M40 25 C 60 95, 90 115, 140 124 S 260 132, 320 134\"/><circle class=\"a\" cx=\"70\" cy=\"92\" r=\"3\"/><circle class=\"a\" cx=\"110\" cy=\"117\" r=\"3\"/><circle class=\"a\" cx=\"180\" cy=\"127\" r=\"3\"/><circle class=\"a\" cx=\"260\" cy=\"132\" r=\"3\"/><text class=\"tm\" x=\"46\" y=\"16\" font-size=\"12\" text-anchor=\"start\">souvenir retenu</text><text class=\"tm\" x=\"318\" y=\"168\" font-size=\"12\" text-anchor=\"end\">temps</text></svg>",
+    "source": "Ebbinghaus, Über das Gedächtnis, 1885"
+   }
   },
   {
    "id": "psy.motivation",
@@ -599,7 +1481,28 @@
    },
    "prerequis": [
     "psy.emotions"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Motivation intrinsèque : agir pour le plaisir de l'activité. Extrinsèque : pour une récompense ou éviter une punition."
+     },
+     {
+      "fr": "Récompenser une activité déjà plaisante peut réduire la motivation intrinsèque (effet de surjustification)."
+     },
+     {
+      "fr": "Autonomie, compétence et lien social nourrissent la motivation (théorie de l'autodétermination)."
+     },
+     {
+      "fr": "La procrastination est surtout une fuite d'une émotion désagréable, pas de la paresse."
+     }
+    ],
+    "piege": {
+     "fr": "La pyramide de Maslow n'a jamais été dessinée par Maslow : elle vient de consultants en management."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 184\" role=\"img\" aria-label=\"Les trois besoins de la théorie de l'autodétermination\"><polygon class=\"f2\" points=\"170,22 72,160 268,160\"/><text class=\"tm\" x=\"170\" y=\"116.2\" font-size=\"12\" text-anchor=\"middle\">motivation</text><rect class=\"f\" x=\"110\" y=\"5\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170\" y=\"26.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">autonomie</text><rect class=\"f\" x=\"12\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"72\" y=\"164.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">compétence</text><rect class=\"f\" x=\"208\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"268\" y=\"164.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">lien social</text></svg>",
+    "source": "Deci et Ryan, Intrinsic Motivation and Self-Determination, 1985"
+   }
   },
   {
    "id": "psy.influence",
@@ -614,7 +1517,28 @@
    "prerequis": [
     "psy.memoire",
     "psy.motivation"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Asch (1951) : face à un groupe unanime qui se trompe, environ un tiers des réponses se conforment."
+     },
+     {
+      "fr": "Milgram (1963) : 65 % des participants vont jusqu'au choc maximal sous l'autorité d'un expérimentateur."
+     },
+     {
+      "fr": "Un seul allié dans le groupe fait chuter fortement le conformisme."
+     },
+     {
+      "fr": "Cialdini : réciprocité, engagement, preuve sociale, autorité, sympathie, rareté."
+     }
+    ],
+    "piege": {
+     "fr": "L'expérience de Stanford de Zimbardo est fortement contestée : les gardiens étaient coachés."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Une ligne de référence et trois lignes A, B et C ; B a la même longueur\"><line class=\"l\" x1=\"70\" y1=\"20\" x2=\"70\" y2=\"140\" stroke-width=\"5\"/><text class=\"tm\" x=\"70\" y=\"162\" font-size=\"13\" text-anchor=\"middle\">référence</text><line class=\"l\" x1=\"190\" y1=\"70\" x2=\"190\" y2=\"140\" stroke-width=\"5\"/><text class=\"t\" x=\"190\" y=\"162\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">A</text><line class=\"l\" x1=\"240\" y1=\"20\" x2=\"240\" y2=\"140\" stroke-width=\"5\"/><text class=\"t\" x=\"240\" y=\"162\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">B</text><line class=\"l\" x1=\"290\" y1=\"45\" x2=\"290\" y2=\"140\" stroke-width=\"5\"/><text class=\"t\" x=\"290\" y=\"162\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">C</text></svg>",
+    "source": "Asch, Scientific American, 1955 ; Milgram, Journal of Abnormal and Social Psychology, 1963"
+   }
   },
   {
    "id": "psy.cerveau",
@@ -628,7 +1552,28 @@
    },
    "prerequis": [
     "psy.influence"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Environ 86 milliards de neurones reliés par des synapses."
+     },
+     {
+      "fr": "Aire de Broca : production du langage ; aire de Wernicke : compréhension."
+     },
+     {
+      "fr": "Plasticité : le cerveau se réorganise toute la vie avec l'apprentissage."
+     },
+     {
+      "fr": "On utilise tout son cerveau, pas 10 % : l'imagerie montre une activité partout."
+     }
+    ],
+    "piege": {
+     "fr": "Le cerveau gauche « logique » et le cerveau droit « créatif » est un mythe : les deux hémisphères collaborent."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" role=\"img\" aria-label=\"Mythes et réalités sur le cerveau\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Mythe</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Réalité</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"132\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">on n'utilise que 10 %</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">cerveau gauche logique</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">aucun neurone neuf</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">on l'utilise en entier</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">les deux collaborent</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">il en naît un peu</text></svg>",
+    "source": "Herculano-Houzel, Frontiers in Human Neuroscience, 2009"
+   }
   },
   {
    "id": "psy.developpement",
@@ -642,7 +1587,28 @@
    },
    "prerequis": [
     "psy.cerveau"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Piaget : stades sensori-moteur, préopératoire, opératoire concret, opératoire formel."
+     },
+     {
+      "fr": "Vygotski : zone proximale de développement, ce que l'enfant réussit avec de l'aide."
+     },
+     {
+      "fr": "Attachement (Bowlby, Ainsworth) : un lien sécurisant permet d'explorer."
+     },
+     {
+      "fr": "Théorie de l'esprit : vers 4 ans, l'enfant comprend qu'autrui peut avoir une croyance fausse (Sally et Anne)."
+     }
+    ],
+    "piege": {
+     "fr": "Les stades de Piaget sont moins rigides qu'il ne le pensait : les bébés savent plus tôt qu'il ne le supposait."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Les quatre stades de Piaget\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">sensori-</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">moteur 0-2 ans</text><circle class=\"f\" cx=\"124.7\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"124.66666666666667\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">préopératoire</text><text class=\"tm\" x=\"124.66666666666667\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">2-7 ans</text><circle class=\"f\" cx=\"215.3\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"215.33333333333334\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">opératoire</text><text class=\"tm\" x=\"215.33333333333334\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">concret 7-11</text><circle class=\"a\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"306.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">formel</text><text class=\"t\" x=\"306.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">11 ans +</text></svg>",
+    "source": "Piaget, La Psychologie de l'enfant, 1966"
+   }
   },
   {
    "id": "psy.personnalite",
@@ -656,7 +1622,28 @@
    },
    "prerequis": [
     "psy.cerveau"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Big Five : ouverture, conscienciosité, extraversion, agréabilité, névrosisme. C'est le modèle le plus validé."
+     },
+     {
+      "fr": "Les traits sont héritables à environ 40 à 50 %."
+     },
+     {
+      "fr": "Le MBTI classe en 16 types, mais beaucoup de gens changent de type d'un test à l'autre."
+     },
+     {
+      "fr": "La phrénologie et les tempéraments des humeurs sont abandonnés."
+     }
+    ],
+    "piege": {
+     "fr": "Les traits sont des continuums, pas des cases : on n'est pas introverti ou extraverti, on est plus ou moins extraverti."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Un profil Big Five : cinq scores, pas un type\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"37.7\" width=\"40.0\" height=\"92.3\" rx=\"3\"/><text class=\"t\" x=\"66.0\" y=\"31.692307692307693\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3,6</text><text class=\"tm\" x=\"66.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">ouvert.</text><rect class=\"f2\" x=\"98.0\" y=\"32.6\" width=\"40.0\" height=\"97.4\" rx=\"3\"/><text class=\"t\" x=\"118.0\" y=\"26.564102564102555\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3,8</text><text class=\"tm\" x=\"118.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">conscienc.</text><rect class=\"f2\" x=\"150.0\" y=\"47.9\" width=\"40.0\" height=\"82.1\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"41.94871794871794\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3,2</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">extrav.</text><rect class=\"f2\" x=\"202.0\" y=\"30.0\" width=\"40.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"222.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3,9</text><text class=\"tm\" x=\"222.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">agréab.</text><rect class=\"a\" x=\"254.0\" y=\"63.3\" width=\"40.0\" height=\"66.7\" rx=\"3\"/><text class=\"t\" x=\"274.0\" y=\"57.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2,6</text><text class=\"tm\" x=\"274.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">névros.</text></svg>",
+    "source": "McCrae et Costa, American Psychologist, 1997"
+   }
   },
   {
    "id": "psy.bienetre",
@@ -671,7 +1658,28 @@
    "prerequis": [
     "psy.developpement",
     "psy.personnalite"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Le stress aigu mobilise ; c'est le stress chronique qui use."
+     },
+     {
+      "fr": "Adaptation hédonique : après un gain ou une perte, on revient en grande partie vers son niveau habituel de bonheur."
+     },
+     {
+      "fr": "Les liens sociaux sont le meilleur prédicteur du bien-être à long terme (étude de Harvard sur 80 ans)."
+     },
+     {
+      "fr": "Le sommeil consolide la mémoire ; en manquer dégrade l'humeur et l'attention."
+     }
+    ],
+    "piege": {
+     "fr": "Gagner au loto ne rend pas durablement beaucoup plus heureux (Brickman, 1978)."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Adaptation hédonique : le pic retombe vers le niveau habituel\"><polyline class=\"l\" points=\"40,16 40,150 324,150\"/><path class=\"al\" d=\"M40 110 L 110 110 L 120 40 C 170 60, 230 100, 320 106\" fill=\"none\" stroke-width=\"3\"/><circle class=\"a\" cx=\"120\" cy=\"40\" r=\"4\"/><text class=\"t\" x=\"120\" y=\"27.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">gain</text><text class=\"tm\" x=\"46\" y=\"14\" font-size=\"11\" text-anchor=\"start\">bonheur</text><text class=\"tm\" x=\"322\" y=\"166\" font-size=\"11\" text-anchor=\"end\">temps</text></svg>",
+    "source": "Waldinger et Schulz, The Good Life, 2023"
+   }
   },
   {
    "id": "sci.atomes",
@@ -683,7 +1691,28 @@
    "description": {
     "fr": "La structure de l'atome, les éléments et le tableau périodique."
    },
-   "prerequis": []
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Un atome : un noyau (protons et neutrons) et des électrons autour."
+     },
+     {
+      "fr": "Le numéro atomique (nombre de protons) définit l'élément."
+     },
+     {
+      "fr": "Le tableau périodique range les éléments par numéro ; une colonne regroupe des propriétés chimiques voisines."
+     },
+     {
+      "fr": "Un atome est presque vide : si le noyau était une bille, l'atome ferait la taille d'un stade."
+     }
+    ],
+    "piege": {
+     "fr": "Changer le nombre de neutrons donne un isotope du même élément, pas un autre élément."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Ce que chaque particule détermine\"><rect class=\"a\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">protons</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">font l'élément</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">neutrons</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">isotopes</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">électrons</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chimie</text></svg>",
+    "source": "IUPAC, Periodic Table of the Elements, 2022"
+   }
   },
   {
    "id": "chim.liaisons",
@@ -697,7 +1726,28 @@
    },
    "prerequis": [
     "sci.atomes"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Liaison covalente : deux atomes partagent une paire d'électrons (H₂O, CH₄)."
+     },
+     {
+      "fr": "Liaison ionique : un atome cède un électron à l'autre ; les ions s'attirent (NaCl)."
+     },
+     {
+      "fr": "Une molécule est polaire si les charges sont mal réparties : l'eau l'est, d'où ses propriétés de solvant."
+     },
+     {
+      "fr": "Les liaisons hydrogène entre molécules d'eau expliquent son point d'ébullition élevé."
+     }
+    ],
+    "piege": {
+     "fr": "La glace flotte parce que ses liaisons hydrogène l'organisent en réseau plus aéré que l'eau liquide."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" role=\"img\" aria-label=\"Liaisons covalente et ionique\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Covalente</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Ionique</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"132\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">partage d'électrons</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">H₂O, CH₄</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">molécules</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">transfert d'électrons</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">NaCl</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">cristaux d'ions</text></svg>",
+    "source": "Pauling, The Nature of the Chemical Bond, 1939"
+   }
   },
   {
    "id": "chim.acides",
@@ -711,7 +1761,28 @@
    },
    "prerequis": [
     "sci.atomes"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "pH < 7 : acide ; pH = 7 : neutre ; pH > 7 : basique."
+     },
+     {
+      "fr": "L'échelle est logarithmique : pH 3 est dix fois plus acide que pH 4."
+     },
+     {
+      "fr": "Acide + base → sel + eau (neutralisation)."
+     },
+     {
+      "fr": "Citron ≈ 2, vinaigre ≈ 3, eau pure 7, eau de Javel ≈ 12."
+     }
+    ],
+    "piege": {
+     "fr": "Une baisse d'une unité de pH n'est pas une petite variation : c'est dix fois plus d'ions H⁺."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 335 110\" role=\"img\" aria-label=\"Échelle de pH de 0 à 14 : acide, neutre, basique\"><rect x=\"10\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E53939\"/><text class=\"tm\" x=\"20\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">0</text><rect x=\"31\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E57039\"/><text class=\"tm\" x=\"41\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">1</text><rect x=\"52\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5A839\"/><text class=\"tm\" x=\"62\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">2</text><rect x=\"73\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5DF39\"/><text class=\"t\" x=\"83\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3</text><rect x=\"94\" y=\"24\" width=\"20\" height=\"34\" fill=\"#B4E539\"/><text class=\"tm\" x=\"104\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">4</text><rect x=\"115\" y=\"24\" width=\"20\" height=\"34\" fill=\"#7CE539\"/><text class=\"tm\" x=\"125\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">5</text><rect x=\"136\" y=\"24\" width=\"20\" height=\"34\" fill=\"#45E539\"/><text class=\"tm\" x=\"146\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">6</text><rect x=\"157\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E564\"/><text class=\"t\" x=\"167\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">7</text><rect x=\"178\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E59B\"/><text class=\"tm\" x=\"188\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">8</text><rect x=\"199\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E5D3\"/><text class=\"tm\" x=\"209\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">9</text><rect x=\"220\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39C0E5\"/><text class=\"tm\" x=\"230\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">10</text><rect x=\"241\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3989E5\"/><text class=\"tm\" x=\"251\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">11</text><rect x=\"262\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3951E5\"/><text class=\"tm\" x=\"272\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">12</text><rect x=\"283\" y=\"24\" width=\"20\" height=\"34\" fill=\"#5839E5\"/><text class=\"tm\" x=\"293\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">13</text><rect x=\"304\" y=\"24\" width=\"20\" height=\"34\" fill=\"#8F39E5\"/><text class=\"tm\" x=\"314\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">14</text><text class=\"t\" x=\"60\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">acide</text><text class=\"t\" x=\"167\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">neutre</text><text class=\"t\" x=\"275\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">basique</text><text class=\"tm\" x=\"20\" y=\"100\" font-size=\"12\" text-anchor=\"start\">citron ≈ 2</text><text class=\"tm\" x=\"167\" y=\"100\" font-size=\"12\" text-anchor=\"middle\">eau pure 7</text><text class=\"tm\" x=\"325\" y=\"100\" font-size=\"12\" text-anchor=\"end\">Javel ≈ 12</text></svg>",
+    "source": "Sørensen, Biochemische Zeitschrift, 1909"
+   }
   },
   {
    "id": "chim.reactions",
@@ -726,7 +1797,28 @@
    "prerequis": [
     "chim.liaisons",
     "chim.acides"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Une équation chimique doit être équilibrée : autant d'atomes de chaque sorte des deux côtés (Lavoisier)."
+     },
+     {
+      "fr": "2 H₂ + O₂ → 2 H₂O."
+     },
+     {
+      "fr": "Combustion : un combustible + du dioxygène → du CO₂, de l'eau et de la chaleur."
+     },
+     {
+      "fr": "Un catalyseur accélère une réaction sans être consommé. Oxydation : perte d'électrons ; réduction : gain."
+     }
+    ],
+    "piege": {
+     "fr": "La rouille n'est pas une simple « saleté » : c'est le fer oxydé, plus volumineux, qui fissure le métal."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Une équation équilibrée : 4 H et 2 O de chaque côté\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2 H₂</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">+ O₂</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2 H₂O</text></svg>",
+    "source": "Lavoisier, Traité élémentaire de chimie, 1789"
+   }
   },
   {
    "id": "chim.etats",
@@ -740,7 +1832,28 @@
    },
    "prerequis": [
     "chim.reactions"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Solide, liquide, gaz : même matière, agitation et distance différentes entre molécules."
+     },
+     {
+      "fr": "Fusion, vaporisation, condensation, solidification, sublimation (solide → gaz), condensation solide (gaz → solide)."
+     },
+     {
+      "fr": "Pendant un changement d'état, la température reste constante."
+     },
+     {
+      "fr": "À volume fixé, la pression d'un gaz augmente avec la température (PV = nRT)."
+     }
+    ],
+    "piege": {
+     "fr": "L'eau bout à moins de 100 °C en altitude : environ 70 °C au sommet de l'Everest."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 210\" role=\"img\" aria-label=\"Les changements d'état de la matière\"><ellipse class=\"lm\" cx=\"170\" cy=\"105\" rx=\"112\" ry=\"76\" fill=\"none\" stroke-dasharray=\"4 5\"/><text class=\"tm\" x=\"170\" y=\"109.2\" font-size=\"12\" text-anchor=\"middle\">chaleur</text><line class=\"al\" x1=\"258.2\" y1=\"58.2\" x2=\"273.9\" y2=\"76.6\" stroke-width=\"2\"/><path class=\"al\" d=\"M267.3 74.1 L273.9 76.6 L272.4 69.7\" stroke-width=\"2\"/><line class=\"al\" x1=\"185.6\" y1=\"180.3\" x2=\"154.4\" y2=\"180.3\" stroke-width=\"2\"/><path class=\"al\" d=\"M160.5 176.9 L154.4 180.3 L160.5 183.6\" stroke-width=\"2\"/><line class=\"al\" x1=\"66.1\" y1=\"76.6\" x2=\"81.8\" y2=\"58.2\" stroke-width=\"2\"/><path class=\"al\" d=\"M80.3 65.0 L81.8 58.2 L75.2 60.7\" stroke-width=\"2\"/><rect class=\"f\" x=\"122.0\" y=\"12.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170.0\" y=\"32.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">solide</text><rect class=\"f\" x=\"219.0\" y=\"126.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"266.99484522385717\" y=\"146.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">liquide</text><rect class=\"f\" x=\"25.0\" y=\"126.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"73.00515477614289\" y=\"146.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">gaz</text></svg>",
+    "source": "Atkins, Chimie physique, 4e éd."
+   }
   },
   {
    "id": "chim.organique",
@@ -754,7 +1867,28 @@
    },
    "prerequis": [
     "chim.etats"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "La chimie organique est celle des composés du carbone, qui forme quatre liaisons."
+     },
+     {
+      "fr": "Hydrocarbures : uniquement carbone et hydrogène (méthane, butane, octane)."
+     },
+     {
+      "fr": "Polymères : longues chaînes d'unités répétées (polyéthylène, ADN, cellulose)."
+     },
+     {
+      "fr": "Les glucides, lipides, protéines et acides nucléiques sont les grandes molécules du vivant."
+     }
+    ],
+    "piege": {
+     "fr": "« Chimique » ne s'oppose pas à « naturel » : tout ce qui vit est fait de molécules organiques."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 430 96\" role=\"img\" aria-label=\"Un polymère : une chaîne de petites unités\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"53.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">monomère</text><line class=\"al\" x1=\"99.0\" y1=\"52.0\" x2=\"115.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M108.9 55.4 L115.0 52.0 L108.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"118.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"161.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">monomère</text><line class=\"al\" x1=\"207.0\" y1=\"52.0\" x2=\"223.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M216.9 55.4 L223.0 52.0 L216.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"226.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"269.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">… × 10 000</text><line class=\"al\" x1=\"315.0\" y1=\"52.0\" x2=\"331.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M324.9 55.4 L331.0 52.0 L324.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"334.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"377.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">polymère</text></svg>",
+    "source": "Wöhler, Annalen der Physik, 1828"
+   }
   },
   {
    "id": "chim.quotidien",
@@ -768,7 +1902,28 @@
    },
    "prerequis": [
     "chim.etats"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Le savon a une tête qui aime l'eau et une queue qui aime les graisses : il emprisonne la graisse dans des micelles."
+     },
+     {
+      "fr": "La réaction de Maillard (sucres + protéines à la chaleur) dore le pain et grille la viande."
+     },
+     {
+      "fr": "Une pile transforme une réaction d'oxydoréduction en courant."
+     },
+     {
+      "fr": "Le paracétamol et l'aspirine sont des molécules de synthèse ; l'aspirine dérive de l'écorce de saule."
+     }
+    ],
+    "piege": {
+     "fr": "Mélanger eau de Javel et vinaigre dégage du chlore toxique : ne jamais combiner les produits ménagers."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Comment le savon emporte la graisse\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">graisse</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">savon</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">tête + queue</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">micelle</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">rincée</text></svg>",
+    "source": "This, Révélations gastronomiques, 1995"
+   }
   },
   {
    "id": "chim.noyau",
@@ -783,7 +1938,28 @@
    "prerequis": [
     "chim.organique",
     "chim.quotidien"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Demi-vie : le temps pour que la moitié des noyaux radioactifs se désintègre. Elle ne dépend pas de la quantité."
+     },
+     {
+      "fr": "Le carbone 14 (demi-vie ≈ 5 730 ans) date les restes organiques jusqu'à environ 50 000 ans."
+     },
+     {
+      "fr": "Fission : un noyau lourd se casse (centrales). Fusion : des noyaux légers s'unissent (Soleil)."
+     },
+     {
+      "fr": "α arrêté par une feuille de papier, β par quelques millimètres d'aluminium, γ par du plomb ou du béton épais."
+     }
+    ],
+    "piege": {
+     "fr": "Après deux demi-vies, il ne reste pas zéro mais un quart."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Ce qui reste après chaque demi-vie\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"30.0\" width=\"40.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"66.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">100 %</text><text class=\"tm\" x=\"66.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">0</text><rect class=\"f2\" x=\"98.0\" y=\"80.0\" width=\"40.0\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"118.0\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">50 %</text><text class=\"tm\" x=\"118.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">1 T</text><rect class=\"a\" x=\"150.0\" y=\"105.0\" width=\"40.0\" height=\"25.0\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"99.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">25 %</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">2 T</text><rect class=\"f2\" x=\"202.0\" y=\"117.5\" width=\"40.0\" height=\"12.5\" rx=\"3\"/><text class=\"t\" x=\"222.0\" y=\"111.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">12,5 %</text><text class=\"tm\" x=\"222.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">3 T</text><rect class=\"f2\" x=\"254.0\" y=\"123.8\" width=\"40.0\" height=\"6.2\" rx=\"3\"/><text class=\"t\" x=\"274.0\" y=\"117.75\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">6,25 %</text><text class=\"tm\" x=\"274.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">4 T</text></svg>",
+    "source": "Rutherford et Soddy, Philosophical Magazine, 1902"
+   }
   },
   {
    "id": "astro.systeme",
@@ -795,7 +1971,28 @@
    "description": {
     "fr": "Le Soleil, les planètes, la Lune et les petits corps."
    },
-   "prerequis": []
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Huit planètes : Mercure, Vénus, Terre, Mars (rocheuses), Jupiter, Saturne (géantes gazeuses), Uranus, Neptune (géantes de glace)."
+     },
+     {
+      "fr": "Pluton est une planète naine depuis 2006."
+     },
+     {
+      "fr": "Vénus est la plus chaude (≈ 465 °C) à cause de son effet de serre, bien que Mercure soit plus proche du Soleil."
+     },
+     {
+      "fr": "Les saisons viennent de l'inclinaison de l'axe terrestre, pas de la distance au Soleil."
+     }
+    ],
+    "piege": {
+     "fr": "La Terre est au plus près du Soleil début janvier, en plein hiver boréal."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" role=\"img\" aria-label=\"La Terre en juin et en décembre, axe toujours incliné du même côté\"><ellipse class=\"lm\" cx=\"170\" cy=\"80\" rx=\"130\" ry=\"44\" fill=\"none\" stroke-dasharray=\"5 5\"/><circle class=\"jaune\" cx=\"170\" cy=\"80\" r=\"18\"/><circle class=\"f\" cx=\"40\" cy=\"80\" r=\"16\"/><line class=\"al\" x1=\"31\" y1=\"58\" x2=\"49\" y2=\"102\" stroke-width=\"2.5\"/><text class=\"tm\" x=\"40\" y=\"128\" font-size=\"12\" text-anchor=\"middle\">juin</text><circle class=\"f\" cx=\"300\" cy=\"80\" r=\"16\"/><line class=\"al\" x1=\"291\" y1=\"58\" x2=\"309\" y2=\"102\" stroke-width=\"2.5\"/><text class=\"tm\" x=\"300\" y=\"128\" font-size=\"12\" text-anchor=\"middle\">décembre</text><text class=\"tm\" x=\"170\" y=\"22\" font-size=\"12\" text-anchor=\"middle\">axe incliné de 23,4°, toujours dans la même direction</text></svg>",
+    "source": "Union astronomique internationale, résolution B5, 2006"
+   }
   },
   {
    "id": "astro.etoiles",
@@ -809,7 +2006,28 @@
    },
    "prerequis": [
     "astro.systeme"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Une étoile brille par fusion nucléaire de l'hydrogène en hélium dans son cœur."
+     },
+     {
+      "fr": "Sa couleur indique sa température : bleue très chaude, rouge plus froide."
+     },
+     {
+      "fr": "Le Soleil deviendra une géante rouge puis une naine blanche ; les étoiles massives finissent en supernova."
+     },
+     {
+      "fr": "Les éléments plus lourds que le fer se forment surtout lors de supernovas et de fusions d'étoiles à neutrons."
+     }
+    ],
+    "piege": {
+     "fr": "Les étoiles rouges ne sont pas les plus chaudes : c'est l'inverse des robinets."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 136\" role=\"img\" aria-label=\"Couleur des étoiles selon leur température\"><circle cx=\"40\" cy=\"50\" r=\"22\" fill=\"#9BB0FF\" stroke=\"var(--line)\"/><text class=\"tm\" x=\"40\" y=\"100\" font-size=\"11\" text-anchor=\"middle\">30 000 °C</text><circle cx=\"104\" cy=\"50\" r=\"20\" fill=\"#CAD7FF\" stroke=\"var(--line)\"/><text class=\"tm\" x=\"104\" y=\"100\" font-size=\"11\" text-anchor=\"middle\">10 000 °C</text><circle cx=\"168\" cy=\"50\" r=\"18\" fill=\"#FFF4E8\" stroke=\"var(--line)\"/><text class=\"tm\" x=\"168\" y=\"100\" font-size=\"11\" text-anchor=\"middle\">5 500 °C</text><circle cx=\"232\" cy=\"50\" r=\"16\" fill=\"#FFD2A1\" stroke=\"var(--line)\"/><text class=\"tm\" x=\"232\" y=\"100\" font-size=\"11\" text-anchor=\"middle\">4 000 °C</text><circle cx=\"296\" cy=\"50\" r=\"14\" fill=\"#FF9A5C\" stroke=\"var(--line)\"/><text class=\"tm\" x=\"296\" y=\"100\" font-size=\"11\" text-anchor=\"middle\">3 000 °C</text><text class=\"tm\" x=\"184\" y=\"126\" font-size=\"12\" text-anchor=\"middle\">← plus chaude          plus froide →</text></svg>",
+    "source": "Burbidge, Burbidge, Fowler et Hoyle, Reviews of Modern Physics, 1957"
+   }
   },
   {
    "id": "astro.orbites",
@@ -823,7 +2041,28 @@
    },
    "prerequis": [
     "astro.systeme"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Kepler 1 : les planètes décrivent des ellipses dont le Soleil occupe un foyer."
+     },
+     {
+      "fr": "Kepler 2 : une planète va plus vite près du Soleil."
+     },
+     {
+      "fr": "Les astronautes de l'ISS flottent parce qu'ils tombent en permanence autour de la Terre, pas parce qu'il n'y a pas de gravité."
+     },
+     {
+      "fr": "Les marées viennent surtout de la Lune, qui tire plus fort sur le côté de la Terre qui lui fait face."
+     }
+    ],
+    "piege": {
+     "fr": "À 400 km d'altitude, la gravité vaut encore environ 90 % de celle du sol."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 150\" role=\"img\" aria-label=\"Orbite elliptique : A est le point le plus proche du Soleil, B le plus éloigné\"><ellipse class=\"lm\" cx=\"170\" cy=\"80\" rx=\"140\" ry=\"62\" fill=\"none\" stroke-width=\"2\"/><circle class=\"jaune\" cx=\"80\" cy=\"80\" r=\"16\"/><text class=\"tm\" x=\"80\" y=\"116\" font-size=\"12\" text-anchor=\"middle\">Soleil</text><circle class=\"a\" cx=\"30\" cy=\"80\" r=\"8\"/><text class=\"t\" x=\"18\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">A</text><circle class=\"a\" cx=\"310\" cy=\"80\" r=\"8\"/><text class=\"t\" x=\"322\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">B</text></svg>",
+    "source": "Kepler, Astronomia nova, 1609"
+   }
   },
   {
    "id": "astro.galaxies",
@@ -838,7 +2077,28 @@
    "prerequis": [
     "astro.etoiles",
     "astro.orbites"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "La Voie lactée est une galaxie spirale d'environ 100 à 400 milliards d'étoiles."
+     },
+     {
+      "fr": "Hubble (1929) : les galaxies s'éloignent d'autant plus vite qu'elles sont loin. L'Univers est en expansion."
+     },
+     {
+      "fr": "Big Bang : il y a 13,8 milliards d'années, l'Univers était très chaud et dense ; ce n'est pas une explosion dans l'espace."
+     },
+     {
+      "fr": "Le fond diffus cosmologique est la lumière émise 380 000 ans après le Big Bang."
+     }
+    ],
+    "piege": {
+     "fr": "Le Big Bang n'a pas de centre : l'expansion se fait partout à la fois."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Histoire de l'Univers\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">Big Bang</text><circle class=\"f\" cx=\"102.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"102.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">fond diffus</text><text class=\"tm\" x=\"102.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">380 000 ans</text><circle class=\"f\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"170.0\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">1res étoiles</text><circle class=\"f\" cx=\"238.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"238.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Soleil</text><text class=\"tm\" x=\"238.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">−4,6 Ga</text><circle class=\"a\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"306.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">aujourd'hui</text><text class=\"t\" x=\"306.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">13,8 Ga</text></svg>",
+    "source": "Planck Collaboration, Astronomy & Astrophysics, 2020"
+   }
   },
   {
    "id": "astro.observer",
@@ -852,7 +2112,28 @@
    },
    "prerequis": [
     "astro.galaxies"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Les constellations sont des alignements apparents : leurs étoiles sont à des distances très différentes."
+     },
+     {
+      "fr": "Une année-lumière est une distance (≈ 9 461 milliards de km), pas une durée."
+     },
+     {
+      "fr": "Un télescope sert surtout à collecter de la lumière : plus le miroir est grand, plus on voit faible."
+     },
+     {
+      "fr": "Le ciel semble tourner autour de l'étoile Polaire à cause de la rotation de la Terre."
+     }
+    ],
+    "piege": {
+     "fr": "Regarder loin, c'est regarder dans le passé : la lumière d'une étoile a parfois voyagé des milliers d'années."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Distances en temps de trajet de la lumière\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Lune</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1,3 s-lum.</text><circle class=\"a\" cx=\"124.7\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"124.66666666666667\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">Soleil</text><text class=\"t\" x=\"124.66666666666667\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">8 min-lum.</text><circle class=\"f\" cx=\"215.3\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"215.33333333333334\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Proxima</text><text class=\"tm\" x=\"215.33333333333334\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">4,2 a-l</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Andromède</text><text class=\"tm\" x=\"306.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">2,5 M a-l</text></svg>",
+    "source": "IAU, Measuring the Universe, 2012"
+   }
   },
   {
    "id": "astro.espace",
@@ -866,7 +2147,28 @@
    },
    "prerequis": [
     "astro.observer"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Spoutnik 1 (1957) : premier satellite artificiel."
+     },
+     {
+      "fr": "Gagarine (1961) : premier humain en orbite ; Apollo 11 (1969) : premier pas sur la Lune."
+     },
+     {
+      "fr": "Une fusée avance en éjectant des gaz vers l'arrière (action-réaction) : elle n'a pas besoin d'air pour pousser."
+     },
+     {
+      "fr": "Voyager 1 a quitté l'héliosphère en 2012 ; c'est l'objet humain le plus lointain."
+     }
+    ],
+    "piege": {
+     "fr": "Dans l'espace, une fusée ne « s'appuie » sur rien : c'est la troisième loi de Newton."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Quelques jalons de la conquête spatiale\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Spoutnik</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1957</text><circle class=\"f\" cx=\"88.4\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"88.4\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Gagarine</text><text class=\"tm\" x=\"88.4\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1961</text><circle class=\"a\" cx=\"142.8\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"142.8\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">Apollo 11</text><text class=\"t\" x=\"142.8\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1969</text><circle class=\"f\" cx=\"197.2\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"197.2\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Voyager</text><text class=\"tm\" x=\"197.2\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1977</text><circle class=\"f\" cx=\"251.6\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"251.6\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">ISS</text><text class=\"tm\" x=\"251.6\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1998</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">JWST</text><text class=\"tm\" x=\"306.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">2021</text></svg>",
+    "source": "NASA History Office"
+   }
   },
   {
    "id": "astro.exoplanetes",
@@ -880,7 +2182,28 @@
    },
    "prerequis": [
     "astro.observer"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Première exoplanète autour d'une étoile semblable au Soleil : 51 Pegasi b (Mayor et Queloz, 1995)."
+     },
+     {
+      "fr": "Méthode des transits : la planète passe devant l'étoile et en baisse légèrement l'éclat."
+     },
+     {
+      "fr": "Méthode des vitesses radiales : l'étoile oscille sous l'attraction de la planète."
+     },
+     {
+      "fr": "Zone habitable : la distance où l'eau pourrait être liquide à la surface."
+     }
+    ],
+    "piege": {
+     "fr": "Zone habitable ne veut pas dire habitée, ni même habitable : Mars est dans celle du Soleil selon les estimations larges, et c'est un désert gelé."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Méthode des transits : l'éclat baisse quand la planète passe\"><polyline class=\"l\" points=\"40,16 40,150 324,150\"/><path class=\"al\" d=\"M40 50 L 140 50 C 150 50, 150 90, 160 90 L 210 90 C 220 90, 220 50, 230 50 L 320 50\" fill=\"none\" stroke-width=\"3\"/><text class=\"tm\" x=\"185\" y=\"111.8\" font-size=\"11\" text-anchor=\"middle\">transit</text><text class=\"tm\" x=\"46\" y=\"14\" font-size=\"11\" text-anchor=\"start\">éclat</text><text class=\"tm\" x=\"322\" y=\"166\" font-size=\"11\" text-anchor=\"end\">temps</text></svg>",
+    "source": "Mayor et Queloz, Nature, 1995"
+   }
   },
   {
    "id": "astro.sombre",
@@ -895,7 +2218,28 @@
    "prerequis": [
     "astro.espace",
     "astro.exoplanetes"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Les galaxies tournent trop vite pour la seule matière visible (Vera Rubin) : il manque de la masse, la matière noire."
+     },
+     {
+      "fr": "Matière ordinaire ≈ 5 %, matière noire ≈ 27 %, énergie noire ≈ 68 % du contenu de l'Univers."
+     },
+     {
+      "fr": "L'énergie noire accélère l'expansion de l'Univers (découverte en 1998 avec des supernovas)."
+     },
+     {
+      "fr": "La matière noire n'interagit pas avec la lumière ; on la détecte par sa gravité (lentilles gravitationnelles)."
+     }
+    ],
+    "piege": {
+     "fr": "Matière noire ne veut pas dire trous noirs ou nuages sombres : ce serait de la matière ordinaire."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Contenu de l'Univers\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"122.6\" width=\"74.7\" height=\"7.4\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"116.6470588235294\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">5 %</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">ordinaire</text><rect class=\"f2\" x=\"132.7\" y=\"90.3\" width=\"74.7\" height=\"39.7\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"84.29411764705883\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">27 %</text><text class=\"tm\" x=\"170.0\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">matière</text><text class=\"tm\" x=\"170.0\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">noire</text><rect class=\"a\" x=\"219.3\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">68 %</text><text class=\"tm\" x=\"256.6666666666667\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">énergie</text><text class=\"tm\" x=\"256.6666666666667\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">noire</text></svg>",
+    "source": "Rubin et Ford, Astrophysical Journal, 1970 ; Planck 2018"
+   }
   },
   {
    "id": "elec.circuits",
@@ -907,7 +2251,28 @@
    "description": {
     "fr": "Charges, conducteurs, circuits en série et en dérivation."
    },
-   "prerequis": []
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Le courant ne circule que dans une boucle fermée."
+     },
+     {
+      "fr": "En série, une seule boucle : une lampe grillée éteint tout."
+     },
+     {
+      "fr": "En dérivation, chaque branche a sa boucle : les lampes sont indépendantes, comme dans une maison."
+     },
+     {
+      "fr": "Les métaux conduisent grâce à leurs électrons libres ; le plastique et le verre isolent."
+     }
+    ],
+    "piege": {
+     "fr": "L'eau pure conduit mal : ce sont les sels dissous qui rendent l'eau du robinet conductrice."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 380 170\" role=\"img\" aria-label=\"Deux lampes en dérivation, chacune sur sa propre branche\"><polyline class=\"l\" points=\"50,30 290,30 290,150 50,150 50,30\"/><polyline class=\"l\" points=\"170,30 170,150\"/><line class=\"l\" x1=\"36\" y1=\"85\" x2=\"64\" y2=\"85\"/><line class=\"l\" x1=\"43\" y1=\"95\" x2=\"57\" y2=\"95\" stroke-width=\"4\"/><rect class=\"fond\" x=\"34\" y=\"87\" width=\"32\" height=\"6\"/><text class=\"tm\" x=\"28\" y=\"88\" font-size=\"13\" text-anchor=\"end\">+</text><text class=\"tm\" x=\"28\" y=\"102\" font-size=\"13\" text-anchor=\"end\">−</text><circle class=\"f\" cx=\"170\" cy=\"90\" r=\"12\"/><line class=\"l\" x1=\"162\" y1=\"82\" x2=\"178\" y2=\"98\"/><line class=\"l\" x1=\"178\" y1=\"82\" x2=\"162\" y2=\"98\"/><circle class=\"f\" cx=\"290\" cy=\"90\" r=\"12\"/><line class=\"l\" x1=\"282\" y1=\"82\" x2=\"298\" y2=\"98\"/><line class=\"l\" x1=\"298\" y1=\"82\" x2=\"282\" y2=\"98\"/><text class=\"tm\" x=\"190\" y=\"95\" font-size=\"12\" text-anchor=\"start\">lampe 1</text><text class=\"tm\" x=\"308\" y=\"95\" font-size=\"12\" text-anchor=\"start\">lampe 2</text></svg>",
+    "source": "Programme de physique-chimie du cycle 4, Éduscol"
+   }
   },
   {
    "id": "elec.ohm",
@@ -921,7 +2286,28 @@
    },
    "prerequis": [
     "elec.circuits"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "U = R × I : tension (volts) = résistance (ohms) × intensité (ampères)."
+     },
+     {
+      "fr": "Une pile de 9 V sur 3 Ω fait passer 3 A."
+     },
+     {
+      "fr": "Deux résistances égales en série : résistance doublée. En dérivation : divisée par deux."
+     },
+     {
+      "fr": "L'intensité est la même partout dans une boucle série ; la tension se partage."
+     }
+    ],
+    "piege": {
+     "fr": "Le courant ne s'« use » pas en traversant une lampe : la même intensité ressort."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 150\" role=\"img\" aria-label=\"Pile de 9 volts reliée à une résistance de 3 ohms\"><polyline class=\"l\" points=\"60,30 260,30 260,130 60,130 60,30\"/><line class=\"l\" x1=\"46\" y1=\"75\" x2=\"74\" y2=\"75\"/><line class=\"l\" x1=\"53\" y1=\"85\" x2=\"67\" y2=\"85\" stroke-width=\"4\"/><rect class=\"fond\" x=\"44\" y=\"77\" width=\"32\" height=\"6\"/><text class=\"tm\" x=\"38\" y=\"78\" font-size=\"13\" text-anchor=\"end\">+</text><text class=\"tm\" x=\"38\" y=\"92\" font-size=\"13\" text-anchor=\"end\">−</text><text class=\"t\" x=\"80\" y=\"85\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">9 V</text><rect class=\"f\" x=\"252\" y=\"60\" width=\"16\" height=\"40\" rx=\"2\"/><text class=\"t\" x=\"274\" y=\"85\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">3 Ω</text><path class=\"al\" d=\"M150 18 l12 12 l-12 12\" fill=\"none\"/><text class=\"t\" x=\"150\" y=\"60\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">I = ?</text></svg>",
+    "source": "Ohm, Die galvanische Kette, 1827"
+   }
   },
   {
    "id": "elec.puissance",
@@ -935,7 +2321,28 @@
    },
    "prerequis": [
     "elec.circuits"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "P = U × I : un appareil de 2 000 W sur 230 V tire environ 8,7 A."
+     },
+     {
+      "fr": "L'énergie facturée est en kilowattheures : 1 kW pendant 1 h."
+     },
+     {
+      "fr": "Effet Joule : un courant dans une résistance la chauffe (grille-pain, fusible)."
+     },
+     {
+      "fr": "Un appareil en veille consomme peu par heure, mais 24 h sur 24."
+     }
+    ],
+    "piege": {
+     "fr": "kW et kWh ne sont pas la même chose : l'un est une puissance, l'autre une énergie."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Puissances d'appareils courants\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"129.5\" width=\"74.7\" height=\"0.5\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"123.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">10 W</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">LED</text><rect class=\"f2\" x=\"132.7\" y=\"122.5\" width=\"74.7\" height=\"7.5\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"116.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">150 W</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">frigo</text><rect class=\"a\" x=\"219.3\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2000 W</text><text class=\"tm\" x=\"256.6666666666667\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">four</text></svg>",
+    "source": "ADEME, guide « Réduire sa facture d'électricité »"
+   }
   },
   {
    "id": "elec.magnetisme",
@@ -950,7 +2357,28 @@
    "prerequis": [
     "elec.ohm",
     "elec.puissance"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Un courant crée un champ magnétique (Ørsted, 1820) : c'est le principe de l'électroaimant."
+     },
+     {
+      "fr": "Un champ magnétique qui varie crée un courant (induction, Faraday 1831) : c'est l'alternateur."
+     },
+     {
+      "fr": "Un moteur électrique transforme l'énergie électrique en mouvement ; un alternateur fait l'inverse."
+     },
+     {
+      "fr": "Le pôle nord d'une boussole pointe vers le pôle Nord géographique, qui est un pôle sud magnétique."
+     }
+    ],
+    "piege": {
+     "fr": "Casser un aimant en deux ne sépare pas les pôles : on obtient deux aimants complets."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 108\" role=\"img\" aria-label=\"Moteur et alternateur, deux faces du même phénomène\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Moteur</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Alternateur</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"100\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">électricité → mouvement</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">courant → champ</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">mouvement → électricité</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">champ variable → courant</text></svg>",
+    "source": "Faraday, Experimental Researches in Electricity, 1839"
+   }
   },
   {
    "id": "elec.em",
@@ -964,7 +2392,28 @@
    },
    "prerequis": [
     "elec.magnetisme"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Radio, micro-ondes, infrarouge, visible, ultraviolet, X et gamma : la même onde à des fréquences différentes."
+     },
+     {
+      "fr": "Toutes se propagent à la vitesse de la lumière dans le vide (Maxwell, 1865)."
+     },
+     {
+      "fr": "Plus la fréquence est élevée, plus chaque photon porte d'énergie : seuls UV, X et gamma sont ionisants."
+     },
+     {
+      "fr": "Le micro-ondes chauffe surtout l'eau des aliments en agitant ses molécules."
+     }
+    ],
+    "piege": {
+     "fr": "Les ondes radio et Wi-Fi ne sont pas ionisantes : elles n'ont pas assez d'énergie pour casser l'ADN."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Le spectre électromagnétique\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">radio</text><circle class=\"f\" cx=\"79.3\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"79.33333333333334\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">micro-</text><text class=\"tm\" x=\"79.33333333333334\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">ondes</text><circle class=\"f\" cx=\"124.7\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"124.66666666666667\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">infra-</text><text class=\"tm\" x=\"124.66666666666667\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">rouge</text><circle class=\"a\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"170.0\" y=\"91.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">visible</text><circle class=\"f\" cx=\"215.3\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"215.33333333333334\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">UV</text><circle class=\"f\" cx=\"260.7\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"260.6666666666667\" y=\"91.8\" font-size=\"11\" text-anchor=\"middle\">rayons X</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">gamma</text><text class=\"tm\" x=\"16\" y=\"118\" font-size=\"11\" text-anchor=\"start\">basse fréquence</text><text class=\"tm\" x=\"324\" y=\"118\" font-size=\"11\" text-anchor=\"end\">haute fréquence</text></svg>",
+    "source": "Maxwell, A Dynamical Theory of the Electromagnetic Field, 1865"
+   }
   },
   {
    "id": "elec.electronique",
@@ -978,7 +2427,28 @@
    },
    "prerequis": [
     "elec.em"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Une diode ne laisse passer le courant que dans un sens."
+     },
+     {
+      "fr": "Un transistor est un interrupteur ou un amplificateur commandé par un petit courant ou une tension."
+     },
+     {
+      "fr": "Un condensateur stocke des charges et les restitue vite (flash d'appareil photo)."
+     },
+     {
+      "fr": "Un circuit intégré réunit des milliards de transistors sur une puce."
+     }
+    ],
+    "piege": {
+     "fr": "Le transistor de 1947 n'était pas en silicium mais en germanium."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Le transistor commande un grand courant avec un petit\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">petit</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">signal</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">transistor</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">grand</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">courant</text></svg>",
+    "source": "Bardeen et Brattain, Physical Review, 1948"
+   }
   },
   {
    "id": "elec.energies",
@@ -992,7 +2462,28 @@
    },
    "prerequis": [
     "elec.em"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Une centrale thermique (charbon, gaz, nucléaire) chauffe de l'eau, la vapeur fait tourner une turbine et un alternateur."
+     },
+     {
+      "fr": "Éolien et solaire sont intermittents : il faut stocker ou compléter."
+     },
+     {
+      "fr": "Le courant est transporté en haute tension pour réduire les pertes par effet Joule."
+     },
+     {
+      "fr": "Les stations de pompage (STEP) stockent l'énergie en remontant de l'eau."
+     }
+    ],
+    "piege": {
+     "fr": "Une centrale nucléaire ne rejette pas de fumée : les panaches blancs sont de la vapeur d'eau."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 430 96\" role=\"img\" aria-label=\"Le principe d'une centrale thermique\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"53.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chaleur</text><line class=\"al\" x1=\"99.0\" y1=\"52.0\" x2=\"115.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M108.9 55.4 L115.0 52.0 L108.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"118.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"161.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">vapeur</text><line class=\"al\" x1=\"207.0\" y1=\"52.0\" x2=\"223.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M216.9 55.4 L223.0 52.0 L216.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"226.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"269.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">turbine</text><line class=\"al\" x1=\"315.0\" y1=\"52.0\" x2=\"331.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M324.9 55.4 L331.0 52.0 L324.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"334.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"377.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">alternateur</text></svg>",
+    "source": "RTE, Bilan électrique annuel"
+   }
   },
   {
    "id": "elec.numerique",
@@ -1007,7 +2498,28 @@
    "prerequis": [
     "elec.electronique",
     "elec.energies"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Le binaire n'utilise que 0 et 1 : 1011 en binaire vaut 8 + 2 + 1 = 11."
+     },
+     {
+      "fr": "Un octet = 8 bits, soit 256 valeurs."
+     },
+     {
+      "fr": "Portes logiques ET, OU, NON : construites avec des transistors, elles font tous les calculs."
+     },
+     {
+      "fr": "Loi de Moore : le nombre de transistors par puce a doublé environ tous les deux ans pendant des décennies."
+     }
+    ],
+    "piege": {
+     "fr": "Un kilooctet vaut 1 000 octets selon le SI ; 1 024 octets s'appelle un kibioctet."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 148\" role=\"img\" aria-label=\"Tables des portes ET et OU\"><text class=\"t\" x=\"50.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A</text><text class=\"t\" x=\"130.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">B</text><text class=\"t\" x=\"210.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A ET B</text><text class=\"t\" x=\"290.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A OU B</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"50.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">0</text><text class=\"tm\" x=\"130.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"210.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"290.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"t\" x=\"50.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">0</text><text class=\"tm\" x=\"130.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"210.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"290.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"t\" x=\"50.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"130.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"210.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"290.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">1</text><rect class=\"a\" x=\"10\" y=\"114\" width=\"320\" height=\"24\" rx=\"4\" opacity=\"0.25\"/><text class=\"t\" x=\"50.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"130.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"210.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"290.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">1</text></svg>",
+    "source": "Shannon, A Symbolic Analysis of Relay and Switching Circuits, 1938"
+   }
   },
   {
    "id": "philo.antiquite",
@@ -1019,7 +2531,28 @@
    "description": {
     "fr": "Présocratiques, Socrate, Platon, Aristote, stoïciens et épicuriens."
    },
-   "prerequis": []
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Socrate n'a rien écrit ; on le connaît par Platon et Xénophon. « Je sais que je ne sais rien. »"
+     },
+     {
+      "fr": "Platon : allégorie de la caverne, le monde sensible n'est qu'une ombre du monde des Idées."
+     },
+     {
+      "fr": "Aristote : logique, éthique de la vertu comme juste milieu, observation du vivant."
+     },
+     {
+      "fr": "Stoïciens : distinguer ce qui dépend de nous de ce qui n'en dépend pas. Épicure : le plaisir comme absence de trouble."
+     }
+    ],
+    "piege": {
+     "fr": "L'épicurisme n'est pas la débauche : Épicure prônait une vie frugale."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Philosophes antiques dans le temps\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Thalès</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">−600</text><circle class=\"f\" cx=\"88.4\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"88.4\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Socrate</text><text class=\"tm\" x=\"88.4\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">−470</text><circle class=\"a\" cx=\"142.8\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"142.8\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">Platon</text><text class=\"t\" x=\"142.8\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">−428</text><circle class=\"f\" cx=\"197.2\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"197.2\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Aristote</text><text class=\"tm\" x=\"197.2\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">−384</text><circle class=\"f\" cx=\"251.6\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"251.6\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Épicure</text><text class=\"tm\" x=\"251.6\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">−341</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Marc Aurèle</text><text class=\"tm\" x=\"306.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">121</text></svg>",
+    "source": "Diogène Laërce, Vies et doctrines des philosophes illustres"
+   }
   },
   {
    "id": "philo.medievale",
@@ -1033,7 +2566,28 @@
    },
    "prerequis": [
     "philo.antiquite"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Averroès commente Aristote et défend l'accord de la raison et de la foi."
+     },
+     {
+      "fr": "Thomas d'Aquin réconcilie Aristote et la théologie chrétienne."
+     },
+     {
+      "fr": "Rasoir d'Ockham : ne pas multiplier les entités sans nécessité."
+     },
+     {
+      "fr": "Machiavel, Le Prince (1532) ; Montaigne, Essais (1580) : « Que sais-je ? »"
+     }
+    ],
+    "piege": {
+     "fr": "Au Moyen Âge, les savants ne croyaient pas la Terre plate : sa sphéricité était admise depuis l'Antiquité."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Philosophes du Moyen Âge et de la Renaissance\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Averroès</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1126</text><circle class=\"f\" cx=\"102.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"102.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Thomas</text><text class=\"tm\" x=\"102.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">d'Aquin 1225</text><circle class=\"a\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"170.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">Ockham</text><text class=\"t\" x=\"170.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1287</text><circle class=\"f\" cx=\"238.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"238.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Machiavel</text><text class=\"tm\" x=\"238.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1469</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Montaigne</text><text class=\"tm\" x=\"306.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1533</text></svg>",
+    "source": "Gilson, La Philosophie au Moyen Âge, 1922"
+   }
   },
   {
    "id": "philo.classique",
@@ -1047,7 +2601,28 @@
    },
    "prerequis": [
     "philo.antiquite"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Descartes : « Je pense, donc je suis », le doute méthodique."
+     },
+     {
+      "fr": "Hume : on ne voit jamais la causalité, seulement des successions habituelles (problème de l'induction)."
+     },
+     {
+      "fr": "Locke : l'esprit est une page blanche que remplit l'expérience."
+     },
+     {
+      "fr": "Kant : agir de façon que la maxime de son action puisse devenir une loi universelle. « Sapere aude ! »"
+     }
+    ],
+    "piege": {
+     "fr": "Rousseau n'a jamais écrit « l'homme naît bon et la société le corrompt » mot pour mot : c'est un résumé."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Âge classique et Lumières\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Descartes</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1596</text><circle class=\"f\" cx=\"88.4\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"88.4\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Spinoza</text><text class=\"tm\" x=\"88.4\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1632</text><circle class=\"f\" cx=\"142.8\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"142.8\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Locke</text><text class=\"tm\" x=\"142.8\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1632</text><circle class=\"f\" cx=\"197.2\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"197.2\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Hume</text><text class=\"tm\" x=\"197.2\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1711</text><circle class=\"f\" cx=\"251.6\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"251.6\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Rousseau</text><text class=\"tm\" x=\"251.6\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1712</text><circle class=\"a\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"306.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">Kant</text><text class=\"t\" x=\"306.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1724</text></svg>",
+    "source": "Descartes, Discours de la méthode, 1637"
+   }
   },
   {
    "id": "philo.moderne",
@@ -1062,7 +2637,28 @@
    "prerequis": [
     "philo.medievale",
     "philo.classique"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Nietzsche : « Dieu est mort », la critique des valeurs, la volonté de puissance."
+     },
+     {
+      "fr": "Popper : une théorie est scientifique si elle est réfutable. Kuhn : la science avance par changements de paradigme."
+     },
+     {
+      "fr": "Sartre : « l'existence précède l'essence ». Beauvoir : « On ne naît pas femme, on le devient »."
+     },
+     {
+      "fr": "Arendt : la « banalité du mal » à propos du procès Eichmann."
+     }
+    ],
+    "piege": {
+     "fr": "« Dieu est mort » n'est pas une célébration chez Nietzsche : c'est le constat d'une crise des valeurs."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Philosophes modernes\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Nietzsche</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1844</text><circle class=\"f\" cx=\"79.3\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"79.33333333333334\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Russell</text><text class=\"tm\" x=\"79.33333333333334\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1872</text><circle class=\"f\" cx=\"124.7\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"124.66666666666667\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Popper</text><text class=\"tm\" x=\"124.66666666666667\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1902</text><circle class=\"f\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"170.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Sartre</text><text class=\"tm\" x=\"170.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1905</text><circle class=\"a\" cx=\"215.3\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"215.33333333333334\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">Arendt</text><text class=\"t\" x=\"215.33333333333334\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1906</text><circle class=\"f\" cx=\"260.7\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"260.6666666666667\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Beauvoir</text><text class=\"tm\" x=\"260.6666666666667\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1908</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Kuhn</text><text class=\"tm\" x=\"306.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1922</text></svg>",
+    "source": "Arendt, Eichmann à Jérusalem, 1963"
+   }
   },
   {
    "id": "philo.ethique",
@@ -1076,7 +2672,28 @@
    },
    "prerequis": [
     "philo.moderne"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Utilitarisme (Bentham, Mill) : la bonne action maximise le bien-être total."
+     },
+     {
+      "fr": "Déontologie (Kant) : certaines actions sont interdites quelles que soient les conséquences."
+     },
+     {
+      "fr": "Éthique des vertus (Aristote) : devenir quelqu'un de courageux, juste, tempérant."
+     },
+     {
+      "fr": "Dilemme du tramway : la plupart acceptent de dévier le tramway, peu de pousser quelqu'un, pour le même bilan."
+     }
+    ],
+    "piege": {
+     "fr": "L'utilitarisme ne dit pas « la fin justifie les moyens » : il compte aussi les moyens dans les conséquences."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 184\" role=\"img\" aria-label=\"Trois grandes familles de l'éthique\"><polygon class=\"f2\" points=\"170,22 72,160 268,160\"/><text class=\"tm\" x=\"170\" y=\"116.2\" font-size=\"12\" text-anchor=\"middle\">bien agir</text><rect class=\"f\" x=\"110\" y=\"5\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170\" y=\"19.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">conséquences</text><text class=\"t\" x=\"170\" y=\"33.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">(Mill)</text><rect class=\"f\" x=\"12\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"72\" y=\"157.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">devoirs</text><text class=\"t\" x=\"72\" y=\"171.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">(Kant)</text><rect class=\"f\" x=\"208\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"268\" y=\"157.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">vertus</text><text class=\"t\" x=\"268\" y=\"171.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">(Aristote)</text></svg>",
+    "source": "Foot, Oxford Review, 1967"
+   }
   },
   {
    "id": "philo.politique",
@@ -1090,7 +2707,28 @@
    },
    "prerequis": [
     "philo.ethique"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Hobbes : sans État, la vie serait « solitaire, misérable, brutale et courte » ; on cède sa liberté au Léviathan."
+     },
+     {
+      "fr": "Locke : le pouvoir protège des droits naturels ; on peut renverser un pouvoir tyrannique."
+     },
+     {
+      "fr": "Montesquieu : séparer législatif, exécutif et judiciaire pour que « le pouvoir arrête le pouvoir »."
+     },
+     {
+      "fr": "Rawls : choisir les règles sous un voile d'ignorance, sans savoir quelle place on aura."
+     }
+    ],
+    "piege": {
+     "fr": "Montesquieu n'a pas inventé la séparation des pouvoirs à partir de rien : il s'inspire de Locke et de l'Angleterre."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 184\" role=\"img\" aria-label=\"La séparation des pouvoirs\"><polygon class=\"f2\" points=\"170,22 72,160 268,160\"/><text class=\"tm\" x=\"170\" y=\"109.2\" font-size=\"12\" text-anchor=\"middle\">« le pouvoir</text><text class=\"tm\" x=\"170\" y=\"123.2\" font-size=\"12\" text-anchor=\"middle\">arrête le pouvoir »</text><rect class=\"f\" x=\"110\" y=\"5\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170\" y=\"26.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">législatif</text><rect class=\"f\" x=\"12\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"72\" y=\"164.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">exécutif</text><rect class=\"f\" x=\"208\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"268\" y=\"164.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">judiciaire</text></svg>",
+    "source": "Montesquieu, De l'esprit des lois, 1748"
+   }
   },
   {
    "id": "philo.esprit",
@@ -1104,7 +2742,28 @@
    },
    "prerequis": [
     "philo.ethique"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Dualisme (Descartes) : l'esprit et le corps sont deux substances. Matérialisme : l'esprit est ce que fait le cerveau."
+     },
+     {
+      "fr": "Test de Turing (1950) : une machine pense-t-elle si on ne la distingue pas d'un humain en conversation ?"
+     },
+     {
+      "fr": "Chambre chinoise (Searle, 1980) : manipuler des symboles selon des règles ne suffit pas à comprendre."
+     },
+     {
+      "fr": "Le « problème difficile » de la conscience (Chalmers) : pourquoi y a-t-il un ressenti ?"
+     }
+    ],
+    "piege": {
+     "fr": "Réussir le test de Turing ne prouve pas la conscience : c'est tout le propos de Searle."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"La chambre chinoise de Searle : tout marche, rien n'est compris\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">symboles</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chinois</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">règles</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">du manuel</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">réponses</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">parfaites</text></svg>",
+    "source": "Searle, Behavioral and Brain Sciences, 1980"
+   }
   },
   {
    "id": "philo.sciences",
@@ -1119,7 +2778,28 @@
    "prerequis": [
     "philo.politique",
     "philo.esprit"
-   ]
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Problème de l'induction (Hume) : rien ne garantit logiquement que le futur ressemblera au passé."
+     },
+     {
+      "fr": "Démarcation (Popper) : la réfutabilité distingue la science de ce qui n'en est pas."
+     },
+     {
+      "fr": "Duhem-Quine : on ne teste jamais une hypothèse seule, mais avec tout un réseau d'hypothèses auxiliaires."
+     },
+     {
+      "fr": "Crise de la reproductibilité : sur 100 études de psychologie, à peine plus d'un tiers ont été reproduites avec succès (2015)."
+     }
+    ],
+    "piege": {
+     "fr": "Un résultat non reproduit n'est pas forcément une fraude : souvent un effet trop faible ou un échantillon trop petit."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Open Science Collaboration : 100 études de psychologie répliquées\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"a\" x=\"46.0\" y=\"73.8\" width=\"118.0\" height=\"56.2\" rx=\"3\"/><text class=\"t\" x=\"105.0\" y=\"67.75\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">36 %</text><text class=\"tm\" x=\"105.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">reproduits</text><rect class=\"f2\" x=\"176.0\" y=\"30.0\" width=\"118.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"235.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">64 %</text><text class=\"tm\" x=\"235.0\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">non</text><text class=\"tm\" x=\"235.0\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">reproduits</text></svg>",
+    "source": "Open Science Collaboration, Science, 2015"
+   }
   }
  ]
 }

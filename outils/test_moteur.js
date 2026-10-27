@@ -13,7 +13,7 @@ assert.equal(M.statut(C, P, "math.arithmetique", t).etat, "disponible");
 assert.equal(M.statut(C, P, "math.proportions", t).etat, "verrouillee");
 let r = M.terminerQuiz(C, P, "math.arithmetique", res("math.arithmetique", 5, 3), t);
 assert.equal(r.issue, "echec");
-assert.deepEqual(r.nouveauxSucces.map(s => s.id), ["tour-de-pise"]);
+assert.deepEqual(r.nouveauxSucces.map(s => s.id).filter(id => id !== "honte-1"), ["tour-de-pise"]);
 r = M.terminerQuiz(C, P, "math.arithmetique", res("math.arithmetique", 5, 5), t);
 assert.equal(r.issue, "maitrisee"); assert.equal(r.xp, 70);
 assert.deepEqual(r.nouveauxSucces.map(s => s.id).sort(), ["einstein-notes", "eureka", "premier-pas"]);
@@ -788,4 +788,45 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const vieux = M.migrer(JSON.parse(JSON.stringify(Object.assign(M.nouvellePartie(t0), { masquesJour: undefined, butinAssure: undefined }))));
   assert.equal(vieux.masquesJour, null); assert.equal(vieux.butinAssure, false);
   console.log("OK : v11 masques du jour, règles cumulées, renfort, objets tenus");
+}
+
+// v12 : le mur de la honte
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
+  const CH = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const t0 = new Date(2026, 9, 28, 10, 0).getTime(), J = 86400000;
+  assert.ok(CH.competences.every(k => k.fiche && k.fiche.essentiel.length >= 3 && k.fiche.schema.startsWith("<svg")));
+  const P = M.nouvellePartie(t0); P.plateau.ennemis = {};
+  const qs = CH.questions.filter(q => q.competence === "math.probabilites").slice(0, 5);
+  const res = qs.map((q, i) => ({ id: q.id, correct: i >= 2, rep: i < 2 ? 99 : null }));
+  const r = M.terminerQuiz(CH, P, "math.probabilites", res, t0, { alea: () => 0.99 });
+  assert.equal(P.oublis.length, 2); assert.equal(P.oublis[0].rep, 99); assert.equal(P.compteurs.hontes, 2);
+  assert.ok(r.nouveauxSucces.some(s => s.id === "honte-1"));
+  let mur = M.murDeLaHonte(CH, P, t0 + 3600000);
+  assert.equal(mur.aujourdhui.length, 2); assert.equal(mur.restantes, 2); assert.equal(mur.aujourdhui[0].question.competence, "math.probabilites");
+  assert.equal(M.repliqueDuJour(CH, P, t0 + 3600000).contexte, "mur_honte");
+  // La même question ratée deux fois le même jour n'apparaît qu'une fois.
+  M.terminerQuiz(CH, P, "math.probabilites", res, t0 + 5 * 3600000, { alea: () => 0.99 });
+  assert.equal(M.murDeLaHonte(CH, P, t0 + 6 * 3600000).aujourdhui.length, 2);
+  // On ne retente pas le jour même.
+  const i0 = M.murDeLaHonte(CH, P, t0 + 6 * 3600000).aujourdhui[0].index;
+  assert.equal(M.retenterOubli(CH, P, i0, true, t0 + 7 * 3600000), null, "pas le jour même");
+  // Le lendemain, elles passent dans les jours précédents, à retenter.
+  mur = M.murDeLaHonte(CH, P, t0 + J);
+  assert.equal(mur.aujourdhui.length, 0); assert.equal(mur.avant.length, 2); assert.equal(mur.aRetenter, 2);
+  assert.notEqual((M.repliqueDuJour(CH, P, t0 + J) || {}).contexte, "mur_honte");
+  const ia = mur.avant[0].index;
+  let rt = M.retenterOubli(CH, P, ia, false, t0 + J);
+  assert.ok(!rt.efface && rt.replique.contexte === "honte_ratee");
+  rt = M.retenterOubli(CH, P, ia, true, t0 + J + 1000);
+  assert.ok(rt.efface); assert.equal(P.compteurs.hontesEffacees, 1);
+  assert.equal(M.retenterOubli(CH, P, ia, true, t0 + J + 2000), null, "déjà effacée");
+  assert.equal(M.murDeLaHonte(CH, P, t0 + J + 3000).aRetenter, 1, "les deux épingles de la même question sont effacées");
+  // Après 30 jours, elles quittent le mur.
+  M.terminerQuiz(CH, P, "math.logique", CH.questions.filter(q => q.competence === "math.logique").slice(0, 5).map(q => ({ id: q.id, correct: false })), t0 + 31 * J, { alea: () => 0.99 });
+  assert.ok(P.oublis.every(e => e.t >= t0 + J), "plus de 30 jours : retiré du mur");
+  const vieux = M.migrer(JSON.parse(JSON.stringify(Object.assign(M.nouvellePartie(t0), { oublis: undefined }))));
+  assert.deepEqual(vieux.oublis, []);
+  console.log("OK : v12 mur de la honte, retenter, fiches de révision");
 }

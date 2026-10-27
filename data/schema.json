@@ -217,7 +217,8 @@
        "rang",
        "nom",
        "description",
-       "prerequis"
+       "prerequis",
+       "fiche"
       ],
       "additionalProperties": false,
       "properties": {
@@ -243,6 +244,36 @@
          "$ref": "#/$defs/id"
         },
         "uniqueItems": true
+       },
+       "fiche": {
+        "type": "object",
+        "required": [
+         "essentiel",
+         "piege",
+         "schema",
+         "source"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "essentiel": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+           "$ref": "#/$defs/texte"
+          }
+         },
+         "piege": {
+          "$ref": "#/$defs/texte"
+         },
+         "schema": {
+          "type": "string",
+          "pattern": "^<svg"
+         },
+         "source": {
+          "type": "string",
+          "minLength": 3
+         }
+        }
        }
       }
      }
@@ -519,7 +550,9 @@
       "cadeaux_offerts",
       "atomes_captures",
       "atomes_enfuis",
-      "famille_capturee"
+      "famille_capturee",
+      "hontes",
+      "hontes_effacees"
      ]
     },
     "n": {
@@ -664,7 +697,11 @@
          "faveur_boudeuse",
          "faveur_furieuse",
          "faveur_comblee",
-         "piege_ia"
+         "piege_ia",
+         "mur_honte",
+         "honte_effacee",
+         "honte_ratee",
+         "honte_vide"
         ]
        },
        "reference": {

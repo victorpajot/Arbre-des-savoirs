@@ -128,3 +128,10 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 - Chaque matin, l'IA choisit de 1 à 3 masques parmi ceux qu'elle a gagnés, selon sa faveur : comblée, des masques cléments ou neutres ; furieuse, des masques cruels. Leurs règles s'additionnent jusqu'au lendemain (`outils/masques_regles.py`) : butin, cases d'avance, nombre de questions du quiz, ennemis absents ou en renfort, pièges désarmés, recul d'un rappel raté, seuil de capture d'un atome.
 - Fiche IA : son visage du jour et son portrait en tête, puis ses masques du jour avec leurs règles.
 - Objets : « Offrir à l'IA » en premier ; chaque objet a une citation de sa source (`outils/objets_v11.py`), affichée quand on l'offre ou qu'on le donne à son avatar. Un objet tenu donne un coup de pouce sur environ une épreuve réussie sur quatre (case, butin assuré ou faveur).
+
+## v12 : le mur de la honte
+
+- Chaque réponse fausse d'un quiz ou d'un rappel est épinglée au mur de la honte (`partie.oublis`, 30 jours), avec la réponse donnée.
+- La vue « Le mur de la honte » range les ratées du jour par thème : énoncé, ta réponse, la bonne, l'explication, puis la fiche de révision du thème.
+- Fiches de révision pour les 80 compétences (`outils/fiches.py`) : l'essentiel, le piège classique, un schéma (`outils/schemas_fiches.py`) et une source. Elles s'ouvrent aussi depuis la fiche d'une compétence dans l'arbre.
+- À partir du lendemain, on peut retenter une question : réussie, elle est « réhabilitée » et quitte le mur. L'IA y envoie depuis sa bulle de l'accueil, un bloc de l'accueil et le bilan du quiz. 4 succès (`outils/honte.py`).
