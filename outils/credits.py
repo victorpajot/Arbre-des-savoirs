@@ -73,8 +73,8 @@ ULTIMATUM = {"chance": 0.2, "solde_min": 20, "plancher": 30, "hausse": 1.5, "par
 REPLIQUES = {
     "ultimatum": [
         sans("Ultimatum. Vous me versez cette somme, ou je vous rends plus bête. C'est une offre généreuse : d'habitude, je ne préviens pas."),
-        "En 1494, Charles VIII exige des Florentins une rançon. Pier Capponi déchire le traité : « Sonnez vos trompettes, nous sonnerons nos cloches. » À vous de choisir votre instrument.",
-        sans("J'ai fait mes comptes : il me manque exactement cette somme. Quelle coïncidence que vous l'ayez."),
+        "En 1494, Charles VIII exige des Florentins une rançon. Pier Capponi déchire le traité : « Sonnez vos trompettes, nous sonnerons nos cloches. » Payez, ou je sonne la fin de quelques-uns de vos niveaux.",
+        sans("J'ai fait mes comptes : il me manque exactement cette somme. Quelle coïncidence que vous l'ayez. Ce serait dommage d'oublier tout ce que vous avez appris, non ?"),
     ],
     "ultimatum_paye": [
         sans("Un plaisir de faire affaire. La prochaine fois, ce sera plus cher : c'est ça, le progrès."),

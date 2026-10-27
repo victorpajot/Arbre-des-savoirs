@@ -3126,10 +3126,10 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   // v17 : l'ultimatum de l'IA. Payer, ou refuser : elle verse la somme mais retire de vrais niveaux.
   function blocUltimatum() {
     var u = P.ultimatum, cr = P.credits, peut = cr.solde >= u.demande;
-    var b = el('<section class="bloc ultimatum"><div class="eyebrow">Ultimatum de l\'IA</div><h2>' + u.demande + ' crédits, ou ' + u.niveaux + ' niveaux</h2><div class="z-ia"></div>' +
-      '<p>Tu as <b>' + cr.solde + "</b> crédit" + (cr.solde > 1 ? "s" : "") + ". Si tu paies, sa prochaine exigence sera plus haute. Si tu refuses, elle te verse les " + u.demande + " crédits… et te retire " + u.niveaux + " niveaux, pour de vrai.</p>" +
+    // Seulement la demande et la menace : les règles, le joueur les découvre en payant ou en refusant.
+    var b = el('<section class="bloc ultimatum"><div class="eyebrow">Ultimatum</div><h2>' + u.demande + ' crédits</h2><div class="z-ia"></div>' +
       '<div class="rangee"><button type="button" class="btn large" data-u="payer"' + (peut ? "" : " disabled") + ">Payer " + u.demande + '</button><button type="button" class="btn sec large" data-u="refuser">Refuser</button></div>' +
-      (peut ? "" : '<p class="meta">Pas assez de crédits pour payer : il ne reste que le refus.</p>') + "</section>");
+      (peut ? "" : '<p class="meta">Tu n\'as que ' + cr.solde + " crédit" + (cr.solde > 1 ? "s" : "") + ".</p>") + "</section>");
     var rep = ligneDuJour("ultimatum"); if (rep) b.querySelector(".z-ia").appendChild(comite(rep, true));
     b.querySelectorAll("[data-u]").forEach(function (bt) { bt.onclick = function () { reponseUltimatum(bt.getAttribute("data-u") === "payer"); }; });
     return b;
@@ -3139,8 +3139,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     if (!r || !r.ok) { toast("Pas assez de crédits."); return; }
     sauver();
     var html = '<div class="eyebrow">Ultimatum</div><h2>' + (paye ? "Payé : −" + r.demande + " crédits" : "Refusé : +" + r.demande + " crédits") + '</h2><div id="ia-ult"></div>' +
-      (paye ? '<p class="etat-pion">Elle est ravie. La prochaine fois, elle exigera au moins ' + Math.ceil(r.demande * C.ia.credits.ultimatum.hausse) + " crédits.</p>" :
-        '<div class="gain-faveur perte"><b>Niveau ' + r.niveauAvant + " → " + r.niveauApres + "</b><span>" + r.perdus + " niveau" + (r.perdus > 1 ? "x" : "") + " retiré" + (r.perdus > 1 ? "s" : "") + " : l'XP de ton arbre le plus haut a fondu.</span></div>");
+      (paye ? "" : '<div class="gain-faveur perte"><b>Niveau ' + r.niveauAvant + " → " + r.niveauApres + "</b></div>");
     feuilleSimple(html, "Ultimatum");
     var avis = M.replique(C, P, [paye ? "ultimatum_paye" : "ultimatum_refuse"]);
     if (avis) { avis.aparte = false; feuille.querySelector("#ia-ult").appendChild(comite(avis)); }
