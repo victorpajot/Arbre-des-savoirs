@@ -134,6 +134,7 @@
       bestiaire: {},
       duel: null,
       cadeaux: { jour: null, donnes: {} },
+      credits: { solde: 0, gagnes: 0, parSucces: {}, record: 0, jour: null, pots: 0 },
       objetIA: null,
       atomes: {},
       sauvages: [],
@@ -203,6 +204,11 @@
     out.duel = p.duel || null;
     out.cadeaux = Object.assign({ jour: null, donnes: {} }, p.cadeaux || {});
     out.objetIA = p.objetIA || null;
+    // v16 : crédits. Une ancienne partie reçoit le tarif normal pour les succès déjà obtenus.
+    out.credits = Object.assign({ solde: 0, gagnes: 0, parSucces: {}, record: 0, jour: null, pots: 0 }, p.credits || {});
+    if (!p.credits && contenu && contenu.ia && contenu.ia.credits) {
+      contenu.succes.forEach(function (sc) { if (out.succes[sc.id]) { var n = tarifSucces(contenu, sc); out.credits.solde += n; out.credits.gagnes += n; out.credits.parSucces[sc.id] = { n: n, humeur: "normal" }; } });
+    }
     // v9 : tableau périodique (z → fiche) et atomes sauvages en attente de combat.
     out.atomes = p.atomes || {};
     out.sauvages = p.sauvages || [];
@@ -1167,6 +1173,75 @@
       eclat: cd.eclat || 1, repete: repete, gain: gain, avant: avant, faveur: faveurIA(contenu, partie, t) };
   }
 
+  // --- Crédits et pots-de-vin (v16) -------------------------------------------
+  // Chaque succès rapporte des crédits : un tarif selon son genre (petit, jalon, exploit, monument, honte),
+  // multiplié par l'humeur de l'IA, tirée au sort et penchée par sa faveur. Elle commente son choix.
+  function tarifSucces(contenu, sc) {
+    var K = contenu.ia && contenu.ia.credits; if (!K) return 0;
+    var g = K.genres[sc.condition && sc.condition.type] || "jalon", n = K.bareme[g] || 0;
+    return Math.round(n * (sc.cache ? K.bonus_cache : 1));
+  }
+  function crediterSucces(contenu, partie, sc) {
+    var K = contenu.ia && contenu.ia.credits; if (!K) return null;
+    var base = tarifSucces(contenu, sc), g = K.genres[sc.condition && sc.condition.type] || "jalon";
+    var h = hacher(sc.id + "|" + (partie.cree || 0) + "|" + (partie.journal ? partie.journal.length : 0)), r = (h % 1000) / 1000;
+    var humeur, mots, facteur;
+    if (g === "honte" && r < K.honte.chance) { humeur = "honte"; facteur = K.honte.facteur; mots = K.honte.mots; }
+    else {
+      var fav = partie.faveur ? partie.faveur.valeur : 60, col = fav >= 75 ? 3 : fav >= 45 ? 2 : fav >= 20 ? 1 : 0;
+      var total = 0; K.humeurs.forEach(function (x) { total += x.poids[col]; });
+      var tir = ((h >>> 10) % 1000) / 1000 * total, choix = K.humeurs[0];
+      for (var i = 0; i < K.humeurs.length; i++) { tir -= K.humeurs[i].poids[col]; if (tir < 0) { choix = K.humeurs[i]; break; } }
+      humeur = choix.id; facteur = choix.facteur; mots = choix.mots;
+    }
+    var n = Math.round(base * facteur);
+    partie.credits.solde += n; partie.credits.gagnes += n;
+    var mot = mots[(h >>> 20) % mots.length];
+    partie.credits.parSucces[sc.id] = { n: n, base: base, humeur: humeur, mot: mot };
+    return { succes: sc.id, n: n, base: base, humeur: humeur, mot: mot };
+  }
+  function potPossible(contenu, partie, montant, t) {
+    if (!contenu.ia || !contenu.ia.credits) return { ok: false, raison: "inconnu" };
+    if (partie.credits.jour === cleJour(t)) return { ok: false, raison: "jour" };
+    montant = Math.floor(Number(montant));
+    if (!(montant > 0)) return { ok: false, raison: "montant" };
+    if (montant > partie.credits.solde) return { ok: false, raison: "solde" };
+    return { ok: true, montant: montant };
+  }
+  // Un pot-de-vin par jour. Au-dessus de son record, elle est ravie : faveur pleine et le pion avance.
+  // Égal au record, la moitié de la faveur. En dessous, elle garde l'argent, se vexe et pose un piège.
+  function corrompre(contenu, partie, montant, t) {
+    var p = potPossible(contenu, partie, montant, t); if (!p.ok) return p;
+    var K = contenu.ia.credits.pots, cr = partie.credits, m = p.montant, record = cr.record || 0;
+    var issue = !cr.pots ? "premier" : m > record ? "genereux" : m === record ? "egal" : "radin";
+    var avant = faveurIA(contenu, partie, t), gain = 0, dep = null, piege = null;
+    cr.solde -= m; cr.jour = cleJour(t); cr.pots = (cr.pots || 0) + 1; cr.dernier = m; cr.record = Math.max(record, m);
+    if (issue === "radin") {
+      gain = -K.colere;
+      if (avant) partie.faveur = { valeur: Math.max(0, avant.valeur - K.colere), maj: t };
+      if (contenu.plateau) {
+        var en = ennemisPlateau(contenu, partie), libres = [];
+        devantPion(contenu, partie, 1, 5).forEach(function (n) { if (!specialDe(contenu, partie, n) && !en[n]) libres.push(n); });
+        if (libres.length) {
+          piege = libres[0];
+          partie.plateau.speciaux[piege] = { type: K.piege.type, n: K.piege.n, ia: true, raison: { fr: "Posé par l'IA : votre dernier pot-de-vin était plus petit que le précédent. Elle a de la mémoire." } };
+        }
+      }
+    } else {
+      gain = Math.min(K.gain_max, Math.round(K.gain_base + m * K.gain_par_credit));
+      if (issue === "egal") gain = Math.round(gain / 2);
+      if (avant) partie.faveur = { valeur: Math.min(100, avant.valeur + gain), maj: t };
+      if (issue !== "egal" && contenu.plateau) {
+        var pas = record && m >= 2 * record ? K.avance_double : K.avance;
+        dep = deplacer(contenu, partie, pas, t, "pot");
+        if (dep) dep.contextes = contextesPlateau(dep);
+      }
+    }
+    var rec = verifierRecompenses(contenu, partie, t);
+    partie.maj = t;
+    return { ok: true, montant: m, issue: issue, record: record, gain: gain, avant: avant, faveur: faveurIA(contenu, partie, t), plateau: dep, piege: piege, recompenses: rec };
+  }
+
   // --- Faveur de l'IA (v10) ----------------------------------------------------
   // Une jauge de 0 à 100, qui baisse chaque jour. Les cadeaux la font remonter selon leur éclat.
   // Le palier (comblée, contente, boudeuse, furieuse) change le butin, l'avancée et, furieuse, pose des pièges.
@@ -1187,7 +1262,7 @@
     partie.colere = cleJour(t);
     if (!libres.length) return null;
     var c = libres[hacher(cleJour(t) + "|" + pl.position) % libres.length], P = contenu.ia.faveur.piege;
-    pl.speciaux[c] = { type: P.type, n: P.n, ia: true, raison: { fr: "Posé par l'IA, furieuse qu'on l'oublie. Un cadeau qui brille la calmerait." } };
+    pl.speciaux[c] = { type: P.type, n: P.n, ia: true, raison: { fr: "Posé par l'IA, furieuse qu'on l'oublie. Un cadeau la calmerait peut-être." } };
     partie.maj = t;
     return c;
   }
@@ -1364,7 +1439,7 @@
   // Débloque succès, savants, dates de la frise, reliques ; range le butin dont la condition est remplie.
   // Certains dépendent des autres (« 30 succès », « 10 objets ») : on boucle jusqu'à stabilité.
   function verifierRecompenses(contenu, partie, t) {
-    var out = { succes: [], objets: [], accessoires: [], savants: [], evenements: [], livres: [], masque: null, gagnables: [] };
+    var out = { succes: [], objets: [], accessoires: [], savants: [], evenements: [], livres: [], masque: null, gagnables: [], credits: [] };
     partie.gagnables = partie.gagnables || {};
     partie.masques = partie.masques || {};
     // v8 : les cadeaux des cases, déjà rangés, rejoignent le résultat pour être montrés au joueur.
@@ -1388,6 +1463,7 @@
           if (f[2][x.id] || (FAMILLES_LOT[f[0]] && lot.n) || !conditionRemplie(contenu, partie, x.condition, t)) return;
           if (f[0] === "evenements" && !dateAtteinte(contenu, partie, x)) return;
           f[2][x.id] = t; out[f[0]].push(x); change = true; compterLot(lot, f[0]);
+          if (f[0] === "succes") { var cr = crediterSucces(contenu, partie, x); if (cr) out.credits.push(cr); }
         });
       });
       FAMILLES_BUTIN.forEach(function (f) {
@@ -1760,7 +1836,7 @@
     replique: replique,
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, choixArbre: choixArbre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,

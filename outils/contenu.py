@@ -24,6 +24,7 @@ import cadeaux
 import pieges
 import mendeleiev
 import brillants
+import credits
 import fiches
 import figures
 import symboles
@@ -749,6 +750,7 @@ def narrateur():
         "taille": [40, 48],
         "expressions": ia.EXPRESSIONS,
         "masques_jour": {"max": 3, "selon_faveur": masques_regles.SELON_FAVEUR},
+        "credits": credits.donnees(),
         "faveur": {**brillants.FAVEUR, "paliers": [{**p, "nom": fr(p["nom"]), "effet": fr(p["effet"])} for p in brillants.FAVEUR["paliers"]]},
         "masques": [{"id": m["id"], "nom": fr(m["nom"]), **({"condition": m["condition"]} if m["condition"] else {}), "notice": fr(m["notice"]),
                      "source": m["source"], "tons": masques.TONS[m["id"]], **regles_masque(m["id"]), "base": calques[m["id"]]["base"], "expressions": calques[m["id"]]["expressions"]} for m in masques.MASQUES],

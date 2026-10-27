@@ -469,6 +469,11 @@ import honte  # noqa: E402
 REPLIQUES.update({k: [sans(l[1]) if isinstance(l, tuple) else l for l in v] for k, v in honte.REPLIQUES.items()})
 EXPRESSIONS.update(honte.TONS)
 
+# v16 : les crédits et les pots-de-vin.
+import credits  # noqa: E402
+REPLIQUES.update({k: [sans(l[1]) if isinstance(l, tuple) else l for l in v] for k, v in credits.REPLIQUES.items()})
+EXPRESSIONS.update(credits.TONS)
+
 # v7 : surnom que l'IA donne au joueur, affiché sous le rang. Il suit son humeur (dernier résultat),
 # ou juste après un succès, ce succès ({succes}). Groupes nominaux épicènes : le joueur peut être n'importe qui.
 SURNOMS = {

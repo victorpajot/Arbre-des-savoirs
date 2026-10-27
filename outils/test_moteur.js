@@ -349,6 +349,36 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const t0 = new Date(2026, 9, 27, 10, 0).getTime();
   const juste = (P, id, n, ok) => M.tirerQuestions(C5, P, id, n).map((q, i) => ({ id: q.id, correct: i < ok }));
 
+  // v16 : crédits des succès, fixés par l'IA ; pots-de-vin, toujours plus
+  {
+    const P = M.nouvellePartie(t0);
+    assert.equal(P.credits.solde, 0);
+    const sc = C5.succes.find(x => x.id === "premier-pas");
+    P.competences["math.arithmetique"] = { maitrise: true, maitriseDepuis: t0, palier: 1, prochainRappel: t0 + 86400000, xp: 20 };
+    const rec = M.verifierRecompenses(C5, P, t0);
+    const cr = rec.credits.find(c => c.succes === "premier-pas");
+    assert.ok(cr && cr.base === M.tarifSucces(C5, sc) && cr.mot && cr.mot.fr, "un succès rapporte des crédits, avec un mot de l'IA");
+    assert.equal(P.credits.solde, rec.credits.reduce((a, c) => a + c.n, 0));
+    const tarifs = C5.succes.map(x => M.tarifSucces(C5, x));
+    assert.ok(Math.max(...tarifs) > Math.min(...tarifs), "le tarif dépend du genre de succès");
+    P.credits.solde = 100;
+    assert.equal(M.potPossible(C5, P, 500, t0).raison, "solde");
+    let r = M.corrompre(C5, P, 10, t0);
+    assert.equal(r.issue, "premier"); assert.ok(r.gain > 0); assert.equal(P.credits.solde, 90 + r.recompenses.credits.reduce((a, c) => a + c.n, 0));
+    assert.equal(M.corrompre(C5, P, 5, t0).raison, "jour", "un pot-de-vin par jour");
+    const j = 86400000;
+    r = M.corrompre(C5, P, 20, t0 + j); assert.equal(r.issue, "genereux"); assert.ok(r.plateau, "plus que son record : le pion avance");
+    r = M.corrompre(C5, P, 20, t0 + 2 * j); assert.equal(r.issue, "egal"); assert.ok(!r.plateau);
+    const avant = M.faveurIA(C5, P, t0 + 3 * j).valeur;
+    r = M.corrompre(C5, P, 5, t0 + 3 * j); assert.equal(r.issue, "radin");
+    assert.ok(M.faveurIA(C5, P, t0 + 3 * j).valeur < avant, "moins que son record : elle se vexe");
+    assert.ok(r.piege && P.plateau.speciaux[r.piege].ia, "et pose un piège");
+    assert.equal(P.credits.record, 20, "elle retient le record");
+    const v = M.migrer(JSON.parse(JSON.stringify(Object.assign({}, P, { credits: undefined }))), C5);
+    assert.ok(v.credits.solde > 0, "migration : crédits rétroactifs pour les succès déjà obtenus");
+    console.log("OK : v16 crédits des succès et pots-de-vin");
+  }
+
   // Une seule case : l'arbre choisi par le joueur, rien dans un arbre fermé
   {
     const P = M.nouvellePartie(t0);

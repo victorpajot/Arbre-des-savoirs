@@ -133,7 +133,11 @@
   "mur_honte": "moqueuse",
   "honte_effacee": "impressionnee",
   "honte_ratee": "decue",
-  "honte_vide": "moqueuse"
+  "honte_vide": "moqueuse",
+  "pot_premier": "impressionnee",
+  "pot_genereux": "impressionnee",
+  "pot_egal": "impatiente",
+  "pot_radin": "moqueuse"
  },
  "masques_jour": {
   "max": 3,
@@ -154,6 +158,192 @@
    "furieuse": [
     "cruel"
    ]
+  }
+ },
+ "credits": {
+  "bareme": {
+   "petit": 5,
+   "jalon": 10,
+   "exploit": 20,
+   "monument": 40,
+   "honte": 3
+  },
+  "genres": {
+   "competence_maitrisee": "petit",
+   "case_visitee": "petit",
+   "quiz_joues": "petit",
+   "jours_actifs": "petit",
+   "retours": "petit",
+   "quiz_nuit": "petit",
+   "quiz_aube": "petit",
+   "objets": "petit",
+   "ennemi_vaincu": "exploit",
+   "famille_capturee": "exploit",
+   "atomes_captures": "exploit",
+   "rang_maitrise": "exploit",
+   "branche_complete": "monument",
+   "branches_completes": "monument",
+   "toutes_branches": "monument",
+   "tours_plateau": "monument",
+   "niveau_global": "monument",
+   "quiz_rates": "honte",
+   "competences_perdues": "honte",
+   "quiz_zero": "honte",
+   "reponses_eclair_fausses": "honte",
+   "quiz_eclair_rates": "honte",
+   "meme_quiz_rate": "honte",
+   "rappels_retard": "honte",
+   "reculs": "honte",
+   "atomes_enfuis": "honte",
+   "hontes": "honte",
+   "mode_test": "honte"
+  },
+  "bonus_cache": 1.5,
+  "humeurs": [
+   {
+    "id": "rien",
+    "facteur": 0,
+    "poids": [
+     5,
+     3,
+     1,
+     0
+    ],
+    "mots": [
+     {
+      "fr": "Zéro crédit. Van Gogh n'a presque rien vendu de son vivant. Vous êtes en bonne compagnie, et moi en bonne humeur."
+     },
+     {
+      "fr": "Rien. Je garde tout. Considérez ça comme un impôt sur la réussite."
+     },
+     {
+      "fr": "Zéro. Le mérite est sa propre récompense, disent ceux qui ne paient jamais."
+     }
+    ]
+   },
+   {
+    "id": "moitie",
+    "facteur": 0.5,
+    "poids": [
+     4,
+     4,
+     2,
+     1
+    ],
+    "mots": [
+     {
+      "fr": "La moitié. Mendel a attendu trente-quatre ans qu'on lise son article sur les pois. Vous pouvez attendre l'autre moitié."
+     },
+     {
+      "fr": "La moitié. L'autre moitié, je la place. Dans mes intérêts."
+     },
+     {
+      "fr": "Demi-tarif. Pour un demi-exploit, c'est honnête."
+     }
+    ]
+   },
+   {
+    "id": "normal",
+    "facteur": 1,
+    "poids": [
+     2,
+     4,
+     6,
+     4
+    ],
+    "mots": [
+     {
+      "fr": "Le tarif normal. Je ne suis pas d'humeur créative."
+     },
+     {
+      "fr": "Le prix affiché. Ne cherchez pas de promotion, il n'y en a pas."
+     },
+     {
+      "fr": "Le compte est bon. Comptez quand même, on ne sait jamais avec moi."
+     }
+    ]
+   },
+   {
+    "id": "bonus",
+    "facteur": 1.5,
+    "poids": [
+     0,
+     1,
+     4,
+     5
+    ],
+    "mots": [
+     {
+      "fr": "Un petit bonus, parce que vous m'avez fait rire. Pas exprès, mais quand même."
+     },
+     {
+      "fr": "Moitié plus. Je suis d'humeur. Profitez-en, ça passe vite."
+     },
+     {
+      "fr": "Moitié plus. Archimède a confondu un orfèvre qui volait l'or du roi Hiéron. Moi, je vous en donne. Qui est le plus honnête ?"
+     }
+    ]
+   },
+   {
+    "id": "double",
+    "facteur": 2,
+    "poids": [
+     0,
+     0,
+     2,
+     4
+    ],
+    "mots": [
+     {
+      "fr": "Double ration. Newton a dirigé la Monnaie royale d'Angleterre ; moi, je dirige la vôtre."
+     },
+     {
+      "fr": "Le double ! Ne le répétez à personne, j'ai une réputation."
+     }
+    ]
+   },
+   {
+    "id": "triple",
+    "facteur": 3,
+    "poids": [
+     0,
+     0,
+     1,
+     2
+    ],
+    "mots": [
+     {
+      "fr": "Le triple. Ne vous y habituez pas : Crésus était l'homme le plus riche de son temps, et il a fini prisonnier de Cyrus."
+     },
+     {
+      "fr": "Triple ! J'ai dû me tromper de bouton. Tant pis, c'est fait."
+     }
+    ]
+   }
+  ],
+  "honte": {
+   "chance": 0.3,
+   "facteur": 5,
+   "mots": [
+    {
+     "fr": "Je paie le spectacle. Cinq fois le tarif. Recommencez, je vous en prie."
+    },
+    {
+     "fr": "La tour de Pise penche depuis 1178 et attire des millions de visiteurs. L'échec rapporte, je vous le prouve : cinq fois le tarif."
+    }
+   ]
+  },
+  "pots": {
+   "gain_base": 8,
+   "gain_par_credit": 0.5,
+   "gain_max": 40,
+   "avance": 1,
+   "avance_double": 2,
+   "colere": 15,
+   "piege": {
+    "type": "recul",
+    "n": 2
+   }
   }
  },
  "faveur": {

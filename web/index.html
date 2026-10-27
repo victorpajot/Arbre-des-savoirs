@@ -422,6 +422,17 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .arbre-une { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 12px 14px; border: 0; border-left: 6px solid var(--c); border-radius: 12px; background: color-mix(in srgb, var(--c) 14%, transparent); color: var(--ink); font: inherit; font-size: 16px; cursor: pointer; }
 .arbre-une span { font-size: 15px; color: var(--muted); }
 .arbre-une:disabled { opacity: .45; cursor: default; }
+.corruption .solde { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 0; font-size: 17px; }
+.corruption .solde b { font-size: 30px; }
+.corruption .solde span { color: var(--muted); font-size: 15px; }
+.corruption .pot { display: flex; gap: 10px; align-items: center; margin: 10px 0; }
+.corruption .pot input { flex: 1; min-width: 0; text-align: center; font-size: 22px; font-family: var(--f-mono); border: 2px solid var(--line); border-radius: 12px; padding: 8px; background: var(--surface); color: var(--ink); }
+.corruption .pot .btn { min-width: 48px; font-size: 20px; }
+.gain-credits { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, var(--warn) 16%, transparent); text-align: left; }
+.gain-credits b { font-size: 18px; }
+.gain-credits .barre { margin-left: 8px; color: var(--muted); font-size: 14px; }
+.gain-credits p { margin: 6px 0 0; font-size: 17px; line-height: 1.45; }
+.gain-faveur.perte b { color: var(--bad); }
 .case-dicte .vitrine { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: color-mix(in srgb, var(--c) 30%, #fff); }
 /* v5 : stats sur l'accueil */
 .mini-stats { display: grid; grid-template-columns: 104px 1fr; gap: 12px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
@@ -2024,7 +2035,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     v.appendChild(seg);
     if (ongletPerso === "stats") v.appendChild(bs);
     if (ongletPerso === "avatar") v.appendChild(blocAvatar());
-    if (ongletPerso === "ia") { v.appendChild(blocIA()); v.appendChild(blocFaveur()); v.appendChild(blocCadeauxIA()); v.appendChild(blocMasques(Object.keys(P.succes).length)); }
+    if (ongletPerso === "ia") { v.appendChild(blocIA()); v.appendChild(blocFaveur()); v.appendChild(blocCadeauxIA()); v.appendChild(blocCorruption()); v.appendChild(blocMasques(Object.keys(P.succes).length)); }
     if (ongletPerso === "ennemis") v.appendChild(blocBestiaire());
     if (ongletPerso !== "reglages") return v;
 
@@ -3028,6 +3039,37 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     if (ids.length) return "Ses goûts ? Regarde bien ses réactions : certains cadeaux lui font plus d'effet que d'autres.";
     return "Ses goûts ? À toi de les découvrir en lui offrant des objets.";
   }
+  // v16 : la corrompre avec les crédits des succès. Un pot-de-vin par jour ; elle retient son record.
+  function blocCorruption() {
+    var t = maintenant(), cr = P.credits, pp = M.potPossible(C, P, 1, t), deja = cr.jour === cleJourUI(t);
+    var b = el('<div class="bloc corruption"><h2>La corrompre</h2><p class="solde"><b class="num">' + cr.solde + "</b> crédit" + (cr.solde > 1 ? "s" : "") + "<span>gagnés avec tes succès : " + cr.gagnes + "</span></p>" +
+      '<p class="note">' + (deja ? "Un pot-de-vin par jour : elle compte encore celui d'aujourd'hui." : !cr.solde ? "Pas un crédit en poche. Chaque succès en rapporte, c'est l'IA qui fixe le montant." :
+        "Glisse-lui une enveloppe : sa faveur remonte, et elle peut te donner un coup de pouce." + (cr.pots ? " Ton dernier pot-de-vin : " + cr.dernier + " crédit" + (cr.dernier > 1 ? "s" : "") + ". Elle a de la mémoire." : "")) + "</p></div>");
+    if (!deja && cr.solde > 0) {
+      var depart = Math.min(cr.solde, Math.max(5, (cr.record || 0) + 1));
+      var f = el('<div class="pot"><button type="button" class="btn sec" data-d="-1" aria-label="Moins">−</button><input type="number" inputmode="numeric" min="1" max="' + cr.solde + '" value="' + depart + '" aria-label="Montant en crédits"><button type="button" class="btn sec" data-d="1" aria-label="Plus">+</button></div>');
+      var inp = f.querySelector("input");
+      f.querySelectorAll("[data-d]").forEach(function (bt) { bt.onclick = function () { inp.value = Math.max(1, Math.min(cr.solde, (parseInt(inp.value, 10) || 0) + Number(bt.getAttribute("data-d")))); }; });
+      var go = el('<button type="button" class="btn large">Glisser l\'enveloppe</button>');
+      go.onclick = function () { corrompreIA(parseInt(inp.value, 10)); };
+      b.appendChild(f); b.appendChild(go);
+    }
+    return b;
+  }
+  function cleJourUI(t) { return M.cleJour(t); }
+  function corrompreIA(montant) {
+    var t = maintenant(), r = M.corrompre(C, P, montant, t);
+    if (!r.ok) { toast(r.raison === "solde" ? "Tu n'as pas autant de crédits." : r.raison === "jour" ? "Un pot-de-vin par jour." : "Choisis un montant."); return; }
+    sauver();
+    var ligne = r.issue === "radin" ? (r.piege ? "Elle pose un piège case " + r.piege + ", juste devant ton pion." : "Elle boude, et garde l'argent.") :
+      r.issue === "egal" ? "Pile son record : elle prend, sans te pousser." : r.plateau && r.plateau.a !== r.plateau.de ? "Elle pousse ton pion de " + (r.plateau.places.length - 1) + " case" + (r.plateau.places.length > 2 ? "s" : "") + "." : "Elle empoche, ravie.";
+    feuilleSimple('<div class="eyebrow">Pot-de-vin</div><h2>' + r.montant + " crédit" + (r.montant > 1 ? "s" : "") + '</h2><div id="ia-pot"></div><p class="etat-pion">' + esc(ligne) + '</p><div id="dep-pot"></div>', "Pot-de-vin");
+    var z = feuille.querySelector("#ia-pot");
+    var avis = M.replique(C, P, ["pot_" + r.issue]); if (avis) { avis.aparte = false; z.appendChild(comite(avis)); }
+    if (r.faveur && r.avant) z.appendChild(el('<div class="gain-faveur' + (r.gain < 0 ? " perte" : "") + '"><b>' + (r.gain > 0 ? "+" : "") + r.gain + "</b> de faveur<span>" + Math.round(r.avant.valeur) + " → " + Math.round(r.faveur.valeur) + " : " + esc(tx(r.faveur.palier.nom).toLowerCase()) + "</span></div>"));
+    if (r.plateau && r.plateau.a !== r.plateau.de) { var zd = feuille.querySelector("#dep-pot"); zd.appendChild(blocDeplacement(r.plateau, null, true)); setTimeout(function () { animerPion(zd); }, 60); }
+    rendre();
+  }
   function blocCadeauxIA() {
     var t = maintenant(), f = M.faveurIA(C, P, t);
     var miens = C.objets.filter(function (o) { return P.objets[o.id] && o.cadeau; }).sort(function (a, b) { return tx(a.nom).localeCompare(tx(b.nom), "fr"); });
@@ -3406,7 +3448,11 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var out = [];
     (r.nouveauxSucces || []).forEach(function (sc) {
       var re = sc.recompense;
-      out.push(carteRecompense("Succès débloqué", medaille(80), tx(sc.nom), tx(sc.description), { titre: re.type === "citation" ? "Lire la citation" : "Lire l'anecdote", html: citationSucces(re) }));
+      var carte = carteRecompense("Succès débloqué", medaille(80), tx(sc.nom), tx(sc.description), { titre: re.type === "citation" ? "Lire la citation" : "Lire l'anecdote", html: citationSucces(re) });
+      // v16 : l'IA fixe ce que le succès rapporte, et le dit.
+      var cr = P.credits && P.credits.parSucces[sc.id];
+      if (cr && cr.mot) carte.appendChild(el('<div class="gain-credits"><b>+' + cr.n + " crédit" + (cr.n > 1 ? "s" : "") + "</b>" + (cr.n !== cr.base ? '<span class="barre">tarif : ' + cr.base + "</span>" : "") + "<p>« " + esc(tx(cr.mot)) + " »</p></div>"));
+      out.push(carte);
     });
     if (r.masque) {
       out.push(carteRecompense("L'IA gagne un masque", svgMasque(r.masque, "moqueuse", 72), tx(r.masque.nom), "Elle le portera quand le ton s'y prête.", { titre: "Son histoire", html: "<p>" + esc(tx(r.masque.notice)) + "</p>" }, "var(--accent)"));
