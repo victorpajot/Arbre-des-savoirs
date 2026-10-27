@@ -411,6 +411,11 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .portrait-q p { margin: 6px 0 4px; font-size: 16px; line-height: 1.45; }
 .portrait-q cite { display: block; font-size: 13px; color: var(--muted); font-style: normal; }
 .case-dicte { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; border-left: 5px solid var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); font-size: 15px; line-height: 1.35; }
+.case-jouer { --c: var(--accent); margin: 0 0 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.case-jouer .vitrine.grande { display: grid; place-items: center; padding: 16px; margin-bottom: 10px; border-radius: 16px; background: color-mix(in srgb, var(--c) 16%, transparent); }
+.case-jouer h2 { margin: 2px 0 6px; }
+.case-jouer p { font-size: 17px; line-height: 1.55; margin: 0 0 8px; }
+.case-jouer .arbre-case { font-size: 16px; padding: 8px 12px; border-left: 5px solid var(--c); border-radius: 8px; background: color-mix(in srgb, var(--c) 12%, transparent); }
 .case-dicte .vitrine { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: color-mix(in srgb, var(--c) 30%, #fff); }
 /* v5 : stats sur l'accueil */
 .mini-stats { display: grid; grid-template-columns: 104px 1fr; gap: 12px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
@@ -1569,9 +1574,12 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     // v15 : la case du pion annonce l'arbre de l'épreuve ; « hors case » quand cet arbre n'a rien à jouer.
     var sc = c.stat ? stat(c.stat) : s, kc = c.kase;
     var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(sc.nom), "case": kc ? tx(kc.titre) : "" }); sauver();
-    var bandeau = kc && kc.stat ? '<div class="case-dicte" style="--c:' + couleur(kc.stat) + '"><span class="vitrine">' + svgSprite(kc.icone, 28) + '</span><span><b>Case ' + kc.n + " · " + esc(tx(kc.titre)) + "</b><br>" +
-      (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : c.raison === "ouvre_arbre" ? "Arbre " + esc(tx(sc.nom)) + " encore fermé : réussis ce quiz pour l'ouvrir." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</span></div>" : "";
-    feuilleSimple('<div class="choix-ia"><div class="eyebrow">L\'IA a choisi</div>' + bandeau + '<div id="ia-jouer"></div>' +
+    // La case du pion en grand, avec son histoire, avant l'épreuve.
+    var ici = C.plateau.cases[P.plateau.position - 1];
+    var bandeau = '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
+      '<div class="eyebrow">Ton pion est case ' + ici.n + " · " + esc(formatAnnee(ici.annee)) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + esc(tx(ici.histoire)) + "</p>" +
+      (kc && kc.stat ? '<p class="arbre-case"><b>' + (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : c.raison === "ouvre_arbre" ? "Arbre " + esc(tx(sc.nom)) + " encore fermé : réussis ce quiz pour l'ouvrir." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</b></p>" : "") + "</div>";
+    feuilleSimple('<div class="choix-ia">' + bandeau + '<div class="eyebrow">L\'IA a choisi</div><div id="ia-jouer"></div>' +
       '<div class="epreuve" style="--c:' + couleur(k.stat) + '"><span class="de' + (v.duJour ? " bonus" : "") + '"><b>+' + (v.total + bonus) + '</b></span><span class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" +
       (c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · dont +" + bonus + " pour le bouton Jouer</span></span></div>" +
       '<button type="button" class="btn large" data-a="go">C\'est parti</button>' +
