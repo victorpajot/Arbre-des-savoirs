@@ -1730,13 +1730,11 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       '<div class="pips" aria-label="' + faites + " compétences maîtrisées sur " + comps.length + '">' + pips + '</div><p class="note">' + faites + " / " + comps.length + " compétences. " + esc(phrase) + "</p></div>");
   }
 
-  // v5 : la farce en cours, avec de quoi la défaire.
+  // v5 : la farce en cours. v14 : on ne peut plus la défaire, c'est l'IA qui décide.
   function blocFarce() {
     var f = farce(); if (!f) return null;
     var h = new Date(f.jusqua), fin = M.joursEntre(maintenant(), f.jusqua) ? "demain " + h.getHours() + " h" : "aujourd'hui " + h.getHours() + " h";
-    var b = el('<div class="farce"><div class="avatar-cadre">' + svgAvatar(56) + '</div><div><p><b>L\'IA vous impose ' + esc(nomDeguisement(f)) + ".</b> Jusqu'à " + esc(fin) + '.</p><button type="button" class="btn sec">Rendre mon visage</button></div></div>');
-    b.querySelector("button").onclick = function (ev) { ev.stopPropagation(); M.rendreVisage(P); sauver(); rendre(); toast("Visage rendu. L'IA prend note."); };
-    return b;
+    return el('<div class="farce"><div class="avatar-cadre">' + svgAvatar(56) + '</div><div><p><b>L\'IA vous impose ' + esc(nomDeguisement(f)) + ".</b> Jusqu'à " + esc(fin) + '. Pas de recours.</p></div></div>');
   }
 
   // --- Vue Arbre ------------------------------------------------------------
@@ -3168,11 +3166,9 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       out.push(carteRecompense("Nouvel accessoire", svgRogne(a.pixels, C.avatar.palette, 80), tx(a.nom), "À essayer sur ton avatar, dans l'onglet Personnage.", null));
     });
     if (r.farce) {
-      var cfa = carteRecompense("Farce de l'IA", '<span class="avatar-cadre">' + svgAvatar(80) + "</span>", "Nouveau look", "Jusqu'à demain, ou jusqu'à ce que vous le rendiez.", null, "var(--warn)");
+      var cfa = carteRecompense("Farce de l'IA", '<span class="avatar-cadre">' + svgAvatar(80) + "</span>", "Nouveau look", "Jusqu'à demain. L'IA décide, pas de recours.", null, "var(--warn)");
       var m = comite(r.repliqueFarce, true); if (m) { m.style.width = "100%"; cfa.appendChild(m); }
-      var bv = el('<button type="button" class="btn sec">Rendre mon visage</button>');
-      bv.onclick = function () { M.rendreVisage(P); sauver(); bv.replaceWith(el('<p class="note">Visage rendu. L\'IA prend note.</p>')); cfa.querySelector(".badge-r").innerHTML = '<span class="avatar-cadre">' + svgAvatar(80) + "</span>"; };
-      cfa.appendChild(bv); out.push(cfa);
+      out.push(cfa);
     }
     return out;
   }
