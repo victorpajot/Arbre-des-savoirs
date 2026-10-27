@@ -433,6 +433,7 @@
   // `infos` (facultatif) : {duree} en ms, {total} si le quiz a été coupé avant la fin.
   function terminerQuiz(contenu, partie, id, resultats, t, infos) {
     var r = contenu.regles, c = partie.compteurs, k = contenu.parId[id];
+    ouvrirLot(partie, t);
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
     var total = Math.max(resultats.length, (infos && infos.total) || 0);
     var reussi = bonnes / total >= r.quiz.seuil_maitrise - 1e-9;
@@ -494,6 +495,7 @@
   function terminerRappel(contenu, partie, id, resultats, t, infos) {
     var r = contenu.regles;
     var e = partie.competences[id];
+    ouvrirLot(partie, t);
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
     var total = Math.max(resultats.length, (infos && infos.total) || 0);
     var reussi = bonnes >= r.rappels.bonnes_reponses_min;
@@ -853,9 +855,11 @@
         if (partie.gagnables && partie.gagnables[cleButin(f, x.id)] && !possede(partie, f, x.id) && x.lot <= tour) proches.push({ famille: f, chose: x });
       });
     });
+    var lot = lotDe(partie, t);
+    proches = horsLot(lot, proches);
     if (!proches.length) return null;
     b = proches[Math.floor((alea || Math.random)() * proches.length)];
-    partie[b.famille][b.chose.id] = t;
+    partie[b.famille][b.chose.id] = t; compterLot(lot, b.famille);
     delete partie.gagnables[cleButin(b.famille, b.chose.id)];
     if (b.famille === "masques") partie.masque = b.chose.id;
     return b;
@@ -864,6 +868,7 @@
   // `resultats` : [{id, correct}]. Renvoie {gagne, ennemi, bonnes, total, plateau, recompenses, butin, premiere, fiche}.
   function terminerDuel(contenu, partie, resultats, t, alea, total) {
     var d = partie.duel; if (!d) return null;
+    ouvrirLot(partie, t);
     var e = contenu.ennemiParId[d.ennemi], f = ficheBestiaire(partie, d.ennemi), c = partie.compteurs;
     var bonnes = resultats.filter(function (x) { return x.correct; }).length, gagne = resultats.length > 0 && bonnes === resultats.length;
     f.dernier = t;
@@ -874,10 +879,10 @@
       out.premiere = f.victoires === 1;
       delete ennemisPlateau(contenu, partie)[d.case];
       partie.duel = null;
+      out.butin = butinDuel(contenu, partie, t, alea);
       var dep = deplacer(contenu, partie, d.reste, t, "duel");
       dep.contextes = contextesPlateau(dep);
       out.plateau = dep;
-      out.butin = butinDuel(contenu, partie, t, alea);
       out.recompenses = verifierRecompenses(contenu, partie, t);
       if (out.butin) { if (out.butin.famille === "masques") out.recompenses.masque = out.butin.chose; else out.recompenses[out.butin.famille].push(out.butin.chose); }
     } else {
@@ -979,6 +984,7 @@
   // `bonnes` : nombre de bonnes réponses. Renvoie {capture, element, bonnes, total, premiere, fiche, recompenses}.
   function terminerCombat(contenu, partie, bonnes, t) {
     var s = atomeSauvage(contenu, partie); if (!s) return null;
+    ouvrirLot(partie, t);
     var R = contenu.atomes.regles, c = partie.compteurs, f = ficheAtome(partie, s.z);
     partie.sauvages.shift();
     var capture = bonnes >= seuilAtome(contenu, partie, t), premiere = capture && !f.capture;
@@ -1227,6 +1233,13 @@
   // premier masque restent donnés d'office ; le reste devient « gagnable » quand sa condition est remplie,
   // puis tombe au hasard après une épreuve réussie (voir tirerButin).
   var FAMILLES_BUTIN = ["objets", "livres", "accessoires", "masques"];
+  // v15 : au plus un savant, un livre ou un objet par épreuve. Le reste attend l'épreuve suivante.
+  // `partie.lot` compte ce qui est tombé pendant l'épreuve datée `t` ; hors épreuve, chaque appel a son propre lot.
+  var FAMILLES_LOT = { savants: 1, objets: 1, livres: 1 };
+  function ouvrirLot(partie, t) { partie.lot = { t: t, n: 0 }; }
+  function lotDe(partie, t) { return partie.lot && partie.lot.t === t ? partie.lot : { t: t, n: 0 }; }
+  function horsLot(lot, liste) { return lot.n ? liste.filter(function (b) { return !FAMILLES_LOT[b.famille]; }) : liste; }
+  function compterLot(lot, famille) { if (FAMILLES_LOT[famille]) lot.n++; }
   function listeFamille(contenu, f) {
     if (f === "objets") return contenu.objets;
     if (f === "livres") return contenu.livres || [];
@@ -1252,6 +1265,7 @@
       if (c.famille === "masques") out.masque = x; else out[c.famille].push(x);
     });
     partie.cadeauxCase = [];
+    var lot = lotDe(partie, t);
     var directes = [
       ["succes", contenu.succes, partie.succes],
       ["savants", contenu.avatar && contenu.avatar.savants ? contenu.avatar.savants : [], partie.savants || (partie.savants = {})],
@@ -1262,7 +1276,8 @@
       change = false;
       directes.forEach(function (f) {
         f[1].forEach(function (x) {
-          if (!f[2][x.id] && conditionRemplie(contenu, partie, x.condition, t)) { f[2][x.id] = t; out[f[0]].push(x); change = true; }
+          if (f[2][x.id] || (FAMILLES_LOT[f[0]] && lot.n) || !conditionRemplie(contenu, partie, x.condition, t)) return;
+          f[2][x.id] = t; out[f[0]].push(x); change = true; compterLot(lot, f[0]);
         });
       });
       FAMILLES_BUTIN.forEach(function (f) {
@@ -1271,7 +1286,8 @@
           if (x.condition && !conditionRemplie(contenu, partie, x.condition, t)) return;
           if (estButin(x)) { partie.gagnables[cleButin(f, x.id)] = { famille: f, id: x.id, depuis: t }; out.gagnables.push(x); return; }
           // Hors butin : reliques des tours, premier masque de l'IA.
-          partie[f][x.id] = t; change = true;
+          if (FAMILLES_LOT[f] && lot.n) return;
+          partie[f][x.id] = t; change = true; compterLot(lot, f);
           if (f === "masques") partie.masque = x.id; else out[f].push(x);
         });
       });
@@ -1318,11 +1334,11 @@
   }
   // v8 : case cadeau. Un objet du cabinet tombe sans épreuve ; à défaut, n'importe quel autre butin ouvert.
   function tirerCadeau(contenu, partie, t) {
-    var ouvert = butinOuvert(contenu, partie), objets = ouvert.filter(function (b) { return b.famille === "objets"; });
+    var lot = lotDe(partie, t), ouvert = horsLot(lot, butinOuvert(contenu, partie)), objets = ouvert.filter(function (b) { return b.famille === "objets"; });
     var liste = objets.length ? objets : ouvert;
     if (!liste.length) return null;
     var b = liste[hacher(String(t) + "|" + partie.plateau.position + "|" + partie.journal.length) % liste.length];
-    partie[b.famille][b.chose.id] = t;
+    partie[b.famille][b.chose.id] = t; compterLot(lot, b.famille);
     delete partie.gagnables[cleButin(b.famille, b.chose.id)];
     if (b.famille === "masques") partie.masque = b.chose.id;
     return b;
@@ -1330,7 +1346,7 @@
   // Après une épreuve réussie : au plus un butin, tiré au hasard. `alea` (facultatif) pour les tests.
   function tirerButin(contenu, partie, epreuve, t, alea) {
     alea = alea || Math.random;
-    var ouvert = butinOuvert(contenu, partie);
+    var lot = lotDe(partie, t), ouvert = horsLot(lot, butinOuvert(contenu, partie));
     var fav = epreuve.type === "duel" ? null : faveurIA(contenu, partie, t);
     var assure = partie.butinAssure && epreuve.type !== "duel" && ouvert.length;
     if (assure) partie.butinAssure = false;
@@ -1338,7 +1354,7 @@
     if (!assure && (!ouvert.length || alea() >= chanceButin(contenu, epreuve) * (fav ? fav.palier.butin : 1) * mult)) return null;
     var b = ouvert[Math.floor(alea() * ouvert.length)];
     if (b.famille === "livres") b = livreDeLaCase(contenu, partie, ouvert, alea) || b;
-    partie[b.famille][b.chose.id] = t;
+    partie[b.famille][b.chose.id] = t; compterLot(lot, b.famille);
     delete partie.gagnables[cleButin(b.famille, b.chose.id)];
     if (b.famille === "masques") partie.masque = b.chose.id;
     partie.maj = t;

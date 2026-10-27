@@ -883,3 +883,18 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(r.total, 5); assert.equal(r.issue, "echec");
   console.log("OK : v15 épreuves coupées quand elles sont perdues");
 }
+
+{
+  // v15 : au plus un savant, un livre ou un objet par épreuve ; le suivant attend.
+  const X = { avatar: d("avatar.json"), objets: d("objets.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json") };
+  const CS = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const T = Date.UTC(2026, 0, 5, 9), P = M.nouvellePartie(T);
+  M.verifierRecompenses(CS, P, T);
+  P.competences["astro.observer"] = { maitrise: true, maitriseDepuis: T, xp: 10 };
+  P.competences["phys.ondes"] = { maitrise: true, maitriseDepuis: T, xp: 10 };
+  const a = M.verifierRecompenses(CS, P, T + 1), b = M.verifierRecompenses(CS, P, T + 2);
+  assert.equal(a.savants.length + a.objets.length + a.livres.length, 1, "un seul déblocage d'un coup");
+  assert.ok(b.savants.length + b.objets.length + b.livres.length <= 1);
+  assert.ok(P.savants.hypatie && P.savants["ibn-al-haytham"], "le second savant vient ensuite");
+  console.log("OK : v15 une récompense (savant, livre, objet) par épreuve");
+}
