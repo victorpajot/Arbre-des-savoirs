@@ -31,6 +31,7 @@ import symboles
 import succes_pixels
 import themes
 import succes_themes
+import ia_themes
 import honte
 import masques_regles
 import objets_v11
@@ -734,7 +735,8 @@ def tous_succes():
 
 
 def commentaires():
-    return {"format": 3, "narrateur": fr(ia.NOM), "commentaires": ia.repliques(), "apartes": ia.apartes(), "surnoms": ia.surnoms()}
+    # v18 : en plus, les lignes propres à chaque arbre (annonce, réussite, échec).
+    return {"format": 3, "narrateur": fr(ia.NOM), "commentaires": ia.repliques() + ia_themes.repliques(), "apartes": ia.apartes(), "surnoms": ia.surnoms()}
 
 
 def regles_masque(id):
@@ -751,7 +753,7 @@ def narrateur():
         "portrait": fr(masques_regles.PORTRAIT),
         "palette": PALETTE,
         "taille": [40, 48],
-        "expressions": ia.EXPRESSIONS,
+        "expressions": {**ia.EXPRESSIONS, **ia_themes.expressions()},
         "masques_jour": {"max": 3, "selon_faveur": masques_regles.SELON_FAVEUR},
         "credits": credits.donnees(),
         "faveur": {**brillants.FAVEUR, "paliers": [{**p, "nom": fr(p["nom"]), "effet": fr(p["effet"])} for p in brillants.FAVEUR["paliers"]]},

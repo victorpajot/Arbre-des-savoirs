@@ -1035,3 +1035,56 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(dep.a, dt.cases[0], "le pion s'y arrête au pas suivant");
   console.log("OK : v15 route retouchée par l'IA, rarement");
 }
+
+{
+  // v18 : la case du pion donne le ton. Butin, apartés, masques, farces et répliques suivent le thème.
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json") };
+  const CT = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const T = Date.UTC(2026, 0, 5, 9);
+  // Tout porte un thème : objets, savants, masques, ennemis ; chaque arbre a ses cases, ses savants, ses masques ou ses objets.
+  assert.ok(CT.objets.every(o => o.theme) && CT.avatar.savants.every(s => s.theme) && CT.ia.masques.every(m => m.theme) && CT.ennemis.every(e => e.theme));
+  CT.regles.stats.forEach(s => {
+    assert.ok(CT.plateau.cases.some(k => k.stat === s.id), "des cases " + s.id);
+    assert.ok(CT.commentairesPar["theme_reussi@" + s.id] && CT.commentairesPar["theme_rate@" + s.id] && CT.commentairesPar["theme_jouer@" + s.id], "répliques " + s.id);
+  });
+  assert.ok(CT.competences.every(k => CT.succes.some(s => s.condition.type === "competence_maitrisee" && s.condition.id === k.id)), "un succès par compétence");
+  // Butin : sur une épreuve Cosmos, trois tirages sur quatre environ viennent du thème quand il y en a en attente.
+  let duTheme = 0, essais = 0;
+  for (let i = 0; i < 80; i++) {
+    const P = M.nouvellePartie(T);
+    P.journal = new Array(i).fill({ t: T, type: "quiz", xp: 1 });
+    CT.objets.filter(o => o.lot === 1).forEach(o => { P.gagnables["objets:" + o.id] = { famille: "objets", id: o.id, depuis: T }; });
+    const b = M.tirerButin(CT, P, { type: "quiz", comp: "astro.systeme" }, T + i, () => 0.01);
+    if (!b) continue;
+    essais++; if (M.themeDe(b.chose) === "cosmos") duTheme++;
+  }
+  assert.ok(essais > 40 && duTheme / essais > 0.6 && duTheme / essais < 0.95, "butin du thème : " + duTheme + "/" + essais);
+  // Aparté : avec un objet Cosmos et un objet Logique, l'IA sort surtout celui du thème.
+  {
+    const P = M.nouvellePartie(T); P.objets = { "lunette-galilee": T, "boulier": T };
+    let cos = 0, n = 0;
+    for (let i = 0; i < 200; i++) { const a = M.aparte(CT, P, "moqueuse", "g" + i, "cosmos"); if (a && a.objet) { n++; if (a.objet.id === "lunette-galilee") cos++; } }
+    assert.ok(n > 50 && cos / n > 0.65, "aparté du thème : " + cos + "/" + n);
+  }
+  // Répliques : une réussite en Cosmos prend souvent une ligne d'astronomie, sous l'expression de la réussite.
+  {
+    const P = M.nouvellePartie(T); let th = 0;
+    for (let i = 0; i < 60; i++) { P.journal.push({ t: T, type: "quiz", xp: 1 }); const r = M.replique(CT, P, ["quiz_reussi"], null, null, "cosmos"); if (r.id.indexOf("theme-reussi-cosmos") === 0) { th++; assert.equal(r.contexte, "quiz_reussi"); } assert.equal(r.theme, "cosmos"); }
+    assert.ok(th > 20 && th < 55, "lignes d'arbre : " + th + "/60");
+  }
+  // Masque : parmi les masques gagnés qui vont au ton, elle prend souvent celui du thème.
+  {
+    const P = M.nouvellePartie(T); P.masques = { theatre: T, talos: T, eliza: T, kismet: T, "machine-analytique": T };
+    let emp = 0;
+    for (let i = 0; i < 100; i++) if (M.themeDe(M.masquePourTon(CT, P, "moqueuse", "m" + i, "empathie")) === "empathie") emp++;
+    assert.ok(emp > 55, "masque du thème : " + emp + "/100");
+  }
+  // Farce : après un échec en Empathie, le déguisement est un savant d'Empathie quand l'IA en a un sous la main.
+  {
+    const P = M.nouvellePartie(T); P.savants = { "william-james": T, "galilee": T, "pasteur": T };
+    const f = M.tenterFarce(CT, P, T, () => 0, "empathie");
+    assert.deepEqual([f.type, f.id], ["savant", "william-james"]);
+  }
+  console.log("OK : v18 thèmes : butin, apartés, répliques, masques et farces suivent la case");
+}

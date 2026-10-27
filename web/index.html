@@ -1642,7 +1642,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var k = c.comp, s = stat(k.stat), v = M.valeurEpreuve(C, P, { type: c.type, comp: k.id }, t), bonus = C.plateau.regles.bonus.jouer || 0;
     // v15 : la case du pion annonce l'arbre de l'épreuve ; « hors case » quand cet arbre n'a rien à jouer.
     var sc = c.stat ? stat(c.stat) : s, kc = c.kase;
-    var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(sc.nom), "case": kc ? tx(kc.titre) : "" }, c.raison === "hors_case" ? null : k.stat); sauver();
+    var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(sc.nom), "case": kc ? tx(kc.titre) : "" }, c.raison === "hors_case" ? null : c.stat || (c.type === "quiz" ? k.stat : null)); sauver();
     // La case du pion en grand, avec son histoire, avant l'épreuve.
     var ici = C.plateau.cases[P.plateau.position - 1];
     var bandeau = '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +

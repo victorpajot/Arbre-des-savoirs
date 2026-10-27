@@ -1611,10 +1611,16 @@
   // Trois fois sur quatre, quand c'est possible, on puise dans ce qui est du thème. Tiré par hachage, pour
   // ne pas déranger les tirages au sort ; `de` donne l'élément à comparer (par défaut la chose elle-même).
   var PART_THEME = 4;
+  // Hachage brassé : les bits bas du hachage simple se ressemblent trop d'une graine voisine à l'autre.
+  function tirage(texte, n) {
+    var h = hacher(texte);
+    h ^= h >>> 16; h = Math.imul(h, 0x45d9f3b) >>> 0; h ^= h >>> 16; h = Math.imul(h, 0x45d9f3b) >>> 0; h ^= h >>> 16;
+    return (h >>> 0) % n;
+  }
   function duTheme(liste, theme, graine, de) {
     if (!theme || !liste.length) return liste;
     var ici = liste.filter(function (x) { return themeDe(de ? de(x) : x) === theme; });
-    return ici.length && hacher("theme|" + graine) % PART_THEME ? ici : liste;
+    return ici.length && tirage("theme|" + graine, PART_THEME) ? ici : liste;
   }
 
   // Si le sort tombe sur un livre, l'IA prend de préférence un livre de l'époque de la case, sinon le plus récent permis.
@@ -1723,7 +1729,7 @@
       var mj = partie.masquesJour, jour = mj && mj.ids && mj.ids.length && mj.jour === cleJour(partie.maj || Date.now());
       var cands = (jour ? gagnes.filter(function (m) { return mj.ids.indexOf(m.id) >= 0; }) : gagnes).filter(function (m) { return themeDe(m) === theme; });
       var bons = cands.filter(function (m) { return !m.tons || m.tons.indexOf(ton) >= 0; });
-      if (bons.length && hacher("masque|" + gt) % PART_THEME) return bons[hacher(ton + "|" + gt) % bons.length];
+      if (bons.length && tirage("masque|" + gt, PART_THEME)) return bons[tirage(ton + "|" + gt, bons.length)];
       return choix;
     }
     if (!gagnes.length) return contenu.ia.masques[0];
@@ -1753,7 +1759,7 @@
     var livres = (contenu.livres || []).filter(function (l) { return partie.livres && partie.livres[l.id]; });
     if (theme) {
       var oT = objets.filter(function (o) { return themeDe(o) === theme; }), lT = livres.filter(function (l) { return themeDe(l) === theme; });
-      if ((oT.length || lT.length) && (h >>> 13) % PART_THEME) { objets = oT; livres = lT; }
+      if ((oT.length || lT.length) && tirage("aparte-theme|" + graine, PART_THEME)) { objets = oT; livres = lT; }
     }
     if (!objets.length && !livres.length) return null;
     var sorte = !livres.length ? "objet" : !objets.length ? "livre" : (h >>> 3) % 3 === 0 ? "livre" : "objet";
@@ -1895,7 +1901,7 @@
   };
   function lignesTheme(contenu, partie, ctx, theme) {
     var g = theme && GROUPE_THEME[ctx], cle = g && "theme_" + g + "@" + theme, l = cle && contenu.commentairesPar[cle];
-    if (!l || !l.length || hacher(ctx + "|" + theme + "|" + partie.journal.length + "|" + (partie.repliques[cle] || []).length) % 5 >= 3) return null;
+    if (!l || !l.length || tirage(ctx + "|" + theme + "|" + partie.journal.length + "|" + (partie.repliques[cle] || []).length, 5) >= 3) return null;
     return { cle: cle, lignes: l };
   }
 
