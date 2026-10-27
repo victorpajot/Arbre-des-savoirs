@@ -218,7 +218,8 @@
        "nom",
        "description",
        "prerequis",
-       "fiche"
+       "fiche",
+       "symbole"
       ],
       "additionalProperties": false,
       "properties": {
@@ -283,6 +284,11 @@
           }
          }
         }
+       },
+       "symbole": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 3
        }
       }
      }

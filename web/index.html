@@ -230,6 +230,11 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .case-act .vitrine { width: 56px; height: 56px; }
 .case-act b { display: block; font-size: 16px; line-height: 1.25; }
 .case-act span { font-size: 13px; color: var(--muted); }
+.vitrine.grande .pix { width: 168px; height: 168px; }
+.etat-ici { font-size: 16px; }
+.vitrine.grande ~ p { font-size: 17px; line-height: 1.55; }
+.etat-ici span:nth-child(even) { text-align: right; font-weight: 600; }
+.badge-comp { flex-shrink: 0; }
 .etat-pion { font-size: 14px; padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, var(--warn) 14%, var(--surface)); border-left: 4px solid var(--warn); }
 .bonus-jour { display: flex; align-items: center; gap: 10px; font-size: 14px; }
 .bonus-jour .pill { font-family: var(--f-mono); font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--c); color: #fff; flex: none; }
@@ -819,6 +824,14 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var o = C.objets.filter(function (x) { return x.id === id; })[0];
     return o ? o.pixels : (C.plateau && C.plateau.icones[id]) || null;
   }
+  // v15 : badge d'une compétence : pastille à la couleur de son arbre, son symbole, et son rang (niveau) en pastille.
+  function badgeComp(k, taille) {
+    var sym = k.symbole || "?", t = sym.length > 2 ? 11 : sym.length > 1 ? 14 : 19;
+    return '<svg class="badge-comp" viewBox="0 0 44 44" width="' + taille + '" height="' + taille + '" role="img" aria-label="' + esc(tx(k.nom)) + ", niveau " + k.rang + '">' +
+      '<rect x="2" y="2" width="36" height="36" rx="11" fill="' + couleur(k.stat) + '" stroke="#fff" stroke-width="2"/>' +
+      '<text x="20" y="' + (20 + t * 0.36).toFixed(1) + '" text-anchor="middle" font-size="' + t + '" font-weight="800" fill="#fff" style="font-family:var(--f-body),\'Noto Sans Symbols 2\',\'Noto Sans Math\',sans-serif">' + esc(sym) + "\uFE0E</text>" +
+      '<circle cx="35" cy="35" r="8.5" fill="#1E1A2B" stroke="#fff" stroke-width="2"/><text x="35" y="39" text-anchor="middle" font-size="11" font-weight="800" fill="#fff" font-family="JetBrains Mono, monospace">' + k.rang + "</text></svg>";
+  }
   function svgSprite(id, taille, label, verrou) {
     var g = grilleSprite(id); if (!g) return "";
     return '<svg class="pix" viewBox="0 0 32 32" width="' + taille + '" height="' + taille + '"' + (label ? ' role="img" aria-label="' + esc(label) + '"' : ' aria-hidden="true"') + ">" +
@@ -925,7 +938,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       else if (nom && actions && actions[nom]) actions[nom]();
     };
     fermerFeuille(); feuille = f; document.getElementById("couche").appendChild(f);
-    f.querySelector("button").focus();
+    f.querySelector("button").focus({ preventScroll: true });
   }
 
   // --- Sauvegarde -----------------------------------------------------------
@@ -1689,7 +1702,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       if (Date.now() - finGlisse < 350) return;
       var g = ev.target.closest && ev.target.closest("[data-n]"); if (!g) return;
       var n = g.getAttribute("data-n");
-      if (n === "pion") ouvrirJouer(); else if (n === "objectif") ouvrirObjectif(); else ouvrirCase(+n);
+      if (n === "pion") ouvrirCase(P.plateau.position); else if (n === "objectif") ouvrirObjectif(); else ouvrirCase(+n);
     };
     b.appendChild(grille);
     var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</span><b>" + esc(tx(k.titre)) + "</b><span>Lire l'histoire de la case</span></span></button>");
@@ -1717,11 +1730,30 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     } else {
       html += '<div class="eyebrow">Case ' + n + " · " + esc(nomEpoque(k.epoque)) + "</div><h2>Case à découvrir</h2><p class=\"meta\">Fais avancer ton pion jusqu'ici pour lire son histoire. Elle s'ajoutera aussi à la frise.</p>";
     }
+    // v15 : la case du pion s'ouvre en grand, avec l'état de la partie et de quoi jouer tout de suite.
+    if (ici) html = html.replace('<div class="vitrine" style="padding:16px">', '<div class="vitrine grande" style="padding:16px">') + etatIci(k) +
+      '<button type="button" class="btn large" data-a="jouer">Jouer depuis cette case</button>';
     var enC = M.ennemisPlateau(C, P)[n] && C.ennemiParId[M.ennemisPlateau(C, P)[n]];
     if (enC) html = '<div class="garde-case">' + teteEnnemi(enC, 44) + "<p><b>" + esc(tx(enC.nom)) + "</b> garde cette case. Passer ici déclenche un duel : cinq affirmations, vraies ou fausses, sans erreur.</p></div>" + html;
-    feuilleSimple(html, connue ? tx(k.titre) : "Case " + n);
+    feuilleSimple(html, connue ? tx(k.titre) : "Case " + n, { jouer: function () { fermerFeuille(); ouvrirJouer(); } });
     var z = feuille.querySelector("#ia-case");
     if (z) z.appendChild(comite({ contexte: "plateau_avance", texte: k.replique, expression: ici ? "moqueuse" : "neutre" }, true));
+  }
+  function etatIci(k) {
+    var pl = P.plateau, t = maintenant(), rt = M.routeTour(C, P), lignes = [], st = k.stat ? stat(k.stat) : null;
+    lignes.push(["Tour", (pl.tours + 1) + " · étape " + (pl.idx + 1) + " sur " + rt.length]);
+    lignes.push(["Épreuves ce tour", (pl.coups || 0) + (pl.meilleur ? " (record : " + pl.meilleur + ")" : "")]);
+    if (st) lignes.push(["Arbre de la case", tx(st.nom) + (M.arbreOuvert(C, P, k.stat) ? ", ouvert" : ", encore fermé")]);
+    var c = M.choixIA(C, P, t);
+    if (c) lignes.push(["L'IA propose", tx(c.comp.nom) + " (" + (c.type === "rappel" ? "rappel" : "niveau " + c.comp.rang) + ")"]);
+    if (pl.prison) lignes.push(["Bloqué", "prison : encore " + pl.prison + " quiz parfait" + (pl.prison > 1 ? "s" : "")]);
+    if (pl.quarantaine) lignes.push(["Bloqué", "quarantaine : " + pl.quarantaine + " épreuve" + (pl.quarantaine > 1 ? "s" : "") + " sans avancer"]);
+    if (P.revision) lignes.push(["Bloqué", "révision forcée de « " + tx(C.parId[P.revision.comp].nom) + " »"]);
+    if (P.duel && P.duel.case === pl.position) lignes.push(["Duel en attente", tx(C.ennemiParId[P.duel.ennemi].nom)]);
+    if ((P.sauvages || []).length) lignes.push(["Atomes en attente", String(P.sauvages.length)]);
+    var en = M.ennemisPlateau(C, P);
+    for (var j = pl.idx + 1; j < rt.length; j++) if (en[rt[j]]) { lignes.push(["Prochain ennemi", tx(C.ennemiParId[en[rt[j]]].nom) + ", dans " + (j - pl.idx) + " étape" + (j - pl.idx > 1 ? "s" : "")]); break; }
+    return '<h3 style="font-size:17px;margin:4px 0 0">Où tu en es</h3><div class="bareme etat-ici">' + lignes.map(function (l) { return "<span>" + esc(l[0]) + "</span><span>" + esc(l[1]) + "</span>"; }).join("") + "</div>";
   }
   function ouvrirRegles() {
     var R = C.plateau.regles, rangs = R.valeurs.quiz_rang, st = stat(M.bonusDuJour(C, P, maintenant()));
@@ -2523,12 +2555,15 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     }
     wrap.appendChild(z);
     var suite = etapes[i + 1];
-    var bt = el('<button type="button" class="btn large">' + (!suite ? (P.duel && P.duel.pret ? "Ennemi suivant !" : "Continuer") : suite === "plateau" ? "Voir le plateau" : "Récompense") + "</button>");
-    bt.onclick = function () {
-      if (suite) { duel.etape = i + 1; rendreDuel(); return; }
-      if (P.duel && P.duel.pret) { duel = null; lancerDuel(); } else fermerDuel();
-    };
-    wrap.appendChild(bt);
+    if (!suite && !(P.duel && P.duel.pret)) finEpreuve(wrap, fermerDuel);
+    else {
+      var bt = el('<button type="button" class="btn large">' + (!suite ? "Ennemi suivant !" : suite === "plateau" ? "Voir le plateau" : "Récompense") + "</button>");
+      bt.onclick = function () {
+        if (suite) { duel.etape = i + 1; rendreDuel(); return; }
+        duel = null; lancerDuel();
+      };
+      wrap.appendChild(bt);
+    }
     if (nom === "plateau") setTimeout(function () { animerPion(z); }, 50);
     return wrap;
   }
@@ -2646,12 +2681,15 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     }
     wrap.appendChild(z);
     var suite = etapes[i + 1], encore = !suite && M.atomeSauvage(C, P);
-    var bt = el('<button type="button" class="btn large">' + (suite ? "Récompense" : encore ? "Atome suivant !" : "Continuer") + "</button>");
-    bt.onclick = function () {
-      if (suite) { combat.etape = i + 1; rendreCombat(); return; }
-      if (encore) { combat = null; lancerCombat(); } else fermerCombat();
-    };
-    wrap.appendChild(bt);
+    if (!suite && !encore) finEpreuve(wrap, fermerCombat);
+    else {
+      var bt = el('<button type="button" class="btn large">' + (suite ? "Récompense" : "Atome suivant !") + "</button>");
+      bt.onclick = function () {
+        if (suite) { combat.etape = i + 1; rendreCombat(); return; }
+        combat = null; lancerCombat();
+      };
+      wrap.appendChild(bt);
+    }
     if (!suite) {
       var vt = el('<button type="button" class="btn sec large">Voir le tableau périodique</button>');
       vt.onclick = function () { combat = null; var q = document.querySelector(".quiz.atome"); if (q) q.remove(); vue = "collections"; collection = "atomes"; rendre(); window.scrollTo(0, 0); };
@@ -3038,6 +3076,18 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       arbreFerme: !M.arbreOuvert(C, P, C.parId[id].stat) };
     rendreQuiz();
   }
+  // v15 : à la fin d'une épreuve, on enchaîne sans repasser par l'accueil : « Jouer » ouvre le choix de l'IA.
+  function finEpreuve(wrap, fermer) {
+    var t = maintenant(), c = M.choixIA(C, P, t);
+    if (c) {
+      var j = el('<button type="button" class="btn large">Jouer l\'épreuve suivante</button>');
+      j.onclick = function () { fermer(); ouvrirJouer(); };
+      wrap.appendChild(j);
+    }
+    var b = el('<button type="button" class="btn ' + (c ? "sec " : "") + 'large">Retour à l\'accueil</button>');
+    b.onclick = fermer;
+    wrap.appendChild(b);
+  }
   function fermerQuiz() {
     var fini = quiz && quiz.fin;
     if (quiz) clearInterval(quiz.minuteur); quiz = null; var q = document.querySelector(".quiz"); if (q) q.remove();
@@ -3058,7 +3108,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       if (inn.querySelector(".defi")) { z.classList.add("rouge"); z.appendChild(flammes()); }
       document.getElementById("couche").appendChild(z); z.querySelector("button").focus(); return; }
     var cur = quiz.qs[quiz.i], q = cur.q;
-    var haut = el('<div class="haut"><div class="titre"><span class="eyebrow" style="color:' + couleur(k.stat) + '">' + (quiz.mode === "rappel" ? "Rappel" : "Quiz") + " · " + esc(tx(s.nom)) + "</span><b>" + esc(tx(k.nom)) + '</b></div><button type="button" class="fermer" aria-label="Quitter">×</button></div>');
+    var haut = el('<div class="haut">' + badgeComp(k, 44) + '<div class="titre"><span class="eyebrow" style="color:' + couleur(k.stat) + '">' + (quiz.mode === "rappel" ? "Rappel" : "Quiz") + " · " + esc(tx(s.nom)) + " · niveau " + k.rang + "</span><b>" + esc(tx(k.nom)) + '</b></div><button type="button" class="fermer" aria-label="Quitter">×</button></div>');
     haut.querySelector(".fermer").onclick = function () {
       if (quiz.res.length && !quiz.fin) {
         var h = haut.querySelector(".titre"), avant = h.innerHTML, croix = haut.lastChild, retourCroix = croix.onclick;
@@ -3272,9 +3322,12 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     wrap.appendChild(z);
     if (nom === "duel") return wrap;
     var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite.indexOf("recompense:") === 0 ? (e === 0 ? (recs.length > 1 ? "Voir les " + recs.length + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
-    var bt = el('<button type="button" class="btn large">' + libelle + "</button>");
-    bt.onclick = function () { if (!suite) fermerQuiz(); else { quiz.etape = e + 1; rendreQuiz(); } };
-    wrap.appendChild(bt);
+    if (!suite) finEpreuve(wrap, fermerQuiz);
+    else {
+      var bt = el('<button type="button" class="btn large">' + libelle + "</button>");
+      bt.onclick = function () { quiz.etape = e + 1; rendreQuiz(); };
+      wrap.appendChild(bt);
+    }
     // v12 : des réponses fausses ? L'IA les a épinglées au mur de la honte.
     var ratees = r.total - r.bonnes;
     // v14 : le mur s'ouvre par-dessus le bilan ; « ← Bilan » ramène à la même étape, pour voir la suite des récompenses.

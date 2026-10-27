@@ -26,6 +26,7 @@ import mendeleiev
 import brillants
 import fiches
 import figures
+import symboles
 import honte
 import masques_regles
 import objets_v11
@@ -175,6 +176,7 @@ def competences():
             out.append({
                 "id": id, "stat": stat, "rang": i + 1,
                 "nom": fr(nom), "description": fr(desc), "prerequis": prerequis[i], "fiche": fiche(id),
+                "symbole": symboles.SYMBOLES[id],
             })
     return out
 

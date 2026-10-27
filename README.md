@@ -157,7 +157,8 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 - Une seule récompense (savant, livre ou objet) par épreuve ; la suivante attend l'épreuve d'après.
 - Cases cachées : seules les cases où le pion s'arrête sont dévoilées et débloquent leur date et leurs livres. Bouton « Avancer d'une seule case » (sans bonus) sous « C'est parti ».
 - Trou de mémoire (cases 17 et 60) et quatre ennemis (Ussher, Lyssenko, le complotiste, le raconteur) renvoient le pion à la plus ancienne case jamais vue, parmi les 15 derrière lui.
-- Compteur d'épreuves par tour et record du tour le plus court. Fond vert ou mauve au verdict d'un duel.
+- Compteur d'épreuves par tour et record du tour le plus court.
+- Case du pion (toucher le pion) : dessin et histoire en grand, « Où tu en es » (tour, étape, épreuves, arbre, proposition de l'IA, blocages, prochain ennemi) et « Jouer depuis cette case ». Fin d'épreuve : « Jouer l'épreuve suivante » sans repasser par l'accueil. Badge de compétence (couleur de l'arbre, symbole de outils/symboles.py, niveau) en tête des quiz. Fond vert ou mauve au verdict d'un duel.
 - Duels : arène rouge sombre en flammes, rencontre rejouée quand l'ennemi bloque toujours le pion, 16 ennemis (outils/ennemis.py) dont l'IA poste sept à chaque tour, sur des cases décalées.
 - Atomes : le combat demande le numéro atomique, plus la masse.
 - Questions dont la réponse est une personne : portrait en pixel art et biographie au retour (outils/portraits.py).
