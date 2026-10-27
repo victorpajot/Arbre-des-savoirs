@@ -249,7 +249,13 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(P.plateau.position, 1); assert.deepEqual(P.repliques, {});
     assert.equal(M.xpParStat(C3, P).empathie, 80);
     const rec = M.verifierRecompenses(C3, P, t0);
-    assert.ok(rec.evenements.some(e => e.id === "ebbinghaus") && rec.evenements.some(e => e.id === "feu"));
+    assert.ok(!rec.evenements.some(e => e.id === "ebbinghaus") && rec.evenements.some(e => e.id === "feu"), "1885 attend que le pion atteigne le XIXe siècle");
+    const xixe = C3.plateau.cases.find(k => k.epoque === "xixe").n;
+    P.plateau.atteinte = xixe;
+    assert.ok(M.verifierRecompenses(C3, P, t0).evenements.some(e => e.id === "ebbinghaus"), "date débloquée une fois l'époque atteinte");
+    P.plateau.atteinte = 1; P.plateau.tours = 1;
+    assert.ok(M.dateAtteinte(C3, P, { annee: 1990 }), "après un tour, plus de limite");
+    P.plateau.tours = 0;
     assert.ok(rec.gagnables.some(l => l.id === "memoire"));
     assert.equal(rec.masque, null, "le premier masque se pose sans annonce");
   }

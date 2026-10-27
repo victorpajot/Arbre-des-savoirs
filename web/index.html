@@ -2208,6 +2208,11 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   }
 
   // --- Vue Collections : objets, frise, bibliothèque ------------------------------
+  // Une date de la frise attend aussi que le pion ait atteint son époque (premier tour).
+  function commentDater(e) {
+    var t = commentObtenir(e.condition), ep = (C.plateau.epoques || []).filter(function (x) { return x.id === e.epoque; })[0];
+    return M.dateAtteinte(C, P, e) || !ep ? t : t.replace(/\.$/, "") + ", et que ton pion ait atteint l'époque « " + tx(ep.nom) + " ».";
+  }
   function commentObtenir(cond) {
     if (cond.type === "competence_maitrisee") return "Maîtriser « " + tx(C.parId[cond.id].nom) + " ».";
     if (cond.type === "branche_complete") return "Maîtriser toute la branche " + tx(stat(cond.stat).nom) + ".";
@@ -2317,7 +2322,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       nav.querySelector('[data-d="-1"]').disabled = pos === 0;
       nav.querySelector('[data-d="1"]').disabled = pos === evs.length - 1;
       eres.querySelectorAll("[data-ere]").forEach(function (x) { x.setAttribute("aria-pressed", x.getAttribute("data-ere") === e.epoque ? "true" : "false"); });
-      detail.innerHTML = '<div class="eyebrow" style="color:' + couleur(e.stat) + '">' + esc(ok ? formatAnnee(e.annee) : siecle(e.annee)) + " · " + esc(tx(s.nom)) + "</div><h3>" + (ok ? esc(tx(e.titre)) : "Date à découvrir") + "</h3><p>" + esc(ok ? tx(e.phrase) : "Pour l'ajouter : " + commentObtenir(e.condition)) + "</p>" +
+      detail.innerHTML = '<div class="eyebrow" style="color:' + couleur(e.stat) + '">' + esc(ok ? formatAnnee(e.annee) : siecle(e.annee)) + " · " + esc(tx(s.nom)) + "</div><h3>" + (ok ? esc(tx(e.titre)) : "Date à découvrir") + "</h3><p>" + esc(ok ? tx(e.phrase) : "Pour l'ajouter : " + commentDater(e)) + "</p>" +
         (ok ? '<button type="button" class="btn">Lire l\'histoire</button>' : "");
       var bl = detail.querySelector("button"); if (bl) bl.onclick = function () { ouvrirEvenement(e); };
       var ere = eres.querySelector('[aria-pressed="true"]'); if (ere && ere.scrollIntoView && eres.scrollWidth > eres.clientWidth) eres.scrollLeft = ere.offsetLeft - 16;
@@ -2366,7 +2371,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       if (k) html += '<div class="vitrine" style="padding:14px">' + svgSprite(k.icone, 96, tx(e.titre)) + "</div>";
       html += '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(formatAnnee(e.annee)) + " · " + esc(tx(s.nom)) + (k ? " · case " + k.n : "") + "</div><h2>" + esc(tx(e.titre)) + "</h2><p><b>" + esc(tx(e.phrase)) + "</b></p><p>" + esc(tx(k ? k.histoire : e.detail)) + '</p><p class="meta">Source : ' + esc(e.source) + "</p>";
     } else {
-      html += '<div class="eyebrow">' + esc(siecle(e.annee)) + "</div><h2>Date à découvrir</h2><p class=\"meta\">Pour l'ajouter à la frise : " + esc(commentObtenir(e.condition)) + "</p>";
+      html += '<div class="eyebrow">' + esc(siecle(e.annee)) + "</div><h2>Date à découvrir</h2><p class=\"meta\">Pour l'ajouter à la frise : " + esc(commentDater(e)) + "</p>";
     }
     feuilleSimple(html, ok ? tx(e.titre) : "Date à découvrir");
   }

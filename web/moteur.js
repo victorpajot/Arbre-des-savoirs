@@ -1386,6 +1386,7 @@
       directes.forEach(function (f) {
         f[1].forEach(function (x) {
           if (f[2][x.id] || (FAMILLES_LOT[f[0]] && lot.n) || !conditionRemplie(contenu, partie, x.condition, t)) return;
+          if (f[0] === "evenements" && !dateAtteinte(contenu, partie, x)) return;
           f[2][x.id] = t; out[f[0]].push(x); change = true; compterLot(lot, f[0]);
         });
       });
@@ -1427,6 +1428,15 @@
       });
     });
     return out;
+  }
+  // La frise suit le pion : pendant le premier tour, une date (gagnée par une compétence) attend que le pion
+  // ait atteint son époque. Au début du parcours, on ne débloque donc que de l'antique.
+  function dateAtteinte(contenu, partie, ev) {
+    var P = contenu.plateau, pl = partie.plateau;
+    if (!P || !pl || pl.tours > 0 || ev.annee == null) return true;
+    var k = P.cases[Math.max(1, pl.atteinte || 1) - 1];
+    var e = k && (P.epoques || []).filter(function (x) { return x.id === k.epoque; })[0];
+    return !e || e.fin == null || Number(ev.annee) <= e.fin;
   }
   function epoqueCase(contenu, partie) {
     var P = contenu.plateau, k = P && partie.plateau && P.cases[partie.plateau.position - 1];
@@ -1750,7 +1760,7 @@
     replique: replique,
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, choixArbre: choixArbre, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    choixIA: choixIA, choixArbre: choixArbre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
