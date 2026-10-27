@@ -140,3 +140,10 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
 - Projecteur sur la case d'arrivée : à la fin du trajet, le plateau passe en gris, le pion s'efface, la case grandit avec son étiquette (numéro, année, titre), puis tout revient.
 - Ennemis : portrait cerclé de rouge épinglé au-dessus de la case, avec un liseré qui pulse et un « ! ». À la rencontre, flash rouge, plateau teinté, l'ennemi bondit avec un bandeau « VS ».
+
+## v14 : retours de lecture
+
+- Plateau : l'assombrissement du projecteur est un voile (rectangle) au lieu d'un filtre CSS ; au glisser, une mise à jour par image et animations en pause, pour supprimer les à-coups.
+- Frise : seules les dates découvertes s'affichent par défaut ; un interrupteur montre les autres.
+- Bilan : le mur de la honte s'ouvre par-dessus le bilan ; « ← Bilan » ramène à la même étape.
+- Textes de lecture (paroles de l'IA, succès, récompenses, notes) agrandis à 15-17 px.

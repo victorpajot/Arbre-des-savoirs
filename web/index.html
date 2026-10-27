@@ -342,14 +342,15 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 /* v13 : épingles d'ennemis et projecteur sur la case d'arrivée */
 .plateau .garde-pulse { animation: garde-pulse 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
 @keyframes garde-pulse { 50% { transform: scale(1.22); stroke-opacity: 0.25; } }
-.plateau svg.grille .monde { transition: filter .45s ease; }
-.plateau svg.grille.projecteur .monde { filter: grayscale(1) brightness(0.5); }
-.plateau svg.grille.projecteur.alerte .monde { filter: grayscale(1) brightness(0.4) sepia(0.6) hue-rotate(-30deg) saturate(2.2); }
+/* v14 : le plateau s'assombrit sous un voile (un simple rectangle) plutôt qu'avec un filtre CSS, qui faisait des à-coups. */
+.plateau .scene .voile-ombre { opacity: 0; animation: voile-ombre .45s ease forwards; pointer-events: none; }
+@keyframes voile-ombre { to { opacity: 0.62; } }
+.quiz.honte-dessus { z-index: 32; }
+.plateau .grille-cadre.en-geste svg * { animation-play-state: paused !important; }
 .plateau #pion { transition: opacity .3s ease; }
 .plateau #pion.efface { opacity: 0; }
-.plateau .scene .vedette { transform-box: fill-box; transform-origin: center; animation: vedette 2.4s ease-in-out forwards; filter: drop-shadow(0 0 6px #FFD447); }
+.plateau .scene .vedette { transform-box: fill-box; transform-origin: center; animation: vedette 2.4s ease-in-out forwards; }
 @keyframes vedette { 0% { transform: scale(1); } 25% { transform: scale(1.9); } 40% { transform: scale(1.7); } 55% { transform: scale(1.85); } 70%, 100% { transform: scale(1.75); } }
-.plateau .grille.alerte .scene .vedette { filter: drop-shadow(0 0 6px #D94141); }
 .plateau .scene .etiquette-case { animation: etiquette .5s .25s ease-out both; }
 @keyframes etiquette { from { opacity: 0; transform: translateY(6px); } }
 .plateau .scene .voile-flash { opacity: 0; animation: flash .6s ease-out; pointer-events: none; }
@@ -678,6 +679,11 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   .feuille { animation: monte 0.22s ease-out; }
   @keyframes monte { from { transform: translateY(24px); opacity: 0.6; } }
 }
+/* v14 : textes de lecture plus grands, à la taille d'une conversation (17 px). Les étiquettes restent petites. */
+.comite p, .succes blockquote, .citation-src blockquote, .recompense .deplie, .fiche-rev li { font-size: 17px; line-height: 1.5; }
+.comite.petit p, .recompense .desc, .succes .desc, .oubli .rep-h, .oubli .expl-h, .fiche-rev .piege-h, .retour p { font-size: 16px; line-height: 1.5; }
+.note, .feuille .meta, .etat-pion, .trajet .pas, .comite .aparte, .faveur-mini, .bonus-objet, .masques-jour .mj span.r, .epreuve .txt span, .ligne .txt span { font-size: 15px; line-height: 1.45; }
+.succes cite, .recompense .deplie cite, .citation-src cite, .oubli .clous, .comite .qui { font-size: 13px; }
 </style>
 
 <div class="app" id="app"><div class="vue"><div class="entete"><h1>Arbre des savoirs</h1></div><div class="bloc"><p class="vide">Chargement des compétences…</p></div></div></div>
@@ -691,7 +697,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   var M = window.Moteur;
   var CLE_LOCALE = "arbre-competences.partie";
   var C = null, P = null, vue = "aujourdhui", quiz = null, feuille = null, ecrire = null;
-  var friseCentre = null, collection = "frise", ongletPerso = "stats", filtreFrise = null, cachePlateau = { cle: null, svg: "" };
+  var friseToutes = false, friseCentre = null, collection = "frise", ongletPerso = "stats", filtreFrise = null, cachePlateau = { cle: null, svg: "" };
   var JOUR_MS = 86400000;
   var stockage = { compte: false, db: null, ref: null, minuteur: null, etat: "Ce navigateur" };
   // Dans l'app Android (Capacitor), les plugins natifs remplacent ce que la page web demande à Claude.
@@ -1343,10 +1349,13 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var sc = svg.querySelector(".scene"), g = svg.querySelector('.monde g[data-n="' + n + '"]:not(.garde)'), pion = svg.querySelector("#pion");
     var k = C.plateau.cases[n - 1]; if (!sc || !g || !k) return;
     var p = centreCase(n), en = M.ennemisPlateau(C, P)[n] && C.ennemiParId[M.ennemisPlateau(C, P)[n]];
-    var vb = (svg.getAttribute("viewBox") || "0 0 360 640").split(" ").map(Number);
     var titre = tx(k.titre); if (titre.length > 30) titre = titre.slice(0, 29) + "…";
     var ly = p[1] + 34, lw = Math.max(96, Math.min(150, titre.length * 4.6 + 18));
-    var h = '<rect class="voile-flash" x="' + vb[0] + '" y="' + vb[1] + '" width="' + vb[2] + '" height="' + vb[3] + '" fill="' + (en ? "#D94141" : "#FFD447") + '"/>' +
+    // Voile et flash couvrent tout le monde, avec de la marge : ils restent en place pendant que la caméra glisse.
+    var tout = 'x="-400" y="-400" width="' + (MONDE[0] + 800) + '" height="' + (MONDE[1] + 800) + '"';
+    var h = '<rect class="voile-ombre" ' + tout + ' fill="' + (en ? "#3A0D12" : "#14101F") + '"/>' +
+      '<rect class="voile-flash" ' + tout + ' fill="' + (en ? "#D94141" : "#FFD447") + '"/>' +
+      '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="30" fill="' + (en ? "#D94141" : "#FFD447") + '" opacity="0.35" class="halo-vedette"/>' +
       '<g class="vedette">' + g.innerHTML + "</g>" +
       '<g class="etiquette-case"><rect x="' + (p[0] - lw / 2).toFixed(1) + '" y="' + ly.toFixed(1) + '" width="' + lw.toFixed(1) + '" height="27" rx="7" fill="#1E1A2B" stroke="' + (en ? "#D94141" : "#FFD447") + '" stroke-width="2"/>' +
       '<text x="' + p[0].toFixed(1) + '" y="' + (ly + 11).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="800" font-family="JetBrains Mono, monospace" fill="' + (en ? "#FF9C9C" : "#FFD447") + '">CASE ' + n + " · " + esc(formatAnnee(k.annee)) + "</text>" +
@@ -1550,14 +1559,17 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       var fx = (g.mx - r.left) / r.width, fy = (g.my - r.top) / r.height, wx = g.v[0] + fx * g.v[2], wy = g.v[1] + fy * g.v[3];
       var nfx = (mx - r.left) / r.width, nfy = (my - r.top) / r.height;
       camera.w = w; camera.cx = wx - nfx * w + w / 2; camera.cy = wy - nfy * w * RATIO_VUE + w * RATIO_VUE / 2;
-      appliquer();
+      // v14 : une seule mise à jour par image, et les animations du plateau en pause pendant le geste : plus d'à-coups.
+      grille.classList.add("en-geste");
+      if (!imageDemandee) { imageDemandee = true; requestAnimationFrame(function () { imageDemandee = false; appliquer(); }); }
     });
+    var imageDemandee = false;
     function lacher(ev) {
       if (!doigts[ev.pointerId]) return;
       delete doigts[ev.pointerId];
       if (glisse) finGlisse = Date.now();
       etatGeste();
-      if (!geste) glisse = false;
+      if (!geste) { glisse = false; grille.classList.remove("en-geste"); }
     }
     grille.addEventListener("pointerup", lacher);
     grille.addEventListener("pointercancel", lacher);
@@ -2078,10 +2090,17 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       fl.appendChild(bt);
     });
     b.appendChild(fl);
+    // v14 : par défaut, la frise ne montre que les dates découvertes ; un interrupteur révèle les autres, en ombre.
+    var tous = C.evenements.filter(function (e) { return !filtreFrise || e.stat === filtreFrise; });
+    var nbVues = tous.filter(function (e) { return P.evenements[e.id]; }).length;
+    var tg = el('<label class="interrupteur" for="frise-toutes" style="margin:4px 0 8px"><span class="note" style="margin:0">Montrer aussi les dates à découvrir (' + (tous.length - nbVues) + ')</span><input type="checkbox" id="frise-toutes"></label>');
+    tg.querySelector("input").checked = friseToutes;
+    tg.querySelector("input").onchange = function (ev) { friseToutes = ev.target.checked; friseCentre = null; rendre(); };
+    b.appendChild(tg);
     // v7 : la frise est un cylindre vu de côté. Le passé à gauche, le futur à droite, la date du centre se lit.
-    var evs = C.evenements.filter(function (e) { return !filtreFrise || e.stat === filtreFrise; })
+    var evs = tous.filter(function (e) { return friseToutes || P.evenements[e.id]; })
       .map(function (e, i) { return { e: e, i: i }; }).sort(function (a, b) { return a.e.annee - b.e.annee || a.i - b.i; }).map(function (x) { return x.e; });
-    if (!evs.length) { b.appendChild(el('<p class="meta">Aucune date pour cette branche.</p>')); return b; }
+    if (!evs.length) { b.appendChild(el('<p class="meta">' + (tous.length ? "Aucune date découverte pour l'instant. Fais avancer ton pion ou maîtrise une compétence." : "Aucune date pour cette branche.") + "</p>")); return b; }
     var pos = evs.map(function (e) { return e.id; }).indexOf(friseCentre);
     if (pos < 0) {
       var tMax = -1; pos = 0;
@@ -2091,7 +2110,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     C.frise.epoques.forEach(function (ep) {
       var idx = evs.map(function (e) { return e.epoque; }).indexOf(ep.id); if (idx < 0) return;
       debutEre[ep.id] = idx;
-      var nb = evs.filter(function (e) { return e.epoque === ep.id && P.evenements[e.id]; }).length, tot = evs.filter(function (e) { return e.epoque === ep.id; }).length;
+      var nb = tous.filter(function (e) { return e.epoque === ep.id && P.evenements[e.id]; }).length, tot = tous.filter(function (e) { return e.epoque === ep.id; }).length;
       var bt = el('<button type="button" data-ere="' + ep.id + '"><b>' + esc(tx(ep.nom)) + '</b><span class="num">' + nb + " / " + tot + "</span></button>");
       bt.onclick = function () { aller(debutEre[ep.id]); };
       eres.appendChild(bt);
@@ -2626,6 +2645,13 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   }
   function bonneReponse(q) { return q.type === "qcm" ? tx(q.choix[q.reponse]) : q.type === "vrai_faux" ? (q.reponse ? "Vrai" : "Faux") : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""); }
   function ouvrirHonte() { fermerFeuille(); vue = "honte"; rendre(); window.scrollTo(0, 0); }
+  function ouvrirHonteSurBilan() {
+    var z = el('<div class="quiz honte-dessus" role="dialog" aria-modal="true" aria-label="Le mur de la honte"><div class="in"></div></div>');
+    function fermer() { z.remove(); var b = document.querySelector(".quiz .btn"); if (b) b.focus({ preventScroll: true }); }
+    z.querySelector(".in").appendChild(vueHonte(fermer));
+    document.body.appendChild(z);
+    var b0 = z.querySelector(".entete .btn"); if (b0) b0.focus({ preventScroll: true });
+  }
   // Carte d'une question du mur. `retenter` : la réponse reste cachée tant qu'on n'a pas répondu.
   function carteOubli(x, retenter) {
     var q = x.question, e = x.entree, donnee = texteReponse(q, e.rep);
@@ -2674,10 +2700,13 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     liste.forEach(function (x) { var id = x.question.competence; if (!groupes[id]) { groupes[id] = []; ordre.push(id); } groupes[id].push(x); });
     return ordre.map(function (id) { return { k: C.parId[id], items: groupes[id] }; });
   }
-  function vueHonte() {
+  // `retour` (facultatif) : ouvert par-dessus le bilan d'un quiz, le bouton y ramène, à la même étape.
+  function vueHonte(retour) {
     var t = maintenant(), mur = M.murDeLaHonte(C, P, t), v = el('<div class="vue"></div>');
     var tete = el('<div class="entete"><div><div class="eyebrow">Révisions, selon l\'IA</div><h1>Le mur de la honte</h1></div></div>');
-    var ret = el('<button type="button" class="btn sec" aria-label="Retour à l\'accueil">← Accueil</button>'); ret.onclick = function () { vue = "aujourdhui"; rendre(); window.scrollTo(0, 0); };
+    var ret = el('<button type="button" class="btn sec">' + (retour ? "← Bilan" : "← Accueil") + "</button>");
+    ret.setAttribute("aria-label", retour ? "Revenir au bilan" : "Retour à l'accueil");
+    ret.onclick = retour || function () { vue = "aujourdhui"; rendre(); window.scrollTo(0, 0); };
     tete.appendChild(ret); v.appendChild(tete);
     var effacees = mur.aujourdhui.filter(function (x) { return x.entree.efface; }).length;
     var mot = comite(M.replique(C, P, [mur.aujourdhui.length || mur.aRetenter ? "mur_honte" : "honte_vide"]));
@@ -3088,9 +3117,10 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     wrap.appendChild(bt);
     // v12 : des réponses fausses ? L'IA les a épinglées au mur de la honte.
     var ratees = r.total - r.bonnes;
-    if (ratees > 0 && !suite) {
+    // v14 : le mur s'ouvre par-dessus le bilan ; « ← Bilan » ramène à la même étape, pour voir la suite des récompenses.
+    if (ratees > 0 && (nom === "verdict" || !suite)) {
       var bm = el('<button type="button" class="btn sec large">Le mur de la honte (' + ratees + ")</button>");
-      bm.onclick = function () { fermerQuiz(); ouvrirHonte(); };
+      bm.onclick = ouvrirHonteSurBilan;
       wrap.appendChild(bm);
     }
     if (nom === "verdict" && ratees > 0) z.appendChild(el('<p class="note" style="margin:0;text-align:center">' + ratees + " réponse" + (ratees > 1 ? "s" : "") + " fausse" + (ratees > 1 ? "s" : "") + " épinglée" + (ratees > 1 ? "s" : "") + " au mur de la honte, avec une fiche pour réviser.</p>"));
