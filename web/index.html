@@ -725,6 +725,10 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
 .etape { display: flex; flex-direction: column; gap: 14px; }
 @media (prefers-reduced-motion: no-preference) { .etape { animation: apparait 0.35s ease-out both; } }
 .plateau-bilan svg.grille { display: block; width: 100%; height: auto; }
+/* Les animations en boucle du plateau (halos, pulsations des ennemis) font frétiller le dessin dans la WebView
+   d'Android, surtout quand le plateau se peuple. Dans le bilan et sur Android, le plateau reste immobile entre deux déplacements. */
+.plateau-bilan svg .halo, .plateau-bilan svg .garde-pulse, .plateau-bilan svg .liseret, .plateau-bilan svg .avenir, .plateau-bilan svg .halo-pion, .plateau-bilan svg .fleche-pion, .plateau-bilan svg .scintille,
+.android .plateau svg .halo, .android .plateau svg .garde-pulse, .android .plateau svg .liseret, .android .plateau svg .avenir, .android .plateau svg .halo-pion, .android .plateau svg .fleche-pion, .android .plateau svg .scintille { animation: none; }
 /* v5 : farce */
 .farce { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; padding: 12px; border-radius: 12px; background: color-mix(in srgb, var(--warn) 12%, var(--surface)); border-left: 4px solid var(--warn); }
 .farce .avatar-cadre { padding: 2px; }
@@ -786,6 +790,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   "use strict";
   var M = window.Moteur;
   var CLE_LOCALE = "arbre-competences.partie";
+  if (/Android/i.test(navigator.userAgent)) document.documentElement.classList.add("android");
   var C = null, P = null, vue = "aujourdhui", quiz = null, feuille = null, ecrire = null;
   var friseToutes = false, friseCentre = null, collection = "frise", ongletPerso = "avatar", filtreFrise = null, cachePlateau = { cle: null, svg: "" };
   var JOUR_MS = 86400000;
@@ -1491,6 +1496,14 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   }
   // v13 : à la fin du trajet, projecteur sur la case d'arrivée. Le plateau passe en gris, le pion s'efface,
   // la case grandit avec son étiquette ; si un ennemi la garde, il bondit avec un bandeau « VS ».
+  // Sur Android, la WebView gardait parfois des morceaux d'anciennes images du plateau après les animations
+  // (caméra qui glisse, voile, case agrandie) : des cases manquaient, coupées net. On remplace le dessin par
+  // une copie fraîche une fois tout fini, ce qui oblige à tout repeindre.
+  function repeindre(svg) {
+    if (!svg || !svg.parentNode || svg.classList.contains("projecteur")) return;
+    var neuf = svg.cloneNode(true);
+    svg.parentNode.replaceChild(neuf, svg);
+  }
   function projecteur(svg, place) {
     var n = laRoute()[place - 1];
     var sc = svg.querySelector(".scene"), g = svg.querySelector('.monde g[data-p="' + place + '"]'), pion = svg.querySelector("#pion");
@@ -1526,7 +1539,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     clearTimeout(svg._projecteur);
     svg._projecteur = setTimeout(function () {
       svg.classList.remove("projecteur", "alerte"); if (pion) pion.classList.remove("efface");
-      setTimeout(function () { if (!svg.classList.contains("projecteur")) sc.innerHTML = ""; }, 400);
+      setTimeout(function () { if (!svg.classList.contains("projecteur")) { sc.innerHTML = ""; repeindre(svg); } }, 400);
     }, en ? 3600 : 3000);
   }
   // `bilan` : toujours zoomé sur le pion, sans tenir compte de la caméra de l'accueil.
