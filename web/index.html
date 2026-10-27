@@ -433,6 +433,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .gain-credits .barre { margin-left: 8px; color: var(--muted); font-size: 14px; }
 .gain-credits p { margin: 6px 0 0; font-size: 17px; line-height: 1.45; }
 .gain-faveur.perte b { color: var(--bad); }
+.mue { animation: mue 1.3s ease-out both; }
+@keyframes mue { 0% { filter: brightness(0); opacity: 0; transform: scale(.9); } 12% { filter: brightness(0); opacity: 1; transform: scale(1); } 55% { filter: brightness(0); } 62% { filter: brightness(2.6) drop-shadow(0 0 10px #FFD447); transform: scale(1.08); } 100% { filter: none; transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .mue { animation: none; } }
 .case-dicte .vitrine { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: color-mix(in srgb, var(--c) 30%, #fff); }
 /* v5 : stats sur l'accueil */
 .mini-stats { display: grid; grid-template-columns: 104px 1fr; gap: 12px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
@@ -862,7 +865,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   function svgMasque(m, expr, largeur, verrou) {
     var A = C.ia, c = pixels(m.base, A.palette, null, 0, 0, 1, verrou);
     if (!verrou) c += pixels(m.expressions[expr] || m.expressions.neutre, A.palette, null, 0, 0, 1);
-    return '<svg class="pix" viewBox="0 0 40 48" width="' + largeur + '" height="' + Math.round(largeur * 1.2) + '" role="img" aria-label="' + esc(verrou ? "Masque à venir" : tx(m.nom)) + '">' + c + "</svg>";
+    return '<svg class="pix" data-sig="' + esc(m.id) + '" viewBox="0 0 40 48" width="' + largeur + '" height="' + Math.round(largeur * 1.2) + '" role="img" aria-label="' + esc(verrou ? "Masque à venir" : tx(m.nom)) + '">' + c + "</svg>";
   }
   // v7 : un ennemi, dessiné comme un savant (corps de l'avatar, tenue, coiffure).
   function pixelsEnnemi(e, silhouette) {
@@ -915,8 +918,31 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var rang = M.rangAvatar(C, P), objet = savantIncarne() ? null : objetTenu();
     var c = pixelsAvatar(3, 0);
     if (objet) c += pixels(objet.pixels, C.cabinet.palette, null, 33, 24, 0.5);
-    return '<svg class="pix" viewBox="0 0 52 48" width="' + taille + '" height="' + Math.round(taille * 48 / 52) + '" role="img" aria-label="Ton avatar, rang ' + esc(tx(rang.nom)) + '">' + c + "</svg>";
+    return '<svg class="pix" data-sig="' + signature(c) + '" viewBox="0 0 52 48" width="' + taille + '" height="' + Math.round(taille * 48 / 52) + '" role="img" aria-label="Ton avatar, rang ' + esc(tx(rang.nom)) + '">' + c + "</svg>";
   }
+
+  // v16 : quand l'avatar du joueur ou le masque de l'IA change, le nouveau apparaît en silhouette noire,
+  // puis un flash le révèle. On retient le dernier vu de chacun, d'une visite à l'autre.
+  function signature(t) { var h = 0; for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+  var CLE_VUS = "arbre-competences.avatars-vus", VUS = {};
+  try { VUS = JSON.parse(localStorage.getItem(CLE_VUS)) || {}; } catch (e) { VUS = {}; }
+  var ROLES_MUE = [["joueur", ".avatar-cadre svg[data-sig], .perso svg[data-sig]"], ["ia", ".comite .masque svg[data-sig], .ia-tete svg[data-sig]"]];
+  function muer() {
+    var change = false;
+    ROLES_MUE.forEach(function (r) {
+      var els = document.querySelectorAll(r[1]); if (!els.length) return;
+      var sig = els[0].getAttribute("data-sig");
+      if (VUS[r[0]] === sig) return;
+      if (VUS[r[0]]) els.forEach(function (x) { if (x.getAttribute("data-sig") === sig) { x.classList.remove("mue"); void x.getBBox; x.classList.add("mue"); } });
+      VUS[r[0]] = sig; change = true;
+    });
+    if (change) try { localStorage.setItem(CLE_VUS, JSON.stringify(VUS)); } catch (e) {}
+  }
+  var mueEnAttente = false;
+  if (window.MutationObserver) new MutationObserver(function () {
+    if (mueEnAttente) return; mueEnAttente = true;
+    requestAnimationFrame(function () { mueEnAttente = false; if (C && P) muer(); });
+  }).observe(document.body, { childList: true, subtree: true });
 
   // --- Narrateur ------------------------------------------------------------
   // L'IA parle derrière son masque du moment, dont l'expression suit le contexte de la réplique.
