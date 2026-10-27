@@ -339,6 +339,26 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .illus .fond { fill: var(--surface); }
 .illus .jaune { fill: #F2B632; }
 .retour .illus { margin-top: 8px; }
+/* v13 : épingles d'ennemis et projecteur sur la case d'arrivée */
+.plateau .garde-pulse { animation: garde-pulse 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes garde-pulse { 50% { transform: scale(1.22); stroke-opacity: 0.25; } }
+.plateau svg.grille .monde { transition: filter .45s ease; }
+.plateau svg.grille.projecteur .monde { filter: grayscale(1) brightness(0.5); }
+.plateau svg.grille.projecteur.alerte .monde { filter: grayscale(1) brightness(0.4) sepia(0.6) hue-rotate(-30deg) saturate(2.2); }
+.plateau #pion { transition: opacity .3s ease; }
+.plateau #pion.efface { opacity: 0; }
+.plateau .scene .vedette { transform-box: fill-box; transform-origin: center; animation: vedette 2.4s ease-in-out forwards; filter: drop-shadow(0 0 6px #FFD447); }
+@keyframes vedette { 0% { transform: scale(1); } 25% { transform: scale(1.9); } 40% { transform: scale(1.7); } 55% { transform: scale(1.85); } 70%, 100% { transform: scale(1.75); } }
+.plateau .grille.alerte .scene .vedette { filter: drop-shadow(0 0 6px #D94141); }
+.plateau .scene .etiquette-case { animation: etiquette .5s .25s ease-out both; }
+@keyframes etiquette { from { opacity: 0; transform: translateY(6px); } }
+.plateau .scene .voile-flash { opacity: 0; animation: flash .6s ease-out; pointer-events: none; }
+@keyframes flash { 0% { opacity: 0.5; } 100% { opacity: 0; } }
+.plateau .scene .vs-ennemi .bond { animation: bond .7s .2s cubic-bezier(.3,1.6,.5,1) both; }
+@keyframes bond { from { transform: translateY(26px) scale(0.3); opacity: 0; } }
+.plateau .scene { transition: opacity .35s ease; }
+.plateau svg.grille:not(.projecteur) .scene { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .plateau .scene * { animation: none !important; } .plateau .scene .vedette { transform: scale(1.75); } }
 /* v5 : plateau routier */
 .plateau .liseret { animation: liseret 2.2s ease-in-out infinite; }
 @keyframes liseret { 50% { stroke-opacity: 0.25; } }
@@ -1306,12 +1326,49 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       '<path d="' + d + '" fill="none" stroke="' + couleur + '" stroke-width="2.6" stroke-dasharray="5 4" stroke-linecap="round" stroke-linejoin="round"/>' +
       '<path d="M0,0 L-8,-4.5 L-8,4.5 Z" fill="' + couleur + '" stroke="#fff" stroke-width="1.2" stroke-linejoin="round" transform="translate(' + fin[0].toFixed(1) + " " + fin[1].toFixed(1) + ") rotate(" + (ang * 180 / Math.PI).toFixed(1) + ')"/></g>';
   }
+  // v13 : un ennemi se voit de loin. Portrait cerclé de rouge, épinglé au-dessus de sa case, avec un liseré qui pulse.
+  // Si le pion est sur sa case (duel en attente), l'épingle se range sur le côté.
+  function epingleEnnemi(en, n, ici) {
+    var p = centreCase(n), ex = p[0] + (ici ? 20 : 0), ey = p[1] - (ici ? 20 : 25);
+    return '<g data-n="' + n + '" class="garde" style="cursor:pointer" transform="translate(' + ex.toFixed(1) + " " + ey.toFixed(1) + ')">' +
+      '<circle r="17" fill="none" stroke="#D94141" stroke-width="3" class="garde-pulse"/>' +
+      (ici ? "" : '<path d="M-5.5,11 L0,20 L5.5,11 Z" fill="#D94141" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>') +
+      '<circle r="13.5" fill="#fff" stroke="#D94141" stroke-width="2.8"/>' +
+      '<svg x="-11.5" y="-11.5" width="23" height="23" viewBox="8 1 24 24" class="pix">' + pixelsEnnemi(en) + "</svg>" +
+      '<g transform="translate(11 -11)"><circle r="5.5" fill="#D94141" stroke="#fff" stroke-width="1.4"/><text y="3" text-anchor="middle" font-size="8" font-weight="900" fill="#fff">!</text></g></g>';
+  }
+  // v13 : à la fin du trajet, projecteur sur la case d'arrivée. Le plateau passe en gris, le pion s'efface,
+  // la case grandit avec son étiquette ; si un ennemi la garde, il bondit avec un bandeau « VS ».
+  function projecteur(svg, n) {
+    var sc = svg.querySelector(".scene"), g = svg.querySelector('.monde g[data-n="' + n + '"]:not(.garde)'), pion = svg.querySelector("#pion");
+    var k = C.plateau.cases[n - 1]; if (!sc || !g || !k) return;
+    var p = centreCase(n), en = M.ennemisPlateau(C, P)[n] && C.ennemiParId[M.ennemisPlateau(C, P)[n]];
+    var vb = (svg.getAttribute("viewBox") || "0 0 360 640").split(" ").map(Number);
+    var titre = tx(k.titre); if (titre.length > 30) titre = titre.slice(0, 29) + "…";
+    var ly = p[1] + 34, lw = Math.max(96, Math.min(150, titre.length * 4.6 + 18));
+    var h = '<rect class="voile-flash" x="' + vb[0] + '" y="' + vb[1] + '" width="' + vb[2] + '" height="' + vb[3] + '" fill="' + (en ? "#D94141" : "#FFD447") + '"/>' +
+      '<g class="vedette">' + g.innerHTML + "</g>" +
+      '<g class="etiquette-case"><rect x="' + (p[0] - lw / 2).toFixed(1) + '" y="' + ly.toFixed(1) + '" width="' + lw.toFixed(1) + '" height="27" rx="7" fill="#1E1A2B" stroke="' + (en ? "#D94141" : "#FFD447") + '" stroke-width="2"/>' +
+      '<text x="' + p[0].toFixed(1) + '" y="' + (ly + 11).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="800" font-family="JetBrains Mono, monospace" fill="' + (en ? "#FF9C9C" : "#FFD447") + '">CASE ' + n + " · " + esc(formatAnnee(k.annee)) + "</text>" +
+      '<text x="' + p[0].toFixed(1) + '" y="' + (ly + 22).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">' + esc(titre) + "</text></g>";
+    if (en) h += '<g class="vs-ennemi" transform="translate(' + p[0].toFixed(1) + " " + (p[1] - 44).toFixed(1) + ')"><g class="bond">' +
+      '<circle r="24" fill="#fff" stroke="#D94141" stroke-width="4"/><svg x="-21" y="-21" width="42" height="42" viewBox="8 1 24 24" class="pix">' + pixelsEnnemi(en) + "</svg>" +
+      '<g transform="translate(24 -16) rotate(-10)"><rect x="-14" y="-9" width="28" height="18" rx="4" fill="#D94141" stroke="#fff" stroke-width="2"/><text y="5" text-anchor="middle" font-size="12" font-weight="900" fill="#fff" font-style="italic">VS</text></g></g></g>';
+    sc.innerHTML = h;
+    svg.classList.add("projecteur"); if (en) svg.classList.add("alerte");
+    if (pion) pion.classList.add("efface");
+    clearTimeout(svg._projecteur);
+    svg._projecteur = setTimeout(function () {
+      svg.classList.remove("projecteur", "alerte"); if (pion) pion.classList.remove("efface");
+      setTimeout(function () { if (!svg.classList.contains("projecteur")) sc.innerHTML = ""; }, 400);
+    }, en ? 3600 : 3000);
+  }
   // `bilan` : toujours zoomé sur le pion, sans tenir compte de la caméra de l'accueil.
   function svgPlateau(bilan) {
     var pl = P.plateau, nb = C.plateau.cases.length, loin = portee(), ennemis = M.ennemisPlateau(C, P), ton = M.humeur(P);
     var cle = [pl.atteinte, pl.tours, pl.position, loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {})].join("/");
     if (cachePlateau.cle !== cle) {
-      var c = decorPlateau(ton), pas = pasCase(), fleches = "";
+      var c = decorPlateau(ton), pas = pasCase(), fleches = "", gardes = "";
       var toute = morceauRoute(0, ROUTE.total);
       c += '<polyline points="' + toute + '" fill="none" stroke="#000" stroke-opacity="0.22" stroke-width="' + (LARGEUR_ROUTE + 8) + '" stroke-linejoin="round" stroke-linecap="round" transform="translate(0 3)"/>' +
         '<polyline points="' + toute + '" fill="none" stroke="#fff" stroke-width="' + (LARGEUR_ROUTE + 6) + '" stroke-linejoin="round" stroke-linecap="round"/>';
@@ -1331,16 +1388,12 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         } else {
           c += '<text x="' + x.toFixed(1) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="middle" font-size="12" font-weight="800" font-family="JetBrains Mono, monospace" fill="#1E1A2B" opacity="0.75">' + n + "</text>";
         }
-        // v7 : l'ennemi qui garde la case. Si le pion est dessus (duel en attente), il se range sur le bord.
+        // v13 : l'ennemi qui garde la case est une épingle au-dessus d'elle, dessinée après toutes les cases pour rester devant.
         var en = ennemis[n] && C.ennemiParId[ennemis[n]];
-        if (en) {
-          var r0 = ici ? 8 : 13, ex = x + (ici ? 13 : 0), ey = y - (ici ? 13 : 0);
-          c += '<circle cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="' + r0 + '" fill="#fff" stroke="#D94141" stroke-width="2"/>' +
-            '<svg x="' + (ex - r0 + 1.5).toFixed(1) + '" y="' + (ey - r0 + 1.5).toFixed(1) + '" width="' + (2 * r0 - 3) + '" height="' + (2 * r0 - 3) + '" viewBox="8 1 24 24" class="pix">' + pixelsEnnemi(en) + "</svg>";
-        }
+        if (en) gardes += epingleEnnemi(en, n, ici);
         c += "</g>";
       });
-      c += fleches;
+      c += fleches + gardes;
       // Départ : un panneau planté au bord de la première case.
       var d0 = centreCase(1);
       c += '<g aria-hidden="true"><path d="M' + (d0[0] - 14) + "," + (d0[1] - 16) + " V" + (d0[1] - 36) + '" stroke="#6E4429" stroke-width="2.4"/><g transform="rotate(-8 ' + (d0[0] - 14) + " " + (d0[1] - 36) + ')"><rect x="' + (d0[0] - 34) + '" y="' + (d0[1] - 44) + '" width="44" height="14" rx="3" fill="#2E9D5B" stroke="#fff" stroke-width="1.5"/>' +
@@ -1361,7 +1414,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       '<circle r="19.5" fill="#1E1A2B"/><circle r="17.5" fill="var(--parchemin)" stroke="#FFD447" stroke-width="3.5"/>' +
       '<path class="fleche-pion" d="M0,-24 L-6,-33 H6 Z" fill="#FFD447" stroke="#1E1A2B" stroke-width="1.6" stroke-linejoin="round"/>' +
       '<svg x="-14.5" y="-14.5" width="29" height="29" viewBox="8 1 24 24" class="pix">' + pixelsAvatar(0, 0) + "</svg></g>";
-    return '<svg class="grille' + (bilan ? " zoom" : " libre") + '" viewBox="' + vb + '" role="img" aria-label="Plateau de l\'histoire : une route sinueuse du départ, en haut à gauche, jusqu\'à l\'arrivée, en bas. Décor : ' + (DECORS[ton] || DECORS.neutre).nom + ", l'IA est " + (NOM_HUMEUR[ton] || ton) + ". Ton pion est sur la case " + pl.position + " sur " + nb + '">' + cachePlateau.svg + pion + "</svg>";
+    return '<svg class="grille' + (bilan ? " zoom" : " libre") + '" viewBox="' + vb + '" role="img" aria-label="Plateau de l\'histoire : une route sinueuse du départ, en haut à gauche, jusqu\'à l\'arrivée, en bas. Décor : ' + (DECORS[ton] || DECORS.neutre).nom + ", l'IA est " + (NOM_HUMEUR[ton] || ton) + ". Ton pion est sur la case " + pl.position + " sur " + nb + '">' + '<g class="monde">' + cachePlateau.svg + '</g><g class="scene"></g>' + pion + "</svg>";
   }
   function valeurTexte(k, type) {
     var v = M.valeurEpreuve(C, P, { type: type, comp: k.id }, maintenant());
@@ -1431,12 +1484,14 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       if (suivre) { if (ms) glisserVue(svgP, cadrePion(n), ms); else svgP.setAttribute("viewBox", boiteVue(cadrePion(n))); }
     }
     var reduit = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduit || cases.length < 2) { poser(cases[cases.length - 1]); return; }
+    var fin = cases[cases.length - 1];
+    if (reduit || cases.length < 2) { poser(fin); if (svgP) projecteur(svgP, fin); return; }
     var svg = g.ownerSVGElement; if (!racine && svg && svg.scrollIntoView) svg.scrollIntoView({ block: "center", behavior: "smooth" });
     var j = 0;
     setTimeout(function pas() {
       j++; poser(cases[j], 180); g.classList.remove("saut"); void g.getBBox(); g.classList.add("saut");
       if (j < cases.length - 1) setTimeout(pas, 190);
+      else setTimeout(function () { projecteur(svgP, fin); }, 320);
     }, 450);
   }
   function blocPlateau() {

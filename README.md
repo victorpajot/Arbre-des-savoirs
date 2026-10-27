@@ -135,3 +135,8 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 - La vue « Le mur de la honte » range les ratées du jour par thème : énoncé, ta réponse, la bonne, l'explication, puis la fiche de révision du thème.
 - Fiches de révision pour les 80 compétences (`outils/fiches.py`) : l'essentiel, le piège classique, un schéma (`outils/schemas_fiches.py`) et une source. Elles s'ouvrent aussi depuis la fiche d'une compétence dans l'arbre.
 - À partir du lendemain, on peut retenter une question : réussie, elle est « réhabilitée » et quitte le mur. L'IA y envoie depuis sa bulle de l'accueil, un bloc de l'accueil et le bilan du quiz. 4 succès (`outils/honte.py`).
+
+## v13 : plateau plus lisible
+
+- Projecteur sur la case d'arrivée : à la fin du trajet, le plateau passe en gris, le pion s'efface, la case grandit avec son étiquette (numéro, année, titre), puis tout revient.
+- Ennemis : portrait cerclé de rouge épinglé au-dessus de la case, avec un liseré qui pulse et un « ! ». À la rencontre, flash rouge, plateau teinté, l'ennemi bondit avec un bandeau « VS ».
