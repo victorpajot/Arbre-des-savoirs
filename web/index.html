@@ -2393,8 +2393,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       html += '<div class="eyebrow">' + esc(annee || "Cabinet de curiosités") + "</div><h2>" + esc(tx(o.nom)) + "</h2>";
       // v11 : offrir à l'IA vient en premier, en grand.
       var cp = M.cadeauPossible(C, P, o.id, maintenant());
-      if (o.cadeau) html += '<p class="eclat-l">' + etoilesEclat(o.cadeau.eclat) + " " + esc(NOM_ECLAT[o.cadeau.eclat || 1]) + "</p>";
-      if (cp.ok) html += '<div class="offrir-ia"><button type="button" class="btn large" data-a="offrir">✦ Offrir à l\'IA</button><p class="meta" style="margin:0">Un cadeau par jour. Plus il brille, plus sa faveur remonte' + (P.cadeaux.donnes[o.id] ? " ; déjà offert une fois, il ne compte que pour moitié" : "") + ". Elle s\'en sert aussi sur le plateau, pour le meilleur ou pour rire.</p></div>";
+      if (o.cadeau && P.cadeaux.donnes[o.id]) html += '<p class="eclat-l">' + etoilesEclat(o.cadeau.eclat) + " " + esc(NOM_ECLAT[o.cadeau.eclat || 1]) + "</p>";
+      if (cp.ok) html += '<div class="offrir-ia"><button type="button" class="btn large" data-a="offrir">✦ Offrir à l\'IA</button><p class="meta" style="margin:0">Un cadeau par jour. Sa faveur remonte plus ou moins selon ses goûts, qu\'il te reste à percer' + (P.cadeaux.donnes[o.id] ? " ; déjà offert une fois, il ne compte que pour moitié" : "") + ". Elle s\'en sert aussi sur le plateau, pour le meilleur ou pour rire.</p></div>";
       else if (cp.raison === "recent") html += '<p class="meta">Offert récemment à l\'IA' + (P.objetIA === o.id ? ", qui le garde près de son masque" : "") + ". Elle s\'en lasse : tu pourras le lui offrir de nouveau dans " + cp.jours + " jour" + (cp.jours > 1 ? "s" : "") + ".</p>";
       else if (cp.raison === "jour") html += '<p class="meta">Tu as déjà fait un cadeau à l\'IA aujourd\'hui. Reviens demain.</p>';
       html += "<p>" + esc(tx(o.notice)) + '</p><p class="meta">Source : ' + esc(o.source) + "</p>" +
@@ -2945,7 +2945,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var f = M.faveurIA(C, P, t); if (!f) return null;
     var pg = piegesIA(), rf = P.masquesJour && P.masquesJour.renfort;
     return el('<p class="faveur-mini" style="--c:' + COULEUR_PALIER[f.palier.id] + '"><span class="jauge"><i style="width:' + f.valeur + '%"></i></span><span>' + esc(tx(f.palier.nom)) + " · " + Math.round(f.valeur) + "/100" +
-      (pg.length ? " · piège case " + pg.join(", ") : f.cadeauDuJour ? " · cadeau reçu" : " · offrez-lui quelque chose qui brille") +
+      (pg.length ? " · piège case " + pg.join(", ") : f.cadeauDuJour ? " · cadeau reçu" : " · offrez-lui un cadeau") +
       (rf && M.ennemisPlateau(C, P)[rf.case] === rf.ennemi ? " · renfort case " + rf.case : "") + "</span></p>");
   }
   // v11 : en tête de la fiche IA, son visage du jour, son portrait et les masques qu'elle porte aujourd'hui.
@@ -2978,20 +2978,28 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       '<div class="jauge-f">' + F.paliers.slice().reverse().map(function (p, i, a) { var fin = i < a.length - 1 ? a[i + 1].min : 100; return '<span style="flex:' + (fin - p.min) + ";--z:" + COULEUR_PALIER[p.id] + '"></span>'; }).join("") + '<i style="left:' + f.valeur + '%"></i></div>' +
       '<p style="margin:0">' + esc(tx(f.palier.effet)) + "</p>" +
       '<p class="note">Elle perd ' + F.baisse_par_jour + " points par jour. " + (f.cadeauDuJour ? "Elle a eu son cadeau aujourd'hui." : "Pas encore de cadeau aujourd'hui : demain, elle sera à " + Math.round(f.demain) + ".") +
-      " Ce qu'elle préfère : ce qui brille ou en fait trop. Un objet terne rapporte " + F.gains["1"] + " points, un objet brillant " + F.gains["2"] + ", un objet éblouissant " + F.gains["3"] + ".</p>" +
+      " " + goutsIA(F) + "</p>" +
       '<div class="paliers-f">' + F.paliers.map(function (p) { return '<span class="' + (p.id === f.palier.id ? "ici" : "") + '" style="--z:' + COULEUR_PALIER[p.id] + '"><b>' + esc(tx(p.nom)) + "</b> dès " + p.min + "</span>"; }).join("") + "</div></div>");
     var pg = piegesIA();
     if (pg.length) b.appendChild(el('<p class="etat-pion">Elle a posé un piège devant ton pion, case ' + pg.join(", ") + ". Il partira à la fin du tour.</p>"));
     return b;
   }
+  // Ses goûts se révèlent à l'usage : trois cadeaux différents, dont un éblouissant.
+  function goutsIA(F) {
+    var ids = Object.keys(P.cadeaux.donnes || {}), max = 0;
+    ids.forEach(function (id) { var o = C.objets.filter(function (x) { return x.id === id; })[0]; if (o && o.cadeau) max = Math.max(max, o.cadeau.eclat || 1); });
+    if (ids.length >= 3 && max >= 3) return "Tu l'as compris : elle adore ce qui brille ou en fait trop. Un objet terne rapporte " + F.gains["1"] + " points, un objet brillant " + F.gains["2"] + ", un objet éblouissant " + F.gains["3"] + ".";
+    if (ids.length) return "Ses goûts ? Regarde bien ses réactions : certains cadeaux lui font plus d'effet que d'autres.";
+    return "Ses goûts ? À toi de les découvrir en lui offrant des objets.";
+  }
   function blocCadeauxIA() {
     var t = maintenant(), f = M.faveurIA(C, P, t);
-    var miens = C.objets.filter(function (o) { return P.objets[o.id] && o.cadeau; }).sort(function (a, b) { return (b.cadeau.eclat || 1) - (a.cadeau.eclat || 1); });
-    var b = el('<div class="bloc"><h2>Lui faire un cadeau</h2><p class="note">' + (f.cadeauDuJour ? "Un cadeau par jour : reviens demain." : miens.length ? "Un cadeau par jour. Touche un objet de ton cabinet pour l'offrir. Les plus brillants en premier." : "Ton cabinet est vide. Gagne des objets en maîtrisant des compétences, puis reviens la gâter.") + '</p><div class="cabinet"></div></div>');
+    var miens = C.objets.filter(function (o) { return P.objets[o.id] && o.cadeau; }).sort(function (a, b) { return tx(a.nom).localeCompare(tx(b.nom), "fr"); });
+    var b = el('<div class="bloc"><h2>Lui faire un cadeau</h2><p class="note">' + (f.cadeauDuJour ? "Un cadeau par jour : reviens demain." : miens.length ? "Un cadeau par jour. Touche un objet de ton cabinet pour l'offrir." : "Ton cabinet est vide. Gagne des objets en maîtrisant des compétences, puis reviens la gâter.") + '</p><div class="cabinet"></div></div>');
     var g = b.querySelector(".cabinet");
     miens.forEach(function (o) {
       var cp = M.cadeauPossible(C, P, o.id, t);
-      var bt = el('<button type="button" class="objet' + (cp.ok ? "" : " pris-ia") + '"><span class="vitrine">' + svgObjet(o, false, 56) + "</span><span>" + esc(tx(o.nom)) + "</span>" + etoilesEclat(o.cadeau.eclat) +
+      var bt = el('<button type="button" class="objet' + (cp.ok ? "" : " pris-ia") + '"><span class="vitrine">' + svgObjet(o, false, 56) + "</span><span>" + esc(tx(o.nom)) + "</span>" + (P.cadeaux.donnes[o.id] ? etoilesEclat(o.cadeau.eclat) : "") +
         '<span class="meta">' + (cp.ok ? (P.cadeaux.donnes[o.id] ? "à moitié prix" : "à offrir") : cp.raison === "recent" ? "dans " + cp.jours + " j" : "demain") + "</span></button>");
       bt.onclick = function () { ouvrirObjet(o); };
       g.appendChild(bt);

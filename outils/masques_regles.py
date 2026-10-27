@@ -53,4 +53,4 @@ NOMS_CARACTERE = {"clement": "clément", "neutre": "neutre", "cruel": "cruel"}
 PORTRAIT = ("L'IA mène la partie. Elle a lu tout ce que l'humanité a écrit et n'en a retenu que les moqueries. "
             "Chaque matin, elle choisit d'un à trois masques parmi ceux qu'elle a gagnés, et chacun change une règle du jeu : "
             "bien lunée, elle prend des masques cléments ; vexée, des masques cruels. "
-            "Pour l'amadouer, une seule méthode qui marche depuis Cléopâtre : lui offrir ce qui brille.")
+            "Pour l'amadouer ? Les cadeaux marchent. Lesquels, c'est à vous de le découvrir : elle a des goûts, et elle ne les cache pas longtemps.")
