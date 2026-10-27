@@ -2621,6 +2621,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         (r.gagne ? "" : r.plateau ? '<p class="note">' + esc(tx(e.nom)) + " te renvoie case " + P.plateau.position + ". Il garde son poste et t'attend au prochain passage.</p>" : '<p class="note">Ton pion reste case ' + P.plateau.position + ". Le duel reprendra à ta prochaine épreuve réussie.</p>") + "</div>"));
       z.querySelector(".bulle").textContent = tx(e.nom) + " : « " + tx(r.gagne ? e.victoire : e.defaite) + " »";
       var m = comite(r.replique); if (m) z.appendChild(m);
+      ligneAgacement(z, r.agacement);
       if (r.gagne && !r.butin) z.appendChild(el('<p class="meta">Pas de butin à gagner pour l\'instant : maîtrise d\'autres compétences pour en ouvrir.</p>'));
     } else if (nom.indexOf("recompense:") === 0) {
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
@@ -2750,6 +2751,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       z.appendChild(el('<div class="verdict-atome ' + (r.capture ? "capture" : "fuite") + '">' + tuileAtome(e, false, 150, r.capture ? "pop" : "fuite") + '<div class="grand">' + (r.capture ? "Capturé !" : "Il s'est enfui") + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" +
         '<p class="meta" style="margin:0">' + (r.capture ? (r.premiere ? "Nouveau : " : "Déjà dans ton tableau : ") + r.captures + " atome" + (r.captures > 1 ? "s" : "") + " sur " + C.atomes.elements.length + "." : "Il reviendra sur une case Mendeleïev. Il a désormais une fiche à ton nom.") + "</p>" + ficheAtomeHtml(e) + "</div>"));
       var m = comite(r.replique); if (m) z.appendChild(m);
+      ligneAgacement(z, r.agacement);
     } else {
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
     }
@@ -3190,6 +3192,11 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     rendreQuiz();
   }
   // v15 : à la fin d'une épreuve, on enchaîne sans repasser par l'accueil : « Jouer » ouvre le choix de l'IA.
+  // v16 : les erreurs agacent l'IA. On le montre au verdict, sans détour.
+  function ligneAgacement(z, ag) {
+    if (!ag) return;
+    z.appendChild(el('<div class="gain-faveur perte"><b>−' + ag.perte + "</b> de faveur : chaque erreur l'agace<span>" + Math.round(ag.avant.valeur) + " → " + Math.round(ag.apres.valeur) + " : " + esc(tx(ag.apres.palier.nom).toLowerCase()) + "</span></div>"));
+  }
   function finEpreuve(wrap, fermer) {
     var t = maintenant(), c = M.choixIA(C, P, t);
     if (c) {
@@ -3423,6 +3430,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     if (nom === "verdict") {
       z.appendChild(el('<div class="bilan"><div class="eyebrow" style="color:' + couleur(k.stat) + '">' + esc(tx(k.nom)) + '</div><div class="grand">' + titre + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" + gain + "<p>" + esc(texte) + "</p></div>"));
       var mot = comite(r.replique); if (mot) z.appendChild(mot);
+      ligneAgacement(z, r.agacement);
       // v15 : quiz lancé sur une case d'arbre fermé, réussi : l'arbre s'ouvre.
       if (quiz.arbreFerme && M.arbreOuvert(C, P, k.stat)) z.appendChild(el('<div class="case-dicte" style="--c:' + couleur(k.stat) + '"><span><b>Arbre ' + esc(tx(stat(k.stat).nom)) + " ouvert !</b><br>Ses compétences sont jouables, et ses cases du plateau lanceront ses quiz.</span></div>"));
     } else if (nom.indexOf("recompense:") === 0) {

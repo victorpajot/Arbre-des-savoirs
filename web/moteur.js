@@ -483,13 +483,14 @@
     var chrono = resultats.length > 0 && resultats.every(function (x) { return x.chrono; });
     var jouer = !!(infos && infos.jouer);
     var dep = jouerPlateau(contenu, partie, { type: "quiz", comp: id }, { reussi: reussi, parfait: parfait, chrono: chrono, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
+    var ag = agacerIA(contenu, partie, resultats.length - bonnes, !reussi, t);
     var rec = verifierRecompenses(contenu, partie, t);
     if (reussi) ajouterButin(contenu, partie, rec, { type: "quiz", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     var fa = reussi ? null : tenterFarce(contenu, partie, t, infos && infos.alea);
     return { issue: reussi ? "maitrisee" : "echec", bonnes: bonnes, total: total, xp: xp, prochainRappel: e.prochainRappel,
       nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
-      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer };
+      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits };
   }
 
   // XP d'un rappel réussi qui mène à l'étape `palier` (1 = premier rappel).
@@ -551,13 +552,14 @@
     if (!revision && reussi) contextes.push("rappel_reussi");
     var jouer = !!(infos && infos.jouer);
     var dep = revision && !reussi ? null : jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
+    var ag = agacerIA(contenu, partie, resultats.length - bonnes, !reussi, t);
     var rec = verifierRecompenses(contenu, partie, t);
     if (reussi) ajouterButin(contenu, partie, rec, { type: "rappel", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     var fa = reussi || revision ? null : tenterFarce(contenu, partie, t, infos && infos.alea);
     return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : "perdue", bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
-      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer };
+      nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits };
   }
 
   // À appeler à chaque ouverture de l'app : repère un retour après une longue absence.
@@ -972,6 +974,7 @@
     var bonnes = resultats.filter(function (x) { return x.correct; }).length, gagne = resultats.length > 0 && bonnes === resultats.length;
     f.dernier = t;
     var out = { gagne: gagne, ennemi: e, bonnes: bonnes, total: Math.max(resultats.length, total || 0), plateau: null, recompenses: null, butin: null, premiere: false, fiche: f };
+    out.agacement = agacerIA(contenu, partie, resultats.length - bonnes, !gagne, t);
     if (gagne) {
       f.victoires++; f.serie++; f.meilleure = Math.max(f.meilleure, f.serie);
       c.duelsGagnes = (c.duelsGagnes || 0) + 1;
@@ -1103,9 +1106,10 @@
     var capture = bonnes >= seuilAtome(contenu, partie, t), premiere = capture && !f.capture;
     if (capture) { if (!f.capture) { f.capture = t; c.atomesCaptures = (c.atomesCaptures || 0) + 1; } }
     else { f.fuites++; c.atomesEnfuis = (c.atomesEnfuis || 0) + 1; }
+    var ag = agacerIA(contenu, partie, R.questions - bonnes, !capture, t);
     var rec = verifierRecompenses(contenu, partie, t);
     partie.maj = t;
-    return { capture: capture, element: s.element, bonnes: bonnes, total: R.questions, premiere: premiere, fiche: f, recompenses: rec,
+    return { capture: capture, element: s.element, bonnes: bonnes, total: R.questions, premiere: premiere, fiche: f, recompenses: rec, agacement: ag,
       captures: Object.keys(partie.atomes).filter(function (z) { return partie.atomes[z].capture; }).length };
   }
 
@@ -1199,6 +1203,15 @@
     var mot = mots[(h >>> 20) % mots.length];
     partie.credits.parSucces[sc.id] = { n: n, base: base, humeur: humeur, mot: mot };
     return { succes: sc.id, n: n, base: base, humeur: humeur, mot: mot };
+  }
+  // Chaque erreur agace l'IA ; une épreuve ratée encore plus. Renvoie la perte de faveur, ou null.
+  function agacerIA(contenu, partie, erreurs, ratee, t) {
+    var A = contenu.ia && contenu.ia.credits && contenu.ia.credits.agacement, avant = faveurIA(contenu, partie, t);
+    if (!A || !avant) return null;
+    var perte = Math.min(A.max, Math.max(0, erreurs) * A.par_erreur + (ratee ? A.epreuve_ratee : 0));
+    if (!perte) return null;
+    partie.faveur = { valeur: Math.max(0, avant.valeur - perte), maj: t };
+    return { perte: perte, avant: avant, apres: faveurIA(contenu, partie, t) };
   }
   function potPossible(contenu, partie, montant, t) {
     if (!contenu.ia || !contenu.ia.credits) return { ok: false, raison: "inconnu" };
@@ -1836,7 +1849,7 @@
     replique: replique,
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,

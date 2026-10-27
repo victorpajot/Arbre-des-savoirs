@@ -59,6 +59,10 @@ HONTE = {"chance": 0.3, "facteur": 5, "mots": [
 # Pot-de-vin : un par jour. Le gain de faveur grandit avec la somme ; le record est le montant le plus élevé
 # déjà donné. Au-dessus du record : faveur pleine, et elle pousse le pion. Égal : moitié de faveur, rien d'autre.
 # En dessous : elle prend l'argent, perd de la faveur et pose un piège devant le pion.
+# Les erreurs agacent l'IA : chaque mauvaise réponse lui coûte de la faveur, une épreuve ratée encore plus.
+# Faveur plus basse, crédits plus maigres : son humeur penche vers « rien » et « moitié ».
+AGACEMENT = {"par_erreur": 2, "epreuve_ratee": 6, "max": 16}
+
 POTS = {"gain_base": 8, "gain_par_credit": 0.5, "gain_max": 40, "avance": 1, "avance_double": 2, "colere": 15,
         "piege": {"type": "recul", "n": 2}}
 
@@ -103,4 +107,5 @@ def donnees():
         "humeurs": [{"id": h["id"], "facteur": h["facteur"], "poids": h["poids"], "mots": mots(h["mots"])} for h in HUMEURS],
         "honte": {"chance": HONTE["chance"], "facteur": HONTE["facteur"], "mots": mots(HONTE["mots"])},
         "pots": POTS,
+        "agacement": AGACEMENT,
     }
