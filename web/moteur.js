@@ -144,7 +144,7 @@
       plateau: nouveauPlateau(),
       derniereVisite: t,
       retour: null,
-      options: { chrono: false },
+      options: { chrono: true },
     };
   }
 
@@ -1413,10 +1413,22 @@
     var rv = revisionEnCours(partie);
     if (rv) return { comp: contenu.parId[rv.comp], type: "rappel", raison: "revision" };
     var dus = rappelsDus(contenu, partie, t);
-    if (dus.length) return { comp: dus[0], type: "rappel", raison: "rappel" };
     var dispo = disponibles(contenu, partie, t);
-    if (!dispo.length) return null;
     var graine = hacher(cleJour(t) + "|" + partie.journal.length + "|" + (partie.cree || 0));
+    // v15 : la case où se tient le pion dicte l'arbre. Les rappels dus passent toujours d'abord (ceux de cet arbre
+    // en tête, l'oubli n'attend pas), puis un quiz de cet arbre ; sinon l'ancien choix, annoncé comme hors case.
+    var k = contenu.plateau && partie.plateau && contenu.plateau.cases[partie.plateau.position - 1];
+    var st = k && k.stat;
+    if (dus.length) {
+      var dusIci = dus.filter(function (c) { return c.stat === st; });
+      return { comp: (dusIci[0] || dus[0]), type: "rappel", raison: "rappel", stat: dusIci.length ? st : null, kase: k || null };
+    }
+    if (!dispo.length) return null;
+    if (st) {
+      var ici = dispo.filter(function (c) { return c.stat === st; });
+      if (ici.length) return { comp: ici[graine % ici.length], type: "quiz", raison: "case", stat: st, kase: k };
+    }
+    if (st) return { comp: dispo[graine % dispo.length], type: "quiz", raison: "hors_case", stat: st, kase: k };
     var raisons = [];
     var sug = suggestion(contenu, partie, t);
     if (sug) raisons.push({ raison: "faible", liste: [sug] });

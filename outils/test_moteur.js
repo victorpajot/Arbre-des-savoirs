@@ -345,7 +345,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   {
     const P = M.nouvellePartie(t0);
     const c = M.choixIA(C5, P, t0);
-    assert.equal(c.type, "quiz"); assert.ok(["faible", "hasard"].includes(c.raison));
+    assert.equal(c.type, "quiz"); assert.ok(["case", "hors_case"].includes(c.raison));
     assert.equal(M.choixIA(C5, P, t0).comp.id, c.comp.id, "même choix tant qu'on n'a pas joué");
     const r = M.terminerQuiz(C5, P, c.comp.id, juste(P, c.comp.id, 5, 5), t0, { jouer: true });
     const sans = M.valeurEpreuve(C5, P, { type: "quiz", comp: c.comp.id }, t0).total + C5.plateau.regles.bonus.parfait;
@@ -353,9 +353,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const t1 = t0 + 2 * jour;
     const c2 = M.choixIA(C5, P, t1);
     assert.equal(c2.type, "rappel"); assert.equal(c2.comp.id, c.comp.id);
-    const raisons = new Set();
-    for (let i = 0; i < 40; i++) { P.journal.push({}); const x = M.choixIA(C5, P, t0); if (x) raisons.add(x.raison); }
-    assert.ok(raisons.size >= 2, "l'IA varie ses raisons");
+    // v15 : la case du pion dicte l'arbre de l'épreuve ; arbre sans rien de jouable, l'IA improvise hors case.
+    const Q = M.nouvellePartie(t0);
+    C5.plateau.cases.forEach(k => {
+      Q.plateau.position = k.n;
+      const x = M.choixIA(C5, Q, t0);
+      const jouable = M.disponibles(C5, Q, t0).some(c => c.stat === k.stat);
+      assert.equal(x.raison, jouable ? "case" : "hors_case", "case " + k.n);
+      if (jouable) assert.equal(x.comp.stat, k.stat, "épreuve de l'arbre de la case " + k.n);
+      assert.equal(x.kase.n, k.n);
+    });
   }
 
   // Masques : l'IA choisit selon le ton, jamais un masque verrouillé

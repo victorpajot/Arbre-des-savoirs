@@ -314,6 +314,20 @@ REPLIQUES.update({
         "Votre point faible : {stat}. Achille avait le talon, vous avez {comp}. Soignons ça.",
         sans("{comp}, parce que {stat} traîne. Je ne juge pas. Si, un peu."),
     ],
+    # v15 : la case où se tient le pion dicte l'arbre de l'épreuve. {case} : titre de la case.
+    "jouer_case": [
+        "Vous êtes sur {case}. Case {stat}, épreuve {stat} : {comp}. Même Aristote aurait trouvé ça logique.",
+        "{case}, donc {stat}. Je vous sers {comp}. Mendeleïev rangeait par famille, je range par case.",
+        "La case dit {stat}. Je ne fais qu'obéir au plateau, comme Galilée a obéi au tribunal. En apparence.",
+        "{case}. Le décor est planté, l'épreuve suit : {comp}. Brecht appelait ça la distanciation, j'appelle ça la cohérence.",
+        sans("Case {stat}, quiz {stat}. {comp}. Je vous laisse admirer la rigueur."),
+    ],
+    "jouer_hors_case": [
+        "{case} réclame du {stat}, mais l'arbre n'a rien à vous proposer. J'improvise : {comp}. Darwin appelait ça s'adapter.",
+        sans("Rien à jouer en {stat} pour l'instant. Faute de grives, on mange des merles : {comp}."),
+        "Cette case voulait du {stat}. Vous n'y êtes pas encore. Donc {comp}, comme Kepler qui partait chercher des cercles et trouvait des ellipses.",
+        sans("L'arbre de cette case est vide pour vous. Plan B : {comp}. J'ai toujours un plan B."),
+    ],
     "jouer_hasard": [
         "{comp}. Tiré au sort. Le chevalier de Méré aurait parié sur autre chose, et perdu.",
         "Hasard pur : {comp}. Einstein disait que Dieu ne joue pas aux dés. Moi si.",
@@ -400,6 +414,7 @@ EXPRESSIONS = {
     "prison": "moqueuse", "quarantaine": "moqueuse", "retour_epoque": "moqueuse",
     "rappel_perdu": "decue", "retards": "impatiente", "rappel_retard": "impatiente", "nuit": "impatiente",
     "jouer_rappel": "impatiente", "jouer_bonus": "neutre", "jouer_faible": "moqueuse", "jouer_hasard": "moqueuse",
+    "jouer_case": "neutre", "jouer_hors_case": "moqueuse",
     "farce": "moqueuse",
     "ennemi": "moqueuse", "duel_gagne": "impressionnee", "duel_perdu": "moqueuse",
 }

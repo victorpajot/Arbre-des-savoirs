@@ -383,6 +383,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .jouer span.s { font-size: 13px; opacity: 0.85; }
 .jouer .pill { font-family: var(--f-mono); font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--accent-ink); color: var(--accent); font-size: 14px; }
 .choix-ia { display: flex; flex-direction: column; gap: 12px; }
+.case-dicte { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; border-left: 5px solid var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); font-size: 15px; line-height: 1.35; }
+.case-dicte .vitrine { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: color-mix(in srgb, var(--c) 30%, #fff); }
 /* v5 : stats sur l'accueil */
 .mini-stats { display: grid; grid-template-columns: 104px 1fr; gap: 12px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
 .mini-stats .jauges { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
@@ -1013,7 +1015,16 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     return out.join(" ");
   }
   var TEINTE_EPOQUE = { antiquite: "#C9A227", "moyen-age": "#A04B57", renaissance: "#2F8C78", classique: "#4A6CC2", xixe: "#9A6534", xxe: "#7A4FB8" };
-  var COULEURS_CASES = ["#FF9FC6", "#FFD447", "#FF9F45", "#6EC3F4", "#7FD68C", "#BFA2F5"];
+  // v15 : chaque case prend la couleur de son arbre, éclaircie pour garder le numéro lisible ; arbre fermé, couleur délavée.
+  function eclaircir(hex, w) {
+    var v = parseInt(hex.slice(1), 16), r = v >> 16, g = (v >> 8) & 255, b = v & 255;
+    function m(c) { return Math.round(c + (255 - c) * w).toString(16).padStart(2, "0"); }
+    return "#" + m(r) + m(g) + m(b);
+  }
+  function couleurCase(k) {
+    var st = stat(k.stat); if (!st) return "#D8D2C4";
+    return eclaircir(st.couleur, M.arbreOuvert(C, P, k.stat) ? 0.38 : 0.78);
+  }
   var COULEUR_SPECIAL = { eureka: "#E0A800", avance: "#2E9D5B", recul: "#D94141", teleport: "#7A3FD1", retour_epoque: "#7A3FD1", revision: "#14899E", cadeau: "#C2185B", mendeleiev: "#1565C0", prison: "#5D6470", quarantaine: "#D9721F" };
   var BORD_SPECIAL = COULEUR_SPECIAL;
   // Pictogramme blanc d'une règle spéciale, centré sur (0, 0), environ 10 × 10.
@@ -1375,7 +1386,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   // `bilan` : toujours zoomé sur le pion, sans tenir compte de la caméra de l'accueil.
   function svgPlateau(bilan) {
     var pl = P.plateau, nb = C.plateau.cases.length, loin = portee(), ennemis = M.ennemisPlateau(C, P), ton = M.humeur(P);
-    var cle = [pl.atteinte, pl.tours, pl.position, loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {})].join("/");
+    var cle = [pl.atteinte, pl.tours, pl.position, loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {}), C.stats.filter(function (s) { return M.arbreOuvert(C, P, s.id); }).length].join("/");
     if (cachePlateau.cle !== cle) {
       var c = decorPlateau(ton), pas = pasCase(), fleches = "", gardes = "";
       var toute = morceauRoute(0, ROUTE.total);
@@ -1384,7 +1395,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       C.plateau.cases.forEach(function (k) {
         var n = k.n, s = abscisse(n), p = pointRoute(s), x = p[0], y = p[1], connue = caseConnue(n), sp = M.specialDe(C, P, n);
         var ici = n === pl.position, proche = n > pl.position && n <= pl.position + loin, vue = n < pl.position;
-        var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : COULEURS_CASES[(n - 1) % COULEURS_CASES.length];
+        var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : couleurCase(k);
         var encre = sp && connue ? "#fff" : "#1E1A2B";
         c += '<g data-n="' + n + '" style="cursor:pointer"><polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="' + fond + '" stroke-width="' + LARGEUR_ROUTE + '" stroke-linejoin="round"/>';
         if (vue) c += '<polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="' + LARGEUR_ROUTE + '"/>';
@@ -1457,7 +1468,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   function boutonJouer() {
     var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? C.plateau.regles.bonus.jouer || 0 : 0;
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + '</span><span><b>Jouer</b><span class="s">' +
-      (c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + "L'IA choisit l'épreuve." : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus ? '<span class="pill">+' + bonus + "</span>" : "") + "</button>");
+      (c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + (c.raison === "case" ? "Case " + esc(tx(stat(c.stat).nom)) + " : l'IA y choisit l'épreuve." : "L'IA choisit l'épreuve.") : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus ? '<span class="pill">+' + bonus + "</span>" : "") + "</button>");
     if (!c) b.disabled = true;
     b.onclick = ouvrirJouer;
     return b;
@@ -1465,8 +1476,12 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   function ouvrirJouer() {
     var t = maintenant(), c = M.choixIA(C, P, t); if (!c) { toast("Rien à jouer pour l'instant."); return; }
     var k = c.comp, s = stat(k.stat), v = M.valeurEpreuve(C, P, { type: c.type, comp: k.id }, t), bonus = C.plateau.regles.bonus.jouer || 0;
-    var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(s.nom) }); sauver();
-    feuilleSimple('<div class="choix-ia"><div class="eyebrow">L\'IA a choisi</div><div id="ia-jouer"></div>' +
+    // v15 : la case du pion annonce l'arbre de l'épreuve ; « hors case » quand cet arbre n'a rien à jouer.
+    var sc = c.stat ? stat(c.stat) : s, kc = c.kase;
+    var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(sc.nom), "case": kc ? tx(kc.titre) : "" }); sauver();
+    var bandeau = kc && kc.stat ? '<div class="case-dicte" style="--c:' + couleur(kc.stat) + '"><span class="vitrine">' + svgSprite(kc.icone, 28) + '</span><span><b>Case ' + kc.n + " · " + esc(tx(kc.titre)) + "</b><br>" +
+      (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</span></div>" : "";
+    feuilleSimple('<div class="choix-ia"><div class="eyebrow">L\'IA a choisi</div>' + bandeau + '<div id="ia-jouer"></div>' +
       '<div class="epreuve" style="--c:' + couleur(k.stat) + '"><span class="de' + (v.duJour ? " bonus" : "") + '"><b>+' + (v.total + bonus) + '</b></span><span class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" +
       (c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · dont +" + bonus + " pour le bouton Jouer</span></span></div>" +
       '<button type="button" class="btn large" data-a="go">C\'est parti</button><p class="meta">Tu peux aussi choisir toi-même une compétence dans l\'arbre, sans ce bonus.</p></div>', "L'IA a choisi", {
@@ -3160,7 +3175,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       c.appendChild(bt); out.push(c);
     });
     (r.nouveauxSavants || []).forEach(function (sv) {
-      out.push(carteRecompense("Nouveau savant jouable", svgSavant(sv, 80), tx(sv.nom), sv.annees + ". À incarner dans l'onglet Personnage.", null));
+      out.push(carteRecompense("Nouveau savant jouable", svgSavant(sv, 80), tx(sv.nom), sv.annees + ". Le dernier savant débloqué devient ton personnage, d'office. Personne ne t'a demandé ton avis.", null));
     });
     (r.nouveauxAccessoires || []).forEach(function (a) {
       out.push(carteRecompense("Nouvel accessoire", svgRogne(a.pixels, C.avatar.palette, 80), tx(a.nom), "À essayer sur ton avatar, dans l'onglet Personnage.", null));
