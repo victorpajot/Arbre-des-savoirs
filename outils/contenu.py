@@ -30,6 +30,7 @@ import figures
 import symboles
 import succes_pixels
 import themes
+import succes_themes
 import honte
 import masques_regles
 import objets_v11
@@ -729,7 +730,7 @@ def cadeau(id):
 
 
 def tous_succes():
-    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES + objectifs.SUCCES + pionniers.SUCCES + ennemis.succes() + mendeleiev.succes() + honte.succes()
+    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES + objectifs.SUCCES + pionniers.SUCCES + ennemis.succes() + mendeleiev.succes() + honte.succes() + succes_themes.succes_v18()
 
 
 def commentaires():

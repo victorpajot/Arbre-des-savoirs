@@ -191,8 +191,13 @@ def expression(reglages, nom):
 import masques_v4 as v4  # noqa: E402
 
 
+# v18 : chaque compétence maîtrisée rapporte désormais son succès. Les paliers montent d'autant (× 1,4),
+# pour que les masques restent aussi rares qu'avant.
+HAUSSE_V18 = 1.4
+
+
 def seuil(n):
-    return {"type": "succes_obtenus", "n": n} if n else None
+    return {"type": "succes_obtenus", "n": round(n * HAUSSE_V18)} if n else None
 
 
 def apres(succes_id):

@@ -16,7 +16,7 @@ assert.equal(r.issue, "echec");
 assert.deepEqual(r.nouveauxSucces.map(s => s.id).filter(id => id !== "honte-1"), ["tour-de-pise"]);
 r = M.terminerQuiz(C, P, "math.arithmetique", res("math.arithmetique", 5, 5), t);
 assert.equal(r.issue, "maitrisee"); assert.equal(r.xp, 70);
-assert.deepEqual(r.nouveauxSucces.map(s => s.id).sort(), ["einstein-notes", "eureka", "premier-pas"]);
+assert.deepEqual(r.nouveauxSucces.map(s => s.id).sort(), ["egal-recorde", "einstein-notes", "eureka", "premier-pas"]);
 // v6 : objets et accessoires deviennent du butin gagnable ; ici, sans plateau, aucun ne tombe
 assert.deepEqual(r.nouveauxObjets, []);
 assert.ok(P.gagnables["objets:boulier"] && P.gagnables["accessoires:lunettes-rondes"] && P.gagnables["accessoires:coiffure-einstein"]);
@@ -211,7 +211,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const P = M.nouvellePartie(t0);
     M.verifierRecompenses(C3, P, t0);
     assert.equal(P.masque, "theatre");
-    for (let i = 0; i < 8; i++) P.succes["test-" + i] = t0;
+    for (let i = 0; i < 11; i++) P.succes["test-" + i] = t0;
     const rec = M.verifierRecompenses(C3, P, t0);
     assert.deepEqual(rec.gagnables.map(m => m.id), ["talos", "golem"]); assert.equal(P.masque, "theatre");
     const ouverts = M.butinOuvert(C3, P).map(b => b.chose.id);
@@ -331,7 +331,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const C4 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const t0 = new Date(2026, 9, 26, 10, 0).getTime();
   const P = M.nouvellePartie(t0);
-  assert.equal(C4.avatar.savants.length, 40, "v7 : quarante savants");
+  assert.equal(C4.avatar.savants.length, 81, "v18 : quatre-vingt-un savants");
+  assert.ok(C4.competences.every(k => C4.avatar.savants.some(s => s.theme === k.stat)), "v18 : chaque arbre a ses savants");
   assert.deepEqual(M.verifierRecompenses(C4, P, t0).savants, []);
   // Hypatie arrive avec l'astronomie d'observation
   P.competences["astro.observer"] = { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + 86400000, xp: 70 };

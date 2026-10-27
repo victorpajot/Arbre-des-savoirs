@@ -225,6 +225,41 @@ def objet(t, nom):
         t.peindre(poly([(26, 35), (28, 34), (28, 37)]), "cuivre", "plat", 1)
         t.peindre(poly([(25, 34), (26, 29), (27, 34)]), "orange", "plat", 1)
         t.poser({(26, 32)}, "j")
+    # v18 : attributs des savants des arbres qui n'en avaient pas.
+    elif nom == "des":
+        t.peindre(rect(29, 30, 35, 36), "gris", "biseau", 5)
+        t.poser({(30, 31), (32, 33), (34, 35)}, "k")
+    elif nom == "loupe":
+        t.poser(trait(34, 37, 37, 42, 1), "B")
+        t.peindre(disque(32, 33, 4), "cyan", "sphere", 1)
+        t.poser(disque(32, 33, 4.6) - disque(32, 33, 3.6), "g")
+    elif nom == "livre":
+        t.peindre(rect(28, 29, 37, 40), "rouge", "biseau", 1)
+        t.poser(rect(29, 30, 29, 39), "1")
+        t.poser(rect(31, 32, 35, 32) | rect(31, 34, 34, 34), "y")
+    elif nom == "cerveau":
+        t.peindre(ellipse(32, 33, 5.5, 4.2), "rose", "sphere", 1)
+        t.poser(courbe([(28, 32), (30, 30), (32, 32), (34, 30), (36, 32)]) | courbe([(29, 35), (31, 34), (33, 36), (35, 34)]), "F")
+        t.poser(trait(32, 29, 32, 37), "F")
+    elif nom == "menottes":
+        t.poser(anneau(29.5, 35, 2.6, 1) | anneau(35.5, 35, 2.6, 1), "g")
+        t.poser(trait(32, 35, 33, 35), "G")
+        t.poser({(28, 33), (34, 33)}, "w")
+    elif nom == "thermometre":
+        t.peindre(rect(31, 25, 33, 37), "gris", "plat", 5)
+        t.peindre(disque(32, 39, 2.2), "rouge", "sphere", 2)
+        t.poser(rect(32, 30, 32, 38), "r")
+        for y in range(27, 36, 2):
+            t.poser({(34, y)}, "G")
+    elif nom == "metronome":
+        t.peindre(poly([(29, 41), (35, 41), (33.5, 27), (30.5, 27)]), "bois", "biseau", 2)
+        t.poser(trait(32, 39, 35, 28), "y")
+        t.poser({(34, 31), (34, 32)}, "Y")
+    elif nom == "globe":
+        t.peindre(disque(32, 33, 5), "bleu", "sphere", 2)
+        t.poser({(30, 31), (31, 31), (31, 32), (34, 34), (35, 34), (33, 35), (30, 35)}, "e")
+        t.poser(trait(32, 38, 32, 41), "B")
+        t.peindre(rect(29, 41, 35, 42), "bois", "plat", 1)
     elif nom == "rouleau":
         t.peindre(rect(29, 28, 36, 40), "parchemin", "plat", 2)
         t.peindre(rect(28, 27, 37, 28) | rect(28, 40, 37, 41), "bois", "cyl_h", 2)
@@ -415,6 +450,11 @@ SAVANTS += [
 ]
 
 
+# v18 : un ou plusieurs savants pour chaque arbre et chaque compétence qui n'en avaient pas (savants_v18.py).
+from savants_v18 import SAVANTS_V18
+SAVANTS += SAVANTS_V18
+
+
 def savant(s):
     id, nom, annees, peau, style, couleurs, (coif, fam_c, base_c), barbe_, objet_, cond, notice, source = s
     t = toile()
@@ -456,7 +496,7 @@ if __name__ == "__main__":
         apercu({s[0]: ["".join(l) for l in img]}, "/tmp/_s.png", extra=s[5], colonnes=1, echelle=4)
         parts.append(Image.open("/tmp/_s.png").copy())
     w, h = parts[0].size
-    planche = Image.new("RGB", (w * 10, h * 2), (243, 233, 210))
+    planche = Image.new("RGB", (w * 10, h * ((len(parts) + 9) // 10)), (243, 233, 210))
     for i, p in enumerate(parts):
         planche.paste(p, ((i % 10) * w, (i // 10) * h))
     planche.save(sys.argv[1])

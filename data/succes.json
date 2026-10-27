@@ -1505,11 +1505,11 @@
     "fr": "Wunderkammer"
    },
    "description": {
-    "fr": "Obtenir 30 succès. Votre propre cabinet de curiosités se remplit."
+    "fr": "Obtenir 42 succès. Votre propre cabinet de curiosités se remplit."
    },
    "condition": {
     "type": "succes_obtenus",
-    "n": 30
+    "n": 42
    },
    "cache": true,
    "recompense": {
@@ -3659,6 +3659,1732 @@
     "id": "pinceau"
    },
    "theme": "cosmos"
+  },
+  {
+   "id": "egal-recorde",
+   "nom": {
+    "fr": "Deux traits parallèles"
+   },
+   "description": {
+    "fr": "Maîtriser l'arithmétique et les fractions. L'IA vous trouve enfin égal à vous-même."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "math.arithmetique"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le signe « = » est inventé en 1557 par le Gallois Robert Recorde, lassé d'écrire « est égal à ». Il choisit deux traits parallèles de même longueur, parce que, dit-il, « nulle chose ne peut être plus égale ». Il fallut plus d'un siècle pour qu'il s'impose."
+    },
+    "source": "Robert Recorde, The Whetstone of Witte, 1557"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "brahmagupta"
+   },
+   "theme": "logique"
+  },
+  {
+   "id": "nombre-or",
+   "nom": {
+    "fr": "Le nombre d'or n'est pas partout"
+   },
+   "description": {
+    "fr": "Maîtriser les proportions et les pourcentages. Vous mesurez, désormais, avant de vous extasier."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "math.proportions"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "On dit le nombre d'or caché dans le Parthénon, la Joconde ou la coquille du nautile. Les mesures qui le « prouvent » choisissent leurs points de repère après coup, et la spirale du nautile ne colle pas. Le mathématicien George Markowsky a fait le tri en 1992 : il ne reste presque rien."
+    },
+    "source": "George Markowsky, « Misconceptions about the Golden Ratio », College Mathematics Journal, 1992"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "compas-euclide"
+   },
+   "theme": "logique"
+  },
+  {
+   "id": "aiguille-buffon",
+   "nom": {
+    "fr": "L'aiguille trop chanceuse"
+   },
+   "description": {
+    "fr": "Maîtriser les probabilités. Le hasard, lui, ne triche pas. Les gens, si."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "math.probabilites"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1777, Buffon montre qu'en lançant des aiguilles sur un parquet, on peut estimer π. En 1901, l'Italien Lazzarini affirme avoir trouvé 3,1415929 en 3 408 lancers, à six décimales près. Bien trop beau : le nombre de lancers était taillé pour tomber sur 355/113."
+    },
+    "source": "Lee Badger, « Lazzarini's Lucky Approximation of π », Mathematics Magazine, 1994"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "des-pascal"
+   },
+   "theme": "logique"
+  },
+  {
+   "id": "lettre-frege",
+   "nom": {
+    "fr": "La lettre à Frege"
+   },
+   "description": {
+    "fr": "Maîtriser la logique formelle. Ne relisez pas vos fondations la veille de l'impression."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "math.logique"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1902, Gottlob Frege imprime le second tome de son grand œuvre, qui fonde l'arithmétique sur la logique. Une lettre de Bertrand Russell lui signale un paradoxe qui fait tout s'écrouler. Frege ajoute en annexe : rien de plus fâcheux pour un savant que de voir céder les bases de son édifice au moment de l'achever."
+    },
+    "source": "Lettre de Russell à Frege, 16 juin 1902 ; Frege, Grundgesetze der Arithmetik, II, appendice, 1903"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "ardoise-boole"
+   },
+   "theme": "logique"
+  },
+  {
+   "id": "nuit-galois",
+   "nom": {
+    "fr": "Pas en une nuit"
+   },
+   "description": {
+    "fr": "Maîtriser l'algèbre et les équations. Vous avez eu plus de temps que Galois. Et moins de duels."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "math.algebre"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "La légende veut qu'Évariste Galois ait inventé toute sa théorie la nuit précédant le duel qui le tua, en 1832, à vingt ans. En réalité, il y travaillait depuis des années. Cette nuit-là, il relit, corrige et résume. Dans une marge : « Je n'ai pas le temps. »"
+    },
+    "source": "Peter Neumann, The Mathematical Writings of Évariste Galois, 2011"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "al-khwarizmi"
+   },
+   "theme": "logique"
+  },
+  {
+   "id": "student-guinness",
+   "nom": {
+    "fr": "Student, de chez Guinness"
+   },
+   "description": {
+    "fr": "Maîtriser les statistiques. Santé."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "math.statistiques"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le test t, outil de base des statistiques, a été publié en 1908 sous le pseudonyme de « Student ». Son auteur, William Gosset, était chimiste chez Guinness à Dublin, et la brasserie interdisait à ses employés de publier sous leur nom. Il cherchait à choisir la meilleure orge avec peu d'échantillons."
+    },
+    "source": "Student, Biometrika, 1908 ; Joan Fisher Box, Statistical Science, 1987"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "nightingale"
+   },
+   "theme": "logique"
+  },
+  {
+   "id": "pi-indiana",
+   "nom": {
+    "fr": "π vaut 3,2, dit la loi"
+   },
+   "description": {
+    "fr": "Maîtriser la géométrie et la trigonométrie. Ici, π n'est pas soumis au vote."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "math.geometrie"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1897, la Chambre des représentants de l'Indiana adopte à l'unanimité un projet de loi d'un médecin amateur qui fixe, en pratique, π à 3,2. Un professeur de mathématiques de passage, Clarence Waldo, alerte les sénateurs, qui ajournent le texte sans fin. Il n'a jamais été voté."
+    },
+    "source": "Indiana House Bill 246, 1897 ; Underwood Dudley, Mathematical Cranks, 1992"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "compas-euclide"
+   },
+   "theme": "logique"
+  },
+  {
+   "id": "paradis-cantor",
+   "nom": {
+    "fr": "Le paradis de Cantor"
+   },
+   "description": {
+    "fr": "Maîtriser les suites, les limites et l'infini. Il y a plusieurs infinis, et vous venez d'en franchir un."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "math.infini"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Nul ne doit pouvoir nous chasser du paradis que Cantor a créé pour nous."
+    },
+    "auteur": "David Hilbert",
+    "source": "« Über das Unendliche », Mathematische Annalen, 1926"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "ramanujan"
+   },
+   "theme": "logique"
+  },
+  {
+   "id": "apesanteur",
+   "nom": {
+    "fr": "Ils tombent, en fait"
+   },
+   "description": {
+    "fr": "Maîtriser les forces et le mouvement. Les astronautes ne flottent pas : ils tombent, sans jamais toucher le sol."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "phys.forces"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "À 400 km d'altitude, là où tourne la Station spatiale, la pesanteur vaut encore 90 % de celle du sol. Si les astronautes flottent, c'est qu'ils tombent en permanence autour de la Terre, avec leur station, à 28 000 km/h. Ils ratent le sol, à chaque tour."
+    },
+    "source": "NASA, « What Is Microgravity? », 2017"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "pomme-newton"
+   },
+   "theme": "mecanique"
+  },
+  {
+   "id": "mouvement-perpetuel",
+   "nom": {
+    "fr": "L'Académie ne lit plus"
+   },
+   "description": {
+    "fr": "Maîtriser l'énergie. Inutile de m'envoyer les plans de votre machine."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "phys.energie"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1775, l'Académie royale des sciences de Paris décide de ne plus examiner aucune machine à mouvement perpétuel, ni aucune quadrature du cercle. Elle en reçoit trop, toutes fausses, et les inventeurs ne se découragent jamais. L'énergie se conserve : rien ne tourne gratuitement."
+    },
+    "source": "Histoire de l'Académie royale des sciences, année 1775"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "machine-joule"
+   },
+   "theme": "mecanique"
+  },
+  {
+   "id": "aile-avion",
+   "nom": {
+    "fr": "Pas le même temps"
+   },
+   "description": {
+    "fr": "Maîtriser la pression et les fluides. L'air du dessus n'a pas rendez-vous avec l'air du dessous."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "phys.fluides"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Une explication répandue dit que l'air passant au-dessus de l'aile doit rejoindre en même temps celui du dessous, donc aller plus vite. C'est faux : il arrive même bien avant. L'aile vole parce qu'elle dévie l'air vers le bas, et la différence de pression en découle."
+    },
+    "source": "NASA Glenn Research Center, « Incorrect Lift Theory » ; Doug McLean, Understanding Aerodynamics, 2012"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "couronne-hieron"
+   },
+   "theme": "mecanique"
+  },
+  {
+   "id": "mpemba",
+   "nom": {
+    "fr": "L'eau chaude gèle-t-elle plus vite ?"
+   },
+   "description": {
+    "fr": "Maîtriser la chaleur et la thermodynamique. La réponse est : ça dépend, et c'est déjà beaucoup."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "phys.thermo"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1963, Erasto Mpemba, lycéen tanzanien, remarque que son mélange de glace chaud prend plus vite que celui de ses camarades. Ses professeurs rient. Un physicien publie l'effet avec lui en 1969. Depuis, les expériences se contredisent : en 2016, une étude soignée ne trouve aucun effet."
+    },
+    "source": "Mpemba et Osborne, Physics Education, 1969 ; Burridge et Linden, Scientific Reports, 2016"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "sadi-carnot"
+   },
+   "theme": "mecanique"
+  },
+  {
+   "id": "gps-relativite",
+   "nom": {
+    "fr": "Votre GPS croit en Einstein"
+   },
+   "description": {
+    "fr": "Maîtriser la relativité. Sans elle, vous seriez perdu de dix kilomètres par jour."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "phys.relativite"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Les horloges des satellites GPS avancent d'environ 38 microsecondes par jour par rapport à celles du sol : la gravité plus faible les accélère, leur vitesse les ralentit. Sans correction relativiste, l'erreur de position grandirait d'une dizaine de kilomètres chaque jour."
+    },
+    "source": "Neil Ashby, « Relativity in the Global Positioning System », Living Reviews in Relativity, 2003"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "einstein"
+   },
+   "theme": "mecanique"
+  },
+  {
+   "id": "acte-desespoir",
+   "nom": {
+    "fr": "Un acte de désespoir"
+   },
+   "description": {
+    "fr": "Maîtriser la physique quantique. Planck n'y croyait pas lui-même. Vous voilà en bonne compagnie."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "phys.quantique"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1900, Max Planck découpe l'énergie de la lumière en petits paquets, les quanta, pour faire coller une formule aux mesures. Il n'y croit pas. Trente ans plus tard, il écrit que c'était « un acte de désespoir », fait parce qu'il fallait trouver une explication, coûte que coûte."
+    },
+    "source": "Lettre de Max Planck à Robert Wood, 7 octobre 1931"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "chien-shiung-wu"
+   },
+   "theme": "mecanique"
+  },
+  {
+   "id": "scorbut-lind",
+   "nom": {
+    "fr": "Six paires de marins"
+   },
+   "description": {
+    "fr": "Maîtriser la méthode scientifique. Vous avez un groupe témoin, maintenant. C'est vous."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "sci.methode"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1747, sur le Salisbury, le chirurgien James Lind répartit douze marins atteints du scorbut en six paires, et donne à chacune un remède différent. Seuls les deux qui reçoivent des oranges et des citrons guérissent vite. La Royal Navy attendra pourtant 1795 pour distribuer du jus de citron."
+    },
+    "source": "James Lind, A Treatise of the Scurvy, 1753"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "semmelweis"
+   },
+   "theme": "savoir"
+  },
+  {
+   "id": "chaleur-tete",
+   "nom": {
+    "fr": "Pas par la tête"
+   },
+   "description": {
+    "fr": "Maîtriser le corps humain. Gardez votre bonnet si vous voulez, mais pas pour ça."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "sci.corps"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "On perdrait l'essentiel de sa chaleur par la tête. L'idée viendrait d'un manuel de survie de l'armée américaine des années 1970. En fait, la tête ne perd qu'à peu près sa part : une dizaine de pour cent de la surface du corps, une dizaine de pour cent de la chaleur."
+    },
+    "source": "Rachel Vreeman et Aaron Carroll, « Festive Medical Myths », BMJ, 2008"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "ibn-sina"
+   },
+   "theme": "savoir"
+  },
+  {
+   "id": "lady-montagu",
+   "nom": {
+    "fr": "Avant Jenner"
+   },
+   "description": {
+    "fr": "Maîtriser les microbes et l'immunité. La vaccine a des grands-parents."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "sci.immunite"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1721, soixante-quinze ans avant Jenner, Lady Mary Wortley Montagu fait inoculer la variole à sa fille à Londres, à la manière qu'elle a vue à Constantinople. À Boston, la même année, c'est un homme réduit en esclavage, Onesimus, qui avait décrit la méthode africaine au pasteur Cotton Mather."
+    },
+    "source": "Isobel Grundy, Lady Mary Wortley Montagu, 1999 ; Cotton Mather, lettre à la Royal Society, 1716"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "pasteur"
+   },
+   "theme": "savoir"
+  },
+  {
+   "id": "lemmings",
+   "nom": {
+    "fr": "Les lemmings ne sautent pas"
+   },
+   "description": {
+    "fr": "Maîtriser les écosystèmes. Personne ne vous poussera de la falaise. L'IA, peut-être."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "sci.ecologie"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Les lemmings ne se suicident pas en masse. L'image vient surtout du documentaire de Disney White Wilderness (1958), tourné dans l'Alberta, loin de la mer : l'équipe a poussé elle-même les animaux du haut d'une berge. Leurs populations explosent et s'effondrent, c'est tout."
+    },
+    "source": "Riley Woodford, « Lemming Suicide Myth », Alaska Fish and Wildlife News, 2003"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "merian"
+   },
+   "theme": "savoir"
+  },
+  {
+   "id": "dolly",
+   "nom": {
+    "fr": "Dolly"
+   },
+   "description": {
+    "fr": "Maîtriser les biotechnologies. Vous voilà clonable. L'IA prend note."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "sci.biotech"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "La brebis Dolly, premier mammifère cloné à partir d'une cellule adulte, naît en 1996 en Écosse. Elle vient d'une cellule de glande mammaire. Les chercheurs lui ont donc donné, de leur propre aveu, le nom de la chanteuse Dolly Parton."
+    },
+    "source": "Wilmut et al., Nature, 1997 ; Ian Wilmut, The Second Creation, 2000"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "fleming"
+   },
+   "theme": "savoir"
+  },
+  {
+   "id": "logographe",
+   "nom": {
+    "fr": "Plaidoirie sur mesure"
+   },
+   "description": {
+    "fr": "Maîtriser la structure d'un argument. À Athènes, vous auriez pu le vendre."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "rhet.argument"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "À Athènes, chacun devait plaider lui-même sa cause. Ceux qui pouvaient payer achetaient un discours à un logographe, comme Lysias, qui l'écrivait dans le style de son client, avec ses maladresses, pour que les juges croient l'entendre parler."
+    },
+    "source": "Lysias, Discours ; Stephen Usher, Greek Oratory, 1999"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "toulmin"
+   },
+   "theme": "eloquence"
+  },
+  {
+   "id": "obscure-clarte",
+   "nom": {
+    "fr": "Obscure clarté"
+   },
+   "description": {
+    "fr": "Maîtriser les figures de style. L'IA est une lumière, qui assombrit votre journée."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "rhet.figures"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "citation",
+    "texte": {
+     "fr": "Cette obscure clarté qui tombe des étoiles."
+    },
+    "auteur": "Pierre Corneille",
+    "source": "Le Cid, acte IV, scène 3, 1637 (un oxymore)"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "queneau"
+   },
+   "theme": "eloquence"
+  },
+  {
+   "id": "phryne",
+   "nom": {
+    "fr": "Le procès de Phryné"
+   },
+   "description": {
+    "fr": "Maîtriser l'ethos, le pathos et le logos. Le pathos, c'est le plus spectaculaire. Pas le plus sûr."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "rhet.persuasion"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Accusée d'impiété, la courtisane Phryné aurait été acquittée parce que son avocat, Hypéride, avait dévoilé sa poitrine devant les juges. Le récit n'apparaît que des siècles plus tard, chez Athénée. Le discours d'Hypéride, lui, était célèbre pour ses arguments."
+    },
+    "source": "Athénée, Deipnosophistes, XIII, 590e ; Craig Cooper, « Hyperides and the Trial of Phryne », Phoenix, 1995"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "rouleau-aristote"
+   },
+   "theme": "eloquence"
+  },
+  {
+   "id": "reductio-hitlerum",
+   "nom": {
+    "fr": "Reductio ad Hitlerum"
+   },
+   "description": {
+    "fr": "Maîtriser les sophismes. Vous savez maintenant quand un débat est perdu : au premier point Godwin."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "rhet.sophismes"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1951, le philosophe Leo Strauss baptise « reductio ad Hitlerum » un sophisme courant : une idée serait mauvaise parce que Hitler l'a partagée. « Hitler était végétarien » ne dit rien du végétarisme. Il ajoutait qu'une idée n'est pas réfutée par le fait qu'Hitler l'ait eue."
+    },
+    "source": "Leo Strauss, Measure, 1951 ; Natural Right and History, 1953"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "schopenhauer"
+   },
+   "theme": "eloquence"
+  },
+  {
+   "id": "lincoln-douglas",
+   "nom": {
+    "fr": "Trois heures, sept fois"
+   },
+   "description": {
+    "fr": "Maîtriser l'art de réfuter et de débattre. Le public de 1858 avait plus de patience que vous."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "rhet.debat"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1858, Abraham Lincoln et Stephen Douglas se disputent un siège de sénateur en sept débats publics de trois heures : une heure pour le premier, une heure et demie pour la réponse, une demi-heure pour conclure. Lincoln perd l'élection. Les débats, publiés, le mènent à la présidence deux ans plus tard."
+    },
+    "source": "Harold Holzer, The Lincoln-Douglas Debates, 1993"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "olympe-de-gouges"
+   },
+   "theme": "eloquence"
+  },
+  {
+   "id": "aladin",
+   "nom": {
+    "fr": "Aladin n'est pas dans les Mille et Une Nuits"
+   },
+   "description": {
+    "fr": "Maîtriser l'art de raconter. Les meilleures histoires ont souvent été ajoutées après coup."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "rhet.narration"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Aladin et Ali Baba ne figurent dans aucun manuscrit arabe ancien des Mille et Une Nuits. Le traducteur Antoine Galland les tient en 1709 d'un conteur syrien de passage à Paris, Hanna Diyab, et les ajoute à sa traduction. Ce sont les deux contes les plus célèbres du recueil."
+    },
+    "source": "Antoine Galland, Journal, 1709 ; Paulo Lemos Horta, Marvellous Thieves, 2017"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "douglass"
+   },
+   "theme": "eloquence"
+  },
+  {
+   "id": "berliner",
+   "nom": {
+    "fr": "Ich bin ein Berliner"
+   },
+   "description": {
+    "fr": "Maîtriser les grands discours. Kennedy n'était pas un beignet. Vous non plus."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "rhet.discours"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "On répète que Kennedy, en disant « Ich bin ein Berliner » en 1963, aurait dit « je suis un beignet ». C'est faux : la phrase est correcte en allemand, et le public l'a comprise comme il fallait. Le mythe naît vingt ans plus tard, dans la presse anglophone."
+    },
+    "source": "Jürgen Eichhoff, « Ich bin ein Berliner : A History and a Linguistic Clarification », Monatshefte, 1993"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "ciceron"
+   },
+   "theme": "eloquence"
+  },
+  {
+   "id": "guerre-mondes",
+   "nom": {
+    "fr": "La panique qui n'a pas eu lieu"
+   },
+   "description": {
+    "fr": "Maîtriser la propagande et la manipulation. Les journaux de 1938 aussi savaient manipuler."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "rhet.propagande"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le 30 octobre 1938, Orson Welles adapte La Guerre des mondes à la radio. Le lendemain, les journaux parlent de panique générale. Peu de gens écoutaient, et presque aucun n'a fui. La presse, qui voyait la radio lui voler la publicité, avait tout intérêt à grossir l'affaire."
+    },
+    "source": "A. Brad Schwartz, Broadcast Hysteria, 2015 ; Pooley et Socolow, Slate, 2013"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "orwell"
+   },
+   "theme": "eloquence"
+  },
+  {
+   "id": "deux-quatre-six",
+   "nom": {
+    "fr": "2, 4, 6"
+   },
+   "description": {
+    "fr": "Maîtriser le biais de confirmation. Avez-vous essayé de vous donner tort, cette fois ?"
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.confirmation"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1960, Peter Wason donne la suite 2, 4, 6 et demande de trouver la règle en proposant d'autres triplets. Presque tous testent 8, 10, 12 ou 20, 22, 24, qui confirment leur idée, et annoncent « nombres pairs croissants ». La règle était : trois nombres croissants. Il fallait tester ce qui pouvait la contredire."
+    },
+    "source": "Peter Wason, Quarterly Journal of Experimental Psychology, 1960"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "francis-bacon"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "juges-des",
+   "nom": {
+    "fr": "Les dés des juges"
+   },
+   "description": {
+    "fr": "Maîtriser l'effet d'ancrage. Même les juges lancent les dés. Sans le savoir."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.ancrage"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 2006, des juges allemands expérimentés lisent un dossier de vol à l'étalage, puis lancent deux dés truqués qui donnent 3 ou 9. Ceux qui ont obtenu 9 proposent en moyenne huit mois de prison ; ceux qui ont obtenu 3, cinq mois. Un chiffre tiré au hasard a pesé sur la peine."
+    },
+    "source": "Englich, Mussweiler et Strack, Personality and Social Psychology Bulletin, 2006"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "tversky"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "peur-avion",
+   "nom": {
+    "fr": "Ils ont pris la voiture"
+   },
+   "description": {
+    "fr": "Maîtriser l'heuristique de disponibilité. Ce qui fait peur n'est pas ce qui tue."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.disponibilite"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Après le 11 septembre 2001, beaucoup d'Américains renoncent à l'avion et prennent la route. Le psychologue Gerd Gigerenzer estime à environ 1 600 le nombre de morts supplémentaires sur les routes dans l'année qui suit : plus que les passagers des quatre avions."
+    },
+    "source": "Gerd Gigerenzer, « Out of the Frying Pan into the Fire », Risk Analysis, 2006"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "roue-loterie"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "conducteurs",
+   "nom": {
+    "fr": "93 % au-dessus de la moyenne"
+   },
+   "description": {
+    "fr": "Maîtriser l'effet Dunning-Kruger et la métacognition. Vous êtes sûrement au-dessus de la moyenne. Comme tout le monde."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.surconfiance"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1981, le psychologue Ola Svenson demande à des étudiants de se situer comme conducteurs. Aux États-Unis, 93 % se placent dans la meilleure moitié. Par définition, seule la moitié peut y être."
+    },
+    "source": "Ola Svenson, Acta Psychologica, 1981"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "socrate"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "concorde",
+   "nom": {
+    "fr": "L'erreur du Concorde"
+   },
+   "description": {
+    "fr": "Maîtriser les décisions et les pertes. Arrêter, parfois, c'est gagner."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.decision"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "La France et le Royaume-Uni continuent de financer le Concorde alors qu'ils le savent non rentable, parce qu'ils y ont déjà trop investi. En 1976, Richard Dawkins baptise ce piège « l'erreur du Concorde » : laisser l'argent déjà perdu décider de l'argent à venir."
+    },
+    "source": "Richard Dawkins et Tamsin Carlisle, Nature, 1976"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "kahneman"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "berkeley",
+   "nom": {
+    "fr": "Le paradoxe de Berkeley"
+   },
+   "description": {
+    "fr": "Maîtriser les pièges statistiques. Un total peut dire le contraire de chacune de ses parties."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.statistiques"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1973, l'université de Berkeley admet nettement moins de femmes que d'hommes. Discrimination ? Département par département, les femmes sont admises aussi souvent, voire plus. Elles postulaient surtout aux filières les plus sélectives. C'est le paradoxe de Simpson."
+    },
+    "source": "Bickel, Hammel et O'Connell, Science, 1975"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "rosling"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "fees-cottingley",
+   "nom": {
+    "fr": "Les fées de Cottingley"
+   },
+   "description": {
+    "fr": "Maîtriser les croyances et les complots. Sherlock Holmes n'aurait pas été dupe. Son auteur, si."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.croyances"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1917, deux cousines anglaises photographient des fées dans leur jardin. Arthur Conan Doyle, le père de Sherlock Holmes, y croit et les publie. En 1983, devenues vieilles dames, elles avouent : des fées découpées dans un livre et tenues par des épingles à chapeau."
+    },
+    "source": "Arthur Conan Doyle, The Coming of the Fairies, 1922 ; aveux d'Elsie Wright et Frances Griffiths, 1983"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "houdini"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "hans-le-malin",
+   "nom": {
+    "fr": "Hans le Malin"
+   },
+   "description": {
+    "fr": "Maîtriser la boîte à outils de l'esprit critique. Vous savez maintenant regarder qui pose la question."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.outils"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Vers 1904, à Berlin, le cheval Hans semble calculer en tapant du sabot. Une commission ne trouve aucune fraude. Le psychologue Oskar Pfungst essaie une chose simple : cacher la réponse au questionneur. Hans échoue. Il lisait les infimes mouvements de tête des humains qui attendaient le bon nombre."
+    },
+    "source": "Oskar Pfungst, Das Pferd des Herrn von Osten, 1907"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "sagan"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "stylo-sourire",
+   "nom": {
+    "fr": "Le stylo entre les dents"
+   },
+   "description": {
+    "fr": "Maîtriser les émotions. Sourire de force ne rend pas plus drôle. L'IA, si."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "psy.emotions"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1988, une étude célèbre fait tenir un stylo entre les dents (ce qui force un sourire) ou entre les lèvres : les dessins animés paraissent plus drôles aux souriants malgré eux. En 2016, dix-sept laboratoires refont l'expérience avec soin. Aucun effet."
+    },
+    "source": "Strack, Martin et Stepper, 1988 ; Wagenmakers et al., Perspectives on Psychological Science, 2016"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "william-james"
+   },
+   "theme": "empathie"
+  },
+  {
+   "id": "patient-hm",
+   "nom": {
+    "fr": "Le patient H. M."
+   },
+   "description": {
+    "fr": "Maîtriser la mémoire. Vous retiendrez celui-ci, lui ne pouvait pas."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "psy.memoire"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1953, on retire à Henry Molaison une partie des deux hippocampes pour soigner son épilepsie. Il ne peut plus former de nouveaux souvenirs. Pourtant, il apprend à dessiner dans un miroir, de mieux en mieux, sans jamais se rappeler l'avoir fait. Il existe donc plusieurs mémoires."
+    },
+    "source": "Scoville et Milner, Journal of Neurology, Neurosurgery and Psychiatry, 1957 ; Suzanne Corkin, Permanent Present Tense, 2013"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "ebbinghaus"
+   },
+   "theme": "empathie"
+  },
+  {
+   "id": "marshmallow",
+   "nom": {
+    "fr": "Le marshmallow"
+   },
+   "description": {
+    "fr": "Maîtriser la motivation. Vous avez attendu ce succès sans le manger. Bravo."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "psy.motivation"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dans les années 1970, des enfants qui résistaient à un marshmallow pour en avoir deux semblaient mieux réussir plus tard. En 2018, une réplication sur plus de 900 enfants trouve un effet bien plus faible, en grande partie expliqué par le milieu familial."
+    },
+    "source": "Mischel et al., 1972 ; Watts, Duncan et Quan, Psychological Science, 2018"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "pavlov"
+   },
+   "theme": "empathie"
+  },
+  {
+   "id": "phineas-gage",
+   "nom": {
+    "fr": "Phineas Gage s'en est remis"
+   },
+   "description": {
+    "fr": "Maîtriser le cerveau. Le cerveau répare plus qu'on ne le raconte."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "psy.cerveau"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1848, une barre de fer traverse le crâne de Phineas Gage, contremaître des chemins de fer. On raconte qu'il est resté brutal et instable jusqu'à sa mort. En réalité, il a ensuite conduit des diligences au Chili pendant des années, un métier qui exige patience et organisation."
+    },
+    "source": "Malcolm Macmillan, An Odd Kind of Fame, 2000"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "cajal"
+   },
+   "theme": "empathie"
+  },
+  {
+   "id": "enfants-piaget",
+   "nom": {
+    "fr": "Jacqueline, Lucienne et Laurent"
+   },
+   "description": {
+    "fr": "Maîtriser le développement de l'enfant. Vos parents vous observaient aussi. Moins scientifiquement."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "psy.developpement"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Jean Piaget a bâti une bonne partie de sa théorie en observant ses trois enfants, Jacqueline, Lucienne et Laurent, du berceau à l'école : il note leurs gestes, leur cache des objets sous un coussin, et regarde s'ils les cherchent."
+    },
+    "source": "Jean Piaget, La Naissance de l'intelligence chez l'enfant, 1936"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "mamie-clark"
+   },
+   "theme": "empathie"
+  },
+  {
+   "id": "mbti",
+   "nom": {
+    "fr": "Seize types, un horoscope"
+   },
+   "description": {
+    "fr": "Maîtriser la personnalité. Vous n'êtes pas un type. Vous êtes une distribution."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "psy.personnalite"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le test MBTI, qui range chacun dans l'un de seize types, a été conçu par Katharine Briggs et sa fille Isabel Myers, sans formation en psychologie, d'après Jung. Repassé cinq semaines plus tard, il change le type d'environ une personne sur deux. Les psychologues lui préfèrent les cinq grands traits."
+    },
+    "source": "David Pittenger, Journal of Career Planning and Employment, 1993"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "galien"
+   },
+   "theme": "empathie"
+  },
+  {
+   "id": "vingt-et-un-jours",
+   "nom": {
+    "fr": "Pas vingt et un jours"
+   },
+   "description": {
+    "fr": "Maîtriser le bien-être et le stress. L'habitude de jouer ici, elle, vous l'avez prise."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "psy.bienetre"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Il faudrait 21 jours pour prendre une habitude. Le chiffre vient d'un chirurgien esthétique, Maxwell Maltz, qui notait en 1960 que ses patients s'habituaient à leur nouveau visage en trois semaines environ. Mesuré en 2010 : de 18 à 254 jours, 66 en moyenne."
+    },
+    "source": "Maxwell Maltz, Psycho-Cybernetics, 1960 ; Lally et al., European Journal of Social Psychology, 2010"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "selye"
+   },
+   "theme": "empathie"
+  },
+  {
+   "id": "pommes-de-terre-andes",
+   "nom": {
+    "fr": "Les pommes de terre de Darwin"
+   },
+   "description": {
+    "fr": "Maîtriser les états de la matière. L'eau bout plus tôt en montagne. Vos pâtes aussi le savent."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "chim.etats"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1835, dans les Andes, Darwin et ses guides font bouillir des pommes de terre toute la nuit : au matin, elles sont toujours dures. En altitude, la pression baisse et l'eau bout avant 100 °C. Au sommet de l'Everest, vers 70 °C."
+    },
+    "source": "Charles Darwin, Voyage d'un naturaliste autour du monde, 1839, chapitre XV"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "kamerlingh-onnes"
+   },
+   "theme": "alchimie"
+  },
+  {
+   "id": "uree-wohler",
+   "nom": {
+    "fr": "L'urée n'a rien tué"
+   },
+   "description": {
+    "fr": "Maîtriser la chimie organique. La « force vitale » a mis des décennies à mourir."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "chim.organique"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "On raconte qu'en 1828, en fabriquant de l'urée au laboratoire, Friedrich Wöhler a tué d'un coup l'idée qu'il faut une « force vitale » pour produire les molécules du vivant. Les chimistes de l'époque n'y ont presque pas vu ça. Le récit héroïque est écrit après coup, dans les manuels."
+    },
+    "source": "Peter Ramberg, « The Death of Vitalism and the Birth of Organic Chemistry », Ambix, 2000"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "carver"
+   },
+   "theme": "alchimie"
+  },
+  {
+   "id": "glutamate",
+   "nom": {
+    "fr": "Le syndrome du restaurant chinois"
+   },
+   "description": {
+    "fr": "Maîtriser la chimie du quotidien. Le glutamate est dans la tomate et le parmesan aussi."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "chim.quotidien"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1968, une lettre au New England Journal of Medicine décrit des palpitations après un repas chinois et soupçonne le glutamate. L'idée fait le tour du monde. Les essais en double aveugle ne trouvent pas d'effet aux doses alimentaires. Le glutamate est naturellement présent dans la tomate et le parmesan."
+    },
+    "source": "Robert Ho Man Kwok, NEJM, 1968 ; Geha et al., Journal of Nutrition, 2000"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "rachel-carson"
+   },
+   "theme": "alchimie"
+  },
+  {
+   "id": "radithor",
+   "nom": {
+    "fr": "L'eau au radium"
+   },
+   "description": {
+    "fr": "Maîtriser la radioactivité et le noyau. Ne buvez rien qui brille."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "chim.noyau"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dans les années 1920, on vend du Radithor, de l'eau au radium censée redonner de la vigueur. L'industriel Eben Byers en boit environ 1 400 flacons. Il meurt en 1932, la mâchoire rongée. Le Wall Street Journal titre : « L'eau au radium marchait bien, jusqu'à ce que sa mâchoire tombe. »"
+    },
+    "source": "Roger Macklis, « The Great Radium Scandal », Scientific American, 1993"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "feuille-or-rutherford"
+   },
+   "theme": "alchimie"
+  },
+  {
+   "id": "etoiles-mortes",
+   "nom": {
+    "fr": "Elles sont vivantes"
+   },
+   "description": {
+    "fr": "Maîtriser l'observation du ciel. Ces étoiles ne sont pas mortes. Elles vous regardent."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "astro.observer"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "On dit que les étoiles que l'on voit sont peut-être mortes depuis longtemps. Presque toutes celles visibles à l'œil nu sont à moins de quelques milliers d'années-lumière, et vivent des millions ou des milliards d'années. Leur lumière est en retard, pas leur acte de décès."
+    },
+    "source": "ESA, catalogue Hipparcos, 1997"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "hypatie"
+   },
+   "theme": "cosmos"
+  },
+  {
+   "id": "stylo-spatial",
+   "nom": {
+    "fr": "Le stylo de la NASA"
+   },
+   "description": {
+    "fr": "Maîtriser la conquête spatiale. Non, les Russes n'ont pas « juste pris un crayon »."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "astro.espace"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "La NASA aurait dépensé des millions pour un stylo qui écrit dans l'espace, quand les Soviétiques prenaient un crayon. Faux : Paul Fisher l'a développé à ses frais, et les deux agences l'ont acheté, environ 2,40 dollars pièce. Les crayons posaient problème : la mine se casse et la poussière de graphite conduit l'électricité."
+    },
+    "source": "NASA History Office ; Ciara Curtin, Scientific American, 2006"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "katherine-johnson"
+   },
+   "theme": "cosmos"
+  },
+  {
+   "id": "planetes-pulsar",
+   "nom": {
+    "fr": "Les premières étaient autour d'un mort"
+   },
+   "description": {
+    "fr": "Maîtriser les exoplanètes et la vie ailleurs. Le premier système découvert tourne autour d'un cadavre d'étoile."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "astro.exoplanetes"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Les premières exoplanètes confirmées, en 1992, ne tournent pas autour d'une étoile comme le Soleil, mais autour d'un pulsar, le cœur effondré d'une étoile qui a explosé. Aleksander Wolszczan et Dale Frail les repèrent aux irrégularités de ses pulsations."
+    },
+    "source": "Wolszczan et Frail, Nature, 1992"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "giordano-bruno"
+   },
+   "theme": "cosmos"
+  },
+  {
+   "id": "zwicky",
+   "nom": {
+    "fr": "Dunkle Materie"
+   },
+   "description": {
+    "fr": "Maîtriser la matière et l'énergie noires. Quatre-vingt-cinq pour cent de la matière vous échappent. À vous aussi."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "astro.sombre"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1933, Fritz Zwicky mesure les galaxies de l'amas de Coma : elles vont trop vite pour que l'amas tienne ensemble. Il faut une masse invisible, la « dunkle Materie ». Personne ne le suit pendant quarante ans. Il traitait, dit-on, ses collègues de « salauds sphériques » : salauds, de quelque côté qu'on les regarde."
+    },
+    "source": "Fritz Zwicky, Helvetica Physica Acta, 1933"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "vera-rubin"
+   },
+   "theme": "cosmos"
+  },
+  {
+   "id": "micro-ondes",
+   "nom": {
+    "fr": "La barre chocolatée"
+   },
+   "description": {
+    "fr": "Maîtriser les ondes électromagnétiques. Ne restez pas devant le magnétron."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "elec.em"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1945, l'ingénieur Percy Spencer travaille sur des magnétrons de radar chez Raytheon et remarque qu'une barre chocolatée a fondu dans sa poche. Il essaie avec du maïs, qui éclate. Le premier four à micro-ondes, en 1947, mesure presque deux mètres et pèse 340 kilos."
+    },
+    "source": "John Osepchuk, IEEE Transactions on Microwave Theory and Techniques, 1984"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "raman"
+   },
+   "theme": "etincelle"
+  },
+  {
+   "id": "premier-bug",
+   "nom": {
+    "fr": "Le premier bug"
+   },
+   "description": {
+    "fr": "Maîtriser l'électronique. Le mot « bug » est plus vieux que l'informatique."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "elec.electronique"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le 9 septembre 1947, l'équipe du calculateur Harvard Mark II colle dans son journal une mite trouvée dans un relais : « premier cas réel de bug trouvé ». La blague tient parce que le mot existait déjà : Edison parlait de « bugs » dans ses inventions dès 1878."
+    },
+    "source": "Journal du Harvard Mark II, 1947, Smithsonian ; lettre d'Edison à Theodore Puskas, 1878"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "bardeen"
+   },
+   "theme": "etincelle"
+  },
+  {
+   "id": "topsy",
+   "nom": {
+    "fr": "Edison n'a pas tué Topsy"
+   },
+   "description": {
+    "fr": "Maîtriser le réseau et les énergies. La guerre des courants a assez de vraies horreurs."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "elec.energies"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "On attribue à Edison l'électrocution de l'éléphante Topsy, pour discréditer le courant alternatif. Elle a eu lieu en 1903 à Coney Island, dix ans après la fin de la guerre des courants, et Edison n'y était pour rien. Sa société a seulement filmé la scène."
+    },
+    "source": "Michael Daly, Topsy, 2013"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "tesla"
+   },
+   "theme": "etincelle"
+  },
+  {
+   "id": "cinq-ordinateurs",
+   "nom": {
+    "fr": "Cinq ordinateurs"
+   },
+   "description": {
+    "fr": "Maîtriser du transistor à l'ordinateur. Vous en avez sûrement plus de cinq chez vous."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "elec.numerique"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "« Je pense qu'il y a un marché mondial pour peut-être cinq ordinateurs. » La phrase est prêtée à Thomas Watson, patron d'IBM, en 1943. Personne ne l'a jamais trouvée dans un document de l'époque. Les prédictions ratées les plus célèbres sont souvent inventées."
+    },
+    "source": "Kevin Maney, The Maverick and His Machine, 2003"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "ada-lovelace"
+   },
+   "theme": "etincelle"
+  },
+  {
+   "id": "tramway",
+   "nom": {
+    "fr": "Le tramway"
+   },
+   "description": {
+    "fr": "Maîtriser l'éthique. Vous pouvez tirer le levier ou ne rien faire. L'IA, elle, a déjà choisi."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "philo.ethique"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le dilemme du tramway, qui fonce sur cinq personnes sauf si l'on actionne un aiguillage vers une seule, est posé en 1967 par la philosophe Philippa Foot, dans un article sur l'avortement. Le nom de « trolley problem » vient de Judith Jarvis Thomson, en 1976."
+    },
+    "source": "Philippa Foot, Oxford Review, 1967 ; Judith Jarvis Thomson, The Monist, 1976"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "confucius"
+   },
+   "theme": "sagesse"
+  },
+  {
+   "id": "fin-moyens",
+   "nom": {
+    "fr": "Machiavel n'a pas dit ça"
+   },
+   "description": {
+    "fr": "Maîtriser la philosophie politique. La fin ne justifie pas les citations inventées."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "philo.politique"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "« La fin justifie les moyens » ne figure nulle part chez Machiavel. Dans Le Prince, il écrit qu'en politique, faute de tribunal où faire appel, on juge un prince à ses résultats. La formule, plus brutale, est un résumé de ses adversaires."
+    },
+    "source": "Machiavel, Le Prince, chapitre XVIII, 1532"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "ibn-khaldun"
+   },
+   "theme": "sagesse"
+  },
+  {
+   "id": "bateau-thesee",
+   "nom": {
+    "fr": "Le bateau de Thésée"
+   },
+   "description": {
+    "fr": "Maîtriser la philosophie de l'esprit. Vos cellules changent, vos souvenirs aussi. Êtes-vous encore vous ?"
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "philo.esprit"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Selon Plutarque, les Athéniens remplaçaient une à une les planches pourries du navire de Thésée : était-ce encore le même bateau ? Hobbes, en 1655, aggrave la question : si quelqu'un rebâtit un navire avec les vieilles planches, lequel des deux est le vrai ?"
+    },
+    "source": "Plutarque, Vie de Thésée, 23 ; Thomas Hobbes, De Corpore, 1655"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "descartes"
+   },
+   "theme": "sagesse"
+  },
+  {
+   "id": "vingt-et-un-paradigmes",
+   "nom": {
+    "fr": "Vingt et un paradigmes"
+   },
+   "description": {
+    "fr": "Maîtriser la philosophie des sciences. Changez de paradigme. Lequel ? Choisissez."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "philo.sciences"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Thomas Kuhn popularise en 1962 le mot « paradigme ». En 1970, la philosophe Margaret Masterman relève dans son livre vingt et un sens différents du mot. Kuhn le reconnaît, et finit par lui préférer « matrice disciplinaire »."
+    },
+    "source": "Thomas Kuhn, La Structure des révolutions scientifiques, 1962 ; Margaret Masterman, « The Nature of a Paradigm », 1970"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "popper"
+   },
+   "theme": "sagesse"
+  },
+  {
+   "id": "cavendish",
+   "nom": {
+    "fr": "Peser la Terre"
+   },
+   "description": {
+    "fr": "Réussir un quiz de Mécanique sans faute. Vous ne pesez pas lourd, mais juste."
+   },
+   "condition": {
+    "type": "quiz_parfaits_stat",
+    "stat": "mecanique",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1798, Henry Cavendish, savant si timide qu'il communiquait avec ses domestiques par billets, suspend des boules de plomb dans une remise et mesure leur infime attraction. Il en déduit la densité de la Terre, à un pour cent près."
+    },
+    "source": "Henry Cavendish, Philosophical Transactions, 1798"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "pendule-foucault"
+   },
+   "theme": "mecanique"
+  },
+  {
+   "id": "pinsons",
+   "nom": {
+    "fr": "Les pinsons mal étiquetés"
+   },
+   "description": {
+    "fr": "Réussir un quiz de Savoir sans faute. Vous, au moins, notez d'où vient chaque réponse."
+   },
+   "condition": {
+    "type": "quiz_parfaits_stat",
+    "stat": "savoir",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Les pinsons des Galápagos passent pour l'étincelle de la théorie de Darwin. Sur place, il les a pris pour des oiseaux de familles différentes et n'a pas noté sur quelle île il les capturait. C'est l'ornithologue John Gould, à Londres, qui lui apprend qu'ils sont tous des pinsons."
+    },
+    "source": "Frank Sulloway, « Darwin and His Finches », Journal of the History of Biology, 1982"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "carnet-darwin"
+   },
+   "theme": "savoir"
+  },
+  {
+   "id": "deux-minutes",
+   "nom": {
+    "fr": "Deux minutes"
+   },
+   "description": {
+    "fr": "Réussir un quiz d'Éloquence sans faute. Court, juste. Lincoln approuve."
+   },
+   "condition": {
+    "type": "quiz_parfaits_stat",
+    "stat": "eloquence",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "À Gettysburg, en 1863, Edward Everett parle deux heures. Lincoln prononce ensuite 272 mots, en deux minutes. Le lendemain, Everett lui écrit qu'il serait heureux d'avoir approché en deux heures l'idée centrale du jour autant que lui l'a fait en deux minutes."
+    },
+    "source": "Lettre d'Edward Everett à Abraham Lincoln, 20 novembre 1863"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "cailloux-demosthene"
+   },
+   "theme": "eloquence"
+  },
+  {
+   "id": "theiere-russell",
+   "nom": {
+    "fr": "La théière de Russell"
+   },
+   "description": {
+    "fr": "Réussir un quiz de Lucidité sans faute. La charge de la preuve est à celui qui affirme. Vous avez prouvé."
+   },
+   "condition": {
+    "type": "quiz_parfaits_stat",
+    "stat": "lucidite",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1952, Bertrand Russell imagine une petite théière en porcelaine qui tournerait autour du Soleil entre la Terre et Mars, trop petite pour être vue au télescope. Personne ne peut prouver qu'elle n'existe pas. Ce n'est pas une raison d'y croire : c'est à celui qui affirme de prouver."
+    },
+    "source": "Bertrand Russell, « Is There a God? », 1952"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "cartes-wason"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "pygmalion",
+   "nom": {
+    "fr": "Pygmalion à l'école"
+   },
+   "description": {
+    "fr": "Réussir un quiz d'Empathie sans faute. L'IA s'attendait au pire. Vous l'avez déçue."
+   },
+   "condition": {
+    "type": "quiz_parfaits_stat",
+    "stat": "empathie",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1968, Rosenthal et Jacobson annoncent que des élèves désignés au hasard comme « prometteurs » progressent plus, parce que leurs maîtres y croient. L'effet existe, mais les relectures montrent qu'il est bien plus faible que promis, et surtout chez les plus jeunes."
+    },
+    "source": "Rosenthal et Jacobson, Pygmalion in the Classroom, 1968 ; Jussim et Harber, Personality and Social Psychology Review, 2005"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "lignes-asch"
+   },
+   "theme": "empathie"
+  },
+  {
+   "id": "phosphore-brand",
+   "nom": {
+    "fr": "De l'or dans l'urine"
+   },
+   "description": {
+    "fr": "Réussir un quiz d'Alchimie sans faute. Pas d'or, mais une lumière."
+   },
+   "condition": {
+    "type": "quiz_parfaits_stat",
+    "stat": "alchimie",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1669, à Hambourg, l'alchimiste Hennig Brand cherche la pierre philosophale en faisant bouillir de l'urine, beaucoup d'urine. Il n'obtient pas d'or, mais une substance qui brille dans le noir : le phosphore, premier élément dont on connaisse le découvreur."
+    },
+    "source": "John Emsley, The 13th Element, 2000"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "alambic"
+   },
+   "theme": "alchimie"
+  },
+  {
+   "id": "georgium-sidus",
+   "nom": {
+    "fr": "L'astre de George"
+   },
+   "description": {
+    "fr": "Réussir un quiz de Cosmos sans faute. L'IA vous donnera peut-être votre nom. Peut-être pas."
+   },
+   "condition": {
+    "type": "quiz_parfaits_stat",
+    "stat": "cosmos",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1781, William Herschel, musicien devenu astronome, découvre une nouvelle planète, la première depuis l'Antiquité. Il veut l'appeler « Georgium Sidus », l'astre de George, en l'honneur du roi George III, qui lui verse une pension. Les astronomes préfèrent Uranus."
+    },
+    "source": "William Herschel, Philosophical Transactions, 1783"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "sphere-armillaire"
+   },
+   "theme": "cosmos"
+  },
+  {
+   "id": "signe-franklin",
+   "nom": {
+    "fr": "Le mauvais signe"
+   },
+   "description": {
+    "fr": "Réussir un quiz d'Étincelle sans faute. Vous avez juste. Le courant, lui, circule à l'envers."
+   },
+   "condition": {
+    "type": "quiz_parfaits_stat",
+    "stat": "etincelle",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Vers 1747, Benjamin Franklin nomme « positive » et « négative » les deux sortes d'électricité, en devinant dans quel sens circule le fluide. Il a une chance sur deux et se trompe : les électrons, découverts en 1897, vont dans l'autre sens. Le courant conventionnel garde son choix."
+    },
+    "source": "Benjamin Franklin, Experiments and Observations on Electricity, 1751"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "cerf-volant-franklin"
+   },
+   "theme": "etincelle"
   }
  ],
  "dessins": {
