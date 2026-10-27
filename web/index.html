@@ -1554,6 +1554,7 @@ svg.grille .interro { transition: opacity .3s; }
     var atP = atomeSur(n);
     var titre = atP ? "Un atome sauvage" : tx(k.titre); if (titre.length > 30) titre = titre.slice(0, 29) + "…";
     var lw = Math.max(96, Math.min(150, titre.length * 4.6 + 18));
+    if (atP) lw = Math.max(lw, 124);
     // v15 : au bord de la vue, la case agrandie, son étiquette et le VS sortaient du cadre. On les ramène dedans.
     var vb = (svg.getAttribute("viewBox") || "").split(/[ ,]+/).map(Number);
     if (vb.length === 4 && vb[2] > 0) {
@@ -1598,7 +1599,8 @@ svg.grille .interro { transition: opacity .3s; }
       rt.forEach(function (n, i) {
         var k = C.plateau.cases[n - 1], place = i + 1, s = abscisse(place), p = pointRoute(s), x = p[0], y = p[1], connue = caseConnue(n), sp = M.specialDe(C, P, n);
         var ici = i === pl.idx, proche = i > pl.idx && i <= pl.idx + loin, vue = i < pl.idx;
-        var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : couleurCase(k);
+        var atC = atomeSur(n);
+        var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : atC ? "#BBD3F2" : couleurCase(k);
         var encre = sp && connue ? "#fff" : "#1E1A2B";
         c += '<g data-n="' + n + '" data-p="' + place + '" style="cursor:pointer"><polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="' + fond + '" stroke-width="' + LARGEUR_ROUTE + '" stroke-linejoin="round"/>';
         if (vue) c += '<polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="' + LARGEUR_ROUTE + '"/>';
@@ -1610,6 +1612,10 @@ svg.grille .interro { transition: opacity .3s; }
             '<text x="' + x.toFixed(1) + '" y="' + (y + 12).toFixed(1) + '" text-anchor="middle" font-size="7.5" font-weight="800" font-family="JetBrains Mono, monospace" fill="' + encre + '">' + n + "</text>";
           if (sp) c += '<g transform="translate(' + (x + 11).toFixed(1) + " " + (y - 13).toFixed(1) + ')"><circle r="6.8" fill="' + COULEUR_SPECIAL[sp.type] + '" stroke="#fff" stroke-width="1.6"/><g transform="scale(0.85)">' + (PICTO_SPECIAL[sp.type] || "") + "</g></g>";
           if (sp && sp.vers && (sp.type === "teleport" || sp.type === "retour_epoque")) fleches += flecheTeleport(place, placeVersUI(rt, i, sp.vers), COULEUR_SPECIAL[sp.type]);
+        } else if (atC) {
+          // v19 : l'atome qui recouvre la case : son logo, en grand, et le numéro de la case.
+          c += '<g transform="translate(' + x.toFixed(1) + " " + (y - 3).toFixed(1) + ')"><circle r="10.5" fill="' + COULEUR_SPECIAL.mendeleiev + '" stroke="#fff" stroke-width="2"/><g transform="scale(1.55)">' + PICTO_SPECIAL.mendeleiev + "</g></g>" +
+            '<text x="' + x.toFixed(1) + '" y="' + (y + 16).toFixed(1) + '" text-anchor="middle" font-size="7.5" font-weight="800" font-family="JetBrains Mono, monospace" fill="#1E1A2B">' + n + "</text>";
         } else {
           c += '<text x="' + x.toFixed(1) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="middle" font-size="12" font-weight="800" font-family="JetBrains Mono, monospace" fill="#1E1A2B" opacity="0.75">' + n + "</text>";
         }
