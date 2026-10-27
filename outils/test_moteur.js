@@ -178,6 +178,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(dep.a, num("solvay") - 4);
     // Deuxième tour : pièges doublés, prison à deux quiz parfaits
     P = M.nouvellePartie(t0); P.plateau.tours = 1; P.plateau.position = num("solvay") - 3;
+    P.plateau.parcours = { fermees: {}, doubles: {}, pas: 62 }; // v15 : parcours d'origine pour isoler la règle
     assert.equal(M.deplacer(C3, P, 3, t0, "test").a, num("solvay") - 8);
     P.plateau.position = num("galilee-proces") - 2; M.deplacer(C3, P, 2, t0, "test");
     assert.equal(P.plateau.prison, 2);
@@ -933,4 +934,29 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(du.plateau && du.plateau.a < 20 && !P.duel, "Ussher renvoie le pion en arrière");
   assert.equal(du.total, 5);
   console.log("OK : v15 cases cachées, trou de mémoire, renvoi, compteur du tour, un seul pas");
+}
+
+{
+  // v15 : l'IA ferme ou dédouble des cases à chaque nouveau tour, selon sa faveur.
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json") };
+  const CP = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const T = Date.UTC(2026, 0, 5, 9);
+  let P = M.nouvellePartie(T);
+  let pc = M.parcoursTour(CP, P, T);
+  assert.equal(Object.keys(pc.fermees).length + Object.keys(pc.doubles).length, 0, "premier tour : parcours d'origine");
+  P = M.nouvellePartie(T); P.plateau.tours = 1; P.faveur = { valeur: 100, maj: T };
+  pc = M.parcoursTour(CP, P, T);
+  assert.equal(Object.keys(pc.fermees).length, 5); assert.equal(Object.keys(pc.doubles).length, 0); assert.equal(pc.pas, 57);
+  const f = Number(Object.keys(pc.fermees)[0]);
+  P.plateau.position = f - 1; P.plateau.ennemis = {};
+  const dep = M.deplacer(CP, P, 1, T, "test");
+  assert.ok(dep.a !== f && dep.a > f, "une case fermée est sautée");
+  P = M.nouvellePartie(T); P.plateau.tours = 1; P.faveur = { valeur: 0, maj: T };
+  pc = M.parcoursTour(CP, P, T);
+  assert.equal(Object.keys(pc.doubles).length, 4); assert.equal(pc.pas, 66);
+  const db = Number(Object.keys(pc.doubles)[0]);
+  P.plateau.position = db - 1; P.plateau.ennemis = {};
+  assert.equal(M.deplacer(CP, P, 3, T, "test").a >= db, true);
+  console.log("OK : v15 parcours remanié par l'IA à chaque tour");
 }

@@ -1444,8 +1444,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   }
   // `bilan` : toujours zoomé sur le pion, sans tenir compte de la caméra de l'accueil.
   function svgPlateau(bilan) {
-    var pl = P.plateau, nb = C.plateau.cases.length, loin = portee(), ennemis = M.ennemisPlateau(C, P), ton = M.humeur(P);
-    var cle = [pl.atteinte, pl.tours, pl.position, loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {}), C.stats.filter(function (s) { return M.arbreOuvert(C, P, s.id); }).length].join("/");
+    var pl = P.plateau, nb = C.plateau.cases.length, loin = portee(), ennemis = M.ennemisPlateau(C, P), ton = M.humeur(P), parc = M.parcoursTour(C, P, maintenant());
+    var cle = [pl.atteinte, pl.tours, pl.position, loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {}), JSON.stringify(M.parcoursTour(C, P, maintenant())), C.stats.filter(function (s) { return M.arbreOuvert(C, P, s.id); }).length].join("/");
     if (cachePlateau.cle !== cle) {
       var c = decorPlateau(ton), pas = pasCase(), fleches = "", gardes = "";
       var toute = morceauRoute(0, ROUTE.total);
@@ -1453,8 +1453,10 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         '<polyline points="' + toute + '" fill="none" stroke="#fff" stroke-width="' + (LARGEUR_ROUTE + 6) + '" stroke-linejoin="round" stroke-linecap="round"/>';
       C.plateau.cases.forEach(function (k) {
         var n = k.n, s = abscisse(n), p = pointRoute(s), x = p[0], y = p[1], connue = caseConnue(n), sp = M.specialDe(C, P, n);
+        // v15 : cases fermées (sautées) ou dédoublées (deux pas) par l'IA pour ce tour.
+        var fermee = parc.fermees[n], double = parc.doubles[n];
         var ici = n === pl.position, proche = n > pl.position && n <= pl.position + loin, vue = n < pl.position;
-        var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : couleurCase(k);
+        var fond = fermee ? "#5D5A66" : sp && connue ? COULEUR_SPECIAL[sp.type] : couleurCase(k);
         var encre = sp && connue ? "#fff" : "#1E1A2B";
         c += '<g data-n="' + n + '" style="cursor:pointer"><polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="' + fond + '" stroke-width="' + LARGEUR_ROUTE + '" stroke-linejoin="round"/>';
         if (vue) c += '<polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="' + LARGEUR_ROUTE + '"/>';
@@ -1465,8 +1467,10 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
           if (sp) c += '<g transform="translate(' + (x + 11).toFixed(1) + " " + (y - 13).toFixed(1) + ')"><circle r="6.8" fill="' + COULEUR_SPECIAL[sp.type] + '" stroke="#fff" stroke-width="1.6"/><g transform="scale(0.85)">' + (PICTO_SPECIAL[sp.type] || "") + "</g></g>";
           if (sp && sp.vers && (sp.type === "teleport" || sp.type === "retour_epoque")) fleches += flecheTeleport(n, sp.vers, COULEUR_SPECIAL[sp.type]);
         } else {
-          c += '<text x="' + x.toFixed(1) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="middle" font-size="12" font-weight="800" font-family="JetBrains Mono, monospace" fill="#1E1A2B" opacity="0.75">' + n + "</text>";
+          c += '<text x="' + x.toFixed(1) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="middle" font-size="12" font-weight="800" font-family="JetBrains Mono, monospace" fill="' + (fermee ? "#CFCAD8" : "#1E1A2B") + '" opacity="0.75">' + n + "</text>";
         }
+        if (fermee) c += '<path d="M' + (x - 7).toFixed(1) + " " + (y - 7).toFixed(1) + " l14 14 m0 -14 l-14 14" + '" stroke="#F2EEE6" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>';
+        if (double) c += '<g transform="translate(' + (x - 12).toFixed(1) + " " + (y - 13).toFixed(1) + ')"><rect x="-8" y="-6" width="16" height="12" rx="6" fill="#1E1A2B" stroke="#fff" stroke-width="1.2"/><text y="3.5" text-anchor="middle" font-size="8" font-weight="800" font-family="JetBrains Mono, monospace" fill="#fff">×2</text></g>';
         // v13 : l'ennemi qui garde la case est une épingle au-dessus d'elle, dessinée après toutes les cases pour rester devant.
         var en = ennemis[n] && C.ennemiParId[ennemis[n]];
         if (en) gardes += epingleEnnemi(en, n, ici);
@@ -1583,6 +1587,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   function blocPlateau() {
     var pl = P.plateau, t = maintenant(), k = C.plateau.cases[pl.position - 1], st = stat(M.bonusDuJour(C, P, t));
     var b = el('<section class="bloc plateau"><div class="tete"><h2>Plateau de l\'histoire</h2><span class="num">' + (pl.tours ? "Tour " + (pl.tours + 1) + " · " : "") + "case " + pl.position + " / " + C.plateau.cases.length + "</span></div>" +
+      (function () { var pc = M.parcoursTour(C, P, t), nf = Object.keys(pc.fermees).length, nd = Object.keys(pc.doubles).length;
+        return nf || nd ? '<p class="compteur-tour">Parcours de l\'IA : <b>' + pc.pas + "</b> pas" + (nf ? " · " + nf + " case" + (nf > 1 ? "s" : "") + " fermée" + (nf > 1 ? "s" : "") + " ✕" : "") + (nd ? " · " + nd + " à deux pas ×2" : "") + "</p>" : ""; })() +
       // v15 : le compteur du tour, pour viser le parcours le plus court.
       '<p class="compteur-tour"><b>' + (pl.coups || 0) + "</b> épreuve" + ((pl.coups || 0) > 1 ? "s" : "") + " dans ce tour" + (pl.meilleur ? " · record : <b>" + pl.meilleur + "</b>" : " · pas encore de record") + "</p></section>");
     var grille = el('<div class="grille-cadre"></div>'), glisse = false, finGlisse = 0;
@@ -3174,6 +3180,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     prison_liberation: function () { return "Quiz parfait : tu sors de prison."; },
     bloque_prison: function () { return "Assigné à résidence : ton pion ne bouge pas."; },
     bloque_quarantaine: function () { return "Quarantaine : cette épreuve ne fait pas avancer ton pion."; },
+    parcours: function (e) { return e.fermees || e.doubles ? "Nouveau parcours : l'IA " + [e.fermees ? "ferme " + e.fermees + " case" + (e.fermees > 1 ? "s" : "") : "", e.doubles ? (e.fermees ? "en dédouble " + e.doubles : "dédouble " + e.doubles + " case" + (e.doubles > 1 ? "s" : "")) : ""].filter(Boolean).join(" et ") + ". " + e.pas + " pas jusqu'à l'arrivée." : "Nouveau parcours : l'IA le laisse tel quel, " + e.pas + " pas."; },
     tour_fini: function (e) { return "Arrivée ! Tour " + e.tour + " terminé en " + e.coups + " épreuve" + (e.coups > 1 ? "s" : "") + (e.record ? (e.ancien ? ", nouveau record (avant : " + e.ancien + ")" : ", ton premier record") : e.ancien ? " (record : " + e.ancien + ")" : "") + ". Retour au feu, en plus dur."; },
     oubli: function (e) { return "Trou de mémoire, case " + e.case + " : retour à la case " + e.vers + ", la plus ancienne que tu n'as jamais vue parmi les 15 dernières."; },
     oubli_vide: function (e) { return "Trou de mémoire, case " + e.case + " : tu as tout vu derrière toi. L'IA cherche, ne trouve rien, et boude."; },
