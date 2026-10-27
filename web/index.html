@@ -387,6 +387,12 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .jouer span.s { font-size: 13px; opacity: 0.85; }
 .jouer .pill { font-family: var(--f-mono); font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--accent-ink); color: var(--accent); font-size: 14px; }
 .choix-ia { display: flex; flex-direction: column; gap: 12px; }
+.portrait-q { display: flex; gap: 14px; align-items: flex-start; margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); animation: tomber .35s ease-out both; }
+.portrait-q .cadre-p { flex: none; padding: 6px 8px 0; border-radius: 12px; background: var(--parchemin); border: 2px solid color-mix(in srgb, var(--c, var(--accent)) 60%, #fff); }
+.portrait-q b { font-family: var(--f-display); font-size: 17px; display: block; }
+.portrait-q .ans { font-family: var(--f-mono); font-size: 13px; color: var(--muted); }
+.portrait-q p { margin: 6px 0 4px; font-size: 16px; line-height: 1.45; }
+.portrait-q cite { display: block; font-size: 13px; color: var(--muted); font-style: normal; }
 .case-dicte { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; border-left: 5px solid var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); font-size: 15px; line-height: 1.35; }
 .case-dicte .vitrine { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: color-mix(in srgb, var(--c) 30%, #fff); }
 /* v5 : stats sur l'accueil */
@@ -2021,6 +2027,14 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var pal = C.avatar.palette, c = pixels(s.base, pal, s.couleurs, 0, 0, 1) + pixels(s.cheveux, pal, null, 0, 0, 1);
     return '<svg class="pix" viewBox="0 0 40 48" width="' + taille + '" height="' + Math.round(taille * 1.2) + '" aria-hidden="true"' + (verrou ? ' style="filter:brightness(0) invert(.5) opacity(.45)"' : "") + ">" + c + "</svg>";
   }
+  // v15 : la bonne réponse est une personne : son portrait en pixel art et une courte biographie.
+  function portraitQuestion(q) {
+    var ref = q.portrait; if (!ref || !C.avatar) return null;
+    var liste = ref.famille === "savant" ? C.avatar.savants : C.avatar.portraits || [];
+    var s = liste.filter(function (x) { return x.id === ref.id; })[0]; if (!s) return null;
+    var bio = tx(ref.famille === "savant" ? s.notice : s.bio);
+    return el('<div class="portrait-q"><div class="cadre-p">' + svgSavant(s, 72) + '</div><div><b>' + esc(tx(s.nom)) + '</b><span class="ans">' + esc(s.annees) + "</span><p>" + esc(bio) + "</p><cite>" + esc(s.source) + "</cite></div></div>");
+  }
   function blocSavants() {
     var liste = C.avatar.savants, n = liste.filter(function (s) { return P.savants[s.id]; }).length, actuel = savantIncarne();
     var b = el('<div><div class="eyebrow">Savants · ' + n + " sur " + liste.length + '</div><p class="note">Ton avatar incarne le dernier savant que tes succès ont débloqué. Ton rang reste visible au cadre.</p><div class="savants"></div></div>');
@@ -3044,6 +3058,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       var tempsEcoule = quiz.tempsEcoule; quiz.tempsEcoule = false;
       zoneRetour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Juste." + (quiz.chrono ? " +" + C.regles.chrono.bonus_xp_par_bonne_reponse + " XP de bonus chrono." : "") : (tempsEcoule ? "Temps écoulé. " : "Raté. ") + "Réponse : " + esc(rep) + ".") + "</b><p>" + esc(tx(q.explication)) + "</p>" +
         (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + "</div>"));
+      var pq = portraitQuestion(q);
+      if (pq) zoneRetour.appendChild(pq);
       if (M.estEclair(quiz.res[quiz.res.length - 1])) {
         var mot = comite(M.replique(C, P, ["eclair"]));
         if (mot) { zoneRetour.appendChild(el('<div style="height:10px"></div>')); zoneRetour.appendChild(mot); }

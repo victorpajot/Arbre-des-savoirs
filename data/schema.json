@@ -348,6 +348,26 @@
        },
        "illustration_explication": {
         "$ref": "#/$defs/svg"
+       },
+       "portrait": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "famille",
+         "id"
+        ],
+        "description": "v15 : la bonne réponse est une personne ; son portrait (savant jouable ou portrait) s'affiche au retour.",
+        "properties": {
+         "famille": {
+          "enum": [
+           "savant",
+           "portrait"
+          ]
+         },
+         "id": {
+          "$ref": "#/$defs/id"
+         }
+        }
        }
       },
       "allOf": [
@@ -1119,6 +1139,51 @@
         "$ref": "#/$defs/condition"
        },
        "notice": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "couleurs": {
+        "$ref": "#/$defs/palette"
+       },
+       "base": {
+        "$ref": "#/$defs/pixels"
+       },
+       "cheveux": {
+        "$ref": "#/$defs/pixels"
+       }
+      }
+     }
+    },
+    "portraits": {
+     "type": "array",
+     "description": "v15 : portraits des personnes qu'une question fait choisir par leur nom, montrés avec une biographie au retour de la question.",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "nom",
+       "annees",
+       "bio",
+       "source",
+       "couleurs",
+       "base",
+       "cheveux"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "annees": {
+        "type": "string"
+       },
+       "bio": {
         "$ref": "#/$defs/texte"
        },
        "source": {

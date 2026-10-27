@@ -32,6 +32,7 @@ import bibliotheque_v7
 import bibliotheque_v8
 import plateau
 import savants
+import portraits
 from dessin import EMPLACEMENTS, PALETTE
 from illustrations import ENONCE, EXPLICATION
 from questions_nouvelles import Q as Q_NOUVELLES
@@ -538,6 +539,9 @@ Q["psy.influence"] = [
 ]
 
 
+NOMS_PORTRAITS = portraits.par_nom()
+
+
 def questions():
     out = []
     for comp, qs in {**Q, **Q_NOUVELLES, **philosophes.Q, **approfondissement_sciences.Q, **approfondissement_humain.Q}.items():
@@ -549,6 +553,12 @@ def questions():
                 q["illustration"] = ENONCE[id]
             if id in EXPLICATION:
                 q["illustration_explication"] = EXPLICATION[id]
+            # v15 : bonne réponse = une personne qui a un portrait → portrait et biographie au retour.
+            if q.get("type") == "qcm":
+                rep = q["choix"][q["reponse"]]
+                qui = NOMS_PORTRAITS.get(rep["fr"] if isinstance(rep, dict) else rep)
+                if qui:
+                    q["portrait"] = {"famille": qui[0], "id": qui[1]}
             out.append(q)
     ids = {q["id"] for q in out}
     assert set(ENONCE) <= ids and set(EXPLICATION) <= ids, (set(ENONCE) | set(EXPLICATION)) - ids
@@ -664,6 +674,8 @@ def avatar():
         # v4 : savants jouables, qui remplacent l'avatar ; le rang se lit alors au cadre.
         "savants": [{"id": s[0], "nom": fr(s[1]), "annees": s[2], "condition": s[9], "notice": fr(s[10]), "source": s[11],
                      "couleurs": s[5], "base": cq["base"], "cheveux": cq["cheveux"]} for s, cq in zip(savants.SAVANTS, savants.calques())],
+        # v15 : portraits des personnes qu'une question fait choisir par leur nom.
+        "portraits": portraits.donnees(),
     }
 
 

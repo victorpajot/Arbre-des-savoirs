@@ -147,3 +147,12 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 - Frise : seules les dates découvertes s'affichent par défaut ; un interrupteur montre les autres.
 - Bilan : le mur de la honte s'ouvre par-dessus le bilan ; « ← Bilan » ramène à la même étape.
 - Textes de lecture (paroles de l'IA, succès, récompenses, notes) agrandis à 15-17 px.
+
+## v15 : la case dicte l'épreuve
+
+- Plateau : chaque case prend la couleur de son arbre. Le bouton Jouer tire l'épreuve dans l'arbre de la case du pion (les rappels dus passent d'abord) ; sur un arbre fermé, il propose son premier quiz, et le réussir ouvre l'arbre.
+- Livres : pas d'anachronisme. Un livre ne tombe que s'il est paru avant la fin de l'époque de la case, de préférence dans cette époque.
+- Duels : arène rouge sombre en flammes, rencontre rejouée quand l'ennemi bloque toujours le pion, 16 ennemis (outils/ennemis.py) dont l'IA poste sept à chaque tour, sur des cases décalées.
+- Atomes : le combat demande le numéro atomique, plus la masse.
+- Questions dont la réponse est une personne : portrait en pixel art et biographie au retour (outils/portraits.py).
+- Chrono activé sur les nouvelles parties ; question en cours en encre dans la barre de progression.
