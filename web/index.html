@@ -1378,13 +1378,23 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var k = C.plateau.cases[n - 1]; if (!sc || !g || !k) return;
     var p = centreCase(n), en = M.ennemisPlateau(C, P)[n] && C.ennemiParId[M.ennemisPlateau(C, P)[n]];
     var titre = tx(k.titre); if (titre.length > 30) titre = titre.slice(0, 29) + "…";
-    var ly = p[1] + 34, lw = Math.max(96, Math.min(150, titre.length * 4.6 + 18));
+    var lw = Math.max(96, Math.min(150, titre.length * 4.6 + 18));
+    // v15 : au bord de la vue, la case agrandie, son étiquette et le VS sortaient du cadre. On les ramène dedans.
+    var vb = (svg.getAttribute("viewBox") || "").split(/[ ,]+/).map(Number);
+    if (vb.length === 4 && vb[2] > 0) {
+      var mx = Math.min(vb[2] / 2, Math.max(40, lw / 2 + 6)), haut = en ? 96 : 40, bas = 66;
+      var cx = Math.min(Math.max(p[0], vb[0] + mx), vb[0] + vb[2] - mx);
+      var cy = vb[3] > haut + bas ? Math.min(Math.max(p[1], vb[1] + haut), vb[1] + vb[3] - bas) : p[1];
+      var dx = cx - p[0], dy = cy - p[1];
+    }
+    p = [p[0] + (dx || 0), p[1] + (dy || 0)];
+    var ly = p[1] + 34;
     // Voile et flash couvrent tout le monde, avec de la marge : ils restent en place pendant que la caméra glisse.
     var tout = 'x="-400" y="-400" width="' + (MONDE[0] + 800) + '" height="' + (MONDE[1] + 800) + '"';
     var h = '<rect class="voile-ombre" ' + tout + ' fill="' + (en ? "#3A0D12" : "#14101F") + '"/>' +
       '<rect class="voile-flash" ' + tout + ' fill="' + (en ? "#D94141" : "#FFD447") + '"/>' +
       '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="30" fill="' + (en ? "#D94141" : "#FFD447") + '" opacity="0.35" class="halo-vedette"/>' +
-      '<g class="vedette">' + g.innerHTML + "</g>" +
+      '<g transform="translate(' + (dx || 0).toFixed(1) + " " + (dy || 0).toFixed(1) + ')"><g class="vedette">' + g.innerHTML + "</g></g>" +
       '<g class="etiquette-case"><rect x="' + (p[0] - lw / 2).toFixed(1) + '" y="' + ly.toFixed(1) + '" width="' + lw.toFixed(1) + '" height="27" rx="7" fill="#1E1A2B" stroke="' + (en ? "#D94141" : "#FFD447") + '" stroke-width="2"/>' +
       '<text x="' + p[0].toFixed(1) + '" y="' + (ly + 11).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="800" font-family="JetBrains Mono, monospace" fill="' + (en ? "#FF9C9C" : "#FFD447") + '">CASE ' + n + " · " + esc(formatAnnee(k.annee)) + "</text>" +
       '<text x="' + p[0].toFixed(1) + '" y="' + (ly + 22).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">' + esc(titre) + "</text></g>";
