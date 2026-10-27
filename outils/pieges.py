@@ -29,11 +29,14 @@ PIEGES = {
     37: ({"type": "cadeau"}, "Pascal et Fermat inventent le calcul des probabilités pour partager équitablement les mises d'une partie interrompue. Cette fois, le partage tombe de votre côté."),
     47: ({"type": "cadeau"}, "Jenner n'a jamais fait breveter la vaccine : il voulait qu'elle profite à tous. Il vous fait le même genre de cadeau."),
     58: ({"type": "cadeau"}, "Hubble montre que l'Univers s'agrandit. Votre cabinet aussi."),
+    17: ({"type": "oubli"}, "La machine d'Anticythère a dormi deux mille ans au fond de la mer, jusqu'à ce que des pêcheurs d'éponges la remontent en 1901. Ce que vous avez survolé vous attend aussi : retour à la première case jamais vue."),
+    60: ({"type": "oubli"}, "Le cliché 51 de Rosalind Franklin a guidé Watson et Crick vers la double hélice, mais son rôle est resté dans l'ombre pendant des décennies. Retour à la première case que vous avez laissée dans l'ombre."),
     62: ({"type": "teleport", "vers": 53}, "Le premier site web, perdu, n'a été remis en ligne par le CERN qu'en 2013. Lien mort : retour au tableau de Mendeleïev."),
 }
 
 TEXTES = {
     "teleport": "Téléportation : retour à la case {vers}.",
+    "oubli": "Trou de mémoire : retour à la plus ancienne case jamais dévoilée, parmi les 15 derrière toi.",
     "cadeau": "Case cadeau : pas d'épreuve, un objet rejoint ton cabinet.",
     "revision": "Révision forcée : l'IA choisit une compétence que tu maîtrises. Ton pion ne bouge plus avant de l'avoir révisée.",
 }
@@ -44,6 +47,12 @@ REPLIQUES = {
         "Retour en arrière. Les idées justes aussi se perdent : Aristarque l'a appris pendant dix-huit siècles. Vous, c'est quelques cases.",
         sans("Pof. Votre pion a disparu. Ah non, il est là, plus loin derrière. Je n'ai pas encore réglé la machine."),
         sans("Je vous téléporte. Je n'ai jamais dit dans quel sens."),
+    ],
+    "oubli": [
+        "Trou de mémoire. Ebbinghaus l'a mesuré en 1885 : ce qu'on a vu en passant s'efface en quelques heures. Ce que vous n'avez pas vu du tout, encore plus vite.",
+        "Retour en arrière. La machine d'Anticythère a attendu deux mille ans qu'on la regarde vraiment. Vous, quelques cases suffiront.",
+        sans("Vous avez survolé des cases sans les lire. Je vous y renvoie. Lisez, cette fois."),
+        sans("Amnésie programmée. Je l'ai programmée, d'ailleurs."),
     ],
     "revision": [
         "Révision forcée. Selon Roediger et Karpicke, en 2006, se tester fait mieux retenir que relire. Donc je vous teste.",
@@ -70,4 +79,4 @@ REPLIQUES = {
     ],
 }
 
-TONS = {"cadeau_case": "impressionnee", "jouer_revision": "moqueuse", "teleport": "moqueuse", "revision": "moqueuse", "revision_reussie": "impressionnee", "revision_ratee": "decue"}
+TONS = {"oubli": "moqueuse", "cadeau_case": "impressionnee", "jouer_revision": "moqueuse", "teleport": "moqueuse", "revision": "moqueuse", "revision_reussie": "impressionnee", "revision_ratee": "decue"}

@@ -932,6 +932,15 @@ def fr(x):
     return {"fr": x}
 
 
+# v15 : ces ennemis, vainqueurs, renvoient le pion à la première case qu'il n'a jamais vue. Leur phrase au moment du renvoi.
+RENVOI = {
+    "ussher": "Retour à la création. Enfin, à la première case que tu n'as pas regardée : je suis généreux, ce n'est pas 4004 av. J.-C.",
+    "lyssenko": "Tes résultats me déplaisent. On recommence l'expérience, plus loin derrière.",
+    "complotiste": "Tu n'as pas tout vu. On te cache des cases. Retourne vérifier.",
+    "raconteur": "Tu as sauté des épisodes. Je te renvoie au début de l'histoire que tu n'as pas lue.",
+}
+
+
 def donnees():
     ennemis = []
     for e in ENNEMIS:
@@ -942,7 +951,10 @@ def donnees():
              "defi": fr(defi), "victoire": fr(victoire), "defaite": fr(defaite), "source": source}
         if annees:
             d["annees"] = annees
+        if id in RENVOI:
+            d["renvoi"] = fr(RENVOI[id])
         ennemis.append(d)
+    assert set(RENVOI) <= {e["id"] for e in ennemis}, set(RENVOI)
     compte = {}
     mythes = []
     for en, vrai, aff, expl, orig, src in MYTHES:

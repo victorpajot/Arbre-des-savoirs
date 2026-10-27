@@ -593,6 +593,7 @@
       "objets",
       "case_atteinte",
       "case_visitee",
+      "epoque_atteinte",
       "tours_plateau",
       "sorties_prison",
       "eurekas",
@@ -739,6 +740,7 @@
          "duel_gagne",
          "duel_perdu",
          "teleport",
+         "oubli",
          "revision",
          "revision_reussie",
          "revision_ratee",
@@ -1771,6 +1773,7 @@
            "prison",
            "retour_epoque",
            "teleport",
+           "oubli",
            "revision",
            "cadeau",
            "mendeleiev"
@@ -2122,6 +2125,9 @@
        "source": {
         "type": "string",
         "minLength": 3
+       },
+       "renvoi": {
+        "$ref": "#/$defs/texte"
        }
       }
      }

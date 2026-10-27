@@ -188,7 +188,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const P = M.nouvellePartie(t0);
     let garde = 0, fini = null;
     while (!fini && garde++ < 200) {
-      const dep = M.avancerPion(C3, P, 2 + (garde % 3), t0);
+      const dep = M.avancerPion(C3, P, 2 + (garde % 3) + (garde % 7 === 0 ? 1 : 0), t0);
       if (P.plateau.prison) P.plateau.prison = 0; // le test ne passe pas de quiz : on ouvre la porte
       if (dep.etapes.some(e => e.type === "tour_fini")) fini = dep;
     }
@@ -197,9 +197,11 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.ok(fini.contextes.includes("tour_fini"));
     assert.ok(P.succes["tour-complet"]);
     const rec = M.verifierRecompenses(C3, P, t0);
+    // v15 : seules les cases où le pion s'est arrêté dévoilent leur date et leurs livres.
     const casesFrise = C3.evenements.filter(e => e.case);
-    assert.ok(casesFrise.every(e => P.evenements[e.id]), "toutes les dates du plateau sont sur la frise");
-    assert.ok(C3.livres.filter(l => l.condition.type === "case_atteinte").every(l => P.livres[l.id] || P.gagnables["livres:" + l.id]), "livres du plateau gagnables");
+    assert.ok(casesFrise.every(e => !!P.evenements[e.id] === !!P.plateau.visites[e.case]), "une date par case foulée, aucune par case survolée");
+    assert.ok(casesFrise.some(e => !P.evenements[e.id]), "des cases survolées restent cachées");
+    assert.ok(C3.livres.filter(l => l.condition.type === "case_atteinte").every(l => !P.plateau.visites[l.condition.n] || P.livres[l.id] || P.gagnables["livres:" + l.id]), "livres des cases foulées gagnables");
     assert.ok(P.succes["epoque-xxe"]);
     assert.ok(P.masques.promethee || P.gagnables["masques:promethee"], "un tour complet rend gagnable le masque de Prométhée");
   }
@@ -897,4 +899,38 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(b.savants.length + b.objets.length + b.livres.length <= 1);
   assert.ok(P.savants.hypatie && P.savants["ibn-al-haytham"], "le second savant vient ensuite");
   console.log("OK : v15 une récompense (savant, livre, objet) par épreuve");
+}
+
+{
+  // v15 : cases cachées, trou de mémoire, renvoi par un ennemi, compteur du tour, un seul pas.
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json") };
+  const CP = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const T = Date.UTC(2026, 0, 5, 9);
+  let P = M.nouvellePartie(T);
+  P.plateau.ennemis = {};
+  M.deplacer(CP, P, 3, T, "test");
+  assert.ok(M.caseDecouverte(P, 4) && !M.caseDecouverte(P, 2) && !M.caseDecouverte(P, 3), "cases survolées cachées");
+  const oubli = CP.plateau.cases.find(k => k.special && k.special.type === "oubli").n;
+  P.plateau.position = oubli - 2; P.plateau.visites[oubli - 2] = 1;
+  const dep = M.deplacer(CP, P, 2, T, "test");
+  const et = dep.etapes.find(e => e.type === "oubli");
+  assert.ok(et && !P.plateau.visites[et.vers - 0] === false && et.vers >= oubli - 15 && et.vers < oubli, "trou de mémoire : retour à une case jamais vue, 15 cases au plus");
+  // Un pas seulement
+  P = M.nouvellePartie(T); P.plateau.ennemis = {};
+  const id = CP.competences.find(k => k.rang === 1).id, qs = CP.questionsPar[id].slice(0, 5);
+  const r = M.terminerQuiz(CP, P, id, qs.map(q => ({ id: q.id, correct: true })), T, { jouer: true, uneCase: true });
+  assert.equal(r.plateau.a, 2, "un seul pas"); assert.equal(P.plateau.coups, 1);
+  // Record de tour
+  P.plateau.position = CP.plateau.regles.arrivee - 1; P.plateau.coups = 9;
+  const fin = M.deplacer(CP, P, 3, T, "test").etapes.find(e => e.type === "tour_fini");
+  assert.equal(fin.coups, 9); assert.ok(fin.record); assert.equal(P.plateau.meilleur, 9); assert.equal(P.plateau.coups, 0);
+  // Renvoi par un ennemi vainqueur
+  P = M.nouvellePartie(T);
+  P.plateau.position = 20; P.plateau.visites[20] = 1;
+  P.duel = { ennemi: "ussher", case: 20, reste: 3, pret: true, depuis: T };
+  const du = M.terminerDuel(CP, P, [{ id: "x", correct: false }], T, undefined, 5);
+  assert.ok(du.plateau && du.plateau.a < 20 && !P.duel, "Ussher renvoie le pion en arrière");
+  assert.equal(du.total, 5);
+  console.log("OK : v15 cases cachées, trou de mémoire, renvoi, compteur du tour, un seul pas");
 }

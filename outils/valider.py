@@ -102,7 +102,7 @@ def main():
             erreurs.append(f"{ou} : compétence inconnue {cond.get('id')}")
         if cond["type"] == "succes" and cond.get("id") not in succes:
             erreurs.append(f"{ou} : succès inconnu {cond.get('id')}")
-        if cond["type"] in ("case_atteinte", "case_visitee") and not 1 <= cond.get("n", 0) <= nb_cases:
+        if cond["type"] in ("case_atteinte", "case_visitee", "epoque_atteinte") and not 1 <= cond.get("n", 0) <= nb_cases:
             erreurs.append(f"{ou} : case hors du plateau {cond.get('n')}")
         besoin = {"competence_maitrisee": "id", "succes": "id", "ennemi_vaincu": "id", "famille_capturee": "famille", "branche_complete": "stat", "quiz_parfaits_stat": "stat",
                   "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None}.get(cond["type"], "n")

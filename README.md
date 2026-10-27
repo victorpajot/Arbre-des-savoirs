@@ -152,6 +152,12 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
 - Plateau : chaque case prend la couleur de son arbre. Le bouton Jouer tire l'épreuve dans l'arbre de la case du pion (les rappels dus passent d'abord) ; sur un arbre fermé, il propose son premier quiz, et le réussir ouvre l'arbre.
 - Livres : pas d'anachronisme. Un livre ne tombe que s'il est paru avant la fin de l'époque de la case, de préférence dans cette époque.
+- Schémas : dix planches légendées façon manuel (cellules, bactérie et virus, atome, ADN, neurone, cerveau, organes, eau, cycle du carbone), dans les retours de quiz et les fiches de révision ; un toucher les agrandit.
+- Épreuves coupées : dès que le seuil n'est plus atteignable (quiz, rappel, duel, atome), l'épreuve s'arrête sans dévoiler les questions restantes.
+- Une seule récompense (savant, livre ou objet) par épreuve ; la suivante attend l'épreuve d'après.
+- Cases cachées : seules les cases où le pion s'arrête sont dévoilées et débloquent leur date et leurs livres. Bouton « Avancer d'une seule case » (sans bonus) sous « C'est parti ».
+- Trou de mémoire (cases 17 et 60) et quatre ennemis (Ussher, Lyssenko, le complotiste, le raconteur) renvoient le pion à la plus ancienne case jamais vue, parmi les 15 derrière lui.
+- Compteur d'épreuves par tour et record du tour le plus court. Fond vert ou mauve au verdict d'un duel.
 - Duels : arène rouge sombre en flammes, rencontre rejouée quand l'ennemi bloque toujours le pion, 16 ennemis (outils/ennemis.py) dont l'IA poste sept à chaque tour, sur des cases décalées.
 - Atomes : le combat demande le numéro atomique, plus la masse.
 - Questions dont la réponse est une personne : portrait en pixel art et biographie au retour (outils/portraits.py).

@@ -849,7 +849,7 @@ def assigner_lots(fichiers):
         t = cond["type"]
         if t == "competence_maitrisee":
             return comps.get(cond["id"], 4)
-        if t in ("case_atteinte", "case_visitee"):
+        if t in ("case_atteinte", "case_visitee", "epoque_atteinte"):
             return cond["n"] / 9
         if t == "succes":
             return difficulte(succes[cond["id"]]["condition"], prof + 1)

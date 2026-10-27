@@ -428,7 +428,8 @@ def debut_epoque(ep):
 
 
 def atteinte(n):
-    return {"type": "case_atteinte", "n": n}
+    # v15 : une époque est atteinte dès qu'on s'arrête sur une de ses cases, ou plus loin.
+    return {"type": "epoque_atteinte", "n": n}
 
 
 def visitee(n):

@@ -151,7 +151,10 @@
 
   function nouveauPlateau() {
     // v7 : ennemis (case → id, posés au début de chaque tour) et cases spéciales déplacées par l'IA (case → règle ou null).
-    return { position: 1, atteinte: 1, tours: 0, visites: { 1: 1 }, prison: 0, quarantaine: 0, historique: [], bonus: null, ennemis: null, speciaux: {} };
+    // v15 : `visites` = cases où le pion s'est arrêté (les seules dévoilées) ; `arrets` = celles du tour en cours ;
+    // `coups` = épreuves jouées dans ce tour, `meilleur` = le tour le plus court.
+    return { position: 1, atteinte: 1, tours: 0, visites: { 1: 1 }, arrets: { 1: 1 }, coups: 0, meilleur: null,
+      prison: 0, quarantaine: 0, historique: [], bonus: null, ennemis: null, speciaux: {} };
   }
 
   // Remet une partie lue (stockage, import) au format courant.
@@ -473,7 +476,7 @@
     else contextes.push(k.rang === 1 ? "quiz_rate_facile" : "quiz_rate");
     var chrono = resultats.length > 0 && resultats.every(function (x) { return x.chrono; });
     var jouer = !!(infos && infos.jouer);
-    var dep = jouerPlateau(contenu, partie, { type: "quiz", comp: id }, { reussi: reussi, parfait: parfait, chrono: chrono, jouer: jouer }, t);
+    var dep = jouerPlateau(contenu, partie, { type: "quiz", comp: id }, { reussi: reussi, parfait: parfait, chrono: chrono, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
     var rec = verifierRecompenses(contenu, partie, t);
     if (reussi) ajouterButin(contenu, partie, rec, { type: "quiz", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
@@ -541,7 +544,7 @@
     if (!revision && reussi && retard >= 3) contextes.push("rappel_retard");
     if (!revision && reussi) contextes.push("rappel_reussi");
     var jouer = !!(infos && infos.jouer);
-    var dep = revision && !reussi ? null : jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false, jouer: jouer }, t);
+    var dep = revision && !reussi ? null : jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
     var rec = verifierRecompenses(contenu, partie, t);
     if (reussi) ajouterButin(contenu, partie, rec, { type: "rappel", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
@@ -657,11 +660,13 @@
   function jouerPlateau(contenu, partie, epreuve, issue, t) {
     if (!contenu.plateau) return null;
     var v = valeurEpreuve(contenu, partie, epreuve, t), pl = partie.plateau, c = partie.compteurs;
-    var bonusJouer = issue.reussi && issue.jouer ? (contenu.plateau.regles.bonus.jouer || 0) : 0;
-    var valeur = issue.reussi ? v.total + (issue.parfait ? v.parfait : 0) + (issue.chrono ? v.chrono : 0) + bonusJouer : v.echec;
+    // v15 : « avancer d'une seule case » : un pas, sans bonus, pour s'arrêter sur la case suivante et la dévoiler.
+    var unPas = issue.reussi && issue.uneCase;
+    var bonusJouer = issue.reussi && issue.jouer && !unPas ? (contenu.plateau.regles.bonus.jouer || 0) : 0;
+    var valeur = unPas ? 1 : issue.reussi ? v.total + (issue.parfait ? v.parfait : 0) + (issue.chrono ? v.chrono : 0) + bonusJouer : v.echec;
     var etapes = [];
     // v11 : l'objet tenu par l'avatar donne parfois un coup de pouce après une épreuve réussie.
-    var tenu = issue.reussi && partie.avatar && partie.avatar.main && (contenu.objets || []).filter(function (o) { return o.id === partie.avatar.main; })[0];
+    var tenu = issue.reussi && !unPas && partie.avatar && partie.avatar.main && (contenu.objets || []).filter(function (o) { return o.id === partie.avatar.main; })[0];
     if (tenu && tenu.bonus && hacher(String(t) + "|" + tenu.id + "|" + partie.journal.length) % 100 < 100 * ((contenu.cabinet && contenu.cabinet.chance_bonus) || 0)) {
       var bo = tenu.bonus;
       if (bo.type === "case") valeur += bo.n;
@@ -674,19 +679,32 @@
       etapes.push({ type: pl.prison ? "prison_reste" : "prison_liberation" });
       if (!pl.prison) c.sortiesPrison++;
     }
+    pl.coups = (pl.coups || 0) + 1;
     var dep = deplacer(contenu, partie, valeur, t, epreuve.type);
     dep.etapes = etapes.concat(dep.etapes);
     dep.contextes = contextesPlateau(dep);
     dep.valeurs = v;
     dep.bonusJouer = bonusJouer;
+    dep.uneCase = !!unPas;
     return dep;
   }
+
+  // v15 : la case où l'IA (ou un ennemi) renvoie le pion : la plus ancienne, parmi les OUBLI_FENETRE cases derrière lui,
+  // où il ne s'est jamais arrêté ; si tout y est dévoilé, la plus ancienne où il ne s'est pas arrêté dans ce tour.
+  var OUBLI_FENETRE = 15;
+  function caseOubliee(contenu, partie, avant) {
+    var pl = partie.plateau, R = contenu.plateau.regles, d = Math.max(R.depart + 1, avant - OUBLI_FENETRE);
+    for (var n = d; n < avant; n++) if (!pl.visites[n]) return n;
+    for (n = d; n < avant; n++) if (!(pl.arrets && pl.arrets[n])) return n;
+    return null;
+  }
+  function caseDecouverte(partie, n) { return !!(partie.plateau.visites[n] || partie.plateau.position === n); }
 
   function contextesPlateau(dep) {
     var vus = {}, out = [];
     dep.etapes.forEach(function (e) {
       var ctx = { prison_liberation: "prison_liberation", prison: "prison", bloque_prison: "prison", eureka: "eureka", recul: "piege",
-        retour_epoque: "retour_epoque", teleport: "teleport", cadeau: "cadeau_case", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi", atome: "atome_apparait" }[e.type];
+        retour_epoque: "retour_epoque", teleport: "teleport", oubli: "oubli", renvoi: "oubli", cadeau: "cadeau_case", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi", atome: "atome_apparait" }[e.type];
       if (ctx && !vus[ctx]) { vus[ctx] = 1; out.unshift(ctx); }
     });
     if (dep.a !== dep.de && dep.valeur > 0) out.push("plateau_avance");
@@ -716,6 +734,7 @@
       pl.position = n;
       chemin.push(n);
       pl.visites[n] = (pl.visites[n] || 0) + 1;
+      (pl.arrets || (pl.arrets = {}))[n] = 1;
       if (n > pl.atteinte) pl.atteinte = n;
     }
     var rj = reglesDuJour(contenu, partie, t);
@@ -737,7 +756,11 @@
       }
       if (cible >= R.arrivee) {
         poser(R.arrivee);
-        etapes.push({ type: "tour_fini", tour: pl.tours + 1 });
+        var coups = pl.coups || 0, record = coups > 0 && (pl.meilleur == null || coups < pl.meilleur);
+        etapes.push({ type: "tour_fini", tour: pl.tours + 1, coups: coups, record: record, ancien: pl.meilleur });
+        if (record) pl.meilleur = coups;
+        pl.coups = 0; pl.arrets = {};
+        pl.arrets[R.depart] = 1;
         pl.tours++;
         pl.atteinte = R.arrivee;
         pl.ennemis = null; pl.speciaux = {}; ennemis = rj.ennemis === "absents" ? {} : ennemisPlateau(contenu, partie);
@@ -767,7 +790,7 @@
           if (!sp) break;
           if (sp.type === "eureka") { c.eurekas++; etapes.push({ type: "eureka", case: pl.position, n: pas }); continue; }
           if (sp.type === "avance") { pas = sp.n; etapes.push({ type: "avance", case: pl.position, n: sp.n }); continue; }
-          if (rj.pieges === "neutres" && (sp.type === "recul" || sp.type === "teleport" || sp.type === "retour_epoque")) {
+          if (rj.pieges === "neutres" && (sp.type === "recul" || sp.type === "teleport" || sp.type === "retour_epoque" || sp.type === "oubli")) {
             etapes.push({ type: "piege_evite", case: pl.position, regle: sp.type });
           } else if (sp.type === "recul") {
             var avant = pl.position;
@@ -779,6 +802,11 @@
             poser(sp.vers);
             c.reculs++;
             etapes.push({ type: sp.type, case: depuis, n: depuis - sp.vers, vers: sp.vers });
+          } else if (sp.type === "oubli") {
+            // v15 : retour à la première case jamais dévoilée (à défaut, la première pas encore foulée dans ce tour).
+            var ici = pl.position, vers = caseOubliee(contenu, partie, ici);
+            if (vers) { poser(vers); c.reculs++; etapes.push({ type: "oubli", case: ici, n: ici - vers, vers: vers }); }
+            else etapes.push({ type: "oubli_vide", case: ici });
           } else if (sp.type === "cadeau") {
             var cad = tirerCadeau(contenu, partie, t);
             if (cad) {
@@ -879,6 +907,7 @@
       out.premiere = f.victoires === 1;
       delete ennemisPlateau(contenu, partie)[d.case];
       partie.duel = null;
+      partie.plateau.coups = (partie.plateau.coups || 0) + 1;
       out.butin = butinDuel(contenu, partie, t, alea);
       var dep = deplacer(contenu, partie, d.reste, t, "duel");
       dep.contextes = contextesPlateau(dep);
@@ -889,6 +918,18 @@
       f.defaites++; f.serie = 0;
       c.duelsPerdus = (c.duelsPerdus || 0) + 1;
       d.pret = false;
+      partie.plateau.coups = (partie.plateau.coups || 0) + 1;
+      // v15 : certains ennemis renvoient le pion à la première case qu'il n'a pas encore vue. Le duel est levé ;
+      // l'ennemi garde son poste et attend le prochain passage.
+      var vers = e.renvoi ? caseOubliee(contenu, partie, d.case) : null;
+      if (vers) {
+        var pl = partie.plateau;
+        pl.position = vers; pl.visites[vers] = (pl.visites[vers] || 0) + 1; (pl.arrets || (pl.arrets = {}))[vers] = 1;
+        c.reculs++; partie.duel = null;
+        out.plateau = { de: d.case, a: vers, chemin: [d.case, vers], valeur: 0, cause: "renvoi",
+          etapes: [{ type: "renvoi", case: d.case, ennemi: e.id, vers: vers, n: d.case - vers }] };
+        out.plateau.contextes = contextesPlateau(out.plateau);
+      }
       out.recompenses = verifierRecompenses(contenu, partie, t);
     }
     partie.maj = t;
@@ -1209,7 +1250,9 @@
       case "competences_regagnees": return c.regagnees >= cond.n;
       case "competences_perdues": return c.perdues >= cond.n;
       case "jours_actifs": return partie.jours.length >= cond.n;
-      case "case_atteinte": return partie.plateau.tours > 0 || partie.plateau.atteinte >= cond.n;
+      // v15 : une case survolée ne débloque rien ; il faut s'y être arrêté.
+      case "case_atteinte": return (partie.plateau.visites[cond.n] || 0) > 0;
+      case "epoque_atteinte": return partie.plateau.tours > 0 || partie.plateau.atteinte >= cond.n;
       case "case_visitee": return (partie.plateau.visites[cond.n] || 0) > 0;
       case "tours_plateau": return partie.plateau.tours >= cond.n;
       case "sorties_prison": return c.sortiesPrison >= cond.n;
@@ -1610,6 +1653,8 @@
     lireNombre: lireNombre,
     corriger: corriger,
     terminerQuiz: terminerQuiz,
+    caseDecouverte: caseDecouverte,
+    caseOubliee: caseOubliee,
     epreuvePerdue: epreuvePerdue,
     terminerRappel: terminerRappel,
     rappelsDus: rappelsDus,
