@@ -453,6 +453,18 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .quiz.rouge { --bg: #2A080D; --surface: #3E1018; --surface-2: #4A1520; --ink: #FCEDEA; --muted: #E7B9B2; --line: #6B2530; --accent: #F2C14E; --accent-ink: #2A080D; --good: #5CD68B; --bad: #FF7A6B;
   background: radial-gradient(120% 70% at 50% 110%, #8E1F1A 0%, #4A0E14 45%, #2A080D 80%); color: var(--ink); }
 .quiz.rouge .in { position: relative; z-index: 1; }
+/* v15 : verdict du duel, l'arène vire au vert (gagné) ou au mauve (perdu). */
+.meta.coupe { margin: 10px 0 0; }
+.issue-fond { position: fixed; inset: 0; z-index: 0; opacity: 0; transition: opacity 1.4s ease; pointer-events: none; }
+.issue-fond.gagne { background: radial-gradient(120% 70% at 50% 110%, #2E9E55 0%, #145A2C 45%, #0B2A14 80%); }
+.issue-fond.perdu { background: radial-gradient(120% 70% at 50% 110%, #8A4FB0 0%, #4A2363 45%, #22102E 80%); }
+.issue-fond.on { opacity: 1; }
+.issue-fond.anim.on { animation: issue-pouls 1.4s ease-out; }
+@keyframes issue-pouls { 0% { filter: brightness(1.8); } 100% { filter: brightness(1); } }
+.quiz.rouge.gagne { --surface: #143E22; --surface-2: #1A4B2B; --line: #2C6B40; --muted: #BFE6CA; }
+.quiz.rouge.perdu { --surface: #36193F; --surface-2: #42204D; --line: #63387A; --muted: #DCC1EA; }
+.quiz.rouge.gagne, .quiz.rouge.perdu { transition: background-color 1.4s; }
+@media (prefers-reduced-motion: reduce) { .issue-fond { transition: none; } .issue-fond.anim.on { animation: none; } }
 .quiz.rouge .arene .vs { text-shadow: 3px 3px 0 #000, 0 0 18px #FF7A2E; color: #FF5A3C; }
 .flammes { position: fixed; left: 0; right: 0; bottom: 0; height: 34vh; pointer-events: none; z-index: 0; overflow: hidden; }
 .flammes i { position: absolute; bottom: -30px; width: var(--w, 70px); height: var(--h, 160px); left: var(--x, 50%); margin-left: calc(var(--w, 70px) / -2);
@@ -2417,7 +2429,13 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       go.focus();
       return;
     }
-    if (duel.phase === "fin") { inn.appendChild(bilanDuel()); var b0 = z.querySelector(".btn"); if (b0) b0.focus(); return; }
+    if (duel.phase === "fin") {
+      // Le fond vire une fois, au verdict ; les étapes suivantes gardent la couleur.
+      var issue = duel.fin.gagne ? "gagne" : "perdu", fond = el('<div class="issue-fond ' + issue + (duel.etape ? " on" : " anim") + '" aria-hidden="true"></div>');
+      z.insertBefore(fond, inn); z.classList.add(issue);
+      if (!duel.etape) requestAnimationFrame(function () { requestAnimationFrame(function () { fond.classList.add("on"); }); });
+      inn.appendChild(bilanDuel()); var b0 = z.querySelector(".btn"); if (b0) b0.focus(); return;
+    }
     var q = duel.qs[duel.i];
     var haut = el('<div class="haut"><span class="vitrine-en">' + teteEnnemi(e, 40) + '</span><div class="titre"><span class="eyebrow" style="color:#D94141">Duel · affirmation ' + (duel.i + 1) + " sur " + duel.qs.length + "</span><b>" + esc(tx(e.nom)) + '</b></div><button type="button" class="fermer" aria-label="Abandonner le duel">×</button></div>');
     // Abandonner ne compte pas : le duel reste à faire.
@@ -2436,11 +2454,12 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         zr.querySelectorAll("button").forEach(function (x, i) { x.disabled = true; if ((i === 0) === q.vrai) x.classList.add("bon"); });
         if (!ok) b.classList.add("faux");
         retour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + (q.vrai ? "C'est vrai." : "C'est une idée reçue.") + "</b><p>" + esc(tx(q.explication)) + '</p><p class="origine"><b>' + (q.vrai ? "Comment on le sait" : "D'où ça vient") + "</b> " + esc(tx(q.origine)) + '</p><cite>Source : ' + esc(q.source) + "</cite></div>"));
-        var dernier = duel.i === duel.qs.length - 1;
+        var perdu = !ok, dernier = duel.i === duel.qs.length - 1 || perdu;
+        if (perdu && duel.i < duel.qs.length - 1) retour.appendChild(el('<p class="meta coupe">Une erreur suffit : le duel s\'arrête là.</p>'));
         var s = el('<button type="button" class="btn large">' + (dernier ? "Verdict" : "Affirmation suivante") + "</button>");
         s.onclick = function () {
           if (!dernier) { duel.i++; duel.repondu = false; rendreDuel(); return; }
-          duel.fin = M.terminerDuel(C, P, duel.res, maintenant());
+          duel.fin = M.terminerDuel(C, P, duel.res, maintenant(), undefined, duel.qs.length);
           duel.fin.replique = M.replique(C, P, [duel.fin.gagne ? "duel_gagne" : "duel_perdu"]);
           if (duel.fin.plateau) duel.fin.repliquePlateau = M.replique(C, P, duel.fin.plateau.contextes);
           duel.phase = "fin"; duel.etape = 0; sauver(); rendreDuel();
@@ -2560,8 +2579,9 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         var etat = n >= seuil ? "Il est déjà à ta merci." : n + reste < seuil ? "Il prépare sa fuite." : "Encore " + (seuil - n) + " bonne" + (seuil - n > 1 ? "s" : "") + " réponse" + (seuil - n > 1 ? "s" : "") + " pour le capturer.";
         var expl = q.type === "symbole" ? "Son symbole : " + e.symbole + "." : q.type === "numero" ? "Numéro atomique : " + e.z + ", soit " + e.z + " proton" + (e.z > 1 ? "s" : "") + " dans son noyau. C'est sa place dans le tableau." : "On le croise surtout dans " + e.ou.map(function (o) { return tx(o); }).join(", ") + ".";
         retour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + "</b>" + esc(expl) + '<p class="meta" style="margin:6px 0 0">' + esc(etat) + "</p></div>"));
-        var dernier = combat.i === combat.qs.length - 1;
-        var s = el('<button type="button" class="btn large">' + (dernier ? "Lancer la capture" : "Question suivante") + "</button>");
+        var perdu = M.epreuvePerdue(C, "atome", n, combat.res.length, combat.qs.length, seuil);
+        var dernier = combat.i === combat.qs.length - 1 || perdu;
+        var s = el('<button type="button" class="btn large">' + (perdu ? "Voir sa fuite" : dernier ? "Lancer la capture" : "Question suivante") + "</button>");
         s.onclick = function () {
           if (!dernier) { combat.i++; combat.repondu = false; rendreCombat(); return; }
           combat.fin = M.terminerCombat(C, P, combat.res.filter(Boolean).length, maintenant());
@@ -3088,7 +3108,10 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         var mot = comite(M.replique(C, P, ["eclair"]));
         if (mot) { zoneRetour.appendChild(el('<div style="height:10px"></div>')); zoneRetour.appendChild(mot); }
       }
-      var dernier = quiz.i === quiz.qs.length - 1;
+      // v15 : seuil hors d'atteinte, on coupe là. Les questions restantes ne sont pas dévoilées.
+      var perdu = M.epreuvePerdue(C, quiz.mode === "rappel" ? "rappel" : "quiz", quiz.res.filter(function (x) { return x.correct; }).length, quiz.res.length, quiz.qs.length);
+      var dernier = quiz.i === quiz.qs.length - 1 || perdu;
+      if (perdu && quiz.i < quiz.qs.length - 1) zoneRetour.appendChild(el('<p class="meta coupe">Le compte n\'y est plus : l\'IA arrête les frais et garde les dernières questions pour une autre fois.</p>'));
       var b = el('<button type="button" class="btn large">' + (dernier ? "Voir le résultat" : "Question suivante") + "</button>");
       b.onclick = function () {
         if (dernier) terminer(); else { quiz.i++; quiz.repondu = false; rendreQuiz(); }
@@ -3115,8 +3138,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
 
   function terminer() {
     var t = maintenant();
-    quiz.fin = quiz.mode === "rappel" ? M.terminerRappel(C, P, quiz.id, quiz.res, t, { jouer: quiz.jouer })
-      : M.terminerQuiz(C, P, quiz.id, quiz.res, t, { duree: Date.now() - quiz.debut, jouer: quiz.jouer });
+    quiz.fin = quiz.mode === "rappel" ? M.terminerRappel(C, P, quiz.id, quiz.res, t, { jouer: quiz.jouer, total: quiz.qs.length })
+      : M.terminerQuiz(C, P, quiz.id, quiz.res, t, { duree: Date.now() - quiz.debut, jouer: quiz.jouer, total: quiz.qs.length });
     quiz.fin.replique = M.replique(C, P, quiz.fin.contextes);
     // Le masque tout juste gagné, l'IA l'étrenne pour l'annoncer.
     if (quiz.fin.replique && quiz.fin.masque && quiz.fin.replique.contexte === "masque") quiz.fin.replique.masque = quiz.fin.masque.id;

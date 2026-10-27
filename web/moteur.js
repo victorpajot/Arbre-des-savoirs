@@ -419,11 +419,22 @@
     return !x.correct && typeof x.ms === "number" && x.ms < ECLAIR_MS;
   }
 
-  // Termine un quiz d'apprentissage. `resultats` : [{id, correct, chrono, ms}] ; `infos` (facultatif) : {duree} en ms.
+  // v15 : l'épreuve est-elle déjà perdue ? Alors on la coupe, sans dévoiler les questions restantes.
+  // `mode` : quiz, rappel, duel (tout juste exigé) ou atome (`seuil` bonnes réponses).
+  function epreuvePerdue(contenu, mode, bonnes, repondues, total, seuil) {
+    var reste = total - repondues;
+    if (mode === "duel") return bonnes < repondues;
+    var besoin = mode === "quiz" ? Math.ceil(total * contenu.regles.quiz.seuil_maitrise - 1e-9)
+      : mode === "rappel" ? contenu.regles.rappels.bonnes_reponses_min : seuil;
+    return bonnes + reste < besoin;
+  }
+
+  // Termine un quiz d'apprentissage. `resultats` : [{id, correct, chrono, ms}] ;
+  // `infos` (facultatif) : {duree} en ms, {total} si le quiz a été coupé avant la fin.
   function terminerQuiz(contenu, partie, id, resultats, t, infos) {
     var r = contenu.regles, c = partie.compteurs, k = contenu.parId[id];
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
-    var total = resultats.length;
+    var total = Math.max(resultats.length, (infos && infos.total) || 0);
     var reussi = bonnes / total >= r.quiz.seuil_maitrise - 1e-9;
     var parfait = bonnes === total;
     var e = partie.competences[id] || (partie.competences[id] = { maitrise: false });
@@ -484,6 +495,7 @@
     var r = contenu.regles;
     var e = partie.competences[id];
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
+    var total = Math.max(resultats.length, (infos && infos.total) || 0);
     var reussi = bonnes >= r.rappels.bonnes_reponses_min;
     var retard = Math.max(0, joursEntre(e.prochainRappel, t));
     // v8 : une révision forcée ne fait pas monter le palier, et la rater ne fait pas perdre la compétence :
@@ -517,7 +529,7 @@
       partie.compteurs.perdues++;
       partie.compteurs.serieRappels = 0;
     }
-    noter(partie, t, { type: "rappel", comp: id, bonnes: bonnes, total: resultats.length, xp: reussi ? xp : -xpPerdue, source: revision ? "revision" : "rappel" });
+    noter(partie, t, { type: "rappel", comp: id, bonnes: bonnes, total: total, xp: reussi ? xp : -xpPerdue, source: revision ? "revision" : "rappel" });
     epinglerOublis(partie, id, resultats, t, revision ? "revision" : "rappel");
     partie.maj = t;
     var contextes = [];
@@ -532,7 +544,7 @@
     if (reussi) ajouterButin(contenu, partie, rec, { type: "rappel", comp: id }, t, infos && infos.alea);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     var fa = reussi || revision ? null : tenterFarce(contenu, partie, t, infos && infos.alea);
-    return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : "perdue", bonnes: bonnes, total: resultats.length, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
+    return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : "perdue", bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer };
   }
@@ -850,12 +862,12 @@
   }
 
   // `resultats` : [{id, correct}]. Renvoie {gagne, ennemi, bonnes, total, plateau, recompenses, butin, premiere, fiche}.
-  function terminerDuel(contenu, partie, resultats, t, alea) {
+  function terminerDuel(contenu, partie, resultats, t, alea, total) {
     var d = partie.duel; if (!d) return null;
     var e = contenu.ennemiParId[d.ennemi], f = ficheBestiaire(partie, d.ennemi), c = partie.compteurs;
     var bonnes = resultats.filter(function (x) { return x.correct; }).length, gagne = resultats.length > 0 && bonnes === resultats.length;
     f.dernier = t;
-    var out = { gagne: gagne, ennemi: e, bonnes: bonnes, total: resultats.length, plateau: null, recompenses: null, butin: null, premiere: false, fiche: f };
+    var out = { gagne: gagne, ennemi: e, bonnes: bonnes, total: Math.max(resultats.length, total || 0), plateau: null, recompenses: null, butin: null, premiere: false, fiche: f };
     if (gagne) {
       f.victoires++; f.serie++; f.meilleure = Math.max(f.meilleure, f.serie);
       c.duelsGagnes = (c.duelsGagnes || 0) + 1;
@@ -1582,6 +1594,7 @@
     lireNombre: lireNombre,
     corriger: corriger,
     terminerQuiz: terminerQuiz,
+    epreuvePerdue: epreuvePerdue,
     terminerRappel: terminerRappel,
     rappelsDus: rappelsDus,
     prochainsRappels: prochainsRappels,

@@ -869,3 +869,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.deepEqual(vieux.oublis, []);
   console.log("OK : v12 mur de la honte, retenter, fiches de révision");
 }
+
+{
+  // v15 : une épreuve perdue d'avance est coupée, et le bilan compte toutes ses questions.
+  assert.equal(M.epreuvePerdue(C, "quiz", 2, 3, 5), false, "2/3 puis 2 justes : 4/5, ça passe");
+  assert.equal(M.epreuvePerdue(C, "quiz", 1, 3, 5), true, "1/3 : 3/5 au mieux, perdu");
+  assert.equal(M.epreuvePerdue(C, "duel", 2, 3, 5), true);
+  assert.equal(M.epreuvePerdue(C, "duel", 3, 3, 5), false);
+  assert.equal(M.epreuvePerdue(C, "atome", 0, 2, 3, 2), true);
+  const T = Date.UTC(2026, 0, 5, 9), P = M.nouvellePartie(T), id = C.competences.find(k => k.rang === 1).id;
+  const qs = C.questionsPar[id].slice(0, 3);
+  const r = M.terminerQuiz(C, P, id, qs.map((q, i) => ({ id: q.id, correct: i === 0 })), T, { total: 5 });
+  assert.equal(r.total, 5); assert.equal(r.issue, "echec");
+  console.log("OK : v15 épreuves coupées quand elles sont perdues");
+}
