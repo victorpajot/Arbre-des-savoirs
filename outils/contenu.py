@@ -801,7 +801,7 @@ def jeu_plateau():
             "depart": 1, "arrivee": len(cases),
             # v6 : une épreuve réussie fait avancer d'autant de cases que le rang de sa compétence, rappels compris.
             "valeurs": {"rappel": 1, "quiz_rang": {str(r): r for r in range(1, 9)}},
-            "bonus": {"parfait": 0, "chrono": 0, "du_jour": 0, "jouer": 2},
+            "bonus": {"parfait": 0, "chrono": 0, "du_jour": 0, "jouer": 0, "jouer_max": 4},
             # v6 : butin. Chance qu'une épreuve réussie fasse tomber un objet, un livre, un accessoire ou un masque.
             "butin": {"rappel": 0.4, "quiz_base": 0.4, "quiz_par_rang": 0.05, "lots": LOTS},
             "echec": {"quiz": 0, "rappel": -2},

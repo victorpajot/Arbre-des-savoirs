@@ -1477,9 +1477,12 @@ svg.grille .interro { transition: opacity .3s; }
     if (sp.type === "prison" && dur) t = t.replace("un quiz parfait", R.tour_suivant.quiz_parfaits_prison + " quiz parfaits");
     return t;
   }
+  // v19 : le bonus du bouton Jouer est tiré au hasard ; on l'annonce comme une fourchette.
+  function bonusJouerMax() { var B = C.plateau ? C.plateau.regles.bonus : {}; return B.jouer_max != null ? B.jouer_max : B.jouer || 0; }
+  function texteBonusJouer() { var B = C.plateau.regles.bonus, a = B.jouer || 0, b = bonusJouerMax(); return a === b ? "+" + a : "+" + a + " à " + b; }
   function portee() {
     var ep = epreuvesDuTour();
-    return ep.length ? Math.min(8, ep[0].v.total + (C.plateau.regles.bonus.jouer || 0)) : 0;
+    return ep.length ? Math.min(8, ep[0].v.total + bonusJouerMax()) : 0;
   }
   // Bilan : le plateau est cadré sur le pion (carré de CADRE unités) et la caméra le suit quand il avance.
   var ETENDUE = [0, 0, MONDE[0], MONDE[1]], CADRE = 180;
@@ -1699,9 +1702,9 @@ svg.grille .interro { transition: opacity .3s; }
   // v5 : bouton « Jouer ». L'IA choisit l'épreuve, l'annonce, et la réussir rapporte des cases en plus.
   var ICONE_JOUER = '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>';
   function boutonJouer() {
-    var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? C.plateau.regles.bonus.jouer || 0 : 0;
+    var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? bonusJouerMax() : 0;
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + '</span><span><b>Jouer</b><span class="s">' +
-      (c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + (c.raison === "case" ? "Case " + esc(tx(stat(c.stat).nom)) + " : l'IA y choisit l'épreuve." : c.raison === "ouvre_arbre" ? "Case " + esc(tx(stat(c.stat).nom)) + " : un arbre fermé à ouvrir." : "L'IA choisit l'épreuve.") : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus ? '<span class="pill">+' + bonus + "</span>" : "") + "</button>");
+      (c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + (c.raison === "case" ? "Case " + esc(tx(stat(c.stat).nom)) + " : l'IA y choisit l'épreuve." : c.raison === "ouvre_arbre" ? "Case " + esc(tx(stat(c.stat).nom)) + " : un arbre fermé à ouvrir." : "L'IA choisit l'épreuve.") : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
     if (!c) b.disabled = true;
     b.onclick = ouvrirJouer;
     return b;
@@ -1716,7 +1719,7 @@ svg.grille .interro { transition: opacity .3s; }
   function ouvrirJouer() {
     if (bloqueParUltimatum()) return;
     var t = maintenant(), c = M.choixIA(C, P, t); if (!c) { toast("Rien à jouer pour l'instant."); return; }
-    var k = c.comp, s = stat(k.stat), v = M.valeurEpreuve(C, P, { type: c.type, comp: k.id }, t), bonus = C.plateau.regles.bonus.jouer || 0;
+    var k = c.comp, s = stat(k.stat), v = M.valeurEpreuve(C, P, { type: c.type, comp: k.id }, t), bonus = bonusJouerMax(), bMin = C.plateau.regles.bonus.jouer || 0;
     // v15 : la case du pion annonce l'arbre de l'épreuve ; « hors case » quand cet arbre n'a rien à jouer.
     var sc = c.stat ? stat(c.stat) : s, kc = c.kase;
     var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(sc.nom), "case": kc ? tx(kc.titre) : "" }, c.raison === "hors_case" ? null : c.stat || (c.type === "quiz" ? k.stat : null)); sauver();
@@ -1726,8 +1729,8 @@ svg.grille .interro { transition: opacity .3s; }
       '<div class="eyebrow">Ton pion est case ' + ici.n + " · " + esc(formatAnnee(ici.annee)) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + esc(tx(ici.histoire)) + "</p>" +
       (kc && kc.stat ? '<p class="arbre-case"><b>' + (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : c.raison === "ouvre_arbre" ? "Arbre " + esc(tx(sc.nom)) + " encore fermé : réussis ce quiz pour l'ouvrir." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</b></p>" : "") + galerieTheme(ici.stat) + "</div>";
     feuilleSimple('<div class="choix-ia">' + bandeau + '<div class="eyebrow">L\'IA a choisi</div><div id="ia-jouer"></div>' +
-      '<div class="epreuve" style="--c:' + couleur(k.stat) + '"><span class="de' + (v.duJour ? " bonus" : "") + '"><b>+' + (v.total + bonus) + '</b></span><span class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" +
-      (c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · dont +" + bonus + " pour le bouton Jouer</span></span></div>" +
+      '<div class="epreuve" style="--c:' + couleur(k.stat) + '"><span class="de' + (v.duJour ? " bonus" : "") + '"><b>+' + (bMin === bonus ? v.total + bonus : (v.total + bMin) + "–" + (v.total + bonus)) + '</b></span><span class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" +
+      (c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · bonus du bouton Jouer : " + texteBonusJouer() + ", tiré au hasard</span></span></div>" +
       '<button type="button" class="btn large" data-a="go">C\'est parti</button>' +
       '<button type="button" class="btn sec large" data-a="un">Avancer d\'une seule case</button>' +
       '<p class="meta">Une seule case : tu choisis l\'arbre, pas de bonus, et ton pion s\'arrête sur la case suivante pour la dévoiler. Tu peux aussi choisir toi-même une compétence dans l\'arbre, sans ce bonus.</p></div>', "L'IA a choisi", {
@@ -1963,7 +1966,7 @@ svg.grille .interro { transition: opacity .3s; }
   function ouvrirRegles() {
     var R = C.plateau.regles, rangs = R.valeurs.quiz_rang, st = stat(M.bonusDuJour(C, P, maintenant()));
     var html = '<div class="eyebrow">Plateau de l\'histoire</div><h2>Règles et barème</h2><p>Pas de dé : chaque épreuve réussie fait avancer ton pion d\'autant de cases que le rang de sa compétence. Du feu, case ' + R.depart + ", jusqu'à l'IA, case " + R.arrivee + ".</p>" +
-      '<div class="bareme"><span>Épreuve réussie depuis l\'arbre</span><span class="num">+ rang</span><span>Épreuve réussie par Jouer</span><span class="num">+ rang + ' + (R.bonus.jouer || 0) + "</span>" +
+      '<div class="bareme"><span>Épreuve réussie depuis l\'arbre</span><span class="num">+ rang</span><span>Épreuve réussie par Jouer</span><span class="num">+ rang ' + texteBonusJouer() + "</span>" +
       "<span>Quiz raté</span><span class=\"num\">" + R.echec.quiz + "</span><span>Rappel raté</span><span class=\"num\">" + R.echec.rappel + "</span></div>" +
       '<p class="meta">Butin : une épreuve réussie a une chance de faire tomber un objet, un livre, un accessoire ou un masque, plus grande pour les rangs élevés. Le butin est réparti sur ' + ((R.butin && R.butin.lots) || 7) + " tours du plateau.</p>" +
       "<h3 style=\"font-size:17px\">Cases spéciales</h3>" +
@@ -3633,7 +3636,7 @@ svg.grille .interro { transition: opacity .3s; }
     if (dep.valeur > 0 && (dep.cause === "cadeau" || dep.cause === "duel" || dep.cause === "atome")) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>" + (dep.cause === "cadeau" ? "Cadeau de l'IA." : dep.cause === "atome" ? "L'atome réglé, le pion finit son trajet." : "Duel gagné : la fin du trajet.") + "</span></div>"));
     else if (dep.valeur > 0 && dep.uneCase) tj.appendChild(el('<div class="pas"><b>+1</b><span>Épreuve réussie : un seul pas, comme demandé.</span></div>'));
     else if (dep.valeur > 0) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>Épreuve réussie" + (v && v.duJour ? ", bonus du jour compris" : "") +
-      (dep.bonusJouer ? ", dont +" + dep.bonusJouer + " pour avoir laissé l'IA choisir" : dep.valeur > (v ? v.total : 0) ? ", avec bonus" : "") + ".</span></div>"));
+      (dep.bonusJouer ? ", dont +" + dep.bonusJouer + " tiré pour avoir laissé l'IA choisir" : dep.jouer ? ", et 0 au tirage du bouton Jouer" : dep.valeur > (v ? v.total : 0) ? ", avec bonus" : "") + ".</span></div>"));
     dep.etapes.forEach(function (e) { var f = NOM_ETAPE[e.type]; if (f) tj.appendChild(el('<div class="pas"><b>·</b><span>' + esc(f(e)) + "</span></div>")); });
     var k = C.plateau.cases[dep.a - 1], at = atomeSur(dep.a), enB = !at && ennemiSur(dep.a);
     if (enB) {

@@ -433,7 +433,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(M.choixIA(C5, P, t0).comp.id, c.comp.id, "même choix tant qu'on n'a pas joué");
     const r = M.terminerQuiz(C5, P, c.comp.id, juste(P, c.comp.id, 5, 5), t0, { jouer: true });
     const sans = M.valeurEpreuve(C5, P, { type: "quiz", comp: c.comp.id }, t0).total + C5.plateau.regles.bonus.parfait;
-    assert.equal(r.plateau.bonusJouer, 2); assert.equal(r.plateau.valeur, sans + 2, "+2 cases par le bouton Jouer");
+    // v19 : bonus du bouton Jouer tiré entre 0 et 4.
+    assert.ok(r.plateau.bonusJouer >= 0 && r.plateau.bonusJouer <= 4); assert.equal(r.plateau.valeur, sans + r.plateau.bonusJouer, "bonus Jouer ajouté à l'avance");
     const t1 = t0 + 2 * jour;
     const c2 = M.choixIA(C5, P, t1);
     assert.equal(c2.type, "rappel"); assert.equal(c2.comp.id, c.comp.id);
@@ -547,7 +548,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(M.valeurEpreuve(C6, P, { type: "rappel", comp: k3.id }, t0).total, 3);
     const k1 = C6.competences.filter(k => k.rang === 1)[0];
     const r = M.terminerQuiz(C6, P, k1.id, juste(P, k1.id, 5, 5), t0, { jouer: true, alea: () => 0.99 });
-    assert.equal(r.plateau.valeur, 3, "rang 1 + 2 pour Jouer, sans bonus parfait");
+    assert.equal(r.plateau.valeur, 1 + r.plateau.bonusJouer, "rang 1 + tirage Jouer, sans bonus parfait");
   }
 
   // Simulation : au plus un butin par épreuve, aucun lot avant son tour, collection incomplète au tour 7

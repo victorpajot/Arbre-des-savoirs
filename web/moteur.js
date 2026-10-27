@@ -685,7 +685,9 @@
     var v = valeurEpreuve(contenu, partie, epreuve, t), pl = partie.plateau, c = partie.compteurs;
     // v15 : « avancer d'une seule case » : un pas, sans bonus, pour s'arrêter sur la case suivante et la dévoiler.
     var unPas = issue.reussi && issue.uneCase;
-    var bonusJouer = issue.reussi && issue.jouer && !unPas ? (contenu.plateau.regles.bonus.jouer || 0) : 0;
+    // v19 : le bonus du bouton Jouer est tiré au hasard, entre bonus.jouer et bonus.jouer_max (0 à 4).
+    var B = contenu.plateau.regles.bonus, bMin = B.jouer || 0, bMax = B.jouer_max != null ? B.jouer_max : bMin;
+    var bonusJouer = issue.reussi && issue.jouer && !unPas ? bMin + tirage("jouer|" + t + "|" + partie.journal.length, bMax - bMin + 1) : 0;
     var valeur = unPas ? 1 : issue.reussi ? v.total + (issue.parfait ? v.parfait : 0) + (issue.chrono ? v.chrono : 0) + bonusJouer : v.echec;
     var etapes = [];
     // v11 : l'objet tenu par l'avatar donne parfois un coup de pouce après une épreuve réussie.
@@ -707,7 +709,7 @@
     dep.etapes = etapes.concat(dep.etapes);
     dep.contextes = contextesPlateau(dep);
     dep.valeurs = v;
-    dep.bonusJouer = bonusJouer;
+    dep.bonusJouer = bonusJouer; dep.jouer = !!(issue.reussi && issue.jouer && !unPas);
     dep.uneCase = !!unPas;
     var retouche = remanierRoute(contenu, partie, issue, t, issue.alea);
     if (retouche) { dep.etapes.push(retouche); dep.contextes = contextesPlateau(dep); }
