@@ -1667,7 +1667,15 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     b.onclick = ouvrirJouer;
     return b;
   }
+  // v19 : tant qu'un ultimatum attend sa réponse, l'IA ferme le jeu : payer ou refuser d'abord.
+  function bloqueParUltimatum() {
+    if (!P.ultimatum) return false;
+    feuilleSimple('<h2>Pas de jeu sans réponse</h2><div id="ult-bloc"></div>', "Ultimatum");
+    var z = feuille && feuille.querySelector("#ult-bloc"); if (z) z.appendChild(blocUltimatum());
+    return true;
+  }
   function ouvrirJouer() {
+    if (bloqueParUltimatum()) return;
     var t = maintenant(), c = M.choixIA(C, P, t); if (!c) { toast("Rien à jouer pour l'instant."); return; }
     var k = c.comp, s = stat(k.stat), v = M.valeurEpreuve(C, P, { type: c.type, comp: k.id }, t), bonus = C.plateau.regles.bonus.jouer || 0;
     // v15 : la case du pion annonce l'arbre de l'épreuve ; « hors case » quand cet arbre n'a rien à jouer.
@@ -2630,6 +2638,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   var duel = null;
   function lancerDuel() {
     if (!P.duel || !P.duel.pret) return;
+    if (bloqueParUltimatum()) return;
     var e = C.ennemiParId[P.duel.ennemi];
     duel = { ennemi: e, phase: "vs", qs: M.tirerDuel(C, P, maintenant()), i: 0, res: [], repondu: false, fin: null, etape: 0,
       replique: M.replique(C, P, ["ennemi"], null, null, e.theme) };
@@ -2791,6 +2800,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   var combat = null;
   function lancerCombat() {
     var s = M.atomeSauvage(C, P); if (!s) return;
+    if (bloqueParUltimatum()) return;
     var cb = M.tirerCombat(C, P);
     combat = { s: s, e: s.element, qs: cb.questions, phase: "apparition", i: 0, res: [], repondu: false, fin: null, etape: 0, replique: M.replique(C, P, ["atome_apparait"], null, null, "alchimie") };
     sauver(); rendreCombat();
@@ -3336,6 +3346,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   // --- Quiz -----------------------------------------------------------------
   // `opts.jouer` : lancé par le bouton « Jouer », l'IA a choisi l'épreuve (bonus de cases si réussie).
   function lancerQuiz(id, mode, opts) {
+    if (bloqueParUltimatum()) return;
     var n = mode === "rappel" ? C.regles.rappels.questions_par_rappel : nbQuiz();
     var qs = M.tirerQuestions(C, P, id, n).map(function (q) {
       var ordre = q.type === "qcm" ? M.melanger(q.choix.map(function (_, i) { return i; }), Math.random) : null;
