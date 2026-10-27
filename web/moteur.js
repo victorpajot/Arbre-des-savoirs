@@ -138,6 +138,9 @@
       credits: { solde: 0, gagnes: 0, parSucces: {}, record: 0, jour: null, pots: 0 },
       ultimatum: null,
       objetIA: null,
+      inventaire: {},
+      tresorIA: {},
+      emplettes: [],
       atomes: {},
       sauvages: [],
       faveur: null,
@@ -810,6 +813,8 @@
     return r || null;
   }
 
+  // v20 : les cases qu'un désarmement acheté rend inoffensives.
+  var PIEGES = { recul: 1, retour_epoque: 1, teleport: 1, oubli: 1, revision: 1, quarantaine: 1, prison: 1 };
   // Déplace le pion de `valeur` cases (négatif : recul simple, sans effet de case).
   // Mode test : on peut l'appeler directement pour parcourir le plateau.
   function deplacer(contenu, partie, valeur, t, cause) {
@@ -894,7 +899,10 @@
           if (!sp) break;
           if (sp.type === "eureka") { c.eurekas++; etapes.push({ type: "eureka", case: pl.position, n: pas }); continue; }
           if (sp.type === "avance") { pas = sp.n; etapes.push({ type: "avance", case: pl.position, n: sp.n }); continue; }
-          if (rj.pieges === "neutres" && (sp.type === "recul" || sp.type === "teleport" || sp.type === "retour_epoque" || sp.type === "oubli")) {
+          if (PIEGES[sp.type] && enPoche(partie, "desarme") && !(sp.type === "revision" && revisionEnCours(partie))) {
+            utiliser(partie, "desarme", t);
+            etapes.push({ type: "piege_desarme", case: pl.position, regle: sp.type });
+          } else if (rj.pieges === "neutres" && (sp.type === "recul" || sp.type === "teleport" || sp.type === "retour_epoque" || sp.type === "oubli")) {
             etapes.push({ type: "piege_evite", case: pl.position, regle: sp.type });
           } else if (sp.type === "recul") {
             var avant = pl.position, avantI = pl.idx;
@@ -1183,6 +1191,7 @@
       return contenu.ennemis.filter(function (e) { return pris.indexOf(e.id) < 0; }).length && casesLibres(contenu, partie).length ? [1] : [];
     }
     if (article === "arbre") return contenu.stats.filter(function (st) { return arbreOuvert(contenu, partie, st.id); });
+    if (POCHE[article]) { var B = boutique(contenu); return enPoche(partie, article) < ((B && B.stock_max) || 5) ? [1] : []; }
     return [];
   }
   // Cases devant le pion où poser un ennemi : ni spéciales, ni déjà gardées, ni la dernière.
@@ -1223,6 +1232,9 @@
       if (!st) return { ok: false, raison: "arbre" };
       pl.arbreAchete = { stat: st.id, restant: B.arbre_epreuves || 5 };
       out.stat = st.id;
+    } else if (POCHE[article]) {
+      var inv = partie.inventaire || (partie.inventaire = {});
+      inv[article] = (inv[article] || 0) + 1; out.stock = inv[article];
     }
     cr.solde -= prix;
     cr.achats = (cr.achats || 0) + 1;
@@ -1231,6 +1243,110 @@
     partie.maj = t;
     return out;
   }
+  // v20 : les articles de poche. Joker 50/50 et droit à l'erreur servent en quiz, la relance sur un atome sauvage ;
+  // le désarmement se déclenche tout seul sur le prochain piège où le pion s'arrête.
+  var POCHE = { joker: 1, erreur: 1, relance: 1, desarme: 1 };
+  function enPoche(partie, article) { return (partie.inventaire && partie.inventaire[article]) || 0; }
+  function utiliser(partie, article, t) {
+    if (!enPoche(partie, article)) return false;
+    partie.inventaire[article]--;
+    var u = partie.compteurs.objetsPoche || (partie.compteurs.objetsPoche = {});
+    u[article] = (u[article] || 0) + 1;
+    partie.maj = t;
+    return true;
+  }
+  // Le joker : les mauvais choix d'un QCM à effacer, tous sauf un, tirés au hasard. null si la question ne s'y prête pas.
+  function joker(question, alea) {
+    if (question.type !== "qcm" || question.choix.length < 3) return null;
+    var faux = question.choix.map(function (_, i) { return i; }).filter(function (i) { return i !== question.reponse; });
+    faux = melanger(faux, alea || Math.random);
+    return faux.slice(1);
+  }
+  // La relance : l'atome qui attend est remplacé par un autre, tiré de la même façon.
+  function relancerAtome(contenu, partie, t) {
+    var s = partie.sauvages && partie.sauvages[0]; if (!s || !enPoche(partie, "relance")) return null;
+    var e = tirerAtome(contenu, partie, s.case, t + 1);
+    if (!e || e.z === s.z) return null;
+    utiliser(partie, "relance", t);
+    var avant = s.z; s.z = e.z;
+    ficheAtome(partie, e.z).rencontres++;
+    return { avant: elementZ(contenu, avant), apres: e };
+  }
+
+  // --- Emplettes de l'IA (v20) -------------------------------------------------
+  // L'argent des ultimatums payés va dans sa bourse. Une fois par jour, une chance sur deux, elle file à la boutique.
+  // Elle ne tire pas au hasard : l'objet qui brille le plus, le masque qui la flatte le plus, l'accessoire le plus ridicule
+  // pour votre tête, ou un ennemi pour le spectacle. Trop pauvre, elle lèche la vitrine.
+  var MAX_EMPLETTES = 10;
+  function rayonIA(contenu, partie, article) {
+    var E = contenu.ia.credits.emplettes, cr = partie.credits;
+    if (article === "masque") {
+      var flatte = E.tons_flatteurs || [];
+      return enRayon(contenu, partie, "masque").map(function (m) {
+        return { chose: m, gout: (m.tons || []).filter(function (x) { return flatte.indexOf(x) >= 0; }).length * 10 + (m.tons || []).length };
+      });
+    }
+    if (article === "objet") {
+      var tr = partie.tresorIA || {};
+      return (contenu.objets || []).filter(function (o) { return o.cadeau && tr[o.id] == null; }).map(function (o) { return { chose: o, gout: (o.cadeau.eclat || 1) * 10 }; });
+    }
+    if (article === "farce") {
+      var acc = {}, av = partie.avatar || {}; (contenu.avatar && contenu.avatar.accessoires || []).forEach(function (a) { acc[a.id] = a; });
+      var f = farceActive(partie, cr.jourEmplettes || 0);
+      return (E.farces || []).filter(function (id) { return acc[id] && av[acc[id].emplacement] !== id && !(f && f.id === id); })
+        .map(function (id, i, l) { return { chose: acc[id], gout: l.length - i }; });
+    }
+    if (article === "convoquer") return enRayon(contenu, partie, "convoquer").length ? [{ chose: null, gout: 1 }] : [];
+    return [];
+  }
+  var ARTICLE_EMPLETTE = { masque: "masque", objet: "objet", farce: "accessoire", convoquer: "convoquer" };
+  function emplettesIA(contenu, partie, t, alea) {
+    var E = contenu.ia && contenu.ia.credits && contenu.ia.credits.emplettes, B = boutique(contenu), cr = partie.credits;
+    if (!E || !B || !cr.ia || partie.ultimatum) return null;
+    if (cr.jourEmplettes && cleJour(cr.jourEmplettes) === cleJour(t)) return null;
+    cr.jourEmplettes = t;
+    if ((alea || Math.random)() >= E.chance) return null;
+    var graine = "emplettes|" + cleJour(t) + "|" + (partie.journal ? partie.journal.length : 0);
+    var choix = Object.keys(E.poids).filter(function (a) { return B.prix[ARTICLE_EMPLETTE[a]] <= cr.ia && rayonIA(contenu, partie, a).length; });
+    var e = { t: t, vu: false };
+    if (!choix.length) {
+      // Rien à sa portée : la vitrine, une fois seulement tant que la bourse n'a pas grossi.
+      if (cr.vitrine === cr.ia) return null;
+      cr.vitrine = cr.ia; e.type = "vitrine";
+    } else {
+      var total = choix.reduce(function (n, a) { return n + E.poids[a]; }, 0), x = tirage(graine, 1000) / 1000 * total, article = choix[choix.length - 1];
+      for (var i = 0; i < choix.length; i++) { x -= E.poids[choix[i]]; if (x < 0) { article = choix[i]; break; } }
+      // Ce qui l'amuse le plus : le meilleur goût, et parmi les ex æquo, celui du jour.
+      var rayon = rayonIA(contenu, partie, article), haut = Math.max.apply(null, rayon.map(function (r) { return r.gout; }));
+      var top = rayon.filter(function (r) { return r.gout === haut; }), pris = top[tirage(graine + "|" + article, top.length)].chose;
+      e.type = article; e.prix = B.prix[ARTICLE_EMPLETTE[article]];
+      cr.ia -= e.prix;
+      cr.depensesIA = (cr.depensesIA || 0) + e.prix;
+      if (article === "masque") {
+        partie.masques[pris.id] = t; partie.masque = pris.id; e.id = pris.id;
+        if (partie.gagnables) delete partie.gagnables[cleButin("masques", pris.id)];
+        var fav = faveurIA(contenu, partie, t);
+        if (fav) partie.faveur = { valeur: Math.min(100, fav.valeur + Math.round((B.faveur_masque || 0) / 2)), maj: t };
+      } else if (article === "objet") {
+        (partie.tresorIA || (partie.tresorIA = {}))[pris.id] = t; partie.objetIA = pris.id; e.id = pris.id;
+      } else if (article === "farce") {
+        partie.farce = { type: "accessoire", id: pris.id, emplacement: pris.emplacement, depuis: t, jusqua: t + DUREE_FARCE, ia: true };
+        e.id = pris.id;
+      } else {
+        var en = ennemisPlateau(contenu, partie), occ = Object.keys(en).map(function (k) { return en[k]; });
+        var libres = contenu.ennemis.filter(function (x) { return occ.indexOf(x.id) < 0; }), cases = casesLibres(contenu, partie);
+        var ennemi = libres[tirage(graine + "|e", libres.length)], c = cases[Math.min(cases.length - 1, tirage(graine + "|c", Math.min(4, cases.length)))];
+        en[c] = ennemi.id; e.id = ennemi.id; e.case = c;
+      }
+    }
+    var mots = (E.mots && E.mots[e.type]) || [];
+    if (mots.length) e.mot = mots[tirage(graine + "|mot", mots.length)];
+    partie.emplettes = [e].concat(partie.emplettes || []).slice(0, MAX_EMPLETTES);
+    partie.maj = t;
+    return e;
+  }
+  function empletteAVoir(partie) { var e = partie.emplettes && partie.emplettes[0]; return e && !e.vu ? e : null; }
+
   // L'arbre acheté : il remplace celui de la case pour le choix de l'IA, le temps de quelques épreuves.
   function arbreAchete(partie) { var a = partie.plateau && partie.plateau.arbreAchete; return a && a.restant > 0 ? a : null; }
   function consommerArbre(partie, stat) {
@@ -1419,6 +1535,7 @@
     var out = { ok: true, paye: paye, demande: u.demande, niveauAvant: avant };
     if (paye) {
       cr.solde -= u.demande; cr.exigence = u.demande;
+      cr.ia = (cr.ia || 0) + u.demande;
       if (fav) partie.faveur = { valeur: Math.min(100, fav.valeur + U.faveur_paye), maj: t };
     } else {
       cr.solde += u.demande; cr.gagnes += u.demande;
@@ -2128,7 +2245,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,

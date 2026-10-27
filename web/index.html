@@ -189,6 +189,11 @@ p { margin: 0; }
 .choix button.bon { border-color: var(--good); background: color-mix(in srgb, var(--good) 14%, var(--surface)); }
 .choix button.faux { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--surface)); }
 .choix button:disabled { cursor: default; color: var(--ink); }
+.choix button.efface { opacity: .28; text-decoration: line-through; }
+.poche-quiz { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 10px; }
+.poche-quiz .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; font-size: 15px; }
+.poche-quiz .meta { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: 15px; }
+.reessai .rangee { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .saisie { display: flex; gap: 10px; align-items: center; }
 .saisie input { flex: 1; min-width: 0; border: 2px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px 14px; font-size: 20px; font-family: var(--f-mono); }
 .saisie .unite { color: var(--muted); font-family: var(--f-mono); }
@@ -420,6 +425,22 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .case-jouer { --c: var(--accent); margin: 0 0 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
 .case-jouer .vitrine.grande { display: grid; place-items: center; padding: 16px; margin-bottom: 10px; border-radius: 16px; background: color-mix(in srgb, var(--c) 16%, transparent); }
 .case-jouer h2 { margin: 2px 0 6px; }
+.emplette { border: 2px solid #E0B12E; background: color-mix(in srgb, #FFD447 12%, var(--surface)); }
+.emplette .em-tete { display: flex; gap: 14px; align-items: center; margin: 6px 0 10px; }
+.emplette .em-tete .vitrine { flex: none; display: grid; place-items: center; width: 88px; height: 88px; border-radius: 16px; background: color-mix(in srgb, #FFD447 30%, var(--surface)); animation: scintille-em 2.4s ease-in-out infinite; }
+.emplette h2 { margin: 0 0 2px; font-size: 19px; }
+.emplette .em-tete b { font-size: 17px; }
+.emplette .meta { margin: 4px 0 0; }
+.emplette .btn { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) { .emplette .em-tete .vitrine { animation: none; } }
+@keyframes scintille-em { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 212, 71, 0); } 50% { box-shadow: 0 0 18px 4px rgba(255, 212, 71, .75); } }
+.android .emplette .em-tete .vitrine { animation: none; box-shadow: 0 0 14px 3px rgba(255, 212, 71, .6); }
+.bourse-ia .solde { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0; font-size: 17px; }
+.bourse-ia .solde b { font-size: 30px; }
+.bourse-ia .solde span { font-size: 15px; color: var(--muted); }
+.bourse-ia .objet.porte .vitrine { box-shadow: 0 0 0 3px #FFD447; }
+.bourse-ia .journal-ia { margin-top: 10px; }
+.poche-achat { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 12px 0; font-size: 17px; }
 .boutique .solde { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 17px; }
 .boutique .solde b { font-size: 30px; }
 .boutique h3 { margin: 16px 0 6px; }
@@ -2025,6 +2046,7 @@ svg.grille .interro { transition: opacity .3s; }
       v.appendChild(mot);
     }
     if (P.ultimatum) v.appendChild(blocUltimatum());
+    var em = M.empletteAVoir(P); if (em) v.appendChild(blocEmplette(em));
     var sn = M.surnom(C, P, t);
     var perso = el('<div class="bloc perso-v5" role="button" tabindex="0" aria-label="Ouvrir la fiche du personnage"><div class="perso"><div class="avatar-cadre rang-' + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + '</div><div><div class="niv-ligne"><div class="niv"><small>Niveau</small><span class="num">' + ng + '</span></div><div class="niv cred"><small>Crédits</small><span class="num">' + P.credits.solde + '</span></div></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div>" + (sn ? '<p class="surnom">' + esc(sn.texte) + '<small>d\'après l\'IA</small></p>' : "") + '<p class="meta">' + nbMait + " compétence" + (nbMait > 1 ? "s" : "") + " maîtrisée" + (nbMait > 1 ? "s" : "") + " sur " + C.competences.length + "</p></div></div></div>");
     perso.onclick = function () { vue = "perso"; ongletPerso = "avatar"; rendre(); window.scrollTo(0, 0); };
@@ -2214,7 +2236,7 @@ svg.grille .interro { transition: opacity .3s; }
     v.appendChild(seg);
     if (ongletPerso === "stats") v.appendChild(bs);
     if (ongletPerso === "avatar") v.appendChild(blocAvatar());
-    if (ongletPerso === "ia") { v.appendChild(blocIA()); v.appendChild(blocFaveur()); v.appendChild(blocCadeauxIA()); v.appendChild(blocCorruption()); v.appendChild(blocMasques(Object.keys(P.succes).length)); }
+    if (ongletPerso === "ia") { v.appendChild(blocIA()); v.appendChild(blocFaveur()); var bi = blocBourseIA(); if (bi) v.appendChild(bi); v.appendChild(blocCadeauxIA()); v.appendChild(blocCorruption()); v.appendChild(blocMasques(Object.keys(P.succes).length)); }
     if (ongletPerso === "ennemis") v.appendChild(blocBestiaire());
     if (ongletPerso === "boutique") v.appendChild(blocBoutique());
     if (ongletPerso !== "reglages") return v;
@@ -2901,7 +2923,22 @@ svg.grille .interro { transition: opacity .3s; }
         if (f.plateau) f.repliquePlateau = M.replique(C, P, f.plateau.contextes);
         combat.fin = f; combat.phase = "fin"; combat.etape = 0; sauver(); rendreCombat();
       };
-      inn.appendChild(go); inn.appendChild(plus); go.focus();
+      inn.appendChild(go); inn.appendChild(plus);
+      // v20 : la relance achetée à la boutique. L'IA range l'atome et en sort un autre.
+      var nr = M.enPoche(P, "relance");
+      if (nr) {
+        var rl = el('<button type="button" class="btn sec large">' + paquet("#1E8C8C", true, "⇄").replace('width="52" height="52"', 'width="26" height="26"') + " Relancer l'atome <small>×" + nr + "</small></button>");
+        rl.style.cssText = "display:inline-flex;align-items:center;justify-content:center;gap:8px";
+        rl.onclick = function () {
+          var r = M.relancerAtome(C, P, maintenant()); if (!r) { toast("Pas d'autre atome en réserve."); return; }
+          var s2 = M.atomeSauvage(C, P), cb = M.tirerCombat(C, P);
+          combat.s = s2; combat.e = s2.element; combat.qs = cb.questions; combat.relance = r.avant;
+          sauver(); rendreCombat();
+        };
+        inn.appendChild(rl);
+      }
+      if (combat.relance) sc.insertBefore(el('<p class="etat-pion" style="margin:0">L\'IA a rangé ' + esc(tx(combat.relance.nom)) + " et sorti un autre atome de sa manche.</p>"), sc.querySelector(".arbitre"));
+      go.focus();
       return;
     }
     if (combat.phase === "fin") { inn.appendChild(bilanCombat()); var b0 = z.querySelector(".btn"); if (b0) b0.focus({ preventScroll: true }); return; }
@@ -3296,33 +3333,43 @@ svg.grille .interro { transition: opacity .3s; }
     ["accessoire", "Accessoire mystère", "De quoi habiller ton avatar.", "#7A3FD1"],
     ["masque", "Masque pour l'IA", "Un masque qu'elle n'a pas. Ça la rend heureuse.", "#C2185B"],
   ];
+  var POCHE = [
+    ["joker", "Joker 50/50", "En quiz, efface deux mauvaises réponses d'une question à choix.", "#E08A00", "½"],
+    ["erreur", "Droit à l'erreur", "En quiz, une mauvaise réponse ne compte pas : tu retentes la question.", "#3A7BD5", "↺"],
+    ["relance", "Relancer un atome", "L'atome sauvage ne te plaît pas ? L'IA en sort un autre.", "#1E8C8C", "⇄"],
+    ["desarme", "Désarmer un piège", "Le prochain piège où tu t'arrêtes ne fonctionne pas.", "#6B4E9B", "✂"],
+  ];
   var PARCOURS = [
     ["chasser", "Chasser un ennemi", "Le prochain ennemi sur ta route s'en va. Même celui qui te bloque.", "#D94141"],
     ["convoquer", "Convoquer un ennemi", "Un ennemi de plus devant ton pion. Plus de duels, plus de butin.", "#5D6470"],
     ["arbre", "Faveur d'un arbre", "Pour tes prochaines épreuves par Jouer, l'IA pioche dans l'arbre de ton choix.", "#2E9D5B"],
   ];
-  function paquet(c, rond) {
+  function paquet(c, rond, glyphe) {
     return '<svg viewBox="0 0 48 48" width="52" height="52" aria-hidden="true">' + (rond ? '<circle cx="24" cy="24" r="21" fill="' + c + '" stroke="#fff" stroke-width="3"/>' :
       '<rect x="5" y="9" width="38" height="33" rx="5" fill="' + c + '"/><rect x="5" y="9" width="38" height="9" rx="3" fill="#000" opacity=".18"/><rect x="21" y="9" width="6" height="33" fill="#FFD447"/>') +
-      '<text x="24" y="' + (rond ? 31 : 36) + '" text-anchor="middle" font-size="20" font-weight="900" fill="#fff" font-family="var(--f-display)">?</text></svg>';
+      '<text x="24" y="' + (rond ? 31 : 36) + '" text-anchor="middle" font-size="20" font-weight="900" fill="#fff" font-family="var(--f-display)">' + (glyphe || "?") + '</text></svg>';
   }
   function blocBoutique() {
     var B = M.boutique(C), cr = P.credits, ach = M.arbreAchete(P);
     var b = el('<div class="bloc boutique"><h2>La boutique de l\'IA</h2><p class="solde">' + svgBourse(36) + '<b class="num">' + cr.solde + "</b> crédit" + (cr.solde > 1 ? "s" : "") + "</p>" +
-      '<p class="note">Tout s\'achète à l\'aveugle : tu paies, l\'IA tire au hasard parmi ce que tu n\'as pas encore.</p><div class="rayons"></div><h3>Ton parcours</h3>' +
+      '<p class="note">Tout s\'achète à l\'aveugle : tu paies, l\'IA tire au hasard parmi ce que tu n\'as pas encore.</p><div class="rayons"></div><h3>Dans ta poche</h3><p class="note">Jusqu\'à ' + (B.stock_max || 5) + ' de chaque. Ils servent quand tu le décides, sauf le désarmement, qui joue tout seul au prochain piège.</p><div class="rayons poche"></div><h3>Ton parcours</h3>' +
       (ach ? '<p class="note">Faveur en cours : arbre ' + esc(tx(stat(ach.stat).nom)) + ", encore " + ach.restant + " épreuve" + (ach.restant > 1 ? "s" : "") + ".</p>" : "") + '<div class="rayons parcours"></div></div>');
     function ligne(a, zone, rond) {
       var prix = B.prix[a[0]], stock = M.enRayon(C, P, a[0]).length, peut = cr.solde >= prix && stock > 0;
-      var r = el('<div class="article"><span class="vis">' + paquet(a[3], rond) + '</span><span class="txt"><b>' + esc(a[1]) + "</b><span>" + esc(a[2]) + "</span>" +
-        '<span class="stock">' + (stock ? (a[0] === "chasser" ? stock + " sur ta route" : FAMILLES_STOCK[a[0]] ? stock + " en rayon" : "disponible") : a[0] === "chasser" ? "aucun ennemi devant toi" : "rien en rayon") + '</span></span><button type="button" class="btn"' + (peut ? "" : " disabled") + ">" + svgBourse(18) + " " + prix + "</button></div>");
+      var r = el('<div class="article"><span class="vis">' + paquet(a[3], rond, a[4]) + '</span><span class="txt"><b>' + esc(a[1]) + "</b><span>" + esc(a[2]) + "</span>" +
+        '<span class="stock">' + (POCHE_IDS[a[0]] ? "en poche : " + M.enPoche(P, a[0]) + " / " + (B.stock_max || 5) : stock ? (a[0] === "chasser" ? stock + " sur ta route" : FAMILLES_STOCK[a[0]] ? stock + " en rayon" : "disponible") : a[0] === "chasser" ? "aucun ennemi devant toi" : "rien en rayon") + '</span></span><button type="button" class="btn"' + (peut ? "" : " disabled") + ">" + svgBourse(18) + " " + prix + "</button></div>");
       r.querySelector("button").onclick = function () { if (a[0] === "arbre") choisirArbreAchat(); else acheterUI(a[0]); };
       b.querySelector(zone).appendChild(r);
     }
     ARTICLES.forEach(function (a) { ligne(a, ".rayons"); });
+    POCHE.forEach(function (a) { if (a[0] === "relance" && !C.atomes) return; if (a[0] === "desarme" && !C.plateau) return; ligne(a, ".poche"); });
     if (C.plateau) PARCOURS.forEach(function (a) { ligne(a, ".parcours", true); });
     return b;
   }
   var FAMILLES_STOCK = { objet: 1, livre: 1, accessoire: 1, masque: 1, chasser: 1 };
+  var POCHE_IDS = { joker: 1, erreur: 1, relance: 1, desarme: 1 };
+  var NOM_POCHE = { joker: ["joker", "jokers"], erreur: ["droit à l'erreur", "droits à l'erreur"], relance: ["relance d'atome", "relances d'atome"], desarme: ["désarmement", "désarmements"] };
+  function nomPoche(a, n) { return n + " " + NOM_POCHE[a][n > 1 ? 1 : 0]; }
   function choisirArbreAchat() {
     var html = '<div class="eyebrow">Boutique · Faveur d\'un arbre</div><h2>Quel arbre ?</h2><p class="meta">Pour tes ' + M.boutique(C).arbre_epreuves + ' prochaines épreuves lancées par Jouer, l\'IA pioche dans cet arbre, quelle que soit la case.</p><div class="arbres-une">', actions = {};
     M.enRayon(C, P, "arbre").forEach(function (st) {
@@ -3340,9 +3387,11 @@ svg.grille .interro { transition: opacity .3s; }
     else if (r.famille) { var o = {}; o[{ objets: "nouveauxObjets", livres: "nouveauxLivres", accessoires: "nouveauxAccessoires" }[r.famille]] = [r.chose]; carte = recompensesBilan(o)[0]; }
     var txt = article === "chasser" ? tx(r.ennemi.nom) + " quitte la case " + r.case + ". La voie est libre." :
       article === "convoquer" ? tx(r.ennemi.nom) + " t'attend case " + r.case + "." :
-      article === "arbre" ? "Arbre " + tx(stat(r.stat).nom) + " : l'IA y pioche pour tes " + M.boutique(C).arbre_epreuves + " prochaines épreuves par Jouer." : "";
+      article === "arbre" ? "Arbre " + tx(stat(r.stat).nom) + " : l'IA y pioche pour tes " + M.boutique(C).arbre_epreuves + " prochaines épreuves par Jouer." :
+      POCHE_IDS[article] ? "Dans ta poche : " + nomPoche(article, r.stock) + "." : "";
     feuilleSimple('<div class="eyebrow">Boutique</div><h2>Acheté : −' + r.prix + ' crédits</h2><div id="achat-carte"></div>' + (txt ? '<p class="etat-pion">' + esc(txt) + "</p>" : "") + '<div id="achat-ia"></div>', "Achat");
     if (carte) { carte.classList.add("anim"); feuille.querySelector("#achat-carte").appendChild(carte); }
+    else if (POCHE_IDS[article]) { var pa = POCHE.filter(function (x) { return x[0] === article; })[0]; feuille.querySelector("#achat-carte").appendChild(el('<div class="poche-achat">' + paquet(pa[3], false, pa[4]) + "<b>" + esc(pa[1]) + "</b></div>")); }
     if (r.mot) { var m = comite({ texte: r.mot, contexte: "pot_genereux", aparte: false }, true); if (m) feuille.querySelector("#achat-ia").appendChild(m); }
     rendre();
   }
@@ -3375,6 +3424,45 @@ svg.grille .interro { transition: opacity .3s; }
     if (r.faveur && r.avant) z.appendChild(el('<div class="gain-faveur' + (r.gain < 0 ? " perte" : "") + '"><b>' + (r.gain > 0 ? "+" : "") + r.gain + "</b> de faveur<span>" + Math.round(r.avant.valeur) + " → " + Math.round(r.faveur.valeur) + " : " + esc(tx(r.faveur.palier.nom).toLowerCase()) + "</span></div>"));
     if (r.plateau && r.plateau.a !== r.plateau.de) { var zd = feuille.querySelector("#dep-pot"); zd.appendChild(blocDeplacement(r.plateau, null, true)); setTimeout(function () { animerPion(zd); }, 60); }
     rendre();
+  }
+  // v20 : les emplettes de l'IA, payées avec l'argent des ultimatums. Elle choisit ce qui l'amuse, et le montre.
+  function chosesEmplette(e) {
+    if (e.type === "masque") { var m = C.ia.masques.filter(function (x) { return x.id === e.id; })[0]; return m && { nom: tx(m.nom), vis: svgMasque(m, "impressionnee", 72), titre: "Elle s'est offert un masque" }; }
+    if (e.type === "objet") { var o = C.objets.filter(function (x) { return x.id === e.id; })[0]; return o && { nom: tx(o.nom), vis: svgObjet(o, false, 72), titre: "Elle s'est offert un bijou" }; }
+    if (e.type === "farce") { var a = (C.avatar.accessoires || []).filter(function (x) { return x.id === e.id; })[0]; return a && { nom: tx(a.nom).toLowerCase(), vis: svgAvatar(72), titre: "Elle t'a acheté un couvre-chef" }; }
+    if (e.type === "convoquer") { var en = C.ennemiParId[e.id]; return en && { nom: tx(en.nom), vis: svgEnnemi(en, 72), titre: "Elle s'est offert un spectacle" }; }
+    return { nom: "", vis: svgBourse(64), titre: "Elle a léché la vitrine" };
+  }
+  function blocEmplette(e) {
+    var c = chosesEmplette(e); if (!c) { e.vu = true; return el("<div></div>"); }
+    var b = el('<section class="bloc emplette"><div class="eyebrow">Les emplettes de l\'IA</div><div class="em-tete"><span class="vitrine">' + c.vis + "</span><div><h2>" + esc(c.titre) + "</h2>" +
+      (c.nom ? "<b>" + esc(c.nom.charAt(0).toUpperCase() + c.nom.slice(1)) + "</b>" : "") + (e.case ? '<p class="meta">Case ' + e.case + ", devant ton pion.</p>" : "") +
+      '<p class="meta">' + (e.prix ? "Payé " + e.prix + " crédits avec tes ultimatums. " : "") + "Sa bourse : " + (P.credits.ia || 0) + " crédits.</p></div></div><div class=\"z-ia\"></div>" +
+      '<button type="button" class="btn large">' + (e.type === "farce" ? "Merci, Madame (pour 24 h)" : e.type === "vitrine" ? "Je vais y réfléchir" : "Bien, Madame") + "</button></section>");
+    if (e.mot) {
+      var txt = tx(e.mot).replace(/\{nom\}/g, c.nom).replace(/\{prix\}/g, e.prix || 0);
+      var m = comite({ texte: { fr: txt }, contexte: "pot_genereux", aparte: false, masque: e.type === "masque" ? e.id : null }, true);
+      if (m) b.querySelector(".z-ia").appendChild(m);
+    }
+    b.querySelector("button").onclick = function () { e.vu = true; sauver(); rendre(); };
+    return b;
+  }
+  function blocBourseIA() {
+    var cr = P.credits, tr = Object.keys(P.tresorIA || {}).sort(function (a, b) { return P.tresorIA[a] - P.tresorIA[b]; });
+    if (!cr.ia && !cr.depensesIA && !tr.length) return null;
+    var b = el('<div class="bloc bourse-ia"><h2>Sa bourse et son trésor</h2><p class="solde">' + svgBourse(36) + '<b class="num">' + (cr.ia || 0) + "</b> crédit" + ((cr.ia || 0) > 1 ? "s" : "") + "<span>tirés de tes ultimatums payés</span></p>" +
+      '<p class="note">Elle fait ses emplettes quand ça lui chante. Elle ne pioche pas : elle prend ce qui brille, ce qui la flatte, ou ce qui te ridiculise.' + (cr.depensesIA ? " Déjà dépensé : " + cr.depensesIA + " crédits." : "") + '</p><div class="cabinet"></div><div class="journal-ia"></div></div>');
+    var g = b.querySelector(".cabinet");
+    tr.forEach(function (id) {
+      var o = C.objets.filter(function (x) { return x.id === id; })[0]; if (!o) return;
+      g.appendChild(el('<div class="objet' + (P.objetIA === id ? " porte" : "") + '"><span class="vitrine">' + svgObjet(o, false, 48) + "</span><span>" + esc(tx(o.nom)) + "</span>" + (P.objetIA === id ? '<span class="meta">elle le porte</span>' : "") + "</div>"));
+    });
+    var j = b.querySelector(".journal-ia");
+    (P.emplettes || []).slice(0, 5).forEach(function (e) {
+      var c = chosesEmplette(e); if (!c) return;
+      j.appendChild(el('<p class="meta">' + new Date(e.t).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) + " · " + esc(c.titre) + (c.nom ? " : " + esc(c.nom) : "") + (e.prix ? " (" + e.prix + ")" : "") + "</p>"));
+    });
+    return b;
   }
   // v17 : l'ultimatum de l'IA. Payer, ou refuser : elle verse la somme mais retire de vrais niveaux.
   function blocUltimatum() {
@@ -3571,8 +3659,10 @@ svg.grille .interro { transition: opacity .3s; }
     function repondre(valeur, bouton) {
       if (quiz.repondu) return;
       var ok = M.corriger(q, valeur);
+      // v20 : le droit à l'erreur acheté à la boutique. Proposé avant de dévoiler la bonne réponse.
+      if (!ok && !quiz.tempsEcoule && !cur.reessai && q.type !== "vrai_faux" && M.enPoche(P, "erreur")) { proposerReessai(valeur, bouton); return; }
       clearInterval(quiz.minuteur);
-      quiz.repondu = true; quiz.res.push({ id: q.id, correct: ok, chrono: quiz.chrono, ms: Date.now() - quiz.debutQuestion, rep: valeur });
+      quiz.repondu = true; quiz.res.push({ id: q.id, correct: ok, chrono: quiz.chrono && !cur.erreur, ms: Date.now() - quiz.debutQuestion, rep: valeur, erreur: !!cur.erreur });
       zoneRep.querySelectorAll("button").forEach(function (b) {
         b.disabled = true;
         var v = b.getAttribute("data-v");
@@ -3582,10 +3672,30 @@ svg.grille .interro { transition: opacity .3s; }
       var inp = zoneRep.querySelector("input"); if (inp) inp.disabled = true;
       montrerRetour(ok);
     }
+    function proposerReessai(valeur, bouton) {
+      quiz.repondu = true; clearInterval(quiz.minuteur);
+      if (bouton) bouton.classList.add("faux");
+      zoneRep.querySelectorAll("button, input").forEach(function (b) { b.disabled = true; });
+      if (barreP) barreP.remove();
+      var n = M.enPoche(P, "erreur");
+      var box = el('<div class="retour ko reessai"><b>Raté.</b><p>Tu as ' + esc(nomPoche("erreur", n)) + ' en poche. Le jouer ? Cette réponse ne comptera pas, et tu retentes la question.</p><div class="rangee"><button type="button" class="btn">Réessayer</button><button type="button" class="btn sec">Non, voir la réponse</button></div></div>');
+      var bts = box.querySelectorAll("button");
+      bts[0].onclick = function () {
+        M.utiliser(P, "erreur", maintenant()); sauver();
+        cur.reessai = true; cur.erreur = true; box.remove(); quiz.repondu = false;
+        if (barre) barre.remove();
+        zoneRep.querySelectorAll("button, input").forEach(function (b) { if (b !== bouton && !b.classList.contains("efface")) b.disabled = false; });
+        var inp = zoneRep.querySelector("input"); if (inp) { inp.value = ""; inp.focus(); }
+        else { var autre = zoneRep.querySelector("button:not(:disabled)"); if (autre) autre.focus(); }
+      };
+      bts[1].onclick = function () { cur.reessai = true; box.remove(); quiz.repondu = false; repondre(valeur, bouton); };
+      zoneRetour.appendChild(box); bts[0].focus();
+    }
     function attendu() { return q.type === "qcm" ? q.reponse : (q.type === "vrai_faux" ? q.reponse : q.reponse); }
     if (q.type === "qcm") {
       cur.ordre.forEach(function (i) {
         var b = el('<button type="button" data-v="' + i + '">' + esc(tx(q.choix[i])) + "</button>");
+        if (cur.joker && cur.joker.indexOf(i) >= 0) { b.classList.add("efface"); b.disabled = true; }
         b.onclick = function () { repondre(i, b); };
         zoneRep.appendChild(b);
       });
@@ -3605,6 +3715,23 @@ svg.grille .interro { transition: opacity .3s; }
         f.querySelector("button").disabled = true;
       };
       zoneRep.appendChild(f);
+    }
+    // v20 : la poche. Le joker 50/50 se joue avant de répondre ; le droit à l'erreur s'annonce, il sert tout seul après une faute.
+    var barreP = null, nj = M.enPoche(P, "joker"), ne = M.enPoche(P, "erreur");
+    if ((nj && q.type === "qcm" && q.choix.length >= 3 && !cur.joker) || (ne && !cur.reessai && q.type !== "vrai_faux")) {
+      barreP = el('<div class="poche-quiz"></div>');
+      if (nj && q.type === "qcm" && q.choix.length >= 3 && !cur.joker) {
+        var bj = el('<button type="button" class="btn sec">' + paquet("#E08A00", true, "½").replace('width="52" height="52"', 'width="26" height="26"') + " Joker 50/50 <small>×" + nj + "</small></button>");
+        bj.onclick = function () {
+          if (quiz.repondu || !M.utiliser(P, "joker", maintenant())) return;
+          sauver(); cur.joker = M.joker(q);
+          zoneRep.querySelectorAll("button[data-v]").forEach(function (b) { if (cur.joker.indexOf(Number(b.getAttribute("data-v"))) >= 0) { b.classList.add("efface"); b.disabled = true; } });
+          bj.remove(); if (!barreP.querySelector("button, span")) barreP.remove();
+        };
+        barreP.appendChild(bj);
+      }
+      if (ne && !cur.reessai && q.type !== "vrai_faux") barreP.appendChild(el('<span class="meta">' + paquet("#3A7BD5", true, "↺").replace('width="52" height="52"', 'width="22" height="22"') + " Droit à l'erreur ×" + ne + "</span>"));
+      inn.appendChild(barreP);
     }
     inn.appendChild(zoneRep);
     var zoneRetour = el("<div></div>"); inn.appendChild(zoneRetour);
@@ -3691,6 +3818,7 @@ svg.grille .interro { transition: opacity .3s; }
     bloque_revision: function (e) { return "Révision forcée en attente (« " + tx(C.parId[e.comp].nom) + " ») : ton pion ne bouge pas."; },
     atome: function (e) { return "Case Mendeleïev " + e.case + " : un atome sauvage (" + tx(C.atomes.elements[e.z - 1].nom) + ") arrête ton pion." + (e.reste ? " Attrape-le ou laisse-le partir pour faire " + (e.reste > 1 ? "les " + e.reste + " cases qui restent." : "la case qui reste.") : ""); },
     atome_plein: function (e) { return "Case Mendeleïev " + e.case + " : trois atomes t'attendent déjà. Celui-ci repart, vexé."; },
+    piege_desarme: function (e) { return "Case " + e.case + " : piège désarmé. Ton achat à la boutique a servi."; },
     piege_evite: function (e) { return "Case " + e.case + " : le piège ne fonctionne pas aujourd'hui. Un masque de l'IA l'a désarmé."; },
     bonus_objet: function (e) { var o = C.objets.filter(function (x) { return x.id === e.objet; })[0], n = o ? tx(o.nom) : "Ton objet"; return e.bonus === "case" ? n + " te pousse : +" + e.n + " case" + (e.n > 1 ? "s" : "") + "." : e.bonus === "butin" ? n + " porte chance : la prochaine récompense est assurée." : n + " fait briller les yeux de l'IA : +" + e.n + " de faveur."; },
     duel_attente: function (e) { return tx(C.ennemiParId[e.ennemi].nom) + " te bloque toujours. Le duel reprend, pour " + e.reste + " case" + (e.reste > 1 ? "s" : "") + "."; },
@@ -3868,6 +3996,7 @@ svg.grille .interro { transition: opacity .3s; }
     if (C.plateau) M.bonusDuJour(C, P, maintenant());
     if (C.ia && C.ia.faveur) M.piegeIA(C, P, maintenant());
     if (C.ia && C.ia.credits) M.tenterUltimatum(C, P, maintenant());
+    if (C.ia && C.ia.credits) M.emplettesIA(C, P, maintenant());
     if (C.ia && C.ia.masques_jour) M.masquesDuJour(C, P, maintenant());
     sauver();
   }

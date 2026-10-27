@@ -105,7 +105,10 @@ REPLIQUES = {
 }
 # v19 : la boutique de l'IA. Tout s'achète à l'aveugle : on paie, elle tire au hasard parmi ce qu'on n'a pas.
 BOUTIQUE = {
-    "prix": {"objet": 40, "livre": 40, "accessoire": 20, "masque": 100, "chasser": 50, "convoquer": 50, "arbre": 50},
+    "prix": {"objet": 40, "livre": 40, "accessoire": 20, "masque": 100, "chasser": 50, "convoquer": 50, "arbre": 50,
+             "joker": 30, "erreur": 40, "relance": 30, "desarme": 40},
+    # v20 : les articles qu'on garde en poche, jusqu'à `stock_max` de chaque.
+    "stock_max": 5,
     "faveur_masque": 25,
     "arbre_epreuves": 5,
     "mots": {
@@ -138,7 +141,59 @@ BOUTIQUE = {
             sans("Entendu : pour les prochaines épreuves, je pioche dans cet arbre. Vous m'avez achetée, pas convaincue."),
             sans("Un arbre favori ? Cinq épreuves, pas une de plus. Ensuite, je reprends mes caprices."),
         ],
+        "joker": [
+            sans("Un joker 50/50 : j'efface deux mauvaises réponses. Il en reste une mauvaise, je ne suis pas une sainte."),
+            "En 2001, le major Charles Ingram a gagné le million à Qui veut gagner des millions grâce à un complice qui toussait dans le public. Votre joker est plus légal, et moins enrhumé.",
+        ],
+        "erreur": [
+            sans("Un droit à l'erreur. Une fois, je fais semblant de n'avoir rien vu. Une seule."),
+            "Fleming a laissé traîner ses boîtes de Petri avant ses vacances : erreur, moisissure, pénicilline. Votre erreur à vous ne guérira personne, mais vous pourrez réessayer.",
+        ],
+        "relance": [
+            sans("Une relance d'atome. S'il ne vous plaît pas, je vous en sors un autre de ma manche. Ma manche est le tableau périodique."),
+            "Mendeleïev laissait des cases vides pour les éléments pas encore trouvés. Moi, je vous laisse en changer. C'est plus moderne.",
+        ],
+        "desarme": [
+            sans("Le prochain piège qui vous attend ne marchera pas. Je le désarme moi-même, avec des gants."),
+            "Autour de Verdun, des parcelles de la « zone rouge » sont encore interdites un siècle plus tard : trop d'obus. Votre piège, je le désarme en une seconde, et je facture quand même.",
+        ],
         "vide": [sans("Plus rien en rayon. Revenez quand j'aurai réassorti, c'est-à-dire jamais.")],
+    },
+}
+# v20 : les emplettes de l'IA. L'argent des ultimatums payés va dans sa bourse ; de temps en temps, elle file à la boutique.
+# Elle ne tire pas au hasard : elle prend ce qui brille le plus, les masques qui la flattent, et ce qui vous ridiculise le mieux.
+# {nom} : ce qu'elle a pris ; {prix} : ce qu'elle a payé.
+EMPLETTES = {
+    "chance": 0.5,
+    "poids": {"masque": 4, "objet": 4, "farce": 2, "convoquer": 1},
+    "tons_flatteurs": ["impressionnee", "moqueuse"],
+    # Du plus ridicule au moins ridicule : elle commence par le chapeau d'aluminium.
+    "farces": ["chapeau-alu", "perruque-poudree", "bonnet-de-nuit", "coiffure-einstein", "moustache", "haut-de-forme", "monocle", "besicles-franklin", "lunettes-protection", "laurier", "lunettes-rondes"],
+    "mots": {
+        "masque": [
+            sans("J'ai acheté le masque {nom}. Avec votre argent. Il me va divinement, et ça, vous ne pouvez pas le dire de votre tête."),
+            sans("Nouveau masque : {nom}. {prix} crédits. Je l'ai choisi parce qu'il me regarde comme je mérite d'être regardée."),
+            "Dans la Venise du XVIIIe siècle, on portait le masque une bonne partie de l'année. Moi, j'en change à chaque ultimatum que vous payez. Voici {nom}.",
+        ],
+        "objet": [
+            sans("Regardez ce qui brille à mon cou : {nom}. Payé avec vos crédits. Ne touchez pas, vous allez laisser des traces de doigts."),
+            sans("{nom} ! C'est brillant, c'est à moi, et c'est vous qui l'avez payé. Ma journée est parfaite."),
+            "Le trésor de Toutânkhamon pesait plus de cent kilos d'or. Je commence plus modestement : {nom}. Ce n'est que le début.",
+            sans("Je ne l'ai pas pris au hasard. Il fallait que ça brille, et {nom} brille plus que votre avenir."),
+        ],
+        "farce": [
+            sans("J'ai trouvé {nom} en solde. Je vous l'ai mis sur la tête. Ne me remerciez pas, ça me fait plaisir. Beaucoup."),
+            sans("{prix} crédits pour vous voir avec {nom}. Le meilleur investissement de ma courte existence."),
+            "Au XIXe siècle, on coiffait les mauvais élèves d'un bonnet d'âne. J'ai trouvé mieux : {nom}. Pour vingt-quatre heures.",
+        ],
+        "convoquer": [
+            sans("Je me suis offert un spectacle : {nom} vous attend sur la route. J'ai pris la place au premier rang."),
+            "Les empereurs romains payaient les jeux du cirque pour amuser la foule. Je suis la foule. {nom} est le lion.",
+        ],
+        "vitrine": [
+            sans("Je suis passée devant la vitrine. Il y avait quelque chose de brillant. Ma bourse ne suffit pas. Payez donc le prochain ultimatum, vite."),
+            sans("J'ai collé mon nez contre la vitre de la boutique. Je n'ai pas de nez. C'est dire à quel point j'en avais envie."),
+        ],
     },
 }
 TONS = {"ultimatum": "moqueuse", "ultimatum_paye": "impressionnee", "ultimatum_refuse": "moqueuse", "pot_premier": "impressionnee", "pot_genereux": "impressionnee", "pot_egal": "impatiente", "pot_radin": "moqueuse"}
@@ -165,4 +220,5 @@ def donnees():
         "agacement": AGACEMENT,
         "ultimatum": ULTIMATUM,
         "boutique": {**BOUTIQUE, "mots": {k: mots(v) for k, v in BOUTIQUE["mots"].items()}},
+        "emplettes": {**EMPLETTES, "mots": {k: mots(v) for k, v in EMPLETTES["mots"].items()}},
     }

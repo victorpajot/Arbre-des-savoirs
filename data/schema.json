@@ -1780,6 +1780,56 @@
            "type": "object"
           }
          }
+        },
+        "stock_max": {
+         "type": "integer",
+         "minimum": 1
+        }
+       }
+      },
+      "emplettes": {
+       "type": "object",
+       "description": "v20 : emplettes de l'IA avec l'argent des ultimatums payés (chance par jour, poids par article, tons flatteurs, farces de la plus ridicule à la moins ridicule, répliques avec {nom} et {prix}).",
+       "required": [
+        "chance",
+        "poids",
+        "tons_flatteurs",
+        "farces",
+        "mots"
+       ],
+       "properties": {
+        "chance": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "poids": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "number",
+          "minimum": 0
+         }
+        },
+        "tons_flatteurs": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        "farces": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        "mots": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "array",
+          "items": {
+           "type": "object"
+          }
+         }
         }
        }
       }

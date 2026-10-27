@@ -1140,3 +1140,50 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const c = M.choixIA(CB, P, T + 4); assert.equal(c.comp.stat, "mecanique"); assert.ok(c.achat);
   console.log("OK : v19 boutique de l'IA, achats à l'aveugle et parcours");
 }
+// v20 : articles de poche (joker, droit à l'erreur, relance, désarmement) et emplettes de l'IA.
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
+  const CP = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const T = new Date(2026, 9, 27, 12).getTime();
+  const P = M.nouvellePartie(T); P.credits.solde = 1000;
+  ["joker", "erreur", "relance", "desarme"].forEach(a => assert.ok(M.acheter(CP, P, a, T).ok, a));
+  for (let i = 0; i < 4; i++) M.acheter(CP, P, "joker", T);
+  assert.equal(M.enPoche(P, "joker"), 5); assert.equal(M.acheter(CP, P, "joker", T).raison, "vide", "5 jokers au plus");
+  // Joker : deux mauvais choix effacés sur un QCM à quatre choix, jamais la bonne réponse.
+  const q = { type: "qcm", choix: ["a", "b", "c", "d"], reponse: 2 };
+  const ef = M.joker(q, () => 0.3); assert.equal(ef.length, 2); assert.ok(ef.indexOf(2) < 0);
+  assert.equal(M.joker({ type: "vrai_faux", reponse: true }), null);
+  assert.ok(M.utiliser(P, "joker", T)); assert.equal(M.enPoche(P, "joker"), 4);
+  // Désarmement : le pion s'arrête sur un recul et ne recule pas.
+  P.plateau.ennemis = {}; const rt = P.plateau.route || Array.from({ length: 63 }, (_, i) => i + 1); P.plateau.route = rt;
+  P.plateau.speciaux = P.plateau.speciaux || {}; P.plateau.speciaux[rt[5]] = { type: "recul", n: 3 };
+  P.plateau.idx = 3; P.plateau.position = rt[3];
+  const dep = M.deplacer(CP, P, 2, T, "test");
+  assert.ok(dep.etapes.some(e => e.type === "piege_desarme")); assert.equal(P.plateau.idx, 5); assert.equal(M.enPoche(P, "desarme"), 0);
+  // Relance : l'atome en attente change d'élément.
+  P.sauvages = [{ z: 1, case: 31, depuis: T }];
+  const rl = M.relancerAtome(CP, P, T); assert.ok(rl && rl.apres.z !== 1 && P.sauvages[0].z === rl.apres.z); assert.equal(M.enPoche(P, "relance"), 0);
+  // Emplettes : l'argent de l'ultimatum payé va dans sa bourse ; elle choisit, pas au hasard.
+  const Q = M.nouvellePartie(T); Q.credits.solde = 500; Q.ultimatum = { demande: 400, niveaux: 2, depuis: T };
+  M.repondreUltimatum(CP, Q, true, T); assert.equal(Q.credits.ia, 400);
+  assert.equal(M.emplettesIA(CP, Q, T, () => 0.9), null, "une chance sur deux");
+  assert.equal(M.emplettesIA(CP, Q, T + 1000, () => 0), null, "une fois par jour");
+  const types = {};
+  for (let j = 1; j <= 12; j++) {
+    const e = M.emplettesIA(CP, Q, T + j * 86400000, () => 0); if (!e) continue;
+    types[e.type] = (types[e.type] || 0) + 1;
+    if (e.type === "objet") { const o = CP.objets.find(x => x.id === e.id); assert.equal(Q.objetIA, e.id); assert.ok(o.cadeau.eclat >= 2, "elle prend ce qui brille"); }
+    if (e.type === "farce") assert.equal(M.farceActive(Q, e.t).id, e.id);
+    if (e.type === "masque") assert.ok(Q.masques[e.id] != null);
+    assert.ok(e.mot && e.mot.fr);
+  }
+  assert.ok(Q.credits.ia >= 0 && Q.credits.depensesIA > 0);
+  assert.ok(M.empletteAVoir(Q));
+  // Le premier objet est le plus brillant : éclat 3.
+  const R = M.nouvellePartie(T); R.credits.ia = 40; const CE = JSON.parse(JSON.stringify(CP.ia.credits.emplettes));
+  CP.ia.credits.emplettes.poids = { objet: 1 };
+  const e1 = M.emplettesIA(CP, R, T, () => 0); assert.equal(e1.type, "objet"); assert.equal(CP.objets.find(x => x.id === e1.id).cadeau.eclat, 3);
+  CP.ia.credits.emplettes = CE;
+  console.log("OK : v20 articles de poche et emplettes de l'IA " + JSON.stringify(types));
+}
