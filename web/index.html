@@ -2256,7 +2256,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
 
   function blocFrise() {
     var t = maintenant(), b = el('<div class="bloc"></div>');
-    b.appendChild(el('<p class="note">Les dates s\'ajoutent quand ton pion atteint une case du plateau, ou quand tu maîtrises une compétence.</p>'));
+    b.appendChild(el('<p class="note">Les dates s\'ajoutent quand ton pion s\'arrête sur une case du plateau, ou quand tu maîtrises une compétence. Au premier tour, la frise suit ton pion : une date attend qu\'il ait atteint son époque.</p>'));
     var fl = el('<div class="filtres" role="group" aria-label="Filtrer par branche"></div>');
     [null].concat(C.stats.map(function (s) { return s.id; })).forEach(function (id) {
       var bt = el('<button type="button" aria-pressed="' + (filtreFrise === id) + '"' + (id ? ' style="--c:' + couleur(id) + '"' : "") + ">" + (id ? esc(tx(stat(id).nom)) : "Tout") + "</button>");
