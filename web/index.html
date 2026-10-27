@@ -2506,7 +2506,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var z = el('<div class="quiz atome" role="dialog" aria-modal="true" aria-label="Combat contre un atome sauvage"><div class="in"></div></div>'), inn = z.querySelector(".in");
     document.getElementById("couche").appendChild(z);
     if (combat.phase === "apparition") {
-      var sc = el('<div class="apparition"><div class="herbe">' + tuileAtome(e, true, 150) + '</div><div class="eyebrow">Case ' + combat.s.case + ' · Mendeleïev</div><h2>Un atome sauvage apparaît !</h2><p style="margin:0">C\'est <b>' + esc(tx(e.nom)) + "</b>. " + badgeRarete(e) + '</p><p class="meta" style="margin:0">Symbole, masse, lieu : trois questions. ' + esc(bonnesA().charAt(0).toUpperCase() + bonnesA().slice(1)) + ', et il rejoint ton tableau périodique.</p><div class="arbitre" style="width:100%"></div></div>');
+      var sc = el('<div class="apparition"><div class="herbe">' + tuileAtome(e, true, 150) + '</div><div class="eyebrow">Case ' + combat.s.case + ' · Mendeleïev</div><h2>Un atome sauvage apparaît !</h2><p style="margin:0">C\'est <b>' + esc(tx(e.nom)) + "</b>. " + badgeRarete(e) + '</p><p class="meta" style="margin:0">Symbole, numéro atomique, lieu : trois questions. ' + esc(bonnesA().charAt(0).toUpperCase() + bonnesA().slice(1)) + ', et il rejoint ton tableau périodique.</p><div class="arbitre" style="width:100%"></div></div>');
       var m = comite(combat.replique, true); if (m) sc.querySelector(".arbitre").appendChild(m);
       inn.appendChild(sc);
       var go = el('<button type="button" class="btn large">Combattre</button>'); go.onclick = function () { combat.phase = "q"; rendreCombat(); };
@@ -2534,7 +2534,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         if (!ok) b.classList.add("faux");
         var n = combat.res.filter(Boolean).length, reste = combat.qs.length - combat.res.length;
         var etat = n >= seuil ? "Il est déjà à ta merci." : n + reste < seuil ? "Il prépare sa fuite." : "Encore " + (seuil - n) + " bonne" + (seuil - n > 1 ? "s" : "") + " réponse" + (seuil - n > 1 ? "s" : "") + " pour le capturer.";
-        var expl = q.type === "symbole" ? "Son symbole : " + e.symbole + "." : q.type === "masse" ? "Masse atomique : " + M.texteMasse(e) + (e.stable ? " (en unités de masse atomique)." : ", celle de son isotope le plus stable : il n'en a aucun qui dure.") : "On le croise surtout dans " + e.ou.map(function (o) { return tx(o); }).join(", ") + ".";
+        var expl = q.type === "symbole" ? "Son symbole : " + e.symbole + "." : q.type === "numero" ? "Numéro atomique : " + e.z + ", soit " + e.z + " proton" + (e.z > 1 ? "s" : "") + " dans son noyau. C'est sa place dans le tableau." : "On le croise surtout dans " + e.ou.map(function (o) { return tx(o); }).join(", ") + ".";
         retour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + "</b>" + esc(expl) + '<p class="meta" style="margin:6px 0 0">' + esc(etat) + "</p></div>"));
         var dernier = combat.i === combat.qs.length - 1;
         var s = el('<button type="button" class="btn large">' + (dernier ? "Lancer la capture" : "Question suivante") + "</button>");

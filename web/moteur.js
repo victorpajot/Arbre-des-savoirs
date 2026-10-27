@@ -871,7 +871,7 @@
 
   // --- Jeu de Mendeleïev (v9) -----------------------------------------------
   // Passer sur une case Mendeleïev fait apparaître un atome sauvage, qui attend son combat (au plus
-  // `attente_max` à la fois). Le combat : trois questions (symbole, masse, où on le croise) ; `seuil`
+  // `attente_max` à la fois). Le combat : trois questions (symbole, numéro atomique, où on le croise) ; `seuil`
   // bonnes réponses le capturent, sinon il s'enfuit et pourra revenir. Le tableau périodique sert de Pokédex.
 
   function estCapture(partie, z) { return !!(partie.atomes && partie.atomes[z] && partie.atomes[z].capture); }
@@ -934,16 +934,13 @@
     melanger(faux, alea).forEach(function (f) { if (pS.length < 3 && pS.indexOf(f) < 0) pS.push(f); });
     melanger(A.map(function (x) { return x.symbole; }), alea).forEach(function (f) { if (pS.length < 3 && f !== e.symbole && pS.indexOf(f) < 0) pS.push(f); });
     var q1 = finir("symbole", "Quel est le symbole de l'atome « " + nom + " » ?", e.symbole, pS);
-    // Masse : celles d'éléments voisins, assez éloignées pour ne pas se confondre.
-    // Les superlourds ont des masses proches : l'écart exigé baisse si les voisins manquent.
-    var pM = [], prises = [e.masse];
-    [0.08, 0.04, 0.02].forEach(function (ecart) {
-      melanger(A.filter(function (x) { return x.z !== e.z && Math.abs(x.z - e.z) <= 14 + (ecart < 0.08 ? 30 : 0); }), alea).forEach(function (x) {
-        var tx = texteMasse(x);
-        if (pM.length < 3 && pM.indexOf(tx) < 0 && tx !== texteMasse(e) && prises.every(function (m) { return Math.abs(m - x.masse) / m >= ecart; })) { pM.push(tx); prises.push(x.masse); }
-      });
+    // v15 : le numéro atomique (Victor ne voulait pas la masse). Leurres : des numéros voisins, à 1 à 6 près.
+    var pZ = [];
+    melanger([-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6], alea).forEach(function (d) {
+      var z = e.z + d;
+      if (pZ.length < 3 && z >= 1 && z <= A.length) pZ.push(String(z));
     });
-    var q2 = finir("masse", "Quelle est la masse atomique de « " + nom + " » ?", texteMasse(e), pM);
+    var q2 = finir("numero", "Quel est le numéro atomique de « " + nom + " » ?", String(e.z), pZ);
     // Où : un lieu de cet atome, et des lieux d'autres familles sans mot commun avec les siens.
     var siens = {}; e.ou.forEach(function (o) { mots(o.fr).forEach(function (m) { siens[m] = 1; }); });
     var bonne = e.ou[Math.floor(alea() * e.ou.length)].fr, pO = [];

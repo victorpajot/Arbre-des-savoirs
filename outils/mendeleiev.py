@@ -1,7 +1,7 @@
 """v9 : le jeu de Mendeleïev, une chasse aux atomes façon Pokémon.
 
 Quelques cases du plateau sont des « cases Mendeleïev ». Passer dessus fait apparaître un atome sauvage,
-dont on ne connaît que le nom. Le combat : trois questions (symbole, masse atomique, où on le croise).
+dont on ne connaît que le nom. Le combat : trois questions (symbole, numéro atomique, où on le croise).
 Deux bonnes réponses le capturent ; sinon il s'enfuit, et il reviendra. Les atomes capturés remplissent
 le tableau périodique, qui sert de Pokédex.
 
