@@ -28,6 +28,7 @@ import credits
 import fiches
 import figures
 import symboles
+import succes_pixels
 import honte
 import masques_regles
 import objets_v11
@@ -883,7 +884,7 @@ def main():
         "skills.json": {"format": 1, "competences": competences(),
                         "figures": {k: {"titre": figures.TITRES[k], "svg": v} for k, v in figures.FIGURES.items()}},
         "questions.json": {"format": 1, "questions": questions()},
-        "succes.json": {"format": 1, "succes": tous_succes()},
+        "succes.json": {"format": 1, "succes": [{**x, "illustration": succes_pixels.illustration(x)} for x in tous_succes()], "dessins": succes_pixels.dessins()},
         "commentaires.json": commentaires(),
         "objets.json": cabinet(),
         "avatar.json": avatar(),

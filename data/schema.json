@@ -491,7 +491,8 @@
        "description",
        "condition",
        "cache",
-       "recompense"
+       "recompense",
+       "illustration"
       ],
       "additionalProperties": false,
       "properties": {
@@ -552,8 +553,38 @@
        "ouvre": {
         "type": "string",
         "description": "v7 : arbre (stat) que ce succès ouvre."
+       },
+       "illustration": {
+        "type": "object",
+        "description": "v17 : image du succès : objet du cabinet, icône de case, dessin propre, ennemi ou savant.",
+        "required": [
+         "type",
+         "id"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "type": {
+          "enum": [
+           "objet",
+           "icone",
+           "dessin",
+           "ennemi",
+           "savant"
+          ]
+         },
+         "id": {
+          "type": "string"
+         }
+        }
        }
       }
+     }
+    },
+    "dessins": {
+     "type": "object",
+     "description": "v17 : dessins 32 × 32 propres aux succès (palette du cabinet).",
+     "additionalProperties": {
+      "$ref": "#/$defs/pixels"
      }
     }
    }

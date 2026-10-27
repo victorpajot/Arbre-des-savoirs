@@ -28,6 +28,7 @@
       figures: skills.figures || {},
       questions: questions.questions,
       succes: succes.succes,
+      dessinsSucces: succes.dessins || {},
       objets: extras.objets ? extras.objets.objets : [],
       cabinet: extras.objets || null,
       avatar: extras.avatar || null,

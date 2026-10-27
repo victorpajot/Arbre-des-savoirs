@@ -87,6 +87,14 @@ def main():
             erreurs.append(f"questions.json : {c} n'a que {par_comp.get(c, 0)} questions")
 
     succes = {s["id"] for s in contenu["succes"]["succes"]}
+    # v17 : l'illustration de chaque succès renvoie à un dessin qui existe.
+    sources = {"objet": {o["id"] for o in contenu["objets"]["objets"]}, "icone": set(contenu["plateau"]["icones"]),
+               "dessin": set(contenu["succes"].get("dessins", {})), "ennemi": {e["id"] for e in contenu["ennemis"]["ennemis"]},
+               "savant": {x["id"] for x in contenu["avatar"]["savants"]}}
+    for s in contenu["succes"]["succes"]:
+        il = s["illustration"]
+        if il["id"] not in sources[il["type"]]:
+            erreurs.append(f"succes.json {s['id']} : illustration inconnue {il['type']} {il['id']}")
     conditions = [(f"succes.json {s['id']}", s["condition"]) for s in contenu["succes"]["succes"]]
     conditions += [(f"objets.json {o['id']}", o["condition"]) for o in contenu["objets"]["objets"]]
     conditions += [(f"avatar.json {a['id']}", a["condition"]) for a in contenu["avatar"]["accessoires"]]

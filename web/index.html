@@ -429,8 +429,13 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .corruption .pot input { flex: 1; min-width: 0; text-align: center; font-size: 22px; font-family: var(--f-mono); border: 2px solid var(--line); border-radius: 12px; padding: 8px; background: var(--surface); color: var(--ink); }
 .corruption .pot .btn { min-width: 48px; font-size: 20px; }
 .gain-credits { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, var(--warn) 16%, transparent); text-align: left; }
-.gain-credits b { font-size: 18px; }
-.gain-credits .barre { margin-left: 8px; color: var(--muted); font-size: 14px; }
+.gain-credits .calcul { font-size: 17px; font-family: var(--f-mono); }
+.gain-credits .calcul b { font-size: 18px; }
+.gain-credits .plus { color: var(--good); font-weight: 700; }
+.gain-credits .moins { color: var(--bad); font-weight: 700; }
+.illus-s { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 12px; background: color-mix(in srgb, #E0A800 16%, var(--surface)); }
+.illus-s.verrou { background: var(--surface-2, #eee); }
+.recompense .illus-s { width: auto; height: auto; background: none; }
 .gain-credits p { margin: 6px 0 0; font-size: 17px; line-height: 1.45; }
 .gain-faveur.perte b { color: var(--bad); }
 .mue { animation: mue 1.3s ease-out both; }
@@ -743,7 +748,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
 .nav-seq { display: grid; grid-template-columns: auto 1fr; gap: 8px; }
 .succes details summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--accent); list-style: none; }
 .succes details summary::-webkit-details-marker { display: none; }
-.succes .tete-s { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; }
+.succes .tete-s { display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: center; }
 .voile.dessus { z-index: 35; }
 @media (prefers-reduced-motion: no-preference) {
   .recompense.anim .badge-r { animation: tombe 0.7s cubic-bezier(.2,.9,.3,1.3) both; }
@@ -3168,13 +3173,25 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     return '<svg width="' + taille + '" height="' + taille + '" viewBox="0 0 32 32" aria-hidden="true"><path d="M9 2h5l3 9h-5zM23 2h-5l-3 9h5z" fill="' + (gris ? "var(--line)" : "var(--accent)") + '"/>' +
       '<circle cx="16" cy="20" r="10" fill="' + f + '" stroke="' + c + '" stroke-width="2"/><path d="M16 14.5l1.7 3.5 3.8.5-2.8 2.6.7 3.8-3.4-1.8-3.4 1.8.7-3.8-2.8-2.6 3.8-.5z" fill="' + (gris ? "var(--line)" : "#B07D00") + '"/></svg>';
   }
+  // v17 : l'image d'un succès, en pixel art : objet, case, dessin propre, ennemi ou savant. Pas encore obtenu : silhouette.
+  function illustrationSucces(s, taille, verrou) {
+    var il = s.illustration, g = null, pal = C.cabinet.palette;
+    if (!il) return medaille(taille, verrou);
+    if (il.type === "ennemi" && C.ennemiParId[il.id]) return '<span class="illus-s' + (verrou ? " verrou" : "") + '">' + svgEnnemi(C.ennemiParId[il.id], taille * 0.84, verrou) + "</span>";
+    if (il.type === "savant") { var sv = C.avatar.savants.filter(function (x) { return x.id === il.id; })[0]; if (sv) return '<span class="illus-s' + (verrou ? " verrou" : "") + '">' + svgSavant(sv, taille * 0.84, verrou) + "</span>"; }
+    if (il.type === "dessin") g = C.dessinsSucces[il.id];
+    else if (il.type === "objet") { var o = C.objets.filter(function (x) { return x.id === il.id; })[0]; g = o && o.pixels; }
+    else if (il.type === "icone") g = C.plateau && C.plateau.icones[il.id];
+    if (!g) return medaille(taille, verrou);
+    return '<span class="illus-s' + (verrou ? " verrou" : "") + '"><svg class="pix" viewBox="0 0 32 32" width="' + taille + '" height="' + taille + '" aria-hidden="true">' + pixels(g, pal, null, 0, 0, 1, verrou) + "</svg></span>";
+  }
   function citationSucces(r) {
     return "<blockquote>" + (r.type === "citation" ? "« " + esc(tx(r.texte)) + " »" : esc(tx(r.texte))) + "</blockquote><cite>" + (r.auteur ? esc(r.auteur) + ", " : "") + esc(r.source) + "</cite>";
   }
   function carteSucces(s, obtenu) {
-    if (!obtenu && s.cache) return el('<div class="succes verrou"><div class="tete-s">' + medaille(30, true) + '<div><h3>Succès caché</h3><p class="desc">Il se débloquera en jouant.</p></div></div></div>');
+    if (!obtenu && s.cache) return el('<div class="succes verrou"><div class="tete-s"><span class="illus-s verrou">' + medaille(40, true) + "</span>" + '<div><h3>Succès caché</h3><p class="desc">Il se débloquera en jouant.</p></div></div></div>');
     var r = s.recompense;
-    var html = '<div class="succes' + (obtenu ? "" : " verrou") + '"><div class="tete-s">' + medaille(30, !obtenu) + "<div><h3>" + esc(tx(s.nom)) + '</h3><p class="desc">' + esc(tx(s.description)) + (obtenu ? " · obtenu le " + dateCourte(P.succes[s.id]) : "") + "</p></div></div>";
+    var html = '<div class="succes' + (obtenu ? "" : " verrou") + '"><div class="tete-s">' + illustrationSucces(s, 44, !obtenu) + "<div><h3>" + esc(tx(s.nom)) + '</h3><p class="desc">' + esc(tx(s.description)) + (obtenu ? " · obtenu le " + dateCourte(P.succes[s.id]) : "") + "</p></div></div>";
     if (obtenu) html += "<details><summary>" + (r.type === "citation" ? "Lire la citation" : "Lire l'anecdote") + "</summary>" + citationSucces(r) + "</details>";
     return el(html + "</div>");
   }
@@ -3482,10 +3499,15 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var out = [];
     (r.nouveauxSucces || []).forEach(function (sc) {
       var re = sc.recompense;
-      var carte = carteRecompense("Succès débloqué", medaille(80), tx(sc.nom), tx(sc.description), { titre: re.type === "citation" ? "Lire la citation" : "Lire l'anecdote", html: citationSucces(re) });
+      var carte = carteRecompense("Succès débloqué", illustrationSucces(sc, 96), tx(sc.nom), tx(sc.description), { titre: re.type === "citation" ? "Lire la citation" : "Lire l'anecdote", html: citationSucces(re) });
       // v16 : l'IA fixe ce que le succès rapporte, et le dit.
       var cr = P.credits && P.credits.parSucces[sc.id];
-      if (cr && cr.mot) carte.appendChild(el('<div class="gain-credits"><b>+' + cr.n + " crédit" + (cr.n > 1 ? "s" : "") + "</b>" + (cr.n !== cr.base ? '<span class="barre">tarif : ' + cr.base + "</span>" : "") + "<p>« " + esc(tx(cr.mot)) + " »</p></div>"));
+      if (cr && cr.mot) {
+        // Le compte en clair : tarif du succès, décision de l'IA, total.
+        var ecart = cr.n - cr.base, pl = function (n) { return n + " crédit" + (Math.abs(n) > 1 ? "s" : ""); };
+        var calcul = ecart ? "+" + pl(cr.base) + ' <span class="' + (ecart > 0 ? "plus" : "moins") + '">' + (ecart > 0 ? "+" : "−") + Math.abs(ecart) + "</span> (décision de l'IA) = <b>" + pl(cr.n) + "</b>" : "<b>+" + pl(cr.n) + "</b> (l'IA s'en tient au tarif)";
+        carte.appendChild(el('<div class="gain-credits"><div class="calcul">' + calcul + "</div><p>« " + esc(tx(cr.mot)) + " »</p></div>"));
+      }
       out.push(carte);
     });
     if (r.masque) {
