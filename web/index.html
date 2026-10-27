@@ -2692,6 +2692,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var recs = duel.recs || (duel.recs = recompensesBilan({ nouveauxSucces: rec.succes, masque: rec.masque, nouveauxObjets: rec.objets, nouveauxLivres: rec.livres,
       nouveauxSavants: rec.savants, nouveauxAccessoires: rec.accessoires, nouveauxEvenements: rec.evenements, theme: duel.ennemi.theme }));
     var etapes = ["verdict"]; recs.forEach(function (_, i) { etapes.push("recompense:" + i); }); if (r.plateau) etapes.push("plateau");
+    var apparus = atomesApparus(r.plateau).filter(function (x) { return (P.sauvages || []).some(function (s) { return s.z === x.z; }); });
+    apparus.forEach(function (_, j) { etapes.push("atome:" + j); });
     var i = duel.etape = Math.min(duel.etape, etapes.length - 1), nom = etapes[i];
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
     wrap.appendChild(el('<div class="etapes-bilan"><span class="pts">' + etapes.map(function (_, j) { return '<i class="' + (j <= i ? "vu" : "") + '"></i>'; }).join("") + "</span></div>"));
@@ -2706,14 +2708,20 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       if (r.gagne && !r.butin) z.appendChild(el('<p class="meta">Pas de butin à gagner pour l\'instant : maîtrise d\'autres compétences pour en ouvrir.</p>'));
     } else if (nom.indexOf("recompense:") === 0) {
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
+    } else if (nom.indexOf("atome:") === 0) {
+      var ap = apparus[+nom.split(":")[1]], ca = carteAtomeApparu(ap); ca.classList.add("anim"); z.appendChild(ca);
+      var go = el('<button type="button" class="btn large" style="background:#1565C0">Le combattre maintenant</button>');
+      go.onclick = function () { fermerDuel(); combattreAtome(ap.z); };
+      z.appendChild(go);
     } else {
       z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
     }
     wrap.appendChild(z);
     var suite = etapes[i + 1];
-    if (!suite && !(P.duel && P.duel.pret)) finEpreuve(wrap, fermerDuel);
+    if (!suite && nom.indexOf("atome:") === 0 && !(P.duel && P.duel.pret)) { var pt = el('<button type="button" class="btn sec large">Plus tard</button>'); pt.onclick = fermerDuel; wrap.appendChild(pt); }
+    else if (!suite && !(P.duel && P.duel.pret)) finEpreuve(wrap, fermerDuel);
     else {
-      var bt = el('<button type="button" class="btn large">' + (!suite ? "Ennemi suivant !" : suite === "plateau" ? "Voir le plateau" : "Récompense") + "</button>");
+      var bt = el('<button type="button" class="btn large">' + (!suite ? "Ennemi suivant !" : suite === "plateau" ? "Voir le plateau" : suite.indexOf("atome:") === 0 ? "Un atome sauvage !" : "Récompense") + "</button>");
       bt.onclick = function () {
         if (suite) { duel.etape = i + 1; rendreDuel(); return; }
         duel = null; lancerDuel();
@@ -2737,6 +2745,21 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       (taille >= 90 ? '<span class="nm">' + esc(tx(e.nom)) + '</span><span class="ma">' + (cache ? "???" : esc(M.texteMasse(e))) + "</span>" : "") + "</div>";
   }
   function badgeRarete(e) { return '<span class="rarete ' + e.rarete + '">' + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</span>"; }
+  // Un atome apparu pendant le trajet : sa propre étape du bilan, en grand, pour qu'on ne le rate pas.
+  function atomesApparus(dep) { return dep ? dep.etapes.filter(function (x) { return x.type === "atome"; }) : []; }
+  function carteAtomeApparu(et) {
+    var e = C.atomes.elements[et.z - 1];
+    var c = carteRecompense("Un atome sauvage apparaît !", tuileAtome(e, true, 88), tx(e.nom), "Case Mendeleïev " + et.case + ". Trois questions, " + bonnesA() + ", et il rejoint ton tableau périodique. Sinon, il s'enfuit.", null, "#1565C0");
+    c.querySelector("h3").insertAdjacentHTML("afterend", badgeRarete(e));
+    c.appendChild(el('<p class="note" style="margin:0">Il t\'attend sur l\'accueil si tu préfères le combattre plus tard.</p>'));
+    return c;
+  }
+  // Mettre cet atome en tête de la file d'attente, puis lancer son combat.
+  function combattreAtome(z) {
+    var l = P.sauvages || [], i = l.map(function (x) { return x.z; }).indexOf(z);
+    if (i > 0) l.unshift(l.splice(i, 1)[0]);
+    lancerCombat();
+  }
   function nbCaptures() { return C.atomes.elements.filter(function (e) { return M.estCapture(P, e.z); }).length; }
 
   // Bloc de l'accueil : l'atome qui attend son combat.
@@ -3535,6 +3558,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var etapes = ["verdict"];
     recs.forEach(function (_, i) { etapes.push("recompense:" + i); });
     if (r.plateau) etapes.push("plateau");
+    var apparus = atomesApparus(r.plateau).filter(function (x) { return (P.sauvages || []).some(function (s) { return s.z === x.z; }); });
+    apparus.forEach(function (_, i) { etapes.push("atome:" + i); });
     if (P.duel && P.duel.pret && r.plateau && r.plateau.etapes.some(function (x) { return x.type === "ennemi" || x.type === "duel_attente"; })) etapes.push("duel");
     var e = quiz.etape = Math.min(quiz.etape || 0, etapes.length - 1), nom = etapes[e], dernier = e === etapes.length - 1;
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
@@ -3552,13 +3577,19 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
     } else if (nom === "duel") {
       z.appendChild(blocDefi());
+    } else if (nom.indexOf("atome:") === 0) {
+      var ap = apparus[+nom.split(":")[1]], ca = carteAtomeApparu(ap); ca.classList.add("anim"); z.appendChild(ca);
+      var go = el('<button type="button" class="btn large" style="background:#1565C0">Le combattre maintenant</button>');
+      go.onclick = function () { fermerQuiz(); combattreAtome(ap.z); };
+      z.appendChild(go);
     } else {
       z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
     }
     wrap.appendChild(z);
     if (nom === "duel") return wrap;
-    var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite.indexOf("recompense:") === 0 ? (e === 0 ? (recs.length > 1 ? "Voir les " + recs.length + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
-    if (!suite) finEpreuve(wrap, fermerQuiz);
+    var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite.indexOf("atome:") === 0 ? "Un atome sauvage !" : suite.indexOf("recompense:") === 0 ? (e === 0 ? (recs.length > 1 ? "Voir les " + recs.length + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
+    if (!suite && nom.indexOf("atome:") === 0) { var pt = el('<button type="button" class="btn sec large">Plus tard</button>'); pt.onclick = fermerQuiz; wrap.appendChild(pt); }
+    else if (!suite) finEpreuve(wrap, fermerQuiz);
     else {
       var bt = el('<button type="button" class="btn large">' + libelle + "</button>");
       bt.onclick = function () { quiz.etape = e + 1; rendreQuiz(); };
