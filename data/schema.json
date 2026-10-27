@@ -803,7 +803,10 @@
          "pot_premier",
          "pot_genereux",
          "pot_egal",
-         "pot_radin"
+         "pot_radin",
+         "ultimatum",
+         "ultimatum_paye",
+         "ultimatum_refuse"
         ]
        },
        "reference": {
@@ -1567,7 +1570,8 @@
       "humeurs",
       "honte",
       "pots",
-      "agacement"
+      "agacement",
+      "ultimatum"
      ],
      "properties": {
       "bareme": {
@@ -1683,6 +1687,13 @@
        }
       },
       "agacement": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+       }
+      },
+      "ultimatum": {
        "type": "object",
        "additionalProperties": {
         "type": "number",

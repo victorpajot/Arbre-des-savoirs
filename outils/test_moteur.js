@@ -384,6 +384,27 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     console.log("OK : v16 crédits des succès et pots-de-vin");
   }
 
+  // v17 : ultimatum de l'IA
+  {
+    const P = M.nouvellePartie(t0);
+    ["math.arithmetique", "phys.unites", "sci.methode"].forEach(id => { P.competences[id] = { maitrise: true, maitriseDepuis: t0, palier: 1, prochainRappel: t0 + 86400000, xp: 400 }; });
+    P.credits.solde = 100;
+    const nv = M.niveauGlobal(C5, P); assert.ok(nv >= 2);
+    assert.equal(M.tenterUltimatum(C5, P, t0, () => 0.99), null, "pas à tous les coups");
+    assert.equal(M.tenterUltimatum(C5, P, t0 + 86400000, () => 0), null, "pas deux jours de suite");
+    const u = M.tenterUltimatum(C5, P, t0 + 4 * 86400000, () => 0);
+    assert.ok(u && u.demande >= 70, "une grosse somme");
+    let r = M.repondreUltimatum(C5, P, true, t0 + 4 * 86400000);
+    assert.ok(r.ok && P.credits.solde === 100 - u.demande);
+    P.credits.solde = 500;
+    const u2 = M.tenterUltimatum(C5, P, t0 + 8 * 86400000, () => 0);
+    assert.ok(u2.demande >= Math.ceil(u.demande * 1.5), "payer fait monter la prochaine exigence");
+    r = M.repondreUltimatum(C5, P, false, t0 + 8 * 86400000);
+    assert.equal(P.credits.solde, 500 + u2.demande, "refuser : elle verse la somme");
+    assert.ok(r.niveauApres < r.niveauAvant && r.perdus > 0, "mais retire de vrais niveaux");
+    console.log("OK : v17 ultimatum de l'IA");
+  }
+
   // Une seule case : l'arbre choisi par le joueur, rien dans un arbre fermé
   {
     const P = M.nouvellePartie(t0);

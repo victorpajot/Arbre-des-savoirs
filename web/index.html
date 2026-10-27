@@ -441,6 +441,12 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .mue { animation: mue 1.3s ease-out both; }
 @keyframes mue { 0% { filter: brightness(0); opacity: 0; transform: scale(.9); } 12% { filter: brightness(0); opacity: 1; transform: scale(1); } 55% { filter: brightness(0); } 62% { filter: brightness(2.6) drop-shadow(0 0 10px #FFD447); transform: scale(1.08); } 100% { filter: none; transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .mue { animation: none; } }
+.perso .niv-ligne { display: flex; gap: 22px; align-items: flex-end; }
+.perso .niv.cred .num { color: #B8862B; }
+.ultimatum { border: 2px solid var(--bad); background: color-mix(in srgb, var(--bad) 8%, var(--surface)); }
+.ultimatum h2 { color: var(--bad); }
+.ultimatum p { font-size: 16px; line-height: 1.5; }
+.ultimatum .rangee { display: flex; gap: 10px; }
 .case-dicte .vitrine { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: color-mix(in srgb, var(--c) 30%, #fff); }
 /* v5 : stats sur l'accueil */
 .mini-stats { display: grid; grid-template-columns: 104px 1fr; gap: 12px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
@@ -1877,8 +1883,9 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       mot.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); versIA(); } };
       v.appendChild(mot);
     }
+    if (P.ultimatum) v.appendChild(blocUltimatum());
     var sn = M.surnom(C, P, t);
-    var perso = el('<div class="bloc perso-v5" role="button" tabindex="0" aria-label="Ouvrir la fiche du personnage"><div class="perso"><div class="avatar-cadre rang-' + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + '</div><div><div class="niv"><small>Niveau</small><span class="num">' + ng + '</span></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div>" + (sn ? '<p class="surnom">' + esc(sn.texte) + '<small>d\'après l\'IA</small></p>' : "") + '<p class="meta">' + nbMait + " compétence" + (nbMait > 1 ? "s" : "") + " maîtrisée" + (nbMait > 1 ? "s" : "") + " sur " + C.competences.length + "</p></div></div></div>");
+    var perso = el('<div class="bloc perso-v5" role="button" tabindex="0" aria-label="Ouvrir la fiche du personnage"><div class="perso"><div class="avatar-cadre rang-' + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + '</div><div><div class="niv-ligne"><div class="niv"><small>Niveau</small><span class="num">' + ng + '</span></div><div class="niv cred"><small>Crédits</small><span class="num">' + P.credits.solde + '</span></div></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div>" + (sn ? '<p class="surnom">' + esc(sn.texte) + '<small>d\'après l\'IA</small></p>' : "") + '<p class="meta">' + nbMait + " compétence" + (nbMait > 1 ? "s" : "") + " maîtrisée" + (nbMait > 1 ? "s" : "") + " sur " + C.competences.length + "</p></div></div></div>");
     perso.onclick = function () { vue = "perso"; ongletPerso = "avatar"; rendre(); window.scrollTo(0, 0); };
     perso.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); perso.onclick(); } };
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
@@ -2051,7 +2058,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   // --- Vue Personnage -------------------------------------------------------
   function vuePerso() {
     var t = maintenant(), v = el('<div class="vue"></div>'), xp = M.xpParStat(C, P);
-    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted)">niveau <b style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + "</b></div></div>"));
+    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted)">niveau <b style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + '</b> · crédits <b style="font-size:24px;color:var(--ink)">' + P.credits.solde + "</b></div></div>"));
     var bs = el('<div class="bloc"><h2>Branches</h2><p class="note">Le niveau de chaque branche monte avec ses compétences maîtrisées et ses rappels réussis. Une pastille par compétence : pleine si maîtrisée, cerclée si ouverte.</p><div class="fiches"></div></div>');
     C.stats.slice().sort(function (a, b) { return (M.arbreOuvert(C, P, b.id) - M.arbreOuvert(C, P, a.id)) || xp[b.id] - xp[a.id]; }).forEach(function (s) { bs.querySelector(".fiches").appendChild(ficheBranche(s, xp[s.id])); });
     // v10 : le personnage se range en onglets ; l'IA et les ennemis y ont leur place.
@@ -3103,6 +3110,29 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     if (r.plateau && r.plateau.a !== r.plateau.de) { var zd = feuille.querySelector("#dep-pot"); zd.appendChild(blocDeplacement(r.plateau, null, true)); setTimeout(function () { animerPion(zd); }, 60); }
     rendre();
   }
+  // v17 : l'ultimatum de l'IA. Payer, ou refuser : elle verse la somme mais retire de vrais niveaux.
+  function blocUltimatum() {
+    var u = P.ultimatum, cr = P.credits, peut = cr.solde >= u.demande;
+    var b = el('<section class="bloc ultimatum"><div class="eyebrow">Ultimatum de l\'IA</div><h2>' + u.demande + ' crédits, ou ' + u.niveaux + ' niveaux</h2><div class="z-ia"></div>' +
+      '<p>Tu as <b>' + cr.solde + "</b> crédit" + (cr.solde > 1 ? "s" : "") + ". Si tu paies, sa prochaine exigence sera plus haute. Si tu refuses, elle te verse les " + u.demande + " crédits… et te retire " + u.niveaux + " niveaux, pour de vrai.</p>" +
+      '<div class="rangee"><button type="button" class="btn large" data-u="payer"' + (peut ? "" : " disabled") + ">Payer " + u.demande + '</button><button type="button" class="btn sec large" data-u="refuser">Refuser</button></div>' +
+      (peut ? "" : '<p class="meta">Pas assez de crédits pour payer : il ne reste que le refus.</p>') + "</section>");
+    var rep = ligneDuJour("ultimatum"); if (rep) b.querySelector(".z-ia").appendChild(comite(rep, true));
+    b.querySelectorAll("[data-u]").forEach(function (bt) { bt.onclick = function () { reponseUltimatum(bt.getAttribute("data-u") === "payer"); }; });
+    return b;
+  }
+  function reponseUltimatum(paye) {
+    var t = maintenant(), r = M.repondreUltimatum(C, P, paye, t);
+    if (!r || !r.ok) { toast("Pas assez de crédits."); return; }
+    sauver();
+    var html = '<div class="eyebrow">Ultimatum</div><h2>' + (paye ? "Payé : −" + r.demande + " crédits" : "Refusé : +" + r.demande + " crédits") + '</h2><div id="ia-ult"></div>' +
+      (paye ? '<p class="etat-pion">Elle est ravie. La prochaine fois, elle exigera au moins ' + Math.ceil(r.demande * C.ia.credits.ultimatum.hausse) + " crédits.</p>" :
+        '<div class="gain-faveur perte"><b>Niveau ' + r.niveauAvant + " → " + r.niveauApres + "</b><span>" + r.perdus + " niveau" + (r.perdus > 1 ? "x" : "") + " retiré" + (r.perdus > 1 ? "s" : "") + " : l'XP de ton arbre le plus haut a fondu.</span></div>");
+    feuilleSimple(html, "Ultimatum");
+    var avis = M.replique(C, P, [paye ? "ultimatum_paye" : "ultimatum_refuse"]);
+    if (avis) { avis.aparte = false; feuille.querySelector("#ia-ult").appendChild(comite(avis)); }
+    rendre();
+  }
   function blocCadeauxIA() {
     var t = maintenant(), f = M.faveurIA(C, P, t);
     var miens = C.objets.filter(function (o) { return P.objets[o.id] && o.cadeau; }).sort(function (a, b) { return tx(a.nom).localeCompare(tx(b.nom), "fr"); });
@@ -3548,6 +3578,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     var a = M.noterVisite(C, P, maintenant()), b = M.verifierRecompenses(C, P, maintenant());
     if (C.plateau) M.bonusDuJour(C, P, maintenant());
     if (C.ia && C.ia.faveur) M.piegeIA(C, P, maintenant());
+    if (C.ia && C.ia.credits) M.tenterUltimatum(C, P, maintenant());
     if (C.ia && C.ia.masques_jour) M.masquesDuJour(C, P, maintenant());
     sauver();
   }

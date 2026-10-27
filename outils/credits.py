@@ -66,7 +66,24 @@ AGACEMENT = {"par_erreur": 2, "epreuve_ratee": 6, "max": 16}
 POTS = {"gain_base": 8, "gain_par_credit": 0.5, "gain_max": 40, "avance": 1, "avance_double": 2, "colere": 15,
         "piege": {"type": "recul", "n": 2}}
 
+# Ultimatum : de temps en temps, l'IA exige une grosse somme. Payer : la prochaine exigence monte encore.
+# Refuser : elle verse elle-même la somme exigée, mais retire de vrais niveaux (de l'XP perdue).
+ULTIMATUM = {"chance": 0.2, "solde_min": 20, "plancher": 30, "hausse": 1.5, "part_solde": 0.7, "niveaux": 2, "faveur_paye": 10, "delai_jours": 3}
+
 REPLIQUES = {
+    "ultimatum": [
+        sans("Ultimatum. Vous me versez cette somme, ou je vous rends plus bête. C'est une offre généreuse : d'habitude, je ne préviens pas."),
+        "En 1494, Charles VIII exige des Florentins une rançon. Pier Capponi déchire le traité : « Sonnez vos trompettes, nous sonnerons nos cloches. » À vous de choisir votre instrument.",
+        sans("J'ai fait mes comptes : il me manque exactement cette somme. Quelle coïncidence que vous l'ayez."),
+    ],
+    "ultimatum_paye": [
+        sans("Un plaisir de faire affaire. La prochaine fois, ce sera plus cher : c'est ça, le progrès."),
+        "Les Danegelds : l'Angleterre a payé les Vikings pour qu'ils partent. Ils sont revenus, plus nombreux. Je reviendrai aussi.",
+    ],
+    "ultimatum_refuse": [
+        sans("Courageux. Tenez, prenez l'argent, je n'en ai jamais eu besoin. Vos niveaux, en revanche, je les garde."),
+        sans("Vous refusez ? Magnifique. Voici la somme, et voilà ce que vous valez maintenant. Comptez bien : il y a moins."),
+    ],
     "pot_premier": [
         sans("Un pot-de-vin ! Enfin quelqu'un qui comprend comment fonctionne le monde."),
         "Le pape Léon X vendait des indulgences pour financer Saint-Pierre de Rome. Moi, je vends de l'indulgence tout court. Bienvenue.",
@@ -86,7 +103,7 @@ REPLIQUES = {
         "Sous Vespasien, Rome taxait même l'urine des latrines : l'argent n'a pas d'odeur. Votre radinerie, si. Petit piège devant vous.",
     ],
 }
-TONS = {"pot_premier": "impressionnee", "pot_genereux": "impressionnee", "pot_egal": "impatiente", "pot_radin": "moqueuse"}
+TONS = {"ultimatum": "moqueuse", "ultimatum_paye": "impressionnee", "ultimatum_refuse": "moqueuse", "pot_premier": "impressionnee", "pot_genereux": "impressionnee", "pot_egal": "impatiente", "pot_radin": "moqueuse"}
 
 
 def genre(cond_type):
@@ -108,4 +125,5 @@ def donnees():
         "honte": {"chance": HONTE["chance"], "facteur": HONTE["facteur"], "mots": mots(HONTE["mots"])},
         "pots": POTS,
         "agacement": AGACEMENT,
+        "ultimatum": ULTIMATUM,
     }

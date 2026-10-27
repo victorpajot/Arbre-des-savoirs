@@ -136,6 +136,7 @@
       duel: null,
       cadeaux: { jour: null, donnes: {} },
       credits: { solde: 0, gagnes: 0, parSucces: {}, record: 0, jour: null, pots: 0 },
+      ultimatum: null,
       objetIA: null,
       atomes: {},
       sauvages: [],
@@ -205,6 +206,7 @@
     out.duel = p.duel || null;
     out.cadeaux = Object.assign({ jour: null, donnes: {} }, p.cadeaux || {});
     out.objetIA = p.objetIA || null;
+    out.ultimatum = p.ultimatum || null;
     // v16 : crédits. Une ancienne partie reçoit le tarif normal pour les succès déjà obtenus.
     out.credits = Object.assign({ solde: 0, gagnes: 0, parSucces: {}, record: 0, jour: null, pots: 0 }, p.credits || {});
     if (!p.credits && contenu && contenu.ia && contenu.ia.credits) {
@@ -1256,6 +1258,55 @@
     return { ok: true, montant: m, issue: issue, record: record, gain: gain, avant: avant, faveur: faveurIA(contenu, partie, t), plateau: dep, piege: piege, recompenses: rec };
   }
 
+  // --- Ultimatum (v17) ---------------------------------------------------------
+  // Une fois de temps en temps, l'IA exige une grosse somme de crédits. Payer : elle est contente, et sa
+  // prochaine exigence sera plus haute. Refuser : elle verse elle-même la somme, mais retire de vrais niveaux.
+  function exigence(contenu, partie) {
+    var U = contenu.ia.credits.ultimatum, cr = partie.credits;
+    return Math.max(U.plancher, Math.ceil((cr.exigence || 0) * U.hausse), Math.ceil(cr.solde * U.part_solde));
+  }
+  function tenterUltimatum(contenu, partie, t, alea) {
+    var U = contenu.ia && contenu.ia.credits && contenu.ia.credits.ultimatum, cr = partie.credits;
+    if (!U || partie.ultimatum || cr.solde < U.solde_min || niveauGlobal(contenu, partie) < 1) return null;
+    if (cr.jourUltimatum && joursEntre(cr.jourUltimatum, t) < U.delai_jours) return null;
+    cr.jourUltimatum = t;
+    if ((alea || Math.random)() >= U.chance) return null;
+    partie.ultimatum = { demande: exigence(contenu, partie), niveaux: U.niveaux, depuis: t };
+    return partie.ultimatum;
+  }
+  // Retire de vrais niveaux : l'arbre le plus haut perd assez d'XP pour redescendre d'un niveau, autant de fois que demandé.
+  function retirerNiveaux(contenu, partie, n) {
+    var p = contenu.regles.xp.paliers_niveau, perdus = 0;
+    for (var i = 0; i < n; i++) {
+      var xp = xpParStat(contenu, partie), haut = null;
+      contenu.stats.forEach(function (st) { var nv = niveau(contenu, xp[st.id]).niveau; if (nv > 0 && (!haut || nv > haut.nv)) haut = { id: st.id, nv: nv }; });
+      if (!haut) break;
+      var trop = xp[haut.id] - (p[haut.nv] - 1);
+      (contenu.parStat[haut.id] || []).map(function (k) { return partie.competences[k.id]; })
+        .filter(function (e) { return e && e.maitrise && e.xp > 0; }).sort(function (a, b) { return b.xp - a.xp; })
+        .forEach(function (e) { if (trop <= 0) return; var r = Math.min(e.xp, trop); e.xp -= r; trop -= r; });
+      perdus++;
+    }
+    return perdus;
+  }
+  function repondreUltimatum(contenu, partie, paye, t) {
+    var u = partie.ultimatum; if (!u) return null;
+    var U = contenu.ia.credits.ultimatum, cr = partie.credits, avant = niveauGlobal(contenu, partie), fav = faveurIA(contenu, partie, t);
+    if (paye && cr.solde < u.demande) return { ok: false, raison: "solde" };
+    partie.ultimatum = null;
+    var out = { ok: true, paye: paye, demande: u.demande, niveauAvant: avant };
+    if (paye) {
+      cr.solde -= u.demande; cr.exigence = u.demande;
+      if (fav) partie.faveur = { valeur: Math.min(100, fav.valeur + U.faveur_paye), maj: t };
+    } else {
+      cr.solde += u.demande; cr.gagnes += u.demande;
+      out.perdus = retirerNiveaux(contenu, partie, u.niveaux);
+    }
+    out.niveauApres = niveauGlobal(contenu, partie);
+    partie.maj = t;
+    return out;
+  }
+
   // --- Faveur de l'IA (v10) ----------------------------------------------------
   // Une jauge de 0 à 100, qui baisse chaque jour. Les cadeaux la font remonter selon leur éclat.
   // Le palier (comblée, contente, boudeuse, furieuse) change le butin, l'avancée et, furieuse, pose des pièges.
@@ -1850,7 +1901,7 @@
     replique: replique,
     repliqueDuJour: repliqueDuJour,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
