@@ -1,6 +1,8 @@
 // Test du cycle complet : node outils/test_moteur.js
 const fs = require("fs"), path = require("path"), assert = require("assert");
 const M = require("../web/moteur.js");
+// v19 : 4 succès au plus par épreuve ; les suivants tombent aux vérifications d'après.
+const succesPuis = (r, C, P, t) => r.nouveauxSucces.map(s => s.id).concat(...[1, 2, 3, 4, 5].map(i => M.verifierRecompenses(C, P, t + i).succes.map(s => s.id)));
 const d = n => JSON.parse(fs.readFileSync(path.join(__dirname, "../data", n), "utf8"));
 const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
   { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json") });
@@ -89,7 +91,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const nuit = new Date(2026, 9, 25, 3, 0).getTime();
   const qs = M.tirerQuestions(C, P3, "chim.liaisons", 5).map(q => ({ id: q.id, correct: false, ms: 900 }));
   let r3 = M.terminerQuiz(C, P3, "chim.liaisons", qs, nuit, { duree: 20000 });
-  const ids = r3.nouveauxSucces.map(s => s.id);
+  // v19 : au plus 4 succès par épreuve ; le reste tombe ensuite (ici à la visite suivante).
+  assert.ok(r3.nouveauxSucces.length <= 4, "4 succès au plus");
+  const ids = r3.nouveauxSucces.map(s => s.id).concat(M.verifierRecompenses(C, P3, nuit + 1).succes.map(s => s.id), M.verifierRecompenses(C, P3, nuit + 2).succes.map(s => s.id));
   for (const id of ["dix-pour-cent", "insomniaque", "table-rase", "neutrinos", "tour-de-pise"]) assert.ok(ids.includes(id), id);
   assert.ok(P3.gagnables["accessoires:chapeau-alu"], "chapeau gagnable après la panoplie moqueuse");
   assert.deepEqual(r3.contextes.slice(0, 2), ["quiz_zero", "nuit"]);
@@ -171,7 +175,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const r = M.terminerQuiz(C3, P, "math.arithmetique", tous(P, "math.arithmetique", 5), t0);
     assert.equal(P.plateau.prison, 0); assert.ok(r.plateau.contextes.includes("prison_liberation"));
     assert.ok(r.plateau.a > num("galilee-proces"), "libéré par un quiz parfait, et on avance");
-    assert.ok(r.nouveauxSucces.some(s => s.id === "eppur-si-muove"));
+    assert.ok(succesPuis(r, C3, P, t0).includes("eppur-si-muove"));
     [P, dep] = sur(num("guillotine"), 1);
     assert.equal(dep.a, cases[num("guillotine") - 1].special.vers, "guillotine : retour au début de l'époque");
     [P, dep] = sur(num("solvay"), 3);

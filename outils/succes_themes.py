@@ -1,4 +1,4 @@
-"""v18 : un succès pour chaque compétence qui n'en avait pas, et un premier quiz parfait pour chaque arbre.
+"""v18 : un succès pour chaque compétence qui n'en avait pas, et trois quiz parfaits pour chaque arbre.
 
 Maîtriser une compétence débloque désormais, en plus de son savant, un succès de son thème : une idée reçue
 démontée ou une citation, toujours sourcée. Trois ancrages sur la même notion au même moment.
@@ -14,7 +14,7 @@ def maitriser(comp):
 
 
 def parfait(stat):
-    return {"type": "quiz_parfaits_stat", "stat": stat, "n": 1}
+    return {"type": "quiz_parfaits_stat", "stat": stat, "n": 3}
 
 
 ENTREES = [
@@ -328,43 +328,43 @@ ENTREES = [
               "Thomas Kuhn, La Structure des révolutions scientifiques, 1962 ; Margaret Masterman, « The Nature of a Paradigm », 1970"),
      ("savant", "popper")),
 
-    # --- Premier quiz parfait dans chaque arbre ---------------------------------------------------
-    ("cavendish", "Peser la Terre", "Réussir un quiz de Mécanique sans faute. Vous ne pesez pas lourd, mais juste.",
+    # --- Trois quiz parfaits dans chaque arbre ---------------------------------------------------
+    ("cavendish", "Peser la Terre", "Réussir trois quiz de Mécanique sans faute. Vous ne pesez pas lourd, mais juste.",
      parfait("mecanique"),
      anecdote("En 1798, Henry Cavendish, savant si timide qu'il communiquait avec ses domestiques par billets, suspend des boules de plomb dans une remise et mesure leur infime attraction. Il en déduit la densité de la Terre, à un pour cent près.",
               "Henry Cavendish, Philosophical Transactions, 1798"),
      ("objet", "pendule-foucault")),
-    ("pinsons", "Les pinsons mal étiquetés", "Réussir un quiz de Savoir sans faute. Vous, au moins, notez d'où vient chaque réponse.",
+    ("pinsons", "Les pinsons mal étiquetés", "Réussir trois quiz de Savoir sans faute. Vous, au moins, notez d'où vient chaque réponse.",
      parfait("savoir"),
      anecdote("Les pinsons des Galápagos passent pour l'étincelle de la théorie de Darwin. Sur place, il les a pris pour des oiseaux de familles différentes et n'a pas noté sur quelle île il les capturait. C'est l'ornithologue John Gould, à Londres, qui lui apprend qu'ils sont tous des pinsons.",
               "Frank Sulloway, « Darwin and His Finches », Journal of the History of Biology, 1982"),
      ("objet", "carnet-darwin")),
-    ("deux-minutes", "Deux minutes", "Réussir un quiz d'Éloquence sans faute. Court, juste. Lincoln approuve.",
+    ("deux-minutes", "Deux minutes", "Réussir trois quiz d'Éloquence sans faute. Court, juste. Lincoln approuve.",
      parfait("eloquence"),
      anecdote("À Gettysburg, en 1863, Edward Everett parle deux heures. Lincoln prononce ensuite 272 mots, en deux minutes. Le lendemain, Everett lui écrit qu'il serait heureux d'avoir approché en deux heures l'idée centrale du jour autant que lui l'a fait en deux minutes.",
               "Lettre d'Edward Everett à Abraham Lincoln, 20 novembre 1863"),
      ("objet", "cailloux-demosthene")),
-    ("theiere-russell", "La théière de Russell", "Réussir un quiz de Lucidité sans faute. La charge de la preuve est à celui qui affirme. Vous avez prouvé.",
+    ("theiere-russell", "La théière de Russell", "Réussir trois quiz de Lucidité sans faute. La charge de la preuve est à celui qui affirme. Vous avez prouvé.",
      parfait("lucidite"),
      anecdote("En 1952, Bertrand Russell imagine une petite théière en porcelaine qui tournerait autour du Soleil entre la Terre et Mars, trop petite pour être vue au télescope. Personne ne peut prouver qu'elle n'existe pas. Ce n'est pas une raison d'y croire : c'est à celui qui affirme de prouver.",
               "Bertrand Russell, « Is There a God? », 1952"),
      ("objet", "cartes-wason")),
-    ("pygmalion", "Pygmalion à l'école", "Réussir un quiz d'Empathie sans faute. L'IA s'attendait au pire. Vous l'avez déçue.",
+    ("pygmalion", "Pygmalion à l'école", "Réussir trois quiz d'Empathie sans faute. L'IA s'attendait au pire. Vous l'avez déçue.",
      parfait("empathie"),
      anecdote("En 1968, Rosenthal et Jacobson annoncent que des élèves désignés au hasard comme « prometteurs » progressent plus, parce que leurs maîtres y croient. L'effet existe, mais les relectures montrent qu'il est bien plus faible que promis, et surtout chez les plus jeunes.",
               "Rosenthal et Jacobson, Pygmalion in the Classroom, 1968 ; Jussim et Harber, Personality and Social Psychology Review, 2005"),
      ("objet", "lignes-asch")),
-    ("phosphore-brand", "De l'or dans l'urine", "Réussir un quiz d'Alchimie sans faute. Pas d'or, mais une lumière.",
+    ("phosphore-brand", "De l'or dans l'urine", "Réussir trois quiz d'Alchimie sans faute. Pas d'or, mais une lumière.",
      parfait("alchimie"),
      anecdote("En 1669, à Hambourg, l'alchimiste Hennig Brand cherche la pierre philosophale en faisant bouillir de l'urine, beaucoup d'urine. Il n'obtient pas d'or, mais une substance qui brille dans le noir : le phosphore, premier élément dont on connaisse le découvreur.",
               "John Emsley, The 13th Element, 2000"),
      ("objet", "alambic")),
-    ("georgium-sidus", "L'astre de George", "Réussir un quiz de Cosmos sans faute. L'IA vous donnera peut-être votre nom. Peut-être pas.",
+    ("georgium-sidus", "L'astre de George", "Réussir trois quiz de Cosmos sans faute. L'IA vous donnera peut-être votre nom. Peut-être pas.",
      parfait("cosmos"),
      anecdote("En 1781, William Herschel, musicien devenu astronome, découvre une nouvelle planète, la première depuis l'Antiquité. Il veut l'appeler « Georgium Sidus », l'astre de George, en l'honneur du roi George III, qui lui verse une pension. Les astronomes préfèrent Uranus.",
               "William Herschel, Philosophical Transactions, 1783"),
      ("objet", "sphere-armillaire")),
-    ("signe-franklin", "Le mauvais signe", "Réussir un quiz d'Étincelle sans faute. Vous avez juste. Le courant, lui, circule à l'envers.",
+    ("signe-franklin", "Le mauvais signe", "Réussir trois quiz d'Étincelle sans faute. Vous avez juste. Le courant, lui, circule à l'envers.",
      parfait("etincelle"),
      anecdote("Vers 1747, Benjamin Franklin nomme « positive » et « négative » les deux sortes d'électricité, en devinant dans quel sens circule le fluide. Il a une chance sur deux et se trompe : les électrons, découverts en 1897, vont dans l'autre sens. Le courant conventionnel garde son choix.",
               "Benjamin Franklin, Experiments and Observations on Electricity, 1751"),

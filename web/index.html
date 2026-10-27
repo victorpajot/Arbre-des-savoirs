@@ -155,7 +155,9 @@ p { margin: 0; }
 /* Feuille et quiz */
 .voile { position: fixed; inset: 0; background: rgb(8 10 20 / 0.5); z-index: 20; display: flex; align-items: flex-end; justify-content: center; }
 .feuille { background: var(--surface); width: 100%; max-width: 560px; border-radius: 20px 20px 0 0; display: flex; flex-direction: column; gap: 14px;
-  padding: 20px max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); max-height: 90%; overflow-y: auto; }
+  padding: calc(20px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); max-height: 100%; overflow-y: auto; }
+/* v19 : une feuille longue (Jouer, case) prend tout l'écran : rien ne dépasse derrière elle. */
+.feuille.pleine { border-radius: 0; height: 100%; }
 .feuille h2 { font-size: 24px; }
 .feuille .meta { color: var(--muted); font-size: 14px; }
 
@@ -435,11 +437,14 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .arbre-une:disabled { opacity: .45; cursor: default; }
 .corruption .solde { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 0; font-size: 17px; }
 .corruption .solde b { font-size: 30px; }
+.corruption .solde .bourse, .entete .bourse { align-self: center; vertical-align: middle; }
 .corruption .solde span { color: var(--muted); font-size: 15px; }
 .corruption .pot { display: flex; gap: 10px; align-items: center; margin: 10px 0; }
 .corruption .pot input { flex: 1; min-width: 0; text-align: center; font-size: 22px; font-family: var(--f-mono); border: 2px solid var(--line); border-radius: 12px; padding: 8px; background: var(--surface); color: var(--ink); }
 .corruption .pot .btn { min-width: 48px; font-size: 20px; }
 .gain-credits { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, var(--warn) 16%, transparent); text-align: left; }
+.gain-credits .ligne-bourse { display: flex; align-items: center; gap: 10px; }
+.gain-credits .ligne-bourse .bourse { flex: none; }
 .gain-credits .calcul { font-size: 17px; font-family: var(--f-mono); }
 .gain-credits .calcul b { font-size: 18px; }
 .gain-credits .plus { color: var(--good); font-weight: 700; }
@@ -736,6 +741,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
 .etape { display: flex; flex-direction: column; gap: 14px; }
 @media (prefers-reduced-motion: no-preference) { .etape { animation: apparait 0.35s ease-out both; } }
 .plateau-bilan svg.grille { display: block; width: 100%; height: auto; }
+/* v19 : dans le bilan, le sujet c'est le pion. Les ennemis des autres cases restent visibles mais en retrait. */
+.plateau-bilan svg .garde.loin { opacity: 0.35; filter: grayscale(0.6); }
 /* Les animations en boucle du plateau (halos, pulsations des ennemis) font frétiller le dessin dans la WebView
    d'Android, surtout quand le plateau se peuple. Dans le bilan et sur Android, le plateau reste immobile entre deux déplacements. */
 .plateau-bilan svg .halo, .plateau-bilan svg .garde-pulse, .plateau-bilan svg .liseret, .plateau-bilan svg .avenir, .plateau-bilan svg .halo-pion, .plateau-bilan svg .fleche-pion, .plateau-bilan svg .scintille,
@@ -868,6 +875,14 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
     if (x1 < 0) return "";
     var c = Math.max(x1 - x0, y1 - y0) + 3, ox = x0 - (c - (x1 - x0 + 1)) / 2, oy = y0 - (c - (y1 - y0 + 1)) / 2;
     return '<svg class="pix" viewBox="' + ox + " " + oy + " " + c + " " + c + '" width="' + taille + '" height="' + taille + '" aria-hidden="true">' + pixels(grille, palette, null, 0, 0, 1) + "</svg>";
+  }
+  // v19 : la bourse des crédits, en pixel art, partout où l'on compte des crédits.
+  var BOURSE = ["................", ".....kkkkkk.....", "....kBlllBBk....", ".....kbbbbk.....", "......kyyk......", ".....kbBBbk.....",
+    "....kbBlBBbk....", "...kbBlBBBBbk...", "..kbBlBBBBBBbk..", "..kbBBBBBBkkkk..", "..kbBBBBBkyYYyk.", "..kbBBBBkyYooYyk",
+    "..kbbBBBkyYyyYyk", "...kbbbbkyyYYyyk", "....kkkkkkyyyyk.", "..........kkkk.."];
+  var PAL_BOURSE = { k: "#2A1A10", b: "#7A4A20", B: "#A87034", l: "#D9A25E", y: "#D69E00", Y: "#FFD84A", o: "#9C6B00" };
+  function svgBourse(taille) {
+    return '<svg class="pix bourse" viewBox="0 0 16 16" width="' + taille + '" height="' + taille + '" aria-hidden="true">' + pixels(BOURSE, PAL_BOURSE, null, 0, 0, 1) + "</svg>";
   }
   function svgObjet(o, verrou, taille) {
     var n = C.cabinet.taille[0];
@@ -1018,6 +1033,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       else if (nom && actions && actions[nom]) actions[nom]();
     };
     fermerFeuille(); feuille = f; document.getElementById("couche").appendChild(f);
+    var fe = f.querySelector(".feuille"); if (fe.offsetHeight >= f.clientHeight - 2) fe.classList.add("pleine");
     f.querySelector("button").focus({ preventScroll: true });
   }
 
@@ -1503,7 +1519,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   // Si le pion est sur sa case (duel en attente), l'épingle se range sur le côté.
   function epingleEnnemi(en, n, ici, place) {
     var p = centreCase(place), ex = p[0] + (ici ? 24 : 0), ey = ici ? (p[1] > 70 ? p[1] - 40 : p[1] + 28) : p[1] - 25;
-    return '<g data-n="' + n + '" class="garde" style="cursor:pointer" transform="translate(' + ex.toFixed(1) + " " + ey.toFixed(1) + ')">' +
+    return '<g data-n="' + n + '" class="garde' + (ici ? "" : " loin") + '" style="cursor:pointer" transform="translate(' + ex.toFixed(1) + " " + ey.toFixed(1) + ')">' +
       '<circle r="17" fill="none" stroke="#D94141" stroke-width="3" class="garde-pulse"/>' +
       (ici ? "" : '<path d="M-5.5,11 L0,20 L5.5,11 Z" fill="#D94141" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>') +
       '<circle r="13.5" fill="#fff" stroke="#D94141" stroke-width="2.8"/>' +
@@ -2119,7 +2135,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   // --- Vue Personnage -------------------------------------------------------
   function vuePerso() {
     var t = maintenant(), v = el('<div class="vue"></div>'), xp = M.xpParStat(C, P);
-    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted)">niveau <b style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + '</b> · crédits <b style="font-size:24px;color:var(--ink)">' + P.credits.solde + "</b></div></div>"));
+    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted)">niveau <b style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + '</b> · ' + svgBourse(22) + ' crédits <b style="font-size:24px;color:var(--ink)">' + P.credits.solde + "</b></div></div>"));
     var bs = el('<div class="bloc"><h2>Branches</h2><p class="note">Le niveau de chaque branche monte avec ses compétences maîtrisées et ses rappels réussis. Une pastille par compétence : pleine si maîtrisée, cerclée si ouverte.</p><div class="fiches"></div></div>');
     C.stats.slice().sort(function (a, b) { return (M.arbreOuvert(C, P, b.id) - M.arbreOuvert(C, P, a.id)) || xp[b.id] - xp[a.id]; }).forEach(function (s) { bs.querySelector(".fiches").appendChild(ficheBranche(s, xp[s.id])); });
     // v10 : le personnage se range en onglets ; l'IA et les ennemis y ont leur place.
@@ -3174,7 +3190,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
   // v16 : la corrompre avec les crédits des succès. Un pot-de-vin par jour ; elle retient son record.
   function blocCorruption() {
     var t = maintenant(), cr = P.credits, pp = M.potPossible(C, P, 1, t), deja = cr.jour === cleJourUI(t);
-    var b = el('<div class="bloc corruption"><h2>La corrompre</h2><p class="solde"><b class="num">' + cr.solde + "</b> crédit" + (cr.solde > 1 ? "s" : "") + "<span>gagnés avec tes succès : " + cr.gagnes + "</span></p>" +
+    var b = el('<div class="bloc corruption"><h2>La corrompre</h2><p class="solde">' + svgBourse(36) + '<b class="num">' + cr.solde + "</b> crédit" + (cr.solde > 1 ? "s" : "") + "<span>gagnés avec tes succès : " + cr.gagnes + "</span></p>" +
       '<p class="note">' + (deja ? "Un pot-de-vin par jour : elle compte encore celui d'aujourd'hui." : !cr.solde ? "Pas un crédit en poche. Chaque succès en rapporte, c'est l'IA qui fixe le montant." :
         "Glisse-lui une enveloppe : sa faveur remonte, et elle peut te donner un coup de pouce." + (cr.pots ? " Ton dernier pot-de-vin : " + cr.dernier + " crédit" + (cr.dernier > 1 ? "s" : "") + ". Elle a de la mémoire." : "")) + "</p></div>");
     if (!deja && cr.solde > 0) {
@@ -3645,7 +3661,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
         // Le compte en clair : tarif du succès, décision de l'IA, total.
         var ecart = cr.n - cr.base, pl = function (n) { return n + " crédit" + (Math.abs(n) > 1 ? "s" : ""); };
         var calcul = ecart ? "+" + pl(cr.base) + ' <span class="' + (ecart > 0 ? "plus" : "moins") + '">' + (ecart > 0 ? "+" : "−") + Math.abs(ecart) + "</span> (décision de l'IA) = <b>" + pl(cr.n) + "</b>" : "<b>+" + pl(cr.n) + "</b> (l'IA s'en tient au tarif)";
-        carte.appendChild(el('<div class="gain-credits"><div class="calcul">' + calcul + "</div><p>« " + esc(tx(cr.mot)) + " »</p></div>"));
+        carte.appendChild(el('<div class="gain-credits"><div class="ligne-bourse">' + svgBourse(44) + '<div class="calcul">' + calcul + "</div></div><p>« " + esc(tx(cr.mot)) + " »</p></div>"));
       }
       out.push(marquerTheme(carte, sc, te));
     });

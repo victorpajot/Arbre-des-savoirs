@@ -445,7 +445,7 @@
   // `infos` (facultatif) : {duree} en ms, {total} si le quiz a été coupé avant la fin.
   function terminerQuiz(contenu, partie, id, resultats, t, infos) {
     var r = contenu.regles, c = partie.compteurs, k = contenu.parId[id];
-    ouvrirLot(partie, t);
+    ouvrirLot(partie, t, k && k.stat);
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
     var total = Math.max(resultats.length, (infos && infos.total) || 0);
     var reussi = bonnes / total >= r.quiz.seuil_maitrise - 1e-9;
@@ -509,7 +509,7 @@
   function terminerRappel(contenu, partie, id, resultats, t, infos) {
     var r = contenu.regles;
     var e = partie.competences[id];
-    ouvrirLot(partie, t);
+    ouvrirLot(partie, t, contenu.parId[id] && contenu.parId[id].stat);
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
     var total = Math.max(resultats.length, (infos && infos.total) || 0);
     var reussi = bonnes >= r.rappels.bonnes_reponses_min;
@@ -982,7 +982,7 @@
   // `resultats` : [{id, correct}]. Renvoie {gagne, ennemi, bonnes, total, plateau, recompenses, butin, premiere, fiche}.
   function terminerDuel(contenu, partie, resultats, t, alea, total) {
     var d = partie.duel; if (!d) return null;
-    ouvrirLot(partie, t);
+    ouvrirLot(partie, t, contenu.ennemiParId[d.ennemi] && contenu.ennemiParId[d.ennemi].theme);
     var e = contenu.ennemiParId[d.ennemi], f = ficheBestiaire(partie, d.ennemi), c = partie.compteurs;
     var bonnes = resultats.filter(function (x) { return x.correct; }).length, gagne = resultats.length > 0 && bonnes === resultats.length;
     f.dernier = t;
@@ -1113,7 +1113,7 @@
   // `bonnes` : nombre de bonnes réponses. Renvoie {capture, element, bonnes, total, premiere, fiche, recompenses}.
   function terminerCombat(contenu, partie, bonnes, t) {
     var s = atomeSauvage(contenu, partie); if (!s) return null;
-    ouvrirLot(partie, t);
+    ouvrirLot(partie, t, "alchimie");
     var R = contenu.atomes.regles, c = partie.compteurs, f = ficheAtome(partie, s.z);
     partie.sauvages.shift();
     var capture = bonnes >= seuilAtome(contenu, partie, t), premiere = capture && !f.capture;
@@ -1495,8 +1495,11 @@
   // v15 : au plus un savant, un livre ou un objet par épreuve. Le reste attend l'épreuve suivante.
   // `partie.lot` compte ce qui est tombé pendant l'épreuve datée `t` ; hors épreuve, chaque appel a son propre lot.
   var FAMILLES_LOT = { savants: 1, objets: 1, livres: 1 };
-  function ouvrirLot(partie, t) { partie.lot = { t: t, n: 0 }; }
-  function lotDe(partie, t) { return partie.lot && partie.lot.t === t ? partie.lot : { t: t, n: 0 }; }
+  // v19 : au plus SUCCES_PAR_EPREUVE succès par épreuve (ou par visite). Les autres attendent les épreuves suivantes :
+  // leurs conditions restent remplies, ils tombent plus tard. Ceux du thème de l'épreuve passent en premier.
+  var SUCCES_PAR_EPREUVE = 4;
+  function ouvrirLot(partie, t, theme) { partie.lot = { t: t, n: 0, s: 0, theme: theme || null }; }
+  function lotDe(partie, t) { return partie.lot && partie.lot.t === t ? partie.lot : { t: t, n: 0, s: 0, theme: null }; }
   function horsLot(lot, liste) { return lot.n ? liste.filter(function (b) { return !FAMILLES_LOT[b.famille]; }) : liste; }
   function compterLot(lot, famille) { if (FAMILLES_LOT[famille]) lot.n++; }
   function listeFamille(contenu, f) {
@@ -1531,10 +1534,19 @@
       ["evenements", contenu.evenements, partie.evenements],
     ];
     var change = true;
+    lot.s = lot.s || 0;
     while (change) {
       change = false;
       directes.forEach(function (f) {
-        f[1].forEach(function (x) {
+        var liste = f[1];
+        if (f[0] === "succes") {
+          var place = SUCCES_PAR_EPREUVE - lot.s;
+          liste = place <= 0 ? [] : liste.filter(function (x) { return !f[2][x.id] && conditionRemplie(contenu, partie, x.condition, t); });
+          if (lot.theme) liste = liste.filter(function (x) { return themeDe(x) === lot.theme; }).concat(liste.filter(function (x) { return themeDe(x) !== lot.theme; }));
+          liste = liste.slice(0, Math.max(0, place));
+          lot.s += liste.length;
+        }
+        liste.forEach(function (x) {
           if (f[2][x.id] || (FAMILLES_LOT[f[0]] && lot.n) || !conditionRemplie(contenu, partie, x.condition, t)) return;
           if (f[0] === "evenements" && !dateAtteinte(contenu, partie, x)) return;
           f[2][x.id] = t; out[f[0]].push(x); change = true; compterLot(lot, f[0]);
