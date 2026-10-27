@@ -3553,7 +3553,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       out.push(carte);
     });
     if (r.masque) {
-      out.push(carteRecompense("L'IA gagne un masque", svgMasque(r.masque, "moqueuse", 72), tx(r.masque.nom), "Elle le portera quand le ton s'y prête.", { titre: "Son histoire", html: "<p>" + esc(tx(r.masque.notice)) + "</p>" }, "var(--accent)"));
+      out.push(carteRecompense("L'IA gagne un masque", svgMasque(r.masque, "moqueuse", 72), tx(r.masque.nom), "Elle le portera quand le ton s'y prête.", { titre: "Son histoire", html: "<p>" + esc(tx(r.masque.notice)) + "</p>" + (r.masque.source ? "<cite>Source : " + esc(r.masque.source) + "</cite>" : "") }, "var(--accent)"));
     }
     (r.nouveauxObjets || []).forEach(function (o) {
       out.push(carteRecompense("Nouvel objet au cabinet", svgObjet(o, false, 80), tx(o.nom), "", { titre: "Lire la notice", html: "<p>" + esc(tx(o.notice)) + '</p><cite>Source : ' + esc(o.source) + "</cite>" }));
@@ -3564,7 +3564,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
       c.appendChild(bt); out.push(c);
     });
     (r.nouveauxSavants || []).forEach(function (sv) {
-      out.push(carteRecompense("Nouveau savant jouable", svgSavant(sv, 80), tx(sv.nom), sv.annees + ". Le dernier savant débloqué devient ton personnage, d'office. Personne ne t'a demandé ton avis.", null));
+      out.push(carteRecompense("Nouveau savant jouable", svgSavant(sv, 80), tx(sv.nom), sv.annees + ". Le dernier savant débloqué devient ton personnage, d'office. Personne ne t'a demandé ton avis.", { titre: "Sa biographie", html: "<p>" + esc(tx(sv.notice)) + "</p>" + (sv.source ? "<cite>Source : " + esc(sv.source) + "</cite>" : "") }));
     });
     (r.nouveauxAccessoires || []).forEach(function (a) {
       out.push(carteRecompense("Nouvel accessoire", svgRogne(a.pixels, C.avatar.palette, 80), tx(a.nom), "À essayer sur ton avatar, dans l'onglet Personnage.", null));
