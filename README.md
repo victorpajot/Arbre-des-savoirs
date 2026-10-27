@@ -163,3 +163,13 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 - Atomes : le combat demande le numéro atomique, plus la masse.
 - Questions dont la réponse est une personne : portrait en pixel art et biographie au retour (outils/portraits.py).
 - Chrono activé sur les nouvelles parties ; question en cours en encre dans la barre de progression.
+
+## v16 : crédits et corruption
+
+- Chaque succès rapporte des crédits selon son genre (`outils/credits.py`) ; l'IA multiplie le tarif selon son humeur, penchée par sa faveur, et le commente.
+- Pot-de-vin quotidien dans l'onglet IA : au-dessus de son record, faveur et coup de pouce ; égal, moitié de faveur ; en dessous, elle se vexe et pose un piège.
+- Les erreurs agacent l'IA : −2 de faveur par erreur, −6 de plus pour une épreuve ratée.
+- Ses goûts (ce qui brille) se découvrent à l'usage, après plusieurs cadeaux.
+- Frise : au premier tour, une date de compétence attend que le pion ait atteint son époque.
+- « Avancer d'une seule case » : le joueur choisit l'arbre. Feuille Jouer ouverte sur la case du pion, en grand.
+- Pion posé au-dessus de sa case, qui reste lisible ; silhouette et flash quand un avatar change.
