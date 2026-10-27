@@ -1060,8 +1060,11 @@
     var libres = A.elements.filter(function (e) { return !estCapture(partie, e.z) && attente.indexOf(e.z) < 0; });
     if (!libres.length) libres = A.elements.filter(function (e) { return attente.indexOf(e.z) < 0; });
     if (!libres.length) return null;
-    var poids = libres.map(function (e) { return A.raretes[e.rarete].poids; }), total = poids.reduce(function (a, b) { return a + b; }, 0);
-    var x = hacher(String(t) + "|" + n + "|" + partie.journal.length + "|" + attente.length) % total;
+    // v19 : en début de parcours, les éléments du début du tableau (les plus faciles) sortent surtout.
+    // L'échelle s'élargit avec la progression : au premier tour, case 7 → surtout z ≤ 12 ; à partir du 2e tour, presque tout.
+    var pl = partie.plateau, prog = pl ? (pl.tours || 0) + (pl.atteinte || 1) / 63 : 2, echelle = 6 + 45 * prog;
+    var poids = libres.map(function (e) { return A.raretes[e.rarete].poids * Math.exp(-(e.z - 1) / echelle) * 1000; }), total = poids.reduce(function (a, b) { return a + b; }, 0);
+    var x = tirage(String(t) + "|" + n + "|" + partie.journal.length + "|" + attente.length, 1000000) / 1000000 * total;
     for (var i = 0; i < libres.length; i++) { x -= poids[i]; if (x < 0) return libres[i]; }
     return libres[libres.length - 1];
   }
