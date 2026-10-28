@@ -457,6 +457,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .cp-reglages { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .cp-reglages li { padding: 6px 10px; border-radius: 10px; background: color-mix(in srgb, var(--ink) 6%, var(--surface)); font-size: 15px; }
 .cp-reglages li span { color: var(--muted); font-size: 13px; }
+.niv.cred.cliquable { cursor: pointer; border-radius: 12px; padding: 2px 10px 4px; box-shadow: inset 0 0 0 2px color-mix(in srgb, #E0B12E 55%, transparent); }
 .boutique .solde { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 17px; }
 .boutique .solde b { font-size: 30px; }
 .boutique h3 { margin: 16px 0 6px; }
@@ -2180,6 +2181,14 @@ svg.grille .interro { transition: opacity .3s; }
     var sn = M.surnom(C, P, t);
     var perso = el('<div class="bloc perso-v5" role="button" tabindex="0" aria-label="Ouvrir la fiche du personnage"><div class="perso"><div class="avatar-cadre rang-' + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + '</div><div><div class="niv-ligne"><div class="niv"><small>Niveau</small><span class="num">' + ng + '</span></div><div class="niv cred"><small>Crédits</small><span class="num">' + P.credits.solde + '</span></div></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div>" + (sn ? '<p class="surnom">' + esc(sn.texte) + '<small>d\'après l\'IA</small></p>' : "") + '<p class="meta">' + nbMait + " compétence" + (nbMait > 1 ? "s" : "") + " maîtrisée" + (nbMait > 1 ? "s" : "") + " sur " + C.competences.length + "</p></div></div></div>");
     perso.onclick = function () { vue = "perso"; ongletPerso = "avatar"; rendre(); window.scrollTo(0, 0); };
+    // Les crédits mènent à la boutique, dans les Collections.
+    var cred = perso.querySelector(".niv.cred");
+    if (cred && M.boutique(C)) {
+      cred.setAttribute("role", "button"); cred.setAttribute("tabindex", "0"); cred.setAttribute("aria-label", "Ouvrir la boutique"); cred.classList.add("cliquable");
+      var versBoutique = function (ev) { ev.stopPropagation(); vue = "collections"; collection = "boutique"; rendre(); window.scrollTo(0, 0); };
+      cred.onclick = versBoutique;
+      cred.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); versBoutique(ev); } };
+    }
     perso.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); perso.onclick(); } };
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
     if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
@@ -2356,7 +2365,7 @@ svg.grille .interro { transition: opacity .3s; }
     var bs = el('<div class="bloc"><h2>Branches</h2><p class="note">Le niveau de chaque branche monte avec ses compétences maîtrisées et ses rappels réussis. Une pastille par compétence : pleine si maîtrisée, cerclée si ouverte.</p><div class="fiches"></div></div>');
     C.stats.slice().sort(function (a, b) { return (M.arbreOuvert(C, P, b.id) - M.arbreOuvert(C, P, a.id)) || xp[b.id] - xp[a.id]; }).forEach(function (s) { bs.querySelector(".fiches").appendChild(ficheBranche(s, xp[s.id])); });
     // v10 : le personnage se range en onglets ; l'IA et les ennemis y ont leur place.
-    var onglets = [["avatar", "Avatar"], ["stats", "Stats"]].concat(C.ia ? [["ia", "IA"]] : []).concat(M.boutique(C) ? [["boutique", "Boutique"]] : []).concat(C.ennemis.length ? [["ennemis", "Ennemis"]] : []).concat([["reglages", "Réglages"]]);
+    var onglets = [["avatar", "Avatar"], ["stats", "Stats"]].concat(C.ia ? [["ia", "IA"]] : []).concat(C.ennemis.length ? [["ennemis", "Ennemis"]] : []).concat([["reglages", "Réglages"]]);
     if (!onglets.some(function (o) { return o[0] === ongletPerso; })) ongletPerso = "avatar";
     var seg = el('<div class="segments' + (onglets.length > 5 ? " deux-rangs" : "") + '" role="group" aria-label="Rubrique du personnage"></div>');
     onglets.forEach(function (o) {
@@ -2369,7 +2378,6 @@ svg.grille .interro { transition: opacity .3s; }
     if (ongletPerso === "avatar") v.appendChild(blocAvatar());
     if (ongletPerso === "ia") { v.appendChild(blocIA()); v.appendChild(blocFaveur()); var bi = blocBourseIA(); if (bi) v.appendChild(bi); v.appendChild(blocCadeauxIA()); v.appendChild(blocCorruption()); v.appendChild(blocMasques(Object.keys(P.succes).length)); }
     if (ongletPerso === "ennemis") v.appendChild(blocBestiaire());
-    if (ongletPerso === "boutique") v.appendChild(blocBoutique());
     if (ongletPerso !== "reglages") return v;
 
     var opt = el('<div class="bloc"><h2>Options</h2><label class="interrupteur" for="opt-chrono"><span><b>Chrono</b><br><span class="note">' + C.regles.chrono.secondes + ' secondes par question. Chaque bonne réponse rapporte ' + C.regles.chrono.bonus_xp_par_bonne_reponse + ' XP de plus.</span></span><input type="checkbox" id="opt-chrono"></label></div>');
@@ -2581,16 +2589,17 @@ svg.grille .interro { transition: opacity .3s; }
     var comptes = { objets: [Object.keys(P.objets).length, C.objets.length], frise: [Object.keys(P.evenements).length, C.evenements.length], livres: [Object.keys(P.livres).length, C.livres.length],
       bestiaire: [Object.keys(P.bestiaire || {}).length, C.ennemis.length],
       atomes: [C.atomes ? C.atomes.elements.filter(function (e) { return M.estCapture(P, e.z); }).length : 0, C.atomes ? C.atomes.elements.length : 0] };
+    if (collection === "boutique" && !M.boutique(C)) collection = "objets";
     var cpt = comptes[collection];
-    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Histoire des sciences</div><h1>Collections</h1></div><div class="num" style="font-size:20px;font-weight:700">' + cpt[0] + " / " + cpt[1] + "</div></div>"));
+    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Histoire des sciences</div><h1>Collections</h1></div><div class="num" style="font-size:20px;font-weight:700">' + (cpt ? cpt[0] + " / " + cpt[1] : P.credits.solde + " crédits") + "</div></div>"));
     var seg = el('<div class="segments" role="group" aria-label="Collection"></div>');
-    [["frise", "Frise"], ["livres", "Livres"], ["objets", "Objets"]].concat(C.atomes ? [["atomes", "Atomes"]] : []).forEach(function (c) {
+    [["frise", "Frise"], ["livres", "Livres"], ["objets", "Objets"]].concat(C.atomes ? [["atomes", "Atomes"]] : []).concat(M.boutique(C) ? [["boutique", "Boutique"]] : []).forEach(function (c) {
       var bt = el('<button type="button" aria-pressed="' + (collection === c[0]) + '">' + c[1] + "</button>");
       bt.onclick = function () { collection = c[0]; rendre(); };
       seg.appendChild(bt);
     });
     v.appendChild(seg);
-    v.appendChild(collection === "frise" ? blocFrise() : collection === "livres" ? blocBibliotheque() : collection === "atomes" ? blocTableau() : blocCabinet());
+    v.appendChild(collection === "frise" ? blocFrise() : collection === "livres" ? blocBibliotheque() : collection === "atomes" ? blocTableau() : collection === "boutique" ? blocBoutique() : blocCabinet());
     return v;
   }
   function blocCabinet() {
