@@ -262,7 +262,7 @@ CASES = [
      "Au cinquième congrès Solvay, à Bruxelles, 17 des 29 participants sont ou seront Prix Nobel. Bohr et Einstein s'y affrontent sur la mécanique quantique : Einstein refuse un monde gouverné par le hasard, « Dieu ne joue pas aux dés », et Bohr lui répond de cesser de dire à Dieu ce qu'il doit faire. Près d'un siècle plus tard, on se dispute toujours sur l'interprétation de la théorie.",
      "Feynman disait que personne ne comprend la mécanique quantique. Vous non plus, et c'est rassurant.",
      "Instituts internationaux de physique et de chimie Solvay ; Richard Feynman, The Character of Physical Law, 1965", {"type": "recul", "n": 4}),
-    ("hubble", 1929, "L'Univers en expansion", "Les galaxies s'éloignent : l'Univers est en expansion.", "cosmos", "plaque-hubble",
+    ("hubble", 1929, "L'Univers en expansion", "Hubble montre que les galaxies s'éloignent ; Lemaître l'avait déduit dès 1927.", "cosmos", "plaque-hubble",
      "Edwin Hubble montre que les galaxies s'éloignent d'autant plus vite qu'elles sont loin : l'Univers est en expansion. Georges Lemaître, prêtre et physicien belge, l'avait déduit dès 1927 dans une revue belge peu lue, en français. En 2018, l'Union astronomique internationale a recommandé de parler de loi de Hubble-Lemaître.",
      "Lemaître avait trouvé avant Hubble, en français, dans une revue belge. L'IA vous conseille de publier en anglais.",
      "Georges Lemaître, Annales de la Société scientifique de Bruxelles, 1927 ; Union astronomique internationale, 2018", None),

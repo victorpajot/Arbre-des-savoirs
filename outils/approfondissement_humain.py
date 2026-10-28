@@ -312,7 +312,7 @@ DATES = [
     ("broca", 1861, "Le patient « Tan »", "Paul Broca localise le langage dans une région du cerveau.", "empathie", "psy.cerveau",
      "Son patient Leborgne ne pouvait plus prononcer que la syllabe « tan ». À l'autopsie, Broca trouve une lésion du lobe frontal gauche. Le cerveau de Leborgne est toujours conservé à Paris.",
      "Paul Broca, Bulletin de la Société anatomique de Paris, 1861"),
-    ("piaget", 1936, "La naissance de l'intelligence", "Jean Piaget décrit comment l'intelligence se construit chez le bébé.", "empathie", "psy.developpement",
+    ("piaget", 1936, "La naissance de l'intelligence", "Jean Piaget décrit, en observant ses trois enfants, comment naît l'intelligence.", "empathie", "psy.developpement",
      "Il s'appuie sur l'observation minutieuse de ses trois enfants. Son idée : l'enfant n'est pas un adulte en miniature, il construit le monde par étapes.",
      "Jean Piaget, La Naissance de l'intelligence chez l'enfant, 1936"),
     ("big-five", 1990, "Les cinq grands traits", "Lewis Goldberg établit la structure des Big Five à partir des mots de la langue.", "empathie", "psy.personnalite",
