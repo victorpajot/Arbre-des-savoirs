@@ -18,7 +18,7 @@ FICHES = {
         "Pour additionner des fractions, on les met au même dénominateur : 3/4 + 1/8 = 6/8 + 1/8 = 7/8. On n'additionne jamais les dénominateurs.",
         "Diviser par une fraction, c'est multiplier par son inverse : 2 ÷ 1/2 = 4.",
         "Un nombre premier a exactement deux diviseurs, 1 et lui-même. 1 n'est donc pas premier ; 2 est le seul premier pair.",
-    ], "6 ÷ 2 × 3 vaut 9, pas 1 : à priorité égale, on calcule de gauche à droite.", I.fractions(),
+    ], "6 ÷ 2 × 3 vaut 9, pas 1 : à priorité égale, la convention est de calculer de gauche à droite.", I.fractions(),
         "Programme de mathématiques du cycle 4, Éduscol"),
     "math.proportions": F([
         "La règle de trois marche quand deux grandeurs sont proportionnelles : si 3 kg coûtent 12 €, 5 kg coûtent 5 × 12 / 3 = 20 €.",
@@ -160,7 +160,7 @@ FICHES = {
     "sci.evolution": F([
         "Sélection naturelle : les individus porteurs de variations avantageuses laissent plus de descendants.",
         "Les mutations sont aléatoires ; la sélection, elle, ne l'est pas.",
-        "L'humain ne descend pas du chimpanzé : ils partagent un ancêtre commun, il y a 6 à 7 millions d'années.",
+        "L'humain ne descend pas du chimpanzé : ils partagent un ancêtre commun, qui vivait il y a plusieurs millions d'années.",
         "L'évolution agit sur des populations sur des générations, pas sur un individu pendant sa vie.",
     ], "La girafe n'a pas allongé son cou à force de l'étirer : c'est Lamarck, et c'est faux.",
         chaine(["variations", "sélection", "descendants|mieux adaptés"], "Le principe de la sélection naturelle", accent=2),
@@ -235,7 +235,7 @@ FICHES = {
         "Pente glissante : affirmer sans preuve qu'un premier pas mène fatalement au pire.",
     ], "Toute attaque personnelle n'est pas un ad hominem : signaler un conflit d'intérêts peut être pertinent.",
         deux_colonnes(["déformer l'idée", "viser la personne", "deux choix seulement", "tout va déraper"], ["homme de paille", "ad hominem", "faux dilemme", "pente glissante"], "Quatre sophismes et leur mécanisme", "Ce qu'on fait", "Son nom"),
-        "Schopenhauer, L'Art d'avoir toujours raison, 1864"),
+        "Schopenhauer, L'Art d'avoir toujours raison, vers 1831"),
     "rhet.debat": F([
         "Un contre-exemple suffit à réfuter une affirmation universelle.",
         "Concéder un point renforce la crédibilité et recentre le débat sur l'essentiel.",
@@ -254,7 +254,7 @@ FICHES = {
         "Campbell, Le Héros aux mille et un visages, 1949"),
     "rhet.discours": F([
         "Périclès, oraison funèbre (431 av. J.-C.) : l'éloge de la démocratie athénienne.",
-        "Lincoln à Gettysburg (1863) : 272 mots, deux minutes, « du peuple, par le peuple, pour le peuple ».",
+        "Lincoln à Gettysburg (1863) : environ 270 mots, deux minutes, « du peuple, par le peuple, pour le peuple ».",
         "Martin Luther King, « I have a dream » (1963) : une anaphore construite en partie en improvisation.",
         "Malala Yousafzai à l'ONU (2013) : « un enfant, un professeur, un livre et un stylo peuvent changer le monde ».",
     ], "Le passage « I have a dream » ne figurait pas dans le texte préparé : Mahalia Jackson lui a crié de parler du rêve.",
@@ -271,7 +271,7 @@ FICHES = {
     # --- Biais cognitifs --------------------------------------------------------------------
     "biais.confirmation": F([
         "On cherche, retient et interprète les informations qui confirment ce qu'on croit déjà.",
-        "Tâche de Wason : pour tester « voyelle → nombre pair », il faut retourner E et 7. Presque tout le monde retourne E et 4.",
+        "Tâche de Wason : pour tester « voyelle → nombre pair », il faut retourner E et 7. Moins d'un participant sur dix y pense : la plupart retournent E, et souvent 4.",
         "Le 4 ne peut pas réfuter la règle ; le 7 si, s'il cache une voyelle.",
         "Antidote : chercher activement ce qui prouverait qu'on a tort.",
     ], "Accumuler des exemples favorables ne teste rien : seul un test qui pourrait échouer est informatif.",
@@ -321,7 +321,7 @@ FICHES = {
     "biais.croyances": F([
         "Paréidolie : voir des visages ou des formes dans le hasard (le visage sur Mars).",
         "Biais d'intentionnalité : voir une volonté derrière des événements accidentels.",
-        "Quand une prophétie échoue, les croyants les plus engagés renforcent souvent leur croyance (Festinger, 1956).",
+        "Quand une prophétie échoue, les croyants les plus engagés renforcent souvent leur croyance, selon Festinger (1956), dont l'enquête est aujourd'hui contestée.",
         "Les souvenirs se reconstruisent : on peut implanter de faux souvenirs détaillés (Loftus).",
     ], "Être sûr de son souvenir n'est pas un gage qu'il soit exact.",
         chaine(["coïncidence", "intention|supposée", "complot"], "Du hasard au complot : le biais d'intentionnalité", accent=2),
@@ -355,7 +355,7 @@ FICHES = {
         "Récompenser une activité déjà plaisante peut réduire la motivation intrinsèque (effet de surjustification).",
         "Autonomie, compétence et lien social nourrissent la motivation (théorie de l'autodétermination).",
         "La procrastination est surtout une fuite d'une émotion désagréable, pas de la paresse.",
-    ], "La pyramide de Maslow n'a jamais été dessinée par Maslow : elle vient de consultants en management.",
+    ], "La pyramide de Maslow n'a jamais été dessinée par Maslow : elle vient d'un psychologue consultant en entreprise, Charles McDermid, en 1960.",
         triangle(["autonomie", "compétence", "lien social"], "Les trois besoins de la théorie de l'autodétermination", "motivation"),
         "Deci et Ryan, Intrinsic Motivation and Self-Determination, 1985"),
     "psy.influence": F([
@@ -383,7 +383,7 @@ FICHES = {
         "Piaget, La Psychologie de l'enfant, 1966"),
     "psy.personnalite": F([
         "Big Five : ouverture, conscienciosité, extraversion, agréabilité, névrosisme. C'est le modèle le plus validé.",
-        "Les traits sont héritables à environ 40 à 50 %.",
+        "Les traits sont héritables à environ 40 à 60 %.",
         "Le MBTI classe en 16 types, mais beaucoup de gens changent de type d'un test à l'autre.",
         "La phrénologie et les tempéraments des humeurs sont abandonnés.",
     ], "Les traits sont des continuums, pas des cases : on n'est pas introverti ou extraverti, on est plus ou moins extraverti.",
@@ -392,7 +392,7 @@ FICHES = {
     "psy.bienetre": F([
         "Le stress aigu mobilise ; c'est le stress chronique qui use.",
         "Adaptation hédonique : après un gain ou une perte, on revient en grande partie vers son niveau habituel de bonheur.",
-        "Les liens sociaux sont le meilleur prédicteur du bien-être à long terme (étude de Harvard sur 80 ans).",
+        "Les liens sociaux sont le meilleur prédicteur du bien-être à long terme (étude de Harvard, suivie depuis 1938).",
         "Le sommeil consolide la mémoire ; en manquer dégrade l'humeur et l'attention.",
     ], "Gagner au loto ne rend pas durablement beaucoup plus heureux (Brickman, 1978).",
         courbe("M40 110 L 110 110 L 120 40 C 170 60, 230 100, 320 106", "Adaptation hédonique : le pic retombe vers le niveau habituel", "temps", "bonheur",
@@ -466,7 +466,7 @@ FICHES = {
     "astro.systeme": F([
         "Huit planètes : Mercure, Vénus, Terre, Mars (rocheuses), Jupiter, Saturne (géantes gazeuses), Uranus, Neptune (géantes de glace).",
         "Pluton est une planète naine depuis 2006.",
-        "Vénus est la plus chaude (≈ 465 °C) à cause de son effet de serre, bien que Mercure soit plus proche du Soleil.",
+        "Vénus est la plus chaude (≈ 464 °C) à cause de son effet de serre, bien que Mercure soit plus proche du Soleil.",
         "Les saisons viennent de l'inclinaison de l'axe terrestre, pas de la distance au Soleil.",
     ], "La Terre est au plus près du Soleil début janvier, en plein hiver boréal.", I.saisons(),
         "Union astronomique internationale, résolution B5, 2006"),
@@ -559,7 +559,7 @@ FICHES = {
     "elec.em": F([
         "Radio, micro-ondes, infrarouge, visible, ultraviolet, X et gamma : la même onde à des fréquences différentes.",
         "Toutes se propagent à la vitesse de la lumière dans le vide (Maxwell, 1865).",
-        "Plus la fréquence est élevée, plus chaque photon porte d'énergie : seuls UV, X et gamma sont ionisants.",
+        "Plus la fréquence est élevée, plus chaque photon porte d'énergie : seuls une partie des UV, les X et les gamma sont ionisants.",
         "Le micro-ondes chauffe surtout l'eau des aliments en agitant ses molécules.",
     ], "Les ondes radio et Wi-Fi ne sont pas ionisantes : elles n'ont pas assez d'énergie pour casser l'ADN.",
         echelle([(0.05, "radio"), (0.22, "micro-|ondes"), (0.4, "infra-|rouge"), (0.52, "visible", True), (0.65, "UV"), (0.8, "rayons X"), (0.95, "gamma")], "Le spectre électromagnétique", "basse fréquence", "haute fréquence"),
@@ -590,7 +590,7 @@ FICHES = {
         "Shannon, A Symbolic Analysis of Relay and Switching Circuits, 1938"),
     # --- Philosophie ---------------------------------------------------------------------------
     "philo.antiquite": F([
-        "Socrate n'a rien écrit ; on le connaît par Platon et Xénophon. « Je sais que je ne sais rien. »",
+        "Socrate n'a rien écrit ; on le connaît par Platon et Xénophon. « Je sais que je ne sais rien » résume après coup l'Apologie : « je ne sais pas, et je ne crois pas savoir ».",
         "Platon : allégorie de la caverne, le monde sensible n'est qu'une ombre du monde des Idées.",
         "Aristote : logique, éthique de la vertu comme juste milieu, observation du vivant.",
         "Stoïciens : distinguer ce qui dépend de nous de ce qui n'en dépend pas. Épicure : le plaisir comme absence de trouble.",
@@ -628,9 +628,9 @@ FICHES = {
         "Dilemme du tramway : la plupart acceptent de dévier le tramway, peu de pousser quelqu'un, pour le même bilan.",
     ], "L'utilitarisme ne dit pas « la fin justifie les moyens » : il compte aussi les moyens dans les conséquences.",
         triangle(["conséquences|(Mill)", "devoirs|(Kant)", "vertus|(Aristote)"], "Trois grandes familles de l'éthique", "bien agir"),
-        "Foot, Oxford Review, 1967"),
+        "Foot, Oxford Review, 1967 ; Thomson, The Monist, 1976"),
     "philo.politique": F([
-        "Hobbes : sans État, la vie serait « solitaire, misérable, brutale et courte » ; on cède sa liberté au Léviathan.",
+        "Hobbes : sans État, la vie serait « solitaire, pauvre, pénible, brutale et courte » ; on cède sa liberté au Léviathan.",
         "Locke : le pouvoir protège des droits naturels ; on peut renverser un pouvoir tyrannique.",
         "Montesquieu : séparer législatif, exécutif et judiciaire pour que « le pouvoir arrête le pouvoir ».",
         "Rawls : choisir les règles sous un voile d'ignorance, sans savoir quelle place on aura.",
