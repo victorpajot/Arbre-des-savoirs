@@ -27,7 +27,7 @@ PIEGES = {
     5: ({"type": "cadeau"}, "Thalès, raconte Aristote, loua tous les pressoirs à olives avant une récolte abondante et fit fortune. Il vous en reverse une part."),
     23: ({"type": "cadeau"}, "Ibn al-Haytham aurait, selon ses biographes, feint la folie pour échapper au calife et écrire en paix. Vous n'avez rien à feindre : servez-vous."),
     37: ({"type": "cadeau"}, "Pascal et Fermat posent les bases du calcul des probabilités pour partager équitablement les mises d'une partie interrompue. Cette fois, le partage tombe de votre côté."),
-    47: ({"type": "cadeau"}, "Jenner n'a jamais fait breveter la vaccine : il voulait qu'elle profite à tous. Il vous fait le même genre de cadeau."),
+    47: ({"type": "cadeau"}, "Jenner a refusé de s'enrichir avec sa découverte. Il vous fait le même genre de cadeau."),
     58: ({"type": "cadeau"}, "Hubble montre que l'Univers s'agrandit. Votre cabinet aussi."),
     17: ({"type": "oubli"}, "La machine d'Anticythère a dormi deux mille ans au fond de la mer, jusqu'à ce que des pêcheurs d'éponges la remontent en 1901. Ce que vous avez survolé vous attend aussi : retour à la première case jamais vue."),
     60: ({"type": "oubli"}, "Le cliché 51 de Rosalind Franklin a guidé Watson et Crick vers la double hélice, mais son rôle est resté dans l'ombre pendant des décennies. Retour à la première case que vous avez laissée dans l'ombre."),
