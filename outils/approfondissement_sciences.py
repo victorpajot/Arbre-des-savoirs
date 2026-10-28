@@ -441,7 +441,7 @@ DATES = [
     ("eclipse-1919", 1919, "L'éclipse d'Eddington", "Des photos d'éclipse confirment que le Soleil dévie la lumière des étoiles.", "mecanique", "phys.relativite",
      "Les expéditions à Sobral, au Brésil, et sur l'île de Principe rendent Einstein célèbre du jour au lendemain. Le Times titre sur une « révolution dans la science ».",
      "Dyson, Eddington et Davidson, Philosophical Transactions A, 1920"),
-    ("planck-quanta", 1900, "Les quanta de Planck", "Max Planck suppose que l'énergie lumineuse s'échange par petits paquets.", "mecanique", "phys.quantique",
+    ("planck-quanta", 1900, "Les quanta de Planck", "Max Planck suppose qu'un oscillateur ne change d'énergie que par petits sauts.", "mecanique", "phys.quantique",
      "Il présente son idée le 14 décembre 1900 à la Société allemande de physique. Il n'y croit qu'à moitié : c'est un « acte de désespoir », écrira-t-il.",
      "Max Planck, Verhandlungen der Deutschen Physikalischen Gesellschaft, 1900"),
     ("harvey", 1628, "La circulation du sang", "William Harvey démontre que le cœur fait circuler le sang en boucle.", "savoir", "sci.corps",
