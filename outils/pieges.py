@@ -31,7 +31,7 @@ PIEGES = {
     58: ({"type": "cadeau"}, "Hubble montre que l'Univers s'agrandit. Votre cabinet aussi."),
     17: ({"type": "oubli"}, "La machine d'Anticythère a dormi deux mille ans au fond de la mer, jusqu'à ce que des pêcheurs d'éponges la remontent en 1901. Ce que vous avez survolé vous attend aussi : retour à la première case jamais vue."),
     60: ({"type": "oubli"}, "Le cliché 51 de Rosalind Franklin a guidé Watson et Crick vers la double hélice, mais son rôle est resté dans l'ombre pendant des décennies. Retour à la première case que vous avez laissée dans l'ombre."),
-    62: ({"type": "teleport", "vers": 53}, "Le premier site web, perdu, n'a été remis en ligne par le CERN qu'en 2013. Lien mort : retour au tableau de Mendeleïev."),
+    62: ({"type": "teleport", "vers": 53}, "La toute première version du premier site est perdue : en 2013, le CERN n'a pu remettre en ligne qu'une copie de 1992. Lien mort : retour au tableau de Mendeleïev."),
 }
 
 TEXTES = {
