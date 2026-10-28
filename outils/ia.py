@@ -474,6 +474,11 @@ import credits  # noqa: E402
 REPLIQUES.update({k: [sans(l[1]) if isinstance(l, tuple) else l for l in v] for k, v in credits.REPLIQUES.items()})
 EXPRESSIONS.update(credits.TONS)
 
+# v27 : l'IA furieuse, sèche et désagréable ; à 0 de faveur, le jeu ferme jusqu'au lendemain.
+import furieuse  # noqa: E402
+REPLIQUES.update({k: [sans(l[1]) if isinstance(l, tuple) else l for l in v] for k, v in furieuse.REPLIQUES.items()})
+EXPRESSIONS.update(furieuse.TONS)
+
 # v7 : surnom que l'IA donne au joueur, affiché sous le rang. Il suit son humeur (dernier résultat),
 # ou juste après un succès, ce succès ({succes}). Groupes nominaux épicènes : le joueur peut être n'importe qui.
 SURNOMS = {

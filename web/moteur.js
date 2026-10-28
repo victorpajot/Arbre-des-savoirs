@@ -1287,7 +1287,7 @@
     if (article === "arbre") return contenu.stats.filter(function (st) { return arbreOuvert(contenu, partie, st.id); });
     if (POCHE[article]) { var B = boutique(contenu); return enPoche(partie, article) < ((B && B.stock_max) || 5) ? [1] : []; }
     // v26 : une case de plus, une fois par jour ; pas quand le pion est retenu (duel à rejouer, révision forcée).
-    if (article === "avancer") return (t != null && partie.credits.avanceJour === cleJour(t)) || duelBloquant(partie) || revisionEnCours(partie) ? [] : [1];
+    if (article === "avancer") return (t != null && (partie.credits.avanceJour === cleJour(t) || jeuFerme(contenu, partie, t))) || duelBloquant(partie) || revisionEnCours(partie) ? [] : [1];
     return [];
   }
   // Cases devant le pion où poser un ennemi : ni spéciales, ni déjà gardées, ni la dernière.
@@ -1653,13 +1653,19 @@
   function faveurIA(contenu, partie, t) {
     var F = contenu.ia && contenu.ia.faveur; if (!F) return null;
     if (!partie.faveur) partie.faveur = { valeur: F.depart, maj: t };
+    // v27 : tombée à 0 (erreurs, pot-de-vin radin), elle ferme le jeu pour la journée ; le lendemain, elle remonte d'elle-même.
+    if (partie.faveur.valeur <= 0 && joursEntre(partie.faveur.maj, t) >= 1) partie.faveur = { valeur: F.remontee || 25, maj: debutJour(t), remontee: cleJour(t) };
     var jours = Math.max(0, joursEntre(partie.faveur.maj, t));
-    var valeur = Math.max(0, partie.faveur.valeur - F.baisse_par_jour * jours);
+    // La baisse quotidienne seule ne descend pas sous 1 : l'absence la rend furieuse, pas muette.
+    var valeur = partie.faveur.valeur <= 0 ? 0 : Math.max(Math.min(1, partie.faveur.valeur), partie.faveur.valeur - F.baisse_par_jour * jours);
     var palier = F.paliers.filter(function (p) { return valeur >= p.min; })[0] || F.paliers[F.paliers.length - 1];
     // v25 : comblée pour la première fois, elle donne son nom. Pour de bon : fâchée, elle le reproche sans le reprendre.
     if (palier.id === "comblee" && !partie.alyca && contenu.ia.alyca) partie.alyca = { depuis: t, vu: false };
-    return { valeur: valeur, palier: palier, demain: Math.max(0, valeur - F.baisse_par_jour), cadeauDuJour: partie.cadeaux.jour === cleJour(t) };
+    return { valeur: valeur, palier: palier, fermee: valeur <= 0, demain: valeur <= 0 ? (F.remontee || 25) : Math.max(1, valeur - F.baisse_par_jour),
+      cadeauDuJour: partie.cadeaux.jour === cleJour(t) };
   }
+  // v27 : à 0 de faveur, plus rien ne se joue (quiz, rappels, duels, atomes) avant le lendemain.
+  function jeuFerme(contenu, partie, t) { var f = faveurIA(contenu, partie, t); return !!(f && f.fermee); }
   // Furieuse, l'IA pose chaque jour un piège sur une case libre juste devant le pion. Renvoie la case, ou null.
   function piegeIA(contenu, partie, t) {
     var fav = faveurIA(contenu, partie, t);
@@ -2263,6 +2269,20 @@
     jouer_case: "jouer", jouer_hasard: "jouer", jouer_faible: "jouer", jouer_rappel: "jouer", jouer_bonus: "jouer", jouer_ouvre_arbre: "jouer",
     jouer_choix_arbre: "jouer", jouer_revision: "jouer",
   };
+  // v27 : version furieuse de chaque contexte (sinon son groupe de GROUPE_THEME, sinon « defaut »). null : on garde la ligne ordinaire.
+  var FURIEUSE = {
+    jouer_case: "jouer", jouer_hasard: "jouer", jouer_faible: "jouer", jouer_rappel: "jouer", jouer_bonus: "jouer", jouer_ouvre_arbre: "jouer",
+    jouer_choix_arbre: "jouer", jouer_revision: "jouer", jouer_hors_case: "jouer",
+    honte_effacee: "reussi", honte_ratee: "rate", eureka: "reussi", prison_liberation: "reussi", quarantaine: "rate", oubli: "rate", eclair: "rate",
+    ennemi: "ennemi", duel_gagne: "duel_gagne", duel_perdu: "duel_perdu",
+    atome_apparait: "atome_apparait", atome_capture: "atome_capture", atome_fuite: "atome_fuite",
+    plateau_avance: "plateau", piege: "plateau", piege_ia: "plateau", teleport: "plateau", revision: "plateau", prison: "plateau",
+    retour_epoque: "plateau", route_detour: "plateau", route_raccourcie: "plateau", cadeau_case: "plateau", tour_fini: "tour_fini",
+    cadeau_terne: "cadeau", cadeau_brillant: "cadeau", cadeau_eblouissant: "cadeau", cadeau_repete: "cadeau",
+    farce: "farce", mur_honte: "honte",
+    pot_egal: null, pot_genereux: null, pot_premier: null, pot_radin: null, ultimatum: null, ultimatum_paye: null, ultimatum_refuse: null,
+    faveur_furieuse: null, faveur_nulle: null, faveur_remontee: null, mode_test: null,
+  };
   function lignesTheme(contenu, partie, ctx, theme) {
     var g = theme && GROUPE_THEME[ctx], cle = g && "theme_" + g + "@" + theme, l = cle && contenu.commentairesPar[cle];
     if (!l || !l.length || tirage(ctx + "|" + theme + "|" + partie.journal.length + "|" + (partie.repliques[cle] || []).length, 5) >= 3) return null;
@@ -2274,10 +2294,16 @@
   // v18 : `theme` (facultatif), l'arbre de l'épreuve ; la réplique le garde, pour le masque et l'aparté.
   function replique(contenu, partie, contextes, alea, vars, theme) {
     alea = alea || Math.random;
+    // v27 : furieuse, elle ne plaisante plus. Chaque moment prend sa version sèche, sans ligne d'arbre.
+    var fav = faveurIA(contenu, partie, maintenant(partie)), furieuse = !!(fav && fav.palier.id === "furieuse");
     for (var i = 0; i < contextes.length; i++) {
       var ctx = contextes[i], lignes = contenu.commentairesPar[ctx];
+      if (furieuse && FURIEUSE[ctx] !== null) {
+        var fc = "furieuse_" + (FURIEUSE[ctx] || GROUPE_THEME[ctx] || "defaut");
+        if (contenu.commentairesPar[fc] && contenu.commentairesPar[fc].length) { ctx = fc; lignes = contenu.commentairesPar[fc]; }
+      }
       if (!lignes || !lignes.length) continue;
-      var lt = lignesTheme(contenu, partie, ctx, theme), cle = ctx;
+      var lt = /^furieuse_/.test(ctx) ? null : lignesTheme(contenu, partie, ctx, theme), cle = ctx;
       if (lt) { lignes = lt.lignes; cle = lt.cle; }
       var vues = partie.repliques[cle] || [];
       var fraiches = lignes.filter(function (l) { return vues.indexOf(l.id) < 0; });
@@ -2309,6 +2335,11 @@
     }
     // v12 : des questions ratées aujourd'hui et pas encore effacées : l'IA vous envoie au mur de la honte.
     if (ctx !== "retour" && contenu.commentairesPar.mur_honte && murDeLaHonte(contenu, partie, t, 0).restantes) ctx = "mur_honte";
+    // v27 : à 0, le jeu est fermé ; le lendemain, elle annonce qu'elle reprend, du bout des lèvres.
+    var fv = faveurIA(contenu, partie, t);
+    if (fv && fv.fermee && contenu.commentairesPar.faveur_nulle) ctx = "faveur_nulle";
+    else if (fv && partie.faveur.remontee === cleJour(t) && contenu.commentairesPar.faveur_remontee) ctx = "faveur_remontee";
+    else if (fv && fv.palier.id === "furieuse" && ctx !== "faveur_furieuse") ctx = FURIEUSE[ctx] === null ? ctx : "furieuse_" + (FURIEUSE[ctx] || "defaut");
     var lignes = contenu.commentairesPar[ctx] || contenu.commentairesPar.accueil;
     if (!lignes || !lignes.length) return null;
     return habiller(contenu, lignes[Math.floor(debutJour(t) / JOUR) % lignes.length]);
@@ -2356,7 +2387,7 @@
     themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
-    faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
+    faveurIA: faveurIA, jeuFerme: jeuFerme, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,

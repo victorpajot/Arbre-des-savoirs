@@ -19,6 +19,8 @@ def sans(texte):
 
 FAVEUR = {
     "depart": 60, "baisse_par_jour": 8, "gains": {"1": 12, "2": 25, "3": 45}, "lassitude_jours": 14,
+    # v27 : la baisse quotidienne s'arrête à 1. À 0 (erreurs, pot-de-vin radin), le jeu ferme ; le lendemain, elle remonte à 25.
+    "remontee": 25,
     "paliers": [
         {"id": "comblee", "min": 75, "nom": "Comblée", "butin": 1.5, "avance": 1,
          "effet": "Butin plus fréquent, et une case de plus à chaque épreuve réussie."},

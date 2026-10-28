@@ -844,7 +844,24 @@
          "theme_rate@etincelle",
          "theme_jouer@sagesse",
          "theme_reussi@sagesse",
-         "theme_rate@sagesse"
+         "theme_rate@sagesse",
+         "furieuse_reussi",
+         "furieuse_rate",
+         "furieuse_jouer",
+         "furieuse_ennemi",
+         "furieuse_duel_gagne",
+         "furieuse_duel_perdu",
+         "furieuse_atome_apparait",
+         "furieuse_atome_capture",
+         "furieuse_atome_fuite",
+         "furieuse_plateau",
+         "furieuse_tour_fini",
+         "furieuse_cadeau",
+         "furieuse_farce",
+         "furieuse_honte",
+         "furieuse_defaut",
+         "faveur_nulle",
+         "faveur_remontee"
         ]
        },
        "reference": {
@@ -1610,6 +1627,12 @@
       "piege": {
        "type": "object",
        "description": "Piège posé chaque jour devant le pion quand l'IA est furieuse."
+      },
+      "remontee": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 100,
+       "description": "Tombée à 0, la faveur revient à cette valeur le lendemain."
       }
      }
     },

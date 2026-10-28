@@ -124,7 +124,9 @@ def main():
         erreurs.append(f"commentaires.json : aucune réplique pour {sorted(attendus - contextes)}")
     if len(repliques) < 200:
         erreurs.append(f"commentaires.json : {len(repliques)} répliques, 200 attendues")
-    part = sum(r.get("reference", False) for r in repliques) / len(repliques)
+    # v27 : furieuse, l'IA ne fait plus de culture ; ces répliques sèches ne comptent pas dans la part sourcée.
+    cultivees = [r for r in repliques if not r["contexte"].startswith("furieuse_") and r["contexte"] not in ("faveur_nulle", "faveur_remontee")]
+    part = sum(r.get("reference", False) for r in cultivees) / len(cultivees)
     if part < 0.7:
         erreurs.append(f"commentaires.json : {part:.0%} des répliques citent l'histoire des sciences, 70 % attendus")
     narr = contenu["ia"]

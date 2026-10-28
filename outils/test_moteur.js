@@ -1263,3 +1263,32 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.enRayon(C, P, "avancer", T + 2 * J).length, 0, "pas quand un duel retient le pion");
   console.log("OK : v26 avancer d'une case à la boutique");
 }
+
+// v27 : furieuse, l'IA est sèche ; à 0, le jeu ferme jusqu'au lendemain, où sa faveur remonte d'elle-même.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 1, 10).getTime(), J = 86400000, F = d("ia.json").faveur;
+  const P = M.nouvellePartie(T); P.decalage = T - Date.now();
+  P.faveur = { valeur: 10, maj: T };
+  for (const [ctx, attendu] of [["ennemi", "furieuse_ennemi"], ["quiz_reussi", "furieuse_reussi"], ["jouer_case", "furieuse_jouer"], ["masque", "furieuse_defaut"]]) {
+    const r = M.replique(C, P, [ctx], () => 0.3);
+    assert.equal(r.contexte, attendu, ctx + " → " + attendu);
+    assert.ok(!/Arbitrage officiel/.test(r.texte.fr));
+  }
+  assert.equal(M.replique(C, P, ["pot_radin"]).contexte, "pot_radin", "le pot-de-vin garde ses lignes");
+  assert.equal(M.repliqueDuJour(C, P, T).contexte.indexOf("furieuse") >= 0 || M.repliqueDuJour(C, P, T).contexte === "faveur_furieuse", true);
+  assert.equal(M.jeuFerme(C, P, T), false, "furieuse mais encore ouverte");
+  // L'absence seule ne la fait pas tomber à 0.
+  assert.equal(M.faveurIA(C, P, T + 30 * J).valeur, 1); assert.equal(M.jeuFerme(C, P, T + 30 * J), false);
+  // Les erreurs la font tomber à 0 : fermé pour la journée.
+  P.faveur = { valeur: 3, maj: T };
+  M.agacerIA(C, P, 5, true, T + 3600e3);
+  assert.equal(M.faveurIA(C, P, T + 3600e3).valeur, 0); assert.ok(M.jeuFerme(C, P, T + 5 * 3600e3));
+  assert.equal(M.repliqueDuJour(C, P, T + 5 * 3600e3).contexte, "faveur_nulle");
+  assert.equal(M.enRayon(C, P, "avancer", T + 5 * 3600e3).length, 0, "pas d'avance achetée, jeu fermé");
+  // Le lendemain, elle remonte d'elle-même et le dit.
+  const f = M.faveurIA(C, P, T + J);
+  assert.equal(f.valeur, F.remontee); assert.equal(M.jeuFerme(C, P, T + J), false);
+  assert.equal(M.repliqueDuJour(C, P, T + J).contexte, "faveur_remontee");
+  console.log("OK : v27 IA furieuse sèche, jeu fermé à 0 jusqu'au lendemain");
+}

@@ -1114,7 +1114,8 @@ svg.grille .interro { transition: opacity .3s; }
       b.querySelector(".qui").appendChild(el('<span class="humeur">' + esc(tx(fh.palier.nom)) + "</span>"));
     }
     b.querySelector("p").textContent = tx(rep.texte);
-    var a = rep.aparte === false ? null : M.aparte(C, P, expr, graine, theme);
+    // v27 : furieuse, plus d'aparté : elle ne cite plus rien, elle grince.
+    var a = rep.aparte === false || (fh && fh.palier.id === "furieuse") ? null : M.aparte(C, P, expr, graine, theme);
     if (a) {
       var vis = a.objet ? '<span class="vitrine">' + svgObjet(a.objet, false, 26) + "</span>" : '<span class="vitrine" style="background:' + a.livre.couleur + '">' + svgSprite(a.livre.embleme, 24) + "</span>";
       var ap = el('<p class="aparte">' + vis + "<span></span></p>");
@@ -1867,15 +1868,25 @@ svg.grille .interro { transition: opacity .3s; }
   // v5 : bouton « Jouer ». L'IA choisit l'épreuve, l'annonce, et la réussir rapporte des cases en plus.
   var ICONE_JOUER = '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>';
   function boutonJouer() {
-    var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? bonusJouerMax() : 0, enDuel = M.duelBloquant(P);
+    var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? bonusJouerMax() : 0, enDuel = M.duelBloquant(P), ferme = M.jeuFerme(C, P, maintenant());
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + '</span><span><b>Jouer</b><span class="s">' +
-      (enDuel ? esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + " te barre la route : revanche obligatoire." : c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + (c.raison === "case" ? "Case " + esc(tx(stat(c.stat).nom)) + " : l'IA y choisit l'épreuve." : c.raison === "ouvre_arbre" ? "Case " + esc(tx(stat(c.stat).nom)) + " : un arbre fermé à ouvrir." : "L'IA choisit l'épreuve.") : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
+      (ferme ? "Faveur à 0 : le jeu est fermé jusqu'à demain." : enDuel ? esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + " te barre la route : revanche obligatoire." : c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + (c.raison === "case" ? "Case " + esc(tx(stat(c.stat).nom)) + " : l'IA y choisit l'épreuve." : c.raison === "ouvre_arbre" ? "Case " + esc(tx(stat(c.stat).nom)) + " : un arbre fermé à ouvrir." : "L'IA choisit l'épreuve.") : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus && !ferme ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
     if (!c && !enDuel) b.disabled = true;
     b.onclick = ouvrirJouer;
     return b;
   }
+  // v27 : sa faveur est tombée à 0 : plus rien ne se joue avant demain, où elle remonte d'elle-même.
+  function bloqueParFureur() {
+    var t = maintenant(); if (!M.jeuFerme(C, P, t)) return false;
+    var f = M.faveurIA(C, P, t);
+    feuilleSimple('<h2>Le jeu est fermé</h2><p class="meta">Sa faveur est tombée à 0. Ni quiz, ni rappel, ni duel, ni atome jusqu\'à demain : sa faveur remontera d\'elle-même à ' + f.demain + '.</p><div id="fureur-bloc"></div>', "Fermé");
+    var z = feuille && feuille.querySelector("#fureur-bloc"), m = z && comite(M.replique(C, P, ["faveur_nulle"]));
+    if (m) z.appendChild(m);
+    return true;
+  }
   // v19 : tant qu'un ultimatum attend sa réponse, l'IA ferme le jeu : payer ou refuser d'abord.
   function bloqueParUltimatum() {
+    if (bloqueParFureur()) return true;
     if (!P.ultimatum) return false;
     feuilleSimple('<h2>Pas de jeu sans réponse</h2><div id="ult-bloc"></div>', "Ultimatum");
     var z = feuille && feuille.querySelector("#ult-bloc"); if (z) z.appendChild(blocUltimatum());
