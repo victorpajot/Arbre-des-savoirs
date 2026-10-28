@@ -1829,10 +1829,10 @@ svg.grille .interro { transition: opacity .3s; }
   // v5 : bouton « Jouer ». L'IA choisit l'épreuve, l'annonce, et la réussir rapporte des cases en plus.
   var ICONE_JOUER = '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>';
   function boutonJouer() {
-    var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? bonusJouerMax() : 0;
+    var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? bonusJouerMax() : 0, enDuel = M.duelBloquant(P);
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + '</span><span><b>Jouer</b><span class="s">' +
-      (c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + (c.raison === "case" ? "Case " + esc(tx(stat(c.stat).nom)) + " : l'IA y choisit l'épreuve." : c.raison === "ouvre_arbre" ? "Case " + esc(tx(stat(c.stat).nom)) + " : un arbre fermé à ouvrir." : "L'IA choisit l'épreuve.") : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
-    if (!c) b.disabled = true;
+      (enDuel ? esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + " te barre la route : revanche obligatoire." : c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + (c.raison === "case" ? "Case " + esc(tx(stat(c.stat).nom)) + " : l'IA y choisit l'épreuve." : c.raison === "ouvre_arbre" ? "Case " + esc(tx(stat(c.stat).nom)) + " : un arbre fermé à ouvrir." : "L'IA choisit l'épreuve.") : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
+    if (!c && !enDuel) b.disabled = true;
     b.onclick = ouvrirJouer;
     return b;
   }
@@ -1843,8 +1843,16 @@ svg.grille .interro { transition: opacity .3s; }
     var z = feuille && feuille.querySelector("#ult-bloc"); if (z) z.appendChild(blocUltimatum());
     return true;
   }
+  // v21 : un ennemi battu ne laisse pas passer. Tant qu'il tient la case du pion, seule la revanche se joue.
+  function bloqueParDuel() {
+    if (!M.duelBloquant(P)) return false;
+    feuilleSimple('<h2>Il te barre la route</h2><p class="meta">Tant que tu ne l\'as pas battu, pas d\'autre épreuve : il faut un sans-faute contre lui.</p><div id="duel-bloc"></div>', "Duel");
+    var z = feuille && feuille.querySelector("#duel-bloc"); if (z) { var d = blocDefi(false); z.appendChild(d); d.onclick = function (ev) { var a = ev.target.closest && ev.target.closest("[data-a]"); if (!a) return; fermerFeuille(); if (a.getAttribute("data-a") === "duel") lancerDuel(); }; }
+    return true;
+  }
   function ouvrirJouer() {
     if (bloqueParUltimatum()) return;
+    if (M.duelBloquant(P)) { lancerDuel(); return; }
     var t = maintenant(), c = M.choixIA(C, P, t); if (!c) { toast("Rien à jouer pour l'instant."); return; }
     var k = c.comp, s = stat(k.stat), v = M.valeurEpreuve(C, P, { type: c.type, comp: k.id }, t), bonus = bonusJouerMax(), bMin = C.plateau.regles.bonus.jouer || 0;
     // v15 : la case du pion annonce l'arbre de l'épreuve ; « hors case » quand cet arbre n'a rien à jouer.
@@ -2941,7 +2949,8 @@ svg.grille .interro { transition: opacity .3s; }
     if (nom === "verdict") {
       z.appendChild(el('<div class="bilan verdict-duel ' + (r.gagne ? "gagne" : "perdu") + '"><div class="duo">' + svgAvatar(r.gagne ? 92 : 64) + svgEnnemi(e, r.gagne ? 56 : 84, false, "miroir" + (r.gagne ? " vaincu" : "")) + '</div><div class="grand">' + (r.gagne ? "Victoire" : "Défaite") + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" +
         '<p class="bulle"></p><p class="meta">Contre ' + esc(nomEn(e)) + " : " + f.victoires + " victoire" + (f.victoires > 1 ? "s" : "") + ", " + f.defaites + " défaite" + (f.defaites > 1 ? "s" : "") + ", meilleure série " + f.meilleure + ".</p>" +
-        (r.gagne ? "" : r.plateau ? '<p class="note">' + esc(tx(e.nom)) + " te renvoie case " + P.plateau.position + ". Il garde son poste et t'attend au prochain passage.</p>" : '<p class="note">Ton pion reste case ' + P.plateau.position + ". Le duel reprendra à ta prochaine épreuve réussie.</p>") + "</div>"));
+        (r.gagne ? "" : r.plateau ? '<p class="note">' + esc(tx(e.nom)) + " te renvoie case " + P.plateau.position + ". Il garde son poste et t'attend au prochain passage.</p>" : '<p class="note">' + esc(tx(e.nom)) + " garde la case " + P.plateau.position + " : pas d'autre épreuve tant que tu ne l'as pas battu.</p>") +
+        (r.vol ? '<div class="gain-credits vol"><div class="ligne-bourse">' + svgBourse(40) + '<div class="calcul"><b>−' + r.vol + " crédit" + (r.vol > 1 ? "s" : "") + "</b> : " + esc(tx(e.nom)) + " te fait les poches.</div></div></div>" : "") + "</div>"));
       z.querySelector(".bulle").textContent = tx(e.nom) + " : « " + tx(r.gagne ? e.victoire : e.defaite) + " »";
       var m = comite(r.replique); if (m) z.appendChild(m);
       ligneAgacement(z, r.agacement);
@@ -2960,12 +2969,13 @@ svg.grille .interro { transition: opacity .3s; }
     if (!suite && arret) boutonAtome(wrap, arret, fermerDuel);
     else if (!suite && !(P.duel && P.duel.pret)) finEpreuve(wrap, fermerDuel);
     else {
-      var bt = el('<button type="button" class="btn large">' + (!suite ? "Ennemi suivant !" : suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : suite === "suite" ? "Et maintenant ?" : "Récompense") + "</button>");
+      var bt = el('<button type="button" class="btn large">' + (!suite ? (P.duel && P.duel.ennemi === e.id ? "Revanche !" : "Ennemi suivant !") : suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : suite === "suite" ? "Et maintenant ?" : "Récompense") + "</button>");
       bt.onclick = function () {
         if (suite) { duel.etape = i + 1; rendreDuel(); return; }
         duel = null; lancerDuel();
       };
       wrap.appendChild(bt);
+      if (!suite) { var pt = el('<button type="button" class="btn sec large">Plus tard</button>'); pt.onclick = fermerDuel; wrap.appendChild(pt); }
     }
     if (nom === "plateau") setTimeout(function () { animerPion(z); }, 50);
     return wrap;
@@ -3719,7 +3729,7 @@ svg.grille .interro { transition: opacity .3s; }
   // --- Quiz -----------------------------------------------------------------
   // `opts.jouer` : lancé par le bouton « Jouer », l'IA a choisi l'épreuve (bonus de cases si réussie).
   function lancerQuiz(id, mode, opts) {
-    if (bloqueParUltimatum()) return;
+    if (bloqueParUltimatum() || bloqueParDuel()) return;
     var n = mode === "rappel" ? C.regles.rappels.questions_par_rappel : nbQuiz();
     var qs = M.tirerQuestions(C, P, id, n).map(function (q) {
       var ordre = q.type === "qcm" ? M.melanger(q.choix.map(function (_, i) { return i; }), Math.random) : null;

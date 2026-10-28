@@ -648,11 +648,13 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   let qs = M.tirerDuel(C8, P, t0, Math.random);
   assert.equal(qs.length, 5);
   assert.ok(qs.every(m => m.ennemi === "sophiste"));
-  // Défaite : le pion reste, le duel attend la prochaine épreuve réussie.
+  // Défaite : le pion reste, le duel reste ouvert (revanche obligatoire) et l'ennemi vole des crédits.
+  P.credits.solde = 100;
   let r = M.terminerDuel(C8, P, qs.map((m, i) => ({ id: m.id, correct: i > 0 })), t0);
   assert.equal(r.gagne, false);
   assert.equal(P.plateau.position, 4);
-  assert.equal(P.duel.pret, false);
+  assert.equal(P.duel.pret, true); assert.ok(M.duelBloquant(P));
+  assert.equal(r.vol, 15); assert.equal(P.credits.solde, 85);
   assert.equal(P.bestiaire.sophiste.defaites, 1);
   dep = M.avancerPion(C8, P, 3, t0 + 1000);
   assert.equal(P.plateau.position, 4, "le pion ne passe pas sans duel");

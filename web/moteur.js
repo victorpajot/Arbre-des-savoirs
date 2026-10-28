@@ -207,6 +207,8 @@
     // v7 : ennemis, duels et cadeaux à l'IA.
     out.bestiaire = p.bestiaire || {};
     out.duel = p.duel || null;
+    // v21 : un duel perdu reste ouvert (revanche obligatoire), y compris dans les anciennes parties.
+    if (out.duel && p.plateau && out.duel.case === p.plateau.position) out.duel.pret = true;
     out.cadeaux = Object.assign({ jour: null, donnes: {} }, p.cadeaux || {});
     out.objetIA = p.objetIA || null;
     out.ultimatum = p.ultimatum || null;
@@ -1085,6 +1087,9 @@
   }
 
   // `resultats` : [{id, correct}]. Renvoie {gagne, ennemi, bonnes, total, plateau, recompenses, butin, premiere, fiche}.
+  var VOL_DUEL = { part: 0.15, min: 5, max: 50 };
+  // v21 : un duel ouvert sur la case du pion ferme les autres épreuves.
+  function duelBloquant(partie) { var d = partie.duel; return !!(d && d.pret && partie.plateau && d.case === partie.plateau.position); }
   function terminerDuel(contenu, partie, resultats, t, alea, total) {
     var d = partie.duel; if (!d) return null;
     ouvrirLot(partie, t, contenu.ennemiParId[d.ennemi] && contenu.ennemiParId[d.ennemi].theme);
@@ -1113,7 +1118,11 @@
     } else {
       f.defaites++; f.serie = 0;
       c.duelsPerdus = (c.duelsPerdus || 0) + 1;
-      d.pret = false;
+      // v21 : l'ennemi garde sa case et le duel reste ouvert : il faut le battre pour passer, pas d'autre épreuve.
+      // Vainqueur, il fait les poches du joueur.
+      var cr = partie.credits, vol = Math.min(cr.solde, Math.max(VOL_DUEL.min, Math.min(VOL_DUEL.max, Math.round(cr.solde * VOL_DUEL.part))));
+      if (vol > 0) { cr.solde -= vol; cr.voles = (cr.voles || 0) + vol; f.vole = (f.vole || 0) + vol; }
+      out.vol = vol;
       partie.plateau.coups = (partie.plateau.coups || 0) + 1;
       // v15 : certains ennemis renvoient le pion à la première case qu'il n'a pas encore vue. Le duel est levé ;
       // l'ennemi garde son poste et attend le prochain passage.
@@ -2334,7 +2343,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,
