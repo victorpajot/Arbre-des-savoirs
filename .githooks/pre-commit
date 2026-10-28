@@ -5,3 +5,6 @@ cd "$(git rev-parse --show-toplevel)" || exit 1
 python3 outils/contenu.py >/dev/null || { echo "contenu.py a échoué"; exit 1; }
 git diff --quiet -- data || { echo "data/*.json n'étaient pas à jour : régénérés, ajoute-les au commit (git add data)."; exit 1; }
 python3 outils/verifier_sources.py
+# v28 : une faute de syntaxe dans l'interface bloque l'appli sur « Chargement » : on vérifie le script avant chaque commit.
+T=$(mktemp --suffix=.js) && python3 -c "import sys; s=open('web/index.html').read(); open(sys.argv[1],'w').write(s[s.rindex('<script>')+8:s.rindex('</script>')])" "$T" && node --check "$T" && node --check web/moteur.js || { echo "Erreur de syntaxe JavaScript dans web/index.html ou web/moteur.js"; rm -f "$T"; exit 1; }
+rm -f "$T"

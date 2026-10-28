@@ -2929,7 +2929,7 @@ svg.grille .interro { transition: opacity .3s; }
     var b = el('<div class="defi' + (accueil ? " bloc" : "") + '"><div class="defi-haut">' + svgEnnemi(e, accueil ? 64 : 112, false, "miroir") + '<div><div class="eyebrow">' + (d.pret ? "Case " + d.case + " · duel" : "Case " + d.case + " · en embuscade") + "</div><h2>" + esc(tx(e.nom)) + '</h2><p class="titre-en">' + esc(tx(e.titre)) + "</p></div></div>" +
       (accueil ? "" : '<p class="note">' + esc(tx(e.description)) + "</p>") +
       (f && (f.victoires || f.defaites) ? '<p class="meta">Déjà affronté : ' + f.victoires + " victoire" + (f.victoires > 1 ? "s" : "") + ", " + f.defaites + " défaite" + (f.defaites > 1 ? "s" : "") + ".</p>" : "") +
-      (d.pret ? '<p class="meta">Cinq affirmations, vraies ou fausses. Il faut un sans-faute pour passer.</p>"
+      (d.pret ? '<p class="meta">Cinq affirmations, vraies ou fausses. Il faut un sans-faute pour passer.</p>'
         : '<p class="meta">Le duel reprendra à ta prochaine épreuve réussie.</p>') +
       (d.pret ? '<div class="rangee"><button type="button" class="btn large" data-a="duel">Affronter</button>' + (accueil ? "" : '<button type="button" class="btn sec large" data-a="plus-tard">Plus tard</button>') + "</div>" : "") + "</div>");
     b.onclick = function (ev) {
