@@ -43,6 +43,9 @@ jobs:
           python3 outils/valider.py
           node outils/test_moteur.js
 
+      - name: Vérifier les sources (rien d'inventé)
+        run: python3 outils/verifier_sources.py
+
       - name: Assembler la page dans l'app
         working-directory: mobile
         run: |

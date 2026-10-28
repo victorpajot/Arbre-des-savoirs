@@ -37,6 +37,7 @@ import masques_regles
 import objets_v11
 import tenues_farce
 import alyca
+import extraits
 import bibliotheque_v7
 import bibliotheque_v8
 import plateau
@@ -846,6 +847,11 @@ def livres():
         out.append({"id": id, "titre": fr(titre), "auteur": auteur, "annee": annee, "stat": stat, "embleme": embleme, "couleur": couleur,
                     "condition": cond, "competence": competence, "resume": fr(resume), "importance": fr(importance), "anecdote": fr(anec), "source": source,
                     "reaction": fr(reaction)})
+        # v26 : un extrait vérifié du vrai livre, quand on en a un.
+        ex = extraits.donnees(id)
+        if ex:
+            out[-1]["extrait"] = ex
+    assert set(extraits.EXTRAITS) <= {l["id"] for l in out}, set(extraits.EXTRAITS) - {l["id"] for l in out}
     assert len({l["id"] for l in out}) == len(out), "deux livres avec le même id"
     out.sort(key=lambda l: l["annee"])
     return {"format": 1, "livres": out}

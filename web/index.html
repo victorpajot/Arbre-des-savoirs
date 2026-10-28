@@ -462,6 +462,13 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .entete .cadre-num { display: inline-block; border-radius: 10px; padding: 0 8px 2px; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent); }
 .entete .cadre-num.or { box-shadow: inset 0 0 0 2px color-mix(in srgb, #E0B12E 55%, transparent); }
 .niv.cred.cliquable { cursor: pointer; }
+.extrait { margin: 4px 0; padding: 14px 16px; border-radius: 14px; border-left: 4px solid var(--c, var(--accent)); background: color-mix(in srgb, var(--c, var(--accent)) 8%, var(--surface)); }
+.extrait figcaption { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.extrait blockquote { margin: 0; font-size: 17px; line-height: 1.55; font-family: Georgia, "Times New Roman", serif; }
+.extrait blockquote.vo { font-style: italic; }
+.extrait .trad { margin: 8px 0 2px; font-size: 17px; line-height: 1.5; }
+.extrait .meta { margin: 4px 0 0; font-size: 13px; }
+.extrait a { color: inherit; }
 .alyca-rev { text-align: center; }
 .faveur .rancune { font-size: 17px; font-style: italic; margin: 8px 0; color: var(--c); }
 .alyca-rev p { font-size: 17px; }
@@ -2812,6 +2819,14 @@ svg.grille .interro { transition: opacity .3s; }
     C.frise.epoques.forEach(function (e) { if ((e.debut == null || a >= e.debut) && (e.fin == null || a <= e.fin)) out = out || e.id; });
     return out;
   }
+  // v26 : « Dans le texte » : l'extrait original, sa traduction, et où on l'a vérifié.
+  function htmlExtrait(l) {
+    var x = l.extrait; if (!x) return "";
+    var dom = (x.verification.url.match(/^https:\/\/([^/]+)/) || [])[1] || "";
+    return '<figure class="extrait"><figcaption>Dans le texte · ' + esc(x.langue) + "</figcaption><blockquote" + (x.traduction ? ' class="vo"' : "") + ">« " + esc(x.texte) + " »</blockquote>" +
+      (x.traduction ? '<p class="trad">« ' + esc(tx(x.traduction)) + ' »</p><p class="meta">' + esc(x.traducteur) + "</p>" : "") +
+      '<p class="meta">' + esc(x.reference) + ' · <a href="' + esc(x.verification.url) + '" target="_blank" rel="noopener">vérifié sur ' + esc(dom.replace(/^www\./, "")) + "</a></p></figure>";
+  }
   // `seul` : ouvert depuis une récompense, le livre s'affiche sans navigation vers les autres.
   function ouvrirLivre(l, seul) {
     var ok = !!P.livres[l.id], s = stat(l.stat);
@@ -2819,7 +2834,7 @@ svg.grille .interro { transition: opacity .3s; }
     var html = '<div class="livre-fiche" style="--c:' + l.couleur + ';display:flex;flex-direction:column;gap:12px"><div class="tete"><div class="couv"><span class="vitrine">' + svgSprite(l.embleme, 44, null, !ok) + "</span></div><div>" +
       '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(formatAnnee(l.annee)) + " · " + esc(tx(s.nom)) + "</div><h2>" + (ok ? esc(tx(l.titre)) : "Livre à découvrir") + "</h2>" + (ok ? '<p class="meta">' + esc(l.auteur) + "</p>" : "") + "</div></div>";
     if (ok) {
-      html += "<p>" + esc(tx(l.resume)) + "</p><h3>Pourquoi il a compté</h3><p>" + esc(tx(l.importance)) + "</p><h3>L'anecdote</h3><p>" + esc(tx(l.anecdote)) + '</p><div id="ia-livre"></div><p class="meta">Référence : ' + esc(l.source) + "</p>";
+      html += "<p>" + esc(tx(l.resume)) + "</p>" + htmlExtrait(l) + "<h3>Pourquoi il a compté</h3><p>" + esc(tx(l.importance)) + "</p><h3>L'anecdote</h3><p>" + esc(tx(l.anecdote)) + '</p><div id="ia-livre"></div><p class="meta">Référence : ' + esc(l.source) + "</p>";
       if (!seul && dispo.length > 1) html += '<div class="nav"><button type="button" class="btn sec" data-a="prec"' + (i <= 0 ? " disabled" : "") + '>← Précédent</button><button type="button" class="btn sec" data-a="suiv"' + (i >= dispo.length - 1 ? " disabled" : "") + ">Suivant →</button></div>";
     } else {
       html += '<p class="meta">Pour le placer sur l\'étagère : ' + esc(commentObtenir(l.condition)) + "</p>";
@@ -4217,7 +4232,7 @@ svg.grille .interro { transition: opacity .3s; }
       out.push(marquerTheme(carteRecompense("Nouvel objet au cabinet", svgObjet(o, false, 80), tx(o.nom), "", { titre: "Lire la notice", html: "<p>" + esc(tx(o.notice)) + '</p><cite>Source : ' + esc(o.source) + "</cite>" }), o, te));
     });
     (r.nouveauxLivres || []).forEach(function (l) {
-      var c = carteRecompense("Nouveau livre à la bibliothèque", '<span class="vitrine" style="padding:8px;background:' + l.couleur + ';border-radius:12px">' + svgSprite(l.embleme, 64) + "</span>", tx(l.titre), l.auteur + ", " + formatAnnee(l.annee), null, l.couleur);
+      var c = carteRecompense("Nouveau livre à la bibliothèque", '<span class="vitrine" style="padding:8px;background:' + l.couleur + ';border-radius:12px">' + svgSprite(l.embleme, 64) + "</span>", tx(l.titre), l.auteur + ", " + formatAnnee(l.annee), l.extrait ? { titre: "Dans le texte", html: htmlExtrait(l) } : null, l.couleur);
       var bt = el('<button type="button" class="btn">Ouvrir le livre</button>'); bt.onclick = function () { ouvrirLivre(l, true); };
       c.appendChild(bt); out.push(marquerTheme(c, l, te));
     });
