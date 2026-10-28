@@ -460,6 +460,12 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .perso-v5 .niv-ligne .niv { border-radius: 12px; padding: 2px 10px 4px; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent); }
 .perso-v5 .niv-ligne .niv.cred { box-shadow: inset 0 0 0 2px color-mix(in srgb, #E0B12E 55%, transparent); }
 .niv.cred.cliquable { cursor: pointer; }
+.alyca-rev { text-align: center; }
+.faveur .rancune { font-size: 17px; font-style: italic; margin: 8px 0; color: var(--c); }
+.alyca-rev p { font-size: 17px; }
+.alyca-rev .nom-ia { font-family: var(--f-mono); font-size: 44px; font-weight: 700; letter-spacing: .12em; margin: 14px 0; color: #B8862B; text-shadow: 0 0 18px color-mix(in srgb, #F2C14E 70%, transparent); }
+.alyca-rev .note { font-size: 15px; text-align: left; }
+.alyca-rev .source { font-size: 13px; text-align: left; }
 .vers-boutique.cliquable { cursor: pointer; padding: 2px 8px; margin-right: -8px; border-radius: 10px; box-shadow: inset 0 0 0 2px color-mix(in srgb, #E0B12E 55%, transparent); }
 .boutique .solde { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 17px; }
 .boutique .solde b { font-size: 30px; }
@@ -880,7 +886,7 @@ svg.grille .interro { transition: opacity .3s; }
   var CLE_LOCALE = "arbre-competences.partie";
   if (/Android/i.test(navigator.userAgent)) document.documentElement.classList.add("android");
   var C = null, P = null, vue = "aujourdhui", quiz = null, feuille = null, ecrire = null;
-  var friseToutes = false, friseCentre = null, collection = "frise", ongletPerso = "avatar", filtreFrise = null, cachePlateau = { cle: null, svg: "" };
+  var friseToutes = false, friseCentre = null, collection = "frise", ongletPerso = "avatar", ongletSucces = "stats", filtreFrise = null, cachePlateau = { cle: null, svg: "" };
   var JOUR_MS = 86400000;
   var stockage = { compte: false, db: null, ref: null, minuteur: null, etat: "Ce navigateur" };
   // Dans l'app Android (Capacitor), les plugins natifs remplacent ce que la page web demande à Claude.
@@ -898,9 +904,18 @@ svg.grille .interro { transition: opacity .3s; }
   ];
 
   // --- Utilitaires ----------------------------------------------------------
-  function el(html) { var t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstChild; }
+  function el(html) { var t = document.createElement("template"); t.innerHTML = nommerIA(html.trim()); return t.content.firstChild; }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  function tx(o) { return o ? (o.fr || "") : ""; }
+  function tx(o) { return o ? nommerIA(o.fr || "") : ""; }
+  // v25 : une fois son nom donné, « l'IA » devient Alyca partout : textes du contenu (tx) et de la page (el).
+  // « de l'IA » → « d'Alyca », « à l'IA » → « à Alyca », « l'IA » → « Alyca », quelle que soit l'apostrophe.
+  var APOS_IA = "('|’|&#39;)";
+  var RE_DE_IA = new RegExp("(^|[^A-Za-zÀ-ÿ])([dD])e [lL]" + APOS_IA + "IA(?![A-Za-z])", "g"), RE_IA = new RegExp("(^|[^A-Za-zÀ-ÿ])[lL]" + APOS_IA + "IA(?![A-Za-z])", "g");
+  function nommerIA(s) {
+    var n = P && C && M.nomIA(C, P);
+    if (!n || !s || s.indexOf("IA") < 0) return s;
+    return s.replace(RE_DE_IA, function (m, a, d, ap) { return a + d + ap + n; }).replace(RE_IA, function (m, a) { return a + n; });
+  }
   function maintenant() { return M.maintenant(P); }
   function stat(id) { return C.stats.filter(function (s) { return s.id === id; })[0]; }
   function couleur(statId) { return "var(--s-" + statId + ")"; }
@@ -2376,10 +2391,8 @@ svg.grille .interro { transition: opacity .3s; }
       vb.onclick = function () { vue = "collections"; collection = "boutique"; rendre(); window.scrollTo(0, 0); };
       vb.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); vb.onclick(); } };
     }
-    var bs = el('<div class="bloc"><h2>Branches</h2><p class="note">Le niveau de chaque branche monte avec ses compétences maîtrisées et ses rappels réussis. Une pastille par compétence : pleine si maîtrisée, cerclée si ouverte.</p><div class="fiches"></div></div>');
-    C.stats.slice().sort(function (a, b) { return (M.arbreOuvert(C, P, b.id) - M.arbreOuvert(C, P, a.id)) || xp[b.id] - xp[a.id]; }).forEach(function (s) { bs.querySelector(".fiches").appendChild(ficheBranche(s, xp[s.id])); });
     // v10 : le personnage se range en onglets ; l'IA et les ennemis y ont leur place.
-    var onglets = [["avatar", "Avatar"], ["stats", "Stats"]].concat(C.ia ? [["ia", "IA"]] : []).concat(C.ennemis.length ? [["ennemis", "Ennemis"]] : []).concat([["reglages", "Réglages"]]);
+    var onglets = [["avatar", "Avatar"]].concat(C.ia ? [["ia", M.nomIA(C, P) || "IA"]] : []).concat(C.ennemis.length ? [["ennemis", "Ennemis"]] : []).concat([["reglages", "Réglages"]]);
     if (!onglets.some(function (o) { return o[0] === ongletPerso; })) ongletPerso = "avatar";
     var seg = el('<div class="segments' + (onglets.length > 5 ? " deux-rangs" : "") + '" role="group" aria-label="Rubrique du personnage"></div>');
     onglets.forEach(function (o) {
@@ -2388,7 +2401,6 @@ svg.grille .interro { transition: opacity .3s; }
       seg.appendChild(bt);
     });
     v.appendChild(seg);
-    if (ongletPerso === "stats") v.appendChild(bs);
     if (ongletPerso === "avatar") v.appendChild(blocAvatar());
     if (ongletPerso === "ia") { v.appendChild(blocIA()); v.appendChild(blocFaveur()); var bi = blocBourseIA(); if (bi) v.appendChild(bi); v.appendChild(blocCadeauxIA()); v.appendChild(blocCorruption()); v.appendChild(blocMasques(Object.keys(P.succes).length)); }
     if (ongletPerso === "ennemis") v.appendChild(blocBestiaire());
@@ -3473,6 +3485,9 @@ svg.grille .interro { transition: opacity .3s; }
       '<div class="paliers-f">' + F.paliers.map(function (p) { return '<span class="' + (p.id === f.palier.id ? "ici" : "") + '" style="--z:' + COULEUR_PALIER[p.id] + '"><b>' + esc(tx(p.nom)) + "</b> dès " + p.min + "</span>"; }).join("") + "</div></div>");
     var pg = piegesIA();
     if (pg.length) b.appendChild(el('<p class="etat-pion">Elle a posé un piège devant ton pion, case ' + pg.join(", ") + ". Il partira à la fin du tour.</p>"));
+    // v25 : fâchée après avoir donné son nom, elle vous le reproche.
+    var ran = M.nomIA(C, P) && C.ia.alyca.rancune[f.palier.id];
+    if (ran && ran.length) b.querySelector(".tete-f").insertAdjacentHTML("afterend", '<p class="rancune">« ' + esc(tx(ran[Math.floor(t / 864e5) % ran.length])) + " »</p>");
     return b;
   }
   // Ses goûts se révèlent à l'usage : trois cadeaux différents, dont un éblouissant.
@@ -3660,10 +3675,25 @@ svg.grille .interro { transition: opacity .3s; }
   }
 
   // --- Vue Succès -----------------------------------------------------------
+  // v25 : les stats des branches, déplacées de la fiche Personnage ; premier onglet des Succès.
+  function blocStats() {
+    var xp = M.xpParStat(C, P);
+    var bs = el('<div class="bloc"><h2>Branches</h2><p class="note">Le niveau de chaque branche monte avec ses compétences maîtrisées et ses rappels réussis. Une pastille par compétence : pleine si maîtrisée, cerclée si ouverte.</p><div class="fiches"></div></div>');
+    C.stats.slice().sort(function (a, b) { return (M.arbreOuvert(C, P, b.id) - M.arbreOuvert(C, P, a.id)) || xp[b.id] - xp[a.id]; }).forEach(function (s) { bs.querySelector(".fiches").appendChild(ficheBranche(s, xp[s.id])); });
+    return bs;
+  }
   function vueSucces() {
     var v = el('<div class="vue"></div>');
     var n = Object.keys(P.succes).length;
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">Citations et anecdotes</div><h1>Succès</h1></div><div class="num" style="font-size:20px;font-weight:700">' + n + " / " + C.succes.length + "</div></div>"));
+    var seg = el('<div class="segments" role="group" aria-label="Rubrique des succès"></div>');
+    [["stats", "Stats"], ["succes", "Succès"]].forEach(function (o) {
+      var bt = el('<button type="button" aria-pressed="' + (ongletSucces === o[0]) + '">' + o[1] + "</button>");
+      bt.onclick = function () { ongletSucces = o[0]; rendre(); };
+      seg.appendChild(bt);
+    });
+    v.appendChild(seg);
+    if (ongletSucces === "stats") { v.appendChild(blocStats()); return v; }
     var obtenus = C.succes.filter(function (s) { return P.succes[s.id]; }).sort(function (a, b) { return P.succes[b.id] - P.succes[a.id]; });
     var autres = C.succes.filter(function (s) { return !P.succes[s.id]; });
     var bloc = el('<div class="bloc"></div>');
@@ -4169,6 +4199,21 @@ svg.grille .interro { transition: opacity .3s; }
     var app = document.getElementById("app"); app.innerHTML = "";
     app.appendChild(vue === "arbre" ? vueArbre() : vue === "perso" ? vuePerso() : vue === "collections" ? vueCollections() : vue === "succes" ? vueSucces() : vue === "honte" ? vueHonte() : vueAujourdhui());
     rendreOnglets();
+    revelerNom();
+  }
+
+  // v25 : comblée pour la première fois, l'IA donne son nom. Une seule fois, hors quiz.
+  function revelerNom() {
+    var A = C.ia && C.ia.alyca;
+    if (!A || !P.alyca || P.alyca.vu || feuille || document.querySelector(".quiz")) return;
+    P.alyca.vu = maintenant(); sauver();
+    var R = A.revelation, m = M.masquesDuJour(C, P, maintenant())[0] || C.ia.masques[0];
+    feuilleSimple('<div class="alyca-rev"><span class="vitrine">' + svgMasque(m, "impressionnee", 96) + '</span><div class="eyebrow">Faveur comblée</div><h2>' + esc(tx(R.titre)) + "</h2>" +
+      R.texte.map(function (x) { return "<p>« " + esc(tx(x)) + " »</p>"; }).join("") +
+      '<p class="nom-ia">' + esc(A.nom) + "</p>" +
+      '<p class="note">' + esc(tx(R.anecdote)) + '</p><p class="meta source">' + esc(R.source) + "</p>" +
+      '<button type="button" class="btn large" data-a="fermer">' + esc(tx(R.bouton)) + "</button></div>", A.nom);
+    var sec = feuille && feuille.querySelector(".feuille > .btn.sec"); if (sec) sec.remove();
   }
 
   function charger(nom) { return fetch("data/" + nom).then(function (r) { if (!r.ok) throw new Error(nom); return r.json(); }); }

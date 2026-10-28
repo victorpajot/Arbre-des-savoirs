@@ -202,6 +202,7 @@
     // v5 : l'IA choisit seule son masque ; l'ancien choix du joueur est oublié.
     delete out.masqueChoisi;
     out.farce = p.farce || null;
+    out.alyca = p.alyca || null;
     // v25 : plus de farce qui remplace le personnage par un savant ; une ancienne en cours est levée.
     if (out.farce && out.farce.type === "savant") out.farce = null;
     // v6 : butin en attente (conditions remplies, pas encore tombé). Ce qui est déjà gagné reste acquis.
@@ -1648,6 +1649,8 @@
     var jours = Math.max(0, joursEntre(partie.faveur.maj, t));
     var valeur = Math.max(0, partie.faveur.valeur - F.baisse_par_jour * jours);
     var palier = F.paliers.filter(function (p) { return valeur >= p.min; })[0] || F.paliers[F.paliers.length - 1];
+    // v25 : comblée pour la première fois, elle donne son nom. Pour de bon : fâchée, elle le reproche sans le reprendre.
+    if (palier.id === "comblee" && !partie.alyca && contenu.ia.alyca) partie.alyca = { depuis: t, vu: false };
     return { valeur: valeur, palier: palier, demain: Math.max(0, valeur - F.baisse_par_jour), cadeauDuJour: partie.cadeaux.jour === cleJour(t) };
   }
   // Furieuse, l'IA pose chaque jour un piège sur une case libre juste devant le pion. Renvoie la case, ou null.
@@ -2228,6 +2231,8 @@
     return f && t < f.jusqua ? f : null;
   }
   function rendreVisage(partie) { partie.farce = null; }
+  // v25 : le nom de l'IA, une fois qu'elle l'a donné ; null avant.
+  function nomIA(contenu, partie) { return partie.alyca && contenu.ia && contenu.ia.alyca ? contenu.ia.alyca.nom : null; }
 
   function expression(contenu, contexte) {
     return (contenu.ia && contenu.ia.expressions[contexte]) || "neutre";
@@ -2346,7 +2351,7 @@
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
-    ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
+    ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,
     valeurEpreuve: valeurEpreuve,

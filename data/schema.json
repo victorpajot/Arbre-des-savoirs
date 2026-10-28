@@ -1865,6 +1865,60 @@
        }
       }
      }
+    },
+    "alyca": {
+     "type": "object",
+     "required": [
+      "nom",
+      "revelation",
+      "rancune"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "nom": {
+       "type": "string"
+      },
+      "revelation": {
+       "type": "object",
+       "required": [
+        "titre",
+        "texte",
+        "anecdote",
+        "source",
+        "bouton"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "titre": {
+         "$ref": "#/$defs/texte"
+        },
+        "texte": {
+         "type": "array",
+         "items": {
+          "$ref": "#/$defs/texte"
+         }
+        },
+        "anecdote": {
+         "$ref": "#/$defs/texte"
+        },
+        "source": {
+         "type": "string"
+        },
+        "bouton": {
+         "$ref": "#/$defs/texte"
+        }
+       }
+      },
+      "rancune": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/texte"
+        }
+       }
+      }
+     }
     }
    }
   },

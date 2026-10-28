@@ -36,6 +36,7 @@ import honte
 import masques_regles
 import objets_v11
 import tenues_farce
+import alyca
 import bibliotheque_v7
 import bibliotheque_v8
 import plateau
@@ -760,6 +761,8 @@ def narrateur():
         "expressions": {**ia.EXPRESSIONS, **ia_themes.expressions()},
         "masques_jour": {"max": 3, "selon_faveur": masques_regles.SELON_FAVEUR},
         "credits": credits.donnees(),
+        # v25 : son nom, donné une fois qu'elle est comblée.
+        "alyca": alyca.donnees(),
         "faveur": {**brillants.FAVEUR, "paliers": [{**p, "nom": fr(p["nom"]), "effet": fr(p["effet"])} for p in brillants.FAVEUR["paliers"]]},
         "masques": [{"id": m["id"], "nom": fr(m["nom"]), **({"condition": m["condition"]} if m["condition"] else {}), "notice": fr(m["notice"]),
                      "source": m["source"], "tons": masques.TONS[m["id"]], **regles_masque(m["id"]), "base": calques[m["id"]]["base"], "expressions": calques[m["id"]]["expressions"]} for m in masques.MASQUES],

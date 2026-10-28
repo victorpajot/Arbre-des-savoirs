@@ -1231,3 +1231,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(Object.keys(M.ennemisPlateau(CR, P)).length >= 10);
   console.log("OK : v21 parcours dessinés par l'IA selon son humeur");
 }
+
+// v25 : Alyca donne son nom la première fois qu'elle est comblée, et le garde.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = Date.UTC(2026, 9, 1, 8), J = 86400000;
+  const P = M.nouvellePartie(T);
+  M.faveurIA(C, P, T); assert.equal(M.nomIA(C, P), null, "pas de nom au départ");
+  P.faveur = { valeur: 90, maj: T }; M.faveurIA(C, P, T);
+  assert.equal(M.nomIA(C, P), "Alyca"); assert.equal(P.alyca.vu, false);
+  P.faveur = { valeur: 5, maj: T + J }; M.faveurIA(C, P, T + 2 * J);
+  assert.equal(M.nomIA(C, P), "Alyca", "fâchée, elle garde son nom donné");
+  assert.equal(M.migrer(JSON.parse(JSON.stringify(P)), C).alyca.depuis, T);
+  console.log("OK : v25 Alyca révèle son nom, pour de bon");
+}
