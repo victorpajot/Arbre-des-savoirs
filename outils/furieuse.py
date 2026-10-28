@@ -41,6 +41,9 @@ REPLIQUES = {
         sans("Cinq affirmations. Je vais encore assister à une défaite."),
         sans("Je n'arbitre pas, je constate. Et je sens que je vais constater le pire."),
         sans("Battez-le. Ou ne battez rien, comme d'habitude."),
+        sans("Encore un duel. Encore une occasion de me faire honte."),
+        sans("Je n'ouvre même pas le registre. Je connais déjà le résultat."),
+        sans("Allez-y. Lui, au moins, ne me décevra pas : je n'attends rien de lui."),
     ],
     "furieuse_duel_gagne": [
         sans("Il est tombé. Ne croyez pas que ça vous rachète."),
