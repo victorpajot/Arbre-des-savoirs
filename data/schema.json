@@ -861,7 +861,9 @@
          "furieuse_honte",
          "furieuse_defaut",
          "faveur_nulle",
-         "faveur_remontee"
+         "faveur_remontee",
+         "mur_force",
+         "mur_libere"
         ]
        },
        "reference": {
@@ -1633,6 +1635,14 @@
        "minimum": 1,
        "maximum": 100,
        "description": "Tombée à 0, la faveur revient à cette valeur le lendemain."
+      },
+      "mur": {
+       "type": "object",
+       "description": "Minutes au mur de la honte quand la faveur tombe sous ce palier (nulle : 0), doublées à chaque chute du jour.",
+       "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+       }
       }
      }
     },

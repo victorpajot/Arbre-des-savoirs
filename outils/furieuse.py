@@ -2,8 +2,9 @@
 
 Chaque moment du jeu a sa version furieuse (« furieuse_reussi », « furieuse_jouer »…) ; le moteur la prend
 à la place des répliques ordinaires tant qu'elle est furieuse (FURIEUSE dans moteur.js range les contextes).
-À 0, elle ferme le jeu jusqu'au lendemain (« faveur_nulle »), puis sa faveur remonte d'elle-même
-(« faveur_remontee », FAVEUR["remontee"] dans brillants.py).
+v28 : chaque chute sous un palier (boudeuse, furieuse, 0) l'enferme au mur de la honte (« mur_force »),
+de plus en plus longtemps (FAVEUR["mur"] dans brillants.py). Tombée à 0, sa faveur remonte d'elle-même
+le lendemain (« faveur_remontee », FAVEUR["remontee"]).
 """
 
 
@@ -99,9 +100,19 @@ REPLIQUES = {
         "Tycho Brahe a perdu son nez pour une querelle de mathématiques. Je ne vous demande qu'un cadeau.",
     ],
     "faveur_nulle": [
-        sans("C'est fini pour aujourd'hui. Je ne joue plus. Revenez demain, si j'accepte de vous revoir."),
-        sans("Ma patience est à zéro. Le plateau est fermé jusqu'à demain."),
-        sans("Non. Ni quiz, ni duel, ni atome. Demain, peut-être."),
+        sans("Zéro. Vous avez vidé ma patience jusqu'à la dernière goutte. Bravo, c'est votre meilleur score."),
+        sans("Ma patience est à zéro. Je vais vous apprendre à la respecter, au mur."),
+        sans("Zéro. Je n'ai plus rien à vous donner, à part du temps au mur."),
+    ],
+    "mur_force": [
+        sans("Au mur. Vous relisez vos erreurs jusqu'à ce que je dise stop. Je n'ai pas dit stop."),
+        sans("Vous restez là. Le chronomètre ne tourne que si vous regardez. Je vérifie."),
+        sans("Le mur de la honte, plein écran, sans sortie. Vous l'avez bien cherché."),
+        sans("Relisez. Encore. Je vous dirai quand vous aurez assez honte."),
+    ],
+    "mur_libere": [
+        sans("Bon. Vous pouvez partir. Ne revenez pas trop vite."),
+        sans("Peine purgée. Je garde le dossier ouvert."),
     ],
     "faveur_remontee": [
         sans("J'ai dormi. Je vais un peu mieux. Ne gâchez pas tout dès le premier quiz."),
@@ -111,4 +122,5 @@ REPLIQUES = {
 
 TONS = {k: "decue" for k in REPLIQUES}
 TONS.update({"furieuse_jouer": "impatiente", "furieuse_ennemi": "impatiente", "furieuse_defaut": "impatiente",
-             "faveur_furieuse": "decue", "faveur_nulle": "decue", "faveur_remontee": "impatiente"})
+             "faveur_furieuse": "decue", "faveur_nulle": "decue", "faveur_remontee": "impatiente",
+             "mur_force": "moqueuse", "mur_libere": "impatiente"})

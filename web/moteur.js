@@ -1659,13 +1659,36 @@
     // La baisse quotidienne seule ne descend pas sous 1 : l'absence la rend furieuse, pas muette.
     var valeur = partie.faveur.valeur <= 0 ? 0 : Math.max(Math.min(1, partie.faveur.valeur), partie.faveur.valeur - F.baisse_par_jour * jours);
     var palier = F.paliers.filter(function (p) { return valeur >= p.min; })[0] || F.paliers[F.paliers.length - 1];
+    // v28 : chaque chute sous un palier (boudeuse, furieuse, puis 0) l'envoie vous enfermer au mur de la honte.
+    var rang = valeur <= 0 ? F.paliers.length : F.paliers.indexOf(palier);
+    if (partie.humeurRang == null || rang < partie.humeurRang) partie.humeurRang = rang;
+    else if (rang > partie.humeurRang) { enfermer(contenu, partie, rang, t); partie.humeurRang = rang; }
     // v25 : comblée pour la première fois, elle donne son nom. Pour de bon : fâchée, elle le reproche sans le reprendre.
     if (palier.id === "comblee" && !partie.alyca && contenu.ia.alyca) partie.alyca = { depuis: t, vu: false };
     return { valeur: valeur, palier: palier, fermee: valeur <= 0, demain: valeur <= 0 ? (F.remontee || 25) : Math.max(1, valeur - F.baisse_par_jour),
       cadeauDuJour: partie.cadeaux.jour === cleJour(t) };
   }
-  // v27 : à 0 de faveur, plus rien ne se joue (quiz, rappels, duels, atomes) avant le lendemain.
-  function jeuFerme(contenu, partie, t) { var f = faveurIA(contenu, partie, t); return !!(f && f.fermee); }
+  // v28 : enfermé au mur de la honte. La peine dépend du palier franchi et double à chaque nouvelle chute du jour ;
+  // elle s'ajoute à celle qui reste. Le temps ne s'écoule que mur affiché (purger, appelé par l'interface).
+  function enfermer(contenu, partie, rang, t) {
+    var M_ = contenu.ia.faveur.mur, ids = contenu.ia.faveur.paliers.map(function (p) { return p.id; }).concat("nulle");
+    var min = M_ && M_[ids[rang]]; if (!min) return null;
+    if (!partie.chutes || partie.chutes.jour !== cleJour(t)) partie.chutes = { jour: cleJour(t), n: 0 };
+    partie.chutes.n++;
+    var ms = min * 60000 * Math.pow(2, partie.chutes.n - 1), p = partie.punition;
+    partie.punition = p ? { restant: p.restant + ms, total: p.total + ms, palier: rang > p.rang ? ids[rang] : p.palier, rang: Math.max(rang, p.rang), depuis: p.depuis, n: partie.chutes.n }
+      : { restant: ms, total: ms, palier: ids[rang], rang: rang, depuis: t, n: partie.chutes.n };
+    return partie.punition;
+  }
+  // Retire `ms` à la peine ; renvoie ce qui reste (0 : libéré).
+  function purger(partie, ms) {
+    if (!partie.punition) return 0;
+    partie.punition.restant = Math.max(0, partie.punition.restant - ms);
+    if (!partie.punition.restant) { partie.punition = null; return 0; }
+    return partie.punition.restant;
+  }
+  // Enfermé au mur : plus rien ne se joue (quiz, rappels, duels, atomes) tant que la peine court.
+  function jeuFerme(contenu, partie, t) { faveurIA(contenu, partie, t); return !!(partie.punition && partie.punition.restant > 0); }
   // Furieuse, l'IA pose chaque jour un piège sur une case libre juste devant le pion. Renvoie la case, ou null.
   function piegeIA(contenu, partie, t) {
     var fav = faveurIA(contenu, partie, t);
@@ -1735,6 +1758,16 @@
   }
 
   // --- Aujourd'hui -----------------------------------------------------------
+
+  // v28 : au mur sans grand-chose à relire, l'IA impose les fiches des compétences les plus fragiles :
+  // les plus ratées ces 30 derniers jours, puis les maîtrisées au rappel le plus proche, puis les arbres ouverts.
+  function fichesImposees(contenu, partie, t, n) {
+    var rates = {};
+    (partie.oublis || []).forEach(function (e) { var q = contenu.questionParId && contenu.questionParId[e.q]; if (q && joursEntre(e.t, t) <= 30) rates[q.competence] = (rates[q.competence] || 0) + 1; });
+    function poids(k) { var e = partie.competences[k.id]; return (rates[k.id] || 0) * 1e15 + (estMaitrisee(partie, k.id) ? 1e14 - Math.max(0, e.prochainRappel - t) / 1000 : 0); }
+    return contenu.competences.filter(function (k) { return k.fiche && arbreOuvert(contenu, partie, k.stat); })
+      .sort(function (a, b) { return poids(b) - poids(a) || (a.id < b.id ? -1 : 1); }).slice(0, n || 3);
+  }
 
   function rappelsDus(contenu, partie, t) {
     return contenu.competences
@@ -2281,7 +2314,7 @@
     cadeau_terne: "cadeau", cadeau_brillant: "cadeau", cadeau_eblouissant: "cadeau", cadeau_repete: "cadeau",
     farce: "farce", mur_honte: "honte",
     pot_egal: null, pot_genereux: null, pot_premier: null, pot_radin: null, ultimatum: null, ultimatum_paye: null, ultimatum_refuse: null,
-    faveur_furieuse: null, faveur_nulle: null, faveur_remontee: null, mode_test: null,
+    faveur_furieuse: null, faveur_nulle: null, faveur_remontee: null, mode_test: null, mur_force: null, mur_libere: null,
   };
   function lignesTheme(contenu, partie, ctx, theme) {
     var g = theme && GROUPE_THEME[ctx], cle = g && "theme_" + g + "@" + theme, l = cle && contenu.commentairesPar[cle];
@@ -2337,7 +2370,8 @@
     if (ctx !== "retour" && contenu.commentairesPar.mur_honte && murDeLaHonte(contenu, partie, t, 0).restantes) ctx = "mur_honte";
     // v27 : à 0, le jeu est fermé ; le lendemain, elle annonce qu'elle reprend, du bout des lèvres.
     var fv = faveurIA(contenu, partie, t);
-    if (fv && fv.fermee && contenu.commentairesPar.faveur_nulle) ctx = "faveur_nulle";
+    if (fv && partie.punition && contenu.commentairesPar.mur_force) ctx = "mur_force";
+    else if (fv && fv.fermee && contenu.commentairesPar.faveur_nulle) ctx = "faveur_nulle";
     else if (fv && partie.faveur.remontee === cleJour(t) && contenu.commentairesPar.faveur_remontee) ctx = "faveur_remontee";
     else if (fv && fv.palier.id === "furieuse" && ctx !== "faveur_furieuse") ctx = FURIEUSE[ctx] === null ? ctx : "furieuse_" + (FURIEUSE[ctx] || "defaut");
     var lignes = contenu.commentairesPar[ctx] || contenu.commentairesPar.accueil;
@@ -2387,7 +2421,7 @@
     themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
-    faveurIA: faveurIA, jeuFerme: jeuFerme, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
+    faveurIA: faveurIA, jeuFerme: jeuFerme, purger: purger, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,

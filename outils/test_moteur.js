@@ -839,7 +839,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Comblée : une case de plus.
   P.faveur = { valeur: 90, maj: tF }; assert.equal(M.faveurIA(CF, P, tF).palier.id, "comblee");
   assert.equal(M.valeurEpreuve(CF, P, { type: "quiz", comp: "math.probabilites" }, tF).faveur, 1);
-  assert.ok(M.repliqueDuJour(CF, P, tF).contexte === "faveur_comblee");
+  P.punition = null; assert.ok(M.repliqueDuJour(CF, P, tF).contexte === "faveur_comblee");
   const vieux = M.migrer(JSON.parse(JSON.stringify(Object.assign(M.nouvellePartie(t0), { faveur: undefined }))));
   assert.equal(vieux.faveur, null);
   console.log("OK : v10 faveur de l'IA, cadeaux brillants, pièges de l'IA");
@@ -1280,15 +1280,42 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.jeuFerme(C, P, T), false, "furieuse mais encore ouverte");
   // L'absence seule ne la fait pas tomber à 0.
   assert.equal(M.faveurIA(C, P, T + 30 * J).valeur, 1); assert.equal(M.jeuFerme(C, P, T + 30 * J), false);
-  // Les erreurs la font tomber à 0 : fermé pour la journée.
+  // Les erreurs la font tomber à 0 : enfermé au mur de la honte, le jeu fermé tant que la peine court.
   P.faveur = { valeur: 3, maj: T };
   M.agacerIA(C, P, 5, true, T + 3600e3);
   assert.equal(M.faveurIA(C, P, T + 3600e3).valeur, 0); assert.ok(M.jeuFerme(C, P, T + 5 * 3600e3));
-  assert.equal(M.repliqueDuJour(C, P, T + 5 * 3600e3).contexte, "faveur_nulle");
-  assert.equal(M.enRayon(C, P, "avancer", T + 5 * 3600e3).length, 0, "pas d'avance achetée, jeu fermé");
+  assert.equal(P.punition.restant, F.mur.nulle * 60000);
+  assert.equal(M.repliqueDuJour(C, P, T + 5 * 3600e3).contexte, "mur_force");
+  assert.equal(M.enRayon(C, P, "avancer", T + 5 * 3600e3).length, 0, "pas d'avance achetée, enfermé");
+  // Le temps hors du mur ne compte pas ; seul purger (mur affiché) fait avancer la peine.
+  assert.ok(M.jeuFerme(C, P, T + 10 * 3600e3));
+  assert.equal(M.purger(P, F.mur.nulle * 60000 - 1000), 1000); assert.equal(M.purger(P, 1000), 0);
+  assert.equal(M.jeuFerme(C, P, T + 10 * 3600e3), false, "peine purgée, on rejoue");
   // Le lendemain, elle remonte d'elle-même et le dit.
   const f = M.faveurIA(C, P, T + J);
   assert.equal(f.valeur, F.remontee); assert.equal(M.jeuFerme(C, P, T + J), false);
   assert.equal(M.repliqueDuJour(C, P, T + J).contexte, "faveur_remontee");
-  console.log("OK : v27 IA furieuse sèche, jeu fermé à 0 jusqu'au lendemain");
+  console.log("OK : v27 IA furieuse sèche ; v28 à 0, enfermé au mur, remontée le lendemain");
+}
+
+// v28 : chaque chute sous un palier enferme au mur, de plus en plus longtemps dans la journée.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 2, 10).getTime(), F = d("ia.json").faveur;
+  const P = M.nouvellePartie(T); P.decalage = T - Date.now();
+  P.faveur = { valeur: 50, maj: T }; M.faveurIA(C, P, T);
+  assert.equal(P.punition || null, null, "pas de peine au départ");
+  M.agacerIA(C, P, 10, true, T + 1000);                       // contente → boudeuse (ou plus bas)
+  const p1 = P.punition; assert.ok(p1 && p1.restant >= F.mur.boudeuse * 60000);
+  M.purger(P, p1.restant);
+  P.faveur = { valeur: 25, maj: T + 2000 }; M.faveurIA(C, P, T + 2000);
+  P.faveur = { valeur: 15, maj: T + 3000 }; M.faveurIA(C, P, T + 3000);  // → furieuse : 2e chute du jour, doublée
+  assert.equal(P.punition.restant, F.mur.furieuse * 60000 * 2);
+  // Un cadeau la fait remonter : pas de peine en remontant.
+  M.purger(P, P.punition.restant);
+  P.faveur = { valeur: 80, maj: T + 4000 }; M.faveurIA(C, P, T + 4000);
+  assert.equal(P.punition, null);
+  assert.ok(M.migrer(JSON.parse(JSON.stringify(P)), C));
+  assert.equal(M.fichesImposees(C, P, T, 3).length, 3, "trois fiches imposées");
+  console.log("OK : v28 chutes de faveur, peines au mur qui doublent");
 }

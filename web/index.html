@@ -724,6 +724,12 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 details.fiche-d { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 10px 0; }
 details.fiche-d summary { font-weight: 700; cursor: pointer; }
 details.fiche-d[open] summary { margin-bottom: 10px; }
+/* v28 : peine au mur, compte à rebours */
+.peine { border: 2px solid var(--bad); background: color-mix(in srgb, var(--bad) 10%, var(--surface)); }
+.peine .temps { font-size: 34px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--bad); line-height: 1.1; }
+.peine .barre { height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; margin-top: 8px; }
+.peine .barre i { display: block; height: 100%; background: var(--bad); transition: width 1s linear; }
+.peine .note { font-size: 15px; }
 .bloc.honte-a { border: 2px dashed color-mix(in srgb, var(--bad) 55%, var(--line)); }
 .bloc.honte-a .rangee { margin-top: 8px; }
 .ia-tete { display: flex; gap: 14px; align-items: flex-start; }
@@ -1870,20 +1876,35 @@ svg.grille .interro { transition: opacity .3s; }
   function boutonJouer() {
     var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? bonusJouerMax() : 0, enDuel = M.duelBloquant(P), ferme = M.jeuFerme(C, P, maintenant());
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + '</span><span><b>Jouer</b><span class="s">' +
-      (ferme ? "Faveur à 0 : le jeu est fermé jusqu'à demain." : enDuel ? esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + " te barre la route : revanche obligatoire." : c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + (c.raison === "case" ? "Case " + esc(tx(stat(c.stat).nom)) + " : l'IA y choisit l'épreuve." : c.raison === "ouvre_arbre" ? "Case " + esc(tx(stat(c.stat).nom)) + " : un arbre fermé à ouvrir." : "L'IA choisit l'épreuve.") : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus && !ferme ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
+      (ferme ? "Enfermé au mur de la honte : encore " + dureePeine(P.punition.restant) + "." : enDuel ? esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + " te barre la route : revanche obligatoire." : c ? (c.raison === "revision" ? "Révision forcée. " : c.type === "rappel" ? "Un rappel t'attend. " : "") + (c.raison === "case" ? "Case " + esc(tx(stat(c.stat).nom)) + " : l'IA y choisit l'épreuve." : c.raison === "ouvre_arbre" ? "Case " + esc(tx(stat(c.stat).nom)) + " : un arbre fermé à ouvrir." : "L'IA choisit l'épreuve.") : "Rien à jouer pour l'instant.") + "</span></span>" + (c && bonus && !ferme ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
     if (!c && !enDuel) b.disabled = true;
     b.onclick = ouvrirJouer;
     return b;
   }
-  // v27 : sa faveur est tombée à 0 : plus rien ne se joue avant demain, où elle remonte d'elle-même.
+  // v28 : sa faveur a chuté sous un palier : elle t'enferme au mur de la honte. Rien d'autre ne se joue tant que la peine court.
   function bloqueParFureur() {
-    var t = maintenant(); if (!M.jeuFerme(C, P, t)) return false;
-    var f = M.faveurIA(C, P, t);
-    feuilleSimple('<h2>Le jeu est fermé</h2><p class="meta">Sa faveur est tombée à 0. Ni quiz, ni rappel, ni duel, ni atome jusqu\'à demain : sa faveur remontera d\'elle-même à ' + f.demain + '.</p><div id="fureur-bloc"></div>', "Fermé");
-    var z = feuille && feuille.querySelector("#fureur-bloc"), m = z && comite(M.replique(C, P, ["faveur_nulle"]));
-    if (m) z.appendChild(m);
+    if (!M.jeuFerme(C, P, maintenant())) return false;
+    sauver(); ouvrirHonte(); toast("Enfermé au mur de la honte : encore " + dureePeine(P.punition.restant) + ".");
     return true;
   }
+  function dureePeine(ms) { var s = Math.ceil(ms / 1000), m = Math.floor(s / 60); s %= 60; return m + ":" + (s < 10 ? "0" : "") + s; }
+  // Le temps ne s'écoule que mur affiché, page visible, sans quiz par-dessus.
+  setInterval(function () {
+    if (!P || !P.punition) return;
+    var b = document.querySelector(".peine");
+    if (!b || document.hidden || document.querySelector(".quiz:not(.honte-dessus)") || feuille) return;
+    var reste = M.purger(P, 1000);
+    if (reste % 10000 < 1000) sauver();
+    if (!reste) {
+      sauver();
+      var m = comite(M.replique(C, P, ["mur_libere"]));
+      rendre(); var v = document.querySelector("#app .vue"); if (m && v) v.insertBefore(m, v.children[1] || null);
+      toast("Peine purgée : tu peux rejouer.");
+      return;
+    }
+    b.querySelector(".temps").textContent = dureePeine(reste);
+    b.querySelector(".barre i").style.width = Math.round(100 * reste / P.punition.total) + "%";
+  }, 1000);
   // v19 : tant qu'un ultimatum attend sa réponse, l'IA ferme le jeu : payer ou refuser d'abord.
   function bloqueParUltimatum() {
     if (bloqueParFureur()) return true;
@@ -3448,13 +3469,22 @@ svg.grille .interro { transition: opacity .3s; }
   function vueHonte(retour) {
     var t = maintenant(), mur = M.murDeLaHonte(C, P, t), v = el('<div class="vue"></div>');
     var tete = el('<div class="entete"><div><div class="eyebrow">Révisions, selon l\'IA</div><h1>Le mur de la honte</h1></div></div>');
+    var peine = !retour && M.jeuFerme(C, P, t) ? P.punition : null;
     var ret = el('<button type="button" class="btn sec">' + (retour ? "← Bilan" : "← Accueil") + "</button>");
     ret.setAttribute("aria-label", retour ? "Revenir au bilan" : "Retour à l'accueil");
     ret.onclick = retour || function () { vue = "aujourdhui"; rendre(); window.scrollTo(0, 0); };
-    tete.appendChild(ret); v.appendChild(tete);
+    if (!peine) tete.appendChild(ret);
+    v.appendChild(tete);
     var effacees = mur.aujourdhui.filter(function (x) { return x.entree.efface; }).length;
-    var mot = comite(M.replique(C, P, [mur.aujourdhui.length || mur.aRetenter ? "mur_honte" : "honte_vide"]));
+    var mot = comite(M.replique(C, P, [peine ? "mur_force" : mur.aujourdhui.length || mur.aRetenter ? "mur_honte" : "honte_vide"]));
     if (mot) v.appendChild(mot);
+    // v28 : la peine, en compte à rebours. Elle ne file que si tu restes là.
+    if (peine) {
+      var NOM_CHUTE = { boudeuse: "Elle est passée boudeuse", furieuse: "Elle est passée furieuse", nulle: "Sa faveur est tombée à 0" };
+      v.appendChild(el('<div class="bloc peine"><div class="eyebrow">Enfermé par l\'IA</div><div class="temps">' + dureePeine(peine.restant) + '</div><div class="barre"><i style="width:' + Math.round(100 * peine.restant / peine.total) + '%"></i></div>' +
+        '<p class="note" style="margin:8px 0 0">' + esc(NOM_CHUTE[peine.palier] || "Elle a perdu patience") + (peine.n > 1 ? ", et c'est ta " + peine.n + "<sup>e</sup> chute aujourd'hui : peine doublée à chaque fois" : "") +
+        ". Le temps ne file que si tu restes sur le mur, écran allumé. Relis tes erreurs et les fiches.</p></div>"));
+    }
     v.appendChild(el('<div class="compteurs-h"><span><b>' + mur.aujourdhui.length + "</b> ratée" + (mur.aujourdhui.length > 1 ? "s" : "") + " aujourd'hui</span><span><b>" + mur.aRetenter + "</b> à retenter</span><span><b>" + (P.compteurs.hontesEffacees || 0) + "</b> réhabilitée" + ((P.compteurs.hontesEffacees || 0) > 1 ? "s" : "") + " en tout</span></div>"));
     // Les jours précédents d'abord : ce sont elles qu'on peut effacer aujourd'hui.
     var aRetenter = [], vues = {};
@@ -3479,6 +3509,16 @@ svg.grille .interro { transition: opacity .3s; }
       });
     }
     if (effacees && mur.aujourdhui.length === effacees) v.appendChild(el('<p class="note">Toutes réhabilitées. Le mur est propre, pour l\'instant.</p>'));
+    // Enfermé sans grand-chose au mur : elle impose les fiches des compétences les plus fragiles.
+    if (peine) {
+      var vus = {}; mur.aujourdhui.forEach(function (x) { vus[x.question.competence] = true; });
+      var fragiles = M.fichesImposees(C, P, t, 3).filter(function (k) { return !vus[k.id]; });
+      if (fragiles.length) {
+        var bf = el('<div class="bloc"><h2>Fiches imposées</h2><p class="note">Tes compétences les plus fragiles, choisies par l\'IA. Lis.</p></div>');
+        fragiles.forEach(function (k) { bf.appendChild(el('<div class="eyebrow" style="color:' + couleur(k.stat) + ';margin-top:10px">' + esc(tx(stat(k.stat).nom)) + "</div><h3 style=\"margin:2px 0 6px\">" + esc(tx(k.nom)) + "</h3>")); bf.appendChild(el(htmlFiche(k))); });
+        v.appendChild(bf);
+      }
+    }
     return v;
   }
   // Sur l'accueil : le mur, tant qu'il y a des ratées du jour ou des questions à retenter.
@@ -3850,10 +3890,17 @@ svg.grille .interro { transition: opacity .3s; }
   // v16 : les erreurs agacent l'IA. On le montre au verdict, sans détour.
   function ligneAgacement(z, ag) {
     if (!ag) return;
-    z.appendChild(el('<div class="gain-faveur perte"><b>−' + ag.perte + "</b> de faveur : chaque erreur l'agace<span>" + Math.round(ag.avant.valeur) + " → " + Math.round(ag.apres.valeur) + " : " + esc(tx(ag.apres.palier.nom).toLowerCase()) + "</span></div>"));
+    z.appendChild(el('<div class="gain-faveur perte"><b>−' + ag.perte + "</b> de faveur : chaque erreur l'agace<span>" + Math.round(ag.avant.valeur) + " → " + Math.round(ag.apres.valeur) + " : " + esc(tx(ag.apres.palier.nom).toLowerCase()) +
+      (P.punition ? ". Elle t'enferme au mur de la honte : " + dureePeine(P.punition.restant) : "") + "</span></div>"));
   }
   function finEpreuve(wrap, fermer) {
     var t = maintenant(), c = M.choixIA(C, P, t);
+    // v28 : sa faveur a chuté pendant l'épreuve : direction le mur, pas l'épreuve suivante.
+    if (M.jeuFerme(C, P, t)) {
+      var h = el('<button type="button" class="btn large">Au mur de la honte (' + dureePeine(P.punition.restant) + ")</button>");
+      h.onclick = function () { fermer(); ouvrirHonte(); };
+      wrap.appendChild(h); return;
+    }
     if (c) {
       var j = el('<button type="button" class="btn large">Jouer l\'épreuve suivante</button>');
       j.onclick = function () { fermer(); ouvrirJouer(); };
@@ -4264,6 +4311,8 @@ svg.grille .interro { transition: opacity .3s; }
   function rendre() {
     if (!C || !P) return;
     var app = document.getElementById("app"); app.innerHTML = "";
+    // v28 : enfermé, on ne quitte pas le mur.
+    if (vue !== "honte" && M.jeuFerme(C, P, maintenant())) { if (vue !== "aujourdhui") toast("Pas avant la fin de ta peine."); vue = "honte"; }
     app.appendChild(vue === "arbre" ? vueArbre() : vue === "perso" ? vuePerso() : vue === "collections" ? vueCollections() : vue === "succes" ? vueSucces() : vue === "honte" ? vueHonte() : vueAujourdhui());
     rendreOnglets();
     revelerNom();
