@@ -360,7 +360,7 @@ DATES = [
     ("asch", 1951, "Les lignes d'Asch", "Asch mesure le conformisme au groupe.", "empathie", "psy.influence",
      "Face à un groupe de complices qui se trompent, environ un tiers des réponses des participants suivent le groupe contre l'évidence.",
      "Solomon Asch, 1951 et 1956"),
-    ("big-bang", 1965, "Le fond diffus cosmologique", "Un bruit radio confirme le Big Bang.", "cosmos", "astro.galaxies",
+    ("big-bang", 1965, "Le fond diffus cosmologique", "Un bruit radio capté en 1964 est reconnu en 1965 comme l'écho du Big Bang.", "cosmos", "astro.galaxies",
      "Arno Penzias et Robert Wilson captent un bruit qu'ils attribuent d'abord à des fientes de pigeon dans leur antenne. C'est la lumière la plus ancienne de l'Univers.",
      "Penzias et Wilson, Astrophysical Journal, 1965"),
     ("wason", 1966, "La tâche de Wason", "Wason montre combien on cherche à confirmer plutôt qu'à réfuter.", "lucidite", "biais.confirmation",
