@@ -190,8 +190,10 @@ p { margin: 0; }
 .choix button.faux { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--surface)); }
 .choix button:disabled { cursor: default; color: var(--ink); }
 .choix button.efface { opacity: .28; text-decoration: line-through; }
-.poche-quiz { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 10px; }
-.poche-quiz .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; font-size: 15px; }
+.poche-quiz { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 0; }
+/* v28 : le joker est une case de plus, sous les réponses, en pointillés dorés. */
+.poche-quiz .joker-case { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; font-size: 17px; font-weight: 700; border: 2px dashed #E08A00; border-radius: 14px; background: color-mix(in srgb, #E08A00 10%, var(--surface)); color: var(--ink); cursor: pointer; }
+.poche-quiz .joker-case small { color: var(--muted); font-weight: 600; }
 .poche-quiz .meta { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: 15px; }
 .reessai .rangee { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .saisie { display: flex; gap: 10px; align-items: center; }
@@ -3964,6 +3966,7 @@ svg.grille .interro { transition: opacity .3s; }
       // v20 : le droit à l'erreur acheté à la boutique. Proposé avant de dévoiler la bonne réponse.
       if (!ok && !quiz.tempsEcoule && !cur.reessai && q.type !== "vrai_faux" && M.enPoche(P, "erreur")) { proposerReessai(valeur, bouton); return; }
       clearInterval(quiz.minuteur);
+      var pq0 = document.querySelector(".quiz .poche-quiz .joker-case"); if (pq0) pq0.remove();
       quiz.repondu = true; quiz.res.push({ id: q.id, correct: ok, chrono: quiz.chrono && !cur.erreur, ms: Date.now() - quiz.debutQuestion, rep: valeur, erreur: !!cur.erreur });
       zoneRep.querySelectorAll("button").forEach(function (b) {
         b.disabled = true;
@@ -4023,9 +4026,10 @@ svg.grille .interro { transition: opacity .3s; }
     if ((nj && q.type === "qcm" && q.choix.length >= 3 && !cur.joker) || (ne && !cur.reessai && q.type !== "vrai_faux")) {
       barreP = el('<div class="poche-quiz"></div>');
       if (nj && q.type === "qcm" && q.choix.length >= 3 && !cur.joker) {
-        var bj = el('<button type="button" class="btn sec">' + paquet("#E08A00", true, "½").replace('width="52" height="52"', 'width="26" height="26"') + " Joker 50/50 <small>×" + nj + "</small></button>");
+        var bj = el('<button type="button" class="joker-case">' + paquet("#E08A00", true, "½").replace('width="52" height="52"', 'width="28" height="28"') + " Jouer un joker 50/50 <small>(" + nj + " en stock)</small></button>");
         bj.onclick = function () {
-          if (quiz.repondu || !M.utiliser(P, "joker", maintenant())) return;
+          if (quiz.repondu) { toast("Trop tard : tu as déjà répondu."); return; }
+          if (!M.utiliser(P, "joker", maintenant())) return;
           sauver(); cur.joker = M.joker(q);
           zoneRep.querySelectorAll("button[data-v]").forEach(function (b) { if (cur.joker.indexOf(Number(b.getAttribute("data-v"))) >= 0) { b.classList.add("efface"); b.disabled = true; } });
           bj.remove(); if (!barreP.querySelector("button, span")) barreP.remove();
@@ -4033,9 +4037,10 @@ svg.grille .interro { transition: opacity .3s; }
         barreP.appendChild(bj);
       }
       if (ne && !cur.reessai && q.type !== "vrai_faux") barreP.appendChild(el('<span class="meta">' + paquet("#3A7BD5", true, "↺").replace('width="52" height="52"', 'width="22" height="22"') + " Droit à l'erreur ×" + ne + "</span>"));
-      inn.appendChild(barreP);
     }
     inn.appendChild(zoneRep);
+    // v28 : sous les réponses, à jouer quand on veut avant de répondre.
+    if (barreP) inn.appendChild(barreP);
     var zoneRetour = el("<div></div>"); inn.appendChild(zoneRetour);
 
     function montrerRetour(ok) {
