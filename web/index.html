@@ -3853,13 +3853,11 @@ svg.grille .interro { transition: opacity .3s; }
     var m = comite(rep, true); if (m) b.appendChild(m);
     return b;
   }
-  // Récompenses puis plateau ; mais quand le pion boucle un tour, il file d'abord jusqu'à l'arrivée,
-  // et les succès du tour tombent ensuite.
+  // Le pion d'abord, le butin ensuite : les récompenses comptent aussi ce que le déplacement a débloqué (tour, cases),
+  // elles ne peuvent donc pas apparaître avant lui.
   function etapesRecompenses(etapes, recs, dep) {
-    var tour = dep && dep.etapes.some(function (x) { return x.type === "tour_fini"; });
-    if (dep && tour) etapes.push("plateau");
+    if (dep) etapes.push("plateau");
     recs.forEach(function (_, i) { etapes.push("recompense:" + i); });
-    if (dep && !tour) etapes.push("plateau");
   }
   function bilan() {
     var r = quiz.fin, k = C.parId[quiz.id], s = stat(k.stat);
