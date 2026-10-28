@@ -1200,3 +1200,29 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   P.faveur = { valeur: 90, maj: T }; assert.equal(M.bornesBonusJouer(CF, P, T).max, 4);
   console.log("OK : v20 furieuse, bonus Jouer bloqué");
 }
+// v21 : à chaque tour bouclé, l'IA dessine le parcours suivant selon son humeur.
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
+  const CR = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const T = new Date(2026, 9, 28, 10).getTime();
+  const boucler = (P, v) => { P.faveur = { valeur: v, maj: T }; P.plateau.ennemis = {}; P.duel = null; P.sauvages = []; const rt = M.routeTour(CR, P); P.plateau.idx = rt.length - 2; P.plateau.position = rt[rt.length - 2]; return M.deplacer(CR, P, 3, T, "test"); };
+  // Comblée : un tour court, peu d'ennemis.
+  const P = M.nouvellePartie(T);
+  const d1 = boucler(P, 95); assert.ok(d1.etapes.some(e => e.type === "tour_fini"));
+  const s1 = P.plateau.parcoursSuivant; assert.ok(s1 && s1.palier === "comblee" && s1.longueur >= 42 && s1.longueur <= 48 && s1.ennemis === 4);
+  assert.notEqual(s1.forme, "serpentin");
+  assert.equal(M.choisirSuite(CR, P, "donjon", T).raison, "bientot");
+  const c = M.choisirSuite(CR, P, "tour", T); assert.ok(c.ok);
+  assert.equal(M.routeTour(CR, P).length, s1.longueur); assert.equal(P.plateau.position, 1);
+  const en = M.ennemisPlateau(CR, P); assert.equal(Object.keys(en).length, 4);
+  Object.keys(en).forEach(n => assert.ok(s1.cases.indexOf(+n) >= 0, "ennemi sur la route"));
+  // Furieuse : toute la route, dix ennemis ou plus, des pièges ajoutés.
+  const d2 = boucler(P, 3); const s2 = P.plateau.parcoursSuivant;
+  assert.ok(s2.palier === "furieuse" && s2.longueur === 63 && s2.ennemis >= 10);
+  assert.ok(["spirale", "labyrinthe"].indexOf(s2.forme) >= 0);
+  // Sans choix, le parcours s'impose quand le pion repart.
+  M.deplacer(CR, P, 1, T + 1, "test"); assert.equal(P.plateau.parcours.forme, s2.forme); assert.equal(P.plateau.parcoursSuivant, null);
+  assert.ok(Object.keys(M.ennemisPlateau(CR, P)).length >= 10);
+  console.log("OK : v21 parcours dessinés par l'IA selon son humeur");
+}

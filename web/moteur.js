@@ -660,6 +660,13 @@
     if (!tour || !contenu.plateau) return Object.assign({}, base);
     var R = contenu.plateau.regles, graine = (partie.cree || 0) + "|" + tour;
     var postes = Object.keys(base).map(Number).sort(function (a, b) { return a - b; });
+    // v21 : le parcours fixe le nombre d'ennemis ; leurs postes se répartissent le long de sa route.
+    var pc = pl.parcours, surRoute = null;
+    if (pc && pc.cases) {
+      surRoute = {}; pc.cases.forEach(function (n) { surRoute[n] = 1; });
+      postes = [];
+      for (var q = 0; q < pc.ennemis; q++) postes.push(pc.cases[Math.round((q + 1) * (pc.cases.length - 1) / (pc.ennemis + 1))]);
+    }
     var bete = partie.bestiaire || {};
     var choisis = contenu.ennemis.filter(function (e) { return e.id !== contenu.reserve; }).map(function (e) {
       var f = bete[e.id], vu = f && (f.victoires || f.defaites);
@@ -667,7 +674,7 @@
     }).sort(function (a, b) { return b.score - a.score; }).slice(0, postes.length).map(function (x) { return x.id; });
     choisis.sort(function (a, b) { return hacher(graine + "|ordre|" + a) - hacher(graine + "|ordre|" + b); });
     var decalage = (tour * 3) % 9 - 4, out = {};
-    var libre = function (c) { return c > R.depart + 1 && c < R.arrivee && !out[c] && !specialDe(contenu, partie, c); };
+    var libre = function (c) { return c > R.depart + 1 && c < R.arrivee && !out[c] && !specialDe(contenu, partie, c) && (!surRoute || surRoute[c]); };
     var parId = {}; contenu.ennemis.forEach(function (e) { parId[e.id] = e; });
     postes.forEach(function (n, i) {
       // v18 : l'ennemi se poste sur une case de son thème, la plus proche de son poste ; sinon, près du poste.
@@ -742,7 +749,10 @@
   // v15 : la route du tour, de la case départ à l'arrivée. Sans retouche de l'IA, toutes les cases dans l'ordre.
   function route(contenu, partie) {
     var pl = partie.plateau, R = contenu.plateau.regles;
-    if (!pl.route) { pl.route = []; for (var n = R.depart; n <= R.arrivee; n++) pl.route.push(n); }
+    if (!pl.route) {
+      if (pl.parcours && pl.parcours.cases) pl.route = pl.parcours.cases.slice();
+      else { pl.route = []; for (var n = R.depart; n <= R.arrivee; n++) pl.route.push(n); }
+    }
     if (pl.idx == null || pl.route[pl.idx] !== pl.position) {
       pl.idx = pl.route.indexOf(pl.position);
       if (pl.idx < 0) { pl.idx = 0; pl.position = pl.route[0]; }
@@ -795,6 +805,59 @@
     return { type: "detour", cases: cases, longueur: rt.length };
   }
   function routeTour(contenu, partie) { return route(contenu, partie); }
+
+  // --- Parcours (v21) ----------------------------------------------------------
+  // Chaque tour bouclé, l'IA dessine le suivant selon son humeur : une forme, une longueur (des époques sautées),
+  // et ses ennemis, atomes, pièges et cases cadeau. Le joueur choisit ensuite : refaire un tour, ou (plus tard) le donjon.
+  var TYPES_PIEGES = ["recul", "teleport", "oubli", "revision", "quarantaine", "prison", "retour_epoque"];
+  function dessinerParcours(contenu, partie, t) {
+    var PC = contenu.plateau.parcours, R = contenu.plateau.regles, pl = partie.plateau;
+    var fav = faveurIA(contenu, partie, t), palier = fav ? fav.palier.id : "contente", H = PC.humeurs[palier] || PC.humeurs.contente;
+    var g = (partie.cree || 0) + "|parcours|" + pl.tours, avant = (pl.parcours && pl.parcours.forme) || "serpentin";
+    var formes = PC.formes.filter(function (f) { return f.humeurs.indexOf(palier) >= 0 && f.id !== avant; });
+    if (!formes.length) formes = PC.formes.filter(function (f) { return f.id !== avant; });
+    var forme = formes[tirage(g + "|forme", formes.length)];
+    var longueur = H.cases[0] + tirage(g + "|long", H.cases[1] - H.cases[0] + 1);
+    var base = function (n) { return contenu.plateau.cases[n - 1].special || null; };
+    var ordinaires = [];
+    for (var n = R.depart + 1; n < R.arrivee; n++) if (!base(n)) ordinaires.push(n);
+    var melange = function (l, cle) { return l.slice().sort(function (a, b) { return hacher(g + cle + a) - hacher(g + cle + b); }); };
+    var retirees = {}; melange(ordinaires, "|retire|").slice(0, Math.max(0, R.arrivee - R.depart + 1 - longueur)).forEach(function (x) { retirees[x] = 1; });
+    var cases = []; for (n = R.depart; n <= R.arrivee; n++) if (!retirees[n]) cases.push(n);
+    // Les cases spéciales : on en retire, ou on en ajoute sur des cases ordinaires de la route (pas les trois premières).
+    var speciaux = {}, libres = melange(cases.filter(function (x) { return x > R.depart + 3 && x < R.arrivee && !base(x); }), "|libre|");
+    function ajuster(types, ecart, nouvelle) {
+      var la = cases.filter(function (x) { var b = base(x); return b && types.indexOf(b.type) >= 0; });
+      if (ecart < 0) melange(la, "|ote|" + types[0]).slice(0, -ecart).forEach(function (x) { speciaux[x] = null; });
+      for (var k = 0; k < ecart && libres.length; k++) speciaux[libres.shift()] = nouvelle(k);
+      return la.length + ecart;
+    }
+    var nAtomes = ajuster(["mendeleiev"], H.atomes - cases.filter(function (x) { return base(x) && base(x).type === "mendeleiev"; }).length, function () { return { type: "mendeleiev" }; });
+    var nPieges = ajuster(TYPES_PIEGES, H.pieges, function (k) { return { type: "recul", n: 2 + k % 3, raison: { fr: "Piège ajouté par l'IA en dessinant ce parcours." } }; });
+    var nCadeaux = ajuster(["cadeau"], H.cadeaux, function () { return { type: "cadeau", raison: { fr: "Case cadeau ajoutée par l'IA, de bonne humeur ce jour-là." } }; });
+    var tours = pl.tours + 1, ennemis = Math.min(PC.ennemis_max || 12, contenu.ennemis.length - 1, H.ennemis + Math.max(0, Math.floor((tours - 2) / 2)) * (PC.ennemis_par_deux_tours || 0));
+    var mots = PC.mots[palier] || [];
+    return { tour: tours, forme: forme.id, palier: palier, cases: cases, longueur: cases.length, ennemis: ennemis,
+      atomes: Math.max(0, nAtomes), pieges: Math.max(0, nPieges), cadeaux: Math.max(0, nCadeaux), speciaux: speciaux,
+      mot: mots.length ? mots[tirage(g + "|mot", mots.length)] : null, dessine: t };
+  }
+  function appliquerParcours(contenu, partie) {
+    var pl = partie.plateau, p = pl.parcoursSuivant; if (!p) return null;
+    pl.parcours = p; pl.parcoursSuivant = null;
+    pl.route = null; pl.speciaux = Object.assign({}, p.speciaux); pl.ennemis = null;
+    pl.idx = 0; pl.position = contenu.plateau.regles.depart;
+    route(contenu, partie);
+    return p;
+  }
+  // Le choix de fin de tour : « tour » (refaire un tour sur le nouveau parcours) ou « donjon » (pas encore ouvert).
+  function choisirSuite(contenu, partie, choix, t) {
+    if (choix === "donjon") return { ok: false, raison: "bientot" };
+    var p = appliquerParcours(contenu, partie);
+    if (!p) return { ok: false, raison: "aucun" };
+    partie.maj = t;
+    return { ok: true, parcours: p };
+  }
+  function formeParcours(contenu, id) { return contenu.plateau && contenu.plateau.parcours ? contenu.plateau.parcours.formes.filter(function (f) { return f.id === id; })[0] || null : null; }
   function caseDecouverte(partie, n) { return !!(partie.plateau.visites[n] || partie.plateau.position === n); }
 
   function contextesPlateau(dep) {
@@ -827,6 +890,8 @@
   // Mode test : on peut l'appeler directement pour parcourir le plateau.
   function deplacer(contenu, partie, valeur, t, cause) {
     var pl = partie.plateau, R = contenu.plateau.regles, c = partie.compteurs;
+    // v21 : un parcours dessiné mais pas encore choisi s'impose dès que le pion repart.
+    if (pl.parcoursSuivant) appliquerParcours(contenu, partie);
     var dur = pl.tours > 0, mult = dur ? R.tour_suivant.multiplicateur_recul : 1;
     // v15 : le pion avance sur la route du tour (pl.route, liste de cases que l'IA peut raccourcir ou rallonger) ;
     // pl.idx est sa place sur la route, pl.position la case où il se tient.
@@ -870,17 +935,22 @@
       }
       if (cible >= der) {
         poser(der);
-        var coups = pl.coups || 0, record = coups > 0 && (pl.meilleur == null || coups < pl.meilleur);
-        etapes.push({ type: "tour_fini", tour: pl.tours + 1, coups: coups, record: record, ancien: pl.meilleur });
-        if (record) pl.meilleur = coups;
+        // v21 : les records se comptent par forme de parcours.
+        var forme = (pl.parcours && pl.parcours.forme) || "serpentin", mf = pl.meilleurs || (pl.meilleurs = {});
+        if (mf.serpentin == null && pl.meilleur != null) mf.serpentin = pl.meilleur;
+        var coups = pl.coups || 0, record = coups > 0 && (mf[forme] == null || coups < mf[forme]);
+        etapes.push({ type: "tour_fini", tour: pl.tours + 1, coups: coups, record: record, ancien: mf[forme], forme: forme });
+        if (record) mf[forme] = coups;
+        if (coups > 0 && (pl.meilleur == null || coups < pl.meilleur)) pl.meilleur = coups;
         pl.coups = 0; pl.arrets = {};
         pl.arrets[R.depart] = 1;
         pl.tours++;
         pl.atteinte = R.arrivee;
-        pl.ennemis = null; pl.speciaux = {}; ennemis = rj.ennemis === "absents" ? {} : ennemisPlateau(contenu, partie);
+        pl.ennemis = null; pl.speciaux = Object.assign({}, pl.parcours && pl.parcours.speciaux); ennemis = rj.ennemis === "absents" ? {} : ennemisPlateau(contenu, partie);
         pl.route = null; der = route(contenu, partie).length - 1;
         pl.idx = 0; pl.position = R.depart;
         chemin.push(R.depart); places.push(1);
+        if (contenu.plateau.parcours) pl.parcoursSuivant = dessinerParcours(contenu, partie, t);
         return false;
       }
       poser(cible);
@@ -2264,7 +2334,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,

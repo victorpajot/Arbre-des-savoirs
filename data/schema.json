@@ -2143,6 +2143,60 @@
        }
       }
      }
+    },
+    "parcours": {
+     "type": "object",
+     "description": "v21 : parcours des tours suivants, dessinés par l'IA selon son humeur (formes, réglages par palier de faveur, répliques).",
+     "required": [
+      "formes",
+      "humeurs",
+      "mots"
+     ],
+     "properties": {
+      "formes": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "required": [
+         "id",
+         "nom",
+         "notice",
+         "humeurs"
+        ]
+       }
+      },
+      "humeurs": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "object",
+        "required": [
+         "cases",
+         "ennemis",
+         "atomes",
+         "pieges",
+         "cadeaux"
+        ]
+       }
+      },
+      "ennemis_par_deux_tours": {
+       "type": "integer"
+      },
+      "ennemis_max": {
+       "type": "integer"
+      },
+      "mots": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "array",
+        "items": {
+         "type": "object"
+        }
+       }
+      },
+      "donjon": {
+       "type": "object"
+      }
+     }
     }
    }
   },

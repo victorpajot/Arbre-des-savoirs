@@ -444,6 +444,19 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .bourse-ia .objet.porte .vitrine { box-shadow: 0 0 0 3px #FFD447; }
 .bourse-ia .journal-ia { margin-top: 10px; }
 .poche-achat { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 12px 0; font-size: 17px; }
+.suite-tour h2 { margin: 0 0 6px; }
+.choix-suite { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.choix-suite .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.choix-suite .donjon { opacity: .55; }
+.choix-suite .donjon small { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 2px 8px; border-radius: 99px; background: color-mix(in srgb, var(--ink) 12%, transparent); }
+.carte-parcours { display: flex; flex-direction: column; gap: 10px; }
+.carte-parcours .cp-tete { display: flex; gap: 14px; align-items: center; }
+.carte-parcours .apercu { flex: none; display: grid; place-items: center; width: 92px; height: 132px; border-radius: 14px; background: #1B2A4A; }
+.carte-parcours h2 { margin: 0 0 4px; font-size: 20px; }
+.carte-parcours .meta { margin: 0; font-size: 15px; }
+.cp-reglages { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.cp-reglages li { padding: 6px 10px; border-radius: 10px; background: color-mix(in srgb, var(--ink) 6%, var(--surface)); font-size: 15px; }
+.cp-reglages li span { color: var(--muted); font-size: 13px; }
 .boutique .solde { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 17px; }
 .boutique .solde b { font-size: 30px; }
 .boutique h3 { margin: 16px 0 6px; }
@@ -1193,27 +1206,96 @@ svg.grille .interro { transition: opacity .3s; }
   // v8 : une route sinueuse façon jeu de l'oie illustré. Six allers-retours ondulés reliés par des virages,
   // des cases multicolores numérotées, et un décor qui change avec l'humeur de l'IA.
   var MONDE = [360, 640], RANGEES = 6, Y0 = 46, ECART = 100, X_G = 70, X_D = 290, VAGUE = 8, LARGEUR_ROUTE = 30;
-  var ROUTE = (function () {
-    var pts = [], r = ECART / 2, i, k;
-    for (i = 0; i < RANGEES; i++) {
-      var y = Y0 + i * ECART, versD = i % 2 === 0;
-      for (k = 0; k <= 60; k++) {
-        var u = k / 60, x = versD ? X_G + u * (X_D - X_G) : X_D - u * (X_D - X_G);
-        pts.push([x, y + VAGUE * Math.sin(u * Math.PI * 3)]);
-      }
-      if (i < RANGEES - 1) for (k = 1; k < 32; k++) {
-        var a = -Math.PI / 2 + k / 32 * Math.PI;
-        pts.push([(versD ? X_D : X_G) + (versD ? 1 : -1) * r * Math.cos(a), y + r + r * Math.sin(a)]);
-      }
-    }
+  // v21 : chaque parcours a sa forme. Toutes tiennent dans le même monde, au-dessus du cartouche du bas.
+  function finirRoute(pts) {
     var L = [0];
-    for (i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    for (var i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
     return { pts: pts, L: L, total: L[L.length - 1] };
-  })();
+  }
+  // Une ligne brisée aux coins arrondis (rayon r), échantillonnée finement.
+  function arrondir(coins, r) {
+    var out = [coins[0]], i, k;
+    function vers(a, b, d) { var l = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1; return [a[0] + (b[0] - a[0]) * d / l, a[1] + (b[1] - a[1]) * d / l]; }
+    for (i = 1; i < coins.length; i++) {
+      var a = coins[i - 1], b = coins[i], c = coins[i + 1];
+      var lab = Math.hypot(b[0] - a[0], b[1] - a[1]), rr = c ? Math.min(r, lab / 2, Math.hypot(c[0] - b[0], c[1] - b[1]) / 2) : 0;
+      var p0 = out[out.length - 1], fin = c ? vers(b, a, rr) : b, n = Math.max(2, Math.ceil(Math.hypot(fin[0] - p0[0], fin[1] - p0[1]) / 3));
+      for (k = 1; k <= n; k++) out.push([p0[0] + (fin[0] - p0[0]) * k / n, p0[1] + (fin[1] - p0[1]) * k / n]);
+      if (c) { var q = vers(b, c, rr); for (k = 1; k <= 8; k++) { var u = k / 8; out.push([(1 - u) * (1 - u) * fin[0] + 2 * u * (1 - u) * b[0] + u * u * q[0], (1 - u) * (1 - u) * fin[1] + 2 * u * (1 - u) * b[1] + u * u * q[1]]); } }
+    }
+    return out;
+  }
+  var FORMES_ROUTE = {
+    serpentin: function () {
+      var pts = [], r = ECART / 2, i, k;
+      for (i = 0; i < RANGEES; i++) {
+        var y = Y0 + i * ECART, versD = i % 2 === 0;
+        for (k = 0; k <= 60; k++) {
+          var u = k / 60, x = versD ? X_G + u * (X_D - X_G) : X_D - u * (X_D - X_G);
+          pts.push([x, y + VAGUE * Math.sin(u * Math.PI * 3)]);
+        }
+        if (i < RANGEES - 1) for (k = 1; k < 32; k++) {
+          var a = -Math.PI / 2 + k / 32 * Math.PI;
+          pts.push([(versD ? X_D : X_G) + (versD ? 1 : -1) * r * Math.cos(a), y + r + r * Math.sin(a)]);
+        }
+      }
+      return pts;
+    },
+    // Une onde qui s'élargit au milieu et se resserre aux extrémités.
+    onde: function () {
+      var pts = [], y0 = 44, y1 = 560, demi = 9, i;
+      for (i = 0; i <= 1600; i++) {
+        var u = i / 1600, y = y0 + u * (y1 - y0), A = 132 * (0.45 + 0.55 * Math.sin(Math.PI * u));
+        pts.push([180 - A * Math.cos(Math.PI * demi * u), y]);
+      }
+      return pts;
+    },
+    // Cinq colonnes, de haut en bas puis de bas en haut.
+    colonnes: function () {
+      var coins = [], xs = [46, 113, 180, 247, 314], i;
+      for (i = 0; i < xs.length; i++) { var bas = i % 2 === 0; coins.push([xs[i], bas ? 44 : 556], [xs[i], bas ? 556 : 44]); }
+      return arrondir(coins, 33);
+    },
+    // Des rangées en créneaux, reliées par des virages.
+    meandre: function () {
+      var coins = [], ys = [62, 182, 302, 422, 542], i, k;
+      for (i = 0; i < ys.length; i++) {
+        var versD = i % 2 === 0, y = ys[i];
+        for (k = 0; k <= 5; k++) {
+          var x0 = versD ? 44 + k * 54 : 316 - k * 54, x1 = versD ? x0 + 27 : x0 - 27, h = k % 2 ? -1 : 1;
+          coins.push([x0, y + h * 18]);
+          if (k < 5) coins.push([x1, y + h * 18], [x1, y - h * 18]);
+        }
+      }
+      return arrondir(coins, 12);
+    },
+    // Une spirale ovale, de l'extérieur vers le centre.
+    spirale: function () {
+      var pts = [], pas = 47, tours = 2.55, n = 1400, i;
+      for (i = 0; i <= n; i++) {
+        var th = i / n * tours * 2 * Math.PI, d = pas * th / (2 * Math.PI);
+        pts.push([180 - (148 - d) * Math.cos(th), 302 - (258 - d) * Math.sin(th)]);
+      }
+      return pts;
+    },
+    // Un labyrinthe carré qui s'enroule vers le centre.
+    labyrinthe: function () {
+      var g = 40, d = 320, h = 40, b = 562, pas = 52, coins = [[g, h]];
+      while (d - g > 30 && b - h > 30) {
+        coins.push([d, h], [d, b], [g, b], [g, h + pas]);
+        g += pas; h += pas; d -= pas; b -= pas;
+        if (d - g > 30 && b - h > 30) coins.push([g, h]);
+      }
+      return arrondir(coins, 16);
+    },
+  };
+  var GEOS = {};
+  function formeActuelle() { return (P && P.plateau && P.plateau.parcours && P.plateau.parcours.forme) || "serpentin"; }
+  function geo(forme) { forme = forme || formeActuelle(); if (!FORMES_ROUTE[forme]) forme = "serpentin"; return GEOS[forme] || (GEOS[forme] = finirRoute(FORMES_ROUTE[forme]())); }
   // Point de la route à l'abscisse curviligne s : [x, y, angle].
   function pointRoute(s) {
-    var L = ROUTE.L, p = ROUTE.pts, lo = 0, hi = L.length - 1;
-    s = Math.max(0, Math.min(ROUTE.total, s));
+    var L = geo().L, p = geo().pts, lo = 0, hi = L.length - 1;
+    s = Math.max(0, Math.min(geo().total, s));
     while (hi - lo > 1) { var m = (lo + hi) >> 1; if (L[m] <= s) lo = m; else hi = m; }
     var k = (s - L[lo]) / ((L[hi] - L[lo]) || 1), a = p[lo], b = p[hi];
     return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, Math.atan2(b[1] - a[1], b[0] - a[0])];
@@ -1232,8 +1314,8 @@ svg.grille .interro { transition: opacity .3s; }
     for (j = i - 1; j >= 0; j--) if (rt[j] <= vers) return j + 1;
     return 1;
   }
-  function pasCase() { return (ROUTE.total - 48) / laRoute().length; }
-  function abscisse(n) { return n > laRoute().length ? ROUTE.total - 20 : 4 + (n - 0.5) * pasCase(); }
+  function pasCase() { return (geo().total - 48) / laRoute().length; }
+  function abscisse(n) { return n > laRoute().length ? geo().total - 20 : 4 + (n - 0.5) * pasCase(); }
   function centreCase(n) { var p = pointRoute(abscisse(n)); return [p[0], p[1]]; }
   function morceauRoute(s0, s1) {
     var out = [], n = Math.max(2, Math.ceil((s1 - s0) / 3));
@@ -1654,7 +1736,7 @@ svg.grille .interro { transition: opacity .3s; }
     var cle = [pl.atteinte, pl.tours, pl.position, pl.idx, rt.join(","), loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {}), (P.sauvages || []).map(function (x) { return x.case; }).join(","), C.stats.filter(function (s) { return M.arbreOuvert(C, P, s.id); }).length].join("/");
     if (cachePlateau.cle !== cle) {
       var c = decorPlateau(ton), pas = pasCase(), fleches = "", gardes = "";
-      var toute = morceauRoute(0, ROUTE.total);
+      var toute = morceauRoute(0, geo().total);
       c += '<polyline points="' + toute + '" fill="none" stroke="#000" stroke-opacity="0.22" stroke-width="' + (LARGEUR_ROUTE + 8) + '" stroke-linejoin="round" stroke-linecap="round" transform="translate(0 3)"/>' +
         '<polyline points="' + toute + '" fill="none" stroke="#fff" stroke-width="' + (LARGEUR_ROUTE + 6) + '" stroke-linejoin="round" stroke-linecap="round"/>';
       rt.forEach(function (n, i) {
@@ -1831,11 +1913,50 @@ svg.grille .interro { transition: opacity .3s; }
       else setTimeout(function () { if (cible) cible.classList.remove("a-reveler"); if (svgP) svgP.classList.remove("anime"); projecteur(svgP, fin); }, 320);
     }, 450);
   }
+  // --- Fin de tour (v21) : refaire un tour sur le parcours que l'IA vient de dessiner, ou le donjon (bientôt).
+  function majuscule(x) { return x.charAt(0).toUpperCase() + x.slice(1); }
+  function svgApercu(forme, h, couleur) {
+    var g = geo(forme), pts = g.pts.filter(function (_, i) { return i % 4 === 0; }).concat([g.pts[g.pts.length - 1]]).map(function (p) { return p[0].toFixed(0) + "," + p[1].toFixed(0); }).join(" ");
+    var a = g.pts[0], z = g.pts[g.pts.length - 1];
+    return '<svg viewBox="10 20 340 560" height="' + h + '" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="' + (couleur || "#E0B12E") + '" stroke-width="24" stroke-linejoin="round" stroke-linecap="round"/>' +
+      (couleur ? "" : '<circle cx="' + a[0].toFixed(0) + '" cy="' + a[1].toFixed(0) + '" r="22" fill="#2E9D5B"/><circle cx="' + z[0].toFixed(0) + '" cy="' + z[1].toFixed(0) + '" r="22" fill="#D94141"/>') + "</svg>";
+  }
+  var HUMEUR_PARCOURS = { comblee: "impressionnee", contente: "neutre", boudeuse: "decue", furieuse: "moqueuse" };
+  function carteParcours(p) {
+    var f = M.formeParcours(C, p.forme), R = C.plateau.regles, saute = R.arrivee - R.depart + 1 - p.longueur;
+    var b = el('<div class="carte-parcours"><div class="eyebrow">Tour ' + p.tour + ' · dessiné par l\'IA</div><div class="cp-tete"><span class="apercu">' + svgApercu(p.forme, 120) + '</span><div><h2>' + esc(majuscule(tx(f.nom))) + '</h2><p class="meta">' + esc(tx(f.notice)) + "</p></div></div>" +
+      '<ul class="cp-reglages"><li><b>' + p.longueur + "</b> cases" + (saute ? " <span>(" + saute + " époques sautées)</span>" : "") + "</li><li><b>" + p.ennemis + "</b> ennemis</li><li><b>" + p.atomes + "</b> cases Mendeleïev</li><li><b>" + p.pieges + "</b> pièges</li><li><b>" + p.cadeaux + "</b> cases cadeau</li></ul><div class=\"z-ia\"></div></div>");
+    if (p.mot) { var m = comite({ texte: p.mot, contexte: "tour_fini", expression: HUMEUR_PARCOURS[p.palier] || "neutre", aparte: false }, true); if (m) b.querySelector(".z-ia").appendChild(m); }
+    return b;
+  }
+  function blocSuiteTour() {
+    var pl = P.plateau, b = el('<section class="bloc suite-tour"><div class="eyebrow">Tour ' + pl.tours + ' bouclé</div><h2>Et maintenant ?</h2><div class="z"></div></section>'), z = b.querySelector(".z");
+    if (!pl.parcoursSuivant) {
+      b.querySelector("h2").textContent = "Nouveau parcours";
+      if (pl.parcours && pl.parcours.tour === pl.tours + 1) z.appendChild(carteParcours(pl.parcours));
+      return b;
+    }
+    var don = C.plateau.parcours.donjon;
+    z.appendChild(el('<p class="meta">L\'IA a déjà dessiné ton prochain parcours, selon son humeur. Tu le découvres en repartant.</p>'));
+    var choix = el('<div class="choix-suite"><button type="button" class="btn large">' + svgApercu("serpentin", 24, "#fff") + ' Refaire un tour</button><button type="button" class="btn sec large donjon" disabled>Donjon <small>bientôt</small></button></div>');
+    choix.querySelector(".btn:not(.donjon)").onclick = function () {
+      var r = M.choisirSuite(C, P, "tour", maintenant()); if (!r.ok) return;
+      sauver();
+      // Depuis l'accueil, le bloc disparaît : la carte du parcours s'ouvre en feuille.
+      if (!quiz && !duel && !combat) { rendre(); feuilleSimple('<div id="np"></div>', "Nouveau parcours"); feuille.querySelector("#np").appendChild(carteParcours(r.parcours)); return; }
+      z.innerHTML = ""; var c = carteParcours(r.parcours); c.classList.add("anim"); z.appendChild(c);
+      b.querySelector("h2").textContent = "Nouveau parcours";
+    };
+    z.appendChild(choix);
+    if (don) z.appendChild(el('<p class="note">' + esc(tx(don)) + "</p>"));
+    return b;
+  }
   function blocPlateau() {
     var pl = P.plateau, t = maintenant(), k = C.plateau.cases[pl.position - 1], st = stat(M.bonusDuJour(C, P, t));
-    var b = el('<section class="bloc plateau"><div class="tete"><h2>Plateau de l\'histoire</h2><span class="num">' + (pl.tours ? "Tour " + (pl.tours + 1) + " · " : "") + "case " + pl.position + " · étape " + (pl.idx + 1) + " / " + M.routeTour(C, P).length + "</span></div>" +
+    var fp = pl.parcours && M.formeParcours(C, pl.parcours.forme), mf = (pl.meilleurs && pl.meilleurs[formeActuelle()]) || (formeActuelle() === "serpentin" ? pl.meilleur : null);
+    var b = el('<section class="bloc plateau"><div class="tete"><h2>' + (fp ? esc(majuscule(tx(fp.nom))) : "Plateau de l\'histoire") + '</h2><span class="num">' + (pl.tours ? "Tour " + (pl.tours + 1) + " · " : "") + "case " + pl.position + " · étape " + (pl.idx + 1) + " / " + M.routeTour(C, P).length + "</span></div>" +
       // v15 : le compteur du tour, pour viser le parcours le plus court.
-      '<p class="compteur-tour"><b>' + (pl.coups || 0) + "</b> épreuve" + ((pl.coups || 0) > 1 ? "s" : "") + " dans ce tour" + (pl.meilleur ? " · record : <b>" + pl.meilleur + "</b>" : " · pas encore de record") + "</p></section>");
+      '<p class="compteur-tour"><b>' + (pl.coups || 0) + "</b> épreuve" + ((pl.coups || 0) > 1 ? "s" : "") + " dans ce tour" + (mf ? " · record sur ce parcours : <b>" + mf + "</b>" : " · pas encore de record sur ce parcours") + "</p></section>");
     var grille = el('<div class="grille-cadre"></div>'), glisse = false, finGlisse = 0;
     function majGrille() {
       grille.innerHTML = svgPlateau();
@@ -2062,6 +2183,7 @@ svg.grille .interro { transition: opacity .3s; }
     perso.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); perso.onclick(); } };
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
     if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
+    if (C.plateau && P.plateau.parcoursSuivant) v.appendChild(blocSuiteTour());
     if (C.plateau) v.appendChild(boutonJouer());
     var bh = blocHonte(); if (bh) v.appendChild(bh);
     var bf = blocFarce(); if (bf) v.appendChild(bf);
@@ -2806,7 +2928,7 @@ svg.grille .interro { transition: opacity .3s; }
     var etapes = ["verdict"];
     var caseLibre = r.gagne && r.plateau ? r.plateau.de : null;
     if (caseLibre) etapes.push("libre");
-    etapesRecompenses(etapes, recs, r.plateau, cd.nAvant);
+    etapesRecompenses(etapes, recs, r.plateau, cd.nAvant, duel);
     var arret = atomeArret(r.plateau);
     var i = duel.etape = Math.min(duel.etape, etapes.length - 1), nom = etapes[i];
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
@@ -2822,6 +2944,8 @@ svg.grille .interro { transition: opacity .3s; }
       if (r.gagne && !r.butin) z.appendChild(el('<p class="meta">Pas de butin à gagner pour l\'instant : maîtrise d\'autres compétences pour en ouvrir.</p>'));
     } else if (nom === "libre") {
       var cl = carteLiberee(caseLibre, "ennemi"); if (cl) z.appendChild(cl);
+    } else if (nom === "suite") {
+      z.appendChild(blocSuiteTour());
     } else if (nom.indexOf("recompense:") === 0) {
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
     } else {
@@ -2832,7 +2956,7 @@ svg.grille .interro { transition: opacity .3s; }
     if (!suite && arret) boutonAtome(wrap, arret, fermerDuel);
     else if (!suite && !(P.duel && P.duel.pret)) finEpreuve(wrap, fermerDuel);
     else {
-      var bt = el('<button type="button" class="btn large">' + (!suite ? "Ennemi suivant !" : suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : "Récompense") + "</button>");
+      var bt = el('<button type="button" class="btn large">' + (!suite ? "Ennemi suivant !" : suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : suite === "suite" ? "Et maintenant ?" : "Récompense") + "</button>");
       bt.onclick = function () {
         if (suite) { duel.etape = i + 1; rendreDuel(); return; }
         duel = null; lancerDuel();
@@ -2998,7 +3122,7 @@ svg.grille .interro { transition: opacity .3s; }
     var etapes = ["verdict"];
     var caseLibre = combat.s && combat.s.case && !atomeSur(combat.s.case) && C.plateau.cases[combat.s.case - 1] ? combat.s.case : null;
     if (caseLibre) etapes.push("libre");
-    etapesRecompenses(etapes, recs, r.plateau, cd.nAvant);
+    etapesRecompenses(etapes, recs, r.plateau, cd.nAvant, combat);
     var i = combat.etape = Math.min(combat.etape, etapes.length - 1), nom = etapes[i];
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
     if (etapes.length > 1) wrap.appendChild(el('<div class="etapes-bilan"><span class="pts">' + etapes.map(function (_, j) { return '<i class="' + (j <= i ? "vu" : "") + '"></i>'; }).join("") + "</span></div>"));
@@ -3016,6 +3140,8 @@ svg.grille .interro { transition: opacity .3s; }
     } else if (nom === "plateau") {
       z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
       setTimeout(function () { animerPion(z); }, 50);
+    } else if (nom === "suite") {
+      z.appendChild(blocSuiteTour());
     } else {
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
     }
@@ -3024,7 +3150,7 @@ svg.grille .interro { transition: opacity .3s; }
     if (arretA) { boutonAtome(wrap, arretA, function () { combat = null; var q = document.querySelector(".quiz.atome"); if (q) q.remove(); }); return wrap; }
     if (!suite && !encore) finEpreuve(wrap, fermerCombat);
     else {
-      var bt = el('<button type="button" class="btn large">' + (suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : suite ? "Récompense" : "Atome suivant !") + "</button>");
+      var bt = el('<button type="button" class="btn large">' + (suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : suite === "suite" ? "Et maintenant ?" : suite ? "Récompense" : "Atome suivant !") + "</button>");
       bt.onclick = function () {
         if (suite) { combat.etape = i + 1; rendreCombat(); return; }
         combat = null; lancerCombat();
@@ -3812,7 +3938,7 @@ svg.grille .interro { transition: opacity .3s; }
     bloque_quarantaine: function () { return "Quarantaine : cette épreuve ne fait pas avancer ton pion."; },
     raccourci: function (e) { return "L'IA, ravie, retire " + (e.cases.length > 1 ? "les cases " + e.cases.join(" et ") : "la case " + e.cases[0]) + " de ta route : " + e.longueur + " étapes en tout."; },
     detour: function (e) { return "L'IA, déçue, remet devant toi " + (e.cases.length > 1 ? "les cases " + e.cases.join(" et ") + ", survolées" : "la case " + e.cases[0] + ", survolée") + " sans t'y arrêter : " + e.longueur + " étapes en tout."; },
-    tour_fini: function (e) { return "Arrivée ! Tour " + e.tour + " terminé en " + e.coups + " épreuve" + (e.coups > 1 ? "s" : "") + (e.record ? (e.ancien ? ", nouveau record (avant : " + e.ancien + ")" : ", ton premier record") : e.ancien ? " (record : " + e.ancien + ")" : "") + ". Retour au feu, en plus dur."; },
+    tour_fini: function (e) { return "Arrivée ! Tour " + e.tour + " terminé en " + e.coups + " épreuve" + (e.coups > 1 ? "s" : "") + (e.record ? (e.ancien ? ", nouveau record (avant : " + e.ancien + ")" : ", ton premier record") : e.ancien ? " (record : " + e.ancien + ")" : "") + ". Retour au feu : l'IA dessine le prochain parcours."; },
     oubli: function (e) { return "Trou de mémoire, case " + e.case + " : retour à la case " + e.vers + ", la plus ancienne que tu n'as jamais vue parmi les 15 dernières."; },
     oubli_vide: function (e) { return "Trou de mémoire, case " + e.case + " : tu as tout vu derrière toi. L'IA cherche, ne trouve rien, et boude."; },
     renvoi: function (e) { return tx(C.ennemiParId[e.ennemi].nom) + " te renvoie à la case " + e.vers + " : « " + tx(C.ennemiParId[e.ennemi].renvoi) + " »"; },
@@ -3862,11 +3988,16 @@ svg.grille .interro { transition: opacity .3s; }
   }
   // Les récompenses de l'épreuve avant le plateau, celles gagnées en avançant (tour bouclé, cases…) après.
   // `recs` : toutes les cartes, celles d'avant puis celles d'après ; `nAvant` : combien viennent avant le pion.
-  function etapesRecompenses(etapes, recs, dep, nAvant) {
+  // v21 : un tour bouclé finit sur le choix de la suite (`memo` retient qu'il y avait un choix, même une fois fait).
+  function etapesRecompenses(etapes, recs, dep, nAvant, memo) {
     if (nAvant == null) nAvant = recs.length;
     recs.forEach(function (_, i) { if (i < nAvant) etapes.push("recompense:" + i); });
     if (dep) etapes.push("plateau");
     recs.forEach(function (_, i) { if (i >= nAvant) etapes.push("recompense:" + i); });
+    if (memo) {
+      if (memo.suiteTour == null) memo.suiteTour = !!(dep && P.plateau.parcoursSuivant && dep.etapes.some(function (x) { return x.type === "tour_fini"; }));
+      if (memo.suiteTour) etapes.push("suite");
+    }
   }
   // Les cartes d'un résultat coupé en deux : {recs, nAvant}. Sans coupe, tout passe avant le plateau.
   function cartesEnDeux(r, rec, theme) {
@@ -3893,7 +4024,7 @@ svg.grille .interro { transition: opacity .3s; }
     // v6 : trois temps, une chose à la fois. 1. le verdict et l'IA, 2. les récompenses une par une, 3. le pion qui avance.
     var cd = quiz.cartes || (quiz.cartes = r.apresPlateau ? cartesEnDeux(r, null, r.theme) : { recs: recompensesBilan(r), nAvant: null }), recs = cd.recs;
     var etapes = ["verdict"];
-    etapesRecompenses(etapes, recs, r.plateau, cd.nAvant);
+    etapesRecompenses(etapes, recs, r.plateau, cd.nAvant, quiz);
     var arret = atomeArret(r.plateau);
     if (P.duel && P.duel.pret && r.plateau && r.plateau.etapes.some(function (x) { return x.type === "ennemi" || x.type === "duel_attente"; })) etapes.push("duel");
     var e = quiz.etape = Math.min(quiz.etape || 0, etapes.length - 1), nom = etapes[e], dernier = e === etapes.length - 1;
@@ -3912,13 +4043,15 @@ svg.grille .interro { transition: opacity .3s; }
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
     } else if (nom === "duel") {
       z.appendChild(blocDefi());
+    } else if (nom === "suite") {
+      z.appendChild(blocSuiteTour());
     } else {
       z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
     }
     wrap.appendChild(z);
     if (nom === "duel") return wrap;
     function groupe(d) { var n = 0; while (etapes[d + n] && etapes[d + n].indexOf("recompense:") === 0) n++; return n; }
-    var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite.indexOf("recompense:") === 0 ? (nom.indexOf("recompense:") !== 0 ? (groupe(e + 1) > 1 ? "Voir les " + groupe(e + 1) + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
+    var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite === "suite" ? "Et maintenant ?" : suite.indexOf("recompense:") === 0 ? (nom.indexOf("recompense:") !== 0 ? (groupe(e + 1) > 1 ? "Voir les " + groupe(e + 1) + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
     if (!suite && arret) boutonAtome(wrap, arret, fermerQuiz);
     else if (!suite) finEpreuve(wrap, fermerQuiz);
     else {

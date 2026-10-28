@@ -38,6 +38,7 @@ import objets_v11
 import bibliotheque_v7
 import bibliotheque_v8
 import plateau
+import parcours
 import savants
 import portraits
 from dessin import EMPLACEMENTS, PALETTE
@@ -814,6 +815,7 @@ def jeu_plateau():
         "icones": {k: v for k, v in icones.items() if k in utilisees},
         "cases": cases,
         "objectifs": objectifs.objectifs(),
+        "parcours": parcours.donnees(),
     }
 
 
