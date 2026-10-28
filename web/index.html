@@ -2793,12 +2793,11 @@ svg.grille .interro { transition: opacity .3s; }
   }
   function bilanDuel() {
     var r = duel.fin, e = r.ennemi, f = r.fiche, rec = r.recompenses || {};
-    var recs = duel.recs || (duel.recs = recompensesBilan({ nouveauxSucces: rec.succes, masque: rec.masque, nouveauxObjets: rec.objets, nouveauxLivres: rec.livres,
-      nouveauxSavants: rec.savants, nouveauxAccessoires: rec.accessoires, nouveauxEvenements: rec.evenements, theme: duel.ennemi.theme }));
+    var cd = duel.cartes || (duel.cartes = cartesEnDeux(r, rec, duel.ennemi.theme)), recs = cd.recs;
     var etapes = ["verdict"];
     var caseLibre = r.gagne && r.plateau ? r.plateau.de : null;
     if (caseLibre) etapes.push("libre");
-    etapesRecompenses(etapes, recs, r.plateau);
+    etapesRecompenses(etapes, recs, r.plateau, cd.nAvant);
     var arret = atomeArret(r.plateau);
     var i = duel.etape = Math.min(duel.etape, etapes.length - 1), nom = etapes[i];
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
@@ -2986,12 +2985,11 @@ svg.grille .interro { transition: opacity .3s; }
   }
   function bilanCombat() {
     var r = combat.fin, e = r.element, rec = r.recompenses || {};
-    var recs = combat.recs || (combat.recs = recompensesBilan({ nouveauxSucces: rec.succes, masque: rec.masque, nouveauxObjets: rec.objets, nouveauxLivres: rec.livres,
-      nouveauxSavants: rec.savants, nouveauxAccessoires: rec.accessoires, nouveauxEvenements: rec.evenements, theme: "alchimie" }));
+    var cd = combat.cartes || (combat.cartes = cartesEnDeux(r, rec, "alchimie")), recs = cd.recs;
     var etapes = ["verdict"];
     var caseLibre = combat.s && combat.s.case && !atomeSur(combat.s.case) && C.plateau.cases[combat.s.case - 1] ? combat.s.case : null;
     if (caseLibre) etapes.push("libre");
-    etapesRecompenses(etapes, recs, r.plateau);
+    etapesRecompenses(etapes, recs, r.plateau, cd.nAvant);
     var i = combat.etape = Math.min(combat.etape, etapes.length - 1), nom = etapes[i];
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
     if (etapes.length > 1) wrap.appendChild(el('<div class="etapes-bilan"><span class="pts">' + etapes.map(function (_, j) { return '<i class="' + (j <= i ? "vu" : "") + '"></i>'; }).join("") + "</span></div>"));
@@ -3853,11 +3851,22 @@ svg.grille .interro { transition: opacity .3s; }
     var m = comite(rep, true); if (m) b.appendChild(m);
     return b;
   }
-  // Le pion d'abord, le butin ensuite : les récompenses comptent aussi ce que le déplacement a débloqué (tour, cases),
-  // elles ne peuvent donc pas apparaître avant lui.
-  function etapesRecompenses(etapes, recs, dep) {
+  // Les récompenses de l'épreuve avant le plateau, celles gagnées en avançant (tour bouclé, cases…) après.
+  // `recs` : toutes les cartes, celles d'avant puis celles d'après ; `nAvant` : combien viennent avant le pion.
+  function etapesRecompenses(etapes, recs, dep, nAvant) {
+    if (nAvant == null) nAvant = recs.length;
+    recs.forEach(function (_, i) { if (i < nAvant) etapes.push("recompense:" + i); });
     if (dep) etapes.push("plateau");
-    recs.forEach(function (_, i) { etapes.push("recompense:" + i); });
+    recs.forEach(function (_, i) { if (i >= nAvant) etapes.push("recompense:" + i); });
+  }
+  // Les cartes d'un résultat coupé en deux : {recs, nAvant}. Sans coupe, tout passe avant le plateau.
+  function cartesEnDeux(r, rec, theme) {
+    function cartes(x, farce) { return recompensesBilan({ nouveauxSucces: x.succes, masque: x.masque, nouveauxObjets: x.objets, nouveauxLivres: x.livres,
+      nouveauxSavants: x.savants, nouveauxAccessoires: x.accessoires, nouveauxEvenements: x.evenements, theme: theme,
+      farce: farce ? r.farce : null, repliqueFarce: farce ? r.repliqueFarce : null }); }
+    if (!r.apresPlateau) { var t = cartes(rec || {}); return { recs: t, nAvant: t.length }; }
+    var a = cartes(r.avantPlateau || {}, true), b = cartes(r.apresPlateau);
+    return { recs: a.concat(b), nAvant: a.length };
   }
   function bilan() {
     var r = quiz.fin, k = C.parId[quiz.id], s = stat(k.stat);
@@ -3873,9 +3882,9 @@ svg.grille .interro { transition: opacity .3s; }
       else { titre = "Compétence perdue"; texte = "Il fallait " + C.regles.rappels.bonnes_reponses_min + " bonnes réponses. Repasse le quiz complet pour la regagner."; gain = '<span class="gain moins">−' + r.xpPerdue + " XP " + esc(tx(s.nom)) + "</span>"; }
     }
     // v6 : trois temps, une chose à la fois. 1. le verdict et l'IA, 2. les récompenses une par une, 3. le pion qui avance.
-    var recs = quiz.recs || (quiz.recs = recompensesBilan(r));
+    var cd = quiz.cartes || (quiz.cartes = r.apresPlateau ? cartesEnDeux(r, null, r.theme) : { recs: recompensesBilan(r), nAvant: null }), recs = cd.recs;
     var etapes = ["verdict"];
-    etapesRecompenses(etapes, recs, r.plateau);
+    etapesRecompenses(etapes, recs, r.plateau, cd.nAvant);
     var arret = atomeArret(r.plateau);
     if (P.duel && P.duel.pret && r.plateau && r.plateau.etapes.some(function (x) { return x.type === "ennemi" || x.type === "duel_attente"; })) etapes.push("duel");
     var e = quiz.etape = Math.min(quiz.etape || 0, etapes.length - 1), nom = etapes[e], dernier = e === etapes.length - 1;
@@ -3899,7 +3908,8 @@ svg.grille .interro { transition: opacity .3s; }
     }
     wrap.appendChild(z);
     if (nom === "duel") return wrap;
-    var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite.indexOf("recompense:") === 0 ? (nom.indexOf("recompense:") !== 0 ? (recs.length > 1 ? "Voir les " + recs.length + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
+    function groupe(d) { var n = 0; while (etapes[d + n] && etapes[d + n].indexOf("recompense:") === 0) n++; return n; }
+    var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite.indexOf("recompense:") === 0 ? (nom.indexOf("recompense:") !== 0 ? (groupe(e + 1) > 1 ? "Voir les " + groupe(e + 1) + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
     if (!suite && arret) boutonAtome(wrap, arret, fermerQuiz);
     else if (!suite) finEpreuve(wrap, fermerQuiz);
     else {

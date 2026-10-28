@@ -489,17 +489,18 @@
     var chrono = resultats.length > 0 && resultats.every(function (x) { return x.chrono; });
     var jouer = !!(infos && infos.jouer);
     if (jouer) consommerArbre(partie, k.stat);
+    var avant = verifierRecompenses(contenu, partie, t);
+    if (reussi) ajouterButin(contenu, partie, avant, { type: "quiz", comp: id }, t, infos && infos.alea);
     var dep = jouerPlateau(contenu, partie, { type: "quiz", comp: id }, { reussi: reussi, parfait: parfait, chrono: chrono, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
     var ag = agacerIA(contenu, partie, resultats.length - bonnes, !reussi, t);
     lotExceptionnel(partie, dep);
-    var rec = verifierRecompenses(contenu, partie, t);
-    if (reussi) ajouterButin(contenu, partie, rec, { type: "quiz", comp: id }, t, infos && infos.alea);
+    var apres = verifierRecompenses(contenu, partie, t), rec = fusionRec(avant, apres);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     var fa = reussi ? null : tenterFarce(contenu, partie, t, infos && infos.alea, k.stat);
     return { issue: reussi ? "maitrisee" : "echec", bonnes: bonnes, total: total, xp: xp, prochainRappel: e.prochainRappel,
       nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
-      theme: contenu.parId[id] ? contenu.parId[id].stat : null };
+      avantPlateau: avant, apresPlateau: apres, theme: contenu.parId[id] ? contenu.parId[id].stat : null };
   }
 
   // XP d'un rappel réussi qui mène à l'étape `palier` (1 = premier rappel).
@@ -561,17 +562,18 @@
     if (!revision && reussi) contextes.push("rappel_reussi");
     var jouer = !!(infos && infos.jouer);
     if (jouer && contenu.parId[id]) consommerArbre(partie, contenu.parId[id].stat);
+    var avant = verifierRecompenses(contenu, partie, t);
+    if (reussi) ajouterButin(contenu, partie, avant, { type: "rappel", comp: id }, t, infos && infos.alea);
     var dep = revision && !reussi ? null : jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
     var ag = agacerIA(contenu, partie, resultats.length - bonnes, !reussi, t);
     lotExceptionnel(partie, dep);
-    var rec = verifierRecompenses(contenu, partie, t);
-    if (reussi) ajouterButin(contenu, partie, rec, { type: "rappel", comp: id }, t, infos && infos.alea);
+    var apres = verifierRecompenses(contenu, partie, t), rec = fusionRec(avant, apres);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     var fa = reussi || revision ? null : tenterFarce(contenu, partie, t, infos && infos.alea, contenu.parId[id] && contenu.parId[id].stat);
     return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : "perdue", bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
-      theme: contenu.parId[id] ? contenu.parId[id].stat : null };
+      avantPlateau: avant, apresPlateau: apres, theme: contenu.parId[id] ? contenu.parId[id].stat : null };
   }
 
   // À appeler à chaque ouverture de l'app : repère un retour après une longue absence.
@@ -1024,12 +1026,14 @@
       partie.plateau.coups = (partie.plateau.coups || 0) + 1;
       partie.lot.cap = SUCCES_DUEL;
       out.butin = butinDuel(contenu, partie, t, alea);
+      var avant = verifierRecompenses(contenu, partie, t);
+      if (out.butin) { if (out.butin.famille === "masques") avant.masque = out.butin.chose; else avant[out.butin.famille].push(out.butin.chose); }
       var dep = deplacer(contenu, partie, d.reste, t, "duel");
       dep.contextes = contextesPlateau(dep);
       out.plateau = dep;
       lotExceptionnel(partie, dep);
-      out.recompenses = verifierRecompenses(contenu, partie, t);
-      if (out.butin) { if (out.butin.famille === "masques") out.recompenses.masque = out.butin.chose; else out.recompenses[out.butin.famille].push(out.butin.chose); }
+      var apres = verifierRecompenses(contenu, partie, t);
+      out.recompenses = fusionRec(avant, apres); out.avantPlateau = avant; out.apresPlateau = apres;
     } else {
       f.defaites++; f.serie = 0;
       c.duelsPerdus = (c.duelsPerdus || 0) + 1;
@@ -1152,10 +1156,11 @@
     if (capture) { if (!f.capture) { f.capture = t; c.atomesCaptures = (c.atomesCaptures || 0) + 1; } }
     else { f.fuites++; c.atomesEnfuis = (c.atomesEnfuis || 0) + 1; }
     var ag = agacerIA(contenu, partie, R.questions - bonnes, !capture, t);
+    var avant = verifierRecompenses(contenu, partie, t);
     var dep = suiteTrajet(contenu, partie, s, t);
-    var rec = verifierRecompenses(contenu, partie, t);
+    var apres = verifierRecompenses(contenu, partie, t), rec = fusionRec(avant, apres);
     partie.maj = t;
-    return { plateau: dep, capture: capture, element: s.element, bonnes: bonnes, total: R.questions, premiere: premiere, fiche: f, recompenses: rec, agacement: ag,
+    return { avantPlateau: avant, apresPlateau: apres, plateau: dep, capture: capture, element: s.element, bonnes: bonnes, total: R.questions, premiere: premiere, fiche: f, recompenses: rec, agacement: ag,
       captures: Object.keys(partie.atomes).filter(function (z) { return partie.atomes[z].capture; }).length };
   }
 
@@ -1172,7 +1177,8 @@
     partie.sauvages.shift();
     var dep = suiteTrajet(contenu, partie, s, t);
     partie.maj = t;
-    return { element: s.element, plateau: dep, recompenses: verifierRecompenses(contenu, partie, t) };
+    var apres = verifierRecompenses(contenu, partie, t);
+    return { element: s.element, plateau: dep, recompenses: apres, apresPlateau: apres };
   }
 
   // --- Boutique de l'IA (v19) -------------------------------------------------
@@ -1751,6 +1757,13 @@
 
   // Débloque succès, savants, dates de la frise, reliques ; range le butin dont la condition est remplie.
   // Certains dépendent des autres (« 30 succès », « 10 objets ») : on boucle jusqu'à stabilité.
+  // v20 : les récompenses d'une épreuve en deux temps, celles de l'épreuve puis celles du déplacement du pion
+  // (tour bouclé, cases…). Le bilan montre les premières avant le plateau, les secondes après.
+  function fusionRec(a, b) {
+    var o = {};
+    Object.keys(a).forEach(function (k) { o[k] = Array.isArray(a[k]) ? a[k].concat(b[k] || []) : a[k] || b[k] || null; });
+    return o;
+  }
   function verifierRecompenses(contenu, partie, t) {
     var out = { succes: [], objets: [], accessoires: [], savants: [], evenements: [], livres: [], masque: null, gagnables: [], credits: [] };
     partie.gagnables = partie.gagnables || {};
