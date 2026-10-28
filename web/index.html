@@ -566,6 +566,17 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .quiz.duel .retour .origine { font-size: 14px; color: var(--muted); }
 .quiz.duel .retour .origine b { color: var(--ink); }
 .quiz.duel .retour cite { display: block; font-size: 13px; color: var(--muted); font-style: normal; margin-top: 6px; }
+.presente-en { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); text-align: left; }
+.presente-en p { margin: 0; font-size: 16px; line-height: 1.5; }
+.presente-en .ligne-en { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.presente-en .badge-en { font-size: 13px; font-weight: 700; padding: 3px 9px; border-radius: 99px; background: color-mix(in srgb, var(--muted) 18%, transparent); }
+.presente-en .badge-en.vrai { background: color-mix(in srgb, #D94141 18%, transparent); color: #B23030; }
+.presente-en .pill { font-size: 13px; font-weight: 700; padding: 3px 9px; border-radius: 99px; color: var(--c); background: color-mix(in srgb, var(--c) 16%, transparent); }
+.presente-en .titre-en { color: #D94141; font-weight: 700; }
+.presente-en .lecon { padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, #2E9D5B 10%, transparent); }
+.presente-en .source { font-size: 13px; }
+.vs-scene .presente-en { animation: tomber .4s ease-out 1.8s both; }
+.lecon-v { margin: 0; font-size: 16px; line-height: 1.5; padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, #2E9D5B 10%, var(--surface)); text-align: left; }
 .vs-scene { display: flex; flex-direction: column; gap: 16px; padding-top: 8px; }
 .vs-scene .arbitre { animation: tomber .5s ease-out both; }
 .arene { position: relative; display: flex; justify-content: space-between; align-items: flex-end; min-height: 190px; padding: 0 4px; overflow: hidden; }
@@ -580,7 +591,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 @keyframes glisserD { from { transform: translateX(140%); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes vsPop { from { transform: translate(-50%, -50%) scale(3); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 @keyframes tomber { from { transform: translateY(-12px); opacity: 0; } to { transform: none; opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .arene .cote, .arene .vs, .vs-scene .bulle, .vs-scene .arbitre { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .arene .cote, .arene .vs, .vs-scene .bulle, .vs-scene .arbitre, .vs-scene .presente-en { animation: none; } }
 /* v15 : l'arène est rouge sombre, quel que soit le thème, et des flammes montent du bas pendant l'annonce du combat. */
 .quiz.rouge { --bg: #2A080D; --surface: #3E1018; --surface-2: #4A1520; --ink: #FCEDEA; --muted: #E7B9B2; --line: #6B2530; --accent: #F2C14E; --accent-ink: #2A080D; --good: #5CD68B; --bad: #FF7A6B;
   background: radial-gradient(120% 70% at 50% 110%, #8E1F1A 0%, #4A0E14 45%, #2A080D 80%); color: var(--ink); }
@@ -1880,7 +1891,7 @@ svg.grille .interro { transition: opacity .3s; }
     var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: tx(k.nom), stat: tx(sc.nom), "case": kc ? tx(kc.titre) : "" }, c.raison === "hors_case" ? null : c.stat || (c.type === "quiz" ? k.stat : null)); sauver();
     // La case du pion en grand, avec son histoire, avant l'épreuve.
     var ici = C.plateau.cases[P.plateau.position - 1], atI = atomeSur(ici.n), enI = !atI && ennemiSur(ici.n);
-    var bandeau = enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + '</div><div class="eyebrow">Ton pion est case ' + ici.n + ' · Ennemi</div><h2>' + esc(tx(enI.nom)) + ' garde la case</h2><p>Bats-le pour voir ce qu\'il y a dessous.</p></div>' : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + '</div><div class="eyebrow">Ton pion est case ' + ici.n + ' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>' : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
+    var bandeau = enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + '</div><div class="eyebrow">Ton pion est case ' + ici.n + ' · Ennemi</div><h2>' + esc(tx(enI.nom)) + ' garde la case</h2><p class="titre-en">' + esc(tx(enI.titre)) + "</p>" + (enI.qui ? "<p>" + esc(tx(enI.qui)) + "</p>" : "") + '<p>Bats-le pour voir ce qu\'il y a dessous.</p></div>' : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + '</div><div class="eyebrow">Ton pion est case ' + ici.n + ' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>' : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
       '<div class="eyebrow">Ton pion est case ' + ici.n + " · " + esc(formatAnnee(ici.annee)) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + esc(tx(ici.histoire)) + "</p>" +
       (c.achat ? '<p class="arbre-case" style="--c:' + couleur(c.stat) + '"><b>Faveur achetée : arbre ' + esc(tx(stat(c.stat).nom)) + ", encore " + M.arbreAchete(P).restant + " épreuve" + (M.arbreAchete(P).restant > 1 ? "s" : "") + ".</b></p>" : "") + (kc && kc.stat && !c.achat ? '<p class="arbre-case"><b>' + (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : c.raison === "ouvre_arbre" ? "Arbre " + esc(tx(sc.nom)) + " encore fermé : réussis ce quiz pour l'ouvrir." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</b></p>" : "") + galerieTheme(ici.stat) + "</div>";
     feuilleSimple('<div class="choix-ia">' + bandeau + '<div class="eyebrow">L\'IA a choisi</div><div id="ia-jouer"></div>' +
@@ -2895,6 +2906,16 @@ svg.grille .interro { transition: opacity .3s; }
     return el('<div class="flammes" aria-hidden="true">' + h + "</div>");
   }
   var duel = null;
+  // v26 : présenter l'ennemi. Qui il est, s'il a existé, ce qu'il a prétendu ; la leçon vient au verdict.
+  function presentationEnnemi(e, avecLecon) {
+    var vrai = e.figure === "historique", st = e.theme && stat(e.theme);
+    return '<div class="presente-en"><div class="ligne-en"><span class="badge-en' + (vrai ? " vrai" : "") + '">' + (vrai ? "A vraiment existé" : "Caricature inventée par l'IA") + "</span>" +
+      (st ? '<span class="pill" style="--c:' + couleur(st.id) + '">Son terrain : ' + esc(tx(st.nom)) + "</span>" : "") + "</div>" +
+      '<p class="titre-en">' + esc(tx(e.titre)) + "</p>" + (e.qui ? '<p class="qui">' + esc(tx(e.qui)) + "</p>" : "") +
+      '<p class="erreur-en"><b>' + (vrai ? "Son erreur" : "Son credo") + " :</b> " + esc(tx(e.description)) + "</p>" +
+      (avecLecon && e.lecon ? '<p class="lecon"><b>À retenir :</b> ' + esc(tx(e.lecon)) + "</p>" : "") +
+      '<p class="meta source">Source : ' + esc(e.source) + "</p></div>";
+  }
   function lancerDuel() {
     if (!P.duel || !P.duel.pret) return;
     if (bloqueParUltimatum()) return;
@@ -2921,6 +2942,7 @@ svg.grille .interro { transition: opacity .3s; }
       var sc = el('<div class="vs-scene"><div class="arbitre"></div><div class="arene"><div class="cote g">' + svgAvatar(120) + '<b>Toi</b></div><div class="vs" aria-hidden="true">VS</div><div class="cote d">' + svgEnnemi(e, 104, false, "miroir") + "<b>" + esc(tx(e.nom)) + '</b></div></div><p class="bulle"></p></div>');
       var m = comite(duel.replique, true); if (m) sc.querySelector(".arbitre").appendChild(m);
       sc.querySelector(".bulle").textContent = "« " + tx(e.defi) + " »";
+      sc.appendChild(el(presentationEnnemi(e, false)));
       inn.appendChild(sc);
       var go = el('<button type="button" class="btn large">Au combat</button>'); go.onclick = function () { duel.phase = "q"; rendreDuel(); };
       var fuir = el('<button type="button" class="btn sec large">Pas maintenant</button>'); fuir.onclick = fermerDuel;
@@ -2985,7 +3007,7 @@ svg.grille .interro { transition: opacity .3s; }
     var z = el('<div class="etape"></div>');
     if (nom === "verdict") {
       z.appendChild(el('<div class="bilan verdict-duel ' + (r.gagne ? "gagne" : "perdu") + '"><div class="duo">' + svgAvatar(r.gagne ? 92 : 64) + svgEnnemi(e, r.gagne ? 56 : 84, false, "miroir" + (r.gagne ? " vaincu" : "")) + '</div><div class="grand">' + (r.gagne ? "Victoire" : "Défaite") + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" +
-        '<p class="bulle"></p><p class="meta">Contre ' + esc(nomEn(e)) + " : " + f.victoires + " victoire" + (f.victoires > 1 ? "s" : "") + ", " + f.defaites + " défaite" + (f.defaites > 1 ? "s" : "") + ", meilleure série " + f.meilleure + ".</p>" +
+        '<p class="bulle"></p>' + (e.lecon ? '<p class="lecon-v"><b>À retenir sur ' + esc(tx(e.nom)) + " :</b> " + esc(tx(e.lecon)) + "</p>" : "") + '<p class="meta">Contre ' + esc(nomEn(e)) + " : " + f.victoires + " victoire" + (f.victoires > 1 ? "s" : "") + ", " + f.defaites + " défaite" + (f.defaites > 1 ? "s" : "") + ", meilleure série " + f.meilleure + ".</p>" +
         (r.gagne ? "" : r.plateau ? '<p class="note">' + esc(tx(e.nom)) + " te renvoie case " + P.plateau.position + ". Il garde son poste et t'attend au prochain passage.</p>" : '<p class="note">' + esc(tx(e.nom)) + " garde la case " + P.plateau.position + " : pas d'autre épreuve tant que tu ne l'as pas battu.</p>") +
         (r.vol ? '<div class="gain-credits vol"><div class="ligne-bourse">' + svgBourse(40) + '<div class="calcul"><b>−' + r.vol + " crédit" + (r.vol > 1 ? "s" : "") + "</b> : " + esc(tx(e.nom)) + " te fait les poches.</div></div></div>" : "") + "</div>"));
       z.querySelector(".bulle").textContent = tx(e.nom) + " : « " + tx(r.gagne ? e.victoire : e.defaite) + " »";
@@ -3275,7 +3297,7 @@ svg.grille .interro { transition: opacity .3s; }
     var f = P.bestiaire && P.bestiaire[e.id];
     if (!f) { feuilleSimple('<div class="vitrine" style="padding:16px">' + svgEnnemi(e, 96, true) + "</div><h2>Ennemi inconnu</h2><p class=\"meta\">Croise-le sur le plateau pour le découvrir.</p>", "Ennemi inconnu"); return; }
     var ou = Object.keys(M.ennemisPlateau(C, P)).filter(function (n) { return M.ennemisPlateau(C, P)[n] === e.id; })[0];
-    feuilleSimple('<div class="vitrine" style="padding:16px">' + svgEnnemi(e, 112, false, "miroir") + '</div><div class="eyebrow">' + esc(tx(e.titre)) + (e.annees ? " · " + esc(e.annees) : "") + "</div><h2>" + esc(tx(e.nom)) + "</h2><p>" + esc(tx(e.description)) + '</p><p class="meta">Source : ' + esc(e.source) + "</p>" +
+    feuilleSimple('<div class="vitrine" style="padding:16px">' + svgEnnemi(e, 112, false, "miroir") + '</div><div class="eyebrow">' + esc(tx(e.titre)) + (e.annees ? " · " + esc(e.annees) : "") + "</div><h2>" + esc(tx(e.nom)) + "</h2>" + presentationEnnemi(e, true) +
       '<div class="bareme"><span>Victoires</span><span class="num">' + f.victoires + '</span><span>Défaites</span><span class="num">' + f.defaites + '</span><span>Meilleure série</span><span class="num">' + f.meilleure + '</span><span>Dernier duel</span><span class="num">' + (f.dernier ? esc(dateCourte(f.dernier)) : "—") + "</span></div>" +
       '<p class="meta">' + (ou ? "Il garde la case " + ou + "." : "Il n'est plus sur le plateau ce tour-ci.") + "</p>", tx(e.nom));
   }

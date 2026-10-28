@@ -929,6 +929,9 @@ def sprite(e):
     return t.lignes(), tete(tete_).lignes()
 
 
+import ennemis_fiches
+
+
 def fr(x):
     return {"fr": x}
 
@@ -952,6 +955,8 @@ def donnees():
              "defi": fr(defi), "victoire": fr(victoire), "defaite": fr(defaite), "source": source}
         if annees:
             d["annees"] = annees
+        # v26 : qui il est, et ce qu'on retient de son erreur.
+        d["qui"], d["lecon"] = (fr(x) for x in ennemis_fiches.FICHES[id])
         if id in RENVOI:
             d["renvoi"] = fr(RENVOI[id])
         ennemis.append(d)
