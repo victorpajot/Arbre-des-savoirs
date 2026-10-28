@@ -560,6 +560,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     C6.avatar.accessoires.forEach(x => { lot["accessoires:" + x.id] = x.lot; }); C6.ia.masques.forEach(x => { if (x.lot) lot["masques:" + x.id] = x.lot; });
     let collectionAuTour7 = null;
     for (let j = 0; j < 400 && P.plateau.tours < 8; j++) {
+      // Un joueur qui gâte l'IA : sa faveur reste moyenne (furieuse, elle ralentirait tout le parcours).
+      P.faveur = { valeur: 60, maj: t };
       M.verifierRecompenses(C6, P, t);
       const faire = M.rappelsDus(C6, P, t).map(k => ({ comp: k, type: "rappel" }));
       for (let n = 0; n < 3; n++) { const c = M.choixIA(C6, P, t); if (c && (c.type === "quiz" || c.raison === "revision")) faire.push(c); }
@@ -1186,4 +1188,15 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const e1 = M.emplettesIA(CP, R, T, () => 0); assert.equal(e1.type, "objet"); assert.equal(CP.objets.find(x => x.id === e1.id).cadeau.eclat, 3);
   CP.ia.credits.emplettes = CE;
   console.log("OK : v20 articles de poche et emplettes de l'IA " + JSON.stringify(types));
+}
+// v20 : furieuse, l'IA bloque le bonus aléatoire du bouton Jouer à son minimum.
+{
+  const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
+  const CF = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
+  const T = new Date(2026, 9, 28, 9).getTime();
+  const P = M.nouvellePartie(T); P.faveur = { valeur: 2, maj: T };
+  const b = M.bornesBonusJouer(CF, P, T); assert.ok(b.furieuse); assert.equal(b.max, b.min);
+  P.faveur = { valeur: 90, maj: T }; assert.equal(M.bornesBonusJouer(CF, P, T).max, 4);
+  console.log("OK : v20 furieuse, bonus Jouer bloqué");
 }

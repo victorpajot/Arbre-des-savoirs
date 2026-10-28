@@ -687,13 +687,19 @@
 
   // Applique le résultat d'une épreuve au pion. `issue` : {reussi, parfait, chrono, jouer}.
   // `jouer` : l'épreuve a été lancée par le bouton « Jouer », l'IA l'a choisie ; réussie, elle rapporte un bonus.
+  function bornesBonusJouer(contenu, partie, t) {
+    var B = contenu.plateau.regles.bonus, bMin = B.jouer || 0, bMax = B.jouer_max != null ? B.jouer_max : bMin;
+    var fav = faveurIA(contenu, partie, t), furieuse = !!(fav && fav.palier.id === "furieuse");
+    return { min: bMin, max: furieuse ? bMin : bMax, furieuse: furieuse };
+  }
   function jouerPlateau(contenu, partie, epreuve, issue, t) {
     if (!contenu.plateau) return null;
     var v = valeurEpreuve(contenu, partie, epreuve, t), pl = partie.plateau, c = partie.compteurs;
     // v15 : « avancer d'une seule case » : un pas, sans bonus, pour s'arrêter sur la case suivante et la dévoiler.
     var unPas = issue.reussi && issue.uneCase;
     // v19 : le bonus du bouton Jouer est tiré au hasard, entre bonus.jouer et bonus.jouer_max (0 à 4).
-    var B = contenu.plateau.regles.bonus, bMin = B.jouer || 0, bMax = B.jouer_max != null ? B.jouer_max : bMin;
+    // v20 : furieuse, l'IA ralentit le jeu : le tirage reste au minimum.
+    var bj = bornesBonusJouer(contenu, partie, t), bMin = bj.min, bMax = bj.max;
     var bonusJouer = issue.reussi && issue.jouer && !unPas ? bMin + tirage("jouer|" + t + "|" + partie.journal.length, bMax - bMin + 1) : 0;
     var valeur = unPas ? 1 : issue.reussi ? v.total + (issue.parfait ? v.parfait : 0) + (issue.chrono ? v.chrono : 0) + bonusJouer : v.echec;
     var etapes = [];
@@ -2258,7 +2264,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage,
     expression: expression,
     bonusDuJour: bonusDuJour,

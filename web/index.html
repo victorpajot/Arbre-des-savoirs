@@ -218,6 +218,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .comite p { font-size: 15px; }
 .comite .qui { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
 .comite .qui i { font-style: normal; font-weight: 400; text-transform: none; letter-spacing: 0; }
+.comite .qui .humeur { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 99px; background: var(--accent); color: #fff; font-size: 11px; letter-spacing: 0.04em; vertical-align: 1px; }
+.comite.humeur-furieuse { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
+.comite.humeur-boudeuse { background: color-mix(in srgb, var(--accent) 17%, var(--surface)); }
 .comite.petit { padding: 10px 12px 10px 8px; }
 .comite.petit .masque { width: 36px; height: 43px; }
 .comite.petit p { font-size: 14px; }
@@ -1050,6 +1053,12 @@ svg.grille .interro { transition: opacity .3s; }
     var tenuIA = P.objetIA && C.objets.filter(function (o) { return o.id === P.objetIA; })[0];
     var b = el('<div class="comite' + (petit ? " petit" : "") + '"><span class="masque">' + (m ? svgMasque(m, expr, petit ? 34 : 44) : "") + (tenuIA ? '<span class="tenu-ia">' + svgObjet(tenuIA, false, petit ? 16 : 20) + "</span>" : "") + '</span><div><div class="qui"></div><p></p></div></div>');
     b.querySelector(".qui").innerHTML = esc(tx(C.narrateur) || "L'IA") + (m ? " <i>· " + esc(tx(m.nom)) + "</i>" : "");
+    // v20 : son humeur se lit au fond de chaque intervention, avec son nom en pastille.
+    var fh = C.ia && C.ia.faveur ? M.faveurIA(C, P, maintenant()) : null;
+    if (fh) {
+      b.classList.add("humeur-" + fh.palier.id); b.style.setProperty("--accent", COULEUR_PALIER[fh.palier.id]);
+      b.querySelector(".qui").appendChild(el('<span class="humeur">' + esc(tx(fh.palier.nom)) + "</span>"));
+    }
     b.querySelector("p").textContent = tx(rep.texte);
     var a = rep.aparte === false ? null : M.aparte(C, P, expr, graine, theme);
     if (a) {
@@ -1511,8 +1520,8 @@ svg.grille .interro { transition: opacity .3s; }
     return t;
   }
   // v19 : le bonus du bouton Jouer est tiré au hasard ; on l'annonce comme une fourchette.
-  function bonusJouerMax() { var B = C.plateau ? C.plateau.regles.bonus : {}; return B.jouer_max != null ? B.jouer_max : B.jouer || 0; }
-  function texteBonusJouer() { var B = C.plateau.regles.bonus, a = B.jouer || 0, b = bonusJouerMax(); return a === b ? "+" + a : "+" + a + " à " + b; }
+  function bonusJouerMax() { return C.plateau ? M.bornesBonusJouer(C, P, maintenant()).max : 0; }
+  function texteBonusJouer() { var b = M.bornesBonusJouer(C, P, maintenant()); return b.min === b.max ? "+" + b.min : "+" + b.min + " à " + b.max; }
   function portee() {
     var ep = epreuvesDuTour();
     return ep.length ? Math.min(8, ep[0].v.total + bonusJouerMax()) : 0;
@@ -1763,7 +1772,7 @@ svg.grille .interro { transition: opacity .3s; }
       (c.achat ? '<p class="arbre-case" style="--c:' + couleur(c.stat) + '"><b>Faveur achetée : arbre ' + esc(tx(stat(c.stat).nom)) + ", encore " + M.arbreAchete(P).restant + " épreuve" + (M.arbreAchete(P).restant > 1 ? "s" : "") + ".</b></p>" : "") + (kc && kc.stat && !c.achat ? '<p class="arbre-case"><b>' + (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : c.raison === "ouvre_arbre" ? "Arbre " + esc(tx(sc.nom)) + " encore fermé : réussis ce quiz pour l'ouvrir." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</b></p>" : "") + galerieTheme(ici.stat) + "</div>";
     feuilleSimple('<div class="choix-ia">' + bandeau + '<div class="eyebrow">L\'IA a choisi</div><div id="ia-jouer"></div>' +
       '<div class="epreuve" style="--c:' + couleur(k.stat) + '"><span class="de' + (v.duJour ? " bonus" : "") + '"><b>+' + (bMin === bonus ? v.total + bonus : (v.total + bMin) + "–" + (v.total + bonus)) + '</b></span><span class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" +
-      (c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · bonus du bouton Jouer : " + texteBonusJouer() + ", tiré au hasard</span></span></div>" +
+      (c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · bonus du bouton Jouer : " + texteBonusJouer() + (M.bornesBonusJouer(C, P, t).furieuse ? ", l'IA furieuse le bloque" : ", tiré au hasard") + "</span></span></div>" +
       '<button type="button" class="btn large" data-a="go">C\'est parti</button>' +
       '<button type="button" class="btn sec large" data-a="un">Avancer d\'une seule case</button>' +
       '<p class="meta">Une seule case : tu choisis l\'arbre, pas de bonus, et ton pion s\'arrête sur la case suivante pour la dévoiler. Tu peux aussi choisir toi-même une compétence dans l\'arbre, sans ce bonus.</p></div>', "L'IA a choisi", {
