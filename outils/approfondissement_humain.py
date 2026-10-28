@@ -285,7 +285,7 @@ Q["philo.sciences"] = [
 
 # Une date de la frise par compétence, débloquée quand on la maîtrise.
 DATES = [
-    ("valladolid", 1550, "La controverse de Valladolid", "Las Casas et Sepúlveda débattent devant Charles Quint de l'humanité des Amérindiens.", "eloquence", "rhet.debat",
+    ("valladolid", 1550, "La controverse de Valladolid", "Las Casas et Sepúlveda débattent de l'humanité des Amérindiens devant des juristes et des théologiens réunis par Charles Quint.", "eloquence", "rhet.debat",
      "Pendant deux sessions, en 1550 et 1551, quinze juges écoutent les deux hommes. Sepúlveda invoque la « servitude naturelle » d'Aristote, Las Casas lit pendant cinq jours une apologie de 500 pages. Aucun vainqueur n'est proclamé.",
      "Bartolomé de Las Casas, Apologia, 1550 ; Jean Dumont, La Vraie Controverse de Valladolid, 1995"),
     ("propp", 1928, "La Morphologie du conte", "Vladimir Propp montre que tous les contes merveilleux russes suivent la même structure.", "eloquence", "rhet.narration",
