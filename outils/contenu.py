@@ -11,6 +11,7 @@ from aides import anecdote, citation, fr, num, qcm, succes, vf
 import approfondissement_humain
 import approfondissement_sciences
 import avatar40
+import calculs
 import bibliotheque
 import ia
 import icones32
@@ -571,6 +572,12 @@ def questions():
                 q["illustration_explication"] = EXPLICATION[id]
             if id in figures.QUESTIONS:
                 q["figure"] = figures.QUESTIONS[id]
+            if id in calculs.CALCULS:
+                assert q["type"] == "numerique", id
+                expl, src = calculs.CALCULS[id]
+                q["explication"] = fr(expl)
+                if src:
+                    q["source"] = src
             # v15 : bonne réponse = une personne qui a un portrait → portrait et biographie au retour.
             if q.get("type") == "qcm":
                 rep = q["choix"][q["reponse"]]
@@ -581,6 +588,7 @@ def questions():
     ids = {q["id"] for q in out}
     assert set(ENONCE) <= ids and set(EXPLICATION) <= ids, (set(ENONCE) | set(EXPLICATION)) - ids
     assert set(figures.QUESTIONS) <= ids, set(figures.QUESTIONS) - ids
+    assert set(calculs.CALCULS) <= ids, set(calculs.CALCULS) - ids
     return out
 
 

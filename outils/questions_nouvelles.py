@@ -90,7 +90,7 @@ Q["astro.systeme"] = [
 Q["astro.etoiles"] = [
     qcm("Une étoile produit son énergie par :", ["la fusion nucléaire de noyaux légers", "la combustion de charbon", "la fission de l'uranium", "la réflexion de la lumière"], "Au cœur du Soleil, à environ 15 millions de degrés, l'hydrogène fusionne en hélium."),
     qcm("Une année-lumière est une unité de :", ["distance", "temps", "vitesse", "luminosité"], "La distance parcourue par la lumière en un an : environ 9 460 milliards de km."),
-    qcm("La couleur d'une étoile renseigne surtout sur :", ["sa température de surface", "sa distance", "son âge exact", "sa forme"], "Les étoiles bleues dépassent 10 000 °C, les rouges sont autour de 3 000 °C. Le Soleil, vers 5 500 °C, est jaune-blanc."),
+    qcm("La couleur d'une étoile renseigne surtout sur :", ["sa température de surface", "sa distance", "son âge exact", "sa forme"], "Les étoiles bleues dépassent 10 000 °C, les rouges sont autour de 3 000 °C. Le Soleil, vers 5 500 °C, est jaune-blanc. La composition, elle, se lit dans les raies du spectre, pas dans la couleur."),
     vf("Quand on regarde une étoile lointaine, on la voit telle qu'elle était dans le passé.", True, "Sa lumière a mis des années, parfois des millénaires, à nous parvenir."),
     qcm("Quelle est l'étoile la plus proche du Soleil ?", ["Proxima du Centaure", "Sirius", "l'étoile Polaire", "Bételgeuse"], "À environ 4,2 années-lumière. Sa lumière met donc plus de quatre ans à nous parvenir."),
     qcm("Que deviendra le Soleil dans environ 5 milliards d'années ?", ["une géante rouge, puis une naine blanche", "un trou noir", "une supernova", "rien, il brillera toujours"], "Il est trop peu massif pour exploser en supernova ou devenir un trou noir."),

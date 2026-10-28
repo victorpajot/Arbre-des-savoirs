@@ -35,7 +35,8 @@ def textes(o):
         yield o
     elif isinstance(o, dict):
         for k in sorted(o):
-            if k in ("lot", "verification"):
+            # Un extrait porte sa propre vérification : il ne remet pas en cause la fiche qui le contient.
+            if k in ("lot", "verification", "extrait"):
                 continue
             yield from textes(o[k])
     elif isinstance(o, list):

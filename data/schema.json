@@ -408,6 +408,11 @@
        "figure": {
         "type": "string",
         "pattern": "^[a-z_]+$"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 5,
+        "description": "Référence de l'attribution citée dans l'explication (questions de calcul) ; vérifiée par verifier_sources.py."
        }
       },
       "allOf": [
