@@ -3890,6 +3890,7 @@ svg.grille .interro { transition: opacity .3s; }
   // v16 : les erreurs agacent l'IA. On le montre au verdict, sans détour.
   function ligneAgacement(z, ag) {
     if (!ag) return;
+    if (ag.gain) { z.appendChild(el('<div class="gain-faveur"><b>+' + ag.gain + "</b> de faveur : sans faute, elle t'aime un peu plus<span>" + Math.round(ag.avant.valeur) + " → " + Math.round(ag.apres.valeur) + " : " + esc(tx(ag.apres.palier.nom).toLowerCase()) + "</span></div>")); return; }
     z.appendChild(el('<div class="gain-faveur perte"><b>−' + ag.perte + "</b> de faveur : chaque erreur l'agace<span>" + Math.round(ag.avant.valeur) + " → " + Math.round(ag.apres.valeur) + " : " + esc(tx(ag.apres.palier.nom).toLowerCase()) +
       (P.punition ? ". Elle t'enferme au mur de la honte : " + dureePeine(P.punition.restant) : "") + "</span></div>"));
   }

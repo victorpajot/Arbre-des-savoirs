@@ -1546,11 +1546,16 @@
     partie.credits.parSucces[sc.id] = { n: n, base: base, humeur: humeur, mot: mot };
     return { succes: sc.id, n: n, base: base, humeur: humeur, mot: mot };
   }
-  // Chaque erreur agace l'IA ; une épreuve ratée encore plus. Renvoie la perte de faveur, ou null.
+  // Chaque erreur agace l'IA ; une épreuve ratée encore plus. Renvoie la perte (ou le gain, sans faute) de faveur, ou null.
   function agacerIA(contenu, partie, erreurs, ratee, t) {
     var A = contenu.ia && contenu.ia.credits && contenu.ia.credits.agacement, avant = faveurIA(contenu, partie, t);
     if (!A || !avant) return null;
     var perte = Math.min(A.max, Math.max(0, erreurs) * A.par_erreur + (ratee ? A.epreuve_ratee : 0));
+    // v28 : sans faute, elle vous aime un peu plus. Un peu.
+    if (!perte && !ratee && A.sans_faute) {
+      partie.faveur = { valeur: Math.min(100, avant.valeur + A.sans_faute), maj: t };
+      return { perte: 0, gain: A.sans_faute, avant: avant, apres: faveurIA(contenu, partie, t) };
+    }
     if (!perte) return null;
     partie.faveur = { valeur: Math.max(0, avant.valeur - perte), maj: t };
     return { perte: perte, avant: avant, apres: faveurIA(contenu, partie, t) };

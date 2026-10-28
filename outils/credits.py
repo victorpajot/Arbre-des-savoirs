@@ -61,7 +61,8 @@ HONTE = {"chance": 0.3, "facteur": 5, "mots": [
 # En dessous : elle prend l'argent, perd de la faveur et pose un piège devant le pion.
 # Les erreurs agacent l'IA : chaque mauvaise réponse lui coûte de la faveur, une épreuve ratée encore plus.
 # Faveur plus basse, crédits plus maigres : son humeur penche vers « rien » et « moitié ».
-AGACEMENT = {"par_erreur": 2, "epreuve_ratee": 6, "max": 16}
+# v28 : une épreuve sans faute lui plaît un peu (sans_faute points de faveur).
+AGACEMENT = {"par_erreur": 2, "epreuve_ratee": 6, "max": 16, "sans_faute": 3}
 
 POTS = {"gain_base": 8, "gain_par_credit": 0.5, "gain_max": 40, "avance": 1, "avance_double": 2, "colere": 15,
         "piege": {"type": "recul", "n": 2}}

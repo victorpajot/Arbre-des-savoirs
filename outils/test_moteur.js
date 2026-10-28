@@ -390,7 +390,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const ag = M.agacerIA(C5, P, 3, true, t0 + 4 * j);
     assert.ok(ag && ag.perte === Math.min(C5.ia.credits.agacement.max, 3 * C5.ia.credits.agacement.par_erreur + C5.ia.credits.agacement.epreuve_ratee));
     assert.ok(M.faveurIA(C5, P, t0 + 4 * j).valeur === Math.max(0, av - ag.perte), "les erreurs font baisser sa faveur");
-    assert.equal(M.agacerIA(C5, P, 0, false, t0 + 4 * j), null, "sans faute, rien");
+    const sf = M.agacerIA(C5, P, 0, false, t0 + 4 * j);
+    assert.equal(sf.gain, C5.ia.credits.agacement.sans_faute, "sans faute, un peu plus de faveur");
+    assert.equal(sf.apres.valeur, Math.min(100, sf.avant.valeur + sf.gain));
     console.log("OK : v16 crédits des succès et pots-de-vin");
   }
 
