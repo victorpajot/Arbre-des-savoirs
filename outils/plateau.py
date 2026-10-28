@@ -333,7 +333,7 @@ DATES = [
     ("boole", 1854, "Les lois de la pensée", "Boole transforme la logique en algèbre.", "logique", "math.logique",
      "George Boole, autodidacte, réduit le raisonnement à des calculs sur 0 et 1. Claude Shannon s'en servira en 1937 pour concevoir des circuits électriques.",
      "George Boole, An Investigation of the Laws of Thought, 1854"),
-    ("cellule-theorie", 1839, "La théorie cellulaire", "Tous les êtres vivants sont faits de cellules.", "savoir", "sci.cellule",
+    ("cellule-theorie", 1839, "La théorie cellulaire", "Schleiden et Schwann montrent que plantes et animaux sont faits de cellules.", "savoir", "sci.cellule",
      "Theodor Schwann et Matthias Schleiden généralisent l'idée ; Rudolf Virchow ajoute en 1855 que toute cellule vient d'une autre cellule.",
      "Theodor Schwann, Mikroskopische Untersuchungen, 1839"),
     ("kekule", 1865, "L'anneau du benzène", "Kekulé propose la structure en anneau du benzène.", "alchimie", "chim.liaisons",
