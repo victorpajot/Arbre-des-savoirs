@@ -163,7 +163,7 @@ SUCCES = [
 
 OBJETS = [
     ("coupe-cigue", "Coupe de ciguë", -399,
-     "Selon le Phédon de Platon, Socrate boit la ciguë calmement et demande qu'on offre un coq à Asclépios. Les médecins doutent de cette mort paisible : la ciguë provoque des convulsions.",
+     "Selon le Phédon de Platon, Socrate boit la ciguë calmement et demande qu'on offre un coq à Asclépios. On a longtemps douté de cette mort paisible, la ciguë aquatique provoquant des convulsions. Mais la grande ciguë des Athéniens paralyse peu à peu : le récit de Platon tient.",
      "Platon, Phédon, 117-118 ; Enid Bloch, « Hemlock Poisoning and the Death of Socrates », 2001", maitriser("philo.antiquite")),
     ("rasoir-ockham", "Rasoir d'Ockham", 1323,
      "La phrase « Entia non sunt multiplicanda praeter necessitatem » ne se trouve pas chez Ockham. Elle est formulée par John Punch en 1639, trois siècles plus tard.",
