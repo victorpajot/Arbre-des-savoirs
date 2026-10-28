@@ -566,7 +566,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       const faire = M.rappelsDus(C6, P, t).map(k => ({ comp: k, type: "rappel" }));
       for (let n = 0; n < 3; n++) { const c = M.choixIA(C6, P, t); if (c && (c.type === "quiz" || c.raison === "revision")) faire.push(c); }
       for (const c of faire) {
-        if (c.type === "quiz" && !M.disponibles(C6, P, t).some(k => k.id === c.comp.id)) continue;
+        if (c.type === "quiz" && c.raison !== "ouvre_arbre" && !M.disponibles(C6, P, t).some(k => k.id === c.comp.id)) continue;
         const avant = butin(), reliques = Object.keys(P.objets).filter(id => !lot["objets:" + id]).length;
         const q = M.tirerQuestions(C6, P, c.comp.id, c.type === "rappel" ? 3 : 5).map(x => ({ id: x.id, correct: rnd() < 0.85 }));
         const res = (c.type === "rappel" ? M.terminerRappel : M.terminerQuiz)(C6, P, c.comp.id, q, t, { jouer: true, alea: rnd });
@@ -1094,11 +1094,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     for (let i = 0; i < 100; i++) if (M.themeDe(M.masquePourTon(CT, P, "moqueuse", "m" + i, "empathie")) === "empathie") emp++;
     assert.ok(emp > 55, "masque du thème : " + emp + "/100");
   }
-  // Farce : après un échec en Empathie, le déguisement est un savant d'Empathie quand l'IA en a un sous la main.
+  // Farce : après un échec en Empathie, la tenue d'Empathie a la priorité. v25 : plus jamais un savant entier.
   {
     const P = M.nouvellePartie(T); P.savants = { "william-james": T, "galilee": T, "pasteur": T };
     const f = M.tenterFarce(CT, P, T, () => 0, "empathie");
-    assert.deepEqual([f.type, f.id], ["savant", "william-james"]);
+    assert.deepEqual([f.type, f.id], ["tenue", "rose-bonbon"]);
+    for (let i = 0; i < 200; i++) { const g = M.tenterFarce(CT, P, T, Math.random); if (g) assert.ok(g.type === "tenue" || g.type === "accessoire", "farce " + g.type); }
+    const v = JSON.parse(JSON.stringify(P)); v.farce = { type: "savant", id: "galilee", depuis: T, jusqua: T + 3600e3 };
+    assert.equal(M.migrer(v, CT).farce, null, "une ancienne farce savant est levée");
   }
   console.log("OK : v18 thèmes : butin, apartés, répliques, masques et farces suivent la case");
 }

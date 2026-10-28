@@ -35,6 +35,7 @@ import ia_themes
 import honte
 import masques_regles
 import objets_v11
+import tenues_farce
 import bibliotheque_v7
 import bibliotheque_v8
 import plateau
@@ -692,6 +693,8 @@ def avatar():
                      "couleurs": s[5], "base": cq["base"], "cheveux": cq["cheveux"]} for s, cq in zip(savants.SAVANTS, savants.calques())],
         # v15 : portraits des personnes qu'une question fait choisir par leur nom.
         "portraits": portraits.donnees(),
+        # v25 : tenues que l'IA impose par farce, en recolorant les vêtements.
+        "tenues_farce": tenues_farce.donnees(),
     }
 
 

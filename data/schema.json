@@ -1328,6 +1328,37 @@
        }
       }
      }
+    },
+    "tenues_farce": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "notice",
+       "theme",
+       "couleurs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "notice": {
+        "$ref": "#/$defs/texte"
+       },
+       "theme": {
+        "type": "string"
+       },
+       "couleurs": {
+        "$ref": "#/$defs/palette"
+       }
+      }
+     }
     }
    }
   },

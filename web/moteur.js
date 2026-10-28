@@ -202,6 +202,8 @@
     // v5 : l'IA choisit seule son masque ; l'ancien choix du joueur est oublié.
     delete out.masqueChoisi;
     out.farce = p.farce || null;
+    // v25 : plus de farce qui remplace le personnage par un savant ; une ancienne en cours est levée.
+    if (out.farce && out.farce.type === "savant") out.farce = null;
     // v6 : butin en attente (conditions remplies, pas encore tombé). Ce qui est déjà gagné reste acquis.
     out.gagnables = p.gagnables || {};
     // v7 : ennemis, duels et cadeaux à l'IA.
@@ -2197,25 +2199,25 @@
   // --- Farces de l'IA --------------------------------------------------------
   var DUREE_FARCE = JOUR;
   var CHANCE_FARCE = 1 / 3;
-  // Après une épreuve ratée, une fois sur trois : l'IA déguise l'avatar pour 24 h (accessoire ou savant).
-  // v18 : `theme` (facultatif) : un savant du thème de l'épreuve ratée, quand il y en a un, a la priorité.
+  // Après une épreuve ratée, une fois sur trois : l'IA déguise l'avatar pour 24 h.
+  // v25 : elle ne remplace plus le personnage par un savant ; elle impose un accessoire ou repeint ses vêtements
+  // (`avatar.tenues_farce`). `theme` (facultatif) : une tenue du thème de l'épreuve ratée a la priorité, une fois sur deux.
   function tenterFarce(contenu, partie, t, alea, theme) {
     if (!contenu.avatar) return null;
     alea = alea || Math.random;
     if (alea() >= CHANCE_FARCE) return null;
     var pool = [];
     (contenu.avatar.accessoires || []).forEach(function (a) { pool.push({ type: "accessoire", id: a.id, emplacement: a.emplacement }); });
-    (contenu.avatar.savants || []).forEach(function (s) { if (partie.savants && partie.savants[s.id]) pool.push({ type: "savant", id: s.id }); });
+    (contenu.avatar.tenues_farce || []).forEach(function (v) { pool.push({ type: "tenue", id: v.id, theme: v.theme }); });
     var av = partie.avatar || {}, actuelle = farceActive(partie, t);
     pool = pool.filter(function (f) {
       if (actuelle && actuelle.id === f.id) return false;
-      return f.type === "savant" ? av.savant !== f.id : av[f.emplacement] !== f.id;
+      return f.type === "tenue" || av[f.emplacement] !== f.id;
     });
     if (!pool.length) return null;
     if (theme) {
-      var parId = {}; (contenu.avatar.savants || []).forEach(function (s) { parId[s.id] = s; });
-      var ici = pool.filter(function (f) { return f.type === "savant" && themeDe(parId[f.id]) === theme; });
-      if (ici.length) pool = ici;
+      var ici = pool.filter(function (f) { return f.type === "tenue" && f.theme === theme; });
+      if (ici.length && alea() < 0.5) pool = ici;
     }
     var f = pool[Math.floor(alea() * pool.length)];
     partie.farce = { type: f.type, id: f.id, emplacement: f.emplacement || null, depuis: t, jusqua: t + DUREE_FARCE };
