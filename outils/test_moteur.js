@@ -1245,3 +1245,21 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.migrer(JSON.parse(JSON.stringify(P)), C).alyca.depuis, T);
   console.log("OK : v25 Alyca révèle son nom, pour de bon");
 }
+
+// v26 : avancer d'une case à la boutique, 80 crédits, une fois par jour.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = Date.UTC(2026, 9, 1, 8), J = 86400000;
+  const P = M.nouvellePartie(T); P.credits.solde = 200;
+  const avant = P.plateau.idx, gagnes = P.credits.gagnes || 0;
+  const r = M.acheter(C, P, "avancer", T);
+  assert.ok(r.ok); assert.equal(r.prix, 80); assert.equal(P.credits.solde, 120 + (P.credits.gagnes || 0) - gagnes);
+  const solde = P.credits.solde;
+  assert.equal(P.plateau.idx, avant + 1, "le pion avance d'une case");
+  const r2 = M.acheter(C, P, "avancer", T + 3600e3);
+  assert.equal(r2.ok, false); assert.equal(r2.raison, "jour"); assert.equal(P.credits.solde, solde);
+  assert.ok(M.acheter(C, P, "avancer", T + J).ok, "de nouveau le lendemain");
+  P.duel = { ennemi: C.ennemis[0].id, case: P.plateau.position, reste: 2, pret: true, depuis: T };
+  assert.equal(M.enRayon(C, P, "avancer", T + 2 * J).length, 0, "pas quand un duel retient le pion");
+  console.log("OK : v26 avancer d'une case à la boutique");
+}

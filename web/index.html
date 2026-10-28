@@ -3516,6 +3516,7 @@ svg.grille .interro { transition: opacity .3s; }
     ["chasser", "Chasser un ennemi", "Le prochain ennemi sur ta route s'en va. Même celui qui te bloque.", "#D94141"],
     ["convoquer", "Convoquer un ennemi", "Un ennemi de plus devant ton pion. Plus de duels, plus de butin.", "#5D6470"],
     ["arbre", "Faveur d'un arbre", "Pour tes prochaines épreuves par Jouer, l'IA pioche dans l'arbre de ton choix.", "#2E9D5B"],
+    ["avancer", "Avancer d'une case", "Le pion avance tout de suite d'une case, avec ce qui l'attend dessus.", "#E8873A", "+1"],
   ];
   function paquet(c, rond, glyphe) {
     return '<svg viewBox="0 0 48 48" width="52" height="52" aria-hidden="true">' + (rond ? '<circle cx="24" cy="24" r="21" fill="' + c + '" stroke="#fff" stroke-width="3"/>' :
@@ -3528,9 +3529,9 @@ svg.grille .interro { transition: opacity .3s; }
       '<p class="note">Tout s\'achète à l\'aveugle : tu paies, l\'IA tire au hasard parmi ce que tu n\'as pas encore.</p><div class="rayons"></div><h3>Dans ta poche</h3><p class="note">Jusqu\'à ' + (B.stock_max || 5) + ' de chaque. Ils servent quand tu le décides, sauf le désarmement, qui joue tout seul au prochain piège.</p><div class="rayons poche"></div><h3>Ton parcours</h3>' +
       (ach ? '<p class="note">Faveur en cours : arbre ' + esc(tx(stat(ach.stat).nom)) + ", encore " + ach.restant + " épreuve" + (ach.restant > 1 ? "s" : "") + ".</p>" : "") + '<div class="rayons parcours"></div></div>');
     function ligne(a, zone, rond) {
-      var prix = B.prix[a[0]], stock = M.enRayon(C, P, a[0]).length, peut = cr.solde >= prix && stock > 0;
+      var prix = B.prix[a[0]], stock = M.enRayon(C, P, a[0], maintenant()).length, peut = cr.solde >= prix && stock > 0;
       var r = el('<div class="article"><span class="vis">' + paquet(a[3], rond, a[4]) + '</span><span class="txt"><b>' + esc(a[1]) + "</b><span>" + esc(a[2]) + "</span>" +
-        '<span class="stock">' + (POCHE_IDS[a[0]] ? "en poche : " + M.enPoche(P, a[0]) + " / " + (B.stock_max || 5) : stock ? (a[0] === "chasser" ? stock + " sur ta route" : FAMILLES_STOCK[a[0]] ? stock + " en rayon" : "disponible") : a[0] === "chasser" ? "aucun ennemi devant toi" : "rien en rayon") + '</span></span><button type="button" class="btn"' + (peut ? "" : " disabled") + ">" + svgBourse(18) + " " + prix + "</button></div>");
+        '<span class="stock">' + (POCHE_IDS[a[0]] ? "en poche : " + M.enPoche(P, a[0]) + " / " + (B.stock_max || 5) : stock ? (a[0] === "chasser" ? stock + " sur ta route" : FAMILLES_STOCK[a[0]] ? stock + " en rayon" : a[0] === "avancer" ? "une fois par jour" : "disponible") : a[0] === "avancer" ? (P.credits.avanceJour === M.cleJour(maintenant()) ? "déjà acheté aujourd'hui, reviens demain" : "ton pion est retenu") : a[0] === "chasser" ? "aucun ennemi devant toi" : "rien en rayon") + '</span></span><button type="button" class="btn"' + (peut ? "" : " disabled") + ">" + svgBourse(18) + " " + prix + "</button></div>");
       r.querySelector("button").onclick = function () { if (a[0] === "arbre") choisirArbreAchat(); else acheterUI(a[0]); };
       b.querySelector(zone).appendChild(r);
     }
@@ -3553,7 +3554,7 @@ svg.grille .interro { transition: opacity .3s; }
   }
   function acheterUI(article, choix) {
     var r = M.acheter(C, P, article, maintenant(), choix);
-    if (!r.ok) { toast(r.raison === "solde" ? "Pas assez de crédits." : r.raison === "vide" ? "Plus rien en rayon." : "Achat impossible."); return; }
+    if (!r.ok) { toast(r.raison === "solde" ? "Pas assez de crédits." : r.raison === "jour" ? "Une case par jour, pas plus." : r.raison === "vide" ? "Plus rien en rayon." : "Achat impossible."); return; }
     sauver();
     var carte = null;
     if (r.famille === "masques") carte = recompensesBilan({ masque: r.chose })[0];
@@ -3561,11 +3562,14 @@ svg.grille .interro { transition: opacity .3s; }
     var txt = article === "chasser" ? tx(r.ennemi.nom) + " quitte la case " + r.case + ". La voie est libre." :
       article === "convoquer" ? tx(r.ennemi.nom) + " t'attend case " + r.case + "." :
       article === "arbre" ? "Arbre " + tx(stat(r.stat).nom) + " : l'IA y pioche pour tes " + M.boutique(C).arbre_epreuves + " prochaines épreuves par Jouer." :
-      POCHE_IDS[article] ? "Dans ta poche : " + nomPoche(article, r.stock) + "." : "";
+      POCHE_IDS[article] ? "Dans ta poche : " + nomPoche(article, r.stock) + "." :
+      article === "avancer" ? (r.plateau && r.plateau.a !== r.plateau.de ? "Ton pion avance d'une case." : "Ton pion n'a pas bougé : quelque chose le retient.") : "";
     feuilleSimple('<div class="eyebrow">Boutique</div><h2>Acheté : −' + r.prix + ' crédits</h2><div id="achat-carte"></div>' + (txt ? '<p class="etat-pion">' + esc(txt) + "</p>" : "") + '<div id="achat-ia"></div>', "Achat");
     if (carte) { carte.classList.add("anim"); feuille.querySelector("#achat-carte").appendChild(carte); }
     else if (POCHE_IDS[article]) { var pa = POCHE.filter(function (x) { return x[0] === article; })[0]; feuille.querySelector("#achat-carte").appendChild(el('<div class="poche-achat">' + paquet(pa[3], false, pa[4]) + "<b>" + esc(pa[1]) + "</b></div>")); }
     if (r.mot) { var m = comite({ texte: r.mot, contexte: "pot_genereux", aparte: false }, true); if (m) feuille.querySelector("#achat-ia").appendChild(m); }
+    // v26 : la case achetée, le pion avance sous les yeux du joueur.
+    if (r.plateau && r.plateau.a !== r.plateau.de) { var zd = feuille.querySelector("#achat-carte"); zd.appendChild(blocDeplacement(r.plateau, null, true)); setTimeout(function () { animerPion(zd); }, 60); }
     rendre();
   }
   function blocCorruption() {
@@ -4020,6 +4024,7 @@ svg.grille .interro { transition: opacity .3s; }
     var rejoue = dep.etapes.some(function (e) { return e.type === "duel_attente"; });
     if (avecPlateau) { animPion = (dep.chemin && dep.chemin.length > 1) || rejoue ? dep : null; var g = el('<div class="plateau-bilan">' + svgPlateau(true) + "</div>"); b.insertBefore(g, tj); }
     if (dep.valeur > 0 && (dep.cause === "cadeau" || dep.cause === "duel" || dep.cause === "atome")) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>" + (dep.cause === "cadeau" ? "Cadeau de l'IA." : dep.cause === "atome" ? "L'atome réglé, le pion finit son trajet." : "Duel gagné : la fin du trajet.") + "</span></div>"));
+    else if (dep.valeur > 0 && (dep.cause === "achat" || dep.cause === "pot")) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>" + (dep.cause === "achat" ? "Case achetée à la boutique." : "Pot-de-vin encaissé : l'IA pousse ton pion.") + "</span></div>"));
     else if (dep.valeur > 0 && dep.uneCase) tj.appendChild(el('<div class="pas"><b>+1</b><span>Épreuve réussie : un seul pas, comme demandé.</span></div>'));
     else if (dep.valeur > 0) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>Épreuve réussie" + (v && v.duJour ? ", bonus du jour compris" : "") +
       (dep.bonusJouer ? ", dont +" + dep.bonusJouer + " tiré pour avoir laissé l'IA choisir" : dep.jouer ? ", et 0 au tirage du bouton Jouer" : dep.valeur > (v ? v.total : 0) ? ", avec bonus" : "") + ".</span></div>"));

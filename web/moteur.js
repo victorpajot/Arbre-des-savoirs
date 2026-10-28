@@ -1274,7 +1274,7 @@
   // Le parcours aussi : chasser le prochain ennemi, en convoquer un, ou faire piocher l'IA dans un arbre.
   var FAMILLE_ARTICLE = { objet: "objets", livre: "livres", accessoire: "accessoires", masque: "masques" };
   function boutique(contenu) { return contenu.ia && contenu.ia.credits && contenu.ia.credits.boutique; }
-  function enRayon(contenu, partie, article) {
+  function enRayon(contenu, partie, article, t) {
     var f = FAMILLE_ARTICLE[article];
     if (f) return listeFamille(contenu, f).filter(function (x) { return (estButin(x) || f === "masques") && !possede(partie, f, x.id); });
     if (!contenu.plateau || !contenu.placement) return [];
@@ -1286,6 +1286,8 @@
     }
     if (article === "arbre") return contenu.stats.filter(function (st) { return arbreOuvert(contenu, partie, st.id); });
     if (POCHE[article]) { var B = boutique(contenu); return enPoche(partie, article) < ((B && B.stock_max) || 5) ? [1] : []; }
+    // v26 : une case de plus, une fois par jour ; pas quand le pion est retenu (duel à rejouer, révision forcée).
+    if (article === "avancer") return (t != null && partie.credits.avanceJour === cleJour(t)) || duelBloquant(partie) || revisionEnCours(partie) ? [] : [1];
     return [];
   }
   // Cases devant le pion où poser un ennemi : ni spéciales, ni déjà gardées, ni la dernière.
@@ -1298,8 +1300,8 @@
     var B = boutique(contenu); if (!B || B.prix[article] == null) return { ok: false, raison: "inconnu" };
     var prix = B.prix[article], cr = partie.credits;
     if (cr.solde < prix) return { ok: false, raison: "solde" };
-    var rayon = enRayon(contenu, partie, article);
-    if (!rayon.length) return { ok: false, raison: "vide" };
+    var rayon = enRayon(contenu, partie, article, t);
+    if (!rayon.length) return { ok: false, raison: article === "avancer" && partie.credits.avanceJour === cleJour(t) ? "jour" : "vide" };
     var graine = "boutique|" + article + "|" + t + "|" + (partie.journal ? partie.journal.length : 0), out = { ok: true, article: article, prix: prix };
     var f = FAMILLE_ARTICLE[article], pl = partie.plateau;
     if (f) {
@@ -1326,12 +1328,17 @@
       if (!st) return { ok: false, raison: "arbre" };
       pl.arbreAchete = { stat: st.id, restant: B.arbre_epreuves || 5 };
       out.stat = st.id;
+    } else if (article === "avancer") {
+      cr.avanceJour = cleJour(t);
+      out.plateau = deplacer(contenu, partie, 1, t, "achat");
+      if (out.plateau) out.plateau.contextes = contextesPlateau(out.plateau);
     } else if (POCHE[article]) {
       var inv = partie.inventaire || (partie.inventaire = {});
       inv[article] = (inv[article] || 0) + 1; out.stock = inv[article];
     }
     cr.solde -= prix;
     cr.achats = (cr.achats || 0) + 1;
+    if (out.plateau) out.recompenses = verifierRecompenses(contenu, partie, t);
     var mots = (B.mots && B.mots[article]) || [];
     if (mots.length) out.mot = mots[tirage(graine + "|mot", mots.length)];
     partie.maj = t;

@@ -106,7 +106,8 @@ REPLIQUES = {
 # v19 : la boutique de l'IA. Tout s'achète à l'aveugle : on paie, elle tire au hasard parmi ce qu'on n'a pas.
 BOUTIQUE = {
     "prix": {"objet": 40, "livre": 40, "accessoire": 20, "masque": 100, "chasser": 50, "convoquer": 50, "arbre": 50,
-             "joker": 30, "erreur": 40, "relance": 30, "desarme": 40},
+             "joker": 30, "erreur": 40, "relance": 30, "desarme": 40, "avancer": 80},
+    # v26 : avancer d'une case, cher et une fois par jour seulement (Victor).
     # v20 : les articles qu'on garde en poche, jusqu'à `stock_max` de chaque.
     "stock_max": 5,
     "faveur_masque": 25,
@@ -156,6 +157,11 @@ BOUTIQUE = {
         "desarme": [
             sans("Le prochain piège qui vous attend ne marchera pas. Je le désarme moi-même, avec des gants."),
             "Autour de Verdun, des parcelles de la « zone rouge » sont encore interdites un siècle plus tard : trop d'obus. Votre piège, je le désarme en une seconde, et je facture quand même.",
+        ],
+        "avancer": [
+            sans("Une case pour quatre-vingts crédits. À ce prix-là, je vous porte presque."),
+            "Au XVIIIe siècle, les chaises à porteurs de Paris se louaient à la course. Vous, vous payez à la case. Le progrès.",
+            sans("Je pousse votre pion. Ne vous habituez pas à acheter ce que vous pourriez gagner."),
         ],
         "vide": [sans("Plus rien en rayon. Revenez quand j'aurai réassorti, c'est-à-dire jamais.")],
     },
