@@ -468,7 +468,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .alyca-rev .nom-ia { font-family: var(--f-mono); font-size: 44px; font-weight: 700; letter-spacing: .12em; margin: 14px 0; color: #B8862B; text-shadow: 0 0 18px color-mix(in srgb, #F2C14E 70%, transparent); }
 .alyca-rev .note { font-size: 15px; text-align: left; }
 .alyca-rev .source { font-size: 13px; text-align: left; }
-.vers-boutique.cliquable { cursor: pointer; }
+.vers-boutique.cliquable, .vers-stats.cliquable, .niv.cliquable { cursor: pointer; }
 .boutique .solde { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 17px; }
 .boutique .solde b { font-size: 30px; }
 .boutique h3 { margin: 16px 0 6px; }
@@ -2212,6 +2212,14 @@ svg.grille .interro { transition: opacity .3s; }
     var perso = el('<div class="bloc perso-v5" role="button" tabindex="0" aria-label="Ouvrir la fiche du personnage"><div class="perso"><div class="avatar-cadre rang-' + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + '</div><div><div class="niv-ligne"><div class="niv"><small>Niveau</small><span class="num">' + ng + '</span></div><div class="niv cred"><small>Crédits</small><span class="num">' + P.credits.solde + '</span></div></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div>" + (sn ? '<p class="surnom">' + esc(sn.texte) + '<small>d\'après l\'IA</small></p>' : "") + '<p class="meta">' + nbMait + " compétence" + (nbMait > 1 ? "s" : "") + " maîtrisée" + (nbMait > 1 ? "s" : "") + " sur " + C.competences.length + "</p></div></div></div>");
     perso.onclick = function () { vue = "perso"; ongletPerso = "avatar"; rendre(); window.scrollTo(0, 0); };
     // Les crédits mènent à la boutique, dans les Collections.
+    // v26 : le niveau mène aux stats, premier onglet des Succès.
+    var nivB = perso.querySelector(".niv:not(.cred)");
+    if (nivB) {
+      nivB.setAttribute("role", "button"); nivB.setAttribute("tabindex", "0"); nivB.setAttribute("aria-label", "Voir les stats"); nivB.classList.add("cliquable");
+      var versStats = function (ev) { ev.stopPropagation(); vue = "succes"; ongletSucces = "stats"; rendre(); window.scrollTo(0, 0); };
+      nivB.onclick = versStats;
+      nivB.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); versStats(ev); } };
+    }
     var cred = perso.querySelector(".niv.cred");
     if (cred && M.boutique(C)) {
       cred.setAttribute("role", "button"); cred.setAttribute("tabindex", "0"); cred.setAttribute("aria-label", "Ouvrir la boutique"); cred.classList.add("cliquable");
@@ -2385,8 +2393,12 @@ svg.grille .interro { transition: opacity .3s; }
   // --- Vue Personnage -------------------------------------------------------
   function vuePerso() {
     var t = maintenant(), v = el('<div class="vue"></div>'), xp = M.xpParStat(C, P);
-    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted);display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span>niveau <b class="cadre-num" style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + '</b></span><span class="vers-boutique" style="display:inline-flex;align-items:center;gap:4px">' + svgBourse(22) + ' <b class="cadre-num or" style="font-size:24px;color:var(--ink)">' + P.credits.solde + "</b> crédits</span></div></div>"));
+    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted);display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="vers-stats">niveau <b class="cadre-num" style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + '</b></span><span class="vers-boutique" style="display:inline-flex;align-items:center;gap:4px">' + svgBourse(22) + ' <b class="cadre-num or" style="font-size:24px;color:var(--ink)">' + P.credits.solde + "</b> crédits</span></div></div>"));
     // Les crédits de la fiche mènent aussi à la boutique.
+    var vs = v.querySelector(".entete .vers-stats");
+    vs.setAttribute("role", "button"); vs.setAttribute("tabindex", "0"); vs.setAttribute("aria-label", "Voir les stats"); vs.classList.add("cliquable");
+    vs.onclick = function () { vue = "succes"; ongletSucces = "stats"; rendre(); window.scrollTo(0, 0); };
+    vs.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); vs.onclick(); } };
     var vb = v.querySelector(".entete .vers-boutique");
     if (vb && M.boutique(C)) {
       vb.setAttribute("role", "button"); vb.setAttribute("tabindex", "0"); vb.setAttribute("aria-label", "Ouvrir la boutique"); vb.classList.add("cliquable");
