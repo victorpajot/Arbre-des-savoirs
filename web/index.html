@@ -457,8 +457,10 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .cp-reglages { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .cp-reglages li { padding: 6px 10px; border-radius: 10px; background: color-mix(in srgb, var(--ink) 6%, var(--surface)); font-size: 15px; }
 .cp-reglages li span { color: var(--muted); font-size: 13px; }
-.perso-v5 .niv-ligne .niv { border-radius: 12px; padding: 2px 10px 4px; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent); }
-.perso-v5 .niv-ligne .niv.cred { box-shadow: inset 0 0 0 2px color-mix(in srgb, #E0B12E 55%, transparent); }
+.perso-v5 .niv-ligne .niv .num { display: inline-block; min-width: 1.4em; text-align: center; border-radius: 12px; padding: 2px 10px 4px; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent); }
+.perso-v5 .niv-ligne .niv.cred .num { box-shadow: inset 0 0 0 2px color-mix(in srgb, #E0B12E 55%, transparent); }
+.entete .cadre-num { display: inline-block; border-radius: 10px; padding: 0 8px 2px; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent); }
+.entete .cadre-num.or { box-shadow: inset 0 0 0 2px color-mix(in srgb, #E0B12E 55%, transparent); }
 .niv.cred.cliquable { cursor: pointer; }
 .alyca-rev { text-align: center; }
 .faveur .rancune { font-size: 17px; font-style: italic; margin: 8px 0; color: var(--c); }
@@ -466,7 +468,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .alyca-rev .nom-ia { font-family: var(--f-mono); font-size: 44px; font-weight: 700; letter-spacing: .12em; margin: 14px 0; color: #B8862B; text-shadow: 0 0 18px color-mix(in srgb, #F2C14E 70%, transparent); }
 .alyca-rev .note { font-size: 15px; text-align: left; }
 .alyca-rev .source { font-size: 13px; text-align: left; }
-.vers-boutique.cliquable { cursor: pointer; padding: 2px 8px; margin-right: -8px; border-radius: 10px; box-shadow: inset 0 0 0 2px color-mix(in srgb, #E0B12E 55%, transparent); }
+.vers-boutique.cliquable { cursor: pointer; }
 .boutique .solde { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 17px; }
 .boutique .solde b { font-size: 30px; }
 .boutique h3 { margin: 16px 0 6px; }
@@ -2383,7 +2385,7 @@ svg.grille .interro { transition: opacity .3s; }
   // --- Vue Personnage -------------------------------------------------------
   function vuePerso() {
     var t = maintenant(), v = el('<div class="vue"></div>'), xp = M.xpParStat(C, P);
-    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted);display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span>niveau <b style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + '</b></span><span class="vers-boutique" style="display:inline-flex;align-items:center;gap:4px">' + svgBourse(22) + ' <b style="font-size:24px;color:var(--ink)">' + P.credits.solde + "</b> crédits</span></div></div>"));
+    v.appendChild(el('<div class="entete"><div><div class="eyebrow">Fiche</div><h1>Personnage</h1></div><div class="num" style="font-size:15px;color:var(--muted);display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span>niveau <b class="cadre-num" style="font-size:24px;color:var(--ink)">' + M.niveauGlobal(C, P) + '</b></span><span class="vers-boutique" style="display:inline-flex;align-items:center;gap:4px">' + svgBourse(22) + ' <b class="cadre-num or" style="font-size:24px;color:var(--ink)">' + P.credits.solde + "</b> crédits</span></div></div>"));
     // Les crédits de la fiche mènent aussi à la boutique.
     var vb = v.querySelector(".entete .vers-boutique");
     if (vb && M.boutique(C)) {
