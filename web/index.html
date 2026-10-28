@@ -2798,7 +2798,7 @@ svg.grille .interro { transition: opacity .3s; }
     var etapes = ["verdict"];
     var caseLibre = r.gagne && r.plateau ? r.plateau.de : null;
     if (caseLibre) etapes.push("libre");
-    recs.forEach(function (_, i) { etapes.push("recompense:" + i); }); if (r.plateau) etapes.push("plateau");
+    etapesRecompenses(etapes, recs, r.plateau);
     var arret = atomeArret(r.plateau);
     var i = duel.etape = Math.min(duel.etape, etapes.length - 1), nom = etapes[i];
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
@@ -2991,7 +2991,7 @@ svg.grille .interro { transition: opacity .3s; }
     var etapes = ["verdict"];
     var caseLibre = combat.s && combat.s.case && !atomeSur(combat.s.case) && C.plateau.cases[combat.s.case - 1] ? combat.s.case : null;
     if (caseLibre) etapes.push("libre");
-    recs.forEach(function (_, i) { etapes.push("recompense:" + i); }); if (r.plateau) etapes.push("plateau");
+    etapesRecompenses(etapes, recs, r.plateau);
     var i = combat.etape = Math.min(combat.etape, etapes.length - 1), nom = etapes[i];
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
     if (etapes.length > 1) wrap.appendChild(el('<div class="etapes-bilan"><span class="pts">' + etapes.map(function (_, j) { return '<i class="' + (j <= i ? "vu" : "") + '"></i>'; }).join("") + "</span></div>"));
@@ -3853,6 +3853,14 @@ svg.grille .interro { transition: opacity .3s; }
     var m = comite(rep, true); if (m) b.appendChild(m);
     return b;
   }
+  // Récompenses puis plateau ; mais quand le pion boucle un tour, il file d'abord jusqu'à l'arrivée,
+  // et les succès du tour tombent ensuite.
+  function etapesRecompenses(etapes, recs, dep) {
+    var tour = dep && dep.etapes.some(function (x) { return x.type === "tour_fini"; });
+    if (dep && tour) etapes.push("plateau");
+    recs.forEach(function (_, i) { etapes.push("recompense:" + i); });
+    if (dep && !tour) etapes.push("plateau");
+  }
   function bilan() {
     var r = quiz.fin, k = C.parId[quiz.id], s = stat(k.stat);
     var titre, texte, gain = "";
@@ -3869,8 +3877,7 @@ svg.grille .interro { transition: opacity .3s; }
     // v6 : trois temps, une chose à la fois. 1. le verdict et l'IA, 2. les récompenses une par une, 3. le pion qui avance.
     var recs = quiz.recs || (quiz.recs = recompensesBilan(r));
     var etapes = ["verdict"];
-    recs.forEach(function (_, i) { etapes.push("recompense:" + i); });
-    if (r.plateau) etapes.push("plateau");
+    etapesRecompenses(etapes, recs, r.plateau);
     var arret = atomeArret(r.plateau);
     if (P.duel && P.duel.pret && r.plateau && r.plateau.etapes.some(function (x) { return x.type === "ennemi" || x.type === "duel_attente"; })) etapes.push("duel");
     var e = quiz.etape = Math.min(quiz.etape || 0, etapes.length - 1), nom = etapes[e], dernier = e === etapes.length - 1;
@@ -3894,7 +3901,7 @@ svg.grille .interro { transition: opacity .3s; }
     }
     wrap.appendChild(z);
     if (nom === "duel") return wrap;
-    var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite.indexOf("recompense:") === 0 ? (e === 0 ? (recs.length > 1 ? "Voir les " + recs.length + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
+    var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite.indexOf("recompense:") === 0 ? (nom.indexOf("recompense:") !== 0 ? (recs.length > 1 ? "Voir les " + recs.length + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
     if (!suite && arret) boutonAtome(wrap, arret, fermerQuiz);
     else if (!suite) finEpreuve(wrap, fermerQuiz);
     else {
