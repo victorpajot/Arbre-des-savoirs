@@ -127,6 +127,50 @@ EXTRAITS = {
         "verification": {"url": "https://medieval.ucdavis.edu/120B/Bacon.html", "date": "2026-10-28",
                          "controle": "Fragment de la traduction Burke, mot pour mot"},
     },
+    # --- Lot 2 : Renaissance et XVIIe -------------------------------------------------
+    "sidereus": {
+        "texte": "Magna, longeque admirabilia spectacula pandens, suspiciendaque proponens unicuique",
+        "langue": "latin",
+        "traduction": "Dévoilant de grands et très admirables spectacles, et les proposant à la contemplation de chacun",
+        "traducteur": "Traduction de l'IA.",
+        "reference": "Page de titre (Venise, 1610)",
+        "verification": {"url": "https://early-astronomy.web.itd.umich.edu/western_messenger1.php", "date": "2026-10-28",
+                         "controle": "Titre latin reproduit mot pour mot (graphie « unicuique » de la page)"},
+    },
+    "novum-organum": {
+        "texte": "Human knowledge and human power meet in one; for where the cause is not known the effect cannot be produced.",
+        "langue": "anglais, traduit du latin",
+        "traduction": "Savoir humain et puissance humaine se rejoignent ; car là où l'on ignore la cause, on ne peut produire l'effet.",
+        "traducteur": "Traduction de l'IA, depuis l'anglais.",
+        "reference": "Livre I, aphorisme III",
+        "verification": {"url": "https://sourcebooks.web.fordham.edu/mod/bacon-aphor.asp", "date": "2026-10-28",
+                         "controle": "Aphorisme III du livre I, mot pour mot"},
+    },
+    "discours": {
+        "texte": "Le bon sens est la chose du monde la mieux partagée ; car chacun pense en être si bien pourvu, que ceux même qui sont les plus difficiles à contenter en toute autre chose n'ont point coutume d'en désirer plus qu'ils en ont.",
+        "langue": "français (édition Cousin)",
+        "reference": "Première phrase, première partie",
+        "verification": {"url": "https://people.duke.edu/~garci/cibertextos/frances/DESCARTES-RENE/TRANSLATE/DISCOURS-METHODE-FR-EN.HTM", "date": "2026-10-28",
+                         "controle": "Phrase complète, mot pour mot (apostrophes typographiques sur la page)"},
+    },
+    "micrographia": {
+        "texte": "I could exceeding plainly perceive it to be all perforated and porous, much like a Honey-comb",
+        "langue": "anglais",
+        "traduction": "Je pouvais voir très clairement qu'il était tout percé et poreux, un peu comme un rayon de miel",
+        "traducteur": "Traduction de l'IA. Il parle d'une fine lamelle de liège : ces pores, il les appelle « cells ».",
+        "reference": "Observation XVIII, sur le liège",
+        "verification": {"url": "https://b-s-h.org.uk/bsh-at-60/60-at-60-exhibition/tools-of-the-trade/microscopes/much-like-a-honey-comb-discovering-the-cell", "date": "2026-10-28",
+                         "controle": "Phrase de Hooke mot pour mot, suivie sur la page de « These pores, or cells »"},
+    },
+    "principia": {
+        "texte": "Mutationem motus proportionalem esse vi motrici impressæ, & fieri secundum lineam rectam qua vis illa imprimitur.",
+        "langue": "latin",
+        "traduction": "Le changement du mouvement est proportionnel à la force motrice imprimée, et se fait selon la ligne droite suivant laquelle cette force est imprimée.",
+        "traducteur": "Traduction de l'IA. C'est la deuxième loi, celle qu'Euler mettra plus tard sous la forme F = m a.",
+        "reference": "Lex II",
+        "verification": {"url": "https://telescoper.blog/2019/11/13/newtons-laws-in-translation/", "date": "2026-10-28",
+                         "controle": "Latin de la Lex II mot pour mot, avec la traduction anglaise de 1792"},
+    },
 }
 
 
