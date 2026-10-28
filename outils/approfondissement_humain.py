@@ -291,7 +291,7 @@ DATES = [
     ("propp", 1928, "La Morphologie du conte", "Vladimir Propp montre que tous les contes merveilleux russes suivent la même structure.", "eloquence", "rhet.narration",
      "Sur une centaine de contes, il dégage 31 fonctions qui apparaissent toujours dans le même ordre. Le livre, ignoré en Occident jusqu'à sa traduction en 1958, inspirera les structuralistes et les scénaristes.",
      "Vladimir Propp, Morphologie du conte, 1928"),
-    ("gettysburg", 1863, "Le discours de Gettysburg", "Abraham Lincoln redéfinit la guerre de Sécession en deux minutes.", "eloquence", "rhet.discours",
+    ("gettysburg", 1863, "Le discours de Gettysburg", "En deux minutes, Abraham Lincoln appelle à « une nouvelle naissance de la liberté ».", "eloquence", "rhet.discours",
      "Environ 270 mots, après deux heures de discours d'Edward Everett. « Le gouvernement du peuple, par le peuple, pour le peuple » : la formule est reprise dans la Constitution française de 1958.",
      "Abraham Lincoln, discours de Gettysburg, 19 novembre 1863"),
     ("propaganda-fide", 1622, "La propagation de la foi", "Le pape Grégoire XV crée une congrégation chargée des missions : la Propaganda Fide.", "eloquence", "rhet.propagande",
