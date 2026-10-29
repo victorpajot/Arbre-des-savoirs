@@ -1321,3 +1321,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.fichesImposees(C, P, T, 3).length, 3, "trois fiches imposées");
   console.log("OK : v28 chutes de faveur, peines au mur qui doublent");
 }
+
+// v29 : un rappel réussi au mur la radoucit d'un point, plafonné par jour.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const A = C.ia.credits.agacement, T = Date.UTC(2026, 9, 29, 9);
+  const P = M.nouvellePartie(T - 86400000);
+  P.faveur = { valeur: 30, maj: T };
+  let total = 0;
+  for (let i = 0; i < A.rappel_mur_jour + 3; i++) { const r = M.radoucirIA(C, P, T + i * 1000); total += r.gain; }
+  assert.equal(total, A.rappel_mur_jour, "plafond du jour");
+  assert.ok(M.radoucirIA(C, P, T + 9000).plafond);
+  assert.equal(M.radoucirIA(C, P, T + 86400000).gain, A.rappel_mur, "le lendemain, ça repart");
+  console.log("OK : v29 rappels du mur qui radoucissent l'IA");
+}

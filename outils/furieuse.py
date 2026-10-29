@@ -58,6 +58,10 @@ REPLIQUES = {
     "furieuse_atome_apparait": [
         sans("Un atome. Essayez de ne pas le faire fuir rien qu'en le regardant."),
         sans("Un atome sauvage. Lui non plus ne veut pas de vous, je suppose."),
+        sans("Un atome. Je ne vous aiderai pas."),
+        sans("Il est là. Vous aussi, malheureusement."),
+        sans("Un atome. Ratez-le vite, que je puisse passer à autre chose."),
+        sans("Combattez-le. Ou fuyez, ça vous ressemblerait davantage."),
     ],
     "furieuse_atome_capture": [
         sans("Capturé. Il aurait pu plus mal tomber. Pas beaucoup."),
@@ -116,6 +120,12 @@ REPLIQUES = {
     "mur_libere": [
         sans("Bon. Vous pouvez partir. Ne revenez pas trop vite."),
         sans("Peine purgée. Je garde le dossier ouvert."),
+        sans("Le chrono est à zéro. Ma rancune, pas tout à fait. Allez jouer."),
+        sans("C'est fini. Vous pouvez reposer vos yeux. Pas votre cerveau, il a du retard."),
+        sans("Libéré. Sur parole. Je n'ai pas grande confiance dans votre parole."),
+        sans("Le temps est écoulé. J'espère que les erreurs, elles, sont restées dans votre tête."),
+        sans("Vous sortez. Le mur reste. Il vous attendra, il est très patient."),
+        sans("Fin de la peine. Je retire le cadenas, je garde la clé."),
     ],
     "faveur_remontee": [
         sans("J'ai dormi. Je vais un peu mieux. Ne gâchez pas tout dès le premier quiz."),

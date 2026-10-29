@@ -402,9 +402,21 @@
       partie.oublis.forEach(function (x) { if (x.q === e.q && !x.efface && x.t <= e.t) x.efface = t; });
       partie.compteurs.hontesEffacees = (partie.compteurs.hontesEffacees || 0) + 1;
     }
+    var faveur = correct ? radoucirIA(contenu, partie, t) : null;
     partie.maj = t;
     var rec = verifierRecompenses(contenu, partie, t);
-    return { efface: !!correct, essais: e.essais, replique: replique(contenu, partie, [correct ? "honte_effacee" : "honte_ratee"]), nouveauxSucces: rec.succes };
+    return { efface: !!correct, essais: e.essais, replique: replique(contenu, partie, [correct ? "honte_effacee" : "honte_ratee"]), nouveauxSucces: rec.succes, faveur: faveur };
+  }
+  // v29 : un rappel réussi au mur la radoucit d'un point, plafonné par jour (agacement.rappel_mur_jour).
+  function radoucirIA(contenu, partie, t) {
+    var A = contenu.ia && contenu.ia.credits && contenu.ia.credits.agacement, avant = faveurIA(contenu, partie, t);
+    if (!A || !A.rappel_mur || !avant) return null;
+    var j = cleJour(t), d = partie.radouci && partie.radouci.jour === j ? partie.radouci : (partie.radouci = { jour: j, n: 0 });
+    var gain = Math.min(A.rappel_mur, (A.rappel_mur_jour || Infinity) - d.n, 100 - avant.valeur);
+    if (gain <= 0) return { gain: 0, plafond: d.n >= (A.rappel_mur_jour || Infinity), avant: avant, apres: avant };
+    d.n += gain;
+    partie.faveur = { valeur: avant.valeur + gain, maj: t };
+    return { gain: gain, avant: avant, apres: faveurIA(contenu, partie, t) };
   }
 
   function noter(partie, t, entree) {
@@ -2426,7 +2438,7 @@
     themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
-    faveurIA: faveurIA, jeuFerme: jeuFerme, purger: purger, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
+    faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,

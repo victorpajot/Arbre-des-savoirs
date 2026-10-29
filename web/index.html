@@ -895,6 +895,29 @@ svg.grille .interro { transition: opacity .3s; }
   .feuille { animation: monte 0.22s ease-out; }
   @keyframes monte { from { transform: translateY(24px); opacity: 0.6; } }
 }
+/* v29 : fin de peine au mur (liberation) et cadeau déballé. */
+.liberation { position: fixed; inset: 0; z-index: 60; background: color-mix(in srgb, var(--bg) 96%, transparent); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
+.liberation .in { max-width: 460px; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.liberation .zero { font-size: 44px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--bad); }
+.liberation .cadenas { color: var(--bad); overflow: visible; }
+.liberation .anse { transform-box: fill-box; transform-origin: 100% 100%; }
+.liberation h2 { margin: 0; }
+.liberation .mot { width: 100%; text-align: left; }
+.liberation .btn { width: 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  .liberation { animation: apparait 0.3s ease-out both; }
+  .liberation .zero { animation: zero-clignote 0.4s 3 steps(2, jump-none), zero-part 0.5s 1.2s ease-in forwards; }
+  .liberation .cadenas { animation: cadenas-tremble 0.5s 0.4s ease-in-out, cadenas-vert 0.4s 1.1s forwards; }
+  .liberation .anse { animation: anse-ouvre 0.6s 0.9s cubic-bezier(.3,1.6,.5,1) forwards; }
+  .liberation h2, .liberation .mot, .liberation .btn { animation: apparait 0.5s 1.4s ease-out both; }
+  .deballe { animation: apparait 0.5s ease-out both; }
+  @keyframes zero-clignote { 50% { opacity: 0.15; } }
+  @keyframes zero-part { to { opacity: 0.35; transform: scale(0.7); } }
+  @keyframes cadenas-tremble { 20%, 60% { transform: rotate(-9deg); } 40%, 80% { transform: rotate(9deg); } }
+  @keyframes cadenas-vert { to { color: var(--good); } }
+  @keyframes anse-ouvre { to { transform: translate(-2px, -10px) rotate(-38deg); } }
+}
+@media (prefers-reduced-motion: reduce) { .liberation .cadenas { color: var(--good); } .liberation .anse { transform: translate(-2px, -10px) rotate(-38deg); } }
 /* v14 : textes de lecture plus grands, à la taille d'une conversation (17 px). Les étiquettes restent petites. */
 .comite p, .succes blockquote, .citation-src blockquote, .recompense .deplie, .fiche-rev li { font-size: 17px; line-height: 1.5; }
 .comite.petit p, .recompense .desc, .succes .desc, .oubli .rep-h, .oubli .expl-h, .fiche-rev .piege-h, .retour p { font-size: 16px; line-height: 1.5; }
@@ -1897,16 +1920,25 @@ svg.grille .interro { transition: opacity .3s; }
     if (!b || document.hidden || document.querySelector(".quiz:not(.honte-dessus)") || feuille) return;
     var reste = M.purger(P, 1000);
     if (reste % 10000 < 1000) sauver();
-    if (!reste) {
-      sauver();
-      var m = comite(M.replique(C, P, ["mur_libere"]));
-      rendre(); var v = document.querySelector("#app .vue"); if (m && v) v.insertBefore(m, v.children[1] || null);
-      toast("Peine purgée : tu peux rejouer.");
-      return;
-    }
+    if (!reste) { sauver(); liberation(); return; }
     b.querySelector(".temps").textContent = dureePeine(reste);
     b.querySelector(".barre i").style.width = Math.round(100 * reste / P.punition.total) + "%";
   }, 1000);
+  // v29 (Victor) : la peine finie, la page ne saute plus sans prévenir. Le chrono tombe à zéro, le cadenas s'ouvre,
+  // elle dit un mot, et c'est le joueur qui sort du mur.
+  function liberation() {
+    if (document.querySelector(".liberation")) return;
+    var z = el('<div class="liberation" role="dialog" aria-modal="true" aria-label="Peine purgée"><div class="in">' +
+      '<div class="zero">0:00</div>' +
+      '<svg class="cadenas" viewBox="0 0 64 72" width="96" height="108" aria-hidden="true"><path class="anse" d="M18 32 V20 a14 14 0 0 1 28 0 V32" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>' +
+      '<rect x="8" y="30" width="48" height="38" rx="7" fill="currentColor"/><circle cx="32" cy="46" r="5" fill="var(--surface)"/><rect x="29.5" y="48" width="5" height="11" rx="2" fill="var(--surface)"/></svg>' +
+      '<h2>Peine purgée</h2><div class="mot"></div><button type="button" class="btn large">Sortir du mur</button></div></div>');
+    var m = comite(M.replique(C, P, ["mur_libere"]));
+    if (m) z.querySelector(".mot").appendChild(m);
+    z.querySelector(".btn").addEventListener("click", function () { z.remove(); rendre(); window.scrollTo(0, 0); toast("Tu peux rejouer."); });
+    document.body.appendChild(z);
+    z.querySelector(".btn").focus({ preventScroll: true });
+  }
   // v19 : tant qu'un ultimatum attend sa réponse, l'IA ferme le jeu : payer ou refuser d'abord.
   function bloqueParUltimatum() {
     if (bloqueParFureur()) return true;
@@ -3364,19 +3396,29 @@ svg.grille .interro { transition: opacity .3s; }
     else ligne = "Le plateau ne bouge pas.";
     var html = '<div class="eyebrow">Cadeau à l\'IA</div><h2>' + esc(tx(o.nom)) + '</h2><div id="ia-cadeau"></div>' +
       (r.garde ? '<p class="meta">Elle le garde : tu le verras près de son masque. Il reste dans ton cabinet.</p>' : '<p class="meta">Elle te le rend, avec un soupir.</p>') +
-      citationObjet(o) + '<p class="etat-pion">' + esc(ligne) + "</p>" + (ef.type === "ennemi" ? '<div class="garde-case">' + teteEnnemi(ef.ennemi, 44) + "<p>" + esc(tx(ef.ennemi.titre)) + "</p></div>" : "") + '<div id="dep-cadeau"></div>';
+      '<div id="suite-cadeau" hidden>' + citationObjet(o) + '<div id="effet-cadeau"></div><p class="etat-pion">' + esc(ligne) + "</p>" + (ef.type === "ennemi" ? '<div class="garde-case">' + teteEnnemi(ef.ennemi, 44) + "<p>" + esc(tx(ef.ennemi.titre)) + "</p></div>" : "") + '<div id="dep-cadeau"></div></div>' +
+      '<button type="button" class="btn large ouvrir-cadeau">✦ Ouvrir son cadeau</button>';
     feuilleSimple(html, "Cadeau à l'IA");
     var zc = feuille.querySelector("#ia-cadeau");
+    // v29 (Victor) : d'abord ses remerciements, puis « Ouvrir son cadeau » révèle ce qu'elle en fait sur le plateau.
     var avis = M.replique(C, P, [r.repete ? "cadeau_repete" : r.eclat >= 3 ? "cadeau_eblouissant" : r.eclat === 2 ? "cadeau_brillant" : "cadeau_terne"]);
     if (avis) { avis.aparte = false; zc.appendChild(comite(avis)); }
     if (r.faveur) zc.appendChild(el('<div class="gain-faveur"><b>+' + r.gain + "</b> de faveur" + (r.repete ? " (moitié : déjà offert)" : "") + " · " + etoilesEclat(r.eclat) + "<span>" + Math.round(r.avant.valeur) + " → " + Math.round(r.faveur.valeur) + " : " + esc(tx(r.faveur.palier.nom).toLowerCase()) + "</span></div>"));
-    zc.appendChild(comite({ contexte: "cadeau", texte: r.texte, expression: TON_CADEAU[ef.type], aparte: false }, true));
-    if (r.plateau && r.plateau.a !== r.plateau.de) {
-      var zd = feuille.querySelector("#dep-cadeau");
-      zd.appendChild(blocDeplacement(r.plateau, null, true));
-      setTimeout(function () { animerPion(zd); }, 60);
-    }
-    rendre();
+    var bo = feuille.querySelector(".ouvrir-cadeau"), fe = feuille;
+    bo.addEventListener("click", function () {
+      if (feuille !== fe) return;
+      bo.remove();
+      var su = fe.querySelector("#suite-cadeau"); su.hidden = false; su.classList.add("deballe");
+      su.querySelector("#effet-cadeau").appendChild(comite({ contexte: "cadeau", texte: r.texte, expression: TON_CADEAU[ef.type], aparte: false }, true));
+      if (r.plateau && r.plateau.a !== r.plateau.de) {
+        var zd = su.querySelector("#dep-cadeau");
+        zd.appendChild(blocDeplacement(r.plateau, null, true));
+        setTimeout(function () { animerPion(zd); }, 60);
+      }
+      su.scrollIntoView({ behavior: "smooth", block: "start" });
+      rendre();
+    });
+    bo.focus({ preventScroll: true });
   }
 
 
@@ -3445,6 +3487,9 @@ svg.grille .interro { transition: opacity .3s; }
       if (ok) { c.classList.add("efface"); c.insertBefore(el('<span class="tampon">Réhabilitée</span>'), c.firstChild); donnee = null; }
       corrige();
       var m = r && comite(r.replique, true); if (m) c.appendChild(m);
+      var fv = r && r.faveur;
+      if (fv && fv.gain) c.appendChild(el('<div class="gain-faveur"><b>+' + fv.gain + "</b> de faveur : elle se radoucit<span>" + Math.round(fv.avant.valeur) + " → " + Math.round(fv.apres.valeur) + " : " + esc(tx(fv.apres.palier.nom).toLowerCase()) + "</span></div>"));
+      else if (fv && fv.plafond) c.appendChild(el('<p class="meta">Elle s\'est assez radoucie pour aujourd\'hui. Revenez demain.</p>'));
       if (r && r.nouveauxSucces && r.nouveauxSucces.length) r.nouveauxSucces.forEach(function (s) { toast("Succès : " + tx(s.nom)); });
     }
     if (q.type === "qcm") M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
