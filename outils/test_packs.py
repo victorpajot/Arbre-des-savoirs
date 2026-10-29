@@ -63,6 +63,10 @@ attendu(lambda f: f["questions.json"][0].update(competence="essai.deux"), "comp�
 attendu(lambda f: f["questions.json"][0].update(id="autre.q01"), "préfixe du pack")
 attendu(lambda f: f.update({"inconnu.json": []}), "fichier inconnu inconnu.json")
 attendu(lambda f: f.update({"objets.json": [{"id": "x", "theme": "nulle-part"}]}), "thème « nulle-part » inconnu")
+attendu(lambda f: f["competences.json"][0].update(embleme="dessin-absent"), "emblème « dessin-absent » introuvable")
+attendu(lambda f: f.update({"dessins.json": {"petit": ["." * 16] * 16}}), "32 lignes de 32 caractères")
+attendu(lambda f: f.update({"savants.json": [{"id": "sans-portrait", "base": [], "cheveux": [], "couleurs": {}}]}), "lancer python3 outils/portrait.py")
+attendu(lambda f: f.update({"succes.json": [{"id": "s", "illustration": {"type": "savant", "id": "personne"}}]}), "illustration savant « personne » introuvable")
 # Le prérequis d'un pack requis est accepté.
 def requis(f):
     f["pack.json"]["requiert"] = ["socle", "mecanique"]
@@ -97,4 +101,4 @@ try:
         assert "en double" in str(e)
 finally:
     shutil.rmtree(tmp)
-print(f"OK : assemblage identique à data/, {len(index['packs'])} packs valides, 14 fautes de pack refusées")
+print(f"OK : assemblage identique à data/, {len(index['packs'])} packs valides, 18 fautes de pack refusées")

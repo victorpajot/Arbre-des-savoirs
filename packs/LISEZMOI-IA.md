@@ -62,7 +62,8 @@ Pour voir le pack dans le jeu : `node mobile/construire.js`, puis servir `mobile
 - **`id`** : minuscules, chiffres, tirets ; identique au nom du dossier.
 - **`requiert`** : toujours `socle`, plus les packs dont on utilise les compétences (prérequis venus d'un autre pack). Pas de dépendance circulaire.
 - **`prefixe`** : chaque compétence et chaque question commence par `<prefixe>.` (`mus.son`, `mus.son.q01`). Une liste est permise (`["chim", "sci.atomes"]`).
-- **`ordre`** : place du pack dans l'assemblage et dans l'interface (les domaines officiels vont de 10 à 110).
+- **`ordre`** : place du pack dans l'assemblage et dans l'interface. Les domaines officiels vont de 10 à 110 : un nouveau domaine prend 120 ou plus.
+- **Les autres ids** (dessins, livres, dates, succès, savants) sont communs à tous les packs : deux packs qui utilisent le même id entrent en collision à l'assemblage. Préfixer ceux du pack (`mus-croche`, `carto-boussole`) ; un savant garde le nom de la personne (`bach`).
 - **Textes** : partout, un texte est un objet par langue, `{"fr": "…"}`. Le français est obligatoire ; d'autres langues pourront s'ajouter à côté (`"en"`), sans changer les ids.
 
 ## 4. Les fichiers d'un pack domaine
@@ -85,7 +86,9 @@ Un fichier par type de contenu. Chacun est une liste (ou un dictionnaire) qui s'
 | `dessins.json` | `{id: 32 lignes de 32 caractères}` : pixel art pour les emblèmes et succès. | `succes.json › dessins` |
 | `objets.json`, `masques.json`, `accessoires.json`, `tenues.json`, `apartes.json`, `figures.json`, `boutique.json` | Facultatifs : objets du cabinet, masques d'Alyca, accessoires, farces, apartés, figures interactives, articles de boutique. Copier la forme d'un pack existant (`grep -l` dans `packs/`). | voir `EMPLACEMENTS` dans `outils/packs.py` |
 
-`verifications.json` (le registre des sources contrôlées) est écrit par l'outil, jamais à la main.
+`verifications.json` (le registre des sources contrôlées) est écrit par l'outil, jamais à la main. `ordre.json` et `donnees/` sont réservés au socle et aux packs de jeu.
+
+**Où trouver les images existantes** (pour un emblème ou une illustration) : `data/succes.json › dessins` (dessins de tous les packs), `data/objets.json › objets` (objets du cabinet), `data/plateau.json › icones` (icônes du plateau). `verifier` refuse un id introuvable.
 
 ### Compétences
 
@@ -99,7 +102,7 @@ Un fichier par type de contenu. Chacun est une liste (ou un dictionnaire) qui s'
  "symbole": "Hz", "embleme": "diapason"}
 ```
 
-- **Rangs** : 1 à 4 forment le premier losange (1 en haut, 2 et 3 au milieu, 4 en bas), 5 à 8 le second. Les prérequis suivent ce dessin (le 2 et le 3 requièrent le 1, le 4 requiert le 2 et le 3, etc.).
+- **Rangs** : 1 à 4 forment le premier losange (1 en haut, 2 et 3 au milieu, 4 en bas), 5 à 8 le second, accroché sous le 4. Prérequis : 2 et 3 requièrent 1 ; 4 requiert 2 et 3 ; 5 requiert 4 ; 6 et 7 requièrent 5 ; 8 requiert 6 et 7. Une compétence peut aussi requérir celle d'un autre pack, s'il est dans `requiert`.
 - **Schéma** : un SVG en ligne, `viewBox` d'environ 400 de large, `role="img"` et un `aria-label`. Pas de couleurs en dur : des classes que le jeu colore selon le thème clair ou sombre : `t` (texte), `tm` (texte discret), `l` (trait), `lm` (trait discret), `f` (forme pleine), `f2` (forme discrète), `a` (remplissage d'accent), `al` (trait d'accent), `ok`, `ko`, `fond`.
 - **Emblème** : l'id d'un dessin (`dessins.json` d'un pack), d'un objet du cabinet ou d'une icône du plateau (`plateau.json › icones`). C'est le badge de la compétence.
 
@@ -118,7 +121,7 @@ Trois types. Pour un QCM, **la bonne réponse est toujours en premier** (`"repon
 ```
 
 - Leurres plausibles, jamais absurdes ; un énoncé ne se répète pas d'une question à l'autre, ni d'un pack à l'autre.
-- **Questions de calcul** (règle de Victor) : l'explication pose la formule en lettres, fait le calcul complet, et dit qui a trouvé la formule ; le champ `source` donne la référence de cette attribution.
+- **Questions de calcul** (règle de Victor) : l'explication pose la formule en lettres, fait le calcul complet, et dit qui a trouvé la formule ; le champ `source` donne la référence de cette attribution. Quand la formule n'a pas de découvreur (une définition comme f = 1/T, une règle de trois, une échelle), l'explication le dit (« c'est la définition de la fréquence ») et la question n'a pas de `source`. Une simple question de comptage (combien de noires dans une ronde) n'est pas une question de calcul.
 - L'explication apprend quelque chose de plus que la réponse : un fait, une date, une personne.
 
 ### Livres, dates, succès
@@ -126,16 +129,17 @@ Trois types. Pour un QCM, **la bonne réponse est toujours en premier** (`"repon
 Voir `packs/musique/livres.json`, `frise.json` et `succes.json`. Points à respecter :
 
 - **Livre** : résumé de 80 à 170 mots, `importance`, `anecdote`, `reaction` (le mot d'Alyca), `competence` rattachée, `condition` (en général `competence_maitrisee`), `embleme` et `couleur` de couverture.
-- **Date** : `epoque` parmi `antiquite`, `moyen-age`, `renaissance` (1450-1599), `classique` (1600-1799), `xixe`, `xxe` ; `phrase` choc, `detail` en deux phrases, `condition` `competence_maitrisee`.
+- **Date** : `epoque` parmi `antiquite` (jusqu'à 475), `moyen-age` (476-1449), `renaissance` (1450-1599), `classique` (1600-1799), `xixe` (1800-1899), `xxe` (depuis 1900, XXIe siècle compris) ; `phrase` choc, `detail` en deux phrases, `condition` `competence_maitrisee`.
 - **Succès** : `nom` moqueur, `description` qui dit comment l'obtenir puis ajoute une pique, `cache` (vrai s'il est une surprise), `recompense` `{"type": "anecdote", "texte", "source"}`, `illustration` (`objet`, `icone`, `dessin`, `savant` ou `ennemi` + id), `theme` (l'id de l'arbre).
-- **Pionnier** : un succès avec `"ouvre": "<arbre>"` ouvre l'arbre. Condition habituelle `{"type": "competences_maitrisees", "n": N}` ; les arbres officiels utilisent n = 2 à 9.
+- **Pionnier** : un succès avec `"ouvre": "<arbre>"` ouvre l'arbre. Condition habituelle `{"type": "competences_maitrisees", "n": N}`, où N compte les compétences maîtrisées dans n'importe quel arbre : plus N est grand, plus l'arbre arrive tard. Les arbres officiels utilisent N = 2 à 9 (Musique : 8). Plusieurs arbres peuvent avoir le même N. Son illustration est en général le savant pionnier.
+- **Champ `source`** : obligatoire pour la fiche d'une compétence, chaque livre, chaque date, chaque récompense de succès, chaque savant, et chaque question qui attribue une formule ou une découverte. Les autres questions s'en passent : leur explication est vérifiée avec la fiche.
 - Les conditions possibles sont listées dans `outils/schema.json` (`$defs.condition`).
 
 ### Savants
 
 Un savant jouable devient le personnage du joueur quand il le débloque. Notice de trois à quatre phrases vérifiées, `annees` (« 1685 / 1750 », « vers 992 / vers 1050 »), `condition`, `source`, `theme`. Personne de vivant.
 
-Le portrait (calques `base` et `cheveux`, `couleurs`) se dessine depuis une recette dans `portraits.json` :
+Le portrait fait 40 × 48 (calques `base` et `cheveux`, plus `couleurs`). On ne le dessine pas à la main : on écrit sa recette dans `portraits.json`, puis on **lance obligatoirement** `outils/portrait.py`, qui remplit ces trois champs dans `savants.json` (`verifier` refuse un savant sans portrait). Si vous produisez vos fichiers avec un script, relancez `portrait.py` après lui, sinon il effacera les portraits.
 
 ```json
 {"id": "bach", "peau": "claire", "tenue": "manteau", "couleurs": ["#3B3B3B", "#1E1E24", "#EEF0F4"],
@@ -146,7 +150,7 @@ Le portrait (calques `base` et `cheveux`, `couleurs`) se dessine depuis une rece
 
 ### Dessins
 
-32 × 32 caractères, `.` pour le transparent, les autres caractères pris dans la palette de `outils/dessin.py` (`FAMILLES`), lumière venant du haut à gauche, contour sombre `k`. Le plus simple est un petit script :
+32 × 32 caractères, `.` pour le transparent, les autres caractères pris dans la palette de `outils/dessin.py` (`FAMILLES` : gris, or, bois, rouge, vert, bleu, peau, parchemin…), lumière venant du haut à gauche, contour sombre `k`. `Toile.peindre(pixels, famille, modele)` prend le modelé `plat`, `biseau`, `sphere`, `cyl_v` ou `cyl_h` ; les formes sont `rect`, `ellipse`, `disque`, `anneau`, `poly`, `trait`, `courbe`, `arc`. Le plus simple est un petit script :
 
 ```python
 import sys; sys.path.insert(0, "outils")
@@ -163,7 +167,7 @@ apercu({"croche": dessin}, "apercu.png", echelle=8)   # puis regarder l'image
 
 Chaque arbre a au moins **3** répliques `theme_jouer@<arbre>` (au lancement d'une épreuve ; `{comp}` est remplacé par le nom de la compétence), **4** `theme_reussi@<arbre>` et **4** `theme_rate@<arbre>`. `"reference": true` quand la réplique cite un fait réel.
 
-`cases.json` relie le domaine au plateau : une case dont l'histoire évoque le domaine propose ses compétences comme épreuve. Les 63 cases et leur histoire sont dans `data/plateau.json › cases` (champ `n`, titre, histoire). Il en faut au moins une par arbre.
+`cases.json` relie le domaine au plateau : une case dont l'histoire évoque le domaine propose ses compétences comme épreuve. Les 63 cases et leur histoire sont dans `data/plateau.json › cases` (champ `n`, titre, histoire). Il en faut au moins une par arbre. Une case peut évoquer plusieurs packs : les listes s'additionnent.
 
 ## 5. Liste de contrôle d'un arbre
 
@@ -177,7 +181,9 @@ Chaque arbre a au moins **3** répliques `theme_jouer@<arbre>` (au lancement d'u
 - les répliques 3 / 4 / 4 ;
 - au moins une case du plateau qui évoque l'arbre.
 
-Il vérifie aussi les liens : préfixes, prérequis, compétences citées, thèmes, conditions, et qu'un pack ne vise que lui-même et ce qu'il requiert.
+Il vérifie aussi les liens (préfixes, prérequis, compétences citées, thèmes, conditions ; un pack ne vise que lui-même et ce qu'il requiert), que chaque emblème et chaque illustration existe, que les dessins font 32 × 32 dans la palette, que les savants ont leur portrait 40 × 48, et que les résumés de livres font 80 à 170 mots.
+
+Il ne juge pas le fond : l'exactitude des faits (section 7), la qualité des leurres, la voix d'Alyca. Relisez-vous, et regardez le pack dans le jeu.
 
 ## 6. La voix du jeu
 

@@ -384,6 +384,7 @@ def verifier_contenu(m, ids):
             if "competence" in x and x["competence"] not in comps:
                 erreurs.append(f"[{m['id']}] {nom} › {x.get('id')} : compétence « {x['competence']} » introuvable")
             erreurs += liens_condition(m, nom, x.get("id"), x.get("condition"), comps, arbres, succes)
+    erreurs += formes(m, ids)
     for k, v in (lire(m["_dossier"] / "cases.json").items() if (m["_dossier"] / "cases.json").exists() else []):
         for c in v:
             if c not in comps:
@@ -392,6 +393,62 @@ def verifier_contenu(m, ids):
         ctx = r.get("contexte", "")
         if "@" in ctx and ctx.split("@")[1] not in arbres:
             erreurs.append(f"[{m['id']}] repliques.json › {r.get('id')} : arbre « {ctx.split('@')[1]} » inconnu")
+    return erreurs
+
+
+def sprites(ids):
+    """Tout ce qui peut servir d'image, dans tous les packs présents : (objets, icônes du plateau, dessins, savants, ennemis)."""
+    objets, icones, dessins, savants, ennemis = set(), set(), set(), set(), set()
+    for d in ids.values():
+        objets |= {o["id"] for o in lire_liste(d, "objets.json")}
+        savants |= {o["id"] for o in lire_liste(d, "savants.json")}
+        ennemis |= {o["id"] for o in lire_liste(d, "ennemis.json")}
+        for f in ("dessins.json", "donnees/succes.json", "donnees/plateau.json"):
+            if (d["_dossier"] / f).exists():
+                x = lire(d["_dossier"] / f)
+                dessins |= set(x if f == "dessins.json" else x.get("dessins", {}))
+                icones |= set(x.get("icones", {})) if f == "donnees/plateau.json" else set()
+    return objets, icones, dessins, savants, ennemis
+
+
+def formes(m, ids):
+    """Images citées qui existent, pixel art aux bonnes dimensions, résumés de livres à la bonne longueur."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from dessin import PALETTE
+    erreurs = []
+
+    def err(msg):
+        erreurs.append(f"[{m['id']}] {msg}")
+    objets, icones, dessins, savants, ennemis = sprites(ids)
+    images = objets | icones | dessins
+    for c in lire_liste(m, "competences.json"):
+        if c.get("embleme") and c["embleme"] not in images:
+            err(f"competences.json › {c['id']} : emblème « {c['embleme']} » introuvable (un dessin de dessins.json, un objet ou une icône du plateau)")
+    for l in lire_liste(m, "livres.json"):
+        if l.get("embleme") not in images:
+            err(f"livres.json › {l.get('id')} : emblème « {l.get('embleme')} » introuvable (un dessin de dessins.json, un objet ou une icône du plateau)")
+        mots = len(l.get("resume", {}).get("fr", "").split())
+        if not 80 <= mots <= 170:
+            err(f"livres.json › {l.get('id')} : résumé de {mots} mots, il en faut de 80 à 170")
+    familles = {"objet": objets, "icone": icones, "dessin": dessins, "savant": savants, "ennemi": ennemis}
+    for x in lire_liste(m, "succes.json"):
+        il = x.get("illustration")
+        if il and il.get("id") not in familles.get(il.get("type"), set()):
+            err(f"succes.json › {x.get('id')} : illustration {il.get('type')} « {il.get('id')} » introuvable")
+    if (m["_dossier"] / "dessins.json").exists():
+        for k, g in lire(m["_dossier"] / "dessins.json").items():
+            if len(g) != 32 or any(len(l) != 32 for l in g):
+                err(f"dessins.json › {k} : 32 lignes de 32 caractères")
+            elif set("".join(g)) - set(PALETTE) - {"."}:
+                err(f"dessins.json › {k} : caractères hors palette {sorted(set(''.join(g)) - set(PALETTE) - {'.'})} (voir FAMILLES dans outils/dessin.py)")
+    for sv in lire_liste(m, "savants.json"):
+        for calque in ("base", "cheveux"):
+            g = sv.get(calque) or []
+            if len(g) != 48 or any(len(l) != 40 for l in g):
+                err(f"savants.json › {sv.get('id')} : calque « {calque} » vide ou pas en 40 × 48 (lancer python3 outils/portrait.py {m['id']})")
+                break
+        if not sv.get("couleurs"):
+            err(f"savants.json › {sv.get('id')} : couleurs vides (lancer python3 outils/portrait.py {m['id']})")
     return erreurs
 
 
