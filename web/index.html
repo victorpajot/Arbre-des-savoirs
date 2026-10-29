@@ -420,6 +420,20 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .jouer span.s { font-size: 13px; opacity: 0.85; }
 .jouer .pill { font-family: var(--f-mono); font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--accent-ink); color: var(--accent); font-size: 14px; }
 .choix-ia { display: flex; flex-direction: column; gap: 12px; }
+.arbre-choisi, .epreuve-choisie { --c: var(--accent); display: grid; grid-template-columns: auto 1fr auto; gap: 6px 12px; align-items: center; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--c) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c) 35%, var(--line)); }
+.arbre-choisi .txt b, .epreuve-choisie .txt b { display: block; font-size: 19px; line-height: 1.2; color: var(--c); }
+.epreuve-choisie .txt b { color: var(--ink); }
+.arbre-choisi .txt span, .epreuve-choisie .txt span { display: block; font-size: 15px; color: var(--muted); line-height: 1.35; }
+.arbre-choisi .txt .eyebrow, .epreuve-choisie .txt .eyebrow { margin: 0 0 2px; }
+.arbre-choisi .niv-a { text-align: center; line-height: 1; color: var(--c); }
+.arbre-choisi .niv-a .num { display: block; font-family: var(--f-display); font-size: 30px; font-weight: 800; }
+.arbre-choisi .niv-a small, .epreuve-choisie .gain-e small { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
+.arbre-choisi .desc-a, .epreuve-choisie .meta { grid-column: 1 / -1; margin: 2px 0 0; }
+.arbre-choisi .desc-a { font-size: 16px; line-height: 1.45; }
+.epreuve-choisie .gain-e { text-align: center; line-height: 1; padding: 8px 10px; border-radius: 10px; background: var(--surface); border: 2px solid color-mix(in srgb, var(--c) 45%, var(--line)); }
+.epreuve-choisie .gain-e.bonus { border-color: var(--good); }
+.epreuve-choisie .gain-e b { font-family: var(--f-mono); font-size: 17px; }
+.choix-ia .galerie-theme { margin-top: 6px; }
 .portrait-q { display: flex; gap: 14px; align-items: flex-start; margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); animation: tomber .35s ease-out both; }
 .portrait-q .cadre-p { flex: none; padding: 6px 8px 0; border-radius: 12px; background: var(--parchemin); border: 2px solid color-mix(in srgb, var(--c, var(--accent)) 60%, #fff); }
 .portrait-q b { font-family: var(--f-display); font-size: 17px; display: block; }
@@ -1034,6 +1048,14 @@ svg.grille .interro { transition: opacity .3s; }
       '<rect x="2" y="2" width="36" height="36" rx="11" fill="' + couleur(k.stat) + '" stroke="#fff" stroke-width="2"/>' +
       '<text x="20" y="' + (20 + t * 0.36).toFixed(1) + '" text-anchor="middle" font-size="' + t + '" font-weight="800" fill="#fff" style="font-family:var(--f-body),\'Noto Sans Symbols 2\',\'Noto Sans Math\',sans-serif">' + esc(sym) + "\uFE0E</text>" +
       '<circle cx="35" cy="35" r="8.5" fill="#1E1A2B" stroke="#fff" stroke-width="2"/><text x="35" y="39" text-anchor="middle" font-size="11" font-weight="800" fill="#fff" font-family="JetBrains Mono, monospace">' + k.rang + "</text></svg>";
+  }
+  // v29 : icône d'un arbre : pastille à sa couleur, un arbre stylisé dessus.
+  function iconeArbre(id, taille) {
+    return '<svg class="icone-arbre" viewBox="0 0 44 44" width="' + taille + '" height="' + taille + '" aria-hidden="true">' +
+      '<rect x="1" y="1" width="42" height="42" rx="12" fill="' + couleur(id) + '"/>' +
+      '<g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M22 36 V20 M22 26 L14 18 M22 23 L30 15"/></g>' +
+      '<g fill="#fff"><circle cx="22" cy="12" r="4.2"/><circle cx="12.5" cy="16.5" r="3.6"/><circle cx="31.5" cy="13.5" r="3.6"/></g>' +
+      '<path d="M15 37 H29" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>';
   }
   function svgSprite(id, taille, label, verrou) {
     var g = grilleSprite(id); if (!g) return "";
@@ -1965,14 +1987,28 @@ svg.grille .interro { transition: opacity .3s; }
     // La case du pion en grand, avec son histoire, avant l'épreuve.
     var ici = C.plateau.cases[P.plateau.position - 1], atI = atomeSur(ici.n), enI = !atI && ennemiSur(ici.n);
     var bandeau = enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + '</div><div class="eyebrow">Ton pion est case ' + ici.n + ' · Ennemi</div><h2>' + esc(tx(enI.nom)) + ' garde la case</h2><p class="titre-en">' + esc(tx(enI.titre)) + "</p>" + (enI.qui ? "<p>" + esc(tx(enI.qui)) + "</p>" : "") + '<p>Bats-le pour voir ce qu\'il y a dessous.</p></div>' : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + '</div><div class="eyebrow">Ton pion est case ' + ici.n + ' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>' : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
-      '<div class="eyebrow">Ton pion est case ' + ici.n + " · " + esc(formatAnnee(ici.annee)) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + esc(tx(ici.histoire)) + "</p>" +
-      (c.achat ? '<p class="arbre-case" style="--c:' + couleur(c.stat) + '"><b>Faveur achetée : arbre ' + esc(tx(stat(c.stat).nom)) + ", encore " + M.arbreAchete(P).restant + " épreuve" + (M.arbreAchete(P).restant > 1 ? "s" : "") + ".</b></p>" : "") + (kc && kc.stat && !c.achat ? '<p class="arbre-case"><b>' + (c.raison === "hors_case" ? "Arbre " + esc(tx(sc.nom)) + " : rien à jouer pour toi, l'IA improvise." : c.raison === "ouvre_arbre" ? "Arbre " + esc(tx(sc.nom)) + " encore fermé : réussis ce quiz pour l'ouvrir." : "Arbre " + esc(tx(stat(kc.stat).nom)) + " : l'épreuve en vient.") + "</b></p>" : "") + galerieTheme(ici.stat) + "</div>";
-    feuilleSimple('<div class="choix-ia">' + bandeau + '<div class="eyebrow">L\'IA a choisi</div><div id="ia-jouer"></div>' +
-      '<div class="epreuve" style="--c:' + couleur(k.stat) + '"><span class="de' + (v.duJour ? " bonus" : "") + '"><b>+' + (bMin === bonus ? v.total + bonus : (v.total + bMin) + "–" + (v.total + bonus)) + '</b></span><span class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" +
-      (c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz de rang " + k.rang) + " · " + esc(tx(s.nom)) + " · bonus du bouton Jouer : " + texteBonusJouer() + (M.bornesBonusJouer(C, P, t).furieuse ? ", l'IA furieuse le bloque" : ", tiré au hasard") + "</span></span></div>" +
+      '<div class="eyebrow">Ton pion est case ' + ici.n + " · " + esc(formatAnnee(ici.annee)) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + esc(tx(ici.histoire)) + "</p></div>";
+    // v29 (Victor) : après la case, la phrase de l'IA, puis l'arbre choisi (icône, description, ton niveau) et l'épreuve.
+    // Les savants et objets du thème passent à la fin.
+    var nvA = M.niveau(C, M.xpParStat(C, P)[s.id] || 0), ferme = !M.arbreOuvert(C, P, s.id);
+    var motif = c.achat ? "Faveur achetée : encore " + M.arbreAchete(P).restant + " épreuve" + (M.arbreAchete(P).restant > 1 ? "s" : "") + " dans cet arbre."
+      : c.raison === "hors_case" && kc && kc.stat ? "Rien à jouer pour toi dans l'arbre " + tx(stat(kc.stat).nom) + " de la case : l'IA improvise ailleurs."
+      : c.raison === "ouvre_arbre" ? "Arbre encore fermé : réussis ce quiz pour l'ouvrir."
+      : c.raison === "revision" ? "Révision forcée par la case."
+      : kc && kc.stat === s.id ? "C'est l'arbre de la case où tu te trouves." : "";
+    var blocArbre = '<div class="arbre-choisi" style="--c:' + couleur(s.id) + '">' + iconeArbre(s.id, 56) + '<div class="txt"><div class="eyebrow">Arbre choisi</div><b>' + esc(tx(s.nom)) + "</b><span>" + esc(tx(s.branche)) + "</span></div>" +
+      '<div class="niv-a">' + (ferme ? ICONE_CADENAS + "<small>Fermé</small>" : '<span class="num">' + nvA.niveau + "</span><small>" + titreNiveau(nvA.niveau) + "</small>") + "</div>" +
+      '<p class="desc-a">' + esc(tx(s.description)) + (motif ? " " + esc(motif) : "") + "</p></div>";
+    var nature = c.raison === "revision" ? "Révision forcée" : c.type === "rappel" ? "Rappel" : "Quiz";
+    var blocEpreuve = '<div class="epreuve-choisie" style="--c:' + couleur(k.stat) + '">' + badgeComp(k, 52) + '<div class="txt"><div class="eyebrow">' + nature + " · niveau " + k.rang + "</div><b>" + esc(tx(k.nom)) + "</b>" +
+      (k.description ? "<span>" + esc(tx(k.description)) + "</span>" : "") + "</div>" +
+      '<span class="gain-e' + (v.duJour ? " bonus" : "") + '"><b>+' + (bMin === bonus ? v.total + bonus : (v.total + bMin) + "–" + (v.total + bonus)) + "</b><small>cases</small></span>" +
+      '<p class="meta">Réussi, ton pion avance d\'autant. Bonus du bouton Jouer : ' + texteBonusJouer() + (M.bornesBonusJouer(C, P, t).furieuse ? ", l'IA furieuse le bloque." : ", tiré au hasard.") + "</p></div>";
+    feuilleSimple('<div class="choix-ia">' + bandeau + '<div id="ia-jouer"></div>' + blocArbre + blocEpreuve +
       '<button type="button" class="btn large" data-a="go">C\'est parti</button>' +
       '<button type="button" class="btn sec large" data-a="un">Avancer d\'une seule case</button>' +
-      '<p class="meta">Une seule case : tu choisis l\'arbre, pas de bonus, et ton pion s\'arrête sur la case suivante pour la dévoiler. Tu peux aussi choisir toi-même une compétence dans l\'arbre, sans ce bonus.</p></div>', "L'IA a choisi", {
+      '<p class="meta">Une seule case : tu choisis l\'arbre, pas de bonus, et ton pion s\'arrête sur la case suivante pour la dévoiler. Tu peux aussi choisir toi-même une compétence dans l\'arbre, sans ce bonus.</p>' +
+      (enI || atI ? "" : galerieTheme(ici.stat)) + "</div>", "L'IA a choisi", {
       go: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true }); },
       atome: function () { fermerFeuille(); if (atI) combattreAtome(atI.z); },
       un: function () { if (c.raison === "revision") { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true, uneCase: true }); } else choisirArbreUneCase(); },
