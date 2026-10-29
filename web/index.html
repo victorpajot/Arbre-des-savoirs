@@ -724,6 +724,12 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .tableau-per .serie { font-size: 2.2cqw; color: var(--muted); display: grid; place-items: center; border: 1px dashed var(--line); border-radius: 3px; aspect-ratio: 1; }
 .tableau-per .serie.nu { border: 0; }
 .tableau-per.jeu { margin-top: 0; }
+.tableau-per.jeu .el.vise { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent); transform: scale(1.35); position: relative; z-index: 1; }
+.placer { display: flex; flex-direction: column; gap: 12px; }
+.viseur { display: flex; flex-direction: column; gap: 10px; }
+.vise-txt { margin: 0; font-size: 16px; font-weight: 600; }
+.fleches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.fleches .btn { font-size: 22px; min-height: 52px; padding: 0; }
 .tableau-per.jeu .el { background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); min-height: 0; }
 .tableau-per.jeu .el.bon { background: var(--good); color: #fff; }
 .tableau-per.jeu .el.faux { color: #fff; }
@@ -3413,18 +3419,7 @@ svg.grille .interro { transition: opacity .3s; }
       fin.onclick = function () { fermerFeuille(); rendre(); };
       c.appendChild(fin);
     }
-    if (q.type === "place") {
-      zone.className = "tableau-per jeu";
-      C.atomes.elements.forEach(function (xa) {
-        var col = xa.groupe, lig = xa.periode;
-        if (!col) { col = 3 + (xa.z >= 89 ? xa.z - 89 : xa.z - 57); lig = xa.z >= 89 ? 10 : 9; }
-        var b = el('<button type="button" class="el" data-v="' + xa.z + '" style="grid-column:' + col + ";grid-row:" + lig + '" aria-label="Ligne ' + lig + ", colonne " + col + '"></button>');
-        b.onclick = function () { repondre(xa.z, b); };
-        zone.appendChild(b);
-      });
-      zone.appendChild(el('<span class="espace" style="grid-row:8"></span>'));
-    }
-    else if (q.type === "qcm") M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
+    if (q.type === "qcm") M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
       var bt = el('<button type="button" data-v="' + i + '">' + esc(tx(q.choix[i])) + "</button>"); bt.onclick = function () { repondre(i, bt); }; zone.appendChild(bt);
     });
     else {
@@ -3783,7 +3778,7 @@ svg.grille .interro { transition: opacity .3s; }
       var expl = q.type === "place" ? (ok ? "Bien placé : " : "Sa case, en vert : ") + placeTexte(e) + "." : q.type === "symbole" ? "Son symbole : " + e.symbole + "." : q.type === "numero" ? "Numéro atomique : " + e.z + ", soit " + e.z + " proton" + (e.z > 1 ? "s" : "") + " dans son noyau. C'est sa place dans le tableau." : "On le croise surtout dans " + e.ou.map(function (o) { return tx(o); }).join(", ") + ".";
       // v34 (Victor) : raté, on dit à quel atome correspond la réponse donnée, et pour le numéro, comment le retrouver.
       var dit = !ok && q.type !== "ou" ? M.atomeDit(C.atomes, q.type === "place" ? "numero" : q.type, c) : null, ast = !ok && q.type === "numero" ? M.astuceNumero(C.atomes, e) : null;
-      if (dit && q.type === "place") expl += " Tu as touché la case de " + tx(dit.nom) + " (n° " + dit.z + ").";
+      if (dit && q.type === "place") expl += " Tu as choisi la case de " + tx(dit.nom) + " (n° " + dit.z + ").";
       else if (dit) expl += " Tu as dit " + c + " : celui-là, c'est " + tx(dit.nom) + (q.type === "numero" ? " (" + dit.symbole + ")" : ", n° " + dit.z) + ".";
       var rt = el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + "</b>" + esc(expl) + '<p class="meta" style="margin:6px 0 0">' + esc(etat) + "</p></div>");
       if (ast) {
@@ -3813,21 +3808,8 @@ svg.grille .interro { transition: opacity .3s; }
       };
       retour.appendChild(el('<div style="height:12px"></div>')); retour.appendChild(s); s.focus();
     }
-    if (q.type === "place") {
-      zr.className = "tableau-per jeu";
-      C.atomes.elements.forEach(function (x) {
-        var col = x.groupe, lig = x.periode;
-        if (!col) { col = 3 + (x.z >= 89 ? x.z - 89 : x.z - 57); lig = x.z >= 89 ? 10 : 9; }
-        var b = el('<button type="button" class="el" data-z="' + x.z + '" style="grid-column:' + col + ";grid-row:" + lig + '" aria-label="Ligne ' + (lig > 8 ? (lig === 9 ? "6, lanthanides" : "7, actinides") : lig) + ", colonne " + col + '"></button>');
-        b.onclick = function () { repondreQ(x.z === e.z, String(x.z), b); };
-        zr.appendChild(b);
-      });
-      zr.appendChild(el('<span class="serie" style="grid-column:3;grid-row:6">*</span>'));
-      zr.appendChild(el('<span class="serie" style="grid-column:3;grid-row:7">**</span>'));
-      zr.appendChild(el('<span class="espace" style="grid-row:8"></span>'));
-      zr.appendChild(el('<span class="serie nu" style="grid-column:2;grid-row:9">*</span>'));
-      zr.appendChild(el('<span class="serie nu" style="grid-column:2;grid-row:10">**</span>'));
-    } else q.choix.forEach(function (c, ci) {
+    if (q.type === "place") zr.replaceWith(zr = grillePlacer(function (z, b) { repondreQ(z === e.z, String(z), b); }));
+    else q.choix.forEach(function (c, ci) {
       var b = el('<button type="button"></button>'); b.textContent = c;
       b.onclick = function () { repondreQ(ci === q.reponse, c, b); };
       zr.appendChild(b);
@@ -3898,6 +3880,56 @@ svg.grille .interro { transition: opacity .3s; }
     var L = M.lectureCouches(C.atomes, e); if (!L) return "";
     return '<div class="couches-z"><b>Ses couches d\'électrons</b><div class="illus">' + M.dessinCouches(C.atomes, e) + "</div><ul>" +
       L.lignes.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" + (L.predite ? '<p class="meta">Atome trop éphémère pour être mesuré : répartition prédite par le calcul.</p>' : "") + '<p class="meta" style="margin:4px 0 0">Source : ' + esc(C.atomes.couches.source.split(" : ")[0]) + "</p></div>";
+  }
+  // v34 (Victor : « avec un gros doigt ce ne sera pas simple ») : toucher vise une case, les flèches ajustent,
+  // « Valider » répond. `valider(z, case)` reçoit le numéro de la case visée. Les cases portent data-z et data-v.
+  function grillePlacer(valider) {
+    var w = el('<div class="placer"><div class="tableau-per jeu"></div><div class="viseur"><p class="vise-txt">Touche la case où tu le vois, ajuste avec les flèches, puis valide.</p>' +
+      '<div class="fleches"><button type="button" class="btn sec" data-d="g" aria-label="Case de gauche">←</button><button type="button" class="btn sec" data-d="h" aria-label="Case du dessus">↑</button><button type="button" class="btn sec" data-d="b" aria-label="Case du dessous">↓</button><button type="button" class="btn sec" data-d="d" aria-label="Case de droite">→</button></div>' +
+      '<button type="button" class="btn large valider" disabled>Valider cette case</button></div></div>');
+    var g = w.querySelector(".tableau-per"), pos = {}, cases = {}, vise = null;
+    C.atomes.elements.forEach(function (x) {
+      var col = x.groupe, lig = x.periode;
+      if (!col) { col = 3 + (x.z >= 89 ? x.z - 89 : x.z - 57); lig = x.z >= 89 ? 10 : 9; }
+      pos[x.z] = { col: col, lig: lig };
+      var b = el('<button type="button" class="el" data-z="' + x.z + '" data-v="' + x.z + '" style="grid-column:' + col + ";grid-row:" + lig + '" aria-label="Ligne ' + (lig > 8 ? (lig === 9 ? "6, lanthanides" : "7, actinides") : lig) + ", colonne " + col + '"></button>');
+      b.onclick = function () { viser(x.z); };
+      cases[x.z] = b; g.appendChild(b);
+    });
+    g.appendChild(el('<span class="serie" style="grid-column:3;grid-row:6">*</span>'));
+    g.appendChild(el('<span class="serie" style="grid-column:3;grid-row:7">**</span>'));
+    g.appendChild(el('<span class="espace" style="grid-row:8"></span>'));
+    g.appendChild(el('<span class="serie nu" style="grid-column:2;grid-row:9">*</span>'));
+    g.appendChild(el('<span class="serie nu" style="grid-column:2;grid-row:10">**</span>'));
+    var txt = w.querySelector(".vise-txt"), ok = w.querySelector(".valider");
+    function viser(z) {
+      if (vise) cases[vise].classList.remove("vise");
+      vise = z; cases[z].classList.add("vise"); ok.disabled = false;
+      var p = pos[z];
+      txt.textContent = p.lig > 8 ? "Visée : ligne du bas des " + (p.lig === 9 ? "lanthanides" : "actinides") + ", " + (p.col - 2) + "e case." : "Visée : ligne " + p.lig + ", colonne " + p.col + ".";
+    }
+    // La case voisine dans une direction : même ligne (gauche/droite), ou la ligne d'à côté, colonne la plus proche.
+    function voisine(z, d) {
+      var p = pos[z], best = null, score = Infinity;
+      var lignes = [1, 2, 3, 4, 5, 6, 7, 9, 10], li = lignes.indexOf(p.lig);
+      Object.keys(pos).forEach(function (k) {
+        var q = pos[k], sc;
+        if (d === "g" || d === "d") { if (q.lig !== p.lig || (d === "g" ? q.col >= p.col : q.col <= p.col)) return; sc = Math.abs(q.col - p.col); }
+        else { var cible = lignes[li + (d === "h" ? -1 : 1)]; if (q.lig !== cible) return; sc = Math.abs(q.col - p.col); }
+        if (sc < score) { score = sc; best = +k; }
+      });
+      return best;
+    }
+    w.querySelectorAll("[data-d]").forEach(function (b) {
+      b.onclick = function () { if (!vise) { viser(1); return; } var n = voisine(vise, b.getAttribute("data-d")); if (n) viser(n); };
+    });
+    ok.onclick = function () {
+      var z = vise; if (!z) return;
+      cases[z].classList.remove("vise");
+      w.querySelector(".viseur").remove();
+      valider(z, cases[z]);
+    };
+    return w;
   }
   function placeTexte(e) {
     return e.groupe ? "ligne " + e.periode + ", colonne " + e.groupe : "ligne " + e.periode + ", dans la série du bas des " + (e.z >= 89 ? "actinides" : "lanthanides") + " (" + (e.z >= 89 ? e.z - 88 : e.z - 56) + "e case)";
@@ -4144,7 +4176,8 @@ svg.grille .interro { transition: opacity .3s; }
         if (bloc && qr) { bloc.after(qr); toast("Toutes tentées : place au rattrapage, plus bas."); }
       }
     }
-    if (q.type === "qcm") M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
+    if (q.type === "place") { zone.className = ""; zone.appendChild(grillePlacer(function (z, b) { repondre(z, b); })); }
+    else if (q.type === "qcm") M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
       var b = el('<button type="button" data-v="' + i + '">' + esc(tx(q.choix[i])) + "</button>"); b.onclick = function () { repondre(i, b); }; zone.appendChild(b);
     });
     else if (q.type === "vrai_faux") [true, false].forEach(function (v) {
