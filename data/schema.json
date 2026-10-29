@@ -867,7 +867,9 @@
          "faveur_nulle",
          "faveur_remontee",
          "mur_force",
-         "mur_libere"
+         "mur_libere",
+         "rattrapage_reussi",
+         "rattrapage_rate"
         ]
        },
        "reference": {
@@ -1633,6 +1635,14 @@
       "piege": {
        "type": "object",
        "description": "Piège posé chaque jour devant le pion quand l'IA est furieuse."
+      },
+      "mur_max": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "mur_rattrapage": {
+       "type": "integer",
+       "minimum": 1
       },
       "remontee": {
        "type": "integer",

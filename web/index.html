@@ -746,6 +746,7 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
 .peine .barre { height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; margin-top: 8px; }
 .peine .barre i { display: block; height: 100%; background: var(--bad); transition: width 1s linear; }
 .peine .note { font-size: 15px; }
+.rattrapage { border-left: 4px solid var(--c); }
 .bloc.honte-a { border: 2px dashed color-mix(in srgb, var(--bad) 55%, var(--line)); }
 .bloc.honte-a .rangee { margin-top: 8px; }
 .ia-tete { display: flex; gap: 14px; align-items: flex-start; }
@@ -3552,6 +3553,49 @@ svg.grille .interro { transition: opacity .3s; }
     if (e.essais) c.appendChild(el('<p class="clous">Déjà retentée ' + e.essais + " fois.</p>"));
     return c;
   }
+  // v29 (Victor) : au mur, une question de rattrapage tirée des thèmes du jour. Réussie, une minute de moins.
+  function blocRattrapage() {
+    var t = maintenant(), q = M.questionRattrapage(C, P, t); if (!q) return null;
+    sauver();
+    var k = C.parId[q.competence];
+    var b = el('<div class="bloc rattrapage" style="--c:' + couleur(k.stat) + '"><div class="eyebrow" style="color:' + couleur(k.stat) + '">Rattrapage · ' + esc(tx(k.nom)) + '</div><p class="note" style="margin:0 0 6px">Réussie, une minute de moins. La réponse se trouve dans les fiches de ce mur.</p></div>');
+    var c = el('<div class="oubli"><p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
+    if (q.illustration) c.appendChild(el('<div class="illus">' + q.illustration + "</div>"));
+    var zone = el('<div class="choix"></div>'), fait = false;
+    function repondre(v, bt) {
+      if (fait) return; fait = true;
+      var ok = M.corriger(q, v), r = M.repondreRattrapage(C, P, ok, maintenant()); sauver();
+      zone.querySelectorAll("button, input").forEach(function (z) { z.disabled = true; });
+      if (bt && !ok) bt.classList.add("faux");
+      zone.querySelectorAll("button[data-v]").forEach(function (z) { if (z.getAttribute("data-v") === String(q.reponse)) z.classList.add("bon"); });
+      var donnee = ok ? null : texteReponse(q, v);
+      c.appendChild(el('<p class="rep-h">' + (donnee ? "Ta réponse : <s>" + esc(donnee) + "</s><br>" : "") + "Bonne réponse : <b>" + esc(bonneReponse(q)) + "</b></p>"));
+      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>"));
+      if (!r) return;
+      if (r.libere) { liberation(); return; }
+      var m = comite(r.replique, true); if (m) c.appendChild(m);
+      var pe = document.querySelector(".peine");
+      if (pe) { pe.querySelector(".temps").textContent = dureePeine(r.reste); pe.querySelector(".barre i").style.width = Math.round(100 * r.reste / P.punition.total) + "%"; }
+      if (r.gagne) toast("−1 minute de peine.");
+      var suite = el('<button type="button" class="btn large">Question suivante</button>');
+      suite.onclick = function () { var n = blocRattrapage(); if (n) { b.replaceWith(n); n.scrollIntoView({ behavior: "smooth", block: "start" }); } };
+      c.appendChild(suite);
+    }
+    if (q.type === "qcm") M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
+      var bt = el('<button type="button" data-v="' + i + '">' + esc(tx(q.choix[i])) + "</button>"); bt.onclick = function () { repondre(i, bt); }; zone.appendChild(bt);
+    });
+    else if (q.type === "vrai_faux") [true, false].forEach(function (v) {
+      var bt = el('<button type="button" data-v="' + v + '">' + (v ? "Vrai" : "Faux") + "</button>"); bt.onclick = function () { repondre(v, bt); }; zone.appendChild(bt);
+    });
+    else {
+      var f = el('<form class="saisie"><input inputmode="decimal" autocomplete="off" aria-label="Ta réponse" placeholder="Ta réponse">' + (q.unite ? '<span class="unite">' + esc(q.unite) + "</span>" : "") + '<button type="submit" class="btn">Valider</button></form>');
+      f.onsubmit = function (ev) { ev.preventDefault(); var val = f.querySelector("input").value; if (isNaN(M.lireNombre(val))) { toast("Écris un nombre, par exemple 42 ou 3,5."); return; } repondre(val, null); };
+      zone.appendChild(f);
+    }
+    c.appendChild(zone);
+    b.appendChild(c);
+    return b;
+  }
   function parTheme(liste) {
     var ordre = [], groupes = {};
     liste.forEach(function (x) { var id = x.question.competence; if (!groupes[id]) { groupes[id] = []; ordre.push(id); } groupes[id].push(x); });
@@ -3575,7 +3619,8 @@ svg.grille .interro { transition: opacity .3s; }
       var NOM_CHUTE = { boudeuse: "Elle est passée boudeuse", furieuse: "Elle est passée furieuse", nulle: "Sa faveur est tombée à 0" };
       v.appendChild(el('<div class="bloc peine"><div class="eyebrow">Enfermé par l\'IA</div><div class="temps">' + dureePeine(peine.restant) + '</div><div class="barre"><i style="width:' + Math.round(100 * peine.restant / peine.total) + '%"></i></div>' +
         '<p class="note" style="margin:8px 0 0">' + esc(NOM_CHUTE[peine.palier] || "Elle a perdu patience") + (peine.n > 1 ? ", et c'est ta " + peine.n + "<sup>e</sup> chute aujourd'hui : peine doublée à chaque fois" : "") +
-        ". Le temps ne file que si tu restes sur le mur, écran allumé. Relis tes erreurs et les fiches.</p></div>"));
+        ". Le temps ne file que si tu restes sur le mur, écran allumé. Relis tes erreurs et les fiches : chaque question de rattrapage réussie retire une minute.</p></div>"));
+      var qr = blocRattrapage(); if (qr) v.appendChild(qr);
     }
     v.appendChild(el('<div class="compteurs-h"><span><b>' + mur.aujourdhui.length + "</b> ratée" + (mur.aujourdhui.length > 1 ? "s" : "") + " aujourd'hui</span><span><b>" + mur.aRetenter + "</b> à retenter</span><span><b>" + (P.compteurs.hontesEffacees || 0) + "</b> réhabilitée" + ((P.compteurs.hontesEffacees || 0) > 1 ? "s" : "") + " en tout</span></div>"));
     // Les jours précédents d'abord : ce sont elles qu'on peut effacer aujourd'hui.

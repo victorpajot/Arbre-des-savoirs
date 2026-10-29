@@ -1692,7 +1692,9 @@
     var min = M_ && M_[ids[rang]]; if (!min) return null;
     if (!partie.chutes || partie.chutes.jour !== cleJour(t)) partie.chutes = { jour: cleJour(t), n: 0 };
     partie.chutes.n++;
-    var ms = min * 60000 * Math.pow(2, partie.chutes.n - 1), p = partie.punition;
+    var ms = min * 60000 * Math.pow(2, partie.chutes.n - 1), p = partie.punition, max = (contenu.ia.faveur.mur_max || Infinity) * 60000;
+    // v29 : plafond de la peine en attente (mur_max minutes).
+    ms = Math.max(0, Math.min(ms, max - (p ? p.restant : 0)));
     partie.punition = p ? { restant: p.restant + ms, total: p.total + ms, palier: rang > p.rang ? ids[rang] : p.palier, rang: Math.max(rang, p.rang), depuis: p.depuis, n: partie.chutes.n }
       : { restant: ms, total: ms, palier: ids[rang], rang: rang, depuis: t, n: partie.chutes.n };
     return partie.punition;
@@ -1703,6 +1705,34 @@
     partie.punition.restant = Math.max(0, partie.punition.restant - ms);
     if (!partie.punition.restant) { partie.punition = null; return 0; }
     return partie.punition.restant;
+  }
+  // v29 (Victor) : au mur, des questions de rattrapage tirées des thèmes du jour (erreurs, puis fiches imposées).
+  // Chacune réussie retire mur_rattrapage minutes à la peine ; ratée, elle ne coûte rien de plus que la honte.
+  function themesCorvee(contenu, partie, t) {
+    var ids = [], vu = {};
+    murDeLaHonte(contenu, partie, t).aujourdhui.forEach(function (x) { var c = x.question.competence; if (!vu[c]) { vu[c] = true; ids.push(c); } });
+    fichesImposees(contenu, partie, t, 3).forEach(function (k) { if (!vu[k.id]) { vu[k.id] = true; ids.push(k.id); } });
+    return ids;
+  }
+  // La question en cours, tirée une fois et gardée jusqu'à la réponse ; null hors peine.
+  function questionRattrapage(contenu, partie, t, alea) {
+    var p = partie.punition; if (!p || !(p.restant > 0)) return null;
+    if (p.q && contenu.questionParId[p.q]) return contenu.questionParId[p.q];
+    var themes = themesCorvee(contenu, partie, t), vues = {};
+    (p.vues || []).forEach(function (id) { vues[id] = true; });
+    var dans = contenu.questions.filter(function (q) { return themes.indexOf(q.competence) >= 0; });
+    var neuves = dans.filter(function (q) { return !vues[q.id]; });
+    var choix = neuves.length ? neuves : dans.length ? dans : contenu.questions;
+    p.q = choix[Math.floor((alea || Math.random)() * choix.length)].id;
+    return contenu.questionParId[p.q];
+  }
+  function repondreRattrapage(contenu, partie, correct, t) {
+    var p = partie.punition; if (!p || !p.q) return null;
+    p.vues = (p.vues || []).concat(p.q).slice(-40);
+    p.q = null;
+    var ms = correct ? (contenu.ia.faveur.mur_rattrapage || 1) * 60000 : 0, reste = ms ? purger(partie, ms) : p.restant;
+    partie.maj = t;
+    return { gagne: ms, reste: reste, libere: !reste, replique: reste ? replique(contenu, partie, [correct ? "rattrapage_reussi" : "rattrapage_rate"]) : null };
   }
   // Enfermé au mur : plus rien ne se joue (quiz, rappels, duels, atomes) tant que la peine court.
   function jeuFerme(contenu, partie, t) { faveurIA(contenu, partie, t); return !!(partie.punition && partie.punition.restant > 0); }
@@ -2331,7 +2361,7 @@
     cadeau_terne: "cadeau", cadeau_brillant: "cadeau", cadeau_eblouissant: "cadeau", cadeau_repete: "cadeau",
     farce: "farce", mur_honte: "honte",
     pot_egal: null, pot_genereux: null, pot_premier: null, pot_radin: null, ultimatum: null, ultimatum_paye: null, ultimatum_refuse: null,
-    faveur_furieuse: null, faveur_nulle: null, faveur_remontee: null, mode_test: null, mur_force: null, mur_libere: null,
+    faveur_furieuse: null, faveur_nulle: null, faveur_remontee: null, mode_test: null, mur_force: null, mur_libere: null, rattrapage_reussi: null, rattrapage_rate: null,
   };
   function lignesTheme(contenu, partie, ctx, theme) {
     var g = theme && GROUPE_THEME[ctx], cle = g && "theme_" + g + "@" + theme, l = cle && contenu.commentairesPar[cle];
@@ -2438,7 +2468,7 @@
     themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
-    faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
+    faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,

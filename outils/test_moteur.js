@@ -1335,3 +1335,29 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.radoucirIA(C, P, T + 86400000).gain, A.rappel_mur, "le lendemain, ça repart");
   console.log("OK : v29 rappels du mur qui radoucissent l'IA");
 }
+
+// v29 : peine plafonnée à mur_max minutes ; chaque rattrapage réussi au mur retire une minute.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 3, 10).getTime(), F = d("ia.json").faveur;
+  const P = M.nouvellePartie(T); P.decalage = T - Date.now();
+  P.faveur = { valeur: 50, maj: T }; M.faveurIA(C, P, T);
+  P.faveur = { valeur: 30, maj: T + 1000 }; M.faveurIA(C, P, T + 1000);    // boudeuse : 2 min
+  P.faveur = { valeur: 10, maj: T + 2000 }; M.faveurIA(C, P, T + 2000);    // furieuse, 2e chute : 10 min, plafonné
+  P.faveur = { valeur: 0, maj: T + 3000 }; M.faveurIA(C, P, T + 3000);     // 0, 3e chute : rien au-delà du plafond
+  assert.equal(P.punition.restant, F.mur_max * 60000, "plafond de la peine");
+  const q = M.questionRattrapage(C, P, T + 4000, () => 0);
+  assert.ok(q, "une question de rattrapage");
+  assert.equal(M.questionRattrapage(C, P, T + 4000, () => 0.99).id, q.id, "gardée jusqu'à la réponse");
+  let r = M.repondreRattrapage(C, P, false, T + 5000);
+  assert.equal(r.gagne, 0); assert.equal(P.punition.restant, F.mur_max * 60000, "ratée : rien de retiré");
+  M.questionRattrapage(C, P, T + 6000);
+  r = M.repondreRattrapage(C, P, true, T + 7000);
+  assert.equal(P.punition.restant, (F.mur_max - F.mur_rattrapage) * 60000, "réussie : une minute de moins");
+  assert.ok(r.replique);
+  M.purger(P, P.punition.restant - 30000);
+  M.questionRattrapage(C, P, T + 8000);
+  r = M.repondreRattrapage(C, P, true, T + 9000);
+  assert.ok(r.libere && P.punition === null && !M.jeuFerme(C, P, T + 9000), "la dernière minute libère");
+  console.log("OK : v29 peine plafonnée, rattrapage au mur");
+}

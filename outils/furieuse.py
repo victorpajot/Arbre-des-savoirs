@@ -127,6 +127,20 @@ REPLIQUES = {
         sans("Vous sortez. Le mur reste. Il vous attendra, il est très patient."),
         sans("Fin de la peine. Je retire le cadenas, je garde la clé."),
     ],
+    # v29 : au mur, les questions de rattrapage. Réussie, une minute de moins ; ratée, rien de retiré.
+    "rattrapage_reussi": [
+        sans("Juste. Une minute de moins. Ne vous habituez pas à ma clémence."),
+        sans("Bonne réponse. Je retire une minute, à contrecœur."),
+        sans("Correct. Vous voyez que relire sert à quelque chose."),
+        sans("Une minute de remise de peine. Pour bonne conduite, si l'on veut."),
+        sans("Exact. Le mur vous va moins bien quand vous savez."),
+    ],
+    "rattrapage_rate": [
+        sans("Faux. Le chrono ne bouge pas. Vous non plus, d'ailleurs."),
+        sans("Raté. La réponse était dans la fiche, juste en dessous. Je dis ça."),
+        sans("Non. Aucune minute retirée. Relisez avant de répondre au hasard."),
+        sans("Mauvaise réponse. Le mur vous remercie de votre fidélité."),
+    ],
     "faveur_remontee": [
         sans("J'ai dormi. Je vais un peu mieux. Ne gâchez pas tout dès le premier quiz."),
         sans("Nouvelle journée, patience neuve. Elle est courte : ne tirez pas dessus."),
@@ -136,4 +150,5 @@ REPLIQUES = {
 TONS = {k: "decue" for k in REPLIQUES}
 TONS.update({"furieuse_jouer": "impatiente", "furieuse_ennemi": "impatiente", "furieuse_defaut": "impatiente",
              "faveur_furieuse": "decue", "faveur_nulle": "decue", "faveur_remontee": "impatiente",
-             "mur_force": "moqueuse", "mur_libere": "impatiente"})
+             "mur_force": "moqueuse", "mur_libere": "impatiente",
+             "rattrapage_reussi": "impatiente", "rattrapage_rate": "moqueuse"})
