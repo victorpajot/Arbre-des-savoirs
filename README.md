@@ -2,6 +2,10 @@
 
 Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
+## Licence
+
+© 2026 Victor Pajot, réalisé avec l'aide de Claude (Anthropic). Le code est sous [GPL 3.0](LICENSE), le contenu (`data/`, textes et pixel art de `outils/`) sous [CC BY-NC-SA 4.0](licences/CC-BY-NC-SA-4.0.txt). Les citations de tiers, le nom du jeu et son icône n'en relèvent pas. Détails dans [NOTICE.md](NOTICE.md), conditions de contribution (accord CLA) dans [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Organisation
 
 | Dossier | Contenu |
