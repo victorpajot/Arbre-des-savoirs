@@ -1579,3 +1579,37 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const a = M.chronoSpontane(C, P, T), b = M.chronoSpontane(C, P, T); assert.equal(a, b);
   console.log("OK : v34 case Chrono sans réservoir");
 }
+{
+  // v34 (Victor) : les ratés d'un combat d'atome vont au mur de la honte, avec l'astuce du numéro atomique.
+  const CA = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+    { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 29, 10).getTime();
+  // Chaque élément a ses trois questions au mur ; le numéro s'écrit au clavier.
+  CA.atomes.elements.forEach(e => {
+    const n = CA.questionParId["atome." + e.z + ".numero"], sy = CA.questionParId["atome." + e.z + ".symbole"], ou = CA.questionParId["atome." + e.z + ".ou"];
+    assert.ok(n && sy && ou && n.competence === "sci.atomes" && n.type === "numerique" && n.reponse === e.z);
+    assert.equal(sy.choix[sy.reponse].fr, e.symbole);
+    // L'astuce tombe juste : gaz noble repère + rang = numéro.
+    const a = M.astuceNumero(CA.atomes, e);
+    assert.equal(a.gaz + a.rang, e.z); assert.ok(a.texte.includes("n° " + e.z) && a.illustration.startsWith("<svg"));
+  });
+  // Les questions du mur ne se glissent pas dans les quiz ordinaires.
+  assert.ok((CA.questionsPar["sci.atomes"] || []).every(q => !q.id.startsWith("atome.")));
+  assert.equal(M.atomeDit(CA.atomes, "numero", "24").symbole, "Cr");
+  assert.equal(M.atomeDit(CA.atomes, "symbole", "Cl").z, 17);
+  const P = M.nouvellePartie(T); P.sauvages = [{ z: 26, case: 53, depuis: T }];
+  const cb = M.tirerCombat(CA, P, () => 0.4);
+  const symFaux = cb.questions[0].choix.find(c => c !== "Fe");
+  M.terminerCombat(CA, P, 1, T, [{ type: "numero", rep: "24" }, { type: "symbole", rep: symFaux }]);
+  const mur = M.murDeLaHonte(CA, P, T);
+  assert.equal(mur.aujourdhui.length, 2);
+  const eN = P.oublis.find(o => o.q === "atome.26.numero"), eS = P.oublis.find(o => o.q === "atome.26.symbole");
+  assert.equal(eN.rep, "24"); assert.equal(eN.src, "atome"); assert.equal(eN.comp, "sci.atomes");
+  const qS = CA.questionParId["atome.26.symbole"];
+  assert.equal(typeof eS.rep === "string" ? eS.rep : qS.choix[eS.rep].fr, symFaux);
+  // Retentable le lendemain, au clavier : 26 l'efface.
+  assert.equal(M.retenterOubli(CA, P, P.oublis.indexOf(eN), true, T), null);
+  const r = M.retenterOubli(CA, P, P.oublis.indexOf(eN), M.corriger(CA.questionParId["atome.26.numero"], "26"), T + 86400000);
+  assert.ok(r.efface);
+  console.log("OK : v34 atomes ratés au mur, astuce du numéro");
+}

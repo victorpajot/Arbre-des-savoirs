@@ -690,6 +690,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .apparition .herbe .tuile-atome { animation: surgir .6s cubic-bezier(.2,.9,.3,1.5) .2s both; }
 @keyframes surgir { from { transform: translateY(40px) scale(.5); opacity: 0; } to { transform: none; opacity: 1; } }
 .apparition h2 { margin: 0; font-size: 26px; }
+.astuce-z { margin: 8px 0 0; font-size: 16px; line-height: 1.5; }
+.astuce-z b { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
 .combat-q .enonce { font-family: var(--f-display); font-weight: 600; }
 .combat-q .choix.grille { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .combat-q .choix.grille button { min-height: 56px; font-size: 18px; font-weight: 700; }
@@ -3746,18 +3748,29 @@ svg.grille .interro { transition: opacity .3s; }
       b.onclick = function () {
         if (combat.repondu) return;
         var ok = ci === q.reponse; combat.repondu = true; combat.res.push(ok);
+        (combat.reps = combat.reps || [])[combat.i] = c;
         zr.querySelectorAll("button").forEach(function (x, i) { x.disabled = true; if (i === q.reponse) x.classList.add("bon"); });
         if (!ok) b.classList.add("faux");
         var n = combat.res.filter(Boolean).length, reste = combat.qs.length - combat.res.length;
         var etat = n >= seuil ? "Il est déjà à ta merci." : n + reste < seuil ? "Il prépare sa fuite." : "Encore " + (seuil - n) + " bonne" + (seuil - n > 1 ? "s" : "") + " réponse" + (seuil - n > 1 ? "s" : "") + " pour le capturer.";
         var expl = q.type === "symbole" ? "Son symbole : " + e.symbole + "." : q.type === "numero" ? "Numéro atomique : " + e.z + ", soit " + e.z + " proton" + (e.z > 1 ? "s" : "") + " dans son noyau. C'est sa place dans le tableau." : "On le croise surtout dans " + e.ou.map(function (o) { return tx(o); }).join(", ") + ".";
-        retour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + "</b>" + esc(expl) + '<p class="meta" style="margin:6px 0 0">' + esc(etat) + "</p></div>"));
+        // v34 (Victor) : raté, on dit à quel atome correspond la réponse donnée, et pour le numéro, comment le retrouver.
+        var dit = !ok && q.type !== "ou" ? M.atomeDit(C.atomes, q.type, c) : null, ast = !ok && q.type === "numero" ? M.astuceNumero(C.atomes, e) : null;
+        if (dit) expl += " Tu as dit " + c + " : celui-là, c'est " + tx(dit.nom) + (q.type === "numero" ? " (" + dit.symbole + ")" : ", n° " + dit.z) + ".";
+        var rt = el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + "</b>" + esc(expl) + '<p class="meta" style="margin:6px 0 0">' + esc(etat) + "</p></div>");
+        if (ast) {
+          rt.insertBefore(el('<p class="astuce-z"><b>Pour le retenir</b>' + esc(ast.texte) + "<br>" + esc(ast.regle) + "</p>"), rt.querySelector(".meta"));
+          rt.insertBefore(el('<div class="illus">' + ast.illustration + "</div>"), rt.querySelector(".meta"));
+        }
+        if (!ok) rt.appendChild(el('<p class="meta" style="margin:6px 0 0">Épinglé au mur de la honte : retente-le dès demain.</p>'));
+        retour.appendChild(rt);
         var perdu = M.epreuvePerdue(C, "atome", n, combat.res.length, combat.qs.length, seuil);
         var dernier = combat.i === combat.qs.length - 1 || perdu;
         var s = el('<button type="button" class="btn large">' + (perdu ? "Voir sa fuite" : dernier ? "Lancer la capture" : "Question suivante") + "</button>");
         s.onclick = function () {
           if (!dernier) { combat.i++; combat.repondu = false; rendreCombat(); return; }
-          combat.fin = M.terminerCombat(C, P, combat.res.filter(Boolean).length, maintenant());
+          var ratees = combat.res.map(function (r, i) { return r ? null : { type: combat.qs[i].type, rep: combat.reps[i] }; }).filter(Boolean);
+          combat.fin = M.terminerCombat(C, P, combat.res.filter(Boolean).length, maintenant(), ratees);
           combat.fin.replique = M.replique(C, P, [combat.fin.capture ? "atome_capture" : "atome_fuite"], null, null, "alchimie");
           if (combat.fin.plateau) combat.fin.repliquePlateau = M.replique(C, P, combat.fin.plateau.contextes);
           combat.phase = "fin"; combat.etape = 0; sauver(); rendreCombat();
@@ -3771,7 +3784,7 @@ svg.grille .interro { transition: opacity .3s; }
   }
   function ficheAtomeHtml(e) {
     return '<div class="fiche-atome"><div class="bareme"><span>Numéro atomique</span><span class="num">' + e.z + '</span><span>Masse atomique</span><span class="num">' + esc(M.texteMasse(e)) + "</span><span>Famille</span><span>" + esc(tx(C.atomes.familles[e.famille].nom)) +
-      "</span><span>Rareté</span><span>" + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</span></div><b>Où on le croise</b><ul>" + e.ou.map(function (o) { return "<li>" + esc(tx(o)) + "</li>"; }).join("") + "</ul><p style=\"margin:0\">" + esc(tx(e.anecdote)) + "</p><cite>Source : " + esc(e.source) + "</cite></div>";
+      "</span><span>Rareté</span><span>" + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</span></div><p class=\"astuce-z\"><b>Retenir son numéro</b>" + esc(M.astuceNumero(C.atomes, e).texte) + "</p><b>Où on le croise</b><ul>" + e.ou.map(function (o) { return "<li>" + esc(tx(o)) + "</li>"; }).join("") + "</ul><p style=\"margin:0\">" + esc(tx(e.anecdote)) + "</p><cite>Source : " + esc(e.source) + "</cite></div>";
   }
   function bilanCombat() {
     var r = combat.fin, e = r.element, rec = r.recompenses || {};
@@ -3952,7 +3965,7 @@ svg.grille .interro { transition: opacity .3s; }
   }
   function texteReponse(q, v) {
     if (v === null || v === undefined || v === "") return null;
-    if (q.type === "qcm") return q.choix[v] ? tx(q.choix[v]) : null;
+    if (q.type === "qcm") return typeof v === "string" ? v : q.choix[v] ? tx(q.choix[v]) : null;
     if (q.type === "vrai_faux") return v === true || v === "true" ? "Vrai" : "Faux";
     return String(v).replace(".", ",") + (q.unite ? " " + q.unite : "");
   }

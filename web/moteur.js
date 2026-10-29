@@ -71,6 +71,11 @@
       (c.questionsPar[q.competence] = c.questionsPar[q.competence] || []).push(q);
       c.questionParId[q.id] = q;
     });
+    // v34 (Victor) : les ratés des combats d'atomes vont au mur de la honte. Chaque élément y a ses trois questions,
+    // rangées sous « Atomes et éléments », hors des quiz ordinaires.
+    if (c.atomes) c.atomes.elements.forEach(function (e) {
+      questionsMur(c.atomes, e).forEach(function (q) { c.questionParId[q.id] = q; });
+    });
     return c;
   }
 
@@ -1249,8 +1254,10 @@
   // Les trois questions du combat en cours, choix mélangés. Rien n'est enregistré : on peut les retirer.
   function tirerCombat(contenu, partie, alea) {
     var s = atomeSauvage(contenu, partie); if (!s) return null;
-    alea = alea || Math.random;
-    var A = contenu.atomes.elements, e = s.element, nom = e.nom.fr;
+    return { z: s.z, element: s.element, questions: questionsCombat(contenu.atomes, s.element, alea || Math.random) };
+  }
+  function questionsCombat(atomes, e, alea) {
+    var A = atomes.elements, nom = e.nom.fr;
     function finir(type, enonce, bonne, faux) {
       var choix = melanger([bonne].concat(faux.slice(0, 3)), alea);
       return { type: type, enonce: enonce, choix: choix, reponse: choix.indexOf(bonne) };
@@ -1284,12 +1291,75 @@
       if (!mots(o).some(function (m) { return siens[m]; })) pO.push(o);
     });
     var q3 = finir("ou", "Où croise-t-on surtout cet atome ?", bonne, pO);
-    return { z: e.z, element: e, questions: [q1, q2, q3] };
+    return [q1, q2, q3];
+  }
+
+  // v34 (Victor : « super dur de retenir le numéro atomique ») : le numéro se compte depuis le gaz noble qui ferme
+  // la ligne d'avant. Sept repères (2, 10, 18, 36, 54, 86, 118) et la place de l'atome dans sa ligne suffisent.
+  var GAZ_NOBLES = [2, 10, 18, 36, 54, 86, 118];
+  var NOM_GAZ = { 2: "l'hélium", 10: "le néon", 18: "l'argon", 36: "le krypton", 54: "le xénon", 86: "le radon", 118: "l'oganesson" };
+  function ordinal(n) { return n === 1 ? "1re" : n + "e"; }
+  // Place dans la grille à 18 colonnes, lanthanides et actinides en lignes 9 et 10 (comme le tableau des Collections).
+  function placeTableau(e) {
+    if (e.groupe) return { col: e.groupe, lig: e.periode };
+    return { col: 3 + (e.z >= 89 ? e.z - 89 : e.z - 57), lig: e.z >= 89 ? 10 : 9 };
+  }
+  function astuceNumero(atomes, e) {
+    var gaz = 0; GAZ_NOBLES.forEach(function (g) { if (g < e.z) gaz = g; });
+    var rang = e.z - gaz, nom = e.nom.fr, texte;
+    if (e.z === 1) texte = nom + ", n° 1 : il ouvre le tableau, avec un seul proton.";
+    else if (!gaz) texte = nom + ", n° 2 : 2e et dernière case de la 1re ligne.";
+    else texte = nom + ", n° " + e.z + " : " + ordinal(rang) + " case de la ligne " + e.periode + (e.periode >= 6 && rang > 2 ? " (en comptant la série des " + (e.periode === 6 ? "lanthanides" : "actinides") + ")" : "") +
+      ". La ligne " + (e.periode - 1) + " se termine par " + NOM_GAZ[gaz] + ", n° " + gaz + " : " + gaz + " + " + rang + " = " + e.z + ".";
+    // Loin dans la ligne, la colonne aide plus que le comptage : l'atome du dessus, plus l'écart d'une ligne.
+    var dessus = e.groupe && atomes.elements.filter(function (x) { return x.groupe === e.groupe && x.periode === e.periode - 1; })[0];
+    if (!(dessus && dessus.z !== gaz && rang > 9)) dessus = null;
+    if (dessus) texte += " Plus court : juste au-dessus dans sa colonne, " + dessus.nom.fr.toLowerCase() + ", n° " + dessus.z + ", et " + dessus.z + " + " + (e.z - dessus.z) + " = " + e.z + ".";
+    return { texte: texte, regle: "Les gaz nobles ferment les lignes : 2, 10, 18, 36, 54, 86, 118. Retiens ces sept repères, puis compte les cases depuis le dernier.", gaz: gaz, rang: rang,
+      illustration: schemaNumero(atomes, e, gaz, dessus) };
+  }
+  // Le tableau en miniature : le gaz noble repère en jaune, les cases comptées en vert, l'atome en couleur d'accent.
+  function schemaNumero(atomes, e, gaz, dessus) {
+    var T = 17, X0 = 22, Y0 = 6, out = [], fin = function (lig) { return Y0 + (lig - 1) * T + (lig >= 9 ? 6 : 0); };
+    atomes.elements.forEach(function (x) {
+      var p = placeTableau(x), cl = x.z === e.z ? "a" : x.z === gaz || (dessus && x.z === dessus.z) ? "jaune" : x.z > gaz && x.z < e.z ? "ok" : "f2";
+      var px = X0 + (p.col - 1) * T, py = fin(p.lig);
+      out.push('<rect class="' + cl + '" x="' + px + '" y="' + py + '" width="' + (T - 2) + '" height="' + (T - 2) + '" rx="2"/>');
+      if (x.z === e.z || x.z === gaz || (dessus && x.z === dessus.z)) out.push('<text x="' + (px + (T - 2) / 2) + '" y="' + (py + 11) + '" font-size="8.5" font-weight="700" text-anchor="middle" fill="' + (x.z === e.z ? "#fff" : "#222") + '" font-family="sans-serif">' + x.z + "</text>");
+    });
+    for (var l = 1; l <= 7; l++) out.push('<text class="tm" x="' + (X0 - 6) + '" y="' + (fin(l) + 11) + '" font-size="9" text-anchor="end">' + l + "</text>");
+    var y = fin(10) + T + 14;
+    out.push('<text class="t" x="' + X0 + '" y="' + y + '" font-size="12" font-weight="700">' + (gaz ? gaz + " (" + NOM_GAZ[gaz].replace(/^(l'|le )/, "") + ") + " + (e.z - gaz) + " case" + (e.z - gaz > 1 ? "s" : "") + " = " + e.z + " (" + e.symbole + ")" : e.symbole + " = " + e.z) + "</text>");
+    if (dessus) { y += 17; out.push('<text class="t" x="' + X0 + '" y="' + y + '" font-size="12" font-weight="700">ou ' + dessus.z + " (" + dessus.nom.fr.toLowerCase() + ", juste au-dessus) + " + (e.z - dessus.z) + " = " + e.z + "</text>"); }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + (X0 + 18 * T + 4) + " " + (y + 8) + '" role="img" aria-label="Tableau périodique : ' + e.nom.fr + ", numéro " + e.z + (gaz ? ", compté depuis le gaz noble numéro " + gaz : "") + '">' + out.join("") + "</svg>";
+  }
+  // Les questions d'un atome sur le mur : mêmes questions qu'au combat, leurres figés ; le numéro s'y écrit au clavier.
+  function questionsMur(atomes, e) {
+    var k = 0, graine = "mur-atome|" + e.z, alea = function () { return (hacher(graine + "|" + (k++)) % 100000) / 100000; };
+    var qs = questionsCombat(atomes, e, alea), ast = astuceNumero(atomes, e);
+    var lieux = e.ou.map(function (o) { return o.fr; }).join(", ");
+    return qs.map(function (q) {
+      var base = { id: "atome." + e.z + "." + q.type, competence: "sci.atomes", atome: e.z, enonce: { fr: q.enonce } };
+      if (q.type === "numero") return Object.assign(base, { type: "numerique", reponse: e.z, tolerance: 0, explication: { fr: ast.texte + " " + ast.regle }, illustration_explication: ast.illustration });
+      return Object.assign(base, { type: "qcm", choix: q.choix.map(function (c) { return { fr: c }; }), reponse: q.reponse,
+        explication: { fr: q.type === "symbole" ? "Le symbole de « " + e.nom.fr + " » est " + e.symbole + ", numéro " + e.z + "." : "On le croise surtout dans " + lieux + ". " + e.anecdote.fr } });
+    });
+  }
+  // L'atome qui porte ce symbole ou ce numéro : « tu as dit 24 ? c'est le chrome ».
+  function atomeDit(atomes, type, valeur) {
+    return atomes.elements.filter(function (x) { return type === "numero" ? String(x.z) === String(valeur) : x.symbole === valeur; })[0] || null;
   }
 
   // `bonnes` : nombre de bonnes réponses. Renvoie {capture, element, bonnes, total, premiere, fiche, recompenses}.
-  function terminerCombat(contenu, partie, bonnes, t) {
+  // v34 : `ratees` (facultatif) : [{type, rep}] des questions manquées, épinglées au mur de la honte.
+  function terminerCombat(contenu, partie, bonnes, t, ratees) {
     var s = atomeSauvage(contenu, partie); if (!s) return null;
+    if (ratees && ratees.length) epinglerOublis(partie, "sci.atomes", ratees.map(function (x) {
+      var id = "atome." + s.z + "." + x.type, q = contenu.questionParId[id], rep = x.rep === undefined ? null : x.rep;
+      // Leurre absent des choix figés du mur : on garde son texte.
+      if (q && q.type === "qcm" && rep !== null) { var ix = q.choix.map(function (c) { return c.fr; }).indexOf(rep); if (ix >= 0) rep = ix; }
+      return { id: id, correct: false, rep: rep };
+    }).filter(function (x) { return contenu.questionParId[x.id]; }), t, "atome");
     ouvrirLot(partie, t, "alchimie");
     var R = contenu.atomes.regles, c = partie.compteurs, f = ficheAtome(partie, s.z);
     partie.sauvages.shift();
@@ -2775,7 +2845,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,
