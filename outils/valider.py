@@ -1,4 +1,4 @@
-"""Valide les fichiers de data/ contre schema.json, puis vérifie les liens entre fichiers.
+"""Valide les fichiers de data/ (assemblés depuis packs/) contre outils/schema.json, puis vérifie les liens entre fichiers.
 
 Usage : python3 outils/valider.py   (code de sortie 1 en cas d'erreur)
 """
@@ -9,6 +9,7 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 
 DATA = Path(__file__).resolve().parent.parent / "data"
+SCHEMA = Path(__file__).resolve().parent / "schema.json"
 FICHIERS = [("regles.json", "regles"), ("skills.json", "skills"), ("questions.json", "questions"),
             ("succes.json", "succes"), ("commentaires.json", "commentaires"), ("objets.json", "objets"),
             ("avatar.json", "avatar"), ("ia.json", "ia"), ("plateau.json", "plateau"), ("frise.json", "frise"),
@@ -29,7 +30,7 @@ def verifier_pixels(nom, img, taille, palette, erreurs, extra=""):
 
 
 def main():
-    schema = charger("schema.json")
+    schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
     erreurs = []
     contenu = {}
     for nom, definition in FICHIERS:
@@ -119,7 +120,16 @@ def main():
 
     repliques = contenu["commentaires"]["commentaires"]
     contextes = {c["contexte"] for c in repliques}
-    attendus = set(schema["$defs"]["commentaires"]["properties"]["commentaires"]["items"]["properties"]["contexte"]["enum"])
+    attendus = set(schema["$defs"]["contexte"]["anyOf"][0]["enum"])
+    # Packs : chaque arbre a ses propres répliques d'annonce, de réussite et d'échec.
+    for st in stats:
+        for moment, mini in (("jouer", 3), ("reussi", 4), ("rate", 4)):
+            nb = sum(1 for r in repliques if r["contexte"] == f"theme_{moment}@{st}")
+            if nb < mini:
+                erreurs.append(f"commentaires.json : {nb} répliques theme_{moment}@{st}, {mini} attendues")
+    for r in repliques:
+        if "@" in r["contexte"] and r["contexte"].split("@")[1] not in stats:
+            erreurs.append(f"commentaires.json {r['id']} : arbre inconnu {r['contexte']}")
     if attendus - contextes:
         erreurs.append(f"commentaires.json : aucune réplique pour {sorted(attendus - contextes)}")
     if len(repliques) < 200:
@@ -258,6 +268,17 @@ def main():
         verifier_pixels(f"avatar.json {nom}", img, av["taille"], av["palette"], erreurs, extra)
     if av["rangs"][0]["niveau_min"] != 0:
         erreurs.append("avatar.json : le premier rang doit commencer au niveau 0")
+
+    # v18 : le thème de chaque chose est un arbre qui existe.
+    a_theme = [("succes.json", contenu["succes"]["succes"]), ("objets.json", contenu["objets"]["objets"]),
+               ("avatar.json", av["savants"] + av["accessoires"] + av.get("tenues_farce", [])), ("ia.json", narr["masques"]),
+               ("ennemis.json", en["ennemis"])]
+    for nom, liste in a_theme:
+        for x in liste:
+            if "theme" in x and x["theme"] not in stats:
+                erreurs.append(f"{nom} {x['id']} : thème inconnu {x['theme']}")
+    if at["theme"] not in stats:
+        erreurs.append(f"atomes.json : thème inconnu {at['theme']}")
 
     # v7 : chaque arbre hors fondamentaux s'ouvre par un succès de pionnier.
     fond = set(contenu["regles"].get("arbres_fondamentaux", []))

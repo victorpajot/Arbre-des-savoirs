@@ -1,0 +1,298 @@
+[
+ {
+  "id": "astro.systeme",
+  "stat": "cosmos",
+  "rang": 1,
+  "nom": {
+   "fr": "Système solaire"
+  },
+  "description": {
+   "fr": "Le Soleil, les planètes, la Lune et les petits corps."
+  },
+  "prerequis": [],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Huit planètes : Mercure, Vénus, Terre, Mars (rocheuses), Jupiter, Saturne (géantes gazeuses), Uranus, Neptune (géantes de glace)."
+    },
+    {
+     "fr": "Pluton est une planète naine depuis 2006."
+    },
+    {
+     "fr": "Vénus est la plus chaude (≈ 464 °C) à cause de son effet de serre, bien que Mercure soit plus proche du Soleil."
+    },
+    {
+     "fr": "Les saisons viennent de l'inclinaison de l'axe terrestre, pas de la distance au Soleil."
+    }
+   ],
+   "piege": {
+    "fr": "La Terre est au plus près du Soleil début janvier, en plein hiver boréal."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" role=\"img\" aria-label=\"La Terre en juin et en décembre, axe toujours incliné du même côté\"><ellipse class=\"lm\" cx=\"170\" cy=\"80\" rx=\"130\" ry=\"44\" fill=\"none\" stroke-dasharray=\"5 5\"/><circle class=\"jaune\" cx=\"170\" cy=\"80\" r=\"18\"/><circle class=\"f\" cx=\"40\" cy=\"80\" r=\"16\"/><line class=\"al\" x1=\"31\" y1=\"58\" x2=\"49\" y2=\"102\" stroke-width=\"2.5\"/><text class=\"tm\" x=\"40\" y=\"128\" font-size=\"12\" text-anchor=\"middle\">juin</text><circle class=\"f\" cx=\"300\" cy=\"80\" r=\"16\"/><line class=\"al\" x1=\"291\" y1=\"58\" x2=\"309\" y2=\"102\" stroke-width=\"2.5\"/><text class=\"tm\" x=\"300\" y=\"128\" font-size=\"12\" text-anchor=\"middle\">décembre</text><text class=\"tm\" x=\"170\" y=\"22\" font-size=\"12\" text-anchor=\"middle\">axe incliné de 23,4°, toujours dans la même direction</text></svg>",
+   "source": "Union astronomique internationale, résolution B5, 2006"
+  },
+  "symbole": "☉",
+  "embleme": "heliocentre"
+ },
+ {
+  "id": "astro.etoiles",
+  "stat": "cosmos",
+  "rang": 2,
+  "nom": {
+   "fr": "Étoiles et lumière des astres"
+  },
+  "description": {
+   "fr": "Comment les étoiles brillent, vivent et meurent."
+  },
+  "prerequis": [
+   "astro.systeme"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Une étoile brille par fusion nucléaire de l'hydrogène en hélium dans son cœur."
+    },
+    {
+     "fr": "Sa couleur indique sa température : bleue très chaude, rouge plus froide."
+    },
+    {
+     "fr": "Le Soleil deviendra une géante rouge puis une naine blanche ; les étoiles massives finissent en supernova."
+    },
+    {
+     "fr": "Les éléments plus lourds que le fer se forment surtout lors de supernovas et de fusions d'étoiles à neutrons."
+    }
+   ],
+   "piege": {
+    "fr": "Les étoiles rouges ne sont pas les plus chaudes : c'est l'inverse des robinets."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 136\" role=\"img\" aria-label=\"Couleur des étoiles selon leur température\"><circle cx=\"40\" cy=\"50\" r=\"22\" fill=\"#9BB0FF\" stroke=\"var(--line)\"/><text class=\"tm\" x=\"40\" y=\"100\" font-size=\"11\" text-anchor=\"middle\">30 000 °C</text><circle cx=\"104\" cy=\"50\" r=\"20\" fill=\"#CAD7FF\" stroke=\"var(--line)\"/><text class=\"tm\" x=\"104\" y=\"100\" font-size=\"11\" text-anchor=\"middle\">10 000 °C</text><circle cx=\"168\" cy=\"50\" r=\"18\" fill=\"#FFF4E8\" stroke=\"var(--line)\"/><text class=\"tm\" x=\"168\" y=\"100\" font-size=\"11\" text-anchor=\"middle\">5 500 °C</text><circle cx=\"232\" cy=\"50\" r=\"16\" fill=\"#FFD2A1\" stroke=\"var(--line)\"/><text class=\"tm\" x=\"232\" y=\"100\" font-size=\"11\" text-anchor=\"middle\">4 000 °C</text><circle cx=\"296\" cy=\"50\" r=\"14\" fill=\"#FF9A5C\" stroke=\"var(--line)\"/><text class=\"tm\" x=\"296\" y=\"100\" font-size=\"11\" text-anchor=\"middle\">3 000 °C</text><text class=\"tm\" x=\"184\" y=\"126\" font-size=\"12\" text-anchor=\"middle\">← plus chaude          plus froide →</text></svg>",
+   "source": "Burbidge, Burbidge, Fowler et Hoyle, Reviews of Modern Physics, 1957"
+  },
+  "symbole": "✶",
+  "embleme": "etoile"
+ },
+ {
+  "id": "astro.orbites",
+  "stat": "cosmos",
+  "rang": 3,
+  "nom": {
+   "fr": "Orbites et gravitation"
+  },
+  "description": {
+   "fr": "Les lois de Kepler, les satellites, les marées, les trous noirs."
+  },
+  "prerequis": [
+   "astro.systeme"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Kepler 1 : les planètes décrivent des ellipses dont le Soleil occupe un foyer."
+    },
+    {
+     "fr": "Kepler 2 : une planète va plus vite près du Soleil."
+    },
+    {
+     "fr": "Les astronautes de l'ISS flottent parce qu'ils tombent en permanence autour de la Terre, pas parce qu'il n'y a pas de gravité."
+    },
+    {
+     "fr": "Les marées viennent surtout de la Lune, qui tire plus fort sur le côté de la Terre qui lui fait face."
+    }
+   ],
+   "piege": {
+    "fr": "À 400 km d'altitude, la gravité vaut encore environ 90 % de celle du sol."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 150\" role=\"img\" aria-label=\"Orbite elliptique : A est le point le plus proche du Soleil, B le plus éloigné\"><ellipse class=\"lm\" cx=\"170\" cy=\"80\" rx=\"140\" ry=\"62\" fill=\"none\" stroke-width=\"2\"/><circle class=\"jaune\" cx=\"80\" cy=\"80\" r=\"16\"/><text class=\"tm\" x=\"80\" y=\"116\" font-size=\"12\" text-anchor=\"middle\">Soleil</text><circle class=\"a\" cx=\"30\" cy=\"80\" r=\"8\"/><text class=\"t\" x=\"18\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">A</text><circle class=\"a\" cx=\"310\" cy=\"80\" r=\"8\"/><text class=\"t\" x=\"322\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">B</text></svg>",
+   "source": "Kepler, Astronomia nova, 1609"
+  },
+  "symbole": "⊕",
+  "embleme": "pluton"
+ },
+ {
+  "id": "astro.galaxies",
+  "stat": "cosmos",
+  "rang": 4,
+  "nom": {
+   "fr": "Galaxies et Big Bang"
+  },
+  "description": {
+   "fr": "La Voie lactée, l'expansion de l'Univers et son histoire."
+  },
+  "prerequis": [
+   "astro.etoiles",
+   "astro.orbites"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "La Voie lactée est une galaxie spirale d'environ 100 à 400 milliards d'étoiles."
+    },
+    {
+     "fr": "Hubble (1929) : les galaxies s'éloignent d'autant plus vite qu'elles sont loin. L'Univers est en expansion."
+    },
+    {
+     "fr": "Big Bang : il y a 13,8 milliards d'années, l'Univers était très chaud et dense ; ce n'est pas une explosion dans l'espace."
+    },
+    {
+     "fr": "Le fond diffus cosmologique est la lumière émise 380 000 ans après le Big Bang."
+    }
+   ],
+   "piege": {
+    "fr": "Le Big Bang n'a pas de centre : l'expansion se fait partout à la fois."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Histoire de l'Univers\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">Big Bang</text><circle class=\"f\" cx=\"102.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"102.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">fond diffus</text><text class=\"tm\" x=\"102.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">380 000 ans</text><circle class=\"f\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"170.0\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">1res étoiles</text><circle class=\"f\" cx=\"238.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"238.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Soleil</text><text class=\"tm\" x=\"238.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">−4,6 Ga</text><circle class=\"a\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"306.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">aujourd'hui</text><text class=\"t\" x=\"306.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">13,8 Ga</text></svg>",
+   "source": "Planck Collaboration, Astronomy & Astrophysics, 2020"
+  },
+  "symbole": "@",
+  "embleme": "plaque-hubble"
+ },
+ {
+  "id": "astro.observer",
+  "stat": "cosmos",
+  "rang": 5,
+  "nom": {
+   "fr": "Observer le ciel"
+  },
+  "description": {
+   "fr": "Constellations, saisons, télescopes et unités de distance."
+  },
+  "prerequis": [
+   "astro.galaxies"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Les constellations sont des alignements apparents : leurs étoiles sont à des distances très différentes."
+    },
+    {
+     "fr": "Une année-lumière est une distance (≈ 9 461 milliards de km), pas une durée."
+    },
+    {
+     "fr": "Un télescope sert surtout à collecter de la lumière : plus le miroir est grand, plus on voit faible."
+    },
+    {
+     "fr": "Le ciel semble tourner autour de l'étoile Polaire à cause de la rotation de la Terre."
+    }
+   ],
+   "piege": {
+    "fr": "Regarder loin, c'est regarder dans le passé : la lumière d'une étoile a parfois voyagé des milliers d'années."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Distances en temps de trajet de la lumière\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Lune</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1,3 s-lum.</text><circle class=\"a\" cx=\"124.7\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"124.66666666666667\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">Soleil</text><text class=\"t\" x=\"124.66666666666667\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">8 min-lum.</text><circle class=\"f\" cx=\"215.3\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"215.33333333333334\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Proxima</text><text class=\"tm\" x=\"215.33333333333334\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">4,2 a-l</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Andromède</text><text class=\"tm\" x=\"306.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">2,5 M a-l</text></svg>",
+   "source": "IAU, Measuring the Universe, 2012"
+  },
+  "symbole": "☾",
+  "embleme": "lunette-galilee"
+ },
+ {
+  "id": "astro.espace",
+  "stat": "cosmos",
+  "rang": 6,
+  "nom": {
+   "fr": "Conquête spatiale"
+  },
+  "description": {
+   "fr": "Fusées, satellites, missions habitées et sondes lointaines."
+  },
+  "prerequis": [
+   "astro.observer"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Spoutnik 1 (1957) : premier satellite artificiel."
+    },
+    {
+     "fr": "Gagarine (1961) : premier humain en orbite ; Apollo 11 (1969) : premier pas sur la Lune."
+    },
+    {
+     "fr": "Une fusée avance en éjectant des gaz vers l'arrière (action-réaction) : elle n'a pas besoin d'air pour pousser."
+    },
+    {
+     "fr": "Voyager 1 a quitté l'héliosphère en 2012 ; c'est l'objet humain le plus lointain."
+    }
+   ],
+   "piege": {
+    "fr": "Dans l'espace, une fusée ne « s'appuie » sur rien : c'est la troisième loi de Newton."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Quelques jalons de la conquête spatiale\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Spoutnik</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1957</text><circle class=\"f\" cx=\"88.4\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"88.4\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Gagarine</text><text class=\"tm\" x=\"88.4\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1961</text><circle class=\"a\" cx=\"142.8\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"142.8\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">Apollo 11</text><text class=\"t\" x=\"142.8\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1969</text><circle class=\"f\" cx=\"197.2\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"197.2\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Voyager</text><text class=\"tm\" x=\"197.2\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1977</text><circle class=\"f\" cx=\"251.6\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"251.6\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">ISS</text><text class=\"tm\" x=\"251.6\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1998</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">JWST</text><text class=\"tm\" x=\"306.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">2021</text></svg>",
+   "source": "NASA History Office"
+  },
+  "symbole": "⇡",
+  "embleme": "fusee"
+ },
+ {
+  "id": "astro.exoplanetes",
+  "stat": "cosmos",
+  "rang": 7,
+  "nom": {
+   "fr": "Exoplanètes et vie ailleurs"
+  },
+  "description": {
+   "fr": "Détecter d'autres mondes et chercher la vie."
+  },
+  "prerequis": [
+   "astro.observer"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Première exoplanète autour d'une étoile semblable au Soleil : 51 Pegasi b (Mayor et Queloz, 1995)."
+    },
+    {
+     "fr": "Méthode des transits : la planète passe devant l'étoile et en baisse légèrement l'éclat."
+    },
+    {
+     "fr": "Méthode des vitesses radiales : l'étoile oscille sous l'attraction de la planète."
+    },
+    {
+     "fr": "Zone habitable : la distance où l'eau pourrait être liquide à la surface."
+    }
+   ],
+   "piege": {
+    "fr": "Zone habitable ne veut pas dire habitée, ni même habitable : Mars est dans celle du Soleil selon les estimations larges, et c'est un désert gelé."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Méthode des transits : l'éclat baisse quand la planète passe\"><polyline class=\"l\" points=\"40,16 40,150 324,150\"/><path class=\"al\" d=\"M40 50 L 140 50 C 150 50, 150 90, 160 90 L 210 90 C 220 90, 220 50, 230 50 L 320 50\" fill=\"none\" stroke-width=\"3\"/><text class=\"tm\" x=\"185\" y=\"111.8\" font-size=\"11\" text-anchor=\"middle\">transit</text><text class=\"tm\" x=\"46\" y=\"14\" font-size=\"11\" text-anchor=\"start\">éclat</text><text class=\"tm\" x=\"322\" y=\"166\" font-size=\"11\" text-anchor=\"end\">temps</text></svg>",
+   "source": "Mayor et Queloz, Nature, 1995"
+  },
+  "symbole": "♁",
+  "embleme": "disque-voyager"
+ },
+ {
+  "id": "astro.sombre",
+  "stat": "cosmos",
+  "rang": 8,
+  "nom": {
+   "fr": "Matière et énergie noires"
+  },
+  "description": {
+   "fr": "Ce qui manque dans l'Univers : la masse invisible et l'accélération."
+  },
+  "prerequis": [
+   "astro.espace",
+   "astro.exoplanetes"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Les galaxies tournent trop vite pour la seule matière visible (Vera Rubin) : il manque de la masse, la matière noire."
+    },
+    {
+     "fr": "Matière ordinaire ≈ 5 %, matière noire ≈ 27 %, énergie noire ≈ 68 % du contenu de l'Univers."
+    },
+    {
+     "fr": "L'énergie noire accélère l'expansion de l'Univers (découverte en 1998 avec des supernovas)."
+    },
+    {
+     "fr": "La matière noire n'interagit pas avec la lumière ; on la détecte par sa gravité (lentilles gravitationnelles)."
+    }
+   ],
+   "piege": {
+    "fr": "Matière noire ne veut pas dire trous noirs ou nuages sombres : ce serait de la matière ordinaire."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Contenu de l'Univers\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"122.6\" width=\"74.7\" height=\"7.4\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"116.6470588235294\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">5 %</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">ordinaire</text><rect class=\"f2\" x=\"132.7\" y=\"90.3\" width=\"74.7\" height=\"39.7\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"84.29411764705883\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">27 %</text><text class=\"tm\" x=\"170.0\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">matière</text><text class=\"tm\" x=\"170.0\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">noire</text><rect class=\"a\" x=\"219.3\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">68 %</text><text class=\"tm\" x=\"256.6666666666667\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">énergie</text><text class=\"tm\" x=\"256.6666666666667\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">noire</text></svg>",
+   "source": "Rubin et Ford, Astrophysical Journal, 1970 ; Planck 2018"
+  },
+  "symbole": "●",
+  "embleme": "halo"
+ }
+]

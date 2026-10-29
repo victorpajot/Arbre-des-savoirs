@@ -1,0 +1,293 @@
+[
+ {
+  "id": "carte-langue",
+  "nom": {
+   "fr": "La carte de la langue"
+  },
+  "description": {
+   "fr": "Maîtriser les acides et les bases. Votre langue, elle, les détectait déjà partout."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "chim.acides"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "La « carte de la langue » (le sucré au bout, l'amer au fond) est fausse : toutes les zones perçoivent toutes les saveurs. Elle vient d'une lecture approximative, en 1942, d'une thèse allemande de 1901 qui ne décrivait que de faibles différences de sensibilité."
+   },
+   "source": "Edwin Boring, Sensation and Perception in the History of Experimental Psychology, 1942 ; David Hänig, 1901"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "papier-tournesol"
+  },
+  "theme": "alchimie"
+ },
+ {
+  "id": "vitraux",
+  "nom": {
+   "fr": "Le verre ne coule pas"
+  },
+  "description": {
+   "fr": "Maîtriser les liaisons chimiques. Les vitraux de Chartres peuvent dormir tranquilles."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "chim.liaisons"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Les vitraux anciens sont parfois plus épais en bas, mais ce n'est pas parce que le verre « coule » : les verriers posaient souvent le côté épais en bas. Un calcul de 1998 montre qu'il faudrait bien plus que l'âge de l'Univers pour qu'un vitrail se déforme visiblement."
+   },
+   "source": "Edgar Zanotto, « Do cathedral glasses flow? », American Journal of Physics, 1998"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "vitrail"
+  },
+  "theme": "alchimie"
+ },
+ {
+  "id": "reve-mendeleiev",
+  "nom": {
+   "fr": "Le rêve de Mendeleïev"
+  },
+  "description": {
+   "fr": "Maîtriser les atomes et les éléments. Sans dormir dessus, si possible."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "sci.atomes"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Mendeleïev aurait raconté avoir vu son tableau en rêve. Les historiens rappellent surtout qu'il travaillait depuis des années à classer ses fiches d'éléments, comme un jeu de patience."
+   },
+   "source": "Michael Gordin, A Well-Ordered Thing, 2004"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "mendeleiev"
+  },
+  "theme": "alchimie"
+ },
+ {
+  "id": "rien-ne-se-perd",
+  "nom": {
+   "fr": "Rien ne se perd"
+  },
+  "description": {
+   "fr": "Maîtriser les réactions chimiques. Votre XP, elle, peut se perdre."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "chim.reactions"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "citation",
+   "texte": {
+    "fr": "Car rien ne se crée, ni dans les opérations de l'art, ni dans celles de la nature."
+   },
+   "auteur": "Antoine Lavoisier",
+   "source": "Traité élémentaire de chimie, 1789"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "balance-lavoisier"
+  },
+  "theme": "alchimie"
+ },
+ {
+  "id": "branche-alchimie",
+  "nom": {
+   "fr": "Le dernier des magiciens"
+  },
+  "description": {
+   "fr": "Maîtriser le premier losange d'Alchimie."
+  },
+  "condition": {
+   "type": "branche_complete",
+   "stat": "alchimie",
+   "rang_max": 4
+  },
+  "cache": true,
+  "recompense": {
+   "type": "citation",
+   "texte": {
+    "fr": "Newton n'a pas été le premier de l'âge de la raison. Il a été le dernier des magiciens."
+   },
+   "auteur": "John Maynard Keynes",
+   "source": "« Newton, the Man », 1946 (traduction)"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "pierre-philosophale"
+  },
+  "theme": "alchimie"
+ },
+ {
+  "id": "pionnier-lavoisier",
+  "nom": {
+   "fr": "Lavoisier"
+  },
+  "description": {
+   "fr": "Maîtriser 3 compétences. L'arbre de la Chimie s'ouvre."
+  },
+  "condition": {
+   "type": "competences_maitrisees",
+   "n": 3
+  },
+  "cache": false,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "« Rien ne se perd, rien ne se crée, tout se transforme » n'est pas de Lavoisier mot pour mot. Il écrit en 1789 que « rien ne se crée, ni dans les opérations de l'art, ni dans celles de la nature ». La formule bien frappée est venue après lui."
+   },
+   "source": "Antoine Lavoisier, Traité élémentaire de chimie, 1789, chapitre XIII"
+  },
+  "ouvre": "alchimie",
+  "illustration": {
+   "type": "savant",
+   "id": "lavoisier"
+  },
+  "theme": "alchimie"
+ },
+ {
+  "id": "pommes-de-terre-andes",
+  "nom": {
+   "fr": "Les pommes de terre de Darwin"
+  },
+  "description": {
+   "fr": "Maîtriser les états de la matière. L'eau bout plus tôt en montagne. Vos pâtes aussi le savent."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "chim.etats"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1835, dans les Andes, Darwin et ses guides font bouillir des pommes de terre toute la nuit : au matin, elles sont toujours dures. En altitude, la pression baisse et l'eau bout avant 100 °C. Au sommet de l'Everest, vers 70 °C."
+   },
+   "source": "Charles Darwin, Voyage d'un naturaliste autour du monde, 1839, chapitre XV"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "kamerlingh-onnes"
+  },
+  "theme": "alchimie"
+ },
+ {
+  "id": "uree-wohler",
+  "nom": {
+   "fr": "L'urée n'a rien tué"
+  },
+  "description": {
+   "fr": "Maîtriser la chimie organique. La « force vitale » a mis des décennies à mourir."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "chim.organique"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "On raconte qu'en 1828, en fabriquant de l'urée au laboratoire, Friedrich Wöhler a tué d'un coup l'idée qu'il faut une « force vitale » pour produire les molécules du vivant. Les chimistes de l'époque n'y ont presque pas vu ça. Le récit héroïque est écrit après coup, dans les manuels."
+   },
+   "source": "Peter Ramberg, « The Death of Vitalism and the Birth of Organic Chemistry », Ambix, 2000"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "carver"
+  },
+  "theme": "alchimie"
+ },
+ {
+  "id": "glutamate",
+  "nom": {
+   "fr": "Le syndrome du restaurant chinois"
+  },
+  "description": {
+   "fr": "Maîtriser la chimie du quotidien. Le glutamate est dans la tomate et le parmesan aussi."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "chim.quotidien"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1968, une lettre au New England Journal of Medicine décrit des palpitations après un repas chinois et soupçonne le glutamate. L'idée fait le tour du monde. Les essais en double aveugle ne trouvent pas d'effet aux doses alimentaires. Le glutamate est naturellement présent dans la tomate et le parmesan."
+   },
+   "source": "Robert Ho Man Kwok, NEJM, 1968 ; Geha et al., Journal of Nutrition, 2000"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "rachel-carson"
+  },
+  "theme": "alchimie"
+ },
+ {
+  "id": "radithor",
+  "nom": {
+   "fr": "L'eau au radium"
+  },
+  "description": {
+   "fr": "Maîtriser la radioactivité et le noyau. Ne buvez rien qui brille."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "chim.noyau"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Dans les années 1920, on vend du Radithor, de l'eau au radium censée redonner de la vigueur. L'industriel Eben Byers en boit environ 1 400 flacons. Il meurt en 1932, la mâchoire rongée. En 1990, le Wall Street Journal résume : « L'eau au radium marchait bien, jusqu'à ce que sa mâchoire tombe. »"
+   },
+   "source": "Roger Macklis, « The Great Radium Scandal », Scientific American, 1993"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "feuille-or-rutherford"
+  },
+  "theme": "alchimie"
+ },
+ {
+  "id": "phosphore-brand",
+  "nom": {
+   "fr": "De l'or dans l'urine"
+  },
+  "description": {
+   "fr": "Réussir trois quiz d'Alchimie sans faute. Pas d'or, mais une lumière."
+  },
+  "condition": {
+   "type": "quiz_parfaits_stat",
+   "stat": "alchimie",
+   "n": 3
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1669, à Hambourg, l'alchimiste Hennig Brand cherche la pierre philosophale en faisant bouillir de l'urine, beaucoup d'urine. Il n'obtient pas d'or, mais une substance qui brille dans le noir : le phosphore, premier élément dont on connaisse le découvreur."
+   },
+   "source": "John Emsley, The 13th Element, 2000"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "alambic"
+  },
+  "theme": "alchimie"
+ }
+]

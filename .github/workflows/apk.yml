@@ -40,6 +40,8 @@ jobs:
       - name: Valider le contenu et les règles
         run: |
           pip install jsonschema
+          python3 outils/packs.py assembler
+          git diff --exit-code --stat -- data || { echo "::error::data/ n'est pas l'assemblage des packs : lance python3 outils/packs.py assembler"; exit 1; }
           python3 outils/valider.py
           node outils/test_moteur.js
 

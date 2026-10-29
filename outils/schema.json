@@ -1,0 +1,3076 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "arbre-competences/schema.json",
+ "title": "Contenu de l'arbre de compétences",
+ "description": "Un seul schéma pour les fichiers de contenu. Chaque fichier est validé contre sa définition dans $defs (regles, skills, questions, succes, commentaires, objets, avatar).",
+ "$defs": {
+  "texte": {
+   "type": "object",
+   "description": "Texte traduit, une clé par langue.",
+   "required": [
+    "fr"
+   ],
+   "additionalProperties": {
+    "type": "string",
+    "minLength": 1
+   }
+  },
+  "id": {
+   "type": "string",
+   "pattern": "^[a-z0-9]+([.-][a-z0-9]+)*$"
+  },
+  "regles": {
+   "type": "object",
+   "required": [
+    "format",
+    "stats",
+    "xp",
+    "quiz",
+    "chrono",
+    "rappels",
+    "aujourdhui"
+   ],
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "stats": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "branche",
+       "couleur",
+       "description"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "branche": {
+        "$ref": "#/$defs/texte"
+       },
+       "couleur": {
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       }
+      }
+     }
+    },
+    "xp": {
+     "type": "object",
+     "required": [
+      "par_bonne_reponse",
+      "bonus_maitrise",
+      "par_rappel_reussi",
+      "paliers_niveau"
+     ],
+     "properties": {
+      "par_bonne_reponse": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "bonus_maitrise": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "par_rappel_reussi": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "paliers_niveau": {
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "minItems": 2
+      },
+      "rappel_par_etape": {
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "minItems": 1,
+       "description": "XP d'un rappel réussi selon l'étape atteinte (1 à n) ; au-delà, la dernière valeur."
+      }
+     }
+    },
+    "quiz": {
+     "type": "object",
+     "required": [
+      "questions_par_quiz",
+      "seuil_maitrise"
+     ],
+     "properties": {
+      "questions_par_quiz": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "seuil_maitrise": {
+       "type": "number",
+       "exclusiveMinimum": 0,
+       "maximum": 1
+      }
+     }
+    },
+    "chrono": {
+     "type": "object",
+     "required": [
+      "secondes",
+      "bonus_xp_par_bonne_reponse"
+     ],
+     "properties": {
+      "secondes": {
+       "type": "integer",
+       "minimum": 5
+      },
+      "bonus_xp_par_bonne_reponse": {
+       "type": "integer",
+       "minimum": 0
+      }
+     }
+    },
+    "rappels": {
+     "type": "object",
+     "required": [
+      "intervalles_jours",
+      "questions_par_rappel",
+      "bonnes_reponses_min"
+     ],
+     "properties": {
+      "intervalles_jours": {
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "minItems": 1
+      },
+      "questions_par_rappel": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "bonnes_reponses_min": {
+       "type": "integer",
+       "minimum": 1
+      }
+     }
+    },
+    "aujourdhui": {
+     "type": "object",
+     "required": [
+      "max_rappels",
+      "suggestion"
+     ],
+     "properties": {
+      "max_rappels": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "suggestion": {
+       "enum": [
+        "stat_la_plus_faible"
+       ]
+      }
+     }
+    },
+    "arbres_fondamentaux": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "uniqueItems": true,
+     "description": "v7 : arbres ouverts dès le départ."
+    }
+   }
+  },
+  "skills": {
+   "type": "object",
+   "required": [
+    "format",
+    "competences"
+   ],
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "competences": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "stat",
+       "rang",
+       "nom",
+       "description",
+       "prerequis",
+       "fiche",
+       "symbole"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "stat": {
+        "$ref": "#/$defs/id"
+       },
+       "rang": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       },
+       "prerequis": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/id"
+        },
+        "uniqueItems": true
+       },
+       "fiche": {
+        "type": "object",
+        "required": [
+         "essentiel",
+         "piege",
+         "schema",
+         "source"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "essentiel": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+           "$ref": "#/$defs/texte"
+          }
+         },
+         "piege": {
+          "$ref": "#/$defs/texte"
+         },
+         "schema": {
+          "type": "string",
+          "pattern": "^<svg"
+         },
+         "source": {
+          "type": "string",
+          "minLength": 3
+         },
+         "figures": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+           "type": "string",
+           "pattern": "^[a-z_]+$"
+          }
+         }
+        }
+       },
+       "symbole": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 3
+       },
+       "embleme": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$"
+       }
+      }
+     }
+    },
+    "figures": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "object",
+      "required": [
+       "titre",
+       "svg"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "titre": {
+        "type": "string",
+        "minLength": 3
+       },
+       "svg": {
+        "type": "string",
+        "pattern": "^<svg"
+       }
+      }
+     }
+    }
+   }
+  },
+  "questions": {
+   "type": "object",
+   "required": [
+    "format",
+    "questions"
+   ],
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "questions": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "competence",
+       "type",
+       "enonce",
+       "reponse",
+       "explication"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "competence": {
+        "$ref": "#/$defs/id"
+       },
+       "type": {
+        "enum": [
+         "qcm",
+         "vrai_faux",
+         "numerique"
+        ]
+       },
+       "enonce": {
+        "$ref": "#/$defs/texte"
+       },
+       "explication": {
+        "$ref": "#/$defs/texte"
+       },
+       "choix": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/texte"
+        },
+        "minItems": 2
+       },
+       "reponse": {
+        "type": [
+         "integer",
+         "number",
+         "boolean"
+        ]
+       },
+       "tolerance": {
+        "type": "number",
+        "minimum": 0
+       },
+       "unite": {
+        "type": "string"
+       },
+       "illustration": {
+        "$ref": "#/$defs/svg"
+       },
+       "illustration_explication": {
+        "$ref": "#/$defs/svg"
+       },
+       "portrait": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "famille",
+         "id"
+        ],
+        "description": "v15 : la bonne réponse est une personne ; son portrait (savant jouable ou portrait) s'affiche au retour.",
+        "properties": {
+         "famille": {
+          "enum": [
+           "savant",
+           "portrait"
+          ]
+         },
+         "id": {
+          "$ref": "#/$defs/id"
+         }
+        }
+       },
+       "figure": {
+        "type": "string",
+        "pattern": "^[a-z_]+$"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 5,
+        "description": "Référence de l'attribution citée dans l'explication (questions de calcul) ; vérifiée par verifier_sources.py."
+       }
+      },
+      "allOf": [
+       {
+        "if": {
+         "properties": {
+          "type": {
+           "const": "qcm"
+          }
+         }
+        },
+        "then": {
+         "required": [
+          "choix"
+         ],
+         "properties": {
+          "reponse": {
+           "type": "integer",
+           "minimum": 0
+          }
+         }
+        }
+       },
+       {
+        "if": {
+         "properties": {
+          "type": {
+           "const": "vrai_faux"
+          }
+         }
+        },
+        "then": {
+         "properties": {
+          "reponse": {
+           "type": "boolean"
+          }
+         }
+        }
+       },
+       {
+        "if": {
+         "properties": {
+          "type": {
+           "const": "numerique"
+          }
+         }
+        },
+        "then": {
+         "required": [
+          "tolerance"
+         ],
+         "properties": {
+          "reponse": {
+           "type": "number"
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   }
+  },
+  "succes": {
+   "type": "object",
+   "required": [
+    "format",
+    "succes"
+   ],
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "succes": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "description",
+       "condition",
+       "cache",
+       "recompense",
+       "illustration"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       },
+       "cache": {
+        "type": "boolean"
+       },
+       "condition": {
+        "$ref": "#/$defs/condition"
+       },
+       "recompense": {
+        "type": "object",
+        "required": [
+         "type",
+         "texte",
+         "source"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "type": {
+          "enum": [
+           "citation",
+           "anecdote"
+          ]
+         },
+         "texte": {
+          "$ref": "#/$defs/texte"
+         },
+         "auteur": {
+          "type": "string"
+         },
+         "source": {
+          "type": "string",
+          "minLength": 3
+         }
+        },
+        "if": {
+         "properties": {
+          "type": {
+           "const": "citation"
+          }
+         }
+        },
+        "then": {
+         "required": [
+          "auteur"
+         ]
+        }
+       },
+       "ouvre": {
+        "type": "string",
+        "description": "v7 : arbre (stat) que ce succès ouvre."
+       },
+       "illustration": {
+        "type": "object",
+        "description": "v17 : image du succès : objet du cabinet, icône de case, dessin propre, ennemi ou savant.",
+        "required": [
+         "type",
+         "id"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "type": {
+          "enum": [
+           "objet",
+           "icone",
+           "dessin",
+           "ennemi",
+           "savant"
+          ]
+         },
+         "id": {
+          "type": "string"
+         }
+        }
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
+       }
+      }
+     }
+    },
+    "dessins": {
+     "type": "object",
+     "description": "v17 : dessins 32 × 32 propres aux succès (palette du cabinet).",
+     "additionalProperties": {
+      "$ref": "#/$defs/pixels"
+     }
+    }
+   }
+  },
+  "condition": {
+   "type": "object",
+   "required": [
+    "type"
+   ],
+   "additionalProperties": false,
+   "description": "Condition déclarative, évaluée par le moteur (verifierSucces). Les compteurs sont dans la partie.",
+   "properties": {
+    "type": {
+     "enum": [
+      "competences_maitrisees",
+      "competence_maitrisee",
+      "quiz_parfaits",
+      "quiz_parfaits_stat",
+      "quiz_rates",
+      "quiz_eclair_rates",
+      "quiz_zero",
+      "quiz_joues",
+      "quiz_nuit",
+      "quiz_aube",
+      "meme_quiz_rate",
+      "chrono_parfaits",
+      "reponses_eclair_fausses",
+      "branche_complete",
+      "toutes_branches",
+      "rappels_reussis",
+      "rappels_retard",
+      "serie_rappels",
+      "duree_maitrise",
+      "niveau_stat",
+      "niveau_global",
+      "competences_regagnees",
+      "competences_perdues",
+      "jours_actifs",
+      "retours",
+      "mode_test",
+      "succes",
+      "succes_obtenus",
+      "objets",
+      "case_atteinte",
+      "case_visitee",
+      "epoque_atteinte",
+      "tours_plateau",
+      "sorties_prison",
+      "eurekas",
+      "reculs",
+      "branches_completes",
+      "rang_maitrise",
+      "ennemi_vaincu",
+      "duels_gagnes",
+      "cadeaux_offerts",
+      "atomes_captures",
+      "atomes_enfuis",
+      "famille_capturee",
+      "hontes",
+      "hontes_effacees",
+      "chronos_joues",
+      "chronos_parfaits",
+      "dates_exactes_partie",
+      "dates_niveau",
+      "dates_rapides",
+      "dates_fausses"
+     ]
+    },
+    "n": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "stat": {
+     "$ref": "#/$defs/id"
+    },
+    "id": {
+     "$ref": "#/$defs/id"
+    },
+    "jours": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "niveau": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "rang_max": {
+     "type": "integer",
+     "minimum": 1,
+     "description": "Avec branche_complete : ne compter que les compétences de rang inférieur ou égal."
+    },
+    "rang": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "famille": {
+     "$ref": "#/$defs/id"
+    }
+   }
+  },
+  "svg": {
+   "type": "string",
+   "pattern": "^<svg[\\s\\S]*</svg>$",
+   "description": "SVG autonome n'utilisant que les classes documentées dans outils/illustrations.py."
+  },
+  "pixels": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "pattern": "^[.A-Za-z0-9!*~+]+$"
+   },
+   "minItems": 1,
+   "description": "Image en pixel art : une chaîne par ligne, un caractère par pixel, « . » transparent, le reste renvoie à la palette (lettres et chiffres) ou aux couleurs du rang (! X * ~ Z + Q)."
+  },
+  "palette": {
+   "type": "object",
+   "propertyNames": {
+    "pattern": "^[A-Za-z0-9!*~+]$"
+   },
+   "additionalProperties": {
+    "type": "string",
+    "pattern": "^#[0-9A-Fa-f]{6}$"
+   }
+  },
+  "commentaires": {
+   "type": "object",
+   "required": [
+    "format",
+    "narrateur",
+    "commentaires",
+    "apartes"
+   ],
+   "properties": {
+    "format": {
+     "const": 3
+    },
+    "narrateur": {
+     "$ref": "#/$defs/texte"
+    },
+    "commentaires": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "contexte",
+       "texte"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "texte": {
+        "$ref": "#/$defs/texte"
+       },
+       "contexte": {
+        "$ref": "#/$defs/contexte"
+       },
+       "reference": {
+        "type": "boolean",
+        "description": "La réplique fait référence à l'histoire des sciences."
+       }
+      }
+     }
+    },
+    "apartes": {
+     "type": "array",
+     "minItems": 10,
+     "description": "Apartés de l'IA qui se sert d'un objet ou d'un livre débloqué, selon le ton.",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "sorte",
+       "ton",
+       "texte"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "sorte": {
+        "enum": [
+         "objet",
+         "livre"
+        ]
+       },
+       "ton": {
+        "enum": [
+         "neutre",
+         "moqueuse",
+         "impressionnee",
+         "decue",
+         "impatiente"
+        ]
+       },
+       "texte": {
+        "$ref": "#/$defs/texte"
+       }
+      }
+     }
+    },
+    "surnoms": {
+     "type": "object",
+     "description": "Surnoms que l'IA donne au joueur selon son humeur ; « succes » contient {succes}.",
+     "required": [
+      "neutre",
+      "moqueuse",
+      "impressionnee",
+      "decue",
+      "impatiente",
+      "succes"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "neutre": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
+        "$ref": "#/$defs/texte"
+       }
+      },
+      "moqueuse": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
+        "$ref": "#/$defs/texte"
+       }
+      },
+      "impressionnee": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
+        "$ref": "#/$defs/texte"
+       }
+      },
+      "decue": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
+        "$ref": "#/$defs/texte"
+       }
+      },
+      "impatiente": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
+        "$ref": "#/$defs/texte"
+       }
+      },
+      "succes": {
+       "type": "array",
+       "minItems": 3,
+       "items": {
+        "$ref": "#/$defs/texte"
+       }
+      }
+     }
+    }
+   }
+  },
+  "objets": {
+   "type": "object",
+   "required": [
+    "format",
+    "palette",
+    "taille",
+    "objets"
+   ],
+   "properties": {
+    "format": {
+     "const": 2
+    },
+    "palette": {
+     "$ref": "#/$defs/palette"
+    },
+    "taille": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "minItems": 2,
+     "maxItems": 2
+    },
+    "objets": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "annee",
+       "notice",
+       "source",
+       "condition",
+       "pixels",
+       "citation",
+       "bonus"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "annee": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "notice": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "condition": {
+        "$ref": "#/$defs/condition"
+       },
+       "pixels": {
+        "$ref": "#/$defs/pixels"
+       },
+       "lot": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 7,
+        "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
+       },
+       "cadeau": {
+        "type": "object",
+        "description": "v7 : ce que fait l'IA quand on lui offre cet objet.",
+        "required": [
+         "effet",
+         "garde",
+         "texte",
+         "eclat"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "effet": {
+          "enum": [
+           "avance",
+           "recule",
+           "echange",
+           "ennemi",
+           "rien"
+          ]
+         },
+         "n": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+         },
+         "garde": {
+          "type": "boolean",
+          "description": "L'IA garde l'objet sur son masque."
+         },
+         "texte": {
+          "$ref": "#/$defs/texte"
+         },
+         "eclat": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "description": "v10 : éclat de l'objet, 3 pour ce qui brille ou en fait trop. Plus il est grand, plus la faveur de l'IA monte."
+         }
+        }
+       },
+       "citation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "verbatim",
+         "texte",
+         "source"
+        ],
+        "properties": {
+         "verbatim": {
+          "type": "boolean",
+          "description": "Faux : résumé de la source, affiché « D'après »."
+         },
+         "texte": {
+          "$ref": "#/$defs/texte"
+         },
+         "source": {
+          "type": "string",
+          "minLength": 3
+         }
+        }
+       },
+       "bonus": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "type"
+        ],
+        "properties": {
+         "type": {
+          "enum": [
+           "case",
+           "butin",
+           "faveur"
+          ]
+         },
+         "n": {
+          "type": "integer",
+          "minimum": 1
+         }
+        }
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
+       }
+      }
+     }
+    },
+    "chance_bonus": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 1
+    }
+   }
+  },
+  "avatar": {
+   "type": "object",
+   "required": [
+    "accessoires",
+    "cheveux",
+    "corps",
+    "format",
+    "palette",
+    "rangs",
+    "savants",
+    "taille"
+   ],
+   "properties": {
+    "format": {
+     "const": 3
+    },
+    "palette": {
+     "$ref": "#/$defs/palette"
+    },
+    "taille": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "minItems": 2,
+     "maxItems": 2
+    },
+    "corps": {
+     "$ref": "#/$defs/pixels"
+    },
+    "cheveux": {
+     "$ref": "#/$defs/pixels"
+    },
+    "rangs": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "niveau_min",
+       "couleurs",
+       "tenue"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "niveau_min": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "couleurs": {
+        "$ref": "#/$defs/palette"
+       },
+       "tenue": {
+        "$ref": "#/$defs/pixels"
+       }
+      }
+     }
+    },
+    "accessoires": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "emplacement",
+       "condition",
+       "pixels"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "emplacement": {
+        "enum": [
+         "tete",
+         "visage"
+        ]
+       },
+       "condition": {
+        "$ref": "#/$defs/condition"
+       },
+       "pixels": {
+        "$ref": "#/$defs/pixels"
+       },
+       "lot": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 7,
+        "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
+       }
+      }
+     }
+    },
+    "emplacements": {
+     "type": "string",
+     "description": "Caractères dont la couleur dépend du rang."
+    },
+    "savants": {
+     "type": "array",
+     "minItems": 20,
+     "description": "Savants jouables : ils remplacent le corps, la tenue et les cheveux de l'avatar. Les accessoires de visage restent portables, ceux de tête deviennent des déguisements.",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "nom",
+       "annees",
+       "condition",
+       "notice",
+       "source",
+       "couleurs",
+       "base",
+       "cheveux"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "annees": {
+        "type": "string"
+       },
+       "condition": {
+        "$ref": "#/$defs/condition"
+       },
+       "notice": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "couleurs": {
+        "$ref": "#/$defs/palette"
+       },
+       "base": {
+        "$ref": "#/$defs/pixels"
+       },
+       "cheveux": {
+        "$ref": "#/$defs/pixels"
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
+       }
+      }
+     }
+    },
+    "portraits": {
+     "type": "array",
+     "description": "v15 : portraits des personnes qu'une question fait choisir par leur nom, montrés avec une biographie au retour de la question.",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "nom",
+       "annees",
+       "bio",
+       "source",
+       "couleurs",
+       "base",
+       "cheveux"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "annees": {
+        "type": "string"
+       },
+       "bio": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "couleurs": {
+        "$ref": "#/$defs/palette"
+       },
+       "base": {
+        "$ref": "#/$defs/pixels"
+       },
+       "cheveux": {
+        "$ref": "#/$defs/pixels"
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
+       }
+      }
+     }
+    },
+    "tenues_farce": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "notice",
+       "theme",
+       "couleurs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "notice": {
+        "$ref": "#/$defs/texte"
+       },
+       "theme": {
+        "type": "string"
+       },
+       "couleurs": {
+        "$ref": "#/$defs/palette"
+       }
+      }
+     }
+    }
+   }
+  },
+  "ia": {
+   "type": "object",
+   "required": [
+    "format",
+    "nom",
+    "palette",
+    "taille",
+    "expressions",
+    "masques",
+    "credits"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 2
+    },
+    "nom": {
+     "$ref": "#/$defs/texte"
+    },
+    "palette": {
+     "$ref": "#/$defs/palette"
+    },
+    "taille": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "minItems": 2,
+     "maxItems": 2
+    },
+    "expressions": {
+     "type": "object",
+     "description": "Expression du masque pour chaque contexte de réplique.",
+     "additionalProperties": {
+      "enum": [
+       "neutre",
+       "moqueuse",
+       "impressionnee",
+       "decue",
+       "impatiente"
+      ]
+     }
+    },
+    "masques": {
+     "type": "array",
+     "minItems": 24,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "notice",
+       "source",
+       "base",
+       "expressions",
+       "tons",
+       "caractere",
+       "regles",
+       "texte_regles"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "notice": {
+        "$ref": "#/$defs/texte"
+       },
+       "base": {
+        "$ref": "#/$defs/pixels"
+       },
+       "expressions": {
+        "type": "object",
+        "required": [
+         "neutre",
+         "moqueuse",
+         "impressionnee",
+         "decue",
+         "impatiente"
+        ],
+        "additionalProperties": {
+         "$ref": "#/$defs/pixels"
+        }
+       },
+       "condition": {
+        "$ref": "#/$defs/condition",
+        "description": "Ce qui débloque le masque. Absente : le masque est là dès le début."
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "tons": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "description": "Tons de réplique que ce masque sait porter.",
+        "items": {
+         "enum": [
+          "neutre",
+          "moqueuse",
+          "impressionnee",
+          "decue",
+          "impatiente"
+         ]
+        }
+       },
+       "lot": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 7,
+        "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
+       },
+       "caractere": {
+        "enum": [
+         "clement",
+         "neutre",
+         "cruel"
+        ]
+       },
+       "regles": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "v11 : règles que le masque impose les jours où l'IA le porte (voir outils/masques_regles.py).",
+        "properties": {
+         "butin": {
+          "type": "number",
+          "minimum": 0
+         },
+         "avance": {
+          "type": "integer"
+         },
+         "questions": {
+          "type": "integer"
+         },
+         "ennemis": {
+          "enum": [
+           "absents",
+           "renfort"
+          ]
+         },
+         "pieges": {
+          "enum": [
+           "neutres"
+          ]
+         },
+         "echec": {
+          "type": "number",
+          "minimum": 0
+         },
+         "atome": {
+          "type": "integer"
+         }
+        }
+       },
+       "texte_regles": {
+        "$ref": "#/$defs/texte"
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
+       }
+      }
+     }
+    },
+    "faveur": {
+     "type": "object",
+     "description": "v10 : la faveur de l'IA, de 0 à 100. Elle baisse chaque jour ; les cadeaux la font remonter selon leur éclat.",
+     "additionalProperties": false,
+     "required": [
+      "depart",
+      "baisse_par_jour",
+      "gains",
+      "lassitude_jours",
+      "paliers",
+      "piege"
+     ],
+     "properties": {
+      "depart": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 100
+      },
+      "baisse_par_jour": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "gains": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+       }
+      },
+      "lassitude_jours": {
+       "type": "integer",
+       "minimum": 1,
+       "description": "Un objet déjà offert peut l'être de nouveau après ce délai, pour moitié moins."
+      },
+      "paliers": {
+       "type": "array",
+       "minItems": 2,
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "id",
+         "min",
+         "nom",
+         "butin",
+         "avance",
+         "effet"
+        ],
+        "properties": {
+         "id": {
+          "$ref": "#/$defs/id"
+         },
+         "min": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "nom": {
+          "$ref": "#/$defs/texte"
+         },
+         "butin": {
+          "type": "number",
+          "minimum": 0
+         },
+         "avance": {
+          "type": "integer"
+         },
+         "effet": {
+          "$ref": "#/$defs/texte"
+         }
+        }
+       }
+      },
+      "piege": {
+       "type": "object",
+       "description": "Piège posé chaque jour devant le pion quand l'IA est furieuse."
+      },
+      "mur_max": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "mur_rattrapage": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "remontee": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 100,
+       "description": "Tombée à 0, la faveur revient à cette valeur le lendemain."
+      },
+      "mur": {
+       "type": "object",
+       "description": "Minutes au mur de la honte quand la faveur tombe sous ce palier (nulle : 0), doublées à chaque chute du jour.",
+       "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+       }
+      }
+     }
+    },
+    "masques_jour": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "max",
+      "selon_faveur"
+     ],
+     "properties": {
+      "max": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "selon_faveur": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "array",
+        "items": {
+         "enum": [
+          "clement",
+          "neutre",
+          "cruel"
+         ]
+        }
+       }
+      }
+     }
+    },
+    "portrait": {
+     "type": "object"
+    },
+    "credits": {
+     "type": "object",
+     "description": "v16 : crédits gagnés par succès (montant fixé par l'IA) et pots-de-vin.",
+     "additionalProperties": false,
+     "required": [
+      "bareme",
+      "genres",
+      "bonus_cache",
+      "humeurs",
+      "honte",
+      "pots",
+      "agacement",
+      "ultimatum"
+     ],
+     "properties": {
+      "bareme": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+       }
+      },
+      "genres": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "string"
+       }
+      },
+      "bonus_cache": {
+       "type": "number",
+       "minimum": 1
+      },
+      "humeurs": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "id",
+         "facteur",
+         "poids",
+         "mots"
+        ],
+        "properties": {
+         "id": {
+          "type": "string"
+         },
+         "facteur": {
+          "type": "number",
+          "minimum": 0
+         },
+         "poids": {
+          "type": "array",
+          "items": {
+           "type": "number",
+           "minimum": 0
+          },
+          "minItems": 4,
+          "maxItems": 4
+         },
+         "mots": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+           "type": "object",
+           "required": [
+            "fr"
+           ],
+           "properties": {
+            "fr": {
+             "type": "string",
+             "minLength": 1
+            }
+           },
+           "additionalProperties": false
+          }
+         }
+        }
+       }
+      },
+      "honte": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "chance",
+        "facteur",
+        "mots"
+       ],
+       "properties": {
+        "chance": {
+         "type": "number"
+        },
+        "facteur": {
+         "type": "number"
+        },
+        "mots": {
+         "type": "array",
+         "items": {
+          "type": "object",
+          "required": [
+           "fr"
+          ],
+          "properties": {
+           "fr": {
+            "type": "string",
+            "minLength": 1
+           }
+          },
+          "additionalProperties": false
+         }
+        }
+       }
+      },
+      "pots": {
+       "type": "object",
+       "additionalProperties": {
+        "anyOf": [
+         {
+          "type": "number"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      },
+      "agacement": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+       }
+      },
+      "ultimatum": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+       }
+      },
+      "boutique": {
+       "type": "object",
+       "description": "v19 : boutique de l'IA (prix, faveur d'un masque acheté, nombre d'épreuves d'un arbre favori, répliques).",
+       "required": [
+        "prix",
+        "faveur_masque",
+        "arbre_epreuves",
+        "mots"
+       ],
+       "properties": {
+        "prix": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "integer",
+          "minimum": 0
+         }
+        },
+        "faveur_masque": {
+         "type": "integer"
+        },
+        "arbre_epreuves": {
+         "type": "integer",
+         "minimum": 1
+        },
+        "mots": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "array",
+          "items": {
+           "type": "object"
+          }
+         }
+        },
+        "stock_max": {
+         "type": "integer",
+         "minimum": 1
+        }
+       }
+      },
+      "emplettes": {
+       "type": "object",
+       "description": "v20 : emplettes de l'IA avec l'argent des ultimatums payés (chance par jour, poids par article, tons flatteurs, farces de la plus ridicule à la moins ridicule, répliques avec {nom} et {prix}).",
+       "required": [
+        "chance",
+        "poids",
+        "tons_flatteurs",
+        "farces",
+        "mots"
+       ],
+       "properties": {
+        "chance": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "poids": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "number",
+          "minimum": 0
+         }
+        },
+        "tons_flatteurs": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        "farces": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        "mots": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "array",
+          "items": {
+           "type": "object"
+          }
+         }
+        }
+       }
+      },
+      "piques": {
+       "type": "object",
+       "description": "v32 : pique propre à chaque succès, ajoutée au verdict de l'humeur.",
+       "additionalProperties": {
+        "type": "object",
+        "required": [
+         "fr"
+        ],
+        "properties": {
+         "fr": {
+          "type": "string",
+          "minLength": 1
+         }
+        }
+       }
+      },
+      "verdicts": {
+       "type": "object",
+       "description": "v32 : le montant dit par chaque humeur, avant la pique du succès.",
+       "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+         "type": "object",
+         "required": [
+          "fr"
+         ],
+         "properties": {
+          "fr": {
+           "type": "string",
+           "minLength": 1
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "alyca": {
+     "type": "object",
+     "required": [
+      "nom",
+      "revelation",
+      "rancune"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "nom": {
+       "type": "string"
+      },
+      "revelation": {
+       "type": "object",
+       "required": [
+        "titre",
+        "texte",
+        "anecdote",
+        "source",
+        "bouton"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "titre": {
+         "$ref": "#/$defs/texte"
+        },
+        "texte": {
+         "type": "array",
+         "items": {
+          "$ref": "#/$defs/texte"
+         }
+        },
+        "anecdote": {
+         "$ref": "#/$defs/texte"
+        },
+        "source": {
+         "type": "string"
+        },
+        "bouton": {
+         "$ref": "#/$defs/texte"
+        }
+       }
+      },
+      "rancune": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/texte"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "plateau": {
+   "type": "object",
+   "required": [
+    "format",
+    "regles",
+    "epoques",
+    "palette",
+    "taille",
+    "icones",
+    "cases"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "regles": {
+     "type": "object",
+     "required": [
+      "depart",
+      "arrivee",
+      "valeurs",
+      "bonus",
+      "echec",
+      "tour_suivant",
+      "textes",
+      "butin"
+     ],
+     "properties": {
+      "depart": {
+       "type": "integer"
+      },
+      "arrivee": {
+       "type": "integer"
+      },
+      "valeurs": {
+       "type": "object",
+       "required": [
+        "rappel",
+        "quiz_rang"
+       ],
+       "properties": {
+        "rappel": {
+         "type": "integer"
+        },
+        "quiz_rang": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "integer"
+         }
+        }
+       }
+      },
+      "bonus": {
+       "type": "object",
+       "required": [
+        "parfait",
+        "chrono",
+        "du_jour",
+        "jouer"
+       ],
+       "additionalProperties": {
+        "type": "integer"
+       }
+      },
+      "echec": {
+       "type": "object",
+       "required": [
+        "quiz",
+        "rappel"
+       ],
+       "additionalProperties": {
+        "type": "integer"
+       }
+      },
+      "tour_suivant": {
+       "type": "object",
+       "required": [
+        "multiplicateur_recul",
+        "quiz_parfaits_prison"
+       ],
+       "additionalProperties": {
+        "type": "integer"
+       }
+      },
+      "textes": {
+       "type": "object",
+       "additionalProperties": {
+        "$ref": "#/$defs/texte"
+       }
+      },
+      "butin": {
+       "type": "object",
+       "required": [
+        "rappel",
+        "quiz_base",
+        "quiz_par_rang",
+        "lots"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "rappel": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "quiz_base": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "quiz_par_rang": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "lots": {
+         "type": "integer",
+         "minimum": 1
+        }
+       }
+      },
+      "question_piege": {
+       "type": "object",
+       "description": "v32 : question piège sur les cases pièges.",
+       "properties": {
+        "rang_min": {
+         "type": "integer",
+         "minimum": 1
+        }
+       }
+      }
+     }
+    },
+    "epoques": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "debut",
+       "fin",
+       "icone"
+      ],
+      "properties": {
+       "id": {
+        "enum": [
+         "antiquite",
+         "moyen-age",
+         "renaissance",
+         "classique",
+         "xixe",
+         "xxe"
+        ]
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "debut": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "fin": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "icone": {
+        "$ref": "#/$defs/id"
+       }
+      }
+     }
+    },
+    "palette": {
+     "$ref": "#/$defs/palette"
+    },
+    "taille": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "minItems": 2,
+     "maxItems": 2
+    },
+    "icones": {
+     "type": "object",
+     "additionalProperties": {
+      "$ref": "#/$defs/pixels"
+     }
+    },
+    "cases": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "object",
+      "required": [
+       "n",
+       "id",
+       "annee",
+       "titre",
+       "stat",
+       "epoque",
+       "icone",
+       "histoire",
+       "replique",
+       "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "n": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "annee": {
+        "type": "integer"
+       },
+       "titre": {
+        "$ref": "#/$defs/texte"
+       },
+       "stat": {
+        "$ref": "#/$defs/id"
+       },
+       "epoque": {
+        "enum": [
+         "antiquite",
+         "moyen-age",
+         "renaissance",
+         "classique",
+         "xixe",
+         "xxe"
+        ]
+       },
+       "icone": {
+        "$ref": "#/$defs/id"
+       },
+       "histoire": {
+        "$ref": "#/$defs/texte"
+       },
+       "replique": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "special": {
+        "type": "object",
+        "required": [
+         "type"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "type": {
+          "enum": [
+           "eureka",
+           "avance",
+           "recul",
+           "quarantaine",
+           "prison",
+           "retour_epoque",
+           "teleport",
+           "oubli",
+           "revision",
+           "cadeau",
+           "mendeleiev"
+          ]
+         },
+         "n": {
+          "type": "integer",
+          "minimum": 1
+         },
+         "vers": {
+          "type": "integer",
+          "minimum": 1
+         },
+         "raison": {
+          "$ref": "#/$defs/texte"
+         }
+        }
+       }
+      }
+     }
+    },
+    "objectifs": {
+     "type": "array",
+     "minItems": 1,
+     "description": "Objectif de la case centrale, tour par tour : la relique du cabinet obtenue en terminant ce tour.",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "tour",
+       "relique",
+       "nom"
+      ],
+      "properties": {
+       "tour": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "relique": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       }
+      }
+     }
+    },
+    "parcours": {
+     "type": "object",
+     "description": "v21 : parcours des tours suivants, dessinés par l'IA selon son humeur (formes, réglages par palier de faveur, répliques).",
+     "required": [
+      "formes",
+      "humeurs",
+      "mots"
+     ],
+     "properties": {
+      "formes": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "required": [
+         "id",
+         "nom",
+         "notice",
+         "humeurs"
+        ]
+       }
+      },
+      "humeurs": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "object",
+        "required": [
+         "cases",
+         "ennemis",
+         "atomes",
+         "pieges",
+         "cadeaux"
+        ]
+       }
+      },
+      "ennemis_par_deux_tours": {
+       "type": "integer"
+      },
+      "ennemis_max": {
+       "type": "integer"
+      },
+      "mots": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "array",
+        "items": {
+         "type": "object"
+        }
+       }
+      },
+      "donjon": {
+       "type": "object"
+      }
+     }
+    },
+    "competences_cases": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+       "type": "string",
+       "pattern": "^[a-z]+\\.[a-z_]+$"
+      }
+     }
+    }
+   }
+  },
+  "frise": {
+   "type": "object",
+   "required": [
+    "format",
+    "epoques",
+    "evenements"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "epoques": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "nom",
+       "debut",
+       "fin"
+      ],
+      "properties": {
+       "id": {
+        "enum": [
+         "antiquite",
+         "moyen-age",
+         "renaissance",
+         "classique",
+         "xixe",
+         "xxe"
+        ]
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "debut": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "fin": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "evenements": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "annee",
+       "titre",
+       "phrase",
+       "stat",
+       "epoque",
+       "source",
+       "condition"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "annee": {
+        "type": "integer"
+       },
+       "titre": {
+        "$ref": "#/$defs/texte"
+       },
+       "phrase": {
+        "$ref": "#/$defs/texte"
+       },
+       "stat": {
+        "$ref": "#/$defs/id"
+       },
+       "epoque": {
+        "enum": [
+         "antiquite",
+         "moyen-age",
+         "renaissance",
+         "classique",
+         "xixe",
+         "xxe"
+        ]
+       },
+       "detail": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "case": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Case du plateau dont l'histoire sert de détail."
+       },
+       "condition": {
+        "$ref": "#/$defs/condition"
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
+       }
+      }
+     }
+    }
+   }
+  },
+  "bibliotheque": {
+   "type": "object",
+   "required": [
+    "format",
+    "livres"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "livres": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "titre",
+       "auteur",
+       "annee",
+       "stat",
+       "embleme",
+       "couleur",
+       "condition",
+       "resume",
+       "importance",
+       "anecdote",
+       "source",
+       "reaction",
+       "competence"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "titre": {
+        "$ref": "#/$defs/texte"
+       },
+       "auteur": {
+        "type": "string",
+        "minLength": 2
+       },
+       "annee": {
+        "type": "integer"
+       },
+       "stat": {
+        "$ref": "#/$defs/id"
+       },
+       "embleme": {
+        "$ref": "#/$defs/id",
+        "description": "Sprite d'objet (objets.json) ou d'icône (plateau.json)."
+       },
+       "couleur": {
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$"
+       },
+       "condition": {
+        "$ref": "#/$defs/condition"
+       },
+       "resume": {
+        "$ref": "#/$defs/texte"
+       },
+       "importance": {
+        "$ref": "#/$defs/texte"
+       },
+       "anecdote": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "reaction": {
+        "$ref": "#/$defs/texte"
+       },
+       "lot": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 7,
+        "description": "v6 : tour du plateau à partir duquel ce butin peut tomber."
+       },
+       "competence": {
+        "$ref": "#/$defs/id",
+        "description": "v7 : la compétence à laquelle le livre est rattaché (un livre par compétence)."
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
+       },
+       "extrait": {
+        "type": "object",
+        "required": [
+         "texte",
+         "langue",
+         "reference",
+         "verification"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "texte": {
+          "type": "string",
+          "minLength": 1
+         },
+         "langue": {
+          "type": "string"
+         },
+         "traduction": {
+          "$ref": "#/$defs/texte"
+         },
+         "traducteur": {
+          "type": "string"
+         },
+         "reference": {
+          "type": "string",
+          "minLength": 1
+         },
+         "verification": {
+          "type": "object",
+          "required": [
+           "url",
+           "date",
+           "controle"
+          ],
+          "additionalProperties": false,
+          "properties": {
+           "url": {
+            "type": "string",
+            "pattern": "^https://"
+           },
+           "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+           },
+           "controle": {
+            "type": "string",
+            "minLength": 10
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "ennemis": {
+   "type": "object",
+   "description": "v7 : ennemis du plateau et affirmations de leurs duels.",
+   "required": [
+    "format",
+    "placement",
+    "reserve",
+    "questions_par_duel",
+    "ennemis",
+    "mythes"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "placement": {
+     "type": "object",
+     "description": "Case (numéro en texte) → ennemi, au début de chaque tour.",
+     "additionalProperties": {
+      "$ref": "#/$defs/id"
+     }
+    },
+    "reserve": {
+     "$ref": "#/$defs/id"
+    },
+    "questions_par_duel": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "ennemis": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "nom",
+       "titre",
+       "figure",
+       "description",
+       "couleurs",
+       "base",
+       "cheveux",
+       "defi",
+       "victoire",
+       "defaite",
+       "source"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "titre": {
+        "$ref": "#/$defs/texte"
+       },
+       "figure": {
+        "enum": [
+         "archetype",
+         "historique"
+        ]
+       },
+       "annees": {
+        "type": "string"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       },
+       "couleurs": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "string",
+         "pattern": "^#[0-9A-Fa-f]{6}$"
+        }
+       },
+       "base": {
+        "$ref": "#/$defs/pixels"
+       },
+       "cheveux": {
+        "$ref": "#/$defs/pixels"
+       },
+       "defi": {
+        "$ref": "#/$defs/texte"
+       },
+       "victoire": {
+        "$ref": "#/$defs/texte"
+       },
+       "defaite": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       },
+       "renvoi": {
+        "$ref": "#/$defs/texte"
+       },
+       "theme": {
+        "$ref": "#/$defs/theme"
+       },
+       "qui": {
+        "$ref": "#/$defs/texte"
+       },
+       "lecon": {
+        "$ref": "#/$defs/texte"
+       }
+      }
+     }
+    },
+    "mythes": {
+     "type": "array",
+     "minItems": 5,
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "ennemi",
+       "vrai",
+       "affirmation",
+       "explication",
+       "origine",
+       "source"
+      ],
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "ennemi": {
+        "$ref": "#/$defs/id"
+       },
+       "vrai": {
+        "type": "boolean"
+       },
+       "affirmation": {
+        "$ref": "#/$defs/texte"
+       },
+       "explication": {
+        "$ref": "#/$defs/texte"
+       },
+       "origine": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 3
+       }
+      }
+     }
+    }
+   }
+  },
+  "atomes": {
+   "type": "object",
+   "description": "v9 : le jeu de Mendeleïev. Les 118 éléments, à capturer sur les cases Mendeleïev du plateau.",
+   "required": [
+    "format",
+    "regles",
+    "familles",
+    "raretes",
+    "elements",
+    "theme"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "regles": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "questions",
+      "seuil",
+      "attente_max"
+     ],
+     "properties": {
+      "questions": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "seuil": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "attente_max": {
+       "type": "integer",
+       "minimum": 1,
+       "description": "Atomes sauvages en attente de combat, au plus."
+      }
+     }
+    },
+    "familles": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "nom",
+       "couleur"
+      ],
+      "properties": {
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "couleur": {
+        "type": "string",
+        "pattern": "^#[0-9A-F]{6}$"
+       }
+      }
+     }
+    },
+    "raretes": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "nom",
+       "poids"
+      ],
+      "properties": {
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "poids": {
+        "type": "integer",
+        "minimum": 1
+       }
+      }
+     }
+    },
+    "elements": {
+     "type": "array",
+     "minItems": 118,
+     "maxItems": 118,
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "z",
+       "symbole",
+       "nom",
+       "masse",
+       "stable",
+       "famille",
+       "periode",
+       "groupe",
+       "rarete",
+       "ou",
+       "anecdote",
+       "source"
+      ],
+      "properties": {
+       "z": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "symbole": {
+        "type": "string",
+        "pattern": "^[A-Z][a-z]?$"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "masse": {
+        "type": "number",
+        "exclusiveMinimum": 0
+       },
+       "stable": {
+        "type": "boolean",
+        "description": "Faux : masse de l'isotope le plus stable (entier)."
+       },
+       "famille": {
+        "$ref": "#/$defs/id"
+       },
+       "periode": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 7
+       },
+       "groupe": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 18,
+        "description": "0 : lanthanide ou actinide, rangé sous le tableau."
+       },
+       "rarete": {
+        "enum": [
+         "commun",
+         "peu_commun",
+         "rare",
+         "legendaire"
+        ]
+       },
+       "ou": {
+        "type": "array",
+        "minItems": 2,
+        "items": {
+         "$ref": "#/$defs/texte"
+        }
+       },
+       "anecdote": {
+        "$ref": "#/$defs/texte"
+       },
+       "source": {
+        "type": "string",
+        "minLength": 5
+       }
+      }
+     }
+    },
+    "guide": {
+     "type": "object",
+     "description": "v34 : le guide du tableau, ouvert après une erreur au combat.",
+     "additionalProperties": false,
+     "required": [
+      "id",
+      "titre",
+      "etapes",
+      "source"
+     ],
+     "properties": {
+      "id": {
+       "type": "string"
+      },
+      "titre": {
+       "$ref": "#/$defs/texte"
+      },
+      "source": {
+       "type": "string"
+      },
+      "etapes": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "schema",
+         "titre",
+         "texte"
+        ],
+        "properties": {
+         "schema": {
+          "enum": [
+           "ordre",
+           "lignes",
+           "trous",
+           "colonnes",
+           "bas"
+          ]
+         },
+         "titre": {
+          "$ref": "#/$defs/texte"
+         },
+         "texte": {
+          "$ref": "#/$defs/texte"
+         }
+        }
+       }
+      }
+     }
+    },
+    "couches": {
+     "type": "object",
+     "description": "v34 : électrons par couche (K, L, M…) de chaque élément, index z - 1.",
+     "additionalProperties": false,
+     "required": [
+      "id",
+      "par_z",
+      "predites_des",
+      "source"
+     ],
+     "properties": {
+      "id": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "predites_des": {
+       "type": "integer"
+      },
+      "par_z": {
+       "type": "array",
+       "minItems": 118,
+       "maxItems": 118,
+       "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 32
+        }
+       }
+      }
+     }
+    },
+    "theme": {
+     "$ref": "#/$defs/theme",
+     "description": "L'arbre dont parle le jeu (répliques, couleur, butin)."
+    }
+   }
+  },
+  "theme": {
+   "description": "v18 : l'arbre auquel la chose se rattache ; la case du pion donne le ton. Packs : l'id d'un arbre déclaré par un pack (valider.py vérifie qu'il existe).",
+   "type": "string",
+   "pattern": "^[a-z][a-z0-9-]*$"
+  },
+  "contexte": {
+   "description": "Le moment où l'IA parle. Packs : « theme_jouer@<arbre> », « theme_reussi@<arbre> », « theme_rate@<arbre> » pour les répliques propres à un arbre.",
+   "anyOf": [
+    {
+     "enum": [
+      "accueil",
+      "quiz_parfait_facile",
+      "quiz_parfait",
+      "quiz_reussi",
+      "quiz_rate_facile",
+      "quiz_rate",
+      "quiz_zero",
+      "rappel_reussi",
+      "rappel_perdu",
+      "rappel_retard",
+      "nuit",
+      "mode_test",
+      "eclair",
+      "retour",
+      "retards",
+      "livre",
+      "date",
+      "masque",
+      "plateau_avance",
+      "eureka",
+      "piege",
+      "prison",
+      "prison_liberation",
+      "quarantaine",
+      "retour_epoque",
+      "tour_fini",
+      "bonus_du_jour",
+      "jouer_rappel",
+      "jouer_bonus",
+      "jouer_faible",
+      "jouer_hasard",
+      "jouer_case",
+      "jouer_hors_case",
+      "jouer_ouvre_arbre",
+      "farce",
+      "ennemi",
+      "duel_gagne",
+      "duel_perdu",
+      "teleport",
+      "oubli",
+      "route_raccourcie",
+      "route_detour",
+      "revision",
+      "revision_reussie",
+      "revision_ratee",
+      "jouer_revision",
+      "cadeau_case",
+      "atome_apparait",
+      "atome_capture",
+      "atome_fuite",
+      "cadeau_eblouissant",
+      "cadeau_brillant",
+      "cadeau_terne",
+      "cadeau_repete",
+      "faveur_boudeuse",
+      "faveur_furieuse",
+      "faveur_comblee",
+      "piege_ia",
+      "mur_honte",
+      "honte_effacee",
+      "honte_ratee",
+      "honte_vide",
+      "pot_premier",
+      "pot_genereux",
+      "pot_egal",
+      "pot_radin",
+      "ultimatum",
+      "ultimatum_paye",
+      "ultimatum_refuse",
+      "furieuse_reussi",
+      "furieuse_rate",
+      "furieuse_jouer",
+      "furieuse_ennemi",
+      "furieuse_duel_gagne",
+      "furieuse_duel_perdu",
+      "furieuse_atome_apparait",
+      "furieuse_atome_capture",
+      "furieuse_atome_fuite",
+      "furieuse_plateau",
+      "furieuse_tour_fini",
+      "furieuse_cadeau",
+      "furieuse_farce",
+      "furieuse_honte",
+      "furieuse_defaut",
+      "faveur_nulle",
+      "faveur_remontee",
+      "mur_force",
+      "mur_libere",
+      "rattrapage_reussi",
+      "rattrapage_rate",
+      "piege_question",
+      "piege_dejoue",
+      "piege_declenche",
+      "chrono_annonce",
+      "chrono_case",
+      "chrono_juste",
+      "chrono_proche",
+      "chrono_faux",
+      "chrono_bilan_bon",
+      "chrono_bilan_rate",
+      "chrono_parfait",
+      "furieuse_chrono"
+     ]
+    },
+    {
+     "type": "string",
+     "pattern": "^theme_(jouer|reussi|rate)@[a-z][a-z0-9-]*$"
+    }
+   ]
+  }
+ }
+}

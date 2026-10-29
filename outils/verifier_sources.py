@@ -4,19 +4,16 @@ et par la compilation GitHub. Demande de Victor (2026-10-28) : rien d'inventé d
 Une « information sourcée » est tout élément des data/*.json qui porte un champ `source` (succès, cases, livres,
 objets, ennemis, mythes, savants, atomes…). Son empreinte couvre tout son texte.
 
-  - vérifiée : inscrite dans outils/verifications.json avec la même empreinte, l'URL consultée, la date et ce qui a
-    été contrôlé ;
-  - héritée : présente avant la routine, listée dans outils/sources_a_verifier.json, inchangée depuis. Elle reste
-    à contrôler, par lots ;
+  - vérifiée : inscrite dans le registre de son pack, packs/<id>/verifications.json, avec la même empreinte, l'URL
+    consultée, la date et ce qui a été contrôlé ;
   - sinon (nouvelle, ou modifiée sans nouvelle vérification) : le commit est refusé.
 
 Les extraits de livres doivent en plus porter leur propre `verification` (texte trouvé mot pour mot).
 
 Usage :
   python3 outils/verifier_sources.py                    contrôle (code 1 si un élément n'est pas vérifié)
-  python3 outils/verifier_sources.py --liste            liste ce qui reste à vérifier
+  python3 outils/verifier_sources.py --liste            liste ce qui reste à vérifier, avec le pack de chaque élément
   python3 outils/verifier_sources.py --inscrire CLE URL "ce qui a été contrôlé"
-  python3 outils/verifier_sources.py --heriter REF      (une seule fois) fige l'état du commit REF comme « à vérifier »
 """
 import hashlib
 import json
@@ -26,8 +23,7 @@ from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
 DATA = RACINE / "data"
-VERIFS = RACINE / "outils" / "verifications.json"
-HERITAGE = RACINE / "outils" / "sources_a_verifier.json"
+PACKS = RACINE / "packs"
 
 
 def textes(o):
@@ -100,45 +96,50 @@ def extraits_sans_verif():
     return mauvais
 
 
-def main(args):
-    el, verifs, herit = elements(), lire(VERIFS), lire(HERITAGE)
-    if args[:1] == ["--heriter"]:
-        # L'héritage vient d'un commit publié (args[1]) : ce qui a été ajouté depuis doit être vérifié tout de suite.
-        if herit:
-            sys.exit("L'héritage est déjà figé : on ne le refait pas, sinon du contenu non vérifié s'y glisserait.")
-        import subprocess
-        ref = args[1]
+def proprietaire(cle, index=None):
+    """Le pack d'une information sourcée, d'après data/packs.json (clé « fichier:id/… »)."""
+    index = index or lire(DATA / "packs.json")
+    fichier, ident = cle.split(":")[0] + ".json", cle.split(":")[1].split("/")[0].split("#")[0]
+    for ou, proprios in index.get("proprietaires", {}).items():
+        if ou.split("/")[0] == fichier and ident in proprios:
+            return proprios[ident]
+    return "socle"
 
-        def au_commit(nom):
-            r = subprocess.run(["git", "show", f"{ref}:data/{nom}"], cwd=RACINE, capture_output=True, text=True)
-            return r.stdout if r.returncode == 0 else None
-        ancien = elements(au_commit)
-        ecrire(HERITAGE, {k: empreinte(v) for k, v in ancien.items() if k not in verifs})
-        print(f"{len(ancien)} informations sourcées de {ref} figées comme « à vérifier ».")
-        return 0
+
+def registres():
+    """Tous les registres des packs, fusionnés : clé → vérification."""
+    out = {}
+    for f in sorted(PACKS.glob("*/verifications.json")):
+        out.update(lire(f))
+    return out
+
+
+def main(args):
+    el, verifs = elements(), registres()
     if args[:1] == ["--inscrire"]:
         cle, url, controle = args[1], args[2], " ".join(args[3:])
         if cle not in el:
             sys.exit(f"Clé inconnue : {cle}")
         if not url.startswith("https://") or len(controle) < 10:
             sys.exit("Il faut l'URL consultée (https://) et ce qui a été contrôlé.")
-        verifs[cle] = {"empreinte": empreinte(el[cle]), "url": url, "date": date.today().isoformat(), "controle": controle}
-        ecrire(VERIFS, verifs)
-        print(f"Vérifié : {cle}")
+        pack = proprietaire(cle)
+        f = PACKS / pack / "verifications.json"
+        reg = lire(f)
+        reg[cle] = {"empreinte": empreinte(el[cle]), "url": url, "date": date.today().isoformat(), "controle": controle}
+        ecrire(f, reg)
+        print(f"Vérifié : {cle} (registre du pack {pack})")
         return 0
-    ok, heritees, refus = 0, [], []
+    ok, refus = 0, []
     for k, v in el.items():
-        e = empreinte(v)
-        if k in verifs and verifs[k]["empreinte"] == e:
+        if k in verifs and verifs[k]["empreinte"] == empreinte(v):
             ok += 1
-        elif herit.get(k) == e:
-            heritees.append(k)
         else:
             refus.append(k)
     sans = extraits_sans_verif()
     if args[:1] == ["--liste"]:
-        print("\n".join(heritees))
-    print(f"Sources : {ok} vérifiées, {len(heritees)} héritées à vérifier, {len(refus)} nouvelles ou modifiées sans vérification.")
+        index = lire(DATA / "packs.json")
+        print("\n".join(f"{k}  [{proprietaire(k, index)}]" for k in refus))
+    print(f"Sources : {ok} vérifiées, {len(refus)} nouvelles ou modifiées sans vérification.")
     if refus or sans:
         for k in refus[:40]:
             print("  NON VÉRIFIÉ :", k)

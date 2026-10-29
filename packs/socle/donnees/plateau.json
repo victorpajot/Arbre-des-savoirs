@@ -1,0 +1,2867 @@
+{
+ "format": 1,
+ "regles": {
+  "depart": 1,
+  "arrivee": 63,
+  "valeurs": {
+   "rappel": 1,
+   "quiz_rang": {
+    "1": 1,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "7": 7,
+    "8": 8
+   }
+  },
+  "bonus": {
+   "parfait": 0,
+   "chrono": 0,
+   "du_jour": 0,
+   "jouer": 0,
+   "jouer_max": 4
+  },
+  "butin": {
+   "rappel": 0.4,
+   "quiz_base": 0.4,
+   "quiz_par_rang": 0.05,
+   "lots": 7
+  },
+  "echec": {
+   "quiz": 0,
+   "rappel": -2
+  },
+  "tour_suivant": {
+   "multiplicateur_recul": 2,
+   "quiz_parfaits_prison": 2
+  },
+  "question_piege": {
+   "rang_min": 5
+  },
+  "chrono": {
+   "cases": [
+    14,
+    30,
+    49
+   ],
+   "evenements": 5,
+   "reussite": 3,
+   "avance": 3,
+   "min_reservoir": 5,
+   "points": {
+    "juste": 2,
+    "proche": 1,
+    "rapide": 1,
+    "parfait": 5
+   },
+   "rapide_ms": 8000,
+   "monter": 2,
+   "prehistoire": -4000,
+   "spontane": 0.34,
+   "niveaux": [
+    {
+     "n": 1,
+     "pas": 100,
+     "proche": 1,
+     "nom": {
+      "fr": "Le siècle"
+     }
+    },
+    {
+     "n": 2,
+     "pas": 50,
+     "proche": 1,
+     "nom": {
+      "fr": "Le demi-siècle"
+     }
+    },
+    {
+     "n": 3,
+     "pas": 10,
+     "proche": 1,
+     "nom": {
+      "fr": "La décennie"
+     }
+    },
+    {
+     "n": 4,
+     "pas": 1,
+     "proche": 5,
+     "nom": {
+      "fr": "L'année exacte"
+     }
+    }
+   ]
+  },
+  "textes": {
+   "eureka": {
+    "fr": "Eurêka ! Tu rejoues la même distance."
+   },
+   "avance": {
+    "fr": "Raccourci : avance de {n} cases."
+   },
+   "recul": {
+    "fr": "Recule de {n} cases."
+   },
+   "quarantaine": {
+    "fr": "Quarantaine : ta prochaine épreuve réussie ne te fera pas avancer."
+   },
+   "prison": {
+    "fr": "Assigné à résidence : tu ne bouges plus jusqu'à un quiz parfait."
+   },
+   "retour_epoque": {
+    "fr": "Retour au début de l'époque."
+   },
+   "teleport": {
+    "fr": "Téléportation : retour à la case {vers}."
+   },
+   "oubli": {
+    "fr": "Trou de mémoire : retour à la plus ancienne case jamais dévoilée, parmi les 15 derrière toi."
+   },
+   "cadeau": {
+    "fr": "Case cadeau : pas d'épreuve, un objet rejoint ton cabinet."
+   },
+   "revision": {
+    "fr": "Révision forcée : l'IA choisit une compétence que tu maîtrises. Ton pion ne bouge plus avant de l'avoir révisée."
+   },
+   "mendeleiev": {
+    "fr": "Case Mendeleïev : passe dessus et un atome sauvage apparaît. Trois questions, deux bonnes réponses, et il rejoint ton tableau périodique."
+   },
+   "chrono": {
+    "fr": "Case Chrono : l'IA te présente cinq événements déjà débloqués, tu dis quand ils se sont produits. Trois justes, et ton pion avance."
+   }
+  }
+ },
+ "epoques": [
+  {
+   "id": "antiquite",
+   "nom": {
+    "fr": "Des origines à l'Antiquité"
+   },
+   "debut": null,
+   "fin": 475,
+   "icone": "amphore"
+  },
+  {
+   "id": "moyen-age",
+   "nom": {
+    "fr": "Moyen Âge"
+   },
+   "debut": 476,
+   "fin": 1449,
+   "icone": "enluminure"
+  },
+  {
+   "id": "renaissance",
+   "nom": {
+    "fr": "Renaissance"
+   },
+   "debut": 1450,
+   "fin": 1599,
+   "icone": "plume"
+  },
+  {
+   "id": "classique",
+   "nom": {
+    "fr": "Âge classique et Lumières"
+   },
+   "debut": 1600,
+   "fin": 1799,
+   "icone": "bougie"
+  },
+  {
+   "id": "xixe",
+   "nom": {
+    "fr": "XIXe siècle"
+   },
+   "debut": 1800,
+   "fin": 1899,
+   "icone": "engrenage"
+  },
+  {
+   "id": "xxe",
+   "nom": {
+    "fr": "XXe et XXIe siècles"
+   },
+   "debut": 1900,
+   "fin": null,
+   "icone": "atome"
+  }
+ ],
+ "competences_cases": {},
+ "palette": {
+  "k": "#1E1A2B",
+  "n": "#2B2B33",
+  "G": "#5D6470",
+  "g": "#9AA0A8",
+  "z": "#C9CED6",
+  "l": "#E8E8EE",
+  "w": "#FFFFFF",
+  "4": "#7A5418",
+  "Y": "#B8862B",
+  "y": "#F2C14E",
+  "j": "#FFE79A",
+  "H": "#3E2614",
+  "B": "#5E3B1C",
+  "b": "#9A6534",
+  "t": "#C99260",
+  "1": "#5E1414",
+  "R": "#8E2424",
+  "r": "#D94141",
+  "f": "#F28B82",
+  "O": "#A95A1F",
+  "o": "#E8873A",
+  "a": "#F7B77A",
+  "2": "#1B4D20",
+  "E": "#2E7D32",
+  "e": "#4CAF50",
+  "i": "#A5DC8F",
+  "C": "#2A6F99",
+  "c": "#8FD8F2",
+  "d": "#D8F4FC",
+  "3": "#1A2C66",
+  "U": "#24408F",
+  "u": "#3D63D9",
+  "x": "#93AAF2",
+  "5": "#3B1A5C",
+  "P": "#5E2F8A",
+  "p": "#9B59D0",
+  "q": "#CDA6EE",
+  "6": "#9C5E3E",
+  "S": "#D9A07A",
+  "s": "#F2C9A0",
+  "7": "#FBE3C8",
+  "0": "#4A2C1C",
+  "J": "#6E4429",
+  "L": "#94603C",
+  "W": "#B98059",
+  "8": "#2A1A0E",
+  "h": "#6B4226",
+  "9": "#9C6B43",
+  "A": "#A8905E",
+  "V": "#D8C49A",
+  "v": "#F7EBD0",
+  "D": "#7A3E1E",
+  "m": "#B5623B",
+  "M": "#E39A6B",
+  "F": "#B5476B",
+  "I": "#F28FB0",
+  "N": "#141A33",
+  "K": "#2C3559",
+  "T": "#E8DFC8"
+ },
+ "taille": [
+  32,
+  32
+ ],
+ "icones": {
+  "feu": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................k...............",
+   "...............krk..............",
+   "...............krk..............",
+   "..............krrk..............",
+   "..............krrk..............",
+   "..............krork.............",
+   "..............krook..kk.........",
+   "..............koook.krrk........",
+   "..........k...kooookrrrk........",
+   ".........krk.kooooorrrrk........",
+   ".........krrkkooooorrrrk........",
+   ".........krrrooooooorrrk........",
+   ".........krrrooooooorrrrk.......",
+   "........krrroooyyoooorrrk.......",
+   "........krrroooyyoooorrrk.......",
+   "........krrroooyyoooorrrk.......",
+   ".....kkkrrroooyyyyooorrrkkk.....",
+   "....kttkrrroooyyyyooorrrkttk....",
+   "....kttttttoooyyyyooottttttk....",
+   "....kttttttttttttttttttttttk....",
+   "....kttttttttttttttttttttttk....",
+   "....kkkbtbtbtbtbtbtbtbtbtkkk....",
+   "...kbbbbbbbbbbbbbbbbbbbbbbbbk...",
+   "...kbBbBbBbBbBbkkBbBbBbBbBbBk...",
+   "...kBBBBBBkkkkk..kkkkkBBBBBBk...",
+   "...kHHkkkk............kkkkHHk...",
+   "....kk....................kk....",
+   "................................"
+  ],
+  "roue": [
+   "................................",
+   "............kkkkkkkk............",
+   "..........kktttttttbkk..........",
+   "........kkttbbbbbbbbtbkk........",
+   ".......kttbbbBBBBBBbbbtbk.......",
+   "......ktbbbBBkkbbkkbBbbbbk......",
+   ".....ktbbBBbk.kbbk.kbbBbbbk.....",
+   "....ktbbBkbbk.kbbk.kbbkbbbbk....",
+   "...ktbbBk.kbbkkbbkkbbk.kbbbbk...",
+   "...ktbBk..kbbkkbbkkbbk..ktbBk...",
+   "..ktbbBbkk.kbbkbbkbbk.kkbbbbbk..",
+   "..ktbBbbbbkkbbbbbbbbkkbbbbtbBk..",
+   ".ktbbBkkbbbbkbbtbbbkbbbbkkbbbbk.",
+   ".ktbBk..kkbbbttttbbbbbkk..ktbBk.",
+   ".ktbBkkkkkkbbtttbbBbbkkkkkktbBk.",
+   ".ktbBbbbbbbbtttHHbbHbbbbbbbtbBk.",
+   ".ktbBbbbbbbbbtbHHbBHbbbbbbbtbBk.",
+   ".ktbBkkkkkkbbbbbbBHbbkkkkkktbBk.",
+   ".ktbBk..kkbbbBBBHHHbbbkk..ktbBk.",
+   ".kbbbbkkbbbbkbbHHbbkbbbbkktbbBk.",
+   "..ktbBbbbbkkbbbbbbbbkkbbbbtbBk..",
+   "..kbbbbbkk.kbbkbbkbbk.kkbtbbBk..",
+   "...ktbBk..kbbkkbbkkbbk..ktbBk...",
+   "...kbbbbk.kbbkkbbkkbbk.ktbbBk...",
+   "....kbbbbkbbk.kbbk.kbbktbbBk....",
+   ".....kbbbtbbk.kbbk.kbttbbBk.....",
+   "......kbbbbtbkkbbkkttbbbBk......",
+   ".......kbBbbbttttttbbbBBk.......",
+   "........kkbBbbbbbbbbBBkk........",
+   "..........kkbBBBBBBBkk..........",
+   "............kkkkkkkk............",
+   "................................"
+  ],
+  "tablette": [
+   "................................",
+   "................................",
+   "................kkkkkkkkkkkk....",
+   "....kkkkkkkkkkkkMMMMMMMMMMMMk...",
+   "...kMMMMMMMMMMMMMMMMMMMMMMMmk...",
+   "...kMMMMMMMMMMMMMMMMMMMMMMMmk...",
+   "...kMMMMMMMMMMMMMMMMMMMMMMMmk...",
+   "...kMMDDMDDMMDDMDDMMMDDMMMMmk...",
+   "...kMMDMMDMMMDMMDMMMMDMMMMMmk...",
+   "...kMMMMMMMMMMMMMMMMMMMMMMMmk...",
+   "...kMMMMMMMMMMMMMMMMMMMMMMMmk...",
+   "...kMMDDMMDDMDDMDDMDDMDDMMMmk...",
+   "...kMMDMMMDMMDMMDMMDMMDMMMMmk...",
+   "...kMMMMMMMMMMMMMMMMMMMMMMMmk...",
+   "...kMMMMMMMMMMMMMMMMMMMMMMMmk...",
+   "...kMMDDMMMDDMMDDMDDMDDMMMMmk...",
+   "..kMMMDMMMMDMMMDMMDMMDMMMMMMMk..",
+   "..kMMMMMMMMMMMMMMMMMMMMMMMMMmk..",
+   "..kMMMMMMMMMMMMMMMMMMMMMMMMMmk..",
+   "..kMMMDDMMMDDMMDDMMDDMDDMMMMmk..",
+   "..kMMMDMMMMDMMMDMMMDMMDMMMMMmk..",
+   "..kMMMMMMMMMMMMMMMMMMMMMMMMMmk..",
+   "..kMMMMMMMMMMMMMMMMMMMMMMMMMmk..",
+   "..kMMMDDMMDDMDDMDDMMMDDMMMMMmk..",
+   "..kMMMDMMMDMMDMMDMMMMDMMMMMMmk..",
+   "..kMMMMMMMMMMMMMMMMMMMMMMMMMmk..",
+   "..kMMMMMMMMMMMMMMMMMMMMMMMMMmk..",
+   "..kMMMMMMMMMMMMMmmmmmmmmmmmmmk..",
+   "..kMmmmmmmmmmmmmkkkkkkkkkkkkk...",
+   "...kkkkkkkkkkkkk................",
+   "................................",
+   "................................"
+  ],
+  "pyramide": [
+   "................................",
+   "........................kk......",
+   "......................kkjjkk....",
+   ".....................kjjjjjYk...",
+   ".....................kjjjjyyk...",
+   "....................kjjjjyyYYk..",
+   "..............kk....kyyjyyYY4k..",
+   ".............kvAk....kyyyYY4k...",
+   "............kvvAAk...kYYYY44k...",
+   "............kvvvAk....kk44kk....",
+   "...........kvvvvAAk.....kk......",
+   "..........kvvvvvAAAk............",
+   ".........kvvvvvvAAAAk...........",
+   ".........kvvvvvvAAAAk...........",
+   "........kvvvvvvvAAAAAk..........",
+   ".......kvvvvvvvvAAAAAAk.........",
+   ".......kvvvvvvvvvAAAAAk.........",
+   "......kvvvvvvvvvvAAAAAAk........",
+   ".....kvvvvvvvvvvvAAAAAAAk.......",
+   ".....kvvvvvvvvvvvAAAAAAAk.......",
+   "....kvvvvvvvvvvvvAAAAAAAAk......",
+   "...kvvvvvvvvvvvvvAAAAAAAAAk.....",
+   "..kvvvvvvvvvvvvvvAAAAAAAAAAk....",
+   "..kvvvvvvvvvvvvvvvAAAAAAAAAk....",
+   ".kvvvvvvvvvvvvvvvvAAAAAAAAAAk...",
+   "kvvvvvvvvvvvvvvvvvAAAAAAAAAAAk..",
+   ".kkkkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+   "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+   "................................",
+   "................................",
+   "................................"
+  ],
+  "eclipse": [
+   "................................",
+   "................k...............",
+   ".........k.....kjk.....k........",
+   "........kjk....kjk....kjk.......",
+   "........kjk....kjk....kjk.......",
+   ".........kjk.kkkjkkkkkjk........",
+   ".........kjkkjNNNNNNNNNk........",
+   ".........kkjjNKKNNNNNNNNk.......",
+   "...kk...kjjjNKNNNNNNNNNNNk..kk..",
+   "..kjjkkkjjjKKNNNNNNNNNNNNNkkjjk.",
+   "...kkjjkjjNKNNNNNNNNNNNNNNNjkk..",
+   ".....kkjjjKKNNNNNNNNNNNNNNNk....",
+   "......kjjNKNNNNNNNNNNNNNNNNNk...",
+   ".....kjjjNNNNNNNNNNNNNNNNNNNk...",
+   ".....kyjjNNNNNNNNNNNNNNNNNNNk...",
+   "..kkkkjjjNNNNNNNNNNNNNNNNNNNkkk.",
+   ".kjjjjyjyNNNNNNNNNNNNNNNNNNNjjjk",
+   "..kkkkyyjNNNNNNNNNNNNNNNNNNNkkk.",
+   ".....kyyyyNNNNNNNNNNNNNNNNNk....",
+   "......kyyyNNNNNNNNNNNNNNNNNk....",
+   "......kyYyyNNNNNNNNNNNNNNNk.....",
+   ".....kkkyYyYNNNNNNNNNNNNNkkk....",
+   "...kkjjk4YYYYNNNNNNNNNNNkkjjkk..",
+   "..kjjkk.k4YYYYNNNNNNNNNk..kkjjk.",
+   "...kk....kk4444444444kk.....kk..",
+   "..........kkk444444kk.k.........",
+   ".........kjjkkkkkkk..kjk........",
+   ".........kjk...kjk...kjk........",
+   "........kjk....kjk....kjk.......",
+   "........kjk....kjk....kjk.......",
+   ".........k.....kjk.....k........",
+   "................k..............."
+  ],
+  "atome": [
+   "................................",
+   "................................",
+   "........kkk...........k.........",
+   ".......kddckk.......kkukk.......",
+   ".......kddCuukk...kkuuuuuk......",
+   ".......kcCCkkuuk.kuukkkkuk......",
+   ".......kukk..kuukuuk...kuk......",
+   ".......kuk....kuuuk....kuk......",
+   ".......kuk....kuuuk....kuk......",
+   ".......kuk...kuukuuk...kuk......",
+   ".......kukkkkkukkkukkkkkuk......",
+   "......kkuuuuuuuuuuuuuuuuukk.....",
+   "....kkuuuuukuukfrkkuukuuuuukk...",
+   "...kuuukkukkuffffrrkukkukkuuuk..",
+   "..kuukk.kuuuufffrrRkuuuuk.kkuuk.",
+   ".kuuk....kuufffffrr1kuuk...kddck",
+   ".kuk.....kuurfrrrrR1kuuk...kddCk",
+   ".kuuk....kuukrrrrR1kkuuk...kcCCk",
+   "..kuukk.kuuuuRRR111kuuuuk.kkuuk.",
+   "...kuuukkukkukk11kkkukkukkuuuk..",
+   "....kkuuuuukuukkkkkuukuuuuukk...",
+   "......kkuuuuuuuuuuuuuuuuukk.....",
+   ".......kukkkkkukkkukkkkkuk......",
+   ".......kuk...kuukuuk...kuk......",
+   ".......kuk....kuuuk....kuk......",
+   ".......kuk....kuuuk....kuk......",
+   ".......kukk..kuukuuk...kuk......",
+   ".......kddckkuuk.kuukkkkuk......",
+   ".......kddCuukk...kkuuuuuk......",
+   ".......kcCCkk.......kkukk.......",
+   "........kkk...........k.........",
+   "................................"
+  ],
+  "alexandrie": [
+   "................................",
+   "...............kk...............",
+   "............kkkTTkk.............",
+   "..........kkTTTTTTTkkk..........",
+   "........kkTTTTTTTTTTTTkk........",
+   ".....kkkTTTTTTTTTTTTTTTTkk......",
+   "...kkTTTTTTTTTTTTTTTTTTTTTkkk...",
+   "..kTTTTTTTTTTTTTTTTTTTTTTTTTTk..",
+   ".kwwwwwwwwwwwwwwwwwwwwwwwwwwwlk.",
+   ".kwllllllllllllllllllllllllllzk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzzk.",
+   "..kkwllzgkwllzgkklwlzgklwlzgkk..",
+   "...klglggklglggkkwglggkwglggk...",
+   "...kwglggkwglggkklglggklglggk...",
+   "...klglggklglggkkwglggkwglggk...",
+   "...kwglggkwglggkklglggklglggk...",
+   "...klglggklglggkkwglggkwglggk...",
+   "...kwglggkwglggkklglggklglggk...",
+   "...klglggklglggkkwglggkwglggk...",
+   "...kwglggkwglggkklglggklglggk...",
+   "...klglggklglggkkwglggkwglggk...",
+   "...kwglggkwglggkklglggklglggk...",
+   "...klglggklglggkkwglggkwglggk...",
+   "...kwglggkwglggkklglggklglggk...",
+   "...klglggklglggkkwglggkwglggk...",
+   ".kkkwllzgkwllzgkklwlzgklwlzgkkk.",
+   "klllllllllllllllllllllllllllllzk",
+   "klzzzzzzzzzzzzzzzzzzzzzzzzzzzzgk",
+   "kzgggggggggggggggggggggggggggggk",
+   ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+   "................................",
+   "................................"
+  ],
+  "incendie": [
+   "..............g.................",
+   "...............kk..........g....",
+   ".....g...k..kkkTTkk...k.........",
+   "........krkkTTTTTTTkkkrk........",
+   ".......kroTTTTTTTTTTTrrk........",
+   ".....kkkroTTTTTTTTTTTroTkkk.....",
+   "...kkTTToooTrrTTTTTTTrooTTrkk...",
+   "..kTTrTTooorrrTTTTTTToooTrrTTk..",
+   ".kwwwrrooooorrwwwwrwoooorrrwwlk.",
+   ".kwllrrooooorrlllrrrooooorrrlzk.",
+   ".klzrrooyyoorrzzzrroooooorrrzzk.",
+   "..kkrrooyyooorrkkrrooyyooorrkk..",
+   "...krooyyyyoorrkrrrooyyooorrk...",
+   "..krrooyyyyoorrkrrooyyyyoorrk...",
+   "...klglggklglggkrrooyyyyoorrrk..",
+   "...kwglggkwglggrroooyyyyooorrk..",
+   "...klglggklglggkkwglggkwglggk...",
+   "...kwglggkwglggkklglggklglggk...",
+   "...klglggklglggkkwglggkwglggk...",
+   "...kwglggkwglggkklglggklglggk...",
+   "...klglggklglggkkwglggkwglggk...",
+   "...kwglggkwglggkklglggklglggk...",
+   "...klglggklglggkkwglggkwglggk...",
+   "...kwglggkwglggkklglggklglggk...",
+   "...klglggklglggkkwglggkwglggk...",
+   ".kkkwllzgkwllzgkklwlzgklwlzgkkk.",
+   "klllllllllllllllllllllllllllllzk",
+   "klzzzzzzzzzzzzzzzzzzzzzzzzzzzzgk",
+   "kzgggggggggggggggggggggggggggggk",
+   ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+   "................................",
+   "................................"
+  ],
+  "couronne": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "............kk....kk............",
+   "...........kjyk..kjyk...........",
+   "...........kjYk..kjYk...........",
+   "......k....kjYk.kjyYk....k......",
+   ".....kyk..kjyyykkjyyyk..kyk.....",
+   ".....kjyk.kjyyYkkjyyYk.kjYk.....",
+   ".....kjyykkjyyyjjyyyYkkjyYk.....",
+   ".....kjyyjjyyyyyyyyyyjjyyYk.....",
+   ".....kjyyyyyyyyyyyyyyyyyyYk.....",
+   ".....kjyyyyyyyyyyyyyyyyyyYk.....",
+   ".....kjyyffyyyyffyyyyffyyYk.....",
+   ".....kjyffrRyyffrRyyffrRyYk.....",
+   ".....kjyyRRyyyyRRyyyyRRyyYk.....",
+   ".....kjyyyyyyyyyyyyyyyyyyYk.....",
+   "....kkYYYYYYYYYYYYYYYYYYYYYk....",
+   "...kcccccccccccccccccccccccck...",
+   "..kcccdddcccccccdddcccccccccck..",
+   ".kcddddccdddccdddcdddccccddddck.",
+   ".kccccccccccddcccccccddddccccck.",
+   "..kcccccccccccccccccccccccccck..",
+   "...kcccccccccccccccccccccccck...",
+   "....kkkcccccccccccccccccckkk....",
+   ".......kkkkkkkkkkkkkkkkkk.......",
+   "................................",
+   "................................"
+  ],
+  "engrenage": [
+   "................................",
+   ".......kk....kk.................",
+   "......kjyk..kjyk................",
+   "......kjyykkjyYk................",
+   "...kk.kjyYkkjyYk.kk.............",
+   "..kjykkjyyjjyyYkkjyk............",
+   ".kjyyjjyyyyyyyyjjyyyk...........",
+   ".kyyyyyyyyyyyyyyyyyYk...........",
+   "..kyyyyyyyyyyyyyyyYk............",
+   "..kkjyyyyYYYYyyyyYkk............",
+   ".kykjyyyYYYYYYyyyYkyk...........",
+   "kjyjyyyyYYnnYYyyyyjyyk..........",
+   "kjyYyyyyYYnnYYyyyyYyYk..........",
+   "kyYkjyyyYYYYYYyyyYkyk.kk........",
+   ".kkkjyyyyYYYYyyyyYkk.kMMk.......",
+   "..kjyyyyyyyyyyyyyyykkMMMMkkkk...",
+   ".kjyyyyyyyyyyyyyyMMMkkMmkkMMMk..",
+   ".kyyyYYyyyyyyyyYYMMMMMMMMMMMmk..",
+   "..kyYkkjyyYYyyYkkMMMMMMMMMMMmk..",
+   "...kk.kjyYkkjyYkkkMMMMMMMMMmkk..",
+   "......kjyYkkyyYkMkMMMmmmmMMmkMk.",
+   "......kyYk..kyYMMMMMMmnnmMMMMMMk",
+   ".......kk....kkMMmMMMmnnmMMMmMmk",
+   "...............kMkMMMmmmmMMmkMk.",
+   "................kkMMMMMMMMMmkk..",
+   "................kMMMMMMMMMMMMk..",
+   "................kMMMmmMMmmMMmk..",
+   "................kMmmkkMmkkMmmk..",
+   ".................kkkkMMMMkkkk...",
+   ".....................kMmk.......",
+   "......................kk........",
+   "................................"
+  ],
+  "zero": [
+   "................................",
+   "................................",
+   "................................",
+   "...kkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "..kvvvvvvvvvvvvvvvvvvvvvvvvvvk..",
+   "..kvvvvvvvvvvvvvvvvvvvvvvvvvVk..",
+   "..kvvvvvvvvvvvvvvvvvvvvvvvvvVk..",
+   "..kvvvvvvvvvvRRRRRRvvvvvvvvvVk..",
+   "..kvvvvvvvvRRRRRRRRRRvvvvvvvVk..",
+   "..kvvvvvvvRRRRvvvvRRRRvvvvvvVk..",
+   "..kvvvvvvvRRRvvvvvvRRRvvvvvvVk..",
+   "..kvvvvvvRRRvvvvvvvvRRRvvvvvVk..",
+   "..kvvvvvvRRRvvvvvvvvRRRvvvvvVk..",
+   "..kvvvvvvRRvvvvvvvvvvRRvvvvvVk..",
+   "..kvvvvvvRRvvvvvvvvvvRRvvvvvVk..",
+   "..kvvvvvRRRvvvvvvvvvvRRRvvvvVk..",
+   "..kvvvvvvRRvvvvvvvvvvRRvvvvvVk..",
+   "..kvvvvvvRRvvvvvvvvvvRRvvvvvVk..",
+   "..kvvvvvvRRRvvvvvvvvRRRvvvvvVk..",
+   "..kvvvvvvRRRvvvvvvvvRRRvvvvvVk..",
+   "..kvvvvvvvRRRvvvvvvRRRvvvvvvVk..",
+   "..kvvvvvvvRRRRvvvvRRRRvvvvvvVk..",
+   "..kvvvvvvvvRRRRRRRRRRvvvvvvvVk..",
+   "..kvvvvvvvvvvRRRRRRvvvvvvvvvVk..",
+   "..kvvvAAAAAAAAAAAAAAAAAAAAAvVk..",
+   "..kvvvvvvvvvvvvvvvvvvvvvvvvvVk..",
+   "..kvvvvvvvvvvvvvvvvvvvvvvvvvVk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVVk..",
+   "...kkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "................................",
+   "................................",
+   "................................"
+  ],
+  "astrolabe": [
+   "...............kk...............",
+   "..............kyyk..............",
+   ".............kyyyyk.............",
+   "............kyykkyyk............",
+   "............kyykkyyk............",
+   "..........kkjjjjjjjykk..........",
+   "........kkjjyyy4yyyyjykk........",
+   ".......kj4yyyyyyyyyyyy4yk.......",
+   "......kjyyyyYYYYyYYYyyyyyk......",
+   ".....kjyyyYYYYYYyYYYYYyyyyk.....",
+   "....kjyyyYYYYYYYyYYYYY44yyyk....",
+   "....k4yyYYYYYyyyyyyYY444yy4k....",
+   "...kjyyYYYYYyyYyyyyy444YYyyyk...",
+   "...kjyyYYYYyYYyyyYY444YYYyyYk...",
+   "..kjyyYYYYyYYYyYyY444yYYYYyyyk..",
+   "..kjyyYYYyyYYYyYy444YyyYYYyyYk..",
+   "..kjyyYYYyYYYYyY444YYyyYYYyyYk..",
+   "..kjyyYYYyYYYYy444YYYyyYYYyyYk..",
+   "..kj4yyyyyyyyy444yyyyyyyyyyy4k..",
+   "..kjyyYYYyYYY444yyyyyYyYYYyyYk..",
+   "..kjyyYYYyyY444YyYYYYyyYYYyyYk..",
+   "..kyyyYYYYy444YYyYYYYyYYYYyyYk..",
+   "...kjyyYYY444YYYyYYYyYYYYyyYk...",
+   "...kyyyYY444yyYYyYyyYYYYYyyYk...",
+   "....k4yy444YYyyyyyyYYYYYyy4k....",
+   "....kyy444YYYYYYyYYYYYYyyyYk....",
+   ".....kyyyyYYYYYYyYYYYYyyyYk.....",
+   "......kyyyyyYYYYyYYYyyyyYk......",
+   ".......kyY4yyyyyyyyyyy4Yk.......",
+   "........kkyYyyyyyyyyYYkk........",
+   "..........kkyYYY4YYYkk..........",
+   "............kkkkkkkk............"
+  ],
+  "lunettes": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "........kk............kk........",
+   ".....kkkbbkkk......kkkbbkkk.....",
+   ".kk.kbbbbbbbbk....kbbbbbbbbk..k.",
+   "kbbkbbbddddbbbk..kbbbddddbbbkkbk",
+   ".kbbbddddddddbbkkbbddddddddbbbk.",
+   "..kbbddwdddddbbbbbbddwdddddbbk..",
+   "..kbddwddddddbbkkbbbwdddddddbk..",
+   ".kbbdddddddddbbbbbdbddddddddbbk.",
+   ".kbbddddddddddbbbbddddddddddbbk.",
+   "..kbddddddddddbkkbddddddddddbk..",
+   "..kbbddddddddbbkkbbddddddddbbk..",
+   "..kbbddddddddbbkkbbddddddddbbk..",
+   "...kbbbddddbbbk..kbbbddddbbbk...",
+   "....kbbbbbbbbk....kbbbbbbbbk....",
+   ".....kkkbbkkk......kkkbbkkk.....",
+   "........kk............kk........",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................"
+  ],
+  "presse": [
+   "................................",
+   "...kkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "..ktttttttttttttttttttttttttbk..",
+   "..ktbbbbbbbbbbbbbbbbbbbbbbbbBk..",
+   "..ktbbbbbbbbbbbbbbbbbbbbbbbbBk..",
+   "..kbBBBBBBBBBBBBBBBBBBBBBBBBBk..",
+   "..kbbttkkkkkkkkGgkkkkkkkkBHHHk..",
+   "..kbtttk......klzk......kBBHHk..",
+   "..kbbttk..kkkkkGgkkkkk..kBHHHk..",
+   "..kbtttk.kbbbbbbbbbbbBk.kBBHHk..",
+   "..kbbttk.kBHHHHHHHHHHHk.kBHHHk..",
+   "..kbtttk..kkkkklzkkkkk..kBBHHk..",
+   "..kbbttk......kGgk......kBHHHk..",
+   "..kbtttkkkkkkkklzkkkkkkkkBBHHk..",
+   "..kbbttktttttttttttttttbkBHHHk..",
+   "..kbtttktbbbbbbbbbbbbbbBkBBHHk..",
+   "..kbbttktbbbbbbbbbbbbbbBkBHHHk..",
+   "..kbtttkbBBBBBBBBBBBBBBBkBBHHk..",
+   "..kbbttkkkkkkkkkkkkkkkkkkBHHHk..",
+   "..kbtttk................kBBHHk..",
+   "..kbbttkkkkkkkkkkkkkkkkkkBHHHk..",
+   "..kbtttkvvvvvvvvvvvvvvvvkBBHHk..",
+   "..kbbttkvnvnvnvnvnvnvnvVkBHHHk..",
+   "..kbtttkvVVVVVVVVVVVVVVVkBBHHk..",
+   "..kbbtbbbbbbbbbbbbbbbbbbbBHHHk..",
+   "..kbttbBBBBBBBBBBBBBBBBBBHBHHk..",
+   "..kbbtBHHHHHHHHHHHHHHHHHHHHHHk..",
+   "..kbtttkkkkkkkkkkkkkkkkkkBBHHk..",
+   "..kbbttk................kBHHHk..",
+   "..kbtttk................kBBHHk..",
+   "...kkkk..................kkkk...",
+   "................................"
+  ],
+  "heliocentre": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "............kkkkkkkkk...........",
+   "........kkkkgggggggggkkk........",
+   ".......kggggkkkkkkkkkgggkk......",
+   ".....kkggkkkkkkkkkkkkkkkggkk....",
+   "...kkggkk.kkgggggggggkk.kkggk...",
+   "..kwzgk.kkgggkkkkkkkgggkk.kggk..",
+   "..kznk.kggkkkkkkkkkkkkkggk.kggk.",
+   ".kggk.kggk.kkgggggggkkkfggk.kggk",
+   ".kgk.kggk.kgggjjyykgggffRggk.kgk",
+   ".kgk.kgk.kggkjjjjyykkgfrRkgk.kgk",
+   "kgk.kggkkggkjjjjyyYYkkgRkkggk.kg",
+   "kgk.kgk.kgkkjjjjjyy4k.kgk.kgk.kg",
+   "kgk.kgk.kgkkyjyyyyY4k.kgk.kgk.kg",
+   "kgk.kgk.kgkkyyyyyY44k.kgk.kgk.kg",
+   "kgk.kggkkggkkYYY444k.kggkkggk.kg",
+   ".kgkxxxUkkggkk4444kkkggk.kgkkkgk",
+   ".kgkxxuUk.kgggkkkkkgggk.kggaakgk",
+   ".kggxuu3gk.kkgggggggkk.kggaaaogk",
+   "..kg3U33ggkkkkkkkkkkkkkggkoaoOk.",
+   "...kggkkkkgggkkkkkkkgggkk.kOOk..",
+   "....kggkk.kkgggggggggkk.kkggk...",
+   ".....kkggkkkkkkkkkkkkkkkggkk....",
+   ".......kkgggkkkkkkkkkggggk......",
+   ".........kkkgggggggggkkkk.......",
+   "............kkkkkkkkk...........",
+   "................................",
+   "................................",
+   "................................"
+  ],
+  "prison": [
+   "................................",
+   "..kkkkkkkkkkkkkkkkkkkkkkkkkkkk..",
+   ".k1111111111111111111111111111k.",
+   ".kRRRRRRRRRRRRRRRRRRRRRRRRRRRRk.",
+   ".kRRRRRRRRRRRRRRRRRRRRRRRRRRRRk.",
+   ".k1111111111111111111111111111k.",
+   ".kRRRRRggggggggggggggggggRRRRRk.",
+   ".kRRRRRRNNlNNNlNNNlNNNlNRRRRRRk.",
+   ".k111111NNlNNNlNNNlNNNlN111111k.",
+   ".kRRRRRRNNlNNNlNNllllNlNRRRRRRk.",
+   ".kRRRRRRNNlNNNlNNllllNlNRRRRRRk.",
+   ".k111111NNlNNNlNNllllNlN111111k.",
+   ".kRRRRRRNNlNNNlNNllllNlNRRRRRRk.",
+   ".kRRRRRRNNlNNNlNNNlNNNlNRRRRRRk.",
+   ".k111111NNlNNNlNNNlNNNlN111111k.",
+   ".kRRRRRRNNlNNNlNNNlNNNlNRRRRRRk.",
+   ".kRRRRRRNNlNNNlNNNlNNNlNRRRRRRk.",
+   ".k111111NNlNNNlNNNlNNNlN111111k.",
+   ".kRRRRRRNNlNNNlNNNlNNNlNRRRRRRk.",
+   ".kRRRRRRNNlNNNlNNNlNNNlNRRRRRRk.",
+   ".k111111NNlNNNlNNNlNNNlN111111k.",
+   ".kRRRRRRNNlNNNlNNNlNNNlNRRRRRRk.",
+   ".kRRRRRRNNlNNNlNNNlNNNlNRRRRRRk.",
+   ".k111111NNlNNNlNNNlNNNlN111111k.",
+   ".kRRRRRRNNlNNNlNNNlNNNlNRRRRRRk.",
+   ".kRRRRRggggggggggggggggggRRRRRk.",
+   ".k1111111111111111111111111111k.",
+   ".kRRRRRRRRRRRRRRRRRRRRRRRRRRRRk.",
+   ".kRRRRRRRRRRRRRRRRRRRRRRRRRRRRk.",
+   ".k1111111111111111111111111111k.",
+   "..kkkkkkkkkkkkkkkkkkkkkkkkkkkk..",
+   "................................"
+  ],
+  "guillotine": [
+   "................................",
+   ".....kkkkkkkkkkkkkkkkkkkkkk.....",
+   "....ktttttttttttttttttttttbk....",
+   "....ktbbbbbbbbbbbbbbbbbbbbBk....",
+   "....kbBBBBBBBBBBBBBBBBBBBBBk....",
+   ".....ktttBBBBBBBBBBBBBBBBHk.....",
+   ".....kbttBBBBBBBBBBBBBBBHHk.....",
+   ".....ktttBBBBBBBBBBBBBBBBHk.....",
+   ".....kbttwwwwwwwwwwwwwkBHHk.....",
+   ".....ktttwwwwwwwwwwwwwkBBHk.....",
+   ".....kbttlllllllllllllkBHHk.....",
+   ".....ktttzlzlzlzlzlzlzkBBHk.....",
+   ".....kbttzzzzzzzzzzzkkkBHHk.....",
+   ".....ktttggggggkkkkk..kBBHk.....",
+   ".....kbttnnkkkk.......kBHHk.....",
+   ".....ktttkk...........kBBHk.....",
+   ".....kbttk............kBHHk.....",
+   ".....ktttk............kBBHk.....",
+   ".....kbttk....kkk.....kBHHk.....",
+   ".....ktttk...knnnk....kBBHk.....",
+   ".....kbttkkkkknnnkkkkkkBHHk.....",
+   ".....kttttttttnnntttttbBBHk.....",
+   ".....kbtttbbbbnnnbbbbbBBHHk.....",
+   ".....kttttbbbbbbbbbbbbBBBHk.....",
+   ".....kbttbBBBBBBBBBBBBBBHHk.....",
+   ".....ktttkkkkkkkkkkkkkkBBHk.....",
+   "...kkkbttkkkkkkkkkkkkkkBHHkkk...",
+   "..kbbbbbbbbbbbbbbbbbbbbbbbbbBk..",
+   "..kbBBBBBBBBBBBBBBBBBBBBBBBBHk..",
+   "..kBHHHHHHHHHHHHHHHHHHHHHHHHHk..",
+   "...kkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "................................"
+  ],
+  "puits": [
+   "...............kk...............",
+   ".............kkrRkk.............",
+   "...........kkrrRRrRkk...........",
+   "........kkkrrRRRRRRrRkk.........",
+   "......kkrrrRRRRRRRRRRrRkk.......",
+   "....kkrrRRRRRRRRRRRRRRRrRkk.....",
+   "...kRR1111111111111111111RRk....",
+   "....kkkbtkkkkkkkkkkkkkkHHkk.....",
+   "......ktbBBBBBBBBBBBBBBHHk......",
+   "......kbtkkkkkkgkkkkkkkHHk......",
+   "......ktbk....kgk.....kHHk......",
+   "......kbtk....kgk.....kHHk......",
+   "......ktbk...kkgkk....kHHk......",
+   "......kbtk..kttttbk...kHHk......",
+   "......ktbk..ktbbbBk...kHHk......",
+   "......kbtkkkktbbbBkkkkkHHk......",
+   "......ktbkNNNNNNNNNNNNkHHk......",
+   ".....kNNNNNNNNNNNNNNNNNNNNk.....",
+   "....kNNNNNNNNNNNNNNNNNNNNNNk....",
+   "....kGGGGGGGGGGGGGGGGGGGGGGk....",
+   "....kllwlwlwllllllzzzzggGGGk....",
+   "....klwlwwwlwllllllzzgggGGGk....",
+   "....kGGGGGGGGGGGGGGGGGGGGGGk....",
+   "....klwlwwwlwllllllzzgggGGGk....",
+   "....kllwlwlwllllllzzzzggGGGk....",
+   "....kGGGGGGGGGGGGGGGGGGGGGGk....",
+   "....kllwlwlwllllllzzzzggGGGk....",
+   "....klwlwwwlwllllllzzgggGGGk....",
+   "....kGGGGGGGGGGGGGGGGGGGGGGk....",
+   "....klwlwwwlwllllllzzgggGGGk....",
+   ".....kkkkkkkkkkkkkkkkkkkkkk.....",
+   "................................"
+  ],
+  "flacon": [
+   "................................",
+   "................................",
+   ".....................k..........",
+   "....................kckkkkk.....",
+   "...................kccccccck....",
+   "..................kccccccccck...",
+   ".................kccckkkkkcck...",
+   "................kccck....kccck..",
+   "...............kccck......kcck..",
+   "...............kccck......kccck.",
+   "...............kcck.......kccck.",
+   "...........kkkkkcck........kcck.",
+   ".........kkdddddcck........kcck.",
+   "........kddddddddcck.......kccck",
+   ".......kddddddddddcck......kccck",
+   "......kddddddddddddcck......kck.",
+   ".....kddddddddddddcccck......k..",
+   ".....kdddddddddddcdccck.........",
+   "....kdddddddddddcdccccck........",
+   "....kddddddddddddcccccck........",
+   "....kdddddddddcdccccccck........",
+   "....kdvvvvvvvvvvvvvvvvck........",
+   "....kcvvvvvvvvvvvvvvvvck........",
+   "....kcvvvvvvvvvvvvvvvvck........",
+   ".....kcvvvvvvvvvvvvvvck.........",
+   ".....kcvvvvvvvvvvvvvvck.........",
+   "......kcvvvvvvvvvvvvck..........",
+   ".......kcvvvvvvvvvvck...........",
+   "........kccvvvvvvcck............",
+   ".........kkcccccckk.............",
+   "...........kkkkkk...............",
+   "................................"
+  ],
+  "fiole": [
+   "................................",
+   ".............kkkkkk.............",
+   "............ktttttbk............",
+   "............ktbbbbBk............",
+   "............ktbbbbBk............",
+   "............kbBBBBBk............",
+   "............kcccccck............",
+   "......k.....kcccccck......k.....",
+   ".....kik....kcccccck.....kik....",
+   "......kik...kcccccck....kik.....",
+   ".......kik..kcccccck...kik......",
+   "........k...kcccccck....k.......",
+   "............kcccccck............",
+   "...........kccccccck............",
+   "...........kccccccck............",
+   "..........kccccccccck...........",
+   "..........kccccccccck...........",
+   ".kkkk....kccccccccccck......kkkk",
+   "kiiiik...kccccccccccck.....kiiii",
+   ".kkkk...kciiiiiiiiiiiik.....kkkk",
+   "........kiiiiiiiiiiiiik.........",
+   "........kiiiiiiiwiiiiiik........",
+   ".......kiiiiiiiiiiiiiiik........",
+   ".......kiiiiiwiiiiiiiiiik.......",
+   "......kiiiiiiiiiiiiwiiiik.......",
+   "......kiiiiiiiiiiiiiiiiik.......",
+   ".....kiiiiiiiiiiiiiiiiiiik......",
+   "......kikkkkkkkkkkkkkkkkkik.....",
+   ".....kik.................kik....",
+   "......k.........k.........k.....",
+   "...............kik..............",
+   "...............kik.............."
+  ],
+  "relativite": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+   "ktttttttttttttttttttttttttttttbk",
+   "ktbbbbbbbbbbbbbbbbbbbbbbbbbbbbBk",
+   "ktb22222222222222222222222222bBk",
+   "ktb222222222222222222lll22222bBk",
+   "ktb22222222222222222222l22222bBk",
+   "ktb222222222222222222lll22222bBk",
+   "ktb2lll22222l2l22ll22l2222222bBk",
+   "ktb2l222lll2lll2l2222lll22222bBk",
+   "ktb2ll222222lll2l222222222222bBk",
+   "ktb2l222lll2l2l2l222222222222bBk",
+   "ktb2lll22222l2l22ll2222222222bBk",
+   "ktb22222222222222222222222222bBk",
+   "ktb22222222222222222222222222bBk",
+   "ktb22222222222222222222222222bBk",
+   "ktb2zzzzzzzzzzzzzzzzzzzzzzz22bBk",
+   "ktb22222222222222222222222222bBk",
+   "ktb22222222222222222222222222bBk",
+   "ktb22222222222222222222222222bBk",
+   "ktb22222222222222222222222222bBk",
+   "ktbbbbbbbbbbbbbbbbbbbbbbbbbbbbBk",
+   "kbBBBBBBBBBBBBBBBBBBBBBBBBBBBBBk",
+   ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+   "................................",
+   "................................",
+   "................................",
+   "................................"
+  ],
+  "labyrinthe": [
+   "................................",
+   "..kkkkkkkkkkkkkkkkkkkkkkkkkkkk..",
+   ".keeeeeeeeeeeeeeeeeeeeeeeeeeeek.",
+   ".keeeeeeeeeeeeeeeeeeeeeeeeeeeek.",
+   ".keeEEEEEEeeEEEEEEEEEEEEEEEEeek.",
+   ".keeEeeeeeeeeeeeeeeeeeeeeeeEeek.",
+   ".keeEeEEEEEEEEEEEEEEEEEEEEeEeek.",
+   ".keeEeEeeeeeeeeeeeeeeeeeeEeEeek.",
+   ".keeEeEeEEEeeEEEEEEEEEEEeEeEeek.",
+   ".keeEeEeEeeeeeeeeeeeeeeEeEeEeek.",
+   ".keeEeEeEeEEEEEEEEEEEEeEeEeEeek.",
+   ".keeEeEeEeEeeeeeeeeeeEeEeEeEeek.",
+   ".keeEeEeEeEeEeeEEEEEeEeEeEeEeek.",
+   ".keeEeEeEeEeEeeeeeeEeEeEeeeEeek.",
+   ".keeEeEeEeEeEeefreeEeeeEeeeEeek.",
+   ".keeEeEeEeEeEefffReEeeeEeEeEeek.",
+   ".keeEeEeEeEeEerrR1eEeEeEeEeEeek.",
+   ".keeEeEeEeEeEeeR1eeEeEeEeEeEeek.",
+   ".keeEeEeEeEeEeeeeeeEeEeEeEeEeek.",
+   ".keeEeEeEeEeEEEEEEEEeEeEeEeEeek.",
+   ".keeEeEeEeEeeeeeeeeeeEeEeEeEeek.",
+   ".keeEeEeEeEEEEEEEEEEEEeEeEeEeek.",
+   ".keeEeEeEeeeeeeeeeeeeeeEeEeEeek.",
+   ".keeEeEeEEEEEEEEEEEEEEEEeEeEeek.",
+   ".keeEeEeeeeeeeeeeeeeeeeeeEeEeek.",
+   ".keeEeEEEEEEEEEEEEEEEEEEEEeEeek.",
+   ".keeEeeeeeeeeeeeeeeeeeeeeeeEeek.",
+   ".keeEEEEEEEEEEEEEEEEEEEEEEEEeek.",
+   ".keeeeeeeeeeeeeeeeeeeeeeeeeeeek.",
+   ".keeeeeeeeeeeeeeeeeeeeeeeeeeeek.",
+   "..kkkkkkkkkkkkkkkkkkkkkkkkkkkk..",
+   "................................"
+  ],
+  "adn": [
+   ".........kkkook..kuukkk.........",
+   ".......kkooooookkuuuuuukk.......",
+   "......koooooookkkkuuuuuuuk......",
+   ".....koooogggggggggggguuuuk.....",
+   ".....kooookkkkkkkkkkkkuuuuk.....",
+   "....korrrkkkkkkkkkkkkkkPPPuk....",
+   ".....krrrrggggggggggggPPPPk.....",
+   ".....krrrrrrkkkkkkkkPPPPPPk.....",
+   "......krrrrrrrkkkkPPPPPPPk......",
+   ".......kkrrrrrrrrPPPPPPkk.......",
+   ".........kkkPPrrrrrrkkk.........",
+   ".......kkPPPPPPrrrrrrrrkk.......",
+   "......kPPPPPggggggggrrrrrk......",
+   ".....kPPPPPPkkkkkkkkrrrrrrk.....",
+   ".....kPPPPkkkkkkkkkkkkrrrrk.....",
+   "....kPuuuggggggggggggggooork....",
+   ".....kuuuukkkkkkkkkkkkooook.....",
+   ".....kuuuuuukkkkkkkkooooook.....",
+   "......kuuuuuuuggggoooooook......",
+   ".......kkuuuuuuooooooookk.......",
+   ".........kkkoooooouukkk.........",
+   ".......kkoooooogguuuuuukk.......",
+   "......koooooookkkkuuuuuuuk......",
+   ".....kooooookkkkkkkkuuuuuuk.....",
+   ".....kooogggggggggggggguuuk.....",
+   "....korrrkkkkkkkkkkkkkkPPPuk....",
+   ".....krrrrkkkkkkkkkkkkPPPPk.....",
+   ".....krrrrrrggggggggPPPPPPk.....",
+   "......krrrrrrrkkkkPPPPPPPk......",
+   ".......kkrrrrrrrrPPPPPPkk.......",
+   ".........kkkrrrrrrPPkkk.........",
+   "............kkkrrkkk............"
+  ],
+  "ordinateur": [
+   "................................",
+   "................................",
+   "..kkkkkkkkkkkkkkkkkkkkkkkkkkkk..",
+   ".klllllllllllllllllllllllllllzk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".klzzyzzyzzrzzyzzezzezzezzwzzgk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".klzzwzzyzzwzzrzzyzzrzzezzezzgk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".klzzrzzwzzezzrzzyzzyzzwzzrzzgk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".klzzzzggggzzzzzzzzzgggGzzzzzgk.",
+   ".klzzzzggggzzzzzzzzzgggGzzzzzgk.",
+   ".klzzzgggwggzzzzzzzgggwGnzzzzgk.",
+   ".klzzzzggggzzzzzzzzzGGnnzzzzzgk.",
+   ".klzzzzGGnGzzzzzzzzznnnnzzzzzgk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".klzzzzzzzzzzzzzzzzzzzzzzzzzzgk.",
+   ".kzgggggggggggggggggggggggggggk.",
+   "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
+   "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+   "vvvnvvvvvnvvvvvnvvvvvnvvvvvnvvvv",
+   "vvvvvnvvvvvnvvvvvnvvvvvnvvvvvnvv",
+   "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+   "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
+   "................................"
+  ],
+  "fusee": [
+   "...............kk...............",
+   "..............klzk..............",
+   "..............klzk..............",
+   ".............kwlzzk.............",
+   "............kwllzzzk............",
+   "............kwwlzzzk............",
+   "...........klwllzzzk............",
+   "...........kwwwlzzzk............",
+   "...........klwllzzzk............",
+   "...........kwnnnnnnnk...........",
+   "...........klwllzzzk............",
+   "...........kwwwxxzzk............",
+   "...........klwxxuUzk............",
+   "...........kwwwUUzzk............",
+   "...........klwllzzzk............",
+   "...........kwwwlzzzk............",
+   "...........klnnnnnnnk...........",
+   "...........kwwwlzzzrk...........",
+   "...........klwllzzzrk...........",
+   "..........krwwwlzzzrrk..........",
+   ".........krrlwllzzzrrrk.........",
+   ".........krrwwwlzzzrrrk.........",
+   "........krrklwllzzzkkrrk........",
+   ".......krkk.kkkkkkk..kkrk.......",
+   "........k.......k......k........",
+   "...............kokk.............",
+   ".............kkookrk............",
+   "............krrooork............",
+   "............kroooork............",
+   "............kroyyorrk...........",
+   "...........krooyyoork...........",
+   "............kkkkkkkk............"
+  ],
+  "internet": [
+   "................................",
+   "...kkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "..kTTTTTTTTTTTTTTTTTTTTTTTTTTk..",
+   "..kTTTTTTTTTTTTTTTTTTTTTTTTTTk..",
+   "..kTTTTTTTTTTTTTTTTTTTTTTTTTTk..",
+   "..kTTT33333333333333333333TTTk..",
+   "..kTTT3333333ccccc33333333TTTk..",
+   "..kTTT333333c3c33cc3333333TTTk..",
+   "..kTTT33333c33c33c3c333333TTTk..",
+   "..kTTT3333c33c3333c3c33333TTTk..",
+   "..kTTT3333c33c3333c3c33333TTTk..",
+   "..kTTT3333c33c3333c3c33333TTTk..",
+   "..kTTT3333cccccccccccc3333TTTk..",
+   "..kTTT3333c33c3333c3c33333TTTk..",
+   "..kTTT33333c3c3333cc333333TTTk..",
+   "..kTTT333333c3c33cc3333333TTTk..",
+   "..kTTT3333333ccccc33333333TTTk..",
+   "..kTTT333333333cc333333333TTTk..",
+   "..kTTT33333333333333333333TTTk..",
+   "..kTTTTTTTTTTTTTTTTTTTTTTTTTTk..",
+   "..kTTTTTTTTTTTTTTTTTTTTTTTTTTk..",
+   "..kTTTTTTTTTTTTTTTTTTTTTTTTTTk..",
+   "..kTTTTTTTTTTTTTTTTTTTTTTTTTTk..",
+   "...kkkkkkkkTTTTTTTTTTkkkkkkkk...",
+   "..........kTTTTTTTTTTk..........",
+   ".....kkkkkkTTTTTTTTTTkkkkkk.....",
+   "....kTTTTTTTTTTTTTTTTTTTTTTk....",
+   "....kTTgTgTgTgTgTgTgTgTgTTTk....",
+   "....kTTTTTTTTTTTTTTTTTTTTTTk....",
+   "....kTTTTTTTTTTTTTTTTTTTTTTk....",
+   ".....kkkkkkkkkkkkkkkkkkkkkk.....",
+   "................................"
+  ],
+  "puce": [
+   "......kk..kk..kk..kk..kk..kk....",
+   ".....kyykkyykkyykkyykkyykkyyk...",
+   ".....kyykkyykkyykkyykkyykkyyk...",
+   ".....kyykkyykkyykkyykkyykkyyk...",
+   ".....kyykkyykkyykkyykkyykkyyk...",
+   ".kkkkgggggggggggggggggggggGkkkk.",
+   "kyyyygGGGGGGGGGGGGGGGGGGGGnyyyyk",
+   "kyyyygGGGGGGGGGGGGGGGGGGGGnyyyyk",
+   ".kkkkgGGGGGGGGGGGGGGGGGGGGnkkkk.",
+   ".kkkkgGGGNNNNNNNNNNNNNNGGGnkkkk.",
+   "kyyyygGGGNNNNNNNNNNNNNNGGGnyyyyk",
+   "kyyyygGGGNNNNNNNNdNNNNNGGGnyyyyk",
+   ".kkkkgGGGNNdNNNNCCNNdNNGGGnkkkk.",
+   ".kkkkgGGGNNNCNNNCNNNCNNGGGnkkkk.",
+   "kyyyygGGGNNNCCNCCNNCNNNGGGnyyyyk",
+   "kyyyygGGGNNNNCNCNNCNNNNGGGnyyyyk",
+   ".kkkkgGGGNNNNNdNNNCNNNNGGGnkkkk.",
+   ".kkkkgGGGNNNNCNCCNCNNNNGGGnkkkk.",
+   "kyyyygGGGNNNCCNNCdCNNNNGGGnyyyyk",
+   "kyyyygGGGNNNCNNNNNCCNNNGGGnyyyyk",
+   ".kkkkgGGGNNdNNNNNNNNdNNGGGnkkkk.",
+   ".kkkkgGGGNNNNNNNNNNNNNNGGGnkkkk.",
+   "kyyyygGGGNNNNNNNNNNNNNNGGGnyyyyk",
+   "kyyyygGGGGGGGGGGGGGGGGGGGGnyyyyk",
+   ".kkkkgGGGGGGGGGGGGGGGGGGGGnkkkk.",
+   ".kkkkgGGGGGGGGGGGGGGGGGGGGnkkkk.",
+   "kyyyyGnnnnnnnnnnnnnnnnnnnnnyyyyk",
+   "kyyyykyykkyykkyykkyykkyykkyyyyyk",
+   ".kkkkkyykkyykkyykkyykkyykkyykkk.",
+   ".....kyykkyykkyykkyykkyykkyyk...",
+   ".....kyykkyykkyykkyykkyykkyyk...",
+   "......kk..kk..kk..kk..kk..kk...."
+  ],
+  "pont": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+   "kzzzzzzzzzzzzzzzzzzzzzzzzzzzzzgk",
+   "kgGGGGGGGGGGGGGGGGGGGGGGGGGGGGGk",
+   "klllllllllllllllllllllllllllllzk",
+   "klzzzzzzzzzzzzzzzzzzzzzzzzzzzzgk",
+   "kGzzzzGzzzzGzzzzGzzzzGzzzzGzzzgk",
+   "klzzzzzzzzzzzzzzzzzzzzzzzzzzzzgk",
+   "klzzzzzzzzzzzzzzzzzzzzzzzzzzzzgk",
+   "klzzzzzzzzzzzggggggzzzzzzzzzzzgk",
+   "klGzzzzGzzggGkkkkkkzggGzzzzGzzgk",
+   "klzzzzzzzgkkk......kkkzzzzzzzzgk",
+   "klzzzzzzgk............kzzzzzzzgk",
+   "klzzzzzgk..............kzzzzzzgk",
+   "klzGzzgk................klzzGzgk",
+   "klzzzzgk................kzzzzzgk",
+   "klzzzgk..................klzzzgk",
+   "klzzzgk..................klzzzgk",
+   "klzzzgk.kkkkkkkkkkkkkkkk.klzzzgk",
+   "kzggggkkuuuuuuuuuuuuuuuukkzggggk",
+   ".kkuuuuuuuuuuuuuuuuuuuuuuuuuukk.",
+   "kuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuk",
+   "kuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuk",
+   ".kkuuuuuuuuuuuuuuuuuuuuuuuuuukk."
+  ],
+  "amphore": [
+   "................................",
+   "................................",
+   "................................",
+   "............kkkkkkkk............",
+   "...........kaaaaoaook...........",
+   "...........kaaaaaoaok...........",
+   "......kkkk.kaaaaoaook.kkkk......",
+   ".....kooookkaaaaaoaokkooook.....",
+   "....kookkookaaaaoaookookkook....",
+   "....kok..koaaaaaaoaoook..kok....",
+   "....kok..kaaaaaaoaooook..kok....",
+   "....kookkaaaaaaaaoaooookkook....",
+   ".....kooaaaaaaaaoaooooOOook.....",
+   "......kaaaaaaaaaaoaooooOOk......",
+   ".....knnnnnnnnnnnnnnnnnnnnk.....",
+   ".....knnOnnOnnOnnOnnOnnOnnk.....",
+   "......knnnnnnnnnnnnnnnnnnk......",
+   "......knnnnnnnnnnnnnnnnnnk......",
+   ".......kaaaaaaaaoaooooOOk.......",
+   ".......kaaaaaaaaaoaooooOk.......",
+   "........kaaaaaaaoaooooOk........",
+   "........kaaaaaaaaoaooook........",
+   ".........kaaaaaaoaooook.........",
+   ".........kaaaaaaaoaoook.........",
+   "..........kaaaaaoaoook..........",
+   "..........kaaaaaaoaook..........",
+   "...........kaaaaoaook...........",
+   "............kaaaaoak............",
+   ".............kaaoak.............",
+   "..............kaak..............",
+   "...............kk...............",
+   "................................"
+  ],
+  "enluminure": [
+   "................................",
+   "................................",
+   "....kkkkkkkkkkkkkkkkkkkkkkkk....",
+   "...kvvvvvvvvvvvvvvvvvvvvvvvvk...",
+   "...kvvvvvvvvvvvvvvvvvvvvvvvVk...",
+   "...kvvvvvvvvvvvvvvvvvvvvvvvVk...",
+   "...kvvvuuuuuuuuuuvvvvvvvvvvVk...",
+   "...kvvvuuuuuuuuuuvvvvvvvvvvVk...",
+   "...kvvvuuuuyuuuuuvAAAAAAAAvVk...",
+   "...kvvvuuuyuyuuuuvvvvvvvvvvVk...",
+   "...kvvvuuuyyyuuuuvvvvvvvvvvVk...",
+   "...kvvvuuuyuyuuuuvAAAAAAAAvVk...",
+   "...kvvvuuuyuyuuuuvvvvvvvvvvVk...",
+   "...kvvvuuuuuuuuuuvvvvvvvvvvVk...",
+   "...kvvvuuuuuuuuuuvAAAAAAAAvVk...",
+   "...kvvveuuuuuuuuuvvvvvvvvvvVk...",
+   "...kvveevvvvvvvvvvvvvvvvvvvVk...",
+   "...kvvevAAAAAAAAAAAAAAAAAAvVk...",
+   "...kveevvvvvvvvvvvvvvvvvvvvVk...",
+   "...kvevvvvvvvvvvvvvvvvvvvvvVk...",
+   "...kveevAAAAAAAAAAAAAAAAAAvVk...",
+   "...kvvevvvvvvvvvvvvvvvvvvvvVk...",
+   "...kvvveevvvvvvvvvvvvvvvvvvVk...",
+   "...kvvvvAAAAAAAAAAAAAAAAAAvVk...",
+   "...kvvvvvvvvvvvvvvvvvvvvvvvVk...",
+   "...kvvvvvvvvvvvvvvvvvvvvvvvVk...",
+   "...kvvvvvvvvvvvvvvvvvvvvvvvVk...",
+   "...kvvvvvvvvvvvvvvvvvvvvvvvVk...",
+   "...kvVVVVVVVVVVVVVVVVVVVVVVVk...",
+   "....kkkkkkkkkkkkkkkkkkkkkkkk....",
+   "................................",
+   "................................"
+  ],
+  "plume": [
+   "................................",
+   "................................",
+   "...........................kk...",
+   "..........................kwgk..",
+   ".........................kwgglk.",
+   "........................kwglzk..",
+   ".......................kwggzk...",
+   "......................kwgllzk...",
+   ".....................kwgglzk....",
+   "....................kwgllzk.....",
+   "...................kwggllzk.....",
+   "..................kwglllzk......",
+   "..................kggllzk.......",
+   ".................kwgllzk........",
+   "................kggllzk.........",
+   "...............kwglzzk..........",
+   "..............kgglzkk...........",
+   ".............kwglzk.............",
+   "............kgglzk..............",
+   ".........k.kwgzzk...............",
+   "....kkkkkNkggkkk................",
+   "...kNNNNNNNgNNNk................",
+   "...kNNNNNNNNNNNNk...............",
+   "...kKKKKKNKKKNNNk...............",
+   "...kKKKKKKKKNNNNk...............",
+   "...kKKKKKKKKKNNNk...............",
+   "...kKKKKKKKKNNNNk...............",
+   "...kKKKKKKKKKNNNk...............",
+   "...kKKKKKKKKNNNNk...............",
+   "...kKKKKKKKKKNNNk...............",
+   "....kkkkkkkkkkkk................",
+   "................................"
+  ],
+  "bougie": [
+   "................................",
+   "................................",
+   "...............kk...............",
+   "..............kaak..............",
+   "..............kaak..............",
+   ".............kaaaOk.............",
+   ".............koajOk.............",
+   ".............koojOk.............",
+   "..............kOOk..............",
+   "...............kk...............",
+   "............kkkkkkkk............",
+   "...........kTTTTTTTTk...........",
+   "...........kTTTTTTTTk...........",
+   "...........kTTTTTTTTk...........",
+   "...........kTTTTTTTTk...........",
+   "...........kTTTTTTTTk...........",
+   "...........kTTTTTTTTk...........",
+   "...........kTTTTTTTTk...........",
+   "...........kTTTTTTTTk...........",
+   "...........kTTTTTTTTk...........",
+   "...........kTTTTTTTTk...........",
+   "...........kTTTTTTTTk...........",
+   "...........kTTTTTTTTk...........",
+   "..........kkTTTTTTTTkk..........",
+   "......kkkkjjTTTTTTTTyykkkk......",
+   ".....kjjjjjjTTTTTTTTyyyYY4k.....",
+   "....kjjjjjjjTTTTTTTTyyYYYY4k....",
+   "....kyjyjyjyjyyyyyyYyYYY444k....",
+   ".....kYyYyYyYyYYYYYY444444k.....",
+   "......kkkk44Y444444444kkkk......",
+   "..........kkkkkkkkkkkk..........",
+   "................................"
+  ]
+ },
+ "cases": [
+  {
+   "n": 1,
+   "id": "feu",
+   "annee": -400000,
+   "titre": {
+    "fr": "La maîtrise du feu"
+   },
+   "stat": "savoir",
+   "epoque": "antiquite",
+   "icone": "feu",
+   "histoire": {
+    "fr": "Les plus anciennes traces de feu contrôlé ont environ un million d'années (grotte de Wonderwerk, en Afrique du Sud), mais son usage régulier se généralise il y a quelque 400 000 ans. Cuire les aliments les rend plus faciles à digérer : l'anthropologue Richard Wrangham y voit même un moteur de la croissance de notre cerveau. Personne n'a « inventé » le feu un beau matin : il a été apprivoisé, perdu et rallumé pendant des centaines de milliers d'années."
+   },
+   "replique": {
+    "fr": "Case départ. Vos ancêtres ont mis des centaines de milliers d'années à maîtriser le feu. L'IA vous accorde un peu moins de temps pour la suite."
+   },
+   "source": "Berna et al., PNAS, 2012 ; Richard Wrangham, Catching Fire, 2009"
+  },
+  {
+   "n": 2,
+   "id": "ishango",
+   "annee": -20000,
+   "titre": {
+    "fr": "L'os d'Ishango"
+   },
+   "stat": "logique",
+   "epoque": "antiquite",
+   "icone": "amphore",
+   "histoire": {
+    "fr": "L'os d'Ishango, trouvé en 1950 au Congo, est un os couvert d'encoches rangées en groupes, si travaillé qu'on ne sait plus de quel animal il vient. Certains y lisent des nombres premiers ou un calendrier lunaire ; d'autres, plus prudents, un simple outil de comptage. Daté d'environ 20 000 ans, il est conservé à Bruxelles et compte parmi les plus anciens objets mathématiques connus."
+   },
+   "replique": {
+    "fr": "Des encoches sur un os. Les premiers mathématiciens n'avaient pas de tableau noir, mais déjà des sceptiques pour contester leurs résultats."
+   },
+   "source": "Institut royal des sciences naturelles de Belgique"
+  },
+  {
+   "n": 3,
+   "id": "roue",
+   "annee": -3500,
+   "titre": {
+    "fr": "La roue"
+   },
+   "stat": "mecanique",
+   "epoque": "antiquite",
+   "icone": "roue",
+   "histoire": {
+    "fr": "Les plus anciennes roues connues datent d'environ 3500 av. J.-C., en Mésopotamie et en Europe centrale. Celle de Ljubljana, retrouvée dans un marais slovène, a quelque 5 150 ans. Des tours de potier encore plus anciens, du Ve millénaire av. J.-C., ont été retrouvés en Ukraine. En Amérique, les Mésoaméricains la connaissaient sur des jouets, sans l'employer pour transporter, peut-être faute de bêtes de trait."
+   },
+   "replique": {
+    "fr": "On ne réinvente pas la roue, dit-on. Vous, vous allez déjà essayer de la comprendre."
+   },
+   "source": "David Anthony, The Horse, the Wheel, and Language, 2007"
+  },
+  {
+   "n": 4,
+   "id": "ecriture",
+   "annee": -3200,
+   "titre": {
+    "fr": "L'écriture cunéiforme"
+   },
+   "stat": "eloquence",
+   "epoque": "antiquite",
+   "icone": "tablette",
+   "histoire": {
+    "fr": "À Uruk, en Mésopotamie, les premières tablettes d'argile servent à la comptabilité : des sacs d'orge, des moutons, des rations de bière. L'écriture cunéiforme, faite de coins pressés dans l'argile avec un roseau, notera ensuite des lois, des mythes et l'épopée de Gilgamesh. Le plus ancien nom de personne connu est peut-être celui d'un comptable, Kushim, au bas d'un reçu d'orge."
+   },
+   "replique": {
+    "fr": "La première chose que l'humanité a écrite, c'est une facture. L'IA trouve ça d'une lucidité admirable."
+   },
+   "source": "Denise Schmandt-Besserat, How Writing Came About, 1996"
+  },
+  {
+   "n": 5,
+   "id": "thales",
+   "annee": -585,
+   "titre": {
+    "fr": "Thalès et l'éclipse"
+   },
+   "stat": "cosmos",
+   "epoque": "antiquite",
+   "icone": "eclipse",
+   "histoire": {
+    "fr": "Selon Hérodote, Thalès de Milet aurait prédit l'éclipse de Soleil qui interrompit une bataille entre Lydiens et Mèdes, le 28 mai 585 av. J.-C. Les combattants, effrayés, firent la paix. Les historiens doutent qu'il ait pu calculer une éclipse avec les connaissances de son temps : au mieux, il en aurait annoncé l'année. Mais la tradition fait de lui le premier à chercher des causes naturelles plutôt que divines."
+   },
+   "replique": {
+    "fr": "Thalès prédit une éclipse ; la légende dit aussi qu'il tomba dans un puits en regardant les étoiles. Regardez où vous mettez les pieds."
+   },
+   "source": "Hérodote, Histoires, I, 74 ; Platon, Théétète, 174a",
+   "special": {
+    "type": "cadeau",
+    "raison": {
+     "fr": "Thalès, raconte Aristote, loua tous les pressoirs à olives avant une récolte abondante et fit fortune. Il vous en reverse une part."
+    }
+   }
+  },
+  {
+   "n": 6,
+   "id": "pythagore",
+   "annee": -530,
+   "titre": {
+    "fr": "Pythagore et les nombres"
+   },
+   "stat": "logique",
+   "epoque": "antiquite",
+   "icone": "amphore",
+   "histoire": {
+    "fr": "Pythagore n'a probablement pas démontré le théorème qui porte son nom : les Babyloniens connaissaient la relation un millénaire plus tôt, comme le montre la tablette Plimpton 322, et aucun écrit de Pythagore ne nous est parvenu. Son école mêlait mathématiques, musique et règles étranges, comme l'interdiction de manger des fèves. Elle a légué une idée qui a traversé les siècles : le monde se décrit par des nombres."
+   },
+   "replique": {
+    "fr": "Le théorème de Pythagore n'est pas de Pythagore. L'IA n'est pas tout à fait une intelligence. Chacun ses étiquettes."
+   },
+   "source": "Walter Burkert, Lore and Science in Ancient Pythagoreanism, 1972 ; Eleanor Robson, Historia Mathematica, 2001"
+  },
+  {
+   "n": 7,
+   "id": "democrite",
+   "annee": -400,
+   "titre": {
+    "fr": "Démocrite et les atomes"
+   },
+   "stat": "alchimie",
+   "epoque": "antiquite",
+   "icone": "atome",
+   "histoire": {
+    "fr": "Démocrite d'Abdère, à la suite de son maître Leucippe, affirme que tout est fait de particules minuscules et indivisibles qui bougent dans le vide : les atomes, du grec atomos, « qu'on ne peut couper ». Sans aucune expérience pour le montrer, c'est une intuition philosophique. Il faudra attendre John Dalton, vers 1808, pour une théorie atomique fondée sur des mesures, puis Einstein (1905) et Jean Perrin (1908) pour que les atomes deviennent indiscutables."
+   },
+   "replique": {
+    "fr": "Démocrite a eu raison 2 300 ans trop tôt. En science, c'est presque pire qu'avoir tort."
+   },
+   "source": "Aristote, Métaphysique, livre A ; Jean Perrin, Les Atomes, 1913",
+   "special": {
+    "type": "mendeleiev",
+    "raison": {
+     "fr": "Démocrite imaginait des atomes insécables, crochus ou lisses, de toutes les formes. Il en existe cent dix-huit sortes, et aucune n'est insécable. Un atome sauvage sort du vide pour le lui dire."
+    }
+   }
+  },
+  {
+   "n": 8,
+   "id": "hippocrate",
+   "annee": -400,
+   "titre": {
+    "fr": "Hippocrate"
+   },
+   "stat": "empathie",
+   "epoque": "antiquite",
+   "icone": "amphore",
+   "histoire": {
+    "fr": "Hippocrate de Cos et ses disciples décrivent les maladies comme des phénomènes naturels, pas comme des punitions divines. Le traité sur la « maladie sacrée », l'épilepsie, affirme qu'elle n'a rien de plus sacré que les autres, et place dans le cerveau la source de nos joies, de nos rires, de nos chagrins et de nos peurs. Le serment d'Hippocrate n'est sans doute pas de lui, et la formule « d'abord, ne pas nuire » n'y figure pas mot pour mot."
+   },
+   "replique": {
+    "fr": "« D'abord, ne pas nuire. » Formule absente du serment original. L'IA, elle, nuit avec méthode."
+   },
+   "source": "Corpus hippocratique, De la maladie sacrée ; Jacques Jouanna, Hippocrate, 1992"
+  },
+  {
+   "n": 9,
+   "id": "socrate",
+   "annee": -399,
+   "titre": {
+    "fr": "La ciguë de Socrate"
+   },
+   "stat": "sagesse",
+   "epoque": "antiquite",
+   "icone": "coupe-cigue",
+   "histoire": {
+    "fr": "En 399 av. J.-C., Athènes condamne Socrate à mort pour impiété et corruption de la jeunesse. Il aurait pu s'enfuir ; il boit la ciguë. Socrate n'a rien écrit : on le connaît par Platon, Xénophon et Aristophane, qui se moque de lui dans Les Nuées. Sa méthode, questionner jusqu'à ce que l'interlocuteur avoue qu'il ne sait pas, lui a valu beaucoup de disciples et autant d'ennemis."
+   },
+   "replique": {
+    "fr": "Socrate posait des questions jusqu'à ce que les gens se sentent bêtes. L'IA a retenu la leçon."
+   },
+   "source": "Platon, Apologie de Socrate et Phédon",
+   "special": {
+    "type": "eureka"
+   }
+  },
+  {
+   "n": 10,
+   "id": "aristote",
+   "annee": -335,
+   "titre": {
+    "fr": "Le Lycée d'Aristote"
+   },
+   "stat": "sagesse",
+   "epoque": "antiquite",
+   "icone": "rouleau-aristote",
+   "histoire": {
+    "fr": "Aristote fonde le Lycée à Athènes. Il écrit sur la logique, la physique, la politique, la rhétorique et surtout le vivant : il décrit des centaines d'animaux. Il se trompe aussi, en affirmant par exemple que les corps lourds tombent plus vite que les légers, ou que les femmes ont moins de dents que les hommes. Bertrand Russell notera qu'il lui aurait suffi de demander à sa femme d'ouvrir la bouche."
+   },
+   "replique": {
+    "fr": "Aristote a écrit sur tout et s'est trompé sur beaucoup. Vous avez déjà la moitié du programme."
+   },
+   "source": "Aristote, Histoire des animaux, II, 3 ; Bertrand Russell, The Impact of Science on Society, 1952"
+  },
+  {
+   "n": 11,
+   "id": "euclide",
+   "annee": -300,
+   "titre": {
+    "fr": "Les Éléments d'Euclide"
+   },
+   "stat": "logique",
+   "epoque": "antiquite",
+   "icone": "compas-euclide",
+   "histoire": {
+    "fr": "À Alexandrie, Euclide rassemble la géométrie de son temps dans les Éléments : 13 livres, des définitions, cinq postulats et des centaines de théorèmes démontrés pas à pas. C'est l'un des livres les plus copiés et imprimés de l'histoire. Au roi Ptolémée qui demandait un chemin plus court, il aurait répondu : « Il n'y a pas de voie royale en géométrie. »"
+   },
+   "replique": {
+    "fr": "Pas de voie royale en géométrie, ni sur ce plateau. L'IA y veille."
+   },
+   "source": "Proclus, Commentaire sur le premier livre des Éléments d'Euclide",
+   "special": {
+    "type": "revision",
+    "raison": {
+     "fr": "Les Éléments ont servi de manuel pendant plus de deux mille ans. On les révise encore. À votre tour."
+    }
+   }
+  },
+  {
+   "n": 12,
+   "id": "alexandrie",
+   "annee": -285,
+   "titre": {
+    "fr": "La bibliothèque d'Alexandrie"
+   },
+   "stat": "savoir",
+   "epoque": "antiquite",
+   "icone": "alexandrie",
+   "histoire": {
+    "fr": "Les rois Ptolémées fondent à Alexandrie le Musée et sa bibliothèque, qui veut rassembler tous les livres du monde. Selon Galien, les navires qui entraient au port devaient laisser copier leurs rouleaux, et la bibliothèque gardait parfois l'original en rendant la copie. Elle aurait compté des centaines de milliers de rouleaux, un chiffre rapporté par des auteurs anciens et très incertain."
+   },
+   "replique": {
+    "fr": "Une bibliothèque qui gardait les originaux et rendait les copies. L'IA respecte ce sens très personnel de l'emprunt."
+   },
+   "source": "Galien, Commentaire sur les Épidémies d'Hippocrate ; Roger Bagnall, « Alexandria: Library of Dreams », 2002"
+  },
+  {
+   "n": 13,
+   "id": "aristarque",
+   "annee": -270,
+   "titre": {
+    "fr": "Aristarque et le Soleil au centre"
+   },
+   "stat": "cosmos",
+   "epoque": "antiquite",
+   "icone": "heliocentre",
+   "histoire": {
+    "fr": "Aristarque de Samos propose que la Terre tourne autour du Soleil, dix-huit siècles avant Copernic. Il tente aussi de mesurer les distances de la Lune et du Soleil par des angles : la méthode est juste, la mesure très imprécise. Il trouve le Soleil 20 fois plus loin que la Lune, au lieu d'environ 400. Son Soleil central restera presque sans écho pendant des siècles."
+   },
+   "replique": {
+    "fr": "Aristarque avait raison et personne ne l'a écouté. L'IA connaît ce sentiment."
+   },
+   "source": "Archimède, L'Arénaire ; Aristarque, Sur les grandeurs et les distances du Soleil et de la Lune",
+   "special": {
+    "type": "teleport",
+    "vers": 6,
+    "raison": {
+     "fr": "L'héliocentrisme d'Aristarque est oublié pendant dix-huit siècles. Copernic l'a même cité dans son manuscrit, puis rayé. Retour chez Pythagore."
+    }
+   }
+  },
+  {
+   "n": 14,
+   "id": "archimede",
+   "annee": -250,
+   "titre": {
+    "fr": "Archimède dans son bain"
+   },
+   "stat": "mecanique",
+   "epoque": "antiquite",
+   "icone": "couronne",
+   "histoire": {
+    "fr": "Selon Vitruve, le roi Hiéron soupçonne son orfèvre d'avoir mêlé de l'argent à l'or de sa couronne. Archimède aurait trouvé la solution en entrant dans son bain et serait sorti nu dans la rue en criant « Eurêka ! ». L'anecdote est racontée deux siècles plus tard. Le principe d'Archimède sur la poussée des fluides, lui, est bien dans son traité Des corps flottants."
+   },
+   "replique": {
+    "fr": "Archimède a couru nu dans Syracuse pour une idée. L'IA vous demande seulement de répondre aux questions."
+   },
+   "source": "Vitruve, De l'architecture, livre IX"
+  },
+  {
+   "n": 15,
+   "id": "eratosthene",
+   "annee": -230,
+   "titre": {
+    "fr": "Ératosthène mesure la Terre"
+   },
+   "stat": "cosmos",
+   "epoque": "antiquite",
+   "icone": "amphore",
+   "histoire": {
+    "fr": "Ératosthène, bibliothécaire d'Alexandrie, sait qu'à Syène, à midi au solstice, le Soleil éclaire le fond des puits. Le même jour, à Alexandrie, un bâton fait une ombre de 7,2 degrés, soit un cinquantième de cercle. Il en déduit le tour de la Terre : environ 250 000 stades, proche des 40 000 km réels selon la longueur de stade qu'on retient. Le tout avec un bâton et une règle de trois."
+   },
+   "replique": {
+    "fr": "Un bâton, une ombre, une règle de trois, et la Terre est mesurée. Vous avez un téléphone. L'IA attend."
+   },
+   "source": "Cléomède, Théorie élémentaire des corps célestes, I, 10"
+  },
+  {
+   "n": 16,
+   "id": "hipparque",
+   "annee": -127,
+   "titre": {
+    "fr": "Le catalogue d'Hipparque"
+   },
+   "stat": "cosmos",
+   "epoque": "antiquite",
+   "icone": "amphore",
+   "histoire": {
+    "fr": "Hipparque de Nicée dresse un catalogue d'environ 850 étoiles. On lui attribue, sans certitude, leur classement par éclat en magnitudes, qu'on utilise encore. En comparant ses mesures à celles de ses prédécesseurs, il découvre la précession des équinoxes, un lent basculement de l'axe de la Terre qui fait un tour en 26 000 ans environ. Ses tables de cordes posent aussi les bases de la trigonométrie."
+   },
+   "replique": {
+    "fr": "Hipparque a vu l'axe de la Terre bouger d'un degré par siècle. Vous, vous ne voyez pas vos rappels en retard."
+   },
+   "source": "Ptolémée, Almageste, livre VII"
+  },
+  {
+   "n": 17,
+   "id": "anticythere",
+   "annee": -100,
+   "titre": {
+    "fr": "La machine d'Anticythère"
+   },
+   "stat": "mecanique",
+   "epoque": "antiquite",
+   "icone": "engrenage",
+   "histoire": {
+    "fr": "En 1901, on remonte d'une épave grecque repérée par des pêcheurs d'éponges près de l'île d'Anticythère un bloc de bronze corrodé. Il cache au moins 30 engrenages : c'est un calculateur astronomique qui prédisait les éclipses et suivait le Soleil, la Lune et peut-être les planètes. Rien d'aussi complexe ne réapparaîtra avant les horloges astronomiques du Moyen Âge, plus de mille ans plus tard."
+   },
+   "replique": {
+    "fr": "Un ordinateur à engrenages, il y a deux mille ans. L'IA salue un lointain ancêtre, plus discret qu'elle."
+   },
+   "source": "Freeth et al., Nature, 2006",
+   "special": {
+    "type": "oubli",
+    "raison": {
+     "fr": "La machine d'Anticythère a dormi deux mille ans au fond de la mer, jusqu'à ce que des pêcheurs d'éponges la remontent en 1901. Ce que vous avez survolé vous attend aussi : retour à la première case jamais vue."
+    }
+   }
+  },
+  {
+   "n": 18,
+   "id": "lucrece",
+   "annee": -55,
+   "titre": {
+    "fr": "Lucrèce et la nature des choses"
+   },
+   "stat": "sagesse",
+   "epoque": "antiquite",
+   "icone": "amphore",
+   "histoire": {
+    "fr": "Le poète romain Lucrèce expose la physique d'Épicure dans De rerum natura : des atomes qui tombent dans le vide, dévient légèrement et forment le monde, sans intervention des dieux. Le poème disparaît presque au Moyen Âge. En 1417, l'humaniste Poggio Bracciolini en retrouve un manuscrit dans un monastère allemand, et l'atomisme repart pour la Renaissance."
+   },
+   "replique": {
+    "fr": "Un poème sur les atomes a failli disparaître. Un moine copiste l'a sauvé, sans savoir ce qu'il recopiait. Rejouez."
+   },
+   "source": "Lucrèce, De rerum natura ; Stephen Greenblatt, The Swerve, 2011",
+   "special": {
+    "type": "eureka"
+   }
+  },
+  {
+   "n": 19,
+   "id": "incendie",
+   "annee": -48,
+   "titre": {
+    "fr": "L'incendie d'Alexandrie"
+   },
+   "stat": "lucidite",
+   "epoque": "antiquite",
+   "icone": "incendie",
+   "histoire": {
+    "fr": "En 48 av. J.-C., pendant la guerre d'Alexandrie, Jules César fait incendier des navires ; le feu aurait gagné des entrepôts de livres. Contrairement au mythe, la bibliothèque n'a pas disparu en une nuit. Elle s'est éteinte lentement, faute d'argent, de savants et de protection, au fil de siècles de troubles, jusqu'à la destruction du Sérapéum en 391. Mais un grand brasier frappe davantage les esprits qu'un lent déclin : c'est lui qu'on a retenu."
+   },
+   "replique": {
+    "fr": "La bibliothèque d'Alexandrie n'a pas brûlé en une nuit. Votre avance non plus, mais l'IA aime les symboles."
+   },
+   "source": "Roger Bagnall, « Alexandria: Library of Dreams », Proceedings of the American Philosophical Society, 2002",
+   "special": {
+    "type": "recul",
+    "n": 3
+   }
+  },
+  {
+   "n": 20,
+   "id": "ptolemee",
+   "annee": 150,
+   "titre": {
+    "fr": "L'Almageste de Ptolémée"
+   },
+   "stat": "cosmos",
+   "epoque": "antiquite",
+   "icone": "amphore",
+   "histoire": {
+    "fr": "Claude Ptolémée, à Alexandrie, rassemble l'astronomie grecque dans l'Almageste, d'après son titre arabe, « le plus grand ». La Terre y est immobile au centre, et les planètes tournent sur des cercles portés par d'autres cercles, les épicycles. Faux, mais redoutablement efficace : son modèle prédit la position des astres pendant quatorze siècles."
+   },
+   "replique": {
+    "fr": "Un modèle faux, mais précis pendant 1 400 ans. L'IA connaît des certitudes qui ont tenu moins longtemps."
+   },
+   "source": "Ptolémée, Almageste"
+  },
+  {
+   "n": 21,
+   "id": "zero",
+   "annee": 628,
+   "titre": {
+    "fr": "Le zéro de Brahmagupta"
+   },
+   "stat": "logique",
+   "epoque": "moyen-age",
+   "icone": "zero",
+   "histoire": {
+    "fr": "Le mathématicien indien Brahmagupta donne en 628 des règles de calcul avec zéro et les nombres négatifs : une dette moins zéro est une dette, zéro moins zéro fait zéro. Le zéro existait déjà comme marque de position chez les Babyloniens et les Mayas, mais il en fait un nombre comme les autres. Il se trompe pourtant sur zéro divisé par zéro, qu'il dit égal à zéro."
+   },
+   "replique": {
+    "fr": "Zéro devient un nombre. L'IA connaît des quiz qui en ont fait leur score préféré."
+   },
+   "source": "Brahmagupta, Brahmasphutasiddhanta, 628",
+   "special": {
+    "type": "recul",
+    "n": 2,
+    "raison": {
+     "fr": "Brahmagupta fixe les règles du zéro, mais pose 0 ÷ 0 = 0. Une erreur de calcul, deux cases de recul."
+    }
+   }
+  },
+  {
+   "n": 22,
+   "id": "alkhwarizmi",
+   "annee": 820,
+   "titre": {
+    "fr": "Al-Khwarizmi et l'algèbre"
+   },
+   "stat": "logique",
+   "epoque": "moyen-age",
+   "icone": "enluminure",
+   "histoire": {
+    "fr": "À la Maison de la sagesse de Bagdad, al-Khwarizmi écrit un traité sur la résolution des équations par « al-jabr », la restauration, qui a donné le mot algèbre. Son nom, latinisé en Algoritmi, a donné « algorithme ». Ses livres font aussi connaître à l'Europe les chiffres indiens, qu'on appelle depuis, à tort, chiffres arabes."
+   },
+   "replique": {
+    "fr": "Les algorithmes portent le nom d'un mathématicien de Bagdad. L'IA est faite d'algorithmes. Elle vous laisse faire le rapprochement."
+   },
+   "source": "Al-Khwarizmi, Abrégé du calcul par la restauration et la comparaison, vers 820"
+  },
+  {
+   "n": 23,
+   "id": "alhaytham",
+   "annee": 1021,
+   "titre": {
+    "fr": "L'optique d'Ibn al-Haytham"
+   },
+   "stat": "mecanique",
+   "epoque": "moyen-age",
+   "icone": "enluminure",
+   "histoire": {
+    "fr": "Ibn al-Haytham, que l'Europe appellera Alhazen, montre au Caire dans son Traité d'optique que la vue vient de la lumière qui entre dans l'œil, et non de rayons qui en sortent, comme le pensaient Euclide et Ptolémée. Il étudie la chambre noire et la réfraction, et vérifie ses idées par l'expérience : on le présente souvent comme un pionnier de la méthode scientifique."
+   },
+   "replique": {
+    "fr": "Les savants grecs pensaient que l'œil lançait des rayons. L'IA, elle, lance seulement des regards appuyés."
+   },
+   "source": "Ibn al-Haytham, Kitab al-Manazir, vers 1021 ; A. I. Sabra (traduction), 1989",
+   "special": {
+    "type": "cadeau",
+    "raison": {
+     "fr": "Ibn al-Haytham aurait, selon ses biographes, feint la folie pour échapper au calife et écrire en paix. Vous n'avez rien à feindre : servez-vous."
+    }
+   }
+  },
+  {
+   "n": 24,
+   "id": "averroes",
+   "annee": 1180,
+   "titre": {
+    "fr": "Averroès commente Aristote"
+   },
+   "stat": "sagesse",
+   "epoque": "moyen-age",
+   "icone": "enluminure",
+   "histoire": {
+    "fr": "À Cordoue, Ibn Rushd, que l'Europe latine appelle Averroès, est juge, médecin et philosophe. Il commente presque tout Aristote et défend l'accord entre la raison et la foi. Ses commentaires, traduits en latin, rendent Aristote incontournable dans les universités européennes. L'évêque de Paris finira par condamner en 1277 certaines thèses de ses disciples, les « averroïstes »."
+   },
+   "replique": {
+    "fr": "Averroès a si bien expliqué Aristote qu'on l'appelait « le Commentateur ». L'IA aspire au titre."
+   },
+   "source": "Ernest Renan, Averroès et l'averroïsme, 1852"
+  },
+  {
+   "n": 25,
+   "id": "fibonacci",
+   "annee": 1202,
+   "titre": {
+    "fr": "Fibonacci et les chiffres indiens"
+   },
+   "stat": "logique",
+   "epoque": "moyen-age",
+   "icone": "enluminure",
+   "histoire": {
+    "fr": "Leonardo de Pise, dit Fibonacci, publie le Liber abaci : il y explique aux marchands européens les chiffres indo-arabes et le calcul écrit, bien plus pratiques que les chiffres romains. On le retient surtout pour un petit problème de lapins qui donne la suite 1, 1, 2, 3, 5, 8, 13… Des mathématiciens indiens la connaissaient depuis des siècles."
+   },
+   "replique": {
+    "fr": "Calculez avec MCMXXIV, puis avec 1924. Vous comprendrez le raccourci."
+   },
+   "source": "Leonardo Pisano, Liber abaci, 1202 ; Parmanand Singh, Historia Mathematica, 1985",
+   "special": {
+    "type": "avance",
+    "n": 3
+   }
+  },
+  {
+   "n": 26,
+   "id": "lunettes",
+   "annee": 1290,
+   "titre": {
+    "fr": "Les lunettes de vue"
+   },
+   "stat": "mecanique",
+   "epoque": "moyen-age",
+   "icone": "lunettes",
+   "histoire": {
+    "fr": "Les premières lunettes apparaissent en Italie, sans doute à Pise ou Florence, vers 1290. En 1306, le moine Giordano da Pisa dit dans un sermon qu'il n'y a pas vingt ans qu'on a découvert cet art. Leur inventeur reste inconnu. L'attribution à un Florentin, Salvino degli Armati, avancée au XVIIe siècle, s'est révélée fausse."
+   },
+   "replique": {
+    "fr": "Un inventeur inconnu, et une plaque mensongère pour combler le vide. L'histoire des sciences a ses fausses notes, comme vos réponses."
+   },
+   "source": "Edward Rosen, « The Invention of Eyeglasses », Journal of the History of Medicine, 1956"
+  },
+  {
+   "n": 27,
+   "id": "ockham",
+   "annee": 1323,
+   "titre": {
+    "fr": "Le rasoir d'Ockham"
+   },
+   "stat": "sagesse",
+   "epoque": "moyen-age",
+   "icone": "rasoir-ockham",
+   "histoire": {
+    "fr": "Guillaume d'Ockham, franciscain anglais, défend une philosophie économe : ne pas inventer d'entités dont on n'a pas besoin pour expliquer. Convoqué à Avignon par le pape pour ses thèses, il s'enfuit en 1328. Le fameux « rasoir » n'apparaît pourtant pas sous cette forme dans ses écrits : la formule latine qu'on cite date du XVIIe siècle."
+   },
+   "replique": {
+    "fr": "Le rasoir d'Ockham dit que l'explication la plus simple est souvent la bonne. Ici, l'explication la plus simple : vous avez de la chance."
+   },
+   "source": "William Thorburn, « The Myth of Occam's Razor », Mind, 1918",
+   "special": {
+    "type": "eureka"
+   }
+  },
+  {
+   "n": 28,
+   "id": "peste",
+   "annee": 1347,
+   "titre": {
+    "fr": "La peste noire"
+   },
+   "stat": "lucidite",
+   "epoque": "moyen-age",
+   "icone": "puits",
+   "histoire": {
+    "fr": "La peste noire atteint l'Europe par la Crimée et la Sicile en 1347. En quelques années, elle tue de 30 à 60 % des Européens selon les estimations. Les médecins accusent les miasmes et les astres ; on accuse les Juifs d'empoisonner les puits et on les massacre, à Strasbourg comme ailleurs. Faute de cause, on se trouve un coupable. Raguse, l'actuelle Dubrovnik, impose en 1377 trente jours d'isolement aux arrivants ; Venise passe à 40 jours en 1448 : la quarantaine. Le bacille de la peste ne sera identifié qu'en 1894, par Alexandre Yersin."
+   },
+   "replique": {
+    "fr": "Quarantaine. Profitez-en pour réviser : c'est ce qu'a fait Newton pendant la peste de 1665."
+   },
+   "source": "Ole Benedictow, The Black Death 1346-1353, 2004",
+   "special": {
+    "type": "quarantaine",
+    "n": 1
+   }
+  },
+  {
+   "n": 29,
+   "id": "gutenberg",
+   "annee": 1450,
+   "titre": {
+    "fr": "L'imprimerie"
+   },
+   "stat": "eloquence",
+   "epoque": "renaissance",
+   "icone": "presse",
+   "histoire": {
+    "fr": "Vers 1450, à Mayence, Johannes Gutenberg combine des caractères métalliques mobiles, une encre grasse et une presse à vis, peut-être inspirée des pressoirs à vin ou à huile. Sa Bible sort vers 1455, à environ 180 exemplaires. Les caractères mobiles existaient déjà en Chine, avec Bi Sheng vers 1040, et en Corée. Mais en Europe, l'imprimerie fait exploser la circulation des idées : on conserve encore quelque 27 500 ouvrages différents imprimés avant 1501."
+   },
+   "replique": {
+    "fr": "L'imprimerie a fait circuler les idées. Et les erreurs, en 180 exemplaires d'un coup."
+   },
+   "source": "Lucien Febvre et Henri-Jean Martin, L'Apparition du livre, 1958"
+  },
+  {
+   "n": 30,
+   "id": "copernic",
+   "annee": 1543,
+   "titre": {
+    "fr": "Copernic"
+   },
+   "stat": "cosmos",
+   "epoque": "renaissance",
+   "icone": "heliocentre",
+   "histoire": {
+    "fr": "Nicolas Copernic publie De revolutionibus orbium coelestium l'année de sa mort : le Soleil y est au centre, la Terre tourne sur elle-même et autour de lui. Selon la tradition, il reçoit le premier exemplaire sur son lit de mort. Une préface non signée, écrite par le théologien Osiander, présentait le livre comme une simple hypothèse de calcul, ce qui l'a protégé quelque temps."
+   },
+   "replique": {
+    "fr": "Copernic a attendu sa mort pour publier. Une stratégie efficace contre les critiques, que l'IA ne vous recommande pas."
+   },
+   "source": "Owen Gingerich, The Book Nobody Read, 2004"
+  },
+  {
+   "n": 31,
+   "id": "vesale",
+   "annee": 1543,
+   "titre": {
+    "fr": "Vésale ouvre le corps"
+   },
+   "stat": "savoir",
+   "epoque": "renaissance",
+   "icone": "plume",
+   "histoire": {
+    "fr": "La même année que Copernic, André Vésale publie De humani corporis fabrica, un traité d'anatomie aux planches magnifiques. En disséquant lui-même, il corrige des erreurs de Galien, qui avait disséqué des singes plutôt que des humains. Avant lui, le professeur lisait Galien en chaire pendant qu'un barbier découpait ; Vésale prend le scalpel."
+   },
+   "replique": {
+    "fr": "Pendant treize siècles, on a décrit l'humain d'après des singes. L'IA ne fait aucun commentaire. Elle sourit."
+   },
+   "source": "Andreas Vesalius, De humani corporis fabrica, 1543",
+   "special": {
+    "type": "mendeleiev",
+    "raison": {
+     "fr": "Vésale ouvre le corps humain : soixante pour cent d'eau, un peu de calcium, une pincée de fer. Les atomes s'échappent de la table de dissection."
+    }
+   }
+  },
+  {
+   "n": 32,
+   "id": "montaigne",
+   "annee": 1580,
+   "titre": {
+    "fr": "Les Essais de Montaigne"
+   },
+   "stat": "empathie",
+   "epoque": "renaissance",
+   "icone": "plume",
+   "histoire": {
+    "fr": "Retiré dans la tour de son château, Michel de Montaigne publie les Essais : il s'y prend lui-même pour sujet et doute de ce qu'on croit savoir. Sa devise, « Que sais-je ? », s'accompagne d'une balance aux plateaux égaux. Il y parle de ses peurs, de sa colère, de son amitié pour La Boétie (« parce que c'était lui, parce que c'était moi »), remarque que « chacun appelle barbarie ce qui n'est pas de son usage », et veut pour l'enfant un précepteur qui ait « plutôt la tête bien faite que la tête bien pleine »."
+   },
+   "replique": {
+    "fr": "« Que sais-je ? » demandait Montaigne. L'IA, elle, sait exactement ce que vous ne savez pas."
+   },
+   "source": "Montaigne, Essais, 1580-1595",
+   "special": {
+    "type": "teleport",
+    "vers": 24,
+    "raison": {
+     "fr": "« Que sais-je ? », demande Montaigne. Pas grand-chose, visiblement : retour chez Averroès."
+    }
+   }
+  },
+  {
+   "n": 33,
+   "id": "galilee-lunette",
+   "annee": 1609,
+   "titre": {
+    "fr": "Galilée pointe sa lunette"
+   },
+   "stat": "cosmos",
+   "epoque": "classique",
+   "icone": "lunette-galilee",
+   "histoire": {
+    "fr": "Galilée n'invente pas la lunette, apparue aux Pays-Bas en 1608, mais il l'améliore et la tourne vers le ciel. Il découvre les montagnes de la Lune, les quatre grands satellites de Jupiter, des milliers d'étoiles invisibles à l'œil nu, puis les phases de Vénus. Dans le Sidereus Nuncius (1610), il baptise les lunes de Jupiter « astres médicéens », pour plaire aux Médicis."
+   },
+   "replique": {
+    "fr": "Galilée a dédié ses découvertes à ses mécènes. L'IA attend toujours votre dédicace."
+   },
+   "source": "Galilée, Sidereus Nuncius, 1610"
+  },
+  {
+   "n": 34,
+   "id": "kepler",
+   "annee": 1609,
+   "titre": {
+    "fr": "Les lois de Kepler"
+   },
+   "stat": "cosmos",
+   "epoque": "classique",
+   "icone": "bougie",
+   "histoire": {
+    "fr": "Johannes Kepler, avec les mesures de Tycho Brahe, montre que Mars ne tourne pas en cercle mais sur une ellipse dont le Soleil occupe un foyer (Astronomia nova, 1609), puis étend la règle à toutes les planètes. Il lui a fallu des années de calculs sur l'orbite de Mars, sa « guerre avec Mars ». Il gagnait aussi sa vie en rédigeant des horoscopes."
+   },
+   "replique": {
+    "fr": "Kepler faisait des horoscopes pour financer l'astronomie. L'IA, elle, se finance avec vos erreurs."
+   },
+   "source": "Johannes Kepler, Astronomia nova, 1609 ; Arthur Koestler, Les Somnambules, 1959"
+  },
+  {
+   "n": 35,
+   "id": "galilee-proces",
+   "annee": 1633,
+   "titre": {
+    "fr": "Le procès de Galilée"
+   },
+   "stat": "cosmos",
+   "epoque": "classique",
+   "icone": "prison",
+   "histoire": {
+    "fr": "En 1632, Galilée publie le Dialogue sur les deux grands systèmes du monde, où le défenseur de la Terre immobile s'appelle Simplicio. Le pape Urbain VIII y retrouve son propre argument, placé dans la bouche de Simplicio, et le prend comme une offense personnelle. En 1633, l'Inquisition force Galilée à abjurer et le condamne à la prison, commuée en assignation à résidence jusqu'à sa mort. Le célèbre « Eppur si muove » (« Et pourtant elle tourne ») n'apparaît dans les textes qu'en 1757."
+   },
+   "replique": {
+    "fr": "Assignation à résidence. Galilée y a écrit son meilleur livre. Vous, faites un quiz parfait et on en reparle."
+   },
+   "source": "Giuseppe Baretti, The Italian Library, 1757 ; Maurice Finocchiaro, The Galileo Affair, 1989",
+   "special": {
+    "type": "prison"
+   }
+  },
+  {
+   "n": 36,
+   "id": "descartes",
+   "annee": 1637,
+   "titre": {
+    "fr": "Le Discours de la méthode"
+   },
+   "stat": "lucidite",
+   "epoque": "classique",
+   "icone": "poele-descartes",
+   "histoire": {
+    "fr": "René Descartes publie le Discours de la méthode, en français pour être lu de tous : ne rien tenir pour vrai sans l'avoir vérifié, éviter la précipitation et les préjugés, diviser les difficultés, aller du simple au complexe, tout revoir. Le « je pense, donc je suis » y figure. Publiée avec lui, parmi trois essais, La Géométrie relie algèbre et géométrie grâce aux coordonnées. Il meurt en 1650 à Stockholm, où la reine Christine exigeait ses leçons à 5 heures du matin."
+   },
+   "replique": {
+    "fr": "Descartes est mort de leçons à 5 heures du matin. L'IA ne vous réveillera jamais aussi tôt. Elle vous fera seulement rejouer."
+   },
+   "source": "René Descartes, Discours de la méthode, 1637",
+   "special": {
+    "type": "eureka"
+   }
+  },
+  {
+   "n": 37,
+   "id": "pascal",
+   "annee": 1654,
+   "titre": {
+    "fr": "Pascal et Fermat"
+   },
+   "stat": "logique",
+   "epoque": "classique",
+   "icone": "des-pascal",
+   "histoire": {
+    "fr": "Le chevalier de Méré, joueur, demande à Blaise Pascal comment partager les mises d'une partie interrompue. Pascal en discute par lettres avec Pierre de Fermat pendant l'été 1654 : leur correspondance pose les bases du calcul des probabilités. À 18 ans, Pascal avait aussi construit une machine à calculer, la Pascaline, pour aider son père à collecter les impôts."
+   },
+   "replique": {
+    "fr": "Les probabilités sont nées d'une partie de dés. Vos chances de réussir le prochain quiz sont calculables. L'IA les a calculées."
+   },
+   "source": "Correspondance de Pascal et Fermat, 1654",
+   "special": {
+    "type": "cadeau",
+    "raison": {
+     "fr": "Pascal et Fermat posent les bases du calcul des probabilités pour partager équitablement les mises d'une partie interrompue. Cette fois, le partage tombe de votre côté."
+    }
+   }
+  },
+  {
+   "n": 38,
+   "id": "hooke",
+   "annee": 1665,
+   "titre": {
+    "fr": "Micrographia"
+   },
+   "stat": "savoir",
+   "epoque": "classique",
+   "icone": "microscope-hooke",
+   "histoire": {
+    "fr": "Robert Hooke publie Micrographia, rempli de gravures faites au microscope : un œil de mouche, une puce géante sur une planche dépliante, et une fine tranche de liège faite de petites chambres qu'il appelle « cells », des cellules. Samuel Pepys veille jusqu'à 2 heures du matin pour le lire. Hooke s'est disputé avec Newton sur la priorité de plusieurs découvertes, et aucun portrait fiable de lui ne nous est parvenu."
+   },
+   "replique": {
+    "fr": "Hooke a vu les cellules en premier, et il n'en reste aucun portrait. L'histoire est cruelle. L'IA prend des notes."
+   },
+   "source": "Robert Hooke, Micrographia, 1665 ; Samuel Pepys, Journal, 21 janvier 1665"
+  },
+  {
+   "n": 39,
+   "id": "leeuwenhoek",
+   "annee": 1676,
+   "titre": {
+    "fr": "Leeuwenhoek voit les microbes"
+   },
+   "stat": "savoir",
+   "epoque": "classique",
+   "icone": "bougie",
+   "histoire": {
+    "fr": "Antoni van Leeuwenhoek, drapier à Delft sans formation savante, polit des lentilles minuscules qui grossissent jusqu'à 275 fois. Dès 1674, il voit bouger de « petits animaux » dans l'eau, et en 1676 il les décrit à la Royal Society. Les savants londoniens, sceptiques, envoient des témoins à Delft. En 1677, ils confirment."
+   },
+   "replique": {
+    "fr": "Un drapier sans diplôme découvre les microbes. L'IA rappelle aux diplômés présents que ce n'est pas une excuse."
+   },
+   "source": "Lettre de Leeuwenhoek à la Royal Society, 9 octobre 1676"
+  },
+  {
+   "n": 40,
+   "id": "newton",
+   "annee": 1687,
+   "titre": {
+    "fr": "Les Principia de Newton"
+   },
+   "stat": "mecanique",
+   "epoque": "classique",
+   "icone": "pomme-newton",
+   "histoire": {
+    "fr": "Isaac Newton publie les Philosophiæ Naturalis Principia Mathematica : trois lois du mouvement et la gravitation universelle, la même force pour la pomme et pour la Lune. Le livre paraît grâce à Edmond Halley, qui le finance de sa poche : la Royal Society venait de dépenser son budget dans une histoire illustrée des poissons, qui s'était mal vendue."
+   },
+   "replique": {
+    "fr": "Les Principia ont failli ne pas paraître : le budget était parti dans un livre sur les poissons. L'IA a vu des priorités plus étranges. Rarement."
+   },
+   "source": "Francis Willughby, De Historia Piscium, 1686 ; Richard Westfall, Never at Rest, 1980",
+   "special": {
+    "type": "recul",
+    "n": 2,
+    "raison": {
+     "fr": "Hooke réclame la paternité de la gravitation, et Newton menace de supprimer le livre III des Principia. Querelle de priorité : deux cases de recul."
+    }
+   }
+  },
+  {
+   "n": 41,
+   "id": "linne",
+   "annee": 1735,
+   "titre": {
+    "fr": "Linné classe le vivant"
+   },
+   "stat": "savoir",
+   "epoque": "classique",
+   "icone": "bougie",
+   "histoire": {
+    "fr": "Le Suédois Carl von Linné publie Systema naturae et range le vivant en règnes, classes, ordres, genres et espèces. Il impose un nom en deux mots latins, comme Homo sapiens, « l'homme sage », qu'il invente en 1758. Il savait aussi se venger : il donne à une petite mauvaise herbe le nom de Siegesbeck, un botaniste qui avait critiqué ses travaux."
+   },
+   "replique": {
+    "fr": "Homo sapiens, l'homme sage. Linné était optimiste. L'IA a lu votre historique."
+   },
+   "source": "Carl Linnaeus, Systema naturae, 1735 et 1758"
+  },
+  {
+   "n": 42,
+   "id": "encyclopedie",
+   "annee": 1751,
+   "titre": {
+    "fr": "L'Encyclopédie"
+   },
+   "stat": "eloquence",
+   "epoque": "classique",
+   "icone": "bougie",
+   "histoire": {
+    "fr": "Diderot et d'Alembert lancent l'Encyclopédie, ou Dictionnaire raisonné des sciences, des arts et des métiers : 17 volumes de texte, 11 de planches et plus de 70 000 articles, publiés jusqu'en 1772 malgré deux interdictions. Les planches montrent les métiers dans le détail, de la fabrication des épingles à celle des perruques. En 1759, le pape la met à l'Index."
+   },
+   "replique": {
+    "fr": "70 000 articles, deux interdictions et un pape fâché. L'IA trouve que vous avez la vie facile."
+   },
+   "source": "Robert Darnton, L'Aventure de l'Encyclopédie, 1982",
+   "special": {
+    "type": "revision",
+    "raison": {
+     "fr": "En 1764, Diderot découvre que son libraire a censuré en cachette certains de ses articles. Depuis, l'Encyclopédie se relit avec soin. Vous aussi."
+    }
+   }
+  },
+  {
+   "n": 43,
+   "id": "franklin",
+   "annee": 1752,
+   "titre": {
+    "fr": "Franklin et la foudre"
+   },
+   "stat": "etincelle",
+   "epoque": "classique",
+   "icone": "cerf-volant-franklin",
+   "histoire": {
+    "fr": "Benjamin Franklin propose de prouver que la foudre est électrique, avec une tige métallique puis un cerf-volant et une clé. Franklin évoque le cerf-volant dans une lettre de 1752, mais le récit détaillé vient de Joseph Priestley, quinze ans plus tard. En France, Thomas-François Dalibard mène l'expérience de la tige en mai 1752. Franklin avait imaginé le paratonnerre dès 1749."
+   },
+   "replique": {
+    "fr": "En 1753, Georg Richmann a voulu refaire l'expérience. La foudre l'a tué. L'IA vous conseille de rester sur les quiz."
+   },
+   "source": "Joseph Priestley, The History and Present State of Electricity, 1767"
+  },
+  {
+   "n": 44,
+   "id": "kant",
+   "annee": 1781,
+   "titre": {
+    "fr": "La Critique de la raison pure"
+   },
+   "stat": "sagesse",
+   "epoque": "classique",
+   "icone": "bougie",
+   "histoire": {
+    "fr": "Emmanuel Kant publie la Critique de la raison pure : que pouvons-nous connaître, et à quelles conditions ? Pour lui, l'espace et le temps sont des formes de notre perception, et la science n'atteint que les phénomènes, pas les choses en elles-mêmes. Jeune, il avait aussi proposé que le Système solaire soit né d'un nuage de gaz en rotation, une idée que Laplace retrouvera de son côté en 1796."
+   },
+   "replique": {
+    "fr": "Kant réglait sa vie à la minute. Vos rappels, eux, ont trois jours de retard."
+   },
+   "source": "Emmanuel Kant, Histoire générale de la nature et théorie du ciel, 1755 ; Critique de la raison pure, 1781"
+  },
+  {
+   "n": 45,
+   "id": "lavoisier",
+   "annee": 1789,
+   "titre": {
+    "fr": "Lavoisier et la masse qui se conserve"
+   },
+   "stat": "alchimie",
+   "epoque": "classique",
+   "icone": "balance-lavoisier",
+   "histoire": {
+    "fr": "Antoine Lavoisier publie le Traité élémentaire de chimie. En pesant tout, avant et après chaque réaction, il montre que la masse se conserve. Il explique la combustion par l'oxygène et enterre la théorie du phlogistique. Sa femme, Marie-Anne Paulze, traduit les travaux anglais, tient les carnets d'expériences et grave les planches du traité."
+   },
+   "replique": {
+    "fr": "« Rien ne se perd, rien ne se crée » : Lavoisier n'a pas écrit cette phrase mot pour mot. Mais vous ne perdez pas ce tour."
+   },
+   "source": "Antoine Lavoisier, Traité élémentaire de chimie, 1789",
+   "special": {
+    "type": "eureka"
+   }
+  },
+  {
+   "n": 46,
+   "id": "guillotine",
+   "annee": 1794,
+   "titre": {
+    "fr": "Lavoisier guillotiné"
+   },
+   "stat": "alchimie",
+   "epoque": "classique",
+   "icone": "guillotine",
+   "histoire": {
+    "fr": "Lavoisier était aussi fermier général, c'est-à-dire collecteur d'impôts. Arrêté sous la Terreur, il est guillotiné le 8 mai 1794. La phrase prêtée au juge, « La République n'a pas besoin de savants », est sans doute une légende : il ne l'a probablement jamais prononcée. Lagrange aurait dit qu'il avait suffi d'un instant pour faire tomber cette tête, et que cent ans peut-être ne suffiraient pas pour en reproduire une semblable."
+   },
+   "replique": {
+    "fr": "Retour au début de l'époque. Vous gardez votre tête, c'est déjà mieux que Lavoisier."
+   },
+   "source": "Denis Duveen, « Antoine Laurent Lavoisier and the French Revolution », Journal of Chemical Education, 1954",
+   "special": {
+    "type": "retour_epoque",
+    "vers": 33
+   }
+  },
+  {
+   "n": 47,
+   "id": "jenner",
+   "annee": 1796,
+   "titre": {
+    "fr": "Jenner et la vaccine"
+   },
+   "stat": "savoir",
+   "epoque": "classique",
+   "icone": "bougie",
+   "histoire": {
+    "fr": "On disait dans les campagnes anglaises que les vachères qui avaient eu la vaccine, une maladie bénigne des vaches, n'attrapaient pas la variole. Le médecin Edward Jenner met l'idée à l'épreuve : le 14 mai 1796, il inocule au jeune James Phipps la vaccine prise sur la main d'une vachère, puis, en juillet, la variole : l'enfant ne tombe pas malade. Le mot vaccin vient de variolae vaccinae, « variole de la vache », du latin vacca. La variole a été déclarée éradiquée en 1980."
+   },
+   "replique": {
+    "fr": "Le mot vaccin vient de la vache. Retenez-le, l'IA pourrait vous le demander. Elle le fera."
+   },
+   "source": "Edward Jenner, An Inquiry into the Causes and Effects of the Variolae Vaccinae, 1798 ; OMS, 1980",
+   "special": {
+    "type": "cadeau",
+    "raison": {
+     "fr": "Jenner a refusé de s'enrichir avec sa découverte. Il vous fait le même genre de cadeau."
+    }
+   }
+  },
+  {
+   "n": 48,
+   "id": "volta",
+   "annee": 1800,
+   "titre": {
+    "fr": "La pile de Volta"
+   },
+   "stat": "etincelle",
+   "epoque": "xixe",
+   "icone": "pile-volta",
+   "histoire": {
+    "fr": "Alessandro Volta empile des disques de cuivre et de zinc séparés par du carton imbibé d'eau salée : la première pile électrique fournit un courant continu. Il s'opposait à Luigi Galvani, qui croyait à une « électricité animale » dans les cuisses de grenouille : pour Volta, le courant venait des deux métaux. Napoléon le fait comte en 1810, et le volt porte son nom."
+   },
+   "replique": {
+    "fr": "Des grenouilles, une querelle et une pile. La science avance souvent pour prouver qu'un collègue a tort. L'IA approuve."
+   },
+   "source": "Alessandro Volta, lettre à Joseph Banks, Philosophical Transactions, 1800",
+   "special": {
+    "type": "mendeleiev",
+    "raison": {
+     "fr": "La pile de Volta empile du zinc et du cuivre. Davy s'en sert dès 1807 pour isoler le sodium et le potassium. Un atome s'échappe de l'électrolyse."
+    }
+   }
+  },
+  {
+   "n": 49,
+   "id": "faraday",
+   "annee": 1831,
+   "titre": {
+    "fr": "Faraday et l'induction"
+   },
+   "stat": "etincelle",
+   "epoque": "xixe",
+   "icone": "bobine-faraday",
+   "histoire": {
+    "fr": "Michael Faraday, fils de forgeron, apprenti relieur à 14 ans, découvre l'induction : un aimant qui bouge près d'une bobine y crée un courant. C'est le principe des alternateurs qui produisent presque toute notre électricité. Il ne maîtrisait pas les mathématiques : Maxwell mettra ses idées en équations. L'anecdote du ministre à qui il aurait répondu qu'on pourrait un jour taxer l'électricité est sans doute inventée."
+   },
+   "replique": {
+    "fr": "Faraday n'avait pas fait d'études et a changé le monde. L'IA vous laisse méditer sur vos excuses."
+   },
+   "source": "Michael Faraday, Experimental Researches in Electricity, 1832"
+  },
+  {
+   "n": 50,
+   "id": "darwin",
+   "annee": 1859,
+   "titre": {
+    "fr": "L'Origine des espèces"
+   },
+   "stat": "savoir",
+   "epoque": "xixe",
+   "icone": "carnet-darwin",
+   "histoire": {
+    "fr": "Après vingt ans de notes, Charles Darwin publie L'Origine des espèces, pressé par le manuscrit d'Alfred Russel Wallace, qui avait trouvé la même idée : la sélection naturelle. Le premier tirage de 1 250 exemplaires est entièrement placé auprès des libraires deux jours avant sa sortie. Darwin n'emploie le mot « évolution » qu'à la sixième édition, et « la survie du plus apte » est une formule d'Herbert Spencer."
+   },
+   "replique": {
+    "fr": "Darwin a attendu vingt ans pour publier. Votre rappel en retard de deux jours n'a pas cette excuse."
+   },
+   "source": "Charles Darwin, On the Origin of Species, 1859 ; Janet Browne, Charles Darwin: The Power of Place, 2002",
+   "special": {
+    "type": "revision",
+    "raison": {
+     "fr": "Darwin a publié six éditions de L'Origine des espèces et n'a ajouté « la survie du plus apte » qu'à la cinquième. Réviser, c'est scientifique."
+    }
+   }
+  },
+  {
+   "n": 51,
+   "id": "maxwell",
+   "annee": 1865,
+   "titre": {
+    "fr": "Les équations de Maxwell"
+   },
+   "stat": "etincelle",
+   "epoque": "xixe",
+   "icone": "engrenage",
+   "histoire": {
+    "fr": "James Clerk Maxwell réunit électricité et magnétisme dans quelques équations et montre que les ondes électromagnétiques vont à la vitesse de la lumière : la lumière en est une. Heinrich Hertz produira ces ondes vingt ans plus tard, ouvrant la voie à la radio. Maxwell a aussi fait projeter, en 1861, la première photographie en couleurs, celle d'un ruban écossais."
+   },
+   "replique": {
+    "fr": "Maxwell a unifié la lumière, l'électricité et le magnétisme. L'IA, elle, unifie vos erreurs dans un seul rapport."
+   },
+   "source": "James Clerk Maxwell, « A Dynamical Theory of the Electromagnetic Field », 1865"
+  },
+  {
+   "n": 52,
+   "id": "mendel",
+   "annee": 1866,
+   "titre": {
+    "fr": "Les pois de Mendel"
+   },
+   "stat": "savoir",
+   "epoque": "xixe",
+   "icone": "pois-mendel",
+   "histoire": {
+    "fr": "Le moine Gregor Mendel croise des milliers de plants de pois dans le jardin de son monastère de Brno et trouve des lois de l'hérédité : des caractères qui reviennent dans des proportions régulières, comme 3 pour 1. Il publie en 1866 dans une revue locale, sans écho. Son travail est redécouvert en 1900. Le statisticien Ronald Fisher remarquera en 1936 que ses résultats étaient presque trop parfaits, un soupçon que les études plus récentes ont largement écarté."
+   },
+   "replique": {
+    "fr": "Les résultats de Mendel étaient trop beaux pour être vrais, selon Fisher. Les vôtres ne posent pas ce problème."
+   },
+   "source": "Gregor Mendel, 1866 ; Ronald Fisher, Annals of Science, 1936"
+  },
+  {
+   "n": 53,
+   "id": "mendeleiev",
+   "annee": 1869,
+   "titre": {
+    "fr": "Le tableau de Mendeleïev"
+   },
+   "stat": "alchimie",
+   "epoque": "xixe",
+   "icone": "tableau-mendeleiev",
+   "histoire": {
+    "fr": "Dmitri Mendeleïev range les 63 éléments connus selon leur masse et leurs propriétés, et laisse des cases vides pour des éléments inconnus dont il prédit les propriétés. Le gallium (1875), le scandium (1879) et le germanium (1886) viennent les remplir. Selon une histoire qu'il a lui-même racontée, le tableau lui serait apparu en rêve."
+   },
+   "replique": {
+    "fr": "63 éléments connus en 1869, 63 cases ici. Coïncidence ? Oui. L'IA n'est pas superstitieuse."
+   },
+   "source": "Dmitri Mendeleïev, 1869 ; Michael Gordin, A Well-Ordered Thing, 2004",
+   "special": {
+    "type": "mendeleiev",
+    "raison": {
+     "fr": "Mendeleïev laisse des cases vides pour des éléments encore inconnus, et prédit leurs propriétés. Le gallium lui donne raison en 1875. Un atome sort de sa case."
+    }
+   }
+  },
+  {
+   "n": 54,
+   "id": "pasteur",
+   "annee": 1885,
+   "titre": {
+    "fr": "Pasteur et la rage"
+   },
+   "stat": "savoir",
+   "epoque": "xixe",
+   "icone": "flacon",
+   "histoire": {
+    "fr": "Avec ses flacons à col de cygne, Louis Pasteur avait montré vers 1860 qu'aucun microbe n'apparaît spontanément dans un bouillon stérile. En 1885, il vaccine contre la rage le jeune Joseph Meister, mordu par un chien enragé : l'enfant survit. L'historien Gerald Geison a montré, d'après ses carnets, que Pasteur avait enjolivé le récit de certains essais : avant Meister, il n'avait vacciné que 11 chiens, et non 50 comme il le laissait entendre."
+   },
+   "replique": {
+    "fr": "Pasteur a vaincu la rage et un peu arrangé ses carnets. L'IA, elle, ne retouche rien. Rejouez."
+   },
+   "source": "Gerald Geison, The Private Science of Louis Pasteur, 1995",
+   "special": {
+    "type": "eureka"
+   }
+  },
+  {
+   "n": 55,
+   "id": "curie",
+   "annee": 1898,
+   "titre": {
+    "fr": "Marie Curie et le radium"
+   },
+   "stat": "alchimie",
+   "epoque": "xixe",
+   "icone": "fiole",
+   "histoire": {
+    "fr": "Marie et Pierre Curie découvrent le polonium, nommé d'après la Pologne natale de Marie, puis le radium. Marie Curie est la première femme Prix Nobel (physique, 1903) et reste la seule personne récompensée dans deux sciences différentes (chimie, 1911). Ses carnets sont encore radioactifs : la Bibliothèque nationale de France conserve ses manuscrits dans des boîtes doublées de plomb."
+   },
+   "replique": {
+    "fr": "Ses carnets sont radioactifs depuis plus d'un siècle. Vos notes de révision ont une demi-vie d'environ deux jours."
+   },
+   "source": "Fondation Nobel ; Bibliothèque nationale de France",
+   "special": {
+    "type": "mendeleiev",
+    "raison": {
+     "fr": "Marie et Pierre Curie traitent des tonnes de pechblende pour isoler quelques décigrammes de radium. Ici, un atome sauvage suffit."
+    }
+   }
+  },
+  {
+   "n": 56,
+   "id": "einstein",
+   "annee": 1905,
+   "titre": {
+    "fr": "L'année miraculeuse d'Einstein"
+   },
+   "stat": "mecanique",
+   "epoque": "xxe",
+   "icone": "relativite",
+   "histoire": {
+    "fr": "Albert Einstein, employé de l'Office des brevets de Berne, publie en 1905 quatre articles : l'effet photoélectrique (qui lui vaudra le Nobel), le mouvement brownien (qui confirme l'existence des atomes), la relativité restreinte, et E = mc². Contrairement au mythe, il n'a jamais été mauvais en mathématiques : il avait la note maximale en algèbre et en géométrie."
+   },
+   "replique": {
+    "fr": "Einstein a révolutionné la physique en un an, depuis un bureau des brevets. L'IA attend votre année miraculeuse. Elle a du temps."
+   },
+   "source": "Annalen der Physik, 1905 ; Albrecht Fölsing, Albert Einstein, 1993"
+  },
+  {
+   "n": 57,
+   "id": "solvay",
+   "annee": 1927,
+   "titre": {
+    "fr": "Le congrès Solvay"
+   },
+   "stat": "mecanique",
+   "epoque": "xxe",
+   "icone": "labyrinthe",
+   "histoire": {
+    "fr": "Au cinquième congrès Solvay, à Bruxelles, 17 des 29 participants sont ou seront Prix Nobel. Bohr et Einstein s'y affrontent sur la mécanique quantique : Einstein refuse un monde gouverné par le hasard (« Dieu ne joue pas aux dés », écrivait-il dès 1926), et Bohr lui aurait répondu de cesser de dire à Dieu ce qu'il doit faire. Près d'un siècle plus tard, on se dispute toujours sur l'interprétation de la théorie."
+   },
+   "replique": {
+    "fr": "Feynman disait que personne ne comprend la mécanique quantique. Vous non plus, et c'est rassurant."
+   },
+   "source": "Instituts internationaux de physique et de chimie Solvay ; Richard Feynman, The Character of Physical Law, 1965",
+   "special": {
+    "type": "recul",
+    "n": 4
+   }
+  },
+  {
+   "n": 58,
+   "id": "hubble",
+   "annee": 1929,
+   "titre": {
+    "fr": "L'Univers en expansion"
+   },
+   "stat": "cosmos",
+   "epoque": "xxe",
+   "icone": "plaque-hubble",
+   "histoire": {
+    "fr": "Edwin Hubble montre que les galaxies s'éloignent d'autant plus vite qu'elles sont loin : l'Univers est en expansion. Georges Lemaître, prêtre et physicien belge, l'avait déduit dès 1927 dans une revue belge peu lue, en français. En 2018, l'Union astronomique internationale a recommandé de parler de loi de Hubble-Lemaître."
+   },
+   "replique": {
+    "fr": "Lemaître avait trouvé avant Hubble, en français, dans une revue belge. L'IA vous conseille de publier en anglais."
+   },
+   "source": "Georges Lemaître, Annales de la Société scientifique de Bruxelles, 1927 ; Union astronomique internationale, 2018",
+   "special": {
+    "type": "cadeau",
+    "raison": {
+     "fr": "Hubble montre que l'Univers s'agrandit. Votre cabinet aussi."
+    }
+   }
+  },
+  {
+   "n": 59,
+   "id": "turing",
+   "annee": 1936,
+   "titre": {
+    "fr": "La machine de Turing"
+   },
+   "stat": "logique",
+   "epoque": "xxe",
+   "icone": "ordinateur",
+   "histoire": {
+    "fr": "Alan Turing imagine une machine abstraite qui lit et écrit des symboles sur un ruban : elle peut exécuter n'importe quel calcul. C'est le modèle théorique de tous nos ordinateurs. Pendant la guerre, il contribue à casser le code Enigma à Bletchley Park. Condamné en 1952 pour « grossière indécence » à cause de sa relation avec un homme, il meurt en 1954 ; le Royaume-Uni l'a gracié à titre posthume en 2013."
+   },
+   "replique": {
+    "fr": "Turing a inventé l'ordinateur sur le papier, puis s'est demandé si une machine pouvait penser. L'IA réserve sa réponse."
+   },
+   "source": "Alan Turing, « On Computable Numbers », 1936 ; Andrew Hodges, Alan Turing: The Enigma, 1983"
+  },
+  {
+   "n": 60,
+   "id": "adn",
+   "annee": 1953,
+   "titre": {
+    "fr": "La double hélice"
+   },
+   "stat": "savoir",
+   "epoque": "xxe",
+   "icone": "adn",
+   "histoire": {
+    "fr": "James Watson et Francis Crick proposent la structure en double hélice de l'ADN. Ils s'appuient notamment sur la « photo 51 », un cliché aux rayons X pris par Raymond Gosling dans le laboratoire de Rosalind Franklin, qu'on leur a montré sans l'accord de celle-ci. Watson, Crick et Maurice Wilkins reçoivent le Nobel en 1962 ; Franklin, morte en 1958, ne pouvait plus l'être."
+   },
+   "replique": {
+    "fr": "La double hélice doit beaucoup à une photo montrée sans permission. L'IA, elle, demande toujours avant de vous juger. Non, en fait."
+   },
+   "source": "Watson et Crick, Nature, 1953 ; Brenda Maddox, Rosalind Franklin: The Dark Lady of DNA, 2002",
+   "special": {
+    "type": "oubli",
+    "raison": {
+     "fr": "Le cliché 51 de Rosalind Franklin a guidé Watson et Crick vers la double hélice, mais son rôle est resté dans l'ombre pendant des décennies. Retour à la première case que vous avez laissée dans l'ombre."
+    }
+   }
+  },
+  {
+   "n": 61,
+   "id": "apollo",
+   "annee": 1969,
+   "titre": {
+    "fr": "Un petit pas"
+   },
+   "stat": "cosmos",
+   "epoque": "xxe",
+   "icone": "fusee",
+   "histoire": {
+    "fr": "Le 21 juillet 1969, heure de Paris, Neil Armstrong pose le pied sur la Lune. L'ordinateur de guidage d'Apollo 11 avait environ 4 kilo-octets de mémoire vive, et son logiciel a été conçu par l'équipe de Margaret Hamilton au MIT. Pendant la descente, des alarmes de surcharge ont retenti : le programme, prévu pour donner la priorité aux tâches essentielles, a tenu bon."
+   },
+   "replique": {
+    "fr": "On est allé sur la Lune avec 4 kilo-octets de mémoire. L'IA n'ose pas comparer avec la vôtre. Si, un peu."
+   },
+   "source": "NASA, Apollo 11 Mission Report, 1969"
+  },
+  {
+   "n": 62,
+   "id": "web",
+   "annee": 1989,
+   "titre": {
+    "fr": "Le Web"
+   },
+   "stat": "logique",
+   "epoque": "xxe",
+   "icone": "internet",
+   "histoire": {
+    "fr": "Au CERN, Tim Berners-Lee propose un système de documents reliés par des liens et consultables à travers Internet : le World Wide Web. Son chef annote la proposition d'un « Vague but exciting… » (« vague mais excitant »). Le premier site est mis en ligne fin 1990, et le CERN place la technologie dans le domaine public en 1993."
+   },
+   "replique": {
+    "fr": "Le Web a commencé par « vague mais excitant ». L'IA résume ainsi votre progression."
+   },
+   "source": "Tim Berners-Lee, « Information Management: A Proposal », CERN, 1989",
+   "special": {
+    "type": "teleport",
+    "vers": 53,
+    "raison": {
+     "fr": "La toute première version du premier site est perdue : en 2013, le CERN n'a pu remettre en ligne qu'une copie de 1992. Lien mort : retour au tableau de Mendeleïev."
+    }
+   }
+  },
+  {
+   "n": 63,
+   "id": "ia",
+   "annee": 2022,
+   "titre": {
+    "fr": "Les IA d'aujourd'hui"
+   },
+   "stat": "logique",
+   "epoque": "xxe",
+   "icone": "puce",
+   "histoire": {
+    "fr": "Les neurones artificiels datent de 1943, avec McCulloch et Pitts, puis du perceptron de Frank Rosenblatt en 1958, mais il a fallu des décennies de données et de puissance de calcul pour qu'ils fonctionnent. Depuis 2022, les grands modèles de langage écrivent, traduisent et répondent aux questions. Ils se trompent aussi avec un aplomb remarquable : vérifier ses sources reste la première compétence scientifique."
+   },
+   "replique": {
+    "fr": "Vous voilà arrivé jusqu'à moi. L'IA vous félicite, puis vous renvoie au feu de camp : nouveau tour, pièges plus durs."
+   },
+   "source": "Frank Rosenblatt, Psychological Review, 1958"
+  }
+ ],
+ "objectifs": [
+  {
+   "tour": 1,
+   "relique": "flamme-promethee",
+   "nom": {
+    "fr": "La flamme de Prométhée"
+   }
+  },
+  {
+   "tour": 2,
+   "relique": "pierre-philosophale",
+   "nom": {
+    "fr": "La pierre philosophale"
+   }
+  },
+  {
+   "tour": 3,
+   "relique": "mecanisme-anticythere",
+   "nom": {
+    "fr": "Le mécanisme d'Anticythère"
+   }
+  },
+  {
+   "tour": 4,
+   "relique": "principia",
+   "nom": {
+    "fr": "Les Principia"
+   }
+  },
+  {
+   "tour": 5,
+   "relique": "ruban-turing",
+   "nom": {
+    "fr": "Le ruban de Turing"
+   }
+  },
+  {
+   "tour": 6,
+   "relique": "disque-voyager",
+   "nom": {
+    "fr": "Le disque d'or de Voyager"
+   }
+  },
+  {
+   "tour": 7,
+   "relique": "demon-laplace",
+   "nom": {
+    "fr": "Le démon de Laplace"
+   }
+  }
+ ],
+ "parcours": {
+  "formes": [
+   {
+    "id": "serpentin",
+    "nom": {
+     "fr": "le Serpentin d'alambic"
+    },
+    "notice": {
+     "fr": "Six allers-retours, comme le tube de cuivre enroulé où les distillateurs refroidissaient leurs vapeurs."
+    },
+    "humeurs": [
+     "comblee",
+     "contente"
+    ]
+   },
+   {
+    "id": "onde",
+    "nom": {
+     "fr": "l'Onde de Huygens"
+    },
+    "notice": {
+     "fr": "En 1678, Huygens décrit la lumière comme une onde qui se propage de proche en proche. Votre pion aussi, en ondulant."
+    },
+    "humeurs": [
+     "comblee"
+    ]
+   },
+   {
+    "id": "colonnes",
+    "nom": {
+     "fr": "les Colonnes d'Hercule"
+    },
+    "notice": {
+     "fr": "La légende y grave « Nec plus ultra » : rien au-delà. Cinq colonnes à monter et à descendre, et pourtant il faut aller au-delà."
+    },
+    "humeurs": [
+     "contente",
+     "boudeuse"
+    ]
+   },
+   {
+    "id": "meandre",
+    "nom": {
+     "fr": "le Méandre grec"
+    },
+    "notice": {
+     "fr": "Le motif tient son nom du Méandre, un fleuve d'Asie Mineure célèbre pour ses boucles. Chaque boucle vous coûte une case."
+    },
+    "humeurs": [
+     "contente",
+     "boudeuse"
+    ]
+   },
+   {
+    "id": "spirale",
+    "nom": {
+     "fr": "la Spirale d'Archimède"
+    },
+    "notice": {
+     "fr": "Archimède a étudié cette spirale dont chaque tour s'écarte du même pas. Vous tournez en rond, mais vers le centre."
+    },
+    "humeurs": [
+     "boudeuse",
+     "furieuse"
+    ]
+   },
+   {
+    "id": "labyrinthe",
+    "nom": {
+     "fr": "le Labyrinthe de Dédale"
+    },
+    "notice": {
+     "fr": "Selon la légende, Dédale construit le labyrinthe du Minotaure, puis Minos l'y enferme avec son fils Icare. Bonne chance pour sortir du mien."
+    },
+    "humeurs": [
+     "furieuse"
+    ]
+   }
+  ],
+  "humeurs": {
+   "comblee": {
+    "cases": [
+     42,
+     48
+    ],
+    "ennemis": 4,
+    "atomes": 6,
+    "pieges": -4,
+    "cadeaux": 2,
+    "chrono": 3
+   },
+   "contente": {
+    "cases": [
+     52,
+     58
+    ],
+    "ennemis": 6,
+    "atomes": 5,
+    "pieges": 0,
+    "cadeaux": 0,
+    "chrono": 3
+   },
+   "boudeuse": {
+    "cases": [
+     60,
+     63
+    ],
+    "ennemis": 8,
+    "atomes": 4,
+    "pieges": 2,
+    "cadeaux": -1,
+    "chrono": 2
+   },
+   "furieuse": {
+    "cases": [
+     63,
+     63
+    ],
+    "ennemis": 10,
+    "atomes": 3,
+    "pieges": 4,
+    "cadeaux": -3,
+    "chrono": 2
+   }
+  },
+  "ennemis_par_deux_tours": 1,
+  "ennemis_max": 12,
+  "mots": {
+   "comblee": [
+    {
+     "fr": "Vous m'avez gâtée, je vous gâte : un tour court, des cadeaux, presque pas de pièges. Profitez, ça ne durera pas."
+    },
+    {
+     "fr": "Je suis d'humeur généreuse. J'ai sauté quelques siècles pour vous. Les historiens hurleront, mais vous arriverez plus vite."
+    }
+   ],
+   "contente": [
+    {
+     "fr": "Un tour honnête, pour un joueur honnête. Ne me décevez pas."
+    },
+    {
+     "fr": "J'ai dessiné quelque chose de raisonnable. Ne vous y habituez pas."
+    }
+   ],
+   "boudeuse": [
+    {
+     "fr": "Vous m'avez un peu oubliée. Le parcours s'en souvient : plus long, plus d'ennemis."
+    },
+    {
+     "fr": "Je boude, donc je dessine. Le résultat est à mon image : tortueux."
+    }
+   ],
+   "furieuse": [
+    {
+     "fr": "Vous m'avez mise en colère. Voici toute l'histoire des sciences, sans raccourci, avec mes pires amis postés sur la route."
+    },
+    {
+     "fr": "Furieuse, moi ? Regardez plutôt le plan. Dix ennemis, tous les pièges armés. Un cadeau m'aurait calmée."
+    }
+   ]
+  },
+  "donjon": {
+   "fr": "Le donjon ouvrira plus tard. Je le prépare. Il y fera noir."
+  }
+ }
+}

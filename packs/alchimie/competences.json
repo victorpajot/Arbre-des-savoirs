@@ -1,0 +1,305 @@
+[
+ {
+  "id": "sci.atomes",
+  "stat": "alchimie",
+  "rang": 1,
+  "nom": {
+   "fr": "Atomes et éléments"
+  },
+  "description": {
+   "fr": "La structure de l'atome, les éléments et le tableau périodique."
+  },
+  "prerequis": [],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Un atome : un noyau (protons et neutrons) et des électrons autour."
+    },
+    {
+     "fr": "Le numéro atomique (nombre de protons) définit l'élément."
+    },
+    {
+     "fr": "Le tableau périodique range les éléments par numéro ; une colonne regroupe des propriétés chimiques voisines."
+    },
+    {
+     "fr": "Un atome est presque vide : si le noyau était une bille, l'atome ferait la taille d'un stade."
+    }
+   ],
+   "piege": {
+    "fr": "Changer le nombre de neutrons donne un isotope du même élément, pas un autre élément."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Ce que chaque particule détermine\"><rect class=\"a\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">protons</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">font l'élément</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">neutrons</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">isotopes</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">électrons</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chimie</text></svg>",
+   "source": "IUPAC, Periodic Table of the Elements, 2022",
+   "figures": [
+    "atome"
+   ]
+  },
+  "symbole": "⚛",
+  "embleme": "atome"
+ },
+ {
+  "id": "chim.liaisons",
+  "stat": "alchimie",
+  "rang": 2,
+  "nom": {
+   "fr": "Liaisons et molécules"
+  },
+  "description": {
+   "fr": "Comment les atomes s'assemblent : liaisons covalentes, ioniques, polarité."
+  },
+  "prerequis": [
+   "sci.atomes"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Liaison covalente : deux atomes partagent une paire d'électrons (H₂O, CH₄)."
+    },
+    {
+     "fr": "Liaison ionique : un atome cède un électron à l'autre ; les ions s'attirent (NaCl)."
+    },
+    {
+     "fr": "Une molécule est polaire si les charges sont mal réparties : l'eau l'est, d'où ses propriétés de solvant."
+    },
+    {
+     "fr": "Les liaisons hydrogène entre molécules d'eau expliquent son point d'ébullition élevé."
+    }
+   ],
+   "piege": {
+    "fr": "La glace flotte parce que ses liaisons hydrogène l'organisent en réseau plus aéré que l'eau liquide."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" role=\"img\" aria-label=\"Liaisons covalente et ionique\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Covalente</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Ionique</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"132\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">partage d'électrons</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">H₂O, CH₄</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">molécules</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">transfert d'électrons</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">NaCl</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">cristaux d'ions</text></svg>",
+   "source": "Pauling, The Nature of the Chemical Bond, 1939",
+   "figures": [
+    "eau",
+    "atome"
+   ]
+  },
+  "symbole": "H₂O",
+  "embleme": "modele-moleculaire"
+ },
+ {
+  "id": "chim.acides",
+  "stat": "alchimie",
+  "rang": 3,
+  "nom": {
+   "fr": "Acides et bases"
+  },
+  "description": {
+   "fr": "Le pH, la neutralisation et les acides du quotidien."
+  },
+  "prerequis": [
+   "sci.atomes"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "pH < 7 : acide ; pH = 7 : neutre ; pH > 7 : basique."
+    },
+    {
+     "fr": "L'échelle est logarithmique : pH 3 est dix fois plus acide que pH 4."
+    },
+    {
+     "fr": "Acide + base → sel + eau (neutralisation)."
+    },
+    {
+     "fr": "Citron ≈ 2, vinaigre ≈ 3, eau pure 7, eau de Javel ≈ 12."
+    }
+   ],
+   "piege": {
+    "fr": "Une baisse d'une unité de pH n'est pas une petite variation : c'est dix fois plus d'ions H⁺."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 335 110\" role=\"img\" aria-label=\"Échelle de pH de 0 à 14 : acide, neutre, basique\"><rect x=\"10\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E53939\"/><text class=\"tm\" x=\"20\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">0</text><rect x=\"31\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E57039\"/><text class=\"tm\" x=\"41\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">1</text><rect x=\"52\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5A839\"/><text class=\"tm\" x=\"62\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">2</text><rect x=\"73\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5DF39\"/><text class=\"t\" x=\"83\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3</text><rect x=\"94\" y=\"24\" width=\"20\" height=\"34\" fill=\"#B4E539\"/><text class=\"tm\" x=\"104\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">4</text><rect x=\"115\" y=\"24\" width=\"20\" height=\"34\" fill=\"#7CE539\"/><text class=\"tm\" x=\"125\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">5</text><rect x=\"136\" y=\"24\" width=\"20\" height=\"34\" fill=\"#45E539\"/><text class=\"tm\" x=\"146\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">6</text><rect x=\"157\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E564\"/><text class=\"t\" x=\"167\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">7</text><rect x=\"178\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E59B\"/><text class=\"tm\" x=\"188\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">8</text><rect x=\"199\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E5D3\"/><text class=\"tm\" x=\"209\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">9</text><rect x=\"220\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39C0E5\"/><text class=\"tm\" x=\"230\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">10</text><rect x=\"241\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3989E5\"/><text class=\"tm\" x=\"251\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">11</text><rect x=\"262\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3951E5\"/><text class=\"tm\" x=\"272\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">12</text><rect x=\"283\" y=\"24\" width=\"20\" height=\"34\" fill=\"#5839E5\"/><text class=\"tm\" x=\"293\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">13</text><rect x=\"304\" y=\"24\" width=\"20\" height=\"34\" fill=\"#8F39E5\"/><text class=\"tm\" x=\"314\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">14</text><text class=\"t\" x=\"60\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">acide</text><text class=\"t\" x=\"167\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">neutre</text><text class=\"t\" x=\"275\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">basique</text><text class=\"tm\" x=\"20\" y=\"100\" font-size=\"12\" text-anchor=\"start\">citron ≈ 2</text><text class=\"tm\" x=\"167\" y=\"100\" font-size=\"12\" text-anchor=\"middle\">eau pure 7</text><text class=\"tm\" x=\"325\" y=\"100\" font-size=\"12\" text-anchor=\"end\">Javel ≈ 12</text></svg>",
+   "source": "Sørensen, Biochemische Zeitschrift, 1909"
+  },
+  "symbole": "pH",
+  "embleme": "papier-tournesol"
+ },
+ {
+  "id": "chim.reactions",
+  "stat": "alchimie",
+  "rang": 4,
+  "nom": {
+   "fr": "Réactions et oxydoréduction"
+  },
+  "description": {
+   "fr": "Équations, combustion, catalyse, oxydation et réduction."
+  },
+  "prerequis": [
+   "chim.liaisons",
+   "chim.acides"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Une équation chimique doit être équilibrée : autant d'atomes de chaque sorte des deux côtés (Lavoisier)."
+    },
+    {
+     "fr": "2 H₂ + O₂ → 2 H₂O."
+    },
+    {
+     "fr": "Combustion : un combustible + du dioxygène → du CO₂, de l'eau et de la chaleur."
+    },
+    {
+     "fr": "Un catalyseur accélère une réaction sans être consommé. Oxydation : perte d'électrons ; réduction : gain."
+    }
+   ],
+   "piege": {
+    "fr": "La rouille n'est pas une simple « saleté » : c'est le fer oxydé, plus volumineux, qui fissure le métal."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Une équation équilibrée : 4 H et 2 O de chaque côté\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2 H₂</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">+ O₂</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2 H₂O</text></svg>",
+   "source": "Lavoisier, Traité élémentaire de chimie, 1789"
+  },
+  "symbole": "→",
+  "embleme": "balance-lavoisier"
+ },
+ {
+  "id": "chim.etats",
+  "stat": "alchimie",
+  "rang": 5,
+  "nom": {
+   "fr": "États de la matière"
+  },
+  "description": {
+   "fr": "Solide, liquide, gaz, changements d'état et lois des gaz."
+  },
+  "prerequis": [
+   "chim.reactions"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Solide, liquide, gaz : même matière, agitation et distance différentes entre molécules."
+    },
+    {
+     "fr": "Fusion, vaporisation, condensation, solidification, sublimation (solide → gaz), condensation solide (gaz → solide)."
+    },
+    {
+     "fr": "Pendant un changement d'état, la température reste constante."
+    },
+    {
+     "fr": "À volume fixé, la pression d'un gaz augmente avec la température (PV = nRT)."
+    }
+   ],
+   "piege": {
+    "fr": "L'eau bout à moins de 100 °C en altitude : environ 70 °C au sommet de l'Everest."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 210\" role=\"img\" aria-label=\"Les changements d'état de la matière\"><ellipse class=\"lm\" cx=\"170\" cy=\"105\" rx=\"112\" ry=\"76\" fill=\"none\" stroke-dasharray=\"4 5\"/><text class=\"tm\" x=\"170\" y=\"109.2\" font-size=\"12\" text-anchor=\"middle\">chaleur</text><line class=\"al\" x1=\"258.2\" y1=\"58.2\" x2=\"273.9\" y2=\"76.6\" stroke-width=\"2\"/><path class=\"al\" d=\"M267.3 74.1 L273.9 76.6 L272.4 69.7\" stroke-width=\"2\"/><line class=\"al\" x1=\"185.6\" y1=\"180.3\" x2=\"154.4\" y2=\"180.3\" stroke-width=\"2\"/><path class=\"al\" d=\"M160.5 176.9 L154.4 180.3 L160.5 183.6\" stroke-width=\"2\"/><line class=\"al\" x1=\"66.1\" y1=\"76.6\" x2=\"81.8\" y2=\"58.2\" stroke-width=\"2\"/><path class=\"al\" d=\"M80.3 65.0 L81.8 58.2 L75.2 60.7\" stroke-width=\"2\"/><rect class=\"f\" x=\"122.0\" y=\"12.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170.0\" y=\"32.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">solide</text><rect class=\"f\" x=\"219.0\" y=\"126.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"266.99484522385717\" y=\"146.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">liquide</text><rect class=\"f\" x=\"25.0\" y=\"126.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"73.00515477614289\" y=\"146.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">gaz</text></svg>",
+   "source": "Atkins, Chimie physique, 4e éd."
+  },
+  "symbole": "❄",
+  "embleme": "bougie"
+ },
+ {
+  "id": "chim.organique",
+  "stat": "alchimie",
+  "rang": 6,
+  "nom": {
+   "fr": "Chimie organique"
+  },
+  "description": {
+   "fr": "Le carbone, les hydrocarbures, les polymères et les molécules du vivant."
+  },
+  "prerequis": [
+   "chim.etats"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "La chimie organique est celle des composés du carbone, qui forme quatre liaisons."
+    },
+    {
+     "fr": "Hydrocarbures : uniquement carbone et hydrogène (méthane, butane, octane)."
+    },
+    {
+     "fr": "Polymères : longues chaînes d'unités répétées (polyéthylène, ADN, cellulose)."
+    },
+    {
+     "fr": "Les glucides, lipides, protéines et acides nucléiques sont les grandes molécules du vivant."
+    }
+   ],
+   "piege": {
+    "fr": "« Chimique » ne s'oppose pas à « naturel » : tout ce qui vit est fait de molécules organiques."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 430 96\" role=\"img\" aria-label=\"Un polymère : une chaîne de petites unités\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"53.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">monomère</text><line class=\"al\" x1=\"99.0\" y1=\"52.0\" x2=\"115.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M108.9 55.4 L115.0 52.0 L108.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"118.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"161.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">monomère</text><line class=\"al\" x1=\"207.0\" y1=\"52.0\" x2=\"223.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M216.9 55.4 L223.0 52.0 L216.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"226.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"269.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">… × 10 000</text><line class=\"al\" x1=\"315.0\" y1=\"52.0\" x2=\"331.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M324.9 55.4 L331.0 52.0 L324.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"334.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"377.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">polymère</text></svg>",
+   "source": "Wöhler, Annalen der Physik, 1828"
+  },
+  "symbole": "⌬",
+  "embleme": "benzene"
+ },
+ {
+  "id": "chim.quotidien",
+  "stat": "alchimie",
+  "rang": 7,
+  "nom": {
+   "fr": "Chimie du quotidien"
+  },
+  "description": {
+   "fr": "Cuisine, savon, médicaments, piles et matériaux."
+  },
+  "prerequis": [
+   "chim.etats"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Le savon a une tête qui aime l'eau et une queue qui aime les graisses : il emprisonne la graisse dans des micelles."
+    },
+    {
+     "fr": "La réaction de Maillard (sucres + protéines à la chaleur) dore le pain et grille la viande."
+    },
+    {
+     "fr": "Une pile transforme une réaction d'oxydoréduction en courant."
+    },
+    {
+     "fr": "Le paracétamol et l'aspirine sont des molécules de synthèse ; l'aspirine dérive de l'écorce de saule."
+    }
+   ],
+   "piege": {
+    "fr": "Mélanger eau de Javel et vinaigre dégage du chlore toxique : ne jamais combiner les produits ménagers."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Comment le savon emporte la graisse\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">graisse</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">savon</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">tête + queue</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">micelle</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">rincée</text></svg>",
+   "source": "This, Révélations gastronomiques, 1995"
+  },
+  "symbole": "⚗",
+  "embleme": "flacon"
+ },
+ {
+  "id": "chim.noyau",
+  "stat": "alchimie",
+  "rang": 8,
+  "nom": {
+   "fr": "Radioactivité et noyau"
+  },
+  "description": {
+   "fr": "Isotopes, demi-vie, fission, fusion et datation."
+  },
+  "prerequis": [
+   "chim.organique",
+   "chim.quotidien"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Demi-vie : le temps pour que la moitié des noyaux radioactifs se désintègre. Elle ne dépend pas de la quantité."
+    },
+    {
+     "fr": "Le carbone 14 (demi-vie ≈ 5 730 ans) date les restes organiques jusqu'à environ 50 000 ans."
+    },
+    {
+     "fr": "Fission : un noyau lourd se casse (centrales). Fusion : des noyaux légers s'unissent (Soleil)."
+    },
+    {
+     "fr": "α arrêté par une feuille de papier, β par quelques millimètres d'aluminium, γ par du plomb ou du béton épais."
+    }
+   ],
+   "piege": {
+    "fr": "Après deux demi-vies, il ne reste pas zéro mais un quart."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Ce qui reste après chaque demi-vie\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"30.0\" width=\"40.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"66.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">100 %</text><text class=\"tm\" x=\"66.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">0</text><rect class=\"f2\" x=\"98.0\" y=\"80.0\" width=\"40.0\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"118.0\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">50 %</text><text class=\"tm\" x=\"118.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">1 T</text><rect class=\"a\" x=\"150.0\" y=\"105.0\" width=\"40.0\" height=\"25.0\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"99.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">25 %</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">2 T</text><rect class=\"f2\" x=\"202.0\" y=\"117.5\" width=\"40.0\" height=\"12.5\" rx=\"3\"/><text class=\"t\" x=\"222.0\" y=\"111.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">12,5 %</text><text class=\"tm\" x=\"222.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">3 T</text><rect class=\"f2\" x=\"254.0\" y=\"123.8\" width=\"40.0\" height=\"6.2\" rx=\"3\"/><text class=\"t\" x=\"274.0\" y=\"117.75\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">6,25 %</text><text class=\"tm\" x=\"274.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">4 T</text></svg>",
+   "source": "Rutherford et Soddy, Philosophical Magazine, 1902"
+  },
+  "symbole": "☢",
+  "embleme": "verre-uranium"
+ }
+]

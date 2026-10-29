@@ -1,0 +1,291 @@
+[
+ {
+  "id": "ampoule-partagee",
+  "nom": {
+   "fr": "Ampoule partagée"
+  },
+  "description": {
+   "fr": "Maîtriser la puissance électrique. Comme Edison, vous n'avez pas tout inventé."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "elec.puissance"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Edison n'a pas inventé l'ampoule. Humphry Davy, Warren de la Rue et Joseph Swan l'avaient précédé. Son apport, en 1879, fut un filament de carbone durable et surtout tout le système pour produire et distribuer le courant."
+   },
+   "source": "Robert Friedel et Paul Israel, Edison's Electric Light, 1986"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "ampoule-edison"
+  },
+  "theme": "etincelle"
+ },
+ {
+  "id": "grenouilles",
+  "nom": {
+   "fr": "Les grenouilles de Galvani"
+  },
+  "description": {
+   "fr": "Maîtriser les charges et les circuits. Aucune grenouille n'a été maltraitée. Cette fois."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "elec.circuits"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Dans les années 1780, Luigi Galvani voit des cuisses de grenouille se contracter au contact de deux métaux. Il croit à une « électricité animale ». Volta conteste et, pour le prouver, invente la pile."
+   },
+   "source": "Luigi Galvani, De viribus electricitatis in motu musculari, 1791"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "grenouille"
+  },
+  "theme": "etincelle"
+ },
+ {
+  "id": "ohm",
+  "nom": {
+   "fr": "Accueil glacial"
+  },
+  "description": {
+   "fr": "Maîtriser la loi d'Ohm. Vous l'avez mieux reçue que ses contemporains."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "elec.ohm"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Georg Ohm publie sa loi en 1827. Elle est accueillie froidement en Allemagne, et Ohm doit quitter son poste d'enseignant. La reconnaissance vient de Londres, avec la médaille Copley de la Royal Society en 1841."
+   },
+   "source": "Royal Society, médaille Copley 1841"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "bouteille-leyde"
+  },
+  "theme": "etincelle"
+ },
+ {
+  "id": "oersted",
+  "nom": {
+   "fr": "La boussole qui bouge"
+  },
+  "description": {
+   "fr": "Maîtriser le magnétisme. Le nord n'est plus tout à fait le même."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "elec.magnetisme"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1820, Hans Christian Ørsted remarque qu'un fil parcouru par un courant fait dévier une aiguille aimantée. Électricité et magnétisme ne feront plus jamais deux disciplines séparées."
+   },
+   "source": "Hans Christian Ørsted, Experimenta circa effectum conflictus electrici in acum magneticam, 1820"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "boussole"
+  },
+  "theme": "etincelle"
+ },
+ {
+  "id": "branche-etincelle",
+  "nom": {
+   "fr": "Le cerf-volant"
+  },
+  "description": {
+   "fr": "Maîtriser le premier losange d'Étincelle."
+  },
+  "condition": {
+   "type": "branche_complete",
+   "stat": "etincelle",
+   "rang_max": 4
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "L'expérience du cerf-volant de Franklin (1752) n'est connue en détail que par un récit publié quinze ans plus tard par Joseph Priestley. En 1753, Georg Richmann, qui reproduisait ce genre d'expérience à Saint-Pétersbourg, est tué par la foudre."
+   },
+   "source": "Joseph Priestley, The History and Present State of Electricity, 1767"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "cerf-volant-franklin"
+  },
+  "theme": "etincelle"
+ },
+ {
+  "id": "pionnier-faraday",
+  "nom": {
+   "fr": "Faraday"
+  },
+  "description": {
+   "fr": "Maîtriser 6 compétences. L'arbre de l'Électricité s'ouvre."
+  },
+  "condition": {
+   "type": "competences_maitrisees",
+   "n": 6
+  },
+  "cache": false,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1825, Michael Faraday lance à la Royal Institution des conférences de Noël pour les enfants. Il en donne lui-même dix-neuf séries. Elles ont lieu chaque année depuis, sauf pendant la Seconde Guerre mondiale."
+   },
+   "source": "Royal Institution, histoire des Christmas Lectures"
+  },
+  "ouvre": "etincelle",
+  "illustration": {
+   "type": "savant",
+   "id": "faraday"
+  },
+  "theme": "etincelle"
+ },
+ {
+  "id": "micro-ondes",
+  "nom": {
+   "fr": "La barre chocolatée"
+  },
+  "description": {
+   "fr": "Maîtriser les ondes électromagnétiques. Ne restez pas devant le magnétron."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "elec.em"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1945, l'ingénieur Percy Spencer travaille sur des magnétrons de radar chez Raytheon et remarque qu'une barre chocolatée a fondu dans sa poche. Il essaie avec du maïs, qui éclate. Le premier four à micro-ondes, en 1947, mesure presque deux mètres et pèse 340 kilos."
+   },
+   "source": "John Osepchuk, IEEE Transactions on Microwave Theory and Techniques, 1984"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "raman"
+  },
+  "theme": "etincelle"
+ },
+ {
+  "id": "premier-bug",
+  "nom": {
+   "fr": "Le premier bug"
+  },
+  "description": {
+   "fr": "Maîtriser l'électronique. Le mot « bug » est plus vieux que l'informatique."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "elec.electronique"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Le 9 septembre 1947, l'équipe du calculateur Harvard Mark II colle dans son journal une mite trouvée dans un relais : « premier cas réel de bug trouvé ». La blague tient parce que le mot existait déjà : Edison parlait de « bugs » dans ses inventions dès 1878."
+   },
+   "source": "Journal du Harvard Mark II, 1947, Smithsonian ; lettre d'Edison à Theodore Puskas, 1878"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "bardeen"
+  },
+  "theme": "etincelle"
+ },
+ {
+  "id": "topsy",
+  "nom": {
+   "fr": "Edison n'a pas tué Topsy"
+  },
+  "description": {
+   "fr": "Maîtriser le réseau et les énergies. La guerre des courants a assez de vraies horreurs."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "elec.energies"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "On attribue à Edison l'électrocution de l'éléphante Topsy, pour discréditer le courant alternatif. Elle a eu lieu en 1903 à Coney Island, dix ans après la fin de la guerre des courants, et Edison n'y était pour rien. Sa société a seulement filmé la scène."
+   },
+   "source": "Michael Daly, Topsy, 2013"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "tesla"
+  },
+  "theme": "etincelle"
+ },
+ {
+  "id": "cinq-ordinateurs",
+  "nom": {
+   "fr": "Cinq ordinateurs"
+  },
+  "description": {
+   "fr": "Maîtriser du transistor à l'ordinateur. Vous en avez sûrement plus de cinq chez vous."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "elec.numerique"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "« Je pense qu'il y a un marché mondial pour peut-être cinq ordinateurs. » La phrase est prêtée à Thomas Watson, patron d'IBM, en 1943. Personne ne l'a jamais trouvée dans un document de l'époque. Les prédictions ratées les plus célèbres sont souvent inventées."
+   },
+   "source": "Kevin Maney, The Maverick and His Machine, 2003"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "ada-lovelace"
+  },
+  "theme": "etincelle"
+ },
+ {
+  "id": "signe-franklin",
+  "nom": {
+   "fr": "Le mauvais signe"
+  },
+  "description": {
+   "fr": "Réussir trois quiz d'Étincelle sans faute. Vous avez juste. Le courant, lui, circule à l'envers."
+  },
+  "condition": {
+   "type": "quiz_parfaits_stat",
+   "stat": "etincelle",
+   "n": 3
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Vers 1747, Benjamin Franklin nomme « positive » et « négative » les deux sortes d'électricité, en devinant dans quel sens circule le fluide. Il a une chance sur deux et se trompe : les électrons, découverts en 1897, vont dans l'autre sens. Le courant conventionnel garde son choix."
+   },
+   "source": "Benjamin Franklin, Experiments and Observations on Electricity, 1751"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "cerf-volant-franklin"
+  },
+  "theme": "etincelle"
+ }
+]

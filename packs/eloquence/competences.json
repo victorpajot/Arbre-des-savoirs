@@ -1,0 +1,298 @@
+[
+ {
+  "id": "rhet.argument",
+  "stat": "eloquence",
+  "rang": 1,
+  "nom": {
+   "fr": "Structure d'un argument"
+  },
+  "description": {
+   "fr": "Prémisses, conclusion, déduction et induction."
+  },
+  "prerequis": [],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Un argument : des prémisses qui soutiennent une conclusion."
+    },
+    {
+     "fr": "Déduction : si les prémisses sont vraies et la forme valide, la conclusion est forcément vraie."
+    },
+    {
+     "fr": "Induction : on généralise à partir de cas ; la conclusion est probable, jamais certaine."
+    },
+    {
+     "fr": "Un argument peut être valide avec des prémisses fausses : « tous les chats volent, Félix est un chat, donc Félix vole »."
+    }
+   ],
+   "piege": {
+    "fr": "Valide n'est pas vrai : la validité porte sur la forme, la vérité sur le contenu."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Structure d'un argument\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">prémisse 1</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">prémisse 2</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">conclusion</text></svg>",
+   "source": "Aristote, Premiers Analytiques"
+  },
+  "symbole": "∴",
+  "embleme": "engrenage"
+ },
+ {
+  "id": "rhet.figures",
+  "stat": "eloquence",
+  "rang": 2,
+  "nom": {
+   "fr": "Figures de style"
+  },
+  "description": {
+   "fr": "Métaphore, litote, chiasme, anaphore et les autres."
+  },
+  "prerequis": [
+   "rhet.argument"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Métaphore : comparaison sans outil (« cet homme est un lion ») ; comparaison : avec « comme »."
+    },
+    {
+     "fr": "Litote : dire moins pour suggérer plus (« va, je ne te hais point »). Euphémisme : adoucir (« il nous a quittés »)."
+    },
+    {
+     "fr": "Anaphore : répétition en début de phrase (« I have a dream »)."
+    },
+    {
+     "fr": "Chiasme : structure croisée A-B / B-A (« il faut manger pour vivre et non vivre pour manger »)."
+    }
+   ],
+   "piege": {
+    "fr": "Litote et euphémisme se confondent souvent : la litote renforce, l'euphémisme atténue."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 160\" role=\"img\" aria-label=\"Schéma du chiasme : manger, vivre, puis vivre, manger\"><text class=\"t\" x=\"70\" y=\"40\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">manger</text><text class=\"t\" x=\"250\" y=\"40\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">vivre</text><text class=\"t\" x=\"70\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">vivre</text><text class=\"t\" x=\"250\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">manger</text><line class=\"al\" x1=\"105\" y1=\"48\" x2=\"215\" y2=\"106\" stroke-width=\"2\"/><line class=\"al\" x1=\"215\" y1=\"48\" x2=\"105\" y2=\"106\" stroke-width=\"2\"/><text class=\"tm\" x=\"160\" y=\"150\" font-size=\"12\" text-anchor=\"middle\">A — B / B — A : les termes se croisent</text></svg>",
+   "source": "Fontanier, Les Figures du discours, 1827"
+  },
+  "symbole": "❦",
+  "embleme": "plume"
+ },
+ {
+  "id": "rhet.persuasion",
+  "stat": "eloquence",
+  "rang": 3,
+  "nom": {
+   "fr": "Ethos, pathos, logos"
+  },
+  "description": {
+   "fr": "Les trois leviers de la persuasion selon Aristote."
+  },
+  "prerequis": [
+   "rhet.argument"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Ethos : la crédibilité de l'orateur."
+    },
+    {
+     "fr": "Pathos : les émotions qu'il suscite chez le public."
+    },
+    {
+     "fr": "Logos : la force des raisons et des preuves."
+    },
+    {
+     "fr": "Un bon discours combine les trois ; la manipulation joue sur l'ethos et le pathos en l'absence de logos."
+    }
+   ],
+   "piege": {
+    "fr": "L'ethos ne se décrète pas : c'est le public qui accorde ou non sa confiance."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 184\" role=\"img\" aria-label=\"Les trois leviers de la persuasion selon Aristote\"><polygon class=\"f2\" points=\"170,22 72,160 268,160\"/><text class=\"tm\" x=\"170\" y=\"116.2\" font-size=\"12\" text-anchor=\"middle\">persuader</text><rect class=\"f\" x=\"110\" y=\"5\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170\" y=\"19.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">ethos</text><text class=\"t\" x=\"170\" y=\"33.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">crédibilité</text><rect class=\"f\" x=\"12\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"72\" y=\"157.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">pathos</text><text class=\"t\" x=\"72\" y=\"171.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">émotion</text><rect class=\"f\" x=\"208\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"268\" y=\"157.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">logos</text><text class=\"t\" x=\"268\" y=\"171.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">raison</text></svg>",
+   "source": "Aristote, Rhétorique, livre I"
+  },
+  "symbole": "☞",
+  "embleme": "rouleau-aristote"
+ },
+ {
+  "id": "rhet.sophismes",
+  "stat": "eloquence",
+  "rang": 4,
+  "nom": {
+   "fr": "Sophismes"
+  },
+  "description": {
+   "fr": "Les raisonnements fallacieux et comment les nommer."
+  },
+  "prerequis": [
+   "rhet.figures",
+   "rhet.persuasion"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Homme de paille : déformer la position adverse pour la réfuter plus facilement."
+    },
+    {
+     "fr": "Ad hominem : attaquer la personne plutôt que l'argument."
+    },
+    {
+     "fr": "Faux dilemme : ne présenter que deux options quand il en existe d'autres."
+    },
+    {
+     "fr": "Pente glissante : affirmer sans preuve qu'un premier pas mène fatalement au pire."
+    }
+   ],
+   "piege": {
+    "fr": "Toute attaque personnelle n'est pas un ad hominem : signaler un conflit d'intérêts peut être pertinent."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Quatre sophismes et leur mécanisme\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Ce qu'on fait</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Son nom</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"164\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">déformer l'idée</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">viser la personne</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">deux choix seulement</text><rect class=\"f2\" x=\"14\" y=\"128\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"144.8\" font-size=\"11\" text-anchor=\"middle\">tout va déraper</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">homme de paille</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">ad hominem</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">faux dilemme</text><rect class=\"f\" x=\"178\" y=\"128\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"144.8\" font-size=\"11\" text-anchor=\"middle\">pente glissante</text></svg>",
+   "source": "Schopenhauer, L'Art d'avoir toujours raison, vers 1831"
+  },
+  "symbole": "≠",
+  "embleme": "labyrinthe"
+ },
+ {
+  "id": "rhet.debat",
+  "stat": "eloquence",
+  "rang": 5,
+  "nom": {
+   "fr": "Réfuter et débattre"
+  },
+  "description": {
+   "fr": "Contre-exemples, concessions, règles du débat loyal et pièges de la réfutation."
+  },
+  "prerequis": [
+   "rhet.sophismes"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Un contre-exemple suffit à réfuter une affirmation universelle."
+    },
+    {
+     "fr": "Concéder un point renforce la crédibilité et recentre le débat sur l'essentiel."
+    },
+    {
+     "fr": "Principe de charité : réfuter la version la plus solide de l'argument adverse (l'homme d'acier)."
+    },
+    {
+     "fr": "Loi de Brandolini : réfuter une ânerie demande bien plus d'énergie que la produire."
+    }
+   ],
+   "piege": {
+    "fr": "Gagner un débat n'est pas avoir raison : on peut réfuter un mauvais défenseur d'une bonne idée."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Une réfutation loyale en trois temps\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">reformuler</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">concéder</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">réfuter</text></svg>",
+   "source": "Rapoport, règles reprises par Dennett, Intuition Pumps, 2013"
+  },
+  "symbole": "⇄",
+  "embleme": "bulles"
+ },
+ {
+  "id": "rhet.narration",
+  "stat": "eloquence",
+  "rang": 6,
+  "nom": {
+   "fr": "Raconter"
+  },
+  "description": {
+   "fr": "Structure d'un récit, suspense, voyage du héros et pouvoir des histoires."
+  },
+  "prerequis": [
+   "rhet.debat"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Schéma narratif : situation initiale, élément perturbateur, péripéties, dénouement, situation finale."
+    },
+    {
+     "fr": "Le voyage du héros (Campbell) : appel, refus, mentor, épreuves, retour transformé."
+    },
+    {
+     "fr": "Le suspense vient de ce que le public sait et que le personnage ignore (Hitchcock et la bombe sous la table)."
+    },
+    {
+     "fr": "On retient mieux une information racontée qu'une liste de faits."
+    }
+   ],
+   "piege": {
+    "fr": "Le fusil de Tchekhov : un détail montré au début doit servir plus tard, sinon il distrait."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 430 96\" role=\"img\" aria-label=\"Le schéma narratif\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"53.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">situation</text><text class=\"t\" x=\"53.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">initiale</text><line class=\"al\" x1=\"99.0\" y1=\"52.0\" x2=\"115.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M108.9 55.4 L115.0 52.0 L108.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"118.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"161.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">élément</text><text class=\"t\" x=\"161.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">perturbateur</text><line class=\"al\" x1=\"207.0\" y1=\"52.0\" x2=\"223.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M216.9 55.4 L223.0 52.0 L216.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"226.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"269.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">péripéties</text><line class=\"al\" x1=\"315.0\" y1=\"52.0\" x2=\"331.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M324.9 55.4 L331.0 52.0 L324.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"334.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"377.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">dénouement</text></svg>",
+   "source": "Campbell, Le Héros aux mille et un visages, 1949"
+  },
+  "symbole": "¶",
+  "embleme": "enluminure"
+ },
+ {
+  "id": "rhet.discours",
+  "stat": "eloquence",
+  "rang": 7,
+  "nom": {
+   "fr": "Grands discours"
+  },
+  "description": {
+   "fr": "De Périclès à Malala : les discours qui ont changé quelque chose."
+  },
+  "prerequis": [
+   "rhet.debat"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Périclès, oraison funèbre (431 av. J.-C.) : l'éloge de la démocratie athénienne."
+    },
+    {
+     "fr": "Lincoln à Gettysburg (1863) : environ 270 mots, deux minutes, « du peuple, par le peuple, pour le peuple »."
+    },
+    {
+     "fr": "Martin Luther King, « I have a dream » (1963) : une anaphore construite en partie en improvisation."
+    },
+    {
+     "fr": "Malala Yousafzai à l'ONU (2013) : « un enfant, un professeur, un livre et un stylo peuvent changer le monde »."
+    }
+   ],
+   "piege": {
+    "fr": "Le passage « I have a dream » ne figurait pas dans le texte préparé : Mahalia Jackson lui a crié de parler du rêve."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Quelques grands discours dans le temps\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Périclès</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">−431</text><circle class=\"f\" cx=\"102.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"102.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Lincoln</text><text class=\"tm\" x=\"102.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1863</text><circle class=\"f\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"170.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Churchill</text><text class=\"tm\" x=\"170.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1940</text><circle class=\"a\" cx=\"238.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"238.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">King</text><text class=\"t\" x=\"238.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1963</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Malala</text><text class=\"tm\" x=\"306.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">2013</text></svg>",
+   "source": "Thucydide, La Guerre du Péloponnèse, II, 35-46 ; Library of Congress"
+  },
+  "symbole": "«»",
+  "embleme": "cailloux-demosthene"
+ },
+ {
+  "id": "rhet.propagande",
+  "stat": "eloquence",
+  "rang": 8,
+  "nom": {
+   "fr": "Propagande et manipulation"
+  },
+  "description": {
+   "fr": "Répétition, novlangue, astroturfing et comment s'en protéger."
+  },
+  "prerequis": [
+   "rhet.narration",
+   "rhet.discours"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Répétition : plus on entend une affirmation, plus elle paraît vraie (effet de vérité illusoire)."
+    },
+    {
+     "fr": "Novlangue : appauvrir ou retourner les mots pour rendre certaines pensées difficiles (Orwell, 1984)."
+    },
+    {
+     "fr": "Astroturfing : simuler un mouvement spontané de citoyens avec de faux comptes ou des groupes payés."
+    },
+    {
+     "fr": "Se protéger : chercher la source, croiser, se demander à qui profite le message."
+    }
+   ],
+   "piege": {
+    "fr": "Savoir qu'une affirmation est fausse ne protège pas complètement de l'effet de répétition."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Plus une phrase est répétée, plus elle paraît vraie\"><polyline class=\"l\" points=\"40,16 40,150 324,150\"/><path class=\"al\" d=\"M40 130 C 120 90, 200 60, 320 45\" fill=\"none\" stroke-width=\"3\"/><text class=\"tm\" x=\"46\" y=\"14\" font-size=\"11\" text-anchor=\"start\">crédibilité ressentie</text><text class=\"tm\" x=\"322\" y=\"166\" font-size=\"11\" text-anchor=\"end\">répétitions</text></svg>",
+   "source": "Hasher, Goldstein et Toppino, Journal of Verbal Learning and Verbal Behavior, 1977"
+  },
+  "symbole": "‼",
+  "embleme": "presse"
+ }
+]

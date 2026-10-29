@@ -1,0 +1,298 @@
+[
+ {
+  "id": "phys.unites",
+  "stat": "mecanique",
+  "rang": 1,
+  "nom": {
+   "fr": "Unités et ordres de grandeur"
+  },
+  "description": {
+   "fr": "Le Système international, les préfixes et les tailles du monde."
+  },
+  "prerequis": [],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Sept unités de base du SI : mètre, kilogramme, seconde, ampère, kelvin, mole, candela. Depuis 2019, toutes sont définies par des constantes."
+    },
+    {
+     "fr": "Préfixes : kilo 10³, méga 10⁶, giga 10⁹, téra 10¹² ; milli 10⁻³, micro 10⁻⁶, nano 10⁻⁹."
+    },
+    {
+     "fr": "Un ordre de grandeur, c'est la puissance de 10 la plus proche : un humain ≈ 1 m, une cellule ≈ 10 µm, un atome ≈ 0,1 nm."
+    },
+    {
+     "fr": "Le poids (newtons) n'est pas la masse (kilogrammes) : sur la Lune, la masse ne change pas, le poids est divisé par six."
+    }
+   ],
+   "piege": {
+    "fr": "1 km² vaut 1 000 000 m², pas 1 000 : on élève aussi le préfixe au carré."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Les tailles du monde en puissances de 10\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">atome</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">10⁻¹⁰ m</text><circle class=\"f\" cx=\"102.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"102.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">cellule</text><text class=\"tm\" x=\"102.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">10⁻⁵ m</text><circle class=\"a\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"170.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">humain</text><text class=\"t\" x=\"170.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1 m</text><circle class=\"f\" cx=\"238.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"238.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Terre</text><text class=\"tm\" x=\"238.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">10⁷ m</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">galaxie</text><text class=\"tm\" x=\"306.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">10²¹ m</text><text class=\"tm\" x=\"16\" y=\"118\" font-size=\"11\" text-anchor=\"start\">petit</text><text class=\"tm\" x=\"324\" y=\"118\" font-size=\"11\" text-anchor=\"end\">grand</text></svg>",
+   "source": "BIPM, Le Système international d'unités, 9e éd., 2019"
+  },
+  "symbole": "m",
+  "embleme": "metre-etalon"
+ },
+ {
+  "id": "phys.forces",
+  "stat": "mecanique",
+  "rang": 2,
+  "nom": {
+   "fr": "Forces et mouvement"
+  },
+  "description": {
+   "fr": "Les lois de Newton, la gravitation, l'inertie."
+  },
+  "prerequis": [
+   "phys.unites"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "1re loi : sans force nette, un objet garde sa vitesse. Le mouvement n'a pas besoin d'une force pour continuer."
+    },
+    {
+     "fr": "2e loi : F = m × a. La même force accélère moins un objet plus massif."
+    },
+    {
+     "fr": "3e loi : action et réaction sont égales et opposées, et s'appliquent à deux objets différents."
+    },
+    {
+     "fr": "Dans le vide, une plume et un marteau tombent ensemble (David Scott sur la Lune, 1971)."
+    }
+   ],
+   "piege": {
+    "fr": "Un objet lancé n'emporte pas de « force du lancer » : une fois lâché, seuls le poids et l'air agissent."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Première loi de Newton : sans force nette, la vitesse ne change pas\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"149.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"84.5\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">force nette</text><text class=\"t\" x=\"84.5\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">nulle</text><line class=\"al\" x1=\"162.0\" y1=\"52.0\" x2=\"178.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M171.9 55.4 L178.0 52.0 L171.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"181.0\" y=\"20\" width=\"149.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"255.5\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">vitesse</text><text class=\"t\" x=\"255.5\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">constante</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">F = m × a : la force change la vitesse, pas le fait d'avancer</text></svg>",
+   "source": "Newton, Philosophiae Naturalis Principia Mathematica, 1687"
+  },
+  "symbole": "F",
+  "embleme": "pomme-newton"
+ },
+ {
+  "id": "phys.energie",
+  "stat": "mecanique",
+  "rang": 3,
+  "nom": {
+   "fr": "Énergie"
+  },
+  "description": {
+   "fr": "Énergie cinétique et potentielle, puissance, conservation."
+  },
+  "prerequis": [
+   "phys.unites"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Énergie cinétique ½ m v² : doubler la vitesse quadruple l'énergie, et la distance de freinage."
+    },
+    {
+     "fr": "Énergie potentielle de pesanteur m g h : elle se transforme en énergie cinétique pendant une chute."
+    },
+    {
+     "fr": "L'énergie se conserve : elle change de forme (chaleur, mouvement, lumière) mais ne disparaît pas."
+    },
+    {
+     "fr": "La puissance est un débit d'énergie : 1 watt = 1 joule par seconde."
+    }
+   ],
+   "piege": {
+    "fr": "À 100 km/h, l'énergie n'est pas deux fois celle à 50 km/h mais quatre fois."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Énergie cinétique selon la vitesse (base 1 à 30 km/h)\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"121.0\" width=\"74.7\" height=\"9.0\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"114.990990990991\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">30 km/h</text><rect class=\"f2\" x=\"132.7\" y=\"104.8\" width=\"74.7\" height=\"25.2\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"98.77477477477477\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2,8</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">50 km/h</text><rect class=\"a\" x=\"219.3\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">11,1</text><text class=\"tm\" x=\"256.6666666666667\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">100 km/h</text></svg>",
+   "source": "Feynman, Leçons sur la physique, tome 1, chapitre 4"
+  },
+  "symbole": "E",
+  "embleme": "machine-joule"
+ },
+ {
+  "id": "phys.ondes",
+  "stat": "mecanique",
+  "rang": 4,
+  "nom": {
+   "fr": "Ondes et lumière"
+  },
+  "description": {
+   "fr": "Son, lumière, fréquences, couleurs et effet Doppler."
+  },
+  "prerequis": [
+   "phys.forces",
+   "phys.energie"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Une onde transporte de l'énergie sans transporter de matière. Vitesse = longueur d'onde × fréquence."
+    },
+    {
+     "fr": "Le son a besoin d'un milieu (≈ 340 m/s dans l'air) ; la lumière traverse le vide (≈ 300 000 km/s)."
+    },
+    {
+     "fr": "Lumière visible : de 400 nm (violet) à 700 nm (rouge). Plus courte longueur d'onde, plus d'énergie."
+    },
+    {
+     "fr": "Effet Doppler : une source qui s'approche paraît plus aiguë, qui s'éloigne plus grave."
+    }
+   ],
+   "piege": {
+    "fr": "Le ciel est bleu parce que l'air diffuse davantage les courtes longueurs d'onde, pas parce qu'il reflète la mer."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 100\" role=\"img\" aria-label=\"Spectre visible du violet (400 nm) au rouge (700 nm)\"><defs><linearGradient id=\"spectre\" x1=\"0\" x2=\"1\"><stop offset=\"0\" stop-color=\"#7A2BD9\"/><stop offset=\"0.18\" stop-color=\"#2B4BE0\"/><stop offset=\"0.36\" stop-color=\"#18A9C9\"/><stop offset=\"0.52\" stop-color=\"#2EB04A\"/><stop offset=\"0.68\" stop-color=\"#F2D22E\"/><stop offset=\"0.84\" stop-color=\"#F2852E\"/><stop offset=\"1\" stop-color=\"#D92B2B\"/></linearGradient></defs><rect x=\"20\" y=\"30\" width=\"300\" height=\"40\" rx=\"6\" fill=\"url(#spectre)\"/><text class=\"tm\" x=\"20\" y=\"92\" font-size=\"12\" text-anchor=\"start\">400 nm</text><text class=\"tm\" x=\"320\" y=\"92\" font-size=\"12\" text-anchor=\"end\">700 nm</text><text class=\"tm\" x=\"170\" y=\"20\" font-size=\"12\" text-anchor=\"middle\">longueur d'onde croissante →</text></svg>",
+   "source": "Hecht, Optics, 5e éd."
+  },
+  "symbole": "λ",
+  "embleme": "prisme-newton"
+ },
+ {
+  "id": "phys.fluides",
+  "stat": "mecanique",
+  "rang": 5,
+  "nom": {
+   "fr": "Pression et fluides"
+  },
+  "description": {
+   "fr": "Pression, poussée d'Archimède, flottaison et écoulements."
+  },
+  "prerequis": [
+   "phys.ondes"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Pression = force ÷ surface. Une aiguille perce parce que sa surface est minuscule."
+    },
+    {
+     "fr": "Sous l'eau, la pression augmente d'environ 1 bar tous les 10 mètres."
+    },
+    {
+     "fr": "Archimède : tout corps plongé reçoit une poussée vers le haut égale au poids du fluide déplacé."
+    },
+    {
+     "fr": "Un objet flotte si sa masse volumique moyenne est inférieure à celle du liquide : un paquebot d'acier est plein d'air."
+    }
+   ],
+   "piege": {
+    "fr": "Un glaçon qui fond dans un verre plein ne le fait pas déborder : il déplaçait déjà son poids d'eau."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Pression sous l'eau, en bars\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"105.0\" width=\"53.0\" height=\"25.0\" rx=\"3\"/><text class=\"t\" x=\"72.5\" y=\"99.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1 bar</text><text class=\"tm\" x=\"72.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">surface</text><rect class=\"f2\" x=\"111.0\" y=\"80.0\" width=\"53.0\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"137.5\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2 bar</text><text class=\"tm\" x=\"137.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">10 m</text><rect class=\"f2\" x=\"176.0\" y=\"55.0\" width=\"53.0\" height=\"75.0\" rx=\"3\"/><text class=\"t\" x=\"202.5\" y=\"49.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3 bar</text><text class=\"tm\" x=\"202.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">20 m</text><rect class=\"a\" x=\"241.0\" y=\"30.0\" width=\"53.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"267.5\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">4 bar</text><text class=\"tm\" x=\"267.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">30 m</text></svg>",
+   "source": "Archimède, Des corps flottants, IIIe s. av. J.-C."
+  },
+  "symbole": "Pa",
+  "embleme": "couronne-hieron"
+ },
+ {
+  "id": "phys.thermo",
+  "stat": "mecanique",
+  "rang": 6,
+  "nom": {
+   "fr": "Chaleur et thermodynamique"
+  },
+  "description": {
+   "fr": "Température, chaleur, entropie et machines thermiques."
+  },
+  "prerequis": [
+   "phys.fluides"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Température et chaleur diffèrent : la température mesure l'agitation, la chaleur est un transfert d'énergie."
+    },
+    {
+     "fr": "La chaleur va spontanément du chaud vers le froid (deuxième principe)."
+    },
+    {
+     "fr": "L'entropie d'un système isolé ne diminue pas : c'est pourquoi un œuf cassé ne se recolle pas."
+    },
+    {
+     "fr": "Une machine thermique ne convertit jamais toute la chaleur en travail : le rendement de Carnot fixe la limite."
+    }
+   ],
+   "piege": {
+    "fr": "Le métal paraît plus froid que le bois à la même température : il conduit plus vite la chaleur de la main."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Une machine thermique prend de la chaleur au chaud, en rend une partie au froid\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">source</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chaude</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">machine</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">source</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">froide</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">seule la différence est convertie en travail</text></svg>",
+   "source": "Carnot, Réflexions sur la puissance motrice du feu, 1824"
+  },
+  "symbole": "°C",
+  "embleme": "feu"
+ },
+ {
+  "id": "phys.relativite",
+  "stat": "mecanique",
+  "rang": 7,
+  "nom": {
+   "fr": "Relativité"
+  },
+  "description": {
+   "fr": "Vitesse de la lumière, temps dilaté, E = mc² et gravitation d'Einstein."
+  },
+  "prerequis": [
+   "phys.fluides"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "La vitesse de la lumière dans le vide est la même pour tous les observateurs : 299 792 458 m/s."
+    },
+    {
+     "fr": "Le temps passe plus lentement pour une horloge en mouvement rapide (dilatation du temps)."
+    },
+    {
+     "fr": "E = mc² : la masse est une forme d'énergie ; un peu de masse contient énormément d'énergie."
+    },
+    {
+     "fr": "Relativité générale : la gravitation courbe l'espace-temps. Les GPS corrigent environ 38 µs par jour."
+    }
+   ],
+   "piege": {
+    "fr": "Rien de massif ne peut atteindre la vitesse de la lumière : l'énergie nécessaire devient infinie."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Le facteur de dilatation du temps explose près de la vitesse de la lumière\"><polyline class=\"l\" points=\"40,16 40,150 324,150\"/><path class=\"al\" d=\"M40 140 C 180 138, 260 120, 300 20\" fill=\"none\" stroke-width=\"3\"/><circle class=\"a\" cx=\"300\" cy=\"40\" r=\"4\"/><text class=\"t\" x=\"300\" y=\"27.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">c</text><text class=\"tm\" x=\"46\" y=\"14\" font-size=\"11\" text-anchor=\"start\">dilatation</text><text class=\"tm\" x=\"322\" y=\"166\" font-size=\"11\" text-anchor=\"end\">vitesse → c</text></svg>",
+   "source": "Einstein, Zur Elektrodynamik bewegter Körper, 1905"
+  },
+  "symbole": "c",
+  "embleme": "relativite"
+ },
+ {
+  "id": "phys.quantique",
+  "stat": "mecanique",
+  "rang": 8,
+  "nom": {
+   "fr": "Physique quantique"
+  },
+  "description": {
+   "fr": "Photons, dualité onde-particule, incertitude et atomes."
+  },
+  "prerequis": [
+   "phys.thermo",
+   "phys.relativite"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "La lumière est faite de photons ; l'énergie d'un photon est proportionnelle à sa fréquence (E = h f)."
+    },
+    {
+     "fr": "Dualité onde-particule : électrons et photons font des interférences, comme des ondes, et arrivent un par un, comme des grains."
+    },
+    {
+     "fr": "Principe d'incertitude : on ne peut connaître à la fois exactement la position et la vitesse d'une particule."
+    },
+    {
+     "fr": "Dans un atome, l'électron n'a que certains niveaux d'énergie ; il émet un photon en descendant d'un niveau."
+    }
+   ],
+   "piege": {
+    "fr": "L'incertitude n'est pas un défaut des instruments : c'est une propriété de la nature."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Expérience des fentes d'Young : des particules qui interfèrent\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">photon</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">deux</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">fentes</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">franges</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">d'interférence</text></svg>",
+   "source": "Feynman, Leçons sur la physique, tome 3, chapitre 1"
+  },
+  "symbole": "ħ",
+  "embleme": "chat"
+ }
+]

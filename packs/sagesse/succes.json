@@ -1,0 +1,294 @@
+[
+ {
+  "id": "tonneau-diogene",
+  "nom": {
+   "fr": "Pas un tonneau"
+  },
+  "description": {
+   "fr": "Maîtriser les philosophes de l'Antiquité. L'IA vous rend votre jarre."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "philo.antiquite"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Diogène vivait dans un pithos, une jarre en terre cuite. Alexandre le Grand lui aurait demandé ce qu'il désirait ; il aurait répondu : « Ôte-toi de mon soleil. »"
+   },
+   "source": "Diogène Laërce, Vies et doctrines des philosophes illustres, livre VI"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "tonneau"
+  },
+  "theme": "sagesse"
+ },
+ {
+  "id": "terre-ronde",
+  "nom": {
+   "fr": "Ronde au Moyen Âge"
+  },
+  "description": {
+   "fr": "Maîtriser le Moyen Âge et la Renaissance. Christophe Colomb n'a convaincu personne que la Terre était ronde : tout le monde le savait."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "philo.medievale"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Le mythe d'un Moyen Âge persuadé que la Terre est plate doit beaucoup à la biographie romancée de Colomb par Washington Irving, en 1828. Les savants médiévaux s'opposaient à Colomb sur la taille de la Terre, et ils avaient raison : il l'avait sous-estimée."
+   },
+   "source": "Jeffrey Burton Russell, Inventing the Flat Earth, 1991"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "sphere-armillaire"
+  },
+  "theme": "sagesse"
+ },
+ {
+  "id": "pas-voltaire",
+  "nom": {
+   "fr": "Voltaire n'a pas dit ça"
+  },
+  "description": {
+   "fr": "Maîtriser l'âge classique et les Lumières. L'IA désapprouve vos citations, mais vous laisse les dire."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "philo.classique"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "« Je désapprouve ce que vous dites, mais je me battrai jusqu'à la mort pour que vous ayez le droit de le dire » est d'Evelyn Beatrice Hall, dans The Friends of Voltaire (1906). Elle résumait la pensée de Voltaire, et a dû le préciser elle-même en 1939."
+   },
+   "source": "Evelyn Beatrice Hall, The Friends of Voltaire, 1906"
+  },
+  "illustration": {
+   "type": "icone",
+   "id": "plume"
+  },
+  "theme": "sagesse"
+ },
+ {
+  "id": "refutable",
+  "nom": {
+   "fr": "Réfutable"
+  },
+  "description": {
+   "fr": "Maîtriser les philosophes modernes. Votre succès est provisoire, comme toute théorie scientifique."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "philo.moderne"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "citation",
+   "texte": {
+    "fr": "Le critère de la scientificité d'une théorie réside dans la possibilité de l'invalider, de la réfuter ou encore de la tester."
+   },
+   "auteur": "Karl Popper",
+   "source": "Conjectures et réfutations, 1963 (traduction)"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "cygne"
+  },
+  "theme": "sagesse"
+ },
+ {
+  "id": "branche-sagesse",
+  "nom": {
+   "fr": "Ce que je sais"
+  },
+  "description": {
+   "fr": "Maîtriser le premier losange de Sagesse. Vous savez maintenant que vous ne savez rien, mais avec des références."
+  },
+  "condition": {
+   "type": "branche_complete",
+   "stat": "sagesse",
+   "rang_max": 4
+  },
+  "cache": true,
+  "recompense": {
+   "type": "citation",
+   "texte": {
+    "fr": "Je sais que je ne sais rien."
+   },
+   "auteur": "Socrate, d'après Platon",
+   "source": "Apologie de Socrate, 21d (formule résumée)"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "coupe-cigue"
+  },
+  "theme": "sagesse"
+ },
+ {
+  "id": "caverne",
+  "nom": {
+   "fr": "Sortie de caverne"
+  },
+  "description": {
+   "fr": "Réussir 3 quiz de Sagesse sans faute. Vous voyez enfin les objets, pas leurs ombres."
+  },
+  "condition": {
+   "type": "quiz_parfaits_stat",
+   "stat": "sagesse",
+   "n": 3
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Platon place l'allégorie de la caverne au livre VII de la République. Il faisait inscrire, dit la tradition, « Que nul n'entre ici s'il n'est géomètre » au fronton de l'Académie. La formule n'est attestée que près de neuf siècles plus tard."
+   },
+   "source": "Jean Philopon, commentaire du De anima, VIe siècle"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "caverne"
+  },
+  "theme": "sagesse"
+ },
+ {
+  "id": "pionnier-socrate",
+  "nom": {
+   "fr": "Socrate"
+  },
+  "description": {
+   "fr": "Maîtriser 9 compétences. L'arbre de la Philosophie s'ouvre."
+  },
+  "condition": {
+   "type": "competences_maitrisees",
+   "n": 9
+  },
+  "cache": false,
+  "recompense": {
+   "type": "citation",
+   "texte": {
+    "fr": "Une vie sans examen ne vaut pas d'être vécue."
+   },
+   "auteur": "Socrate",
+   "source": "Platon, Apologie de Socrate, 38a"
+  },
+  "ouvre": "sagesse",
+  "illustration": {
+   "type": "objet",
+   "id": "coupe-cigue"
+  },
+  "theme": "sagesse"
+ },
+ {
+  "id": "tramway",
+  "nom": {
+   "fr": "Le tramway"
+  },
+  "description": {
+   "fr": "Maîtriser l'éthique. Vous pouvez tirer le levier ou ne rien faire. L'IA, elle, a déjà choisi."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "philo.ethique"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Le dilemme du tramway, qui fonce sur cinq personnes sauf si l'on actionne un aiguillage vers une seule, est posé en 1967 par la philosophe Philippa Foot, dans un article sur l'avortement. Le nom de « trolley problem » vient de Judith Jarvis Thomson, en 1976."
+   },
+   "source": "Philippa Foot, Oxford Review, 1967 ; Judith Jarvis Thomson, The Monist, 1976"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "confucius"
+  },
+  "theme": "sagesse"
+ },
+ {
+  "id": "fin-moyens",
+  "nom": {
+   "fr": "Machiavel n'a pas dit ça"
+  },
+  "description": {
+   "fr": "Maîtriser la philosophie politique. La fin ne justifie pas les citations inventées."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "philo.politique"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "« La fin justifie les moyens » ne figure nulle part chez Machiavel. Dans Le Prince, il écrit qu'en politique, faute de tribunal où faire appel, on juge un prince à ses résultats. La formule, plus brutale, est un résumé de ses adversaires."
+   },
+   "source": "Machiavel, Le Prince, chapitre XVIII, 1532"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "ibn-khaldun"
+  },
+  "theme": "sagesse"
+ },
+ {
+  "id": "bateau-thesee",
+  "nom": {
+   "fr": "Le bateau de Thésée"
+  },
+  "description": {
+   "fr": "Maîtriser la philosophie de l'esprit. Vos cellules changent, vos souvenirs aussi. Êtes-vous encore vous ?"
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "philo.esprit"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Selon Plutarque, les Athéniens remplaçaient une à une les planches pourries du navire de Thésée : était-ce encore le même bateau ? Hobbes, en 1655, aggrave la question : si quelqu'un rebâtit un navire avec les vieilles planches, lequel des deux est le vrai ?"
+   },
+   "source": "Plutarque, Vie de Thésée, 23 ; Thomas Hobbes, De Corpore, 1655"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "descartes"
+  },
+  "theme": "sagesse"
+ },
+ {
+  "id": "vingt-et-un-paradigmes",
+  "nom": {
+   "fr": "Vingt et un paradigmes"
+  },
+  "description": {
+   "fr": "Maîtriser la philosophie des sciences. Changez de paradigme. Lequel ? Choisissez."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "philo.sciences"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Thomas Kuhn popularise en 1962 le mot « paradigme ». En 1970, la philosophe Margaret Masterman relève dans son livre vingt et un sens différents du mot. Kuhn le reconnaît, et finit par lui préférer « matrice disciplinaire »."
+   },
+   "source": "Thomas Kuhn, La Structure des révolutions scientifiques, 1962 ; Margaret Masterman, « The Nature of a Paradigm », 1970"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "popper"
+  },
+  "theme": "sagesse"
+ }
+]

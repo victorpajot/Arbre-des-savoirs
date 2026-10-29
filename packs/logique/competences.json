@@ -1,0 +1,298 @@
+[
+ {
+  "id": "math.arithmetique",
+  "stat": "logique",
+  "rang": 1,
+  "nom": {
+   "fr": "Arithmétique et fractions"
+  },
+  "description": {
+   "fr": "Les opérations, les priorités de calcul, les fractions et les nombres premiers."
+  },
+  "prerequis": [],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Priorités : parenthèses, puissances, puis multiplications et divisions (de gauche à droite), puis additions et soustractions."
+    },
+    {
+     "fr": "Pour additionner des fractions, on les met au même dénominateur : 3/4 + 1/8 = 6/8 + 1/8 = 7/8. On n'additionne jamais les dénominateurs."
+    },
+    {
+     "fr": "Diviser par une fraction, c'est multiplier par son inverse : 2 ÷ 1/2 = 4."
+    },
+    {
+     "fr": "Un nombre premier a exactement deux diviseurs, 1 et lui-même. 1 n'est donc pas premier ; 2 est le seul premier pair."
+    }
+   ],
+   "piege": {
+    "fr": "6 ÷ 2 × 3 vaut 9, pas 1 : à priorité égale, la convention est de calculer de gauche à droite."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 100\" role=\"img\" aria-label=\"Une barre coupée en 4 dont 3 parts colorées, une barre coupée en 8 dont 1 part colorée\"><text class=\"t\" x=\"20\" y=\"30\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">3/4</text><text class=\"t\" x=\"20\" y=\"80\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">1/8</text><rect class=\"a\" x=\"70\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"130\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"190\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"250\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\"/><rect class=\"a\" x=\"70\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"100\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"130\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"160\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"190\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"220\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"250\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"280\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/></svg>",
+   "source": "Programme de mathématiques du cycle 4, Éduscol"
+  },
+  "symbole": "½",
+  "embleme": "boulier"
+ },
+ {
+  "id": "math.proportions",
+  "stat": "logique",
+  "rang": 2,
+  "nom": {
+   "fr": "Proportions et pourcentages"
+  },
+  "description": {
+   "fr": "Règle de trois, échelles, hausses et baisses en pourcentage."
+  },
+  "prerequis": [
+   "math.arithmetique"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "La règle de trois marche quand deux grandeurs sont proportionnelles : si 3 kg coûtent 12 €, 5 kg coûtent 5 × 12 / 3 = 20 €."
+    },
+    {
+     "fr": "Une hausse de t % multiplie par (1 + t/100), une baisse par (1 − t/100). On enchaîne les évolutions en multipliant les coefficients."
+    },
+    {
+     "fr": "+50 % puis −50 % ne ramène pas au départ : 1,5 × 0,5 = 0,75, soit une baisse de 25 %."
+    },
+    {
+     "fr": "Point de pourcentage et pourcentage diffèrent : passer de 10 % à 12 %, c'est +2 points, mais +20 %."
+    }
+   ],
+   "piege": {
+    "fr": "Une baisse de 20 % ne se rattrape pas par une hausse de 20 % : il faut +25 %."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Hausse de 50 % puis baisse de 50 % : on finit à 75\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"63.3\" width=\"74.7\" height=\"66.7\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"57.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">100</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">départ</text><rect class=\"f2\" x=\"132.7\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">150</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+50 %</text><rect class=\"a\" x=\"219.3\" y=\"80.0\" width=\"74.7\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">75</text><text class=\"tm\" x=\"256.6666666666667\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">puis −50 %</text></svg>",
+   "source": "INSEE, « Évolutions et pourcentages », fiche méthode"
+  },
+  "symbole": "%",
+  "embleme": "camembert"
+ },
+ {
+  "id": "math.probabilites",
+  "stat": "logique",
+  "rang": 3,
+  "nom": {
+   "fr": "Probabilités"
+  },
+  "description": {
+   "fr": "Le hasard, l'indépendance, les paradoxes qui trompent l'intuition."
+  },
+  "prerequis": [
+   "math.arithmetique"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Probabilité = cas favorables ÷ cas possibles, à condition que les cas soient équiprobables."
+    },
+    {
+     "fr": "Deux événements indépendants : on multiplie leurs probabilités. Deux pile de suite : 1/2 × 1/2 = 1/4."
+    },
+    {
+     "fr": "Le hasard n'a pas de mémoire : après dix pile, le onzième lancer a toujours une chance sur deux (erreur du joueur)."
+    },
+    {
+     "fr": "Monty Hall : changer de porte fait gagner 2 fois sur 3, car l'animateur sait où est la voiture et n'ouvre jamais celle-là."
+    }
+   ],
+   "piege": {
+    "fr": "Avec deux dés, 7 est la somme la plus probable (6 issues sur 36), pas 12 (1 sur 36)."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 232\" role=\"img\" aria-label=\"Tableau des 36 résultats possibles avec deux dés\"><text class=\"tm\" x=\"52\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"24\" y=\"47\" font-size=\"13\" text-anchor=\"middle\">1</text><rect class=\"f2\" x=\"38\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"82\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">2</text><text class=\"tm\" x=\"24\" y=\"77\" font-size=\"13\" text-anchor=\"middle\">2</text><rect class=\"f2\" x=\"68\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"112\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">3</text><text class=\"tm\" x=\"24\" y=\"107\" font-size=\"13\" text-anchor=\"middle\">3</text><rect class=\"f2\" x=\"98\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"142\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">4</text><text class=\"tm\" x=\"24\" y=\"137\" font-size=\"13\" text-anchor=\"middle\">4</text><rect class=\"f2\" x=\"128\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"172\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">5</text><text class=\"tm\" x=\"24\" y=\"167\" font-size=\"13\" text-anchor=\"middle\">5</text><rect class=\"f2\" x=\"158\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"202\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">6</text><text class=\"tm\" x=\"24\" y=\"197\" font-size=\"13\" text-anchor=\"middle\">6</text><rect class=\"f2\" x=\"188\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"130\" y=\"222\" font-size=\"12\" text-anchor=\"middle\">36 issues équiprobables (dé 1 × dé 2)</text></svg>",
+   "source": "Feller, An Introduction to Probability Theory and Its Applications, 1968"
+  },
+  "symbole": "⚄",
+  "embleme": "des-pascal"
+ },
+ {
+  "id": "math.logique",
+  "stat": "logique",
+  "rang": 4,
+  "nom": {
+   "fr": "Logique formelle"
+  },
+  "description": {
+   "fr": "Implication, négation, syllogismes et raisonnement par l'absurde."
+  },
+  "prerequis": [
+   "math.proportions",
+   "math.probabilites"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "« Si A alors B » est faux dans un seul cas : A vrai et B faux."
+    },
+    {
+     "fr": "La contraposée « si non B alors non A » est équivalente. La réciproque « si B alors A » ne l'est pas."
+    },
+    {
+     "fr": "Nier « tous les cygnes sont blancs », c'est dire « au moins un cygne n'est pas blanc », pas « aucun cygne n'est blanc »."
+    },
+    {
+     "fr": "Raisonnement par l'absurde : on suppose le contraire de ce qu'on veut prouver et on aboutit à une contradiction."
+    }
+   ],
+   "piege": {
+    "fr": "Affirmer le conséquent : « s'il pleut, le sol est mouillé ; le sol est mouillé, donc il pleut » est invalide."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 148\" role=\"img\" aria-label=\"Table de vérité de l'implication\"><text class=\"t\" x=\"63.333333333333336\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A</text><text class=\"t\" x=\"170.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">B</text><text class=\"t\" x=\"276.6666666666667\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">si A alors B</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"63.333333333333336\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">vrai</text><rect class=\"a\" x=\"10\" y=\"62\" width=\"320\" height=\"24\" rx=\"4\" opacity=\"0.25\"/><text class=\"t\" x=\"63.333333333333336\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">faux</text><text class=\"t\" x=\"63.333333333333336\" y=\"105\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">vrai</text><text class=\"t\" x=\"63.333333333333336\" y=\"131\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">vrai</text></svg>",
+   "source": "Copi, Introduction to Logic, 14e éd."
+  },
+  "symbole": "∧",
+  "embleme": "ardoise-boole"
+ },
+ {
+  "id": "math.algebre",
+  "stat": "logique",
+  "rang": 5,
+  "nom": {
+   "fr": "Algèbre et équations"
+  },
+  "description": {
+   "fr": "Inconnues, équations, identités remarquables et systèmes."
+  },
+  "prerequis": [
+   "math.logique"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Résoudre une équation : faire la même opération des deux côtés jusqu'à isoler l'inconnue."
+    },
+    {
+     "fr": "Identités remarquables : (a + b)² = a² + 2ab + b², (a − b)² = a² − 2ab + b², (a + b)(a − b) = a² − b²."
+    },
+    {
+     "fr": "(a + b)² n'est pas a² + b² : on oublie le double produit 2ab."
+    },
+    {
+     "fr": "Un système de deux équations à deux inconnues se résout par substitution ou par combinaison."
+    }
+   ],
+   "piege": {
+    "fr": "Diviser les deux côtés par x fait perdre la solution x = 0 : on factorise plutôt."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Résoudre 3x + 5 = 20 étape par étape\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x + 5 = 20</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x = 15</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">x = 5</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">on retire 5, puis on divise par 3</text></svg>",
+   "source": "Programme de mathématiques de seconde, Éduscol"
+  },
+  "symbole": "x²",
+  "embleme": "tablette"
+ },
+ {
+  "id": "math.statistiques",
+  "stat": "logique",
+  "rang": 6,
+  "nom": {
+   "fr": "Statistiques"
+  },
+  "description": {
+   "fr": "Moyenne, médiane, écart type, corrélation et échantillons."
+  },
+  "prerequis": [
+   "math.algebre"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "La moyenne est sensible aux valeurs extrêmes ; la médiane coupe la population en deux moitiés et y résiste."
+    },
+    {
+     "fr": "Quand Bill Gates entre dans un bar, la moyenne des fortunes explose ; la médiane ne bouge presque pas."
+    },
+    {
+     "fr": "L'écart type mesure la dispersion autour de la moyenne."
+    },
+    {
+     "fr": "Corrélation n'est pas causalité : glaces et noyades montent ensemble l'été, à cause de la chaleur."
+    }
+   ],
+   "piege": {
+    "fr": "Un salaire moyen supérieur au salaire médian ne veut pas dire que la plupart gagnent plus que la moyenne : c'est l'inverse."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Cinq valeurs : médiane 2, moyenne 4 tirée par la valeur 12\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"121.7\" width=\"40.0\" height=\"8.3\" rx=\"3\"/><text class=\"t\" x=\"66.0\" y=\"115.66666666666667\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"66.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">A</text><rect class=\"f2\" x=\"98.0\" y=\"113.3\" width=\"40.0\" height=\"16.7\" rx=\"3\"/><text class=\"t\" x=\"118.0\" y=\"107.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"118.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">B</text><rect class=\"f2\" x=\"150.0\" y=\"113.3\" width=\"40.0\" height=\"16.7\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"107.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">C</text><rect class=\"f2\" x=\"202.0\" y=\"105.0\" width=\"40.0\" height=\"25.0\" rx=\"3\"/><text class=\"t\" x=\"222.0\" y=\"99.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3</text><text class=\"tm\" x=\"222.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">D</text><rect class=\"a\" x=\"254.0\" y=\"30.0\" width=\"40.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"274.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">12</text><text class=\"tm\" x=\"274.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">E</text></svg>",
+   "source": "INSEE, « Moyenne et médiane », définitions"
+  },
+  "symbole": "σ",
+  "embleme": "courbe-cloche"
+ },
+ {
+  "id": "math.geometrie",
+  "stat": "logique",
+  "rang": 7,
+  "nom": {
+   "fr": "Géométrie et trigonométrie"
+  },
+  "description": {
+   "fr": "Angles, aires, volumes, Pythagore, sinus et cosinus."
+  },
+  "prerequis": [
+   "math.algebre"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Pythagore : dans un triangle rectangle, le carré de l'hypoténuse vaut la somme des carrés des deux autres côtés (3, 4, 5)."
+    },
+    {
+     "fr": "Aire du disque π r², périmètre 2 π r ; volume de la sphère 4/3 π r³."
+    },
+    {
+     "fr": "Doubler les longueurs multiplie les aires par 4 et les volumes par 8."
+    },
+    {
+     "fr": "Dans un triangle rectangle : sinus = opposé / hypoténuse, cosinus = adjacent / hypoténuse, tangente = opposé / adjacent."
+    }
+   ],
+   "piege": {
+    "fr": "La somme des angles d'un triangle vaut 180°, mais seulement sur un plan : sur une sphère, elle dépasse 180°."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Agrandir une figure : longueurs, aires et volumes\"><text class=\"t\" x=\"50.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">côté ×</text><text class=\"t\" x=\"130.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">longueur</text><text class=\"t\" x=\"210.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">aire</text><text class=\"t\" x=\"290.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">volume</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"50.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"130.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 2</text><text class=\"tm\" x=\"210.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 4</text><text class=\"tm\" x=\"290.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 8</text><text class=\"t\" x=\"50.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3</text><text class=\"tm\" x=\"130.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 3</text><text class=\"tm\" x=\"210.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 9</text><text class=\"tm\" x=\"290.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 27</text></svg>",
+   "source": "Euclide, Éléments, livre I, proposition 47"
+  },
+  "symbole": "△",
+  "embleme": "compas-euclide"
+ },
+ {
+  "id": "math.infini",
+  "stat": "logique",
+  "rang": 8,
+  "nom": {
+   "fr": "Suites, limites et infini"
+  },
+  "description": {
+   "fr": "Suites, séries, limites et les paradoxes de l'infini."
+  },
+  "prerequis": [
+   "math.statistiques",
+   "math.geometrie"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Une suite géométrique de raison inférieure à 1 en valeur absolue tend vers 0 ; sa somme peut être finie : 1/2 + 1/4 + 1/8 + … = 1."
+    },
+    {
+     "fr": "0,999… = 1 exactement : c'est la même somme infinie écrite autrement."
+    },
+    {
+     "fr": "La série harmonique 1 + 1/2 + 1/3 + … diverge, même si ses termes tendent vers 0."
+    },
+    {
+     "fr": "Cantor : il y a autant d'entiers pairs que d'entiers, mais strictement plus de réels que d'entiers."
+    }
+   ],
+   "piege": {
+    "fr": "Que les termes tendent vers 0 ne suffit pas pour qu'une somme infinie soit finie."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Les sommes 1/2 + 1/4 + … s'approchent de 1 sans le dépasser\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"80.0\" width=\"53.0\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"72.5\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,5</text><text class=\"tm\" x=\"72.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">1/2</text><rect class=\"f2\" x=\"111.0\" y=\"55.0\" width=\"53.0\" height=\"75.0\" rx=\"3\"/><text class=\"t\" x=\"137.5\" y=\"49.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,75</text><text class=\"tm\" x=\"137.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/4</text><rect class=\"f2\" x=\"176.0\" y=\"42.5\" width=\"53.0\" height=\"87.5\" rx=\"3\"/><text class=\"t\" x=\"202.5\" y=\"36.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,875</text><text class=\"tm\" x=\"202.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/8</text><rect class=\"a\" x=\"241.0\" y=\"36.2\" width=\"53.0\" height=\"93.8\" rx=\"3\"/><text class=\"t\" x=\"267.5\" y=\"30.25\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,9375</text><text class=\"tm\" x=\"267.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/16</text></svg>",
+   "source": "Cantor, Beiträge zur Begründung der transfiniten Mengenlehre, 1895"
+  },
+  "symbole": "∞",
+  "embleme": "ouroboros"
+ }
+]

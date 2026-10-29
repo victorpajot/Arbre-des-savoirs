@@ -1,0 +1,291 @@
+[
+ {
+  "id": "coriolis",
+  "nom": {
+   "fr": "L'évier de l'hémisphère Sud"
+  },
+  "description": {
+   "fr": "Maîtriser les orbites. L'IA vous interdit désormais de croire à l'histoire du lavabo."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "astro.orbites"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "L'eau ne tourne pas dans l'autre sens dans les éviers de l'hémisphère Sud : à cette échelle, la force de Coriolis est bien trop faible face à la forme de la cuve et aux remous. Au MIT en 1962, Ascher Shapiro a dû laisser reposer l'eau d'un bassin de 2 m de large pendant 24 heures pour la mesurer."
+   },
+   "source": "Ascher Shapiro, « Bath-Tub Vortex », Nature, 1962"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "tourbillon"
+  },
+  "theme": "cosmos"
+ },
+ {
+  "id": "saisons",
+  "nom": {
+   "fr": "Pas plus près, pas plus chaud"
+  },
+  "description": {
+   "fr": "Maîtriser le Système solaire. Félicitations, vous savez enfin pourquoi il fait froid en hiver."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "astro.systeme"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Les saisons ne viennent pas de la distance au Soleil : la Terre en est au plus près début janvier, en plein hiver de l'hémisphère Nord. C'est l'inclinaison de son axe qui change la hauteur du Soleil et la durée du jour."
+   },
+   "source": "Institut de mécanique céleste et de calcul des éphémérides (IMCCE), Observatoire de Paris"
+  },
+  "illustration": {
+   "type": "icone",
+   "id": "heliocentre"
+  },
+  "theme": "cosmos"
+ },
+ {
+  "id": "poussieres",
+  "nom": {
+   "fr": "Poussières d'étoiles"
+  },
+  "description": {
+   "fr": "Maîtriser les étoiles. Vous êtes, littéralement, fait de ce que vous venez d'apprendre."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "astro.etoiles"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Le carbone, l'oxygène et le fer de notre corps ont été fabriqués dans des étoiles. Le mécanisme est décrit en 1957 dans un article resté célèbre sous les initiales de ses quatre auteurs : B²FH."
+   },
+   "source": "Burbidge, Burbidge, Fowler et Hoyle, Reviews of Modern Physics, 1957"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "etoile"
+  },
+  "theme": "cosmos"
+ },
+ {
+  "id": "big-bang",
+  "nom": {
+   "fr": "Un nom pour rire"
+  },
+  "description": {
+   "fr": "Maîtriser les galaxies et le Big Bang. Le nom, lui, était une moquerie."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "astro.galaxies"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Fred Hoyle, qui défendait un Univers éternel, lance l'expression « Big Bang » en mars 1949 à la radio de la BBC pour décrire la théorie rivale. On y entend souvent une moquerie, ce que Hoyle a toujours nié. Le nom est resté, la théorie aussi."
+   },
+   "source": "Fred Hoyle, BBC Third Programme, mars 1949"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "plaque-hubble"
+  },
+  "theme": "cosmos"
+ },
+ {
+  "id": "branche-cosmos",
+  "nom": {
+   "fr": "Colomb avait tort, mais pas pour ça"
+  },
+  "description": {
+   "fr": "Maîtriser le premier losange de Cosmos."
+  },
+  "condition": {
+   "type": "branche_complete",
+   "stat": "cosmos",
+   "rang_max": 4
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Au temps de Colomb, les savants savaient la Terre ronde ; Ératosthène l'avait même mesurée vers 240 avant notre ère. Colomb se trompait sur sa taille, qu'il croyait bien plus petite. Le mythe de la Terre plate médiévale vient surtout du XIXe siècle."
+   },
+   "source": "Jeffrey Burton Russell, Inventing the Flat Earth, 1991"
+  },
+  "illustration": {
+   "type": "icone",
+   "id": "astrolabe"
+  },
+  "theme": "cosmos"
+ },
+ {
+  "id": "pionnier-galilee",
+  "nom": {
+   "fr": "Galilée"
+  },
+  "description": {
+   "fr": "Maîtriser 4 compétences. L'arbre de l'Astronomie s'ouvre."
+  },
+  "condition": {
+   "type": "competences_maitrisees",
+   "n": 4
+  },
+  "cache": false,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "« Et pourtant elle tourne » : Galilée ne l'a sans doute jamais murmuré devant ses juges en 1633. La phrase apparaît pour la première fois en 1757, dans un livre de Giuseppe Baretti, plus d'un siècle après le procès."
+   },
+   "source": "Giuseppe Baretti, The Italian Library, Londres, 1757"
+  },
+  "ouvre": "cosmos",
+  "illustration": {
+   "type": "savant",
+   "id": "galilee"
+  },
+  "theme": "cosmos"
+ },
+ {
+  "id": "etoiles-mortes",
+  "nom": {
+   "fr": "Elles sont vivantes"
+  },
+  "description": {
+   "fr": "Maîtriser l'observation du ciel. Ces étoiles ne sont pas mortes. Elles vous regardent."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "astro.observer"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "On dit que les étoiles que l'on voit sont peut-être mortes depuis longtemps. Presque toutes celles visibles à l'œil nu sont à moins de quelques milliers d'années-lumière, et vivent des millions ou des milliards d'années. Leur lumière est en retard, pas leur acte de décès."
+   },
+   "source": "ESA, catalogue Hipparcos, 1997"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "hypatie"
+  },
+  "theme": "cosmos"
+ },
+ {
+  "id": "stylo-spatial",
+  "nom": {
+   "fr": "Le stylo de la NASA"
+  },
+  "description": {
+   "fr": "Maîtriser la conquête spatiale. Non, les Russes n'ont pas « juste pris un crayon »."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "astro.espace"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "La NASA aurait dépensé des millions pour un stylo qui écrit dans l'espace, quand les Soviétiques prenaient un crayon. Faux : Paul Fisher l'a développé à ses frais, et les deux agences l'ont acheté, quelques dollars pièce. Les crayons posaient problème : la mine se casse et la poussière de graphite conduit l'électricité."
+   },
+   "source": "NASA History Office ; Ciara Curtin, Scientific American, 2006"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "katherine-johnson"
+  },
+  "theme": "cosmos"
+ },
+ {
+  "id": "planetes-pulsar",
+  "nom": {
+   "fr": "Les premières étaient autour d'un mort"
+  },
+  "description": {
+   "fr": "Maîtriser les exoplanètes et la vie ailleurs. Le premier système découvert tourne autour d'un cadavre d'étoile."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "astro.exoplanetes"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Les premières exoplanètes confirmées, en 1992, ne tournent pas autour d'une étoile comme le Soleil, mais autour d'un pulsar, le cœur effondré d'une étoile qui a explosé. Aleksander Wolszczan et Dale Frail les repèrent aux irrégularités de ses pulsations."
+   },
+   "source": "Wolszczan et Frail, Nature, 1992"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "giordano-bruno"
+  },
+  "theme": "cosmos"
+ },
+ {
+  "id": "zwicky",
+  "nom": {
+   "fr": "Dunkle Materie"
+  },
+  "description": {
+   "fr": "Maîtriser la matière et l'énergie noires. Quatre-vingt-cinq pour cent de la matière vous échappent. À vous aussi."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "astro.sombre"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1933, Fritz Zwicky mesure les galaxies de l'amas de Coma : elles vont trop vite pour que l'amas tienne ensemble. Il faut une masse invisible, la « dunkle Materie ». Personne ne le suit pendant quarante ans. Il traitait, dit-on, ses collègues de « salauds sphériques » : salauds, de quelque côté qu'on les regarde."
+   },
+   "source": "Fritz Zwicky, Helvetica Physica Acta, 1933"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "vera-rubin"
+  },
+  "theme": "cosmos"
+ },
+ {
+  "id": "georgium-sidus",
+  "nom": {
+   "fr": "L'astre de George"
+  },
+  "description": {
+   "fr": "Réussir trois quiz de Cosmos sans faute. L'IA vous donnera peut-être votre nom. Peut-être pas."
+  },
+  "condition": {
+   "type": "quiz_parfaits_stat",
+   "stat": "cosmos",
+   "n": 3
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1781, William Herschel, musicien devenu astronome, découvre une nouvelle planète, la première depuis l'Antiquité. Il veut l'appeler « Georgium Sidus », l'astre de George, en l'honneur du roi George III, qui lui verse une pension. Les astronomes préfèrent Uranus."
+   },
+   "source": "William Herschel, Philosophical Transactions, 1783"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "sphere-armillaire"
+  },
+  "theme": "cosmos"
+ }
+]

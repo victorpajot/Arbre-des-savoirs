@@ -2758,7 +2758,9 @@
   function nomIA(contenu, partie) { return partie.alyca && contenu.ia && contenu.ia.alyca ? contenu.ia.alyca.nom : null; }
 
   function expression(contenu, contexte) {
-    return (contenu.ia && contenu.ia.expressions[contexte]) || "neutre";
+    // Packs : « theme_reussi@cosmos » prend l'expression de « theme_reussi ».
+    var ex = contenu.ia && contenu.ia.expressions;
+    return (ex && (ex[contexte] || ex[String(contexte).split("@")[0]])) || "neutre";
   }
 
   // Remplace {stat}, {n}… dans le texte d'une réplique, sans toucher au contenu.

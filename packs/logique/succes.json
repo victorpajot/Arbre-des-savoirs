@@ -1,0 +1,266 @@
+[
+ {
+  "id": "branche-logique",
+  "nom": {
+   "fr": "Langue du monde"
+  },
+  "description": {
+   "fr": "Maîtriser le premier losange de Logique."
+  },
+  "condition": {
+   "type": "branche_complete",
+   "stat": "logique",
+   "rang_max": 4
+  },
+  "cache": true,
+  "recompense": {
+   "type": "citation",
+   "texte": {
+    "fr": "La philosophie est écrite dans ce très grand livre qui se tient constamment ouvert devant nos yeux, je veux dire l'Univers. […] Il est écrit en langue mathématique."
+   },
+   "auteur": "Galilée",
+   "source": "L'Essayeur (Il Saggiatore), 1623"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "compas-euclide"
+  },
+  "theme": "logique"
+ },
+ {
+  "id": "einstein-notes",
+  "nom": {
+   "fr": "Einstein avait de bonnes notes"
+  },
+  "description": {
+   "fr": "Réussir trois quiz de Logique sans faute. Vous voilà au niveau d'un lycéen suisse de 1896."
+  },
+  "condition": {
+   "type": "quiz_parfaits_stat",
+   "stat": "logique",
+   "n": 3
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Einstein n'a jamais été mauvais en maths. À sa maturité, à Aarau en 1896, il obtient 6 sur 6, la note maximale, en algèbre et en géométrie. Il disait maîtriser le calcul différentiel et intégral avant 15 ans."
+   },
+   "source": "Albrecht Fölsing, Albert Einstein, 1993 ; certificat de maturité d'Aarau, 1896"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "einstein"
+  },
+  "theme": "logique"
+ },
+ {
+  "id": "egal-recorde",
+  "nom": {
+   "fr": "Deux traits parallèles"
+  },
+  "description": {
+   "fr": "Maîtriser l'arithmétique et les fractions. L'IA vous trouve enfin égal à vous-même."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "math.arithmetique"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Le signe « = » est inventé en 1557 par le Gallois Robert Recorde, lassé d'écrire « est égal à ». Il choisit deux traits parallèles de même longueur, parce que, dit-il, « nulle chose ne peut être plus égale ». Il fallut plus d'un siècle pour qu'il s'impose."
+   },
+   "source": "Robert Recorde, The Whetstone of Witte, 1557"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "brahmagupta"
+  },
+  "theme": "logique"
+ },
+ {
+  "id": "nombre-or",
+  "nom": {
+   "fr": "Le nombre d'or n'est pas partout"
+  },
+  "description": {
+   "fr": "Maîtriser les proportions et les pourcentages. Vous mesurez, désormais, avant de vous extasier."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "math.proportions"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "On dit le nombre d'or caché dans le Parthénon, la Joconde ou la coquille du nautile. Les mesures qui le « prouvent » choisissent leurs points de repère après coup, et la spirale du nautile ne colle pas. Le mathématicien George Markowsky a fait le tri en 1992 : il ne reste presque rien."
+   },
+   "source": "George Markowsky, « Misconceptions about the Golden Ratio », College Mathematics Journal, 1992"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "compas-euclide"
+  },
+  "theme": "logique"
+ },
+ {
+  "id": "aiguille-buffon",
+  "nom": {
+   "fr": "L'aiguille trop chanceuse"
+  },
+  "description": {
+   "fr": "Maîtriser les probabilités. Le hasard, lui, ne triche pas. Les gens, si."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "math.probabilites"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1777, Buffon montre qu'en lançant des aiguilles sur un parquet, on peut estimer π. En 1901, l'Italien Lazzarini affirme avoir trouvé 3,1415929 en 3 408 lancers, à six décimales près. Bien trop beau : le nombre de lancers était taillé pour tomber sur 355/113."
+   },
+   "source": "Lee Badger, « Lazzarini's Lucky Approximation of π », Mathematics Magazine, 1994"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "des-pascal"
+  },
+  "theme": "logique"
+ },
+ {
+  "id": "lettre-frege",
+  "nom": {
+   "fr": "La lettre à Frege"
+  },
+  "description": {
+   "fr": "Maîtriser la logique formelle. Ne relisez pas vos fondations la veille de l'impression."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "math.logique"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1902, Gottlob Frege imprime le second tome de son grand œuvre, qui fonde l'arithmétique sur la logique. Une lettre de Bertrand Russell lui signale un paradoxe qui fait tout s'écrouler. Frege ajoute en annexe : rien de plus fâcheux pour un savant que de voir céder les bases de son édifice au moment de l'achever."
+   },
+   "source": "Lettre de Russell à Frege, 16 juin 1902 ; Frege, Grundgesetze der Arithmetik, II, appendice, 1903"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "ardoise-boole"
+  },
+  "theme": "logique"
+ },
+ {
+  "id": "nuit-galois",
+  "nom": {
+   "fr": "Pas en une nuit"
+  },
+  "description": {
+   "fr": "Maîtriser l'algèbre et les équations. Vous avez eu plus de temps que Galois. Et moins de duels."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "math.algebre"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "La légende veut qu'Évariste Galois ait inventé toute sa théorie la nuit précédant le duel qui le tua, en 1832, à vingt ans. En réalité, il y travaillait depuis des années. Cette nuit-là, il relit, corrige et résume. Dans une marge : « Je n'ai pas le temps. »"
+   },
+   "source": "Peter Neumann, The Mathematical Writings of Évariste Galois, 2011"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "al-khwarizmi"
+  },
+  "theme": "logique"
+ },
+ {
+  "id": "student-guinness",
+  "nom": {
+   "fr": "Student, de chez Guinness"
+  },
+  "description": {
+   "fr": "Maîtriser les statistiques. Santé."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "math.statistiques"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Le test t, outil de base des statistiques, a été publié en 1908 sous le pseudonyme de « Student ». Son auteur, William Gosset, était chimiste chez Guinness à Dublin, et la brasserie interdisait à ses employés de publier sous leur nom. Il cherchait à choisir la meilleure orge avec peu d'échantillons."
+   },
+   "source": "Student, Biometrika, 1908 ; Joan Fisher Box, Statistical Science, 1987"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "nightingale"
+  },
+  "theme": "logique"
+ },
+ {
+  "id": "pi-indiana",
+  "nom": {
+   "fr": "π vaut 3,2, dit la loi"
+  },
+  "description": {
+   "fr": "Maîtriser la géométrie et la trigonométrie. Ici, π n'est pas soumis au vote."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "math.geometrie"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1897, la Chambre des représentants de l'Indiana adopte à l'unanimité un projet de loi d'un médecin amateur qui fixe, en pratique, π à 3,2. Un professeur de mathématiques de passage, Clarence Waldo, alerte les sénateurs, qui ajournent le texte sans fin. Il n'a jamais été voté."
+   },
+   "source": "Indiana House Bill 246, 1897 ; Underwood Dudley, Mathematical Cranks, 1992"
+  },
+  "illustration": {
+   "type": "objet",
+   "id": "compas-euclide"
+  },
+  "theme": "logique"
+ },
+ {
+  "id": "paradis-cantor",
+  "nom": {
+   "fr": "Le paradis de Cantor"
+  },
+  "description": {
+   "fr": "Maîtriser les suites, les limites et l'infini. Il y a plusieurs infinis, et vous venez d'en franchir un."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "math.infini"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "citation",
+   "texte": {
+    "fr": "Nul ne doit pouvoir nous chasser du paradis que Cantor a créé pour nous."
+   },
+   "auteur": "David Hilbert",
+   "source": "« Über das Unendliche », Mathematische Annalen, 1926"
+  },
+  "illustration": {
+   "type": "savant",
+   "id": "ramanujan"
+  },
+  "theme": "logique"
+ }
+]
