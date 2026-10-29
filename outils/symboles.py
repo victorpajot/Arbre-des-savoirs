@@ -27,8 +27,8 @@ SYMBOLES = {
 }
 
 
-# v29 (Victor) : quand un objet du jeu dit mieux la compétence qu'un caractère, le badge montre son pixel art.
-# Le symbole reste pour les compétences sans objet parlant (σ, ∞, x² se lisent très bien).
+# v29 (Victor) : le badge montre un emblème en pixel art plutôt qu'un caractère : objet du cabinet, icône du plateau
+# ou dessin (succes_pixels.py, emblemes_pixels.py). Le symbole ne sert plus qu'en secours.
 EMBLEMES = {
     "math.arithmetique": "boulier", "math.probabilites": "des-pascal", "math.logique": "ardoise-boole",
     "math.geometrie": "compas-euclide",
@@ -49,4 +49,14 @@ EMBLEMES = {
     "elec.numerique": "ordinateur",
     "philo.antiquite": "lanterne-diogene", "philo.classique": "poele-descartes", "philo.moderne": "marteau-nietzsche",
     "philo.politique": "couronne", "philo.esprit": "ruban-turing",
+    # v29 : les 31 qui restaient en symbole, dessinés (emblemes_pixels.py) ou repris des succès et du plateau.
+    "math.proportions": "camembert", "math.algebre": "tablette", "math.statistiques": "courbe-cloche",
+    "math.infini": "ouroboros", "phys.quantique": "chat", "sci.corps": "coeur", "sci.ecologie": "plante",
+    "rhet.argument": "engrenage", "rhet.sophismes": "labyrinthe", "rhet.debat": "bulles",
+    "biais.confirmation": "loupe", "biais.disponibilite": "eclair", "biais.surconfiance": "citron",
+    "biais.decision": "pieces", "biais.statistiques": "barres", "biais.croyances": "lune",
+    "psy.emotions": "visage", "psy.motivation": "rocher", "psy.cerveau": "cerveau", "psy.developpement": "cubes",
+    "psy.personnalite": "masque", "psy.bienetre": "soleil", "chim.organique": "benzene", "chim.quotidien": "flacon",
+    "astro.etoiles": "etoile", "astro.orbites": "pluton", "astro.sombre": "halo", "elec.em": "antenne",
+    "philo.medievale": "vitrail", "philo.ethique": "balance", "philo.sciences": "cygne",
 }

@@ -411,6 +411,7 @@ def pinceau():
 
 
 def dessins():
+    import emblemes_pixels  # noqa: F401  (v29 : enregistre les emblèmes de compétence)
     return {nom: fn().lignes() for nom, fn in DESSINS.items()}
 
 

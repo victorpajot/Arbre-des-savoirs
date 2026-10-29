@@ -1047,14 +1047,14 @@ svg.grille .interro { transition: opacity .3s; }
   // Un sprite 32 × 32 : objet du cabinet ou icône du plateau.
   function grilleSprite(id) {
     var o = C.objets.filter(function (x) { return x.id === id; })[0];
-    return o ? o.pixels : (C.plateau && C.plateau.icones[id]) || null;
+    return o ? o.pixels : (C.plateau && C.plateau.icones[id]) || C.dessinsSucces[id] || null;
   }
   // v15 : badge d'une compétence : pastille à la couleur de son arbre, son symbole, et son rang (niveau) en pastille.
   function badgeComp(k, taille) {
     var sym = k.symbole || "?", t = sym.length > 2 ? 11 : sym.length > 1 ? 14 : 19, g = k.embleme && grilleSprite(k.embleme);
     return '<svg class="badge-comp" viewBox="0 0 44 44" width="' + taille + '" height="' + taille + '" role="img" aria-label="' + esc(tx(k.nom)) + ", niveau " + k.rang + '">' +
       '<rect x="2" y="2" width="36" height="36" rx="11" fill="' + couleur(k.stat) + '" stroke="#fff" stroke-width="2"/>' +
-      // v29 : l'objet qui dit la compétence, en pixel art, sur un médaillon clair.
+      // v29 : l'emblème de la compétence (objet, case ou dessin), en pixel art, sur un médaillon clair.
       (g ? '<rect x="5.5" y="5.5" width="29" height="29" rx="8" fill="#FFF8EC"/>' + spriteRogne(g, C.cabinet.palette, 7, 7, 26) : '<text x="20" y="' + (20 + t * 0.36).toFixed(1) + '" text-anchor="middle" font-size="' + t + '" font-weight="800" fill="#fff" style="font-family:var(--f-body),\'Noto Sans Symbols 2\',\'Noto Sans Math\',sans-serif">' + esc(sym) + "\uFE0E</text>") +
       '<circle cx="35" cy="35" r="8.5" fill="#1E1A2B" stroke="#fff" stroke-width="2"/><text x="35" y="39" text-anchor="middle" font-size="11" font-weight="800" fill="#fff" font-family="JetBrains Mono, monospace">' + k.rang + "</text></svg>";
   }
