@@ -698,6 +698,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .compte-z { display: flex; flex-wrap: wrap; gap: 6px; }
 .compte-z span { padding: 4px 8px; border-radius: 8px; background: var(--surface-2); font-size: 15px; }
 .compte-z span.moi { background: var(--accent); color: #fff; }
+.couches-z { margin: 10px 0 0; }
+.couches-z > b { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; }
+.couches-z ul { margin: 8px 0 0; padding-left: 20px; font-size: 16px; line-height: 1.5; }
 .astuce-z { margin: 8px 0 0; font-size: 16px; line-height: 1.5; }
 .astuce-z b { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
 .combat-q .enonce { font-family: var(--f-display); font-weight: 600; }
@@ -3767,9 +3770,11 @@ svg.grille .interro { transition: opacity .3s; }
         if (dit) expl += " Tu as dit " + c + " : celui-là, c'est " + tx(dit.nom) + (q.type === "numero" ? " (" + dit.symbole + ")" : ", n° " + dit.z) + ".";
         var rt = el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + "</b>" + esc(expl) + '<p class="meta" style="margin:6px 0 0">' + esc(etat) + "</p></div>");
         if (ast) {
-          rt.insertBefore(el('<p class="astuce-z"><b>Sa place</b>' + esc(ast.texte) + "</p>"), rt.querySelector(".meta"));
-          rt.insertBefore(el('<div class="illus">' + ast.illustration + "</div>"), rt.querySelector(".meta"));
-          var bg = boutonGuide(e); bg.style.marginTop = "10px"; rt.insertBefore(bg, rt.querySelector(".meta"));
+          var etatP = rt.lastElementChild;
+          if (C.atomes.couches) rt.insertBefore(el(htmlCouches(e)), etatP);
+          rt.insertBefore(el('<p class="astuce-z"><b>Sa place</b>' + esc(ast.texte) + "</p>"), etatP);
+          rt.insertBefore(el('<div class="illus">' + ast.illustration + "</div>"), etatP);
+          var bg = boutonGuide(e); bg.style.marginTop = "10px"; rt.insertBefore(bg, etatP);
         }
         if (!ok) rt.appendChild(el('<p class="meta" style="margin:6px 0 0">Épinglé au mur de la honte : retente-le dès demain.</p>'));
         retour.appendChild(rt);
@@ -3829,7 +3834,7 @@ svg.grille .interro { transition: opacity .3s; }
     var texte = e.z === b[0] ? tx(e.nom) + " est le tout premier de la ligne " + l + " : la ligne d'avant s'arrête à " + (b[0] - 1) + ", donc il porte le " + e.z + "." :
       tx(e.nom) + " est sur la ligne " + l + ", qui va de " + b[0] + " à " + b[1] + ". On compte depuis le début de la ligne, case par case" + (l >= 6 && e.z > b[0] + 1 ? ", en passant par la ligne du bas (" + (l === 6 ? "57 à 71" : "89 à 103") + ")" : "") + " :";
     var puces = e.z === b[0] ? "" : '<div class="compte-z">' + suite.map(function (x) { return "<span" + (x.z === e.z ? ' class="moi"' : "") + "><b>" + x.z + "</b> " + esc(tx(x.nom)) + "</span>"; }).join("") + "</div>";
-    return { titre: "Ton atome : " + tx(e.nom), html: "<p>" + esc(texte) + "</p>" + puces + '<div class="illus">' + svg + "</div>" };
+    return { titre: "Ton atome : " + tx(e.nom), html: htmlCouches(e) + "<p>" + esc(texte) + "</p>" + puces + '<div class="illus">' + svg + "</div>" };
   }
   function ouvrirGuideTableau(e) {
     var G = C.atomes.guide; if (!G) return;
@@ -3849,6 +3854,12 @@ svg.grille .interro { transition: opacity .3s; }
     }
     montrer();
   }
+  // v34 : l'atome dessiné couche par couche, et ce que le dessin dit de sa place (ligne, colonne).
+  function htmlCouches(e) {
+    var L = M.lectureCouches(C.atomes, e); if (!L) return "";
+    return '<div class="couches-z"><b>Ses couches d\'électrons</b><div class="illus">' + M.dessinCouches(C.atomes, e) + "</div><ul>" +
+      L.lignes.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" + (L.predite ? '<p class="meta">Atome trop éphémère pour être mesuré : répartition prédite par le calcul.</p>' : "") + '<p class="meta" style="margin:4px 0 0">Source : ' + esc(C.atomes.couches.source.split(" : ")[0]) + "</p></div>";
+  }
   function boutonGuide(e) {
     var b = el('<button type="button" class="btn sec">Comprendre le tableau</button>');
     b.onclick = function () { ouvrirGuideTableau(e); };
@@ -3856,7 +3867,7 @@ svg.grille .interro { transition: opacity .3s; }
   }
   function ficheAtomeHtml(e) {
     return '<div class="fiche-atome"><div class="bareme"><span>Numéro atomique</span><span class="num">' + e.z + '</span><span>Masse atomique</span><span class="num">' + esc(M.texteMasse(e)) + "</span><span>Famille</span><span>" + esc(tx(C.atomes.familles[e.famille].nom)) +
-      "</span><span>Rareté</span><span>" + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</span></div><p class=\"astuce-z\"><b>Sa place</b>" + esc(M.astuceNumero(C.atomes, e).texte) + "</p><b>Où on le croise</b><ul>" + e.ou.map(function (o) { return "<li>" + esc(tx(o)) + "</li>"; }).join("") + "</ul><p style=\"margin:0\">" + esc(tx(e.anecdote)) + "</p><cite>Source : " + esc(e.source) + "</cite></div>";
+      "</span><span>Rareté</span><span>" + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</span></div><p class=\"astuce-z\"><b>Sa place</b>" + esc(M.astuceNumero(C.atomes, e).texte) + "</p>" + htmlCouches(e) + "<b>Où on le croise</b><ul>" + e.ou.map(function (o) { return "<li>" + esc(tx(o)) + "</li>"; }).join("") + "</ul><p style=\"margin:0\">" + esc(tx(e.anecdote)) + "</p><cite>Source : " + esc(e.source) + "</cite></div>";
   }
   function bilanCombat() {
     var r = combat.fin, e = r.element, rec = r.recompenses || {};

@@ -1614,6 +1614,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.retenterOubli(CA, P, P.oublis.indexOf(eN), true, T), null);
   const r = M.retenterOubli(CA, P, P.oublis.indexOf(eN), M.corriger(CA.questionParId["atome.26.numero"], "26"), T + 86400000);
   assert.ok(r.efface);
+  // Les couches d'électrons : somme = Z, et la lecture du dessin redonne la ligne et la colonne de chaque atome.
+  CA.atomes.elements.forEach(e => {
+    const L = M.lectureCouches(CA.atomes, e);
+    assert.equal(L.couches.reduce((a, b) => a + b, 0), e.z, e.symbole);
+    assert.equal(L.ligne, e.periode, e.symbole);
+    if (e.groupe) assert.equal(L.colonne, e.groupe, e.symbole + " " + L.couches);
+    assert.ok(M.dessinCouches(CA.atomes, e).startsWith("<svg"));
+  });
   // Le guide du tableau : cinq étapes, sourcées.
   assert.equal(CA.atomes.guide.etapes.length, 5); assert.ok(CA.atomes.guide.source.includes("eduscol"));
   console.log("OK : v34 atomes ratés au mur, astuce du numéro, guide du tableau");

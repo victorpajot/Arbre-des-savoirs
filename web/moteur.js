@@ -1320,6 +1320,63 @@
     out.push('<text class="t" x="' + X0 + '" y="' + y + '" font-size="13" font-weight="700">' + e.nom.fr + " (" + e.symbole + ") = " + e.z + "</text>");
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + (X0 + 18 * T + 4) + " " + (y + 8) + '" role="img" aria-label="Tableau périodique : ' + e.nom.fr + ", numéro " + e.z + '">' + out.join("") + "</svg>";
   }
+  // v34 (Victor) : l'atome dessiné couche par couche. Le nombre de couches donne la ligne ; les électrons de la couche
+  // extérieure (plus ceux « en trop » de l'avant-dernière, au milieu du tableau) donnent la colonne.
+  var COULEURS_COUCHES = ["#D99A0B", "#2E9E5B", "#2B7BBF", "#8A57C9", "#D9534F", "#17998A", "#A4791A"];
+  function lectureCouches(atomes, e) {
+    var K = atomes.couches; if (!K) return null;
+    var c = K.par_z[e.z - 1].slice(), n = c.length, ext = c[n - 1], av = n > 1 ? c[n - 2] : 0, out = { couches: c, predite: e.z >= K.predites_des, lignes: [] };
+    var nom = e.nom.fr, pl = function (k, mot) { return k + " " + mot + (k > 1 ? "s" : ""); };
+    if (e.z === 46) {
+      out.ligne = 5; out.colonne = 10; out.cas = "palladium";
+      out.lignes.push("4 couches remplies, et une 5e restée vide : le palladium a gardé tous ses électrons en dessous. Il est quand même sur la ligne 5.");
+      out.lignes.push("Sa 4e couche est pleine à 18 : 0 dehors + 10 = colonne 10.");
+      return out;
+    }
+    out.ligne = n;
+    out.lignes.push(pl(n, "couche") + " → ligne " + n + ".");
+    if (!e.groupe) {
+      out.cas = "terre_rare";
+      var serie = e.z >= 89 ? "actinides" : "lanthanides";
+      out.lignes.push("Sa " + (n - 2) + "e couche se remplit (" + c[n - 3] + " électrons) pendant que les deux dernières bougent à peine : c'est un des " + serie + ", rangés dans la ligne du bas.");
+      return out;
+    }
+    if (e.z === 2) { out.cas = "helium"; out.colonne = 18; out.lignes.push("2 électrons : sa seule couche est déjà pleine. Couche extérieure pleine = gaz noble, colonne 18."); return out; }
+    if (n <= 2 || av === 8 && ext <= 2 || av === 2 || av === 8 && n === 3) {
+      out.cas = "principal"; out.colonne = ext <= 2 ? ext : ext + 10;
+      out.lignes.push(ext <= 2 ? pl(ext, "électron") + " sur la couche extérieure → colonne " + ext + "." : pl(ext, "électron") + " sur la couche extérieure → colonne " + ext + " + 10 = " + (ext + 10) + " (on saute les 10 colonnes du milieu).");
+    } else if (av === 18 || av === 32) {
+      out.colonne = ext + 10; out.cas = ext <= 2 ? "fin_transition" : "principal";
+      out.lignes.push(pl(ext, "électron") + " sur la couche extérieure, et la couche d'en dessous pleine à " + av + " → colonne " + ext + " + 10 = " + (ext + 10) + ".");
+    } else {
+      var trop = av - 8; out.cas = "transition"; out.colonne = ext + trop;
+      out.lignes.push(pl(ext, "électron") + " dehors, plus " + trop + " en trop sur la couche d'en dessous (" + av + " au lieu de 8) → colonne " + ext + " + " + trop + " = " + out.colonne + ".");
+    }
+    return out;
+  }
+  function dessinCouches(atomes, e) {
+    var L = lectureCouches(atomes, e); if (!L) return "";
+    var c = L.couches, n = c.length, R = 118, r0 = 20, pas = Math.min(26, (R - r0 - 4) / n), out = [], cx = 125, cy = 125;
+    for (var i = 0; i < n; i++) {
+      var r = r0 + 4 + pas * (i + 1), col = COULEURS_COUCHES[i], k = c[i], dehors = i === n - 1;
+      out.push('<circle cx="' + cx + '" cy="' + cy + '" r="' + r.toFixed(1) + '" fill="none" stroke="' + col + '" stroke-width="' + (dehors ? 2.6 : 1.4) + '" stroke-opacity="' + (dehors ? 1 : 0.75) + '"/>');
+      var dr = Math.max(1.6, Math.min(dehors ? 6 : 4.4, (2 * Math.PI * r / Math.max(k, 1)) * 0.36));
+      for (var j = 0; j < k; j++) {
+        var a = -Math.PI / 2 + 2 * Math.PI * j / k + i * 0.35;
+        out.push('<circle cx="' + (cx + r * Math.cos(a)).toFixed(1) + '" cy="' + (cy + r * Math.sin(a)).toFixed(1) + '" r="' + dr.toFixed(1) + '" fill="' + col + '"' + (dehors ? ' stroke="#222" stroke-width="1.2"' : "") + "/>");
+      }
+    }
+    out.push('<circle cx="' + cx + '" cy="' + cy + '" r="' + r0 + '" fill="#C0392B"/><text x="' + cx + '" y="' + (cy + 5) + '" font-size="15" font-weight="700" text-anchor="middle" fill="#fff" font-family="sans-serif">' + e.symbole + "</text>");
+    // La légende : une ligne par couche, à sa couleur.
+    var lx = 262;
+    out.push('<text class="tm" x="' + lx + '" y="20" font-size="11">couche · électrons</text>');
+    for (i = 0; i < n; i++) {
+      var y = 40 + i * 24;
+      out.push('<circle cx="' + (lx + 7) + '" cy="' + (y - 4) + '" r="7" fill="' + COULEURS_COUCHES[i] + '"/><text class="t" x="' + (lx + 20) + '" y="' + y + '" font-size="14" font-weight="' + (i === n - 1 ? 700 : 400) + '">' + (i + 1) + " · " + c[i] + (i === n - 1 ? " ← dehors" : "") + "</text>");
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 250" role="img" aria-label="' + e.nom.fr + " : " + c.join(", ") + ' électrons par couche">' + out.join("") + "</svg>";
+  }
+
   // Les questions d'un atome sur le mur : mêmes questions qu'au combat, leurres figés ; le numéro s'y écrit au clavier.
   function questionsMur(atomes, e) {
     var k = 0, graine = "mur-atome|" + e.z, alea = function () { return (hacher(graine + "|" + (k++)) % 100000) / 100000; };
@@ -1327,7 +1384,8 @@
     var lieux = e.ou.map(function (o) { return o.fr; }).join(", ");
     return qs.map(function (q) {
       var base = { id: "atome." + e.z + "." + q.type, competence: "sci.atomes", atome: e.z, enonce: { fr: q.enonce } };
-      if (q.type === "numero") return Object.assign(base, { type: "numerique", reponse: e.z, tolerance: 0, explication: { fr: ast.texte }, illustration_explication: ast.illustration });
+      var lc = lectureCouches(atomes, e);
+      if (q.type === "numero") return Object.assign(base, { type: "numerique", reponse: e.z, tolerance: 0, explication: { fr: ast.texte + (lc ? " " + lc.lignes.join(" ") : "") }, illustration_explication: (lc ? dessinCouches(atomes, e) : "") + ast.illustration });
       return Object.assign(base, { type: "qcm", choix: q.choix.map(function (c) { return { fr: c }; }), reponse: q.reponse,
         explication: { fr: q.type === "symbole" ? "Le symbole de « " + e.nom.fr + " » est " + e.symbole + ", numéro " + e.z + "." : "On le croise surtout dans " + lieux + ". " + e.anecdote.fr } });
     });
@@ -2832,7 +2890,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,

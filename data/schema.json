@@ -3041,6 +3041,42 @@
        }
       }
      }
+    },
+    "couches": {
+     "type": "object",
+     "description": "v34 : électrons par couche (K, L, M…) de chaque élément, index z - 1.",
+     "additionalProperties": false,
+     "required": [
+      "id",
+      "par_z",
+      "predites_des",
+      "source"
+     ],
+     "properties": {
+      "id": {
+       "type": "string"
+      },
+      "source": {
+       "type": "string"
+      },
+      "predites_des": {
+       "type": "integer"
+      },
+      "par_z": {
+       "type": "array",
+       "minItems": 118,
+       "maxItems": 118,
+       "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 32
+        }
+       }
+      }
+     }
     }
    }
   },
