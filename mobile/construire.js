@@ -13,4 +13,6 @@ fs.copyFileSync(path.join(racine, "web/moteur.js"), path.join(www, "moteur.js"))
 for (const f of fs.readdirSync(path.join(racine, "data"))) {
   if (f.endsWith(".json")) fs.copyFileSync(path.join(racine, "data", f), path.join(www, "data", f));
 }
+// Les langues (outils/langues.py) : data/langues/<xx>.json, chargé selon la langue choisie.
+if (fs.existsSync(path.join(racine, "data/langues"))) fs.cpSync(path.join(racine, "data/langues"), path.join(www, "data/langues"), { recursive: true });
 console.log("www/ assemblé");

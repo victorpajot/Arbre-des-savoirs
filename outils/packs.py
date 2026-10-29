@@ -248,6 +248,10 @@ def assembler(packs=None, ecrire_data=True):
         for f, d in donnees.items():
             ecrire(DATA / f, ordonner(f, d))
         ecrire(DATA / "packs.json", index)
+        # Les traductions des packs (packs/<id>/langues/<xx>/) : data/langues/<xx>.json, chargé selon la langue choisie.
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import langues
+        langues.assembler()
     return donnees, index
 
 

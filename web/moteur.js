@@ -16,6 +16,32 @@
   var QUIZ_ECLAIR_MS = 60000; // quiz raté plus vite que ça
   var ABSENCE_RETOUR = 14;    // jours sans visite qui comptent comme un retour
 
+  // --- Langue ----------------------------------------------------------------
+  // Le contenu est écrit en objets texte {"fr": …} (la langue source de son pack). Une autre langue se lit dans le
+  // dictionnaire data/langues/<xx>.json (outils/langues.py) : « textes » pour le contenu, « interface » pour les
+  // chaînes du code, écrites en français dans __("…").
+  var LANGUE = "fr", DICO = {}, CATALOGUE = {};
+  function choisirLangue(langue, fichier) {
+    LANGUE = langue || "fr";
+    DICO = (fichier && fichier.textes) || {};
+    CATALOGUE = (fichier && fichier.interface) || {};
+  }
+  function langue() { return LANGUE; }
+  // Le texte d'un objet {"fr": …} dans la langue du joueur ; à défaut, dans sa langue source.
+  function TX(o) {
+    if (!o) return "";
+    if (typeof o === "string") return o;
+    if (o[LANGUE] != null) return o[LANGUE];
+    var src = o.fr != null ? o.fr : o[Object.keys(o)[0]];
+    if (src == null) return "";
+    return DICO[src] || CATALOGUE[src] || src;
+  }
+  // Une chaîne du code, écrite en français ; {nom} est remplacé par params.nom.
+  function __(s, params) {
+    var t = LANGUE !== "fr" && CATALOGUE[s] || s;
+    return params ? t.replace(/\{(\w+)\}/g, function (m, k) { return k in params ? params[k] : m; }) : t;
+  }
+
   // --- Contenu ---------------------------------------------------------------
 
   // `extras` (facultatif) : { commentaires, objets, avatar, ia, plateau, frise, bibliotheque }, les fichiers du même nom.
@@ -1342,7 +1368,7 @@
     return { z: s.z, element: s.element, questions: questionsCombat(contenu.atomes, s.element, alea || Math.random) };
   }
   function questionsCombat(atomes, e, alea) {
-    var A = atomes.elements, nom = e.nom.fr;
+    var A = atomes.elements, nom = TX(e.nom);
     function finir(type, enonce, bonne, faux) {
       var choix = melanger([bonne].concat(faux.slice(0, 3)), alea);
       return { type: type, enonce: enonce, choix: choix, reponse: choix.indexOf(bonne) };
@@ -1357,27 +1383,27 @@
     var pS = melanger(reels, alea).slice(0, 2);
     melanger(faux, alea).forEach(function (f) { if (pS.length < 3 && pS.indexOf(f) < 0) pS.push(f); });
     melanger(A.map(function (x) { return x.symbole; }), alea).forEach(function (f) { if (pS.length < 3 && f !== e.symbole && pS.indexOf(f) < 0) pS.push(f); });
-    var q1 = finir("symbole", "Quel est le symbole de l'atome « " + nom + " » ?", e.symbole, pS);
+    var q1 = finir("symbole", __("Quel est le symbole de l'atome « ") + nom + " » ?", e.symbole, pS);
     // v15 : le numéro atomique (Victor ne voulait pas la masse). v34 (Victor) : leurres éloignés d'au moins 12,
     // pour deviner avec la logique léger/lourd plutôt que de tout savoir par cœur.
     var pZ = [], pris = [e.z];
     melanger(A.map(function (x) { return x.z; }), alea).forEach(function (z) {
       if (pZ.length < 3 && pris.every(function (y) { return Math.abs(y - z) >= 12; })) { pZ.push(String(z)); pris.push(z); }
     });
-    var q2 = finir("numero", "Quel est le numéro atomique de « " + nom + " » ?", String(e.z), pZ);
+    var q2 = finir("numero", __("Quel est le numéro atomique de « ") + nom + " » ?", String(e.z), pZ);
     // Où : un lieu de cet atome, et des lieux d'autres familles sans mot commun avec les siens.
-    var siens = {}; e.ou.forEach(function (o) { mots(o.fr).forEach(function (m) { siens[m] = 1; }); });
-    var bonne = e.ou[Math.floor(alea() * e.ou.length)].fr, pO = [];
+    var siens = {}; e.ou.forEach(function (o) { mots(TX(o)).forEach(function (m) { siens[m] = 1; }); });
+    var bonne = TX(e.ou[Math.floor(alea() * e.ou.length)]), pO = [];
     // Hydrogène, carbone, azote, oxygène sont partout dans le vivant : leurs leurres viennent des métaux lourds.
     var organique = [1, 6, 7, 8].indexOf(e.z) >= 0;
     melanger(A.filter(function (x) { return x.famille !== e.famille && Math.abs(x.z - e.z) > 4 && (!organique || (x.z > 20 && [25, 26, 27, 29, 30, 34, 42, 53].indexOf(x.z) < 0)); }), alea).forEach(function (x) {
       if (pO.length >= 3) return;
-      var o = x.ou[Math.floor(alea() * x.ou.length)].fr;
+      var o = TX(x.ou[Math.floor(alea() * x.ou.length)]);
       if (!mots(o).some(function (m) { return siens[m]; })) pO.push(o);
     });
-    var q3 = finir("ou", "Où croise-t-on surtout cet atome ?", bonne, pO);
+    var q3 = finir("ou", __("Où croise-t-on surtout cet atome ?"), bonne, pO);
     // v34 (Victor) : le placer sur le tableau, en touchant sa case. `reponse` : le numéro de la case juste.
-    var qP = { type: "place", enonce: "Où va « " + nom + " » dans le tableau ? Touche sa case.", choix: [], reponse: e.z };
+    var qP = { type: "place", enonce: __("Où va « ") + nom + __(" » dans le tableau ? Touche sa case."), choix: [], reponse: e.z };
     return [q1, q2, qP, q3];
   }
 
@@ -1389,9 +1415,9 @@
     return { col: 3 + (e.z >= 89 ? e.z - 89 : e.z - 57), lig: e.z >= 89 ? 10 : 9 };
   }
   function astuceNumero(atomes, e) {
-    var av = atomes.elements[e.z - 2], ap = atomes.elements[e.z], nom = function (x) { return x.nom.fr.toLowerCase() + " (" + x.z + ")"; };
-    var voisins = av && ap ? "entre " + nom(av) + " et " + nom(ap) : av ? "juste après " + nom(av) + ", tout au bout du tableau" : "le tout premier, avant " + nom(ap);
-    return { texte: e.nom.fr + ", n° " + e.z + " : " + voisins + ".", voisins: [av, ap].filter(Boolean).map(function (x) { return x.z; }), illustration: schemaNumero(atomes, e, av, ap) };
+    var av = atomes.elements[e.z - 2], ap = atomes.elements[e.z], nom = function (x) { return TX(x.nom).toLowerCase() + " (" + x.z + ")"; };
+    var voisins = av && ap ? "entre " + nom(av) + " et " + nom(ap) : av ? __("juste après ") + nom(av) + __(", tout au bout du tableau") : __("le tout premier, avant ") + nom(ap);
+    return { texte: TX(e.nom) + ", n° " + e.z + " : " + voisins + ".", voisins: [av, ap].filter(Boolean).map(function (x) { return x.z; }), illustration: schemaNumero(atomes, e, av, ap) };
   }
   // Le tableau en miniature : l'atome en couleur d'accent, ses deux voisins en jaune, numéros écrits.
   function schemaNumero(atomes, e, av, ap) {
@@ -1404,8 +1430,8 @@
       if (x.z === e.z || voisin(x)) out.push('<text x="' + (px + (T - 2) / 2) + '" y="' + (py + 11) + '" font-size="8.5" font-weight="700" text-anchor="middle" fill="' + (x.z === e.z ? "#fff" : "#222") + '" font-family="sans-serif">' + x.z + "</text>");
     });
     var y = haut(10) + T + 14;
-    out.push('<text class="t" x="' + X0 + '" y="' + y + '" font-size="13" font-weight="700">' + e.nom.fr + " (" + e.symbole + ") = " + e.z + "</text>");
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + (X0 + 18 * T + 4) + " " + (y + 8) + '" role="img" aria-label="Tableau périodique : ' + e.nom.fr + ", numéro " + e.z + '">' + out.join("") + "</svg>";
+    out.push('<text class="t" x="' + X0 + '" y="' + y + '" font-size="13" font-weight="700">' + TX(e.nom) + " (" + e.symbole + ") = " + e.z + "</text>");
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + (X0 + 18 * T + 4) + " " + (y + 8) + '" role="img" aria-label="Tableau périodique : ' + TX(e.nom) + __(", numéro ") + e.z + '">' + out.join("") + "</svg>";
   }
   // v34 (Victor) : l'atome dessiné couche par couche. Le nombre de couches donne la ligne ; les électrons de la couche
   // extérieure (plus ceux « en trop » de l'avant-dernière, au milieu du tableau) donnent la colonne.
@@ -1413,11 +1439,11 @@
   function lectureCouches(atomes, e) {
     var K = atomes.couches; if (!K) return null;
     var c = K.par_z[e.z - 1].slice(), n = c.length, ext = c[n - 1], av = n > 1 ? c[n - 2] : 0, out = { couches: c, predite: e.z >= K.predites_des, lignes: [] };
-    var nom = e.nom.fr, pl = function (k, mot) { return k + " " + mot + (k > 1 ? "s" : ""); };
+    var nom = TX(e.nom), pl = function (k, mot) { return k + " " + mot + (k > 1 ? "s" : ""); };
     if (e.z === 46) {
       out.ligne = 5; out.colonne = 10; out.cas = "palladium";
-      out.lignes.push("4 couches remplies, et une 5e restée vide : le palladium a gardé tous ses électrons en dessous. Il est quand même sur la ligne 5.");
-      out.lignes.push("Sa 4e couche est pleine à 18 : 0 dehors + 10 = colonne 10.");
+      out.lignes.push(__("4 couches remplies, et une 5e restée vide : le palladium a gardé tous ses électrons en dessous. Il est quand même sur la ligne 5."));
+      out.lignes.push(__("Sa 4e couche est pleine à 18 : 0 dehors + 10 = colonne 10."));
       return out;
     }
     out.ligne = n;
@@ -1425,19 +1451,19 @@
     if (!e.groupe) {
       out.cas = "terre_rare";
       var serie = e.z >= 89 ? "actinides" : "lanthanides";
-      out.lignes.push("Sa " + (n - 2) + "e couche se remplit (" + c[n - 3] + " électrons) pendant que les deux dernières bougent à peine : c'est un des " + serie + ", rangés dans la ligne du bas.");
+      out.lignes.push("Sa " + (n - 2) + __("e couche se remplit (") + c[n - 3] + __(" électrons) pendant que les deux dernières bougent à peine : c'est un des ") + serie + __(", rangés dans la ligne du bas."));
       return out;
     }
-    if (e.z === 2) { out.cas = "helium"; out.colonne = 18; out.lignes.push("2 électrons : sa seule couche est déjà pleine. Couche extérieure pleine = gaz noble, colonne 18."); return out; }
+    if (e.z === 2) { out.cas = "helium"; out.colonne = 18; out.lignes.push(__("2 électrons : sa seule couche est déjà pleine. Couche extérieure pleine = gaz noble, colonne 18.")); return out; }
     if (n <= 2 || av === 8 && ext <= 2 || av === 2 || av === 8 && n === 3) {
       out.cas = "principal"; out.colonne = ext <= 2 ? ext : ext + 10;
-      out.lignes.push(ext <= 2 ? pl(ext, "électron") + " sur la couche extérieure → colonne " + ext + "." : pl(ext, "électron") + " sur la couche extérieure → colonne " + ext + " + 10 = " + (ext + 10) + " (on saute les 10 colonnes du milieu).");
+      out.lignes.push(ext <= 2 ? pl(ext, __("électron")) + __(" sur la couche extérieure → colonne ") + ext + "." : pl(ext, __("électron")) + __(" sur la couche extérieure → colonne ") + ext + " + 10 = " + (ext + 10) + __(" (on saute les 10 colonnes du milieu)."));
     } else if (av === 18 || av === 32) {
       out.colonne = ext + 10; out.cas = ext <= 2 ? "fin_transition" : "principal";
-      out.lignes.push(pl(ext, "électron") + " sur la couche extérieure, et la couche d'en dessous pleine à " + av + " → colonne " + ext + " + 10 = " + (ext + 10) + ".");
+      out.lignes.push(pl(ext, __("électron")) + __(" sur la couche extérieure, et la couche d'en dessous pleine à ") + av + " → colonne " + ext + " + 10 = " + (ext + 10) + ".");
     } else {
       var trop = av - 8; out.cas = "transition"; out.colonne = ext + trop;
-      out.lignes.push(pl(ext, "électron") + " dehors, plus " + trop + " en trop sur la couche d'en dessous (" + av + " au lieu de 8) → colonne " + ext + " + " + trop + " = " + out.colonne + ".");
+      out.lignes.push(pl(ext, __("électron")) + " dehors, plus " + trop + __(" en trop sur la couche d'en dessous (") + av + __(" au lieu de 8) → colonne ") + ext + " + " + trop + " = " + out.colonne + ".");
     }
     return out;
   }
@@ -1456,26 +1482,26 @@
     out.push('<circle cx="' + cx + '" cy="' + cy + '" r="' + r0 + '" fill="#C0392B"/><text x="' + cx + '" y="' + (cy + 5) + '" font-size="15" font-weight="700" text-anchor="middle" fill="#fff" font-family="sans-serif">' + e.symbole + "</text>");
     // La légende : une ligne par couche, à sa couleur.
     var lx = 262;
-    out.push('<text class="tm" x="' + lx + '" y="20" font-size="11">couche · électrons</text>');
+    out.push('<text class="tm" x="' + lx + __('" y="20" font-size="11">couche · électrons</text>'));
     for (i = 0; i < n; i++) {
       var y = 40 + i * 24;
       out.push('<circle cx="' + (lx + 7) + '" cy="' + (y - 4) + '" r="7" fill="' + COULEURS_COUCHES[i] + '"/><text class="t" x="' + (lx + 20) + '" y="' + y + '" font-size="14" font-weight="' + (i === n - 1 ? 700 : 400) + '">' + (i + 1) + " · " + c[i] + (i === n - 1 ? " ← dehors" : "") + "</text>");
     }
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 250" role="img" aria-label="' + e.nom.fr + " : " + c.join(", ") + ' électrons par couche">' + out.join("") + "</svg>";
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 250" role="img" aria-label="' + TX(e.nom) + " : " + c.join(", ") + __(' électrons par couche">') + out.join("") + "</svg>";
   }
 
   // Les questions d'un atome sur le mur : mêmes questions qu'au combat, leurres figés ; le numéro s'y écrit au clavier.
   function questionsMur(atomes, e) {
     var k = 0, graine = "mur-atome|" + e.z, alea = function () { return (hacher(graine + "|" + (k++)) % 100000) / 100000; };
     var qs = questionsCombat(atomes, e, alea), ast = astuceNumero(atomes, e);
-    var lieux = e.ou.map(function (o) { return o.fr; }).join(", ");
+    var lieux = e.ou.map(function (o) { return TX(o); }).join(", ");
     return qs.map(function (q) {
       var base = { id: "atome." + e.z + "." + q.type, competence: "sci.atomes", atome: e.z, enonce: { fr: q.enonce } };
       var lc = lectureCouches(atomes, e);
       if (q.type === "numero") return Object.assign(base, { type: "numerique", reponse: e.z, tolerance: 0, explication: { fr: ast.texte + (lc ? " " + lc.lignes.join(" ") : "") }, illustration_explication: (lc ? dessinCouches(atomes, e) : "") + ast.illustration });
       if (q.type === "place") return Object.assign(base, { type: "place", reponse: e.z, explication: { fr: (lc ? lc.lignes.join(" ") + " " : "") + ast.texte }, illustration_explication: (lc ? dessinCouches(atomes, e) : "") + ast.illustration });
       return Object.assign(base, { type: "qcm", choix: q.choix.map(function (c) { return { fr: c }; }), reponse: q.reponse,
-        explication: { fr: q.type === "symbole" ? "Le symbole de « " + e.nom.fr + " » est " + e.symbole + ", numéro " + e.z + "." : "On le croise surtout dans " + lieux + ". " + e.anecdote.fr } });
+        explication: { fr: q.type === "symbole" ? __("Le symbole de « ") + TX(e.nom) + __(" » est ") + e.symbole + __(", numéro ") + e.z + "." : __("On le croise surtout dans ") + lieux + ". " + TX(e.anecdote) } });
     });
   }
   // L'atome qui porte ce symbole ou ce numéro : « tu as dit 24 ? c'est le chrome ».
@@ -1492,7 +1518,7 @@
     if (ratees && ratees.length) epinglerOublis(partie, "sci.atomes", ratees.map(function (x) {
       var id = "atome." + s.z + "." + x.type, q = contenu.questionParId[id], rep = x.rep === undefined ? null : x.rep;
       // Leurre absent des choix figés du mur : on garde son texte.
-      if (q && q.type === "qcm" && rep !== null) { var ix = q.choix.map(function (c) { return c.fr; }).indexOf(rep); if (ix >= 0) rep = ix; }
+      if (q && q.type === "qcm" && rep !== null) { var ix = q.choix.map(function (c) { return TX(c); }).indexOf(rep); if (ix >= 0) rep = ix; }
       return { id: id, correct: false, rep: rep };
     }).filter(function (x) { return contenu.questionParId[x.id]; }), t, "atome");
     ouvrirLot(partie, t, themeActif(contenu, contenu.atomes && contenu.atomes.theme));
@@ -1815,7 +1841,7 @@
     var pique = K.piques && K.piques[sc.id], verdicts = K.verdicts && K.verdicts[humeur];
     if (pique && verdicts && verdicts.length) {
       var v = verdicts[(h >>> 20) % verdicts.length];
-      mot = { fr: v.fr + " " + pique.fr };
+      mot = { fr: TX(v) + " " + TX(pique) };
     }
     partie.credits.parSucces[sc.id] = { n: n, base: base, humeur: humeur, mot: mot };
     return { succes: sc.id, n: n, base: base, humeur: humeur, mot: mot };
@@ -2061,18 +2087,18 @@
     v.forEach(function (x) { while (n >= x[0]) { s += x[1]; n -= x[0]; } });
     return s;
   }
-  function texteSiecle(k) { return k >= 0 ? chiffreRomain(k + 1) + (k === 0 ? "er" : "e") + " siècle" : chiffreRomain(-k) + "e siècle av. J.-C."; }
+  function texteSiecle(k) { return k >= 0 ? chiffreRomain(k + 1) + (k === 0 ? "er" : "e") + __(" siècle") : chiffreRomain(-k) + __("e siècle av. J.-C."); }
   // Le libellé d'un créneau : « XVIIe siècle », « 2de moitié du XVIIe siècle », « 1680-1689 », « 585 av. J.-C. ».
   function texteCreneau(k, pas, prehistoire) {
-    if (prehistoire != null && k < creneau(prehistoire, pas, null)) return "Préhistoire (avant " + (-prehistoire) + " av. J.-C.)";
+    if (prehistoire != null && k < creneau(prehistoire, pas, null)) return __("Préhistoire (avant ") + (-prehistoire) + " av. J.-C.)";
     if (pas === 100) return texteSiecle(k);
-    if (pas === 50) { var c = Math.floor(k / 2); return (k - 2 * c ? "2de" : "1re") + " moitié du " + texteSiecle(c); }
+    if (pas === 50) { var c = Math.floor(k / 2); return (k - 2 * c ? "2de" : "1re") + __(" moitié du ") + texteSiecle(c); }
     if (pas === 1) { var y = anneeDuCreneau(k, 1); return y > 0 ? String(y) : (-y) + " av. J.-C."; }
     var a = anneeDuCreneau(k, pas), b = k >= 0 ? k * pas + pas - 1 : k * pas + pas - 1;
     return a > 0 ? a + "-" + b : (-a) + " à " + (-b) + " av. J.-C.";
   }
   // Une phrase qui donnerait la date (un nombre de trois ou quatre chiffres) n'est pas montrée.
-  function sansDate(o) { var x = o && o.fr; return x && !/\d{3,4}/.test(x) ? x : null; }
+  function sansDate(o) { var x = o && TX(o); return x && !/\d{3,4}/.test(x) ? x : null; }
   // « vers 370 / 415 », « -384 / -322 », « vers -2650 » → {debut, fin, vers}.
   function lireAnnees(s) {
     var parts = String(s || "").split("/"), vers = /vers/.test(s);
@@ -2087,20 +2113,20 @@
     function ajouter(x) { if (x.debut < pre) x.max = 1; out.push(x); }
     (contenu.evenements || []).forEach(function (e) {
       if (partie.evenements && partie.evenements[e.id] != null && e.annee != null)
-        ajouter({ cle: "frise:" + e.id, sorte: "frise", id: e.id, titre: e.titre.fr, texte: sansDate(e.phrase), debut: e.annee, fin: e.annee, max: maxN, source: e.source, case: e.case || null, stat: e.stat });
+        ajouter({ cle: "frise:" + e.id, sorte: "frise", id: e.id, titre: TX(e.titre), texte: sansDate(e.phrase), debut: e.annee, fin: e.annee, max: maxN, source: e.source, case: e.case || null, stat: e.stat });
     });
     (contenu.livres || []).forEach(function (l) {
       if (partie.livres && partie.livres[l.id] != null && l.annee != null)
-        ajouter({ cle: "livre:" + l.id, sorte: "livre", id: l.id, titre: l.titre.fr, auteur: l.auteur, texte: null, debut: l.annee, fin: l.annee, max: maxN, source: l.source, stat: l.stat });
+        ajouter({ cle: "livre:" + l.id, sorte: "livre", id: l.id, titre: TX(l.titre), auteur: l.auteur, texte: null, debut: l.annee, fin: l.annee, max: maxN, source: l.source, stat: l.stat });
     });
     (contenu.avatar && contenu.avatar.savants || []).forEach(function (s) {
       var a = partie.savants && partie.savants[s.id] != null && lireAnnees(s.annees);
       // Pour un savant, tout siècle de sa vie compte juste ; en mode année exacte, on demande sa naissance (Victor).
-      if (a) ajouter({ cle: "savant:" + s.id, sorte: "savant", id: s.id, titre: s.nom.fr, texte: null, debut: a.debut, fin: a.fin, max: a.naissanceVers ? 2 : maxN, source: s.source, theme: s.theme });
+      if (a) ajouter({ cle: "savant:" + s.id, sorte: "savant", id: s.id, titre: TX(s.nom), texte: null, debut: a.debut, fin: a.fin, max: a.naissanceVers ? 2 : maxN, source: s.source, theme: s.theme });
     });
     (contenu.objets || []).forEach(function (o) {
       if (partie.objets && partie.objets[o.id] != null && o.annee != null)
-        ajouter({ cle: "objet:" + o.id, sorte: "objet", id: o.id, titre: o.nom.fr, texte: sansDate(o.notice), debut: o.annee, fin: o.annee, max: maxN, source: o.source, theme: o.theme });
+        ajouter({ cle: "objet:" + o.id, sorte: "objet", id: o.id, titre: TX(o.nom), texte: sansDate(o.notice), debut: o.annee, fin: o.annee, max: maxN, source: o.source, theme: o.theme });
     });
     return out;
   }
@@ -2144,7 +2170,7 @@
     tries.forEach(function (x) { if (choix.length < R.evenements && choix.indexOf(x) < 0) choix.push(x); });
     s.jeu = { mode: mode, depuis: t, case: mode === "case" ? s.case : null, reponses: [], questions: choix.map(function (x) {
       var f = s.fiches[x.cle], n = Math.min(f ? f.niveau : 1, x.max), N = niveauChrono(R, n);
-      return Object.assign({}, x, { niveau: n, pas: N.pas, proche: N.proche, nomNiveau: N.nom.fr, naissance: x.sorte === "savant" && N.pas < 50 });
+      return Object.assign({}, x, { niveau: n, pas: N.pas, proche: N.proche, nomNiveau: TX(N.nom), naissance: x.sorte === "savant" && N.pas < 50 });
     }) };
     partie.maj = t;
     return s.jeu;
@@ -2715,9 +2741,9 @@
     if (!choix.length) return null;
     var ligne = choix[(h >>> 5) % choix.length];
     var chose = sorte === "objet" ? objets[(h >>> 9) % objets.length] : livres[(h >>> 9) % livres.length];
-    var nom = sorte === "objet" ? chose.nom.fr : chose.titre.fr;
+    var nom = sorte === "objet" ? TX(chose.nom) : TX(chose.titre);
     if (sorte === "objet") nom = nom.charAt(0).toLowerCase() + nom.slice(1);
-    var texte = ligne.texte.fr.replace(/\{(objet|livre)\}/g, nom);
+    var texte = TX(ligne.texte).replace(/\{(objet|livre)\}/g, nom);
     texte = texte.charAt(0).toUpperCase() + texte.slice(1);
     var out = { id: ligne.id, texte: { fr: texte } };
     out[sorte] = chose;
@@ -2741,10 +2767,10 @@
     var h = hacher(cleJour(t) + "|" + partie.journal.length);
     if (dernier && tMax >= jT && joursEntre(tMax, t) <= 1 && contenu.parSucces && contenu.parSucces[dernier]) {
       var sc = contenu.parSucces[dernier], m = S.succes[h % S.succes.length];
-      return { texte: m.fr.replace("{succes}", sc.nom.fr), ton: "impressionnee", succes: sc };
+      return { texte: TX(m).replace("{succes}", TX(sc.nom)), ton: "impressionnee", succes: sc };
     }
     var ton = humeur(partie), l = S[ton] || S.neutre;
-    return { texte: l[h % l.length].fr, ton: ton };
+    return { texte: TX(l[h % l.length]), ton: ton };
   }
 
   // --- Bouton « Jouer » : l'IA choisit l'épreuve ------------------------------
@@ -2954,6 +2980,7 @@
   }
 
   var Moteur = {
+    choisirLangue: choisirLangue, langue: langue, TX: TX, __: __,
     FORMAT_PARTIE: FORMAT_PARTIE,
     indexerContenu: indexerContenu,
     packsEteints: packsEteints, filtrerPacks: filtrerPacks, packDe: packDe, accorderPartie: accorderPartie,

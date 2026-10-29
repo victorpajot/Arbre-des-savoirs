@@ -15,3 +15,5 @@ node outils/test_moteur.js >/dev/null || { echo "Les tests du moteur échouent (
 # v35 : les packs : verifier refuse les fautes courantes, et chaque pack s'éteint en jeu sans rien casser ni perdre.
 python3 outils/test_packs.py >/dev/null || { python3 outils/test_packs.py; exit 1; }
 node outils/test_packs.js >/dev/null || { echo "Les tests des packs échouent (node outils/test_packs.js)"; exit 1; }
+# Les langues : extraction, repli, balises conservées dans les traductions, data/langues/ à jour (outils/langues.py).
+python3 outils/test_langues.py >/dev/null || { python3 outils/test_langues.py; exit 1; }
