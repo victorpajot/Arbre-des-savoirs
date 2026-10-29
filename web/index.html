@@ -1120,6 +1120,10 @@ function demarrerJeu() {
   }
   // Dates et nombres dans la langue du joueur.
   function locale() { return M.langue() === "fr" ? "fr-FR" : M.langue(); }
+  // Les guillemets et les deux-points selon la langue : « … » et « : » en français, “…” et « : » collé en anglais.
+  function gu(t) { return M.langue() === "fr" ? "« " + t + " »" : "\u201c" + t + "\u201d"; }
+  function gf() { return M.langue() === "fr" ? " »" : "\u201d"; }
+  function deuxPoints() { return M.langue() === "fr" ? " : " : ": "; }
   function dateLongue(t) { return new Date(t).toLocaleDateString(locale(), { weekday: "long", day: "numeric", month: "long" }); }
   function dateCourte(t) {
     var d = new Date(t), o = { day: "numeric", month: "long" };
@@ -2514,7 +2518,7 @@ function demarrerJeu() {
     if (c) lignes.push([__("L'IA propose"), tx(c.comp.nom) + " (" + (c.type === "rappel" ? "rappel" : __("niveau ") + c.comp.rang) + ")"]);
     if (pl.prison) lignes.push([__("Bloqué"), __("prison : encore ") + pl.prison + (pl.prison > 1 ? __(" quiz parfaits") : __(" quiz parfait"))]);
     if (pl.quarantaine) lignes.push([__("Bloqué"), __("quarantaine : ") + pl.quarantaine + (pl.quarantaine > 1 ? __(" épreuves") : __(" épreuve")) + __(" sans avancer")]);
-    if (P.revision) lignes.push([__("Bloqué"), __("révision forcée de « ") + tx(C.parId[P.revision.comp].nom) + " »"]);
+    if (P.revision) lignes.push([__("Bloqué"), __("révision forcée de « ") + tx(C.parId[P.revision.comp].nom) + gf()]);
     if (P.duel && P.duel.case === pl.position) lignes.push([__("Duel en attente"), tx(C.ennemiParId[P.duel.ennemi].nom)]);
     if ((P.sauvages || []).length) lignes.push([__("Atomes en attente"), String(P.sauvages.length)]);
     var en = M.ennemisPlateau(C, P);
@@ -2636,7 +2640,7 @@ function demarrerJeu() {
     if (!M.arbreOuvert(C, P, s.id)) {
       var cp = conditionPionnier(s);
       return el('<div class="fiche-branche fermee" style="--c:' + couleur(s.id) + '"><div class="haut-f"><div><b>' + esc(tx(s.nom)) + '</b><span>' + esc(tx(s.branche)) + '</span></div><div class="niv-f">' + ICONE_CADENAS + __("<small>Fermée</small></div></div>") +
-        '<p class="note">' + (cp ? __("S'ouvre avec le succès « ") + esc(tx(cp.succes.nom)) + " » : " + cp.faites + " / " + cp.n + __(" compétences maîtrisées.") : "") + "</p></div>");
+        '<p class="note">' + (cp ? __("S'ouvre avec le succès « ") + esc(tx(cp.succes.nom)) + gf() + deuxPoints() + cp.faites + " / " + cp.n + __(" compétences maîtrisées.") : "") + "</p></div>");
     }
     var pips = comps.map(function (k) { var st = M.statut(C, P, k.id, maintenant()).etat; return '<i class="' + (M.estMaitrisee(P, k.id) ? "ok" : st === "disponible" ? "ouvert" : "") + '" title="' + esc(tx(k.nom)) + '"></i>'; }).join("");
     return el('<div class="fiche-branche" style="--c:' + couleur(s.id) + '"><div class="haut-f"><div><b>' + esc(tx(s.nom)) + '</b><span>' + esc(tx(s.branche)) + '</span></div><div class="niv-f"><span class="num">' + nv.niveau + "</span><small>" + titreNiveau(nv.niveau) + '</small></div></div>' +
@@ -2824,7 +2828,7 @@ function demarrerJeu() {
         var rec = M.avancerHorloge(C, P, j), mot = j ? M.replique(C, P, ["mode_test"]) : null;
         sauver(); rendre();
         toast((j ? __("Horloge avancée de ") + j + (j > 1 ? __(" jours") : __(" jour")) + "." : __("Horloge remise à l'heure.")) +
-          (mot ? " « " + tx(mot.texte) + " »" : "") + (rec.succes.length ? __(" Succès : ") + rec.succes.map(function (x) { return tx(x.nom); }).join(", ") + "." : ""));
+          (mot ? " " + gu(tx(mot.texte)) : "") + (rec.succes.length ? __(" Succès : ") + rec.succes.map(function (x) { return tx(x.nom); }).join(", ") + "." : ""));
       };
     });
     var ta = el(__('<label class="interrupteur" for="opt-arbres" style="margin-top:12px"><span><b>Ouvrir tous les arbres</b><br><span class="note">Pour la démo : toutes les branches sont jouables sans succès pionnier.</span></span><input type="checkbox" id="opt-arbres"></label>'));
@@ -2905,10 +2909,10 @@ function demarrerJeu() {
   }
 
   function conditionTexte(c) {
-    if (c.type === "competence_maitrisee") return __("Maîtriser « ") + tx(C.parId[c.id].nom) + " »";
+    if (c.type === "competence_maitrisee") return __("Maîtriser « ") + tx(C.parId[c.id].nom) + gf();
     if (c.type === "succes") {
       var sc = C.succes.filter(function (x) { return x.id === c.id; })[0];
-      return sc ? (P.succes[sc.id] || !sc.cache ? __("Succès « ") + tx(sc.nom) + " »" : __("Un succès caché")) : __("Un succès");
+      return sc ? (P.succes[sc.id] || !sc.cache ? __("Succès « ") + tx(sc.nom) + gf() : __("Un succès caché")) : __("Un succès");
     }
     return __("Plus tard");
   }
@@ -2994,17 +2998,17 @@ function demarrerJeu() {
   // Une date de la frise attend aussi que le pion ait atteint son époque (premier tour).
   function commentDater(e) {
     var t = commentObtenir(e.condition), ep = (C.plateau.epoques || []).filter(function (x) { return x.id === e.epoque; })[0];
-    return M.dateAtteinte(C, P, e) || !ep ? t : t.replace(/\.$/, "") + __(", et que ton pion ait atteint l'époque « ") + tx(ep.nom) + " ».";
+    return M.dateAtteinte(C, P, e) || !ep ? t : t.replace(/\.$/, "") + __(", et que ton pion ait atteint l'époque « ") + tx(ep.nom) + gf() + ".";
   }
   function commentObtenir(cond) {
-    if (cond.type === "competence_maitrisee") return __("Maîtriser « ") + tx(C.parId[cond.id].nom) + " ».";
+    if (cond.type === "competence_maitrisee") return __("Maîtriser « ") + tx(C.parId[cond.id].nom) + gf() + ".";
     if (cond.type === "branche_complete") return __("Maîtriser toute la branche ") + tx(stat(cond.stat).nom) + ".";
     if (cond.type === "epoque_atteinte") return __("S'arrêter sur la case ") + cond.n + __(" du plateau, ou plus loin.");
     if (cond.type === "case_atteinte" || cond.type === "case_visitee") {
       var k = C.plateau.cases[cond.n - 1];
       return __("S'arrêter sur la case ") + cond.n + __(" du plateau") + (caseConnue(cond.n) ? ", " + tx(k.titre) : "") + ".";
     }
-    if (cond.type === "succes") { var sc = C.succes.filter(function (x) { return x.id === cond.id; })[0]; return __("Obtenir le succès « ") + tx(sc.nom) + " »."; }
+    if (cond.type === "succes") { var sc = C.succes.filter(function (x) { return x.id === cond.id; })[0]; return __("Obtenir le succès « ") + tx(sc.nom) + gf() + "."; }
     return __("Continuer à jouer.");
   }
   function vueCollections() {
@@ -3191,9 +3195,8 @@ function demarrerJeu() {
     // Un original déjà dans la langue du joueur (Newton en anglais, pour un joueur anglophone) se passe de traduction.
     var trad = x.traduction ? tx(x.traduction) : "";
     if (trad === x.texte) trad = "";
-    var cite = function (t) { return M.langue() === "fr" ? "« " + esc(t) + " »" : "“" + esc(t) + "”"; };
-    return __('<figure class="extrait"><figcaption>Dans le texte · ') + esc(x.langue) + "</figcaption><blockquote" + (trad ? ' class="vo"' : "") + ">" + cite(x.texte) + "</blockquote>" +
-      (trad ? '<p class="trad">' + cite(trad) + '</p><p class="meta">' + esc(x.traducteur) + "</p>" : "") +
+    return __('<figure class="extrait"><figcaption>Dans le texte · ') + esc(x.langue) + "</figcaption><blockquote" + (trad ? ' class="vo"' : "") + ">" + gu(esc(x.texte)) + "</blockquote>" +
+      (trad ? '<p class="trad">' + gu(esc(trad)) + '</p><p class="meta">' + esc(x.traducteur) + "</p>" : "") +
       '<p class="meta">' + esc(x.reference) + ' · <a href="' + esc(x.verification.url) + __('" target="_blank" rel="noopener">vérifié sur ') + esc(dom.replace(/^www\./, "")) + "</a></p></figure>";
   }
   // `seul` : ouvert depuis une récompense, le livre s'affiche sans navigation vers les autres.
@@ -3250,7 +3253,7 @@ function demarrerJeu() {
   // v11 : ce que dit la source de l'objet, et ce qu'il rapporte quand l'avatar le tient.
   function citationObjet(o) {
     var c = o.citation; if (!c) return "";
-    return '<figure class="citation-src"><blockquote>' + (c.verbatim ? "« " + esc(tx(c.texte)) + " »" : __("D'après la source : ") + esc(tx(c.texte))) + "</blockquote><cite>" + esc(c.source) + "</cite></figure>";
+    return '<figure class="citation-src"><blockquote>' + (c.verbatim ? gu(esc(tx(c.texte))) : __("D'après la source : ") + esc(tx(c.texte))) + "</blockquote><cite>" + esc(c.source) + "</cite></figure>";
   }
   function texteBonus(o) {
     var b = o.bonus, pc = Math.round(100 * (C.cabinet.chance_bonus || 0));
@@ -3326,7 +3329,7 @@ function demarrerJeu() {
     if (duel.phase === "vs") {
       var sc = el('<div class="vs-scene"><div class="arbitre"></div><div class="arene"><div class="cote g">' + svgAvatar(120) + __('<b>Toi</b></div><div class="vs" aria-hidden="true">VS</div><div class="cote d">') + svgEnnemi(e, 104, false, "miroir") + "<b>" + esc(tx(e.nom)) + '</b></div></div><p class="bulle"></p></div>');
       var m = comite(duel.replique, true); if (m) sc.querySelector(".arbitre").appendChild(m);
-      sc.querySelector(".bulle").textContent = "« " + tx(e.defi) + " »";
+      sc.querySelector(".bulle").textContent = gu(tx(e.defi));
       sc.appendChild(el(presentationEnnemi(e, false)));
       inn.appendChild(sc);
       var go = el(__('<button type="button" class="btn large">Au combat</button>')); go.onclick = function () { duel.phase = "q"; rendreDuel(); };
@@ -3351,7 +3354,7 @@ function demarrerJeu() {
     var pts = el('<div class="points"></div>');
     duel.qs.forEach(function (_, i) { var r = duel.res[i]; pts.appendChild(el('<i class="' + (r ? (r.correct ? "ok" : "ko") : (i === duel.i ? "cur" : "")) + '"></i>')); });
     inn.appendChild(pts);
-    inn.appendChild(el('<p class="enonce">« ' + esc(tx(q.affirmation)) + " »</p>"));
+    inn.appendChild(el('<p class="enonce">' + gu(esc(tx(q.affirmation))) + "</p>"));
     var zr = el('<div class="choix"></div>'), retour = el("<div></div>");
     [[true, "Vrai"], [false, __("Faux : idée reçue")]].forEach(function (c) {
       var b = el('<button type="button">' + c[1] + "</button>");
@@ -3395,7 +3398,7 @@ function demarrerJeu() {
         '<p class="bulle"></p>' + (e.lecon ? __('<p class="lecon-v"><b>À retenir sur ') + esc(tx(e.nom)) + " :</b> " + esc(tx(e.lecon)) + "</p>" : "") + __('<p class="meta">Contre ') + esc(nomEn(e)) + " : " + f.victoires + (f.victoires > 1 ? __(" victoires") : __(" victoire")) + ", " + f.defaites + (f.defaites > 1 ? __(" défaites") : __(" défaite")) + __(", meilleure série ") + f.meilleure + ".</p>" +
         (r.gagne ? "" : r.plateau ? '<p class="note">' + esc(tx(e.nom)) + __(" te renvoie case ") + P.plateau.position + __(". Il garde son poste et t'attend au prochain passage.</p>") : '<p class="note">' + esc(tx(e.nom)) + __(" garde la case ") + P.plateau.position + __(" : pas d'autre épreuve tant que tu ne l'as pas battu.</p>")) +
         (r.vol ? '<div class="gain-credits vol"><div class="ligne-bourse">' + svgBourse(40) + '<div class="calcul"><b>−' + r.vol + (r.vol > 1 ? __(" crédits") : __(" crédit")) + "</b> : " + esc(tx(e.nom)) + __(" te fait les poches.</div></div></div>") : "") + "</div>"));
-      z.querySelector(".bulle").textContent = tx(e.nom) + " : « " + tx(r.gagne ? e.victoire : e.defaite) + " »";
+      z.querySelector(".bulle").textContent = tx(e.nom) + deuxPoints() + gu(tx(r.gagne ? e.victoire : e.defaite));
       var m = comite(r.replique); if (m) z.appendChild(m);
       ligneAgacement(z, r.agacement);
       if (r.gagne && !r.butin) z.appendChild(el(__('<p class="meta">Pas de butin à gagner pour l\'instant : maîtrise d\'autres compétences pour en ouvrir.</p>')));
@@ -4456,7 +4459,7 @@ function demarrerJeu() {
     var expr = f ? EXPR_PALIER[f.palier.id] : "neutre", sn = M.surnom(C, P, t);
     var b = el('<div class="bloc"><div class="ia-tete"><span class="vitrine">' + svgMasque(m, expr, 96) + __('</span><div><div class="eyebrow">Maîtresse du jeu</div><h1>') + esc(tx(C.ia.nom)) + "</h1>" +
       __('<p class="meta">Aujourd\'hui sous le masque ') + esc(tx(m.nom)) + (f ? ", " + esc(tx(f.palier.nom).toLowerCase()) : "") + ".</p>" +
-      (sn ? __('<p class="meta">Elle t\'appelle « ') + esc(sn.texte) + " ».</p>" : "") + "</div></div>" +
+      (sn ? __('<p class="meta">Elle t\'appelle « ') + esc(sn.texte) + gf() + ".</p>" : "") + "</div></div>" +
       (C.ia.portrait ? '<p class="portrait-ia">' + esc(tx(C.ia.portrait)) + "</p>" : "") +
       "<h2 style=\"margin-top:16px\">" + (ms.length > 1 ? __("Ses ") + ms.length + __(" masques du jour") : __("Son masque du jour")) + __('</h2><p class="note">Leurs règles s\'additionnent jusqu\'à demain matin.') +
       (f ? __(" Selon sa faveur, elle pioche parmi les masques ") + C.ia.masques_jour.selon_faveur[f.palier.id].map(function (c) { return NOM_CAR[c] + "s"; }).join(", ").replace(/, ([^,]*)$/, " ou $1") + "." : "") + '</p><div class="masques-jour"></div></div>');
@@ -4482,7 +4485,7 @@ function demarrerJeu() {
     if (pg.length) b.appendChild(el(__('<p class="etat-pion">Elle a posé un piège devant ton pion, case ') + pg.join(", ") + __(". Il partira à la fin du tour.</p>")));
     // v25 : fâchée après avoir donné son nom, elle vous le reproche.
     var ran = M.nomIA(C, P) && C.ia.alyca.rancune[f.palier.id];
-    if (ran && ran.length) b.querySelector(".tete-f").insertAdjacentHTML("afterend", '<p class="rancune">« ' + esc(tx(ran[Math.floor(t / 864e5) % ran.length])) + " »</p>");
+    if (ran && ran.length) b.querySelector(".tete-f").insertAdjacentHTML("afterend", '<p class="rancune">' + gu(esc(tx(ran[Math.floor(t / 864e5) % ran.length]))) + "</p>");
     return b;
   }
   // Ses goûts se révèlent à l'usage : trois cadeaux différents, dont un éblouissant.
@@ -4710,7 +4713,7 @@ function demarrerJeu() {
     if (c.type === "succes") {
       var sc = C.succes.filter(function (x) { return x.id === c.id; })[0];
       if (sc && sc.condition.type === "tours_plateau") return sc.condition.n > 1 ? sc.condition.n + __(" tours du plateau") : __("1 tour du plateau");
-      return sc ? (P.succes[sc.id] || !sc.cache ? __("Succès « ") + tx(sc.nom) + " »" : __("Un succès caché")) : __("Un succès");
+      return sc ? (P.succes[sc.id] || !sc.cache ? __("Succès « ") + tx(sc.nom) + gf() : __("Un succès caché")) : __("Un succès");
     }
     return __("Plus tard");
   }
@@ -4756,7 +4759,7 @@ function demarrerJeu() {
     return '<span class="illus-s' + (verrou ? " verrou" : "") + '"><svg class="pix" viewBox="0 0 32 32" width="' + taille + '" height="' + taille + '" aria-hidden="true">' + pixels(g, pal, null, 0, 0, 1, verrou) + "</svg></span>";
   }
   function citationSucces(r) {
-    return "<blockquote>" + (r.type === "citation" ? "« " + esc(tx(r.texte)) + " »" : esc(tx(r.texte))) + "</blockquote><cite>" + (r.auteur ? esc(r.auteur) + ", " : "") + esc(r.source) + "</cite>";
+    return "<blockquote>" + (r.type === "citation" ? gu(esc(tx(r.texte))) : esc(tx(r.texte))) + "</blockquote><cite>" + (r.auteur ? esc(r.auteur) + ", " : "") + esc(r.source) + "</cite>";
   }
   function carteSucces(s, obtenu) {
     if (!obtenu && s.cache) return el('<div class="succes verrou"><div class="tete-s"><span class="illus-s verrou">' + medaille(40, true) + "</span>" + __('<div><h3>Succès caché</h3><p class="desc">Il se débloquera en jouant.</p></div></div></div>'));
@@ -5020,7 +5023,7 @@ function demarrerJeu() {
     tour_fini: function (e) { return __("Arrivée ! Tour ") + e.tour + __(" terminé en ") + e.coups + (e.coups > 1 ? __(" épreuves") : __(" épreuve")) + (e.record ? (e.ancien ? __(", nouveau record (avant : ") + e.ancien + ")" : __(", ton premier record")) : e.ancien ? " (record : " + e.ancien + ")" : "") + __(". Retour au feu : l'IA dessine le prochain parcours.") + (e.faveur && e.faveur.gain ? __(" Elle est ravie : +") + e.faveur.gain + __(" de faveur.") : ""); },
     oubli: function (e) { return __("Trou de mémoire, case ") + e.case + __(" : retour à la case ") + e.vers + __(", la plus ancienne que tu n'as jamais vue parmi les 15 dernières."); },
     oubli_vide: function (e) { return __("Trou de mémoire, case ") + e.case + __(" : tu as tout vu derrière toi. L'IA cherche, ne trouve rien, et boude."); },
-    renvoi: function (e) { return tx(C.ennemiParId[e.ennemi].nom) + __(" te renvoie à la case ") + e.vers + " : « " + tx(C.ennemiParId[e.ennemi].renvoi) + " »"; },
+    renvoi: function (e) { return tx(C.ennemiParId[e.ennemi].nom) + __(" te renvoie à la case ") + e.vers + deuxPoints() + gu(tx(C.ennemiParId[e.ennemi].renvoi)); },
     ennemi: function (e) { return __("Case ") + e.case + " : " + nomEn(C.ennemiParId[e.ennemi]) + __(" te barre la route. ") + (e.reste > 1 ? __("Gagne le duel pour faire les ") + e.reste + __(" cases qui restent.") : e.reste === 1 ? __("Gagne le duel pour faire la case qui reste.") : __("Gagne le duel pour passer.")); },
     cadeau: function (e) { return __("Case cadeau {n} : {chose} rejoint ta collection, sans épreuve.", { n: e.case, chose: { objets: __("un objet"), livres: __("un livre"), accessoires: __("un accessoire"), masques: __("un masque") }[e.famille] || __("un trésor") }); },
     cadeau_vide: function (e) { return __("Case cadeau ") + e.case + __(" : le cabinet est vide pour ce tour. L'IA promet de se rattraper."); },
@@ -5194,7 +5197,7 @@ function demarrerJeu() {
         // Le compte en clair : tarif du succès, décision de l'IA, total.
         var ecart = cr.n - cr.base, pl = function (n) { return n + __(" crédit") + (Math.abs(n) > 1 ? "s" : ""); };
         var calcul = ecart ? "+" + pl(cr.base) + ' <span class="' + (ecart > 0 ? "plus" : "moins") + '">' + (ecart > 0 ? "+" : "−") + Math.abs(ecart) + __("</span> (décision de l'IA) = <b>") + pl(cr.n) + "</b>" : "<b>+" + pl(cr.n) + __("</b> (l'IA s'en tient au tarif)");
-        carte.appendChild(el('<div class="gain-credits"><div class="ligne-bourse">' + svgBourse(44) + '<div class="calcul">' + calcul + "</div></div><p>« " + esc(tx(cr.mot)) + " »</p></div>"));
+        carte.appendChild(el('<div class="gain-credits"><div class="ligne-bourse">' + svgBourse(44) + '<div class="calcul">' + calcul + "</div></div><p>" + gu(esc(tx(cr.mot))) + "</p></div>"));
       }
       out.push(marquerTheme(carte, sc, te));
     });
@@ -5242,7 +5245,7 @@ function demarrerJeu() {
     P.alyca.vu = maintenant(); sauver();
     var R = A.revelation, m = M.masquesDuJour(C, P, maintenant())[0] || C.ia.masques[0];
     feuilleSimple('<div class="alyca-rev"><span class="vitrine">' + svgMasque(m, "impressionnee", 96) + __('</span><div class="eyebrow">Faveur comblée</div><h2>') + esc(tx(R.titre)) + "</h2>" +
-      R.texte.map(function (x) { return "<p>« " + esc(tx(x)) + " »</p>"; }).join("") +
+      R.texte.map(function (x) { return "<p>" + gu(esc(tx(x))) + "</p>"; }).join("") +
       '<p class="nom-ia">' + esc(A.nom) + "</p>" +
       '<p class="note">' + esc(tx(R.anecdote)) + '</p><p class="meta source">' + esc(R.source) + "</p>" +
       '<button type="button" class="btn large" data-a="fermer">' + esc(tx(R.bouton)) + "</button></div>", A.nom);

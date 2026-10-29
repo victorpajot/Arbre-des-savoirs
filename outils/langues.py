@@ -246,12 +246,17 @@ def dejavascript(s, q):
                   else {"n": "\n", "t": "\t"}.get(m.group(1), m.group(1)), s)
 
 
+# Les attributs lus par le joueur ou son lecteur d'écran : une chaîne qui n'a de texte que là se traduit aussi.
+RE_ATTR_LU = re.compile(r'(?:aria-label|title|placeholder|alt)="([^"{]*)"')
+
+
 def chaines_interface():
     out = []
     for f in (WEB / "index.html", WEB / "moteur.js"):
         for m in RE_L.finditer(f.read_text(encoding="utf-8")):
             s = dejavascript(m.group(2), m.group(1))
-            if re.search(r"[A-Za-zÀ-ÿ]", re.sub(r"\{\w+\}|<[^<>]*>", "", s)) and s not in out:
+            lu = re.sub(r"\{\w+\}|<[^<>]*>", "", s) + " ".join(RE_ATTR_LU.findall(s))
+            if re.search(r"[A-Za-zÀ-ÿ]", lu) and s not in out:
                 out.append(s)
     return out
 
