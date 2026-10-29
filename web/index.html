@@ -3759,7 +3759,7 @@ svg.grille .interro { transition: opacity .3s; }
         if (dit) expl += " Tu as dit " + c + " : celui-là, c'est " + tx(dit.nom) + (q.type === "numero" ? " (" + dit.symbole + ")" : ", n° " + dit.z) + ".";
         var rt = el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + "</b>" + esc(expl) + '<p class="meta" style="margin:6px 0 0">' + esc(etat) + "</p></div>");
         if (ast) {
-          rt.insertBefore(el('<p class="astuce-z"><b>Pour le retenir</b>' + esc(ast.texte) + "<br>" + esc(ast.regle) + "</p>"), rt.querySelector(".meta"));
+          rt.insertBefore(el('<p class="astuce-z"><b>Sa place</b>' + esc(ast.texte) + "</p>"), rt.querySelector(".meta"));
           rt.insertBefore(el('<div class="illus">' + ast.illustration + "</div>"), rt.querySelector(".meta"));
         }
         if (!ok) rt.appendChild(el('<p class="meta" style="margin:6px 0 0">Épinglé au mur de la honte : retente-le dès demain.</p>'));
@@ -3784,7 +3784,7 @@ svg.grille .interro { transition: opacity .3s; }
   }
   function ficheAtomeHtml(e) {
     return '<div class="fiche-atome"><div class="bareme"><span>Numéro atomique</span><span class="num">' + e.z + '</span><span>Masse atomique</span><span class="num">' + esc(M.texteMasse(e)) + "</span><span>Famille</span><span>" + esc(tx(C.atomes.familles[e.famille].nom)) +
-      "</span><span>Rareté</span><span>" + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</span></div><p class=\"astuce-z\"><b>Retenir son numéro</b>" + esc(M.astuceNumero(C.atomes, e).texte) + "</p><b>Où on le croise</b><ul>" + e.ou.map(function (o) { return "<li>" + esc(tx(o)) + "</li>"; }).join("") + "</ul><p style=\"margin:0\">" + esc(tx(e.anecdote)) + "</p><cite>Source : " + esc(e.source) + "</cite></div>";
+      "</span><span>Rareté</span><span>" + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</span></div><p class=\"astuce-z\"><b>Sa place</b>" + esc(M.astuceNumero(C.atomes, e).texte) + "</p><b>Où on le croise</b><ul>" + e.ou.map(function (o) { return "<li>" + esc(tx(o)) + "</li>"; }).join("") + "</ul><p style=\"margin:0\">" + esc(tx(e.anecdote)) + "</p><cite>Source : " + esc(e.source) + "</cite></div>";
   }
   function bilanCombat() {
     var r = combat.fin, e = r.element, rec = r.recompenses || {};

@@ -1589,9 +1589,12 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const n = CA.questionParId["atome." + e.z + ".numero"], sy = CA.questionParId["atome." + e.z + ".symbole"], ou = CA.questionParId["atome." + e.z + ".ou"];
     assert.ok(n && sy && ou && n.competence === "sci.atomes" && n.type === "numerique" && n.reponse === e.z);
     assert.equal(sy.choix[sy.reponse].fr, e.symbole);
-    // L'astuce tombe juste : gaz noble repère + rang = numéro.
+    // L'image : ses voisins sont bien z - 1 et z + 1.
     const a = M.astuceNumero(CA.atomes, e);
-    assert.equal(a.gaz + a.rang, e.z); assert.ok(a.texte.includes("n° " + e.z) && a.illustration.startsWith("<svg"));
+    assert.deepEqual(a.voisins, [e.z - 1, e.z + 1].filter(z => z >= 1 && z <= 118)); assert.ok(a.texte.includes("n° " + e.z) && a.illustration.startsWith("<svg"));
+    // Leurres du numéro éloignés d'au moins 12 entre eux et de la bonne réponse.
+    const zs = n.type === "numerique" ? M.tirerCombat(CA, { sauvages: [{ z: e.z, case: 1 }], atomes: {} }, Math.random).questions[1].choix.map(Number) : [];
+    zs.forEach((x, i) => zs.forEach((y, k) => { if (i < k) assert.ok(Math.abs(x - y) >= 12, e.z + " : " + zs); }));
   });
   // Les questions du mur ne se glissent pas dans les quiz ordinaires.
   assert.ok((CA.questionsPar["sci.atomes"] || []).every(q => !q.id.startsWith("atome.")));
