@@ -12,3 +12,6 @@ rm -f "$T"
 # v34 (Victor) : rien ne doit casser ce qui existe : validation du contenu et tests du moteur avant chaque commit.
 python3 outils/valider.py >/dev/null || { echo "valider.py a échoué"; exit 1; }
 node outils/test_moteur.js >/dev/null || { echo "Les tests du moteur échouent (node outils/test_moteur.js)"; exit 1; }
+# v35 : les packs : verifier refuse les fautes courantes, et chaque pack s'éteint en jeu sans rien casser ni perdre.
+python3 outils/test_packs.py >/dev/null || { python3 outils/test_packs.py; exit 1; }
+node outils/test_packs.js >/dev/null || { echo "Les tests des packs échouent (node outils/test_packs.js)"; exit 1; }

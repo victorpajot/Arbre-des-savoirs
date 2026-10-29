@@ -284,7 +284,7 @@ def verifier(packs=None, cibles=None):
         erreurs.append(f"[{m['id']}] {msg}")
 
     for m in packs:
-        if cibles and m["id"] not in cibles:
+        if cibles and m["_dossier"].name not in cibles:
             continue
         for k, t in CHAMPS_MANIFESTE.items():
             if not isinstance(m.get(k), t):

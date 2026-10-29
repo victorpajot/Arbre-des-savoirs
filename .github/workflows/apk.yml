@@ -44,6 +44,8 @@ jobs:
           git diff --exit-code --stat -- data || { echo "::error::data/ n'est pas l'assemblage des packs : lance python3 outils/packs.py assembler"; exit 1; }
           python3 outils/valider.py
           node outils/test_moteur.js
+          python3 outils/test_packs.py
+          node outils/test_packs.js
 
       - name: Vérifier les sources (rien d'inventé)
         run: python3 outils/verifier_sources.py
