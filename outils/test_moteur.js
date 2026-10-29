@@ -1632,14 +1632,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const ri = M.terminerCombat(CA, PI, 4, T, [], true);
     assert.ok(ri.capture && ri.indice && ri.agacement === null && PI.lot.cap === 1);
   }
-  // Le kit du chasseur s'achète à la boutique et se range en poche.
+  // Le kit du chasseur s'achète une fois à la boutique, et reste.
   {
     const CK = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
       { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), atomes: d("atomes.json"), ennemis: d("ennemis.json") });
     const PK = M.nouvellePartie(T); PK.credits.solde = 100;
+    PK.credits.solde = 250;
     const a = M.acheter(CK, PK, "kit", T);
-    assert.ok(a.ok && M.enPoche(PK, "kit") === 1 && PK.credits.solde === 70, JSON.stringify(a));
-    assert.ok(M.utiliser(PK, "kit", T) && M.enPoche(PK, "kit") === 0);
+    assert.ok(a.ok && PK.kit === T && PK.credits.solde === 150, JSON.stringify(a));
+    // Une fois pour toutes : plus en rayon.
+    assert.equal(M.enRayon(CK, PK, "kit", T).length, 0); assert.ok(!M.acheter(CK, PK, "kit", T).ok);
   }
   // Le guide du tableau : cinq étapes, sourcées.
   assert.equal(CA.atomes.guide.etapes.length, 5); assert.ok(CA.atomes.guide.source.includes("eduscol"));

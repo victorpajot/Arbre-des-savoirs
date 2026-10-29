@@ -728,7 +728,6 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .placer { display: flex; flex-direction: column; gap: 12px; }
 .placer .indice { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .placer .indice small { font-size: 13px; font-weight: 500; color: var(--muted); }
-.placer .indice:not(.sec) small { color: #fff; opacity: .85; }
 .tableau-per.jeu .el.pris { background: var(--c); color: #fff; box-shadow: none; }
 .viseur { display: flex; flex-direction: column; gap: 10px; }
 .vise-txt { margin: 0; font-size: 16px; font-weight: 600; }
@@ -2701,7 +2700,7 @@ svg.grille .interro { transition: opacity .3s; }
       seg.appendChild(bt);
     });
     v.appendChild(seg);
-    if (ongletPerso === "avatar") v.appendChild(blocAvatar());
+    if (ongletPerso === "avatar") { v.appendChild(blocAvatar()); if (P.kit) v.appendChild(el('<div class="bloc"><h2>Équipement</h2><div class="article"><span class="vis">' + paquet("#B5651D", false, "⌖") + '</span><span class="txt"><b>Kit du chasseur</b><span>Quand tu places un atome sur le tableau, tes atomes déjà capturés s\'affichent.</span><span class="stock">acheté le ' + esc(dateCourte(P.kit)) + "</span></span></div></div>")); }
     if (ongletPerso === "ia") { v.appendChild(blocIA()); v.appendChild(blocFaveur()); var bi = blocBourseIA(); if (bi) v.appendChild(bi); v.appendChild(blocCadeauxIA()); v.appendChild(blocCorruption()); v.appendChild(blocMasques(Object.keys(P.succes).length)); }
     if (ongletPerso === "ennemis") v.appendChild(blocBestiaire());
     if (ongletPerso !== "reglages") return v;
@@ -3814,20 +3813,14 @@ svg.grille .interro { transition: opacity .3s; }
     }
     if (q.type === "place") {
       zr.replaceWith(zr = grillePlacer(function (z, b) { zr.querySelectorAll(".indice").forEach(function (x) { x.remove(); }); repondreQ(z === e.z, String(z), b); }));
-      // v34 (Victor) : l'indice montre les atomes déjà capturés, contre une récompense en moins à la fin.
-      if (Object.keys(P.atomes || {}).some(function (k) { return M.estCapture(P, +k) && +k !== e.z; })) {
+      // v34 (Victor) : avec le kit du chasseur (boutique), les atomes capturés s'affichent d'office. Sans lui, l'indice
+      // les montre contre une récompense en moins à la fin.
+      if (P.kit) zr.reveler();
+      else if (Object.keys(P.atomes || {}).some(function (k) { return M.estCapture(P, +k) && +k !== e.z; })) {
         var bi = el('<button type="button" class="btn sec indice"><span>' + (combat.indice ? "Indice utilisé" : "Indice : montrer mes atomes capturés") + '</span><small>une récompense en moins à la fin</small></button>');
-        bi.onclick = function () { combat.indice = true; zr.reveler(); bi.disabled = true; bi.firstChild.textContent = "Indice utilisé"; if (bk) bk.remove(); };
-        // Le kit du chasseur (boutique) : même aide, sans malus.
-        var nk = M.enPoche(P, "kit"), bk = null;
-        if (nk && !combat.kit && !combat.indice) {
-          bk = el('<button type="button" class="btn indice"><span>Kit du chasseur ×' + nk + '</span><small>tes atomes capturés, sans malus</small></button>');
-          bk.onclick = function () { if (!M.utiliser(P, "kit", maintenant())) return; combat.kit = true; sauver(); zr.reveler(); bk.remove(); bi.remove(); };
-          zr.insertBefore(bk, zr.querySelector(".viseur"));
-        }
+        bi.onclick = function () { combat.indice = true; zr.reveler(); bi.disabled = true; bi.firstChild.textContent = "Indice utilisé"; };
         zr.insertBefore(bi, zr.querySelector(".viseur"));
         if (combat.indice) { zr.reveler(); bi.disabled = true; }
-        if (combat.kit) { zr.reveler(); bi.remove(); }
       }
     }
     else q.choix.forEach(function (c, ci) {
@@ -4428,8 +4421,10 @@ svg.grille .interro { transition: opacity .3s; }
     ["joker", "Joker 50/50", "En quiz, efface deux mauvaises réponses d'une question à choix.", "#E08A00", "½"],
     ["erreur", "Droit à l'erreur", "En quiz, une mauvaise réponse ne compte pas : tu retentes la question.", "#3A7BD5", "↺"],
     ["relance", "Relancer un atome", "L'atome sauvage ne te plaît pas ? L'IA en sort un autre.", "#1E8C8C", "⇄"],
-    ["kit", "Kit du chasseur", "Au combat d'atome, montre tes atomes capturés sur le tableau, sans perdre de récompense.", "#B5651D", "⌖"],
     ["desarme", "Désarmer un piège", "Le prochain piège où tu t'arrêtes ne fonctionne pas.", "#6B4E9B", "✂"],
+  ];
+  var EQUIPEMENT = [
+    ["kit", "Kit du chasseur", "Quand tu places un atome sur le tableau, tes atomes déjà capturés s'affichent. Acheté une fois pour toutes.", "#B5651D", "⌖"],
   ];
   var PARCOURS = [
     ["chasser", "Chasser un ennemi", "Le prochain ennemi sur ta route s'en va. Même celui qui te bloque.", "#D94141"],
@@ -4445,23 +4440,24 @@ svg.grille .interro { transition: opacity .3s; }
   function blocBoutique() {
     var B = M.boutique(C), cr = P.credits, ach = M.arbreAchete(P);
     var b = el('<div class="bloc boutique"><h2>La boutique de l\'IA</h2><p class="solde">' + svgBourse(36) + '<b class="num">' + cr.solde + "</b> crédit" + (cr.solde > 1 ? "s" : "") + "</p>" +
-      '<p class="note">Tout s\'achète à l\'aveugle : tu paies, l\'IA tire au hasard parmi ce que tu n\'as pas encore.</p><div class="rayons"></div><h3>Dans ta poche</h3><p class="note">Jusqu\'à ' + (B.stock_max || 5) + ' de chaque. Ils servent quand tu le décides, sauf le désarmement, qui joue tout seul au prochain piège.</p><div class="rayons poche"></div><h3>Ton parcours</h3>' +
+      '<p class="note">Tout s\'achète à l\'aveugle : tu paies, l\'IA tire au hasard parmi ce que tu n\'as pas encore.</p><div class="rayons"></div><h3>Dans ta poche</h3><p class="note">Jusqu\'à ' + (B.stock_max || 5) + ' de chaque. Ils servent quand tu le décides, sauf le désarmement, qui joue tout seul au prochain piège.</p><div class="rayons poche"></div>' + (C.atomes ? '<h3>Équipement</h3><div class="rayons equipement"></div>' : "") + '<h3>Ton parcours</h3>' +
       (ach ? '<p class="note">Faveur en cours : arbre ' + esc(tx(stat(ach.stat).nom)) + ", encore " + ach.restant + " épreuve" + (ach.restant > 1 ? "s" : "") + ".</p>" : "") + '<div class="rayons parcours"></div></div>');
     function ligne(a, zone, rond) {
       var prix = B.prix[a[0]], stock = M.enRayon(C, P, a[0], maintenant()).length, peut = cr.solde >= prix && stock > 0;
       var r = el('<div class="article"><span class="vis">' + paquet(a[3], rond, a[4]) + '</span><span class="txt"><b>' + esc(a[1]) + "</b><span>" + esc(a[2]) + "</span>" +
-        '<span class="stock">' + (POCHE_IDS[a[0]] ? "en poche : " + M.enPoche(P, a[0]) + " / " + (B.stock_max || 5) : stock ? (a[0] === "chasser" ? stock + " sur ta route" : FAMILLES_STOCK[a[0]] ? stock + " en rayon" : a[0] === "avancer" ? "une fois par jour" : "disponible") : a[0] === "avancer" ? (P.credits.avanceJour === M.cleJour(maintenant()) ? "déjà acheté aujourd'hui, reviens demain" : "ton pion est retenu") : a[0] === "chasser" ? "aucun ennemi devant toi" : "rien en rayon") + '</span></span><button type="button" class="btn"' + (peut ? "" : " disabled") + ">" + svgBourse(18) + " " + prix + "</button></div>");
+        '<span class="stock">' + (POCHE_IDS[a[0]] ? "en poche : " + M.enPoche(P, a[0]) + " / " + (B.stock_max || 5) : stock ? (a[0] === "chasser" ? stock + " sur ta route" : FAMILLES_STOCK[a[0]] ? stock + " en rayon" : a[0] === "avancer" ? "une fois par jour" : a[0] === "kit" ? "une fois pour toutes" : "disponible") : a[0] === "avancer" ? (P.credits.avanceJour === M.cleJour(maintenant()) ? "déjà acheté aujourd'hui, reviens demain" : "ton pion est retenu") : a[0] === "chasser" ? "aucun ennemi devant toi" : a[0] === "kit" && P.kit ? "déjà à toi" : "rien en rayon") + '</span></span><button type="button" class="btn"' + (peut ? "" : " disabled") + ">" + svgBourse(18) + " " + prix + "</button></div>");
       r.querySelector("button").onclick = function () { if (a[0] === "arbre") choisirArbreAchat(); else acheterUI(a[0]); };
       b.querySelector(zone).appendChild(r);
     }
     ARTICLES.forEach(function (a) { ligne(a, ".rayons"); });
-    POCHE.forEach(function (a) { if ((a[0] === "relance" || a[0] === "kit") && !C.atomes) return; if (a[0] === "desarme" && !C.plateau) return; ligne(a, ".poche"); });
+    POCHE.forEach(function (a) { if (a[0] === "relance" && !C.atomes) return; if (a[0] === "desarme" && !C.plateau) return; ligne(a, ".poche"); });
+    if (C.atomes) EQUIPEMENT.forEach(function (a) { ligne(a, ".equipement"); });
     if (C.plateau) PARCOURS.forEach(function (a) { ligne(a, ".parcours", true); });
     return b;
   }
   var FAMILLES_STOCK = { objet: 1, livre: 1, accessoire: 1, masque: 1, chasser: 1 };
-  var POCHE_IDS = { joker: 1, erreur: 1, relance: 1, desarme: 1, kit: 1 };
-  var NOM_POCHE = { joker: ["joker", "jokers"], erreur: ["droit à l'erreur", "droits à l'erreur"], relance: ["relance d'atome", "relances d'atome"], desarme: ["désarmement", "désarmements"], kit: ["kit du chasseur", "kits du chasseur"] };
+  var POCHE_IDS = { joker: 1, erreur: 1, relance: 1, desarme: 1 };
+  var NOM_POCHE = { joker: ["joker", "jokers"], erreur: ["droit à l'erreur", "droits à l'erreur"], relance: ["relance d'atome", "relances d'atome"], desarme: ["désarmement", "désarmements"] };
   function nomPoche(a, n) { return n + " " + NOM_POCHE[a][n > 1 ? 1 : 0]; }
   function choisirArbreAchat() {
     var html = '<div class="eyebrow">Boutique · Faveur d\'un arbre</div><h2>Quel arbre ?</h2><p class="meta">Pour tes ' + M.boutique(C).arbre_epreuves + ' prochaines épreuves lancées par Jouer, l\'IA pioche dans cet arbre, quelle que soit la case.</p><div class="arbres-une">', actions = {};
@@ -4482,9 +4478,11 @@ svg.grille .interro { transition: opacity .3s; }
       article === "convoquer" ? tx(r.ennemi.nom) + " t'attend case " + r.case + "." :
       article === "arbre" ? "Arbre " + tx(stat(r.stat).nom) + " : l'IA y pioche pour tes " + M.boutique(C).arbre_epreuves + " prochaines épreuves par Jouer." :
       POCHE_IDS[article] ? "Dans ta poche : " + nomPoche(article, r.stock) + "." :
-      article === "avancer" ? (r.plateau && r.plateau.a !== r.plateau.de ? "Ton pion avance d'une case." : "Ton pion n'a pas bougé : quelque chose le retient.") : "";
+      article === "avancer" ? (r.plateau && r.plateau.a !== r.plateau.de ? "Ton pion avance d'une case." : "Ton pion n'a pas bougé : quelque chose le retient.") :
+      article === "kit" ? "Le kit du chasseur est à toi : quand tu places un atome, tes prises s'affichent sur le tableau. Il est rangé dans ton profil." : "";
     feuilleSimple('<div class="eyebrow">Boutique</div><h2>Acheté : −' + r.prix + ' crédits</h2><div id="achat-carte"></div>' + (txt ? '<p class="etat-pion">' + esc(txt) + "</p>" : "") + '<div id="achat-ia"></div>', "Achat");
     if (carte) { carte.classList.add("anim"); feuille.querySelector("#achat-carte").appendChild(carte); }
+    else if (article === "kit") feuille.querySelector("#achat-carte").appendChild(el('<div class="poche-achat">' + paquet("#B5651D", false, "⌖") + "<b>Kit du chasseur</b></div>"));
     else if (POCHE_IDS[article]) { var pa = POCHE.filter(function (x) { return x[0] === article; })[0]; feuille.querySelector("#achat-carte").appendChild(el('<div class="poche-achat">' + paquet(pa[3], false, pa[4]) + "<b>" + esc(pa[1]) + "</b></div>")); }
     if (r.mot) { var m = comite({ texte: r.mot, contexte: "pot_genereux", aparte: false }, true); if (m) feuille.querySelector("#achat-ia").appendChild(m); }
     // v26 : la case achetée, le pion avance sous les yeux du joueur.

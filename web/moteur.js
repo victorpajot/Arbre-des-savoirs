@@ -1452,6 +1452,8 @@
   function enRayon(contenu, partie, article, t) {
     var f = FAMILLE_ARTICLE[article];
     if (f) return listeFamille(contenu, f).filter(function (x) { return (estButin(x) || f === "masques") && !possede(partie, f, x.id); });
+    // v34 (Victor) : le kit du chasseur, un équipement acheté une fois pour toutes.
+    if (article === "kit") return contenu.atomes && !partie.kit ? [1] : [];
     if (!contenu.plateau || !contenu.placement) return [];
     var pl = partie.plateau, en = ennemisPlateau(contenu, partie), rt = route(contenu, partie);
     if (article === "chasser") return rt.slice(pl.idx).filter(function (n) { return en[n]; });
@@ -1507,6 +1509,8 @@
       cr.avanceJour = cleJour(t);
       out.plateau = deplacer(contenu, partie, 1, t, "achat");
       if (out.plateau) out.plateau.contextes = contextesPlateau(out.plateau);
+    } else if (article === "kit") {
+      partie.kit = t;
     } else if (POCHE[article]) {
       var inv = partie.inventaire || (partie.inventaire = {});
       inv[article] = (inv[article] || 0) + 1; out.stock = inv[article];
@@ -1521,7 +1525,7 @@
   }
   // v20 : les articles de poche. Joker 50/50 et droit à l'erreur servent en quiz, la relance sur un atome sauvage ;
   // le désarmement se déclenche tout seul sur le prochain piège où le pion s'arrête.
-  var POCHE = { joker: 1, erreur: 1, relance: 1, desarme: 1, kit: 1 };
+  var POCHE = { joker: 1, erreur: 1, relance: 1, desarme: 1 };
   function enPoche(partie, article) { return (partie.inventaire && partie.inventaire[article]) || 0; }
   function utiliser(partie, article, t) {
     if (!enPoche(partie, article)) return false;
