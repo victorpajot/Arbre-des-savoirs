@@ -247,8 +247,10 @@ ELEMENTS = [
      "L'un des éléments les plus chers au monde : des dizaines de millions de dollars le gramme."),
     ("Es", "Einsteinium", 252, "actinide", "einsteinium", ["les retombées de la première bombe H", "le réacteur à haut flux d'Oak Ridge"],
      "Découvert dans les débris de la première bombe à hydrogène, en 1952. Nommé d'après Einstein, qui n'y était pour rien."),
-    ("Fm", "Fermium", 257, "actinide", "fermium", ["les coraux de l'atoll d'Enewetak après Ivy Mike", "la mémoire d'Enrico Fermi"],
-     "Lui aussi sorti des débris d'Ivy Mike. Nommé d'après Enrico Fermi, qui a construit la première pile atomique."),
+    ("Fm", "Fermium", 257, "actinide", "fermium", ["les coraux de l'atoll d'Enewetak après Ivy Mike, la première bombe H", "la mémoire d'Enrico Fermi"],
+     "Né d'Ivy Mike, la première bombe à hydrogène, que les États-Unis ont fait exploser le 1er novembre 1952 sur l'atoll d'Enewetak, "
+     "aux îles Marshall : 10,4 mégatonnes, et à la place de l'îlot d'Elugelab, un cratère de près de 2 km. Des avions traversaient "
+     "le nuage pour filtrer ses débris : c'est sur ces filtres qu'on l'a trouvé. Nommé d'après Enrico Fermi, qui a construit la première pile atomique."),
     ("Md", "Mendélévium", 258, "actinide", "mendelevium", ["le cyclotron de 1955, un atome à la fois", "ce jeu"],
      "Nommé d'après Mendeleïev. Les premiers ont été produits un atome à la fois, dix-sept en tout, en 1955."),
     ("No", "Nobélium", 259, "actinide", "nobelium", ["l'Institut Nobel de Stockholm", "les querelles de priorité"],
