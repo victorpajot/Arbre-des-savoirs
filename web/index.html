@@ -690,6 +690,14 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .apparition .herbe .tuile-atome { animation: surgir .6s cubic-bezier(.2,.9,.3,1.5) .2s both; }
 @keyframes surgir { from { transform: translateY(40px) scale(.5); opacity: 0; } to { transform: none; opacity: 1; } }
 .apparition h2 { margin: 0; font-size: 26px; }
+.guide-z { display: flex; flex-direction: column; gap: 12px; }
+.guide-z h2 { margin: 0; }
+.guide-z .meta { overflow-wrap: anywhere; }
+.guide-z p { margin: 0; font-size: 17px; line-height: 1.55; }
+.nav-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.compte-z { display: flex; flex-wrap: wrap; gap: 6px; }
+.compte-z span { padding: 4px 8px; border-radius: 8px; background: var(--surface-2); font-size: 15px; }
+.compte-z span.moi { background: var(--accent); color: #fff; }
 .astuce-z { margin: 8px 0 0; font-size: 16px; line-height: 1.5; }
 .astuce-z b { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
 .combat-q .enonce { font-family: var(--f-display); font-weight: 600; }
@@ -1285,7 +1293,7 @@ svg.grille .interro { transition: opacity .3s; }
   function feuilleSimple(html, label, actions) {
     var surQuiz = !!document.querySelector(".quiz");
     var f = el('<div class="voile' + (surQuiz ? " dessus" : "") + '"><div class="feuille" role="dialog" aria-modal="true" aria-label="' + esc(label) + '">' + html +
-      '<button type="button" class="btn sec large" data-a="fermer">' + (surQuiz ? "← Retour au bilan" : "Fermer") + "</button></div></div>");
+      '<button type="button" class="btn sec large" data-a="fermer">' + (document.querySelector(".quiz.atome .combat-q") ? "← Retour au combat" : surQuiz ? "← Retour au bilan" : "Fermer") + "</button></div></div>");
     f.onclick = function (ev) {
       var a = ev.target.closest && ev.target.closest("[data-a]"), nom = a && a.getAttribute("data-a");
       if (ev.target === f || nom === "fermer") fermerFeuille();
@@ -3761,6 +3769,7 @@ svg.grille .interro { transition: opacity .3s; }
         if (ast) {
           rt.insertBefore(el('<p class="astuce-z"><b>Sa place</b>' + esc(ast.texte) + "</p>"), rt.querySelector(".meta"));
           rt.insertBefore(el('<div class="illus">' + ast.illustration + "</div>"), rt.querySelector(".meta"));
+          var bg = boutonGuide(e); bg.style.marginTop = "10px"; rt.insertBefore(bg, rt.querySelector(".meta"));
         }
         if (!ok) rt.appendChild(el('<p class="meta" style="margin:6px 0 0">Épinglé au mur de la honte : retente-le dès demain.</p>'));
         retour.appendChild(rt);
@@ -3781,6 +3790,69 @@ svg.grille .interro { transition: opacity .3s; }
     });
     inn.appendChild(corps);
     zr.querySelector("button").focus();
+  }
+  // v34 (Victor) : le guide du tableau périodique, pas à pas, ouvert après une erreur. Le tableau en miniature :
+  // `o.cls(x)` classe de la case, `o.fill(x)` couleur imposée, `o.lab(x)` texte dans la case, `o.droite(l)` texte au bout de la ligne l.
+  function miniTableau(o) {
+    var T = 20, X0 = 18, Y0 = 4, out = [], haut = function (l) { return Y0 + (l - 1) * T + (l >= 9 ? 8 : 0); }, larg = X0 + 18 * T + (o.droite ? 62 : 4);
+    C.atomes.elements.forEach(function (x) {
+      var col = x.groupe, lig = x.periode;
+      if (!col) { col = 3 + (x.z >= 89 ? x.z - 89 : x.z - 57); lig = x.z >= 89 ? 10 : 9; }
+      var px = X0 + (col - 1) * T, py = haut(lig), cl = (o.cls && o.cls(x)) || "f2", f = o.fill && o.fill(x), lb = o.lab && o.lab(x);
+      out.push('<rect class="' + cl + '" x="' + px + '" y="' + py + '" width="' + (T - 2) + '" height="' + (T - 2) + '" rx="2"' + (f ? ' style="fill:' + f + ';stroke:none"' : "") + "/>");
+      if (lb) out.push('<text x="' + (px + (T - 2) / 2) + '" y="' + (py + 12.5) + '" font-size="' + (String(lb).length > 2 ? 7.5 : 9) + '" font-weight="700" text-anchor="middle" fill="' + (cl === "a" ? "#fff" : "#222") + '" font-family="sans-serif">' + esc(String(lb)) + "</text>");
+    });
+    for (var l = 1; l <= 7; l++) {
+      out.push('<text class="tm" x="' + (X0 - 5) + '" y="' + (haut(l) + 13) + '" font-size="10" text-anchor="end">' + l + "</text>");
+      if (o.droite) out.push('<text class="t" x="' + (X0 + 18 * T + 4) + '" y="' + (haut(l) + 13) + '" font-size="10" font-weight="700">' + esc(o.droite(l)) + "</text>");
+    }
+    [[6, "*"], [7, "**"]].forEach(function (m) { out.push('<text class="tm" x="' + (X0 + 2 * T + 9) + '" y="' + (haut(m[0]) + 14) + '" font-size="12" font-weight="700" text-anchor="middle">' + m[1] + "</text>"); });
+    [[9, "*"], [10, "**"]].forEach(function (m) { out.push('<text class="tm" x="' + (X0 + T + 9) + '" y="' + (haut(m[0]) + 14) + '" font-size="12" font-weight="700" text-anchor="middle">' + m[1] + "</text>"); });
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + larg + " " + (haut(10) + T + 2) + '" role="img" aria-label="' + esc(o.aria || "Tableau périodique") + '">' + out.join("") + "</svg>";
+  }
+  var BORNES_LIGNES = [[1, 2], [3, 10], [11, 18], [19, 36], [37, 54], [55, 86], [87, 118]];
+  var TEINTES_LIGNES = ["#F4C26B", "#9FD3A8", "#8EC5E8", "#C9A7E4", "#F2A3A3", "#A9DDD6", "#E8D08A"];
+  function ligneDe(x) { for (var i = 0; i < BORNES_LIGNES.length; i++) if (x.z <= BORNES_LIGNES[i][1]) return i + 1; return 7; }
+  function schemaGuide(nom) {
+    if (nom === "ordre") return miniTableau({ aria: "Les 18 premiers atomes, numérotés dans l'ordre de lecture", cls: function (x) { return x.z <= 18 ? "ok" : "f2"; }, lab: function (x) { return x.z <= 18 ? x.z : ""; } });
+    if (nom === "lignes") return miniTableau({ aria: "Chaque ligne en couleur, avec son premier et son dernier numéro", fill: function (x) { return TEINTES_LIGNES[ligneDe(x) - 1]; },
+      lab: function (x) { var b = BORNES_LIGNES[ligneDe(x) - 1]; return x.z === b[0] || x.z === b[1] ? x.z : ""; }, droite: function (l) { return BORNES_LIGNES[l - 1][0] + " → " + BORNES_LIGNES[l - 1][1]; } });
+    if (nom === "trous") return miniTableau({ aria: "Les trois premières lignes, coupées en deux", cls: function (x) { return [4, 5, 13].indexOf(x.z) >= 0 ? "jaune" : x.z <= 18 ? "ok" : "f2"; }, lab: function (x) { return x.z <= 18 ? x.z : ""; } });
+    if (nom === "colonnes") return miniTableau({ aria: "Colonne 1, les alcalins, et colonne 18, les gaz nobles", fill: function (x) { return x.groupe === 1 && x.z > 1 ? "#F2A3A3" : x.groupe === 18 ? "#8EC5E8" : null; }, lab: function (x) { return (x.groupe === 1 && x.z > 1) || x.groupe === 18 ? x.symbole : ""; } });
+    if (nom === "bas") return miniTableau({ aria: "Les lanthanides et les actinides, sortis des lignes 6 et 7", cls: function (x) { return x.groupe ? "f2" : "jaune"; }, lab: function (x) { return [57, 71, 89, 103].indexOf(x.z) >= 0 ? x.z : ""; } });
+    return "";
+  }
+  // Dernière étape : l'atome du combat, retrouvé en comptant depuis le début de sa ligne.
+  function etapeTonAtome(e) {
+    var l = ligneDe(e), b = BORNES_LIGNES[l - 1], suite = C.atomes.elements.slice(b[0] - 1, e.z);
+    var svg = miniTableau({ aria: tx(e.nom) + " compté depuis le début de la ligne " + l, cls: function (x) { return x.z === e.z ? "a" : x.z >= b[0] && x.z < e.z ? "ok" : "f2"; }, lab: function (x) { return x.z >= b[0] && x.z <= e.z ? x.z : ""; } });
+    var texte = e.z === b[0] ? tx(e.nom) + " est le tout premier de la ligne " + l + " : la ligne d'avant s'arrête à " + (b[0] - 1) + ", donc il porte le " + e.z + "." :
+      tx(e.nom) + " est sur la ligne " + l + ", qui va de " + b[0] + " à " + b[1] + ". On compte depuis le début de la ligne, case par case" + (l >= 6 && e.z > b[0] + 1 ? ", en passant par la ligne du bas (" + (l === 6 ? "57 à 71" : "89 à 103") + ")" : "") + " :";
+    var puces = e.z === b[0] ? "" : '<div class="compte-z">' + suite.map(function (x) { return "<span" + (x.z === e.z ? ' class="moi"' : "") + "><b>" + x.z + "</b> " + esc(tx(x.nom)) + "</span>"; }).join("") + "</div>";
+    return { titre: "Ton atome : " + tx(e.nom), html: "<p>" + esc(texte) + "</p>" + puces + '<div class="illus">' + svg + "</div>" };
+  }
+  function ouvrirGuideTableau(e) {
+    var G = C.atomes.guide; if (!G) return;
+    var etapes = G.etapes.map(function (x) { return { titre: tx(x.titre), html: "<p>" + esc(tx(x.texte)) + '</p><div class="illus">' + schemaGuide(x.schema) + "</div>" }; });
+    if (e) etapes.push(etapeTonAtome(e));
+    var i = 0;
+    feuilleSimple('<div class="guide-z"></div>', tx(G.titre), {
+      prec: function () { if (i > 0) { i--; montrer(); } }, suiv: function () { if (i < etapes.length - 1) { i++; montrer(); } }
+    });
+    function montrer() {
+      var z = feuille.querySelector(".guide-z"), x = etapes[i];
+      z.innerHTML = '<div class="eyebrow">' + esc(tx(G.titre)) + " · étape " + (i + 1) + " sur " + etapes.length + "</div><h2>" + esc(x.titre) + "</h2>" + x.html +
+        (i === etapes.length - 1 ? '<p class="meta" style="margin:0">Source : ' + esc(G.source) + "</p>" : "") +
+        '<div class="nav-guide"><button type="button" class="btn sec" data-a="prec"' + (i ? "" : " disabled") + '>← Précédent</button><button type="button" class="btn" data-a="suiv"' + (i < etapes.length - 1 ? "" : " disabled") + ">Suivant →</button></div>";
+      var fe = feuille.querySelector(".feuille"); fe.scrollTop = 0;
+      var b = z.querySelector('[data-a="suiv"]:not([disabled])') || z.querySelector('[data-a="prec"]'); if (b) b.focus({ preventScroll: true });
+    }
+    montrer();
+  }
+  function boutonGuide(e) {
+    var b = el('<button type="button" class="btn sec">Comprendre le tableau</button>');
+    b.onclick = function () { ouvrirGuideTableau(e); };
+    return b;
   }
   function ficheAtomeHtml(e) {
     return '<div class="fiche-atome"><div class="bareme"><span>Numéro atomique</span><span class="num">' + e.z + '</span><span>Masse atomique</span><span class="num">' + esc(M.texteMasse(e)) + "</span><span>Famille</span><span>" + esc(tx(C.atomes.familles[e.famille].nom)) +
@@ -3844,6 +3916,7 @@ svg.grille .interro { transition: opacity .3s; }
     var b = el('<div class="bloc"><div class="compteur-per"><b>Tableau périodique</b><span class="num">' + n + " / " + A.elements.length + '</span><span class="barre"><i style="width:' + (100 * n / A.elements.length).toFixed(1) + '%"></i></span></div>' +
       '<p class="note">Passe sur une case Mendeleïev (' + cases.join(", ") + ") pour faire apparaître un atome sauvage. Trois questions, " + bonnesA() + ", et il prend sa place ici. Les éléments légendaires sont les plus rares.</p>" +
       '<div class="tableau-per" role="grid" aria-label="Tableau périodique"></div><div class="familles-per"></div></div>');
+    if (C.atomes.guide) b.insertBefore(boutonGuide(null), b.querySelector(".tableau-per"));
     var g = b.querySelector(".tableau-per");
     A.elements.forEach(function (e) {
       var pris = M.estCapture(P, e.z), f = P.atomes && P.atomes[e.z], vu = !pris && f && f.rencontres;
@@ -3988,6 +4061,7 @@ svg.grille .interro { transition: opacity .3s; }
       c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>"));
       if (q.illustration_explication) c.appendChild(el('<div class="illus">' + q.illustration_explication + "</div>"));
       if (q.figure) c.appendChild(el(htmlFigure(q.figure)));
+      if (q.atome && q.type === "numerique" && C.atomes) c.appendChild(boutonGuide(C.atomes.elements[q.atome - 1]));
     }
     if (!retenter || e.efface) {
       corrige();

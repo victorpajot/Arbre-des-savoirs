@@ -1614,5 +1614,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.retenterOubli(CA, P, P.oublis.indexOf(eN), true, T), null);
   const r = M.retenterOubli(CA, P, P.oublis.indexOf(eN), M.corriger(CA.questionParId["atome.26.numero"], "26"), T + 86400000);
   assert.ok(r.efface);
-  console.log("OK : v34 atomes ratés au mur, astuce du numéro");
+  // Le guide du tableau : cinq étapes, sourcées.
+  assert.equal(CA.atomes.guide.etapes.length, 5); assert.ok(CA.atomes.guide.source.includes("eduscol"));
+  console.log("OK : v34 atomes ratés au mur, astuce du numéro, guide du tableau");
 }

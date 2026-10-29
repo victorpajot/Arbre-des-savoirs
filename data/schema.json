@@ -2989,6 +2989,58 @@
        }
       }
      }
+    },
+    "guide": {
+     "type": "object",
+     "description": "v34 : le guide du tableau, ouvert après une erreur au combat.",
+     "additionalProperties": false,
+     "required": [
+      "id",
+      "titre",
+      "etapes",
+      "source"
+     ],
+     "properties": {
+      "id": {
+       "type": "string"
+      },
+      "titre": {
+       "$ref": "#/$defs/texte"
+      },
+      "source": {
+       "type": "string"
+      },
+      "etapes": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "schema",
+         "titre",
+         "texte"
+        ],
+        "properties": {
+         "schema": {
+          "enum": [
+           "ordre",
+           "lignes",
+           "trous",
+           "colonnes",
+           "bas"
+          ]
+         },
+         "titre": {
+          "$ref": "#/$defs/texte"
+         },
+         "texte": {
+          "$ref": "#/$defs/texte"
+         }
+        }
+       }
+      }
+     }
     }
    }
   },
