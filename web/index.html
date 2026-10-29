@@ -1126,8 +1126,14 @@ svg.grille .interro { transition: opacity .3s; }
   function tenueFarce(id) { return (C.avatar.tenues_farce || []).filter(function (v) { return v.id === id; })[0] || null; }
   function objetTenu() { var id = P.avatar && P.avatar.main; return id && P.objets[id] ? C.objets.filter(function (o) { return o.id === id; })[0] || null : null; }
   // Avatar : corps, tenue du rang, cheveux (ou accessoire de tête), accessoire de visage, objet tenu à la main.
+  // v32 (Victor) : pendant une épreuve et son bilan, l'avatar garde le savant d'avant ; le nouveau n'apparaît
+  // qu'avec la carte qui l'annonce (ou au retour à l'accueil, si on n'est pas allé jusque-là).
+  var avatarGele = null;
+  function gelerAvatar() { avatarGele = { sv: M.savantActuel(C, P) }; }
+  function degelerAvatar() { avatarGele = null; }
   function savantIncarne() {
     // v6 : le dernier savant débloqué par les succès, sans choix du joueur.
+    if (avatarGele) return avatarGele.sv;
     return M.savantActuel(C, P);
     var id = P.avatar && P.avatar.savant;
     return id && P.savants && P.savants[id] && C.avatar.savants ? C.avatar.savants.filter(function (s) { return s.id === id; })[0] || null : null;
@@ -3104,6 +3110,7 @@ svg.grille .interro { transition: opacity .3s; }
   function lancerDuel() {
     if (!P.duel || !P.duel.pret) return;
     if (bloqueParUltimatum()) return;
+    gelerAvatar();
     var e = C.ennemiParId[P.duel.ennemi];
     duel = { ennemi: e, phase: "vs", qs: M.tirerDuel(C, P, maintenant()), i: 0, res: [], repondu: false, fin: null, etape: 0,
       replique: M.replique(C, P, ["ennemi"], null, null, e.theme) };
@@ -3204,7 +3211,7 @@ svg.grille .interro { transition: opacity .3s; }
     } else if (nom === "suite") {
       z.appendChild(blocSuiteTour());
     } else if (nom.indexOf("recompense:") === 0) {
-      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
+      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c); if (c.classList.contains("carte-savant")) degelerAvatar();
     } else {
       z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
     }
@@ -3284,6 +3291,7 @@ svg.grille .interro { transition: opacity .3s; }
   function lancerCombat() {
     var s = M.atomeSauvage(C, P); if (!s) return;
     if (bloqueParUltimatum()) return;
+    gelerAvatar();
     var cb = M.tirerCombat(C, P);
     combat = { s: s, e: s.element, qs: cb.questions, phase: "apparition", i: 0, res: [], repondu: false, fin: null, etape: 0, replique: M.replique(C, P, ["atome_apparait"], null, null, "alchimie") };
     sauver(); rendreCombat();
@@ -3401,7 +3409,7 @@ svg.grille .interro { transition: opacity .3s; }
     } else if (nom === "suite") {
       z.appendChild(blocSuiteTour());
     } else {
-      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
+      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c); if (c.classList.contains("carte-savant")) degelerAvatar();
     }
     wrap.appendChild(z);
     var suite = etapes[i + 1], encore = !suite && M.atomeSauvage(C, P), arretA = !suite && atomeArret(r.plateau);
@@ -4108,6 +4116,7 @@ svg.grille .interro { transition: opacity .3s; }
       var ordre = q.type === "qcm" ? M.melanger(q.choix.map(function (_, i) { return i; }), Math.random) : null;
       return { q: q, ordre: ordre };
     });
+    gelerAvatar();
     quiz = { id: id, mode: mode, jouer: !!(opts && opts.jouer), uneCase: !!(opts && opts.uneCase), qs: qs, i: 0, res: [], repondu: false, fin: null, chrono: !!(P.options && P.options.chrono), minuteur: null, debut: Date.now(), debutQuestion: 0,
       arbreFerme: !M.arbreOuvert(C, P, C.parId[id].stat) };
     rendreQuiz();
@@ -4439,7 +4448,7 @@ svg.grille .interro { transition: opacity .3s; }
       // v15 : quiz lancé sur une case d'arbre fermé, réussi : l'arbre s'ouvre.
       if (quiz.arbreFerme && M.arbreOuvert(C, P, k.stat)) z.appendChild(el('<div class="case-dicte" style="--c:' + couleur(k.stat) + '"><span><b>Arbre ' + esc(tx(stat(k.stat).nom)) + " ouvert !</b><br>Ses compétences sont jouables, et ses cases du plateau lanceront ses quiz.</span></div>"));
     } else if (nom.indexOf("recompense:") === 0) {
-      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c);
+      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c); if (c.classList.contains("carte-savant")) degelerAvatar();
     } else if (nom === "duel") {
       z.appendChild(blocDefi());
     } else if (nom === "suite") {
@@ -4497,6 +4506,7 @@ svg.grille .interro { transition: opacity .3s; }
     var g = carte.querySelector(".recompense h3") || carte.querySelector("h3") || carte.querySelector(".genre"); if (g) g.insertAdjacentHTML("afterend", p);
     return carte;
   }
+  function carteSavant() { var c = carteRecompense.apply(null, arguments); c.classList.add("carte-savant"); return c; }
   function recompensesBilan(r) {
     var out = [], te = r.theme || (r.ennemi && r.ennemi.theme) || null;
     (r.nouveauxSucces || []).forEach(function (sc) {
@@ -4525,7 +4535,7 @@ svg.grille .interro { transition: opacity .3s; }
       c.appendChild(bt); out.push(marquerTheme(c, l, te));
     });
     (r.nouveauxSavants || []).forEach(function (sv) {
-      out.push(marquerTheme(carteRecompense("Nouveau savant jouable", svgSavant(sv, 80), tx(sv.nom), sv.annees + ". Le dernier savant débloqué devient ton personnage, d'office. Personne ne t'a demandé ton avis.", { titre: "Sa biographie", html: "<p>" + esc(tx(sv.notice)) + "</p>" + (sv.source ? "<cite>Source : " + esc(sv.source) + "</cite>" : "") }), sv, te));
+      out.push(marquerTheme(carteSavant("Nouveau savant jouable", svgSavant(sv, 80), tx(sv.nom), sv.annees + ". Le dernier savant débloqué devient ton personnage, d'office. Personne ne t'a demandé ton avis.", { titre: "Sa biographie", html: "<p>" + esc(tx(sv.notice)) + "</p>" + (sv.source ? "<cite>Source : " + esc(sv.source) + "</cite>" : "") }), sv, te));
     });
     (r.nouveauxAccessoires || []).forEach(function (a) {
       out.push(carteRecompense("Nouvel accessoire", svgRogne(a.pixels, C.avatar.palette, 80), tx(a.nom), "À essayer sur ton avatar, dans l'onglet Personnage.", null));
@@ -4541,6 +4551,7 @@ svg.grille .interro { transition: opacity .3s; }
   function rendre() {
     if (!C || !P) return;
     var app = document.getElementById("app"); app.innerHTML = "";
+    if (!document.querySelector(".quiz")) degelerAvatar();
     // v28 : enfermé, on ne quitte pas le mur.
     if (vue !== "honte" && M.jeuFerme(C, P, maintenant())) { if (vue !== "aujourdhui") toast("Pas avant la fin de ta peine."); vue = "honte"; }
     app.appendChild(vue === "arbre" ? vueArbre() : vue === "perso" ? vuePerso() : vue === "collections" ? vueCollections() : vue === "succes" ? vueSucces() : vue === "honte" ? vueHonte() : vueAujourdhui());
