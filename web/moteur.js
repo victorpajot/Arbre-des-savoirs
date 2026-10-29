@@ -1401,7 +1401,9 @@
 
   // `bonnes` : nombre de bonnes réponses. Renvoie {capture, element, bonnes, total, premiere, fiche, recompenses}.
   // v34 : `ratees` (facultatif) : [{type, rep}] des questions manquées, épinglées au mur de la honte.
-  function terminerCombat(contenu, partie, bonnes, t, ratees) {
+  // v34 (Victor) : `indice` : les atomes capturés ont été montrés sur le tableau. Ça aide, mais ça coûte :
+  // une récompense de moins dans le lot, et pas de faveur gagnée si l'atome est pris.
+  function terminerCombat(contenu, partie, bonnes, t, ratees, indice) {
     var s = atomeSauvage(contenu, partie); if (!s) return null;
     if (ratees && ratees.length) epinglerOublis(partie, "sci.atomes", ratees.map(function (x) {
       var id = "atome." + s.z + "." + x.type, q = contenu.questionParId[id], rep = x.rep === undefined ? null : x.rep;
@@ -1410,17 +1412,18 @@
       return { id: id, correct: false, rep: rep };
     }).filter(function (x) { return contenu.questionParId[x.id]; }), t, "atome");
     ouvrirLot(partie, t, "alchimie");
+    if (indice) partie.lot.cap = RECOMPENSES_PAR_EPREUVE - 1;
     var R = contenu.atomes.regles, c = partie.compteurs, f = ficheAtome(partie, s.z);
     partie.sauvages.shift();
     var capture = bonnes >= seuilAtome(contenu, partie, t), premiere = capture && !f.capture;
     if (capture) { if (!f.capture) { f.capture = t; c.atomesCaptures = (c.atomesCaptures || 0) + 1; } }
     else { f.fuites++; c.atomesEnfuis = (c.atomesEnfuis || 0) + 1; }
-    var ag = agacerIA(contenu, partie, R.questions - bonnes, !capture, t);
+    var ag = indice && capture ? null : agacerIA(contenu, partie, R.questions - bonnes, !capture, t);
     var avant = verifierRecompenses(contenu, partie, t);
     var dep = suiteTrajet(contenu, partie, s, t);
     var apres = verifierRecompenses(contenu, partie, t), rec = fusionRec(avant, apres);
     partie.maj = t;
-    return { avantPlateau: avant, apresPlateau: apres, plateau: dep, capture: capture, element: s.element, bonnes: bonnes, total: R.questions, premiere: premiere, fiche: f, recompenses: rec, agacement: ag,
+    return { avantPlateau: avant, apresPlateau: apres, plateau: dep, capture: capture, element: s.element, bonnes: bonnes, total: R.questions, premiere: premiere, fiche: f, recompenses: rec, agacement: ag, indice: !!indice,
       captures: Object.keys(partie.atomes).filter(function (z) { return partie.atomes[z].capture; }).length };
   }
 
@@ -1518,7 +1521,7 @@
   }
   // v20 : les articles de poche. Joker 50/50 et droit à l'erreur servent en quiz, la relance sur un atome sauvage ;
   // le désarmement se déclenche tout seul sur le prochain piège où le pion s'arrête.
-  var POCHE = { joker: 1, erreur: 1, relance: 1, desarme: 1 };
+  var POCHE = { joker: 1, erreur: 1, relance: 1, desarme: 1, kit: 1 };
   function enPoche(partie, article) { return (partie.inventaire && partie.inventaire[article]) || 0; }
   function utiliser(partie, article, t) {
     if (!enPoche(partie, article)) return false;

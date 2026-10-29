@@ -726,6 +726,10 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .tableau-per.jeu { margin-top: 0; }
 .tableau-per.jeu .el.vise { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent); transform: scale(1.35); position: relative; z-index: 1; }
 .placer { display: flex; flex-direction: column; gap: 12px; }
+.placer .indice { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.placer .indice small { font-size: 13px; font-weight: 500; color: var(--muted); }
+.placer .indice:not(.sec) small { color: #fff; opacity: .85; }
+.tableau-per.jeu .el.pris { background: var(--c); color: #fff; box-shadow: none; }
 .viseur { display: flex; flex-direction: column; gap: 10px; }
 .vise-txt { margin: 0; font-size: 16px; font-weight: 600; }
 .fleches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
@@ -3801,14 +3805,31 @@ svg.grille .interro { transition: opacity .3s; }
       s.onclick = function () {
         if (!dernier) { combat.i++; combat.repondu = false; rendreCombat(); return; }
         var ratees = combat.res.map(function (r, i) { return r ? null : { type: combat.qs[i].type, rep: combat.reps[i] }; }).filter(Boolean);
-        combat.fin = M.terminerCombat(C, P, combat.res.filter(Boolean).length, maintenant(), ratees);
+        combat.fin = M.terminerCombat(C, P, combat.res.filter(Boolean).length, maintenant(), ratees, !!combat.indice);
         combat.fin.replique = M.replique(C, P, [combat.fin.capture ? "atome_capture" : "atome_fuite"], null, null, "alchimie");
         if (combat.fin.plateau) combat.fin.repliquePlateau = M.replique(C, P, combat.fin.plateau.contextes);
         combat.phase = "fin"; combat.etape = 0; sauver(); rendreCombat();
       };
       retour.appendChild(el('<div style="height:12px"></div>')); retour.appendChild(s); s.focus();
     }
-    if (q.type === "place") zr.replaceWith(zr = grillePlacer(function (z, b) { repondreQ(z === e.z, String(z), b); }));
+    if (q.type === "place") {
+      zr.replaceWith(zr = grillePlacer(function (z, b) { zr.querySelectorAll(".indice").forEach(function (x) { x.remove(); }); repondreQ(z === e.z, String(z), b); }));
+      // v34 (Victor) : l'indice montre les atomes déjà capturés, contre une récompense en moins à la fin.
+      if (Object.keys(P.atomes || {}).some(function (k) { return M.estCapture(P, +k) && +k !== e.z; })) {
+        var bi = el('<button type="button" class="btn sec indice"><span>' + (combat.indice ? "Indice utilisé" : "Indice : montrer mes atomes capturés") + '</span><small>une récompense en moins à la fin</small></button>');
+        bi.onclick = function () { combat.indice = true; zr.reveler(); bi.disabled = true; bi.firstChild.textContent = "Indice utilisé"; if (bk) bk.remove(); };
+        // Le kit du chasseur (boutique) : même aide, sans malus.
+        var nk = M.enPoche(P, "kit"), bk = null;
+        if (nk && !combat.kit && !combat.indice) {
+          bk = el('<button type="button" class="btn indice"><span>Kit du chasseur ×' + nk + '</span><small>tes atomes capturés, sans malus</small></button>');
+          bk.onclick = function () { if (!M.utiliser(P, "kit", maintenant())) return; combat.kit = true; sauver(); zr.reveler(); bk.remove(); bi.remove(); };
+          zr.insertBefore(bk, zr.querySelector(".viseur"));
+        }
+        zr.insertBefore(bi, zr.querySelector(".viseur"));
+        if (combat.indice) { zr.reveler(); bi.disabled = true; }
+        if (combat.kit) { zr.reveler(); bi.remove(); }
+      }
+    }
     else q.choix.forEach(function (c, ci) {
       var b = el('<button type="button"></button>'); b.textContent = c;
       b.onclick = function () { repondreQ(ci === q.reponse, c, b); };
@@ -3923,6 +3944,12 @@ svg.grille .interro { transition: opacity .3s; }
     w.querySelectorAll("[data-d]").forEach(function (b) {
       b.onclick = function () { if (!vise) { viser(1); return; } var n = voisine(vise, b.getAttribute("data-d")); if (n) viser(n); };
     });
+    // L'indice : les atomes déjà capturés montrent leur symbole, à la couleur de leur famille.
+    w.reveler = function () {
+      var n = 0;
+      C.atomes.elements.forEach(function (x) { if (M.estCapture(P, x.z)) { n++; cases[x.z].classList.add("pris"); cases[x.z].style.setProperty("--c", couleurFamille(x)); cases[x.z].innerHTML = "<b>" + esc(x.symbole) + "</b>"; } });
+      return n;
+    };
     ok.onclick = function () {
       var z = vise; if (!z) return;
       cases[z].classList.remove("vise");
@@ -3961,6 +3988,7 @@ svg.grille .interro { transition: opacity .3s; }
       z.appendChild(el('<div class="verdict-atome ' + (r.capture ? "capture" : "fuite") + '">' + tuileAtome(e, false, 150, r.capture ? "pop" : "fuite") + '<div class="grand">' + (r.capture ? "Capturé !" : "Il s'est enfui") + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" +
         '<p class="meta" style="margin:0">' + (r.capture ? (r.premiere ? "Nouveau : " : "Déjà dans ton tableau : ") + r.captures + " atome" + (r.captures > 1 ? "s" : "") + " sur " + C.atomes.elements.length + "." : "Il reviendra sur une case Mendeleïev. Il a désormais une fiche à ton nom.") + "</p>" + ficheAtomeHtml(e) + "</div>"));
       var m = comite(r.replique); if (m) z.appendChild(m);
+      if (r.indice) z.appendChild(el('<p class="meta" style="margin:0">Indice utilisé : une récompense en moins' + (r.capture ? ", et pas de faveur gagnée." : ".") + "</p>"));
       ligneAgacement(z, r.agacement);
     } else if (nom === "libre") {
       var cl = carteLiberee(caseLibre, "atome"); if (cl) z.appendChild(cl);
@@ -4400,6 +4428,7 @@ svg.grille .interro { transition: opacity .3s; }
     ["joker", "Joker 50/50", "En quiz, efface deux mauvaises réponses d'une question à choix.", "#E08A00", "½"],
     ["erreur", "Droit à l'erreur", "En quiz, une mauvaise réponse ne compte pas : tu retentes la question.", "#3A7BD5", "↺"],
     ["relance", "Relancer un atome", "L'atome sauvage ne te plaît pas ? L'IA en sort un autre.", "#1E8C8C", "⇄"],
+    ["kit", "Kit du chasseur", "Au combat d'atome, montre tes atomes capturés sur le tableau, sans perdre de récompense.", "#B5651D", "⌖"],
     ["desarme", "Désarmer un piège", "Le prochain piège où tu t'arrêtes ne fonctionne pas.", "#6B4E9B", "✂"],
   ];
   var PARCOURS = [
@@ -4426,13 +4455,13 @@ svg.grille .interro { transition: opacity .3s; }
       b.querySelector(zone).appendChild(r);
     }
     ARTICLES.forEach(function (a) { ligne(a, ".rayons"); });
-    POCHE.forEach(function (a) { if (a[0] === "relance" && !C.atomes) return; if (a[0] === "desarme" && !C.plateau) return; ligne(a, ".poche"); });
+    POCHE.forEach(function (a) { if ((a[0] === "relance" || a[0] === "kit") && !C.atomes) return; if (a[0] === "desarme" && !C.plateau) return; ligne(a, ".poche"); });
     if (C.plateau) PARCOURS.forEach(function (a) { ligne(a, ".parcours", true); });
     return b;
   }
   var FAMILLES_STOCK = { objet: 1, livre: 1, accessoire: 1, masque: 1, chasser: 1 };
-  var POCHE_IDS = { joker: 1, erreur: 1, relance: 1, desarme: 1 };
-  var NOM_POCHE = { joker: ["joker", "jokers"], erreur: ["droit à l'erreur", "droits à l'erreur"], relance: ["relance d'atome", "relances d'atome"], desarme: ["désarmement", "désarmements"] };
+  var POCHE_IDS = { joker: 1, erreur: 1, relance: 1, desarme: 1, kit: 1 };
+  var NOM_POCHE = { joker: ["joker", "jokers"], erreur: ["droit à l'erreur", "droits à l'erreur"], relance: ["relance d'atome", "relances d'atome"], desarme: ["désarmement", "désarmements"], kit: ["kit du chasseur", "kits du chasseur"] };
   function nomPoche(a, n) { return n + " " + NOM_POCHE[a][n > 1 ? 1 : 0]; }
   function choisirArbreAchat() {
     var html = '<div class="eyebrow">Boutique · Faveur d\'un arbre</div><h2>Quel arbre ?</h2><p class="meta">Pour tes ' + M.boutique(C).arbre_epreuves + ' prochaines épreuves lancées par Jouer, l\'IA pioche dans cet arbre, quelle que soit la case.</p><div class="arbres-une">', actions = {};

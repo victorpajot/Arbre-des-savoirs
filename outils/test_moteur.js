@@ -1626,6 +1626,21 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Placer l'atome : une question du combat, retentable au mur en touchant la case.
   const qp = CA.questionParId["atome.26.place"];
   assert.ok(qp && qp.type === "place" && M.corriger(qp, 26) && M.corriger(qp, "26") && !M.corriger(qp, 27));
+  // L'indice : une récompense de moins, pas de faveur gagnée sur une capture.
+  {
+    const PI = M.nouvellePartie(T); PI.sauvages = [{ z: 8, case: 53, depuis: T }];
+    const ri = M.terminerCombat(CA, PI, 4, T, [], true);
+    assert.ok(ri.capture && ri.indice && ri.agacement === null && PI.lot.cap === 1);
+  }
+  // Le kit du chasseur s'achète à la boutique et se range en poche.
+  {
+    const CK = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+      { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), atomes: d("atomes.json"), ennemis: d("ennemis.json") });
+    const PK = M.nouvellePartie(T); PK.credits.solde = 100;
+    const a = M.acheter(CK, PK, "kit", T);
+    assert.ok(a.ok && M.enPoche(PK, "kit") === 1 && PK.credits.solde === 70, JSON.stringify(a));
+    assert.ok(M.utiliser(PK, "kit", T) && M.enPoche(PK, "kit") === 0);
+  }
   // Le guide du tableau : cinq étapes, sourcées.
   assert.equal(CA.atomes.guide.etapes.length, 5); assert.ok(CA.atomes.guide.source.includes("eduscol"));
   console.log("OK : v34 atomes ratés au mur, astuce du numéro, guide du tableau");

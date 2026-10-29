@@ -117,7 +117,7 @@ REPLIQUES = {
 # v19 : la boutique de l'IA. Tout s'achète à l'aveugle : on paie, elle tire au hasard parmi ce qu'on n'a pas.
 BOUTIQUE = {
     "prix": {"objet": 40, "livre": 40, "accessoire": 20, "masque": 100, "chasser": 50, "convoquer": 50, "arbre": 50,
-             "joker": 30, "erreur": 40, "relance": 30, "desarme": 40, "avancer": 80},
+             "joker": 30, "erreur": 40, "relance": 30, "desarme": 40, "avancer": 80, "kit": 30},
     # v26 : avancer d'une case, cher et une fois par jour seulement (Victor).
     # v20 : les articles qu'on garde en poche, jusqu'à `stock_max` de chaque.
     "stock_max": 5,
@@ -164,6 +164,11 @@ BOUTIQUE = {
         "relance": [
             sans("Une relance d'atome. S'il ne vous plaît pas, je vous en sors un autre de ma manche. Ma manche est le tableau périodique."),
             "Mendeleïev laissait des cases vides pour les éléments pas encore trouvés. Moi, je vous laisse en changer. C'est plus moderne.",
+        ],
+        # v34 (Victor) : le kit du chasseur montre les atomes déjà capturés, sans le malus de l'indice.
+        "kit": [
+            sans("Un kit du chasseur : vos prises affichées sur le tableau, pour viser juste. Un combat, pas plus."),
+            sans("Je vous prête vos propres trophées. Que vous ne sachiez pas où les ranger, c'est votre problème."),
         ],
         "desarme": [
             sans("Le prochain piège qui vous attend ne marchera pas. Je le désarme moi-même, avec des gants."),
