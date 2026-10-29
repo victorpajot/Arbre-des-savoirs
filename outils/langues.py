@@ -65,7 +65,7 @@ def etiquettes_svg(svg):
     return out
 
 
-RE_BALISE = re.compile(r"<[^<>]*>|\{\w+\}")
+RE_BALISE = re.compile(r"</?[A-Za-z][^<>]*>|\{\w+\}")
 
 
 def balises(s):
