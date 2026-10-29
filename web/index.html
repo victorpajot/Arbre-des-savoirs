@@ -3780,23 +3780,13 @@ svg.grille .interro { transition: opacity .3s; }
       var etat = n >= seuil ? "Il est déjà à ta merci." : n + reste < seuil ? "Il prépare sa fuite." : "Encore " + (seuil - n) + " bonne" + (seuil - n > 1 ? "s" : "") + " réponse" + (seuil - n > 1 ? "s" : "") + " pour le capturer.";
       var expl = q.type === "place" ? (ok ? "Bien placé : " : "Sa case, en vert : ") + placeTexte(e) + "." : q.type === "symbole" ? "Son symbole : " + e.symbole + "." : q.type === "numero" ? "Numéro atomique : " + e.z + ", soit " + e.z + " proton" + (e.z > 1 ? "s" : "") + " dans son noyau. C'est sa place dans le tableau." : "On le croise surtout dans " + e.ou.map(function (o) { return tx(o); }).join(", ") + ".";
       // v34 (Victor) : raté, on dit à quel atome correspond la réponse donnée, et pour le numéro, comment le retrouver.
-      var dit = !ok && q.type !== "ou" ? M.atomeDit(C.atomes, q.type === "place" ? "numero" : q.type, c) : null, ast = !ok && q.type === "numero" ? M.astuceNumero(C.atomes, e) : null;
+      var dit = !ok && q.type !== "ou" ? M.atomeDit(C.atomes, q.type === "place" ? "numero" : q.type, c) : null;
       if (dit && q.type === "place") expl += " Tu as choisi la case de " + tx(dit.nom) + " (n° " + dit.z + ").";
       else if (dit) expl += " Tu as dit " + c + " : celui-là, c'est " + tx(dit.nom) + (q.type === "numero" ? " (" + dit.symbole + ")" : ", n° " + dit.z) + ".";
       var rt = el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + "</b>" + esc(expl) + '<p class="meta" style="margin:6px 0 0">' + esc(etat) + "</p></div>");
-      if (ast) {
-        var etatP = rt.lastElementChild;
-        if (C.atomes.couches) rt.insertBefore(el(htmlCouches(e)), etatP);
-        rt.insertBefore(el('<p class="astuce-z"><b>Sa place</b>' + esc(ast.texte) + "</p>"), etatP);
-        rt.insertBefore(el('<div class="illus">' + ast.illustration + "</div>"), etatP);
-        var bg = boutonGuide(e); bg.style.marginTop = "10px"; rt.insertBefore(bg, etatP);
-      }
-      if (!ok && q.type === "place") {
-        var etatQ = rt.lastElementChild;
-        if (C.atomes.couches) rt.insertBefore(el(htmlCouches(e)), etatQ);
-        var bq = boutonGuide(e); bq.style.marginTop = "10px"; rt.insertBefore(bq, etatQ);
-      }
-      if (!ok) rt.appendChild(el('<p class="meta" style="margin:6px 0 0">Épinglé au mur de la honte : retente-le dès demain.</p>'));
+      // v34b (Victor) : les aides (couches, sa place, guide) attendent la fin du combat, sinon le placement devient trivial.
+      if (!ok && (q.type === "numero" || q.type === "place")) combat.aides = true;
+      if (!ok) rt.appendChild(el('<p class="meta" style="margin:6px 0 0">Épinglé au mur de la honte : retente-le dès demain.' + (q.type === "numero" || q.type === "place" ? " De quoi retrouver sa place t'attend à la fin du combat." : "") + "</p>"));
       retour.appendChild(rt);
       var perdu = M.epreuvePerdue(C, "atome", n, combat.res.length, combat.qs.length, seuil);
       var dernier = combat.i === combat.qs.length - 1 || perdu;
@@ -3981,6 +3971,10 @@ svg.grille .interro { transition: opacity .3s; }
       z.appendChild(el('<div class="verdict-atome ' + (r.capture ? "capture" : "fuite") + '">' + tuileAtome(e, false, 150, r.capture ? "pop" : "fuite") + '<div class="grand">' + (r.capture ? "Capturé !" : "Il s'est enfui") + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" +
         '<p class="meta" style="margin:0">' + (r.capture ? (r.premiere ? "Nouveau : " : "Déjà dans ton tableau : ") + r.captures + " atome" + (r.captures > 1 ? "s" : "") + " sur " + C.atomes.elements.length + "." : "Il reviendra sur une case Mendeleïev. Il a désormais une fiche à ton nom.") + "</p>" + ficheAtomeHtml(e) + "</div>"));
       var m = comite(r.replique); if (m) z.appendChild(m);
+      if (combat.aides && !r.laisse) {
+        var ast = M.astuceNumero(C.atomes, e), ai = el('<div class="retour ko"><b>Pour retrouver sa place</b><div class="illus">' + ast.illustration + "</div></div>");
+        var bg = boutonGuide(e); bg.style.marginTop = "10px"; ai.appendChild(bg); z.appendChild(ai);
+      }
       if (r.indice) z.appendChild(el('<p class="meta" style="margin:0">Indice utilisé : une récompense en moins' + (r.capture ? ", et pas de faveur gagnée." : ".") + "</p>"));
       ligneAgacement(z, r.agacement);
     } else if (nom === "libre") {
