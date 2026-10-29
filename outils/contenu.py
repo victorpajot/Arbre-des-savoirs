@@ -48,6 +48,10 @@ import savants
 import portraits
 from dessin import EMPLACEMENTS, PALETTE
 from illustrations import ENONCE, EXPLICATION
+from illustrations_v31 import EXPLICATION as EXPLICATION_V31
+
+assert not set(EXPLICATION) & set(EXPLICATION_V31), set(EXPLICATION) & set(EXPLICATION_V31)
+EXPLICATION = {**EXPLICATION, **EXPLICATION_V31}
 from questions_nouvelles import Q as Q_NOUVELLES
 from recompenses import ACCESSOIRES, OBJETS, SUCCES_V2, objet
 
