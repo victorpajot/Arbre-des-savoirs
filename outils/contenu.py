@@ -828,6 +828,8 @@ def jeu_plateau():
             "butin": {"rappel": 0.4, "quiz_base": 0.4, "quiz_par_rang": 0.05, "lots": LOTS},
             "echec": {"quiz": 0, "rappel": -2},
             "tour_suivant": {"multiplicateur_recul": 2, "quiz_parfaits_prison": 2},
+            # v32 (Victor) : sur une case piège, une question difficile (rang 5 et plus) ; juste, le piège est déjoué.
+            "question_piege": {"rang_min": 5},
             "textes": {k: fr(v) for k, v in {**plateau.REGLES_SPECIALES, **pieges.TEXTES, **mendeleiev.TEXTES}.items()},
         },
         "epoques": [{"id": id, "nom": fr(nom), "debut": d, "fin": f, "icone": plateau.PICTO_EPOQUE[id]} for id, nom, d, f in plateau.EPOQUES],

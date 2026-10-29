@@ -1419,3 +1419,22 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(M.agacerIA(C, P, 1, true, T).perte > 0, "ratée : elle s'agace");
   console.log("OK : v31 réussite avec fautes, faveur positive");
 }
+
+// v32 : « Piège ! » Une case piège arrête le pion sur une question difficile ; juste, le piège est déjoué ; faux, il se déclenche.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 7, 10).getTime();
+  const prep = () => { const P = M.nouvellePartie(T); P.decalage = T - Date.now(); P.plateau.ennemis = {}; P.sauvages = []; const rt = M.routeTour(C, P); const i = rt.indexOf(21); P.plateau.idx = i - 1; P.plateau.position = rt[i - 1]; return P; };
+  let P = prep();
+  let dep = M.deplacer(C, P, 1, T, "quiz");
+  assert.ok(dep.etapes.some(e => e.type === "piege") && P.plateau.position === 21 && M.piegeEnAttente(P), "le pion s'arrête sur le piège");
+  const q = M.questionPiege(C, P, () => 0.3);
+  assert.ok(q.type !== "vrai_faux" && C.parId[q.competence].rang >= 5, "question difficile");
+  assert.ok(M.deplacer(C, P, 2, T, "quiz").etapes.some(e => e.type === "bloque_piege") && P.plateau.position === 21, "bloqué tant que la question attend");
+  const rate = M.repondrePiege(C, P, false, T);
+  assert.ok(!rate.dejoue && P.plateau.position < 21 && !M.piegeEnAttente(P) && rate.plateau.etapes.some(e => e.type === "recul"), "raté : le recul s'applique");
+  P = prep(); M.deplacer(C, P, 1, T, "quiz"); M.questionPiege(C, P);
+  const ok = M.repondrePiege(C, P, true, T);
+  assert.ok(ok.dejoue && P.plateau.position === 21 && !M.piegeEnAttente(P), "juste : le piège est déjoué");
+  console.log("OK : v32 question piège");
+}

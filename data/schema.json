@@ -869,7 +869,10 @@
          "mur_force",
          "mur_libere",
          "rattrapage_reussi",
-         "rattrapage_rate"
+         "rattrapage_rate",
+         "piege_question",
+         "piege_dejoue",
+         "piege_declenche"
         ]
        },
        "reference": {
@@ -2127,6 +2130,16 @@
          "maximum": 1
         },
         "lots": {
+         "type": "integer",
+         "minimum": 1
+        }
+       }
+      },
+      "question_piege": {
+       "type": "object",
+       "description": "v32 : question piège sur les cases pièges.",
+       "properties": {
+        "rang_min": {
          "type": "integer",
          "minimum": 1
         }

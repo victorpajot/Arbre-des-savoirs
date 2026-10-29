@@ -135,6 +135,33 @@ REPLIQUES = {
         sans("Une minute de remise de peine. Pour bonne conduite, si l'on veut."),
         sans("Exact. Le mur vous va moins bien quand vous savez."),
     ],
+    "piege_question": [
+        sans("Piège ! Une question, une seule, et pas des plus faciles. Juste, vous passez. Faux, vous connaissez la suite."),
+        sans("Halte. Cette case est piégée. Je vous laisse une chance de vous en sortir : répondez juste."),
+        sans("Piège ! J'ai choisi la question moi-même. Je ne dirai pas que je l'ai choisie difficile. Je l'ai choisie difficile."),
+        sans("Vous marchez sur un piège. Une bonne réponse le désamorce. Une mauvaise, je vous laisse imaginer."),
+        "Piège ! Frege a vu céder les fondations de son grand œuvre au moment de l'imprimer, à cause d'une seule lettre de Russell. Voyons si les vôtres tiennent à une seule question.",
+        "Piège ! Le cheval Hans semblait calculer, jusqu'à ce que Pfungst fasse poser la question par quelqu'un qui ignorait la réponse. Personne ne vous soufflera rien ici.",
+        "Piège ! En 2011, OPERA annonçait des neutrinos plus rapides que la lumière ; c'était un câble mal branché. Vérifiez vos branchements avant de répondre.",
+    ],
+    "piege_dejoue": [
+        sans("Déjoué. Je l'avais pourtant bien caché."),
+        sans("Juste. Le piège ne se déclenche pas. Je note que vous êtes moins naïf que prévu."),
+        sans("Correct. Vous passez. Je reposerai un piège plus loin, rassurez-vous."),
+        sans("Bien répondu. Le piège reste armé pour le prochain imprudent."),
+        "Déjoué. Kepler a refusé d'ignorer huit minutes d'arc, et l'astronomie entière en a été réformée. Vous, vous n'avez rien ignoré : vous passez.",
+        "Juste. Pfungst a démasqué Hans le Malin avec une question bien posée. La vôtre était bien répondue. Le piège reste muet.",
+        "Désamorcé. Volta a inventé la pile pour contredire Galvani. Vous avez répondu juste pour me contredire. Ça marche aussi.",
+    ],
+    "piege_declenche": [
+        sans("Faux. Le piège se referme. C'était pourtant écrit dans vos fiches."),
+        sans("Raté. Clac. Vous auriez dû réviser."),
+        sans("Mauvaise réponse. Le piège fait son travail, et moi le mien."),
+        sans("Non. Le piège se déclenche. Je n'y suis pour rien. Enfin, presque."),
+        "Raté. Lazzarini trichait pour tomber pile sur π. Vous n'avez même pas triché, et vous êtes tombé à côté. Le piège se déclenche.",
+        "Faux. En 1920, le New York Times affirmait qu'une fusée ne volerait pas dans le vide ; il s'est corrigé en 1969. Prenez moins de temps que lui. En attendant, le piège se déclenche.",
+        "Clac. Mars Climate Orbiter s'est perdue pour une confusion d'unités. Vous, pour une confusion tout court.",
+    ],
     "rattrapage_rate": [
         sans("Faux. Le chrono ne bouge pas. Vous non plus, d'ailleurs."),
         sans("Raté. La réponse était dans la fiche, juste en dessous. Je dis ça."),
@@ -151,4 +178,5 @@ TONS = {k: "decue" for k in REPLIQUES}
 TONS.update({"furieuse_jouer": "impatiente", "furieuse_ennemi": "impatiente", "furieuse_defaut": "impatiente",
              "faveur_furieuse": "decue", "faveur_nulle": "decue", "faveur_remontee": "impatiente",
              "mur_force": "moqueuse", "mur_libere": "impatiente",
-             "rattrapage_reussi": "impatiente", "rattrapage_rate": "moqueuse"})
+             "rattrapage_reussi": "impatiente", "rattrapage_rate": "moqueuse",
+             "piege_question": "moqueuse", "piege_dejoue": "decue", "piege_declenche": "moqueuse"})

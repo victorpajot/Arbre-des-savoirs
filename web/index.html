@@ -934,6 +934,14 @@ svg.grille .interro { transition: opacity .3s; }
   @keyframes cadenas-vert { to { color: var(--good); } }
   @keyframes anse-ouvre { to { transform: translate(-2px, -10px) rotate(-38deg); } }
 }
+.piege-scene { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.piege-titre { font-size: 34px; font-weight: 800; color: var(--bad); letter-spacing: .02em; }
+.piege-verdict { font-size: 20px; font-weight: 800; margin: 10px 0 4px; }
+.piege-verdict.ok { color: var(--good); }
+.piege-verdict.ko { color: var(--bad); }
+.bloc.piege-attente { display: flex; gap: 14px; align-items: center; border-left: 4px solid var(--bad); }
+@media (prefers-reduced-motion: no-preference) { .piege-titre { animation: piege-claque 0.6s cubic-bezier(.3,1.8,.5,1) both; } }
+@keyframes piege-claque { 0% { transform: scale(2.4) rotate(-6deg); opacity: 0; } 60% { transform: scale(.92) rotate(2deg); opacity: 1; } 100% { transform: none; } }
 .fete { position: fixed; inset: 0; z-index: 60; background: color-mix(in srgb, var(--bg) 97%, transparent); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
 .fete .in { position: relative; z-index: 1; max-width: 460px; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .fete h2 { margin: 0; }
@@ -2015,6 +2023,7 @@ svg.grille .interro { transition: opacity .3s; }
   }
   function ouvrirJouer() {
     if (bloqueParUltimatum()) return;
+    if (M.piegeEnAttente(P)) { ouvrirPiege(); return; }
     if (M.duelBloquant(P)) { lancerDuel(); return; }
     var t = maintenant(), c = M.choixIA(C, P, t); if (!c) { toast("Rien à jouer pour l'instant."); return; }
     var k = c.comp, s = stat(k.stat), v = M.valeurEpreuve(C, P, { type: c.type, comp: k.id }, t), bonus = bonusJouerMax(), bMin = C.plateau.regles.bonus.jouer || 0;
@@ -2426,6 +2435,7 @@ svg.grille .interro { transition: opacity .3s; }
     v.appendChild(perso);
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
     if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
+    if (M.piegeEnAttente(P)) v.appendChild(blocPiegeAccueil());
     if (C.plateau && P.plateau.parcoursSuivant) v.appendChild(blocSuiteTour());
     if (C.plateau) v.appendChild(boutonJouer());
     var bh = blocHonte(); if (bh) v.appendChild(bh);
@@ -3218,6 +3228,7 @@ svg.grille .interro { transition: opacity .3s; }
     wrap.appendChild(z);
     var suite = etapes[i + 1];
     if (!suite && arret) boutonAtome(wrap, arret, fermerDuel);
+    else if (!suite && M.piegeEnAttente(P)) boutonPiege(wrap, fermerDuel);
     else if (!suite && !(P.duel && P.duel.pret)) finEpreuve(wrap, fermerDuel);
     else {
       var bt = el('<button type="button" class="btn large">' + (!suite ? (P.duel && P.duel.ennemi === e.id ? "Revanche !" : "Ennemi suivant !") : suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : suite === "suite" ? "Et maintenant ?" : "Récompense") + "</button>");
@@ -3268,6 +3279,64 @@ svg.grille .interro { transition: opacity .3s; }
     var go = el('<button type="button" class="btn large" style="background:#1565C0">Un atome sauvage !</button>');
     go.onclick = function () { fermer(); combattreAtome(ap.z); };
     wrap.appendChild(go);
+  }
+  // v32 (Victor) : « Piège ! » Fin du trajet sur une case piège : un seul bouton, vers la question.
+  function boutonPiege(wrap, fermer) {
+    var go = el('<button type="button" class="btn large" style="background:#D94141">Piège !</button>');
+    go.onclick = function () { fermer(); ouvrirPiege(); };
+    wrap.appendChild(go);
+  }
+  function blocPiegeAccueil() {
+    var pg = P.piege, k = C.plateau.cases[pg.case - 1];
+    var b = el('<div class="bloc piege-attente"><span class="vitrine">' + svgSprite(k.icone, 64, tx(k.titre)) + '</span><div style="flex:1;min-width:0"><div class="eyebrow">Case ' + pg.case + ' · piège</div><h2>Piège !</h2>' +
+      '<p class="meta">Une question difficile, sans faute, pour le déjouer. Sinon : ' + esc(texteRegle(pg.regle).replace(/^[^:]*: /, "").toLowerCase()) + '</p><button type="button" class="btn">Répondre</button></div></div>');
+    b.querySelector(".btn").onclick = ouvrirPiege;
+    return b;
+  }
+  function ouvrirPiege() {
+    var pg = P.piege, q = M.questionPiege(C, P); if (!q) return;
+    sauver();
+    var k = C.plateau.cases[pg.case - 1], kq = C.parId[q.competence];
+    feuilleSimple('<div class="piege-scene"><div class="piege-titre">Piège !</div><span class="vitrine">' + svgSprite(k.icone, 96, tx(k.titre)) + '</span>' +
+      '<div class="eyebrow">Case ' + pg.case + " · " + esc(tx(k.titre)) + '</div><p class="etat-pion">' + esc(texteRegle(pg.regle)) + '</p></div><div id="piege-ia"></div><div id="piege-q"></div>', "Piège");
+    var zia = feuille.querySelector("#piege-ia"), m = comite(M.replique(C, P, ["piege_question"]), true); if (m) zia.appendChild(m);
+    var c = el('<div class="oubli" style="--c:' + couleur(kq.stat) + '"><div class="eyebrow" style="color:' + couleur(kq.stat) + '">' + esc(tx(kq.nom)) + " · niveau " + kq.rang + '</div><p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
+    if (q.illustration) c.appendChild(el('<div class="illus">' + q.illustration + "</div>"));
+    var zone = el('<div class="choix"></div>'), fait = false;
+    function repondre(v, bt) {
+      if (fait) return; fait = true;
+      var ok = M.corriger(q, v), r = M.repondrePiege(C, P, ok, maintenant()); sauver();
+      zone.querySelectorAll("button, input").forEach(function (z) { z.disabled = true; });
+      if (bt && !ok) bt.classList.add("faux");
+      zone.querySelectorAll("button[data-v]").forEach(function (z) { if (z.getAttribute("data-v") === String(q.reponse)) z.classList.add("bon"); });
+      var donnee = ok ? null : texteReponse(q, v);
+      c.appendChild(el('<p class="rep-h">' + (donnee ? "Ta réponse : <s>" + esc(donnee) + "</s><br>" : "") + "Bonne réponse : <b>" + esc(bonneReponse(q)) + "</b></p>"));
+      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>"));
+      if (q.illustration_explication) c.appendChild(el('<div class="illus">' + q.illustration_explication + "</div>"));
+      if (!r) return;
+      c.appendChild(el('<div class="piege-verdict ' + (r.dejoue ? "ok" : "ko") + '">' + (r.dejoue ? "Piège déjoué !" : "Le piège se déclenche") + "</div>"));
+      var mr = comite(r.replique, true); if (mr) c.appendChild(mr);
+      if (!r.dejoue && r.plateau) {
+        var zd = el("<div></div>"); c.appendChild(zd);
+        animPion = r.plateau; zd.appendChild(blocDeplacement(r.plateau, null, true)); setTimeout(function () { animerPion(zd); }, 60);
+        var rec = r.recompenses || {};
+        recompensesBilan({ nouveauxSucces: rec.succes, masque: rec.masque, nouveauxObjets: rec.objets, nouveauxLivres: rec.livres, nouveauxSavants: rec.savants, nouveauxAccessoires: rec.accessoires, nouveauxEvenements: rec.evenements })
+          .forEach(function (x) { c.appendChild(x); });
+      }
+      var fin = el('<button type="button" class="btn large">Continuer</button>');
+      fin.onclick = function () { fermerFeuille(); rendre(); };
+      c.appendChild(fin);
+    }
+    if (q.type === "qcm") M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
+      var bt = el('<button type="button" data-v="' + i + '">' + esc(tx(q.choix[i])) + "</button>"); bt.onclick = function () { repondre(i, bt); }; zone.appendChild(bt);
+    });
+    else {
+      var f = el('<form class="saisie"><input inputmode="decimal" autocomplete="off" aria-label="Ta réponse" placeholder="Ta réponse">' + (q.unite ? '<span class="unite">' + esc(q.unite) + "</span>" : "") + '<button type="submit" class="btn">Valider</button></form>');
+      f.onsubmit = function (ev) { ev.preventDefault(); var val = f.querySelector("input").value; if (isNaN(M.lireNombre(val))) { toast("Écris un nombre, par exemple 42 ou 3,5."); return; } repondre(val, null); };
+      zone.appendChild(f);
+    }
+    c.appendChild(zone);
+    feuille.querySelector("#piege-q").appendChild(c);
   }
   // Mettre cet atome en tête de la file d'attente, puis lancer son combat.
   function combattreAtome(z) {
@@ -3414,6 +3483,7 @@ svg.grille .interro { transition: opacity .3s; }
     wrap.appendChild(z);
     var suite = etapes[i + 1], encore = !suite && M.atomeSauvage(C, P), arretA = !suite && atomeArret(r.plateau);
     if (arretA) { boutonAtome(wrap, arretA, function () { combat = null; var q = document.querySelector(".quiz.atome"); if (q) q.remove(); }); return wrap; }
+    if (!suite && !encore && M.piegeEnAttente(P)) { boutonPiege(wrap, fermerCombat); return wrap; }
     if (!suite && !encore) finEpreuve(wrap, fermerCombat);
     else {
       var bt = el('<button type="button" class="btn large">' + (suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : suite === "suite" ? "Et maintenant ?" : suite ? "Récompense" : "Atome suivant !") + "</button>");
@@ -4111,6 +4181,7 @@ svg.grille .interro { transition: opacity .3s; }
   // `opts.jouer` : lancé par le bouton « Jouer », l'IA a choisi l'épreuve (bonus de cases si réussie).
   function lancerQuiz(id, mode, opts) {
     if (bloqueParUltimatum() || bloqueParDuel()) return;
+    if (M.piegeEnAttente(P)) { ouvrirPiege(); return; }
     var n = mode === "rappel" ? C.regles.rappels.questions_par_rappel : nbQuiz();
     var qs = M.tirerQuestions(C, P, id, n).map(function (q) {
       var ordre = q.type === "qcm" ? M.melanger(q.choix.map(function (_, i) { return i; }), Math.random) : null;
@@ -4358,6 +4429,8 @@ svg.grille .interro { transition: opacity .3s; }
     bloque_revision: function (e) { return "Révision forcée en attente (« " + tx(C.parId[e.comp].nom) + " ») : ton pion ne bouge pas."; },
     atome: function (e) { return "Case Mendeleïev " + e.case + " : un atome sauvage (" + tx(C.atomes.elements[e.z - 1].nom) + ") arrête ton pion." + (e.reste ? " Attrape-le ou laisse-le partir pour faire " + (e.reste > 1 ? "les " + e.reste + " cases qui restent." : "la case qui reste.") : ""); },
     atome_plein: function (e) { return "Case Mendeleïev " + e.case + " : trois atomes t'attendent déjà. Celui-ci repart, vexé."; },
+    piege: function (e) { return "Piège ! Case " + e.case + " : une question difficile, à réussir sans faute, sinon le piège se déclenche."; },
+    bloque_piege: function (e) { return "Case " + e.case + " : le piège attend ta réponse. Ton pion ne bouge pas."; },
     piege_desarme: function (e) { return "Case " + e.case + " : piège désarmé. Ton achat à la boutique a servi."; },
     piege_evite: function (e) { return "Case " + e.case + " : le piège ne fonctionne pas aujourd'hui. Un masque de l'IA l'a désarmé."; },
     bonus_objet: function (e) { var o = C.objets.filter(function (x) { return x.id === e.objet; })[0], n = o ? tx(o.nom) : "Ton objet"; return e.bonus === "case" ? n + " te pousse : +" + e.n + " case" + (e.n > 1 ? "s" : "") + "." : e.bonus === "butin" ? n + " porte chance : la prochaine récompense est assurée." : n + " fait briller les yeux de l'IA : +" + e.n + " de faveur."; },
@@ -4461,6 +4534,7 @@ svg.grille .interro { transition: opacity .3s; }
     function groupe(d) { var n = 0; while (etapes[d + n] && etapes[d + n].indexOf("recompense:") === 0) n++; return n; }
     var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite === "suite" ? "Et maintenant ?" : suite.indexOf("recompense:") === 0 ? (nom.indexOf("recompense:") !== 0 ? (groupe(e + 1) > 1 ? "Voir les " + groupe(e + 1) + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
     if (!suite && arret) boutonAtome(wrap, arret, fermerQuiz);
+    else if (!suite && M.piegeEnAttente(P)) boutonPiege(wrap, fermerQuiz);
     else if (!suite) finEpreuve(wrap, fermerQuiz);
     else {
       var bt = el('<button type="button" class="btn large">' + libelle + "</button>");

@@ -888,7 +888,7 @@
     var vus = {}, out = [];
     dep.etapes.forEach(function (e) {
       var ctx = { prison_liberation: "prison_liberation", prison: "prison", bloque_prison: "prison", eureka: "eureka", recul: "piege",
-        retour_epoque: "retour_epoque", teleport: "teleport", oubli: "oubli", renvoi: "oubli", raccourci: "route_raccourcie", detour: "route_detour", cadeau: "cadeau_case", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi", atome: "atome_apparait" }[e.type];
+        retour_epoque: "retour_epoque", teleport: "teleport", oubli: "oubli", renvoi: "oubli", raccourci: "route_raccourcie", detour: "route_detour", cadeau: "cadeau_case", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", piege: "piege_question", bloque_piege: "piege_question", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi", atome: "atome_apparait" }[e.type];
       if (ctx && !vus[ctx]) { vus[ctx] = 1; out.unshift(ctx); }
     });
     if (dep.a !== dep.de && dep.valeur > 0) out.push("plateau_avance");
@@ -928,6 +928,38 @@
       pl.visites[n] = (pl.visites[n] || 0) + 1;
       (pl.arrets || (pl.arrets = {}))[n] = 1;
       if (n > pl.atteinte) pl.atteinte = n;
+    }
+    // v32 : ce que fait un piège qui se déclenche (aussi après une question piège ratée).
+    function subir(sp) {
+      if (sp.type === "recul") {
+        var avant = pl.position, avantI = pl.idx;
+        poser(Math.max(0, pl.idx - sp.n * mult));
+        c.reculs++;
+        etapes.push({ type: "recul", case: avant, n: avantI - pl.idx, cause: "piege" });
+      } else if (sp.type === "retour_epoque" || sp.type === "teleport") {
+        var depuis = pl.position, depuisI = pl.idx;
+        poser(placeVers(pl.route, pl.idx, sp.vers));
+        c.reculs++;
+        etapes.push({ type: sp.type, case: depuis, n: depuisI - pl.idx, vers: pl.position });
+      } else if (sp.type === "oubli") {
+        // v15 : retour à la première case jamais dévoilée (à défaut, la première pas encore foulée dans ce tour).
+        var ici = pl.position, iciI = pl.idx, vers = caseOubliee(contenu, partie, iciI);
+        if (vers != null) { poser(vers); c.reculs++; etapes.push({ type: "oubli", case: ici, n: iciI - vers, vers: pl.position }); }
+        else etapes.push({ type: "oubli_vide", case: ici });
+      } else if (sp.type === "revision") {
+        var cible = compARevisier(contenu, partie, t);
+        if (cible) {
+          partie.revision = { comp: cible.id, case: pl.position, depuis: t };
+          c.revisions = (c.revisions || 0) + 1;
+          etapes.push({ type: "revision", case: pl.position, comp: cible.id });
+        } else etapes.push({ type: "revision_vide", case: pl.position });
+      } else if (sp.type === "quarantaine") {
+        pl.quarantaine = sp.n * mult;
+        etapes.push({ type: "quarantaine", case: pl.position, n: pl.quarantaine });
+      } else if (sp.type === "prison") {
+        pl.prison = dur ? R.tour_suivant.quiz_parfaits_prison : 1;
+        etapes.push({ type: "prison", case: pl.position, n: pl.prison });
+      }
     }
     var rj = reglesDuJour(contenu, partie, t);
     // v11 : un masque peut écarter les ennemis pour la journée.
@@ -987,7 +1019,11 @@
       poser(cible);
       return true;
     }
-    if (valeur < 0 && pl.prison > 0) etapes.push({ type: "bloque_prison", reste: pl.prison });
+    if (cause === "piege" && partie.piege) {
+      var pg = partie.piege; partie.piege = null;
+      if (pl.position === pg.case) subir(pg.regle);
+    } else if (partie.piege && partie.piege.case === pl.position && valeur > 0) etapes.push({ type: "bloque_piege", case: pl.position });
+    else if (valeur < 0 && pl.prison > 0) etapes.push({ type: "bloque_prison", reste: pl.prison });
     else if (valeur < 0) {
       poser(Math.max(0, pl.idx + valeur));
       if (pl.idx < deI) { c.reculs++; etapes.push({ type: "recul", n: deI - pl.idx, cause: cause === "cadeau" ? "cadeau" : "echec" }); }
@@ -1013,21 +1049,12 @@
             etapes.push({ type: "piege_desarme", case: pl.position, regle: sp.type });
           } else if (rj.pieges === "neutres" && (sp.type === "recul" || sp.type === "teleport" || sp.type === "retour_epoque" || sp.type === "oubli")) {
             etapes.push({ type: "piege_evite", case: pl.position, regle: sp.type });
-          } else if (sp.type === "recul") {
-            var avant = pl.position, avantI = pl.idx;
-            poser(Math.max(0, pl.idx - sp.n * mult));
-            c.reculs++;
-            etapes.push({ type: "recul", case: avant, n: avantI - pl.idx, cause: "piege" });
-          } else if (sp.type === "retour_epoque" || sp.type === "teleport") {
-            var depuis = pl.position, depuisI = pl.idx;
-            poser(placeVers(pl.route, pl.idx, sp.vers));
-            c.reculs++;
-            etapes.push({ type: sp.type, case: depuis, n: depuisI - pl.idx, vers: pl.position });
-          } else if (sp.type === "oubli") {
-            // v15 : retour à la première case jamais dévoilée (à défaut, la première pas encore foulée dans ce tour).
-            var ici = pl.position, iciI = pl.idx, vers = caseOubliee(contenu, partie, iciI);
-            if (vers != null) { poser(vers); c.reculs++; etapes.push({ type: "oubli", case: ici, n: iciI - vers, vers: pl.position }); }
-            else etapes.push({ type: "oubli_vide", case: ici });
+          } else if (PIEGES[sp.type] && contenu.plateau.regles.question_piege && cause !== "test") {
+            // v32 (Victor) : « Piège ! » Le pion s'arrête ; une question difficile, sans faute, le désamorce.
+            partie.piege = { case: pl.position, regle: sp, depuis: t, q: null };
+            etapes.push({ type: "piege", case: pl.position, regle: sp.type });
+          } else if (PIEGES[sp.type]) {
+            subir(sp);
           } else if (sp.type === "cadeau") {
             var cad = tirerCadeau(contenu, partie, t);
             if (cad) {
@@ -1035,26 +1062,14 @@
               c.cadeauxCase = (c.cadeauxCase || 0) + 1;
               etapes.push({ type: "cadeau", case: pl.position, famille: cad.famille, id: cad.chose.id });
             } else etapes.push({ type: "cadeau_vide", case: pl.position });
-          } else if (sp.type === "revision") {
-            var cible = compARevisier(contenu, partie, t);
-            if (cible) {
-              partie.revision = { comp: cible.id, case: pl.position, depuis: t };
-              c.revisions = (c.revisions || 0) + 1;
-              etapes.push({ type: "revision", case: pl.position, comp: cible.id });
-            } else etapes.push({ type: "revision_vide", case: pl.position });
-          } else if (sp.type === "quarantaine") {
-            pl.quarantaine = sp.n * mult;
-            etapes.push({ type: "quarantaine", case: pl.position, n: pl.quarantaine });
-          } else if (sp.type === "prison") {
-            pl.prison = dur ? R.tour_suivant.quiz_parfaits_prison : 1;
-            etapes.push({ type: "prison", case: pl.position, n: pl.prison });
           }
           break;
         }
       }
     }
-    // Le pion a quitté la case de l'ennemi (recul) : le duel est oublié.
+    // Le pion a quitté la case de l'ennemi (recul) : le duel est oublié. Pareil pour un piège en attente.
     if (partie.duel && partie.duel.case !== pl.position) partie.duel = null;
+    if (partie.piege && partie.piege.case !== pl.position) partie.piege = null;
     // chemin : les cases où le pion se pose, dans l'ordre, pour l'animer case par case.
     // places : les mêmes, en rang sur la route (1 = départ), pour le dessin.
     var dep = { de: de, a: pl.position, valeur: valeur, cause: cause, tour: pl.tours, etapes: etapes, chemin: chemin, places: places, t: t };
@@ -1761,6 +1776,33 @@
     partie.maj = t;
     return { gagne: ms, reste: reste, libere: !reste, replique: reste ? replique(contenu, partie, [correct ? "rattrapage_reussi" : "rattrapage_rate"]) : null };
   }
+  // v32 (Victor) : « Piège ! » Une question difficile (compétence du second losange, pas de vrai/faux),
+  // tirée d'abord parmi celles qu'évoque la case, puis dans son arbre. Juste : le piège est déjoué. Faux : il se déclenche.
+  function piegeEnAttente(partie) { var p = partie.piege; return !!(p && partie.plateau && p.case === partie.plateau.position); }
+  function questionPiege(contenu, partie, alea) {
+    if (!piegeEnAttente(partie)) return null;
+    var p = partie.piege;
+    if (p.q && contenu.questionParId[p.q]) return contenu.questionParId[p.q];
+    var R = contenu.plateau.regles.question_piege || {}, rangMin = R.rang_min || 5;
+    var dures = contenu.questions.filter(function (q) { var k = contenu.parId[q.competence]; return q.type !== "vrai_faux" && k && k.rang >= rangMin; });
+    var k = contenu.plateau.cases[p.case - 1], CC = contenu.plateau.competences_cases, evoque = (CC && CC[String(p.case)]) || [];
+    var choix = dures.filter(function (q) { return evoque.indexOf(q.competence) >= 0; });
+    if (!choix.length && k && k.stat) choix = dures.filter(function (q) { return contenu.parId[q.competence].stat === k.stat; });
+    if (!choix.length) choix = dures.length ? dures : contenu.questions;
+    p.q = choix[Math.floor((alea || Math.random)() * choix.length)].id;
+    return contenu.questionParId[p.q];
+  }
+  function repondrePiege(contenu, partie, correct, t) {
+    if (!piegeEnAttente(partie)) return null;
+    var p = partie.piege, c = partie.compteurs;
+    if (correct) {
+      partie.piege = null; c.piegesDejoues = (c.piegesDejoues || 0) + 1; partie.maj = t;
+      return { dejoue: true, case: p.case, regle: p.regle.type, replique: replique(contenu, partie, ["piege_dejoue"]) };
+    }
+    var dep = deplacer(contenu, partie, 0, t, "piege");
+    dep.contextes = contextesPlateau(dep);
+    return { dejoue: false, case: p.case, regle: p.regle.type, plateau: dep, replique: replique(contenu, partie, ["piege_declenche"]), recompenses: verifierRecompenses(contenu, partie, t) };
+  }
   // Enfermé au mur : plus rien ne se joue (quiz, rappels, duels, atomes) tant que la peine court.
   function jeuFerme(contenu, partie, t) { faveurIA(contenu, partie, t); return !!(partie.punition && partie.punition.restant > 0); }
   // Furieuse, l'IA pose chaque jour un piège sur une case libre juste devant le pion. Renvoie la case, ou null.
@@ -2410,7 +2452,7 @@
     cadeau_terne: "cadeau", cadeau_brillant: "cadeau", cadeau_eblouissant: "cadeau", cadeau_repete: "cadeau",
     farce: "farce", mur_honte: "honte",
     pot_egal: null, pot_genereux: null, pot_premier: null, pot_radin: null, ultimatum: null, ultimatum_paye: null, ultimatum_refuse: null,
-    faveur_furieuse: null, faveur_nulle: null, faveur_remontee: null, mode_test: null, mur_force: null, mur_libere: null, rattrapage_reussi: null, rattrapage_rate: null,
+    faveur_furieuse: null, faveur_nulle: null, faveur_remontee: null, mode_test: null, mur_force: null, mur_libere: null, rattrapage_reussi: null, rattrapage_rate: null, piege_question: null, piege_dejoue: null, piege_declenche: null,
   };
   function lignesTheme(contenu, partie, ctx, theme) {
     var g = theme && GROUPE_THEME[ctx], cle = g && "theme_" + g + "@" + theme, l = cle && contenu.commentairesPar[cle];
@@ -2518,7 +2560,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,
