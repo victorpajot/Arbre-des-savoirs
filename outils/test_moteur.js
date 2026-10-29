@@ -1219,6 +1219,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Comblée : un tour court, peu d'ennemis.
   const P = M.nouvellePartie(T);
   const d1 = boucler(P, 95); assert.ok(d1.etapes.some(e => e.type === "tour_fini"));
+  const tf = d1.etapes.find(e => e.type === "tour_fini");
+  assert.ok(tf.case > 0 && tf.faveur && tf.faveur.gain === 5 && M.faveurIA(CR, P, T).valeur === 100, "v32 : arrivée nommée, faveur en hausse (plafonnée à 100)");
   const s1 = P.plateau.parcoursSuivant; assert.ok(s1 && s1.palier === "comblee" && s1.longueur >= 42 && s1.longueur <= 48 && s1.ennemis === 4);
   assert.notEqual(s1.forme, "serpentin");
   assert.equal(M.choisirSuite(CR, P, "donjon", T).raison, "bientot");

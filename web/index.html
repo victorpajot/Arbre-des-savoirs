@@ -934,6 +934,25 @@ svg.grille .interro { transition: opacity .3s; }
   @keyframes cadenas-vert { to { color: var(--good); } }
   @keyframes anse-ouvre { to { transform: translate(-2px, -10px) rotate(-38deg); } }
 }
+.fete { position: fixed; inset: 0; z-index: 60; background: color-mix(in srgb, var(--bg) 97%, transparent); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
+.fete .in { position: relative; z-index: 1; max-width: 460px; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.fete h2 { margin: 0; }
+.fete .fete-case { padding: 16px; }
+.fete .fete-faveur { font-size: 17px; color: var(--good); margin: 0; }
+.fete .mot { width: 100%; text-align: left; }
+.fete .btn { width: 100%; }
+.fete .feux { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+.fete .feu { position: absolute; width: 0; height: 0; opacity: 0; }
+.fete .feu i { position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
+@media (prefers-reduced-motion: no-preference) {
+  .fete .in > * { animation: apparait 0.5s ease-out both; }
+  .fete .fete-case { animation: fete-zoom 0.9s cubic-bezier(.3,1.5,.5,1) both; }
+  .fete .feu { animation: feu-vie 2.7s ease-out infinite; }
+  .fete .feu i { animation: feu-eclat 2.7s ease-out infinite; animation-delay: inherit; }
+}
+@keyframes fete-zoom { from { transform: scale(0.2) rotate(-8deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes feu-vie { 0% { opacity: 0; } 5% { opacity: 1; } 60% { opacity: 1; } 75%, 100% { opacity: 0; } }
+@keyframes feu-eclat { 0% { transform: translate(0, 0) scale(0.4); } 60% { transform: translate(var(--dx), var(--dy)) scale(1); } 75%, 100% { transform: translate(var(--dx), calc(var(--dy) + 24px)) scale(0.3); } }
 @media (prefers-reduced-motion: reduce) { .liberation .cadenas { color: var(--good); } .liberation .anse { transform: translate(-2px, -10px) rotate(-38deg); } }
 /* v14 : textes de lecture plus grands, à la taille d'une conversation (17 px). Les étiquettes restent petites. */
 .comite p, .succes blockquote, .citation-src blockquote, .recompense .deplie, .fiche-rev li { font-size: 17px; line-height: 1.5; }
@@ -2052,11 +2071,13 @@ svg.grille .interro { transition: opacity .3s; }
     var dep = animPion; animPion = null;
     var g = (racine || document).querySelector("#pion");
     if (!dep || !g) return;
-    // Les places sur la route ; au bout du tour, le pion saute de l'arrivée au départ.
-    var chemin = dep.places || dep.chemin, cases = [chemin[0]];
+    // Les places sur la route. v32 (Victor) : au bout du tour, le pion s'arrête sur l'arrivée, la fête s'ouvre,
+    // et il ne rejoint le départ qu'une fois la fête refermée.
+    var chemin = dep.places || dep.chemin, cases = [chemin[0]], depart = null;
+    var tourFini = (dep.etapes || []).filter(function (e) { return e.type === "tour_fini"; })[0];
     for (var i = 1; i < chemin.length; i++) {
       var de = cases[cases.length - 1], a = chemin[i];
-      if (a === 1 && de > 2) { cases.push(a); continue; }
+      if (a === 1 && de > 2) { if (tourFini) { depart = a; break; } cases.push(a); continue; }
       while (de !== a) { de += a > de ? 1 : -1; cases.push(de); }
     }
     var svgP = g.ownerSVGElement, suivre = svgP && svgP.classList.contains("zoom");
@@ -2066,7 +2087,11 @@ svg.grille .interro { transition: opacity .3s; }
     }
     var reduit = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var fin = cases[cases.length - 1];
-    if (reduit || cases.length < 2) { poser(fin); if (svgP) projecteur(svgP, fin); return; }
+    function arrivee() {
+      if (depart == null) return;
+      feteArrivee(tourFini, function () { poser(depart, reduit ? 0 : 400); if (svgP) projecteur(svgP, depart); });
+    }
+    if (reduit || cases.length < 2) { poser(fin); if (svgP && depart == null) projecteur(svgP, fin); arrivee(); return; }
     var svg = g.ownerSVGElement; if (!racine && svg && svg.scrollIntoView) svg.scrollIntoView({ block: "center", behavior: "smooth" });
     var cible = svgP && svgP.querySelector('.monde g[data-p="' + fin + '"]');
     if (cible) cible.classList.add("a-reveler");
@@ -2075,8 +2100,37 @@ svg.grille .interro { transition: opacity .3s; }
     setTimeout(function pas() {
       j++; poser(cases[j], 180); g.classList.remove("saut"); void g.getBBox(); g.classList.add("saut");
       if (j < cases.length - 1) setTimeout(pas, 190);
-      else setTimeout(function () { if (cible) cible.classList.remove("a-reveler"); if (svgP) svgP.classList.remove("anime"); projecteur(svgP, fin); }, 320);
+      else setTimeout(function () {
+        if (cible) cible.classList.remove("a-reveler"); if (svgP) svgP.classList.remove("anime");
+        if (depart == null) projecteur(svgP, fin); else setTimeout(arrivee, 500);
+      }, 320);
     }, 450);
+  }
+  // v32 (Victor) : la case d'arrivée en grand, sous un feu d'artifice ; la faveur gagnée ; puis retour au départ.
+  function feteArrivee(e, suite) {
+    if (document.querySelector(".fete")) return;
+    var k = e && e.case && C.plateau.cases[e.case - 1], couleurs = ["#F2B632", "#D94141", "#2E9D5B", "#5B8DEF", "#C36BE0", "#FFFFFF"], feux = "";
+    for (var f = 0; f < 6; f++) {
+      var x = 12 + (f * 37) % 76, y = 8 + (f * 23) % 30, c = couleurs[f % couleurs.length], rayons = "";
+      for (var r = 0; r < 12; r++) {
+        var ang = r * 30 * Math.PI / 180;
+        rayons += '<i style="--dx:' + (Math.cos(ang) * 70).toFixed(0) + "px;--dy:" + (Math.sin(ang) * 70).toFixed(0) + 'px"></i>';
+      }
+      feux += '<span class="feu" style="left:' + x + "%;top:" + y + "%;color:" + c + ";animation-delay:" + (f * 0.45).toFixed(2) + 's">' + rayons + "</span>";
+    }
+    var fav = e && e.faveur;
+    var z = el('<div class="fete" role="dialog" aria-modal="true" aria-label="Tour terminé"><div class="feux" aria-hidden="true">' + feux + '</div><div class="in">' +
+      '<div class="eyebrow">Arrivée · tour ' + (e ? e.tour : "") + " terminé</div>" +
+      (k ? '<div class="vitrine grande fete-case">' + svgSprite(k.icone, 200, tx(k.titre)) + "</div><h2>" + esc(tx(k.titre)) + "</h2>" : "<h2>Arrivée !</h2>") +
+      (e ? '<p class="meta">' + e.coups + " épreuve" + (e.coups > 1 ? "s" : "") + (e.record ? ", nouveau record" : "") + "</p>" : "") +
+      (fav && fav.gain ? '<p class="fete-faveur">Faveur de ' + esc(nommerIA("l'IA")) + " : <b>+" + fav.gain + "</b> (" + fav.avant + " → " + fav.apres + ")</p>" : "") +
+      '<div class="mot"></div><button type="button" class="btn large">Retour au départ</button></div></div>');
+    var rep = M.replique(C, P, ["tour_fini"]) || (k && k.replique ? { contexte: "tour_fini", texte: k.replique } : null);
+    var m = rep && comite(Object.assign({}, rep, { expression: "impressionnee", theme: k && k.stat, aparte: false }), true);
+    if (m) z.querySelector(".mot").appendChild(m);
+    z.querySelector(".btn").addEventListener("click", function () { z.remove(); if (suite) suite(); });
+    document.body.appendChild(z);
+    z.querySelector(".btn").focus({ preventScroll: true });
   }
   // --- Fin de tour (v21) : refaire un tour sur le parcours que l'IA vient de dessiner, ou le donjon (bientôt).
   function majuscule(x) { return x.charAt(0).toUpperCase() + x.slice(1); }
@@ -4282,7 +4336,7 @@ svg.grille .interro { transition: opacity .3s; }
     bloque_quarantaine: function () { return "Quarantaine : cette épreuve ne fait pas avancer ton pion."; },
     raccourci: function (e) { return "L'IA, ravie, retire " + (e.cases.length > 1 ? "les cases " + e.cases.join(" et ") : "la case " + e.cases[0]) + " de ta route : " + e.longueur + " étapes en tout."; },
     detour: function (e) { return "L'IA, déçue, remet devant toi " + (e.cases.length > 1 ? "les cases " + e.cases.join(" et ") + ", survolées" : "la case " + e.cases[0] + ", survolée") + " sans t'y arrêter : " + e.longueur + " étapes en tout."; },
-    tour_fini: function (e) { return "Arrivée ! Tour " + e.tour + " terminé en " + e.coups + " épreuve" + (e.coups > 1 ? "s" : "") + (e.record ? (e.ancien ? ", nouveau record (avant : " + e.ancien + ")" : ", ton premier record") : e.ancien ? " (record : " + e.ancien + ")" : "") + ". Retour au feu : l'IA dessine le prochain parcours."; },
+    tour_fini: function (e) { return "Arrivée ! Tour " + e.tour + " terminé en " + e.coups + " épreuve" + (e.coups > 1 ? "s" : "") + (e.record ? (e.ancien ? ", nouveau record (avant : " + e.ancien + ")" : ", ton premier record") : e.ancien ? " (record : " + e.ancien + ")" : "") + ". Retour au feu : l'IA dessine le prochain parcours." + (e.faveur && e.faveur.gain ? " Elle est ravie : +" + e.faveur.gain + " de faveur." : ""); },
     oubli: function (e) { return "Trou de mémoire, case " + e.case + " : retour à la case " + e.vers + ", la plus ancienne que tu n'as jamais vue parmi les 15 dernières."; },
     oubli_vide: function (e) { return "Trou de mémoire, case " + e.case + " : tu as tout vu derrière toi. L'IA cherche, ne trouve rien, et boude."; },
     renvoi: function (e) { return tx(C.ennemiParId[e.ennemi].nom) + " te renvoie à la case " + e.vers + " : « " + tx(C.ennemiParId[e.ennemi].renvoi) + " »"; },

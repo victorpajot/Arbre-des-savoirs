@@ -963,7 +963,8 @@
         var forme = (pl.parcours && pl.parcours.forme) || "serpentin", mf = pl.meilleurs || (pl.meilleurs = {});
         if (mf.serpentin == null && pl.meilleur != null) mf.serpentin = pl.meilleur;
         var coups = pl.coups || 0, record = coups > 0 && (mf[forme] == null || coups < mf[forme]);
-        etapes.push({ type: "tour_fini", tour: pl.tours + 1, coups: coups, record: record, ancien: mf[forme], forme: forme });
+        var fin = { type: "tour_fini", tour: pl.tours + 1, coups: coups, record: record, ancien: mf[forme], forme: forme, case: pl.route[der] };
+        etapes.push(fin);
         if (record) mf[forme] = coups;
         if (coups > 0 && (pl.meilleur == null || coups < pl.meilleur)) pl.meilleur = coups;
         pl.coups = 0; pl.arrets = {};
@@ -975,6 +976,12 @@
         pl.idx = 0; pl.position = R.depart;
         chemin.push(R.depart); places.push(1);
         if (contenu.plateau.parcours) pl.parcoursSuivant = dessinerParcours(contenu, partie, t);
+        // v32 (Victor) : boucler un tour ravit l'IA. Le parcours suivant est déjà dessiné, selon l'humeur d'avant.
+        var Ag = contenu.ia && contenu.ia.credits && contenu.ia.credits.agacement, fv = faveurIA(contenu, partie, t);
+        if (Ag && Ag.tour_fini && fv) {
+          partie.faveur = { valeur: Math.min(100, fv.valeur + Ag.tour_fini), maj: t };
+          fin.faveur = { gain: partie.faveur.valeur - fv.valeur, avant: fv.valeur, apres: partie.faveur.valeur };
+        }
         return false;
       }
       poser(cible);
