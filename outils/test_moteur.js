@@ -340,7 +340,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const C4 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const t0 = new Date(2026, 9, 26, 10, 0).getTime();
   const P = M.nouvellePartie(t0);
-  assert.equal(C4.avatar.savants.length, 81, "v18 : quatre-vingt-un savants");
+  assert.ok(C4.avatar.savants.length >= 81, "v18 : au moins quatre-vingt-un savants");
   assert.ok(C4.competences.every(k => C4.avatar.savants.some(s => s.theme === k.stat)), "v18 : chaque arbre a ses savants");
   assert.deepEqual(M.verifierRecompenses(C4, P, t0).savants, []);
   // Hypatie arrive avec l'astronomie d'observation
@@ -1064,7 +1064,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Tout porte un thème : objets, savants, masques, ennemis ; chaque arbre a ses cases, ses savants, ses masques ou ses objets.
   assert.ok(CT.objets.every(o => o.theme) && CT.avatar.savants.every(s => s.theme) && CT.ia.masques.every(m => m.theme) && CT.ennemis.every(e => e.theme));
   CT.regles.stats.forEach(s => {
-    assert.ok(CT.plateau.cases.some(k => k.stat === s.id), "des cases " + s.id);
+    // Un pack peut n'avoir aucune case à lui : il lui faut au moins une case qui évoque une de ses compétences.
+    const evoque = Object.values(CT.plateau.competences_cases || {}).some(l => l.some(id => CT.parId[id] && CT.parId[id].stat === s.id));
+    assert.ok(CT.plateau.cases.some(k => k.stat === s.id) || evoque, "des cases " + s.id);
     assert.ok(CT.commentairesPar["theme_reussi@" + s.id] && CT.commentairesPar["theme_rate@" + s.id] && CT.commentairesPar["theme_jouer@" + s.id], "répliques " + s.id);
   });
   assert.ok(CT.competences.every(k => CT.succes.some(s => s.condition.type === "competence_maitrisee" && s.condition.id === k.id)), "un succès par compétence");

@@ -243,7 +243,7 @@ def main():
     if set(rattachees) != set(comps):
         erreurs.append(f"bibliotheque.json : il faut au moins un livre par compétence ({len(set(rattachees))} sur {len(comps)})")
     for l in contenu["bibliotheque"]["livres"]:
-        if l["embleme"] not in sprites:
+        if l["embleme"] not in sprites and l["embleme"] not in contenu["succes"].get("dessins", {}):
             erreurs.append(f"bibliotheque.json {l['id']} : emblème inconnu {l['embleme']}")
         if l["stat"] not in stats:
             erreurs.append(f"bibliotheque.json {l['id']} : stat inconnue {l['stat']}")

@@ -28,8 +28,9 @@ MODELE = {
 }
 
 
-def avec(faute):
-    """Les packs du dépôt plus le pack d'essai abîmé par `faute(fichiers)` ; renvoie les erreurs de verifier."""
+def avec(faute, completude=False):
+    """Les packs du dépôt plus le pack d'essai abîmé par `faute(fichiers)` ; renvoie les erreurs de verifier
+    (sans celles de complétude, sauf demande : le pack d'essai est volontairement minuscule)."""
     tmp = Path(tempfile.mkdtemp())
     try:
         shutil.copytree(P.PACKS / "socle", tmp / "socle")
@@ -38,7 +39,8 @@ def avec(faute):
         faute(fichiers)
         for nom, contenu in fichiers.items():
             P.ecrire(tmp / "essai" / nom, contenu)
-        return [e for e in P.verifier(P.tous(tmp), cibles={"essai"}) if not e.startswith("[assemblage]")]
+        return [e for e in P.verifier(P.tous(tmp), cibles={"essai"})
+                if not e.startswith("[assemblage]") and (completude or "complétude" not in e)]
     finally:
         shutil.rmtree(tmp)
 
@@ -66,6 +68,10 @@ def requis(f):
     f["pack.json"]["requiert"] = ["socle", "mecanique"]
     f["competences.json"][0]["prerequis"] = ["phys.forces"]
 assert avec(requis) == [], avec(requis)
+# Un arbre incomplet est signalé, avec ce qui manque.
+incomplet = avec(lambda f: None, completude=True)
+for morceau in ("une par rang de 1 à 8", "au moins 10", "aucun livre", "aucune date", "aucun succès", "pionnier", "savant jouable", "theme_rate@essai", "case du plateau"):
+    assert any(morceau in e for e in incomplet), f"complétude : attendu « {morceau} », reçu : {incomplet}"
 
 # 3. L'assemblage refuse deux éléments de même identifiant.
 tmp = Path(tempfile.mkdtemp())
@@ -81,4 +87,4 @@ try:
         assert "en double" in str(e)
 finally:
     shutil.rmtree(tmp)
-print(f"OK : assemblage identique à data/, {len(index['packs'])} packs valides, 13 fautes de pack refusées")
+print(f"OK : assemblage identique à data/, {len(index['packs'])} packs valides, 14 fautes de pack refusées")

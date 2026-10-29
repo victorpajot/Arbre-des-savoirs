@@ -5647,6 +5647,295 @@
     "id": "couronne"
    },
    "theme": "eloquence"
+  },
+  {
+   "id": "pionnier-mersenne",
+   "nom": {
+    "fr": "Mersenne"
+   },
+   "description": {
+    "fr": "Maîtriser 8 compétences. L'arbre de l'Harmonie s'ouvre."
+   },
+   "condition": {
+    "type": "competences_maitrisees",
+    "n": 8
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Marin Mersenne, moine minime, a servi de relais à l'Europe savante, à une époque sans revues scientifiques : il écrivait à Descartes, à Fermat, à Pascal. On disait qu'informer Mersenne d'une découverte valait une publication."
+    },
+    "source": "MacTutor History of Mathematics, « Marin Mersenne »"
+   },
+   "ouvre": "musique",
+   "illustration": {
+    "type": "icone",
+    "id": "diapason"
+   },
+   "theme": "musique"
+  },
+  {
+   "id": "branche-musique",
+   "nom": {
+    "fr": "Imprimé en trois passages"
+   },
+   "description": {
+    "fr": "Maîtriser le premier losange de l'Harmonie."
+   },
+   "condition": {
+    "type": "branche_complete",
+    "stat": "musique",
+    "rang_max": 4
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1501, à Venise, Ottaviano Petrucci publie l'Harmonice Musices Odhecaton, premier recueil de musique polyphonique imprimé en caractères mobiles. Portées, paroles puis notes passaient sous la presse en trois fois, et tout devait tomber juste."
+    },
+    "source": "Wikipédia (en), « Harmonice Musices Odhecaton »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mus-partition"
+   },
+   "theme": "musique"
+  },
+  {
+   "id": "miserere-de-memoire",
+   "nom": {
+    "fr": "Le Miserere de mémoire"
+   },
+   "description": {
+    "fr": "Réussir sans faute 3 quiz de Musique."
+   },
+   "condition": {
+    "type": "quiz_parfaits_stat",
+    "stat": "musique",
+    "n": 3
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En avril 1770, à Rome, Mozart a 14 ans. Il entend à la chapelle Sixtine le Miserere d'Allegri, dont le Vatican gardait jalousement les ornements, et l'aurait réécrit de mémoire le jour même. La seule source est une lettre de son père Leopold, datée du 14 avril 1770."
+    },
+    "source": "Leopold Mozart, lettre à son épouse, Rome, 14 avril 1770"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mus-orgue"
+   },
+   "theme": "musique"
+  },
+  {
+   "id": "quinte-du-loup",
+   "nom": {
+    "fr": "La quinte du loup"
+   },
+   "description": {
+    "fr": "Maîtriser l'accord des instruments."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mus.temperament"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dans les anciens accords, l'écart qui restait retombait sur une seule quinte. Ses battements la faisaient hurler comme un loup, d'où son nom. Un même clavier ne pouvait donc pas servir toutes les tonalités, et les musiciens baroques réaccordaient parfois en plein concert."
+    },
+    "source": "Wikipédia (en), « Wolf interval »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mus-clavier"
+   },
+   "theme": "musique"
+  },
+  {
+   "id": "arithmetique-cachee",
+   "nom": {
+    "fr": "L'arithmétique cachée"
+   },
+   "description": {
+    "fr": "Maîtriser l'oreille et le cerveau."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mus.perception"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "« La musique est un exercice caché d'arithmétique, où l'esprit ne sait pas qu'il compte. » Leibniz l'écrit en latin au mathématicien Christian Goldbach, dans une lettre du 17 avril 1712."
+    },
+    "source": "Gottfried Wilhelm Leibniz, lettre à Christian Goldbach, 17 avril 1712"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mus-oreille"
+   },
+   "theme": "musique"
+  },
+  {
+   "id": "trop-vite-trop-lent",
+   "nom": {
+    "fr": "Trop vite, puis trop lent"
+   },
+   "description": {
+    "fr": "Maîtriser le son. L'IA chronomètre désormais vos hésitations."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mus.son"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Mersenne a d'abord mesuré la vitesse du son en chronométrant l'écart entre l'éclair d'un coup de feu et sa détonation : 448 m/s, trop rapide. Avec des échos, il trouve ensuite 316 m/s, trop lent. La bonne valeur, environ 342 m/s, tombait entre les deux."
+    },
+    "source": "MacTutor History of Mathematics, « Marin Mersenne »"
+   },
+   "illustration": {
+    "type": "icone",
+    "id": "diapason"
+   },
+   "theme": "musique"
+  },
+  {
+   "id": "main-guidonienne",
+   "nom": {
+    "fr": "La main qui n'était pas la sienne"
+   },
+   "description": {
+    "fr": "Lire une partition. L'IA vous laisse compter sur vos doigts."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mus.notation"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "La « main guidonienne », qui place les notes sur les articulations des doigts, porte le nom de Guido d'Arezzo. Elle ne s'est pourtant répandue qu'après sa mort, et deux auteurs qui commentent Guido peu après lui ne parlent même pas de ses syllabes."
+    },
+    "source": "Encyclopedia.com, « Guido of Arezzo »"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "guido-arezzo"
+   },
+   "theme": "musique"
+  },
+  {
+   "id": "la-de-londres",
+   "nom": {
+    "fr": "Le la de Londres"
+   },
+   "description": {
+    "fr": "Maîtriser les intervalles. L'IA vous accorde, à 440 Hz près."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mus.intervalles"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En mai 1939, à la Broadcasting House de Londres, des délégués européens s'accordent sur un la à 440 Hz. Avant, chacun avait le sien : la France s'était fixé 435 Hz au XIXe siècle. L'ISO reprend le 440 en 1955, puis en fait la norme ISO 16 en 1975."
+    },
+    "source": "Wikipédia (en), « A440 (pitch standard) »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mus-lyre"
+   },
+   "theme": "musique"
+  },
+  {
+   "id": "copie-sans-citer",
+   "nom": {
+    "fr": "Copié sans citer"
+   },
+   "description": {
+    "fr": "Maîtriser les gammes. L'IA cite toujours ses sources. Presque toujours."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mus.gammes"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1547, à Bâle, Heinrich Glaréan porte les modes d'église de huit à douze dans son Dodecachordon, en ajoutant l'ionien et l'éolien, nos majeur et mineur. Onze ans plus tard, Zarlino reprend son système dans les Istitutioni harmoniche, sans nommer Glaréan."
+    },
+    "source": "Oberlin College Library, « Music Theorists » ; Heinrich Glarean, Dodecachordon, Bâle, 1547"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "zarlino"
+   },
+   "theme": "musique"
+  },
+  {
+   "id": "parrain-acoustique",
+   "nom": {
+    "fr": "Le parrain de l'acoustique"
+   },
+   "description": {
+    "fr": "Maîtriser les harmoniques. L'IA vous trouve un timbre presque supportable."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mus.harmoniques"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Joseph Sauveur a donné leur nom aux sons harmoniques et aux nœuds des cordes dans un mémoire de 1701. Il a aussi proposé une science nouvelle, consacrée aux sons en général, et l'a baptisée acoustique. Ses mots sont toujours en usage."
+    },
+    "source": "Joseph Sauveur, Système général des intervalles des sons, Mémoires de l'Académie royale des sciences, 1701"
+   },
+   "illustration": {
+    "type": "icone",
+    "id": "prisme-newton"
+   },
+   "theme": "musique"
+  },
+  {
+   "id": "rameauneurs",
+   "nom": {
+    "fr": "Lullistes contre rameauneurs"
+   },
+   "description": {
+    "fr": "Maîtriser les accords. L'IA choisit son camp : le sien."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mus.accords"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Après Hippolyte et Aricie, en 1733, Paris se divise. Les partisans de Lully trouvent les harmonies de Rameau discordantes et y voient une attaque contre la musique française ; ceux de Rameau, les « rameauneurs », le défendent. La guerre de pamphlets dure jusqu'à la fin de la décennie."
+    },
+    "source": "Wikipédia (en), « Jean-Philippe Rameau »"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "rameau"
+   },
+   "theme": "musique"
   }
  ],
  "dessins": {
@@ -7212,6 +7501,210 @@
    "........kjyyyyyyyyyyyyYk........",
    "........kyYYYYYYYYYYYYYk........",
    ".........kkkkkkkkkkkkkk.........",
+   "................................"
+  ],
+  "mus-croche": [
+   "................................",
+   "................................",
+   "................................",
+   "...................k............",
+   "..................kKk...........",
+   ".................kKKKk..........",
+   ".................kKKKKk.........",
+   ".................kKKKKKk........",
+   ".................kKKKKKKk.......",
+   ".................kKKKKKKKk......",
+   ".................kKKKKKKKKk.....",
+   ".................kKKKkKKKKKk....",
+   ".................kKKKkkKKKNk....",
+   ".................kKKKk.kKKNk....",
+   ".................kKKKk..kKNk....",
+   ".................kKKKk...kKk....",
+   ".................kKKKk....k.....",
+   ".................kKKKk..........",
+   ".................kKKKk..........",
+   "............kkkkkkKKKk..........",
+   "..........kkKKKKKKNKKk..........",
+   ".........kKKKKKKKKKNKk..........",
+   ".........kKKKKKKKKNNNk..........",
+   "........kKKKKKKKKKKNk...........",
+   ".........kKKKKKKNNNNk...........",
+   "........kNKKKKKNKNNNk...........",
+   ".........kNkNNNNNNNk............",
+   "..........kNNNNNNkk.............",
+   "...........kkkkkk...............",
+   "................................",
+   "................................",
+   "................................"
+  ],
+  "mus-lyre": [
+   "................................",
+   "................................",
+   "........kkk..........kkk........",
+   ".......kjjyk........kjjyk.......",
+   ".......kjyYkkkkkkkkkkjyYk.......",
+   "......kttttttttttttttttttk......",
+   "......kBBBBBBBBBBBBBBBBBBk......",
+   "......kjyYkklklklklklkjyYk......",
+   ".....kjyyYkklklklklklkyyyyk.....",
+   ".....kjyYk.klklklklklkkjyYk.....",
+   ".....kjyYk.klklklklklkkjyYk.....",
+   ".....kjyYk.klklklklklkkjyYk.....",
+   ".....kjyYk.klklklklklkkjyYk.....",
+   ".....kjyYk.klklklklklkkjyYk.....",
+   ".....kjyYk.klklklklklkkjyYk.....",
+   ".....kjyYk.klklklklklkkjyYk.....",
+   ".....kyyyykklklklklklkjyyYk.....",
+   "......kjyYkklklklklklkjyYk......",
+   "......kyyyyklklklklkljyyYk......",
+   ".......kjyYklklklklkljyYk.......",
+   ".......kyyyylklklklklyyYk.......",
+   "........kjyYlklklklklyYk........",
+   "........kyyylkljlkljlyYk........",
+   ".........kyjljljlylylYk.........",
+   "........kjjjjjjjyyyyY4k.........",
+   "........kjjjjjjjjyyYY4k.........",
+   "........kyyjyjyyyyYY44k.........",
+   "........kYyyyyyyyYY444k.........",
+   ".........kkYYYYY4444kk..........",
+   "...........kkkk4kkkk............",
+   "...............k................",
+   "................................"
+  ],
+  "mus-partition": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "...kkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "..kvvvvvvvvvvvvvvvvvvvvvvkvvVk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVkVVAk..",
+   "..kvVVVVkkVVVVVVVVVVVVVVVkVVAk..",
+   "..kvVVVVkVkVVVVVVVVVkVVVVkVVAk..",
+   "..kvVAAAkAkAAAAAAAAAkAAAAkAVAk..",
+   "..kvVVVVkkVVVVVVVVVVkVVkkkVVAk..",
+   "..kvVVVVkkVVVVVkVVVVkVkkkkVVAk..",
+   "..kvVAAAkAAAAAAkAAAAkAAkkAAVAk..",
+   "..kvVVkkkkVVVVVkVVkkkVVVVVVVAk..",
+   "..kvVVkVkkVVVVVkVkkkkVVVVVVVAk..",
+   "..kvVAkAkAkAAAAkAAkkAAAAAAAVAk..",
+   "..kvVVVkkkkVVkkkVVVVVVVVVVVVAk..",
+   "..kvVVVkkVVVkkkkVVVVVVVVVVVVAk..",
+   "..kvVAAAkAAAAkkAAAAAAAAAAAAVAk..",
+   "..kvVVVVkVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVVVkVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVAAAkAAAAAAAAAAAAAAAAAAVAk..",
+   "..kvVVVVkVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kVAAAAAAAAAAAAAAAAAAAAAAAAAk..",
+   "...kkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................"
+  ],
+  "mus-orgue": [
+   "................................",
+   "................................",
+   "...............kk...............",
+   "..............klzk..............",
+   "..............kwgk..............",
+   "............kkklzkkk............",
+   "...........klzknnklzk...........",
+   "...........kwgklzkwgk...........",
+   "...........klzkwgklzk...........",
+   ".........kkknnklzknnkkk.........",
+   "........kwgklzkwgklzkwgk........",
+   "........klzkwgklzkwgklzk........",
+   "........kwgklzkwgklzkwgk........",
+   "......kkknnkwgklzkwgknnkkk......",
+   ".....klzkwgklzkwgklzkwgklzk.....",
+   ".....kwgklzkwgklzkwgklzkwgk.....",
+   ".....klzkwgklzkwgklzkwgklzk.....",
+   ".....knnklzkwgklzkwgklzknnk.....",
+   ".....klzkwgklzkwgklzkwgklzk.....",
+   "....kkwgklzkwgklzkwgklzkwgkk....",
+   "...ktttttttttttttttttttttttbk...",
+   "...ktbbbbbbbbbbbbbbbbbbbbbbBk...",
+   "...ktbbbbbbbbbbbbbbbbbbbbbbBk...",
+   "...ktbTTTTTTTTTTTTTTTTTTTTbBk...",
+   "...ktbTTTTTTTTTTTTTTTTTTTTbBk...",
+   "...ktbbbbbbbbbbbbbbbbbbbbbbBk...",
+   "...ktbbbbbbbbbbbbbbbbbbbbbbBk...",
+   "...ktbbbbbbbbbbbbbbbbbbbbbbBk...",
+   "...kbBBBBBBBBBBBBBBBBBBBBBBBk...",
+   "....kkkkkkkkkkkkkkkkkkkkkkkk....",
+   "................................",
+   "................................"
+  ],
+  "mus-clavier": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "..kkkkkkkkkkkkkkkkkkkkkkkkkkkk..",
+   ".ktttttttttttttttttttttttttttbk.",
+   ".ktbbbbbbbbbbbbbbbbbbbbbbbbbbBk.",
+   ".ktbbbbbbbbbbbbbbbbbbbbbbbbbbBk.",
+   ".ktbbbbbbbbbbbbbbbbbbbbbbbbbbBk.",
+   ".ktwwnnwwnnwwwzwwnnwwnnwwnnwwBk.",
+   ".ktwwnnwwnnwwwzwwnnwwnnwwnnwwBk.",
+   ".ktwwnnwwnnwwwzwwnnwwnnwwnnwwBk.",
+   ".ktwwnnwwnnwwwzwwnnwwnnwwnnwwBk.",
+   ".ktwwnnwwnnwwwzwwnnwwnnwwnnwwBk.",
+   ".ktwwnnwwnnwwwzwwnnwwnnwwnnwwBk.",
+   ".ktwwnnwwnnwwwzwwnnwwnnwwnnwwBk.",
+   ".ktwwwzwwwzwwwzwwwzwwwzwwwzwwBk.",
+   ".ktwwwzwwwzwwwzwwwzwwwzwwwzwwBk.",
+   ".ktwwwzwwwzwwwzwwwzwwwzwwwzwwBk.",
+   ".ktwwwzwwwzwwwzwwwzwwwzwwwzwwBk.",
+   ".ktwwwzwwwzwwwzwwwzwwwzwwwzwwBk.",
+   ".kbBBBBBBBBBBBBBBBBBBBBBBBBBBBk.",
+   "..kkkkkkkkkkkkkkkkkkkkkkkkkkkk..",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................"
+  ],
+  "mus-oreille": [
+   "................................",
+   "................................",
+   "..........kkkkk.................",
+   "......kkkk777ssk................",
+   ".....k777777s7sSk...............",
+   "....k77777777sssSk..............",
+   "....k777777777ssSSk.............",
+   "...k77777777677ssSSk............",
+   "...k77777666766sSS6k............",
+   "..k7777767777766sSSk.......kk...",
+   "..k77777777777ss6SSk......kuuk..",
+   "...k777777777sss6SS6k......kuuk.",
+   "....k77777766sss6S66k.....kkkuk.",
+   ".....k77777766s6sSS6k....kuukuuk",
+   "......k777s766s6SS66k.....kukkuk",
+   "......k7777s6ss6SSSk......kukkuk",
+   "......k7s7ss6s6SSSk.......kukkuk",
+   "......ks7ssss6sSS6k......kuukuuk",
+   ".......kssss6sSS6k........kkkuk.",
+   ".......kssss6SSSk..........kuuk.",
+   ".......kssS66SSSk.........kuuk..",
+   ".......ksss6SSSk...........kk...",
+   "......ksSSS6SS6k................",
+   ".....kSSSSSSS66k................",
+   "....k6SSSSSS66k.................",
+   ".....k66S6S666k.................",
+   "......k666666k..................",
+   ".......k66kkk...................",
+   "........kk......................",
+   "................................",
+   "................................",
    "................................"
   ]
  }

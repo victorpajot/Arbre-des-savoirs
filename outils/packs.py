@@ -312,6 +312,7 @@ def verifier(packs=None, cibles=None):
         if m.get("sorte") == "domaine" and any(n.startswith("donnees/") for _, _, n in frs):
             err(m, "un pack domaine n'a pas de dossier donnees/ : seulement les fichiers de EMPLACEMENTS")
         erreurs += verifier_contenu(m, ids)
+        erreurs += completude(m)
     erreurs += cycles(packs)
     if not erreurs:
         try:
@@ -389,6 +390,60 @@ def verifier_contenu(m, ids):
         ctx = r.get("contexte", "")
         if "@" in ctx and ctx.split("@")[1] not in arbres:
             erreurs.append(f"[{m['id']}] repliques.json › {r.get('id')} : arbre « {ctx.split('@')[1]} » inconnu")
+    return erreurs
+
+
+QUESTIONS_MIN = 10
+REPLIQUES_MIN = {"theme_jouer": 3, "theme_reussi": 4, "theme_rate": 4}
+
+
+def completude(m):
+    """Ce qu'un arbre doit apporter pour tenir sa place dans le jeu (voir packs/LISEZMOI-IA.md, « Liste de contrôle »)."""
+    erreurs = []
+    if m.get("sorte") != "domaine":
+        return erreurs
+    comps = lire_liste(m, "competences.json")
+    questions = lire_liste(m, "questions.json")
+    livres = lire_liste(m, "livres.json")
+    dates = lire_liste(m, "frise.json")
+    succes = lire_liste(m, "succes.json")
+    savants = lire_liste(m, "savants.json")
+    repliques = lire_liste(m, "repliques.json")
+    cases = lire(m["_dossier"] / "cases.json") if (m["_dossier"] / "cases.json").exists() else {}
+
+    def err(msg):
+        erreurs.append(f"[{m['id']}] complétude : {msg}")
+
+    def maitrise(x, cid):
+        c = x.get("condition") or {}
+        return c.get("type") == "competence_maitrisee" and c.get("id") == cid
+    for a in lire_liste(m, "arbres.json"):
+        st = a["id"]
+        siennes = [c for c in comps if c.get("stat") == st]
+        rangs = sorted(c.get("rang") for c in siennes)
+        if rangs != list(range(1, 9)):
+            err(f"l'arbre « {st} » a 8 compétences, une par rang de 1 à 8 (il a les rangs {rangs})")
+        for c in siennes:
+            n = sum(q.get("competence") == c["id"] for q in questions)
+            if n < QUESTIONS_MIN:
+                err(f"{c['id']} : {n} questions, il en faut au moins {QUESTIONS_MIN} (questions.json)")
+            if not any(l.get("competence") == c["id"] for l in livres):
+                err(f"{c['id']} : aucun livre ne s'y rattache (livres.json, champ « competence »)")
+            if not any(maitrise(d, c["id"]) for d in dates):
+                err(f"{c['id']} : aucune date de la frise ne se débloque en la maîtrisant (frise.json)")
+            if not any(maitrise(x, c["id"]) for x in succes):
+                err(f"{c['id']} : aucun succès ne se gagne en la maîtrisant (succes.json)")
+        if not a.get("fondamental") and not any(x.get("ouvre") == st for x in succes):
+            err(f"l'arbre « {st} » s'ouvre par un succès de pionnier (succes.json, champ « ouvre »), sauf s'il est « fondamental »")
+        if not any(x.get("theme") == st for x in savants):
+            err(f"l'arbre « {st} » a au moins un savant jouable (savants.json, « theme »: « {st} »)")
+        for ctx, n in REPLIQUES_MIN.items():
+            k = sum(r.get("contexte") == f"{ctx}@{st}" for r in repliques)
+            if k < n:
+                err(f"l'arbre « {st} » a {k} répliques « {ctx}@{st} », il en faut {n} (repliques.json)")
+        ids = {c["id"] for c in siennes}
+        if not any(set(v) & ids for v in cases.values()):
+            err(f"l'arbre « {st} » est évoqué par au moins une case du plateau (cases.json)")
     return erreurs
 
 
