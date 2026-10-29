@@ -2005,6 +2005,8 @@ svg.grille .interro { transition: opacity .3s; }
       : c.raison === "hors_case" && kc && kc.stat ? "Rien à jouer pour toi dans l'arbre " + tx(stat(kc.stat).nom) + " de la case : l'IA improvise ailleurs."
       : c.raison === "ouvre_arbre" ? "Arbre encore fermé : réussis ce quiz pour l'ouvrir."
       : c.raison === "revision" ? "Révision forcée par la case."
+      : c.evoque ? "La case évoque " + tx(k.nom) + " : l'IA l'a prise."
+      : c.vers ? "La case évoque " + tx(c.vers.nom) + ", encore verrouillée : l'IA te fait passer par " + tx(k.nom) + ", qui y mène."
       : kc && kc.stat === s.id ? "C'est l'arbre de la case où tu te trouves." : "";
     var blocArbre = '<div class="arbre-choisi" style="--c:' + couleur(s.id) + '">' + iconeArbre(s.id, 56) + '<div class="txt"><div class="eyebrow">Arbre choisi</div><b>' + esc(tx(s.nom)) + "</b><span>" + esc(tx(s.branche)) + "</span></div>" +
       '<div class="niv-a">' + (ferme ? ICONE_CADENAS + "<small>Fermé</small>" : '<span class="num">' + nvA.niveau + "</span><small>" + titreNiveau(nvA.niveau) + "</small>") + "</div>" +

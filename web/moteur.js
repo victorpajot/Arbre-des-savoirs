@@ -2259,6 +2259,7 @@
   // --- Bouton « Jouer » : l'IA choisit l'épreuve ------------------------------
   // Un rappel dû passe d'abord (le plus en retard). Sinon, parmi les quiz ouverts, l'IA tire une raison :
   // la stat la plus faible ou le hasard. Le choix reste le même tant qu'on n'a pas joué.
+  var RETARD_PRIORITAIRE = 2 * JOUR;
   function choixIA(contenu, partie, t) {
     var rv = revisionEnCours(partie);
     if (rv) return { comp: contenu.parId[rv.comp], type: "rappel", raison: "revision" };
@@ -2270,17 +2271,38 @@
     var k = contenu.plateau && partie.plateau && contenu.plateau.cases[partie.plateau.position - 1];
     var ach = arbreAchete(partie);
     var st = ach ? ach.stat : k && k.stat;
-    if (dus.length) {
-      var dusIci = dus.filter(function (c) { return c.stat === st; });
-      return { comp: (dusIci[0] || dus[0]), type: "rappel", raison: "rappel", stat: dusIci.length ? st : null, kase: k || null, achat: !!(ach && dusIci.length) };
-    }
+    // v31 (Victor) : la case évoque des compétences précises (Mendel → Génétique) : elles passent avant le reste de l'arbre.
+    var CC = contenu.plateau && contenu.plateau.competences_cases, evoque = (k && CC && CC[String(k.n)]) || [];
+    if (ach && k && k.stat !== ach.stat) evoque = [];
+    function evoquee(c) { return evoque.indexOf(c.id) >= 0; }
+    // Un rappel très en retard (RETARD_PRIORITAIRE) passe avant tout ; les autres attendent leur arbre.
+    var urgents = dus.filter(function (c) { return t - partie.competences[c.id].prochainRappel >= RETARD_PRIORITAIRE && c.stat !== st; });
+    if (urgents.length) return { comp: urgents[0], type: "rappel", raison: "rappel", stat: null, kase: k || null, achat: false };
+    var dusEvoques = dus.filter(evoquee);
+    if (dusEvoques.length) return { comp: dusEvoques[0], type: "rappel", raison: "rappel", stat: st, kase: k || null, achat: !!ach, evoque: true };
+    var dispoEvoques = dispo.filter(evoquee);
+    if (dispoEvoques.length) return { comp: dispoEvoques[graine % dispoEvoques.length], type: "quiz", raison: "case", stat: st, kase: k, achat: !!ach, evoque: true };
+    // Compétence évoquée encore verrouillée : l'IA prend le prérequis jouable qui en rapproche (Cellule avant Génétique).
+    var chemin = [];
+    evoque.forEach(function (id) {
+      var file = (contenu.parId[id] ? contenu.parId[id].prerequis : []).slice(), vu = {};
+      while (file.length) {
+        var p = file.shift(); if (vu[p] || !contenu.parId[p]) continue; vu[p] = true;
+        if (dispo.some(function (c) { return c.id === p; })) { if (!chemin.some(function (x) { return x.comp.id === p; })) chemin.push({ comp: contenu.parId[p], vers: id }); }
+        else file = file.concat(contenu.parId[p].prerequis);
+      }
+    });
+    if (chemin.length) { var ch = chemin[graine % chemin.length]; return { comp: ch.comp, type: "quiz", raison: "case", stat: st, kase: k, achat: !!ach, vers: contenu.parId[ch.vers] }; }
     var porte = st && porteArbre(contenu, partie, st);
     if (porte) return { comp: porte, type: "quiz", raison: "ouvre_arbre", stat: st, kase: k };
-    if (!dispo.length) return null;
+    var dusIci = dus.filter(function (c) { return c.stat === st; });
+    if (dusIci.length) return { comp: dusIci[0], type: "rappel", raison: "rappel", stat: st, kase: k || null, achat: !!ach };
     if (st) {
       var ici = dispo.filter(function (c) { return c.stat === st; });
       if (ici.length) return { comp: ici[graine % ici.length], type: "quiz", raison: "case", stat: st, kase: k, achat: !!ach };
     }
+    if (dus.length) return { comp: dus[0], type: "rappel", raison: "rappel", stat: null, kase: k || null, achat: false };
+    if (!dispo.length) return null;
     if (st) return { comp: dispo[graine % dispo.length], type: "quiz", raison: "hors_case", stat: st, kase: k };
     var raisons = [];
     var sug = suggestion(contenu, partie, t);

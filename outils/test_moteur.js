@@ -437,7 +437,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const sans = M.valeurEpreuve(C5, P, { type: "quiz", comp: c.comp.id }, t0).total + C5.plateau.regles.bonus.parfait;
     // v19 : bonus du bouton Jouer tiré entre 0 et 4.
     assert.ok(r.plateau.bonusJouer >= 0 && r.plateau.bonusJouer <= 4); assert.equal(r.plateau.valeur, sans + r.plateau.bonusJouer, "bonus Jouer ajouté à l'avance");
-    const t1 = t0 + 2 * jour;
+    // v31 : un rappel d'un autre arbre n'attend plus que son arbre… sauf s'il est très en retard.
+    const t1 = P.competences[c.comp.id].prochainRappel + 3 * jour;
     const c2 = M.choixIA(C5, P, t1);
     assert.equal(c2.type, "rappel"); assert.equal(c2.comp.id, c.comp.id);
     // v15 : une case d'arbre fermé lance son premier quiz ; raté, l'arbre reste fermé ; réussi, il s'ouvre.
@@ -1388,4 +1389,19 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(g.gain, A.duel_gagne); assert.ok(A.duel_gagne > A.sans_faute); assert.equal(g.raison, "duel_gagne");
   assert.equal(M.agacerIA(C, P, 0, false, T).gain, A.sans_faute);
   console.log("OK : v31 duel gagné, faveur ravie");
+}
+
+// v31 : la case évoque des compétences précises ; verrouillées, l'IA passe par un prérequis qui y mène.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 6, 10).getTime();
+  const P = M.nouvellePartie(T); P.decalage = T - Date.now();
+  const mendel = C.plateau.cases.find(k => k.id && C.plateau.competences_cases[k.n].includes("sci.genetique") && /Mendel/.test(k.titre.fr));
+  P.plateau.position = mendel.n;
+  const x = M.choixIA(C, P, T);
+  assert.equal(x.stat, "savoir");
+  const dispo = M.disponibles(C, P, T).some(c => c.id === "sci.genetique");
+  if (dispo) assert.equal(x.comp.id, "sci.genetique"); else assert.equal(x.vers && x.vers.id, "sci.genetique", "prérequis vers Génétique");
+  // Un rappel d'un autre arbre, à peine dû, ne passe plus devant la case.
+  console.log("OK : v31 case → compétence évoquée (" + x.comp.id + ")");
 }

@@ -29,6 +29,7 @@ import credits
 import fiches
 import figures
 import symboles
+import cases_competences
 import succes_pixels
 import themes
 import succes_themes
@@ -826,6 +827,8 @@ def jeu_plateau():
             "textes": {k: fr(v) for k, v in {**plateau.REGLES_SPECIALES, **pieges.TEXTES, **mendeleiev.TEXTES}.items()},
         },
         "epoques": [{"id": id, "nom": fr(nom), "debut": d, "fin": f, "icone": plateau.PICTO_EPOQUE[id]} for id, nom, d, f in plateau.EPOQUES],
+        # v31 : les compétences qu'évoque chaque case (outils/cases_competences.py).
+        "competences_cases": {str(n): l for n, l in cases_competences.COMPETENCES.items()},
         "palette": PALETTE,
         "taille": [icones32.N, icones32.N],
         "icones": {k: v for k, v in icones.items() if k in utilisees},
