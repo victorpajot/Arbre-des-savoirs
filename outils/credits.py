@@ -68,7 +68,7 @@ HONTE = {"chance": 0.3, "facteur": 5, "mots": [
 # rappel_mur_jour points par jour : l'humeur remonte petit à petit, pas d'un coup.
 # v31 (Victor) : un ennemi battu la ravit bien davantage qu'un quiz sans faute (duel_gagne au lieu de sans_faute).
 AGACEMENT = {"par_erreur": 2, "epreuve_ratee": 6, "max": 16, "sans_faute": 6, "rappel_mur": 1, "rappel_mur_jour": 6,
-             "duel_gagne": 15, "reussi": 1, "tour_fini": 30}
+             "duel_gagne": 15, "reussi": 1, "tour_fini": 60}
 # v32 (Victor) : boucler un tour entier la ravit, bien plus qu'un duel (tour_fini).
 # v31 (Victor) : une épreuve réussie avec des fautes (atome capturé, quiz ou rappel réussi) ne coûte plus de faveur :
 # elle gagne « reussi ». Seules les épreuves ratées l'agacent.
