@@ -3188,8 +3188,12 @@ function demarrerJeu() {
   function htmlExtrait(l) {
     var x = l.extrait; if (!x) return "";
     var dom = (x.verification.url.match(/^https:\/\/([^/]+)/) || [])[1] || "";
-    return __('<figure class="extrait"><figcaption>Dans le texte · ') + esc(x.langue) + "</figcaption><blockquote" + (x.traduction ? ' class="vo"' : "") + ">« " + esc(x.texte) + " »</blockquote>" +
-      (x.traduction ? '<p class="trad">« ' + esc(tx(x.traduction)) + ' »</p><p class="meta">' + esc(x.traducteur) + "</p>" : "") +
+    // Un original déjà dans la langue du joueur (Newton en anglais, pour un joueur anglophone) se passe de traduction.
+    var trad = x.traduction ? tx(x.traduction) : "";
+    if (trad === x.texte) trad = "";
+    var cite = function (t) { return M.langue() === "fr" ? "« " + esc(t) + " »" : "“" + esc(t) + "”"; };
+    return __('<figure class="extrait"><figcaption>Dans le texte · ') + esc(x.langue) + "</figcaption><blockquote" + (trad ? ' class="vo"' : "") + ">" + cite(x.texte) + "</blockquote>" +
+      (trad ? '<p class="trad">' + cite(trad) + '</p><p class="meta">' + esc(x.traducteur) + "</p>" : "") +
       '<p class="meta">' + esc(x.reference) + ' · <a href="' + esc(x.verification.url) + __('" target="_blank" rel="noopener">vérifié sur ') + esc(dom.replace(/^www\./, "")) + "</a></p></figure>";
   }
   // `seul` : ouvert depuis une récompense, le livre s'affiche sans navigation vers les autres.

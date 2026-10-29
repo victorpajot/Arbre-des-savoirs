@@ -37,6 +37,20 @@ try:
 finally:
     shutil.rmtree(tmp)
 
+# 2 bis. Une même étiquette, deux sens selon le schéma : chaque schéma garde sa traduction.
+tmp = Path(tempfile.mkdtemp())
+try:
+    for nom, svg, trad in (("a_ciel", '<svg aria-label="Matière"><text>noire</text></svg>', "dark"),
+                           ("b_notes", '<svg aria-label="Durées"><text>noire</text></svg>', "quarter note")):
+        L.ecrire(tmp / nom / "pack.json", {"id": nom, "langue_source": "fr", "nom": {"fr": nom}})
+        L.ecrire(tmp / nom / "questions.json", [{"id": nom, "illustration": svg}])
+        L.ecrire(tmp / nom / "langues" / "en" / "questions.json", {"noire": trad})
+    d = L.dictionnaire("en", [tmp / "a_ciel", tmp / "b_notes"])
+    assert L.traduire_svg('<svg aria-label="Matière"><text>noire</text></svg>', d) == '<svg aria-label="Matière"><text>dark</text></svg>'
+    assert L.traduire_svg('<svg aria-label="Durées"><text>noire</text></svg>', d) == '<svg aria-label="Durées"><text>quarter note</text></svg>'
+finally:
+    shutil.rmtree(tmp)
+
 # 3. Les traductions du dépôt : balises HTML et variables {x} identiques à la source, rien de vide qui traîne.
 for langue in [f.stem for f in (L.WEB / "langues").glob("*.json")]:
     for s, v in L.catalogue(langue)["textes"].items():

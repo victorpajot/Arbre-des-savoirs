@@ -75,10 +75,28 @@ def balises(s):
     return sorted(RE_BALISE.findall(sans_textes))
 
 
+# Une étiquette se traduit d'abord sous la clé « aria-label ␟ étiquette » de son schéma, puis seule (voir dictionnaire).
+SEP_SCHEMA = "\u241f"
+
+
+def cle_schema(svg, etiquette):
+    m = RE_ARIA.search(svg)
+    return (m.group(2) if m else "") + SEP_SCHEMA + etiquette
+
+
+def schemas(o):
+    """Les schémas SVG d'un fichier de pack."""
+    if isinstance(o, dict):
+        return [s for k, v in o.items() if k not in CLES_IGNOREES for s in schemas(v)]
+    if isinstance(o, list):
+        return [s for v in o for s in schemas(v)]
+    return [o] if isinstance(o, str) and "<svg" in o else []
+
+
 def traduire_svg(svg, dico):
     """Le schéma avec ses étiquettes traduites ; une étiquette sans traduction reste telle quelle."""
     def rempl(m):
-        return m.group(1) + dico.get(m.group(2), m.group(2)) + m.group(3)
+        return m.group(1) + dico.get(cle_schema(svg, m.group(2)), dico.get(m.group(2), m.group(2))) + m.group(3)
     for r in (RE_TEXTE_SVG, RE_TSPAN_SVG, RE_ARIA):
         svg = r.sub(rempl, svg)
     return svg
@@ -166,7 +184,7 @@ def etat_pack(dossier, langue):
 
 def dictionnaire(langue, packs_=None):
     """Toutes les traductions des packs pour une langue : {texte source: traduction}. Un même texte traduit autrement
-    par deux packs garde la première traduction (packs dans l'ordre alphabétique, socle compris)."""
+    par deux packs garde la première traduction (packs dans l'ordre alphabétique, socle compris), sauf dans les schémas."""
     dico = {}
     for d in packs_ if packs_ is not None else packs():
         if source_de(d) == langue:
@@ -176,6 +194,18 @@ def dictionnaire(langue, packs_=None):
             for s, v in t.items():
                 if v and s in sources.get(f, {}):
                     dico.setdefault(s, v)
+    # Une étiquette de schéma traduite autrement que dans le dictionnaire commun (« noire » : la note en musique, la
+    # matière en astronomie) s'inscrit aussi sous la clé propre à son schéma.
+    for d in packs_ if packs_ is not None else packs():
+        if source_de(d) == langue:
+            continue
+        trads = traductions(d, langue)
+        for f in fichiers(d):
+            t = trads.get(nom_langue(f, d), {})
+            for svg in schemas(lire(f)):
+                for e in etiquettes_svg(svg):
+                    if t.get(e) and t[e] != dico.get(e):
+                        dico[cle_schema(svg, e)] = t[e]
     return dico
 
 

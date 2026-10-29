@@ -40,8 +40,10 @@
   // (outils/langues.py, CHAMPS_SIMPLES). Traduits une fois, au chargement : changer de langue relance le jeu.
   var CHAMPS_SIMPLES = { langue: 1, traducteur: 1, reference: 1, titre: 1 }, CLES_IGNOREES = { source: 1, url: 1, verification: 1, id: 1 };
   var RE_SVG = [/(<text\b[^>]*>)([^<]*)(<\/text>)/g, /(<tspan\b[^>]*>)([^<]*)(<\/tspan>)/g, /(aria-label=")([^"]*)(")/g];
+  // Une étiquette se cherche d'abord sous « aria-label ␟ étiquette », propre à son schéma (outils/langues.py).
   function traduireSvg(svg) {
-    RE_SVG.forEach(function (r) { svg = svg.replace(r, function (m, a, t, b) { return a + (DICO[t] || t) + b; }); });
+    var aria = (/aria-label="([^"]*)"/.exec(svg) || ["", ""])[1];
+    RE_SVG.forEach(function (r) { svg = svg.replace(r, function (m, a, t, b) { return a + (DICO[aria + "\u241f" + t] || DICO[t] || t) + b; }); });
     return svg;
   }
   function traduireChaines(o) {
