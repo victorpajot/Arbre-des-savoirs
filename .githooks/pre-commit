@@ -8,3 +8,8 @@ python3 outils/verifier_sources.py
 # v28 : une faute de syntaxe dans l'interface bloque l'appli sur « Chargement » : on vérifie le script avant chaque commit.
 T=$(mktemp --suffix=.js) && python3 -c "import sys; s=open('web/index.html').read(); open(sys.argv[1],'w').write(s[s.rindex('<script>')+8:s.rindex('</script>')])" "$T" && node --check "$T" && node --check web/moteur.js || { echo "Erreur de syntaxe JavaScript dans web/index.html ou web/moteur.js"; rm -f "$T"; exit 1; }
 rm -f "$T"
+# Règle de Victor (2026-10-29) : tests rapides avant chaque commit, pour vérifier que rien de l'existant ne casse.
+python3 outils/valider.py >/dev/null || { echo "valider.py a échoué : contenu ou règles invalides"; exit 1; }
+node outils/test_moteur.js >/dev/null || { echo "test_moteur.js a échoué : le moteur du jeu est cassé"; exit 1; }
+# L'app Android s'assemble sans requête vers Internet (polices embarquées).
+node mobile/construire.js >/dev/null || { echo "mobile/construire.js a échoué"; exit 1; }

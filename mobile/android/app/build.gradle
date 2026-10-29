@@ -1,25 +1,28 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "fr.pajot.arbredessavoirs"
-    compileSdk rootProject.ext.compileSdkVersion
+    namespace = "fr.pajot.arbredessavoirs"
+    compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "fr.pajot.arbredessavoirs"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // Le numéro de build GitHub fait monter la version : chaque APK s'installe par-dessus le précédent.
-        versionCode = Integer.parseInt(System.getenv("GITHUB_RUN_NUMBER") ?: "1")
-        versionName = "1.0." + (System.getenv("GITHUB_RUN_NUMBER") ?: "0")
+        // Le workflow Play fournit VERSION_CODE (nombre de commits de main), qui ne redescend jamais.
+        def numero = System.getenv("VERSION_CODE") ?: System.getenv("GITHUB_RUN_NUMBER") ?: "1"
+        versionCode = Integer.parseInt(numero)
+        versionName = "1.0." + numero
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
-            ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
     // Clé stable, versionnée avec le projet : sans elle, chaque APK aurait une signature
     // différente et Android refuserait la mise à jour (il faudrait désinstaller et perdre la partie).
     // Usage personnel en installation directe uniquement, pas pour le Play Store.
+    // Play : clé d'envoi distincte, jamais versionnée, fournie par les secrets GitHub (workflow play.yml).
     signingConfigs {
         stable {
             storeFile file("arbre.keystore")
@@ -27,12 +30,21 @@ android {
             keyAlias "arbre"
             keyPassword "arbredessavoirs"
         }
+        if (System.getenv("PLAY_KEYSTORE")) {
+            play {
+                storeFile file(System.getenv("PLAY_KEYSTORE"))
+                storePassword System.getenv("PLAY_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("PLAY_KEY_ALIAS")
+                keyPassword System.getenv("PLAY_KEY_PASSWORD")
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.stable
         }
         release {
+            if (System.getenv("PLAY_KEYSTORE")) signingConfig signingConfigs.play
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
