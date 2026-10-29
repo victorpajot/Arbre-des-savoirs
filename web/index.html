@@ -1080,6 +1080,10 @@ svg.grille .interro { transition: opacity .3s; }
     var trouve = function (l) { return l.filter(function (s) { return s.id === id; })[0]; };
     return trouve(C.stats) || (BRUT && trouve(BRUT["regles.json"].stats)) || { id: id, nom: { fr: "Arbre absent" }, branche: { fr: "Arbre absent" }, description: { fr: "" }, couleur: "#9AA1B6" };
   }
+  // L'arbre s'il est joué dans cette partie (son pack est allumé), sinon null : les éléments du socle rattachés à un
+  // arbre éteint (cases, dates) restent, mais sans son nom ni sa couleur.
+  function statActif(id) { return C.stats.filter(function (s) { return s.id === id; })[0] || null; }
+  function avecArbre(id) { var s = statActif(id); return s ? " · " + tx(s.nom) : ""; }
   // v35 : la couleur d'un arbre vient de son pack (couleurs.clair / couleurs.sombre) ; un arbre absent prend le gris.
   function couleur(statId) { return "var(--s-" + statId + ", var(--muted))"; }
   function poserCouleursArbres(stats) {
@@ -1582,7 +1586,7 @@ svg.grille .interro { transition: opacity .3s; }
     return "#" + m(r) + m(g) + m(b);
   }
   function couleurCase(k) {
-    var st = stat(k.stat); if (!st) return "#D8D2C4";
+    var st = statActif(k.stat); if (!st) return "#D8D2C4";
     return eclaircir(st.couleur, M.arbreOuvert(C, P, k.stat) ? 0.38 : 0.78);
   }
   var COULEUR_SPECIAL = { eureka: "#E0A800", avance: "#2E9D5B", recul: "#D94141", teleport: "#7A3FD1", retour_epoque: "#7A3FD1", revision: "#14899E", cadeau: "#C2185B", mendeleiev: "#1565C0", prison: "#5D6470", quarantaine: "#D9721F", oubli: "#8E5BB5", chrono: "#8A6A12" };
@@ -2153,7 +2157,7 @@ svg.grille .interro { transition: opacity .3s; }
     // Les savants et objets du thème passent à la fin.
     var nvA = M.niveau(C, M.xpParStat(C, P)[s.id] || 0), ferme = !M.arbreOuvert(C, P, s.id);
     var motif = c.achat ? "Faveur achetée : encore " + M.arbreAchete(P).restant + " épreuve" + (M.arbreAchete(P).restant > 1 ? "s" : "") + " dans cet arbre."
-      : c.raison === "hors_case" && kc && kc.stat ? "Rien à jouer pour toi dans l'arbre " + tx(stat(kc.stat).nom) + " de la case : l'IA improvise ailleurs."
+      : c.raison === "hors_case" && kc && statActif(kc.stat) ? "Rien à jouer pour toi dans l'arbre " + tx(stat(kc.stat).nom) + " de la case : l'IA improvise ailleurs."
       : c.raison === "ouvre_arbre" ? "Arbre encore fermé : réussis ce quiz pour l'ouvrir."
       : c.raison === "revision" ? "Révision forcée par la case."
       : c.evoque ? "La case évoque " + tx(k.nom) + " : l'IA l'a prise."
@@ -2412,7 +2416,7 @@ svg.grille .interro { transition: opacity .3s; }
   // v18 : « Sur ce thème » : les savants et les objets de l'arbre de la case, découverts ou à découvrir.
   // Toucher un portrait l'ouvre juste en dessous, sans quitter la feuille.
   function galerieTheme(th) {
-    if (!th || !stat(th)) return "";
+    if (!th || !statActif(th)) return "";
     var rangDe = function (x) { var k = x.condition && x.condition.id && C.parId[x.condition.id]; return k ? k.rang : 9; };
     var sv = C.avatar.savants.filter(function (x) { return x.theme === th; }).sort(function (a, b) { return rangDe(a) - rangDe(b); });
     var ob = C.objets.filter(function (x) { return x.theme === th; }).sort(function (a, b) { return rangDe(a) - rangDe(b); });
@@ -2460,7 +2464,7 @@ svg.grille .interro { transition: opacity .3s; }
     brancherGalerie(feuille);
   }
   function etatIci(k) {
-    var pl = P.plateau, t = maintenant(), rt = M.routeTour(C, P), lignes = [], st = k.stat ? stat(k.stat) : null;
+    var pl = P.plateau, t = maintenant(), rt = M.routeTour(C, P), lignes = [], st = k.stat ? statActif(k.stat) : null;
     lignes.push(["Tour", (pl.tours + 1) + " · étape " + (pl.idx + 1) + " sur " + rt.length]);
     lignes.push(["Épreuves ce tour", (pl.coups || 0) + (pl.meilleur ? " (record : " + pl.meilleur + ")" : "")]);
     if (st) lignes.push(["Arbre de la case", tx(st.nom) + (M.arbreOuvert(C, P, k.stat) ? ", ouvert" : ", encore fermé")]);
@@ -3030,7 +3034,7 @@ svg.grille .interro { transition: opacity .3s; }
     var cyl = el('<div class="cylindre" tabindex="0" role="listbox" aria-label="Frise chronologique : flèches gauche et droite pour tourner, Entrée pour lire"><div class="axe-f" aria-hidden="true"></div><span class="sens g" aria-hidden="true">← passé</span><span class="sens d" aria-hidden="true">futur →</span></div>');
     var cartes = evs.map(function (e, i) {
       var ok = !!P.evenements[e.id], k = e.case ? C.plateau.cases[e.case - 1] : null, neuf = ok && t - P.evenements[e.id] < JOUR_MS;
-      var visuel = k ? svgSprite(k.icone, 44, null, !ok) : '<span class="pastille-f" aria-hidden="true">' + esc(tx(stat(e.stat).nom).charAt(0)) + "</span>";
+      var visuel = k ? svgSprite(k.icone, 44, null, !ok) : '<span class="pastille-f" aria-hidden="true">' + esc(statActif(e.stat) ? tx(stat(e.stat).nom).charAt(0) : "·") + "</span>";
       var c = el('<button type="button" role="option" class="carte-f' + (ok ? "" : " ombre") + (neuf ? " nouveau" : "") + '" data-i="' + i + '" style="--c:' + couleur(e.stat) + '">' + visuel +
         '<span class="an">' + esc(ok ? formatAnnee(e.annee) : siecle(e.annee)) + "</span><b>" + (ok ? esc(tx(e.titre)) : "???") + "</b></button>");
       cyl.appendChild(c);
@@ -3059,7 +3063,7 @@ svg.grille .interro { transition: opacity .3s; }
       nav.querySelector('[data-d="-1"]').disabled = pos === 0;
       nav.querySelector('[data-d="1"]').disabled = pos === evs.length - 1;
       eres.querySelectorAll("[data-ere]").forEach(function (x) { x.setAttribute("aria-pressed", x.getAttribute("data-ere") === e.epoque ? "true" : "false"); });
-      detail.innerHTML = '<div class="eyebrow" style="color:' + couleur(e.stat) + '">' + esc(ok ? formatAnnee(e.annee) : siecle(e.annee)) + " · " + esc(tx(s.nom)) + "</div><h3>" + (ok ? esc(tx(e.titre)) : "Date à découvrir") + "</h3><p>" + esc(ok ? tx(e.phrase) : "Pour l'ajouter : " + commentDater(e)) + "</p>" +
+      detail.innerHTML = '<div class="eyebrow" style="color:' + couleur(e.stat) + '">' + esc(ok ? formatAnnee(e.annee) : siecle(e.annee)) + esc(avecArbre(s.id)) + "</div><h3>" + (ok ? esc(tx(e.titre)) : "Date à découvrir") + "</h3><p>" + esc(ok ? tx(e.phrase) : "Pour l'ajouter : " + commentDater(e)) + "</p>" +
         (ok ? '<button type="button" class="btn">Lire l\'histoire</button>' : "");
       var bl = detail.querySelector("button"); if (bl) bl.onclick = function () { ouvrirEvenement(e); };
       var ere = eres.querySelector('[aria-pressed="true"]'); if (ere && ere.scrollIntoView && eres.scrollWidth > eres.clientWidth) eres.scrollLeft = ere.offsetLeft - 16;
@@ -3106,7 +3110,7 @@ svg.grille .interro { transition: opacity .3s; }
     var html = "";
     if (ok) {
       if (k) html += '<div class="vitrine" style="padding:14px">' + svgSprite(k.icone, 96, tx(e.titre)) + "</div>";
-      html += '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(formatAnnee(e.annee)) + " · " + esc(tx(s.nom)) + (k ? " · case " + k.n : "") + "</div><h2>" + esc(tx(e.titre)) + "</h2><p><b>" + esc(tx(e.phrase)) + "</b></p><p>" + esc(tx(k ? k.histoire : e.detail)) + '</p><p class="meta">Source : ' + esc(e.source) + "</p>";
+      html += '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(formatAnnee(e.annee)) + esc(avecArbre(s.id)) + (k ? " · case " + k.n : "") + "</div><h2>" + esc(tx(e.titre)) + "</h2><p><b>" + esc(tx(e.phrase)) + "</b></p><p>" + esc(tx(k ? k.histoire : e.detail)) + '</p><p class="meta">Source : ' + esc(e.source) + "</p>";
     } else {
       html += '<div class="eyebrow">' + esc(siecle(e.annee)) + "</div><h2>Date à découvrir</h2><p class=\"meta\">Pour l'ajouter à la frise : " + esc(commentDater(e)) + "</p>";
     }
@@ -3150,7 +3154,7 @@ svg.grille .interro { transition: opacity .3s; }
     var ok = !!P.livres[l.id], s = stat(l.stat);
     var dispo = C.livres.filter(function (x) { return P.livres[x.id]; }), i = dispo.indexOf(l);
     var html = '<div class="livre-fiche" style="--c:' + l.couleur + ';display:flex;flex-direction:column;gap:12px"><div class="tete"><div class="couv"><span class="vitrine">' + svgSprite(l.embleme, 44, null, !ok) + "</span></div><div>" +
-      '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(formatAnnee(l.annee)) + " · " + esc(tx(s.nom)) + "</div><h2>" + (ok ? esc(tx(l.titre)) : "Livre à découvrir") + "</h2>" + (ok ? '<p class="meta">' + esc(l.auteur) + "</p>" : "") + "</div></div>";
+      '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(formatAnnee(l.annee)) + esc(avecArbre(s.id)) + "</div><h2>" + (ok ? esc(tx(l.titre)) : "Livre à découvrir") + "</h2>" + (ok ? '<p class="meta">' + esc(l.auteur) + "</p>" : "") + "</div></div>";
     if (ok) {
       html += "<p>" + esc(tx(l.resume)) + "</p>" + htmlExtrait(l) + "<h3>Pourquoi il a compté</h3><p>" + esc(tx(l.importance)) + "</p><h3>L'anecdote</h3><p>" + esc(tx(l.anecdote)) + '</p><div id="ia-livre"></div><p class="meta">Référence : ' + esc(l.source) + "</p>";
       if (!seul && dispo.length > 1) html += '<div class="nav"><button type="button" class="btn sec" data-a="prec"' + (i <= 0 ? " disabled" : "") + '>← Précédent</button><button type="button" class="btn sec" data-a="suiv"' + (i >= dispo.length - 1 ? " disabled" : "") + ">Suivant →</button></div>";
@@ -5122,7 +5126,7 @@ svg.grille .interro { transition: opacity .3s; }
   }
   // v18 : pastille du thème d'une récompense. Même arbre que l'épreuve : on le dit, c'est un ancrage de plus.
   function pastilleTheme(th, themeEpreuve) {
-    if (!th || !stat(th)) return "";
+    if (!th || !statActif(th)) return "";
     return '<span class="pastille-theme" style="--c:' + couleur(th) + '"><i></i>' + esc(tx(stat(th).nom)) + (themeEpreuve && th === themeEpreuve ? " · comme ton épreuve" : "") + "</span>";
   }
   function marquerTheme(carte, x, themeEpreuve) {

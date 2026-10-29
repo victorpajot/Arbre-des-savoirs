@@ -117,7 +117,15 @@
     if (d["skills.json"]) d["skills.json"].competences.forEach(function (k) { comps[k.id] = true; });
     if (d["regles.json"]) {
       d["regles.json"].stats.forEach(function (s) { stats[s.id] = true; });
-      d["regles.json"].arbres_fondamentaux = (d["regles.json"].arbres_fondamentaux || []).filter(function (s) { return stats[s]; });
+      var R = d["regles.json"];
+      R.arbres_fondamentaux = (R.arbres_fondamentaux || []).filter(function (s) { return stats[s]; });
+      // Plus aucun arbre de départ : les arbres dont le pionnier vient le plus tôt (le plus petit n) ouvrent la partie.
+      if (!R.arbres_fondamentaux.length && R.stats.length && d["succes.json"]) {
+        var n = {};
+        d["succes.json"].succes.forEach(function (s) { if (s.ouvre && stats[s.ouvre]) n[s.ouvre] = (s.condition && s.condition.n) || 1; });
+        var min = Math.min.apply(null, R.stats.map(function (s) { return n[s.id] || 0; }));
+        R.arbres_fondamentaux = R.stats.filter(function (s) { return (n[s.id] || 0) === min; }).map(function (s) { return s.id; });
+      }
     }
     if (d["skills.json"]) d["skills.json"].competences.forEach(function (k) { k.prerequis = k.prerequis.filter(function (p) { return comps[p]; }); });
     var pl = d["plateau.json"];
@@ -139,6 +147,10 @@
     }
     garer("duel", contenu.ennemis.length > 0, null);
     garer("sauvages", !!contenu.atomes, []);
+    // Une révision forcée sur une compétence d'un pack éteint dort aussi : elle bloquerait le pion.
+    var rv = partie.revision;
+    if (rv && !contenu.parId[rv.comp]) { v.revision = rv; partie.revision = null; }
+    else if (!rv && v.revision && contenu.parId[v.revision.comp]) { partie.revision = v.revision; delete v.revision; }
     return partie;
   }
 
@@ -744,9 +756,11 @@
   }
   // v7 : la règle spéciale d'une case, en tenant compte des cases que l'IA a déplacées.
   function specialDe(contenu, partie, n) {
-    var sp = partie.plateau.speciaux;
-    if (sp && Object.prototype.hasOwnProperty.call(sp, n)) return sp[n];
-    return caseN(contenu, n).special || chronoDeBase(contenu, n);
+    var sp = partie.plateau.speciaux, x;
+    if (sp && Object.prototype.hasOwnProperty.call(sp, n)) x = sp[n];
+    else x = caseN(contenu, n).special || chronoDeBase(contenu, n);
+    // Pack atomes éteint : une case Mendeleïev redevient une case ordinaire.
+    return x && x.type === "mendeleiev" && !contenu.atomes ? null : x;
   }
   // v34 : les cases Chrono du premier tour (plateau.json regles.chrono.cases), hors des cases elles-mêmes.
   function chronoDeBase(contenu, n) { var R = contenu.plateau.regles.chrono; return R && R.cases && R.cases.indexOf(n) >= 0 ? { type: "chrono" } : null; }
@@ -936,13 +950,14 @@
       for (var k = 0; k < ecart && libres.length; k++) speciaux[libres.shift()] = nouvelle(k);
       return la.length + ecart;
     }
-    var nAtomes = ajuster(["mendeleiev"], H.atomes - cases.filter(function (x) { return base(x) && base(x).type === "mendeleiev"; }).length, function () { return { type: "mendeleiev" }; });
+    var nAtomes = !contenu.atomes ? 0 : ajuster(["mendeleiev"], H.atomes - cases.filter(function (x) { return base(x) && base(x).type === "mendeleiev"; }).length, function () { return { type: "mendeleiev" }; });
     var nPieges = ajuster(TYPES_PIEGES, H.pieges, function (k) { return { type: "recul", n: 2 + k % 3, raison: { fr: "Piège ajouté par l'IA en dessinant ce parcours." } }; });
     var nCadeaux = ajuster(["cadeau"], H.cadeaux, function () { return { type: "cadeau", raison: { fr: "Case cadeau ajoutée par l'IA, de bonne humeur ce jour-là." } }; });
     // v34 : des cases Chrono, selon l'humeur (outils/parcours.py).
     var nChrono = H.chrono == null ? 0 : ajuster(["chrono"], H.chrono - cases.filter(function (x) { return base(x) && base(x).type === "chrono"; }).length, function () { return { type: "chrono" }; });
-    var tours = pl.tours + 1, ennemis = Math.min(PC.ennemis_max || 12, contenu.ennemis.length - 1, H.ennemis + Math.max(0, Math.floor((tours - 2) / 2)) * (PC.ennemis_par_deux_tours || 0));
-    var mots = PC.mots[palier] || [];
+    var tours = pl.tours + 1, ennemis = Math.max(0, Math.min(PC.ennemis_max || 12, contenu.ennemis.length - 1, H.ennemis + Math.max(0, Math.floor((tours - 2) / 2)) * (PC.ennemis_par_deux_tours || 0)));
+    // Sans le pack ennemis, Alyca ne promet pas d'ennemis sur la route.
+    var mots = (PC.mots[palier] || []).filter(function (m) { return contenu.ennemis.length || !m.ennemis; });
     return { tour: tours, forme: forme.id, palier: palier, cases: cases, longueur: cases.length, ennemis: ennemis,
       atomes: Math.max(0, nAtomes), pieges: Math.max(0, nPieges), cadeaux: Math.max(0, nCadeaux), chrono: Math.max(0, nChrono), speciaux: speciaux,
       mot: mots.length ? mots[tirage(g + "|mot", mots.length)] : null, dessine: t };
@@ -1223,7 +1238,7 @@
   function duelBloquant(partie) { var d = partie.duel; return !!(d && d.pret && partie.plateau && d.case === partie.plateau.position); }
   function terminerDuel(contenu, partie, resultats, t, alea, total) {
     var d = partie.duel; if (!d) return null;
-    ouvrirLot(partie, t, contenu.ennemiParId[d.ennemi] && contenu.ennemiParId[d.ennemi].theme);
+    ouvrirLot(partie, t, themeActif(contenu, contenu.ennemiParId[d.ennemi] && contenu.ennemiParId[d.ennemi].theme));
     var e = contenu.ennemiParId[d.ennemi], f = ficheBestiaire(partie, d.ennemi), c = partie.compteurs;
     var bonnes = resultats.filter(function (x) { return x.correct; }).length, gagne = resultats.length > 0 && bonnes === resultats.length;
     f.dernier = t;
@@ -1480,7 +1495,7 @@
       if (q && q.type === "qcm" && rep !== null) { var ix = q.choix.map(function (c) { return c.fr; }).indexOf(rep); if (ix >= 0) rep = ix; }
       return { id: id, correct: false, rep: rep };
     }).filter(function (x) { return contenu.questionParId[x.id]; }), t, "atome");
-    ouvrirLot(partie, t, contenu.atomes && contenu.atomes.theme);
+    ouvrirLot(partie, t, themeActif(contenu, contenu.atomes && contenu.atomes.theme));
     if (indice) partie.lot.cap = RECOMPENSES_PAR_EPREUVE - 1;
     var R = contenu.atomes.regles, c = partie.compteurs, f = ficheAtome(partie, s.z);
     partie.sauvages.shift();
@@ -2402,6 +2417,8 @@
   function lotExceptionnel(partie, dep) {
     if (partie.lot && dep && dep.etapes && dep.etapes.some(function (e) { return e.type === "tour_fini"; })) partie.lot.cap = SUCCES_EXPLOIT;
   }
+  // Un thème ne compte que si son arbre est joué (pack allumé) : l'ennemi ou l'atome d'un arbre éteint ne donne pas de ton.
+  function themeActif(contenu, th) { return th && contenu.parStat[th] ? th : null; }
   function ouvrirLot(partie, t, theme) { partie.lot = { t: t, n: 0, r: 0, theme: theme || null }; }
   function lotDe(partie, t) { return partie.lot && partie.lot.t === t ? partie.lot : { t: t, n: 0, r: 0, theme: null }; }
   function horsLot(lot, liste) { return lot.n ? liste.filter(function (b) { return !FAMILLES_LOT[b.famille]; }) : liste; }
@@ -2528,12 +2545,13 @@
   // Le thème de la case où se tient le pion.
   function themeCase(contenu, partie) {
     var k = contenu.plateau && partie.plateau && contenu.plateau.cases[partie.plateau.position - 1];
-    return k ? k.stat || null : null;
+    // Une case dont l'arbre est éteint ne donne pas de ton.
+    return k && k.stat && contenu.parStat[k.stat] ? k.stat : null;
   }
   // Le thème d'une épreuve : l'arbre de sa compétence, celui de l'ennemi d'un duel, sinon celui de la case.
   function themeEpreuve(contenu, partie, epreuve) {
     if (epreuve && epreuve.comp && contenu.parId[epreuve.comp]) return contenu.parId[epreuve.comp].stat;
-    if (epreuve && epreuve.ennemi && contenu.ennemiParId && contenu.ennemiParId[epreuve.ennemi]) return themeDe(contenu.ennemiParId[epreuve.ennemi]);
+    if (epreuve && epreuve.ennemi && contenu.ennemiParId && contenu.ennemiParId[epreuve.ennemi]) return themeActif(contenu, themeDe(contenu.ennemiParId[epreuve.ennemi]));
     return themeCase(contenu, partie);
   }
   // Trois fois sur quatre, quand c'est possible, on puise dans ce qui est du thème. Tiré par hachage, pour
@@ -2735,7 +2753,7 @@
   var RETARD_PRIORITAIRE = 2 * JOUR;
   function choixIA(contenu, partie, t) {
     var rv = revisionEnCours(partie);
-    if (rv) return { comp: contenu.parId[rv.comp], type: "rappel", raison: "revision" };
+    if (rv && contenu.parId[rv.comp]) return { comp: contenu.parId[rv.comp], type: "rappel", raison: "revision" };
     var dus = rappelsDus(contenu, partie, t);
     var dispo = disponibles(contenu, partie, t);
     var graine = hacher(cleJour(t) + "|" + partie.journal.length + "|" + (partie.cree || 0));
@@ -2743,7 +2761,8 @@
     // en tête, l'oubli n'attend pas), puis un quiz de cet arbre ; sinon l'ancien choix, annoncé comme hors case.
     var k = contenu.plateau && partie.plateau && contenu.plateau.cases[partie.plateau.position - 1];
     var ach = arbreAchete(partie);
-    var st = ach ? ach.stat : k && k.stat;
+    if (ach && !contenu.parStat[ach.stat]) ach = null;
+    var st = ach ? ach.stat : k && contenu.parStat[k.stat] ? k.stat : null;
     // v31 (Victor) : la case évoque des compétences précises (Mendel → Génétique) : elles passent avant le reste de l'arbre.
     var CC = contenu.plateau && contenu.plateau.competences_cases, evoque = (k && CC && CC[String(k.n)]) || [];
     if (ach && k && k.stat !== ach.stat) evoque = [];
