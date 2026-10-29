@@ -1242,7 +1242,7 @@ function demarrerJeu() {
   function nomDeguisement(f) {
     if (!f) return "";
     if (f.type === "tenue") { var v = tenueFarce(f.id); return v ? tx(v.nom) : __("une tenue ridicule"); }
-    var a = accessoire(f.id, true), nom = a ? tx(a.nom) : "", art = ARTICLE_ACC[f.id] || "le";
+    var a = accessoire(f.id, true), nom = a ? tx(a.nom) : "", art = M.langue() === "fr" ? ARTICLE_ACC[f.id] || "le" : "the";
     return art + " " + nom.charAt(0).toLowerCase() + nom.slice(1);
   }
   function tenueFarce(id) { return (C.avatar.tenues_farce || []).filter(function (v) { return v.id === id; })[0] || null; }
@@ -1366,7 +1366,7 @@ function demarrerJeu() {
   var LANGUES_JEU = [["fr", __("Français")], ["en", __("English")]];
   function blocLangue() {
     var b = el('<div class="bloc"><h2>' + __("Langue") + '</h2><p class="note">' + __("Le jeu redémarre dans la langue choisie. Ta progression ne change pas.") + '</p><div class="segments" role="group" aria-label="' + __("Langue") + '"></div></div>');
-    var seg = b.querySelector(".seg");
+    var seg = b.querySelector(".segments");
     LANGUES_JEU.forEach(function (l) {
       var bt = el('<button type="button" lang="' + l[0] + '" aria-pressed="' + (M.langue() === l[0]) + '">' + l[1] + "</button>");
       bt.onclick = function () {
