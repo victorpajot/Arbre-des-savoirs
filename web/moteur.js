@@ -1405,14 +1405,14 @@
     var pS = melanger(reels, alea).slice(0, 2);
     melanger(faux, alea).forEach(function (f) { if (pS.length < 3 && pS.indexOf(f) < 0) pS.push(f); });
     melanger(A.map(function (x) { return x.symbole; }), alea).forEach(function (f) { if (pS.length < 3 && f !== e.symbole && pS.indexOf(f) < 0) pS.push(f); });
-    var q1 = finir("symbole", __("Quel est le symbole de l'atome « ") + nom + " » ?", e.symbole, pS);
+    var q1 = finir("symbole", __("Quel est le symbole de l'atome « {nom} » ?", { nom: nom }), e.symbole, pS);
     // v15 : le numéro atomique (Victor ne voulait pas la masse). v34 (Victor) : leurres éloignés d'au moins 12,
     // pour deviner avec la logique léger/lourd plutôt que de tout savoir par cœur.
     var pZ = [], pris = [e.z];
     melanger(A.map(function (x) { return x.z; }), alea).forEach(function (z) {
       if (pZ.length < 3 && pris.every(function (y) { return Math.abs(y - z) >= 12; })) { pZ.push(String(z)); pris.push(z); }
     });
-    var q2 = finir("numero", __("Quel est le numéro atomique de « ") + nom + " » ?", String(e.z), pZ);
+    var q2 = finir("numero", __("Quel est le numéro atomique de « {nom} » ?", { nom: nom }), String(e.z), pZ);
     // Où : un lieu de cet atome, et des lieux d'autres familles sans mot commun avec les siens.
     var siens = {}; e.ou.forEach(function (o) { mots(TX(o)).forEach(function (m) { siens[m] = 1; }); });
     var bonne = TX(e.ou[Math.floor(alea() * e.ou.length)]), pO = [];
@@ -1425,7 +1425,7 @@
     });
     var q3 = finir("ou", __("Où croise-t-on surtout cet atome ?"), bonne, pO);
     // v34 (Victor) : le placer sur le tableau, en touchant sa case. `reponse` : le numéro de la case juste.
-    var qP = { type: "place", enonce: __("Où va « ") + nom + __(" » dans le tableau ? Touche sa case."), choix: [], reponse: e.z };
+    var qP = { type: "place", enonce: __("Où va « {nom} » dans le tableau ? Touche sa case.", { nom: nom }), choix: [], reponse: e.z };
     return [q1, q2, qP, q3];
   }
 
@@ -1469,11 +1469,11 @@
       return out;
     }
     out.ligne = n;
-    out.lignes.push(pl(n, "couche") + __(" → ligne ") + n + ".");
+    out.lignes.push(pl(n, __("couche")) + __(" → ligne ") + n + ".");
     if (!e.groupe) {
       out.cas = "terre_rare";
       var serie = e.z >= 89 ? "actinides" : "lanthanides";
-      out.lignes.push(__("Sa ") + (n - 2) + __("e couche se remplit (") + c[n - 3] + __(" électrons) pendant que les deux dernières bougent à peine : c'est un des ") + serie + __(", rangés dans la ligne du bas."));
+      out.lignes.push(__("Sa {n}e couche se remplit ({e} électrons) pendant que les deux dernières bougent à peine : c'est un des {serie}, rangés dans la ligne du bas.", { n: n - 2, e: c[n - 3], serie: serie }));
       return out;
     }
     if (e.z === 2) { out.cas = "helium"; out.colonne = 18; out.lignes.push(__("2 électrons : sa seule couche est déjà pleine. Couche extérieure pleine = gaz noble, colonne 18.")); return out; }
@@ -1523,7 +1523,7 @@
       if (q.type === "numero") return Object.assign(base, { type: "numerique", reponse: e.z, tolerance: 0, explication: { fr: ast.texte + (lc ? " " + lc.lignes.join(" ") : "") }, illustration_explication: (lc ? dessinCouches(atomes, e) : "") + ast.illustration });
       if (q.type === "place") return Object.assign(base, { type: "place", reponse: e.z, explication: { fr: (lc ? lc.lignes.join(" ") + " " : "") + ast.texte }, illustration_explication: (lc ? dessinCouches(atomes, e) : "") + ast.illustration });
       return Object.assign(base, { type: "qcm", choix: q.choix.map(function (c) { return { fr: c }; }), reponse: q.reponse,
-        explication: { fr: q.type === "symbole" ? __("Le symbole de « ") + TX(e.nom) + __(" » est ") + e.symbole + __(", numéro ") + e.z + "." : __("On le croise surtout dans ") + lieux + ". " + TX(e.anecdote) } });
+        explication: { fr: q.type === "symbole" ? __("Le symbole de « {nom} » est {symbole}, numéro {z}.", { nom: TX(e.nom), symbole: e.symbole, z: e.z }) : __("On le croise surtout dans ") + lieux + ". " + TX(e.anecdote) } });
     });
   }
   // L'atome qui porte ce symbole ou ce numéro : « tu as dit 24 ? c'est le chrome ».

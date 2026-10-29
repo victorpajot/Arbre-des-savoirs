@@ -221,7 +221,7 @@ def chaines_interface():
     for f in (WEB / "index.html", WEB / "moteur.js"):
         for m in RE_L.finditer(f.read_text(encoding="utf-8")):
             s = dejavascript(m.group(2), m.group(1))
-            if s not in out:
+            if re.search(r"[A-Za-zÀ-ÿ]", re.sub(r"\{\w+\}|<[^<>]*>", "", s)) and s not in out:
                 out.append(s)
     return out
 
