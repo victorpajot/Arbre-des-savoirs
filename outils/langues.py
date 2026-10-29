@@ -69,8 +69,10 @@ RE_BALISE = re.compile(r"<[^<>]*>|\{\w+\}")
 
 
 def balises(s):
-    """Les balises HTML et variables {x} d'un texte : une traduction les garde toutes (l'ordre peut changer)."""
-    return sorted(RE_BALISE.findall(s))
+    """Les balises HTML et variables {x} d'un texte : une traduction les garde toutes (l'ordre peut changer). Seuls
+    les textes des attributs lus par le joueur (aria-label, title, placeholder, alt) et les liens (href) se traduisent."""
+    sans_textes = re.sub(r'((?:aria-label|title|placeholder|alt|href)=\\?")[^"\\]*', r"\1", s)
+    return sorted(RE_BALISE.findall(sans_textes))
 
 
 def traduire_svg(svg, dico):

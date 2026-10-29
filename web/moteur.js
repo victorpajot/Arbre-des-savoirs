@@ -36,6 +36,28 @@
     if (src == null) return "";
     return DICO[src] || CATALOGUE[src] || src;
   }
+  // Les textes qui ne sont pas des objets {"fr"} : étiquettes et aria-label des schémas SVG, quelques champs simples
+  // (outils/langues.py, CHAMPS_SIMPLES). Traduits une fois, au chargement : changer de langue relance le jeu.
+  var CHAMPS_SIMPLES = { langue: 1, traducteur: 1, reference: 1, titre: 1 }, CLES_IGNOREES = { source: 1, url: 1, verification: 1, id: 1 };
+  var RE_SVG = [/(<text\b[^>]*>)([^<]*)(<\/text>)/g, /(<tspan\b[^>]*>)([^<]*)(<\/tspan>)/g, /(aria-label=")([^"]*)(")/g];
+  function traduireSvg(svg) {
+    RE_SVG.forEach(function (r) { svg = svg.replace(r, function (m, a, t, b) { return a + (DICO[t] || t) + b; }); });
+    return svg;
+  }
+  function traduireChaines(o) {
+    if (LANGUE === "fr" && !Object.keys(DICO).length) return o;
+    (function voir(x) {
+      if (!x || typeof x !== "object") return;
+      Object.keys(x).forEach(function (k) {
+        var v = x[k];
+        if (typeof v === "string") {
+          if (v.indexOf("<svg") >= 0) x[k] = traduireSvg(v);
+          else if (CHAMPS_SIMPLES[k] && DICO[v]) x[k] = DICO[v];
+        } else if (!CLES_IGNOREES[k]) voir(v);
+      });
+    })(o);
+    return o;
+  }
   // Une chaîne du code, écrite en français ; {nom} est remplacé par params.nom.
   function __(s, params) {
     var t = LANGUE !== "fr" && CATALOGUE[s] || s;
@@ -1416,7 +1438,7 @@
   }
   function astuceNumero(atomes, e) {
     var av = atomes.elements[e.z - 2], ap = atomes.elements[e.z], nom = function (x) { return TX(x.nom).toLowerCase() + " (" + x.z + ")"; };
-    var voisins = av && ap ? "entre " + nom(av) + " et " + nom(ap) : av ? __("juste après ") + nom(av) + __(", tout au bout du tableau") : __("le tout premier, avant ") + nom(ap);
+    var voisins = av && ap ? __("entre ") + nom(av) + __(" et ") + nom(ap) : av ? __("juste après ") + nom(av) + __(", tout au bout du tableau") : __("le tout premier, avant ") + nom(ap);
     return { texte: TX(e.nom) + ", n° " + e.z + " : " + voisins + ".", voisins: [av, ap].filter(Boolean).map(function (x) { return x.z; }), illustration: schemaNumero(atomes, e, av, ap) };
   }
   // Le tableau en miniature : l'atome en couleur d'accent, ses deux voisins en jaune, numéros écrits.
@@ -1447,11 +1469,11 @@
       return out;
     }
     out.ligne = n;
-    out.lignes.push(pl(n, "couche") + " → ligne " + n + ".");
+    out.lignes.push(pl(n, "couche") + __(" → ligne ") + n + ".");
     if (!e.groupe) {
       out.cas = "terre_rare";
       var serie = e.z >= 89 ? "actinides" : "lanthanides";
-      out.lignes.push("Sa " + (n - 2) + __("e couche se remplit (") + c[n - 3] + __(" électrons) pendant que les deux dernières bougent à peine : c'est un des ") + serie + __(", rangés dans la ligne du bas."));
+      out.lignes.push(__("Sa ") + (n - 2) + __("e couche se remplit (") + c[n - 3] + __(" électrons) pendant que les deux dernières bougent à peine : c'est un des ") + serie + __(", rangés dans la ligne du bas."));
       return out;
     }
     if (e.z === 2) { out.cas = "helium"; out.colonne = 18; out.lignes.push(__("2 électrons : sa seule couche est déjà pleine. Couche extérieure pleine = gaz noble, colonne 18.")); return out; }
@@ -1460,10 +1482,10 @@
       out.lignes.push(ext <= 2 ? pl(ext, __("électron")) + __(" sur la couche extérieure → colonne ") + ext + "." : pl(ext, __("électron")) + __(" sur la couche extérieure → colonne ") + ext + " + 10 = " + (ext + 10) + __(" (on saute les 10 colonnes du milieu)."));
     } else if (av === 18 || av === 32) {
       out.colonne = ext + 10; out.cas = ext <= 2 ? "fin_transition" : "principal";
-      out.lignes.push(pl(ext, __("électron")) + __(" sur la couche extérieure, et la couche d'en dessous pleine à ") + av + " → colonne " + ext + " + 10 = " + (ext + 10) + ".");
+      out.lignes.push(pl(ext, __("électron")) + __(" sur la couche extérieure, et la couche d'en dessous pleine à ") + av + __(" → colonne ") + ext + " + 10 = " + (ext + 10) + ".");
     } else {
       var trop = av - 8; out.cas = "transition"; out.colonne = ext + trop;
-      out.lignes.push(pl(ext, __("électron")) + " dehors, plus " + trop + __(" en trop sur la couche d'en dessous (") + av + __(" au lieu de 8) → colonne ") + ext + " + " + trop + " = " + out.colonne + ".");
+      out.lignes.push(pl(ext, __("électron")) + __(" dehors, plus ") + trop + __(" en trop sur la couche d'en dessous (") + av + __(" au lieu de 8) → colonne ") + ext + " + " + trop + " = " + out.colonne + ".");
     }
     return out;
   }
@@ -1485,7 +1507,7 @@
     out.push('<text class="tm" x="' + lx + __('" y="20" font-size="11">couche · électrons</text>'));
     for (i = 0; i < n; i++) {
       var y = 40 + i * 24;
-      out.push('<circle cx="' + (lx + 7) + '" cy="' + (y - 4) + '" r="7" fill="' + COULEURS_COUCHES[i] + '"/><text class="t" x="' + (lx + 20) + '" y="' + y + '" font-size="14" font-weight="' + (i === n - 1 ? 700 : 400) + '">' + (i + 1) + " · " + c[i] + (i === n - 1 ? " ← dehors" : "") + "</text>");
+      out.push('<circle cx="' + (lx + 7) + '" cy="' + (y - 4) + '" r="7" fill="' + COULEURS_COUCHES[i] + '"/><text class="t" x="' + (lx + 20) + '" y="' + y + '" font-size="14" font-weight="' + (i === n - 1 ? 700 : 400) + '">' + (i + 1) + " · " + c[i] + (i === n - 1 ? __(" ← dehors") : "") + "</text>");
     }
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 250" role="img" aria-label="' + TX(e.nom) + " : " + c.join(", ") + __(' électrons par couche">') + out.join("") + "</svg>";
   }
@@ -2087,15 +2109,20 @@
     v.forEach(function (x) { while (n >= x[0]) { s += x[1]; n -= x[0]; } });
     return s;
   }
-  function texteSiecle(k) { return k >= 0 ? chiffreRomain(k + 1) + (k === 0 ? "er" : "e") + __(" siècle") : chiffreRomain(-k) + __("e siècle av. J.-C."); }
+  // Le rang d'un siècle : « XVIIe », « Ier » en français, « 17th », « 1st » en anglais.
+  function ordinalSiecle(n) {
+    if (LANGUE === "en") return n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th");
+    return chiffreRomain(n) + (n === 1 ? "er" : "e");
+  }
+  function texteSiecle(k) { return k >= 0 ? __("{o} siècle", { o: ordinalSiecle(k + 1) }) : __("{o} siècle av. J.-C.", { o: ordinalSiecle(-k) }); }
   // Le libellé d'un créneau : « XVIIe siècle », « 2de moitié du XVIIe siècle », « 1680-1689 », « 585 av. J.-C. ».
   function texteCreneau(k, pas, prehistoire) {
-    if (prehistoire != null && k < creneau(prehistoire, pas, null)) return __("Préhistoire (avant ") + (-prehistoire) + " av. J.-C.)";
+    if (prehistoire != null && k < creneau(prehistoire, pas, null)) return __("Préhistoire (avant {a} av. J.-C.)", { a: -prehistoire });
     if (pas === 100) return texteSiecle(k);
-    if (pas === 50) { var c = Math.floor(k / 2); return (k - 2 * c ? "2de" : "1re") + __(" moitié du ") + texteSiecle(c); }
-    if (pas === 1) { var y = anneeDuCreneau(k, 1); return y > 0 ? String(y) : (-y) + " av. J.-C."; }
+    if (pas === 50) { var c = Math.floor(k / 2); return k - 2 * c ? __("2de moitié du {siecle}", { siecle: texteSiecle(c) }) : __("1re moitié du {siecle}", { siecle: texteSiecle(c) }); }
+    if (pas === 1) { var y = anneeDuCreneau(k, 1); return y > 0 ? String(y) : __("{a} av. J.-C.", { a: -y }); }
     var a = anneeDuCreneau(k, pas), b = k >= 0 ? k * pas + pas - 1 : k * pas + pas - 1;
-    return a > 0 ? a + "-" + b : (-a) + " à " + (-b) + " av. J.-C.";
+    return a > 0 ? a + "-" + b : __("{a} à {b} av. J.-C.", { a: -a, b: -b });
   }
   // Une phrase qui donnerait la date (un nombre de trois ou quatre chiffres) n'est pas montrée.
   function sansDate(o) { var x = o && TX(o); return x && !/\d{3,4}/.test(x) ? x : null; }
@@ -2884,10 +2911,10 @@
 
   // Remplace {stat}, {n}… dans le texte d'une réplique, sans toucher au contenu.
   function habiller(contenu, ligne, vars) {
-    var texte = {};
-    Object.keys(ligne.texte).forEach(function (l) {
-      texte[l] = ligne.texte[l].replace(/\{(\w+)\}/g, function (m, k) { return vars && vars[k] != null ? vars[k] : m; });
-    });
+    var texte = {}, remplir = function (t) { return t.replace(/\{(\w+)\}/g, function (m, k) { return vars && vars[k] != null ? vars[k] : m; }); };
+    Object.keys(ligne.texte).forEach(function (l) { texte[l] = remplir(ligne.texte[l]); });
+    // Dans une autre langue, la traduction est prise avant de remplir les variables.
+    if (texte[LANGUE] == null) texte[LANGUE] = remplir(TX(ligne.texte));
     return { id: ligne.id, contexte: ligne.contexte, texte: texte, expression: expression(contenu, ligne.contexte) };
   }
 
@@ -2980,7 +3007,7 @@
   }
 
   var Moteur = {
-    choisirLangue: choisirLangue, langue: langue, TX: TX, __: __,
+    choisirLangue: choisirLangue, langue: langue, TX: TX, __: __, ordinalSiecle: ordinalSiecle, traduireChaines: traduireChaines,
     FORMAT_PARTIE: FORMAT_PARTIE,
     indexerContenu: indexerContenu,
     packsEteints: packsEteints, filtrerPacks: filtrerPacks, packDe: packDe, accorderPartie: accorderPartie,
