@@ -1023,6 +1023,14 @@ svg.grille .interro { transition: opacity .3s; }
     var c = Math.max(x1 - x0, y1 - y0) + 3, ox = x0 - (c - (x1 - x0 + 1)) / 2, oy = y0 - (c - (y1 - y0 + 1)) / 2;
     return '<svg class="pix" viewBox="' + ox + " " + oy + " " + c + " " + c + '" width="' + taille + '" height="' + taille + '" aria-hidden="true">' + pixels(grille, palette, null, 0, 0, 1) + "</svg>";
   }
+  // La même grille rognée, posée en (x, y) dans un autre SVG.
+  function spriteRogne(grille, palette, x, y, taille) {
+    var x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1;
+    grille.forEach(function (l, j) { for (var i = 0; i < l.length; i++) if (l[i] !== ".") { x0 = Math.min(x0, i); x1 = Math.max(x1, i); y0 = Math.min(y0, j); y1 = Math.max(y1, j); } });
+    if (x1 < 0) return "";
+    var c = Math.max(x1 - x0, y1 - y0) + 2, ox = x0 - (c - (x1 - x0 + 1)) / 2, oy = y0 - (c - (y1 - y0 + 1)) / 2;
+    return '<svg x="' + x + '" y="' + y + '" width="' + taille + '" height="' + taille + '" viewBox="' + ox + " " + oy + " " + c + " " + c + '" shape-rendering="crispEdges">' + pixels(grille, palette, null, 0, 0, 1) + "</svg>";
+  }
   // v19 : la bourse des crédits, en pixel art, partout où l'on compte des crédits.
   var BOURSE = ["................", ".....kkkkkk.....", "....kBlllBBk....", ".....kbbbbk.....", "......kyyk......", ".....kbBBbk.....",
     "....kbBlBBbk....", "...kbBlBBBBbk...", "..kbBlBBBBBBbk..", "..kbBBBBBBkkkk..", "..kbBBBBBkyYYyk.", "..kbBBBBkyYooYyk",
@@ -1043,10 +1051,11 @@ svg.grille .interro { transition: opacity .3s; }
   }
   // v15 : badge d'une compétence : pastille à la couleur de son arbre, son symbole, et son rang (niveau) en pastille.
   function badgeComp(k, taille) {
-    var sym = k.symbole || "?", t = sym.length > 2 ? 11 : sym.length > 1 ? 14 : 19;
+    var sym = k.symbole || "?", t = sym.length > 2 ? 11 : sym.length > 1 ? 14 : 19, g = k.embleme && grilleSprite(k.embleme);
     return '<svg class="badge-comp" viewBox="0 0 44 44" width="' + taille + '" height="' + taille + '" role="img" aria-label="' + esc(tx(k.nom)) + ", niveau " + k.rang + '">' +
       '<rect x="2" y="2" width="36" height="36" rx="11" fill="' + couleur(k.stat) + '" stroke="#fff" stroke-width="2"/>' +
-      '<text x="20" y="' + (20 + t * 0.36).toFixed(1) + '" text-anchor="middle" font-size="' + t + '" font-weight="800" fill="#fff" style="font-family:var(--f-body),\'Noto Sans Symbols 2\',\'Noto Sans Math\',sans-serif">' + esc(sym) + "\uFE0E</text>" +
+      // v29 : l'objet qui dit la compétence, en pixel art, sur un médaillon clair.
+      (g ? '<rect x="5.5" y="5.5" width="29" height="29" rx="8" fill="#FFF8EC"/>' + spriteRogne(g, C.cabinet.palette, 7, 7, 26) : '<text x="20" y="' + (20 + t * 0.36).toFixed(1) + '" text-anchor="middle" font-size="' + t + '" font-weight="800" fill="#fff" style="font-family:var(--f-body),\'Noto Sans Symbols 2\',\'Noto Sans Math\',sans-serif">' + esc(sym) + "\uFE0E</text>") +
       '<circle cx="35" cy="35" r="8.5" fill="#1E1A2B" stroke="#fff" stroke-width="2"/><text x="35" y="39" text-anchor="middle" font-size="11" font-weight="800" fill="#fff" font-family="JetBrains Mono, monospace">' + k.rang + "</text></svg>";
   }
   // v29 : icône d'un arbre : pastille à sa couleur, un arbre stylisé dessus.

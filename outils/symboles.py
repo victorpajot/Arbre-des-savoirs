@@ -25,3 +25,28 @@ SYMBOLES = {
     "philo.antiquite": "Φ", "philo.medievale": "✠", "philo.classique": "✒", "philo.moderne": "∃",
     "philo.ethique": "⚖", "philo.politique": "⚑", "philo.esprit": "☁", "philo.sciences": "⊢",
 }
+
+
+# v29 (Victor) : quand un objet du jeu dit mieux la compétence qu'un caractère, le badge montre son pixel art.
+# Le symbole reste pour les compétences sans objet parlant (σ, ∞, x² se lisent très bien).
+EMBLEMES = {
+    "math.arithmetique": "boulier", "math.probabilites": "des-pascal", "math.logique": "ardoise-boole",
+    "math.geometrie": "compas-euclide",
+    "phys.unites": "metre-etalon", "phys.forces": "pomme-newton", "phys.energie": "machine-joule",
+    "phys.ondes": "prisme-newton", "phys.fluides": "couronne-hieron", "phys.thermo": "feu", "phys.relativite": "relativite",
+    "sci.methode": "rasoir-ockham", "sci.cellule": "microscope-hooke", "sci.evolution": "carnet-darwin",
+    "sci.genetique": "pois-mendel", "sci.immunite": "boite-petri", "sci.biotech": "adn",
+    "rhet.figures": "plume", "rhet.persuasion": "rouleau-aristote", "rhet.narration": "enluminure",
+    "rhet.discours": "cailloux-demosthene", "rhet.propagande": "presse",
+    "biais.ancrage": "roue-loterie", "biais.outils": "lunettes",
+    "psy.memoire": "fiche-ebbinghaus", "psy.influence": "lignes-asch",
+    "sci.atomes": "atome", "chim.liaisons": "modele-moleculaire", "chim.acides": "papier-tournesol",
+    "chim.reactions": "balance-lavoisier", "chim.etats": "bougie", "chim.noyau": "verre-uranium",
+    "astro.systeme": "heliocentre", "astro.galaxies": "plaque-hubble", "astro.observer": "lunette-galilee",
+    "astro.espace": "fusee", "astro.exoplanetes": "disque-voyager",
+    "elec.circuits": "bouteille-leyde", "elec.ohm": "pile-volta", "elec.puissance": "ampoule-edison",
+    "elec.magnetisme": "bobine-faraday", "elec.electronique": "puce", "elec.energies": "bobine-tesla",
+    "elec.numerique": "ordinateur",
+    "philo.antiquite": "lanterne-diogene", "philo.classique": "poele-descartes", "philo.moderne": "marteau-nietzsche",
+    "philo.politique": "couronne", "philo.esprit": "ruban-turing",
+}

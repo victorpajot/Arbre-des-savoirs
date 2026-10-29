@@ -187,6 +187,7 @@ def competences():
                 "id": id, "stat": stat, "rang": i + 1,
                 "nom": fr(nom), "description": fr(desc), "prerequis": prerequis[i], "fiche": fiche(id),
                 "symbole": symboles.SYMBOLES[id],
+                **({"embleme": symboles.EMBLEMES[id]} if id in symboles.EMBLEMES else {}),
             })
     return out
 
