@@ -66,7 +66,9 @@ HONTE = {"chance": 0.3, "facteur": 5, "mots": [
 # rappel_mur_jour points par jour : l'humeur remonte petit à petit, pas d'un coup.
 # v31 (Victor) : un ennemi battu la ravit bien davantage qu'un quiz sans faute (duel_gagne au lieu de sans_faute).
 AGACEMENT = {"par_erreur": 2, "epreuve_ratee": 6, "max": 16, "sans_faute": 2, "rappel_mur": 1, "rappel_mur_jour": 6,
-             "duel_gagne": 15}
+             "duel_gagne": 15, "reussi": 1}
+# v31 (Victor) : une épreuve réussie avec des fautes (atome capturé, quiz ou rappel réussi) ne coûte plus de faveur :
+# elle gagne « reussi ». Seules les épreuves ratées l'agacent.
 
 POTS = {"gain_base": 8, "gain_par_credit": 0.5, "gain_max": 40, "avance": 1, "avance_double": 2, "colere": 15,
         "piege": {"type": "recul", "n": 2}}

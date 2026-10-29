@@ -1405,3 +1405,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Un rappel d'un autre arbre, à peine dû, ne passe plus devant la case.
   console.log("OK : v31 case → compétence évoquée (" + x.comp.id + ")");
 }
+
+// v31 : réussie avec des fautes, la faveur monte quand même un peu ; ratée, elle baisse.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 7, 10).getTime(), A = C.ia.credits.agacement;
+  const P = M.nouvellePartie(T); P.decalage = T - Date.now(); P.faveur = { valeur: 40, maj: T };
+  const r = M.agacerIA(C, P, 1, false, T);
+  assert.equal(r.gain, A.reussi); assert.equal(r.raison, "reussi"); assert.equal(M.faveurIA(C, P, T).valeur, 40 + A.reussi);
+  assert.ok(M.agacerIA(C, P, 1, true, T).perte > 0, "ratée : elle s'agace");
+  console.log("OK : v31 réussite avec fautes, faveur positive");
+}

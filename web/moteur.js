@@ -1570,6 +1570,11 @@
     var A = contenu.ia && contenu.ia.credits && contenu.ia.credits.agacement, avant = faveurIA(contenu, partie, t);
     if (!A || !avant) return null;
     var perte = Math.min(A.max, Math.max(0, erreurs) * A.par_erreur + (ratee ? A.epreuve_ratee : 0));
+    // v31 : réussie malgré des fautes, elle reste contente (un peu).
+    if (!ratee && perte && A.reussi) {
+      partie.faveur = { valeur: Math.min(100, avant.valeur + A.reussi), maj: t };
+      return { perte: 0, gain: A.reussi, raison: "reussi", avant: avant, apres: faveurIA(contenu, partie, t) };
+    }
     // v28 : sans faute, elle vous aime un peu plus. Un peu.
     // v31 : `cle` choisit un autre gain (duel_gagne : un ennemi battu la ravit).
     var g = (cle && A[cle]) || A.sans_faute;
