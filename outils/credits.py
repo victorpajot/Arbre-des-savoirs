@@ -64,7 +64,9 @@ HONTE = {"chance": 0.3, "facteur": 5, "mots": [
 # v28 : une épreuve sans faute lui plaît un peu (sans_faute points de faveur).
 # v29 (Victor) : chaque question réhabilitée au mur de la honte la radoucit un peu (rappel_mur), sans dépasser
 # rappel_mur_jour points par jour : l'humeur remonte petit à petit, pas d'un coup.
-AGACEMENT = {"par_erreur": 2, "epreuve_ratee": 6, "max": 16, "sans_faute": 2, "rappel_mur": 1, "rappel_mur_jour": 6}
+# v31 (Victor) : un ennemi battu la ravit bien davantage qu'un quiz sans faute (duel_gagne au lieu de sans_faute).
+AGACEMENT = {"par_erreur": 2, "epreuve_ratee": 6, "max": 16, "sans_faute": 2, "rappel_mur": 1, "rappel_mur_jour": 6,
+             "duel_gagne": 15}
 
 POTS = {"gain_base": 8, "gain_par_credit": 0.5, "gain_max": 40, "avance": 1, "avance_double": 2, "colere": 15,
         "piege": {"type": "recul", "n": 2}}

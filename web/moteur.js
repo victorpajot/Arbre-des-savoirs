@@ -1119,7 +1119,7 @@
     var bonnes = resultats.filter(function (x) { return x.correct; }).length, gagne = resultats.length > 0 && bonnes === resultats.length;
     f.dernier = t;
     var out = { gagne: gagne, ennemi: e, bonnes: bonnes, total: Math.max(resultats.length, total || 0), plateau: null, recompenses: null, butin: null, premiere: false, fiche: f };
-    out.agacement = agacerIA(contenu, partie, resultats.length - bonnes, !gagne, t);
+    out.agacement = agacerIA(contenu, partie, resultats.length - bonnes, !gagne, t, "duel_gagne");
     if (gagne) {
       f.victoires++; f.serie++; f.meilleure = Math.max(f.meilleure, f.serie);
       c.duelsGagnes = (c.duelsGagnes || 0) + 1;
@@ -1566,14 +1566,16 @@
     return { succes: sc.id, n: n, base: base, humeur: humeur, mot: mot };
   }
   // Chaque erreur agace l'IA ; une épreuve ratée encore plus. Renvoie la perte (ou le gain, sans faute) de faveur, ou null.
-  function agacerIA(contenu, partie, erreurs, ratee, t) {
+  function agacerIA(contenu, partie, erreurs, ratee, t, cle) {
     var A = contenu.ia && contenu.ia.credits && contenu.ia.credits.agacement, avant = faveurIA(contenu, partie, t);
     if (!A || !avant) return null;
     var perte = Math.min(A.max, Math.max(0, erreurs) * A.par_erreur + (ratee ? A.epreuve_ratee : 0));
     // v28 : sans faute, elle vous aime un peu plus. Un peu.
-    if (!perte && !ratee && A.sans_faute) {
-      partie.faveur = { valeur: Math.min(100, avant.valeur + A.sans_faute), maj: t };
-      return { perte: 0, gain: A.sans_faute, avant: avant, apres: faveurIA(contenu, partie, t) };
+    // v31 : `cle` choisit un autre gain (duel_gagne : un ennemi battu la ravit).
+    var g = (cle && A[cle]) || A.sans_faute;
+    if (!perte && !ratee && g) {
+      partie.faveur = { valeur: Math.min(100, avant.valeur + g), maj: t };
+      return { perte: 0, gain: g, raison: cle && A[cle] ? cle : "sans_faute", avant: avant, apres: faveurIA(contenu, partie, t) };
     }
     if (!perte) return null;
     partie.faveur = { valeur: Math.max(0, avant.valeur - perte), maj: t };

@@ -3937,6 +3937,19 @@ svg.grille .interro { transition: opacity .3s; }
 
   // --- Vue Succès -----------------------------------------------------------
   // v25 : les stats des branches, déplacées de la fiche Personnage ; premier onglet des Succès.
+  // v31 (Victor) : les combats du personnage, en tête des stats.
+  function blocCombats() {
+    var B = P.bestiaire || {}, ids = Object.keys(B), aff = 0, vaincus = 0, v = 0, d = 0, serie = 0;
+    ids.forEach(function (id) { var f = B[id]; if (f.victoires || f.defaites) aff++; if (f.victoires) vaincus++; v += f.victoires || 0; d += f.defaites || 0; serie = Math.max(serie, f.meilleure || 0); });
+    var nAt = Object.keys(P.atomes || {}).filter(function (z) { return P.atomes[z].capture; }).length;
+    return el('<div class="bloc"><h2>Combats</h2><div class="bareme" style="font-size:16px">' +
+      "<span>Ennemis combattus</span><span class=\"num\">" + aff + " / " + C.ennemis.length + "</span>" +
+      "<span>Ennemis vaincus</span><span class=\"num\">" + vaincus + "</span>" +
+      "<span>Duels gagnés</span><span class=\"num\">" + v + "</span>" +
+      "<span>Duels perdus</span><span class=\"num\">" + d + "</span>" +
+      "<span>Meilleure série</span><span class=\"num\">" + serie + "</span>" +
+      "<span>Atomes capturés</span><span class=\"num\">" + nAt + " / " + C.atomes.elements.length + "</span></div></div>");
+  }
   function blocStats() {
     var xp = M.xpParStat(C, P);
     var bs = el('<div class="bloc"><h2>Branches</h2><p class="note">Le niveau de chaque branche monte avec ses compétences maîtrisées et ses rappels réussis. Une pastille par compétence : pleine si maîtrisée, cerclée si ouverte.</p><div class="fiches"></div></div>');
@@ -3954,7 +3967,7 @@ svg.grille .interro { transition: opacity .3s; }
       seg.appendChild(bt);
     });
     v.appendChild(seg);
-    if (ongletSucces === "stats") { v.appendChild(blocStats()); return v; }
+    if (ongletSucces === "stats") { v.appendChild(blocCombats()); v.appendChild(blocStats()); return v; }
     var obtenus = C.succes.filter(function (s) { return P.succes[s.id]; }).sort(function (a, b) { return P.succes[b.id] - P.succes[a.id]; });
     var autres = C.succes.filter(function (s) { return !P.succes[s.id]; });
     var bloc = el('<div class="bloc"></div>');
@@ -4045,7 +4058,7 @@ svg.grille .interro { transition: opacity .3s; }
   // v16 : les erreurs agacent l'IA. On le montre au verdict, sans détour.
   function ligneAgacement(z, ag) {
     if (!ag) return;
-    if (ag.gain) { z.appendChild(el('<div class="gain-faveur"><b>+' + ag.gain + "</b> de faveur : sans faute, elle t'aime un peu plus<span>" + Math.round(ag.avant.valeur) + " → " + Math.round(ag.apres.valeur) + " : " + esc(tx(ag.apres.palier.nom).toLowerCase()) + "</span></div>")); return; }
+    if (ag.gain) { z.appendChild(el('<div class="gain-faveur"><b>+' + ag.gain + "</b> de faveur : " + (ag.raison === "duel_gagne" ? "un ennemi à terre, elle jubile" : "sans faute, elle t'aime un peu plus") + "<span>" + Math.round(ag.avant.valeur) + " → " + Math.round(ag.apres.valeur) + " : " + esc(tx(ag.apres.palier.nom).toLowerCase()) + "</span></div>")); return; }
     z.appendChild(el('<div class="gain-faveur perte"><b>−' + ag.perte + "</b> de faveur : chaque erreur l'agace<span>" + Math.round(ag.avant.valeur) + " → " + Math.round(ag.apres.valeur) + " : " + esc(tx(ag.apres.palier.nom).toLowerCase()) +
       (P.punition ? ". Elle t'enferme au mur de la honte : " + dureePeine(P.punition.restant) : "") + "</span></div>"));
   }

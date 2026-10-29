@@ -1378,3 +1378,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(P.oublis[x.index].essai >= P.punition.depuis);
   console.log("OK : v30 questions à retenter qui comptent pour la peine");
 }
+
+// v31 : un duel gagné la ravit (duel_gagne), bien plus qu'un sans-faute.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 5, 10).getTime(), A = C.ia.credits.agacement;
+  const P = M.nouvellePartie(T); P.decalage = T - Date.now(); P.faveur = { valeur: 40, maj: T };
+  const g = M.agacerIA(C, P, 0, false, T, "duel_gagne");
+  assert.equal(g.gain, A.duel_gagne); assert.ok(A.duel_gagne > A.sans_faute); assert.equal(g.raison, "duel_gagne");
+  assert.equal(M.agacerIA(C, P, 0, false, T).gain, A.sans_faute);
+  console.log("OK : v31 duel gagné, faveur ravie");
+}
