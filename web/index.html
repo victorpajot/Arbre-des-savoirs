@@ -353,7 +353,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 
 /* Schémas des questions */
 .illus { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
-.illus svg { display: block; width: 100%; height: auto; max-height: 240px; }
+.illus svg { display: block; width: 100%; height: auto; max-height: 320px; }
 .illus .t { fill: var(--ink); font-family: var(--f-body); }
 .illus .tm { fill: var(--muted); font-family: var(--f-body); }
 .illus .l { stroke: var(--ink); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -364,6 +364,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .illus .al { stroke: var(--accent); fill: none; }
 .illus .fond { fill: var(--surface); }
 .illus .jaune { fill: #F2B632; }
+.illus .ok { fill: color-mix(in srgb, var(--good) 28%, var(--surface)); stroke: var(--good); stroke-width: 1.5; }
+.illus .ko { fill: color-mix(in srgb, var(--bad) 22%, var(--surface)); stroke: var(--bad); stroke-width: 1.5; }
 .retour .illus { margin-top: 8px; }
 .illus.figure { margin: 8px 0 0; }
 .illus.figure svg { max-height: 380px; }

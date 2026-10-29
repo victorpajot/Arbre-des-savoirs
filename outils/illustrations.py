@@ -282,6 +282,29 @@ def fractions():
     return svg(320, 100, c, "Une barre coupée en 4 dont 3 parts colorées, une barre coupée en 8 dont 1 part colorée")
 
 
+
+def depistage():
+    """v31 (Victor) : test de dépistage. En haut, l'arbre des fréquences sur 100 000 personnes ;
+    en bas, les positifs regroupés : sur onze, un seul est malade."""
+    def boite(x, y, l, h, haut, bas, cls="f"):
+        return (f'<rect class="{cls}" x="{x - l / 2}" y="{y}" width="{l}" height="{h}" rx="6"/>'
+                + texte(x, y + 18, haut, "t", 14, "middle", 700) + texte(x, y + 34, bas, "tm", 12))
+    c = boite(170, 8, 150, 42, "100 000", "personnes")
+    c += fil((170, 50), (85, 78)) + fil((170, 50), (255, 78))
+    c += boite(85, 78, 130, 42, "100", "malades") + boite(255, 78, 130, 42, "99 900", "bien portants")
+    c += fil((85, 120), (45, 148)) + fil((85, 120), (125, 148)) + fil((255, 120), (215, 148)) + fil((255, 120), (295, 148))
+    c += boite(45, 148, 78, 42, "99", "positifs", "ok") + boite(125, 148, 78, 42, "1", "négatif", "f2")
+    c += boite(215, 148, 78, 42, "≈ 1 000", "positifs", "ko") + boite(295, 148, 78, 42, "98 900", "négatifs", "f2")
+    c += texte(170, 220, "Tous les positifs : 99 + 1 000 ≈ 1 100", "t", 14, "middle", 700)
+    for i in range(11):
+        x = 30 + i * 28
+        cls = "ok" if i == 0 else "ko"
+        c += f'<circle class="{cls}" cx="{x}" cy="240" r="7"/><rect class="{cls}" x="{x - 8}" y="249" width="16" height="16" rx="5"/>'
+    c += texte(30, 280, "malade", "tm", 11) + texte(184, 280, "10 faux positifs", "tm", 11)
+    c += texte(170, 304, "1 positif sur 11 est malade ≈ 9 %", "t", 14, "middle", 700)
+    return svg(340, 314, c, "Sur 100 000 personnes, 100 malades dont 99 testés positifs, et environ 1 000 faux positifs parmi les 99 900 bien portants : un positif sur onze est malade")
+
+
 ENONCE = {
     "biais.confirmation.q02": wason(),
     "math.probabilites.q05": monty_hall(),
@@ -309,4 +332,5 @@ EXPLICATION = {
     "astro.systeme.q04": saisons(),
     "astro.etoiles.q03": couleurs_etoiles(),
     "rhet.figures.q05": chiasme(),
+    "math.probabilites.q12": depistage(),
 }
