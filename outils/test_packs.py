@@ -73,6 +73,16 @@ incomplet = avec(lambda f: None, completude=True)
 for morceau in ("une par rang de 1 à 8", "au moins 10", "aucun livre", "aucune date", "aucun succès", "pionnier", "savant jouable", "theme_rate@essai", "case du plateau"):
     assert any(morceau in e for e in incomplet), f"complétude : attendu « {morceau} », reçu : {incomplet}"
 
+# Le modèle packs/_modele, copié sous son id, n'a d'autre défaut que d'être incomplet (un seul exemplaire de chaque chose).
+tmp = Path(tempfile.mkdtemp())
+try:
+    shutil.copytree(P.PACKS / "socle", tmp / "socle")
+    shutil.copytree(P.PACKS / "_modele", tmp / "monpack")
+    reste = [e for e in P.verifier(P.tous(tmp), cibles={"monpack"}) if not e.startswith("[assemblage]") and "complétude" not in e]
+    assert reste == [], f"packs/_modele : {reste}"
+finally:
+    shutil.rmtree(tmp)
+
 # 3. L'assemblage refuse deux éléments de même identifiant.
 tmp = Path(tempfile.mkdtemp())
 try:

@@ -51,7 +51,7 @@ EMPLACEMENTS = {
     "boutique.json": ("ia.json", ("credits", "boutique", "articles")),
 }
 PAR_CHEMIN = {(f, c): nom for nom, (f, c) in EMPLACEMENTS.items()}
-AUTRES = {"pack.json", "verifications.json", "ordre.json", "LISEZMOI.md"}
+AUTRES = {"pack.json", "verifications.json", "ordre.json", "portraits.json", "LISEZMOI.md"}
 SORTES = ("socle", "domaine", "jeu")
 
 # v6 : le butin est réparti en 7 lots, un par tour du plateau ; le lot N ne tombe qu'à partir du tour N.
@@ -95,7 +95,9 @@ def manifeste(dossier):
 
 def tous(dossier=PACKS):
     """Les packs présents, socle d'abord puis par ordre (ordre, id)."""
-    packs = [manifeste(d) | {"_dossier": d} for d in sorted(dossier.iterdir()) if (d / "pack.json").exists()]
+    # Un dossier dont le nom commence par « _ » (packs/_modele) n'est pas un pack.
+    packs = [manifeste(d) | {"_dossier": d} for d in sorted(dossier.iterdir())
+             if (d / "pack.json").exists() and not d.name.startswith("_")]
     return sorted(packs, key=lambda m: (m.get("sorte") != "socle", m["ordre"], m["id"]))
 
 

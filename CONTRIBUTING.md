@@ -9,7 +9,8 @@ Merci de vouloir améliorer le jeu : code, questions, traductions, dessins ou co
   auteur et sa source. Une traduction se fait depuis le texte original ou une traduction tombée dans le domaine public.
 - **Tests avant chaque commit.** Active le hook une fois par clone : `git config core.hooksPath .githooks`. Lance aussi
   `node outils/test_moteur.js` et `python3 outils/valider.py`.
-- **Le contenu se modifie dans `outils/*.py`**, puis `python3 outils/contenu.py` régénère `data/`.
+- **Le contenu se modifie dans `packs/`**, puis `python3 outils/packs.py assembler` régénère `data/`. Pour ajouter un
+  domaine de savoir, suivre [packs/LISEZMOI-IA.md](packs/LISEZMOI-IA.md).
 
 ## Accord de contribution (CLA)
 

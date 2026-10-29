@@ -9,8 +9,8 @@ Le projet a deux licences : une pour le code, une pour le contenu.
 
 Licence : [GNU General Public License, version 3](LICENSE).
 
-Couvre la logique du jeu : `web/moteur.js`, le script et les styles de `web/index.html`, les fonctions des scripts
-`outils/*.py`, `mobile/` et `.github/`. Tu peux le copier, le modifier et le redistribuer, y compris contre paiement, à
+Couvre la logique du jeu : `web/moteur.js`, le script et les styles de `web/index.html`, les scripts
+`outils/`, `mobile/` et `.github/`. Tu peux le copier, le modifier et le redistribuer, y compris contre paiement, à
 condition de publier ton code sous la même licence.
 
 ## Le contenu : CC BY-NC-SA 4.0
@@ -18,8 +18,8 @@ condition de publier ton code sous la même licence.
 Licence : [Creative Commons Attribution, Pas d'utilisation commerciale, Partage dans les mêmes conditions 4.0
 International](licences/CC-BY-NC-SA-4.0.txt) ([résumé en français](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr)).
 
-Couvre tout ce qui se lit ou se voit dans le jeu : les fichiers `data/*.json`, et les textes, questions, répliques,
-fiches et dessins en pixel art écrits dans les scripts `outils/*.py`. Tu peux les copier, les traduire et les adapter,
+Couvre tout ce qui se lit ou se voit dans le jeu : les packs `packs/*/` (textes, questions, répliques,
+fiches et dessins en pixel art) et leur assemblage `data/*.json`. Tu peux les copier, les traduire et les adapter,
 par exemple pour une autre version du jeu, à trois conditions :
 
 - citer « Arbre des savoirs, Victor Pajot » avec un lien vers le dépôt, et dire ce que tu as changé ;
@@ -34,7 +34,7 @@ Victor Pajot, auteur, reste libre d'utiliser son contenu comme il veut, y compri
   bibliothèque) restent la propriété de leurs auteurs ou sont dans le domaine public. Ils sont reproduits au titre du
   droit de courte citation, avec l'auteur et la source. La licence du contenu ne s'y applique pas.
 - **Les faits** (dates, masses atomiques, découvertes) n'appartiennent à personne. Les sources consultées sont listées
-  dans `outils/verifications.json`.
+  dans les fichiers `packs/*/verifications.json`.
 - **Le nom « Arbre des savoirs », le nom « Alyca » et l'icône de l'appli** ne sont pas sous licence libre. Une version
   dérivée doit porter un autre nom et une autre icône.
 

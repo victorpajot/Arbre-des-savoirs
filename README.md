@@ -4,18 +4,23 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 
 ## Licence
 
-© 2026 Victor Pajot, réalisé avec l'aide de Claude (Anthropic). Le code est sous [GPL 3.0](LICENSE), le contenu (`data/`, textes et pixel art de `outils/`) sous [CC BY-NC-SA 4.0](licences/CC-BY-NC-SA-4.0.txt). Les citations de tiers, le nom du jeu et son icône n'en relèvent pas. Détails dans [NOTICE.md](NOTICE.md), conditions de contribution (accord CLA) dans [CONTRIBUTING.md](CONTRIBUTING.md).
+© 2026 Victor Pajot, réalisé avec l'aide de Claude (Anthropic). Le code est sous [GPL 3.0](LICENSE), le contenu (`packs/` et son assemblage `data/`) sous [CC BY-NC-SA 4.0](licences/CC-BY-NC-SA-4.0.txt). Les citations de tiers, le nom du jeu et son icône n'en relèvent pas. Détails dans [NOTICE.md](NOTICE.md), conditions de contribution (accord CLA) dans [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Organisation
 
 | Dossier | Contenu |
 | --- | --- |
-| `data/` | Le contenu du jeu, généré par `outils/contenu.py` : `regles.json`, `skills.json`, `questions.json`, `succes.json`, `commentaires.json` (les répliques de l'IA), `ia.json` (ses masques), `objets.json` (le cabinet de curiosités), `avatar.json`, `plateau.json`, `frise.json`, `bibliotheque.json`, `ennemis.json`, `atomes.json` (les 118 éléments du jeu de Mendeleïev), plus `schema.json` qui les valide. |
-| `web/moteur.js` | Les règles pures (XP, maîtrise, rappels, perte, gel, succès). Aucun affichage, aucun stockage. |
+| `packs/` | **Tout le contenu**, en packs : `socle` (règles, plateau, Alyca, avatar), un pack par domaine (`logique`, `mecanique`, `savoir`, `eloquence`, `lucidite`, `empathie`, `alchimie`, `cosmos`, `etincelle`, `sagesse`, `musique`), et les jeux du plateau (`atomes`, `ennemis`). Chaque pack se désactive dans Personnage › Réglages › Packs. Pour en écrire un : [packs/LISEZMOI-IA.md](packs/LISEZMOI-IA.md), avec `packs/musique/` pour exemple et `packs/_modele/` pour squelette. |
+| `data/` | Ce que lit le jeu, **généré** par `python3 outils/packs.py assembler` : `regles.json`, `skills.json`, `questions.json`, `succes.json`, `commentaires.json`, `objets.json`, `avatar.json`, `ia.json`, `plateau.json`, `frise.json`, `bibliotheque.json`, `ennemis.json`, `atomes.json`, et `packs.json` (les manifestes et qui possède quoi). Ne pas l'éditer à la main. |
+| `web/moteur.js` | Les règles pures (XP, maîtrise, rappels, perte, gel, succès, plateau, packs éteints). Aucun affichage, aucun stockage. |
 | `web/index.html` | L'interface web. |
-| `outils/contenu.py` | Source du contenu : régénère `data/` (`python3 outils/contenu.py`). Il assemble `questions_nouvelles.py` (questions v2), `approfondissement_sciences.py` et `approfondissement_humain.py` (second losange, rangs 5 à 8), `philosophes.py` (branche Sagesse), `illustrations.py` (schémas SVG), `recompenses.py` (succès v2, objets, accessoires), `plateau.py` (63 cases, dates de la frise, succès du plateau), `bibliotheque.py` (32 livres), `ia.py` (répliques) et le pixel art (`dessin.py`, `objets32.py`, `avatar40.py`, `masques.py`, `masques_v4.py`, `savants.py`, `objectifs.py`, `icones32.py`, chacun exécutable pour produire une planche d'aperçu PNG). |
-| `outils/valider.py` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
-| `outils/test_moteur.js` | Test du cycle quiz, rappel, perte, regain (`node outils/test_moteur.js`). |
+| `outils/packs.py` | Assemble les packs dans `data/`, les vérifie (`verifier`, avec la liste de contrôle d'un arbre) et les liste. |
+| `outils/valider.py`, `outils/schema.json` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
+| `outils/verifier_sources.py` | Règle « rien d'inventé » : liste les sources non vérifiées et inscrit les vérifications dans le pack concerné. |
+| `outils/dessin.py`, `outils/portrait.py` | Atelier de pixel art (32 × 32) et portraits des savants jouables (40 × 48). |
+| `outils/test_moteur.js`, `outils/test_packs.py`, `outils/test_packs.js`, `outils/simulation.js` | Tests lancés avant chaque commit par `.githooks/pre-commit` (activer avec `git config core.hooksPath .githooks`). |
+
+Les sections « Nouveautés » ci-dessous citent parfois d'anciens scripts de `outils/` : leur contenu vit désormais dans `packs/`.
 
 ## Nouveautés de la v10 (faveur de l'IA)
 

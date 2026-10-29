@@ -1,0 +1,55 @@
+[
+ {
+  "id": "pionnier-monpack",
+  "nom": {
+   "fr": "Nom du pionnier"
+  },
+  "description": {
+   "fr": "Maîtriser 8 compétences. L'arbre … s'ouvre."
+  },
+  "condition": {
+   "type": "competences_maitrisees",
+   "n": 8
+  },
+  "cache": false,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Une anecdote vérifiée sur ce pionnier."
+   },
+   "source": "Référence"
+  },
+  "ouvre": "monpack",
+  "illustration": {
+   "type": "savant",
+   "id": "mon-savant"
+  },
+  "theme": "monpack"
+ },
+ {
+  "id": "mon-succes",
+  "nom": {
+   "fr": "Titre moqueur"
+  },
+  "description": {
+   "fr": "Maîtriser la première compétence. Une pique d'Alyca."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "mon.base"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Une anecdote vérifiée."
+   },
+   "source": "Référence"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "mon-dessin"
+  },
+  "theme": "monpack"
+ }
+]
