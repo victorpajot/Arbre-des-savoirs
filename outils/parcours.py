@@ -27,12 +27,13 @@ FORMES = [
      ["furieuse"]),
 ]
 
-# Réglages par humeur. cases : longueur [min, max] sur 63 ; pieges et cadeaux : écart avec le plateau d'origine.
+# Réglages par humeur. cases : longueur [min, max] sur 63 ; pieges et cadeaux : écart avec le plateau d'origine ;
+# atomes et chrono (v34) : nombre de cases du parcours.
 HUMEURS = {
-    "comblee": {"cases": [42, 48], "ennemis": 4, "atomes": 6, "pieges": -4, "cadeaux": 2},
-    "contente": {"cases": [52, 58], "ennemis": 6, "atomes": 5, "pieges": 0, "cadeaux": 0},
-    "boudeuse": {"cases": [60, 63], "ennemis": 8, "atomes": 4, "pieges": 2, "cadeaux": -1},
-    "furieuse": {"cases": [63, 63], "ennemis": 10, "atomes": 3, "pieges": 4, "cadeaux": -3},
+    "comblee": {"cases": [42, 48], "ennemis": 4, "atomes": 6, "pieges": -4, "cadeaux": 2, "chrono": 3},
+    "contente": {"cases": [52, 58], "ennemis": 6, "atomes": 5, "pieges": 0, "cadeaux": 0, "chrono": 3},
+    "boudeuse": {"cases": [60, 63], "ennemis": 8, "atomes": 4, "pieges": 2, "cadeaux": -1, "chrono": 2},
+    "furieuse": {"cases": [63, 63], "ennemis": 10, "atomes": 3, "pieges": 4, "cadeaux": -3, "chrono": 2},
 }
 # Un ennemi de plus tous les deux tours, au-delà du deuxième ; jamais plus que `ennemis_max`.
 ENNEMIS_PAR_DEUX_TOURS = 1

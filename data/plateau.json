@@ -40,6 +40,61 @@
   "question_piege": {
    "rang_min": 5
   },
+  "chrono": {
+   "cases": [
+    14,
+    30,
+    49
+   ],
+   "evenements": 5,
+   "reussite": 3,
+   "avance": 3,
+   "min_reservoir": 5,
+   "points": {
+    "juste": 2,
+    "proche": 1,
+    "rapide": 1,
+    "parfait": 5
+   },
+   "rapide_ms": 8000,
+   "monter": 2,
+   "prehistoire": -4000,
+   "spontane": 0.34,
+   "niveaux": [
+    {
+     "n": 1,
+     "pas": 100,
+     "proche": 1,
+     "nom": {
+      "fr": "Le siècle"
+     }
+    },
+    {
+     "n": 2,
+     "pas": 50,
+     "proche": 1,
+     "nom": {
+      "fr": "Le demi-siècle"
+     }
+    },
+    {
+     "n": 3,
+     "pas": 10,
+     "proche": 1,
+     "nom": {
+      "fr": "La décennie"
+     }
+    },
+    {
+     "n": 4,
+     "pas": 1,
+     "proche": 5,
+     "nom": {
+      "fr": "L'année exacte"
+     }
+    }
+   ]
+  },
   "textes": {
    "eureka": {
     "fr": "Eurêka ! Tu rejoues la même distance."
@@ -73,6 +128,9 @@
    },
    "mendeleiev": {
     "fr": "Case Mendeleïev : passe dessus et un atome sauvage apparaît. Trois questions, deux bonnes réponses, et il rejoint ton tableau périodique."
+   },
+   "chrono": {
+    "fr": "Case Chrono : l'IA te présente cinq événements déjà débloqués, tu dis quand ils se sont produits. Trois justes, et ton pion avance."
    }
   }
  },
@@ -2953,7 +3011,8 @@
     "ennemis": 4,
     "atomes": 6,
     "pieges": -4,
-    "cadeaux": 2
+    "cadeaux": 2,
+    "chrono": 3
    },
    "contente": {
     "cases": [
@@ -2963,7 +3022,8 @@
     "ennemis": 6,
     "atomes": 5,
     "pieges": 0,
-    "cadeaux": 0
+    "cadeaux": 0,
+    "chrono": 3
    },
    "boudeuse": {
     "cases": [
@@ -2973,7 +3033,8 @@
     "ennemis": 8,
     "atomes": 4,
     "pieges": 2,
-    "cadeaux": -1
+    "cadeaux": -1,
+    "chrono": 2
    },
    "furieuse": {
     "cases": [
@@ -2983,7 +3044,8 @@
     "ennemis": 10,
     "atomes": 3,
     "pieges": 4,
-    "cadeaux": -3
+    "cadeaux": -3,
+    "chrono": 2
    }
   },
   "ennemis_par_deux_tours": 1,

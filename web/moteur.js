@@ -143,6 +143,7 @@
       emplettes: [],
       atomes: {},
       sauvages: [],
+      siecles: null,
       faveur: null,
       colere: null,
       masquesJour: null,
@@ -223,6 +224,8 @@
     // v9 : tableau périodique (z → fiche) et atomes sauvages en attente de combat.
     out.atomes = p.atomes || {};
     out.sauvages = p.sauvages || [];
+    // v34 : Chrono, le jeu des siècles (posé au premier besoin).
+    out.siecles = p.siecles || null;
     // v10 : faveur de l'IA (posée au premier besoin) et jour de son dernier piège.
     out.faveur = p.faveur || null;
     out.colere = p.colere || null;
@@ -645,9 +648,9 @@
   function valeurEpreuve(contenu, partie, epreuve, t) {
     if (!contenu.plateau) return null;
     var r = contenu.plateau.regles, k = contenu.parId[epreuve.comp];
-    // v6 : une épreuve vaut le rang de sa compétence, quiz comme rappel.
-    var base = r.valeurs.quiz_rang[String(k.rang)];
-    var duJour = k.stat === bonusDuJour(contenu, partie, t) ? r.bonus.du_jour : 0;
+    // v6 : une épreuve vaut le rang de sa compétence, quiz comme rappel. v34 : une case Chrono, un nombre fixe de cases.
+    var base = epreuve.type === "chrono" ? r.chrono.avance : r.valeurs.quiz_rang[String(k.rang)];
+    var duJour = k && k.stat === bonusDuJour(contenu, partie, t) ? r.bonus.du_jour : 0;
     // v10 : comblée, l'IA ajoute une case ; furieuse, elle en retire une (jamais moins d'une).
     var fav = faveurIA(contenu, partie, t), faveur = fav ? fav.palier.avance : 0;
     // v11 : les masques du jour ajoutent ou retirent des cases, et durcissent ou adoucissent le rappel raté.
@@ -668,8 +671,10 @@
   function specialDe(contenu, partie, n) {
     var sp = partie.plateau.speciaux;
     if (sp && Object.prototype.hasOwnProperty.call(sp, n)) return sp[n];
-    return caseN(contenu, n).special || null;
+    return caseN(contenu, n).special || chronoDeBase(contenu, n);
   }
+  // v34 : les cases Chrono du premier tour (plateau.json regles.chrono.cases), hors des cases elles-mêmes.
+  function chronoDeBase(contenu, n) { var R = contenu.plateau.regles.chrono; return R && R.cases && R.cases.indexOf(n) >= 0 ? { type: "chrono" } : null; }
   // v7 : ennemis du plateau (case → id), posés au début de chaque tour.
   function ennemisPlateau(contenu, partie) {
     var pl = partie.plateau;
@@ -842,7 +847,7 @@
     if (!formes.length) formes = PC.formes.filter(function (f) { return f.id !== avant; });
     var forme = formes[tirage(g + "|forme", formes.length)];
     var longueur = H.cases[0] + tirage(g + "|long", H.cases[1] - H.cases[0] + 1);
-    var base = function (n) { return contenu.plateau.cases[n - 1].special || null; };
+    var base = function (n) { return contenu.plateau.cases[n - 1].special || chronoDeBase(contenu, n); };
     var ordinaires = [];
     for (var n = R.depart + 1; n < R.arrivee; n++) if (!base(n)) ordinaires.push(n);
     var melange = function (l, cle) { return l.slice().sort(function (a, b) { return hacher(g + cle + a) - hacher(g + cle + b); }); };
@@ -859,10 +864,12 @@
     var nAtomes = ajuster(["mendeleiev"], H.atomes - cases.filter(function (x) { return base(x) && base(x).type === "mendeleiev"; }).length, function () { return { type: "mendeleiev" }; });
     var nPieges = ajuster(TYPES_PIEGES, H.pieges, function (k) { return { type: "recul", n: 2 + k % 3, raison: { fr: "Piège ajouté par l'IA en dessinant ce parcours." } }; });
     var nCadeaux = ajuster(["cadeau"], H.cadeaux, function () { return { type: "cadeau", raison: { fr: "Case cadeau ajoutée par l'IA, de bonne humeur ce jour-là." } }; });
+    // v34 : des cases Chrono, selon l'humeur (outils/parcours.py).
+    var nChrono = H.chrono == null ? 0 : ajuster(["chrono"], H.chrono - cases.filter(function (x) { return base(x) && base(x).type === "chrono"; }).length, function () { return { type: "chrono" }; });
     var tours = pl.tours + 1, ennemis = Math.min(PC.ennemis_max || 12, contenu.ennemis.length - 1, H.ennemis + Math.max(0, Math.floor((tours - 2) / 2)) * (PC.ennemis_par_deux_tours || 0));
     var mots = PC.mots[palier] || [];
     return { tour: tours, forme: forme.id, palier: palier, cases: cases, longueur: cases.length, ennemis: ennemis,
-      atomes: Math.max(0, nAtomes), pieges: Math.max(0, nPieges), cadeaux: Math.max(0, nCadeaux), speciaux: speciaux,
+      atomes: Math.max(0, nAtomes), pieges: Math.max(0, nPieges), cadeaux: Math.max(0, nCadeaux), chrono: Math.max(0, nChrono), speciaux: speciaux,
       mot: mots.length ? mots[tirage(g + "|mot", mots.length)] : null, dessine: t };
   }
   function appliquerParcours(contenu, partie) {
@@ -888,7 +895,7 @@
     var vus = {}, out = [];
     dep.etapes.forEach(function (e) {
       var ctx = { prison_liberation: "prison_liberation", prison: "prison", bloque_prison: "prison", eureka: "eureka", recul: "piege",
-        retour_epoque: "retour_epoque", teleport: "teleport", oubli: "oubli", renvoi: "oubli", raccourci: "route_raccourcie", detour: "route_detour", cadeau: "cadeau_case", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", piege: "piege_question", bloque_piege: "piege_question", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi", atome: "atome_apparait" }[e.type];
+        retour_epoque: "retour_epoque", teleport: "teleport", oubli: "oubli", renvoi: "oubli", raccourci: "route_raccourcie", detour: "route_detour", cadeau: "cadeau_case", revision: "revision", bloque_revision: "revision", quarantaine: "quarantaine", bloque_quarantaine: "quarantaine", piege: "piege_question", bloque_piege: "piege_question", tour_fini: "tour_fini", ennemi: "ennemi", duel_attente: "ennemi", atome: "atome_apparait", chrono: "chrono_case" }[e.type];
       if (ctx && !vus[ctx]) { vus[ctx] = 1; out.unshift(ctx); }
     });
     if (dep.a !== dep.de && dep.valeur > 0) out.push("plateau_avance");
@@ -1055,6 +1062,10 @@
             etapes.push({ type: "piege", case: pl.position, regle: sp.type });
           } else if (PIEGES[sp.type]) {
             subir(sp);
+          } else if (sp.type === "chrono" && contenu.plateau.regles.chrono) {
+            // v34 (Victor) : case Chrono. Le pion s'arrête ; la partie de Chrono sert d'épreuve de la case.
+            if (chronoPossible(contenu, partie)) { etatChrono(partie).case = pl.position; etapes.push({ type: "chrono", case: pl.position }); }
+            else etapes.push({ type: "chrono_vide", case: pl.position });
           } else if (sp.type === "cadeau") {
             var cad = tirerCadeau(contenu, partie, t);
             if (cad) {
@@ -1070,6 +1081,7 @@
     // Le pion a quitté la case de l'ennemi (recul) : le duel est oublié. Pareil pour un piège en attente.
     if (partie.duel && partie.duel.case !== pl.position) partie.duel = null;
     if (partie.piege && partie.piege.case !== pl.position) partie.piege = null;
+    if (partie.siecles && partie.siecles.case && partie.siecles.case !== pl.position) { partie.siecles.case = null; if (partie.siecles.jeu && partie.siecles.jeu.mode === "case") partie.siecles.jeu = null; }
     // chemin : les cases où le pion se pose, dans l'ordre, pour l'animer case par case.
     // places : les mêmes, en rang sur la route (1 = départ), pour le dessin.
     var dep = { de: de, a: pl.position, valeur: valeur, cause: cause, tour: pl.tours, etapes: etapes, chemin: chemin, places: places, t: t };
@@ -1803,6 +1815,200 @@
     dep.contextes = contextesPlateau(dep);
     return { dejoue: false, case: p.case, regle: p.regle.type, plateau: dep, replique: replique(contenu, partie, ["piege_declenche"]), recompenses: verifierRecompenses(contenu, partie, t) };
   }
+  // --- Chrono, le jeu des siècles (v34) ----------------------------------------
+  // Alyca présente un événement déjà débloqué (frise, livre, savant, objet) ; le joueur dit quand il s'est produit.
+  // Chaque événement a son niveau : siècle, demi-siècle, décennie, année exacte (plateau.json regles.chrono.niveaux).
+  // Deux justes de suite le font monter d'un cran, une erreur le fait redescendre. Juste : des crédits ; proche : un peu.
+  // Deux portes : une case Chrono (la partie sert d'épreuve de la case) ou Alyca, d'elle-même, une fois par jour au plus.
+  function reglesChrono(contenu) { return contenu.plateau && contenu.plateau.regles && contenu.plateau.regles.chrono || null; }
+  function etatChrono(partie) {
+    return partie.siecles || (partie.siecles = { fiches: {}, case: null, offre: null, joueJour: null, jeu: null,
+      parties: 0, parfaits: 0, justes: 0, proches: 0, faux: 0, rapides: 0, exactes: 0, maxExactes: 0 });
+  }
+  // Créneau d'une année pour un pas donné, en suivant le calendrier (pas d'an zéro) :
+  // pas 100 et 50 : siècles et demi-siècles au sens propre (1901-2000 = XXe) ; pas 10 : décennies (1680-1689) ; pas 1 : l'année.
+  // Avant `prehistoire`, une seule case : la Préhistoire.
+  function creneau(annee, pas, prehistoire) {
+    var y = Number(annee);
+    if (prehistoire != null && y < prehistoire) return creneau(prehistoire, pas, null) - 1;
+    if (pas >= 50) return y > 0 ? Math.floor((y - 1) / pas) : -Math.floor((-y - 1) / pas) - 1;
+    if (pas === 1) return y > 0 ? y - 1 : y;
+    return y > 0 ? Math.floor(y / pas) : -Math.floor((-y - 1) / pas) - 1;
+  }
+  // Une année du créneau `k`, la première : ce que l'interface renvoie pour un siècle ou une décennie choisis.
+  function anneeDuCreneau(k, pas) {
+    if (pas >= 50) return k >= 0 ? k * pas + 1 : k * pas;
+    if (pas === 1) return k >= 0 ? k + 1 : k;
+    return k >= 0 ? Math.max(1, k * pas) : k * pas;
+  }
+  function chiffreRomain(n) {
+    var v = [[1000, "M"], [900, "CM"], [500, "D"], [400, "CD"], [100, "C"], [90, "XC"], [50, "L"], [40, "XL"], [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]], s = "";
+    v.forEach(function (x) { while (n >= x[0]) { s += x[1]; n -= x[0]; } });
+    return s;
+  }
+  function texteSiecle(k) { return k >= 0 ? chiffreRomain(k + 1) + (k === 0 ? "er" : "e") + " siècle" : chiffreRomain(-k) + "e siècle av. J.-C."; }
+  // Le libellé d'un créneau : « XVIIe siècle », « 2de moitié du XVIIe siècle », « 1680-1689 », « 585 av. J.-C. ».
+  function texteCreneau(k, pas, prehistoire) {
+    if (prehistoire != null && k < creneau(prehistoire, pas, null)) return "Préhistoire (avant " + (-prehistoire) + " av. J.-C.)";
+    if (pas === 100) return texteSiecle(k);
+    if (pas === 50) { var c = Math.floor(k / 2); return (k - 2 * c ? "2de" : "1re") + " moitié du " + texteSiecle(c); }
+    if (pas === 1) { var y = anneeDuCreneau(k, 1); return y > 0 ? String(y) : (-y) + " av. J.-C."; }
+    var a = anneeDuCreneau(k, pas), b = k >= 0 ? k * pas + pas - 1 : k * pas + pas - 1;
+    return a > 0 ? a + "-" + b : (-a) + " à " + (-b) + " av. J.-C.";
+  }
+  // Une phrase qui donnerait la date (un nombre de trois ou quatre chiffres) n'est pas montrée.
+  function sansDate(o) { var x = o && o.fr; return x && !/\d{3,4}/.test(x) ? x : null; }
+  // « vers 370 / 415 », « -384 / -322 », « vers -2650 » → {debut, fin, vers}.
+  function lireAnnees(s) {
+    var parts = String(s || "").split("/"), vers = /vers/.test(s);
+    var n = parts.map(function (p) { var m = p.match(/-?\d+/); return m ? Number(m[0]) : null; });
+    if (n[0] == null) return null;
+    return { debut: n[0], fin: n[1] != null ? n[1] : n[0], vers: vers || n[1] == null, naissanceVers: /vers/.test(parts[0]) || n[1] == null };
+  }
+  // Tout ce que le joueur a débloqué et qui porte une date : le réservoir de Chrono.
+  function reservoirChrono(contenu, partie) {
+    var R = reglesChrono(contenu); if (!R) return [];
+    var out = [], pre = R.prehistoire, maxN = R.niveaux.length;
+    function ajouter(x) { if (x.debut < pre) x.max = 1; out.push(x); }
+    (contenu.evenements || []).forEach(function (e) {
+      if (partie.evenements && partie.evenements[e.id] != null && e.annee != null)
+        ajouter({ cle: "frise:" + e.id, sorte: "frise", id: e.id, titre: e.titre.fr, texte: sansDate(e.phrase), debut: e.annee, fin: e.annee, max: maxN, source: e.source, case: e.case || null, stat: e.stat });
+    });
+    (contenu.livres || []).forEach(function (l) {
+      if (partie.livres && partie.livres[l.id] != null && l.annee != null)
+        ajouter({ cle: "livre:" + l.id, sorte: "livre", id: l.id, titre: l.titre.fr, auteur: l.auteur, texte: null, debut: l.annee, fin: l.annee, max: maxN, source: l.source, stat: l.stat });
+    });
+    (contenu.avatar && contenu.avatar.savants || []).forEach(function (s) {
+      var a = partie.savants && partie.savants[s.id] != null && lireAnnees(s.annees);
+      // Pour un savant, tout siècle de sa vie compte juste ; en mode année exacte, on demande sa naissance (Victor).
+      if (a) ajouter({ cle: "savant:" + s.id, sorte: "savant", id: s.id, titre: s.nom.fr, texte: null, debut: a.debut, fin: a.fin, max: a.naissanceVers ? 2 : maxN, source: s.source, theme: s.theme });
+    });
+    (contenu.objets || []).forEach(function (o) {
+      if (partie.objets && partie.objets[o.id] != null && o.annee != null)
+        ajouter({ cle: "objet:" + o.id, sorte: "objet", id: o.id, titre: o.nom.fr, texte: sansDate(o.notice), debut: o.annee, fin: o.annee, max: maxN, source: o.source, theme: o.theme });
+    });
+    return out;
+  }
+  // La case du pion attend sa partie de Chrono.
+  function chronoEnAttente(partie) { var s = partie.siecles; return !!(s && s.case && partie.plateau && s.case === partie.plateau.position); }
+  // Alyca propose une partie aujourd'hui (et elle n'est pas encore jouée).
+  function offreChrono(partie, t) { var s = partie.siecles; return !!(s && s.offre && s.offre === cleJour(t)); }
+  function chronoPossible(contenu, partie) { var R = reglesChrono(contenu); return !!(R && reservoirChrono(contenu, partie).length >= R.min_reservoir); }
+  // Après une épreuve : Alyca lance-t-elle une partie d'elle-même ? Une chance sur trois, une fois par jour au plus.
+  function chronoSpontane(contenu, partie, t, alea) {
+    var R = reglesChrono(contenu); if (!R) return false;
+    var s = etatChrono(partie), jour = cleJour(t);
+    if (s.offre === jour) return true;
+    if (s.joueJour === jour || chronoEnAttente(partie) || s.jeu || !chronoPossible(contenu, partie)) return false;
+    // Sans `alea`, le tirage dépend du jour et du journal : le même résultat à chaque affichage d'un même bilan.
+    if ((alea ? alea() : tirage(jour + "|chrono|" + partie.journal.length, 1000) / 1000) >= R.spontane) return false;
+    s.offre = jour; partie.maj = t;
+    return true;
+  }
+  function niveauChrono(R, n) { return R.niveaux[Math.max(1, Math.min(n, R.niveaux.length)) - 1]; }
+  // Lance (ou reprend) une partie. `mode` : « case » (case Chrono du pion) ou « alyca » (proposée par elle aujourd'hui).
+  // Tirage : d'abord les événements ratés la dernière fois, puis les jamais vus, puis les plus anciennement vus ;
+  // pas deux du même siècle tant que c'est possible, pour que la frise s'étale.
+  function lancerChrono(contenu, partie, mode, t, alea) {
+    var R = reglesChrono(contenu); if (!R) return null;
+    var s = etatChrono(partie);
+    if (s.jeu && s.jeu.mode === mode && s.jeu.reponses.length < s.jeu.questions.length) return s.jeu;
+    if (mode === "case" ? !chronoEnAttente(partie) : !offreChrono(partie, t)) return null;
+    var pool = reservoirChrono(contenu, partie);
+    // Trop peu d'éléments datés : la case ne retient pas le pion.
+    if (pool.length < R.min_reservoir) { if (mode === "case") s.case = null; return null; }
+    alea = alea || Math.random;
+    var prio = function (x) { var f = s.fiches[x.cle]; return !f ? 2 : f.rate ? 3 : 1; };
+    var tries = melanger(pool, alea).sort(function (a, b) {
+      var pa = prio(a), pb = prio(b);
+      if (pa !== pb) return pb - pa;
+      return pa === 1 ? (s.fiches[a.cle].dernier || 0) - (s.fiches[b.cle].dernier || 0) : 0;
+    });
+    var choix = [], siecles = {};
+    tries.forEach(function (x) { var k = creneau(x.debut, 100, R.prehistoire); if (choix.length < R.evenements && !siecles[k]) { siecles[k] = 1; choix.push(x); } });
+    tries.forEach(function (x) { if (choix.length < R.evenements && choix.indexOf(x) < 0) choix.push(x); });
+    s.jeu = { mode: mode, depuis: t, case: mode === "case" ? s.case : null, reponses: [], questions: choix.map(function (x) {
+      var f = s.fiches[x.cle], n = Math.min(f ? f.niveau : 1, x.max), N = niveauChrono(R, n);
+      return Object.assign({}, x, { niveau: n, pas: N.pas, proche: N.proche, nomNiveau: N.nom.fr, naissance: x.sorte === "savant" && N.pas < 50 });
+    }) };
+    partie.maj = t;
+    return s.jeu;
+  }
+  function jeuChrono(partie) { var s = partie.siecles; return s && s.jeu || null; }
+  // Corrige la réponse à la question en cours. `annee` : l'année choisie (la première du créneau suffit) ; `ms` : temps de réponse.
+  function repondreChrono(contenu, partie, annee, ms, t) {
+    var R = reglesChrono(contenu), s = etatChrono(partie), j = s.jeu;
+    if (!R || !j || j.reponses.length >= j.questions.length) return null;
+    var q = j.questions[j.reponses.length], pre = R.prehistoire, pas = q.pas;
+    var g = creneau(annee, pas, pre), a = creneau(q.debut, pas, pre), b = q.naissance ? a : creneau(q.fin, pas, pre);
+    var d = g < a ? a - g : g > b ? g - b : 0;
+    var verdict = d === 0 ? "juste" : d <= q.proche ? "proche" : "faux", rapide = verdict === "juste" && typeof ms === "number" && ms < R.rapide_ms;
+    var P = R.points, points = verdict === "juste" ? P.juste + (rapide ? P.rapide : 0) : verdict === "proche" ? P.proche : 0;
+    var f = s.fiches[q.cle] || (s.fiches[q.cle] = { niveau: 1, serie: 0, vus: 0, justes: 0, dernier: null, rate: false });
+    var avant = f.niveau;
+    f.vus++; f.dernier = t;
+    if (verdict === "juste") {
+      f.justes++; f.serie++; f.rate = false;
+      if (f.serie >= R.monter && f.niveau < q.max) { f.niveau++; f.serie = 0; }
+      s.justes++; if (rapide) s.rapides++; if (pas === 1) s.exactes++;
+    } else if (verdict === "proche") { f.serie = 0; f.rate = false; s.proches++; }
+    else { f.serie = 0; f.rate = true; f.niveau = Math.max(1, f.niveau - 1); s.faux++; }
+    var r = { cle: q.cle, annee: Number(annee), choisi: texteCreneau(g, pas, pre), verdict: verdict, rapide: rapide, points: points, ecart: d,
+      vrai: q.naissance || q.debut === q.fin ? texteCreneau(a, pas, pre) : texteCreneau(a, pas, pre) + " → " + texteCreneau(b, pas, pre),
+      niveauAvant: avant, niveauApres: f.niveau, ms: ms };
+    j.reponses.push(r);
+    partie.maj = t;
+    return r;
+  }
+  // Fin de partie : crédits (selon l'humeur d'Alyca, comme le butin), faveur, et sur une case Chrono, l'épreuve.
+  function terminerChrono(contenu, partie, t, alea) {
+    var R = reglesChrono(contenu), s = etatChrono(partie), j = s.jeu;
+    if (!R || !j || j.reponses.length < j.questions.length) return null;
+    s.jeu = null;
+    var total = j.questions.length, justes = j.reponses.filter(function (r) { return r.verdict === "juste"; }).length;
+    var proches = j.reponses.filter(function (r) { return r.verdict === "proche"; }).length, parfait = justes === total;
+    var exactes = j.reponses.filter(function (r, i) { return r.verdict === "juste" && j.questions[i].pas === 1; }).length;
+    var points = j.reponses.reduce(function (n, r) { return n + r.points; }, 0) + (parfait ? R.points.parfait : 0);
+    var fav = faveurIA(contenu, partie, t), mult = fav ? fav.palier.butin : 1, credits = Math.round(points * mult);
+    partie.credits.solde += credits; partie.credits.gagnes += credits;
+    s.parties++; if (parfait) s.parfaits++; s.maxExactes = Math.max(s.maxExactes || 0, exactes);
+    var reussi = justes >= R.reussite, enCase = j.mode === "case" && s.case && partie.plateau.position === s.case;
+    marquerJour(partie, t);
+    noter(partie, t, { type: "chrono", bonnes: justes, total: total, xp: credits, source: j.mode });
+    var out = { mode: j.mode, questions: j.questions, reponses: j.reponses, justes: justes, proches: proches, total: total, parfait: parfait, reussi: reussi,
+      exactes: exactes, points: points, mult: mult, credits: credits, plateau: null, agacement: null,
+      montees: j.reponses.filter(function (r) { return r.niveauApres > r.niveauAvant; }).length,
+      contextes: [parfait ? "chrono_parfait" : reussi ? "chrono_bilan_bon" : "chrono_bilan_rate"] };
+    if (enCase) {
+      // La case est jouée, réussie ou non : on n'y revient pas.
+      s.case = null;
+      ouvrirLot(partie, t, themeCase(contenu, partie));
+      var avant = verifierRecompenses(contenu, partie, t);
+      if (reussi) ajouterButin(contenu, partie, avant, { type: "chrono" }, t, alea);
+      var dep = jouerPlateau(contenu, partie, { type: "chrono" }, { reussi: reussi, parfait: parfait, jouer: true, alea: alea }, t);
+      out.agacement = agacerIA(contenu, partie, total - justes, !reussi, t);
+      lotExceptionnel(partie, dep);
+      var apres = verifierRecompenses(contenu, partie, t);
+      out.plateau = dep; out.avantPlateau = avant; out.apresPlateau = apres; out.recompenses = fusionRec(avant, apres);
+    } else {
+      // Partie offerte par Alyca : des crédits, rien d'autre, sauf un sans-faute qui la ravit.
+      if (j.mode === "alyca") { s.offre = null; s.joueJour = cleJour(t); }
+      ouvrirLot(partie, t, null);
+      if (parfait) out.agacement = agacerIA(contenu, partie, 0, false, t);
+      out.recompenses = out.avantPlateau = verifierRecompenses(contenu, partie, t);
+      out.apresPlateau = { succes: [], objets: [], accessoires: [], savants: [], evenements: [], livres: [], masque: null, gagnables: [], credits: [] };
+    }
+    partie.maj = t;
+    return out;
+  }
+  // Les événements vus, par niveau (pour les stats et les succès).
+  function statsChrono(contenu, partie) {
+    var s = etatChrono(partie), R = reglesChrono(contenu), parNiveau = {};
+    Object.keys(s.fiches).forEach(function (k) { var n = s.fiches[k].niveau; parNiveau[n] = (parNiveau[n] || 0) + 1; });
+    return { parties: s.parties, parfaits: s.parfaits, justes: s.justes, proches: s.proches, faux: s.faux, rapides: s.rapides, exactes: s.exactes,
+      vus: Object.keys(s.fiches).length, parNiveau: parNiveau, reservoir: R ? reservoirChrono(contenu, partie).length : 0 };
+  }
+  function datesAuNiveau(partie, niveau) { var s = partie.siecles; return s ? Object.keys(s.fiches).filter(function (k) { return s.fiches[k].niveau >= niveau; }).length : 0; }
   // Enfermé au mur : plus rien ne se joue (quiz, rappels, duels, atomes) tant que la peine court.
   function jeuFerme(contenu, partie, t) { faveurIA(contenu, partie, t); return !!(partie.punition && partie.punition.restant > 0); }
   // Furieuse, l'IA pose chaque jour un piège sur une case libre juste devant le pion. Renvoie la case, ou null.
@@ -1969,6 +2175,13 @@
       case "famille_capturee":
         if (!contenu.atomes) return false;
         return contenu.atomes.elements.every(function (e) { return e.famille !== cond.famille || estCapture(partie, e.z); });
+      // v34 : Chrono.
+      case "chronos_joues": return !!partie.siecles && partie.siecles.parties >= cond.n;
+      case "chronos_parfaits": return !!partie.siecles && partie.siecles.parfaits >= cond.n;
+      case "dates_exactes_partie": return !!partie.siecles && (partie.siecles.maxExactes || 0) >= cond.n;
+      case "dates_niveau": return datesAuNiveau(partie, cond.niveau) >= cond.n;
+      case "dates_rapides": return !!partie.siecles && partie.siecles.rapides >= cond.n;
+      case "dates_fausses": return !!partie.siecles && partie.siecles.faux >= cond.n;
       case "eurekas": return c.eurekas >= cond.n;
       case "reculs": return c.reculs >= cond.n;
       default: return false;
@@ -2447,6 +2660,8 @@
     honte_effacee: "reussi", honte_ratee: "rate", eureka: "reussi", prison_liberation: "reussi", quarantaine: "rate", oubli: "rate", eclair: "rate",
     ennemi: "ennemi", duel_gagne: "duel_gagne", duel_perdu: "duel_perdu",
     atome_apparait: "atome_apparait", atome_capture: "atome_capture", atome_fuite: "atome_fuite",
+    chrono_annonce: "chrono", chrono_case: "chrono", chrono_juste: "reussi", chrono_parfait: "reussi", chrono_bilan_bon: "reussi",
+    chrono_proche: "rate", chrono_faux: "rate", chrono_bilan_rate: "rate",
     plateau_avance: "plateau", piege: "plateau", piege_ia: "plateau", teleport: "plateau", revision: "plateau", prison: "plateau",
     retour_epoque: "plateau", route_detour: "plateau", route_raccourcie: "plateau", cadeau_case: "plateau", tour_fini: "tour_fini",
     cadeau_terne: "cadeau", cadeau_brillant: "cadeau", cadeau_eblouissant: "cadeau", cadeau_repete: "cadeau",
@@ -2570,6 +2785,9 @@
     cleJour: cleJour,
     jouerPlateau: jouerPlateau,
     murDeLaHonte: murDeLaHonte,
+    reglesChrono: reglesChrono, etatChrono: etatChrono, creneau: creneau, anneeDuCreneau: anneeDuCreneau, texteCreneau: texteCreneau, texteSiecle: texteSiecle,
+    reservoirChrono: reservoirChrono, chronoEnAttente: chronoEnAttente, offreChrono: offreChrono, chronoPossible: chronoPossible, chronoSpontane: chronoSpontane,
+    lancerChrono: lancerChrono, jeuChrono: jeuChrono, repondreChrono: repondreChrono, terminerChrono: terminerChrono, statsChrono: statsChrono,
     retenterOubli: retenterOubli,
   };
 

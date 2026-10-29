@@ -77,6 +77,9 @@ SUCCES = {
     "baignoire": "mecanique", "eppur-si-muove": "cosmos", "woolsthorpe": "mecanique", "honte-1": "alchimie",
     "honte-10": "cosmos", "honte-effacee-50": "cosmos",
 }
+# v34 : les succès de Chrono, rangés selon leur anecdote (outils/chrono.py).
+from chrono import THEMES as _CHRONO  # noqa: E402
+SUCCES.update(_CHRONO)
 # Ceux-là restent sans thème : ils parlent de tout à la fois.
 SANS_THEME = {"polymathe", "conservateur", "dernier-homme", "honte-50"}
 

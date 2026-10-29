@@ -5385,6 +5385,268 @@
     "id": "cerf-volant-franklin"
    },
    "theme": "etincelle"
+  },
+  {
+   "id": "chrono-1",
+   "nom": {
+    "fr": "Pas d'an zéro"
+   },
+   "description": {
+    "fr": "Jouer une première partie de Chrono."
+   },
+   "condition": {
+    "type": "chronos_joues",
+    "n": 1
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Au VIe siècle, Denys le Petit compte les années à partir de la naissance du Christ. Il ne prévoit pas d'an zéro : on passe directement de l'an 1 av. J.-C. à l'an 1."
+    },
+    "source": "Encyclopædia Britannica, « Dionysius Exiguus »"
+   },
+   "illustration": {
+    "type": "icone",
+    "id": "zero"
+   },
+   "theme": "cosmos"
+  },
+  {
+   "id": "chrono-10",
+   "nom": {
+    "fr": "Dix jours effacés"
+   },
+   "description": {
+    "fr": "Jouer 10 parties de Chrono."
+   },
+   "condition": {
+    "type": "chronos_joues",
+    "n": 10
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1582, le pape Grégoire XIII réforme le calendrier : le jeudi 4 octobre est suivi du vendredi 15 octobre. Dix jours n'ont jamais existé."
+    },
+    "source": "Bulle Inter gravissimas, 1582 ; Encyclopædia Britannica, « Gregorian calendar »"
+   },
+   "illustration": {
+    "type": "icone",
+    "id": "astrolabe"
+   },
+   "theme": "cosmos"
+  },
+  {
+   "id": "chrono-50",
+   "nom": {
+    "fr": "La longue durée"
+   },
+   "description": {
+    "fr": "Jouer 50 parties de Chrono."
+   },
+   "condition": {
+    "type": "chronos_joues",
+    "n": 50
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1949, Fernand Braudel découpe l'histoire en trois temps : l'événement, la conjoncture, et la « longue durée », celle des montagnes et des mers."
+    },
+    "source": "Fernand Braudel, La Méditerranée et le monde méditerranéen à l'époque de Philippe II, 1949"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "sablier"
+   },
+   "theme": "sagesse"
+  },
+  {
+   "id": "chrono-parfait-1",
+   "nom": {
+    "fr": "Carbone 14"
+   },
+   "description": {
+    "fr": "Réussir une partie de Chrono sans faute."
+   },
+   "condition": {
+    "type": "chronos_parfaits",
+    "n": 1
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1949, Willard Libby et James Arnold vérifient la datation au carbone 14 sur des échantillons d'âge connu, tirés de tombes de pharaons. Prix Nobel de chimie pour Libby en 1960."
+    },
+    "source": "Nobel Prize, « The Nobel Prize in Chemistry 1960 » ; Libby et Arnold, Science, décembre 1949"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "sablier"
+   },
+   "theme": "alchimie"
+  },
+  {
+   "id": "chrono-parfait-10",
+   "nom": {
+    "fr": "Lire les cernes"
+   },
+   "description": {
+    "fr": "Réussir 10 parties de Chrono sans faute."
+   },
+   "condition": {
+    "type": "chronos_parfaits",
+    "n": 10
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "L'astronome Andrew Ellicott Douglass relie les cernes des arbres au cycle des taches solaires. Il fonde la dendrochronologie, la datation par les cernes, et le laboratoire de Tucson en 1937."
+    },
+    "source": "University of Arizona, Laboratory of Tree-Ring Research, « Lab History »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "plante"
+   },
+   "theme": "savoir"
+  },
+  {
+   "id": "chrono-exactes-3",
+   "nom": {
+    "fr": "À l'année près"
+   },
+   "description": {
+    "fr": "Donner 3 années exactes dans la même partie."
+   },
+   "condition": {
+    "type": "dates_exactes_partie",
+    "n": 3
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1650, l'archevêque James Ussher date la Création de 4004 av. J.-C., la veille du 23 octobre. D'une précision admirable, et faux de quelques milliards d'années."
+    },
+    "source": "James Ussher, Annales Veteris Testamenti, 1650"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "loupe"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "chrono-niveau-2",
+   "nom": {
+    "fr": "La frise de Priestley"
+   },
+   "description": {
+    "fr": "Faire passer 10 événements au demi-siècle."
+   },
+   "condition": {
+    "type": "dates_niveau",
+    "niveau": 2,
+    "n": 10
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1765, Joseph Priestley publie une frise de deux mille vies célèbres, de 1200 av. J.-C. à 1800. Trois mille ans d'histoire sur une seule feuille."
+    },
+    "source": "Joseph Priestley, A Chart of Biography, 1765"
+   },
+   "illustration": {
+    "type": "icone",
+    "id": "plume"
+   },
+   "theme": "sagesse"
+  },
+  {
+   "id": "chrono-niveau-4",
+   "nom": {
+    "fr": "Scaliger"
+   },
+   "description": {
+    "fr": "Connaître 10 événements à l'année exacte."
+   },
+   "condition": {
+    "type": "dates_niveau",
+    "niveau": 4,
+    "n": 10
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1583, Joseph Scaliger compare les chronologies des Perses, des Babyloniens, des Égyptiens et des Juifs, pas seulement des Grecs et des Romains. Il bouleverse l'idée qu'on se faisait de l'histoire ancienne."
+    },
+    "source": "Joseph Scaliger, De emendatione temporum, 1583"
+   },
+   "illustration": {
+    "type": "icone",
+    "id": "enluminure"
+   },
+   "theme": "sagesse"
+  },
+  {
+   "id": "chrono-rapides",
+   "nom": {
+    "fr": "Horloge atomique"
+   },
+   "description": {
+    "fr": "Donner 20 réponses justes en moins de 8 secondes."
+   },
+   "condition": {
+    "type": "dates_rapides",
+    "n": 20
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Depuis 1967, la seconde est la durée de 9 192 631 770 périodes d'une radiation de l'atome de césium 133."
+    },
+    "source": "BIPM, Brochure sur le SI, 9e édition, 2019"
+   },
+   "illustration": {
+    "type": "icone",
+    "id": "atome"
+   },
+   "theme": "mecanique"
+  },
+  {
+   "id": "chrono-anachronismes",
+   "nom": {
+    "fr": "Donation de Constantin"
+   },
+   "description": {
+    "fr": "Se tromper de date 25 fois."
+   },
+   "condition": {
+    "type": "dates_fausses",
+    "n": 25
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Vers 1440, Lorenzo Valla démasque la Donation de Constantin : sa langue ne peut pas dater du IVe siècle. Un faux, trahi par ses anachronismes."
+    },
+    "source": "Lorenzo Valla, De falso credita et ementita Constantini donatione, 1440"
+   },
+   "illustration": {
+    "type": "icone",
+    "id": "couronne"
+   },
+   "theme": "eloquence"
   }
  ],
  "dessins": {

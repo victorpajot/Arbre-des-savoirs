@@ -492,6 +492,11 @@ import furieuse  # noqa: E402
 REPLIQUES.update({k: [sans(l[1]) if isinstance(l, tuple) else l for l in v] for k, v in furieuse.REPLIQUES.items()})
 EXPRESSIONS.update(furieuse.TONS)
 
+# v34 : Chrono, le jeu des siècles.
+import chrono  # noqa: E402
+REPLIQUES.update({k: [sans(l[1]) if isinstance(l, tuple) else l for l in v] for k, v in chrono.REPLIQUES.items()})
+EXPRESSIONS.update(chrono.TONS)
+
 # v7 : surnom que l'IA donne au joueur, affiché sous le rang. Il suit son humeur (dernier résultat),
 # ou juste après un succès, ce succès ({succes}). Groupes nominaux épicènes : le joueur peut être n'importe qui.
 SURNOMS = {

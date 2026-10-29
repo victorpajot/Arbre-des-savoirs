@@ -12,11 +12,12 @@ def sans(texte):
 
 # Genre de succès selon sa condition : petit, jalon, exploit, monument, ou honte (les succès de l'échec).
 GENRES = {
-    "petit": ["competence_maitrisee", "case_visitee", "quiz_joues", "jours_actifs", "retours", "quiz_nuit", "quiz_aube", "objets"],
-    "exploit": ["ennemi_vaincu", "famille_capturee", "atomes_captures", "rang_maitrise"],
+    "petit": ["competence_maitrisee", "case_visitee", "quiz_joues", "jours_actifs", "retours", "quiz_nuit", "quiz_aube", "objets",
+              "chronos_joues"],
+    "exploit": ["ennemi_vaincu", "famille_capturee", "atomes_captures", "rang_maitrise", "dates_exactes_partie"],
     "monument": ["branche_complete", "branches_completes", "toutes_branches", "tours_plateau", "niveau_global"],
     "honte": ["quiz_rates", "competences_perdues", "quiz_zero", "reponses_eclair_fausses", "quiz_eclair_rates", "meme_quiz_rate",
-              "rappels_retard", "reculs", "atomes_enfuis", "hontes", "mode_test"],
+              "rappels_retard", "reculs", "atomes_enfuis", "hontes", "mode_test", "dates_fausses"],
 }
 BAREME = {"petit": 5, "jalon": 10, "exploit": 20, "monument": 40, "honte": 3}
 

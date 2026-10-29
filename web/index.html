@@ -940,6 +940,50 @@ svg.grille .interro { transition: opacity .3s; }
 .piege-verdict.ok { color: var(--good); }
 .piege-verdict.ko { color: var(--bad); }
 .bloc.piege-attente { display: flex; gap: 14px; align-items: center; border-left: 4px solid var(--bad); }
+/* v34 : Chrono, le jeu des siècles. Or bruni du sablier ; préfixe sc- (la classe .chrono sert déjà au minuteur des quiz). */
+.quiz.siecles { --c: #8A6A12; }
+.bloc.chrono-attente { display: flex; gap: 14px; align-items: center; border-left: 4px solid #8A6A12; }
+.points i.presque { background: var(--warn); }
+.sc-herbe { background: radial-gradient(circle at 50% 60%, color-mix(in srgb, #8A6A12 22%, var(--surface)), transparent 70%); }
+.sc-regle { font-size: 17px; margin: 0; }
+.sc-carte { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; background: var(--surface); border-radius: 18px; padding: 18px 16px; border-top: 5px solid #8A6A12; }
+.sc-carte .enonce { margin: 0; }
+.sc-texte { font-size: 17px; color: var(--muted); margin: 0; }
+.sc-saisie { display: flex; flex-direction: column; gap: 12px; background: var(--surface); border-radius: 18px; padding: 16px; }
+.sc-choisi { text-align: center; display: flex; flex-direction: column; gap: 2px; }
+.sc-choisi b { font-family: var(--f-display); font-size: 26px; }
+.sc-choisi small { font-size: 15px; color: var(--muted); }
+.sc-curseur { display: flex; align-items: center; gap: 8px; }
+.sc-curseur input { flex: 1; min-width: 0; accent-color: #8A6A12; height: 32px; }
+.sc-pas { flex: none; width: 44px; height: 44px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface-2); font-size: 16px; color: var(--ink); }
+.sc-repere { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-top: -6px; }
+.sc-fins { display: flex; flex-direction: column; gap: 10px; }
+.sc-ligne { display: flex; flex-direction: column; gap: 6px; }
+.sc-boutons { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.sc-boutons:has(> button:nth-child(2):last-child) { grid-template-columns: 1fr 1fr; }
+.sc-boutons button { min-height: 44px; border: 2px solid var(--line); background: var(--surface-2); border-radius: 10px; font-family: var(--f-mono); font-size: 15px; color: var(--ink); padding: 4px; }
+.sc-boutons button.pris { border-color: #8A6A12; background: color-mix(in srgb, #8A6A12 20%, var(--surface)); font-weight: 700; }
+.sc-boutons button:disabled { opacity: .3; }
+.sc-retour { font-size: 17px; }
+.sc-retour p { margin: 0; }
+.sc-retour.proche { border-left-color: var(--warn); }
+.sc-retour.faux { border-left-color: var(--bad); }
+.sc-retour cite { font-size: 13px; color: var(--muted); font-style: normal; }
+.sc-frise { background: var(--surface); border-radius: 18px; padding: 14px 16px; }
+.sc-frise ol { list-style: none; margin: 8px 0 0; padding: 0; position: relative; }
+.sc-frise ol::before { content: ""; position: absolute; left: 117px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+.sc-frise li { display: grid; grid-template-columns: 108px 20px 1fr; align-items: center; gap: 0; padding: 5px 0; font-size: 15px; color: var(--muted); }
+.sc-frise li .an { font-family: var(--f-mono); font-size: 12px; text-align: right; padding-right: 4px; white-space: nowrap; letter-spacing: -0.02em; }
+.sc-frise li .pt { width: 12px; height: 12px; border-radius: 50%; background: var(--line); justify-self: center; position: relative; z-index: 1; border: 2px solid var(--surface); }
+.sc-frise li.partie { color: var(--ink); }
+.sc-frise li.partie.juste .pt { background: var(--good); } .sc-frise li.partie.proche .pt { background: var(--warn); } .sc-frise li.partie.faux .pt { background: var(--bad); }
+.sc-frise li.ici { color: var(--ink); font-weight: 700; font-size: 16px; }
+.sc-frise li.ici .pt { width: 16px; height: 16px; background: #8A6A12; }
+.sc-recap { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.sc-recap li { display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: center; background: var(--surface); border-radius: 12px; padding: 10px 12px; font-size: 16px; }
+.sc-recap .ic { font-weight: 800; text-align: center; }
+.sc-recap li.juste .ic { color: var(--good); } .sc-recap li.proche .ic { color: var(--warn); } .sc-recap li.faux .ic { color: var(--bad); }
+.sc-recap .an { font-family: var(--f-mono); font-size: 13px; color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) { .piege-titre { animation: piege-claque 0.6s cubic-bezier(.3,1.8,.5,1) both; } }
 @keyframes piege-claque { 0% { transform: scale(2.4) rotate(-6deg); opacity: 0; } 60% { transform: scale(.92) rotate(2deg); opacity: 1; } 100% { transform: none; } }
 .fete { position: fixed; inset: 0; z-index: 60; background: color-mix(in srgb, var(--bg) 97%, transparent); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
@@ -1473,7 +1517,7 @@ svg.grille .interro { transition: opacity .3s; }
     var st = stat(k.stat); if (!st) return "#D8D2C4";
     return eclaircir(st.couleur, M.arbreOuvert(C, P, k.stat) ? 0.38 : 0.78);
   }
-  var COULEUR_SPECIAL = { eureka: "#E0A800", avance: "#2E9D5B", recul: "#D94141", teleport: "#7A3FD1", retour_epoque: "#7A3FD1", revision: "#14899E", cadeau: "#C2185B", mendeleiev: "#1565C0", prison: "#5D6470", quarantaine: "#D9721F", oubli: "#8E5BB5" };
+  var COULEUR_SPECIAL = { eureka: "#E0A800", avance: "#2E9D5B", recul: "#D94141", teleport: "#7A3FD1", retour_epoque: "#7A3FD1", revision: "#14899E", cadeau: "#C2185B", mendeleiev: "#1565C0", prison: "#5D6470", quarantaine: "#D9721F", oubli: "#8E5BB5", chrono: "#8A6A12" };
   var BORD_SPECIAL = COULEUR_SPECIAL;
   // Pictogramme blanc d'une règle spéciale, centré sur (0, 0), environ 10 × 10.
   var PICTO_SPECIAL = {
@@ -1488,6 +1532,8 @@ svg.grille .interro { transition: opacity .3s; }
     quarantaine: '<path d="M0,-4.5 V4.5 M-4.5,0 H4.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
     mendeleiev: '<g fill="none" stroke="#fff" stroke-width="1.1"><ellipse rx="5.2" ry="2"/><ellipse rx="5.2" ry="2" transform="rotate(60)"/><ellipse rx="5.2" ry="2" transform="rotate(-60)"/></g><circle r="1.4" fill="#fff"/>',
   };
+  // v34 : Chrono, un sablier.
+  PICTO_SPECIAL.chrono = '<path d="M-3.6,-4.8 H3.6 M-3.6,4.8 H3.6 M-2.8,-4.8 Q-2.8,-1.4 0,0 Q2.8,1.4 2.8,4.8 M2.8,-4.8 Q2.8,-1.4 0,0 Q-2.8,1.4 -2.8,4.8" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><path d="M-1.8,4.2 Q0,1.8 1.8,4.2 Z" fill="#fff"/>';
   PICTO_SPECIAL.retour_epoque = PICTO_SPECIAL.teleport;
 
   // v8 : le fond est une planche ancienne, tracée au trait, qui change avec l'humeur de l'IA.
@@ -2025,6 +2071,7 @@ svg.grille .interro { transition: opacity .3s; }
     if (bloqueParUltimatum()) return;
     if (M.piegeEnAttente(P)) { ouvrirPiege(); return; }
     if (M.duelBloquant(P)) { lancerDuel(); return; }
+    if (M.chronoEnAttente(P)) { ouvrirChrono("case"); return; }
     var t = maintenant(), c = M.choixIA(C, P, t); if (!c) { toast("Rien à jouer pour l'instant."); return; }
     var k = c.comp, s = stat(k.stat), v = M.valeurEpreuve(C, P, { type: c.type, comp: k.id }, t), bonus = bonusJouerMax(), bMin = C.plateau.regles.bonus.jouer || 0;
     // v15 : la case du pion annonce l'arbre de l'épreuve ; « hors case » quand cet arbre n'a rien à jouer.
@@ -2371,6 +2418,7 @@ svg.grille .interro { transition: opacity .3s; }
         var nom = k.special.type === "eureka" ? "Eurêka, cases " + C.plateau.cases.filter(function (x) { return x.special && x.special.type === "eureka"; }).map(function (x) { return x.n; }).join(", ") : "Case " + k.n + ", " + tx(k.titre);
         return '<p class="meta"><b style="color:var(--ink)">' + esc(nom) + "</b> : " + esc(texteRegle(k.special)) + "</p>";
       }).join("") +
+      (R.chrono ? '<p class="meta"><b style="color:var(--ink)">Chrono, cases ' + R.chrono.cases.join(", ") + " au premier tour</b> : " + esc(tx(R.textes.chrono)) + "</p>" : "") +
       '<p class="meta">Arrivée : tu termines le tour et repars du feu. Au tour suivant, les pièges et la quarantaine comptent double, et la prison demande ' + R.tour_suivant.quiz_parfaits_prison + " quiz parfaits.</p>";
     if (P.plateau.historique.length) {
       html += '<h3 style="font-size:17px">Derniers déplacements</h3><div class="trajet">' + P.plateau.historique.slice(0, 8).map(function (h) {
@@ -2436,6 +2484,8 @@ svg.grille .interro { transition: opacity .3s; }
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
     if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
     if (M.piegeEnAttente(P)) v.appendChild(blocPiegeAccueil());
+    if (M.chronoEnAttente(P)) v.appendChild(blocChronoAccueil("case"));
+    else if (M.offreChrono(P, maintenant())) v.appendChild(blocChronoAccueil("alyca"));
     if (C.plateau && P.plateau.parcoursSuivant) v.appendChild(blocSuiteTour());
     if (C.plateau) v.appendChild(boutonJouer());
     var bh = blocHonte(); if (bh) v.appendChild(bh);
@@ -3229,6 +3279,7 @@ svg.grille .interro { transition: opacity .3s; }
     var suite = etapes[i + 1];
     if (!suite && arret) boutonAtome(wrap, arret, fermerDuel);
     else if (!suite && M.piegeEnAttente(P)) boutonPiege(wrap, fermerDuel);
+    else if (!suite && M.chronoEnAttente(P)) boutonChrono(wrap, fermerDuel);
     else if (!suite && !(P.duel && P.duel.pret)) finEpreuve(wrap, fermerDuel);
     else {
       var bt = el('<button type="button" class="btn large">' + (!suite ? (P.duel && P.duel.ennemi === e.id ? "Revanche !" : "Ennemi suivant !") : suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : suite === "suite" ? "Et maintenant ?" : "Récompense") + "</button>");
@@ -3337,6 +3388,260 @@ svg.grille .interro { transition: opacity .3s; }
     }
     c.appendChild(zone);
     feuille.querySelector("#piege-q").appendChild(c);
+  }
+  // --- Chrono, le jeu des siècles (v34, Victor) -----------------------------------
+  // Alyca montre un événement déjà débloqué, le joueur dit quand. Au siècle d'abord, puis plus finement, événement par événement.
+  // Pas de compte à rebours : une réponse juste en moins de huit secondes rapporte un crédit de plus.
+  var siecles = null;
+  function logoChrono(taille) {
+    return '<svg viewBox="-12 -12 24 24" width="' + taille + '" height="' + taille + '" aria-hidden="true"><circle r="10.5" fill="' + COULEUR_SPECIAL.chrono + '" stroke="#fff" stroke-width="2"/><g transform="scale(1.55)">' + PICTO_SPECIAL.chrono + "</g></svg>";
+  }
+  // Le visuel d'un événement : l'icône de sa case, l'objet, l'emblème du livre ou le portrait du savant.
+  function visuelChrono(q, taille) {
+    if (q.sorte === "objet") { var o = C.objets.filter(function (x) { return x.id === q.id; })[0]; if (o) return svgObjet(o, false, taille); }
+    if (q.sorte === "savant") { var sv = C.avatar.savants.filter(function (x) { return x.id === q.id; })[0]; if (sv) return svgSavant(sv, Math.round(taille * 0.84)); }
+    if (q.sorte === "livre") { var l = (C.livres || []).filter(function (x) { return x.id === q.id; })[0]; if (l) return '<span class="vitrine" style="padding:8px;background:' + l.couleur + ';border-radius:12px">' + svgSprite(l.embleme, Math.round(taille * 0.8)) + "</span>"; }
+    var k = q.case && C.plateau.cases[q.case - 1];
+    if (k) return svgSprite(k.icone, taille, q.titre);
+    var ep = (C.plateau.epoques || []).filter(function (x) { return x.debut == null ? q.debut <= x.fin : q.debut >= x.debut && (x.fin == null || q.debut <= x.fin); })[0];
+    return ep ? svgSprite(ep.icone, taille) : logoChrono(taille);
+  }
+  var SORTE_CHRONO = { frise: "Date de la frise", livre: "Livre", savant: "Savant", objet: "Objet du cabinet" };
+  function questionChrono(q) {
+    if (q.sorte === "livre") return "Quand paraît « " + q.titre + " »" + (q.auteur && q.auteur !== "Auteur inconnu" ? ", de " + q.auteur : "") + " ?";
+    if (q.sorte === "savant") return q.naissance ? "En quelle année est né " + q.titre + " ?" : "À quelle époque a vécu " + q.titre + " ?";
+    if (q.sorte === "objet") return "De quand date cet objet : " + q.titre.charAt(0).toLowerCase() + q.titre.slice(1) + " ?";
+    return "Quand : " + q.titre.charAt(0).toLowerCase() + q.titre.slice(1) + " ?";
+  }
+  function dateChrono(q) { return q.debut === q.fin ? formatAnnee(q.debut) : formatAnnee(q.debut) + " – " + formatAnnee(q.fin); }
+  function blocChronoAccueil(mode) {
+    var cas = mode === "case", n = cas ? P.siecles.case : null;
+    var b = el('<div class="bloc chrono-attente"><span class="vitrine">' + logoChrono(64) + '</span><div style="flex:1;min-width:0"><div class="eyebrow">' + (cas ? "Case " + n + " · Chrono" : "L'IA t'attend") + "</div>" +
+      "<h2>" + (cas ? "Chrono !" : "Vérification d'archives") + '</h2><p class="meta">' + (cas ? "Cinq événements à dater. " + M.reglesChrono(C).reussite + " justes, et ton pion avance." : "Une partie de Chrono offerte : des crédits à gagner, ton pion ne bouge pas. Jusqu'à ce soir.") +
+      '</p><button type="button" class="btn" style="background:' + COULEUR_SPECIAL.chrono + '">Dater</button></div></div>');
+    b.querySelector(".btn").onclick = function () { ouvrirChrono(mode); };
+    return b;
+  }
+  // Fin du trajet sur une case Chrono : un seul bouton, vers la partie.
+  function boutonChrono(wrap, fermer) {
+    var go = el('<button type="button" class="btn large" style="background:' + COULEUR_SPECIAL.chrono + '">Chrono !</button>');
+    go.onclick = function () { fermer(); ouvrirChrono("case"); };
+    wrap.appendChild(go);
+  }
+  function ouvrirChrono(mode) {
+    if (bloqueParUltimatum() || bloqueParDuel()) return;
+    var t = maintenant(), j = M.lancerChrono(C, P, mode, t);
+    if (!j) { sauver(); toast("Pas assez d'événements datés débloqués pour jouer à Chrono."); rendre(); return; }
+    gelerAvatar();
+    var commence = j.reponses.length > 0;
+    siecles = { mode: mode, phase: commence ? "q" : "intro", sel: null, debutQ: 0, rep: null, fin: null, etape: 0,
+      replique: M.replique(C, P, [mode === "case" ? "chrono_case" : "chrono_annonce"]) };
+    sauver(); rendreChrono();
+  }
+  function fermerChrono() {
+    var fini = siecles && siecles.fin;
+    siecles = null; var z = document.querySelector(".quiz.siecles"); if (z) z.remove();
+    animPion = null;
+    if (fini) { vue = "aujourdhui"; window.scrollTo(0, 0); }
+    rendre();
+  }
+  // Les bornes des curseurs : de la Préhistoire au XXIe siècle.
+  function bornesChrono(pas) {
+    var R = M.reglesChrono(C), pre = R.prehistoire, haut = M.creneau(2030, 100);
+    if (pas === 100) return [M.creneau(pre, 100, pre) - 1, haut];
+    if (pas === 50) return [M.creneau(pre, 100), haut];
+    return [Math.floor(M.creneau(pre, 10) / 10), Math.floor(M.creneau(2030, 10) / 10)];
+  }
+  function texteCentaine(g) { return g >= 0 ? "Années " + (g ? 100 * g : 1) + " à " + (100 * g + 99) : "De " + (-100 * g) + " à " + (-100 * g - 99) + " av. J.-C."; }
+  // L'année que désigne la sélection en cours.
+  function anneeChrono(q, s) {
+    if (q.pas === 100) return M.anneeDuCreneau(s.k, 100);
+    if (q.pas === 50) return M.anneeDuCreneau(2 * s.k + s.h, 50);
+    var k10 = 10 * s.k + s.d;
+    if (q.pas === 10) return M.anneeDuCreneau(k10, 10);
+    var y = 10 * k10 + s.y; return y === 0 ? 1 : y;
+  }
+  // La saisie : un curseur (siècle, ou centaine d'années), puis des boutons pour affiner selon le niveau.
+  function saisieChrono(q, s, maj) {
+    var R = M.reglesChrono(C), b = bornesChrono(q.pas);
+    var z = el('<div class="sc-saisie"><div class="sc-choisi" aria-live="polite"></div><div class="sc-curseur"><button type="button" class="sc-pas" data-d="-1" aria-label="Plus tôt">◀</button>' +
+      '<input type="range" min="' + b[0] + '" max="' + b[1] + '" step="1" value="' + s.k + '" aria-label="' + (q.pas >= 50 ? "Siècle" : "Centaine d'années") + '"><button type="button" class="sc-pas" data-d="1" aria-label="Plus tard">▶</button></div>' +
+      '<div class="sc-repere"><span>' + esc(q.pas === 100 ? "Préhistoire" : formatAnnee(R.prehistoire)) + "</span><span>XXIe s.</span></div><div class=\"sc-fins\"></div></div>");
+    var curseur = z.querySelector("input"), fins = z.querySelector(".sc-fins");
+    function ligne(lib, valeurs, cle, nom) {
+      var w = el('<div class="sc-ligne"><span class="eyebrow">' + esc(lib) + '</span><div class="sc-boutons"></div></div>'), bt = w.querySelector(".sc-boutons");
+      valeurs.forEach(function (v) {
+        var x = el('<button type="button"' + (s[cle] === v.v ? ' class="pris"' : "") + (v.off ? " disabled" : "") + ">" + esc(v.t) + "</button>");
+        x.onclick = function () { s[cle] = v.v; maj(); };
+        bt.appendChild(x);
+      });
+      if (nom) w.querySelector(".eyebrow").textContent = nom;
+      fins.appendChild(w);
+    }
+    function dessiner() {
+      fins.innerHTML = "";
+      var lib = q.pas === 100 ? M.texteCreneau(s.k, 100, R.prehistoire) : q.pas === 50 ? M.texteSiecle(s.k) : texteCentaine(s.k);
+      if (q.pas === 50) ligne("Quelle moitié ?", [{ v: 0, t: "1re moitié" }, { v: 1, t: "2de moitié" }], "h");
+      if (q.pas <= 10) {
+        var dec = []; for (var d = 0; d < 10; d++) { var k10 = 10 * s.k + d; dec.push({ v: d, t: k10 >= 0 ? String(Math.max(1, 10 * k10)) : String(-10 * k10) }); }
+        ligne("Quelle décennie ?", dec, "d");
+      }
+      if (q.pas === 1) {
+        var k = 10 * s.k + s.d, ans = [];
+        for (var y = 0; y < 10; y++) { var a = 10 * k + y; ans.push({ v: y, t: String(Math.abs(a)), off: a === 0 }); }
+        ligne("Quelle année ?", ans, "y");
+      }
+      z.querySelector(".sc-choisi").innerHTML = "<b>" + esc(M.texteCreneau(M.creneau(anneeChrono(q, s), q.pas, R.prehistoire), q.pas, R.prehistoire)) + "</b>" + (q.pas < 100 ? "<small>" + esc(lib) + "</small>" : "");
+    }
+    curseur.oninput = function () { s.k = +curseur.value; if (q.pas === 1 && s.k === 0 && s.d === 0 && s.y === 0) s.y = 1; dessiner(); };
+    z.querySelectorAll(".sc-pas").forEach(function (x) { x.onclick = function () { s.k = Math.max(b[0], Math.min(b[1], s.k + +x.getAttribute("data-d"))); curseur.value = s.k; dessiner(); }; });
+    dessiner();
+    z.redessiner = dessiner;
+    return z;
+  }
+  // La mini-frise : les événements de la partie déjà datés, et deux voisins déjà vus de part et d'autre de celui-ci.
+  function friseChrono(j, iCourant) {
+    var vus = j.questions.slice(0, j.reponses.length).map(function (q, i) { return { q: q, r: j.reponses[i], partie: true, ici: i === iCourant }; });
+    var cles = vus.map(function (x) { return x.q.cle; }), cur = j.questions[iCourant];
+    var anciens = M.reservoirChrono(C, P).filter(function (x) { var f = P.siecles.fiches[x.cle]; return f && f.vus > 0 && cles.indexOf(x.cle) < 0; });
+    var avant = anciens.filter(function (x) { return x.debut <= cur.debut; }).sort(function (a, b) { return b.debut - a.debut; }).slice(0, 2);
+    var apres = anciens.filter(function (x) { return x.debut > cur.debut; }).sort(function (a, b) { return a.debut - b.debut; }).slice(0, 2);
+    var tout = vus.concat(avant.concat(apres).map(function (q) { return { q: q, partie: false }; })).sort(function (a, b) { return a.q.debut - b.q.debut; });
+    var z = el('<div class="sc-frise" aria-label="Frise des événements"><div class="eyebrow">Sur ta frise</div><ol></ol></div>'), ol = z.querySelector("ol");
+    tout.forEach(function (x) {
+      var cl = x.ici ? "ici" : x.partie ? "partie " + (x.r ? x.r.verdict : "") : "ancien";
+      var li = el('<li class="' + cl + '"><span class="an">' + esc(dateChrono(x.q)) + '</span><span class="pt" aria-hidden="true"></span><span class="ti"></span></li>');
+      li.querySelector(".ti").textContent = x.q.titre;
+      ol.appendChild(li);
+    });
+    return z;
+  }
+  function rendreChrono() {
+    var ancien = document.querySelector(".quiz.siecles"); if (ancien) ancien.remove();
+    if (!siecles) return;
+    var j = M.jeuChrono(P);
+    var z = el('<div class="quiz siecles" role="dialog" aria-modal="true" aria-label="Chrono, le jeu des siècles"><div class="in"></div></div>'), inn = z.querySelector(".in");
+    document.getElementById("couche").appendChild(z);
+    if (siecles.phase === "fin") { inn.appendChild(bilanChrono()); var b0 = z.querySelector(".btn"); if (b0) b0.focus({ preventScroll: true }); return; }
+    if (!j) { fermerChrono(); return; }
+    var R = M.reglesChrono(C);
+    if (siecles.phase === "intro") {
+      var sc = el('<div class="apparition"><div class="herbe sc-herbe">' + logoChrono(130) + '</div><div class="eyebrow">' + (siecles.mode === "case" ? "Case " + j.case + " · Chrono" : "Partie offerte par l'IA") + '</div><h2>Chrono</h2>' +
+        '<p class="sc-regle">Cinq événements que tu as déjà croisés. Dis quand ils se sont produits : au siècle d\'abord, plus finement quand tu les connais bien.</p>' +
+        '<p class="meta" style="margin:0">Juste : ' + R.points.juste + " crédits, " + R.points.rapide + " de plus en moins de " + Math.round(R.rapide_ms / 1000) + " s. Proche : " + R.points.proche + ". Sans faute : +" + R.points.parfait + "." +
+        (siecles.mode === "case" ? " " + R.reussite + " justes sur " + j.questions.length + ", et ton pion avance de " + R.avance + " cases, plus le bonus du bouton Jouer." : " Ton pion ne bouge pas.") + '</p><div class="arbitre" style="width:100%"></div></div>');
+      var m = comite(siecles.replique, true); if (m) sc.querySelector(".arbitre").appendChild(m);
+      inn.appendChild(sc);
+      var go = el('<button type="button" class="btn large" style="background:' + COULEUR_SPECIAL.chrono + '">Commencer</button>');
+      go.onclick = function () { siecles.phase = "q"; rendreChrono(); };
+      inn.appendChild(go); go.focus();
+      var tard = el('<button type="button" class="btn sec large">Plus tard</button>'); tard.onclick = fermerChrono; inn.appendChild(tard);
+      return;
+    }
+    var i = siecles.phase === "retour" ? j.reponses.length - 1 : j.reponses.length, q = j.questions[i];
+    var haut = el('<div class="haut">' + logoChrono(40) + '<div class="titre"><span class="eyebrow" style="color:' + COULEUR_SPECIAL.chrono + '">Événement ' + (i + 1) + " sur " + j.questions.length + "</span><b>Chrono · " + esc(q.nomNiveau) + '</b></div><button type="button" class="fermer" aria-label="Reprendre plus tard">×</button></div>');
+    haut.querySelector(".fermer").onclick = fermerChrono;
+    inn.appendChild(haut);
+    var pts = el('<div class="points"></div>');
+    j.questions.forEach(function (_, x) { var r = j.reponses[x]; pts.appendChild(el('<i class="' + (r ? (r.verdict === "juste" ? "ok" : r.verdict === "proche" ? "presque" : "ko") : x === i ? "cur" : "") + '"></i>')); });
+    inn.appendChild(pts);
+    var carte = el('<div class="sc-carte"><div class="vitrine grande">' + visuelChrono(q, 96) + '</div><div class="eyebrow">' + esc(SORTE_CHRONO[q.sorte]) + '</div><p class="enonce"></p>' + (q.texte ? '<p class="sc-texte"></p>' : "") + "</div>");
+    carte.querySelector(".enonce").textContent = questionChrono(q);
+    if (q.texte) carte.querySelector(".sc-texte").textContent = q.texte;
+    inn.appendChild(carte);
+    if (siecles.phase === "q") {
+      // Sélection de départ : au milieu de la frise, pour ne rien souffler.
+      if (!siecles.sel || siecles.sel.cle !== q.cle) { var b = bornesChrono(q.pas); siecles.sel = { cle: q.cle, k: Math.round((b[0] + b[1]) / 2), h: 0, d: 0, y: 0 }; siecles.debutQ = Date.now(); }
+      var s = siecles.sel, sa = saisieChrono(q, s, rendreSaisie);
+      function rendreSaisie() { var n = saisieChrono(q, s, rendreSaisie); sa.replaceWith(n); sa = n; }
+      inn.appendChild(sa);
+      var ok = el('<button type="button" class="btn large" style="background:' + COULEUR_SPECIAL.chrono + '">Valider</button>');
+      ok.onclick = function () {
+        siecles.rep = M.repondreChrono(C, P, anneeChrono(q, s), Date.now() - siecles.debutQ, maintenant());
+        siecles.repliqueQ = M.replique(C, P, ["chrono_" + siecles.rep.verdict]);
+        siecles.phase = "retour"; siecles.sel = null; sauver(); rendreChrono();
+      };
+      inn.appendChild(ok);
+      return;
+    }
+    // Retour : le verdict, la vraie date, la frise.
+    var r = j.reponses[i], titre = r.verdict === "juste" ? "Juste !" : r.verdict === "proche" ? "Presque" : "Raté";
+    var niv = r.niveauApres > r.niveauAvant ? "Tu le connais : la prochaine fois, " + M.reglesChrono(C).niveaux[r.niveauApres - 1].nom.fr.toLowerCase() + "." : r.niveauApres < r.niveauAvant ? "Il redescend d'un cran : " + M.reglesChrono(C).niveaux[r.niveauApres - 1].nom.fr.toLowerCase() + "." : "";
+    var rt = el('<div class="retour sc-retour ' + r.verdict + '"><b>' + titre + (r.points ? " +" + r.points + " crédit" + (r.points > 1 ? "s" : "") + (r.rapide ? " (éclair)" : "") : "") + "</b>" +
+      (r.verdict === "juste" ? "" : "<p>Ta réponse : " + esc(r.choisi) + "</p>") + "<p>" + (q.sorte === "savant" && !q.naissance ? "A vécu : " : "C'était : ") + "<b>" + esc(r.vrai) + "</b> (" + esc(dateChrono(q)) + ")</p>" +
+      (niv ? '<p class="meta" style="margin:0">' + esc(niv) + "</p>" : "") + (q.source ? "<cite>Source : " + esc(q.source) + "</cite>" : "") + "</div>");
+    inn.appendChild(rt);
+    var mr = comite(siecles.repliqueQ, true); if (mr) inn.appendChild(mr);
+    inn.appendChild(friseChrono(j, i));
+    var dernier = j.reponses.length >= j.questions.length;
+    var suite = el('<button type="button" class="btn large">' + (dernier ? "Voir le bilan" : "Événement suivant") + "</button>");
+    suite.onclick = function () {
+      if (!dernier) { siecles.phase = "q"; rendreChrono(); return; }
+      var f = M.terminerChrono(C, P, maintenant());
+      f.replique = M.replique(C, P, f.contextes);
+      if (f.plateau) f.repliquePlateau = M.replique(C, P, f.plateau.contextes);
+      siecles.fin = f; siecles.phase = "fin"; siecles.etape = 0; sauver(); rendreChrono();
+    };
+    inn.appendChild(suite); suite.focus({ preventScroll: true });
+  }
+  function bilanChrono() {
+    var r = siecles.fin, rec = r.recompenses || {}, R = M.reglesChrono(C);
+    var cd = siecles.cartes || (siecles.cartes = cartesEnDeux(r, rec, null)), recs = cd.recs;
+    var etapes = ["verdict"];
+    etapesRecompenses(etapes, recs, r.plateau, cd.nAvant, siecles);
+    var i = siecles.etape = Math.min(siecles.etape, etapes.length - 1), nom = etapes[i];
+    var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
+    if (etapes.length > 1) wrap.appendChild(el('<div class="etapes-bilan"><span class="pts">' + etapes.map(function (_, x) { return '<i class="' + (x <= i ? "vu" : "") + '"></i>'; }).join("") + "</span></div>"));
+    var z = el('<div class="etape"></div>');
+    if (nom === "verdict") {
+      var titre = r.parfait ? "Sans faute !" : r.mode === "case" ? (r.reussi ? "Case réussie" : "Case ratée") : "Archives vérifiées";
+      var nJ = r.reponses.filter(function (x) { return x.verdict === "juste"; }).length, nP = r.proches, nR = r.reponses.filter(function (x) { return x.rapide; }).length;
+      var calcul = nJ + " juste" + (nJ > 1 ? "s" : "") + " × " + R.points.juste + (nR ? " + " + nR + " éclair" + (nR > 1 ? "s" : "") : "") + (nP ? " + " + nP + " proche" + (nP > 1 ? "s" : "") : "") + (r.parfait ? " + " + R.points.parfait + " sans faute" : "");
+      // Sans multiplicateur d'humeur, pas de « = 6 = +6 » : le total une seule fois.
+      var humeur = r.mult !== 1 ? " = " + r.points + " × " + String(r.mult).replace(".", ",") + " (humeur de l'IA)" : "";
+      z.appendChild(el('<div class="bilan"><div class="eyebrow" style="color:' + COULEUR_SPECIAL.chrono + '">Chrono' + (r.mode === "case" ? "" : " · partie offerte") + '</div><div class="grand">' + titre + '</div><div class="score">' + r.justes + " / " + r.total + "</div>" +
+        '<p>' + (r.mode === "case" ? (r.reussi ? "Ton pion repart." : "Il en fallait " + R.reussite + ". Ton pion reste là, la case est jouée.") : "Ton pion ne bouge pas, mais tes crédits si.") + (r.montees ? " " + r.montees + " événement" + (r.montees > 1 ? "s passent" : " passe") + " au niveau supérieur." : "") + "</p></div>"));
+      z.appendChild(el('<div class="gain-credits"><div class="ligne-bourse">' + svgBourse(44) + '<div class="calcul">' + esc(calcul) + esc(humeur) + " = <b>+" + r.credits + " crédit" + (r.credits > 1 ? "s" : "") + "</b></div></div></div>"));
+      var liste = el('<ol class="sc-recap"></ol>');
+      r.questions.forEach(function (q, x) {
+        var rp = r.reponses[x], li = el('<li class="' + rp.verdict + '"><span class="ic" aria-hidden="true">' + (rp.verdict === "juste" ? "✓" : rp.verdict === "proche" ? "≈" : "✗") + '</span><span class="ti"></span><span class="an">' + esc(dateChrono(q)) + "</span></li>");
+        li.querySelector(".ti").textContent = q.titre; liste.appendChild(li);
+      });
+      z.appendChild(liste);
+      var m = comite(r.replique); if (m) z.appendChild(m);
+      ligneAgacement(z, r.agacement);
+    } else if (nom === "plateau") {
+      z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
+      setTimeout(function () { animerPion(z); }, 50);
+    } else if (nom === "suite") {
+      z.appendChild(blocSuiteTour());
+    } else {
+      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c); if (c.classList.contains("carte-savant")) degelerAvatar();
+    }
+    wrap.appendChild(z);
+    var suite = etapes[i + 1], arretA = !suite && atomeArret(r.plateau);
+    if (arretA) { boutonAtome(wrap, arretA, function () { siecles = null; var q = document.querySelector(".quiz.siecles"); if (q) q.remove(); }); return wrap; }
+    if (!suite && M.piegeEnAttente(P)) { boutonPiege(wrap, fermerChrono); return wrap; }
+    if (!suite && M.chronoEnAttente(P)) { boutonChrono(wrap, function () { siecles = null; var q = document.querySelector(".quiz.siecles"); if (q) q.remove(); }); return wrap; }
+    if (!suite) finEpreuve(wrap, fermerChrono, true);
+    else {
+      var bt = el('<button type="button" class="btn large">' + (suite === "plateau" ? "Voir le plateau" : suite === "suite" ? "Et maintenant ?" : "Récompense") + "</button>");
+      bt.onclick = function () { siecles.etape = i + 1; rendreChrono(); };
+      wrap.appendChild(bt);
+    }
+    return wrap;
+  }
+  function blocChronoStats() {
+    var s = M.statsChrono(C, P), R = M.reglesChrono(C);
+    var niveaux = R.niveaux.map(function (n) { return "<span>" + esc(n.nom.fr) + '</span><span class="num">' + (s.parNiveau[n.n] || 0) + "</span>"; }).join("");
+    return el('<div class="bloc"><h2>Chrono</h2><div class="bareme" style="font-size:16px">' +
+      '<span>Parties jouées</span><span class="num">' + s.parties + "</span>" +
+      '<span>Sans faute</span><span class="num">' + s.parfaits + "</span>" +
+      '<span>Justes · proches · ratées</span><span class="num">' + s.justes + " · " + s.proches + " · " + s.faux + "</span>" +
+      '<span>Réponses éclair</span><span class="num">' + s.rapides + "</span>" +
+      '<span>Années exactes</span><span class="num">' + s.exactes + "</span>" +
+      '<span>Événements datables</span><span class="num">' + s.reservoir + "</span></div>" +
+      '<p class="note">Où en sont les événements déjà vus (' + s.vus + ") :</p>" + '<div class="bareme" style="font-size:16px">' + niveaux + "</div></div>");
   }
   // Mettre cet atome en tête de la file d'attente, puis lancer son combat.
   function combattreAtome(z) {
@@ -3484,6 +3789,7 @@ svg.grille .interro { transition: opacity .3s; }
     var suite = etapes[i + 1], encore = !suite && M.atomeSauvage(C, P), arretA = !suite && atomeArret(r.plateau);
     if (arretA) { boutonAtome(wrap, arretA, function () { combat = null; var q = document.querySelector(".quiz.atome"); if (q) q.remove(); }); return wrap; }
     if (!suite && !encore && M.piegeEnAttente(P)) { boutonPiege(wrap, fermerCombat); return wrap; }
+    if (!suite && !encore && M.chronoEnAttente(P)) { boutonChrono(wrap, fermerCombat); return wrap; }
     if (!suite && !encore) finEpreuve(wrap, fermerCombat);
     else {
       var bt = el('<button type="button" class="btn large">' + (suite === "libre" ? "Libérer la case" : suite === "plateau" ? "Voir le plateau" : suite === "suite" ? "Et maintenant ?" : suite ? "Récompense" : "Atome suivant !") + "</button>");
@@ -4103,7 +4409,7 @@ svg.grille .interro { transition: opacity .3s; }
       seg.appendChild(bt);
     });
     v.appendChild(seg);
-    if (ongletSucces === "stats") { v.appendChild(blocCombats()); v.appendChild(blocStats()); return v; }
+    if (ongletSucces === "stats") { v.appendChild(blocCombats()); if (C.plateau && C.plateau.regles.chrono) v.appendChild(blocChronoStats()); v.appendChild(blocStats()); return v; }
     var obtenus = C.succes.filter(function (s) { return P.succes[s.id]; }).sort(function (a, b) { return P.succes[b.id] - P.succes[a.id]; });
     var autres = C.succes.filter(function (s) { return !P.succes[s.id]; });
     var bloc = el('<div class="bloc"></div>');
@@ -4182,6 +4488,8 @@ svg.grille .interro { transition: opacity .3s; }
   function lancerQuiz(id, mode, opts) {
     if (bloqueParUltimatum() || bloqueParDuel()) return;
     if (M.piegeEnAttente(P)) { ouvrirPiege(); return; }
+    // v34 : la case Chrono du pion se joue avant toute autre épreuve.
+    if (M.chronoEnAttente(P)) { ouvrirChrono("case"); return; }
     var n = mode === "rappel" ? C.regles.rappels.questions_par_rappel : nbQuiz();
     var qs = M.tirerQuestions(C, P, id, n).map(function (q) {
       var ordre = q.type === "qcm" ? M.melanger(q.choix.map(function (_, i) { return i; }), Math.random) : null;
@@ -4200,13 +4508,21 @@ svg.grille .interro { transition: opacity .3s; }
     z.appendChild(el('<div class="gain-faveur perte"><b>−' + ag.perte + "</b> de faveur : chaque erreur l'agace<span>" + Math.round(ag.avant.valeur) + " → " + Math.round(ag.apres.valeur) + " : " + esc(tx(ag.apres.palier.nom).toLowerCase()) +
       (P.punition ? ". Elle t'enferme au mur de la honte : " + dureePeine(P.punition.restant) : "") + "</span></div>"));
   }
-  function finEpreuve(wrap, fermer) {
+  // `sansChrono` : au sortir d'une partie de Chrono, Alyca n'en relance pas une autre.
+  function finEpreuve(wrap, fermer, sansChrono) {
     var t = maintenant(), c = M.choixIA(C, P, t);
     // v28 : sa faveur a chuté pendant l'épreuve : direction le mur, pas l'épreuve suivante.
     if (M.jeuFerme(C, P, t)) {
       var h = el('<button type="button" class="btn large">Au mur de la honte (' + dureePeine(P.punition.restant) + ")</button>");
       h.onclick = function () { fermer(); ouvrirHonte(); };
       wrap.appendChild(h); return;
+    }
+    // v34 : de temps en temps (une fois par jour au plus), Alyca offre une partie de Chrono.
+    if (!sansChrono && C.plateau && C.plateau.regles.chrono && M.chronoSpontane(C, P, t)) {
+      sauver();
+      var ch = el('<button type="button" class="btn large" style="background:' + COULEUR_SPECIAL.chrono + '">L\'IA t\'offre un Chrono</button>');
+      ch.onclick = function () { fermer(); ouvrirChrono("alyca"); };
+      wrap.appendChild(ch);
     }
     if (c) {
       var j = el('<button type="button" class="btn large">Jouer l\'épreuve suivante</button>');
@@ -4404,6 +4720,8 @@ svg.grille .interro { transition: opacity .3s; }
   }
 
   var NOM_ETAPE = {
+    chrono: function (e) { return "Case Chrono " + e.case + " : cinq événements à dater, et ton pion repart."; },
+    chrono_vide: function (e) { return "Case Chrono " + e.case + " : pas encore assez de dates débloquées. L'IA range son sablier."; },
     eureka: function (e) { return "Eurêka, case " + e.case + " : tu rejoues " + e.n + " cases."; },
     avance: function (e) { return "Raccourci, case " + e.case + " : +" + e.n + " cases."; },
     recul: function (e) { return e.cause === "cadeau" ? "L'IA fait reculer ton pion de " + e.n + " case" + (e.n > 1 ? "s" : "") + "." : e.cause === "echec" ? "Rappel raté : recul de " + e.n + " cases." : "Piège, case " + e.case + " : recul de " + e.n + " cases."; },
@@ -4535,6 +4853,7 @@ svg.grille .interro { transition: opacity .3s; }
     var suite = etapes[e + 1], libelle = !suite ? "Continuer" : suite === "plateau" ? "Voir le plateau" : suite === "duel" ? "Un ennemi !" : suite === "suite" ? "Et maintenant ?" : suite.indexOf("recompense:") === 0 ? (nom.indexOf("recompense:") !== 0 ? (groupe(e + 1) > 1 ? "Voir les " + groupe(e + 1) + " récompenses" : "Voir la récompense") : "Récompense suivante") : "Suite";
     if (!suite && arret) boutonAtome(wrap, arret, fermerQuiz);
     else if (!suite && M.piegeEnAttente(P)) boutonPiege(wrap, fermerQuiz);
+    else if (!suite && M.chronoEnAttente(P)) boutonChrono(wrap, fermerQuiz);
     else if (!suite) finEpreuve(wrap, fermerQuiz);
     else {
       var bt = el('<button type="button" class="btn large">' + libelle + "</button>");

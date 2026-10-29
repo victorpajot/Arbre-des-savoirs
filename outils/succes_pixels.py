@@ -467,7 +467,8 @@ def illustration(succes):
     if c["type"] == "ennemi_vaincu":
         return {"type": "ennemi", "id": c["id"]}
     from succes_themes import ILLUSTRATIONS as V18
-    t, i = ILLUSTRATIONS.get(succes["id"]) or V18[succes["id"]]
+    from chrono import ILLUSTRATIONS as V34
+    t, i = ILLUSTRATIONS.get(succes["id"]) or V34.get(succes["id"]) or V18[succes["id"]]
     return {"type": t, "id": i}
 
 

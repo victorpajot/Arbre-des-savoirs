@@ -180,3 +180,12 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 - Carte de succès : « +20 crédits −10 (décision de l'IA) = 10 crédits ».
 - Crédits affichés à côté du niveau. Ultimatum de l'IA : payer (exigence suivante ×1,5) ou refuser (elle verse la somme, retire 2 vrais niveaux).
 - Plateau : plus d'animations en boucle dans le bilan ni sur Android, dessin repeint après le projecteur.
+
+## v34 : Chrono, le jeu des siècles
+
+- L'IA présente cinq événements déjà débloqués (dates de la frise, livres, savants, objets) ; le joueur dit quand ils se sont produits (`outils/chrono.py`, règles dans `plateau.json` › `regles.chrono`).
+- Chaque événement a son niveau : le siècle, le demi-siècle, la décennie, l'année exacte. Deux justes de suite font monter d'un cran, une erreur fait redescendre. Un savant : tout siècle de sa vie compte juste ; à l'année exacte, on demande sa naissance.
+- Crédits : 2 par juste, +1 si répondu en moins de 8 s, 1 si proche, +5 sans faute, multipliés par l'humeur de l'IA.
+- Case Chrono (14, 30, 49 au premier tour, puis selon l'humeur dans les parcours) : la partie sert d'épreuve, 3 justes sur 5 et le pion avance. Après une épreuve, l'IA offre parfois une partie (une fois par jour au plus) : des crédits seulement.
+- 10 succès Chrono sourcés. Stats dans Succès › Stats.
+- Avant chaque commit, `.githooks/pre-commit` lance aussi `outils/valider.py` et `node outils/test_moteur.js`.

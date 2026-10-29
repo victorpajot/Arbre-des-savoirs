@@ -1438,3 +1438,144 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(ok.dejoue && P.plateau.position === 21 && !M.piegeEnAttente(P), "juste : le piège est déjoué");
   console.log("OK : v32 question piège");
 }
+
+// v34 : Chrono, le jeu des siècles. Créneaux sans an zéro, réservoir des choses débloquées, case qui sert d'épreuve,
+// partie offerte par Alyca, niveaux par événement, crédits juste / proche / rapide.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const R = M.reglesChrono(C), T = new Date(2026, 9, 7, 10).getTime();
+  // Créneaux : siècles au sens propre, pas d'an zéro, Préhistoire à part.
+  assert.equal(M.creneau(1901, 100), 19); assert.equal(M.creneau(2000, 100), 19); assert.equal(M.creneau(2001, 100), 20);
+  assert.equal(M.creneau(1, 100), 0); assert.equal(M.creneau(-1, 100), -1); assert.equal(M.creneau(-100, 100), -1); assert.equal(M.creneau(-101, 100), -2);
+  assert.equal(M.creneau(1, 1) - M.creneau(-1, 1), 1, "de 1 av. J.-C. à l'an 1 : un an");
+  assert.equal(M.creneau(1689, 10), M.creneau(1680, 10)); assert.notEqual(M.creneau(1690, 10), M.creneau(1689, 10));
+  assert.equal(M.creneau(-590, 10), M.creneau(-581, 10)); assert.notEqual(M.creneau(-580, 10), M.creneau(-581, 10));
+  assert.equal(M.creneau(-400000, 100, R.prehistoire), M.creneau(-20000, 100, R.prehistoire), "une seule Préhistoire");
+  for (const pas of [100, 50, 10, 1]) for (const k of [-45, -41, -2, -1, 0, 1, 19, 20, 168, 2025]) assert.equal(M.creneau(M.anneeDuCreneau(k, pas), pas), k, pas + "/" + k);
+  assert.equal(M.texteCreneau(16, 100), "XVIIe siècle"); assert.equal(M.texteCreneau(0, 100), "Ier siècle"); assert.equal(M.texteCreneau(-6, 100), "VIe siècle av. J.-C.");
+  assert.equal(M.texteCreneau(M.creneau(1687, 50), 50), "2de moitié du XVIIe siècle"); assert.equal(M.texteCreneau(M.creneau(1687, 10), 10), "1680-1689");
+  assert.equal(M.texteCreneau(M.creneau(-585, 1), 1), "585 av. J.-C.");
+
+  const prep = () => {
+    const P = M.nouvellePartie(T); P.decalage = T - Date.now(); P.plateau.ennemis = {}; P.sauvages = []; P.faveur = { valeur: 60, maj: T };
+    for (const e of C.evenements.slice(0, 12)) P.evenements[e.id] = T;
+    P.savants.aristote = T;
+    return P;
+  };
+  let P = prep();
+  const pool = M.reservoirChrono(C, P);
+  assert.equal(pool.length, 13); assert.ok(pool.every(x => x.texte == null || !/\d{3,4}/.test(x.texte)), "pas de phrase qui donne la date");
+  assert.ok(pool.find(x => x.id === "feu").max === 1, "la Préhistoire reste au siècle");
+  // Rien sans case ni offre ; trop peu d'éléments : pas de partie.
+  assert.equal(M.lancerChrono(C, P, "case", T), null); assert.equal(M.lancerChrono(C, P, "alyca", T), null);
+  const vide = M.nouvellePartie(T); vide.decalage = T - Date.now();
+  assert.equal(M.chronoSpontane(C, vide, T, () => 0), false, "réservoir trop maigre");
+
+  // Case Chrono : le pion s'y arrête, Jouer lance la partie ; 3 justes sur 5, il avance.
+  const rt = M.routeTour(C, P), i14 = rt.indexOf(R.cases[0]);
+  P.plateau.idx = i14 - 2; P.plateau.position = rt[i14 - 2];
+  let dep = M.deplacer(C, P, 2, T, "quiz");
+  assert.ok(dep.etapes.some(e => e.type === "chrono") && M.chronoEnAttente(P), "arrêt sur la case Chrono");
+  assert.ok(M.deplacer(C, P, 0, T, "quiz").etapes.length === 0 && M.chronoEnAttente(P));
+  let j = M.lancerChrono(C, P, "case", T, () => 0.4);
+  assert.equal(j.questions.length, R.evenements);
+  const siecles = j.questions.map(q => M.creneau(q.debut, 100, R.prehistoire));
+  assert.equal(new Set(siecles).size, siecles.length, "pas deux fois le même siècle");
+  assert.strictEqual(M.lancerChrono(C, P, "case", T), j, "une partie commencée se reprend");
+  const credAvant = P.credits.solde;
+  const rep = [];
+  j.questions.forEach((q, i) => {
+    const k = M.creneau(q.debut, 100, R.prehistoire);
+    // 3 justes (dont 1 rapide), 1 proche, 1 faux
+    const annee = i < 3 ? q.debut : i === 3 ? M.anneeDuCreneau(k + 1, 100) : M.anneeDuCreneau(k + 5, 100);
+    rep.push(M.repondreChrono(C, P, annee, i === 0 ? 3000 : 20000, T));
+  });
+  assert.deepEqual(rep.map(r => r.verdict), ["juste", "juste", "juste", "proche", "faux"]);
+  assert.ok(rep[0].rapide && !rep[1].rapide);
+  assert.equal(M.repondreChrono(C, P, 1500, 1000, T), null, "plus de question");
+  const posAvant = P.plateau.position;
+  let fin = M.terminerChrono(C, P, T, () => 0.99);
+  assert.ok(fin.reussi && !fin.parfait && fin.points === 2 * 3 + 1 + 1, "points : 3 justes, 1 rapide, 1 proche");
+  assert.equal(P.credits.solde - credAvant >= fin.credits, true);
+  assert.ok(fin.plateau && P.plateau.position !== posAvant && !M.chronoEnAttente(P), "réussi : le pion avance");
+  assert.ok(fin.plateau.valeurs.base === R.avance);
+  assert.equal(P.siecles.parties, 1);
+  assert.ok(M.verifierRecompenses(C, P, T + 1).succes.concat(fin.recompenses.succes).some(s => s.id === "chrono-1") || P.succes["chrono-1"], "succès de la première partie");
+  // Le faux est retenu, il revient en tête au prochain tirage.
+  const rate = j.questions[4].cle;
+  assert.ok(P.siecles.fiches[rate].rate);
+
+  // Échec sur la case : la case est consommée, le pion ne bouge pas.
+  P = prep(); P.plateau.idx = i14 - 2; P.plateau.position = rt[i14 - 2]; M.deplacer(C, P, 2, T, "quiz");
+  j = M.lancerChrono(C, P, "case", T, () => 0.1);
+  j.questions.forEach(q => M.repondreChrono(C, P, M.anneeDuCreneau(M.creneau(q.debut, 100, R.prehistoire) + 9, 100), 20000, T));
+  const ici = P.plateau.position; fin = M.terminerChrono(C, P, T);
+  assert.ok(!fin.reussi && P.plateau.position === ici && !M.chronoEnAttente(P) && fin.agacement && fin.agacement.perte > 0);
+
+  // Alyca : une offre par jour au plus ; partie bonus, le pion ne bouge pas.
+  P = prep();
+  assert.equal(M.chronoSpontane(C, P, T, () => 0.9), false);
+  assert.equal(M.chronoSpontane(C, P, T, () => 0.1), true); assert.ok(M.offreChrono(P, T));
+  j = M.lancerChrono(C, P, "alyca", T, () => 0.5);
+  const pos = P.plateau.position;
+  j.questions.forEach(q => M.repondreChrono(C, P, q.debut, 1000, T));
+  fin = M.terminerChrono(C, P, T);
+  assert.ok(fin.parfait && fin.points === 5 * 3 + R.points.parfait && P.plateau.position === pos && !fin.plateau);
+  assert.ok(fin.agacement && fin.agacement.gain > 0, "sans faute : elle est ravie");
+  assert.ok(!M.offreChrono(P, T) && M.chronoSpontane(C, P, T, () => 0) === false, "une fois par jour");
+  assert.equal(M.chronoSpontane(C, P, T + 86400000, () => 0), true, "le lendemain, elle recommence");
+
+  // Niveaux : deux justes de suite font monter d'un cran, une erreur fait redescendre ; le savant : siècle de sa vie.
+  P = prep(); const s = M.etatChrono(P);
+  const ar = M.reservoirChrono(C, P).find(x => x.id === "aristote");
+  assert.ok(ar.debut === -384 && ar.fin === -322);
+  for (let n = 0; n < 2; n++) {
+    s.offre = M.cleJour(T); s.joueJour = null;
+    j = M.lancerChrono(C, P, "alyca", T + n, () => 0.5);
+    j.questions.forEach(q => M.repondreChrono(C, P, q.sorte === "savant" ? -330 : q.debut, 20000, T + n));
+    M.terminerChrono(C, P, T + n);
+  }
+  assert.ok(Object.values(s.fiches).every(f => f.niveau === 2 || f.vus < 2), "deux justes : demi-siècle");
+  const f2 = Object.keys(s.fiches).find(k => s.fiches[k].niveau === 2);
+  s.fiches[f2].niveau = 4;
+  s.offre = M.cleJour(T); s.joueJour = null; s.fiches[f2].rate = true;
+  j = M.lancerChrono(C, P, "alyca", T + 5, () => 0.5);
+  const q4 = j.questions.find(q => q.cle === f2);
+  assert.ok(q4 && (q4.pas === 1 || q4.niveau < 4), "le raté passe en tête, au niveau de sa fiche");
+  if (q4.pas === 1) {
+    j.questions.forEach(q => M.repondreChrono(C, P, q === q4 ? (q.naissance ? q.debut : q.debut) + 4 : q.debut, 20000, T + 5));
+    assert.equal(j.reponses[j.questions.indexOf(q4)].verdict, "proche", "année : à 5 ans près, proche");
+  }
+  // Migration : une ancienne partie n'a pas de Chrono et n'en souffre pas.
+  const vieille = JSON.parse(JSON.stringify(prep())); delete vieille.siecles;
+  const mig = M.migrer(vieille, C); assert.equal(mig.siecles, null); assert.ok(!M.chronoEnAttente(mig));
+  console.log("OK : v34 Chrono, le jeu des siècles");
+}
+
+// v34 : les parcours dessinés posent des cases Chrono selon l'humeur.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 7, 10).getTime();
+  for (const [v, attendu] of [[90, 3], [60, 3], [30, 2], [10, 2]]) {
+    const P = M.nouvellePartie(T); P.decalage = T - Date.now(); P.faveur = { valeur: v, maj: T };
+    const p = M.dessinerParcours(C, P, T);
+    P.plateau.parcoursSuivant = p; M.choisirSuite(C, P, "tour", T);
+    const n = P.plateau.route.filter(c => { const sp = M.specialDe(C, P, c); return sp && sp.type === "chrono"; }).length;
+    assert.equal(n, attendu, "faveur " + v);
+  }
+  console.log("OK : v34 cases Chrono des parcours");
+}
+
+// v34 : sans assez d'éléments datés, une case Chrono ne retient pas le pion.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 7, 10).getTime(), R = M.reglesChrono(C);
+  const P = M.nouvellePartie(T); P.decalage = T - Date.now(); P.plateau.ennemis = {}; P.sauvages = [];
+  const rt = M.routeTour(C, P), i = rt.indexOf(R.cases[0]); P.plateau.idx = i - 1; P.plateau.position = rt[i - 1];
+  const dep = M.deplacer(C, P, 1, T, "quiz");
+  assert.ok(dep.etapes.some(e => e.type === "chrono_vide") && !M.chronoEnAttente(P));
+  // Le tirage spontané est stable d'un affichage à l'autre.
+  for (const e of C.evenements.slice(0, 12)) P.evenements[e.id] = T;
+  const a = M.chronoSpontane(C, P, T), b = M.chronoSpontane(C, P, T); assert.equal(a, b);
+  console.log("OK : v34 case Chrono sans réservoir");
+}

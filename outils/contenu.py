@@ -24,6 +24,7 @@ import ennemis
 import cadeaux
 import pieges
 import mendeleiev
+import chrono
 import brillants
 import credits
 import fiches
@@ -751,7 +752,7 @@ def cadeau(id):
 
 
 def tous_succes():
-    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES + objectifs.SUCCES + pionniers.SUCCES + ennemis.succes() + mendeleiev.succes() + honte.succes() + succes_themes.succes_v18()
+    return SUCCES + SUCCES_V2 + philosophes.SUCCES + plateau.SUCCES + objectifs.SUCCES + pionniers.SUCCES + ennemis.succes() + mendeleiev.succes() + honte.succes() + succes_themes.succes_v18() + chrono.succes()
 
 
 def commentaires():
@@ -830,7 +831,9 @@ def jeu_plateau():
             "tour_suivant": {"multiplicateur_recul": 2, "quiz_parfaits_prison": 2},
             # v32 (Victor) : sur une case piège, une question difficile (rang 5 et plus) ; juste, le piège est déjoué.
             "question_piege": {"rang_min": 5},
-            "textes": {k: fr(v) for k, v in {**plateau.REGLES_SPECIALES, **pieges.TEXTES, **mendeleiev.TEXTES}.items()},
+            # v34 (Victor) : Chrono, le jeu des siècles (outils/chrono.py).
+            "chrono": chrono.REGLES,
+            "textes": {k: fr(v) for k, v in {**plateau.REGLES_SPECIALES, **pieges.TEXTES, **mendeleiev.TEXTES, **chrono.TEXTES}.items()},
         },
         "epoques": [{"id": id, "nom": fr(nom), "debut": d, "fin": f, "icone": plateau.PICTO_EPOQUE[id]} for id, nom, d, f in plateau.EPOQUES],
         # v31 : les compétences qu'évoque chaque case (outils/cases_competences.py).
