@@ -12,6 +12,8 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 | `outils/contenu.py` | Source du contenu : régénère `data/` (`python3 outils/contenu.py`). Il assemble `questions_nouvelles.py` (questions v2), `approfondissement_sciences.py` et `approfondissement_humain.py` (second losange, rangs 5 à 8), `philosophes.py` (branche Sagesse), `illustrations.py` (schémas SVG), `recompenses.py` (succès v2, objets, accessoires), `plateau.py` (63 cases, dates de la frise, succès du plateau), `bibliotheque.py` (32 livres), `ia.py` (répliques) et le pixel art (`dessin.py`, `objets32.py`, `avatar40.py`, `masques.py`, `masques_v4.py`, `savants.py`, `objectifs.py`, `icones32.py`, chacun exécutable pour produire une planche d'aperçu PNG). |
 | `outils/valider.py` | Valide `data/` contre le schéma et vérifie les liens entre fichiers. |
 | `outils/test_moteur.js` | Test du cycle quiz, rappel, perte, regain (`node outils/test_moteur.js`). |
+| `mobile/` | L'app Android (Capacitor 8, cible Android 16). `construire.js` assemble la page, les données et les polices embarquées (`mobile/polices/`). |
+| `play/` | Publication Google Play : `GUIDE.md` (pas à pas), `FICHE.md` (textes et questionnaires), `visuels/` (icône, bannière, captures). Politique de confidentialité : `docs/confidentialite.md`. |
 
 ## Nouveautés de la v10 (faveur de l'IA)
 
@@ -116,6 +118,11 @@ Page jouable : https://claude.ai/artifact/XsArLs3oJmQyF2ua2GoHGa
 - Rappel en retard : pas de pénalité tant qu'il n'est pas raté.
 - Chrono en option (onglet Personnage) : 30 s par question, +5 XP par bonne réponse ; temps écoulé = réponse fausse.
 - Tous les succès sont cachés jusqu'à leur obtention.
+
+## Deux circuits Android
+
+- **APK perso** (`.github/workflows/apk.yml`) : à chaque push sur main, un APK dans les Releases, installable par-dessus le précédent. C'est le circuit de test rapide, à ne pas ralentir.
+- **Google Play** (`.github/workflows/play.yml`) : lancé à la main, il produit l'AAB signé avec la clé d'envoi (secrets GitHub, jamais dans le dépôt). Sur une pull request qui touche l'app, il compile aussi l'AAB et un APK de test pour vérifier que rien ne casse.
 
 ## Intégration mobile et Unreal
 
