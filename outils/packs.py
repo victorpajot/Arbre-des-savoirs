@@ -48,6 +48,7 @@ EMPLACEMENTS = {
     "ennemis.json": ("ennemis.json", ("ennemis",)),
     "mythes.json": ("ennemis.json", ("mythes",)),
     "atomes.json": ("atomes.json", ("elements",)),
+    "boutique.json": ("ia.json", ("credits", "boutique", "articles")),
 }
 PAR_CHEMIN = {(f, c): nom for nom, (f, c) in EMPLACEMENTS.items()}
 AUTRES = {"pack.json", "verifications.json", "ordre.json", "LISEZMOI.md"}
@@ -235,8 +236,11 @@ def assembler(packs=None, ecrire_data=True):
     erreurs = doublons(donnees)
     if erreurs:
         raise ErreurPack("\n".join(erreurs))
+    # Un pack de jeu possède ses fichiers de data/ en entier (atomes.json…) : éteint en jeu, le fichier disparaît.
     index = {"format": 1,
-             "packs": [{k: v for k, v in m.items() if not k.startswith("_")} for m in packs],
+             "packs": [{k: v for k, v in m.items() if not k.startswith("_")}
+                       | ({"fichiers": [n.split("/")[1] for _, _, n in fragments(m) if n.startswith("donnees/")]} if m.get("sorte") == "jeu" else {})
+                       for m in packs],
              "proprietaires": proprietaires}
     if ecrire_data:
         for f, d in donnees.items():

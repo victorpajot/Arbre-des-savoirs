@@ -44,7 +44,8 @@
        "nom",
        "branche",
        "couleur",
-       "description"
+       "description",
+       "couleurs"
       ],
       "additionalProperties": false,
       "properties": {
@@ -63,6 +64,25 @@
        },
        "description": {
         "$ref": "#/$defs/texte"
+       },
+       "couleurs": {
+        "type": "object",
+        "description": "Packs : la couleur de l'arbre à l'écran, en thème clair et en thème sombre (variables CSS --s-<id>).",
+        "required": [
+         "clair",
+         "sombre"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "clair": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+         },
+         "sombre": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+         }
+        }
        }
       }
      }
@@ -1718,19 +1738,81 @@
       },
       "boutique": {
        "type": "object",
-       "description": "v19 : boutique de l'IA (prix, faveur d'un masque acheté, nombre d'épreuves d'un arbre favori, répliques).",
+       "description": "v19 : boutique de l'IA. v35 : chaque article est une fiche, apportée par un pack (packs/<id>/boutique.json) ; le moteur sait quoi faire de chaque id.",
        "required": [
-        "prix",
+        "articles",
         "faveur_masque",
-        "arbre_epreuves",
-        "mots"
+        "arbre_epreuves"
        ],
+       "additionalProperties": false,
        "properties": {
-        "prix": {
-         "type": "object",
-         "additionalProperties": {
-          "type": "integer",
-          "minimum": 0
+        "articles": {
+         "type": "array",
+         "items": {
+          "type": "object",
+          "required": [
+           "id",
+           "rayon",
+           "nom",
+           "description",
+           "couleur",
+           "prix",
+           "mots"
+          ],
+          "additionalProperties": false,
+          "properties": {
+           "id": {
+            "$ref": "#/$defs/id"
+           },
+           "rayon": {
+            "enum": [
+             "rayons",
+             "poche",
+             "equipement",
+             "parcours"
+            ]
+           },
+           "nom": {
+            "$ref": "#/$defs/texte"
+           },
+           "description": {
+            "$ref": "#/$defs/texte"
+           },
+           "couleur": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+           },
+           "glyphe": {
+            "type": "string"
+           },
+           "poche": {
+            "type": "object",
+            "required": [
+             "un",
+             "plusieurs"
+            ],
+            "properties": {
+             "un": {
+              "$ref": "#/$defs/texte"
+             },
+             "plusieurs": {
+              "$ref": "#/$defs/texte"
+             }
+            },
+            "additionalProperties": false
+           },
+           "prix": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 150
+           },
+           "mots": {
+            "type": "array",
+            "items": {
+             "$ref": "#/$defs/texte"
+            }
+           }
+          }
          }
         },
         "faveur_masque": {
@@ -1739,15 +1821,6 @@
         "arbre_epreuves": {
          "type": "integer",
          "minimum": 1
-        },
-        "mots": {
-         "type": "object",
-         "additionalProperties": {
-          "type": "array",
-          "items": {
-           "type": "object"
-          }
-         }
         },
         "stock_max": {
          "type": "integer",
@@ -3071,6 +3144,118 @@
      "pattern": "^theme_(jouer|reussi|rate)@[a-z][a-z0-9-]*$"
     }
    ]
+  },
+  "packs": {
+   "type": "object",
+   "description": "v35 : l'index des packs assemblés (outils/packs.py) : leurs manifestes et le pack de chaque élément qui n'est pas au socle, pour pouvoir désactiver un pack en jeu.",
+   "required": [
+    "format",
+    "packs",
+    "proprietaires"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "packs": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "format",
+       "id",
+       "sorte",
+       "version",
+       "nom",
+       "description",
+       "auteurs",
+       "licence",
+       "langue_source",
+       "requiert",
+       "ordre"
+      ],
+      "properties": {
+       "format": {
+        "const": 1
+       },
+       "id": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$"
+       },
+       "sorte": {
+        "enum": [
+         "socle",
+         "domaine",
+         "jeu"
+        ]
+       },
+       "version": {
+        "type": "string",
+        "pattern": "^\\d+\\.\\d+\\.\\d+$"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       },
+       "auteurs": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "licence": {
+        "type": "string"
+       },
+       "langue_source": {
+        "type": "string"
+       },
+       "requiert": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "ordre": {
+        "type": "integer"
+       },
+       "prefixe": {
+        "anyOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        ]
+       },
+       "fichiers": {
+        "type": "array",
+        "description": "Pack de jeu : les fichiers de data/ qu'il apporte en entier.",
+        "items": {
+         "type": "string"
+        }
+       }
+      },
+      "additionalProperties": false
+     }
+    },
+    "proprietaires": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "object",
+      "additionalProperties": {
+       "type": "string"
+      }
+     }
+    }
+   }
   }
  }
 }

@@ -21,16 +21,6 @@
   --good: #1F8A55;
   --warn: #B86E00;
   --bad: #C2353B;
-  --s-logique: #3D63D9;
-  --s-mecanique: #C9701A;
-  --s-savoir: #24885A;
-  --s-eloquence: #8147C9;
-  --s-lucidite: #0B8794;
-  --s-empathie: #C63E6E;
-  --s-alchimie: #C2402F;
-  --s-cosmos: #4F46B8;
-  --s-etincelle: #9A7200;
-  --s-sagesse: #8B5E34;
   --parchemin: #F3E9D2;
   --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
   --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
@@ -42,16 +32,14 @@
   :root:not([data-theme="light"]) {
     --bg: #0E1120; --surface: #171B2C; --surface-2: #1E2336; --ink: #E9EBF3; --muted: #9AA1B6; --line: #2B3149;
     --accent: #9AA9FF; --accent-ink: #0E1120; --good: #4CC98A; --warn: #F0A43A; --bad: #FF6B70;
-    --s-logique: #7E9BFF; --s-mecanique: #F0A55A; --s-savoir: #5CCB92; --s-eloquence: #B98CF5; --s-lucidite: #4FC6D2; --s-empathie: #F27BA4;
-    --s-alchimie: #FF7F6E; --s-cosmos: #A49CFF; --s-etincelle: #F2C14E; --s-sagesse: #D9A66B; --parchemin: #E9DDC0;
+    --parchemin: #E9DDC0;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0E1120; --surface: #171B2C; --surface-2: #1E2336; --ink: #E9EBF3; --muted: #9AA1B6; --line: #2B3149;
   --accent: #9AA9FF; --accent-ink: #0E1120; --good: #4CC98A; --warn: #F0A43A; --bad: #FF6B70;
-  --s-logique: #7E9BFF; --s-mecanique: #F0A55A; --s-savoir: #5CCB92; --s-eloquence: #B98CF5; --s-lucidite: #4FC6D2; --s-empathie: #F27BA4;
-  --s-alchimie: #FF7F6E; --s-cosmos: #A49CFF; --s-etincelle: #F2C14E; --s-sagesse: #D9A66B; --parchemin: #E9DDC0;
+  --parchemin: #E9DDC0;
   color-scheme: dark;
 }
 html, body { height: 100%; }
@@ -1087,8 +1075,23 @@ svg.grille .interro { transition: opacity .3s; }
     return s.replace(RE_DE_IA, function (m, a, d, ap) { return a + d + ap + n; }).replace(RE_IA, function (m, a) { return a + n; });
   }
   function maintenant() { return M.maintenant(P); }
-  function stat(id) { return C.stats.filter(function (s) { return s.id === id; })[0]; }
-  function couleur(statId) { return "var(--s-" + statId + ")"; }
+  // v35 : l'arbre d'un pack éteint garde son nom (on le lit dans les fichiers complets) ; inconnu, il reste anonyme.
+  function stat(id) {
+    var trouve = function (l) { return l.filter(function (s) { return s.id === id; })[0]; };
+    return trouve(C.stats) || (BRUT && trouve(BRUT["regles.json"].stats)) || { id: id, nom: { fr: "Arbre absent" }, branche: { fr: "Arbre absent" }, description: { fr: "" }, couleur: "#9AA1B6" };
+  }
+  // v35 : la couleur d'un arbre vient de son pack (couleurs.clair / couleurs.sombre) ; un arbre absent prend le gris.
+  function couleur(statId) { return "var(--s-" + statId + ", var(--muted))"; }
+  function poserCouleursArbres(stats) {
+    var clair = "", sombre = "";
+    stats.forEach(function (s) {
+      if (!/^[a-z][a-z0-9-]*$/.test(s.id) || !s.couleurs) return;
+      clair += "--s-" + s.id + ":" + s.couleurs.clair + ";"; sombre += "--s-" + s.id + ":" + s.couleurs.sombre + ";";
+    });
+    var st = document.getElementById("couleurs-arbres") || document.head.appendChild(document.createElement("style"));
+    st.id = "couleurs-arbres";
+    st.textContent = ":root{" + clair + "}@media (prefers-color-scheme: dark){:root:not([data-theme=\"light\"]){" + sombre + "}}:root[data-theme=\"dark\"]{" + sombre + "}";
+  }
   var JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
   var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
   function dateLongue(t) { var d = new Date(t); return JOURS[d.getDay()] + " " + d.getDate() + " " + MOIS[d.getMonth()]; }
@@ -1107,6 +1110,8 @@ svg.grille .interro { transition: opacity .3s; }
   // Une image = des lignes de caractères. Les pixels voisins de même couleur sont fusionnés en un rectangle.
   function pixels(grille, palette, couleurs, ox, oy, e, silhouette) {
     var out = "";
+    // v35 : un dessin d'un pack éteint n'est plus là : la case reste vide plutôt que de casser l'écran.
+    if (!grille) return out;
     grille.forEach(function (ligne, y) {
       var x = 0;
       while (x < ligne.length) {
@@ -1321,6 +1326,34 @@ svg.grille .interro { transition: opacity .3s; }
     f.querySelector("button").focus({ preventScroll: true });
   }
 
+  // v35 (Victor) : chaque pack s'éteint ou se rallume dans les réglages, pour l'essayer seul ou sans lui.
+  // Rien n'est effacé : la progression d'un pack éteint attend qu'on le rallume.
+  function blocPacks() {
+    var demandes = packsDemandes(P), eteints = C.packsEteints || {};
+    var b = el('<div class="bloc"><h2>Packs</h2><p class="note">Le jeu est fait de packs : un par domaine de savoir, un par jeu du plateau. Éteins-en un pour jouer sans lui : il disparaît, mais ta progression reste et revient quand tu le rallumes.</p></div>');
+    INDEX.packs.forEach(function (m) {
+      if (m.sorte === "socle") return;
+      var requis = (m.requiert || []).filter(function (r) { return r !== "socle"; }).map(function (r) {
+        var x = INDEX.packs.filter(function (y) { return y.id === r; })[0]; return x ? tx(x.nom) : r;
+      });
+      var par = eteints[m.id] && demandes.indexOf(m.id) < 0;
+      var l = el('<label class="interrupteur" style="margin-top:10px"><span><b>' + esc(tx(m.nom)) + '</b> <span class="note">' + (m.sorte === "jeu" ? "jeu" : "domaine") + " · " + esc(m.version) + "</span><br>" +
+        '<span class="note">' + esc(tx(m.description)) + (requis.length ? " Demande : " + esc(requis.join(", ")) + "." : "") + (par ? " <b>Éteint avec un pack dont il dépend.</b>" : "") +
+        '</span></span><input type="checkbox"></label>');
+      var cb = l.querySelector("input"); cb.checked = !eteints[m.id]; cb.disabled = par;
+      cb.onchange = function () {
+        P.options = P.options || {};
+        var off = packsDemandes(P).filter(function (x) { return x !== m.id; });
+        if (!cb.checked) off.push(m.id);
+        P.options.packsOff = off;
+        construireContenu(off); M.accorderPartie(C, P); sauver(); rendre();
+        toast((cb.checked ? "Pack rallumé : " : "Pack éteint : ") + tx(m.nom));
+      };
+      b.appendChild(l);
+    });
+    return b;
+  }
+
   // --- Sauvegarde -----------------------------------------------------------
   function lireLocal() {
     try { var s = localStorage.getItem(CLE_LOCALE); return s ? M.migrer(JSON.parse(s), C) : null; } catch (e) { return null; }
@@ -1350,7 +1383,11 @@ svg.grille .interro { transition: opacity .3s; }
         return ref.get().then(function (snap) {
           var distante = snap.exists ? M.migrer(snap.data(), C) : null;
           stockage.ref = ref; stockage.etat = "Ton compte Claude + ce navigateur";
-          if (distante && (!P || distante.maj > P.maj)) { P = distante; try { localStorage.setItem(CLE_LOCALE, JSON.stringify(P)); } catch (e) {} rendre(); }
+          if (distante && (!P || distante.maj > P.maj)) {
+            // La partie du compte peut avoir éteint d'autres packs que celle du navigateur.
+            if (JSON.stringify(packsDemandes(distante)) !== JSON.stringify(packsDemandes(P))) { construireContenu(packsDemandes(distante)); distante = M.migrer(distante, C) || distante; }
+            P = distante; M.accorderPartie(C, P); try { localStorage.setItem(CLE_LOCALE, JSON.stringify(P)); } catch (e) {} rendre();
+          }
           else sauver();
           if (vue === "perso") rendre();
         });
@@ -2744,7 +2781,7 @@ svg.grille .interro { transition: opacity .3s; }
           (mot ? " « " + tx(mot.texte) + " »" : "") + (rec.succes.length ? " Succès : " + rec.succes.map(function (x) { return tx(x.nom); }).join(", ") + "." : ""));
       };
     });
-    var ta = el('<label class="interrupteur" for="opt-arbres" style="margin-top:12px"><span><b>Ouvrir tous les arbres</b><br><span class="note">Pour la démo : les dix branches sont jouables sans succès pionnier.</span></span><input type="checkbox" id="opt-arbres"></label>');
+    var ta = el('<label class="interrupteur" for="opt-arbres" style="margin-top:12px"><span><b>Ouvrir tous les arbres</b><br><span class="note">Pour la démo : toutes les branches sont jouables sans succès pionnier.</span></span><input type="checkbox" id="opt-arbres"></label>');
     var cba = ta.querySelector("input"); cba.checked = !!(P.options && P.options.tousArbres);
     cba.onchange = function () { P.options = P.options || {}; P.options.tousArbres = cba.checked; sauver(); toast(cba.checked ? "Tous les arbres sont ouverts" : "Seuls les arbres gagnés restent ouverts"); };
     test.appendChild(ta);
@@ -2762,6 +2799,7 @@ svg.grille .interro { transition: opacity .3s; }
       });
       test.appendChild(tp);
     }
+    if (INDEX) v.appendChild(blocPacks());
     v.appendChild(test);
 
     var raz = el('<div class="bloc"><h2>Recommencer</h2><p class="note">Efface toute la progression, sur ce navigateur et sur ton compte.</p><div class="rangee" id="raz"><button type="button" class="btn sec">Recommencer à zéro</button></div></div>');
@@ -3711,7 +3749,7 @@ svg.grille .interro { transition: opacity .3s; }
     if (bloqueParUltimatum()) return;
     gelerAvatar();
     var cb = M.tirerCombat(C, P);
-    combat = { s: s, e: s.element, qs: cb.questions, phase: "apparition", i: 0, res: [], repondu: false, fin: null, etape: 0, replique: M.replique(C, P, ["atome_apparait"], null, null, "alchimie") };
+    combat = { s: s, e: s.element, qs: cb.questions, phase: "apparition", i: 0, res: [], repondu: false, fin: null, etape: 0, replique: M.replique(C, P, ["atome_apparait"], null, null, C.atomes.theme) };
     sauver(); rendreCombat();
   }
   function fermerCombat() {
@@ -3735,7 +3773,7 @@ svg.grille .interro { transition: opacity .3s; }
       var plus = el('<button type="button" class="btn sec large">Le laisser partir</button>');
       plus.onclick = function () {
         var f = M.laisserPartir(C, P, maintenant()); if (!f) { fermerCombat(); return; }
-        f.laisse = true; f.replique = M.replique(C, P, ["atome_fuite"], null, null, "alchimie");
+        f.laisse = true; f.replique = M.replique(C, P, ["atome_fuite"], null, null, C.atomes.theme);
         if (f.plateau) f.repliquePlateau = M.replique(C, P, f.plateau.contextes);
         combat.fin = f; combat.phase = "fin"; combat.etape = 0; sauver(); rendreCombat();
       };
@@ -3795,7 +3833,7 @@ svg.grille .interro { transition: opacity .3s; }
         if (!dernier) { combat.i++; combat.repondu = false; rendreCombat(); return; }
         var ratees = combat.res.map(function (r, i) { return r ? null : { type: combat.qs[i].type, rep: combat.reps[i] }; }).filter(Boolean);
         combat.fin = M.terminerCombat(C, P, combat.res.filter(Boolean).length, maintenant(), ratees, !!combat.indice);
-        combat.fin.replique = M.replique(C, P, [combat.fin.capture ? "atome_capture" : "atome_fuite"], null, null, "alchimie");
+        combat.fin.replique = M.replique(C, P, [combat.fin.capture ? "atome_capture" : "atome_fuite"], null, null, C.atomes.theme);
         if (combat.fin.plateau) combat.fin.repliquePlateau = M.replique(C, P, combat.fin.plateau.contextes);
         combat.phase = "fin"; combat.etape = 0; sauver(); rendreCombat();
       };
@@ -3955,7 +3993,7 @@ svg.grille .interro { transition: opacity .3s; }
   }
   function bilanCombat() {
     var r = combat.fin, e = r.element, rec = r.recompenses || {};
-    var cd = combat.cartes || (combat.cartes = cartesEnDeux(r, rec, "alchimie")), recs = cd.recs;
+    var cd = combat.cartes || (combat.cartes = cartesEnDeux(r, rec, C.atomes.theme)), recs = cd.recs;
     var etapes = ["verdict"];
     var caseLibre = combat.s && combat.s.case && !atomeSur(combat.s.case) && C.plateau.cases[combat.s.case - 1] ? combat.s.case : null;
     if (caseLibre) etapes.push("libre");
@@ -4405,27 +4443,8 @@ svg.grille .interro { transition: opacity .3s; }
   }
   // v16 : la corrompre avec les crédits des succès. Un pot-de-vin par jour ; elle retient son record.
   // v19 : la boutique de l'IA. Tout s'achète à l'aveugle avec les crédits.
-  var ARTICLES = [
-    ["objet", "Objet mystère", "Un objet du cabinet que tu n'as pas encore.", "#8A5A2B"],
-    ["livre", "Livre mystère", "Un livre de la bibliothèque, au hasard.", "#2E5E8C"],
-    ["accessoire", "Accessoire mystère", "De quoi habiller ton avatar.", "#7A3FD1"],
-    ["masque", "Masque pour l'IA", "Un masque qu'elle n'a pas. Ça la rend heureuse.", "#C2185B"],
-  ];
-  var POCHE = [
-    ["joker", "Joker 50/50", "En quiz, efface deux mauvaises réponses d'une question à choix.", "#E08A00", "½"],
-    ["erreur", "Droit à l'erreur", "En quiz, une mauvaise réponse ne compte pas : tu retentes la question.", "#3A7BD5", "↺"],
-    ["relance", "Relancer un atome", "L'atome sauvage ne te plaît pas ? L'IA en sort un autre.", "#1E8C8C", "⇄"],
-    ["desarme", "Désarmer un piège", "Le prochain piège où tu t'arrêtes ne fonctionne pas.", "#6B4E9B", "✂"],
-  ];
-  var EQUIPEMENT = [
-    ["kit", "Kit du chasseur", "Quand tu places un atome sur le tableau, tes atomes déjà capturés s'affichent. Acheté une fois pour toutes.", "#B5651D", "⌖"],
-  ];
-  var PARCOURS = [
-    ["chasser", "Chasser un ennemi", "Le prochain ennemi sur ta route s'en va. Même celui qui te bloque.", "#D94141"],
-    ["convoquer", "Convoquer un ennemi", "Un ennemi de plus devant ton pion. Plus de duels, plus de butin.", "#5D6470"],
-    ["arbre", "Faveur d'un arbre", "Pour tes prochaines épreuves par Jouer, l'IA pioche dans l'arbre de ton choix.", "#2E9D5B"],
-    ["avancer", "Avancer d'une case", "Le pion avance tout de suite d'une case, avec ce qui l'attend dessus.", "#E8873A", "+1"],
-  ];
+  // v35 : les articles viennent des packs (ia.json › credits.boutique.articles) : nom, rayon, couleur, glyphe, prix.
+  function articles(rayon) { var B = M.boutique(C); return B ? B.articles.filter(function (a) { return a.rayon === rayon; }) : []; }
   function paquet(c, rond, glyphe) {
     return '<svg viewBox="0 0 48 48" width="52" height="52" aria-hidden="true">' + (rond ? '<circle cx="24" cy="24" r="21" fill="' + c + '" stroke="#fff" stroke-width="3"/>' :
       '<rect x="5" y="9" width="38" height="33" rx="5" fill="' + c + '"/><rect x="5" y="9" width="38" height="9" rx="3" fill="#000" opacity=".18"/><rect x="21" y="9" width="6" height="33" fill="#FFD447"/>') +
@@ -4434,29 +4453,27 @@ svg.grille .interro { transition: opacity .3s; }
   function blocBoutique() {
     var B = M.boutique(C), cr = P.credits, ach = M.arbreAchete(P);
     var b = el('<div class="bloc boutique"><h2>La boutique de l\'IA</h2><p class="solde">' + svgBourse(36) + '<b class="num">' + cr.solde + "</b> crédit" + (cr.solde > 1 ? "s" : "") + "</p>" +
-      '<p class="note">Tout s\'achète à l\'aveugle : tu paies, l\'IA tire au hasard parmi ce que tu n\'as pas encore.</p><div class="rayons"></div><h3>Dans ta poche</h3><p class="note">Jusqu\'à ' + (B.stock_max || 5) + ' de chaque. Ils servent quand tu le décides, sauf le désarmement, qui joue tout seul au prochain piège.</p><div class="rayons poche"></div>' + (C.atomes ? '<h3>Équipement</h3><div class="rayons equipement"></div>' : "") + '<h3>Ton parcours</h3>' +
+      '<p class="note">Tout s\'achète à l\'aveugle : tu paies, l\'IA tire au hasard parmi ce que tu n\'as pas encore.</p><div class="rayons"></div><h3>Dans ta poche</h3><p class="note">Jusqu\'à ' + (B.stock_max || 5) + ' de chaque. Ils servent quand tu le décides, sauf le désarmement, qui joue tout seul au prochain piège.</p><div class="rayons poche"></div>' + (articles("equipement").length ? '<h3>Équipement</h3><div class="rayons equipement"></div>' : "") + '<h3>Ton parcours</h3>' +
       (ach ? '<p class="note">Faveur en cours : arbre ' + esc(tx(stat(ach.stat).nom)) + ", encore " + ach.restant + " épreuve" + (ach.restant > 1 ? "s" : "") + ".</p>" : "") + '<div class="rayons parcours"></div></div>');
     function ligne(a, zone, rond) {
-      var prix = B.prix[a[0]], stock = M.enRayon(C, P, a[0], maintenant()).length, peut = cr.solde >= prix && stock > 0;
-      var r = el('<div class="article"><span class="vis">' + paquet(a[3], rond, a[4]) + '</span><span class="txt"><b>' + esc(a[1]) + "</b><span>" + esc(a[2]) + "</span>" +
-        '<span class="stock">' + (POCHE_IDS[a[0]] ? "en poche : " + M.enPoche(P, a[0]) + " / " + (B.stock_max || 5) : stock ? (a[0] === "chasser" ? stock + " sur ta route" : FAMILLES_STOCK[a[0]] ? stock + " en rayon" : a[0] === "avancer" ? "une fois par jour" : a[0] === "kit" ? "une fois pour toutes" : "disponible") : a[0] === "avancer" ? (P.credits.avanceJour === M.cleJour(maintenant()) ? "déjà acheté aujourd'hui, reviens demain" : "ton pion est retenu") : a[0] === "chasser" ? "aucun ennemi devant toi" : a[0] === "kit" && P.kit ? "déjà à toi" : "rien en rayon") + '</span></span><button type="button" class="btn"' + (peut ? "" : " disabled") + ">" + svgBourse(18) + " " + prix + "</button></div>");
-      r.querySelector("button").onclick = function () { if (a[0] === "arbre") choisirArbreAchat(); else acheterUI(a[0]); };
+      var id = a.id, prix = a.prix, stock = M.enRayon(C, P, id, maintenant()).length, peut = cr.solde >= prix && stock > 0;
+      var r = el('<div class="article"><span class="vis">' + paquet(a.couleur, rond, a.glyphe) + '</span><span class="txt"><b>' + esc(tx(a.nom)) + "</b><span>" + esc(tx(a.description)) + "</span>" +
+        '<span class="stock">' + (a.rayon === "poche" ? "en poche : " + M.enPoche(P, id) + " / " + (B.stock_max || 5) : stock ? (id === "chasser" ? stock + " sur ta route" : FAMILLES_STOCK[id] ? stock + " en rayon" : id === "avancer" ? "une fois par jour" : a.rayon === "equipement" ? "une fois pour toutes" : "disponible") : id === "avancer" ? (P.credits.avanceJour === M.cleJour(maintenant()) ? "déjà acheté aujourd'hui, reviens demain" : "ton pion est retenu") : id === "chasser" ? "aucun ennemi devant toi" : id === "kit" && P.kit ? "déjà à toi" : "rien en rayon") + '</span></span><button type="button" class="btn"' + (peut ? "" : " disabled") + ">" + svgBourse(18) + " " + prix + "</button></div>");
+      r.querySelector("button").onclick = function () { if (id === "arbre") choisirArbreAchat(); else acheterUI(id); };
       b.querySelector(zone).appendChild(r);
     }
-    ARTICLES.forEach(function (a) { ligne(a, ".rayons"); });
-    POCHE.forEach(function (a) { if (a[0] === "relance" && !C.atomes) return; if (a[0] === "desarme" && !C.plateau) return; ligne(a, ".poche"); });
-    if (C.atomes) EQUIPEMENT.forEach(function (a) { ligne(a, ".equipement"); });
-    if (C.plateau) PARCOURS.forEach(function (a) { ligne(a, ".parcours", true); });
+    articles("rayons").forEach(function (a) { ligne(a, ".rayons"); });
+    articles("poche").forEach(function (a) { if (a.id === "desarme" && !C.plateau) return; ligne(a, ".poche"); });
+    articles("equipement").forEach(function (a) { ligne(a, ".equipement"); });
+    if (C.plateau) articles("parcours").forEach(function (a) { ligne(a, ".parcours", true); });
     return b;
   }
   var FAMILLES_STOCK = { objet: 1, livre: 1, accessoire: 1, masque: 1, chasser: 1 };
-  var POCHE_IDS = { joker: 1, erreur: 1, relance: 1, desarme: 1 };
-  var NOM_POCHE = { joker: ["joker", "jokers"], erreur: ["droit à l'erreur", "droits à l'erreur"], relance: ["relance d'atome", "relances d'atome"], desarme: ["désarmement", "désarmements"] };
-  function nomPoche(a, n) { return n + " " + NOM_POCHE[a][n > 1 ? 1 : 0]; }
+  function nomPoche(a, n) { var f = M.articleDe(C, a); return n + " " + (f && f.poche ? tx(n > 1 ? f.poche.plusieurs : f.poche.un) : a); }
   function choisirArbreAchat() {
     var html = '<div class="eyebrow">Boutique · Faveur d\'un arbre</div><h2>Quel arbre ?</h2><p class="meta">Pour tes ' + M.boutique(C).arbre_epreuves + ' prochaines épreuves lancées par Jouer, l\'IA pioche dans cet arbre, quelle que soit la case.</p><div class="arbres-une">', actions = {};
     M.enRayon(C, P, "arbre").forEach(function (st) {
-      html += '<button type="button" class="arbre-une" style="--c:' + couleur(st.id) + '" data-a="ach-' + st.id + '"><b>' + esc(tx(st.nom)) + "</b><span>" + M.boutique(C).prix.arbre + " crédits</span></button>";
+      html += '<button type="button" class="arbre-une" style="--c:' + couleur(st.id) + '" data-a="ach-' + st.id + '"><b>' + esc(tx(st.nom)) + "</b><span>" + M.articleDe(C, "arbre").prix + " crédits</span></button>";
       actions["ach-" + st.id] = function () { acheterUI("arbre", st.id); };
     });
     feuilleSimple(html + "</div>", "Faveur d'un arbre", actions);
@@ -4471,13 +4488,13 @@ svg.grille .interro { transition: opacity .3s; }
     var txt = article === "chasser" ? tx(r.ennemi.nom) + " quitte la case " + r.case + ". La voie est libre." :
       article === "convoquer" ? tx(r.ennemi.nom) + " t'attend case " + r.case + "." :
       article === "arbre" ? "Arbre " + tx(stat(r.stat).nom) + " : l'IA y pioche pour tes " + M.boutique(C).arbre_epreuves + " prochaines épreuves par Jouer." :
-      POCHE_IDS[article] ? "Dans ta poche : " + nomPoche(article, r.stock) + "." :
+      (M.articleDe(C, article) || {}).rayon === "poche" ? "Dans ta poche : " + nomPoche(article, r.stock) + "." :
       article === "avancer" ? (r.plateau && r.plateau.a !== r.plateau.de ? "Ton pion avance d'une case." : "Ton pion n'a pas bougé : quelque chose le retient.") :
       article === "kit" ? "Le kit du chasseur est à toi : quand tu places un atome, tes prises s'affichent sur le tableau. Il est rangé dans ton profil." : "";
     feuilleSimple('<div class="eyebrow">Boutique</div><h2>Acheté : −' + r.prix + ' crédits</h2><div id="achat-carte"></div>' + (txt ? '<p class="etat-pion">' + esc(txt) + "</p>" : "") + '<div id="achat-ia"></div>', "Achat");
     if (carte) { carte.classList.add("anim"); feuille.querySelector("#achat-carte").appendChild(carte); }
     else if (article === "kit") feuille.querySelector("#achat-carte").appendChild(el('<div class="poche-achat">' + paquet("#B5651D", false, "⌖") + "<b>Kit du chasseur</b></div>"));
-    else if (POCHE_IDS[article]) { var pa = POCHE.filter(function (x) { return x[0] === article; })[0]; feuille.querySelector("#achat-carte").appendChild(el('<div class="poche-achat">' + paquet(pa[3], false, pa[4]) + "<b>" + esc(pa[1]) + "</b></div>")); }
+    else if ((M.articleDe(C, article) || {}).rayon === "poche") { var pa = M.articleDe(C, article); feuille.querySelector("#achat-carte").appendChild(el('<div class="poche-achat">' + paquet(pa.couleur, false, pa.glyphe) + "<b>" + esc(tx(pa.nom)) + "</b></div>")); }
     if (r.mot) { var m = comite({ texte: r.mot, contexte: "pot_genereux", aparte: false }, true); if (m) feuille.querySelector("#achat-ia").appendChild(m); }
     // v26 : la case achetée, le pion avance sous les yeux du joueur.
     if (r.plateau && r.plateau.a !== r.plateau.de) { var zd = feuille.querySelector("#achat-carte"); zd.appendChild(blocDeplacement(r.plateau, null, true)); setTimeout(function () { animerPion(zd); }, 60); }
@@ -4596,13 +4613,15 @@ svg.grille .interro { transition: opacity .3s; }
     var B = P.bestiaire || {}, ids = Object.keys(B), aff = 0, vaincus = 0, v = 0, d = 0, serie = 0;
     ids.forEach(function (id) { var f = B[id]; if (f.victoires || f.defaites) aff++; if (f.victoires) vaincus++; v += f.victoires || 0; d += f.defaites || 0; serie = Math.max(serie, f.meilleure || 0); });
     var nAt = Object.keys(P.atomes || {}).filter(function (z) { return P.atomes[z].capture; }).length;
+    // v35 : chaque ligne n'apparaît que si son pack de jeu est allumé.
+    if (!C.ennemis.length && !C.atomes) return el("<div></div>");
     return el('<div class="bloc"><h2>Combats</h2><div class="bareme" style="font-size:16px">' +
-      "<span>Ennemis combattus</span><span class=\"num\">" + aff + " / " + C.ennemis.length + "</span>" +
+      (C.ennemis.length ? "<span>Ennemis combattus</span><span class=\"num\">" + aff + " / " + C.ennemis.length + "</span>" +
       "<span>Ennemis vaincus</span><span class=\"num\">" + vaincus + "</span>" +
       "<span>Duels gagnés</span><span class=\"num\">" + v + "</span>" +
       "<span>Duels perdus</span><span class=\"num\">" + d + "</span>" +
-      "<span>Meilleure série</span><span class=\"num\">" + serie + "</span>" +
-      "<span>Atomes capturés</span><span class=\"num\">" + nAt + " / " + C.atomes.elements.length + "</span></div></div>");
+      "<span>Meilleure série</span><span class=\"num\">" + serie + "</span>" : "") +
+      (C.atomes ? "<span>Atomes capturés</span><span class=\"num\">" + nAt + " / " + C.atomes.elements.length + "</span>" : "") + "</div></div>");
   }
   function blocStats() {
     var xp = M.xpParStat(C, P);
@@ -5178,6 +5197,17 @@ svg.grille .interro { transition: opacity .3s; }
     var sec = feuille && feuille.querySelector(".feuille > .btn.sec"); if (sec) sec.remove();
   }
 
+  // --- Packs (v35) -----------------------------------------------------------
+  // BRUT : les fichiers de data/ tels que chargés ; INDEX : data/packs.json. C est reconstruit sans les packs éteints.
+  var BRUT = null, INDEX = null;
+  function packsDemandes(p) { return (p && p.options && p.options.packsOff) || []; }
+  function construireContenu(off) {
+    var d = M.filtrerPacks(BRUT, INDEX, off);
+    C = M.indexerContenu(d["regles.json"], d["skills.json"], d["questions.json"], d["succes.json"], { commentaires: d["commentaires.json"], objets: d["objets.json"],
+      avatar: d["avatar.json"], ia: d["ia.json"], plateau: d["plateau.json"], frise: d["frise.json"], bibliotheque: d["bibliotheque.json"], ennemis: d["ennemis.json"], atomes: d["atomes.json"] });
+    C.packsEteints = M.packsEteints(INDEX, off);
+    poserCouleursArbres(C.stats);
+  }
   function charger(nom) { return fetch("data/" + nom).then(function (r) { if (!r.ok) throw new Error(nom); return r.json(); }); }
 
   function visite() {
@@ -5191,10 +5221,15 @@ svg.grille .interro { transition: opacity .3s; }
   }
 
   var FICHIERS = ["regles.json", "skills.json", "questions.json", "succes.json", "commentaires.json", "objets.json", "avatar.json",
-    "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json"];
+    "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json", "packs.json"];
   Promise.all(FICHIERS.map(charger)).then(function (d) {
-    C = M.indexerContenu(d[0], d[1], d[2], d[3], { commentaires: d[4], objets: d[5], avatar: d[6], ia: d[7], plateau: d[8], frise: d[9], bibliotheque: d[10], ennemis: d[11], atomes: d[12] });
+    BRUT = {}; FICHIERS.forEach(function (f, i) { BRUT[f] = d[i]; });
+    INDEX = BRUT["packs.json"];
+    // v35 : les packs éteints dans les réglages sont retirés avant d'indexer ; on les lit dans la partie enregistrée.
+    var avant = null; try { avant = JSON.parse(localStorage.getItem(CLE_LOCALE)); } catch (e) {}
+    construireContenu(packsDemandes(avant));
     P = lireLocal() || M.nouvellePartie(Date.now());
+    M.accorderPartie(C, P);
     visite();
     try { localStorage.setItem(CLE_LOCALE, JSON.stringify(P)); } catch (e) {}
     rendre();
@@ -5205,7 +5240,8 @@ svg.grille .interro { transition: opacity .3s; }
       // Au retour dans l'app, la date a pu changer : on recalcule l'écran et les notifications.
       document.addEventListener("visibilitychange", function () { if (!document.hidden && !quiz) { visite(); rendre(); planifierRoutine(); } });
     } else brancherCompte();
-  }).catch(function () {
+  }).catch(function (e) {
+    if (window.console) console.error(e);
     document.getElementById("app").innerHTML = '<div class="vue"><div class="entete"><h1>Arbre des savoirs</h1></div><div class="bloc"><p>Les fichiers de compétences n\'ont pas pu être chargés. Recharge la page.</p></div></div>';
   });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") { if (feuille) fermerFeuille(); } });

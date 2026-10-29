@@ -13,7 +13,8 @@ SCHEMA = Path(__file__).resolve().parent / "schema.json"
 FICHIERS = [("regles.json", "regles"), ("skills.json", "skills"), ("questions.json", "questions"),
             ("succes.json", "succes"), ("commentaires.json", "commentaires"), ("objets.json", "objets"),
             ("avatar.json", "avatar"), ("ia.json", "ia"), ("plateau.json", "plateau"), ("frise.json", "frise"),
-            ("bibliotheque.json", "bibliotheque"), ("ennemis.json", "ennemis"), ("atomes.json", "atomes")]
+            ("bibliotheque.json", "bibliotheque"), ("ennemis.json", "ennemis"), ("atomes.json", "atomes"),
+            ("packs.json", "packs")]
 
 
 def charger(nom):

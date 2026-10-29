@@ -79,6 +79,75 @@
     return c;
   }
 
+  // --- Packs (v35) ------------------------------------------------------------
+  // Le contenu vient de packs (data/packs.json en est l'index). Un pack désactivé en jeu disparaît : son arbre, ses
+  // questions, ses objets, ses répliques… La progression n'est pas touchée : tout revient quand on le réactive.
+
+  // Les packs éteints : ceux demandés, plus ceux qui en dépendent. Le socle ne s'éteint jamais.
+  function packsEteints(index, demandes) {
+    var off = {}, liste = (index && index.packs) || [], change = true;
+    (demandes || []).forEach(function (id) { off[id] = true; });
+    delete off.socle;
+    while (change) {
+      change = false;
+      liste.forEach(function (m) {
+        if (!off[m.id] && m.sorte !== "socle" && (m.requiert || []).some(function (r) { return off[r]; })) { off[m.id] = true; change = true; }
+      });
+    }
+    return off;
+  }
+
+  // `donnees` : { "regles.json": …, "skills.json": … } tels que chargés. Renvoie une copie sans les packs éteints.
+  function filtrerPacks(donnees, index, demandes) {
+    var off = packsEteints(index, demandes);
+    if (!Object.keys(off).length) return donnees;
+    var d = JSON.parse(JSON.stringify(donnees));
+    var proprios = (index && index.proprietaires) || {};
+    (index.packs || []).forEach(function (m) { if (off[m.id]) (m.fichiers || []).forEach(function (f) { d[f] = null; }); });
+    function cleDe(x) { return x && (x.id !== undefined ? String(x.id) : x.n !== undefined ? String(x.n) : x.z !== undefined ? String(x.z) : null); }
+    Object.keys(proprios).forEach(function (ou) {
+      var parts = ou.split("/"), o = d[parts[0]];
+      for (var i = 1; i < parts.length - 1 && o; i++) o = o[parts[i]];
+      var dernier = parts[parts.length - 1];
+      if (!o || !Array.isArray(o[dernier])) return;
+      o[dernier] = o[dernier].filter(function (x) { var p = proprios[ou][cleDe(x)]; return !(p && off[p]); });
+    });
+    // Ce qui pointe encore vers un élément disparu est nettoyé : prérequis, cases, arbres de départ.
+    var comps = {}, stats = {};
+    if (d["skills.json"]) d["skills.json"].competences.forEach(function (k) { comps[k.id] = true; });
+    if (d["regles.json"]) {
+      d["regles.json"].stats.forEach(function (s) { stats[s.id] = true; });
+      d["regles.json"].arbres_fondamentaux = (d["regles.json"].arbres_fondamentaux || []).filter(function (s) { return stats[s]; });
+    }
+    if (d["skills.json"]) d["skills.json"].competences.forEach(function (k) { k.prerequis = k.prerequis.filter(function (p) { return comps[p]; }); });
+    var pl = d["plateau.json"];
+    if (pl && pl.competences_cases) Object.keys(pl.competences_cases).forEach(function (n) {
+      pl.competences_cases[n] = pl.competences_cases[n].filter(function (c) { return comps[c]; });
+    });
+    if (d["succes.json"]) d["succes.json"].succes = d["succes.json"].succes.filter(function (s) { return !s.ouvre || stats[s.ouvre]; });
+    return d;
+  }
+
+  // Ce qu'une partie a en cours dans un jeu éteint (duel, atomes en attente) dort dans partie.veille et revient au
+  // réveil du pack : un pack désactivé ne bloque pas le plateau et ne perd rien.
+  function accorderPartie(contenu, partie) {
+    var v = partie.veille || (partie.veille = {});
+    function garer(cle, actif, vide) {
+      var plein = Array.isArray(partie[cle]) ? partie[cle].length > 0 : !!partie[cle];
+      if (!actif && plein) { v[cle] = partie[cle]; partie[cle] = vide; }
+      else if (actif && v[cle] !== undefined) { if (!plein) partie[cle] = v[cle]; delete v[cle]; }
+    }
+    garer("duel", contenu.ennemis.length > 0, null);
+    garer("sauvages", !!contenu.atomes, []);
+    return partie;
+  }
+
+  // Le pack d'un élément (« questions.json/questions », id) ; « socle » s'il n'en a pas d'autre.
+  function packDe(index, ou, id) {
+    var p = index && index.proprietaires && index.proprietaires[ou];
+    return (p && p[String(id)]) || "socle";
+  }
+
   // --- Temps -----------------------------------------------------------------
 
   function maintenant(partie) {
@@ -1411,7 +1480,7 @@
       if (q && q.type === "qcm" && rep !== null) { var ix = q.choix.map(function (c) { return c.fr; }).indexOf(rep); if (ix >= 0) rep = ix; }
       return { id: id, correct: false, rep: rep };
     }).filter(function (x) { return contenu.questionParId[x.id]; }), t, "atome");
-    ouvrirLot(partie, t, "alchimie");
+    ouvrirLot(partie, t, contenu.atomes && contenu.atomes.theme);
     if (indice) partie.lot.cap = RECOMPENSES_PAR_EPREUVE - 1;
     var R = contenu.atomes.regles, c = partie.compteurs, f = ficheAtome(partie, s.z);
     partie.sauvages.shift();
@@ -1449,6 +1518,11 @@
   // Le parcours aussi : chasser le prochain ennemi, en convoquer un, ou faire piocher l'IA dans un arbre.
   var FAMILLE_ARTICLE = { objet: "objets", livre: "livres", accessoire: "accessoires", masque: "masques" };
   function boutique(contenu) { return contenu.ia && contenu.ia.credits && contenu.ia.credits.boutique; }
+  // v35 : chaque article est une fiche de pack ; un pack éteint retire les siens du rayon.
+  function articleDe(contenu, id) {
+    var B = boutique(contenu);
+    return (B && B.articles.filter(function (a) { return a.id === id; })[0]) || null;
+  }
   function enRayon(contenu, partie, article, t) {
     var f = FAMILLE_ARTICLE[article];
     if (f) return listeFamille(contenu, f).filter(function (x) { return (estButin(x) || f === "masques") && !possede(partie, f, x.id); });
@@ -1474,8 +1548,8 @@
   }
   // `choix` : l'arbre favori (article « arbre »). Renvoie {ok, article, prix, chose, famille, ennemi, case, stat, mot} ou {ok: false, raison}.
   function acheter(contenu, partie, article, t, choix) {
-    var B = boutique(contenu); if (!B || B.prix[article] == null) return { ok: false, raison: "inconnu" };
-    var prix = B.prix[article], cr = partie.credits;
+    var B = boutique(contenu), fiche = articleDe(contenu, article); if (!B || !fiche) return { ok: false, raison: "inconnu" };
+    var prix = fiche.prix, cr = partie.credits;
     if (cr.solde < prix) return { ok: false, raison: "solde" };
     var rayon = enRayon(contenu, partie, article, t);
     if (!rayon.length) return { ok: false, raison: article === "avancer" && partie.credits.avanceJour === cleJour(t) ? "jour" : "vide" };
@@ -1518,7 +1592,7 @@
     cr.solde -= prix;
     cr.achats = (cr.achats || 0) + 1;
     if (out.plateau) out.recompenses = verifierRecompenses(contenu, partie, t);
-    var mots = (B.mots && B.mots[article]) || [];
+    var mots = fiche.mots || [];
     if (mots.length) out.mot = mots[tirage(graine + "|mot", mots.length)];
     partie.maj = t;
     return out;
@@ -1587,7 +1661,7 @@
     cr.jourEmplettes = t;
     if ((alea || Math.random)() >= E.chance) return null;
     var graine = "emplettes|" + cleJour(t) + "|" + (partie.journal ? partie.journal.length : 0);
-    var choix = Object.keys(E.poids).filter(function (a) { return B.prix[ARTICLE_EMPLETTE[a]] <= cr.ia && rayonIA(contenu, partie, a).length; });
+    var choix = Object.keys(E.poids).filter(function (a) { var f = articleDe(contenu, ARTICLE_EMPLETTE[a]); return f && f.prix <= cr.ia && rayonIA(contenu, partie, a).length; });
     var e = { t: t, vu: false };
     if (!choix.length) {
       // Rien à sa portée : la vitrine, une fois seulement tant que la bourse n'a pas grossi.
@@ -1599,7 +1673,7 @@
       // Ce qui l'amuse le plus : le meilleur goût, et parmi les ex æquo, celui du jour.
       var rayon = rayonIA(contenu, partie, article), haut = Math.max.apply(null, rayon.map(function (r) { return r.gout; }));
       var top = rayon.filter(function (r) { return r.gout === haut; }), pris = top[tirage(graine + "|" + article, top.length)].chose;
-      e.type = article; e.prix = B.prix[ARTICLE_EMPLETTE[article]];
+      e.type = article; e.prix = articleDe(contenu, ARTICLE_EMPLETTE[article]).prix;
       cr.ia -= e.prix;
       cr.depensesIA = (cr.depensesIA || 0) + e.prix;
       if (article === "masque") {
@@ -2863,6 +2937,7 @@
   var Moteur = {
     FORMAT_PARTIE: FORMAT_PARTIE,
     indexerContenu: indexerContenu,
+    packsEteints: packsEteints, filtrerPacks: filtrerPacks, packDe: packDe, accorderPartie: accorderPartie,
     maintenant: maintenant,
     debutJour: debutJour,
     ajouterJours: ajouterJours,
@@ -2903,7 +2978,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,
