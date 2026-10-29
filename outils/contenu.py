@@ -239,7 +239,7 @@ Q["math.probabilites"] = [
     qcm("Une urne contient 3 boules rouges et 7 bleues. Quelle est la probabilité de tirer une rouge ?", ["0,3", "0,7", "0,43", "0,5"], "3 boules favorables sur 10."),
     vf("Un événement de probabilité 0,01 % n'arrive jamais.", False, "Il est rare, pas impossible : sur un million d'essais, il arrive environ 100 fois."),
     num("On gagne 10 € avec une probabilité de 1/5, rien sinon. Quelle est l'espérance de gain ?", 2, "Espérance = 10 € × 1/5 = 2 €.", unite="€"),
-    qcm("Un test détecte une maladie rare (1 personne sur 1 000). Il est fiable à 99 % dans les deux sens. Si votre test est positif, la probabilité d'être malade est d'environ :", ["9 %", "99 %", "50 %", "1 %"], "Sur 100 000 personnes : 99 malades testés positifs, mais aussi environ 999 faux positifs. 99 / 1 098 ≈ 9 %."),
+    qcm("Un test détecte une maladie rare (1 personne sur 1 000). Il est fiable à 99 % dans les deux sens. Si votre test est positif, la probabilité d'être malade est d'environ :", ["9 %", "99 %", "50 %", "1 %"], "Prenez 100 000 personnes : 100 sont malades. Le test en repère 99. Mais il se trompe aussi sur 1 % des 99 900 bien portants : environ 1 000 faux positifs. Résultat : environ 1 100 tests positifs, dont seulement 99 vrais malades. Un positif sur onze est malade, soit environ 9 %."),
 ]
 
 Q["math.logique"] = [
