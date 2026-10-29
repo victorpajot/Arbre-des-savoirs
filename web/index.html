@@ -723,6 +723,11 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .tableau-per .el.attend::after { content: "!"; position: absolute; top: -2px; right: 0; font-weight: 800; color: #D94141; font-size: 3cqw; }
 .tableau-per .serie { font-size: 2.2cqw; color: var(--muted); display: grid; place-items: center; border: 1px dashed var(--line); border-radius: 3px; aspect-ratio: 1; }
 .tableau-per .serie.nu { border: 0; }
+.tableau-per.jeu { margin-top: 0; }
+.tableau-per.jeu .el { background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); min-height: 0; }
+.tableau-per.jeu .el.bon { background: var(--good); color: #fff; }
+.tableau-per.jeu .el.faux { color: #fff; }
+.tableau-per.jeu .el.faux { background: var(--bad); }
 .tableau-per .espace { grid-column: 1 / -1; height: 6px; }
 .familles-per { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .familles-per span { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
@@ -3326,7 +3331,7 @@ svg.grille .interro { transition: opacity .3s; }
 
 
   // --- Jeu de Mendeleïev (v9) ----------------------------------------------------
-  // Atomes sauvages des cases Mendeleïev : un combat en trois questions, deux bonnes réponses pour capturer.
+  // Atomes sauvages des cases Mendeleïev : un combat en quatre questions, deux bonnes réponses pour capturer.
   // Le tableau périodique, dans Collections, sert de Pokédex.
   function couleurFamille(e) { return C.atomes.familles[e.famille].couleur; }
   function tuileAtome(e, cache, taille, classe) {
@@ -3408,7 +3413,18 @@ svg.grille .interro { transition: opacity .3s; }
       fin.onclick = function () { fermerFeuille(); rendre(); };
       c.appendChild(fin);
     }
-    if (q.type === "qcm") M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
+    if (q.type === "place") {
+      zone.className = "tableau-per jeu";
+      C.atomes.elements.forEach(function (xa) {
+        var col = xa.groupe, lig = xa.periode;
+        if (!col) { col = 3 + (xa.z >= 89 ? xa.z - 89 : xa.z - 57); lig = xa.z >= 89 ? 10 : 9; }
+        var b = el('<button type="button" class="el" data-v="' + xa.z + '" style="grid-column:' + col + ";grid-row:" + lig + '" aria-label="Ligne ' + lig + ", colonne " + col + '"></button>');
+        b.onclick = function () { repondre(xa.z, b); };
+        zone.appendChild(b);
+      });
+      zone.appendChild(el('<span class="espace" style="grid-row:8"></span>'));
+    }
+    else if (q.type === "qcm") M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
       var bt = el('<button type="button" data-v="' + i + '">' + esc(tx(q.choix[i])) + "</button>"); bt.onclick = function () { repondre(i, bt); }; zone.appendChild(bt);
     });
     else {
@@ -3685,7 +3701,7 @@ svg.grille .interro { transition: opacity .3s; }
   function blocSauvage() {
     var s = M.atomeSauvage(C, P), e = s.element;
     var b = el('<div class="bloc sauvage">' + tuileAtome(e, true, 76) + '<div style="flex:1;min-width:0"><div class="eyebrow">Case ' + s.case + " · atome sauvage</div><h2>" + esc(tx(e.nom)) + "</h2>" + badgeRarete(e) +
-      '<p class="meta">' + (s.attente > 1 ? (s.attente - 1) + " autre" + (s.attente > 2 ? "s attendent" : " attend") + " derrière lui." : "Trois questions, " + bonnesA() + " pour le capturer.") + "</p>" +
+      '<p class="meta">' + (s.attente > 1 ? (s.attente - 1) + " autre" + (s.attente > 2 ? "s attendent" : " attend") + " derrière lui." : "Quatre questions, " + bonnesA() + " pour le capturer.") + "</p>" +
       '<button type="button" class="btn">Combattre</button></div></div>');
     b.querySelector(".btn").onclick = lancerCombat;
     return b;
@@ -3713,7 +3729,7 @@ svg.grille .interro { transition: opacity .3s; }
     var z = el('<div class="quiz atome" role="dialog" aria-modal="true" aria-label="Combat contre un atome sauvage"><div class="in"></div></div>'), inn = z.querySelector(".in");
     document.getElementById("couche").appendChild(z);
     if (combat.phase === "apparition") {
-      var sc = el('<div class="apparition"><div class="herbe">' + tuileAtome(e, true, 150) + '</div><div class="eyebrow">Case ' + combat.s.case + ' · Mendeleïev</div><h2>Un atome sauvage apparaît !</h2><p style="margin:0">C\'est <b>' + esc(tx(e.nom)) + "</b>. " + badgeRarete(e) + '</p><p class="meta" style="margin:0">Symbole, numéro atomique, lieu : trois questions. ' + esc(bonnesA().charAt(0).toUpperCase() + bonnesA().slice(1)) + ', et il rejoint ton tableau périodique.</p><div class="arbitre" style="width:100%"></div></div>');
+      var sc = el('<div class="apparition"><div class="herbe">' + tuileAtome(e, true, 150) + '</div><div class="eyebrow">Case ' + combat.s.case + ' · Mendeleïev</div><h2>Un atome sauvage apparaît !</h2><p style="margin:0">C\'est <b>' + esc(tx(e.nom)) + "</b>. " + badgeRarete(e) + '</p><p class="meta" style="margin:0">Symbole, numéro, place sur le tableau, lieu : quatre questions. ' + esc(bonnesA().charAt(0).toUpperCase() + bonnesA().slice(1)) + ', et il rejoint ton tableau périodique.</p><div class="arbitre" style="width:100%"></div></div>');
       var m = comite(combat.replique, true); if (m) sc.querySelector(".arbitre").appendChild(m);
       inn.appendChild(sc);
       var go = el('<button type="button" class="btn large">Combattre</button>'); go.onclick = function () { combat.phase = "q"; rendreCombat(); };
@@ -3754,43 +3770,66 @@ svg.grille .interro { transition: opacity .3s; }
     inn.appendChild(pts);
     var corps = el('<div class="combat-q" style="display:flex;flex-direction:column;gap:14px"><p class="enonce">' + esc(q.enonce) + '</p><div class="choix grille' + (q.type === "ou" ? " long" : "") + '"></div><div class="retour-z"></div></div>');
     var zr = corps.querySelector(".choix"), retour = corps.querySelector(".retour-z");
-    q.choix.forEach(function (c, ci) {
-      var b = el('<button type="button"></button>'); b.textContent = c;
-      b.onclick = function () {
-        if (combat.repondu) return;
-        var ok = ci === q.reponse; combat.repondu = true; combat.res.push(ok);
-        (combat.reps = combat.reps || [])[combat.i] = c;
-        zr.querySelectorAll("button").forEach(function (x, i) { x.disabled = true; if (i === q.reponse) x.classList.add("bon"); });
-        if (!ok) b.classList.add("faux");
-        var n = combat.res.filter(Boolean).length, reste = combat.qs.length - combat.res.length;
-        var etat = n >= seuil ? "Il est déjà à ta merci." : n + reste < seuil ? "Il prépare sa fuite." : "Encore " + (seuil - n) + " bonne" + (seuil - n > 1 ? "s" : "") + " réponse" + (seuil - n > 1 ? "s" : "") + " pour le capturer.";
-        var expl = q.type === "symbole" ? "Son symbole : " + e.symbole + "." : q.type === "numero" ? "Numéro atomique : " + e.z + ", soit " + e.z + " proton" + (e.z > 1 ? "s" : "") + " dans son noyau. C'est sa place dans le tableau." : "On le croise surtout dans " + e.ou.map(function (o) { return tx(o); }).join(", ") + ".";
-        // v34 (Victor) : raté, on dit à quel atome correspond la réponse donnée, et pour le numéro, comment le retrouver.
-        var dit = !ok && q.type !== "ou" ? M.atomeDit(C.atomes, q.type, c) : null, ast = !ok && q.type === "numero" ? M.astuceNumero(C.atomes, e) : null;
-        if (dit) expl += " Tu as dit " + c + " : celui-là, c'est " + tx(dit.nom) + (q.type === "numero" ? " (" + dit.symbole + ")" : ", n° " + dit.z) + ".";
-        var rt = el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + "</b>" + esc(expl) + '<p class="meta" style="margin:6px 0 0">' + esc(etat) + "</p></div>");
-        if (ast) {
-          var etatP = rt.lastElementChild;
-          if (C.atomes.couches) rt.insertBefore(el(htmlCouches(e)), etatP);
-          rt.insertBefore(el('<p class="astuce-z"><b>Sa place</b>' + esc(ast.texte) + "</p>"), etatP);
-          rt.insertBefore(el('<div class="illus">' + ast.illustration + "</div>"), etatP);
-          var bg = boutonGuide(e); bg.style.marginTop = "10px"; rt.insertBefore(bg, etatP);
-        }
-        if (!ok) rt.appendChild(el('<p class="meta" style="margin:6px 0 0">Épinglé au mur de la honte : retente-le dès demain.</p>'));
-        retour.appendChild(rt);
-        var perdu = M.epreuvePerdue(C, "atome", n, combat.res.length, combat.qs.length, seuil);
-        var dernier = combat.i === combat.qs.length - 1 || perdu;
-        var s = el('<button type="button" class="btn large">' + (perdu ? "Voir sa fuite" : dernier ? "Lancer la capture" : "Question suivante") + "</button>");
-        s.onclick = function () {
-          if (!dernier) { combat.i++; combat.repondu = false; rendreCombat(); return; }
-          var ratees = combat.res.map(function (r, i) { return r ? null : { type: combat.qs[i].type, rep: combat.reps[i] }; }).filter(Boolean);
-          combat.fin = M.terminerCombat(C, P, combat.res.filter(Boolean).length, maintenant(), ratees);
-          combat.fin.replique = M.replique(C, P, [combat.fin.capture ? "atome_capture" : "atome_fuite"], null, null, "alchimie");
-          if (combat.fin.plateau) combat.fin.repliquePlateau = M.replique(C, P, combat.fin.plateau.contextes);
-          combat.phase = "fin"; combat.etape = 0; sauver(); rendreCombat();
-        };
-        retour.appendChild(el('<div style="height:12px"></div>')); retour.appendChild(s); s.focus();
+    // v34 (Victor) : la question « place-le sur le tableau » se joue en touchant une case de la grille.
+    function repondreQ(ok, c, b) {
+      if (combat.repondu) return;
+      combat.repondu = true; combat.res.push(ok);
+      (combat.reps = combat.reps || [])[combat.i] = c;
+      zr.querySelectorAll("button").forEach(function (x, i) { x.disabled = true; if (q.type === "place" ? x.getAttribute("data-z") === String(e.z) : i === q.reponse) x.classList.add("bon"); });
+      if (q.type === "place") { zr.querySelector(".bon").innerHTML = "<b>" + esc(e.symbole) + "</b>"; if (!ok) { var xd = C.atomes.elements[Number(c) - 1]; b.innerHTML = "<b>" + esc(xd.symbole) + "</b>"; } }
+      if (!ok) b.classList.add("faux");
+      var n = combat.res.filter(Boolean).length, reste = combat.qs.length - combat.res.length;
+      var etat = n >= seuil ? "Il est déjà à ta merci." : n + reste < seuil ? "Il prépare sa fuite." : "Encore " + (seuil - n) + " bonne" + (seuil - n > 1 ? "s" : "") + " réponse" + (seuil - n > 1 ? "s" : "") + " pour le capturer.";
+      var expl = q.type === "place" ? (ok ? "Bien placé : " : "Sa case, en vert : ") + placeTexte(e) + "." : q.type === "symbole" ? "Son symbole : " + e.symbole + "." : q.type === "numero" ? "Numéro atomique : " + e.z + ", soit " + e.z + " proton" + (e.z > 1 ? "s" : "") + " dans son noyau. C'est sa place dans le tableau." : "On le croise surtout dans " + e.ou.map(function (o) { return tx(o); }).join(", ") + ".";
+      // v34 (Victor) : raté, on dit à quel atome correspond la réponse donnée, et pour le numéro, comment le retrouver.
+      var dit = !ok && q.type !== "ou" ? M.atomeDit(C.atomes, q.type === "place" ? "numero" : q.type, c) : null, ast = !ok && q.type === "numero" ? M.astuceNumero(C.atomes, e) : null;
+      if (dit && q.type === "place") expl += " Tu as touché la case de " + tx(dit.nom) + " (n° " + dit.z + ").";
+      else if (dit) expl += " Tu as dit " + c + " : celui-là, c'est " + tx(dit.nom) + (q.type === "numero" ? " (" + dit.symbole + ")" : ", n° " + dit.z) + ".";
+      var rt = el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? "Touché. " : "Raté. ") + "</b>" + esc(expl) + '<p class="meta" style="margin:6px 0 0">' + esc(etat) + "</p></div>");
+      if (ast) {
+        var etatP = rt.lastElementChild;
+        if (C.atomes.couches) rt.insertBefore(el(htmlCouches(e)), etatP);
+        rt.insertBefore(el('<p class="astuce-z"><b>Sa place</b>' + esc(ast.texte) + "</p>"), etatP);
+        rt.insertBefore(el('<div class="illus">' + ast.illustration + "</div>"), etatP);
+        var bg = boutonGuide(e); bg.style.marginTop = "10px"; rt.insertBefore(bg, etatP);
+      }
+      if (!ok && q.type === "place") {
+        var etatQ = rt.lastElementChild;
+        if (C.atomes.couches) rt.insertBefore(el(htmlCouches(e)), etatQ);
+        var bq = boutonGuide(e); bq.style.marginTop = "10px"; rt.insertBefore(bq, etatQ);
+      }
+      if (!ok) rt.appendChild(el('<p class="meta" style="margin:6px 0 0">Épinglé au mur de la honte : retente-le dès demain.</p>'));
+      retour.appendChild(rt);
+      var perdu = M.epreuvePerdue(C, "atome", n, combat.res.length, combat.qs.length, seuil);
+      var dernier = combat.i === combat.qs.length - 1 || perdu;
+      var s = el('<button type="button" class="btn large">' + (perdu ? "Voir sa fuite" : dernier ? "Lancer la capture" : "Question suivante") + "</button>");
+      s.onclick = function () {
+        if (!dernier) { combat.i++; combat.repondu = false; rendreCombat(); return; }
+        var ratees = combat.res.map(function (r, i) { return r ? null : { type: combat.qs[i].type, rep: combat.reps[i] }; }).filter(Boolean);
+        combat.fin = M.terminerCombat(C, P, combat.res.filter(Boolean).length, maintenant(), ratees);
+        combat.fin.replique = M.replique(C, P, [combat.fin.capture ? "atome_capture" : "atome_fuite"], null, null, "alchimie");
+        if (combat.fin.plateau) combat.fin.repliquePlateau = M.replique(C, P, combat.fin.plateau.contextes);
+        combat.phase = "fin"; combat.etape = 0; sauver(); rendreCombat();
       };
+      retour.appendChild(el('<div style="height:12px"></div>')); retour.appendChild(s); s.focus();
+    }
+    if (q.type === "place") {
+      zr.className = "tableau-per jeu";
+      C.atomes.elements.forEach(function (x) {
+        var col = x.groupe, lig = x.periode;
+        if (!col) { col = 3 + (x.z >= 89 ? x.z - 89 : x.z - 57); lig = x.z >= 89 ? 10 : 9; }
+        var b = el('<button type="button" class="el" data-z="' + x.z + '" style="grid-column:' + col + ";grid-row:" + lig + '" aria-label="Ligne ' + (lig > 8 ? (lig === 9 ? "6, lanthanides" : "7, actinides") : lig) + ", colonne " + col + '"></button>');
+        b.onclick = function () { repondreQ(x.z === e.z, String(x.z), b); };
+        zr.appendChild(b);
+      });
+      zr.appendChild(el('<span class="serie" style="grid-column:3;grid-row:6">*</span>'));
+      zr.appendChild(el('<span class="serie" style="grid-column:3;grid-row:7">**</span>'));
+      zr.appendChild(el('<span class="espace" style="grid-row:8"></span>'));
+      zr.appendChild(el('<span class="serie nu" style="grid-column:2;grid-row:9">*</span>'));
+      zr.appendChild(el('<span class="serie nu" style="grid-column:2;grid-row:10">**</span>'));
+    } else q.choix.forEach(function (c, ci) {
+      var b = el('<button type="button"></button>'); b.textContent = c;
+      b.onclick = function () { repondreQ(ci === q.reponse, c, b); };
       zr.appendChild(b);
     });
     inn.appendChild(corps);
@@ -3860,6 +3899,9 @@ svg.grille .interro { transition: opacity .3s; }
     return '<div class="couches-z"><b>Ses couches d\'électrons</b><div class="illus">' + M.dessinCouches(C.atomes, e) + "</div><ul>" +
       L.lignes.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" + (L.predite ? '<p class="meta">Atome trop éphémère pour être mesuré : répartition prédite par le calcul.</p>' : "") + '<p class="meta" style="margin:4px 0 0">Source : ' + esc(C.atomes.couches.source.split(" : ")[0]) + "</p></div>";
   }
+  function placeTexte(e) {
+    return e.groupe ? "ligne " + e.periode + ", colonne " + e.groupe : "ligne " + e.periode + ", dans la série du bas des " + (e.z >= 89 ? "actinides" : "lanthanides") + " (" + (e.z >= 89 ? e.z - 88 : e.z - 56) + "e case)";
+  }
   function boutonGuide(e) {
     var b = el('<button type="button" class="btn sec">Comprendre le tableau</button>');
     b.onclick = function () { ouvrirGuideTableau(e); };
@@ -3925,7 +3967,7 @@ svg.grille .interro { transition: opacity .3s; }
     var A = C.atomes, n = nbCaptures(), attente = (P.sauvages || []).map(function (x) { return x.z; });
     var cases = C.plateau.cases.filter(function (k) { return k.special && k.special.type === "mendeleiev"; }).map(function (k) { return k.n; });
     var b = el('<div class="bloc"><div class="compteur-per"><b>Tableau périodique</b><span class="num">' + n + " / " + A.elements.length + '</span><span class="barre"><i style="width:' + (100 * n / A.elements.length).toFixed(1) + '%"></i></span></div>' +
-      '<p class="note">Passe sur une case Mendeleïev (' + cases.join(", ") + ") pour faire apparaître un atome sauvage. Trois questions, " + bonnesA() + ", et il prend sa place ici. Les éléments légendaires sont les plus rares.</p>" +
+      '<p class="note">Passe sur une case Mendeleïev (' + cases.join(", ") + ") pour faire apparaître un atome sauvage. Quatre questions, " + bonnesA() + ", et il prend sa place ici. Les éléments légendaires sont les plus rares.</p>" +
       '<div class="tableau-per" role="grid" aria-label="Tableau périodique"></div><div class="familles-per"></div></div>');
     if (C.atomes.guide) b.insertBefore(boutonGuide(null), b.querySelector(".tableau-per"));
     var g = b.querySelector(".tableau-per");
@@ -4049,11 +4091,12 @@ svg.grille .interro { transition: opacity .3s; }
   }
   function texteReponse(q, v) {
     if (v === null || v === undefined || v === "") return null;
+    if (q.type === "place") { var xa = C.atomes.elements[Number(v) - 1]; return xa ? "la case de " + tx(xa.nom) + " (" + placeTexte(xa) + ")" : null; }
     if (q.type === "qcm") return typeof v === "string" ? v : q.choix[v] ? tx(q.choix[v]) : null;
     if (q.type === "vrai_faux") return v === true || v === "true" ? "Vrai" : "Faux";
     return String(v).replace(".", ",") + (q.unite ? " " + q.unite : "");
   }
-  function bonneReponse(q) { return q.type === "qcm" ? tx(q.choix[q.reponse]) : q.type === "vrai_faux" ? (q.reponse ? "Vrai" : "Faux") : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""); }
+  function bonneReponse(q) { if (q.type === "place") return placeTexte(C.atomes.elements[q.reponse - 1]); return q.type === "qcm" ? tx(q.choix[q.reponse]) : q.type === "vrai_faux" ? (q.reponse ? "Vrai" : "Faux") : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""); }
   function ouvrirHonte() { fermerFeuille(); vue = "honte"; rendre(); window.scrollTo(0, 0); }
   function ouvrirHonteSurBilan() {
     var z = el('<div class="quiz honte-dessus" role="dialog" aria-modal="true" aria-label="Le mur de la honte"><div class="in"></div></div>');
@@ -4072,7 +4115,7 @@ svg.grille .interro { transition: opacity .3s; }
       c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>"));
       if (q.illustration_explication) c.appendChild(el('<div class="illus">' + q.illustration_explication + "</div>"));
       if (q.figure) c.appendChild(el(htmlFigure(q.figure)));
-      if (q.atome && q.type === "numerique" && C.atomes) c.appendChild(boutonGuide(C.atomes.elements[q.atome - 1]));
+      if (q.atome && (q.type === "numerique" || q.type === "place") && C.atomes) c.appendChild(boutonGuide(C.atomes.elements[q.atome - 1]));
     }
     if (!retenter || e.efface) {
       corrige();

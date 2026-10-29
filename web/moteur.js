@@ -358,6 +358,7 @@
   function corriger(question, reponse) {
     if (question.type === "qcm") return reponse === question.reponse;
     if (question.type === "vrai_faux") return reponse === question.reponse;
+    if (question.type === "place") return Number(reponse) === question.reponse;
     var v = lireNombre(reponse);
     return !isNaN(v) && Math.abs(v - question.reponse) <= (question.tolerance || 0) + 1e-9;
   }
@@ -1291,7 +1292,9 @@
       if (!mots(o).some(function (m) { return siens[m]; })) pO.push(o);
     });
     var q3 = finir("ou", "Où croise-t-on surtout cet atome ?", bonne, pO);
-    return [q1, q2, q3];
+    // v34 (Victor) : le placer sur le tableau, en touchant sa case. `reponse` : le numéro de la case juste.
+    var qP = { type: "place", enonce: "Où va « " + nom + " » dans le tableau ? Touche sa case.", choix: [], reponse: e.z };
+    return [q1, q2, qP, q3];
   }
 
   // v34 (Victor : « super dur de retenir le numéro atomique ») : pas de calcul, une image. L'atome allumé dans le
@@ -1386,6 +1389,7 @@
       var base = { id: "atome." + e.z + "." + q.type, competence: "sci.atomes", atome: e.z, enonce: { fr: q.enonce } };
       var lc = lectureCouches(atomes, e);
       if (q.type === "numero") return Object.assign(base, { type: "numerique", reponse: e.z, tolerance: 0, explication: { fr: ast.texte + (lc ? " " + lc.lignes.join(" ") : "") }, illustration_explication: (lc ? dessinCouches(atomes, e) : "") + ast.illustration });
+      if (q.type === "place") return Object.assign(base, { type: "place", reponse: e.z, explication: { fr: (lc ? lc.lignes.join(" ") + " " : "") + ast.texte }, illustration_explication: (lc ? dessinCouches(atomes, e) : "") + ast.illustration });
       return Object.assign(base, { type: "qcm", choix: q.choix.map(function (c) { return { fr: c }; }), reponse: q.reponse,
         explication: { fr: q.type === "symbole" ? "Le symbole de « " + e.nom.fr + " » est " + e.symbole + ", numéro " + e.z + "." : "On le croise surtout dans " + lieux + ". " + e.anecdote.fr } });
     });

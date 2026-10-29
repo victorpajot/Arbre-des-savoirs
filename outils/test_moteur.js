@@ -779,8 +779,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   for (let k = 0; k < 40; k++) {
     P.sauvages[0].z = 1 + (k * 7) % 118;
     const cb = M.tirerCombat(CA, P, Math.random);
-    assert.equal(cb.questions.length, 3);
-    cb.questions.forEach(q => {
+    assert.equal(cb.questions.length, 4);
+    assert.equal(cb.questions[2].type, "place"); assert.equal(cb.questions[2].reponse, cb.element.z);
+    cb.questions.filter(q => q.type !== "place").forEach(q => {
       assert.equal(new Set(q.choix).size, q.choix.length, q.enonce + " " + q.choix);
       assert.ok(q.choix.length === 4, q.enonce + " " + q.choix);
       assert.ok(q.reponse >= 0);
@@ -1622,6 +1623,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     if (e.groupe) assert.equal(L.colonne, e.groupe, e.symbole + " " + L.couches);
     assert.ok(M.dessinCouches(CA.atomes, e).startsWith("<svg"));
   });
+  // Placer l'atome : une question du combat, retentable au mur en touchant la case.
+  const qp = CA.questionParId["atome.26.place"];
+  assert.ok(qp && qp.type === "place" && M.corriger(qp, 26) && M.corriger(qp, "26") && !M.corriger(qp, 27));
   // Le guide du tableau : cinq étapes, sourcées.
   assert.equal(CA.atomes.guide.etapes.length, 5); assert.ok(CA.atomes.guide.source.includes("eduscol"));
   console.log("OK : v34 atomes ratés au mur, astuce du numéro, guide du tableau");

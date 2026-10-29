@@ -364,7 +364,7 @@ def donnees():
                          "famille": fam, "periode": per, "groupe": gr, "rarete": rarete(z, fam),
                          "ou": [fr(x) for x in ou], "anecdote": fr(anec),
                          "source": f"Royal Society of Chemistry, Periodic Table : https://periodic-table.rsc.org/element/{z}/{en}"})
-    return {"format": 1, "regles": {"questions": 3, "seuil": 2, "attente_max": 3},
+    return {"format": 1, "regles": {"questions": 4, "seuil": 2, "attente_max": 3},
             "familles": {k: {"nom": fr(n), "couleur": c} for k, (n, c) in FAMILLES.items()},
             "raretes": {k: {"nom": fr(n), "poids": p} for k, (n, p) in RARETES.items()},
             "elements": elements, "guide": GUIDE, "couches": COUCHES}
