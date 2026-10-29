@@ -1361,3 +1361,20 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(r.libere && P.punition === null && !M.jeuFerme(C, P, T + 9000), "la dernière minute libère");
   console.log("OK : v29 peine plafonnée, rattrapage au mur");
 }
+
+// v30 : enfermé, une question à retenter réussie retire aussi une minute.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 4, 10).getTime(), J = 86400000;
+  const P = M.nouvellePartie(T - 2 * J); P.decalage = T - Date.now();
+  const qs = C.questions.filter(q => q.competence === "math.probabilites").slice(0, 2);
+  M.terminerQuiz(C, P, "math.probabilites", qs.map(q => ({ id: q.id, correct: false })), T - J, { alea: () => 0.99 });
+  P.faveur = { valeur: 50, maj: T }; M.faveurIA(C, P, T);
+  P.punition = { restant: 300000, total: 300000, palier: "furieuse", rang: 2, depuis: T, n: 1 };
+  const x = M.murDeLaHonte(C, P, T).avant[0];
+  M.faveurIA(C, P, T + 1000); const avant = P.punition.restant;
+  const r = M.retenterOubli(C, P, x.index, true, T + 1000);
+  assert.equal(r.peine.gagne, 60000); assert.equal(P.punition.restant, avant - 60000, "une minute de moins");
+  assert.ok(P.oublis[x.index].essai >= P.punition.depuis);
+  console.log("OK : v30 questions à retenter qui comptent pour la peine");
+}

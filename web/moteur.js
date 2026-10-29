@@ -398,14 +398,21 @@
     var e = partie.oublis && partie.oublis[index];
     if (!e || e.efface || joursEntre(e.t, t) < 1) return null;
     e.essais = (e.essais || 0) + 1;
+    e.essai = t;
     if (correct) {
       partie.oublis.forEach(function (x) { if (x.q === e.q && !x.efface && x.t <= e.t) x.efface = t; });
       partie.compteurs.hontesEffacees = (partie.compteurs.hontesEffacees || 0) + 1;
     }
     var faveur = correct ? radoucirIA(contenu, partie, t) : null;
+    // v30 (Victor) : enfermé, une question à retenter réussie retire aussi du temps à la peine.
+    var peine = null;
+    if (correct && partie.punition && partie.punition.restant > 0) {
+      var ms = ((contenu.ia && contenu.ia.faveur && contenu.ia.faveur.mur_rattrapage) || 1) * 60000;
+      peine = { gagne: ms, reste: purger(partie, ms) };
+    }
     partie.maj = t;
     var rec = verifierRecompenses(contenu, partie, t);
-    return { efface: !!correct, essais: e.essais, replique: replique(contenu, partie, [correct ? "honte_effacee" : "honte_ratee"]), nouveauxSucces: rec.succes, faveur: faveur };
+    return { efface: !!correct, essais: e.essais, replique: replique(contenu, partie, [correct ? "honte_effacee" : "honte_ratee"]), nouveauxSucces: rec.succes, faveur: faveur, peine: peine };
   }
   // v29 : un rappel réussi au mur la radoucit d'un point, plafonné par jour (agacement.rappel_mur_jour).
   function radoucirIA(contenu, partie, t) {

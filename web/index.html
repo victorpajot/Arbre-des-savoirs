@@ -3537,6 +3537,12 @@ svg.grille .interro { transition: opacity .3s; }
       if (fv && fv.gain) c.appendChild(el('<div class="gain-faveur"><b>+' + fv.gain + "</b> de faveur : elle se radoucit<span>" + Math.round(fv.avant.valeur) + " → " + Math.round(fv.apres.valeur) + " : " + esc(tx(fv.apres.palier.nom).toLowerCase()) + "</span></div>"));
       else if (fv && fv.plafond) c.appendChild(el('<p class="meta">Elle s\'est assez radoucie pour aujourd\'hui. Revenez demain.</p>'));
       if (r && r.nouveauxSucces && r.nouveauxSucces.length) r.nouveauxSucces.forEach(function (s) { toast("Succès : " + tx(s.nom)); });
+      if (r && r.peine) majPeine(r.peine);
+      // Toutes tentées : le rattrapage prend le relais, juste après.
+      if (P.punition && !resteARetenter() && !document.querySelector(".rattrapage")) {
+        var bloc = c.closest(".bloc"), qr = blocRattrapage();
+        if (bloc && qr) { bloc.after(qr); toast("Toutes tentées : place au rattrapage, plus bas."); }
+      }
     }
     if (q.type === "qcm") M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
       var b = el('<button type="button" data-v="' + i + '">' + esc(tx(q.choix[i])) + "</button>"); b.onclick = function () { repondre(i, b); }; zone.appendChild(b);
@@ -3552,6 +3558,19 @@ svg.grille .interro { transition: opacity .3s; }
     c.appendChild(zone);
     if (e.essais) c.appendChild(el('<p class="clous">Déjà retentée ' + e.essais + " fois.</p>"));
     return c;
+  }
+  // Enfermé : questions à retenter pas encore tentées depuis le début de la peine.
+  function resteARetenter() {
+    var p = P.punition; if (!p) return false;
+    var mur = M.murDeLaHonte(C, P, maintenant()), vues = {};
+    return mur.avant.some(function (x) { if (vues[x.entree.q]) return false; vues[x.entree.q] = true; return !x.entree.efface && !(x.entree.essai >= p.depuis); });
+  }
+  // Une minute de moins à la peine : le chrono suit, ou le cadenas s'ouvre.
+  function majPeine(r) {
+    if (!r.reste) { liberation(); return; }
+    var pe = document.querySelector(".peine");
+    if (pe && P.punition) { pe.querySelector(".temps").textContent = dureePeine(r.reste); pe.querySelector(".barre i").style.width = Math.round(100 * r.reste / P.punition.total) + "%"; }
+    toast("−" + Math.round(r.gagne / 60000) + " minute de peine.");
   }
   // v29 (Victor) : au mur, une question de rattrapage tirée des thèmes du jour. Réussie, une minute de moins.
   function blocRattrapage() {
@@ -3574,9 +3593,7 @@ svg.grille .interro { transition: opacity .3s; }
       if (!r) return;
       if (r.libere) { liberation(); return; }
       var m = comite(r.replique, true); if (m) c.appendChild(m);
-      var pe = document.querySelector(".peine");
-      if (pe) { pe.querySelector(".temps").textContent = dureePeine(r.reste); pe.querySelector(".barre i").style.width = Math.round(100 * r.reste / P.punition.total) + "%"; }
-      if (r.gagne) toast("−1 minute de peine.");
+      if (r.gagne) majPeine(r);
       var suite = el('<button type="button" class="btn large">Question suivante</button>');
       suite.onclick = function () { var n = blocRattrapage(); if (n) { b.replaceWith(n); n.scrollIntoView({ behavior: "smooth", block: "start" }); } };
       c.appendChild(suite);
@@ -3619,8 +3636,7 @@ svg.grille .interro { transition: opacity .3s; }
       var NOM_CHUTE = { boudeuse: "Elle est passée boudeuse", furieuse: "Elle est passée furieuse", nulle: "Sa faveur est tombée à 0" };
       v.appendChild(el('<div class="bloc peine"><div class="eyebrow">Enfermé par l\'IA</div><div class="temps">' + dureePeine(peine.restant) + '</div><div class="barre"><i style="width:' + Math.round(100 * peine.restant / peine.total) + '%"></i></div>' +
         '<p class="note" style="margin:8px 0 0">' + esc(NOM_CHUTE[peine.palier] || "Elle a perdu patience") + (peine.n > 1 ? ", et c'est ta " + peine.n + "<sup>e</sup> chute aujourd'hui : peine doublée à chaque fois" : "") +
-        ". Le temps ne file que si tu restes sur le mur, écran allumé. Relis tes erreurs et les fiches : chaque question de rattrapage réussie retire une minute.</p></div>"));
-      var qr = blocRattrapage(); if (qr) v.appendChild(qr);
+        ". Le temps ne file que si tu restes sur le mur, écran allumé. Relis tes erreurs et les fiches : chaque question " + (mur.aRetenter ? "à retenter" : "de rattrapage") + " réussie retire une minute.</p></div>"));
     }
     v.appendChild(el('<div class="compteurs-h"><span><b>' + mur.aujourdhui.length + "</b> ratée" + (mur.aujourdhui.length > 1 ? "s" : "") + " aujourd'hui</span><span><b>" + mur.aRetenter + "</b> à retenter</span><span><b>" + (P.compteurs.hontesEffacees || 0) + "</b> réhabilitée" + ((P.compteurs.hontesEffacees || 0) > 1 ? "s" : "") + " en tout</span></div>"));
     // Les jours précédents d'abord : ce sont elles qu'on peut effacer aujourd'hui.
@@ -3635,6 +3651,8 @@ svg.grille .interro { transition: opacity .3s; }
       });
       v.appendChild(br);
     }
+    // v30 (Victor) : les questions à retenter passent d'abord ; le rattrapage ne vient qu'une fois toutes tentées.
+    if (peine && !resteARetenter()) { var qr = blocRattrapage(); if (qr) v.appendChild(qr); }
     if (!mur.aujourdhui.length) {
       v.appendChild(el('<div class="bloc"><h2>Aujourd\'hui</h2><p class="note">Aucune question ratée aujourd\'hui. Soit tu es brillant, soit tu n\'as pas joué. L\'IA a son avis.</p></div>'));
     } else {
