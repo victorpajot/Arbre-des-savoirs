@@ -64,7 +64,7 @@ Pour voir le pack dans le jeu : `node mobile/construire.js`, puis servir `mobile
 - **`prefixe`** : chaque compétence et chaque question commence par `<prefixe>.` (`mus.son`, `mus.son.q01`). Une liste est permise (`["chim", "sci.atomes"]`).
 - **`ordre`** : place du pack dans l'assemblage et dans l'interface. Les domaines officiels vont de 10 à 110 : un nouveau domaine prend 120 ou plus.
 - **Les autres ids** (dessins, livres, dates, succès, savants) sont communs à tous les packs : deux packs qui utilisent le même id entrent en collision à l'assemblage. Préfixer ceux du pack (`mus-croche`, `carto-boussole`) ; un savant garde le nom de la personne (`bach`).
-- **Textes** : partout, un texte est un objet par langue, `{"fr": "…"}`. Le français est obligatoire ; d'autres langues pourront s'ajouter à côté (`"en"`), sans changer les ids.
+- **Textes** : partout, un texte est un objet `{"fr": "…"}` dans la langue source du pack (`langue_source`). Les traductions ne vont pas à côté mais dans `langues/` (section 8).
 
 ## 4. Les fichiers d'un pack domaine
 
@@ -206,13 +206,29 @@ Règle absolue du projet : **chaque fait doit être vérifié en ligne avant d'e
 
 Le crochet de commit et la compilation GitHub refusent toute source non vérifiée.
 
-## 8. Ce qu'un pack ne peut pas (encore) faire
+## 8. Traduire un pack
+
+Le jeu se joue en français ou en anglais (Personnage › Réglages). Chaque pack porte ses traductions, rangées **par texte source** : `langues/<xx>/<fichier>.json` vaut `{"texte source": "traduction"}` pour les textes de `<fichier>.json` (`langues/en/questions.json` pour `questions.json`, `langues/en/donnees-avatar.json` pour `donnees/avatar.json`). Se traduisent : les objets `{"fr": …}`, les étiquettes `<text>` et `aria-label` des schémas, et les champs `langue`, `traducteur`, `reference`, `titre`. Jamais les sources, URL et ids.
+
+```bash
+python3 outils/langues.py etat en                          # couverture de chaque pack
+python3 outils/langues.py a-traduire en mon-pack questions.json  # ce qui manque, prêt à remplir
+python3 outils/langues.py inscrire en mon-pack fait.json   # range des traductions faites
+python3 outils/packs.py assembler                          # data/langues/en.json, ce que le jeu charge
+```
+
+- Un texte source modifié perd sa traduction : il s'affiche en français et `etat` le signale. Retraduire.
+- **Balises et variables** (`<b>`, `{comp}`, `{n}`) : toutes gardées, l'ordre peut changer. Les tests le vérifient.
+- **Rien d'inventé** vaut aussi en traduction : une citation dont l'original est connu en anglais reprend l'original (Newton, Darwin, Feynman) ; sinon, traduire au plus près. Un extrait dont l'original est en anglais garde le texte original en guise de traduction : le jeu ne l'affiche alors qu'une fois.
+- **Schémas** : une étiquette peut se traduire différemment d'un schéma à l'autre (« noire » : la note en musique, la matière en astronomie) ; l'assemblage s'en charge. Une étiquette en deux lignes (« situation » / « initiale ») peut échanger ses mots pour suivre l'ordre anglais.
+- **Anglais** : américain, point décimal (3.5), virgule des milliers (1,000) ; Alyca est « she » ; notes C D E F G A B ; le « tu » des descriptions devient « you ». L'interface se traduit dans `web/langues/en.json` (`python3 outils/langues.py interface en`).
+
+## 9. Ce qu'un pack ne peut pas (encore) faire
 
 - Ajouter des **cases au plateau** : il a 63 cases, dans le socle. Un pack s'y rattache par `cases.json`.
 - Créer un **nouvel effet** en boutique : un article (`boutique.json`) reprend un rayon et un effet existants.
 - Apporter du **code** : un pack de jeu (`sorte: jeu`) fournit des données, mais son jeu doit être programmé dans `web/moteur.js` et `web/index.html`.
-- **Traduire** : le format le permet (`{"fr": …, "en": …}`), l'interface pas encore.
 
-## 9. Licence
+## 10. Licence
 
 En proposant un pack au dépôt, on accepte `CONTRIBUTING.md` (accord CLA). Le contenu des packs est sous CC BY-NC-SA 4.0 (`NOTICE.md`). Un pack qui reprend un texte d'un tiers (citation, extrait) le cite et n'en prend que le nécessaire.
