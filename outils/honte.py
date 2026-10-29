@@ -50,6 +50,6 @@ def succes():
           {"type": "citation", "texte": fr("Déjà essayé. Déjà échoué. Peu importe. Essayer encore. Échouer encore. Échouer mieux."),
            "auteur": "Samuel Beckett", "source": "Worstward Ho, 1983"}),
         s("honte-effacee-50", "Ravalement de façade", "Effacer 50 questions du mur de la honte.", {"type": "hontes_effacees", "n": 50},
-          anec("En 1919, le New York Times se moque de Robert Goddard, qui croit qu'une fusée peut voler dans le vide. Le journal publie un rectificatif le 17 juillet 1969, pendant le vol d'Apollo 11.",
+          anec("En 1920, le New York Times se moque de Robert Goddard, qui croit qu'une fusée peut voler dans le vide. Le journal publie un rectificatif le 17 juillet 1969, pendant le vol d'Apollo 11.",
                "The New York Times, « A Correction », 17 juillet 1969")),
     ]

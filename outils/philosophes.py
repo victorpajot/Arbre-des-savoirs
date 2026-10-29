@@ -149,16 +149,16 @@ SUCCES = [
                     "Socrate, d'après Platon", "Apologie de Socrate, 21d (formule résumée)")),
     succes("caverne", "Sortie de caverne", "Réussir 3 quiz de Sagesse sans faute. Vous voyez enfin les objets, pas leurs ombres.",
            {"type": "quiz_parfaits_stat", "stat": "sagesse", "n": 3},
-           anecdote("Platon place l'allégorie de la caverne au livre VII de la République. Il faisait inscrire, dit la tradition, « Que nul n'entre ici s'il n'est géomètre » au fronton de l'Académie. La formule n'est attestée que huit siècles plus tard.",
+           anecdote("Platon place l'allégorie de la caverne au livre VII de la République. Il faisait inscrire, dit la tradition, « Que nul n'entre ici s'il n'est géomètre » au fronton de l'Académie. La formule n'est attestée que près de neuf siècles plus tard.",
                     "Jean Philopon, commentaire du De anima, VIe siècle")),
     succes("promenade-kant", "Réglé comme Kant", "Réussir 20 rappels. Les voisins règlent leur montre sur vous.",
            {"type": "rappels_reussis", "n": 20},
-           anecdote("Selon la légende, Kant faisait sa promenade à heure si fixe que les habitants de Königsberg réglaient leur montre sur lui. Il ne l'aurait manquée que pour lire l'Émile de Rousseau. Ses biographes de l'époque parlent surtout d'un homme sociable qui recevait beaucoup à dîner.",
+           anecdote("Selon la légende, Kant faisait sa promenade à heure si fixe que les habitants de Königsberg réglaient leur montre sur lui. Il ne l'aurait manquée que pour lire l'Émile de Rousseau. Son biographe Manfred Kuehn décrit surtout un homme très sociable, qui passait des heures à table avec ses amis.",
                     "Manfred Kuehn, Kant: A Biography, 2001")),
     succes("nietzsche-soeur", "Le marteau et la sœur", "Rater 5 quiz. Ce qui ne vous tue pas vous rend plus fort, paraît-il.",
            {"type": "quiz_rates", "n": 5},
-           anecdote("Elisabeth Förster-Nietzsche, sœur du philosophe, a fabriqué La Volonté de puissance à partir de brouillons et a présenté son frère comme un penseur du nationalisme allemand. Nietzsche, lui, avait écrit qu'il ferait fusiller tous les antisémites.",
-                    "Lettre de Nietzsche à Franz Overbeck, janvier 1889 ; Mazzino Montinari, éditions critiques Colli-Montinari")),
+           anecdote("Elisabeth Förster-Nietzsche, sœur du philosophe, a fabriqué La Volonté de puissance à partir de brouillons et a plié ses textes à son propre nationalisme. Nietzsche, lui, méprisait l'antisémitisme : dans ses derniers billets, en janvier 1889, il écrit qu'il fait fusiller tous les antisémites.",
+                    "Billets de Nietzsche, janvier 1889 ; Mazzino Montinari, éditions critiques Colli-Montinari")),
 ]
 
 OBJETS = [

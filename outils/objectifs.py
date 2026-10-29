@@ -56,7 +56,7 @@ SUCCES = [
     succes("hypotheses-non-fingo", "Je ne feins pas d'hypothèses", "Terminer quatre tours du plateau. Les Principia sont à vous, Halley a payé.",
            {"type": "tours_plateau", "n": 4},
            citation("Je n'ai pu encore parvenir à déduire des phénomènes la raison de ces propriétés de la gravité, et je ne feins pas d'hypothèses.",
-                    "Isaac Newton", "Principia, scholie général, 2e édition, 1713 (traduction d'Émilie du Châtelet)")),
+                    "Isaac Newton", "Principia, scholie général, 2e édition, 1713 (traduction)")),
     succes("infaillible", "Ni infaillible ni bête", "Terminer cinq tours du plateau. Vous ne vous êtes toujours pas arrêté.",
            {"type": "tours_plateau", "n": 5},
            citation("Si l'on attend d'une machine qu'elle soit infaillible, elle ne peut pas être aussi intelligente.",
