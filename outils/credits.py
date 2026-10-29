@@ -3,6 +3,8 @@ montant, avec un mot. Les crédits servent à la corrompre : un pot-de-vin par j
 pousse le pion. Mais elle en veut toujours plus : donner moins que son record la vexe, et elle se venge.
 """
 
+from credits_piques import PIQUES, VERDICTS
+
 
 def sans(texte):
     return ("sans", texte)
@@ -234,4 +236,6 @@ def donnees():
         "ultimatum": ULTIMATUM,
         "boutique": {**BOUTIQUE, "mots": {k: mots(v) for k, v in BOUTIQUE["mots"].items()}},
         "emplettes": {**EMPLETTES, "mots": {k: mots(v) for k, v in EMPLETTES["mots"].items()}},
+        "piques": {k: {"fr": v} for k, v in PIQUES.items()},
+        "verdicts": {k: mots(v) for k, v in VERDICTS.items()},
     }

@@ -1915,6 +1915,42 @@
          }
         }
        }
+      },
+      "piques": {
+       "type": "object",
+       "description": "v32 : pique propre à chaque succès, ajoutée au verdict de l'humeur.",
+       "additionalProperties": {
+        "type": "object",
+        "required": [
+         "fr"
+        ],
+        "properties": {
+         "fr": {
+          "type": "string",
+          "minLength": 1
+         }
+        }
+       }
+      },
+      "verdicts": {
+       "type": "object",
+       "description": "v32 : le montant dit par chaque humeur, avant la pique du succès.",
+       "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+         "type": "object",
+         "required": [
+          "fr"
+         ],
+         "properties": {
+          "fr": {
+           "type": "string",
+           "minLength": 1
+          }
+         }
+        }
+       }
       }
      }
     },

@@ -1562,6 +1562,12 @@
     var n = Math.round(base * facteur);
     partie.credits.solde += n; partie.credits.gagnes += n;
     var mot = mots[(h >>> 20) % mots.length];
+    // v32 (Victor) : le verdict de l'humeur, puis une pique sur le sujet même du succès.
+    var pique = K.piques && K.piques[sc.id], verdicts = K.verdicts && K.verdicts[humeur];
+    if (pique && verdicts && verdicts.length) {
+      var v = verdicts[(h >>> 20) % verdicts.length];
+      mot = { fr: v.fr + " " + pique.fr };
+    }
     partie.credits.parSucces[sc.id] = { n: n, base: base, humeur: humeur, mot: mot };
     return { succes: sc.id, n: n, base: base, humeur: humeur, mot: mot };
   }

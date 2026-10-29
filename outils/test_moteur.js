@@ -368,6 +368,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const rec = M.verifierRecompenses(C5, P, t0);
     const cr = rec.credits.find(c => c.succes === "premier-pas");
     assert.ok(cr && cr.base === M.tarifSucces(C5, sc) && cr.mot && cr.mot.fr, "un succès rapporte des crédits, avec un mot de l'IA");
+    assert.ok(cr.mot.fr.endsWith(C5.ia.credits.piques["premier-pas"].fr), "v32 : la phrase parle du sujet du succès");
     assert.equal(P.credits.solde, rec.credits.reduce((a, c) => a + c.n, 0));
     const tarifs = C5.succes.map(x => M.tarifSucces(C5, x));
     assert.ok(Math.max(...tarifs) > Math.min(...tarifs), "le tarif dépend du genre de succès");
