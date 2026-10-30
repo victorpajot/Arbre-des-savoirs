@@ -52,6 +52,19 @@ for (const id of packs) {
   assert.ok(!M.packsEteints(index, ["+cp"]).cp, "« +cp » l'allume");
   assert.ok(!complet.stats.some(s => s.id.startsWith("cp-")));
   assert.ok(S.contenu(brut, ["+cp"]).stats.some(s => s.id === "cp-calcul"));
+  // La règle tient au manifeste, pas au nom du pack : tout pack « public »: « enfant » suit le même chemin, même chargé à part.
+  const fictif = { packs: index.packs.concat([{ id: "ce1", sorte: "domaine", public: "enfant", requiert: ["socle"] }]) };
+  assert.ok(M.packsEteints(fictif, []).ce1 && !M.packsEteints(fictif, ["+ce1"]).ce1);
+  const os = require("os"), { execFileSync } = require("child_process"), f = path.join(os.tmpdir(), "test-cp.pack.json");
+  execFileSync("python3", [path.join(__dirname, "packs.py"), "paquet", "cp", f]);
+  const paquet = JSON.parse(fs.readFileSync(f, "utf8")); fs.unlinkSync(f);
+  assert.equal(paquet.manifeste.public, "enfant", "le paquet garde « public »");
+  const sans = JSON.parse(JSON.stringify(M.filtrerPacks(brut, index, ["cp"]))), idx = JSON.parse(JSON.stringify(index));
+  idx.packs = idx.packs.filter(m => m.id !== "cp");
+  for (const ou of Object.keys(idx.proprietaires)) for (const k of Object.keys(idx.proprietaires[ou])) if (idx.proprietaires[ou][k] === "cp") delete idx.proprietaires[ou][k];
+  M.ajouterPaquet(sans, idx, paquet);
+  assert.ok(M.packsEteints(idx, []).cp && !M.packsEteints(idx, ["+cp"]).cp, "chargé à part, il reste éteint par défaut");
+  console.log("OK : packs pour enfants éteints par défaut, quel que soit le pack");
 }
 
 // Boutique : un pack éteint retire ses articles.

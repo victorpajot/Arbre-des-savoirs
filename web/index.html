@@ -6002,8 +6002,10 @@ function demarrerJeu() {
         var l = lirePaquets().filter(function (x) { return x.manifeste.id !== m.id; }).concat([q]);
         if (!ecrireJSON(CLE_PAQUETS, l)) { toast(__("La mémoire de l'appareil est pleine : le pack n'a pas pu être installé.")); return; }
         // Le pack s'allume dans l'assistant comme dans la partie en cours.
-        if (assistant) assistant.off = assistant.off.filter(function (x) { return x !== m.id; });
-        if (!provisoire && P.options && P.options.packsOff) { P.options.packsOff = P.options.packsOff.filter(function (x) { return x !== m.id; }); sauver(); }
+        // Un pack pour enfants (« public »: « enfant ») est éteint par défaut : on le note allumé (« +id »).
+        var allume = function (l) { l = l.filter(function (x) { return x !== m.id && x !== "+" + m.id; }); if (m.public === "enfant") l.push("+" + m.id); return l; };
+        if (assistant) assistant.off = allume(assistant.off);
+        if (!provisoire && P.options) { P.options.packsOff = allume(P.options.packsOff || []); sauver(); }
         redemarrer();
       },
     });

@@ -516,6 +516,9 @@ def formes(m, ids):
         il = x.get("illustration")
         if il and il.get("id") not in familles.get(il.get("type"), set()):
             err(f"succes.json › {x.get('id')} : illustration {il.get('type')} « {il.get('id')} » introuvable")
+    for q in lire_liste(m, "questions.json"):
+        if q.get("dessin") and q["dessin"].get("id") not in dessins:
+            err(f"questions.json › {q.get('id')} : dessin « {q['dessin'].get('id')} » introuvable (un dessin de dessins.json)")
     if (m["_dossier"] / "dessins.json").exists():
         for k, g in lire(m["_dossier"] / "dessins.json").items():
             if len(g) != 32 or any(len(l) != 32 for l in g):
