@@ -1475,7 +1475,10 @@ function demarrerJeu() {
     listePacks(b, packsDemandes(P), function (off) {
       var avant = C.packsEteints || {};
       P.options = P.options || {}; P.options.packsOff = off;
-      construireContenu(off); M.accorderPartie(C, P); sauver(); rendre();
+      construireContenu(off); M.accorderPartie(C, P);
+      // « Voir toutes les cases » : la route suit les domaines allumés.
+      if (P.options.toutesCases) M.voirToutesCases(C, P, true);
+      sauver(); rendre();
       var change = INDEX.packs.filter(function (m) { return !!avant[m.id] !== !!C.packsEteints[m.id]; })[0];
       if (change) toast((C.packsEteints[change.id] ? __("Pack éteint : ") : __("Pack rallumé : ")) + tx(change.nom));
     });
@@ -2127,7 +2130,7 @@ function demarrerJeu() {
   function svgPlateau(bilan) {
     var pl = P.plateau, nb = C.plateau.cases.length, loin = portee(), ennemis = M.ennemisPlateau(C, P), ton = M.humeur(P);
     var rt = laRoute(); nb = rt.length;
-    var cle = [pl.atteinte, pl.tours, pl.position, pl.idx, rt.join(","), loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {}), (P.sauvages || []).map(function (x) { return x.case; }).join(","), C.stats.filter(function (s) { return M.arbreOuvert(C, P, s.id); }).length].join("/");
+    var cle = [M.caseDecouverte(P, -1), pl.atteinte, pl.tours, pl.position, pl.idx, rt.join(","), loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {}), (P.sauvages || []).map(function (x) { return x.case; }).join(","), C.stats.filter(function (s) { return M.arbreOuvert(C, P, s.id); }).length].join("/");
     if (cachePlateau.cle !== cle) {
       var c = decorPlateau(ton), pas = pasCase(), fleches = "", gardes = "";
       var toute = morceauRoute(0, geo().total);

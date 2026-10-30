@@ -291,10 +291,12 @@
     function nettoyer(l) { var o = l.filter(present); if (o[o.length - 1] !== arr) { o = o.filter(function (n) { return n !== arr; }); o.push(arr); } return o; }
     if (pl.parcoursSuivant && pl.parcoursSuivant.cases) pl.parcoursSuivant.cases = nettoyer(pl.parcoursSuivant.cases);
     if (!pl.route) { route(contenu, partie); return; }
-    if (pl.route.every(present) && pl.route[pl.route.length - 1] === arr) return;
+    // Une route réduite à l'arrivée (tous les domaines éteints un moment) se redessine dès qu'un domaine revient.
+    var seule = function (l) { return l.length < 2 && contenu.plateau.cases.length > 1; };
+    if (pl.route.every(present) && pl.route[pl.route.length - 1] === arr && !seule(pl.route)) return;
     var vieille = pl.route, i = vieille.indexOf(pl.position), rt = nettoyer(vieille);
     if (pl.parcours && pl.parcours.cases) pl.parcours.cases = nettoyer(pl.parcours.cases);
-    if (rt.length < 2) { pl.parcours = null; pl.route = null; pl.redessiner = true; route(contenu, partie); return; }
+    if (seule(rt)) { pl.parcours = null; pl.route = null; pl.redessiner = true; route(contenu, partie); return; }
     pl.route = rt;
     if (!present(pl.position)) {
       var j = i;

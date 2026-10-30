@@ -101,6 +101,18 @@ for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "co
   S.jouer(C, P, 60, P.cree, S.graine(7));
   console.log("OK : cases par arbre, Thalès en premier, réglage « Voir toutes les cases »");
 }
+// Tous les domaines éteints un moment : la route tombe à la seule arrivée, puis se redessine dès qu'un domaine revient
+// (Victor, 2026-10-30 : bloqué sur un parcours d'une case après avoir changé de domaines).
+{
+  const sauf = l => packs.filter(p => !l.includes(p));
+  const P = M.nouvellePartie(new Date(2026, 9, 30, 9).getTime());
+  P.options = { packsOff: sauf(["mecanique"]) }; M.accorderPartie(S.contenu(brut, sauf(["mecanique"])), P);
+  M.accorderPartie(S.contenu(brut, sauf([])), P);
+  assert.equal(M.routeTour(S.contenu(brut, sauf([])), P).length, 1, "aucun domaine : l'arrivée seule");
+  const C = S.contenu(brut, sauf(["logique"])); M.accorderPartie(C, P);
+  assert.ok(M.routeTour(C, P).length >= 24, "un domaine rallumé : la route se redessine");
+  console.log("OK : route d'une case redessinée quand un domaine revient");
+}
 // v53 : un pack de domaine chargé par le joueur (outils/packs.py paquet) se pose comme s'il avait été assemblé.
 {
   const os = require("os"), { execFileSync } = require("child_process");
