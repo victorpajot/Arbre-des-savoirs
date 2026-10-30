@@ -3259,8 +3259,8 @@
     },
     {
      "type": "string",
-     "pattern": "^enfant_[a-z_]+$",
-     "description": "Mode enfant : la version douce d'un moment (« enfant_<contexte> »), de son groupe (« enfant_reussi »…) ou « enfant_defaut »."
+     "pattern": "^ton\\.[a-z]+\\.[a-z_]+$",
+     "description": "Un ton d'Alyca (réglage « ton » d'une partie) : sa version d'un moment (« ton.<ton>.<contexte> »), de son groupe (« ton.enfant.reussi »…) ou « ton.<ton>.defaut »."
     }
    ]
   },
@@ -3361,11 +3361,19 @@
          "type": "string"
         }
        },
-       "public": {
-        "enum": [
-         "enfant"
-        ],
-        "description": "Fil « Basile » : un pack pour les enfants. Ses répliques tutoient ; une partie qui n'allume que de tels packs démarre en mode enfant."
+       "reglages": {
+        "type": "object",
+        "description": "Réglages que le pack propose à la partie (M.REGLAGES) : une nouvelle partie prend ceux sur lesquels tous ses domaines allumés s'accordent.",
+        "properties": {
+         "allume": {"type": "boolean", "description": "false : éteint par défaut, à allumer dans l'assistant ou les réglages."},
+         "ton": {"type": "string", "pattern": "^[a-z]+$", "description": "Ton d'Alyca : ses répliques « ton.<ton>.<moment> »."},
+         "voix": {"type": "boolean"},
+         "texte": {"enum": ["grand"]},
+         "ultimatum": {"type": "boolean"},
+         "vol": {"type": "boolean"},
+         "mur": {"enum": ["revisions"]}
+        },
+        "additionalProperties": false
        }
       },
       "additionalProperties": false

@@ -313,6 +313,9 @@ CHAMPS_MANIFESTE = {"format": int, "id": str, "sorte": str, "version": str, "nom
                     "auteurs": list, "licence": str, "langue_source": str}
 
 
+REGLAGES = {"allume", "ton", "voix", "texte", "ultimatum", "vol", "mur"}
+
+
 def verifier(packs=None, cibles=None):
     """Renvoie la liste des erreurs, chacune dite pour être corrigée sans autre aide."""
     packs = packs if packs is not None else tous()
@@ -343,6 +346,16 @@ def verifier(packs=None, cibles=None):
                 err(m, f"pack.json : requiert le pack « {r} », absent de packs/")
         if m.get("sorte") != "socle" and "socle" not in m["requiert"]:
             err(m, "pack.json : tout pack requiert « socle »")
+        # Réglages proposés à la partie : des entrées ouvertes, les mêmes pour tous les packs (M.REGLAGES dans moteur.js).
+        rg = m.get("reglages", {})
+        for k in set(rg) - set(REGLAGES):
+            err(m, f"pack.json : réglage « {k} » inconnu (connus : {', '.join(sorted(REGLAGES))})")
+        if rg.get("ton"):
+            # Un ton demande ses répliques, au socle ou dans un pack : au moins l'accueil et la passe-partout.
+            ctxs = {r.get("contexte") for x in packs for r in lire_liste(x, "repliques.json")}
+            for c in ("accueil", "defaut"):
+                if f"ton.{rg['ton']}.{c}" not in ctxs:
+                    err(m, f"pack.json : le ton « {rg['ton']} » n'a pas de répliques « ton.{rg['ton']}.{c} » (repliques.json)")
         try:
             frs = fragments(m)
         except ErreurPack as e:

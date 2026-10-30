@@ -64,7 +64,14 @@ Pour voir le pack dans le jeu : `node mobile/construire.js`, puis servir `mobile
 - **`prefixe`** : chaque compétence et chaque question commence par `<prefixe>.` (`mus.son`, `mus.son.q01`). Une liste est permise (`["chim", "sci.atomes"]`).
 - **`ordre`** : place du pack dans l'assemblage et dans l'interface. Les domaines officiels vont de 10 à 110 : un nouveau domaine prend 120 ou plus.
 - **Les autres ids** (dessins, livres, dates, succès, savants) sont communs à tous les packs : deux packs qui utilisent le même id entrent en collision à l'assemblage. Préfixer ceux du pack (`mus-croche`, `carto-boussole`) ; un savant garde le nom de la personne (`bach`).
-- **`public`** (facultatif) : `"enfant"` pour un pack destiné aux jeunes enfants (exemple : `packs/cp/`). Il est éteint par défaut ; on l'allume dans l'assistant ou dans Réglages › Packs (le jeu note alors `+cp` dans la liste des packs). Une partie qui n'allume que des packs pour enfants passe en **mode enfant** : énoncés lus à voix haute, gros texte, Alyca gentille qui tutoie (répliques `enfant_*` du socle), pas d'ultimatum ni de vol de crédits, mur de la honte renommé « Révisions » (chrono gardé). Les répliques de thème d'un tel pack tutoient. Rien à toucher dans le moteur ni dans l'interface pour un nouveau pack pour enfants (CE1, lecture…) : tout découle de ce champ.
+- **`reglages`** (facultatif) : ce que le pack propose de changer dans la partie. Des entrées ouvertes, les mêmes pour tous les packs, quel que soit leur type ; une nouvelle partie prend celles sur lesquelles **tous** ses domaines allumés s'accordent (un domaine qui ne dit rien garde le jeu tel quel), et le joueur les change ensuite dans Personnage › Réglages.
+  - `allume` : `false` = pack éteint par défaut, à allumer dans l'assistant ou Réglages › Packs (le jeu note `+id`).
+  - `ton` : le ton d'Alyca, par exemple `"enfant"` ; elle prend alors ses répliques `ton.<ton>.<moment>` (au moins `ton.<ton>.accueil` et `ton.<ton>.defaut`, au socle ou dans un pack), et seules les répliques d'arbre des packs sur ce ton.
+  - `voix` : `true` = questions, réponses et paroles d'Alyca lues à voix haute.
+  - `texte` : `"grand"` = gros caractères, « Oui » et « Non » au lieu de « Vrai » et « Faux ».
+  - `ultimatum`, `vol` : `false` = pas d'ultimatum d'Alyca, pas de vol de crédits par un ennemi vainqueur.
+  - `mur` : `"revisions"` = le mur de la honte s'appelle « Révisions » (chrono et rattrapage gardés).
+  Exemple, le pack CP : `"reglages": {"allume": false, "ton": "enfant", "voix": true, "texte": "grand", "ultimatum": false, "vol": false, "mur": "revisions"}`. Rien à toucher dans le moteur ni dans l'interface pour un autre pack qui veut les mêmes réglages ; un réglage vraiment nouveau s'ajoute une fois pour toutes dans `M.REGLAGES` (moteur.js), `REGLAGES` (outils/packs.py) et le schéma.
 - **Textes** : partout, un texte est un objet `{"fr": "…"}` dans la langue source du pack (`langue_source`). Les traductions ne vont pas à côté mais dans `langues/` (section 8).
 
 ## 4. Les fichiers d'un pack domaine

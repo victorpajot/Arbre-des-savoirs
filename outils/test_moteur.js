@@ -410,6 +410,15 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const nv = M.niveauGlobal(C5, P); assert.ok(nv >= 2);
     assert.equal(M.tenterUltimatum(C5, P, t0, () => 0.99), null, "pas à tous les coups");
     assert.equal(M.tenterUltimatum(C5, P, t0 + 86400000, () => 0), null, "pas deux jours de suite");
+    // Réglage de partie « ultimatum »: false (proposé par un pack, ou choisi par le joueur) : jamais d'ultimatum.
+    P.options.reglages = { ultimatum: false };
+    assert.equal(M.tenterUltimatum(C5, P, t0 + 4 * 86400000, () => 0), null, "réglage : pas d'ultimatum");
+    // Réglage « ton » : Alyca parle sur ce ton (« ton.enfant.* »), y compris à l'accueil.
+    P.options.reglages = { ton: "enfant" };
+    assert.ok(/^ton\.enfant\./.test(M.repliqueDuJour(C5, P, t0).contexte || ""), "ton enfant à l'accueil");
+    const re = M.replique(C5, P, ["quiz_parfait"], () => 0);
+    assert.ok(re && C5.commentairesPar["ton.enfant.quiz_parfait"].some(l => l.id === re.id), "ton enfant après un sans-faute");
+    delete P.options.reglages;
     const u = M.tenterUltimatum(C5, P, t0 + 4 * 86400000, () => 0);
     assert.ok(u && u.demande >= 70, "une grosse somme");
     let r = M.repondreUltimatum(C5, P, true, t0 + 4 * 86400000);

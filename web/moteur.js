@@ -134,10 +134,10 @@
   // questions, ses objets, ses répliques… La progression n'est pas touchée : tout revient quand on le réactive.
 
   // Les packs éteints : ceux demandés, plus ceux qui en dépendent. Le socle ne s'éteint jamais.
-  // Fil « Basile » : un pack pour enfants (« public »: « enfant ») est éteint tant qu'on ne l'a pas allumé (« +id » dans la liste).
+  // Un pack qui déclare « reglages »: { « allume »: false } est éteint tant qu'on ne l'a pas allumé (« +id » dans la liste).
   function packsEteints(index, demandes) {
     var off = {}, liste = (index && index.packs) || [], change = true;
-    liste.forEach(function (m) { if (m.public === "enfant" && (demandes || []).indexOf("+" + m.id) < 0) off[m.id] = true; });
+    liste.forEach(function (m) { if (!allumeParDefaut(m) && (demandes || []).indexOf("+" + m.id) < 0) off[m.id] = true; });
     (demandes || []).forEach(function (id) { if (id.charAt(0) !== "+") off[id] = true; });
     delete off.socle;
     while (change) {
@@ -309,9 +309,30 @@
     if (pl.idx < 0) { pl.idx = 0; pl.position = rt[0]; }
   }
 
-  // Mode enfant (Victor, 2026-10-30, fil « Basile ») : une partie pour un enfant qui apprend à lire. Alyca le tutoie
-  // avec ses répliques « enfant_* », ne lance pas d'ultimatum, et les ennemis ne volent pas de crédits.
-  function enfant(partie) { return !!(partie && partie.options && partie.options.enfant); }
+  // Réglages de partie (Victor, 2026-10-30, fil « Basile ») : des entrées ouvertes, indépendantes du type de pack. Un pack
+  // les propose dans son manifeste (« reglages »), la partie les garde dans options.reglages, le joueur les change dans
+  // les réglages. Aucune n'est propre à un pack : un pack pour enfants n'est qu'un pack qui en déclare plusieurs.
+  //   allume    : false = le pack est éteint par défaut (à allumer dans l'assistant ou les réglages)
+  //   ton       : le ton d'Alyca ; ses répliques « ton.<ton>.<moment> » remplacent les siennes (ex. « enfant »)
+  //   voix      : true = questions et réponses lues à voix haute
+  //   texte     : « grand » = gros caractères, Oui/Non au lieu de Vrai/Faux
+  //   ultimatum : false = Alyca ne lance pas d'ultimatum
+  //   vol       : false = un ennemi vainqueur ne vole pas de crédits
+  //   mur       : le nom du mur de la honte (« revisions »)
+  var REGLAGES = ["ton", "voix", "texte", "ultimatum", "vol", "mur"];
+  function reglage(partie, cle) { var r = partie && partie.options && partie.options.reglages; return r ? r[cle] : undefined; }
+  function allumeParDefaut(m) { return !(m && m.reglages && m.reglages.allume === false); }
+  // Les réglages d'une nouvelle partie : ceux sur lesquels tous les domaines allumés s'accordent. Un domaine qui ne
+  // déclare rien garde le jeu tel quel : un pack pour enfants allumé avec un domaine adulte ne change rien.
+  function reglagesDesPacks(index, off) {
+    var doms = ((index && index.packs) || []).filter(function (m) { return m.sorte === "domaine" && !off[m.id]; }), r = {};
+    if (!doms.length) return r;
+    REGLAGES.forEach(function (k) {
+      var v = (doms[0].reglages || {})[k];
+      if (v !== undefined && doms.every(function (m) { return (m.reglages || {})[k] === v; })) r[k] = v;
+    });
+    return r;
+  }
 
   // Le pack d'un élément (« questions.json/questions », id) ; « socle » s'il n'en a pas d'autre.
   function packDe(index, ou, id) {
@@ -1544,7 +1565,7 @@
       c.duelsPerdus = (c.duelsPerdus || 0) + 1;
       // v21 : l'ennemi garde sa case et le duel reste ouvert : il faut le battre pour passer, pas d'autre épreuve.
       // Vainqueur, il fait les poches du joueur.
-      var cr = partie.credits, vol = enfant(partie) ? 0 : Math.min(cr.solde, Math.max(VOL_DUEL.min, Math.min(VOL_DUEL.max, Math.round(cr.solde * VOL_DUEL.part))));
+      var cr = partie.credits, vol = reglage(partie, "vol") === false ? 0 : Math.min(cr.solde, Math.max(VOL_DUEL.min, Math.min(VOL_DUEL.max, Math.round(cr.solde * VOL_DUEL.part))));
       if (vol > 0) { cr.solde -= vol; cr.voles = (cr.voles || 0) + vol; f.vole = (f.vole || 0) + vol; }
       out.vol = vol;
       partie.plateau.coups = (partie.plateau.coups || 0) + 1;
@@ -2170,7 +2191,7 @@
   }
   function tenterUltimatum(contenu, partie, t, alea) {
     var U = contenu.ia && contenu.ia.credits && contenu.ia.credits.ultimatum, cr = partie.credits;
-    if (!U || enfant(partie) || partie.ultimatum || cr.solde < U.solde_min || niveauGlobal(contenu, partie) < 1) return null;
+    if (!U || reglage(partie, "ultimatum") === false || partie.ultimatum || cr.solde < U.solde_min || niveauGlobal(contenu, partie) < 1) return null;
     if (cr.jourUltimatum && joursEntre(cr.jourUltimatum, t) < U.delai_jours) return null;
     cr.jourUltimatum = t;
     if ((alea || Math.random)() >= U.chance) return null;
@@ -3189,14 +3210,16 @@
   function replique(contenu, partie, contextes, alea, vars, theme) {
     alea = alea || Math.random;
     // v27 : furieuse, elle ne plaisante plus. Chaque moment prend sa version sèche, sans ligne d'arbre.
-    var fav = faveurIA(contenu, partie, maintenant(partie)), petit = enfant(partie), furieuse = !petit && !!(fav && fav.palier.id === "furieuse");
+    var fav = faveurIA(contenu, partie, maintenant(partie)), ton = reglage(partie, "ton"), furieuse = !ton && !!(fav && fav.palier.id === "furieuse");
     for (var i = 0; i < contextes.length; i++) {
       var ctx = contextes[i], lignes = contenu.commentairesPar[ctx];
-      if (petit) {
-        // Mode enfant : la version douce du moment, sinon celle de son groupe, sinon une réplique passe-partout.
-        var ek = ["enfant_" + ctx, "enfant_" + (GROUPE_THEME[ctx] || ""), "enfant_defaut"].filter(function (k) { return (contenu.commentairesPar[k] || []).length; })[0];
+      if (ton) {
+        // Un ton choisi : sa version du moment, sinon celle de son groupe, sinon sa réplique passe-partout. Les lignes
+        // d'arbre ne viennent que des packs qui parlent sur ce ton.
+        var pre = "ton." + ton + ".";
+        var ek = [pre + ctx, pre + (GROUPE_THEME[ctx] || ""), pre + "defaut"].filter(function (k) { return (contenu.commentairesPar[k] || []).length; })[0];
         if (!lignes || !lignes.length || !ek) continue;
-        var lte = (contenu.arbresEnfant || {})[theme] ? lignesTheme(contenu, partie, ctx, theme) : null;
+        var lte = (contenu.tonArbres || {})[theme] === ton ? lignesTheme(contenu, partie, ctx, theme) : null;
         if (lte) { lignes = lte.lignes; ek = lte.cle; } else lignes = contenu.commentairesPar[ek];
         var vuesE = partie.repliques[ek] || [], frE = lignes.filter(function (l) { return vuesE.indexOf(l.id) < 0; });
         if (!frE.length) { vuesE = vuesE.slice(0, 1); frE = lignes.filter(function (l) { return vuesE.indexOf(l.id) < 0; }); }
@@ -3250,8 +3273,9 @@
     else if (fv && fv.fermee && contenu.commentairesPar.faveur_nulle) ctx = "faveur_nulle";
     else if (fv && partie.faveur.remontee === cleJour(t) && contenu.commentairesPar.faveur_remontee) ctx = "faveur_remontee";
     else if (fv && fv.palier.id === "furieuse" && ctx !== "faveur_furieuse") ctx = FURIEUSE[ctx] === null ? ctx : "furieuse_" + (FURIEUSE[ctx] || "defaut");
-    if (enfant(partie)) ctx = partie.punition && contenu.commentairesPar.enfant_mur_force ? "enfant_mur_force" :
-      ctx === "mur_honte" && contenu.commentairesPar.enfant_honte ? "enfant_honte" : contenu.commentairesPar["enfant_" + ctx] ? "enfant_" + ctx : "enfant_accueil";
+    var ton = reglage(partie, "ton"), cp = contenu.commentairesPar, pre = "ton." + ton + ".";
+    if (ton && cp[pre + "accueil"]) ctx = partie.punition && cp[pre + "mur_force"] ? pre + "mur_force" :
+      ctx === "mur_honte" && cp[pre + "honte"] ? pre + "honte" : cp[pre + ctx] ? pre + ctx : pre + "accueil";
     var lignes = contenu.commentairesPar[ctx] || contenu.commentairesPar.accueil;
     if (!lignes || !lignes.length) return null;
     return habiller(contenu, lignes[Math.floor(debutJour(t) / JOUR) % lignes.length]);
@@ -3261,7 +3285,7 @@
     choisirLangue: choisirLangue, langue: langue, TX: TX, __: __, ordinalSiecle: ordinalSiecle, traduireChaines: traduireChaines,
     FORMAT_PARTIE: FORMAT_PARTIE,
     indexerContenu: indexerContenu,
-    enfant: enfant,
+    reglage: reglage, REGLAGES: REGLAGES, allumeParDefaut: allumeParDefaut, reglagesDesPacks: reglagesDesPacks,
     packsEteints: packsEteints, filtrerPacks: filtrerPacks, verifierPaquet: verifierPaquet, ajouterPaquet: ajouterPaquet, ajouterTextes: ajouterTextes, packDe: packDe, accorderPartie: accorderPartie,
     maintenant: maintenant,
     debutJour: debutJour,
