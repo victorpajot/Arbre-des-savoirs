@@ -69,9 +69,10 @@ def main():
             erreurs.append(f"questions.json {q['id']} : figure inconnue {q['figure']}")
 
     for st in stats:
-        rangs = sorted(c["rang"] for c in comps.values() if c["stat"] == st)
-        if rangs != list(range(1, 9)):
-            erreurs.append(f"skills.json : la branche {st} doit avoir les rangs 1 à 8, elle a {rangs}")
+        rangs = [c["rang"] for c in comps.values() if c["stat"] == st]
+        if sorted(rangs) != list(range(1, 9)) and not (len(rangs) % 4 == 0 and rangs == sorted(rangs) and rangs.count(1) == 1
+                                                      and set(rangs) == set(range(1, 9))):
+            erreurs.append(f"skills.json : la branche {st} doit avoir les rangs 1 à 8 (ou des losanges de 4 rangés par rang croissant), elle a {rangs}")
 
     ids = set()
     enonces = {}

@@ -134,7 +134,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const P = M.nouvellePartie(t0);
     const bonus = M.bonusDuJour(C3, P, t0);
     assert.equal(M.bonusDuJour(C3, P, t0 + 3600000), bonus, "bonus stable dans la journée");
-    for (const id of ["math.arithmetique", "phys.unites", "philo.antiquite"]) {
+    for (const id of ["math.arithmetique", "phys.unites", "philo.presocratiques"]) {
       const Q = M.nouvellePartie(t0);
       const v = M.valeurEpreuve(C3, Q, { type: "quiz", comp: id }, t0);
       assert.equal(v.base, R.valeurs.quiz_rang["1"]);

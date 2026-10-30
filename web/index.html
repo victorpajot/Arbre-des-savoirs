@@ -2865,8 +2865,12 @@ function demarrerJeu() {
 
   // --- Vue Arbre ------------------------------------------------------------
   var POS = [[50, 13], [26, 50], [74, 50], [50, 87]];
-  // Deux losanges empilés : le sommet du premier ouvre la racine du second.
-  var POS2 = POS.map(function (p) { return [p[0], p[1] * 0.46]; }).concat(POS.map(function (p) { return [p[0], 54 + p[1] * 0.46]; }));
+  // Losanges empilés : le sommet de l'un ouvre la racine du suivant. Un arbre a 2 losanges, Philosophes 4.
+  function posLosanges(n) {
+    var out = [];
+    for (var g = 0; g < n; g++) POS.forEach(function (p) { out.push([p[0], n === 1 ? p[1] : (g * 100 + p[1] * 0.92 + (g ? 8 : 0)) / n]); });
+    return out;
+  }
   function libelleEtat(st) {
     if (st.etat === "fermee") return __("Arbre fermé");
     if (st.etat === "verrouillee") return __("Verrouillée");
@@ -2883,10 +2887,11 @@ function demarrerJeu() {
       var b = el('<section class="bloc branche" style="--c:' + couleur(s.id) + '"><div class="tete"><div><h2>' + esc(tx(s.nom)) + '</h2><div class="sous">' + esc(tx(s.branche)) + __('</div></div><span class="niveau num">niv. ') + nv.niveau + '</span></div><div class="diamant"></div></section>');
       var d = b.querySelector(".diamant");
       var lignes = "";
-      // Le second losange reste plié tant que le sommet du premier n'est pas maîtrisé.
-      var ouvert = comps.length > 4 && (M.debloque(C, P, comps[3].id) || comps.slice(4).some(function (k) { return P.competences[k.id]; }));
-      var pos = ouvert ? POS2 : POS, visibles = ouvert ? comps : comps.slice(0, 4);
-      if (ouvert) d.classList.add("double");
+      // Chaque losange reste plié tant que le sommet du précédent n'est pas maîtrisé (ou qu'on n'y a pas déjà joué).
+      var nL = 1;
+      while (nL * 4 < comps.length && (M.debloque(C, P, comps[nL * 4 - 1].id) || comps.slice(nL * 4).some(function (k) { return P.competences[k.id]; }))) nL++;
+      var pos = posLosanges(nL), visibles = comps.slice(0, nL * 4);
+      if (nL > 1) { d.classList.add("double"); d.style.height = 390 * nL + "px"; }
       visibles.forEach(function (k, i) {
         k.prerequis.forEach(function (p) {
           var j = comps.indexOf(C.parId[p]);
@@ -2900,10 +2905,11 @@ function demarrerJeu() {
         n.onclick = function () { ouvrirFeuille(k.id); };
         d.appendChild(n);
       });
-      if (!ouvert && comps.length > 4) {
-        var pli = el(__('<button type="button" class="losange-plie"><span class="eyebrow">Second losange · rangs 5 à 8</span><b>') + comps.slice(4).map(function (k) { return esc(tx(k.nom)); }).join(" · ") +
-          __('</b><span class="meta">S\'ouvre quand « ') + esc(tx(comps[3].nom)) + __(" » est maîtrisée.</span></button>"));
-        pli.onclick = function () { ouvrirFeuille(comps[4].id); };
+      if (nL * 4 < comps.length) {
+        var suivants = comps.slice(nL * 4, nL * 4 + 4), r0 = suivants[0].rang, r1 = suivants[suivants.length - 1].rang;
+        var pli = el('<button type="button" class="losange-plie"><span class="eyebrow">' + (nL === 1 ? __("Second losange") : __("Losange ") + (nL + 1)) + " · " + (r0 === r1 ? __("rang ") + r0 : __("rangs ") + r0 + __(" à ") + r1) + "</span><b>" + suivants.map(function (k) { return esc(tx(k.nom)); }).join(" · ") +
+          __('</b><span class="meta">S\'ouvre quand « ') + esc(tx(comps[nL * 4 - 1].nom)) + __(" » est maîtrisée.</span></button>"));
+        pli.onclick = function () { ouvrirFeuille(suivants[0].id); };
         b.appendChild(pli);
       }
       v.appendChild(b);
