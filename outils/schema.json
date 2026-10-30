@@ -362,6 +362,12 @@
             "schema_fiche": {
              "type": "boolean",
              "description": "Le schéma de la fiche de révision s'affiche dans ce chapitre (sinon dans le premier)."
+            },
+            "reperes": {
+             "type": "array",
+             "items": {
+              "$ref": "#/$defs/texte"
+             }
             }
            }
           }
@@ -3180,6 +3186,8 @@
       "rattrapage_reussi",
       "rattrapage_rate",
       "piege_question",
+      "masterclass_imposee",
+      "masterclass_lue",
       "piege_dejoue",
       "piege_declenche",
       "chrono_annonce",

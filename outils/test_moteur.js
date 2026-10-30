@@ -1651,3 +1651,24 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(CA.atomes.guide.etapes.length, 5); assert.ok(CA.atomes.guide.source.includes("eduscol"));
   console.log("OK : v34 atomes ratés au mur, astuce du numéro, guide du tableau");
 }
+
+// Victor (2026-10-30) : deux épreuves ratées de suite sur la même compétence, l'IA impose la masterclass,
+// levée seulement quand on l'a lue jusqu'au dernier chapitre ; une réussite remet le compteur à zéro.
+{
+  const T0 = new Date(2026, 9, 24, 9, 0).getTime();
+  const PM = M.nouvellePartie(T0);
+  const rate = M.tirerQuestions(C, PM, "math.arithmetique", 5).map((q) => ({ id: q.id, correct: false, rep: 0 }));
+  M.terminerQuiz(C, PM, "math.arithmetique", rate, T0);
+  assert.ok(!M.masterclassImposee(C, PM), "un seul échec n'impose rien");
+  M.terminerQuiz(C, PM, "math.arithmetique", rate, T0 + 1000);
+  const mi = M.masterclassImposee(C, PM);
+  assert.ok(mi && mi.id === "math.arithmetique" && mi.rates.length === 5);
+  assert.ok(!M.masterclassLue(PM, "math.proportions") && M.masterclassImposee(C, PM), "une autre leçon ne lève rien");
+  assert.ok(M.masterclassLue(PM, "math.arithmetique") && !M.masterclassImposee(C, PM));
+  // Les repères d'histoire de chaque chapitre recopient mot pour mot son texte vérifié.
+  C.competences.forEach(function (k) { (k.masterclass ? k.masterclass.chapitres : []).forEach(function (ch) {
+    const corps = ch.texte.map((x) => x.fr).join(" ");
+    (ch.reperes || []).forEach((h) => assert.ok(corps.includes(h.fr), k.id + "/" + ch.id));
+  }); });
+  console.log("OK : masterclass imposée après deux échecs, repères d'histoire");
+}

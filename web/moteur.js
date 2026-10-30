@@ -610,6 +610,17 @@
 
   // Termine un quiz d'apprentissage. `resultats` : [{id, correct, chrono, ms}] ;
   // `infos` (facultatif) : {duree} en ms, {total} si le quiz a été coupé avant la fin.
+  var MASTERCLASS_APRES_ECHECS = 2;
+  function aLecon(k) { return !!(k && k.masterclass && k.masterclass.chapitres && k.masterclass.chapitres.length); }
+  // La masterclass imposée, si sa compétence existe encore (pack allumé) ; sinon rien.
+  function masterclassImposee(contenu, partie) {
+    var m = partie.masterclass; return m && aLecon(contenu.parId[m.id]) ? m : null;
+  }
+  // Lue jusqu'au dernier chapitre : la consigne tombe. Renvoie vrai si c'était bien celle-là.
+  function masterclassLue(partie, id) {
+    if (!partie.masterclass || partie.masterclass.id !== id) return false;
+    delete partie.masterclass; return true;
+  }
   function terminerQuiz(contenu, partie, id, resultats, t, infos) {
     var r = contenu.regles, c = partie.compteurs, k = contenu.parId[id];
     ouvrirLot(partie, t, k && k.stat);
@@ -630,6 +641,10 @@
     if (bonnes === 0) c.quizZero++;
     if (!reussi && infos && typeof infos.duree === "number" && infos.duree < QUIZ_ECLAIR_MS) c.quizEclairRates++;
     e.echecsSuite = reussi ? 0 : (e.echecsSuite || 0) + 1;
+    // Victor (2026-10-30) : deux épreuves ratées de suite sur la même compétence, l'IA impose sa masterclass,
+    // lue jusqu'au bout avant toute autre épreuve. Les erreurs de la dernière tentative y sont corrigées.
+    if (!reussi && e.echecsSuite >= MASTERCLASS_APRES_ECHECS && aLecon(k))
+      partie.masterclass = { id: id, depuis: t, rates: resultats.filter(function (x) { return !x.correct; }).map(function (x) { return { id: x.id, rep: x.rep }; }) };
     var xp = 0;
     if (reussi) {
       xp = bonnes * r.xp.par_bonne_reponse + r.xp.bonus_maitrise + bonusChrono(contenu, resultats);
@@ -3054,7 +3069,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,

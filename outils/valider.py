@@ -59,6 +59,11 @@ def main():
         for ch in c.get("masterclass", {}).get("chapitres", []):
             if ch.get("figure") and ch["figure"] not in figs:
                 erreurs.append(f"skills.json {c['id']} : figure de masterclass inconnue {ch['figure']}")
+            # Les repères d'histoire des quiz recopient mot pour mot une phrase vérifiée du chapitre.
+            corps = " ".join(t["fr"] for t in ch["texte"])
+            for h in ch.get("reperes", []):
+                if h["fr"] not in corps:
+                    erreurs.append(f"skills.json {c['id']}/{ch['id']} : repère d'histoire absent du texte du chapitre")
     for q in contenu["questions"]["questions"]:
         if q.get("figure") and q["figure"] not in figs:
             erreurs.append(f"questions.json {q['id']} : figure inconnue {q['figure']}")

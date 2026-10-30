@@ -32,7 +32,8 @@ def textes(o):
     elif isinstance(o, dict):
         for k in sorted(o):
             # Un extrait porte sa propre vérification : il ne remet pas en cause la fiche qui le contient.
-            if k in ("lot", "verification", "extrait"):
+            # `reperes` (masterclass) ne fait que recopier des phrases du texte vérifié (contrôlé par valider.py).
+            if k in ("lot", "verification", "extrait", "reperes"):
                 continue
             yield from textes(o[k])
     elif isinstance(o, list):

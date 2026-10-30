@@ -760,6 +760,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .oubli .rep-h s { color: var(--bad); }
 .oubli .rep-h b { color: var(--good); }
 .oubli .expl-h { margin: 0; font-size: 14px; color: var(--muted); }
+/* Victor (2026-10-30) : l'histoire des sciences sous chaque correction. */
+.repere-h { margin: 8px 0 0 !important; padding-left: 10px; border-left: 3px solid var(--warn); font-size: 16px; line-height: 1.5; color: var(--ink); }
+.repere-h b { display: block; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--warn); }
 .oubli.efface { opacity: 0.75; }
 .oubli .tampon { align-self: flex-end; transform: rotate(-4deg); border: 2px solid var(--good); color: var(--good); font-weight: 800; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; }
 .oubli .clous { font-size: 12px; color: var(--muted); }
@@ -1384,10 +1387,11 @@ function demarrerJeu() {
 
   // Feuille du bas pour un contenu quelconque (objet du cabinet, etc.).
   // Ouverte depuis le bilan d'un quiz, elle passe au-dessus et ramène au bilan.
-  function feuilleSimple(html, label, actions) {
+  // `fermerLib` (facultatif) : le texte du bouton de fermeture, quand on sait où il ramène.
+  function feuilleSimple(html, label, actions, fermerLib) {
     var surQuiz = !!document.querySelector(".quiz");
     var f = el('<div class="voile' + (surQuiz ? " dessus" : "") + '"><div class="feuille" role="dialog" aria-modal="true" aria-label="' + esc(label) + '">' + html +
-      '<button type="button" class="btn sec large" data-a="fermer">' + (document.querySelector(".quiz.atome .combat-q") ? __("← Retour au combat") : surQuiz ? __("← Retour au bilan") : __("Fermer")) + "</button></div></div>");
+      '<button type="button" class="btn sec large" data-a="fermer">' + (fermerLib || (document.querySelector(".quiz.atome .combat-q") ? __("← Retour au combat") : surQuiz ? __("← Retour au bilan") : __("Fermer"))) + "</button></div></div>");
     f.onclick = function (ev) {
       var a = ev.target.closest && ev.target.closest("[data-a]"), nom = a && a.getAttribute("data-a");
       if (ev.target === f || nom === "fermer") fermerFeuille();
@@ -2228,6 +2232,7 @@ function demarrerJeu() {
   function ouvrirJouer() {
     if (bloqueParUltimatum()) return;
     if (M.piegeEnAttente(P)) { ouvrirPiege(); return; }
+    if (bloqueParMasterclass()) return;
     if (M.duelBloquant(P)) { lancerDuel(); return; }
     if (M.chronoEnAttente(P)) { ouvrirChrono("case"); return; }
     var t = maintenant(), c = M.choixIA(C, P, t); if (!c) { toast(__("Rien à jouer pour l'instant.")); return; }
@@ -2643,6 +2648,7 @@ function demarrerJeu() {
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
     if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
     if (M.piegeEnAttente(P)) v.appendChild(blocPiegeAccueil());
+    if (M.masterclassImposee(C, P)) v.appendChild(blocMasterclassAccueil());
     if (M.chronoEnAttente(P)) v.appendChild(blocChronoAccueil("case"));
     else if (M.offreChrono(P, maintenant())) v.appendChild(blocChronoAccueil("alyca"));
     if (C.plateau && P.plateau.parcoursSuivant) v.appendChild(blocSuiteTour());
@@ -3542,7 +3548,7 @@ function demarrerJeu() {
       zone.querySelectorAll("button[data-v]").forEach(function (z) { if (z.getAttribute("data-v") === String(q.reponse)) z.classList.add("bon"); });
       var donnee = ok ? null : texteReponse(q, v);
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
-      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>"));
+      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>" + htmlRepere(q)));
       if (q.illustration_explication) c.appendChild(el('<div class="illus">' + q.illustration_explication + "</div>"));
       if (!r) return;
       c.appendChild(el('<div class="piege-verdict ' + (r.dejoue ? "ok" : "ko") + '">' + (r.dejoue ? __("Piège déjoué !") : __("Le piège se déclenche")) + "</div>"));
@@ -4019,14 +4025,37 @@ function demarrerJeu() {
   // v35 (Victor : « une masterclass sur cette compétence directement à la sortie d'un échec ») : une leçon écrite,
   // chapitre par chapitre (competences[].masterclass, sourcée et vérifiée), puis les erreurs de l'épreuve corrigées.
   // `rates` : [{id, rep}] des réponses fausses (facultatif). Sans leçon écrite, pas de masterclass.
+  // Victor (2026-10-30) : un repère d'histoire des sciences sous chaque correction. Il vient de la masterclass de la
+  // compétence (reperes : phrases recopiées du texte vérifié), du chapitre le plus proche de la question.
+  // Rien si l'explication date déjà sa découverte.
+  var DATE_RE = /\b(1[0-9]{3}|20[0-2][0-9])\b|siècle|av\. J|avant notre ère/;
+  function htmlRepere(q) {
+    var k = q && C.parId[q.competence]; if (!aMasterclass(k) || !q.explication || DATE_RE.test(q.explication.fr || "")) return "";
+    var mots = function (t) { return (t || "").toLowerCase().match(/[a-zà-ÿ]{5,}/g) || []; };
+    var cles = {}; mots((q.enonce && q.enonce.fr) + " " + q.explication.fr).forEach(function (m) { cles[m] = 1; });
+    var meilleur = null, score = -1, tous = [];
+    k.masterclass.chapitres.forEach(function (ch) {
+      if (!ch.reperes || !ch.reperes.length) return;
+      tous = tous.concat(ch.reperes);
+      var n = 0, vus = {}; mots(ch.texte.map(function (x) { return x.fr; }).join(" ")).forEach(function (m) { if (cles[m] && !vus[m]) { vus[m] = 1; n++; } });
+      if (n > score) { score = n; meilleur = ch; }
+    });
+    var l = score > 0 ? meilleur.reperes : tous; if (!l.length) return "";
+    var h = 0; for (var i = 0; i < q.id.length; i++) h = (h * 31 + q.id.charCodeAt(i)) % 9973;
+    return '<p class="repere-h"><b>' + __("Un peu d'histoire") + "</b> " + esc(tx(l[h % l.length])) + "</p>";
+  }
   function aMasterclass(k) { return !!(k && k.masterclass && k.masterclass.chapitres && k.masterclass.chapitres.length); }
-  function ouvrirMasterclass(id, rates) {
+  // `retour` (facultatif) : le texte du bouton qui ramène d'où on vient (le mur de la honte).
+  function ouvrirMasterclass(id, rates, retour) {
     var k = C.parId[id]; if (!aMasterclass(k)) return;
+    // Imposée par l'IA (deux épreuves ratées de suite) : sa réplique en tête, et la consigne tombe au dernier chapitre.
+    var imp = M.masterclassImposee(C, P); imp = imp && imp.id === id ? imp : null;
+    if (imp && !rates) rates = imp.rates;
     rates = (rates || []).filter(function (x) { return C.questionParId[x.id]; });
     function blocQ(q, rep) {
       var dit = rep !== undefined ? texteReponse(q, rep) : null;
       return '<div class="mc-q"><p class="enonce-mc">' + esc(tx(q.enonce)) + "</p>" + (dit ? __('<p class="mc-faux">Tu as répondu : ') + esc(dit) + "</p>" : "") +
-        __('<p class="mc-bon">Bonne réponse : ') + esc(bonneReponse(q)) + "</p>" + (q.explication ? "<p>" + esc(tx(q.explication)) + "</p>" : "") +
+        __('<p class="mc-bon">Bonne réponse : ') + esc(bonneReponse(q)) + "</p>" + (q.explication ? "<p>" + esc(tx(q.explication)) + "</p>" : "") + htmlRepere(q) +
         (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + (q.figure ? htmlFigure(q.figure) : "") + "</div>";
     }
     // Le schéma de la fiche va dans le chapitre qui en parle (schema_fiche), sinon dans le premier.
@@ -4041,20 +4070,42 @@ function demarrerJeu() {
     var n = 0, titre = __("Masterclass : ") + tx(k.nom);
     feuilleSimple('<div class="guide-z masterclass"></div>', titre, {
       prec: function () { if (n > 0) { n--; montrer(); } }, suiv: function () { if (n < etapes.length - 1) { n++; montrer(); } }
-    });
+    }, retour);
     function montrer() {
       var z = feuille.querySelector(".masterclass"), x = etapes[n];
       z.innerHTML = '<div class="eyebrow">' + esc(titre) + __(" · étape ") + (n + 1) + __(" sur ") + etapes.length + "</div><h2>" + esc(x.titre) + "</h2>" + x.html +
         '<div class="nav-guide"><button type="button" class="btn sec" data-a="prec"' + (n ? "" : " disabled") + __('>← Précédent</button><button type="button" class="btn" data-a="suiv"') + (n < etapes.length - 1 ? "" : " disabled") + __(">Suivant →</button></div>");
+      if (imp && n === 0 && imp.mot) { var mi = comite(imp.mot, true); if (mi) z.insertBefore(mi, z.querySelector("h2")); }
+      if (imp && n === etapes.length - 1 && M.masterclassLue(P, id)) {
+        var ml = comite(M.replique(C, P, ["masterclass_lue"]), true); sauver();
+        if (ml) z.insertBefore(ml, z.querySelector(".nav-guide"));
+        toast(__("Masterclass lue : le jeu est rouvert."));
+      }
       feuille.querySelector(".feuille").scrollTop = 0;
       var b = z.querySelector('[data-a="suiv"]:not([disabled])') || z.querySelector('[data-a="prec"]'); if (b) b.focus({ preventScroll: true });
     }
+    if (imp) { imp.mot = M.replique(C, P, ["masterclass_imposee"]); sauver(); }
     montrer();
   }
+  // Victor (2026-10-30) : deux épreuves ratées de suite, l'IA impose la masterclass ; rien d'autre ne se joue avant.
+  function bloqueParMasterclass() {
+    var m = M.masterclassImposee(C, P); if (!m) return false;
+    ouvrirMasterclass(m.id); return true;
+  }
+  function blocMasterclassAccueil() {
+    var m = M.masterclassImposee(C, P), k = C.parId[m.id];
+    var b = el(__('<div class="bloc piege-attente"><div style="flex:1;min-width:0"><div class="eyebrow">Imposée par l\'IA</div><h2>Masterclass : ') + esc(tx(k.nom)) +
+      __('</h2><p class="meta">Deux épreuves ratées de suite. Lis la leçon jusqu\'au bout : rien d\'autre ne se joue avant.</p></div></div>'));
+    var bt = el('<button type="button" class="btn sc-mc mc-mur">' + __("Lire la masterclass") + "</button>");
+    bt.onclick = function () { ouvrirMasterclass(m.id); };
+    b.firstChild.appendChild(bt);
+    return b;
+  }
   // Le bouton de la masterclass, au mur : `items` sont les entrées du mur ({question, entree}) de cette compétence.
+  // Victor (2026-10-30) : ouverte depuis le mur, elle y ramène, au même endroit.
   function boutonMasterclass(k, items) {
     var b = el('<button type="button" class="btn sc-mc mc-mur">' + __("Masterclass : ") + esc(tx(k.nom)) + "</button>");
-    b.onclick = function () { ouvrirMasterclass(k.id, items.map(function (x) { return { id: x.question.id, rep: x.entree.rep }; })); };
+    b.onclick = function () { ouvrirMasterclass(k.id, (items || []).map(function (x) { return { id: x.question.id, rep: x.entree.rep }; }), __("← Retour au mur de la honte")); };
     return b;
   }
   // v34 : l'atome dessiné couche par couche, et ce que le dessin dit de sa place (ligne, colonne).
@@ -4337,7 +4388,7 @@ function demarrerJeu() {
     if (q.illustration) c.appendChild(el('<div class="illus">' + q.illustration + "</div>"));
     function corrige() {
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
-      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>"));
+      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>" + htmlRepere(q)));
       if (q.illustration_explication) c.appendChild(el('<div class="illus">' + q.illustration_explication + "</div>"));
       if (q.figure) c.appendChild(el(htmlFigure(q.figure)));
       if (q.atome && (q.type === "numerique" || q.type === "place") && C.atomes) c.appendChild(boutonGuide(C.atomes.elements[q.atome - 1]));
@@ -4415,7 +4466,7 @@ function demarrerJeu() {
       zone.querySelectorAll("button[data-v]").forEach(function (z) { if (z.getAttribute("data-v") === String(q.reponse)) z.classList.add("bon"); });
       var donnee = ok ? null : texteReponse(q, v);
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
-      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>"));
+      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>" + htmlRepere(q)));
       if (!r) return;
       if (r.libere) { liberation(); return; }
       var m = comite(r.replique, true); if (m) c.appendChild(m);
@@ -4500,7 +4551,7 @@ function demarrerJeu() {
       var fragiles = M.fichesImposees(C, P, t, 3).filter(function (k) { return !vus[k.id]; });
       if (fragiles.length) {
         var bf = el(__('<div class="bloc"><h2>Fiches imposées</h2><p class="note">Tes compétences les plus fragiles, choisies par l\'IA. Lis.</p></div>'));
-        fragiles.forEach(function (k) { bf.appendChild(el('<div class="eyebrow" style="color:' + couleur(k.stat) + ';margin-top:10px">' + esc(tx(stat(k.stat).nom)) + "</div><h3 style=\"margin:2px 0 6px\">" + esc(tx(k.nom)) + "</h3>")); bf.appendChild(el(htmlFiche(k))); });
+        fragiles.forEach(function (k) { bf.appendChild(el('<div class="eyebrow" style="color:' + couleur(k.stat) + ';margin-top:10px">' + esc(tx(stat(k.stat).nom)) + "</div><h3 style=\"margin:2px 0 6px\">" + esc(tx(k.nom)) + "</h3>")); bf.appendChild(el(htmlFiche(k))); if (aMasterclass(k)) bf.appendChild(boutonMasterclass(k, [])); });
         v.appendChild(bf);
       }
     }
@@ -4861,7 +4912,7 @@ function demarrerJeu() {
   // --- Quiz -----------------------------------------------------------------
   // `opts.jouer` : lancé par le bouton « Jouer », l'IA a choisi l'épreuve (bonus de cases si réussie).
   function lancerQuiz(id, mode, opts) {
-    if (bloqueParUltimatum() || bloqueParDuel()) return;
+    if (bloqueParUltimatum() || bloqueParMasterclass() || bloqueParDuel()) return;
     if (M.piegeEnAttente(P)) { ouvrirPiege(); return; }
     // v34 : la case Chrono du pion se joue avant toute autre épreuve.
     if (M.chronoEnAttente(P)) { ouvrirChrono("case"); return; }
@@ -5041,7 +5092,7 @@ function demarrerJeu() {
     function montrerRetour(ok) {
       var rep = q.type === "qcm" ? tx(q.choix[q.reponse]) : (q.type === "vrai_faux" ? (q.reponse ? __("Vrai") : __("Faux")) : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""));
       var tempsEcoule = quiz.tempsEcoule; quiz.tempsEcoule = false;
-      zoneRetour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? __("Juste.") + (quiz.chrono ? " +" + C.regles.chrono.bonus_xp_par_bonne_reponse + __(" XP de bonus chrono.") : "") : (tempsEcoule ? __("Temps écoulé. ") : __("Raté. ")) + __("Réponse : ") + esc(rep) + ".") + "</b><p>" + esc(tx(q.explication)) + "</p>" +
+      zoneRetour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? __("Juste.") + (quiz.chrono ? " +" + C.regles.chrono.bonus_xp_par_bonne_reponse + __(" XP de bonus chrono.") : "") : (tempsEcoule ? __("Temps écoulé. ") : __("Raté. ")) + __("Réponse : ") + esc(rep) + ".") + "</b><p>" + esc(tx(q.explication)) + "</p>" + htmlRepere(q) +
         (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + htmlFigure(q.figure) + "</div>"));
       var pq = portraitQuestion(q);
       if (pq) zoneRetour.appendChild(pq);
@@ -5227,6 +5278,12 @@ function demarrerJeu() {
     function groupe(d) { var n = 0; while (etapes[d + n] && etapes[d + n].indexOf("recompense:") === 0) n++; return n; }
     var suite = etapes[e + 1], libelle = !suite ? __("Continuer") : suite === "plateau" ? __("Voir le plateau") : suite === "duel" ? __("Un ennemi !") : suite === "suite" ? "Et maintenant ?" : suite.indexOf("recompense:") === 0 ? (nom.indexOf("recompense:") !== 0 ? (groupe(e + 1) > 1 ? __("Voir les ") + groupe(e + 1) + __(" récompenses") : __("Voir la récompense")) : __("Récompense suivante")) : __("Suite");
     if (!suite && arret) boutonAtome(wrap, arret, fermerQuiz);
+    else if (!suite && M.masterclassImposee(C, P)) {
+      var mi = el('<button type="button" class="btn large sc-mc">' + __("Masterclass imposée : ") + esc(tx(C.parId[M.masterclassImposee(C, P).id].nom)) + "</button>");
+      mi.onclick = function () { fermerQuiz(); ouvrirMasterclass(M.masterclassImposee(C, P).id); };
+      wrap.appendChild(mi);
+      wrap.appendChild(el(__('<p class="note" style="margin:0;text-align:center">Deux épreuves ratées de suite : l\'IA t\'impose la leçon avant toute autre épreuve.</p>')));
+    }
     else if (!suite && M.piegeEnAttente(P)) boutonPiege(wrap, fermerQuiz);
     else if (!suite && M.chronoEnAttente(P)) boutonChrono(wrap, fermerQuiz);
     else if (!suite) finEpreuve(wrap, fermerQuiz);
@@ -5239,7 +5296,7 @@ function demarrerJeu() {
     var ratees = r.total - r.bonnes;
     // v14 : le mur s'ouvre par-dessus le bilan ; « ← Bilan » ramène à la même étape, pour voir la suite des récompenses.
     // v35 (Victor) : une épreuve ratée propose d'abord la masterclass de la compétence, erreurs en tête.
-    if (ratees > 0 && (nom === "verdict" || !suite) && ["echec", "revision_ratee", "perdue"].indexOf(r.issue) >= 0 && aMasterclass(k)) {
+    if (ratees > 0 && (nom === "verdict" || !suite) && ["echec", "revision_ratee", "perdue"].indexOf(r.issue) >= 0 && aMasterclass(k) && !(!suite && M.masterclassImposee(C, P))) {
       var mc = el('<button type="button" class="btn large sc-mc">' + __("Masterclass : ") + esc(tx(k.nom)) + "</button>");
       mc.onclick = function () { ouvrirMasterclass(quiz.id, quiz.res.filter(function (x) { return !x.correct; }).map(function (x) { return { id: x.id, rep: x.rep }; })); };
       wrap.appendChild(mc);
