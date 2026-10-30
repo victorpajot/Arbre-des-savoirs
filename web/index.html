@@ -350,8 +350,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .illus .tm { fill: var(--muted); font-family: var(--f-body); }
 .illus .l { stroke: var(--ink); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .illus .lm { stroke: var(--muted); stroke-width: 1.5; fill: none; }
-.illus .f { fill: var(--surface); stroke: var(--ink); stroke-width: 1.5; }
-.illus .f2 { fill: var(--surface-2); stroke: var(--line); stroke-width: 1; }
+/* Boîtes teintées (Victor, 2026-10-30) : sur le fond sombre, des boîtes couleur de fond ne se voyaient pas. */
+.illus .f { fill: color-mix(in srgb, var(--accent) 20%, var(--surface)); stroke: var(--ink); stroke-width: 1.5; }
+.illus .f2 { fill: color-mix(in srgb, var(--warn) 24%, var(--surface)); stroke: color-mix(in srgb, var(--warn) 70%, var(--surface)); stroke-width: 1.2; }
 .illus .a { fill: var(--accent); }
 .illus .al { stroke: var(--accent); fill: none; }
 .illus .fond { fill: var(--surface); }
