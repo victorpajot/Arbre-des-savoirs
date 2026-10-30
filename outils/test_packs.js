@@ -1,5 +1,5 @@
 // Tests des packs en jeu (node outils/test_packs.js) : chaque pack s'éteint sans casser le moteur et sans rien perdre.
-const assert = require("assert");
+const assert = require("assert"), fs = require("fs"), path = require("path");
 const S = require("./simulation.js"), M = require("../web/moteur.js");
 const brut = S.charger(), index = brut["packs.json"];
 const packs = index.packs.filter(m => m.sorte !== "socle").map(m => m.id);
@@ -81,4 +81,39 @@ for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "co
   S.jouer(C, P, 200, t, S.graine(6));
   coherence(off, t, C, P);
 }
-console.log(`OK : ${packs.length} packs éteints un à un, partie jouée puis reprise sans perte ; parties longues cohérentes avec les packs choisis`);
+// v53 : un pack de domaine chargé par le joueur (outils/packs.py paquet) se pose comme s'il avait été assemblé.
+{
+  const os = require("os"), { execFileSync } = require("child_process");
+  const f = path.join(os.tmpdir(), "test-musique.pack.json");
+  execFileSync("python3", [path.join(__dirname, "packs.py"), "paquet", "musique", f]);
+  const paquet = JSON.parse(fs.readFileSync(f, "utf8")); fs.unlinkSync(f);
+  assert.equal(paquet.sources.verifiees, paquet.sources.total, "paquet : sources toutes vérifiées");
+  // Les données sans Musique, puis Musique chargée en paquet : on retrouve l'assemblage complet.
+  const sans = JSON.parse(JSON.stringify(M.filtrerPacks(brut, index, ["musique"])));
+  const idx = JSON.parse(JSON.stringify(index));
+  idx.packs = idx.packs.filter(m => m.id !== "musique");
+  for (const ou of Object.keys(idx.proprietaires)) for (const k of Object.keys(idx.proprietaires[ou])) if (idx.proprietaires[ou][k] === "musique") delete idx.proprietaires[ou][k];
+  const v = M.verifierPaquet(sans, idx, paquet);
+  assert.deepEqual(v.erreurs, [], "paquet musique accepté");
+  assert.ok(v.compte["questions.json/questions"] > 20);
+  M.ajouterPaquet(sans, idx, paquet);
+  const cles = (d, fi, ch) => ch.reduce((o, k) => o[k], d[fi]).map(x => x.id).sort().join("|");
+  for (const [fi, ch] of [["skills.json", ["competences"]], ["questions.json", ["questions"]], ["succes.json", ["succes"]], ["avatar.json", ["savants"]], ["regles.json", ["stats"]]])
+    assert.equal(cles(sans, fi, ch), cles(brut, fi, ch), `paquet : ${fi} identique à l'assemblage`);
+  assert.ok(idx.packs.find(m => m.id === "musique").ajoute);
+  // Le jeu tourne avec, puis sans (pack éteint), sans rien perdre.
+  sans["packs.json"] = idx;
+  const C = S.contenu(sans, []), P = M.nouvellePartie(new Date(2026, 9, 1, 9).getTime());
+  P.options = { tousArbres: true };
+  S.jouer(C, P, 60, P.cree, S.graine(4));
+  assert.ok(C.parStat.musique && C.parStat.musique.length);
+  // Refus : un pack de jeu, un doublon d'un pack officiel, une dépendance absente, un emplacement interdit.
+  const refus = (mod, attendu) => { const q = JSON.parse(JSON.stringify(paquet)); mod(q); assert.ok(M.verifierPaquet(brut, index, q).erreurs.some(e => e.startsWith(attendu)), attendu); };
+  refus(q => { q.manifeste.sorte = "jeu"; }, "sorte");
+  refus(q => {}, "officiel");
+  refus(q => { q.manifeste.id = "musique2"; }, "doublon");
+  refus(q => { q.manifeste.id = "musique2"; q.manifeste.requiert = ["socle", "inconnu"]; }, "requiert");
+  refus(q => { q.manifeste.id = "musique2"; q.fragments.push({ fichier: "regles.json", chemin: ["xp"], elements: {} }); }, "emplacement");
+  assert.deepEqual(M.verifierPaquet(brut, index, { format: "autre" }).erreurs, ["format"]);
+}
+console.log(`OK : ${packs.length} packs éteints un à un, partie jouée puis reprise sans perte ; parties longues cohérentes avec les packs choisis ; pack additionnel chargé en paquet`);

@@ -226,11 +226,29 @@ def assembler(ecrire_data=True):
     if ecrire_data:
         dossier = DATA / "langues"
         for f in dossier.glob("*.json") if dossier.exists() else []:
-            if f.stem not in out:
+            if f.stem not in out and f.stem != "index":
                 f.unlink()
         for l, d in out.items():
             ecrire(dossier / (l + ".json"), d)
+        ecrire(dossier / "index.json", index_langues())
     return out
+
+
+def couverture(langue):
+    """La part du jeu traduite dans `langue`, en pour cent (packs et interface, comme « etat »)."""
+    total = faits = 0
+    for d in packs():
+        if source_de(d) != langue:
+            t, f, _, _ = etat_pack(d, langue)
+            total, faits = total + t, faits + f
+    n, f, _, _ = etat_interface(langue)
+    return 100 * (faits + f) // max(total + n, 1)
+
+
+def index_langues():
+    """v53 : data/langues/index.json, la liste des langues du jeu pour l'écran titre, avec leur part traduite."""
+    return {"format": 1, "langues": [{"code": l, "couverture": 100 if l == "fr" else couverture(l)}
+                                     for l in ["fr"] + [x for x in langues_presentes() if x != "fr"]]}
 
 
 # --- Interface -------------------------------------------------------------------------------------------------------

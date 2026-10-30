@@ -3,6 +3,7 @@
     python3 outils/packs.py assembler        fusionne les packs dans data/ (ce que lit le jeu)
     python3 outils/packs.py verifier [id…]   contrôle les packs (tous par défaut) sans rien écrire
     python3 outils/packs.py liste            liste les packs et ce qu'ils contiennent
+    python3 outils/packs.py paquet id [fichier]  le pack en un seul fichier .json, à charger dans le jeu (packs additionnels)
 
 Un pack, c'est un dossier :
     pack.json             le manifeste (id, sorte, nom, version, requiert…)
@@ -525,6 +526,53 @@ def liens_condition(m, nom, ident, cond, comps, arbres, succes):
 
 # --- Ligne de commande ---------------------------------------------------------------------------------------------
 
+# --- Paquet : un pack de domaine en un fichier, chargé par le joueur (v53, packs additionnels) ----------------------
+
+FORMAT_PAQUET = "arbre-des-savoirs/pack"
+
+
+def paquet(ident):
+    """Le pack `ident` prêt à charger dans le jeu : manifeste, fragments posés à leur place dans data/ (lots compris),
+    traductions, et le compte de ses sources vérifiées. Seuls les packs de domaine s'emballent : un pack de jeu porte
+    du code, qui n'entre dans le jeu qu'après relecture, dans une mise à jour."""
+    packs = tous()
+    m = next((x for x in packs if x["id"] == ident), None)
+    if not m:
+        raise ErreurPack(f"pack inconnu : {ident}")
+    if m.get("sorte") != "domaine":
+        raise ErreurPack(f"{ident} : seuls les packs de domaine s'emballent (celui-ci est « {m.get('sorte')} »)")
+    erreurs = verifier(packs, {ident})
+    if erreurs:
+        raise ErreurPack("\n".join(erreurs))
+    donnees, index = assembler(packs, ecrire_data=False)
+    frags = []
+    for fichier, frag, nom in fragments(m):
+        chemin = list(EMPLACEMENTS[nom][1])
+        elements = obtenir(frag, chemin)
+        if fichier == "regles.json" and chemin == ["stats"]:
+            elements = [{k: v for k, v in s.items() if k != "fondamental"} for s in elements]
+        # Le lot de chaque élément, tel que l'assemblage complet l'a posé.
+        assemble = obtenir(donnees[fichier], chemin)
+        if isinstance(elements, list) and isinstance(assemble, list):
+            lots = {cle(x): x["lot"] for x in assemble if isinstance(x, dict) and "lot" in x}
+            elements = [dict(x, lot=lots[cle(x)]) if isinstance(x, dict) and "lot" not in x and cle(x) in lots else x for x in elements]
+        frags.append({"fichier": fichier, "chemin": chemin, "elements": elements})
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import langues
+    import verifier_sources as vs
+    trads = {l: langues.dictionnaire(l, [m["_dossier"]]) for l in langues.langues_presentes() if l != m.get("langue_source", "fr")}
+    el = vs.elements(lambda f: json.dumps(donnees[f], ensure_ascii=False) if f in donnees else None)
+    siens = {k: v for k, v in el.items() if vs.proprietaire(k, index) == ident}
+    reg = lire(m["_dossier"] / "verifications.json") if (m["_dossier"] / "verifications.json").exists() else {}
+    verifiees = sum(1 for k, v in siens.items() if reg.get(k, {}).get("empreinte") == vs.empreinte(v))
+    return {"format": FORMAT_PAQUET, "version": 1,
+            "manifeste": {k: v for k, v in m.items() if not k.startswith("_")},
+            "fondamentaux": [s["id"] for s in lire_liste(m, "arbres.json") if s.get("fondamental")],
+            "fragments": frags,
+            "langues": {l: d for l, d in trads.items() if d},
+            "sources": {"total": len(siens), "verifiees": verifiees}}
+
+
 def main(args):
     action = args[0] if args else "assembler"
     if action == "verifier":
@@ -545,6 +593,17 @@ def main(args):
         for m in tous():
             frs = fragments(m)
             print(f"{m['id']:<12} {m['sorte']:<8} {m['version']:<7} {m['nom']['fr']}  ({len(frs)} fichiers)")
+        return 0
+    if action == "paquet" and len(args) > 1:
+        try:
+            p = paquet(args[1])
+        except ErreurPack as e:
+            print(e)
+            return 1
+        sortie = Path(args[2]) if len(args) > 2 else Path(f"{args[1]}.pack.json")
+        sortie.write_text(json.dumps(p, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        print(f"{sortie} : pack {args[1]} {p['manifeste']['version']}, {len(p['fragments'])} fragments, "
+              f"sources vérifiées {p['sources']['verifiees']}/{p['sources']['total']}, {sortie.stat().st_size // 1024} Ko")
         return 0
     print(__doc__)
     return 1

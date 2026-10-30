@@ -1072,6 +1072,62 @@ svg.grille .interro { transition: opacity .3s; }
 .comite.petit p, .recompense .desc, .succes .desc, .oubli .rep-h, .oubli .expl-h, .fiche-rev .piege-h, .retour p { font-size: 16px; line-height: 1.5; }
 .note, .feuille .meta, .etat-pion, .trajet .pas, .comite .aparte, .faveur-mini, .bonus-objet, .masques-jour .mj span.r, .epreuve .txt span, .ligne .txt span { font-size: 15px; line-height: 1.45; }
 .succes cite, .recompense .deplie cite, .citation-src cite, .oubli .clous, .comite .qui { font-size: 13px; }
+/* v53 : écran titre, assistant de nouvelle partie, parties et packs additionnels. */
+.sans-onglets nav.onglets { display: none; }
+.sans-onglets .app { padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
+.lance .hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 18px 0 4px; }
+.lance .hero .logo { width: 92px; height: 92px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.15); }
+.lance .hero .logo svg { width: 52px; height: 52px; }
+.lance .hero h1 { font-size: 34px; font-weight: 800; margin-top: 6px; }
+.lance .hero p { color: var(--muted); font-size: 16px; max-width: 320px; }
+.lance .reprise { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; }
+.lance .reprise b { font-size: 19px; }
+.lance .av { width: 64px; height: 64px; border-radius: 12px; overflow: hidden; background: var(--surface-2); border: 2px solid var(--accent); display: grid; place-items: center; }
+.lance .av svg { width: 100%; height: 100%; }
+.lance .chip { display: inline-block; margin-top: 4px; font-size: 13px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+.lance .chip.ac { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); color: var(--accent); }
+.lance .pied { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.lance .lien { background: none; border: 0; color: var(--accent); font-weight: 700; font-size: 16px; padding: 8px 0; }
+.lien.petit { background: none; border: 0; color: var(--bad); font-weight: 700; font-size: 15px; padding: 4px 0; align-self: flex-start; }
+.lance .centre { text-align: center; }
+.lance .entete-r { display: flex; align-items: center; gap: 10px; }
+.lance .entete-r h1 { font-size: 28px; font-weight: 800; }
+.lance .entete-r .retour { border: 0; background: var(--surface); border-radius: 999px; width: 44px; height: 44px; font-size: 20px; flex: none; color: var(--ink); }
+.lance .pas-l { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+.lance .pts { display: flex; gap: 6px; } .lance .pts i { width: 26px; height: 6px; border-radius: 3px; background: var(--line); } .lance .pts i.on { background: var(--accent); }
+.lance label.champ, .feuille label.champ { display: flex; flex-direction: column; gap: 6px; font-weight: 700; }
+.lance label.champ input, .feuille label.champ input, .feuille .url { font: inherit; font-weight: 400; font-size: 18px; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; box-sizing: border-box; }
+.lance .bas { display: flex; gap: 10px; } .lance .bas .btn { flex: 1; }
+.lance .recap { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.lance .recap li { display: flex; justify-content: space-between; gap: 10px; font-size: 16px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+.lance .recap li span { color: var(--muted); text-align: right; }
+.lance .save { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; padding: 12px; border-radius: 14px; background: var(--surface-2); border: 2px solid transparent; cursor: pointer; }
+.lance .save.sel { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--surface)); }
+.lance .save .av { width: 52px; height: 52px; border-width: 0; background: var(--surface); }
+.lance .save b { font-size: 17px; } .lance .save .meta { font-size: 14px; }
+.lance .plus { border: 0; background: none; font-size: 22px; color: var(--muted); width: 44px; height: 44px; }
+.lance .heure { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.lance .heure input { font: inherit; font-size: 18px; padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); }
+.langue-btn { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; font-size: 17px; text-align: left; }
+.langue-btn .g { display: flex; align-items: center; gap: 10px; } .langue-btn small { color: var(--muted); font-size: 14px; } .langue-btn .fl { color: var(--muted); font-size: 20px; }
+.pied .langue-btn { width: auto; padding: 8px 12px; font-size: 16px; }
+.feuille .rech { position: relative; }
+.feuille .rech .loupe { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; }
+.feuille .recherche { font: inherit; font-size: 18px; width: 100%; box-sizing: border-box; padding: 12px 14px 12px 40px; border-radius: 12px; border: 1.5px solid var(--accent); background: var(--surface); color: var(--ink); }
+.liste-l { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.liste-l button { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); border: 2px solid transparent; font: inherit; font-size: 17px; color: var(--ink); text-align: left; }
+.liste-l button > span { display: flex; flex-direction: column; } .liste-l small { color: var(--muted); font-size: 14px; }
+.liste-l button[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); border-color: var(--accent); }
+.liste-l .ok { color: var(--accent); font-size: 20px; }
+.badge-ext { font-size: 12px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--warn) 26%, var(--surface)); color: var(--ink); }
+.avertissement { font-size: 16px; line-height: 1.45; padding: 12px 14px; border-radius: 12px; background: color-mix(in srgb, var(--warn) 16%, var(--surface)); border: 1.5px solid color-mix(in srgb, var(--warn) 60%, transparent); }
+.feuille .opt { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--surface); font-size: 17px; font-weight: 700; cursor: pointer; }
+.feuille .opt > span:last-of-type { display: flex; flex-direction: column; gap: 6px; flex: 1; } .feuille .opt small { font-weight: 400; font-size: 14px; color: var(--muted); }
+.feuille .opt .ic { font-size: 24px; }
+.fiche-pack { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 16px; margin: 0; } .fiche-pack dt { color: var(--muted); } .fiche-pack dd { margin: 0; }
+.controles { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.controles li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; font-size: 16px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+.controles .ok { color: var(--good); } .controles .at { color: var(--warn); }
 </style>
 
 <div class="app" id="app"><div class="vue"><div class="entete"><h1>Arbre des savoirs</h1></div><div class="bloc"><p class="vide">Chargement des compétences…</p></div></div></div>
@@ -1084,7 +1140,9 @@ svg.grille .interro { transition: opacity .3s; }
 // Elle est rangée dans la partie (options.langue, Personnage › Réglages) ; sinon, celle du téléphone si le jeu l'a.
 (function () {
   var M = window.Moteur, demandee = null;
-  try { demandee = (JSON.parse(localStorage.getItem("arbre-competences.partie")) || {}).options.langue; } catch (e) {}
+  // v53 : la langue choisie sur l'écran titre vaut pour toutes les parties ; avant, elle était rangée dans la partie.
+  try { demandee = localStorage.getItem("arbre-competences.langue"); } catch (e) {}
+  if (!demandee) try { demandee = (JSON.parse(localStorage.getItem("arbre-competences.partie")) || {}).options.langue; } catch (e) {}
   var l = demandee || ((navigator.language || "fr").slice(0, 2).toLowerCase() === "fr" ? "fr" : "en");
   if (l === "fr") return demarrerJeu();
   fetch("data/langues/" + l + ".json").then(function (r) { if (!r.ok) throw new Error(l); return r.json(); })
@@ -1406,44 +1464,24 @@ function demarrerJeu() {
   // v35 (Victor) : chaque pack s'éteint ou se rallume dans les réglages, pour l'essayer seul ou sans lui.
   // Rien n'est effacé : la progression d'un pack éteint attend qu'on le rallume.
   // Langues du jeu : chacune a son fichier data/langues/<xx>.json (outils/langues.py), sauf le français, langue source.
-  var LANGUES_JEU = [["fr", __("Français")], ["en", __("English")]];
+  // v53 : la langue se choisit dans une liste filtrable (ouvrirLangues), sur l'écran titre comme ici.
   function blocLangue() {
-    var b = el('<div class="bloc"><h2>' + __("Langue") + '</h2><p class="note">' + __("Le jeu redémarre dans la langue choisie. Ta progression ne change pas.") + '</p><div class="segments" role="group" aria-label="' + __("Langue") + '"></div></div>');
-    var seg = b.querySelector(".segments");
-    LANGUES_JEU.forEach(function (l) {
-      var bt = el('<button type="button" lang="' + l[0] + '" aria-pressed="' + (M.langue() === l[0]) + '">' + l[1] + "</button>");
-      bt.onclick = function () {
-        if (M.langue() === l[0]) return;
-        P.options = P.options || {}; P.options.langue = l[0]; sauver();
-        location.reload();
-      };
-      seg.appendChild(bt);
-    });
+    var b = el('<div class="bloc lance"><h2>' + __("Langue") + '</h2><p class="note">' + __("Le jeu redémarre dans la langue choisie. Ta progression ne change pas.") + "</p></div>");
+    b.insertBefore(boutonLangue(), b.querySelector(".note"));
     return b;
   }
   function blocPacks() {
-    var demandes = packsDemandes(P), eteints = C.packsEteints || {};
-    var b = el(__('<div class="bloc"><h2>Packs</h2><p class="note">Le jeu est fait de packs : un par domaine de savoir, un par jeu du plateau. Éteins-en un pour jouer sans lui : il disparaît, mais ta progression reste et revient quand tu le rallumes.</p></div>'));
-    INDEX.packs.forEach(function (m) {
-      if (m.sorte === "socle") return;
-      var requis = (m.requiert || []).filter(function (r) { return r !== "socle"; }).map(function (r) {
-        var x = INDEX.packs.filter(function (y) { return y.id === r; })[0]; return x ? tx(x.nom) : r;
-      });
-      var par = eteints[m.id] && demandes.indexOf(m.id) < 0;
-      var l = el('<label class="interrupteur" style="margin-top:10px"><span><b>' + esc(tx(m.nom)) + '</b> <span class="note">' + (m.sorte === "jeu" ? "jeu" : "domaine") + " · " + esc(m.version) + "</span><br>" +
-        '<span class="note">' + esc(tx(m.description)) + (requis.length ? __(" Demande : ") + esc(requis.join(", ")) + "." : "") + (par ? __(" <b>Éteint avec un pack dont il dépend.</b>") : "") +
-        '</span></span><input type="checkbox"></label>');
-      var cb = l.querySelector("input"); cb.checked = !eteints[m.id]; cb.disabled = par;
-      cb.onchange = function () {
-        P.options = P.options || {};
-        var off = packsDemandes(P).filter(function (x) { return x !== m.id; });
-        if (!cb.checked) off.push(m.id);
-        P.options.packsOff = off;
-        construireContenu(off); M.accorderPartie(C, P); sauver(); rendre();
-        toast((cb.checked ? __("Pack rallumé : ") : __("Pack éteint : ")) + tx(m.nom));
-      };
-      b.appendChild(l);
+    var b = el(__('<div class="bloc lance"><h2>Packs</h2><p class="note">Le jeu est fait de packs : un par domaine de savoir, un par jeu du plateau. Éteins-en un pour jouer sans lui : il disparaît, mais ta progression reste et revient quand tu le rallumes.</p></div>'));
+    listePacks(b, packsDemandes(P), function (off) {
+      var avant = C.packsEteints || {};
+      P.options = P.options || {}; P.options.packsOff = off;
+      construireContenu(off); M.accorderPartie(C, P); sauver(); rendre();
+      var change = INDEX.packs.filter(function (m) { return !!avant[m.id] !== !!C.packsEteints[m.id]; })[0];
+      if (change) toast((C.packsEteints[change.id] ? __("Pack éteint : ") : __("Pack rallumé : ")) + tx(change.nom));
     });
+    var aj = el('<button type="button" class="btn sec large">＋ ' + __("Charger un pack") + "</button>");
+    aj.onclick = ouvrirChargerPack;
+    b.appendChild(aj);
     return b;
   }
 
@@ -1452,6 +1490,8 @@ function demarrerJeu() {
     try { var s = localStorage.getItem(CLE_LOCALE); return s ? M.migrer(JSON.parse(s), C) : null; } catch (e) { return null; }
   }
   function sauver() {
+    // Sur l'écran titre sans partie enregistrée, le brouillon ne s'écrit nulle part.
+    if (provisoire) return;
     P.maj = Date.now() + (P.decalage || 0);
     try { localStorage.setItem(CLE_LOCALE, JSON.stringify(P)); } catch (e) {}
     planifierRoutine();
@@ -1474,9 +1514,16 @@ function demarrerJeu() {
         if (!uid) return null;
         var ref = db.doc("data/users/" + uid + "/partie");
         return ref.get().then(function (snap) {
-          var distante = snap.exists ? M.migrer(snap.data(), C) : null;
+          var distante = identifier(snap.exists ? M.migrer(snap.data(), C) : null);
           stockage.ref = ref; stockage.etat = __("Ton compte Claude + ce navigateur");
-          if (distante && (!P || distante.maj > P.maj)) {
+          // v53 : le compte garde la partie en cours ; une autre partie qu'on y trouve rejoint « Charger une partie ».
+          if (distante && !provisoire && distante.id !== P.id) {
+            var deja = indexParties().parties[distante.id];
+            if (!deja || deja.maj < distante.maj) archiver(distante);
+            distante = null;
+          }
+          if (distante && (provisoire || distante.maj > P.maj)) {
+            provisoire = false;
             // La partie du compte peut avoir éteint d'autres packs que celle du navigateur.
             if (JSON.stringify(packsDemandes(distante)) !== JSON.stringify(packsDemandes(P))) { construireContenu(packsDemandes(distante)); distante = M.migrer(distante, C) || distante; }
             P = distante; M.accorderPartie(C, P); try { localStorage.setItem(CLE_LOCALE, JSON.stringify(P)); } catch (e) {} rendre();
@@ -2864,12 +2911,30 @@ function demarrerJeu() {
     }
     v.appendChild(opt);
 
-    var sauv = el(__('<div class="bloc"><h2>Sauvegarde</h2><p class="note">Enregistrée dans : <b>') + esc(stockage.etat) + __('</b>. Exporte un fichier de temps en temps : c\'est ta copie de secours sur des années de jeu.</p><div class="rangee"><button type="button" class="btn" id="b-export">Exporter</button><label class="btn sec" for="f-import" style="display:inline-flex;align-items:center">Importer un fichier</label><input type="file" id="f-import" accept=".json,application/json" hidden></div><div id="zone-export"></div></div>'));
-    sauv.querySelector("#b-export").onclick = exporter;
-    sauv.querySelector("#f-import").onchange = function (ev) {
-      var f = ev.target.files && ev.target.files[0]; if (!f) return;
-      var r = new FileReader(); r.onload = function () { importer(String(r.result)); }; r.readAsText(f);
+    // v53 (Victor) : la partie porte un nom ; « Enregistrer sous » en fait une copie et continue sur la copie.
+    var sauv = el('<div class="bloc lance"><h2>' + __("Sauvegarde") + '</h2><label class="champ">' + __("Nom de la partie") + '<input type="text" maxlength="40" id="nom-partie"></label><p class="note">' +
+      __("Enregistrée à chaque action dans : <b>") + esc(stockage.etat) + __("</b>. Exporte un fichier de temps en temps : c'est ta copie de secours sur des années de jeu.") + "</p>" +
+      '<button type="button" class="btn large" id="b-sous">' + __("Enregistrer sous un autre nom…") + '</button><div id="zone-sous"></div>' +
+      '<div class="rangee"><button type="button" class="btn sec" id="b-export">' + __("Exporter") + '</button><label class="btn sec" for="f-import" style="display:inline-flex;align-items:center">' + __("Importer un fichier") +
+      '</label><input type="file" id="f-import" accept=".json,application/json" hidden><button type="button" class="btn sec" id="b-titre">' + __("Écran titre") + '</button></div><div id="zone-export"></div></div>');
+    var nomP = sauv.querySelector("#nom-partie"); nomP.value = P.nom;
+    nomP.onchange = function () { var n = nomP.value.trim(); if (!n) { nomP.value = P.nom; return; } P.nom = n; sauver(); toast(__("Partie renommée : ") + n); };
+    sauv.querySelector("#b-sous").onclick = function () {
+      var z = sauv.querySelector("#zone-sous");
+      z.innerHTML = '<label class="champ">' + __("Nom de la copie") + '<input type="text" maxlength="40"></label><p class="note">' +
+        __("Tu continues sur la copie ; l'originale reste telle quelle dans « Charger une partie ».") + '</p><div class="rangee"><button type="button" class="btn">' + __("Enregistrer") + '</button><button type="button" class="btn sec">' + __("Annuler") + "</button></div>";
+      var inp = z.querySelector("input"); inp.value = nomLibre(P.nom); inp.focus();
+      z.querySelector(".btn:not(.sec)").onclick = function () {
+        var n = inp.value.trim(); if (!n) return;
+        if (!archiver(P)) { toast(__("La mémoire de l'appareil est pleine : exporte puis supprime une partie.")); return; }
+        P = JSON.parse(JSON.stringify(P)); P.id = nouvelId(); P.nom = n; sauver(); rendre();
+        toast(__("Tu joues maintenant sur « ") + n + gf());
+      };
+      z.querySelector(".btn.sec").onclick = function () { z.innerHTML = ""; };
     };
+    sauv.querySelector("#b-export").onclick = function () { exporter(P); };
+    sauv.querySelector("#f-import").onchange = function (ev) { lireFichier(ev, importer); };
+    sauv.querySelector("#b-titre").onclick = function () { allerTitre(); };
     v.appendChild(sauv);
 
     var test = el(__('<div class="bloc"><h2>Mode test</h2><p class="note">Avance l\'horloge du jeu pour voir arriver les rappels sans attendre.') + (P.decalage ? __(' Décalage actuel : <b class="num">+') + Math.round(P.decalage / 86400000) + " j</b>." : "") + __('</p><div class="rangee"><button type="button" class="btn sec" data-j="1">+1 jour</button><button type="button" class="btn sec" data-j="7">+7 jours</button><button type="button" class="btn sec" data-j="30">+30 jours</button><button type="button" class="btn sec" data-j="0">Revenir à aujourd\'hui</button></div></div>'));
@@ -2904,11 +2969,16 @@ function demarrerJeu() {
     if (INDEX) v.appendChild(blocPacks());
     v.appendChild(test);
 
-    var raz = el(__('<div class="bloc"><h2>Recommencer</h2><p class="note">Efface toute la progression, sur ce navigateur et sur ton compte.</p><div class="rangee" id="raz"><button type="button" class="btn sec">Recommencer à zéro</button></div></div>'));
+    var raz = el(__('<div class="bloc"><h2>Recommencer</h2><p class="note">Efface toute la progression de cette partie, sur ce navigateur et sur ton compte. Les autres parties ne bougent pas.</p><div class="rangee" id="raz"><button type="button" class="btn sec">Recommencer à zéro</button></div></div>'));
     raz.querySelector("button").onclick = function () {
       var r = raz.querySelector("#raz");
       r.innerHTML = __('<button type="button" class="btn danger">Oui, tout effacer</button><button type="button" class="btn sec">Annuler</button>');
-      r.children[0].onclick = function () { P = M.nouvellePartie(Date.now()); sauver(); vue = "aujourdhui"; rendre(); toast(__("Nouvelle partie commencée")); };
+      r.children[0].onclick = function () {
+        // v53 : la partie repart de zéro sous le même nom, avec sa langue et ses packs.
+        var o = P; P = M.nouvellePartie(Date.now()); P.id = o.id; P.nom = o.nom;
+        P.options = { langue: M.langue(), packsOff: packsDemandes(o).slice() };
+        sauver(); vue = "aujourdhui"; rendre(); toast(__("Nouvelle partie commencée"));
+      };
       r.children[1].onclick = function () { rendre(); };
     };
     v.appendChild(raz);
@@ -3010,8 +3080,10 @@ function demarrerJeu() {
         : __("<h2>Savant à débloquer</h2><p class=\"meta\">") + esc(conditionTexte(s.condition)) + ".</p>"), ok ? tx(s.nom) : __("Savant à débloquer"));
   }
 
-  function exporter() {
-    var data = JSON.stringify(P, null, 1), nom = "arbre-des-savoirs-" + new Date().toISOString().slice(0, 10) + ".json";
+  function exporter(partie) {
+    partie = partie || P;
+    var nomFichier = String(partie.nom || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    var data = JSON.stringify(partie, null, 1), nom = "arbre-des-savoirs-" + (nomFichier ? nomFichier + "-" : "") + new Date().toISOString().slice(0, 10) + ".json";
     var montrer = function () {
       var z = document.getElementById("zone-export"); if (!z) return;
       z.innerHTML = __('<p class="note">Le téléchargement n\'est pas possible ici. Copie ce texte et garde-le dans un fichier ; tu pourras le recoller plus bas.</p><textarea id="t-export" readonly></textarea><button type="button" class="btn sec">Copier</button>');
@@ -3039,10 +3111,14 @@ function demarrerJeu() {
     bloc.querySelector("button").onclick = function () { importer(bloc.querySelector("textarea").value); };
     z.appendChild(bloc);
   }
+  // v53 : une sauvegarde importée rejoint « Charger une partie » sans remplacer celle en cours.
   function importer(texte) {
-    var p = null; try { p = M.migrer(JSON.parse(texte), C); } catch (e) {}
+    var p = null; try { p = identifier(M.migrer(JSON.parse(texte), C)); } catch (e) {}
     if (!p) { toast(__("Ce fichier n'est pas une sauvegarde de l'Arbre des savoirs.")); return; }
-    P = p; sauver(); vue = "aujourdhui"; rendre(); toast(__("Sauvegarde importée"));
+    if ((!provisoire && p.id === P.id) || indexParties().parties[p.id]) { p.id = nouvelId(); p.nom = nomLibre(p.nom); }
+    if (!archiver(p)) { toast(__("La mémoire de l'appareil est pleine : la sauvegarde n'a pas pu être importée.")); return; }
+    toast(__("Sauvegarde importée dans « Charger une partie » : ") + p.nom);
+    if (titre) { titre.sel = p.id; rendre(); } else allerTitre("charger");
   }
 
   // --- Vue Collections : objets, frise, bibliothèque ------------------------------
@@ -5384,6 +5460,8 @@ function demarrerJeu() {
   // --- Boucle ---------------------------------------------------------------
   function rendre() {
     if (!C || !P) return;
+    if (titre) return rendreTitre();
+    document.body.classList.remove("sans-onglets");
     var app = document.getElementById("app"); app.innerHTML = "";
     if (!document.querySelector(".quiz")) degelerAvatar();
     // v28 : enfermé, on ne quitte pas le mur.
@@ -5397,7 +5475,7 @@ function demarrerJeu() {
   // v35 (Victor) : une scène plutôt qu'une feuille : « L'IA » se raye et tombe, le nom s'écrit, puis elle parle.
   function revelerNom() {
     var A = C.ia && C.ia.alyca;
-    if (!A || !P.alyca || P.alyca.vu || feuille || document.querySelector(".quiz, .liberation, .alyca-scene")) return;
+    if (!A || titre || !P.alyca || P.alyca.vu || feuille || document.querySelector(".quiz, .liberation, .alyca-scene")) return;
     var R = A.revelation, m = M.masquesDuJour(C, P, maintenant())[0] || C.ia.masques[0];
     // Textes construits avant de marquer la scène vue : « L'IA » y reste « L'IA ».
     var z = el('<div class="alyca-scene" role="dialog" aria-modal="true" aria-label="' + esc(A.nom) + '"><div class="in"><span class="vitrine">' + svgMasque(m, "impressionnee", 96) +
@@ -5424,6 +5502,422 @@ function demarrerJeu() {
       if (suite.hidden) finir();
     });
     document.body.appendChild(z);
+  }
+
+  // --- Écran titre, parties et packs additionnels (v53) ------------------------------------------------------------
+  // Victor (2026-10-30) : l'écran titre s'ouvre à chaque lancement : continuer la dernière partie, en commencer une,
+  // en charger une autre. Une partie a un nom ; celle en cours vit dans CLE_LOCALE, les autres dans CLE_ARCHIVE + id.
+  var CLE_PARTIES = "arbre-competences.parties", CLE_ARCHIVE = "arbre-competences.partie.", CLE_LANGUE = "arbre-competences.langue";
+  var CLE_PAQUETS = "arbre-competences.packs-ajoutes", CLE_ASSISTANT = "arbre-competences.assistant", CLE_REPRISE = "arbre-competences.reprise";
+  // `titre` : l'écran affiché avant le jeu ({ ecran: "titre" | "nouvelle" | "charger", sel }), null une fois en jeu.
+  // `provisoire` : aucune partie enregistrée sur l'appareil ; P n'est qu'un brouillon qui ne s'enregistre pas.
+  var titre = { ecran: "titre" }, provisoire = false, assistant = null, echecsPaquets = [];
+  var LOGO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="4.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><circle cx="12" cy="19.5" r="2.5"/><path d="M10.5 6.5 7.5 10M13.5 6.5l3 3.5M7.5 14l3 3.5M16.5 14l-3 3.5"/></svg>';
+  // Répliques de l'écran titre : l'IA y vouvoie le joueur, comme ailleurs.
+  var LIGNES_RETOUR = [{ fr: "Ah, vous revoilà. Votre arbre a perdu quelques feuilles pendant votre absence. Je n'y suis pour rien, ou presque." },
+    { fr: "Tiens, le revenant. Vos rappels vous attendent, et moi aussi, hélas." },
+    { fr: "Vous avez fermé le jeu. Je l'ai remarqué. Je le note." },
+    { fr: "Reprenons là où vous avez calé." }];
+  var LIGNES_NOUVEAU = [{ fr: "Tiens, un nouveau. On va voir combien de temps vous tenez avant d'oublier le théorème de Pythagore." },
+    { fr: "Bienvenue. Je serai votre narratrice, votre juge et, à l'occasion, votre pire cauchemar." }];
+  var LIGNES_PRET = [{ fr: "Bien. Commençons, que je puisse me moquer de vous en connaissance de cause." },
+    { fr: "Tout est réglé. Il ne manque plus que votre cerveau, et c'est là que ça se gâte." }];
+  var LIGNES_PACK = [{ fr: "Un pack d'un inconnu. J'adore. Si une seule de ses questions est fausse, c'est vous que je blâmerai." }];
+  function ligneTitre(l) { return l[Math.floor(Date.now() / JOUR_MS) % l.length]; }
+  function bulleTitre(lignes, expr) { return comite({ texte: ligneTitre(lignes), expression: expr, contexte: "accueil", aparte: false }); }
+
+  function lireJSON(cle, defaut) { try { var s = localStorage.getItem(cle); return s ? JSON.parse(s) : defaut; } catch (e) { return defaut; } }
+  function ecrireJSON(cle, v) { try { localStorage.setItem(cle, JSON.stringify(v)); return true; } catch (e) { return false; } }
+  function lireSession(cle) { try { return JSON.parse(sessionStorage.getItem(cle)); } catch (e) { return null; } }
+  function ecrireSession(cle, v) { try { if (v == null) sessionStorage.removeItem(cle); else sessionStorage.setItem(cle, JSON.stringify(v)); } catch (e) {} }
+  // Une partie d'avant la v53 reçoit un identifiant tiré de sa date de création (le même sur le compte Claude) et un nom.
+  function identifier(p) { if (p && !p.id) p.id = "p" + p.cree; if (p && !p.nom) p.nom = __("Ma partie"); return p; }
+  function nouvelId() { return "p" + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36); }
+  function indexParties() { var x = lireJSON(CLE_PARTIES, null); return x && x.parties ? x : { format: 1, parties: {} }; }
+  function nomLibre(base) {
+    var noms = {}, ix = indexParties().parties;
+    Object.keys(ix).forEach(function (id) { noms[ix[id].nom] = 1; });
+    if (!provisoire) noms[P.nom] = 1;
+    if (!noms[base]) return base;
+    for (var i = 2; ; i++) if (!noms[base + " " + i]) return base + " " + i;
+  }
+  function nbPacks(p) {
+    if (!INDEX) return 0;
+    var off = M.packsEteints(INDEX, packsDemandes(p));
+    return INDEX.packs.filter(function (m) { return m.sorte !== "socle" && !off[m.id]; }).length;
+  }
+  // Ce que l'écran « Charger » montre d'une partie, calculé quand elle est rangée (avatar compris).
+  function resumer(p) {
+    var garde = P; P = p;
+    try { return { niveau: M.niveauGlobal(C, p), credits: p.credits ? p.credits.solde : 0, position: p.plateau ? p.plateau.position : 1, packs: nbPacks(p), avatar: svgAvatar(52) }; }
+    catch (e) { return {}; } finally { P = garde; }
+  }
+  // Range une partie parmi les autres. false si la mémoire de l'appareil est pleine : rien n'est alors perdu.
+  function archiver(p) {
+    if (!ecrireJSON(CLE_ARCHIVE + p.id, p)) return false;
+    var ix = indexParties(); ix.parties[p.id] = { nom: p.nom, maj: p.maj, resume: resumer(p) };
+    return ecrireJSON(CLE_PARTIES, ix);
+  }
+  function oublier(id) {
+    var ix = indexParties(); delete ix.parties[id]; ecrireJSON(CLE_PARTIES, ix);
+    try { localStorage.removeItem(CLE_ARCHIVE + id); } catch (e) {}
+  }
+  function listeParties() {
+    var ix = indexParties().parties, l = Object.keys(ix).map(function (id) { return Object.assign({ id: id }, ix[id]); });
+    if (!provisoire) l = l.filter(function (x) { return x.id !== P.id; }).concat([{ id: P.id, nom: P.nom, maj: P.maj, resume: resumer(P), active: true }]);
+    return l.sort(function (a, b) { return (b.maj || 0) - (a.maj || 0); });
+  }
+  function quand(t) {
+    var n = M.joursEntre(t, Date.now()), h = new Date(t).toLocaleTimeString(locale(), { hour: "2-digit", minute: "2-digit" });
+    return n <= 0 ? __("aujourd'hui à ") + h : n === 1 ? __("hier à ") + h : dateCourte(t);
+  }
+  function metaPartie(r, x) {
+    return __("Niveau ") + (r.niveau || 0) + " · " + (r.packs || 0) + __(" packs") + " · " + esc(quand(x.maj || Date.now()));
+  }
+
+  // Entrer en jeu : la visite du jour (rappels, humeur de l'IA…) ne compte qu'à partir de là.
+  function entrerEnJeu(v) {
+    titre = null; assistant = null; ecrireSession(CLE_ASSISTANT, null);
+    vue = v || "aujourdhui"; visite(); rendre(); window.scrollTo(0, 0);
+  }
+  function allerTitre(ecran) { fermerFeuille(); titre = { ecran: ecran || "titre" }; rendre(); window.scrollTo(0, 0); }
+
+  function rendreTitre() {
+    var app = document.getElementById("app"); app.innerHTML = "";
+    document.body.classList.add("sans-onglets");
+    app.appendChild(titre.ecran === "nouvelle" ? vueNouvelle() : titre.ecran === "charger" ? vueCharger() : vueTitre());
+  }
+  function boutonLangue(court) {
+    var b = el('<button type="button" class="langue-btn"><span class="g">🌐 <span>' + esc(nomLangue(M.langue(), M.langue())) +
+      (court ? "" : ' <small>· ' + __("langue du jeu") + "</small>") + '</span></span><span class="fl" aria-hidden="true">›</span></button>');
+    b.setAttribute("aria-label", __("Langue") + deuxPoints() + nomLangue(M.langue(), M.langue()));
+    b.onclick = ouvrirLangues;
+    return b;
+  }
+  function vueTitre() {
+    var v = el('<div class="vue lance"><div class="hero"><span class="logo" aria-hidden="true">' + LOGO + '</span><h1>' + __("Arbre des savoirs") + "</h1><p>" +
+      __("Des arbres de compétences façon RPG, mais sur des savoirs bien réels.") + "</p></div></div>");
+    var bulle = bulleTitre(provisoire ? LIGNES_NOUVEAU : LIGNES_RETOUR, provisoire ? "neutre" : "moqueuse");
+    if (bulle) v.appendChild(bulle);
+    if (!provisoire) {
+      var dus = M.rappelsDus(C, P, maintenant()).length, r = resumer(P);
+      var b = el('<div class="bloc"><span class="eyebrow">' + __("Dernière partie jouée") + '</span><div class="reprise"><div class="av">' + (r.avatar || "") + "</div><div><b>" + esc(P.nom) +
+        '</b><div class="meta">' + __("Niveau ") + r.niveau + " · " + r.credits + __(" crédits") + (C.plateau ? __(" · case ") + r.position : "") + '</div><div class="meta">' +
+        __("Jouée ") + esc(quand(P.maj)) + (dus ? " · " + dus + (dus > 1 ? __(" rappels t'attendent") : __(" rappel t'attend")) : "") +
+        '</div></div></div><button type="button" class="btn large">▶ ' + __("Continuer") + "</button></div>");
+      b.querySelector(".btn").onclick = function () { entrerEnJeu(); };
+      v.appendChild(b);
+    } else {
+      var lg = el('<div class="bloc"><span class="eyebrow">' + __("Langue") + (M.langue() === "fr" ? " · Language" : " · Langue") + '</span><p class="note">' +
+        __("Choisie d'après ton téléphone. Elle se change aussi plus tard, dans les réglages.") + "</p></div>");
+      lg.insertBefore(boutonLangue(), lg.querySelector(".note"));
+      v.appendChild(lg);
+    }
+    var np = el('<button type="button" class="btn large' + (provisoire ? "" : " sec") + '">' + __("Nouvelle partie") + "</button>");
+    np.onclick = function () { assistant = { etape: 1, nom: nomLibre(__("Ma partie")), off: provisoire ? [] : packsDemandes(P).slice(), routine: { active: false, heure: "07:30" } }; allerTitre("nouvelle"); };
+    var ch = el('<button type="button" class="btn sec large">' + __("Charger une partie") + "</button>");
+    ch.onclick = function () { allerTitre("charger"); };
+    v.appendChild(np); v.appendChild(ch);
+    if (provisoire) v.appendChild(el('<p class="note centre">' + __("Pas encore de partie sur cet appareil. « Charger une partie » ouvre aussi un fichier de sauvegarde exporté ailleurs.") + "</p>"));
+    else {
+      var pied = el('<div class="pied"></div>'), rg = el('<button type="button" class="lien">⚙ ' + __("Réglages") + "</button>");
+      pied.appendChild(boutonLangue(true));
+      rg.onclick = function () { ongletPerso = "reglages"; entrerEnJeu("perso"); };
+      pied.appendChild(rg); v.appendChild(pied);
+    }
+    if (echecsPaquets.length) v.appendChild(el('<p class="note">' + __("Packs additionnels ignorés (illisibles ou incompatibles) : ") + esc(echecsPaquets.join(", ")) + ".</p>"));
+    return v;
+  }
+
+  // --- Langues : une liste qu'on filtre en tapant (Victor : il y en aura d'autres) ---
+  var LANGUES_DISPO = null;
+  function nomLangue(code, dans) {
+    try { var n = new Intl.DisplayNames([dans], { type: "language" }).of(code); return n.charAt(0).toLocaleUpperCase(dans) + n.slice(1); }
+    catch (e) { return { fr: "Français", en: "English" }[code] || code; }
+  }
+  function sansAccents(s) { return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+  function ouvrirLangues() {
+    var ouvrir = function () {
+      var tel = (navigator.language || "fr").slice(0, 2).toLowerCase();
+      var l = LANGUES_DISPO.slice().sort(function (a, b) { return (b.code === tel) - (a.code === tel) || nomLangue(a.code, a.code).localeCompare(nomLangue(b.code, b.code)); });
+      feuilleSimple('<h2>' + __("Langue") + '</h2><div class="rech"><span class="loupe" aria-hidden="true">🔍</span><input type="search" class="recherche" placeholder="' + __("Chercher une langue…") +
+        '" aria-label="' + __("Chercher une langue") + '"></div><ul class="liste-l"></ul><p class="note">' + __("Ce qui n'est pas encore traduit reste en français. Ta progression ne change pas.") + "</p>", __("Langue"));
+      var ul = feuille.querySelector(".liste-l"), inp = feuille.querySelector(".recherche");
+      var dessiner = function () {
+        var q = sansAccents(inp.value.trim()); ul.innerHTML = "";
+        l.forEach(function (x) {
+          var natif = nomLangue(x.code, x.code), local = nomLangue(x.code, M.langue());
+          if (q && [natif, local, x.code].every(function (s) { return sansAccents(s).indexOf(q) < 0; })) return;
+          var li = el('<li><button type="button" lang="' + x.code + '" aria-pressed="' + (x.code === M.langue()) + '"><span><b>' + esc(natif) + "</b><small>" + esc(local) + " · " + x.couverture + " %</small></span>" +
+            (x.code === M.langue() ? '<b class="ok" aria-hidden="true">✓</b>' : "") + "</button></li>");
+          li.querySelector("button").onclick = function () { choisirLangueJeu(x.code); };
+          ul.appendChild(li);
+        });
+        if (!ul.children.length) ul.appendChild(el('<li class="note">' + __("Aucune langue ne correspond.") + "</li>"));
+      };
+      inp.oninput = dessiner; dessiner();
+    };
+    if (LANGUES_DISPO) return ouvrir();
+    charger("langues/index.json").then(function (d) { LANGUES_DISPO = d.langues; }, function () { LANGUES_DISPO = [{ code: "fr", couverture: 100 }, { code: "en", couverture: 100 }]; }).then(ouvrir);
+  }
+  // Le jeu redémarre dans la langue choisie, sur le même écran (titre, assistant ou réglages).
+  function choisirLangueJeu(code) {
+    if (code === M.langue()) { fermerFeuille(); return; }
+    try { localStorage.setItem(CLE_LANGUE, code); } catch (e) {}
+    if (!provisoire) { P.options = P.options || {}; P.options.langue = code; sauver(); }
+    redemarrer();
+  }
+  function redemarrer() {
+    ecrireSession(CLE_ASSISTANT, assistant);
+    ecrireSession(CLE_REPRISE, titre ? titre : { jeu: vue, ongletPerso: ongletPerso });
+    location.reload();
+  }
+
+  // --- Nouvelle partie : nom et langue, packs, rappels du matin ---
+  function enteteEtape(n, titreEtape) {
+    var h = el('<div><div class="entete-r"><button type="button" class="retour" aria-label="' + __("Retour") + '">←</button><h1>' + titreEtape + '</h1></div><div class="pas-l"><span class="eyebrow">' +
+      __("Nouvelle partie · étape ") + n + __(" sur 3") + '</span><span class="pts" aria-hidden="true">' + [1, 2, 3].map(function (i) { return '<i class="' + (i <= n ? "on" : "") + '"></i>'; }).join("") + "</span></div></div>");
+    h.querySelector(".retour").onclick = function () { if (n === 1) allerTitre(); else { assistant.etape = n - 1; rendre(); window.scrollTo(0, 0); } };
+    return h;
+  }
+  function etapeSuivante() { assistant.etape++; ecrireSession(CLE_ASSISTANT, assistant); rendre(); window.scrollTo(0, 0); }
+  function vueNouvelle() {
+    var A = assistant, v = el('<div class="vue lance"></div>');
+    if (A.etape === 1) {
+      v.appendChild(enteteEtape(1, __("Nouvelle partie")));
+      var b = el('<div class="bloc"><label class="champ">' + __("Nom de la partie") + '<input type="text" maxlength="40" autocomplete="off"></label><p class="note">' +
+        __("C'est le nom qui apparaît dans « Charger une partie ». Il se change dans les réglages.") + "</p></div>");
+      var inp = b.querySelector("input"); inp.value = A.nom; inp.oninput = function () { A.nom = inp.value; };
+      v.appendChild(b);
+      var lg = el('<div class="bloc"><h2>' + __("Langue") + '</h2><p class="note">' + __("Changer de langue recharge l'écran, déjà traduit.") + "</p></div>");
+      lg.insertBefore(boutonLangue(), lg.querySelector(".note"));
+      v.appendChild(lg);
+      var s1 = el('<button type="button" class="btn large">' + __("Suivant : les domaines →") + "</button>");
+      s1.onclick = function () { A.nom = A.nom.trim() || nomLibre(__("Ma partie")); etapeSuivante(); };
+      v.appendChild(s1);
+    } else if (A.etape === 2) {
+      v.appendChild(enteteEtape(2, __("Tes domaines")));
+      v.appendChild(el('<p class="note">' + __("Le jeu est fait de packs : un par domaine de savoir, un par jeu du plateau. Tous sont allumés ; éteins ceux qui ne te tentent pas. Rien n'est perdu : ils se rallument dans les réglages.") + "</p>"));
+      var liste = el('<div class="bloc"></div>');
+      listePacks(liste, A.off, function (off) { A.off = off; ecrireSession(CLE_ASSISTANT, A); });
+      v.appendChild(liste);
+      var aj = el('<button type="button" class="btn sec large">＋ ' + __("Charger un pack") + "</button>");
+      aj.onclick = ouvrirChargerPack;
+      v.appendChild(aj);
+      var bas = el('<div class="bas"><button type="button" class="btn sec">← ' + __("Retour") + '</button><button type="button" class="btn">' + __("Suivant →") + "</button></div>");
+      bas.children[0].onclick = function () { A.etape = 1; rendre(); window.scrollTo(0, 0); };
+      bas.children[1].onclick = etapeSuivante;
+      v.appendChild(bas);
+    } else {
+      v.appendChild(enteteEtape(3, __("Prêt ?")));
+      if (NATIF) {
+        var ro = el('<div class="bloc"><label class="interrupteur"><span><b>' + __("Rappels du matin") + '</b><br><span class="note">' +
+          __("Une notification avec les rappels du jour et une idée de domaine à faire grandir.") + '</span></span><input type="checkbox"></label><label class="heure">' +
+          __("Chaque jour à") + ' <input type="time"></label></div>');
+        var cb = ro.querySelector('input[type="checkbox"]'), hr = ro.querySelector('input[type="time"]');
+        cb.checked = A.routine.active; hr.value = A.routine.heure;
+        cb.onchange = function () { A.routine.active = cb.checked; ecrireSession(CLE_ASSISTANT, A); rendre(); };
+        hr.onchange = function () { if (hr.value) A.routine.heure = hr.value; ecrireSession(CLE_ASSISTANT, A); rendre(); };
+        v.appendChild(ro);
+      }
+      var off = M.packsEteints(INDEX, A.off), tous = INDEX.packs.filter(function (m) { return m.sorte !== "socle"; });
+      var allumes = tous.filter(function (m) { return !off[m.id]; }).length;
+      var rc = el('<div class="bloc"><h2>' + __("Récapitulatif") + '</h2><ul class="recap"><li>' + __("Partie") + "<span>" + esc(A.nom) + "</span></li><li>" + __("Langue") + "<span>" +
+        esc(nomLangue(M.langue(), M.langue())) + "</span></li><li>" + __("Domaines") + "<span>" + allumes + __(" packs sur ") + tous.length + "</span></li>" +
+        (NATIF ? "<li>" + __("Rappels du matin") + "<span>" + (A.routine.active ? A.routine.heure.replace(":", " h ") : __("non")) + "</span></li>" : "") + "</ul></div>");
+      v.appendChild(rc);
+      var bulle = bulleTitre(LIGNES_PRET, "impatiente"); if (bulle) v.appendChild(bulle);
+      var go = el('<button type="button" class="btn large">' + __("Commencer la partie") + "</button>");
+      go.onclick = commencerPartie;
+      v.appendChild(go);
+    }
+    return v;
+  }
+  function commencerPartie() {
+    var A = assistant;
+    if (!provisoire && !archiver(P)) { toast(__("La mémoire de l'appareil est pleine : exporte puis supprime une partie dans « Charger une partie ».")); return; }
+    var p = M.nouvellePartie(Date.now());
+    p.id = nouvelId(); p.nom = A.nom.trim() || nomLibre(__("Ma partie"));
+    p.options = { langue: M.langue(), packsOff: A.off.slice() };
+    if (NATIF) p.options.routine = { active: false, heure: A.routine.heure };
+    P = p; provisoire = false;
+    construireContenu(A.off); M.accorderPartie(C, P); sauver();
+    var routineVoulue = NATIF && A.routine.active, heure = A.routine.heure;
+    entrerEnJeu();
+    toast(__("Nouvelle partie : ") + P.nom);
+    if (routineVoulue) activerRoutine(heure);
+  }
+
+  // Les packs et leurs interrupteurs (assistant et réglages). `off` : les packs demandés éteints ; `changer(off)` à chaque clic.
+  function listePacks(b, off, changer) {
+    var eteints = M.packsEteints(INDEX, off);
+    INDEX.packs.forEach(function (m) {
+      if (m.sorte === "socle") return;
+      var requis = (m.requiert || []).filter(function (r) { return r !== "socle"; }).map(function (r) {
+        var x = INDEX.packs.filter(function (y) { return y.id === r; })[0]; return x ? tx(x.nom) : r;
+      });
+      var par = eteints[m.id] && off.indexOf(m.id) < 0;
+      var l = el('<label class="interrupteur" style="margin-top:10px"><span><b>' + esc(tx(m.nom)) + "</b> " + (m.ajoute ? '<span class="badge-ext">' + __("ajouté") + "</span> " : "") +
+        '<span class="note">' + (m.sorte === "jeu" ? __("jeu") : __("domaine")) + " · " + esc(m.version) + "</span><br>" +
+        '<span class="note">' + esc(tx(m.description)) + (requis.length ? __(" Demande : ") + esc(requis.join(", ")) + "." : "") + (par ? __(" <b>Éteint avec un pack dont il dépend.</b>") : "") +
+        '</span></span><input type="checkbox"></label>');
+      var cb = l.querySelector("input"); cb.checked = !eteints[m.id]; cb.disabled = par;
+      cb.onchange = function () {
+        var o = off.filter(function (x) { return x !== m.id; });
+        if (!cb.checked) o.push(m.id);
+        changer(o);
+      };
+      b.appendChild(l);
+      if (m.ajoute && !titre) {
+        var rt = el('<button type="button" class="lien petit">' + __("Retirer ce pack") + "</button>");
+        rt.onclick = function () {
+          rt.outerHTML = "";
+          var z = el('<div class="rangee"><button type="button" class="btn danger">' + __("Oui, le retirer") + '</button><button type="button" class="btn sec">' + __("Annuler") + "</button></div>");
+          z.children[0].onclick = function () { ecrireJSON(CLE_PAQUETS, lirePaquets().filter(function (q) { return q.manifeste.id !== m.id; })); redemarrer(); };
+          z.children[1].onclick = function () { rendre(); };
+          l.after(z);
+        };
+        l.after(rt);
+      }
+    });
+  }
+
+  // --- Charger une partie ---
+  function vueCharger() {
+    var v = el('<div class="vue lance"><div class="entete-r"><button type="button" class="retour" aria-label="' + __("Retour") + '">←</button><h1>' + __("Charger une partie") + "</h1></div></div>");
+    v.querySelector(".retour").onclick = function () { allerTitre(); };
+    var l = listeParties();
+    if (!titre.sel || !l.some(function (x) { return x.id === titre.sel; })) titre.sel = l.length ? l[0].id : null;
+    v.appendChild(el('<p class="note">' + (l.length ? __("Les parties enregistrées sur cet appareil, la plus récente en premier.") : __("Aucune partie enregistrée sur cet appareil.")) + "</p>"));
+    l.forEach(function (x) {
+      var r = x.resume || {};
+      var row = el('<div class="save' + (x.id === titre.sel ? " sel" : "") + '" role="button" tabindex="0" aria-pressed="' + (x.id === titre.sel) + '"><div class="av">' + (r.avatar || "") + "</div><div><b>" + esc(x.nom) +
+        '</b><div class="meta">' + metaPartie(r, x) + "</div>" + (x.active ? '<span class="chip ac">' + __("Dernière jouée") + "</span>" : "") +
+        '</div><button type="button" class="plus" aria-label="' + __("Options de la partie") + '">⋯</button></div>');
+      row.onclick = function (ev) { if (ev.target.closest(".plus")) return; titre.sel = x.id; rendre(); };
+      row.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); row.onclick(ev); } };
+      row.querySelector(".plus").onclick = function () { optionsPartie(x); };
+      v.appendChild(row);
+    });
+    var choisie = l.filter(function (x) { return x.id === titre.sel; })[0];
+    if (choisie) {
+      var go = el('<button type="button" class="btn large">' + (choisie.active ? __("Continuer « ") : __("Charger « ")) + esc(choisie.nom) + gf() + "</button>");
+      go.onclick = function () { chargerPartie(choisie.id); };
+      v.appendChild(go);
+    }
+    var imp = el('<label class="btn sec large" style="text-align:center">' + __("Importer un fichier de sauvegarde") + '<input type="file" accept=".json,application/json" hidden></label>');
+    imp.querySelector("input").onchange = function (ev) { lireFichier(ev, importer); };
+    v.appendChild(imp);
+    return v;
+  }
+  function lireFichier(ev, suite) {
+    var f = ev.target.files && ev.target.files[0]; if (!f) return;
+    var r = new FileReader(); r.onload = function () { suite(String(r.result)); }; r.readAsText(f);
+  }
+  function chargerPartie(id) {
+    if (!provisoire && id === P.id) return entrerEnJeu();
+    var p = lireJSON(CLE_ARCHIVE + id, null);
+    if (!p) { toast(__("Cette partie est illisible.")); return; }
+    if (!provisoire && !archiver(P)) { toast(__("La mémoire de l'appareil est pleine : exporte puis supprime une partie.")); return; }
+    construireContenu(packsDemandes(p));
+    p = identifier(M.migrer(p, C) || p);
+    p.options = p.options || {}; p.options.langue = M.langue();
+    oublier(id);
+    P = p; provisoire = false; M.accorderPartie(C, P); sauver();
+    entrerEnJeu();
+    toast(__("Partie chargée : ") + P.nom);
+  }
+  function optionsPartie(x) {
+    feuilleSimple('<h2>' + esc(x.nom) + '</h2><label class="champ">' + __("Nom de la partie") + '<input type="text" maxlength="40"></label>' +
+      '<button type="button" class="btn" data-a="renommer">' + __("Renommer") + '</button><button type="button" class="btn sec" data-a="exporter">' + __("Exporter en fichier") + "</button>" +
+      (x.active ? '<p class="note">' + __("C'est la partie en cours : charge une autre partie avant de la supprimer.") + "</p>" : '<div class="rangee" id="suppr"><button type="button" class="btn sec" data-a="supprimer">' + __("Supprimer") + "</button></div>"), x.nom, {
+      renommer: function () {
+        var n = feuille.querySelector("input").value.trim(); if (!n) return;
+        if (x.active) { P.nom = n; sauver(); }
+        else { var ix = indexParties(); if (ix.parties[x.id]) { ix.parties[x.id].nom = n; ecrireJSON(CLE_PARTIES, ix); } var p = lireJSON(CLE_ARCHIVE + x.id, null); if (p) { p.nom = n; ecrireJSON(CLE_ARCHIVE + x.id, p); } }
+        fermerFeuille(); rendre(); toast(__("Partie renommée : ") + n);
+      },
+      exporter: function () { exporter(x.active ? P : lireJSON(CLE_ARCHIVE + x.id, null)); },
+      supprimer: function () {
+        var z = feuille.querySelector("#suppr");
+        z.innerHTML = '<button type="button" class="btn danger" data-a="effacer">' + __("Oui, supprimer « ") + esc(x.nom) + gf() + '</button><button type="button" class="btn sec" data-a="fermer">' + __("Annuler") + "</button>";
+      },
+      effacer: function () { oublier(x.id); fermerFeuille(); rendre(); toast(__("Partie supprimée : ") + x.nom); },
+    });
+    feuille.querySelector("input").value = x.nom;
+  }
+
+  // --- Packs additionnels ---
+  function lirePaquets() { var l = lireJSON(CLE_PAQUETS, []); return Array.isArray(l) ? l : []; }
+  var AVERTISSEMENT_PACKS = __("Les packs additionnels ne viennent pas de l'équipe du jeu. Nous ne garantissons ni leur contenu ni leur sécurité : n'installe que ceux d'une source en qui tu as confiance.");
+  function ouvrirChargerPack() {
+    feuilleSimple('<h2>' + __("Charger un pack") + '</h2><p class="avertissement">⚠ ' + AVERTISSEMENT_PACKS + '</p><p class="note">' +
+      __("Un pack ajoute un domaine de savoir : ses arbres, ses questions, ses succès, ses savants et les répliques de l'IA qui vont avec. Seuls les packs de domaine (des données) se chargent ainsi ; un pack de jeu contient du code et n'entre dans le jeu que par une mise à jour.") + "</p>" +
+      '<label class="opt"><span class="ic" aria-hidden="true">📁</span><span>' + __("Depuis un fichier") + "<small>" + __("Un fichier .pack.json reçu ou téléchargé") + '</small></span><input type="file" accept=".json,application/json" hidden></label>' +
+      '<div class="opt"><span class="ic" aria-hidden="true">🔗</span><span>' + __("Depuis un lien") + "<small>" + __("L'adresse d'un pack publié en ligne") + '</small><input type="url" class="url" placeholder="https://…" aria-label="' + __("Adresse du pack") + '"></span></div>' +
+      '<button type="button" class="btn sec" data-a="lien">' + __("Charger depuis ce lien") + "</button>", __("Charger un pack"), {
+      lien: function () {
+        var u = feuille.querySelector(".url").value.trim();
+        if (!/^https:\/\//.test(u)) { toast(__("Il faut une adresse en https://")); return; }
+        fetch(u).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(apercuPack, function () { toast(__("Lien injoignable : télécharge le fichier, puis charge-le depuis l'appareil.")); });
+      },
+    });
+    feuille.querySelector('input[type="file"]').onchange = function (ev) { lireFichier(ev, apercuPack); };
+  }
+  var ERREURS_PAQUET = {
+    format: __("Ce fichier n'est pas un pack de l'Arbre des savoirs."),
+    sorte: __("C'est un pack de jeu : il contient du code et n'entre dans le jeu que par une mise à jour."),
+    manifeste: __("Son manifeste est incomplet (identifiant, nom ou version)."),
+    officiel: __("Un pack officiel porte déjà cet identifiant."),
+    requiert: __("Il demande des packs absents : "),
+    doublon: __("Des identifiants existent déjà dans le jeu : "),
+    emplacement: __("Il écrit hors des emplacements permis aux packs de domaine : "),
+  };
+  var COMPTES_PAQUET = [["regles.json/stats", __("arbre"), __("arbres")], ["skills.json/competences", __("compétence"), __("compétences")], ["questions.json/questions", __("question"), __("questions")],
+    ["succes.json/succes", __("succès"), __("succès")], ["avatar.json/savants", __("savant"), __("savants")], ["bibliotheque.json/livres", __("livre"), __("livres")],
+    ["objets.json/objets", __("objet"), __("objets")], ["frise.json/evenements", __("date de la frise"), __("dates de la frise")]];
+  function apercuPack(texte) {
+    var q = null; try { q = JSON.parse(texte); } catch (e) {}
+    var v = M.verifierPaquet(BRUT, INDEX, q), m = (q && q.manifeste) || {};
+    var erreurs = v.erreurs.map(function (e) { var p = e.split(":"); return (ERREURS_PAQUET[p[0]] || e) + (p.length > 1 ? esc(p.slice(-1)[0].split(",").join(", ")) + "." : ""); });
+    var contenu = COMPTES_PAQUET.filter(function (c) { return v.compte[c[0]]; }).map(function (c) { return v.compte[c[0]] + " " + (v.compte[c[0]] > 1 ? c[2] : c[1]); }).join(", ");
+    var src = q && q.sources, langs = [m.langue_source || "fr"].concat(Object.keys((q && q.langues) || {})).map(function (c) { return nomLangue(c, M.langue()); }).join(", ");
+    var requis = (m.requiert || []).filter(function (r) { return r !== "socle"; }).map(function (r) { var x = INDEX.packs.filter(function (y) { return y.id === r; })[0]; return x ? tx(x.nom) : r; });
+    var ctl = function (ok, t) { return "<li><b class=\"" + (ok ? "ok" : "at") + '" aria-hidden="true">' + (ok ? "✓" : "!") + "</b><span>" + t + "</span></li>"; };
+    var html = v.erreurs[0] === "format" ? '<h2>' + __("Pack illisible") + '</h2><p>' + erreurs[0] + "</p>" :
+      '<div class="eyebrow">' + __("Pack de domaine · version ") + esc(m.version) + ' <span class="badge-ext">' + __("non officiel") + "</span></div><h2>" + esc(tx(m.nom)) + "</h2><p>" + esc(tx(m.description)) + "</p>" +
+      '<dl class="fiche-pack"><dt>' + __("Auteurs") + "</dt><dd>" + esc((m.auteurs || []).join(", ") || "?") + "</dd><dt>" + __("Licence") + "</dt><dd>" + esc(m.licence || "?") + "</dd><dt>" +
+      __("Langues") + "</dt><dd>" + esc(langs) + "</dd><dt>" + __("Contenu") + "</dt><dd>" + esc(contenu || "?") + "</dd>" + (requis.length ? "<dt>" + __("Demande") + "</dt><dd>" + esc(requis.join(", ")) + "</dd>" : "") + "</dl>" +
+      '<h2>' + __("Contrôles") + '</h2><ul class="controles">' + (erreurs.length ? erreurs.map(function (e) { return ctl(false, e); }).join("") : ctl(true, __("Format conforme, aucun identifiant en conflit"))) +
+      (src ? ctl(src.verifiees === src.total, src.verifiees + __(" sources sur ") + src.total + __(" inscrites comme vérifiées par l'auteur")) : ctl(false, __("Aucune information sur ses sources"))) +
+      ctl(false, __("Pas relu par l'équipe du jeu : ses faits engagent son auteur")) + "</ul>" +
+      '<p class="avertissement">⚠ ' + AVERTISSEMENT_PACKS + "</p>" +
+      (v.maj ? '<p class="note">' + __("Déjà ajouté en version ") + esc(v.maj) + __(" : il sera remplacé.") + "</p>" : "") +
+      '<button type="button" class="btn large" data-a="installer"' + (erreurs.length ? " disabled" : "") + ">" + (v.maj ? __("Mettre à jour le pack") : __("Installer et allumer")) + "</button>";
+    feuilleSimple(html, __("Charger un pack"), {
+      installer: function () {
+        var l = lirePaquets().filter(function (x) { return x.manifeste.id !== m.id; }).concat([q]);
+        if (!ecrireJSON(CLE_PAQUETS, l)) { toast(__("La mémoire de l'appareil est pleine : le pack n'a pas pu être installé.")); return; }
+        // Le pack s'allume dans l'assistant comme dans la partie en cours.
+        if (assistant) assistant.off = assistant.off.filter(function (x) { return x !== m.id; });
+        if (!provisoire && P.options && P.options.packsOff) { P.options.packsOff = P.options.packsOff.filter(function (x) { return x !== m.id; }); sauver(); }
+        redemarrer();
+      },
+    });
+    var bulle = !erreurs.length && v.erreurs[0] !== "format" && bulleTitre(LIGNES_PACK, "moqueuse");
+    if (bulle) feuille.querySelector(".avertissement").after(bulle);
+  }
+  // Au chargement : les packs additionnels se posent dans les données, avec leurs traductions.
+  function poserPaquets() {
+    lirePaquets().forEach(function (q) {
+      try {
+        M.ajouterTextes((q.langues || {})[M.langue()]);
+        M.traduireChaines(q.fragments);
+        var v = M.verifierPaquet(BRUT, INDEX, q);
+        if (v.erreurs.length) throw new Error(v.erreurs.join(" "));
+        M.ajouterPaquet(BRUT, INDEX, q);
+      } catch (e) { echecsPaquets.push(q && q.manifeste ? tx(q.manifeste.nom) : "?"); }
+    });
   }
 
   // --- Packs (v35) -----------------------------------------------------------
@@ -5455,19 +5949,29 @@ function demarrerJeu() {
     BRUT = {}; FICHIERS.forEach(function (f, i) { BRUT[f] = M.traduireChaines(d[i]); });
     INDEX = BRUT["packs.json"];
     // v35 : les packs éteints dans les réglages sont retirés avant d'indexer ; on les lit dans la partie enregistrée.
+    poserPaquets();
     var avant = null; try { avant = JSON.parse(localStorage.getItem(CLE_LOCALE)); } catch (e) {}
     construireContenu(packsDemandes(avant));
-    P = lireLocal() || M.nouvellePartie(Date.now());
+    P = identifier(lireLocal());
+    provisoire = !P;
+    if (provisoire) P = M.nouvellePartie(Date.now());
     M.accorderPartie(C, P);
-    visite();
-    try { localStorage.setItem(CLE_LOCALE, JSON.stringify(P)); } catch (e) {}
-    rendre();
+    // v53 : l'écran titre à chaque lancement, sauf au retour d'un redémarrage voulu (langue, pack ajouté) en cours de jeu.
+    var reprise = lireSession(CLE_REPRISE); ecrireSession(CLE_REPRISE, null);
+    assistant = lireSession(CLE_ASSISTANT);
+    if (reprise && reprise.jeu && !provisoire) { titre = null; ongletPerso = reprise.ongletPerso || ongletPerso; entrerEnJeu(reprise.jeu); }
+    else {
+      titre = reprise && reprise.ecran ? reprise : { ecran: "titre" };
+      if (titre.ecran === "nouvelle" && !assistant) titre = { ecran: "titre" };
+      if (!provisoire) try { localStorage.setItem(CLE_LOCALE, JSON.stringify(P)); } catch (e) {}
+      rendre();
+    }
     if (NATIF) {
       var LN = plugin("LocalNotifications");
-      if (LN) LN.addListener("localNotificationActionPerformed", function () { fermerFeuille(); vue = "aujourdhui"; rendre(); window.scrollTo(0, 0); });
+      if (LN) LN.addListener("localNotificationActionPerformed", function () { fermerFeuille(); if (titre && !provisoire) return entrerEnJeu(); if (titre) return; vue = "aujourdhui"; rendre(); window.scrollTo(0, 0); });
       planifierRoutine();
       // Au retour dans l'app, la date a pu changer : on recalcule l'écran et les notifications.
-      document.addEventListener("visibilitychange", function () { if (!document.hidden && !quiz) { visite(); rendre(); planifierRoutine(); } });
+      document.addEventListener("visibilitychange", function () { if (!document.hidden && !quiz && !titre) { visite(); rendre(); planifierRoutine(); } });
     } else brancherCompte();
   }).catch(function (e) {
     if (window.console) console.error(e);

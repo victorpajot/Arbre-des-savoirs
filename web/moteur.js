@@ -186,6 +186,79 @@
     return d;
   }
 
+  // --- Packs additionnels (v53) ------------------------------------------------
+  // Un pack de domaine chargé par le joueur : un fichier « paquet » (outils/packs.py paquet), dont les fragments se
+  // posent dans les données chargées comme le ferait l'assemblage. Nous ne garantissons ni leur contenu ni leur sécurité :
+  // seuls les packs de domaine (des données, jamais de code) se chargent ainsi.
+  var FORMAT_PAQUET = "arbre-des-savoirs/pack";
+  // Où un pack de domaine a le droit d'écrire : les emplacements d'outils/packs.py (EMPLACEMENTS).
+  var EMPLACEMENTS_PAQUET = ["regles.json/stats", "skills.json/competences", "skills.json/figures", "questions.json/questions", "succes.json/succes",
+    "succes.json/dessins", "objets.json/objets", "avatar.json/savants", "avatar.json/accessoires", "avatar.json/tenues_farce", "ia.json/masques",
+    "bibliotheque.json/livres", "frise.json/evenements", "commentaires.json/commentaires", "commentaires.json/apartes", "ia.json/credits/piques",
+    "plateau.json/competences_cases", "ennemis.json/mythes", "ia.json/credits/boutique/articles"];
+  function ajouterTextes(dico) { Object.keys(dico || {}).forEach(function (k) { if (DICO[k] == null) DICO[k] = dico[k]; }); }
+  function cleElement(x) { return x && typeof x === "object" && (x.id !== undefined ? String(x.id) : x.n !== undefined ? String(x.n) : x.z !== undefined ? String(x.z) : null); }
+  function lieu(donnees, fichier, chemin, creer) {
+    var o = donnees[fichier];
+    if (!o) return null;
+    for (var i = 0; i < chemin.length - 1; i++) { if (!o[chemin[i]]) { if (!creer) return null; o[chemin[i]] = {}; } o = o[chemin[i]]; }
+    return o;
+  }
+  // Ce que le joueur doit savoir avant d'installer : { erreurs, compte, maj }. Une erreur empêche l'installation.
+  function verifierPaquet(donnees, index, paquet) {
+    var erreurs = [], compte = {}, m = paquet && paquet.manifeste;
+    if (!paquet || paquet.format !== FORMAT_PAQUET || !m || !Array.isArray(paquet.fragments)) return { erreurs: ["format"], compte: compte };
+    if (m.sorte !== "domaine") erreurs.push("sorte");
+    if (!/^[a-z][a-z0-9-]*$/.test(String(m.id || "")) || !m.nom || !m.version) erreurs.push("manifeste");
+    var existant = ((index && index.packs) || []).filter(function (x) { return x.id === m.id; })[0];
+    if (existant && !existant.ajoute) erreurs.push("officiel");
+    var manque = (m.requiert || []).filter(function (r) { return !((index && index.packs) || []).some(function (x) { return x.id === r; }); });
+    if (manque.length) erreurs.push("requiert:" + manque.join(","));
+    var proprios = (index && index.proprietaires) || {};
+    paquet.fragments.forEach(function (f) {
+      var ou = f.fichier + "/" + (f.chemin || []).join("/");
+      if (EMPLACEMENTS_PAQUET.indexOf(ou) < 0) { erreurs.push("emplacement:" + ou); return; }
+      var n = Array.isArray(f.elements) ? f.elements.length : Object.keys(f.elements || {}).length;
+      compte[ou] = (compte[ou] || 0) + n;
+      var parent = lieu(donnees, f.fichier, f.chemin, false), cible = parent && parent[f.chemin[f.chemin.length - 1]];
+      if (!Array.isArray(f.elements) || !Array.isArray(cible)) return;
+      var vus = {};
+      cible.forEach(function (x) { var c = cleElement(x); if (c != null && (proprios[ou] || {})[c] !== m.id) vus[c] = true; });
+      var doubles = f.elements.map(cleElement).filter(function (c) { return c != null && vus[c]; });
+      if (doubles.length) erreurs.push("doublon:" + ou + ":" + doubles.slice(0, 3).join(","));
+    });
+    return { erreurs: erreurs, compte: compte, maj: existant ? existant.version : null };
+  }
+  // Pose le paquet dans les données (modifiées sur place) et l'inscrit dans l'index, comme un pack assemblé.
+  function ajouterPaquet(donnees, index, paquet) {
+    var m = paquet.manifeste, proprios = index.proprietaires || (index.proprietaires = {});
+    function fusion(cible, v, ou) {
+      if (Array.isArray(v)) {
+        var p = proprios[ou] || (proprios[ou] = {});
+        v.forEach(function (x) { var c = cleElement(x); if (c != null) p[c] = m.id; });
+        Array.prototype.push.apply(cible, JSON.parse(JSON.stringify(v)));
+        return;
+      }
+      Object.keys(v).forEach(function (k) {
+        if (cible[k] === undefined) cible[k] = JSON.parse(JSON.stringify(v[k]));
+        else if (Array.isArray(cible[k]) && Array.isArray(v[k])) Array.prototype.push.apply(cible[k], v[k]);
+        else if (cible[k] && typeof cible[k] === "object" && v[k] && typeof v[k] === "object") fusion(cible[k], v[k], ou + "/" + k);
+      });
+    }
+    paquet.fragments.forEach(function (f) {
+      var parent = lieu(donnees, f.fichier, f.chemin, true); if (!parent) return;
+      var k = f.chemin[f.chemin.length - 1];
+      if (parent[k] === undefined) parent[k] = Array.isArray(f.elements) ? [] : {};
+      fusion(parent[k], f.elements, f.fichier + "/" + f.chemin.join("/"));
+    });
+    var R = donnees["regles.json"];
+    if (R) R.arbres_fondamentaux = (R.arbres_fondamentaux || []).concat(paquet.fondamentaux || []);
+    var B = donnees["bibliotheque.json"];
+    if (B && B.livres) B.livres.sort(function (a, b) { return a.annee - b.annee; });
+    index.packs.push(Object.assign({}, m, { ajoute: true, sources: paquet.sources || null }));
+    return donnees;
+  }
+
   // Ce qu'une partie a en cours dans un jeu éteint (duel, atomes en attente) dort dans partie.veille et revient au
   // réveil du pack : un pack désactivé ne bloque pas le plateau et ne perd rien.
   function accorderPartie(contenu, partie) {
@@ -3028,7 +3101,7 @@
     choisirLangue: choisirLangue, langue: langue, TX: TX, __: __, ordinalSiecle: ordinalSiecle, traduireChaines: traduireChaines,
     FORMAT_PARTIE: FORMAT_PARTIE,
     indexerContenu: indexerContenu,
-    packsEteints: packsEteints, filtrerPacks: filtrerPacks, packDe: packDe, accorderPartie: accorderPartie,
+    packsEteints: packsEteints, filtrerPacks: filtrerPacks, verifierPaquet: verifierPaquet, ajouterPaquet: ajouterPaquet, ajouterTextes: ajouterTextes, packDe: packDe, accorderPartie: accorderPartie,
     maintenant: maintenant,
     debutJour: debutJour,
     ajouterJours: ajouterJours,

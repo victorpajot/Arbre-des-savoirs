@@ -229,6 +229,16 @@ python3 outils/packs.py assembler                          # data/langues/en.jso
 - Créer un **nouvel effet** en boutique : un article (`boutique.json`) reprend un rayon et un effet existants.
 - Apporter du **code** : un pack de jeu (`sorte: jeu`) fournit des données, mais son jeu doit être programmé dans `web/moteur.js` et `web/index.html`.
 
+## 9 bis. Distribuer un pack hors du dépôt (pack additionnel)
+
+Un pack de **domaine** peut aussi se charger directement dans le jeu, sans passer par le dépôt : écran titre › Nouvelle partie › « Charger un pack », ou Personnage › Réglages › Packs.
+
+1. `python3 outils/packs.py verifier <id>` puis `python3 outils/verifier_sources.py` : tout doit passer, comme pour le dépôt.
+2. `python3 outils/packs.py paquet <id> [fichier]` écrit `<id>.pack.json` : le manifeste, les fragments posés à leur place (lots compris), les traductions et le compte des sources vérifiées.
+3. Le joueur charge ce fichier (ou son adresse https). Le jeu refuse un pack de jeu (il porte du code), un identifiant qui existe déjà, un pack demandé absent ou un emplacement hors de ceux d'un domaine (`EMPLACEMENTS` d'`outils/packs.py`).
+
+Le jeu affiche toujours l'avertissement : l'équipe du jeu ne garantit ni le contenu ni la sécurité des packs additionnels. Ils sont marqués « non officiel » et se retirent depuis les réglages ; la progression qu'ils ont donnée reste dans la partie.
+
 ## 10. Licence
 
 En proposant un pack au dépôt, on accepte `CONTRIBUTING.md` (accord CLA). Le contenu des packs est sous CC BY-NC-SA 4.0 (`NOTICE.md`). Un pack qui reprend un texte d'un tiers (citation, extrait) le cite et n'en prend que le nécessaire.
