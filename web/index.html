@@ -682,6 +682,14 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .guide-z h2 { margin: 0; }
 .guide-z .meta { overflow-wrap: anywhere; }
 .guide-z p { margin: 0; font-size: 17px; line-height: 1.55; }
+.masterclass .mc-q { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; }
+.masterclass .enonce-mc { font-weight: 700; font-size: 17px; }
+.masterclass .mc-faux { color: var(--bad); margin: 4px 0; }
+.masterclass .mc-retenir { border-left: 4px solid #E0A800; padding: 6px 10px; background: color-mix(in srgb, #E0A800 12%, var(--surface)); border-radius: 6px; }
+.masterclass .mc-retenir b { display: block; }
+.masterclass .mc-bon { color: var(--good); font-weight: 700; margin: 4px 0; }
+.btn.sc-mc { background: #E0A800; color: #1F1600; }
+.btn.mc-mur { width: 100%; margin: 6px 0 4px; }
 .nav-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .compte-z { display: flex; flex-wrap: wrap; gap: 6px; }
 .compte-z span { padding: 4px 8px; border-radius: 8px; background: var(--surface-2); font-size: 15px; }
@@ -2782,12 +2790,14 @@ function demarrerJeu() {
     var f = el('<div class="voile"><div class="feuille" role="dialog" aria-modal="true" aria-label="' + esc(tx(k.nom)) + '" style="--c:' + couleur(k.stat) + '">' +
       '<div class="eyebrow" style="color:' + couleur(k.stat) + '">' + esc(tx(s.nom)) + " · " + esc(tx(s.branche)) + "</div><h2>" + esc(tx(k.nom)) + "</h2><p>" + esc(tx(k.description)) + "</p>" +
       lignes.map(function (l) { return '<p class="meta">' + esc(l) + "</p>"; }).join("") +
-      (k.fiche && st.etat !== "fermee" && st.etat !== "verrouillee" ? __('<details class="fiche-d"><summary>Fiche de révision</summary>') + htmlFiche(k) + "</details>" : "") + bouton +
+      (k.fiche && st.etat !== "fermee" && st.etat !== "verrouillee" ? __('<details class="fiche-d"><summary>Fiche de révision</summary>') + htmlFiche(k) + "</details>" : "") +
+      (aMasterclass(k) && st.etat !== "fermee" && st.etat !== "verrouillee" ? '<button type="button" class="btn large sc-mc" data-a="masterclass">' + __("Masterclass : ") + esc(tx(k.nom)) + "</button>" : "") + bouton +
       __('<button type="button" class="btn sec large" data-a="fermer">Fermer</button></div></div>'));
     f.onclick = function (ev) {
       var a = ev.target.getAttribute && ev.target.getAttribute("data-a");
       if (ev.target === f || a === "fermer") fermerFeuille();
       if (a === "quiz" || a === "rappel") { fermerFeuille(); lancerQuiz(id, a); }
+      if (a === "masterclass") { fermerFeuille(); ouvrirMasterclass(id); }
     };
     feuille = f; document.getElementById("couche").appendChild(f);
     f.querySelector("button").focus();
@@ -4005,6 +4015,45 @@ function demarrerJeu() {
     }
     montrer();
   }
+  // v35 (Victor : « une masterclass sur cette compétence directement à la sortie d'un échec ») : une leçon écrite,
+  // chapitre par chapitre (competences[].masterclass, sourcée et vérifiée), puis les erreurs de l'épreuve corrigées.
+  // `rates` : [{id, rep}] des réponses fausses (facultatif). Sans leçon écrite, pas de masterclass.
+  function aMasterclass(k) { return !!(k && k.masterclass && k.masterclass.chapitres && k.masterclass.chapitres.length); }
+  function ouvrirMasterclass(id, rates) {
+    var k = C.parId[id]; if (!aMasterclass(k)) return;
+    rates = (rates || []).filter(function (x) { return C.questionParId[x.id]; });
+    function blocQ(q, rep) {
+      var dit = rep !== undefined ? texteReponse(q, rep) : null;
+      return '<div class="mc-q"><p class="enonce-mc">' + esc(tx(q.enonce)) + "</p>" + (dit ? __('<p class="mc-faux">Tu as répondu : ') + esc(dit) + "</p>" : "") +
+        __('<p class="mc-bon">Bonne réponse : ') + esc(bonneReponse(q)) + "</p>" + (q.explication ? "<p>" + esc(tx(q.explication)) + "</p>" : "") +
+        (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + (q.figure ? htmlFigure(q.figure) : "") + "</div>";
+    }
+    var etapes = k.masterclass.chapitres.map(function (ch, i) {
+      return { titre: tx(ch.titre), html: ch.texte.map(function (x) { return "<p>" + esc(tx(x)) + "</p>"; }).join("") +
+        (ch.figure ? htmlFigure(ch.figure, true) : i === 0 && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
+        __('<p class="mc-retenir"><b>À retenir</b>') + esc(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
+    });
+    if (rates.length) etapes.push({ titre: rates.length > 1 ? __("Tes erreurs, corrigées") : __("Ton erreur, corrigée"), html: rates.map(function (x) { return blocQ(C.questionParId[x.id], x.rep); }).join("") +
+      __('<p class="meta">Elles t\'attendent au mur de la honte : retente-les dès demain.</p>') });
+    var n = 0, titre = __("Masterclass : ") + tx(k.nom);
+    feuilleSimple('<div class="guide-z masterclass"></div>', titre, {
+      prec: function () { if (n > 0) { n--; montrer(); } }, suiv: function () { if (n < etapes.length - 1) { n++; montrer(); } }
+    });
+    function montrer() {
+      var z = feuille.querySelector(".masterclass"), x = etapes[n];
+      z.innerHTML = '<div class="eyebrow">' + esc(titre) + __(" · étape ") + (n + 1) + __(" sur ") + etapes.length + "</div><h2>" + esc(x.titre) + "</h2>" + x.html +
+        '<div class="nav-guide"><button type="button" class="btn sec" data-a="prec"' + (n ? "" : " disabled") + __('>← Précédent</button><button type="button" class="btn" data-a="suiv"') + (n < etapes.length - 1 ? "" : " disabled") + __(">Suivant →</button></div>");
+      feuille.querySelector(".feuille").scrollTop = 0;
+      var b = z.querySelector('[data-a="suiv"]:not([disabled])') || z.querySelector('[data-a="prec"]'); if (b) b.focus({ preventScroll: true });
+    }
+    montrer();
+  }
+  // Le bouton de la masterclass, au mur : `items` sont les entrées du mur ({question, entree}) de cette compétence.
+  function boutonMasterclass(k, items) {
+    var b = el('<button type="button" class="btn sc-mc mc-mur">' + __("Masterclass : ") + esc(tx(k.nom)) + "</button>");
+    b.onclick = function () { ouvrirMasterclass(k.id, items.map(function (x) { return { id: x.question.id, rep: x.entree.rep }; })); };
+    return b;
+  }
   // v34 : l'atome dessiné couche par couche, et ce que le dessin dit de sa place (ligne, colonne).
   function htmlCouches(e) {
     var L = M.lectureCouches(C.atomes, e); if (!L) return "";
@@ -4418,9 +4467,12 @@ function demarrerJeu() {
     mur.avant.forEach(function (x) { if (!x.entree.efface && !vues[x.entree.q]) { vues[x.entree.q] = true; aRetenter.push(x); } });
     if (aRetenter.length) {
       var br = el(__('<div class="bloc"><h2>À retenter</h2><p class="note">Ratées ces derniers jours. Une bonne réponse, et l\'IA retire le clou. Elle garde le trou.</p></div>'));
+      var mcVus = {};
       aRetenter.forEach(function (x) {
         var k = C.parId[x.question.competence];
         br.appendChild(el('<div class="eyebrow" style="color:' + couleur(k.stat) + ';margin-top:6px">' + esc(tx(k.nom)) + " · " + (x.jours === 1 ? __("hier") : __("il y a {n} jours", { n: x.jours })) + "</div>"));
+        // v35 (Victor) : avant de retenter, la masterclass de la compétence, une fois par compétence.
+        if (!mcVus[k.id] && aMasterclass(k)) { mcVus[k.id] = 1; br.appendChild(boutonMasterclass(k, aRetenter.filter(function (y) { return y.question.competence === k.id; }))); }
         br.appendChild(carteOubli(x, true));
       });
       v.appendChild(br);
@@ -4432,6 +4484,7 @@ function demarrerJeu() {
     } else {
       parTheme(mur.aujourdhui).forEach(function (g) {
         var b = el('<div class="bloc theme-h" style="--c:' + couleur(g.k.stat) + '"><div class="eyebrow" style="color:' + couleur(g.k.stat) + '">' + esc(tx(stat(g.k.stat).nom)) + (g.items.length > 1 ? __(" · ratées") : __(" · ratée")) + __(" aujourd'hui : ") + g.items.length + "</div><h2>" + esc(tx(g.k.nom)) + "</h2></div>");
+        if (aMasterclass(g.k)) b.appendChild(boutonMasterclass(g.k, g.items));
         g.items.forEach(function (x) { b.appendChild(carteOubli(x, false)); });
         if (g.k.fiche) { b.appendChild(el(__('<h3 style="margin:8px 0 0">Ce qu\'il faut retenir</h3>'))); b.appendChild(el(htmlFiche(g.k))); }
         v.appendChild(b);
@@ -5182,6 +5235,12 @@ function demarrerJeu() {
     // v12 : des réponses fausses ? L'IA les a épinglées au mur de la honte.
     var ratees = r.total - r.bonnes;
     // v14 : le mur s'ouvre par-dessus le bilan ; « ← Bilan » ramène à la même étape, pour voir la suite des récompenses.
+    // v35 (Victor) : une épreuve ratée propose d'abord la masterclass de la compétence, erreurs en tête.
+    if (ratees > 0 && (nom === "verdict" || !suite) && ["echec", "revision_ratee", "perdue"].indexOf(r.issue) >= 0 && aMasterclass(k)) {
+      var mc = el('<button type="button" class="btn large sc-mc">' + __("Masterclass : ") + esc(tx(k.nom)) + "</button>");
+      mc.onclick = function () { ouvrirMasterclass(quiz.id, quiz.res.filter(function (x) { return !x.correct; }).map(function (x) { return { id: x.id, rep: x.rep }; })); };
+      wrap.appendChild(mc);
+    }
     if (ratees > 0 && (nom === "verdict" || !suite)) {
       var bm = el(__('<button type="button" class="btn sec large">Le mur de la honte (') + ratees + ")</button>");
       bm.onclick = ouvrirHonteSurBilan;
