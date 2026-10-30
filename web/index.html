@@ -5699,7 +5699,7 @@ function demarrerJeu() {
       v.appendChild(enteteEtape(2, __("Tes domaines")));
       v.appendChild(el('<p class="note">' + __("Le jeu est fait de packs : un par domaine de savoir, un par jeu du plateau. Tous sont allumés ; éteins ceux qui ne te tentent pas. Rien n'est perdu : ils se rallument dans les réglages.") + "</p>"));
       var liste = el('<div class="bloc"></div>');
-      listePacks(liste, A.off, function (off) { A.off = off; ecrireSession(CLE_ASSISTANT, A); });
+      listePacks(liste, A.off, function (off) { A.off = off; ecrireSession(CLE_ASSISTANT, A); rendre(); });
       v.appendChild(liste);
       var aj = el('<button type="button" class="btn sec large">＋ ' + __("Charger un pack") + "</button>");
       aj.onclick = ouvrirChargerPack;
@@ -5765,7 +5765,8 @@ function demarrerJeu() {
       cb.onchange = function () {
         var o = off.filter(function (x) { return x !== m.id; });
         if (!cb.checked) o.push(m.id);
-        changer(o);
+        // La liste suit chaque clic : sans cela, le clic suivant repartait de la liste d'origine et n'éteignait qu'un pack.
+        off = o; changer(o);
       };
       b.appendChild(l);
       if (m.ajoute && !titre) {
