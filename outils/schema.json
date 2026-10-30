@@ -497,6 +497,24 @@
         "type": "string",
         "minLength": 5,
         "description": "Référence de l'attribution citée dans l'explication (questions de calcul) ; vérifiée par verifier_sources.py."
+       },
+       "repere": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "texte",
+         "source"
+        ],
+        "description": "Victor (2026-10-30) : un repère d'histoire des sciences propre à la question (qui, quand, contexte, plus ancienne trace), affiché sous la correction ; vérifié par verifier_sources.py (clé questions:<id>:repere).",
+        "properties": {
+         "texte": {
+          "$ref": "#/$defs/texte"
+         },
+         "source": {
+          "type": "string",
+          "minLength": 5
+         }
+        }
        }
       },
       "allOf": [
