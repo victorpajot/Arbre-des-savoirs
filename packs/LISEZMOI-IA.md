@@ -82,7 +82,8 @@ Un fichier par type de contenu. Chacun est une liste (ou un dictionnaire) qui s'
 | `savants.json` | Les savants jouables du domaine (un par compétence idéalement), avec leur portrait. | `avatar.json` |
 | `portraits.json` | La recette de chaque portrait, lue par `outils/portrait.py` (pas assemblée). | — |
 | `repliques.json` | Les répliques d'Alyca propres à l'arbre. | `commentaires.json` |
-| `cases.json` | `{numéro de case: [compétences]}` : les cases du plateau qui évoquent le domaine. | `plateau.json` |
+| `cases.json` | Les cases du plateau apportées par l'arbre (liste, voir plus bas). | `plateau.json › cases` |
+| `evocations.json` | `{numéro de case: [compétences]}` : les cases d'autres packs dont l'histoire évoque le domaine. | `plateau.json › competences_cases` |
 | `dessins.json` | `{id: 32 lignes de 32 caractères}` : pixel art pour les emblèmes et succès. | `succes.json › dessins` |
 | `objets.json`, `masques.json`, `accessoires.json`, `tenues.json`, `apartes.json`, `figures.json`, `boutique.json` | Facultatifs : objets du cabinet, masques d'Alyca, accessoires, farces, apartés, figures interactives, articles de boutique. Copier la forme d'un pack existant (`grep -l` dans `packs/`). | voir `EMPLACEMENTS` dans `outils/packs.py` |
 
@@ -167,7 +168,20 @@ apercu({"croche": dessin}, "apercu.png", echelle=8)   # puis regarder l'image
 
 Chaque arbre a au moins **3** répliques `theme_jouer@<arbre>` (au lancement d'une épreuve ; `{comp}` est remplacé par le nom de la compétence), **4** `theme_reussi@<arbre>` et **4** `theme_rate@<arbre>`. `"reference": true` quand la réplique cite un fait réel.
 
-`cases.json` relie le domaine au plateau : une case dont l'histoire évoque le domaine propose ses compétences comme épreuve. Les 63 cases et leur histoire sont dans `data/plateau.json › cases` (champ `n`, titre, histoire). Il en faut au moins une par arbre. Une case peut évoquer plusieurs packs : les listes s'additionnent.
+**Chaque arbre apporte ses cases** (`cases.json`, une liste ; viser 24 cases par arbre, de la plus ancienne trace à aujourd'hui). À chaque tour, Alyca tire ses cases dans les arbres allumés : la plus ancienne ouvre toujours la route, le reste est réparti par époque et entre les arbres, puis rangé par date, et sa case d'arrivée ferme le tour. Avec peu d'arbres allumés, le tour est plus court. Une case :
+
+```json
+{"id": "thales-eau", "annee": -585, "titre": {"fr": "Thalès et l'eau"}, "stat": "sagesse", "epoque": "antiquite",
+ "icone": "puits", "histoire": {"fr": "40 à 140 mots, faits vérifiés"}, "replique": {"fr": "Alyca, qui vouvoie"},
+ "source": "Platon, Théétète, 174a", "evoque": ["philo.antiquite"], "special": {"type": "eureka"}}
+```
+
+- Pas de champ `n` : l'assemblage attribue à chaque `id` un numéro définitif, gardé dans `packs/socle/numeros_cases.json` (à committer). Ne jamais changer l'`id` d'une case publiée.
+- `epoque` suit `annee` (bornes dans `plateau.json › epoques`) ; `icone` est une icône du plateau, un objet ou un dessin (`dessins.json`).
+- `evoque` : les compétences que la case propose comme épreuve. `special` est facultatif (types dans `TYPES_SPECIAUX`, `outils/packs.py`).
+- La source se vérifie en ligne puis s'inscrit : `--inscrire plateau:<id> URL "contrôle"`. La traduction va dans `langues/en/cases.json`.
+
+`evocations.json` rattache le domaine aux cases d'autres packs dont l'histoire l'évoque ; les listes s'additionnent.
 
 ## 5. Liste de contrôle d'un arbre
 
@@ -225,7 +239,6 @@ python3 outils/packs.py assembler                          # data/langues/en.jso
 
 ## 9. Ce qu'un pack ne peut pas (encore) faire
 
-- Ajouter des **cases au plateau** : il a 63 cases, dans le socle. Un pack s'y rattache par `cases.json`.
 - Créer un **nouvel effet** en boutique : un article (`boutique.json`) reprend un rayon et un effet existants.
 - Apporter du **code** : un pack de jeu (`sorte: jeu`) fournit des données, mais son jeu doit être programmé dans `web/moteur.js` et `web/index.html`.
 

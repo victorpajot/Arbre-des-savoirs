@@ -64,7 +64,7 @@ function coherence(off, depuis, C, P) {
   if (pc && pc.dessine > depuis && ((eteints.ennemis && pc.ennemis) || (eteints.atomes && pc.atomes))) pb.push("parcours avec ennemis ou atomes");
   if (eteints.atomes && P.sauvages.length) pb.push("atomes sauvages");
   if (eteints.ennemis && (P.duel || Object.keys(P.plateau.ennemis || {}).length)) pb.push("ennemis ou duel");
-  for (let n = 1; n <= 63; n++) { const sp = M.specialDe(C, P, n); if (eteints.atomes && sp && sp.type === "mendeleiev") pb.push(`case ${n} Mendeleïev`); }
+  for (const { n } of complet.plateau.cases) { const sp = M.specialDe(C, P, n); if (eteints.atomes && sp && sp.type === "mendeleiev") pb.push(`case ${n} Mendeleïev`); }
   assert.deepEqual([...new Set(pb)].slice(0, 5), [], `incohérent avec ${off.join(", ")} éteints`);
 }
 for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "cosmos"]]) {
@@ -80,6 +80,26 @@ for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "co
   P.options = { packsOff: off }; M.accorderPartie(C, P);
   S.jouer(C, P, 200, t, S.graine(6));
   coherence(off, t, C, P);
+}
+// v36 : chaque arbre apporte ses cases ; une partie Philosophes + Biais seuls part de Thalès, ne passe que par leurs
+// cases, dans l'ordre des dates, et le réglage « Voir toutes les cases » met toutes leurs cases sur la route.
+{
+  const off = packs.filter(p => !["sagesse", "lucidite"].includes(p)), C = S.contenu(brut, off);
+  const P = M.nouvellePartie(new Date(2026, 9, 30, 9).getTime());
+  P.options = { packsOff: off }; M.accorderPartie(C, P);
+  const rt = M.routeTour(C, P), arr = rt[rt.length - 1], ks = rt.slice(0, -1).map(n => M.caseN(C, n));
+  assert.equal(ks[0].id, "thales-eau", "premier tour : Thalès en premier");
+  assert.ok(ks.every(k => ["sagesse", "lucidite"].includes(k.stat)), "seulement les cases des arbres allumés");
+  assert.ok(ks.every((k, i) => !i || ks[i - 1].annee <= k.annee), "cases dans l'ordre des dates");
+  assert.ok(M.caseN(C, arr).arrivee && ks.length >= 24 && new Set(rt).size === rt.length);
+  M.voirToutesCases(C, P, true);
+  const tout = M.routeTour(C, P);
+  assert.equal(tout.length, C.plateau.cases.length, "toutes les cases sur la route");
+  assert.ok(tout.every(n => M.caseDecouverte(P, n)), "toutes dévoilées");
+  M.voirToutesCases(C, P, false);
+  assert.ok(!M.caseDecouverte(P, arr), "réglage coupé : l'arrivée redevient cachée");
+  S.jouer(C, P, 60, P.cree, S.graine(7));
+  console.log("OK : cases par arbre, Thalès en premier, réglage « Voir toutes les cases »");
 }
 // v53 : un pack de domaine chargé par le joueur (outils/packs.py paquet) se pose comme s'il avait été assemblé.
 {

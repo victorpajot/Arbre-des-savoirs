@@ -167,7 +167,7 @@ def main():
         erreurs.append(f"ia.json : seuil de masque {max(seuils)} au-delà des {len(succes)} succès")
 
     pl = contenu["plateau"]
-    sprites = set(pl["icones"]) | {o["id"] for o in contenu["objets"]["objets"]}
+    sprites = set(pl["icones"]) | {o["id"] for o in contenu["objets"]["objets"]} | set(contenu["succes"].get("dessins", {}))
     for nom, img in pl["icones"].items():
         verifier_pixels(f"plateau.json icône {nom}", img, pl["taille"], pl["palette"], erreurs)
     en = contenu["ennemis"]
@@ -178,7 +178,8 @@ def main():
     for n, e in en["placement"].items():
         if e not in ids_en:
             erreurs.append(f"ennemis.json : ennemi inconnu {e} case {n}")
-        if not 1 < int(n) < len(pl["cases"]) or pl["cases"][int(n) - 1].get("special"):
+        k = next((c for c in pl["cases"] if c["n"] == int(n)), None)
+        if not k or int(n) == 1 or k.get("arrivee") or k.get("special"):
             erreurs.append(f"ennemis.json : case {n} interdite (départ, arrivée ou case spéciale)")
     if en["reserve"] not in ids_en or en["reserve"] in en["placement"].values():
         erreurs.append("ennemis.json : réserve invalide")
@@ -212,9 +213,13 @@ def main():
             erreurs.append(f"succes.json {s['id']} : famille inconnue")
     if not any(c.get("special", {}).get("type") == "mendeleiev" for c in pl["cases"]):
         erreurs.append("plateau.json : aucune case Mendeleïev")
-    for i, c in enumerate(pl["cases"], 1):
-        if c["n"] != i:
-            erreurs.append(f"plateau.json : case {c['id']} numérotée {c['n']}, {i} attendu")
+    # v36 : chaque arbre apporte ses cases ; le numéro est l'identité d'une case, unique, pas sa place dans le tour.
+    numeros = [c["n"] for c in pl["cases"]]
+    if len(set(numeros)) != len(numeros):
+        erreurs.append("plateau.json : deux cases portent le même numéro")
+    annee_de = {c["n"]: c["annee"] for c in pl["cases"]}
+    for c in pl["cases"]:
+        i = c["n"]
         if c["stat"] not in stats:
             erreurs.append(f"plateau.json {c['id']} : stat inconnue {c['stat']}")
         if c["icone"] not in sprites:
@@ -222,16 +227,14 @@ def main():
         sp = c.get("special")
         if sp and sp["type"] in ("avance", "recul", "quarantaine") and "n" not in sp:
             erreurs.append(f"plateau.json {c['id']} : la règle {sp['type']} demande « n »")
-        if sp and sp["type"] in ("retour_epoque", "teleport") and not 1 <= sp.get("vers", 0) < i:
+        if sp and sp["type"] in ("retour_epoque", "teleport") and not annee_de.get(sp.get("vers"), c["annee"] + 1) <= c["annee"]:
             erreurs.append(f"plateau.json {c['id']} : retour d'époque vers une case invalide")
-    if pl["regles"]["arrivee"] != len(pl["cases"]):
-        erreurs.append("plateau.json : l'arrivée doit être la dernière case")
+    arrivees = [c for c in pl["cases"] if c.get("arrivee")]
+    if len(arrivees) != 1 or arrivees[0]["annee"] != max(annee_de.values()):
+        erreurs.append("plateau.json : une seule case d'arrivée (« arrivee »: true), la plus récente")
     for e in pl["epoques"]:
         if e["icone"] not in sprites:
             erreurs.append(f"plateau.json époque {e['id']} : icône inconnue")
-    annees = [c["annee"] for c in pl["cases"]]
-    if annees != sorted(annees):
-        erreurs.append("plateau.json : les cases doivent suivre l'ordre chronologique")
 
     objets_ids = {o["id"] for o in contenu["objets"]["objets"]}
     for o in contenu["plateau"].get("objectifs", []):

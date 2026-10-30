@@ -1,6 +1,10 @@
 // Test du cycle complet : node outils/test_moteur.js
 const fs = require("fs"), path = require("path"), assert = require("assert");
 const M = require("../web/moteur.js");
+// v36 : une partie neuve tire ses cases dans les arbres allumés. Les tests historiques jouent sur l'ancien plateau
+// fixe (les 63 cases dans l'ordre, comme une sauvegarde d'avant) ; « plateau tiré » plus bas teste le tirage.
+const nouvellePartieTiree = M.nouvellePartie;
+M.nouvellePartie = function (t) { const P = nouvellePartieTiree(t); P.plateau.route = Array.from({ length: 63 }, (_, i) => i + 1); return P; };
 // v19 : 4 succès au plus par épreuve ; les suivants tombent aux vérifications d'après.
 const vider = (C, P, t) => { for (let i = 1; i <= 12; i++) M.verifierRecompenses(C, P, t + i); };
 const succesPuis = (r, C, P, t) => r.nouveauxSucces.map(s => s.id).concat(...[1, 2, 3, 4, 5].map(i => M.verifierRecompenses(C, P, t + i).succes.map(s => s.id)));
@@ -690,7 +694,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.ok(cases.every(n => n > 2 && n < 63 && !M.specialDe(C8, P, n)));
     assert.notDeepEqual(cases.sort((a, b) => a - b), [4, 15, 34, 39, 43, 52, 61], "les postes glissent");
     // v18 : chacun se poste sur une case de son thème quand il en reste une de libre.
-    const surTheme = Object.keys(en).filter(n => C8.plateau.cases[n - 1].stat === C8.ennemiParId[en[n]].theme).length;
+    const surTheme = Object.keys(en).filter(n => M.caseN(C8, n).stat === C8.ennemiParId[en[n]].theme).length;
     assert.ok(surTheme >= 6, "ennemis sur les cases de leur thème : " + surTheme);
     const nouveaux = ids.filter(id => !P.bestiaire[id]).length;
     assert.ok(nouveaux >= 5, "l'IA préfère les ennemis jamais affrontés");

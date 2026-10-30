@@ -45,20 +45,25 @@ EMPLACEMENTS = {
     "repliques.json": ("commentaires.json", ("commentaires",)),
     "apartes.json": ("commentaires.json", ("apartes",)),
     "piques.json": ("ia.json", ("credits", "piques")),
-    "cases.json": ("plateau.json", ("competences_cases",)),
+    "cases.json": ("plateau.json", ("cases",)),
+    "evocations.json": ("plateau.json", ("competences_cases",)),
     "ennemis.json": ("ennemis.json", ("ennemis",)),
     "mythes.json": ("ennemis.json", ("mythes",)),
     "atomes.json": ("atomes.json", ("elements",)),
     "boutique.json": ("ia.json", ("credits", "boutique", "articles")),
 }
 PAR_CHEMIN = {(f, c): nom for nom, (f, c) in EMPLACEMENTS.items()}
-AUTRES = {"pack.json", "verifications.json", "ordre.json", "portraits.json", "LISEZMOI.md"}
+AUTRES = {"pack.json", "verifications.json", "ordre.json", "portraits.json", "numeros_cases.json", "LISEZMOI.md"}
 SORTES = ("socle", "domaine", "jeu")
 
 # v6 : le butin est réparti en 7 lots, un par tour du plateau ; le lot N ne tombe qu'à partir du tour N.
 LOTS = 7
 # Les listes que le jeu lit dans un ordre précis.
-TRIS = {("bibliotheque.json", ("livres",)): lambda x: x["annee"]}
+TRIS = {("bibliotheque.json", ("livres",)): lambda x: x["annee"],
+        ("plateau.json", ("cases",)): lambda x: x["n"]}
+# v36 : chaque arbre apporte ses cases du plateau. Leur numéro `n` est leur identité pour toujours (sauvegardes, conditions,
+# évocations) : une case écrite sans numéro en reçoit un, gardé dans ce registre du socle (id → n).
+NUMEROS = PACKS / "socle" / "numeros_cases.json"
 
 
 class ErreurPack(Exception):
@@ -117,9 +122,29 @@ def fragments(m):
             raise ErreurPack(f"{m['id']} : fichier inconnu {f.name} (voir EMPLACEMENTS dans outils/packs.py)")
         fichier, chemin = EMPLACEMENTS[f.name]
         frag = lire(f)
+        if f.name == "cases.json":
+            frag = numeroter(frag)
         for k in reversed(chemin):
             frag = {k: frag}
         out.append((fichier, frag, f.name))
+    return out
+
+
+def numeroter(cases):
+    """Donne à chaque case sans `n` le numéro du registre (socle/numeros_cases.json), ou le suivant libre."""
+    if all("n" in c for c in cases):
+        return cases
+    reg = lire(NUMEROS) if NUMEROS.exists() else {}
+    pris = set(reg.values()) | {c["n"] for m in tous() for c in lire_liste(m, "cases.json") if "n" in c}
+    out = []
+    for c in cases:
+        if "n" not in c:
+            if c.get("id") not in reg:
+                reg[c["id"]] = max(pris | {63}) + 1
+                pris.add(reg[c["id"]])
+                ecrire(NUMEROS, dict(sorted(reg.items(), key=lambda kv: kv[1])))
+            c = {"n": reg[c["id"]], **c}
+        out.append(c)
     return out
 
 
@@ -235,6 +260,13 @@ def assembler(packs=None, ecrire_data=True):
         for k in chemin[:-1]:
             o = o[k]
         o[chemin[-1]].sort(key=cle_tri)
+    # v36 : une case d'un pack évoque ses compétences par « evoque » ; le jeu les lit dans competences_cases.
+    pl = donnees["plateau.json"]
+    for k in pl.get("cases", []):
+        ev = k.pop("evoque", None)
+        if ev:
+            cc = pl.setdefault("competences_cases", {}).setdefault(str(k["n"]), [])
+            cc += [c for c in ev if c not in cc]
     poser_lots(donnees)
     erreurs = doublons(donnees)
     if erreurs:
@@ -390,14 +422,58 @@ def verifier_contenu(m, ids):
                 erreurs.append(f"[{m['id']}] {nom} › {x.get('id')} : compétence « {x['competence']} » introuvable")
             erreurs += liens_condition(m, nom, x.get("id"), x.get("condition"), comps, arbres, succes)
     erreurs += formes(m, ids)
-    for k, v in (lire(m["_dossier"] / "cases.json").items() if (m["_dossier"] / "cases.json").exists() else []):
+    for k, v in (lire(m["_dossier"] / "evocations.json").items() if (m["_dossier"] / "evocations.json").exists() else []):
         for c in v:
             if c not in comps:
-                erreurs.append(f"[{m['id']}] cases.json › case {k} : compétence « {c} » introuvable")
+                erreurs.append(f"[{m['id']}] evocations.json › case {k} : compétence « {c} » introuvable")
+    erreurs += verifier_cases(m, ids, comps, tous_arbres)
     for r in lire_liste(m, "repliques.json"):
         ctx = r.get("contexte", "")
         if "@" in ctx and ctx.split("@")[1] not in arbres:
             erreurs.append(f"[{m['id']}] repliques.json › {r.get('id')} : arbre « {ctx.split('@')[1]} » inconnu")
+    return erreurs
+
+
+CHAMPS_CASE = ("id", "annee", "titre", "stat", "epoque", "icone", "histoire", "replique", "source")
+TYPES_SPECIAUX = ("avance", "recul", "teleport", "retour_epoque", "oubli", "revision", "quarantaine", "prison", "cadeau", "mendeleiev", "chrono", "eureka")
+
+
+def verifier_cases(m, ids, comps, tous_arbres):
+    """Les cases d'un pack : champs complets, arbre du pack, époque qui colle à l'année, image qui existe, histoire datée."""
+    erreurs, cases = [], lire_liste(m, "cases.json")
+    if not cases:
+        return erreurs
+    socle = next((d for d in ids.values() if d.get("sorte") == "socle"), None)
+    pl = lire(socle["_dossier"] / "donnees" / "plateau.json") if socle and (socle["_dossier"] / "donnees" / "plateau.json").exists() else {}
+    epoques = pl.get("epoques", [])
+    objets, icones, dessins, _, _ = sprites(ids)
+    siens = {s["id"] for s in lire_liste(m, "arbres.json")}
+
+    def err(c, msg):
+        erreurs.append(f"[{m['id']}] cases.json › {c.get('id')} : {msg}")
+    for c in cases:
+        manque = [k for k in CHAMPS_CASE if not c.get(k)]
+        if manque:
+            err(c, f"champs manquants : {', '.join(manque)}")
+            continue
+        if m.get("sorte") == "domaine" and c["stat"] not in siens:
+            err(c, f"arbre « {c['stat']} » : une case d'un pack domaine appartient à un de ses arbres ({', '.join(sorted(siens))})")
+        if not isinstance(c["annee"], int):
+            err(c, "« annee » est un entier (négatif avant notre ère)")
+            continue
+        e = next((x for x in epoques if (x["debut"] is None or x["debut"] <= c["annee"]) and (x["fin"] is None or c["annee"] <= x["fin"])), None)
+        if e and e["id"] != c["epoque"]:
+            err(c, f"l'année {c['annee']} tombe dans l'époque « {e['id']} », pas « {c['epoque']} »")
+        if c["icone"] not in icones | dessins | objets:
+            err(c, f"icône « {c['icone']} » introuvable (une icône du plateau, un dessin de dessins.json ou un objet)")
+        mots = len(c["histoire"].get("fr", "").split())
+        if not 40 <= mots <= 140:
+            err(c, f"histoire de {mots} mots, il en faut de 40 à 140")
+        if c.get("special") and c["special"].get("type") not in TYPES_SPECIAUX:
+            err(c, f"case spéciale de type inconnu « {c['special'].get('type')} »")
+        for k in c.get("evoque", []):
+            if k not in comps:
+                err(c, f"évoque la compétence « {k} », introuvable")
     return erreurs
 
 
@@ -473,7 +549,11 @@ def completude(m):
     succes = lire_liste(m, "succes.json")
     savants = lire_liste(m, "savants.json")
     repliques = lire_liste(m, "repliques.json")
-    cases = lire(m["_dossier"] / "cases.json") if (m["_dossier"] / "cases.json").exists() else {}
+    cases = lire(m["_dossier"] / "evocations.json") if (m["_dossier"] / "evocations.json").exists() else {}
+    # Les cases du pack évoquent leurs compétences par leur champ « evoque ».
+    for k in lire_liste(m, "cases.json"):
+        if k.get("evoque"):
+            cases[str(k.get("n", k.get("id")))] = k["evoque"]
 
     def err(msg):
         erreurs.append(f"[{m['id']}] complétude : {msg}")
@@ -507,7 +587,7 @@ def completude(m):
                 err(f"l'arbre « {st} » a {k} répliques « {ctx}@{st} », il en faut {n} (repliques.json)")
         ids = {c["id"] for c in siennes}
         if not any(set(v) & ids for v in cases.values()):
-            err(f"l'arbre « {st} » est évoqué par au moins une case du plateau (cases.json)")
+            err(f"l'arbre « {st} » est évoqué par au moins une case du plateau (cases.json, champ « evoque », ou evocations.json)")
     return erreurs
 
 

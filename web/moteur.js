@@ -152,6 +152,10 @@
     var off = packsEteints(index, demandes);
     if (!Object.keys(off).length) return donnees;
     var d = JSON.parse(JSON.stringify(donnees));
+    // v36 : l'année de chaque case reste connue quand son pack s'éteint (conditions « case atteinte », téléportations).
+    if (d["plateau.json"] && d["plateau.json"].cases) {
+      var an = {}; d["plateau.json"].cases.forEach(function (k) { an[k.n] = k.annee; }); d["plateau.json"].annees = an;
+    }
     var proprios = (index && index.proprietaires) || {};
     (index.packs || []).forEach(function (m) { if (off[m.id]) (m.fichiers || []).forEach(function (f) { d[f] = null; }); });
     function cleDe(x) { return x && (x.id !== undefined ? String(x.id) : x.n !== undefined ? String(x.n) : x.z !== undefined ? String(x.z) : null); }
@@ -274,7 +278,31 @@
     var rv = partie.revision;
     if (rv && !contenu.parId[rv.comp]) { v.revision = rv; partie.revision = null; }
     else if (!rv && v.revision && contenu.parId[v.revision.comp]) { partie.revision = v.revision; delete v.revision; }
+    accorderPlateau(contenu, partie);
     return partie;
+  }
+  // v36 : les cases viennent des packs. Une case dont le pack s'éteint quitte le tour en cours (elle reviendra dans un
+  // prochain tour) ; le pion qui s'y tenait recule sur la dernière case encore là. La case d'Alyca ferme toujours la route.
+  function accorderPlateau(contenu, partie) {
+    var pl = partie.plateau;
+    if (!pl || !contenu.plateau || !contenu.plateau.cases.length) return;
+    if (pl.anneeMax == null && !pl.tours && pl.atteinte > 1) pl.anneeMax = anneeAtteinte(contenu, pl);
+    var arr = arriveeN(contenu), present = function (n) { return !!caseN(contenu, n); };
+    function nettoyer(l) { var o = l.filter(present); if (o[o.length - 1] !== arr) { o = o.filter(function (n) { return n !== arr; }); o.push(arr); } return o; }
+    if (pl.parcoursSuivant && pl.parcoursSuivant.cases) pl.parcoursSuivant.cases = nettoyer(pl.parcoursSuivant.cases);
+    if (!pl.route) { route(contenu, partie); return; }
+    if (pl.route.every(present) && pl.route[pl.route.length - 1] === arr) return;
+    var vieille = pl.route, i = vieille.indexOf(pl.position), rt = nettoyer(vieille);
+    if (pl.parcours && pl.parcours.cases) pl.parcours.cases = nettoyer(pl.parcours.cases);
+    if (rt.length < 2) { pl.parcours = null; pl.route = null; pl.redessiner = true; route(contenu, partie); return; }
+    pl.route = rt;
+    if (!present(pl.position)) {
+      var j = i;
+      while (j > 0 && !present(vieille[j])) j--;
+      pl.position = present(vieille[j]) ? vieille[j] : rt[0];
+    }
+    pl.idx = rt.indexOf(pl.position);
+    if (pl.idx < 0) { pl.idx = 0; pl.position = rt[0]; }
   }
 
   // Le pack d'un élément (« questions.json/questions », id) ; « socle » s'il n'en a pas d'autre.
@@ -889,14 +917,81 @@
     };
   }
 
+  // v36 : chaque arbre apporte ses cases ; le numéro `n` d'une case est son identité (pas sa place dans la liste).
   function caseN(contenu, n) {
-    return contenu.plateau.cases[n - 1];
+    var P = contenu.plateau; if (!P) return null;
+    if (!P.parN) {
+      var m = {}; P.cases.forEach(function (k) { m[k.n] = k; });
+      Object.defineProperty(P, "parN", { value: m, enumerable: false, configurable: true });
+    }
+    return P.parN[n] || null;
+  }
+  // L'année d'une case, même si son pack est éteint (plateau.annees, posé par filtrerPacks).
+  function anneeDe(contenu, n) {
+    var k = caseN(contenu, n); if (k) return k.annee;
+    var A = contenu.plateau && contenu.plateau.annees; return A && A[n] != null ? A[n] : null;
+  }
+  // La case d'arrivée (celle d'Alyca) ferme chaque tour ; à défaut, la plus récente.
+  function arriveeN(contenu) {
+    var P = contenu.plateau, a = P.cases.filter(function (k) { return k.arrivee; })[0];
+    return a ? a.n : P.cases.slice().sort(parDate)[P.cases.length - 1].n;
+  }
+  function parDate(a, b) { return a.annee - b.annee || a.n - b.n; }
+  // v36 (Victor) : le tour se compose de cases tirées dans tous les arbres allumés, rangées par date. La plus ancienne
+  // ouvre toujours le tour ; les autres se répartissent entre les époques et les arbres, celles jamais vues d'abord.
+  // Avec peu d'arbres allumés, le tour est plus court (choix de Victor) : jamais de case répétée ni hors sujet.
+  function tirerCases(contenu, partie, longueur, g) {
+    var arr = arriveeN(contenu), vues = (partie.plateau && partie.plateau.visites) || {};
+    var pool = contenu.plateau.cases.filter(function (k) { return k.n !== arr; }).sort(parDate);
+    var pris;
+    // Réglage temporaire « Voir toutes les cases » : le tour prend toutes les cases des arbres allumés.
+    if (toutesCases(partie) || pool.length <= longueur - 1) pris = pool;
+    else {
+      pris = [pool[0]];
+      var reste = pool.slice(1), k = longueur - 2, parEp = {}, eps = [];
+      reste.forEach(function (c) { if (!parEp[c.epoque]) { parEp[c.epoque] = []; eps.push(c.epoque); } parEp[c.epoque].push(c); });
+      // Quotas par époque, au prorata (plus forts restes), puis tirage tournant entre les arbres de l'époque.
+      var quotas = eps.map(function (e) { var q = k * parEp[e].length / reste.length; return { e: e, n: Math.floor(q), r: q - Math.floor(q) }; });
+      var manque = k - quotas.reduce(function (a, q) { return a + q.n; }, 0);
+      quotas.slice().sort(function (a, b) { return b.r - a.r || hacher(g + "|q|" + a.e) - hacher(g + "|q|" + b.e); }).slice(0, manque).forEach(function (q) { q.n++; });
+      quotas.forEach(function (q) {
+        var parStat = {}, stats = [];
+        parEp[q.e].forEach(function (c) { if (!parStat[c.stat]) { parStat[c.stat] = []; stats.push(c.stat); } parStat[c.stat].push(c); });
+        stats.sort(function (a, b) { return hacher(g + "|s|" + a) - hacher(g + "|s|" + b); });
+        stats.forEach(function (st) { parStat[st].sort(function (a, b) { return (vues[a.n] ? 1 : 0) - (vues[b.n] ? 1 : 0) || hacher(g + "|c|" + a.n) - hacher(g + "|c|" + b.n); }); });
+        for (var i = 0, n = 0; n < q.n; i++) {
+          var st = stats[i % stats.length], c = parStat[st].shift();
+          if (c) { pris.push(c); n++; }
+          if (stats.every(function (x) { return !parStat[x].length; })) break;
+        }
+      });
+    }
+    return pris.slice().sort(parDate).map(function (c) { return c.n; }).concat([arr]);
+  }
+  // Une case est atteinte quand le pion s'y est arrêté (v15 : les cases survolées restent cachées ; le tirage des tours
+  // suivants donne la priorité aux cases jamais vues). Une case dont le pack est éteint ne bloque rien : elle compte
+  // comme atteinte dès que le pion a passé son année, ou fini un tour.
+  // L'année la plus récente où le pion s'est arrêté pendant le premier tour. Sauvegardes d'avant v36 : la progression se
+  // lisait au numéro de case (`atteinte`), alors chronologique sur les 63 cases d'origine.
+  function anneeAtteinte(contenu, pl) {
+    if (pl.anneeMax != null) return pl.anneeMax;
+    var m = null;
+    for (var n = 1; n <= Math.min(pl.atteinte || 1, 63); n++) { var a = anneeDe(contenu, n); if (a != null && (m == null || a > m)) m = a; }
+    return m != null ? m : anneeDe(contenu, pl.position);
+  }
+  function caseAtteinte(contenu, partie, n) {
+    var pl = partie.plateau;
+    if ((pl.visites[n] || 0) > 0) return true;
+    if (caseN(contenu, n)) return false;
+    var a = anneeDe(contenu, n);
+    var m = anneeAtteinte(contenu, pl);
+    return pl.tours > 0 || (a != null && m != null && m >= a);
   }
   // v7 : la règle spéciale d'une case, en tenant compte des cases que l'IA a déplacées.
   function specialDe(contenu, partie, n) {
     var sp = partie.plateau.speciaux, x;
     if (sp && Object.prototype.hasOwnProperty.call(sp, n)) x = sp[n];
-    else x = caseN(contenu, n).special || chronoDeBase(contenu, n);
+    else x = (caseN(contenu, n) || {}).special || chronoDeBase(contenu, n);
     // Pack atomes éteint : une case Mendeleïev redevient une case ordinaire.
     return x && x.type === "mendeleiev" && !contenu.atomes ? null : x;
   }
@@ -913,15 +1008,21 @@
   // le joueur n'a jamais affrontés d'abord, puis ceux qui l'ont battu), et les postes glissent de quelques cases.
   function placerEnnemis(contenu, partie) {
     var pl = partie.plateau, base = contenu.placement, tour = pl.tours || 0;
-    if (!tour || !contenu.plateau) return Object.assign({}, base);
-    var R = contenu.plateau.regles, graine = (partie.cree || 0) + "|" + tour;
+    if (!contenu.plateau) return Object.assign({}, base);
+    var pc = pl.parcours;
+    // L'ancien premier tour (les 63 cases dans l'ordre) garde le placement d'origine.
+    if (!tour && !(pc && pc.cases)) return Object.assign({}, base);
+    var graine = (partie.cree || 0) + "|" + tour;
     var postes = Object.keys(base).map(Number).sort(function (a, b) { return a - b; });
     // v21 : le parcours fixe le nombre d'ennemis ; leurs postes se répartissent le long de sa route.
-    var pc = pl.parcours, surRoute = null;
+    // v36 : tout se compte en places sur la route, les numéros de case ne disent plus l'ordre.
+    var rt = route(contenu, partie), place = {}, surRoute = null;
+    rt.forEach(function (n, i) { place[n] = i; });
     if (pc && pc.cases) {
-      surRoute = {}; pc.cases.forEach(function (n) { surRoute[n] = 1; });
+      surRoute = place;
+      var nE = pc.ennemis != null ? pc.ennemis : postes.length;
       postes = [];
-      for (var q = 0; q < pc.ennemis; q++) postes.push(pc.cases[Math.round((q + 1) * (pc.cases.length - 1) / (pc.ennemis + 1))]);
+      for (var q = 0; q < nE; q++) postes.push(rt[Math.round((q + 1) * (rt.length - 1) / (nE + 1))]);
     }
     var bete = partie.bestiaire || {};
     var choisis = contenu.ennemis.filter(function (e) { return e.id !== contenu.reserve; }).map(function (e) {
@@ -930,18 +1031,18 @@
     }).sort(function (a, b) { return b.score - a.score; }).slice(0, postes.length).map(function (x) { return x.id; });
     choisis.sort(function (a, b) { return hacher(graine + "|ordre|" + a) - hacher(graine + "|ordre|" + b); });
     var decalage = (tour * 3) % 9 - 4, out = {};
-    var libre = function (c) { return c > R.depart + 1 && c < R.arrivee && !out[c] && !specialDe(contenu, partie, c) && (!surRoute || surRoute[c]); };
+    var libre = function (c) { return c != null && place[c] > 1 && place[c] < rt.length - 1 && !out[c] && !specialDe(contenu, partie, c) && (!surRoute || surRoute[c] != null); };
     var parId = {}; contenu.ennemis.forEach(function (e) { parId[e.id] = e; });
     postes.forEach(function (n, i) {
       // v18 : l'ennemi se poste sur une case de son thème, la plus proche de son poste ; sinon, près du poste.
       var th = themeDe(parId[choisis[i]]), ici = th ? contenu.plateau.cases.filter(function (k) { return k.stat === th && libre(k.n); }) : [];
       if (ici.length) {
-        ici.sort(function (a, b) { return Math.abs(a.n - n - decalage) - Math.abs(b.n - n - decalage) || a.n - b.n; });
+        ici.sort(function (a, b) { return Math.abs(place[a.n] - place[n] - decalage) - Math.abs(place[b.n] - place[n] - decalage) || place[a.n] - place[b.n]; });
         out[ici[0].n] = choisis[i]; return;
       }
-      var visee = n + decalage;
+      var visee = place[n] + decalage;
       for (var d = 0; d < 8; d++) {
-        var c = visee + (d % 2 ? -1 : 1) * Math.ceil(d / 2);
+        var c = rt[visee + (d % 2 ? -1 : 1) * Math.ceil(d / 2)];
         if (libre(c)) { out[c] = choisis[i]; return; }
       }
     });
@@ -1004,10 +1105,26 @@
   }
   // v15 : la route du tour, de la case départ à l'arrivée. Sans retouche de l'IA, toutes les cases dans l'ordre.
   function route(contenu, partie) {
-    var pl = partie.plateau, R = contenu.plateau.regles;
+    var pl = partie.plateau;
     if (!pl.route) {
-      if (pl.parcours && pl.parcours.cases) pl.route = pl.parcours.cases.slice();
-      else { pl.route = []; for (var n = R.depart; n <= R.arrivee; n++) pl.route.push(n); }
+      // v36 : une partie neuve n'a pas encore de parcours : Alyca dessine le premier, comme les suivants.
+      if (!(pl.parcours && pl.parcours.cases)) {
+        // Une sauvegarde d'avant v36, au-delà du premier tour, garde toutes les cases dans l'ordre jusqu'au parcours suivant.
+        if (!contenu.plateau.parcours || (pl.tours && !pl.redessiner)) {
+          var arr = arriveeN(contenu);
+          pl.route = contenu.plateau.cases.slice().sort(parDate).map(function (k) { return k.n; }).filter(function (n) { return n !== arr; }).concat([arr]);
+          return route(contenu, partie);
+        }
+        delete pl.redessiner;
+        pl.parcours = dessinerParcours(contenu, partie, partie.cree || 0);
+        pl.speciaux = Object.assign({}, pl.parcours.speciaux); pl.ennemis = null;
+        if (!pl.tours && !pl.coups) {
+          var r0 = pl.parcours.cases[0];
+          pl.position = r0; pl.idx = 0; pl.visites = {}; pl.visites[r0] = 1; pl.arrets = {}; pl.arrets[r0] = 1;
+          pl.anneeMax = anneeDe(contenu, r0);
+        }
+      }
+      pl.route = pl.parcours.cases.slice();
     }
     if (pl.idx == null || pl.route[pl.idx] !== pl.position) {
       pl.idx = pl.route.indexOf(pl.position);
@@ -1016,9 +1133,11 @@
     return pl.route;
   }
   // Place, derrière `ici`, où renvoie une téléportation vers la case `vers` (à défaut, la dernière case plus ancienne).
-  function placeVers(rt, ici, vers) {
+  // v36 : si la case visée n'est pas sur la route du tour, la dernière case qui ne lui est pas postérieure.
+  function placeVers(contenu, rt, ici, vers) {
     for (var j = ici - 1; j >= 0; j--) if (rt[j] === vers) return j;
-    for (j = ici - 1; j >= 0; j--) if (rt[j] <= vers) return j;
+    var a = anneeDe(contenu, vers);
+    for (j = ici - 1; j >= 0; j--) if (a == null || anneeDe(contenu, rt[j]) <= a) return j;
     return 0;
   }
   // Les cases de la route entre les places ici + a et ici + b (sans l'arrivée).
@@ -1072,16 +1191,15 @@
     var g = (partie.cree || 0) + "|parcours|" + pl.tours, avant = (pl.parcours && pl.parcours.forme) || "serpentin";
     var formes = PC.formes.filter(function (f) { return f.humeurs.indexOf(palier) >= 0 && f.id !== avant; });
     if (!formes.length) formes = PC.formes.filter(function (f) { return f.id !== avant; });
-    var forme = formes[tirage(g + "|forme", formes.length)];
+    // Le premier tour garde le serpentin d'origine.
+    var forme = !pl.parcours && !pl.tours ? PC.formes.filter(function (f) { return f.id === "serpentin"; })[0] || formes[0] : formes[tirage(g + "|forme", formes.length)];
     var longueur = H.cases[0] + tirage(g + "|long", H.cases[1] - H.cases[0] + 1);
-    var base = function (n) { return contenu.plateau.cases[n - 1].special || chronoDeBase(contenu, n); };
-    var ordinaires = [];
-    for (var n = R.depart + 1; n < R.arrivee; n++) if (!base(n)) ordinaires.push(n);
+    var base = function (n) { return (caseN(contenu, n) || {}).special || chronoDeBase(contenu, n); };
     var melange = function (l, cle) { return l.slice().sort(function (a, b) { return hacher(g + cle + a) - hacher(g + cle + b); }); };
-    var retirees = {}; melange(ordinaires, "|retire|").slice(0, Math.max(0, R.arrivee - R.depart + 1 - longueur)).forEach(function (x) { retirees[x] = 1; });
-    var cases = []; for (n = R.depart; n <= R.arrivee; n++) if (!retirees[n]) cases.push(n);
+    // v36 : les cases du tour sont tirées dans les arbres allumés et rangées par date (tirerCases).
+    var cases = tirerCases(contenu, partie, longueur, g);
     // Les cases spéciales : on en retire, ou on en ajoute sur des cases ordinaires de la route (pas les trois premières).
-    var speciaux = {}, libres = melange(cases.filter(function (x) { return x > R.depart + 3 && x < R.arrivee && !base(x); }), "|libre|");
+    var speciaux = {}, libres = melange(cases.filter(function (x, i) { return i > 3 && i < cases.length - 1 && !base(x); }), "|libre|");
     function ajuster(types, ecart, nouvelle) {
       var la = cases.filter(function (x) { var b = base(x); return b && types.indexOf(b.type) >= 0; });
       if (ecart < 0) melange(la, "|ote|" + types[0]).slice(0, -ecart).forEach(function (x) { speciaux[x] = null; });
@@ -1104,7 +1222,7 @@
     var pl = partie.plateau, p = pl.parcoursSuivant; if (!p) return null;
     pl.parcours = p; pl.parcoursSuivant = null;
     pl.route = null; pl.speciaux = Object.assign({}, p.speciaux); pl.ennemis = null;
-    pl.idx = 0; pl.position = contenu.plateau.regles.depart;
+    pl.idx = 0; pl.position = p.cases[0];
     route(contenu, partie);
     return p;
   }
@@ -1117,7 +1235,19 @@
     return { ok: true, parcours: p };
   }
   function formeParcours(contenu, id) { return contenu.plateau && contenu.plateau.parcours ? contenu.plateau.parcours.formes.filter(function (f) { return f.id === id; })[0] || null : null; }
-  function caseDecouverte(partie, n) { return !!(partie.plateau.visites[n] || partie.plateau.position === n); }
+  function caseDecouverte(partie, n) { return toutesCases(partie) || !!(partie.plateau.visites[n] || partie.plateau.position === n); }
+  function toutesCases(partie) { return !!(partie.options && partie.options.toutesCases); }
+  // Réglage temporaire « Voir toutes les cases » : redessine le tour en cours (toutes les cases dévoilées, ou de nouveau
+  // un tirage), le pion garde sa case si elle reste sur la route, sinon il repart de la première.
+  function voirToutesCases(contenu, partie, oui) {
+    partie.options = partie.options || {}; partie.options.toutesCases = !!oui;
+    var pl = partie.plateau; if (!contenu.plateau || !contenu.plateau.parcours) return;
+    var p = dessinerParcours(contenu, partie, partie.cree || 0);
+    if (pl.parcours) { p.forme = pl.parcours.forme; p.tour = pl.parcours.tour; }
+    pl.parcours = p; pl.parcoursSuivant = null; pl.route = null; pl.speciaux = Object.assign({}, p.speciaux); pl.ennemis = null;
+    if (p.cases.indexOf(pl.position) < 0) { pl.position = p.cases[0]; pl.visites[pl.position] = (pl.visites[pl.position] || 0) + 1; }
+    pl.idx = null; route(contenu, partie);
+  }
 
   function contextesPlateau(dep) {
     var vus = {}, out = [];
@@ -1163,6 +1293,9 @@
       pl.visites[n] = (pl.visites[n] || 0) + 1;
       (pl.arrets || (pl.arrets = {}))[n] = 1;
       if (n > pl.atteinte) pl.atteinte = n;
+      // v36 : la progression du premier tour se lit à l'année de la case (les numéros ne sont plus dans l'ordre).
+      var an = anneeDe(contenu, n);
+      if (an != null && (pl.anneeMax == null || an > pl.anneeMax)) pl.anneeMax = an;
     }
     // v32 : ce que fait un piège qui se déclenche (aussi après une question piège ratée).
     function subir(sp) {
@@ -1173,7 +1306,7 @@
         etapes.push({ type: "recul", case: avant, n: avantI - pl.idx, cause: "piege" });
       } else if (sp.type === "retour_epoque" || sp.type === "teleport") {
         var depuis = pl.position, depuisI = pl.idx;
-        poser(placeVers(pl.route, pl.idx, sp.vers));
+        poser(placeVers(contenu, pl.route, pl.idx, sp.vers));
         c.reculs++;
         etapes.push({ type: sp.type, case: depuis, n: depuisI - pl.idx, vers: pl.position });
       } else if (sp.type === "oubli") {
@@ -1235,13 +1368,12 @@
         if (record) mf[forme] = coups;
         if (coups > 0 && (pl.meilleur == null || coups < pl.meilleur)) pl.meilleur = coups;
         pl.coups = 0; pl.arrets = {};
-        pl.arrets[R.depart] = 1;
         pl.tours++;
-        pl.atteinte = R.arrivee;
+        pl.atteinte = R.arrivee; pl.anneeMax = null;
         pl.ennemis = null; pl.speciaux = Object.assign({}, pl.parcours && pl.parcours.speciaux); ennemis = rj.ennemis === "absents" ? {} : ennemisPlateau(contenu, partie);
         pl.route = null; der = route(contenu, partie).length - 1;
-        pl.idx = 0; pl.position = R.depart;
-        chemin.push(R.depart); places.push(1);
+        pl.idx = 0; pl.position = pl.route[0]; pl.arrets[pl.position] = 1;
+        chemin.push(pl.position); places.push(1);
         if (contenu.plateau.parcours) pl.parcoursSuivant = dessinerParcours(contenu, partie, t);
         // v32 (Victor) : boucler un tour ravit l'IA. Le parcours suivant est déjà dessiné, selon l'humeur d'avant.
         var Ag = contenu.ia && contenu.ia.credits && contenu.ia.credits.agacement, fv = faveurIA(contenu, partie, t);
@@ -1447,7 +1579,7 @@
     if (!libres.length) return null;
     // v19 : en début de parcours, les éléments du début du tableau (les plus faciles) sortent surtout.
     // L'échelle s'élargit avec la progression : au premier tour, case 7 → surtout z ≤ 12 ; à partir du 2e tour, presque tout.
-    var pl = partie.plateau, prog = pl ? (pl.tours || 0) + (pl.atteinte || 1) / 63 : 2, echelle = 6 + 45 * prog;
+    var pl = partie.plateau, prog = pl ? (pl.tours || 0) + (pl.route && pl.route.length > 1 ? (pl.idx || 0) / (pl.route.length - 1) : 0) : 2, echelle = 6 + 45 * prog;
     var poids = libres.map(function (e) { return A.raretes[e.rarete].poids * Math.exp(-(e.z - 1) / echelle) * 1000; }), total = poids.reduce(function (a, b) { return a + b; }, 0);
     var x = tirage(String(t) + "|" + n + "|" + partie.journal.length + "|" + attente.length, 1000000) / 1000000 * total;
     for (var i = 0; i < libres.length; i++) { x -= poids[i]; if (x < 0) return libres[i]; }
@@ -2150,7 +2282,7 @@
     if (p.q && contenu.questionParId[p.q]) return contenu.questionParId[p.q];
     var R = contenu.plateau.regles.question_piege || {}, rangMin = R.rang_min || 5;
     var dures = contenu.questions.filter(function (q) { var k = contenu.parId[q.competence]; return q.type !== "vrai_faux" && k && k.rang >= rangMin; });
-    var k = contenu.plateau.cases[p.case - 1], CC = contenu.plateau.competences_cases, evoque = (CC && CC[String(p.case)]) || [];
+    var k = caseN(contenu, p.case), CC = contenu.plateau.competences_cases, evoque = (CC && CC[String(p.case)]) || [];
     var choix = dures.filter(function (q) { return evoque.indexOf(q.competence) >= 0; });
     if (!choix.length && k && k.stat) choix = dures.filter(function (q) { return contenu.parId[q.competence].stat === k.stat; });
     if (!choix.length) choix = dures.length ? dures : contenu.questions;
@@ -2518,8 +2650,11 @@
       case "competences_perdues": return c.perdues >= cond.n;
       case "jours_actifs": return partie.jours.length >= cond.n;
       // v15 : une case survolée ne débloque rien ; il faut s'y être arrêté.
-      case "case_atteinte": return (partie.plateau.visites[cond.n] || 0) > 0;
-      case "epoque_atteinte": return partie.plateau.tours > 0 || partie.plateau.atteinte >= cond.n;
+      case "case_atteinte": return caseAtteinte(contenu, partie, cond.n);
+      case "epoque_atteinte":
+        if (partie.plateau.tours > 0) return true;
+        var aa = contenu.plateau ? anneeAtteinte(contenu, partie.plateau) : null, ac = contenu.plateau ? anneeDe(contenu, cond.n) : null;
+        return aa != null && ac != null ? aa >= ac : (partie.plateau.atteinte || 1) >= cond.n;
       case "case_visitee": return (partie.plateau.visites[cond.n] || 0) > 0;
       case "tours_plateau": return partie.plateau.tours >= cond.n;
       case "sorties_prison": return c.sortiesPrison >= cond.n;
@@ -2673,12 +2808,12 @@
   function dateAtteinte(contenu, partie, ev) {
     var P = contenu.plateau, pl = partie.plateau;
     if (!P || !pl || pl.tours > 0 || ev.annee == null) return true;
-    var k = P.cases[Math.max(1, pl.atteinte || 1) - 1];
-    var e = k && (P.epoques || []).filter(function (x) { return x.id === k.epoque; })[0];
+    var a = anneeAtteinte(contenu, pl);
+    var e = a != null && (P.epoques || []).filter(function (x) { return (x.debut == null || x.debut <= a) && (x.fin == null || a <= x.fin); })[0];
     return !e || e.fin == null || Number(ev.annee) <= e.fin;
   }
   function epoqueCase(contenu, partie) {
-    var P = contenu.plateau, k = P && partie.plateau && P.cases[partie.plateau.position - 1];
+    var P = contenu.plateau, k = P && partie.plateau && caseN(contenu, partie.plateau.position);
     return k ? (P.epoques || []).filter(function (e) { return e.id === k.epoque; })[0] || null : null;
   }
   function finEpoqueCase(contenu, partie) { var e = epoqueCase(contenu, partie); return e ? e.fin : null; }
@@ -2687,7 +2822,7 @@
   function themeDe(x) { return x ? x.theme || x.stat || null : null; }
   // Le thème de la case où se tient le pion.
   function themeCase(contenu, partie) {
-    var k = contenu.plateau && partie.plateau && contenu.plateau.cases[partie.plateau.position - 1];
+    var k = contenu.plateau && partie.plateau && caseN(contenu, partie.plateau.position);
     // Une case dont l'arbre est éteint ne donne pas de ton.
     return k && k.stat && contenu.parStat[k.stat] ? k.stat : null;
   }
@@ -2902,7 +3037,7 @@
     var graine = hacher(cleJour(t) + "|" + partie.journal.length + "|" + (partie.cree || 0));
     // v15 : la case où se tient le pion dicte l'arbre. Les rappels dus passent toujours d'abord (ceux de cet arbre
     // en tête, l'oubli n'attend pas), puis un quiz de cet arbre ; sinon l'ancien choix, annoncé comme hors case.
-    var k = contenu.plateau && partie.plateau && contenu.plateau.cases[partie.plateau.position - 1];
+    var k = contenu.plateau && partie.plateau && caseN(contenu, partie.plateau.position);
     var ach = arbreAchete(partie);
     if (ach && !contenu.parStat[ach.stat]) ach = null;
     var st = ach ? ach.stat : k && contenu.parStat[k.stat] ? k.stat : null;
@@ -3119,9 +3254,9 @@
     lireNombre: lireNombre,
     corriger: corriger,
     terminerQuiz: terminerQuiz,
-    routeTour: routeTour,
+    routeTour: routeTour, caseN: caseN, anneeDe: anneeDe, tirerCases: tirerCases, caseAtteinte: caseAtteinte,
     remanierRoute: remanierRoute,
-    caseDecouverte: caseDecouverte,
+    caseDecouverte: caseDecouverte, voirToutesCases: voirToutesCases,
     caseOubliee: caseOubliee,
     epreuvePerdue: epreuvePerdue,
     terminerRappel: terminerRappel,
