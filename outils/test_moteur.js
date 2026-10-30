@@ -1592,6 +1592,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const n = CA.questionParId["atome." + e.z + ".numero"], sy = CA.questionParId["atome." + e.z + ".symbole"], ou = CA.questionParId["atome." + e.z + ".ou"];
     assert.ok(n && sy && ou && n.competence === "sci.atomes" && n.type === "numerique" && n.reponse === e.z);
     assert.equal(sy.choix[sy.reponse].fr, e.symbole);
+    // Au mur, la question seule doit dire de quel atome on parle (Victor).
+    [n, sy, ou, CA.questionParId["atome." + e.z + ".place"]].forEach(q => assert.ok(q.enonce.fr.includes(e.nom.fr || e.nom), q.id + " : " + q.enonce.fr));
     // L'image : ses voisins sont bien z - 1 et z + 1.
     const a = M.astuceNumero(CA.atomes, e);
     assert.deepEqual(a.voisins, [e.z - 1, e.z + 1].filter(z => z >= 1 && z <= 118)); assert.ok(a.texte.includes("n° " + e.z) && a.illustration.startsWith("<svg"));

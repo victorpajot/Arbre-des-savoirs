@@ -1425,7 +1425,7 @@
       var o = TX(x.ou[Math.floor(alea() * x.ou.length)]);
       if (!mots(o).some(function (m) { return siens[m]; })) pO.push(o);
     });
-    var q3 = finir("ou", __("Où croise-t-on surtout cet atome ?"), bonne, pO);
+    var q3 = finir("ou", __("Où croise-t-on surtout « {nom} » ?", { nom: nom }), bonne, pO);
     // v34 (Victor) : le placer sur le tableau, en touchant sa case. `reponse` : le numéro de la case juste.
     var qP = { type: "place", enonce: __("Où va « {nom} » dans le tableau ? Touche sa case.", { nom: nom }), choix: [], reponse: e.z };
     return [q1, q2, qP, q3];
