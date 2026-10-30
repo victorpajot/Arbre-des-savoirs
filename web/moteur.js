@@ -199,7 +199,7 @@
   var EMPLACEMENTS_PAQUET = ["regles.json/stats", "skills.json/competences", "skills.json/figures", "questions.json/questions", "succes.json/succes",
     "succes.json/dessins", "objets.json/objets", "avatar.json/savants", "avatar.json/accessoires", "avatar.json/tenues_farce", "ia.json/masques",
     "bibliotheque.json/livres", "frise.json/evenements", "commentaires.json/commentaires", "commentaires.json/apartes", "ia.json/credits/piques",
-    "plateau.json/competences_cases", "ennemis.json/mythes", "ia.json/credits/boutique/articles"];
+    "plateau.json/cases", "plateau.json/competences_cases", "ennemis.json/mythes", "ia.json/credits/boutique/articles"];
   function ajouterTextes(dico) { Object.keys(dico || {}).forEach(function (k) { if (DICO[k] == null) DICO[k] = dico[k]; }); }
   function cleElement(x) { return x && typeof x === "object" && (x.id !== undefined ? String(x.id) : x.n !== undefined ? String(x.n) : x.z !== undefined ? String(x.z) : null); }
   function lieu(donnees, fichier, chemin, creer) {

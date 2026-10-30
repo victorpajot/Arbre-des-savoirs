@@ -636,6 +636,14 @@ def paquet(ident):
         if isinstance(elements, list) and isinstance(assemble, list):
             lots = {cle(x): x["lot"] for x in assemble if isinstance(x, dict) and "lot" in x}
             elements = [dict(x, lot=lots[cle(x)]) if isinstance(x, dict) and "lot" not in x and cle(x) in lots else x for x in elements]
+        if nom == "cases.json":
+            # Les cases telles que l'assemblage les a posées : numéro `n` du registre, « evoque » passé dans competences_cases.
+            siennes = {x["id"] for x in elements}
+            elements = [x for x in assemble if x["id"] in siennes]
+            cc = donnees["plateau.json"].get("competences_cases", {})
+            ev = {str(x["n"]): cc[str(x["n"])] for x in elements if str(x["n"]) in cc}
+            if ev:
+                frags.append({"fichier": fichier, "chemin": ["competences_cases"], "elements": ev})
         frags.append({"fichier": fichier, "chemin": chemin, "elements": elements})
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import langues

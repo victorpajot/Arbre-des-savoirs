@@ -118,7 +118,7 @@ for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "co
   assert.ok(v.compte["questions.json/questions"] > 20);
   M.ajouterPaquet(sans, idx, paquet);
   const cles = (d, fi, ch) => ch.reduce((o, k) => o[k], d[fi]).map(x => x.id).sort().join("|");
-  for (const [fi, ch] of [["skills.json", ["competences"]], ["questions.json", ["questions"]], ["succes.json", ["succes"]], ["avatar.json", ["savants"]], ["regles.json", ["stats"]]])
+  for (const [fi, ch] of [["skills.json", ["competences"]], ["questions.json", ["questions"]], ["succes.json", ["succes"]], ["avatar.json", ["savants"]], ["regles.json", ["stats"]], ["plateau.json", ["cases"]]])
     assert.equal(cles(sans, fi, ch), cles(brut, fi, ch), `paquet : ${fi} identique à l'assemblage`);
   assert.ok(idx.packs.find(m => m.id === "musique").ajoute);
   // Le jeu tourne avec, puis sans (pack éteint), sans rien perdre.
