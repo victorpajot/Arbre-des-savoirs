@@ -1,794 +1,794 @@
 [
- {
-  "id": "sci.atomes",
-  "stat": "alchimie",
-  "rang": 1,
-  "nom": {
-   "fr": "Atomes et éléments"
-  },
-  "description": {
-   "fr": "La structure de l'atome, les éléments et le tableau périodique."
-  },
-  "prerequis": [],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Un atome : un noyau (protons et neutrons) et des électrons autour."
+  {
+    "id": "sci.atomes",
+    "stat": "alchimie",
+    "rang": 1,
+    "nom": {
+      "fr": "Atomes et éléments"
     },
-    {
-     "fr": "Le numéro atomique (nombre de protons) définit l'élément."
+    "description": {
+      "fr": "La structure de l'atome, les éléments et le tableau périodique."
     },
-    {
-     "fr": "Le tableau périodique range les éléments par numéro ; une colonne regroupe des propriétés chimiques voisines."
+    "prerequis": [],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Un atome : un noyau (protons et neutrons) et des électrons autour."
+        },
+        {
+          "fr": "Le numéro atomique (nombre de protons) définit l'élément."
+        },
+        {
+          "fr": "Le tableau périodique range les éléments par numéro ; une colonne regroupe des propriétés chimiques voisines."
+        },
+        {
+          "fr": "Un atome est presque vide : si le noyau était une bille, l'atome ferait la taille d'un stade."
+        }
+      ],
+      "piege": {
+        "fr": "Changer le nombre de neutrons donne un isotope du même élément, pas un autre élément."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Ce que chaque particule détermine\"><rect class=\"a\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">protons</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">font l'élément</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">neutrons</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">isotopes</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">électrons</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chimie</text></svg>",
+      "source": "IUPAC, Periodic Table of the Elements, 2022",
+      "figures": [
+        "atome"
+      ]
     },
-    {
-     "fr": "Un atome est presque vide : si le noyau était une bille, l'atome ferait la taille d'un stade."
+    "symbole": "⚛",
+    "embleme": "atome",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "noyau",
+          "titre": {
+            "fr": "Un noyau minuscule dans beaucoup de vide"
+          },
+          "texte": [
+            {
+              "fr": "Un atome, c'est un noyau, fait de protons et de neutrons, entouré d'électrons. Presque toute sa masse est dans le noyau, et pourtant ce noyau est minuscule : l'atome est 27 000 à 60 000 fois plus large que lui, selon l'élément. Si le noyau était une bille, l'atome aurait la taille d'un stade."
+            },
+            {
+              "fr": "On l'a compris en tirant dessus. Entre 1906 et 1913, à Manchester, Hans Geiger et Ernest Marsden envoient des particules alpha sur une feuille d'or très fine, sous la direction d'Ernest Rutherford. Presque toutes passent tout droit, mais quelques-unes rebondissent vers l'arrière. En 1911, Rutherford en tire la conclusion : la charge positive et la masse sont concentrées dans un tout petit centre, le noyau."
+            }
+          ],
+          "retenir": {
+            "fr": "Protons et neutrons dans le noyau, électrons autour. Le noyau porte presque toute la masse, mais l'atome est surtout du vide (Rutherford, 1911)."
+          },
+          "source": "Rutherford, Philosophical Magazine, 1911 ; expériences de Geiger et Marsden",
+          "figure": "mc_alch_rutherford"
+        },
+        {
+          "id": "numero",
+          "titre": {
+            "fr": "Le numéro qui fait l'élément"
+          },
+          "texte": [
+            {
+              "fr": "Ce qui fait qu'un atome est du carbone plutôt que de l'azote, c'est son nombre de protons : le numéro atomique. Le carbone en a 6, l'oxygène 8, le fer 26. Changer ce nombre, c'est changer d'élément. C'est le jeune physicien anglais Henry Moseley qui le montre en 1913, en mesurant les rayons X des éléments : le numéro atomique est la charge du noyau, et il remet de l'ordre dans le tableau. Il est tué deux ans plus tard à Gallipoli, le 10 août 1915, à 27 ans."
+            },
+            {
+              "fr": "Les neutrons, eux, peuvent varier sans changer l'élément : on obtient des isotopes. Le carbone 12 et le carbone 14 ont tous deux 6 protons ; le second a deux neutrons de plus. Les électrons aussi peuvent varier : un atome qui en gagne ou en perd devient un ion, chargé, comme Na⁺ ou Cl⁻ dans le sel."
+            }
+          ],
+          "retenir": {
+            "fr": "Protons = identité de l'élément. Neutrons en plus ou en moins = isotope. Électrons en plus ou en moins = ion."
+          },
+          "source": "IUPAC, Periodic Table of the Elements, 2022",
+          "schema_fiche": true
+        },
+        {
+          "id": "tableau",
+          "titre": {
+            "fr": "Le pari de Mendeleïev"
+          },
+          "texte": [
+            {
+              "fr": "En 1869, Dmitri Mendeleïev range les éléments connus dans un tableau : en lignes par masse croissante, et en colonnes qui regroupent les éléments aux propriétés chimiques voisines. Là où rien ne colle, il laisse des cases vides et annonce que des éléments inconnus viendront les remplir."
+            },
+            {
+              "fr": "Il les nomme d'avance : eka-aluminium, eka-bore, eka-silicium. Le gallium est découvert en 1875 par Paul-Émile Lecoq de Boisbaudran, le scandium en 1879, le germanium en 1886 : ils prennent les places prévues. C'est ce qui a imposé son tableau."
+            }
+          ],
+          "retenir": {
+            "fr": "Une colonne du tableau = une famille aux propriétés voisines. Mendeleïev (1869) a prédit des éléments manquants, trouvés ensuite : gallium, scandium, germanium."
+          },
+          "source": "Mendeleïev, Zeitschrift für Chemie, 1869",
+          "figure": "mc_alch_mendeleiev"
+        }
+      ]
     }
-   ],
-   "piege": {
-    "fr": "Changer le nombre de neutrons donne un isotope du même élément, pas un autre élément."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Ce que chaque particule détermine\"><rect class=\"a\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">protons</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">font l'élément</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">neutrons</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">isotopes</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">électrons</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chimie</text></svg>",
-   "source": "IUPAC, Periodic Table of the Elements, 2022",
-   "figures": [
-    "atome"
-   ]
   },
-  "symbole": "⚛",
-  "embleme": "atome",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "noyau",
-     "titre": {
-      "fr": "Un noyau minuscule dans beaucoup de vide"
-     },
-     "texte": [
-      {
-       "fr": "Un atome, c'est un noyau, fait de protons et de neutrons, entouré d'électrons. Presque toute sa masse est dans le noyau, et pourtant ce noyau est minuscule : l'atome est 27 000 à 60 000 fois plus large que lui, selon l'élément. Si le noyau était une bille, l'atome aurait la taille d'un stade."
-      },
-      {
-       "fr": "On l'a compris en tirant dessus. Entre 1906 et 1913, à Manchester, Hans Geiger et Ernest Marsden envoient des particules alpha sur une feuille d'or très fine, sous la direction d'Ernest Rutherford. Presque toutes passent tout droit, mais quelques-unes rebondissent vers l'arrière. En 1911, Rutherford en tire la conclusion : la charge positive et la masse sont concentrées dans un tout petit centre, le noyau."
-      }
-     ],
-     "retenir": {
-      "fr": "Protons et neutrons dans le noyau, électrons autour. Le noyau porte presque toute la masse, mais l'atome est surtout du vide (Rutherford, 1911)."
-     },
-     "source": "Rutherford, Philosophical Magazine, 1911 ; expériences de Geiger et Marsden",
-     "figure": "mc_alch_rutherford"
+  {
+    "id": "chim.liaisons",
+    "stat": "alchimie",
+    "rang": 2,
+    "nom": {
+      "fr": "Liaisons et molécules"
     },
-    {
-     "id": "numero",
-     "titre": {
-      "fr": "Le numéro qui fait l'élément"
-     },
-     "texte": [
-      {
-       "fr": "Ce qui fait qu'un atome est du carbone plutôt que de l'azote, c'est son nombre de protons : le numéro atomique. Le carbone en a 6, l'oxygène 8, le fer 26. Changer ce nombre, c'est changer d'élément."
-      },
-      {
-       "fr": "Les neutrons, eux, peuvent varier sans changer l'élément : on obtient des isotopes. Le carbone 12 et le carbone 14 ont tous deux 6 protons ; le second a deux neutrons de plus. Les électrons aussi peuvent varier : un atome qui en gagne ou en perd devient un ion, chargé, comme Na⁺ ou Cl⁻ dans le sel."
-      }
-     ],
-     "retenir": {
-      "fr": "Protons = identité de l'élément. Neutrons en plus ou en moins = isotope. Électrons en plus ou en moins = ion."
-     },
-     "source": "IUPAC, Periodic Table of the Elements, 2022",
-     "schema_fiche": true
+    "description": {
+      "fr": "Comment les atomes s'assemblent : liaisons covalentes, ioniques, polarité."
     },
-    {
-     "id": "tableau",
-     "titre": {
-      "fr": "Le pari de Mendeleïev"
-     },
-     "texte": [
-      {
-       "fr": "En 1869, Dmitri Mendeleïev range les éléments connus dans un tableau : en lignes par masse croissante, et en colonnes qui regroupent les éléments aux propriétés chimiques voisines. Là où rien ne colle, il laisse des cases vides et annonce que des éléments inconnus viendront les remplir."
+    "prerequis": [
+      "sci.atomes"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Liaison covalente : deux atomes partagent une paire d'électrons (H₂O, CH₄)."
+        },
+        {
+          "fr": "Liaison ionique : un atome cède un électron à l'autre ; les ions s'attirent (NaCl)."
+        },
+        {
+          "fr": "Une molécule est polaire si les charges sont mal réparties : l'eau l'est, d'où ses propriétés de solvant."
+        },
+        {
+          "fr": "Les liaisons hydrogène entre molécules d'eau expliquent son point d'ébullition élevé."
+        }
+      ],
+      "piege": {
+        "fr": "La glace flotte parce que ses liaisons hydrogène l'organisent en réseau plus aéré que l'eau liquide."
       },
-      {
-       "fr": "Il les nomme d'avance : eka-aluminium, eka-bore, eka-silicium. Le gallium est découvert en 1875 par Paul-Émile Lecoq de Boisbaudran, le scandium en 1879, le germanium en 1886 : ils prennent les places prévues. C'est ce qui a imposé son tableau."
-      }
-     ],
-     "retenir": {
-      "fr": "Une colonne du tableau = une famille aux propriétés voisines. Mendeleïev (1869) a prédit des éléments manquants, trouvés ensuite : gallium, scandium, germanium."
-     },
-     "source": "Mendeleïev, Zeitschrift für Chemie, 1869",
-     "figure": "mc_alch_mendeleiev"
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" role=\"img\" aria-label=\"Liaisons covalente et ionique\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Covalente</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Ionique</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"132\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">partage d'électrons</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">H₂O, CH₄</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">molécules</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">transfert d'électrons</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">NaCl</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">cristaux d'ions</text></svg>",
+      "source": "Pauling, The Nature of the Chemical Bond, 1939",
+      "figures": [
+        "eau",
+        "atome"
+      ]
+    },
+    "symbole": "H₂O",
+    "embleme": "modele-moleculaire",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "partage",
+          "titre": {
+            "fr": "Partager des électrons"
+          },
+          "texte": [
+            {
+              "fr": "En 1916, Gilbert Lewis propose une idée simple : deux atomes restent liés quand ils partagent une paire d'électrons. C'est la liaison covalente. Dans H₂, chaque hydrogène apporte un électron ; la paire appartient aux deux à la fois."
+            },
+            {
+              "fr": "Deux atomes peuvent partager une, deux ou trois paires : liaison simple, double ou triple. Les deux oxygènes de O₂ sont reliés par une double liaison. Le carbone, avec ses quatre électrons de valence, forme quatre liaisons : c'est ce qui lui permet de bâtir des chaînes et des cycles."
+            }
+          ],
+          "retenir": {
+            "fr": "Liaison covalente = une paire d'électrons partagée (Lewis, 1916). Simple, double ou triple selon le nombre de paires. Le carbone fait 4 liaisons."
+          },
+          "source": "Lewis, Journal of the American Chemical Society, 1916"
+        },
+        {
+          "id": "electronegativite",
+          "titre": {
+            "fr": "Qui tire le plus fort ?"
+          },
+          "texte": [
+            {
+              "fr": "Dans une liaison, les deux atomes ne tirent pas les électrons avec la même force. Linus Pauling chiffre cette force en 1932 : l'électronégativité. Le fluor est le plus gourmand (3,98), l'oxygène suit (3,44), l'hydrogène est à 2,20, le sodium à 0,93."
+            },
+            {
+              "fr": "Tout dépend de l'écart. Presque nul (jusqu'à 0,3 environ) : partage équitable. Entre 0,3 et 1,7 : la liaison est polaire, un côté porte un peu de charge négative. Au-delà de 1,7, c'est en général ionique : un atome prend carrément l'électron. Entre le sodium et le chlore (3,16), l'écart dépasse 2 : le sel est fait d'ions Na⁺ et Cl⁻. Ces seuils sont des repères, pas des frontières nettes."
+            }
+          ],
+          "retenir": {
+            "fr": "Électronégativité (Pauling, 1932) : petit écart = covalente, écart moyen = polaire, grand écart (plus de 1,7) = ionique."
+          },
+          "source": "Pauling, Journal of the American Chemical Society, 1932",
+          "figure": "mc_alch_electroneg"
+        },
+        {
+          "id": "eau",
+          "titre": {
+            "fr": "L'eau, une molécule tordue"
+          },
+          "texte": [
+            {
+              "fr": "Dans l'eau, l'oxygène tire les électrons plus fort que les hydrogènes, et la molécule est coudée, à environ 104,5° : un côté négatif (l'oxygène), un côté positif (les hydrogènes). Elle est polaire. Le côté hydrogène d'une molécule s'accroche au côté oxygène d'une voisine : c'est la liaison hydrogène, et chaque molécule peut en former jusqu'à quatre. Que l'eau ne soit pas un élément mais un composé d'hydrogène et d'oxygène, Lavoisier et Laplace l'annoncent à l'Académie des sciences en novembre 1783. Henry Cavendish avait obtenu de l'eau en brûlant de l'hydrogène dès 1781, sans l'interpréter ainsi."
+            },
+            {
+              "fr": "Ces accroches expliquent les bizarreries de l'eau. Le sulfure d'hydrogène, H₂S, presque deux fois plus lourd, est un gaz à température ambiante, alors que l'eau ne bout qu'à 100 °C. Et en gelant, les liaisons hydrogène rangent les molécules en réseau aéré : la glace (0,917 g/mL) est environ 9 % moins dense que l'eau liquide. Elle flotte, et les lacs gèlent par le dessus."
+            }
+          ],
+          "retenir": {
+            "fr": "L'eau est polaire et coudée ; ses liaisons hydrogène expliquent son ébullition à 100 °C et la glace qui flotte."
+          },
+          "source": "Pauling, The Nature of the Chemical Bond, 1939",
+          "figure": "eau"
+        }
+      ]
     }
-   ]
+  },
+  {
+    "id": "chim.acides",
+    "stat": "alchimie",
+    "rang": 3,
+    "nom": {
+      "fr": "Acides et bases"
+    },
+    "description": {
+      "fr": "Le pH, la neutralisation et les acides du quotidien."
+    },
+    "prerequis": [
+      "sci.atomes"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "pH < 7 : acide ; pH = 7 : neutre ; pH > 7 : basique."
+        },
+        {
+          "fr": "L'échelle est logarithmique : pH 3 est dix fois plus acide que pH 4."
+        },
+        {
+          "fr": "Acide + base → sel + eau (neutralisation)."
+        },
+        {
+          "fr": "Citron ≈ 2, vinaigre ≈ 3, eau pure 7, eau de Javel ≈ 12."
+        },
+        {
+          "fr": "pH = −log[H⁺] : 10⁻³ mol/L d'ions H⁺ donne un pH de 3, 10⁻⁷ donne 7."
+        }
+      ],
+      "piege": {
+        "fr": "Une baisse d'une unité de pH n'est pas une petite variation : c'est dix fois plus d'ions H⁺."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 335 110\" role=\"img\" aria-label=\"Échelle de pH de 0 à 14 : acide, neutre, basique\"><rect x=\"10\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E53939\"/><text class=\"tm\" x=\"20\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">0</text><rect x=\"31\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E57039\"/><text class=\"tm\" x=\"41\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">1</text><rect x=\"52\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5A839\"/><text class=\"tm\" x=\"62\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">2</text><rect x=\"73\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5DF39\"/><text class=\"t\" x=\"83\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3</text><rect x=\"94\" y=\"24\" width=\"20\" height=\"34\" fill=\"#B4E539\"/><text class=\"tm\" x=\"104\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">4</text><rect x=\"115\" y=\"24\" width=\"20\" height=\"34\" fill=\"#7CE539\"/><text class=\"tm\" x=\"125\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">5</text><rect x=\"136\" y=\"24\" width=\"20\" height=\"34\" fill=\"#45E539\"/><text class=\"tm\" x=\"146\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">6</text><rect x=\"157\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E564\"/><text class=\"t\" x=\"167\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">7</text><rect x=\"178\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E59B\"/><text class=\"tm\" x=\"188\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">8</text><rect x=\"199\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E5D3\"/><text class=\"tm\" x=\"209\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">9</text><rect x=\"220\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39C0E5\"/><text class=\"tm\" x=\"230\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">10</text><rect x=\"241\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3989E5\"/><text class=\"tm\" x=\"251\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">11</text><rect x=\"262\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3951E5\"/><text class=\"tm\" x=\"272\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">12</text><rect x=\"283\" y=\"24\" width=\"20\" height=\"34\" fill=\"#5839E5\"/><text class=\"tm\" x=\"293\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">13</text><rect x=\"304\" y=\"24\" width=\"20\" height=\"34\" fill=\"#8F39E5\"/><text class=\"tm\" x=\"314\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">14</text><text class=\"t\" x=\"60\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">acide</text><text class=\"t\" x=\"167\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">neutre</text><text class=\"t\" x=\"275\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">basique</text><text class=\"tm\" x=\"20\" y=\"100\" font-size=\"12\" text-anchor=\"start\">citron ≈ 2</text><text class=\"tm\" x=\"167\" y=\"100\" font-size=\"12\" text-anchor=\"middle\">eau pure 7</text><text class=\"tm\" x=\"325\" y=\"100\" font-size=\"12\" text-anchor=\"end\">Javel ≈ 12</text></svg>",
+      "source": "Sørensen, Biochemische Zeitschrift, 1909"
+    },
+    "symbole": "pH",
+    "embleme": "papier-tournesol",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "ph",
+          "titre": {
+            "fr": "Une échelle qui compte par dix"
+          },
+          "texte": [
+            {
+              "fr": "En 1909, au laboratoire Carlsberg de Copenhague, Søren Sørensen invente le pH pour mesurer l'acidité. Sous 7, la solution est acide ; à 7, neutre ; au-dessus, basique. Le jus de citron est vers 2, le vinaigre vers 3, l'eau pure à 7, l'eau de Javel vers 12."
+            },
+            {
+              "fr": "Le piège, c'est que l'échelle est logarithmique : le pH est l'exposant de la concentration en ions H⁺, changé de signe. 10⁻³ mol/L donne un pH de 3, 10⁻⁴ un pH de 4. Descendre d'une seule unité, c'est donc dix fois plus d'ions H⁺ ; de deux unités, cent fois plus."
+            }
+          ],
+          "retenir": {
+            "fr": "pH = −log[H⁺] (Sørensen, 1909). Une unité de moins = 10 fois plus acide."
+          },
+          "source": "Sørensen, Biochemische Zeitschrift, 1909"
+        },
+        {
+          "id": "donner",
+          "titre": {
+            "fr": "Un acide donne, une base prend"
+          },
+          "texte": [
+            {
+              "fr": "La définition la plus utile date de 1923 : le Danois Johannes Brønsted et l'Anglais Martin Lowry, chacun de leur côté, disent qu'un acide est une espèce qui cède un ion H⁺, et une base une espèce qui le capte. Avant eux, Svante Arrhenius, à partir de ses travaux de 1884 sur les ions dans l'eau, parlait d'acides qui libèrent des H⁺ en solution."
+            },
+            {
+              "fr": "Quand un acide rencontre une base en bonnes proportions, les H⁺ de l'un et les OH⁻ de l'autre forment de l'eau, et il reste un sel : c'est la neutralisation. C'est ce que fait le bicarbonate d'un médicament contre les brûlures d'estomac : il neutralise une partie de l'acide chlorhydrique du suc gastrique."
+            }
+          ],
+          "retenir": {
+            "fr": "Acide = donneur de H⁺, base = capteur de H⁺ (Brønsted et Lowry, 1923). Acide + base → sel + eau."
+          },
+          "source": "Brønsted, Recueil des Travaux Chimiques des Pays-Bas, 1923 ; Lowry, Journal of the Society of Chemical Industry, 1923",
+          "figure": "mc_alch_acide_base"
+        },
+        {
+          "id": "tampon",
+          "titre": {
+            "fr": "Le sang ne plaisante pas avec le pH"
+          },
+          "texte": [
+            {
+              "fr": "Le sang humain se tient entre pH 7,35 et 7,45. En dehors de cette fenêtre étroite, on tombe vite en acidose ou en alcalose. Ce qui le maintient, c'est un tampon : un couple acide faible et base, ici l'acide carbonique et le bicarbonate, qui absorbe les H⁺ en trop ou en fournit quand il en manque."
+            },
+            {
+              "fr": "Les océans, eux, n'ont pas un tampon infini. Ils absorbent une partie du CO₂ que nous émettons, qui forme de l'acide carbonique : le pH de surface est passé d'environ 8,2 à 8,1 depuis le XIXe siècle. Un dixième d'unité seulement, mais sur une échelle par dix, cela fait environ 30 % d'ions H⁺ en plus."
+            }
+          ],
+          "retenir": {
+            "fr": "Un tampon (acide faible + sa base) amortit les variations de pH : le sang reste entre 7,35 et 7,45 grâce au bicarbonate."
+          },
+          "source": "Hall, Guyton and Hall Textbook of Medical Physiology",
+          "figure": "mc_alch_tampon"
+        }
+      ]
+    }
+  },
+  {
+    "id": "chim.reactions",
+    "stat": "alchimie",
+    "rang": 4,
+    "nom": {
+      "fr": "Réactions et oxydoréduction"
+    },
+    "description": {
+      "fr": "Équations, combustion, catalyse, oxydation et réduction."
+    },
+    "prerequis": [
+      "chim.liaisons",
+      "chim.acides"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Une équation chimique doit être équilibrée : autant d'atomes de chaque sorte des deux côtés (Lavoisier)."
+        },
+        {
+          "fr": "2 H₂ + O₂ → 2 H₂O."
+        },
+        {
+          "fr": "Combustion : un combustible + du dioxygène → du CO₂, de l'eau et de la chaleur."
+        },
+        {
+          "fr": "Un catalyseur accélère une réaction sans être consommé. Oxydation : perte d'électrons ; réduction : gain."
+        }
+      ],
+      "piege": {
+        "fr": "La rouille n'est pas une simple « saleté » : c'est le fer oxydé, plus volumineux, qui fissure le métal."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Une équation équilibrée : 4 H et 2 O de chaque côté\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2 H₂</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">+ O₂</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2 H₂O</text></svg>",
+      "source": "Lavoisier, Traité élémentaire de chimie, 1789"
+    },
+    "symbole": "→",
+    "embleme": "balance-lavoisier",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "compter",
+          "titre": {
+            "fr": "Rien ne se crée : on recompte les atomes"
+          },
+          "texte": [
+            {
+              "fr": "Un bois qui brûle semble perdre du poids, un métal qui rouille semble en gagner. Antoine Lavoisier fait les réactions en vase clos et pèse tout : la masse totale ne change pas. Il l'énonce dès 1773 et popularise le principe, qui enterre la théorie du phlogistique. Le Russe Mikhaïl Lomonossov l'avait formulé dès 1756."
+            },
+            {
+              "fr": "Dans une réaction, les atomes changent de partenaires, ils ne naissent ni ne disparaissent. D'où l'équilibrage : dans 2 H₂ + O₂ → 2 H₂O, on compte 4 hydrogènes et 2 oxygènes de chaque côté. Si les comptes ne tombent pas juste, l'équation est fausse."
+            }
+          ],
+          "retenir": {
+            "fr": "Conservation de la masse (Lomonossov 1756, Lavoisier 1773) : autant d'atomes de chaque sorte avant et après."
+          },
+          "source": "Lavoisier, Traité élémentaire de chimie, 1789"
+        },
+        {
+          "id": "vitesse",
+          "titre": {
+            "fr": "La bosse à franchir"
+          },
+          "texte": [
+            {
+              "fr": "Une allumette ne s'enflamme pas toute seule dans sa boîte : il faut la frotter. Toute réaction a une barrière d'énergie à franchir, l'énergie d'activation, un terme introduit par Svante Arrhenius en 1889. Plus il fait chaud, plus de molécules ont assez d'énergie pour passer : c'est pourquoi le réfrigérateur ralentit les réactions qui gâtent les aliments."
+            },
+            {
+              "fr": "Un catalyseur abaisse cette barrière : la réaction va plus vite, et lui en ressort intact. Il ne change ni le point de départ ni le point d'arrivée, seulement le chemin. Les enzymes sont les catalyseurs du vivant ; le pot catalytique d'une voiture en est un autre."
+            }
+          ],
+          "retenir": {
+            "fr": "Énergie d'activation (Arrhenius, 1889) : la barrière à franchir. Chaleur = plus de molécules passent ; catalyseur = barrière plus basse, sans être consommé."
+          },
+          "source": "Arrhenius, Zeitschrift für physikalische Chemie, 1889",
+          "figure": "mc_alch_activation"
+        },
+        {
+          "id": "redox",
+          "titre": {
+            "fr": "Perdre ou gagner des électrons"
+          },
+          "texte": [
+            {
+              "fr": "S'oxyder, c'est perdre des électrons ; se réduire, c'est en gagner. Les deux vont toujours ensemble : les électrons perdus par l'un sont pris par l'autre. Le fer qui rouille s'oxyde ; l'oxygène qui l'attaque se réduit."
+            },
+            {
+              "fr": "Si l'on force ces électrons à passer par un fil, on obtient du courant. C'est l'idée d'Alessandro Volta, qui décrit sa pile à la Royal Society le 20 mars 1800 : des disques de zinc et de cuivre empilés, séparés par du tissu imbibé de saumure. Toutes nos piles fonctionnent encore ainsi."
+            }
+          ],
+          "retenir": {
+            "fr": "Oxydation = perte d'électrons, réduction = gain. Une pile fait passer ces électrons par un circuit (Volta, 1800)."
+          },
+          "source": "Volta, Philosophical Transactions of the Royal Society, 1800",
+          "figure": "mc_alch_redox"
+        }
+      ]
+    }
+  },
+  {
+    "id": "chim.etats",
+    "stat": "alchimie",
+    "rang": 5,
+    "nom": {
+      "fr": "États de la matière"
+    },
+    "description": {
+      "fr": "Solide, liquide, gaz, changements d'état et lois des gaz."
+    },
+    "prerequis": [
+      "chim.reactions"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Solide, liquide, gaz : même matière, agitation et distance différentes entre molécules."
+        },
+        {
+          "fr": "Fusion, vaporisation, condensation, solidification, sublimation (solide → gaz), condensation solide (gaz → solide)."
+        },
+        {
+          "fr": "Pendant un changement d'état, la température reste constante."
+        },
+        {
+          "fr": "À volume fixé, la pression d'un gaz augmente avec la température (PV = nRT)."
+        },
+        {
+          "fr": "Une mole de gaz parfait à 0 °C sous une atmosphère occupe environ 22,4 L."
+        }
+      ],
+      "piege": {
+        "fr": "L'eau bout à moins de 100 °C en altitude : environ 70 °C au sommet de l'Everest."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 210\" role=\"img\" aria-label=\"Les changements d'état de la matière\"><ellipse class=\"lm\" cx=\"170\" cy=\"105\" rx=\"112\" ry=\"76\" fill=\"none\" stroke-dasharray=\"4 5\"/><text class=\"tm\" x=\"170\" y=\"109.2\" font-size=\"12\" text-anchor=\"middle\">chaleur</text><line class=\"al\" x1=\"258.2\" y1=\"58.2\" x2=\"273.9\" y2=\"76.6\" stroke-width=\"2\"/><path class=\"al\" d=\"M267.3 74.1 L273.9 76.6 L272.4 69.7\" stroke-width=\"2\"/><line class=\"al\" x1=\"185.6\" y1=\"180.3\" x2=\"154.4\" y2=\"180.3\" stroke-width=\"2\"/><path class=\"al\" d=\"M160.5 176.9 L154.4 180.3 L160.5 183.6\" stroke-width=\"2\"/><line class=\"al\" x1=\"66.1\" y1=\"76.6\" x2=\"81.8\" y2=\"58.2\" stroke-width=\"2\"/><path class=\"al\" d=\"M80.3 65.0 L81.8 58.2 L75.2 60.7\" stroke-width=\"2\"/><rect class=\"f\" x=\"122.0\" y=\"12.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170.0\" y=\"32.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">solide</text><rect class=\"f\" x=\"219.0\" y=\"126.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"266.99484522385717\" y=\"146.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">liquide</text><rect class=\"f\" x=\"25.0\" y=\"126.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"73.00515477614289\" y=\"146.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">gaz</text></svg>",
+      "source": "Atkins, Chimie physique, 4e éd."
+    },
+    "symbole": "❄",
+    "embleme": "bougie",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "agitation",
+          "titre": {
+            "fr": "Même matière, autre agitation"
+          },
+          "texte": [
+            {
+              "fr": "Glace, eau, vapeur : ce sont les mêmes molécules H₂O. Ce qui change, c'est leur agitation et leur distance. Dans un solide, elles vibrent sur place ; dans un liquide, elles glissent les unes sur les autres ; dans un gaz, elles filent et s'éloignent."
+            },
+            {
+              "fr": "Chaque passage a son nom : fusion (solide → liquide), vaporisation (liquide → gaz), condensation (gaz → liquide), solidification (liquide → solide), sublimation (solide → gaz directement, comme la glace carbonique). Chauffez encore un gaz et ses atomes perdent des électrons : c'est le plasma, celui des étoiles et des éclairs. Le mot plasma est proposé en 1928 par le chimiste américain Irving Langmuir."
+            }
+          ],
+          "retenir": {
+            "fr": "Solide, liquide, gaz = mêmes molécules, agitation différente. Sublimation = solide → gaz directement."
+          },
+          "source": "Atkins, Chimie physique, 4e éd."
+        },
+        {
+          "id": "palier",
+          "titre": {
+            "fr": "Pourquoi le glaçon reste à 0 °C"
+          },
+          "texte": [
+            {
+              "fr": "Pendant qu'un glaçon fond, sa température ne bouge pas : 0 °C du début à la fin. L'énergie reçue ne sert pas à chauffer, elle sert à défaire le cristal. Et il en faut beaucoup : 334 J pour fondre un gramme de glace, presque autant que pour chauffer ce même gramme d'eau liquide de 0 à 80 °C. Cette chaleur cachée, la chaleur latente, c'est l'Écossais Joseph Black qui la présente le premier, le 23 avril 1762 à l'université de Glasgow : de la glace et de l'eau à 0 °C posées dans la même pièce, l'eau se réchauffe vite, la glace reste à 0 °C."
+            },
+            {
+              "fr": "C'est pour cela que la glace refroidit si bien une boisson : elle aspire de la chaleur sans se réchauffer. Et le sel sur une route verglacée ne chauffe rien : il abaisse la température à laquelle l'eau gèle, jusqu'à environ −21 °C pour l'eau salée."
+            }
+          ],
+          "retenir": {
+            "fr": "Pendant un changement d'état, la température reste constante. Fondre 1 g de glace ≈ chauffer 1 g d'eau de 80 °C."
+          },
+          "source": "Atkins, Chimie physique, 4e éd.",
+          "figure": "mc_alch_paliers"
+        },
+        {
+          "id": "gaz",
+          "titre": {
+            "fr": "Ce que font les gaz quand on les serre"
+          },
+          "texte": [
+            {
+              "fr": "À température constante, si on divise par deux le volume d'un gaz, sa pression double : P × V reste constant. Robert Boyle le publie en 1662, Edme Mariotte en 1676. Émile Clapeyron réunit ces lois en 1834 dans une seule formule, P V = n R T : pression, volume, quantité de gaz et température sont liés."
+            },
+            {
+              "fr": "Une conséquence concrète : la température d'ébullition dépend de la pression. Sous une atmosphère, l'eau bout à 100 °C ; en altitude, l'air pèse moins et elle bout plus tôt, vers 70 °C au sommet de l'Everest. Les pâtes y cuisent mal, et c'est l'inverse dans une cocotte-minute, où la pression monte et l'eau dépasse 100 °C."
+            }
+          ],
+          "retenir": {
+            "fr": "P × V constant à température fixe (Boyle 1662, Mariotte 1676) ; P V = n R T (Clapeyron, 1834). Moins de pression = ébullition plus basse."
+          },
+          "source": "Clapeyron, Journal de l'École polytechnique, 1834",
+          "figure": "mc_alch_boyle"
+        }
+      ]
+    }
+  },
+  {
+    "id": "chim.organique",
+    "stat": "alchimie",
+    "rang": 6,
+    "nom": {
+      "fr": "Chimie organique"
+    },
+    "description": {
+      "fr": "Le carbone, les hydrocarbures, les polymères et les molécules du vivant."
+    },
+    "prerequis": [
+      "chim.etats"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "La chimie organique est celle des composés du carbone, qui forme quatre liaisons."
+        },
+        {
+          "fr": "Hydrocarbures : uniquement carbone et hydrogène (méthane, butane, octane)."
+        },
+        {
+          "fr": "Polymères : longues chaînes d'unités répétées (polyéthylène, ADN, cellulose)."
+        },
+        {
+          "fr": "Les glucides, lipides, protéines et acides nucléiques sont les grandes molécules du vivant."
+        }
+      ],
+      "piege": {
+        "fr": "« Chimique » ne s'oppose pas à « naturel » : tout ce qui vit est fait de molécules organiques."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 430 96\" role=\"img\" aria-label=\"Un polymère : une chaîne de petites unités\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"53.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">monomère</text><line class=\"al\" x1=\"99.0\" y1=\"52.0\" x2=\"115.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M108.9 55.4 L115.0 52.0 L108.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"118.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"161.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">monomère</text><line class=\"al\" x1=\"207.0\" y1=\"52.0\" x2=\"223.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M216.9 55.4 L223.0 52.0 L216.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"226.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"269.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">… × 10 000</text><line class=\"al\" x1=\"315.0\" y1=\"52.0\" x2=\"331.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M324.9 55.4 L331.0 52.0 L324.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"334.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"377.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">polymère</text></svg>",
+      "source": "Wöhler, Annalen der Physik, 1828"
+    },
+    "symbole": "⌬",
+    "embleme": "benzene",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "carbone",
+          "titre": {
+            "fr": "Le carbone, champion des assemblages"
+          },
+          "texte": [
+            {
+              "fr": "La chimie organique, c'est la chimie des composés du carbone. Avec ses quatre liaisons, le carbone s'accroche à lui-même en chaînes, en branches et en cycles, et à l'hydrogène, l'oxygène, l'azote : d'où des millions de molécules différentes, du méthane CH₄ aux protéines."
+            },
+            {
+              "fr": "On a longtemps cru qu'il fallait une « force vitale » pour fabriquer ces molécules. En 1828, Friedrich Wöhler obtient de l'urée à partir de composés minéraux. Les manuels en font souvent le coup de grâce du vitalisme, mais c'est une légende simplifiée : Wöhler n'était pas en croisade, et d'autres synthèses, comme celle de l'acide acétique par Kolbe en 1845, ont compté autant."
+            }
+          ],
+          "retenir": {
+            "fr": "Organique = chimie du carbone, qui fait 4 liaisons. Wöhler (1828) synthétise l'urée, mais n'a pas tué le vitalisme à lui seul."
+          },
+          "source": "Wöhler, Annalen der Physik, 1828",
+          "figure": "mc_alch_methane"
+        },
+        {
+          "id": "cycle",
+          "titre": {
+            "fr": "Le serpent de Kekulé"
+          },
+          "texte": [
+            {
+              "fr": "Le benzène, isolé par Michael Faraday en 1825, a longtemps été une énigme : six carbones, six hydrogènes, et pourtant une stabilité étonnante. En 1865, August Kekulé propose un anneau de six carbones, avec des liaisons simples et doubles en alternance."
+            },
+            {
+              "fr": "En 1890, pour les 25 ans de sa découverte, Kekulé raconte qu'il en a eu l'idée en rêvassant devant le feu : un serpent qui se mordait la queue. Belle histoire, racontée un quart de siècle après coup ; on ne sait pas jusqu'où la croire. L'anneau, lui, est resté : on le retrouve dans l'aspirine, le paracétamol ou le polystyrène."
+            }
+          ],
+          "retenir": {
+            "fr": "Benzène : isolé par Faraday (1825), anneau de 6 carbones proposé par Kekulé (1865). Le rêve du serpent est raconté en 1890."
+          },
+          "source": "Kekulé, Bulletin de la Société chimique de Paris, 1865",
+          "figure": "mc_alch_benzene"
+        },
+        {
+          "id": "polymeres",
+          "titre": {
+            "fr": "Des molécules géantes"
+          },
+          "texte": [
+            {
+              "fr": "Un polymère est une molécule immense faite d'un motif répété des milliers de fois. Le polyéthylène des sacs est une chaîne de –CH₂–CH₂–. La nature en est pleine : la cellulose du bois, l'amidon, les protéines, l'ADN."
+            },
+            {
+              "fr": "En 1920, Hermann Staudinger affirme que le caoutchouc ou la cellulose sont de vraies longues chaînes liées par des liaisons covalentes. Les grands noms de l'époque, comme Emil Fischer, n'y croient pas : pour eux, ce sont des amas de petites molécules. Staudinger tient bon et reçoit le prix Nobel en 1953. Entre-temps, la bakélite (1907) et le nylon (1935) avaient lancé l'âge du plastique."
+            }
+          ],
+          "retenir": {
+            "fr": "Polymère = longue chaîne d'un motif répété (plastiques, cellulose, ADN). Staudinger (1920, Nobel 1953) l'a imposé contre l'avis général."
+          },
+          "source": "Staudinger, Berichte der deutschen chemischen Gesellschaft, 1920",
+          "schema_fiche": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "chim.quotidien",
+    "stat": "alchimie",
+    "rang": 7,
+    "nom": {
+      "fr": "Chimie du quotidien"
+    },
+    "description": {
+      "fr": "Cuisine, savon, médicaments, piles et matériaux."
+    },
+    "prerequis": [
+      "chim.etats"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Le savon a une tête qui aime l'eau et une queue qui aime les graisses : il emprisonne la graisse dans des micelles."
+        },
+        {
+          "fr": "La réaction de Maillard (sucres + protéines à la chaleur) dore le pain et grille la viande."
+        },
+        {
+          "fr": "Une pile transforme une réaction d'oxydoréduction en courant."
+        },
+        {
+          "fr": "Le paracétamol et l'aspirine sont des molécules de synthèse ; l'aspirine dérive de l'écorce de saule."
+        }
+      ],
+      "piege": {
+        "fr": "Mélanger eau de Javel et vinaigre dégage du chlore toxique : ne jamais combiner les produits ménagers."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Comment le savon emporte la graisse\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">graisse</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">savon</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">tête + queue</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">micelle</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">rincée</text></svg>",
+      "source": "This, Révélations gastronomiques, 1995"
+    },
+    "symbole": "⚗",
+    "embleme": "flacon",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "savon",
+          "titre": {
+            "fr": "Comment le savon attrape la graisse"
+          },
+          "texte": [
+            {
+              "fr": "Le savon se fabrique en mélangeant des graisses ou des huiles avec une base forte, la soude : les graisses se coupent en sels d'acides gras, et il reste de la glycérine. C'est la saponification. Des traces de matières savonneuses remontent à environ 2800 avant notre ère, à Babylone."
+            },
+            {
+              "fr": "Chaque molécule de savon a une tête qui aime l'eau et une queue qui aime la graisse. Dans l'eau, les queues plongent dans la graisse et les têtes restent tournées vers l'extérieur : elles forment des petites billes, les micelles, qui emprisonnent la saleté. Le rinçage les emporte."
+            }
+          ],
+          "retenir": {
+            "fr": "Savon = graisse + soude (saponification). Tête qui aime l'eau, queue qui aime la graisse : les micelles emportent la saleté."
+          },
+          "source": "This, Révélations gastronomiques, 1995"
+        },
+        {
+          "id": "cuisine",
+          "titre": {
+            "fr": "La croûte dorée de Maillard"
+          },
+          "texte": [
+            {
+              "fr": "La croûte du pain, la viande grillée, le café torréfié : c'est la réaction de Maillard, décrite en 1912 par le chimiste français Louis Camille Maillard. Des sucres et des acides aminés réagissent à la chaleur et donnent des centaines de molécules brunes et parfumées."
+            },
+            {
+              "fr": "Elle va vite autour de 140 à 165 °C. Voilà pourquoi une viande bouillie ne dore pas : dans l'eau, on ne dépasse pas 100 °C. Pour griller, il faut une poêle chaude et une surface sèche."
+            }
+          ],
+          "retenir": {
+            "fr": "Maillard (1912) : sucres + acides aminés + chaleur (140 à 165 °C) = brunissement et arômes. Pas de croûte dans l'eau bouillante."
+          },
+          "source": "Maillard, Comptes rendus de l'Académie des sciences, 1912",
+          "figure": "mc_alch_maillard"
+        },
+        {
+          "id": "remedes",
+          "titre": {
+            "fr": "Du saule à l'aspirine, et ce qu'il ne faut pas mélanger"
+          },
+          "texte": [
+            {
+              "fr": "Les plantes riches en salicylés, comme le saule, figurent déjà sur des tablettes sumériennes et dans le papyrus Ebers égyptien ; vers 400 avant notre ère, Hippocrate décrit une tisane contre la fièvre. En 1897, chez Bayer, on cherche une version moins agressive pour l'estomac, et dès 1899 l'acide acétylsalicylique se vend dans le monde entier sous le nom d'Aspirin."
+            },
+            {
+              "fr": "La chimie de la maison a aussi ses dangers. L'eau de Javel mélangée à un acide, comme un détartrant ou du vinaigre, libère du dichlore, un gaz toxique. Règle simple : ne jamais mélanger deux produits ménagers."
+            }
+          ],
+          "retenir": {
+            "fr": "L'aspirine vient du saule (Bayer, 1899). Javel + acide = dichlore toxique : ne jamais mélanger les produits ménagers."
+          },
+          "source": "Jeffreys, Aspirin: The Remarkable Story of a Wonder Drug, 2004",
+          "figure": "mc_alch_aspirine"
+        }
+      ]
+    }
+  },
+  {
+    "id": "chim.noyau",
+    "stat": "alchimie",
+    "rang": 8,
+    "nom": {
+      "fr": "Radioactivité et noyau"
+    },
+    "description": {
+      "fr": "Isotopes, demi-vie, fission, fusion et datation."
+    },
+    "prerequis": [
+      "chim.organique",
+      "chim.quotidien"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Demi-vie : le temps pour que la moitié des noyaux radioactifs se désintègre. Elle ne dépend pas de la quantité."
+        },
+        {
+          "fr": "Le carbone 14 (demi-vie ≈ 5 730 ans) date les restes organiques jusqu'à environ 50 000 ans."
+        },
+        {
+          "fr": "Fission : un noyau lourd se casse (centrales). Fusion : des noyaux légers s'unissent (Soleil)."
+        },
+        {
+          "fr": "α arrêté par une feuille de papier, β par quelques millimètres d'aluminium, γ par du plomb ou du béton épais."
+        }
+      ],
+      "piege": {
+        "fr": "Après deux demi-vies, il ne reste pas zéro mais un quart."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Ce qui reste après chaque demi-vie\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"30.0\" width=\"40.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"66.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">100 %</text><text class=\"tm\" x=\"66.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">0</text><rect class=\"f2\" x=\"98.0\" y=\"80.0\" width=\"40.0\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"118.0\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">50 %</text><text class=\"tm\" x=\"118.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">1 T</text><rect class=\"a\" x=\"150.0\" y=\"105.0\" width=\"40.0\" height=\"25.0\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"99.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">25 %</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">2 T</text><rect class=\"f2\" x=\"202.0\" y=\"117.5\" width=\"40.0\" height=\"12.5\" rx=\"3\"/><text class=\"t\" x=\"222.0\" y=\"111.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">12,5 %</text><text class=\"tm\" x=\"222.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">3 T</text><rect class=\"f2\" x=\"254.0\" y=\"123.8\" width=\"40.0\" height=\"6.2\" rx=\"3\"/><text class=\"t\" x=\"274.0\" y=\"117.75\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">6,25 %</text><text class=\"tm\" x=\"274.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">4 T</text></svg>",
+      "source": "Rutherford et Soddy, Philosophical Magazine, 1902"
+    },
+    "symbole": "☢",
+    "embleme": "verre-uranium",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "decouverte",
+          "titre": {
+            "fr": "Une plaque voilée dans un tiroir"
+          },
+          "texte": [
+            {
+              "fr": "En 1896, Henri Becquerel range des sels d'uranium sur une plaque photographique dans un tiroir, faute de soleil pour son expérience. La plaque est voilée quand même : l'uranium émet un rayonnement tout seul. En 1898, Marie et Pierre Curie découvrent deux éléments bien plus actifs, le polonium et le radium."
+            },
+            {
+              "fr": "En 1899, Ernest Rutherford trie ces rayons selon ce qui les arrête : il appelle alpha ceux qu'arrêtent quelques feuilles minces, bêta ceux qui passent. Plus tard viendra le gamma. Les alpha, des noyaux d'hélium, s'arrêtent sur une feuille de papier ; les bêta, sur quelques millimètres d'aluminium ; les gamma, une lumière très énergétique, demandent du plomb ou du béton épais."
+            }
+          ],
+          "retenir": {
+            "fr": "Becquerel (1896), les Curie (1898). Alpha : papier ; bêta : aluminium ; gamma : plomb ou béton."
+          },
+          "source": "Rutherford, Philosophical Magazine, 1899",
+          "figure": "mc_alch_rayonnements"
+        },
+        {
+          "id": "demivie",
+          "titre": {
+            "fr": "La moitié, puis la moitié de la moitié"
+          },
+          "texte": [
+            {
+              "fr": "On ne peut pas prévoir quand un noyau radioactif va se désintégrer, mais on sait combien de temps il faut pour que la moitié d'un lot le fasse : c'est la demi-vie. Elle ne dépend pas de la quantité. Après une demi-vie il reste la moitié, après deux un quart, après trois un huitième : jamais zéro d'un coup."
+            },
+            {
+              "fr": "Le carbone 14 en fait une horloge. Il naît en haute atmosphère, quand des neutrons produits par les rayons cosmiques frappent l'azote. Les êtres vivants en absorbent tant qu'ils vivent, puis le stock s'épuise avec une demi-vie d'environ 5 730 ans. Willard Libby met la méthode au point à Chicago à la fin des années 1940 (prix Nobel 1960) ; elle porte jusqu'à environ 50 000 ans."
+            }
+          ],
+          "retenir": {
+            "fr": "Demi-vie : la moitié se désintègre, quelle que soit la quantité. Carbone 14 : 5 730 ans, datation jusqu'à environ 50 000 ans (Libby)."
+          },
+          "source": "Libby, Radiocarbon Dating, 1952",
+          "schema_fiche": true
+        },
+        {
+          "id": "fission",
+          "titre": {
+            "fr": "Casser ou fusionner"
+          },
+          "texte": [
+            {
+              "fr": "En décembre 1938, Otto Hahn et Fritz Strassmann trouvent du baryum après avoir bombardé de l'uranium avec des neutrons : le noyau s'est cassé en deux. Début 1939, Lise Meitner et son neveu Otto Frisch l'expliquent, et Frisch l'appelle fission, comme la division des cellules. Chaque fission libère environ 200 MeV et des neutrons qui peuvent en provoquer d'autres : une réaction en chaîne."
+            },
+            {
+              "fr": "Le 2 décembre 1942, sous les gradins du stade Stagg Field de l'université de Chicago, sur un ancien court de squash, la pile d'Enrico Fermi, de l'uranium dans 45 000 blocs de graphite, entretient la première réaction en chaîne contrôlée, à environ un demi-watt. Le Soleil, lui, fait l'inverse : il fusionne des noyaux d'hydrogène en hélium."
+            }
+          ],
+          "retenir": {
+            "fr": "Fission (Hahn et Strassmann 1938, Meitner et Frisch 1939) : un noyau lourd se casse, réaction en chaîne (Chicago, 1942). Fusion : des noyaux légers s'unissent (Soleil)."
+          },
+          "source": "Meitner et Frisch, Nature, 1939",
+          "figure": "mc_alch_fission"
+        }
+      ]
+    }
   }
- },
- {
-  "id": "chim.liaisons",
-  "stat": "alchimie",
-  "rang": 2,
-  "nom": {
-   "fr": "Liaisons et molécules"
-  },
-  "description": {
-   "fr": "Comment les atomes s'assemblent : liaisons covalentes, ioniques, polarité."
-  },
-  "prerequis": [
-   "sci.atomes"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Liaison covalente : deux atomes partagent une paire d'électrons (H₂O, CH₄)."
-    },
-    {
-     "fr": "Liaison ionique : un atome cède un électron à l'autre ; les ions s'attirent (NaCl)."
-    },
-    {
-     "fr": "Une molécule est polaire si les charges sont mal réparties : l'eau l'est, d'où ses propriétés de solvant."
-    },
-    {
-     "fr": "Les liaisons hydrogène entre molécules d'eau expliquent son point d'ébullition élevé."
-    }
-   ],
-   "piege": {
-    "fr": "La glace flotte parce que ses liaisons hydrogène l'organisent en réseau plus aéré que l'eau liquide."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" role=\"img\" aria-label=\"Liaisons covalente et ionique\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Covalente</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Ionique</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"132\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">partage d'électrons</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">H₂O, CH₄</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">molécules</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">transfert d'électrons</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">NaCl</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">cristaux d'ions</text></svg>",
-   "source": "Pauling, The Nature of the Chemical Bond, 1939",
-   "figures": [
-    "eau",
-    "atome"
-   ]
-  },
-  "symbole": "H₂O",
-  "embleme": "modele-moleculaire",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "partage",
-     "titre": {
-      "fr": "Partager des électrons"
-     },
-     "texte": [
-      {
-       "fr": "En 1916, Gilbert Lewis propose une idée simple : deux atomes restent liés quand ils partagent une paire d'électrons. C'est la liaison covalente. Dans H₂, chaque hydrogène apporte un électron ; la paire appartient aux deux à la fois."
-      },
-      {
-       "fr": "Deux atomes peuvent partager une, deux ou trois paires : liaison simple, double ou triple. Les deux oxygènes de O₂ sont reliés par une double liaison. Le carbone, avec ses quatre électrons de valence, forme quatre liaisons : c'est ce qui lui permet de bâtir des chaînes et des cycles."
-      }
-     ],
-     "retenir": {
-      "fr": "Liaison covalente = une paire d'électrons partagée (Lewis, 1916). Simple, double ou triple selon le nombre de paires. Le carbone fait 4 liaisons."
-     },
-     "source": "Lewis, Journal of the American Chemical Society, 1916"
-    },
-    {
-     "id": "electronegativite",
-     "titre": {
-      "fr": "Qui tire le plus fort ?"
-     },
-     "texte": [
-      {
-       "fr": "Dans une liaison, les deux atomes ne tirent pas les électrons avec la même force. Linus Pauling chiffre cette force en 1932 : l'électronégativité. Le fluor est le plus gourmand (3,98), l'oxygène suit (3,44), l'hydrogène est à 2,20, le sodium à 0,93."
-      },
-      {
-       "fr": "Tout dépend de l'écart. Presque nul (jusqu'à 0,3 environ) : partage équitable. Entre 0,3 et 1,7 : la liaison est polaire, un côté porte un peu de charge négative. Au-delà de 1,7, c'est en général ionique : un atome prend carrément l'électron. Entre le sodium et le chlore (3,16), l'écart dépasse 2 : le sel est fait d'ions Na⁺ et Cl⁻. Ces seuils sont des repères, pas des frontières nettes."
-      }
-     ],
-     "retenir": {
-      "fr": "Électronégativité (Pauling, 1932) : petit écart = covalente, écart moyen = polaire, grand écart (plus de 1,7) = ionique."
-     },
-     "source": "Pauling, Journal of the American Chemical Society, 1932",
-     "figure": "mc_alch_electroneg"
-    },
-    {
-     "id": "eau",
-     "titre": {
-      "fr": "L'eau, une molécule tordue"
-     },
-     "texte": [
-      {
-       "fr": "Dans l'eau, l'oxygène tire les électrons plus fort que les hydrogènes, et la molécule est coudée, à environ 104,5° : un côté négatif (l'oxygène), un côté positif (les hydrogènes). Elle est polaire. Le côté hydrogène d'une molécule s'accroche au côté oxygène d'une voisine : c'est la liaison hydrogène, et chaque molécule peut en former jusqu'à quatre."
-      },
-      {
-       "fr": "Ces accroches expliquent les bizarreries de l'eau. Le sulfure d'hydrogène, H₂S, presque deux fois plus lourd, est un gaz à température ambiante, alors que l'eau ne bout qu'à 100 °C. Et en gelant, les liaisons hydrogène rangent les molécules en réseau aéré : la glace (0,917 g/mL) est environ 9 % moins dense que l'eau liquide. Elle flotte, et les lacs gèlent par le dessus."
-      }
-     ],
-     "retenir": {
-      "fr": "L'eau est polaire et coudée ; ses liaisons hydrogène expliquent son ébullition à 100 °C et la glace qui flotte."
-     },
-     "source": "Pauling, The Nature of the Chemical Bond, 1939",
-     "figure": "eau"
-    }
-   ]
-  }
- },
- {
-  "id": "chim.acides",
-  "stat": "alchimie",
-  "rang": 3,
-  "nom": {
-   "fr": "Acides et bases"
-  },
-  "description": {
-   "fr": "Le pH, la neutralisation et les acides du quotidien."
-  },
-  "prerequis": [
-   "sci.atomes"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "pH < 7 : acide ; pH = 7 : neutre ; pH > 7 : basique."
-    },
-    {
-     "fr": "L'échelle est logarithmique : pH 3 est dix fois plus acide que pH 4."
-    },
-    {
-     "fr": "Acide + base → sel + eau (neutralisation)."
-    },
-    {
-     "fr": "Citron ≈ 2, vinaigre ≈ 3, eau pure 7, eau de Javel ≈ 12."
-    },
-    {
-     "fr": "pH = −log[H⁺] : 10⁻³ mol/L d'ions H⁺ donne un pH de 3, 10⁻⁷ donne 7."
-    }
-   ],
-   "piege": {
-    "fr": "Une baisse d'une unité de pH n'est pas une petite variation : c'est dix fois plus d'ions H⁺."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 335 110\" role=\"img\" aria-label=\"Échelle de pH de 0 à 14 : acide, neutre, basique\"><rect x=\"10\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E53939\"/><text class=\"tm\" x=\"20\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">0</text><rect x=\"31\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E57039\"/><text class=\"tm\" x=\"41\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">1</text><rect x=\"52\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5A839\"/><text class=\"tm\" x=\"62\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">2</text><rect x=\"73\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5DF39\"/><text class=\"t\" x=\"83\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3</text><rect x=\"94\" y=\"24\" width=\"20\" height=\"34\" fill=\"#B4E539\"/><text class=\"tm\" x=\"104\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">4</text><rect x=\"115\" y=\"24\" width=\"20\" height=\"34\" fill=\"#7CE539\"/><text class=\"tm\" x=\"125\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">5</text><rect x=\"136\" y=\"24\" width=\"20\" height=\"34\" fill=\"#45E539\"/><text class=\"tm\" x=\"146\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">6</text><rect x=\"157\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E564\"/><text class=\"t\" x=\"167\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">7</text><rect x=\"178\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E59B\"/><text class=\"tm\" x=\"188\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">8</text><rect x=\"199\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E5D3\"/><text class=\"tm\" x=\"209\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">9</text><rect x=\"220\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39C0E5\"/><text class=\"tm\" x=\"230\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">10</text><rect x=\"241\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3989E5\"/><text class=\"tm\" x=\"251\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">11</text><rect x=\"262\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3951E5\"/><text class=\"tm\" x=\"272\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">12</text><rect x=\"283\" y=\"24\" width=\"20\" height=\"34\" fill=\"#5839E5\"/><text class=\"tm\" x=\"293\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">13</text><rect x=\"304\" y=\"24\" width=\"20\" height=\"34\" fill=\"#8F39E5\"/><text class=\"tm\" x=\"314\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">14</text><text class=\"t\" x=\"60\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">acide</text><text class=\"t\" x=\"167\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">neutre</text><text class=\"t\" x=\"275\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">basique</text><text class=\"tm\" x=\"20\" y=\"100\" font-size=\"12\" text-anchor=\"start\">citron ≈ 2</text><text class=\"tm\" x=\"167\" y=\"100\" font-size=\"12\" text-anchor=\"middle\">eau pure 7</text><text class=\"tm\" x=\"325\" y=\"100\" font-size=\"12\" text-anchor=\"end\">Javel ≈ 12</text></svg>",
-   "source": "Sørensen, Biochemische Zeitschrift, 1909"
-  },
-  "symbole": "pH",
-  "embleme": "papier-tournesol",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "ph",
-     "titre": {
-      "fr": "Une échelle qui compte par dix"
-     },
-     "texte": [
-      {
-       "fr": "En 1909, au laboratoire Carlsberg de Copenhague, Søren Sørensen invente le pH pour mesurer l'acidité. Sous 7, la solution est acide ; à 7, neutre ; au-dessus, basique. Le jus de citron est vers 2, le vinaigre vers 3, l'eau pure à 7, l'eau de Javel vers 12."
-      },
-      {
-       "fr": "Le piège, c'est que l'échelle est logarithmique : le pH est l'exposant de la concentration en ions H⁺, changé de signe. 10⁻³ mol/L donne un pH de 3, 10⁻⁴ un pH de 4. Descendre d'une seule unité, c'est donc dix fois plus d'ions H⁺ ; de deux unités, cent fois plus."
-      }
-     ],
-     "retenir": {
-      "fr": "pH = −log[H⁺] (Sørensen, 1909). Une unité de moins = 10 fois plus acide."
-     },
-     "source": "Sørensen, Biochemische Zeitschrift, 1909"
-    },
-    {
-     "id": "donner",
-     "titre": {
-      "fr": "Un acide donne, une base prend"
-     },
-     "texte": [
-      {
-       "fr": "La définition la plus utile date de 1923 : le Danois Johannes Brønsted et l'Anglais Martin Lowry, chacun de leur côté, disent qu'un acide est une espèce qui cède un ion H⁺, et une base une espèce qui le capte. Avant eux, Svante Arrhenius, à partir de ses travaux de 1884 sur les ions dans l'eau, parlait d'acides qui libèrent des H⁺ en solution."
-      },
-      {
-       "fr": "Quand un acide rencontre une base en bonnes proportions, les H⁺ de l'un et les OH⁻ de l'autre forment de l'eau, et il reste un sel : c'est la neutralisation. C'est ce que fait le bicarbonate d'un médicament contre les brûlures d'estomac : il neutralise une partie de l'acide chlorhydrique du suc gastrique."
-      }
-     ],
-     "retenir": {
-      "fr": "Acide = donneur de H⁺, base = capteur de H⁺ (Brønsted et Lowry, 1923). Acide + base → sel + eau."
-     },
-     "source": "Brønsted, Recueil des Travaux Chimiques des Pays-Bas, 1923 ; Lowry, Journal of the Society of Chemical Industry, 1923",
-     "figure": "mc_alch_acide_base"
-    },
-    {
-     "id": "tampon",
-     "titre": {
-      "fr": "Le sang ne plaisante pas avec le pH"
-     },
-     "texte": [
-      {
-       "fr": "Le sang humain se tient entre pH 7,35 et 7,45. En dehors de cette fenêtre étroite, on tombe vite en acidose ou en alcalose. Ce qui le maintient, c'est un tampon : un couple acide faible et base, ici l'acide carbonique et le bicarbonate, qui absorbe les H⁺ en trop ou en fournit quand il en manque."
-      },
-      {
-       "fr": "Les océans, eux, n'ont pas un tampon infini. Ils absorbent une partie du CO₂ que nous émettons, qui forme de l'acide carbonique : le pH de surface est passé d'environ 8,2 à 8,1 depuis le XIXe siècle. Un dixième d'unité seulement, mais sur une échelle par dix, cela fait environ 30 % d'ions H⁺ en plus."
-      }
-     ],
-     "retenir": {
-      "fr": "Un tampon (acide faible + sa base) amortit les variations de pH : le sang reste entre 7,35 et 7,45 grâce au bicarbonate."
-     },
-     "source": "Hall, Guyton and Hall Textbook of Medical Physiology",
-     "figure": "mc_alch_tampon"
-    }
-   ]
-  }
- },
- {
-  "id": "chim.reactions",
-  "stat": "alchimie",
-  "rang": 4,
-  "nom": {
-   "fr": "Réactions et oxydoréduction"
-  },
-  "description": {
-   "fr": "Équations, combustion, catalyse, oxydation et réduction."
-  },
-  "prerequis": [
-   "chim.liaisons",
-   "chim.acides"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Une équation chimique doit être équilibrée : autant d'atomes de chaque sorte des deux côtés (Lavoisier)."
-    },
-    {
-     "fr": "2 H₂ + O₂ → 2 H₂O."
-    },
-    {
-     "fr": "Combustion : un combustible + du dioxygène → du CO₂, de l'eau et de la chaleur."
-    },
-    {
-     "fr": "Un catalyseur accélère une réaction sans être consommé. Oxydation : perte d'électrons ; réduction : gain."
-    }
-   ],
-   "piege": {
-    "fr": "La rouille n'est pas une simple « saleté » : c'est le fer oxydé, plus volumineux, qui fissure le métal."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Une équation équilibrée : 4 H et 2 O de chaque côté\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2 H₂</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">+ O₂</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2 H₂O</text></svg>",
-   "source": "Lavoisier, Traité élémentaire de chimie, 1789"
-  },
-  "symbole": "→",
-  "embleme": "balance-lavoisier",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "compter",
-     "titre": {
-      "fr": "Rien ne se crée : on recompte les atomes"
-     },
-     "texte": [
-      {
-       "fr": "Un bois qui brûle semble perdre du poids, un métal qui rouille semble en gagner. Antoine Lavoisier fait les réactions en vase clos et pèse tout : la masse totale ne change pas. Il l'énonce dès 1773 et popularise le principe, qui enterre la théorie du phlogistique. Le Russe Mikhaïl Lomonossov l'avait formulé dès 1756."
-      },
-      {
-       "fr": "Dans une réaction, les atomes changent de partenaires, ils ne naissent ni ne disparaissent. D'où l'équilibrage : dans 2 H₂ + O₂ → 2 H₂O, on compte 4 hydrogènes et 2 oxygènes de chaque côté. Si les comptes ne tombent pas juste, l'équation est fausse."
-      }
-     ],
-     "retenir": {
-      "fr": "Conservation de la masse (Lomonossov 1756, Lavoisier 1773) : autant d'atomes de chaque sorte avant et après."
-     },
-     "source": "Lavoisier, Traité élémentaire de chimie, 1789"
-    },
-    {
-     "id": "vitesse",
-     "titre": {
-      "fr": "La bosse à franchir"
-     },
-     "texte": [
-      {
-       "fr": "Une allumette ne s'enflamme pas toute seule dans sa boîte : il faut la frotter. Toute réaction a une barrière d'énergie à franchir, l'énergie d'activation, un terme introduit par Svante Arrhenius en 1889. Plus il fait chaud, plus de molécules ont assez d'énergie pour passer : c'est pourquoi le réfrigérateur ralentit les réactions qui gâtent les aliments."
-      },
-      {
-       "fr": "Un catalyseur abaisse cette barrière : la réaction va plus vite, et lui en ressort intact. Il ne change ni le point de départ ni le point d'arrivée, seulement le chemin. Les enzymes sont les catalyseurs du vivant ; le pot catalytique d'une voiture en est un autre."
-      }
-     ],
-     "retenir": {
-      "fr": "Énergie d'activation (Arrhenius, 1889) : la barrière à franchir. Chaleur = plus de molécules passent ; catalyseur = barrière plus basse, sans être consommé."
-     },
-     "source": "Arrhenius, Zeitschrift für physikalische Chemie, 1889",
-     "figure": "mc_alch_activation"
-    },
-    {
-     "id": "redox",
-     "titre": {
-      "fr": "Perdre ou gagner des électrons"
-     },
-     "texte": [
-      {
-       "fr": "S'oxyder, c'est perdre des électrons ; se réduire, c'est en gagner. Les deux vont toujours ensemble : les électrons perdus par l'un sont pris par l'autre. Le fer qui rouille s'oxyde ; l'oxygène qui l'attaque se réduit."
-      },
-      {
-       "fr": "Si l'on force ces électrons à passer par un fil, on obtient du courant. C'est l'idée d'Alessandro Volta, qui décrit sa pile à la Royal Society le 20 mars 1800 : des disques de zinc et de cuivre empilés, séparés par du tissu imbibé de saumure. Toutes nos piles fonctionnent encore ainsi."
-      }
-     ],
-     "retenir": {
-      "fr": "Oxydation = perte d'électrons, réduction = gain. Une pile fait passer ces électrons par un circuit (Volta, 1800)."
-     },
-     "source": "Volta, Philosophical Transactions of the Royal Society, 1800",
-     "figure": "mc_alch_redox"
-    }
-   ]
-  }
- },
- {
-  "id": "chim.etats",
-  "stat": "alchimie",
-  "rang": 5,
-  "nom": {
-   "fr": "États de la matière"
-  },
-  "description": {
-   "fr": "Solide, liquide, gaz, changements d'état et lois des gaz."
-  },
-  "prerequis": [
-   "chim.reactions"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Solide, liquide, gaz : même matière, agitation et distance différentes entre molécules."
-    },
-    {
-     "fr": "Fusion, vaporisation, condensation, solidification, sublimation (solide → gaz), condensation solide (gaz → solide)."
-    },
-    {
-     "fr": "Pendant un changement d'état, la température reste constante."
-    },
-    {
-     "fr": "À volume fixé, la pression d'un gaz augmente avec la température (PV = nRT)."
-    },
-    {
-     "fr": "Une mole de gaz parfait à 0 °C sous une atmosphère occupe environ 22,4 L."
-    }
-   ],
-   "piege": {
-    "fr": "L'eau bout à moins de 100 °C en altitude : environ 70 °C au sommet de l'Everest."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 210\" role=\"img\" aria-label=\"Les changements d'état de la matière\"><ellipse class=\"lm\" cx=\"170\" cy=\"105\" rx=\"112\" ry=\"76\" fill=\"none\" stroke-dasharray=\"4 5\"/><text class=\"tm\" x=\"170\" y=\"109.2\" font-size=\"12\" text-anchor=\"middle\">chaleur</text><line class=\"al\" x1=\"258.2\" y1=\"58.2\" x2=\"273.9\" y2=\"76.6\" stroke-width=\"2\"/><path class=\"al\" d=\"M267.3 74.1 L273.9 76.6 L272.4 69.7\" stroke-width=\"2\"/><line class=\"al\" x1=\"185.6\" y1=\"180.3\" x2=\"154.4\" y2=\"180.3\" stroke-width=\"2\"/><path class=\"al\" d=\"M160.5 176.9 L154.4 180.3 L160.5 183.6\" stroke-width=\"2\"/><line class=\"al\" x1=\"66.1\" y1=\"76.6\" x2=\"81.8\" y2=\"58.2\" stroke-width=\"2\"/><path class=\"al\" d=\"M80.3 65.0 L81.8 58.2 L75.2 60.7\" stroke-width=\"2\"/><rect class=\"f\" x=\"122.0\" y=\"12.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170.0\" y=\"32.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">solide</text><rect class=\"f\" x=\"219.0\" y=\"126.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"266.99484522385717\" y=\"146.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">liquide</text><rect class=\"f\" x=\"25.0\" y=\"126.0\" width=\"96\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"73.00515477614289\" y=\"146.9\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">gaz</text></svg>",
-   "source": "Atkins, Chimie physique, 4e éd."
-  },
-  "symbole": "❄",
-  "embleme": "bougie",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "agitation",
-     "titre": {
-      "fr": "Même matière, autre agitation"
-     },
-     "texte": [
-      {
-       "fr": "Glace, eau, vapeur : ce sont les mêmes molécules H₂O. Ce qui change, c'est leur agitation et leur distance. Dans un solide, elles vibrent sur place ; dans un liquide, elles glissent les unes sur les autres ; dans un gaz, elles filent et s'éloignent."
-      },
-      {
-       "fr": "Chaque passage a son nom : fusion (solide → liquide), vaporisation (liquide → gaz), condensation (gaz → liquide), solidification (liquide → solide), sublimation (solide → gaz directement, comme la glace carbonique). Chauffez encore un gaz et ses atomes perdent des électrons : c'est le plasma, celui des étoiles et des éclairs."
-      }
-     ],
-     "retenir": {
-      "fr": "Solide, liquide, gaz = mêmes molécules, agitation différente. Sublimation = solide → gaz directement."
-     },
-     "source": "Atkins, Chimie physique, 4e éd."
-    },
-    {
-     "id": "palier",
-     "titre": {
-      "fr": "Pourquoi le glaçon reste à 0 °C"
-     },
-     "texte": [
-      {
-       "fr": "Pendant qu'un glaçon fond, sa température ne bouge pas : 0 °C du début à la fin. L'énergie reçue ne sert pas à chauffer, elle sert à défaire le cristal. Et il en faut beaucoup : 334 J pour fondre un gramme de glace, presque autant que pour chauffer ce même gramme d'eau liquide de 0 à 80 °C."
-      },
-      {
-       "fr": "C'est pour cela que la glace refroidit si bien une boisson : elle aspire de la chaleur sans se réchauffer. Et le sel sur une route verglacée ne chauffe rien : il abaisse la température à laquelle l'eau gèle, jusqu'à environ −21 °C pour l'eau salée."
-      }
-     ],
-     "retenir": {
-      "fr": "Pendant un changement d'état, la température reste constante. Fondre 1 g de glace ≈ chauffer 1 g d'eau de 80 °C."
-     },
-     "source": "Atkins, Chimie physique, 4e éd.",
-     "figure": "mc_alch_paliers"
-    },
-    {
-     "id": "gaz",
-     "titre": {
-      "fr": "Ce que font les gaz quand on les serre"
-     },
-     "texte": [
-      {
-       "fr": "À température constante, si on divise par deux le volume d'un gaz, sa pression double : P × V reste constant. Robert Boyle le publie en 1662, Edme Mariotte en 1676. Émile Clapeyron réunit ces lois en 1834 dans une seule formule, P V = n R T : pression, volume, quantité de gaz et température sont liés."
-      },
-      {
-       "fr": "Une conséquence concrète : la température d'ébullition dépend de la pression. Sous une atmosphère, l'eau bout à 100 °C ; en altitude, l'air pèse moins et elle bout plus tôt, vers 70 °C au sommet de l'Everest. Les pâtes y cuisent mal, et c'est l'inverse dans une cocotte-minute, où la pression monte et l'eau dépasse 100 °C."
-      }
-     ],
-     "retenir": {
-      "fr": "P × V constant à température fixe (Boyle 1662, Mariotte 1676) ; P V = n R T (Clapeyron, 1834). Moins de pression = ébullition plus basse."
-     },
-     "source": "Clapeyron, Journal de l'École polytechnique, 1834",
-     "figure": "mc_alch_boyle"
-    }
-   ]
-  }
- },
- {
-  "id": "chim.organique",
-  "stat": "alchimie",
-  "rang": 6,
-  "nom": {
-   "fr": "Chimie organique"
-  },
-  "description": {
-   "fr": "Le carbone, les hydrocarbures, les polymères et les molécules du vivant."
-  },
-  "prerequis": [
-   "chim.etats"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "La chimie organique est celle des composés du carbone, qui forme quatre liaisons."
-    },
-    {
-     "fr": "Hydrocarbures : uniquement carbone et hydrogène (méthane, butane, octane)."
-    },
-    {
-     "fr": "Polymères : longues chaînes d'unités répétées (polyéthylène, ADN, cellulose)."
-    },
-    {
-     "fr": "Les glucides, lipides, protéines et acides nucléiques sont les grandes molécules du vivant."
-    }
-   ],
-   "piege": {
-    "fr": "« Chimique » ne s'oppose pas à « naturel » : tout ce qui vit est fait de molécules organiques."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 430 96\" role=\"img\" aria-label=\"Un polymère : une chaîne de petites unités\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"53.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">monomère</text><line class=\"al\" x1=\"99.0\" y1=\"52.0\" x2=\"115.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M108.9 55.4 L115.0 52.0 L108.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"118.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"161.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">monomère</text><line class=\"al\" x1=\"207.0\" y1=\"52.0\" x2=\"223.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M216.9 55.4 L223.0 52.0 L216.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"226.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"269.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">… × 10 000</text><line class=\"al\" x1=\"315.0\" y1=\"52.0\" x2=\"331.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M324.9 55.4 L331.0 52.0 L324.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"334.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"377.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">polymère</text></svg>",
-   "source": "Wöhler, Annalen der Physik, 1828"
-  },
-  "symbole": "⌬",
-  "embleme": "benzene",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "carbone",
-     "titre": {
-      "fr": "Le carbone, champion des assemblages"
-     },
-     "texte": [
-      {
-       "fr": "La chimie organique, c'est la chimie des composés du carbone. Avec ses quatre liaisons, le carbone s'accroche à lui-même en chaînes, en branches et en cycles, et à l'hydrogène, l'oxygène, l'azote : d'où des millions de molécules différentes, du méthane CH₄ aux protéines."
-      },
-      {
-       "fr": "On a longtemps cru qu'il fallait une « force vitale » pour fabriquer ces molécules. En 1828, Friedrich Wöhler obtient de l'urée à partir de composés minéraux. Les manuels en font souvent le coup de grâce du vitalisme, mais c'est une légende simplifiée : Wöhler n'était pas en croisade, et d'autres synthèses, comme celle de l'acide acétique par Kolbe en 1845, ont compté autant."
-      }
-     ],
-     "retenir": {
-      "fr": "Organique = chimie du carbone, qui fait 4 liaisons. Wöhler (1828) synthétise l'urée, mais n'a pas tué le vitalisme à lui seul."
-     },
-     "source": "Wöhler, Annalen der Physik, 1828",
-     "figure": "mc_alch_methane"
-    },
-    {
-     "id": "cycle",
-     "titre": {
-      "fr": "Le serpent de Kekulé"
-     },
-     "texte": [
-      {
-       "fr": "Le benzène, isolé par Michael Faraday en 1825, a longtemps été une énigme : six carbones, six hydrogènes, et pourtant une stabilité étonnante. En 1865, August Kekulé propose un anneau de six carbones, avec des liaisons simples et doubles en alternance."
-      },
-      {
-       "fr": "En 1890, pour les 25 ans de sa découverte, Kekulé raconte qu'il en a eu l'idée en rêvassant devant le feu : un serpent qui se mordait la queue. Belle histoire, racontée un quart de siècle après coup ; on ne sait pas jusqu'où la croire. L'anneau, lui, est resté : on le retrouve dans l'aspirine, le paracétamol ou le polystyrène."
-      }
-     ],
-     "retenir": {
-      "fr": "Benzène : isolé par Faraday (1825), anneau de 6 carbones proposé par Kekulé (1865). Le rêve du serpent est raconté en 1890."
-     },
-     "source": "Kekulé, Bulletin de la Société chimique de Paris, 1865",
-     "figure": "mc_alch_benzene"
-    },
-    {
-     "id": "polymeres",
-     "titre": {
-      "fr": "Des molécules géantes"
-     },
-     "texte": [
-      {
-       "fr": "Un polymère est une molécule immense faite d'un motif répété des milliers de fois. Le polyéthylène des sacs est une chaîne de –CH₂–CH₂–. La nature en est pleine : la cellulose du bois, l'amidon, les protéines, l'ADN."
-      },
-      {
-       "fr": "En 1920, Hermann Staudinger affirme que le caoutchouc ou la cellulose sont de vraies longues chaînes liées par des liaisons covalentes. Les grands noms de l'époque, comme Emil Fischer, n'y croient pas : pour eux, ce sont des amas de petites molécules. Staudinger tient bon et reçoit le prix Nobel en 1953. Entre-temps, la bakélite (1907) et le nylon (1935) avaient lancé l'âge du plastique."
-      }
-     ],
-     "retenir": {
-      "fr": "Polymère = longue chaîne d'un motif répété (plastiques, cellulose, ADN). Staudinger (1920, Nobel 1953) l'a imposé contre l'avis général."
-     },
-     "source": "Staudinger, Berichte der deutschen chemischen Gesellschaft, 1920",
-     "schema_fiche": true
-    }
-   ]
-  }
- },
- {
-  "id": "chim.quotidien",
-  "stat": "alchimie",
-  "rang": 7,
-  "nom": {
-   "fr": "Chimie du quotidien"
-  },
-  "description": {
-   "fr": "Cuisine, savon, médicaments, piles et matériaux."
-  },
-  "prerequis": [
-   "chim.etats"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Le savon a une tête qui aime l'eau et une queue qui aime les graisses : il emprisonne la graisse dans des micelles."
-    },
-    {
-     "fr": "La réaction de Maillard (sucres + protéines à la chaleur) dore le pain et grille la viande."
-    },
-    {
-     "fr": "Une pile transforme une réaction d'oxydoréduction en courant."
-    },
-    {
-     "fr": "Le paracétamol et l'aspirine sont des molécules de synthèse ; l'aspirine dérive de l'écorce de saule."
-    }
-   ],
-   "piege": {
-    "fr": "Mélanger eau de Javel et vinaigre dégage du chlore toxique : ne jamais combiner les produits ménagers."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Comment le savon emporte la graisse\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">graisse</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">savon</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">tête + queue</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">micelle</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">rincée</text></svg>",
-   "source": "This, Révélations gastronomiques, 1995"
-  },
-  "symbole": "⚗",
-  "embleme": "flacon",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "savon",
-     "titre": {
-      "fr": "Comment le savon attrape la graisse"
-     },
-     "texte": [
-      {
-       "fr": "Le savon se fabrique en mélangeant des graisses ou des huiles avec une base forte, la soude : les graisses se coupent en sels d'acides gras, et il reste de la glycérine. C'est la saponification. Des traces de matières savonneuses remontent à environ 2800 avant notre ère, à Babylone."
-      },
-      {
-       "fr": "Chaque molécule de savon a une tête qui aime l'eau et une queue qui aime la graisse. Dans l'eau, les queues plongent dans la graisse et les têtes restent tournées vers l'extérieur : elles forment des petites billes, les micelles, qui emprisonnent la saleté. Le rinçage les emporte."
-      }
-     ],
-     "retenir": {
-      "fr": "Savon = graisse + soude (saponification). Tête qui aime l'eau, queue qui aime la graisse : les micelles emportent la saleté."
-     },
-     "source": "This, Révélations gastronomiques, 1995"
-    },
-    {
-     "id": "cuisine",
-     "titre": {
-      "fr": "La croûte dorée de Maillard"
-     },
-     "texte": [
-      {
-       "fr": "La croûte du pain, la viande grillée, le café torréfié : c'est la réaction de Maillard, décrite en 1912 par le chimiste français Louis Camille Maillard. Des sucres et des acides aminés réagissent à la chaleur et donnent des centaines de molécules brunes et parfumées."
-      },
-      {
-       "fr": "Elle va vite autour de 140 à 165 °C. Voilà pourquoi une viande bouillie ne dore pas : dans l'eau, on ne dépasse pas 100 °C. Pour griller, il faut une poêle chaude et une surface sèche."
-      }
-     ],
-     "retenir": {
-      "fr": "Maillard (1912) : sucres + acides aminés + chaleur (140 à 165 °C) = brunissement et arômes. Pas de croûte dans l'eau bouillante."
-     },
-     "source": "Maillard, Comptes rendus de l'Académie des sciences, 1912",
-     "figure": "mc_alch_maillard"
-    },
-    {
-     "id": "remedes",
-     "titre": {
-      "fr": "Du saule à l'aspirine, et ce qu'il ne faut pas mélanger"
-     },
-     "texte": [
-      {
-       "fr": "Les plantes riches en salicylés, comme le saule, figurent déjà sur des tablettes sumériennes et dans le papyrus Ebers égyptien ; vers 400 avant notre ère, Hippocrate décrit une tisane contre la fièvre. En 1897, chez Bayer, on cherche une version moins agressive pour l'estomac, et dès 1899 l'acide acétylsalicylique se vend dans le monde entier sous le nom d'Aspirin."
-      },
-      {
-       "fr": "La chimie de la maison a aussi ses dangers. L'eau de Javel mélangée à un acide, comme un détartrant ou du vinaigre, libère du dichlore, un gaz toxique. Règle simple : ne jamais mélanger deux produits ménagers."
-      }
-     ],
-     "retenir": {
-      "fr": "L'aspirine vient du saule (Bayer, 1899). Javel + acide = dichlore toxique : ne jamais mélanger les produits ménagers."
-     },
-     "source": "Jeffreys, Aspirin: The Remarkable Story of a Wonder Drug, 2004",
-     "figure": "mc_alch_aspirine"
-    }
-   ]
-  }
- },
- {
-  "id": "chim.noyau",
-  "stat": "alchimie",
-  "rang": 8,
-  "nom": {
-   "fr": "Radioactivité et noyau"
-  },
-  "description": {
-   "fr": "Isotopes, demi-vie, fission, fusion et datation."
-  },
-  "prerequis": [
-   "chim.organique",
-   "chim.quotidien"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Demi-vie : le temps pour que la moitié des noyaux radioactifs se désintègre. Elle ne dépend pas de la quantité."
-    },
-    {
-     "fr": "Le carbone 14 (demi-vie ≈ 5 730 ans) date les restes organiques jusqu'à environ 50 000 ans."
-    },
-    {
-     "fr": "Fission : un noyau lourd se casse (centrales). Fusion : des noyaux légers s'unissent (Soleil)."
-    },
-    {
-     "fr": "α arrêté par une feuille de papier, β par quelques millimètres d'aluminium, γ par du plomb ou du béton épais."
-    }
-   ],
-   "piege": {
-    "fr": "Après deux demi-vies, il ne reste pas zéro mais un quart."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Ce qui reste après chaque demi-vie\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"30.0\" width=\"40.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"66.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">100 %</text><text class=\"tm\" x=\"66.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">0</text><rect class=\"f2\" x=\"98.0\" y=\"80.0\" width=\"40.0\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"118.0\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">50 %</text><text class=\"tm\" x=\"118.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">1 T</text><rect class=\"a\" x=\"150.0\" y=\"105.0\" width=\"40.0\" height=\"25.0\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"99.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">25 %</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">2 T</text><rect class=\"f2\" x=\"202.0\" y=\"117.5\" width=\"40.0\" height=\"12.5\" rx=\"3\"/><text class=\"t\" x=\"222.0\" y=\"111.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">12,5 %</text><text class=\"tm\" x=\"222.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">3 T</text><rect class=\"f2\" x=\"254.0\" y=\"123.8\" width=\"40.0\" height=\"6.2\" rx=\"3\"/><text class=\"t\" x=\"274.0\" y=\"117.75\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">6,25 %</text><text class=\"tm\" x=\"274.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">4 T</text></svg>",
-   "source": "Rutherford et Soddy, Philosophical Magazine, 1902"
-  },
-  "symbole": "☢",
-  "embleme": "verre-uranium",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "decouverte",
-     "titre": {
-      "fr": "Une plaque voilée dans un tiroir"
-     },
-     "texte": [
-      {
-       "fr": "En 1896, Henri Becquerel range des sels d'uranium sur une plaque photographique dans un tiroir, faute de soleil pour son expérience. La plaque est voilée quand même : l'uranium émet un rayonnement tout seul. En 1898, Marie et Pierre Curie découvrent deux éléments bien plus actifs, le polonium et le radium."
-      },
-      {
-       "fr": "En 1899, Ernest Rutherford trie ces rayons selon ce qui les arrête : il appelle alpha ceux qu'arrêtent quelques feuilles minces, bêta ceux qui passent. Plus tard viendra le gamma. Les alpha, des noyaux d'hélium, s'arrêtent sur une feuille de papier ; les bêta, sur quelques millimètres d'aluminium ; les gamma, une lumière très énergétique, demandent du plomb ou du béton épais."
-      }
-     ],
-     "retenir": {
-      "fr": "Becquerel (1896), les Curie (1898). Alpha : papier ; bêta : aluminium ; gamma : plomb ou béton."
-     },
-     "source": "Rutherford, Philosophical Magazine, 1899",
-     "figure": "mc_alch_rayonnements"
-    },
-    {
-     "id": "demivie",
-     "titre": {
-      "fr": "La moitié, puis la moitié de la moitié"
-     },
-     "texte": [
-      {
-       "fr": "On ne peut pas prévoir quand un noyau radioactif va se désintégrer, mais on sait combien de temps il faut pour que la moitié d'un lot le fasse : c'est la demi-vie. Elle ne dépend pas de la quantité. Après une demi-vie il reste la moitié, après deux un quart, après trois un huitième : jamais zéro d'un coup."
-      },
-      {
-       "fr": "Le carbone 14 en fait une horloge. Il naît en haute atmosphère, quand des neutrons produits par les rayons cosmiques frappent l'azote. Les êtres vivants en absorbent tant qu'ils vivent, puis le stock s'épuise avec une demi-vie d'environ 5 730 ans. Willard Libby met la méthode au point à Chicago à la fin des années 1940 (prix Nobel 1960) ; elle porte jusqu'à environ 50 000 ans."
-      }
-     ],
-     "retenir": {
-      "fr": "Demi-vie : la moitié se désintègre, quelle que soit la quantité. Carbone 14 : 5 730 ans, datation jusqu'à environ 50 000 ans (Libby)."
-     },
-     "source": "Libby, Radiocarbon Dating, 1952",
-     "schema_fiche": true
-    },
-    {
-     "id": "fission",
-     "titre": {
-      "fr": "Casser ou fusionner"
-     },
-     "texte": [
-      {
-       "fr": "En décembre 1938, Otto Hahn et Fritz Strassmann trouvent du baryum après avoir bombardé de l'uranium avec des neutrons : le noyau s'est cassé en deux. Début 1939, Lise Meitner et son neveu Otto Frisch l'expliquent, et Frisch l'appelle fission, comme la division des cellules. Chaque fission libère environ 200 MeV et des neutrons qui peuvent en provoquer d'autres : une réaction en chaîne."
-      },
-      {
-       "fr": "Le 2 décembre 1942, sous les gradins du stade Stagg Field de l'université de Chicago, sur un ancien court de squash, la pile d'Enrico Fermi, de l'uranium dans 45 000 blocs de graphite, entretient la première réaction en chaîne contrôlée, à environ un demi-watt. Le Soleil, lui, fait l'inverse : il fusionne des noyaux d'hydrogène en hélium."
-      }
-     ],
-     "retenir": {
-      "fr": "Fission (Hahn et Strassmann 1938, Meitner et Frisch 1939) : un noyau lourd se casse, réaction en chaîne (Chicago, 1942). Fusion : des noyaux légers s'unissent (Soleil)."
-     },
-     "source": "Meitner et Frisch, Nature, 1939",
-     "figure": "mc_alch_fission"
-    }
-   ]
-  }
- }
 ]

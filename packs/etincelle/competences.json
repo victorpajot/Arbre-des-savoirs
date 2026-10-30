@@ -1,783 +1,783 @@
 [
- {
-  "id": "elec.circuits",
-  "stat": "etincelle",
-  "rang": 1,
-  "nom": {
-   "fr": "Charges et circuits"
-  },
-  "description": {
-   "fr": "Charges, conducteurs, circuits en série et en dérivation."
-  },
-  "prerequis": [],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Le courant ne circule que dans une boucle fermée."
+  {
+    "id": "elec.circuits",
+    "stat": "etincelle",
+    "rang": 1,
+    "nom": {
+      "fr": "Charges et circuits"
     },
-    {
-     "fr": "En série, une seule boucle : une lampe grillée éteint tout."
+    "description": {
+      "fr": "Charges, conducteurs, circuits en série et en dérivation."
     },
-    {
-     "fr": "En dérivation, chaque branche a sa boucle : les lampes sont indépendantes, comme dans une maison."
+    "prerequis": [],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Le courant ne circule que dans une boucle fermée."
+        },
+        {
+          "fr": "En série, une seule boucle : une lampe grillée éteint tout."
+        },
+        {
+          "fr": "En dérivation, chaque branche a sa boucle : les lampes sont indépendantes, comme dans une maison."
+        },
+        {
+          "fr": "Les métaux conduisent grâce à leurs électrons libres ; le plastique et le verre isolent."
+        }
+      ],
+      "piege": {
+        "fr": "L'eau pure conduit mal : ce sont les sels dissous qui rendent l'eau du robinet conductrice."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 380 170\" role=\"img\" aria-label=\"Deux lampes en dérivation, chacune sur sa propre branche\"><polyline class=\"l\" points=\"50,30 290,30 290,150 50,150 50,30\"/><polyline class=\"l\" points=\"170,30 170,150\"/><line class=\"l\" x1=\"36\" y1=\"85\" x2=\"64\" y2=\"85\"/><line class=\"l\" x1=\"43\" y1=\"95\" x2=\"57\" y2=\"95\" stroke-width=\"4\"/><rect class=\"fond\" x=\"34\" y=\"87\" width=\"32\" height=\"6\"/><text class=\"tm\" x=\"28\" y=\"88\" font-size=\"13\" text-anchor=\"end\">+</text><text class=\"tm\" x=\"28\" y=\"102\" font-size=\"13\" text-anchor=\"end\">−</text><circle class=\"f\" cx=\"170\" cy=\"90\" r=\"12\"/><line class=\"l\" x1=\"162\" y1=\"82\" x2=\"178\" y2=\"98\"/><line class=\"l\" x1=\"178\" y1=\"82\" x2=\"162\" y2=\"98\"/><circle class=\"f\" cx=\"290\" cy=\"90\" r=\"12\"/><line class=\"l\" x1=\"282\" y1=\"82\" x2=\"298\" y2=\"98\"/><line class=\"l\" x1=\"298\" y1=\"82\" x2=\"282\" y2=\"98\"/><text class=\"tm\" x=\"190\" y=\"95\" font-size=\"12\" text-anchor=\"start\">lampe 1</text><text class=\"tm\" x=\"308\" y=\"95\" font-size=\"12\" text-anchor=\"start\">lampe 2</text></svg>",
+      "source": "Programme de physique-chimie du cycle 4, Éduscol"
     },
-    {
-     "fr": "Les métaux conduisent grâce à leurs électrons libres ; le plastique et le verre isolent."
+    "symbole": "+−",
+    "embleme": "bouteille-leyde",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "charges",
+          "titre": {
+            "fr": "Ce qui frotte se charge"
+          },
+          "texte": [
+            {
+              "fr": "Les Grecs avaient remarqué que l'ambre frottée attire les brindilles. En 1600, dans De Magnete, le médecin anglais William Gilbert tire du grec elektron, l'ambre, un mot latin pour ces corps qui attirent : c'est l'origine de notre « électricité ». Au XVIIIe siècle, Benjamin Franklin appelle les deux sortes de charges positive et négative, et invente le mot « charge »."
+            },
+            {
+              "fr": "Les charges de même signe se repoussent, celles de signes opposés s'attirent. Frotter ne crée rien : des électrons changent de place. Un ballon frotté sur des cheveux leur prend des électrons, devient négatif et les attire. Le choix de Franklin était arbitraire, et il a fixé le sens conventionnel du courant avant qu'on découvre les électrons : dans un fil, ils vont en réalité dans l'autre sens."
+            }
+          ],
+          "retenir": {
+            "fr": "Même signe : répulsion ; signes opposés : attraction. Frotter déplace des électrons, sans rien créer. Mot « charge » : Franklin."
+          },
+          "source": "Gilbert, De Magnete, 1600 ; Franklin, Experiments and Observations on Electricity, 1751",
+          "figure": "mc_elec_charges"
+        },
+        {
+          "id": "boucle",
+          "titre": {
+            "fr": "Pas de boucle, pas de courant"
+          },
+          "texte": [
+            {
+              "fr": "Un courant ne circule que dans une boucle fermée : de la pile, par les fils, à travers la lampe, et retour à la pile. Un interrupteur ouvert coupe la boucle, la lampe s'éteint. Les métaux conduisent parce que certains de leurs électrons sont libres de se déplacer ; le plastique, le verre ou le caoutchouc les retiennent : ce sont des isolants, d'où la gaine des câbles. Cette différence entre conducteurs et isolants, l'Anglais Stephen Gray la découvre en 1729 : un fil soutenu par du métal perdait sa charge, un fil soutenu par de la soie la gardait, et il fait ainsi voyager l'électricité sur 800 pieds, environ 240 m."
+            },
+            {
+              "fr": "En série, une seule boucle : retirer une lampe éteint toutes les autres, comme les vieilles guirlandes. En dérivation, chaque lampe a sa propre boucle : elles sont indépendantes. C'est ainsi que sont câblées les prises d'une maison. Si le courant trouve un chemin presque sans résistance, c'est le court-circuit : l'intensité s'emballe et chauffe les fils, d'où les fusibles et les disjoncteurs qui coupent avant l'incendie."
+            }
+          ],
+          "retenir": {
+            "fr": "Boucle fermée obligatoire. Série : tout s'éteint ensemble. Dérivation : chaque branche est indépendante, comme à la maison."
+          },
+          "source": "Programme de physique-chimie du cycle 4, Éduscol",
+          "schema_fiche": true
+        },
+        {
+          "id": "pile",
+          "titre": {
+            "fr": "Une querelle sur des cuisses de grenouille"
+          },
+          "texte": [
+            {
+              "fr": "Dans les années 1780, à Bologne, Luigi Galvani voit des cuisses de grenouille se contracter quand on les touche avec deux métaux différents. Il y voit une électricité propre aux êtres vivants. Alessandro Volta n'est pas d'accord : pour lui, l'électricité naît du contact entre les deux métaux, et la grenouille ne sert que de détecteur."
+            },
+            {
+              "fr": "Pour le prouver, Volta empile des disques de cuivre et de zinc séparés par du carton imbibé d'eau salée. Reliez le haut et le bas par un fil : un courant continu circule. Il décrit cette première vraie pile dans une lettre à la Royal Society de Londres, le 20 mars 1800. On saura plus tard que l'eau salée participe aux réactions, ce que Volta négligeait. Le volt porte son nom."
+            }
+          ],
+          "retenir": {
+            "fr": "Galvani (années 1780) : les grenouilles. Volta (1800) : la pile, cuivre, zinc et eau salée. Le volt lui doit son nom."
+          },
+          "source": "Volta, lettre à la Royal Society, 20 mars 1800",
+          "figure": "mc_elec_pile"
+        }
+      ]
     }
-   ],
-   "piege": {
-    "fr": "L'eau pure conduit mal : ce sont les sels dissous qui rendent l'eau du robinet conductrice."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 380 170\" role=\"img\" aria-label=\"Deux lampes en dérivation, chacune sur sa propre branche\"><polyline class=\"l\" points=\"50,30 290,30 290,150 50,150 50,30\"/><polyline class=\"l\" points=\"170,30 170,150\"/><line class=\"l\" x1=\"36\" y1=\"85\" x2=\"64\" y2=\"85\"/><line class=\"l\" x1=\"43\" y1=\"95\" x2=\"57\" y2=\"95\" stroke-width=\"4\"/><rect class=\"fond\" x=\"34\" y=\"87\" width=\"32\" height=\"6\"/><text class=\"tm\" x=\"28\" y=\"88\" font-size=\"13\" text-anchor=\"end\">+</text><text class=\"tm\" x=\"28\" y=\"102\" font-size=\"13\" text-anchor=\"end\">−</text><circle class=\"f\" cx=\"170\" cy=\"90\" r=\"12\"/><line class=\"l\" x1=\"162\" y1=\"82\" x2=\"178\" y2=\"98\"/><line class=\"l\" x1=\"178\" y1=\"82\" x2=\"162\" y2=\"98\"/><circle class=\"f\" cx=\"290\" cy=\"90\" r=\"12\"/><line class=\"l\" x1=\"282\" y1=\"82\" x2=\"298\" y2=\"98\"/><line class=\"l\" x1=\"298\" y1=\"82\" x2=\"282\" y2=\"98\"/><text class=\"tm\" x=\"190\" y=\"95\" font-size=\"12\" text-anchor=\"start\">lampe 1</text><text class=\"tm\" x=\"308\" y=\"95\" font-size=\"12\" text-anchor=\"start\">lampe 2</text></svg>",
-   "source": "Programme de physique-chimie du cycle 4, Éduscol"
   },
-  "symbole": "+−",
-  "embleme": "bouteille-leyde",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "charges",
-     "titre": {
-      "fr": "Ce qui frotte se charge"
-     },
-     "texte": [
-      {
-       "fr": "Les Grecs avaient remarqué que l'ambre frottée attire les brindilles. En 1600, dans De Magnete, le médecin anglais William Gilbert tire du grec elektron, l'ambre, un mot latin pour ces corps qui attirent : c'est l'origine de notre « électricité ». Au XVIIIe siècle, Benjamin Franklin appelle les deux sortes de charges positive et négative, et invente le mot « charge »."
-      },
-      {
-       "fr": "Les charges de même signe se repoussent, celles de signes opposés s'attirent. Frotter ne crée rien : des électrons changent de place. Un ballon frotté sur des cheveux leur prend des électrons, devient négatif et les attire. Le choix de Franklin était arbitraire, et il a fixé le sens conventionnel du courant avant qu'on découvre les électrons : dans un fil, ils vont en réalité dans l'autre sens."
-      }
-     ],
-     "retenir": {
-      "fr": "Même signe : répulsion ; signes opposés : attraction. Frotter déplace des électrons, sans rien créer. Mot « charge » : Franklin."
-     },
-     "source": "Gilbert, De Magnete, 1600 ; Franklin, Experiments and Observations on Electricity, 1751",
-     "figure": "mc_elec_charges"
+  {
+    "id": "elec.ohm",
+    "stat": "etincelle",
+    "rang": 2,
+    "nom": {
+      "fr": "Tension, intensité et loi d'Ohm"
     },
-    {
-     "id": "boucle",
-     "titre": {
-      "fr": "Pas de boucle, pas de courant"
-     },
-     "texte": [
-      {
-       "fr": "Un courant ne circule que dans une boucle fermée : de la pile, par les fils, à travers la lampe, et retour à la pile. Un interrupteur ouvert coupe la boucle, la lampe s'éteint. Les métaux conduisent parce que certains de leurs électrons sont libres de se déplacer ; le plastique, le verre ou le caoutchouc les retiennent : ce sont des isolants, d'où la gaine des câbles."
-      },
-      {
-       "fr": "En série, une seule boucle : retirer une lampe éteint toutes les autres, comme les vieilles guirlandes. En dérivation, chaque lampe a sa propre boucle : elles sont indépendantes. C'est ainsi que sont câblées les prises d'une maison. Si le courant trouve un chemin presque sans résistance, c'est le court-circuit : l'intensité s'emballe et chauffe les fils, d'où les fusibles et les disjoncteurs qui coupent avant l'incendie."
-      }
-     ],
-     "retenir": {
-      "fr": "Boucle fermée obligatoire. Série : tout s'éteint ensemble. Dérivation : chaque branche est indépendante, comme à la maison."
-     },
-     "source": "Programme de physique-chimie du cycle 4, Éduscol",
-     "schema_fiche": true
+    "description": {
+      "fr": "Volts, ampères, ohms, et la relation qui les lie."
     },
-    {
-     "id": "pile",
-     "titre": {
-      "fr": "Une querelle sur des cuisses de grenouille"
-     },
-     "texte": [
-      {
-       "fr": "Dans les années 1780, à Bologne, Luigi Galvani voit des cuisses de grenouille se contracter quand on les touche avec deux métaux différents. Il y voit une électricité propre aux êtres vivants. Alessandro Volta n'est pas d'accord : pour lui, l'électricité naît du contact entre les deux métaux, et la grenouille ne sert que de détecteur."
+    "prerequis": [
+      "elec.circuits"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "U = R × I : tension (volts) = résistance (ohms) × intensité (ampères)."
+        },
+        {
+          "fr": "Une pile de 9 V sur 3 Ω fait passer 3 A."
+        },
+        {
+          "fr": "Deux résistances égales en série : résistance doublée. En dérivation : divisée par deux."
+        },
+        {
+          "fr": "L'intensité est la même partout dans une boucle série ; la tension se partage."
+        }
+      ],
+      "piege": {
+        "fr": "Le courant ne s'« use » pas en traversant une lampe : la même intensité ressort."
       },
-      {
-       "fr": "Pour le prouver, Volta empile des disques de cuivre et de zinc séparés par du carton imbibé d'eau salée. Reliez le haut et le bas par un fil : un courant continu circule. Il décrit cette première vraie pile dans une lettre à la Royal Society de Londres, le 20 mars 1800. On saura plus tard que l'eau salée participe aux réactions, ce que Volta négligeait. Le volt porte son nom."
-      }
-     ],
-     "retenir": {
-      "fr": "Galvani (années 1780) : les grenouilles. Volta (1800) : la pile, cuivre, zinc et eau salée. Le volt lui doit son nom."
-     },
-     "source": "Volta, lettre à la Royal Society, 20 mars 1800",
-     "figure": "mc_elec_pile"
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 150\" role=\"img\" aria-label=\"Pile de 9 volts reliée à une résistance de 3 ohms\"><polyline class=\"l\" points=\"60,30 260,30 260,130 60,130 60,30\"/><line class=\"l\" x1=\"46\" y1=\"75\" x2=\"74\" y2=\"75\"/><line class=\"l\" x1=\"53\" y1=\"85\" x2=\"67\" y2=\"85\" stroke-width=\"4\"/><rect class=\"fond\" x=\"44\" y=\"77\" width=\"32\" height=\"6\"/><text class=\"tm\" x=\"38\" y=\"78\" font-size=\"13\" text-anchor=\"end\">+</text><text class=\"tm\" x=\"38\" y=\"92\" font-size=\"13\" text-anchor=\"end\">−</text><text class=\"t\" x=\"80\" y=\"85\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">9 V</text><rect class=\"f\" x=\"252\" y=\"60\" width=\"16\" height=\"40\" rx=\"2\"/><text class=\"t\" x=\"274\" y=\"85\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">3 Ω</text><path class=\"al\" d=\"M150 18 l12 12 l-12 12\" fill=\"none\"/><text class=\"t\" x=\"150\" y=\"60\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">I = ?</text></svg>",
+      "source": "Ohm, Die galvanische Kette, 1827"
+    },
+    "symbole": "Ω",
+    "embleme": "pile-volta",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "loi",
+          "titre": {
+            "fr": "U = R × I"
+          },
+          "texte": [
+            {
+              "fr": "La tension U, en volts, pousse le courant. La résistance R, en ohms, le freine. L'intensité I, en ampères, est le débit qui en résulte. Georg Ohm les relie en 1827 dans Die galvanische Kette : U = R × I. Avec une pile de 9 V sur une résistance de 3 Ω, I = U ÷ R = 9 V ÷ 3 Ω = 3 A. Son travail a d'abord été accueilli sans enthousiasme ; l'unité de résistance porte pourtant son nom."
+            },
+            {
+              "fr": "L'image de l'eau aide : la tension est la pression, l'intensité le débit, la résistance l'étroitesse du tuyau. Un fil long et fin résiste plus qu'un fil court et épais. Et le courant ne s'use pas en traversant une lampe : la même intensité ressort, c'est l'énergie qui est cédée. On mesure l'intensité avec un ampèremètre branché en série, la tension avec un voltmètre branché aux bornes."
+            }
+          ],
+          "retenir": {
+            "fr": "U = R × I (Ohm, 1827). 9 V sur 3 Ω = 3 A. Le courant ne s'use pas, l'énergie si."
+          },
+          "source": "Ohm, Die galvanische Kette, mathematisch bearbeitet, 1827"
+        },
+        {
+          "id": "assembler",
+          "titre": {
+            "fr": "Série, dérivation : le calcul"
+          },
+          "texte": [
+            {
+              "fr": "En série, le courant traverse les résistances l'une après l'autre : elles s'additionnent, R = R₁ + R₂. L'intensité est la même partout, la tension se partage. En dérivation, le courant a plusieurs chemins : 1/R = 1/R₁ + 1/R₂. Pour deux résistances de 100 Ω : 1/R = 1/100 + 1/100 = 2/100, donc R = 100 ÷ 2 = 50 Ω. Deux chemins laissent passer deux fois plus de courant."
+            },
+            {
+              "fr": "Ces règles se déduisent de la loi d'Ohm et des deux lois que Gustav Kirchhoff publie en 1845, encore étudiant. Loi des nœuds : tout le courant qui arrive à un carrefour en repart, rien ne se perd. Loi des mailles : sur une boucle, les tensions se compensent. Avec ces deux lois, on calcule n'importe quel circuit, si compliqué soit-il."
+            }
+          ],
+          "retenir": {
+            "fr": "Série : R = R₁ + R₂. Dérivation : 1/R = 1/R₁ + 1/R₂ (deux fois 100 Ω = 50 Ω). Lois de Kirchhoff, 1845."
+          },
+          "source": "Kirchhoff, Annalen der Physik, 1845",
+          "figure": "mc_elec_assembler"
+        },
+        {
+          "id": "danger",
+          "titre": {
+            "fr": "C'est le courant qui tue"
+          },
+          "texte": [
+            {
+              "fr": "Ce qui blesse, c'est le courant qui traverse le corps, plus que la tension seule. Quelques dizaines de milliampères suffisent à provoquer des troubles graves du cœur. C'est pourquoi les maisons ont un disjoncteur différentiel de 30 mA : il compare le courant qui part et celui qui revient, et coupe en une fraction de seconde si une partie s'échappe, par exemple à travers quelqu'un."
+            },
+            {
+              "fr": "Un oiseau posé sur un seul câble haute tension ne risque rien : ses deux pattes sont au même potentiel, aucun courant ne le traverse. Le danger viendrait de toucher deux câbles à la fois, ou un câble et le pylône. En France, le réseau domestique est à 230 V alternatif, 50 Hz ; l'Amérique du Nord utilise environ 120 V à 60 Hz."
+            }
+          ],
+          "retenir": {
+            "fr": "Le danger, c'est le courant à travers le corps : 30 mA pour le différentiel. Un seul câble, pas de courant : l'oiseau survit."
+          },
+          "source": "IEC 60479, effets du courant sur l'homme",
+          "figure": "mc_elec_danger"
+        }
+      ]
     }
-   ]
+  },
+  {
+    "id": "elec.puissance",
+    "stat": "etincelle",
+    "rang": 3,
+    "nom": {
+      "fr": "Puissance et énergie électrique"
+    },
+    "description": {
+      "fr": "Watts, kilowattheures, effet Joule et production d'électricité."
+    },
+    "prerequis": [
+      "elec.circuits"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "P = U × I : un appareil de 2 000 W sur 230 V tire environ 8,7 A."
+        },
+        {
+          "fr": "L'énergie facturée est en kilowattheures : 1 kW pendant 1 h."
+        },
+        {
+          "fr": "Effet Joule : un courant dans une résistance la chauffe (grille-pain, fusible)."
+        },
+        {
+          "fr": "Un appareil en veille consomme peu par heure, mais 24 h sur 24."
+        }
+      ],
+      "piege": {
+        "fr": "kW et kWh ne sont pas la même chose : l'un est une puissance, l'autre une énergie."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Puissances d'appareils courants\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"129.5\" width=\"74.7\" height=\"0.5\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"123.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">10 W</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">LED</text><rect class=\"f2\" x=\"132.7\" y=\"122.5\" width=\"74.7\" height=\"7.5\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"116.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">150 W</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">frigo</text><rect class=\"a\" x=\"219.3\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2000 W</text><text class=\"tm\" x=\"256.6666666666667\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">four</text></svg>",
+      "source": "ADEME, guide « Réduire sa facture d'électricité »"
+    },
+    "symbole": "W",
+    "embleme": "ampoule-edison",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "watts",
+          "titre": {
+            "fr": "Des volts fois des ampères"
+          },
+          "texte": [
+            {
+              "fr": "La puissance électrique P, en watts, est le produit de la tension U par l'intensité I : P = U × I. Un appareil sous 230 V qui tire 10 A consomme P = 230 V × 10 A = 2 300 W. Dans l'autre sens, une bouilloire de 2 000 W tire I = P ÷ U = 2 000 ÷ 230 ≈ 8,7 A. Le watt porte le nom de James Watt, l'ingénieur de la machine à vapeur. Sa grande amélioration de la machine de Newcomen, le condenseur séparé, date de 1769."
+            },
+            {
+              "fr": "Le watt et le joule ne mesurent pas la même chose. Le joule est une énergie, le watt une puissance, c'est-à-dire une énergie par seconde : 1 W = 1 J/s. Une ampoule de 5 W dépense 5 joules chaque seconde. Une LED éclaire autant qu'une ampoule à incandescence en consommant environ 5 à 8 fois moins, car l'ancienne transformait surtout l'électricité en chaleur."
+            }
+          ],
+          "retenir": {
+            "fr": "P = U × I : 230 V × 10 A = 2 300 W. Watt = joule par seconde."
+          },
+          "source": "Bureau international des poids et mesures, brochure SI"
+        },
+        {
+          "id": "kwh",
+          "titre": {
+            "fr": "Ce que dit la facture"
+          },
+          "texte": [
+            {
+              "fr": "Sur une facture, on paie une énergie, en kilowattheures : la puissance multipliée par la durée, E = P × t. Un radiateur de 2 000 W, soit 2 kW, allumé 3 heures consomme E = 2 kW × 3 h = 6 kWh. Une ampoule de 5 W allumée 1 000 heures : E = 5 W × 1 000 h = 5 000 Wh = 5 kWh. Un kilowattheure vaut 1 000 W × 3 600 s = 3 600 000 joules."
+            },
+            {
+              "fr": "Le piège : un appareil en veille consomme peu par heure, souvent quelques watts, mais 24 heures sur 24. Quelques watts toute l'année finissent par peser plus qu'un appareil puissant utilisé quelques minutes. Pour savoir ce qui coûte, il faut toujours multiplier la puissance par le temps d'usage."
+            }
+          ],
+          "retenir": {
+            "fr": "E = P × t : 2 kW pendant 3 h = 6 kWh. 1 kWh = 3,6 millions de joules. La veille coûte par sa durée."
+          },
+          "source": "ADEME, guide « Réduire sa facture d'électricité »",
+          "figure": "mc_elec_kwh"
+        },
+        {
+          "id": "joule",
+          "titre": {
+            "fr": "Le courant qui chauffe"
+          },
+          "texte": [
+            {
+              "fr": "En 1841, James Prescott Joule mesure la chaleur dégagée par un fil parcouru par un courant : elle est proportionnelle à la résistance et au carré de l'intensité. En combinant P = U × I et la loi d'Ohm U = R × I, on obtient P = R × I². C'est l'effet Joule : le grille-pain, la bouilloire, le radiateur et le fusible qui fond l'exploitent."
+            },
+            {
+              "fr": "Ce carré explique le transport à très haute tension. Pour une même puissance P = U × I, monter la tension fait baisser l'intensité. Or les pertes dans les câbles valent R × I² : diviser l'intensité par 10 divise les pertes par 10 × 10 = 100. C'est pourquoi les lignes partent des centrales à des centaines de milliers de volts."
+            }
+          ],
+          "retenir": {
+            "fr": "P = R × I² (Joule, 1841). Haute tension = faible intensité = pertes divisées par le carré."
+          },
+          "source": "Joule, Philosophical Magazine, 1841",
+          "figure": "mc_elec_joule"
+        }
+      ]
+    }
+  },
+  {
+    "id": "elec.magnetisme",
+    "stat": "etincelle",
+    "rang": 4,
+    "nom": {
+      "fr": "Magnétisme et induction"
+    },
+    "description": {
+      "fr": "Aimants, boussoles, électroaimants, moteurs et alternateurs."
+    },
+    "prerequis": [
+      "elec.ohm",
+      "elec.puissance"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Un courant crée un champ magnétique (Ørsted, 1820) : c'est le principe de l'électroaimant."
+        },
+        {
+          "fr": "Un champ magnétique qui varie crée un courant (induction, Faraday 1831) : c'est l'alternateur."
+        },
+        {
+          "fr": "Un moteur électrique transforme l'énergie électrique en mouvement ; un alternateur fait l'inverse."
+        },
+        {
+          "fr": "Le pôle nord d'une boussole pointe vers le pôle Nord géographique, qui est un pôle sud magnétique."
+        }
+      ],
+      "piege": {
+        "fr": "Casser un aimant en deux ne sépare pas les pôles : on obtient deux aimants complets."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 108\" role=\"img\" aria-label=\"Moteur et alternateur, deux faces du même phénomène\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Moteur</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Alternateur</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"100\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">électricité → mouvement</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">courant → champ</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">mouvement → électricité</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">champ variable → courant</text></svg>",
+      "source": "Faraday, Experimental Researches in Electricity, 1839"
+    },
+    "symbole": "NS",
+    "embleme": "bobine-faraday",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "oersted",
+          "titre": {
+            "fr": "La boussole qui bouge"
+          },
+          "texte": [
+            {
+              "fr": "En 1820, Hans Christian Ørsted remarque qu'un fil parcouru par un courant fait dévier l'aiguille d'une boussole posée à côté. Selon la tradition, c'était pendant un cours. C'est la preuve qu'électricité et magnétisme sont liés : un courant crée un champ magnétique autour de lui. André-Marie Ampère en tire les lois en quelques semaines ; l'unité d'intensité porte son nom."
+            },
+            {
+              "fr": "Enroulez le fil autour d'un noyau de fer et le champ se concentre : c'est l'électroaimant, inventé par William Sturgeon en 1824. Contrairement à un aimant, on l'allume et on l'éteint : grues de ferrailleurs, sonnettes, haut-parleurs. Dans un moteur électrique, ces forces font tourner un axe : l'énergie électrique devient mouvement."
+            }
+          ],
+          "retenir": {
+            "fr": "Un courant crée un champ magnétique (Ørsted, 1820). Électroaimant : Sturgeon, 1824. Moteur : électricité → mouvement."
+          },
+          "source": "Ørsted, Experimenta circa effectum conflictus electrici in acum magneticam, 1820",
+          "figure": "mc_elec_oersted"
+        },
+        {
+          "id": "faraday",
+          "titre": {
+            "fr": "L'aimant qui fait le courant"
+          },
+          "texte": [
+            {
+              "fr": "En 1831, Michael Faraday fait l'inverse : il déplace un aimant près d'une bobine de fil, et un courant y apparaît. Pas quand l'aimant est immobile, seulement quand le champ varie. C'est l'induction électromagnétique. Faraday, apprenti relieur devenu assistant de Humphry Davy, ne maniait guère que l'algèbre la plus simple : il pensait en lignes de force, une image qui guidera Maxwell."
+            },
+            {
+              "fr": "Presque toute notre électricité vient de là. Dans un alternateur, un aimant tourne devant des bobines : charbon, gaz, nucléaire, barrage ou éolienne ne servent qu'à le faire tourner. Le moteur fait l'inverse, et certaines voitures électriques font les deux, en récupérant l'énergie au freinage. La plaque à induction aussi : son champ variable crée des courants dans le fond de la casserole, qui chauffe par effet Joule."
+            }
+          ],
+          "retenir": {
+            "fr": "Un champ qui varie crée un courant (Faraday, 1831). Alternateur = aimant qui tourne devant des bobines."
+          },
+          "source": "Faraday, Experimental Researches in Electricity, 1839",
+          "schema_fiche": true
+        },
+        {
+          "id": "terre",
+          "titre": {
+            "fr": "La Terre est un aimant"
+          },
+          "texte": [
+            {
+              "fr": "L'aiguille d'une boussole s'aligne sur le champ magnétique terrestre, produit par les mouvements du fer liquide dans le noyau externe. Piège classique : le pôle nord de l'aiguille est attiré par un pôle sud magnétique. Le pôle situé dans l'Arctique est donc, au sens magnétique, un pôle sud. Et casser un aimant en deux ne sépare pas ses pôles : chaque morceau devient un aimant complet. Que la Terre elle-même soit un aimant, c'est l'Anglais William Gilbert, médecin d'Élisabeth Ire, qui le propose en 1600 dans De Magnete, après avoir promené une aiguille autour d'une petite sphère d'aimant, la terrella."
+            },
+            {
+              "fr": "Ce champ nous protège. Il dévie la plupart des particules chargées venues du Soleil. Près des pôles, certaines s'engouffrent et excitent l'oxygène et l'azote de la haute atmosphère, qui émettent du vert, du rouge ou du violet : ce sont les aurores polaires."
+            }
+          ],
+          "retenir": {
+            "fr": "Champ terrestre = fer liquide du noyau. L'Arctique abrite un pôle sud magnétique. Aurores = particules solaires guidées vers les pôles."
+          },
+          "source": "NOAA, National Centers for Environmental Information, Geomagnetism",
+          "figure": "mc_elec_terre"
+        }
+      ]
+    }
+  },
+  {
+    "id": "elec.em",
+    "stat": "etincelle",
+    "rang": 5,
+    "nom": {
+      "fr": "Ondes électromagnétiques"
+    },
+    "description": {
+      "fr": "Radio, micro-ondes, infrarouge, rayons X : le spectre de Maxwell."
+    },
+    "prerequis": [
+      "elec.magnetisme"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Radio, micro-ondes, infrarouge, visible, ultraviolet, X et gamma : la même onde à des fréquences différentes."
+        },
+        {
+          "fr": "Toutes se propagent à la vitesse de la lumière dans le vide (Maxwell, 1865)."
+        },
+        {
+          "fr": "Plus la fréquence est élevée, plus chaque photon porte d'énergie : seuls une partie des UV, les X et les gamma sont ionisants."
+        },
+        {
+          "fr": "Le micro-ondes chauffe surtout l'eau des aliments en agitant ses molécules."
+        }
+      ],
+      "piege": {
+        "fr": "Les ondes radio et Wi-Fi ne sont pas ionisantes : elles n'ont pas assez d'énergie pour casser l'ADN."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Le spectre électromagnétique\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">radio</text><circle class=\"f\" cx=\"79.3\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"79.33333333333334\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">micro-</text><text class=\"tm\" x=\"79.33333333333334\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">ondes</text><circle class=\"f\" cx=\"124.7\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"124.66666666666667\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">infra-</text><text class=\"tm\" x=\"124.66666666666667\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">rouge</text><circle class=\"a\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"170.0\" y=\"91.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">visible</text><circle class=\"f\" cx=\"215.3\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"215.33333333333334\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">UV</text><circle class=\"f\" cx=\"260.7\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"260.6666666666667\" y=\"91.8\" font-size=\"11\" text-anchor=\"middle\">rayons X</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">gamma</text><text class=\"tm\" x=\"16\" y=\"118\" font-size=\"11\" text-anchor=\"start\">basse fréquence</text><text class=\"tm\" x=\"324\" y=\"118\" font-size=\"11\" text-anchor=\"end\">haute fréquence</text></svg>",
+      "source": "Maxwell, A Dynamical Theory of the Electromagnetic Field, 1865"
+    },
+    "symbole": "∿",
+    "embleme": "antenne",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "maxwell",
+          "titre": {
+            "fr": "La lumière est électrique"
+          },
+          "texte": [
+            {
+              "fr": "En 1865, James Clerk Maxwell met en équations l'électricité et le magnétisme. Ses équations prédisent des ondes qui se propagent à une vitesse qu'il calcule : celle de la lumière. Il en conclut que la lumière est elle-même une onde électromagnétique. Un champ électrique qui varie crée un champ magnétique, qui crée à son tour un champ électrique : l'onde s'entretient seule, même dans le vide."
+            },
+            {
+              "fr": "Restait à le prouver. À partir de 1886, Heinrich Hertz produit et détecte des ondes radio dans son laboratoire. Interrogé sur leurs applications, il aurait répondu : « Rien, je suppose. » Quinze ans plus tard, en 1901, Guglielmo Marconi transmet un « S » en morse à travers l'Atlantique, de la Cornouailles à Terre-Neuve."
+            }
+          ],
+          "retenir": {
+            "fr": "Maxwell (1865) : la lumière est une onde électromagnétique. Hertz (1886) : les ondes radio existent. Marconi (1901) : l'Atlantique."
+          },
+          "source": "Maxwell, A Dynamical Theory of the Electromagnetic Field, 1865",
+          "figure": "mc_elec_maxwell"
+        },
+        {
+          "id": "spectre",
+          "titre": {
+            "fr": "Une seule onde, mille noms"
+          },
+          "texte": [
+            {
+              "fr": "Radio, micro-ondes, infrarouge, visible, ultraviolet, rayons X et gamma : c'est la même onde, à des fréquences différentes. Toutes vont à la vitesse de la lumière c, environ 300 000 km/s, et vérifient c = λ × f : longueur d'onde fois fréquence. Pour le Wi-Fi à 2,4 GHz : λ = c ÷ f = 300 000 000 m/s ÷ 2 400 000 000 Hz = 0,125 m, soit 12,5 cm. Notre œil ne voit qu'une fine tranche, d'environ 400 nm (violet) à 700 nm (rouge). Les deux voisins invisibles de cette tranche sont découverts coup sur coup : l'infrarouge en 1800 par William Herschel, avec un thermomètre placé au-delà du rouge d'un arc-en-ciel de prisme, et l'ultraviolet en 1801 par Johann Ritter, avec un papier au chlorure d'argent qui noircit au-delà du violet."
+            },
+            {
+              "fr": "Plus la fréquence est haute, plus chaque grain de lumière, chaque photon, porte d'énergie. Seuls une partie des ultraviolets, les rayons X et les gamma en ont assez pour arracher des électrons et abîmer l'ADN : ce sont les rayonnements ionisants, d'où les coups de soleil. Les ondes radio et le Wi-Fi n'en ont pas assez : ils peuvent chauffer, pas casser l'ADN."
+            }
+          ],
+          "retenir": {
+            "fr": "Même onde, fréquences différentes. c = λ × f : Wi-Fi 2,4 GHz = 12,5 cm. Ionisants : une partie des UV, X, gamma."
+          },
+          "source": "NASA, Tour of the Electromagnetic Spectrum",
+          "schema_fiche": true
+        },
+        {
+          "id": "usages",
+          "titre": {
+            "fr": "Des rayons X au micro-ondes"
+          },
+          "texte": [
+            {
+              "fr": "En 1895, Wilhelm Röntgen découvre des rayons inconnus, qu'il appelle X, capables de traverser la chair et de révéler les os. Il reçoit en 1901 le tout premier prix Nobel de physique, et refuse de breveter sa découverte. Six semaines environ après la découverte, il radiographie déjà la main de sa femme."
+            },
+            {
+              "fr": "Le radar, développé intensément pendant la Seconde Guerre mondiale, envoie des ondes et écoute leur écho. En 1945, chez Raytheon, l'ingénieur Percy Spencer travaille près d'un magnétron de radar quand une barre chocolatée fond dans sa poche : il en tire le four à micro-ondes, qui agite les molécules d'eau des aliments."
+            }
+          ],
+          "retenir": {
+            "fr": "Röntgen (1895) : rayons X, premier Nobel de physique (1901). Spencer (1945) : le micro-ondes, né d'un chocolat fondu."
+          },
+          "source": "Fondation Nobel, prix de physique 1901",
+          "figure": "mc_elec_usages"
+        }
+      ]
+    }
+  },
+  {
+    "id": "elec.electronique",
+    "stat": "etincelle",
+    "rang": 6,
+    "nom": {
+      "fr": "Électronique"
+    },
+    "description": {
+      "fr": "Diodes, transistors, condensateurs et circuits intégrés."
+    },
+    "prerequis": [
+      "elec.em"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Une diode ne laisse passer le courant que dans un sens."
+        },
+        {
+          "fr": "Un transistor est un interrupteur ou un amplificateur commandé par un petit courant ou une tension."
+        },
+        {
+          "fr": "Un condensateur stocke des charges et les restitue vite (flash d'appareil photo)."
+        },
+        {
+          "fr": "Un circuit intégré réunit des milliards de transistors sur une puce."
+        }
+      ],
+      "piege": {
+        "fr": "Le transistor de 1947 n'était pas en silicium mais en germanium."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Le transistor commande un grand courant avec un petit\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">petit</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">signal</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">transistor</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">grand</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">courant</text></svg>",
+      "source": "Bardeen et Brattain, Physical Review, 1948"
+    },
+    "symbole": "⊳",
+    "embleme": "puce",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "tubes",
+          "titre": {
+            "fr": "Avant le transistor, les lampes"
+          },
+          "texte": [
+            {
+              "fr": "Les premiers ordinateurs calculaient avec des tubes à vide, des ampoules de verre qui laissent passer ou bloquent un courant d'électrons. L'ENIAC, achevé en 1945 aux États-Unis, en comptait plus de 17 000. Ils chauffaient, consommaient beaucoup et grillaient régulièrement : trouver le tube mort faisait partie du travail."
+            },
+            {
+              "fr": "Tout l'enjeu de l'électronique est là : commander un courant avec un autre. La diode, le composant le plus simple, ne laisse passer le courant que dans un sens ; elle sert à transformer l'alternatif en continu. Le condensateur stocke des charges et les rend d'un coup, comme pour le flash d'un appareil photo."
+            }
+          ],
+          "retenir": {
+            "fr": "ENIAC : plus de 17 000 tubes. Diode = sens unique. Condensateur = réserve de charges rendue d'un coup."
+          },
+          "source": "Goldstine, The Computer from Pascal to von Neumann, 1972",
+          "figure": "mc_elec_tubes"
+        },
+        {
+          "id": "transistor",
+          "titre": {
+            "fr": "Un interrupteur sans pièce mobile"
+          },
+          "texte": [
+            {
+              "fr": "En décembre 1947, aux laboratoires Bell, John Bardeen et Walter Brattain font fonctionner le premier transistor, un petit montage en germanium ; William Shockley, leur chef, en conçoit bientôt une version plus pratique. Les trois partagent le Nobel de physique 1956. Bardeen en recevra un second en 1972, pour la supraconductivité."
+            },
+            {
+              "fr": "Le transistor est fait d'un semi-conducteur : un matériau qui conduit moins bien qu'un métal, mais dont on peut commander la conduction. Un petit courant ou une petite tension sur une borne règle un grand courant entre les deux autres. Il sert d'amplificateur dans une radio, et d'interrupteur ultra-rapide dans un ordinateur. Le silicium a remplacé le germanium, d'où la Silicon Valley."
+            }
+          ],
+          "retenir": {
+            "fr": "Transistor : Bell, 1947, germanium, Nobel 1956. Un petit signal commande un grand courant."
+          },
+          "source": "Bardeen et Brattain, Physical Review, 1948",
+          "schema_fiche": true
+        },
+        {
+          "id": "puces",
+          "titre": {
+            "fr": "Des milliards sur un ongle"
+          },
+          "texte": [
+            {
+              "fr": "Le 12 septembre 1958, chez Texas Instruments, Jack Kilby montre le premier circuit intégré : plusieurs composants sur un même morceau de germanium. Environ six mois plus tard, Robert Noyce, chez Fairchild, en réalise une version en silicium, bien plus facile à fabriquer. Kilby reçoit le Nobel de physique en 2000 ; Noyce, mort en 1990, ne pouvait plus le partager."
+            },
+            {
+              "fr": "En 1965, Gordon Moore remarque que le nombre de transistors par puce double à un rythme régulier : chaque année, puis, en 1975, il corrige à tous les deux ans. Cette « loi de Moore » a tenu des décennies. Un grand processeur de 2023 compte de quelques dizaines à plus de cent milliards de transistors. Les LED sont aussi des diodes : la LED bleue, qui a permis la lumière blanche, a valu le Nobel 2014."
+            }
+          ],
+          "retenir": {
+            "fr": "Circuit intégré : Kilby 1958 (germanium), Noyce 1959 (silicium). Loi de Moore : doublement tous les deux ans."
+          },
+          "source": "Moore, Electronics, 1965 ; Fondation Nobel, prix de physique 2000",
+          "figure": "mc_elec_moore"
+        }
+      ]
+    }
+  },
+  {
+    "id": "elec.energies",
+    "stat": "etincelle",
+    "rang": 7,
+    "nom": {
+      "fr": "Réseau et énergies"
+    },
+    "description": {
+      "fr": "Centrales, renouvelables, stockage et transport du courant."
+    },
+    "prerequis": [
+      "elec.em"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Une centrale thermique (charbon, gaz, nucléaire) chauffe de l'eau, la vapeur fait tourner une turbine et un alternateur."
+        },
+        {
+          "fr": "Éolien et solaire sont intermittents : il faut stocker ou compléter."
+        },
+        {
+          "fr": "Le courant est transporté en haute tension pour réduire les pertes par effet Joule."
+        },
+        {
+          "fr": "Les stations de pompage (STEP) stockent l'énergie en remontant de l'eau."
+        }
+      ],
+      "piege": {
+        "fr": "Une centrale nucléaire ne rejette pas de fumée : les panaches blancs sont de la vapeur d'eau."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 430 96\" role=\"img\" aria-label=\"Le principe d'une centrale thermique\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"53.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chaleur</text><line class=\"al\" x1=\"99.0\" y1=\"52.0\" x2=\"115.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M108.9 55.4 L115.0 52.0 L108.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"118.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"161.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">vapeur</text><line class=\"al\" x1=\"207.0\" y1=\"52.0\" x2=\"223.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M216.9 55.4 L223.0 52.0 L216.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"226.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"269.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">turbine</text><line class=\"al\" x1=\"315.0\" y1=\"52.0\" x2=\"331.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M324.9 55.4 L331.0 52.0 L324.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"334.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"377.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">alternateur</text></svg>",
+      "source": "RTE, Bilan électrique annuel"
+    },
+    "symbole": "kW",
+    "embleme": "bobine-tesla",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "centrale",
+          "titre": {
+            "fr": "Une grosse bouilloire"
+          },
+          "texte": [
+            {
+              "fr": "Une centrale thermique, au charbon, au gaz ou nucléaire, fait toujours la même chose : chauffer de l'eau. La vapeur fait tourner une turbine, la turbine entraîne un alternateur, et l'induction de Faraday fait le reste. Dans une centrale nucléaire, la chaleur vient de la fission de noyaux d'uranium. Les grands panaches blancs des tours de refroidissement ne sont pas de la fumée, mais de la vapeur d'eau."
+            },
+            {
+              "fr": "Les éoliennes et les barrages font tourner l'alternateur directement, sans vapeur. Le panneau solaire, lui, n'a rien qui tourne : il transforme la lumière en électricité par l'effet photovoltaïque, observé par Edmond Becquerel en 1839, à 19 ans. En 2023, selon RTE, le nucléaire a produit environ 65 % de l'électricité française."
+            }
+          ],
+          "retenir": {
+            "fr": "Thermique = eau chauffée, vapeur, turbine, alternateur. Panaches = vapeur d'eau. Solaire : Becquerel, 1839."
+          },
+          "source": "RTE, Bilan électrique 2023"
+        },
+        {
+          "id": "guerre",
+          "titre": {
+            "fr": "La guerre des courants"
+          },
+          "texte": [
+            {
+              "fr": "À la fin du XIXe siècle, Thomas Edison défend le courant continu ; George Westinghouse, qui exploite les brevets de moteur de Nikola Tesla, défend l'alternatif. Le continu d'Edison, à 110 V, ne portait pas à plus d'un mille environ : il fallait une petite centrale par quartier. En 1882, sa compagnie d'éclairage s'installe à New York sur ce modèle."
+            },
+            {
+              "fr": "L'alternatif gagne grâce au transformateur, qui ne marche qu'avec un courant variable, puisqu'il repose sur l'induction. Il permet de monter la tension pour transporter loin avec peu de pertes, puis de la redescendre chez l'usager. En France, le courant change de sens cent fois par seconde : 50 Hz. La fusion de 1892 qui crée General Electric met fin à la bataille."
+            }
+          ],
+          "retenir": {
+            "fr": "Edison : continu. Westinghouse et Tesla : alternatif. L'alternatif gagne grâce au transformateur."
+          },
+          "source": "Hughes, Networks of Power, 1983",
+          "figure": "mc_elec_guerre"
+        },
+        {
+          "id": "equilibre",
+          "titre": {
+            "fr": "Produire exactement ce qu'on consomme"
+          },
+          "texte": [
+            {
+              "fr": "Le réseau a une contrainte que peu de gens connaissent : à chaque instant, la production doit égaler la consommation. Si l'on consomme plus qu'on ne produit, la fréquence descend sous 50 Hz ; trop d'écart, et des coupures se déclenchent pour protéger le réseau. Le soir d'hiver, quand tout le monde rentre et cuisine, il faut des moyens qui démarrent vite."
+            },
+            {
+              "fr": "Le vent et le soleil ne se commandent pas : il faut stocker ou compléter. Les stations de pompage, les STEP, remontent de l'eau dans un lac quand l'électricité abonde et la turbinent quand on en manque. Les batteries lithium-ion jouent le même rôle à plus petite échelle ; elles ont valu le Nobel de chimie 2019 à Goodenough, Whittingham et Yoshino."
+            }
+          ],
+          "retenir": {
+            "fr": "Production = consommation à chaque instant, sinon la fréquence dérive. Stocker : STEP, batteries (Nobel 2019)."
+          },
+          "source": "RTE, Bilan électrique annuel",
+          "figure": "mc_elec_equilibre"
+        }
+      ]
+    }
+  },
+  {
+    "id": "elec.numerique",
+    "stat": "etincelle",
+    "rang": 8,
+    "nom": {
+      "fr": "Du transistor à l'ordinateur"
+    },
+    "description": {
+      "fr": "Binaire, portes logiques, processeurs et mémoire."
+    },
+    "prerequis": [
+      "elec.electronique",
+      "elec.energies"
+    ],
+    "fiche": {
+      "essentiel": [
+        {
+          "fr": "Le binaire n'utilise que 0 et 1 : 1011 en binaire vaut 8 + 2 + 1 = 11."
+        },
+        {
+          "fr": "Un octet = 8 bits, soit 256 valeurs."
+        },
+        {
+          "fr": "Portes logiques ET, OU, NON : construites avec des transistors, elles font tous les calculs."
+        },
+        {
+          "fr": "Loi de Moore : le nombre de transistors par puce a doublé environ tous les deux ans pendant des décennies."
+        }
+      ],
+      "piege": {
+        "fr": "Un kilooctet vaut 1 000 octets selon le SI ; 1 024 octets s'appelle un kibioctet."
+      },
+      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 148\" role=\"img\" aria-label=\"Tables des portes ET et OU\"><text class=\"t\" x=\"50.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A</text><text class=\"t\" x=\"130.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">B</text><text class=\"t\" x=\"210.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A ET B</text><text class=\"t\" x=\"290.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A OU B</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"50.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">0</text><text class=\"tm\" x=\"130.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"210.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"290.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"t\" x=\"50.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">0</text><text class=\"tm\" x=\"130.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"210.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"290.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"t\" x=\"50.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"130.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"210.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"290.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">1</text><rect class=\"a\" x=\"10\" y=\"114\" width=\"320\" height=\"24\" rx=\"4\" opacity=\"0.25\"/><text class=\"t\" x=\"50.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"130.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"210.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"290.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">1</text></svg>",
+      "source": "Shannon, A Symbolic Analysis of Relay and Switching Circuits, 1938"
+    },
+    "symbole": "01",
+    "embleme": "ordinateur",
+    "masterclass": {
+      "chapitres": [
+        {
+          "id": "binaire",
+          "titre": {
+            "fr": "Compter avec deux doigts"
+          },
+          "texte": [
+            {
+              "fr": "En binaire, on n'a que deux chiffres, 0 et 1, et chaque rang vaut le double du précédent : 1, 2, 4, 8… Ainsi 1011 = 1 × 8 + 0 × 4 + 1 × 2 + 1 × 1 = 11. Leibniz expose cette arithmétique dans un mémoire publié en 1705. Avec 3 bits, on code 2 × 2 × 2 = 8 valeurs ; avec un octet de 8 bits, 2⁸ = 256."
+            },
+            {
+              "fr": "Pourquoi deux chiffres ? Parce qu'un transistor sait très bien faire deux choses : laisser passer ou bloquer. Textes, images, sons : tout est codé en 0 et en 1. Un détail d'unités : selon le Système international, un kilooctet vaut 1 000 octets ; les 1 024 octets s'appellent un kibioctet."
+            }
+          ],
+          "retenir": {
+            "fr": "1011 = 8 + 2 + 1 = 11 (Leibniz, 1705). 8 bits = 256 valeurs. Un transistor : ouvert ou fermé."
+          },
+          "source": "Leibniz, Explication de l'arithmétique binaire, Mémoires de l'Académie royale des sciences, 1705",
+          "figure": "mc_elec_binaire"
+        },
+        {
+          "id": "portes",
+          "titre": {
+            "fr": "La logique en circuits"
+          },
+          "texte": [
+            {
+              "fr": "Au XIXe siècle, George Boole fait de la logique une algèbre : vrai et faux deviennent 1 et 0, et « et », « ou », « non » deviennent des opérations. En 1937, à 21 ans, Claude Shannon montre dans son mémoire de master au MIT, publié en 1938, que des circuits de relais peuvent réaliser toute cette algèbre. On l'a appelé le mémoire de master peut-être le plus important du siècle."
+            },
+            {
+              "fr": "La porte ET donne 1 seulement si ses deux entrées valent 1 ; la porte OU donne 1 si au moins une vaut 1 ; la porte NON inverse. Construites avec quelques transistors, ces portes s'assemblent en additionneurs, en mémoires, puis en processeurs. Un ordinateur n'est, au fond, qu'un immense assemblage de ces trois décisions."
+            }
+          ],
+          "retenir": {
+            "fr": "Boole : la logique devient algèbre. Shannon (1937) : des circuits la calculent. ET, OU, NON suffisent à tout."
+          },
+          "source": "Shannon, A Symbolic Analysis of Relay and Switching Circuits, 1938",
+          "schema_fiche": true
+        },
+        {
+          "id": "machines",
+          "titre": {
+            "fr": "Des plans de Babbage au bug de 1947"
+          },
+          "texte": [
+            {
+              "fr": "Au XIXe siècle, Charles Babbage conçoit la machine analytique, un calculateur mécanique programmable. Elle n'a jamais été construite de son vivant. Ada Lovelace en publie pourtant, en 1843, le premier programme : un calcul des nombres de Bernoulli. Elle pressent aussi que la machine pourrait manipuler autre chose que des nombres, de la musique par exemple."
+            },
+            {
+              "fr": "La guerre accélère tout. En 1943-1944, Colossus aide à Bletchley Park à casser des messages chiffrés allemands ; il restera secret jusque dans les années 1970. En 1945, John von Neumann décrit l'architecture où programme et données partagent la même mémoire, celle de presque tous nos ordinateurs. Et en 1947, l'équipe de Grace Hopper colle dans son cahier un papillon de nuit trouvé dans un relais : « premier cas réel de bug trouvé »."
+            }
+          ],
+          "retenir": {
+            "fr": "Babbage : la machine jamais construite ; Lovelace (1843) : le premier programme. Von Neumann (1945) : programme et données ensemble."
+          },
+          "source": "Lovelace, notes sur la machine analytique, 1843 ; von Neumann, First Draft of a Report on the EDVAC, 1945",
+          "figure": "mc_elec_machines"
+        }
+      ]
+    }
   }
- },
- {
-  "id": "elec.ohm",
-  "stat": "etincelle",
-  "rang": 2,
-  "nom": {
-   "fr": "Tension, intensité et loi d'Ohm"
-  },
-  "description": {
-   "fr": "Volts, ampères, ohms, et la relation qui les lie."
-  },
-  "prerequis": [
-   "elec.circuits"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "U = R × I : tension (volts) = résistance (ohms) × intensité (ampères)."
-    },
-    {
-     "fr": "Une pile de 9 V sur 3 Ω fait passer 3 A."
-    },
-    {
-     "fr": "Deux résistances égales en série : résistance doublée. En dérivation : divisée par deux."
-    },
-    {
-     "fr": "L'intensité est la même partout dans une boucle série ; la tension se partage."
-    }
-   ],
-   "piege": {
-    "fr": "Le courant ne s'« use » pas en traversant une lampe : la même intensité ressort."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 150\" role=\"img\" aria-label=\"Pile de 9 volts reliée à une résistance de 3 ohms\"><polyline class=\"l\" points=\"60,30 260,30 260,130 60,130 60,30\"/><line class=\"l\" x1=\"46\" y1=\"75\" x2=\"74\" y2=\"75\"/><line class=\"l\" x1=\"53\" y1=\"85\" x2=\"67\" y2=\"85\" stroke-width=\"4\"/><rect class=\"fond\" x=\"44\" y=\"77\" width=\"32\" height=\"6\"/><text class=\"tm\" x=\"38\" y=\"78\" font-size=\"13\" text-anchor=\"end\">+</text><text class=\"tm\" x=\"38\" y=\"92\" font-size=\"13\" text-anchor=\"end\">−</text><text class=\"t\" x=\"80\" y=\"85\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">9 V</text><rect class=\"f\" x=\"252\" y=\"60\" width=\"16\" height=\"40\" rx=\"2\"/><text class=\"t\" x=\"274\" y=\"85\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">3 Ω</text><path class=\"al\" d=\"M150 18 l12 12 l-12 12\" fill=\"none\"/><text class=\"t\" x=\"150\" y=\"60\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">I = ?</text></svg>",
-   "source": "Ohm, Die galvanische Kette, 1827"
-  },
-  "symbole": "Ω",
-  "embleme": "pile-volta",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "loi",
-     "titre": {
-      "fr": "U = R × I"
-     },
-     "texte": [
-      {
-       "fr": "La tension U, en volts, pousse le courant. La résistance R, en ohms, le freine. L'intensité I, en ampères, est le débit qui en résulte. Georg Ohm les relie en 1827 dans Die galvanische Kette : U = R × I. Avec une pile de 9 V sur une résistance de 3 Ω, I = U ÷ R = 9 V ÷ 3 Ω = 3 A. Son travail a d'abord été accueilli sans enthousiasme ; l'unité de résistance porte pourtant son nom."
-      },
-      {
-       "fr": "L'image de l'eau aide : la tension est la pression, l'intensité le débit, la résistance l'étroitesse du tuyau. Un fil long et fin résiste plus qu'un fil court et épais. Et le courant ne s'use pas en traversant une lampe : la même intensité ressort, c'est l'énergie qui est cédée. On mesure l'intensité avec un ampèremètre branché en série, la tension avec un voltmètre branché aux bornes."
-      }
-     ],
-     "retenir": {
-      "fr": "U = R × I (Ohm, 1827). 9 V sur 3 Ω = 3 A. Le courant ne s'use pas, l'énergie si."
-     },
-     "source": "Ohm, Die galvanische Kette, mathematisch bearbeitet, 1827"
-    },
-    {
-     "id": "assembler",
-     "titre": {
-      "fr": "Série, dérivation : le calcul"
-     },
-     "texte": [
-      {
-       "fr": "En série, le courant traverse les résistances l'une après l'autre : elles s'additionnent, R = R₁ + R₂. L'intensité est la même partout, la tension se partage. En dérivation, le courant a plusieurs chemins : 1/R = 1/R₁ + 1/R₂. Pour deux résistances de 100 Ω : 1/R = 1/100 + 1/100 = 2/100, donc R = 100 ÷ 2 = 50 Ω. Deux chemins laissent passer deux fois plus de courant."
-      },
-      {
-       "fr": "Ces règles se déduisent de la loi d'Ohm et des deux lois que Gustav Kirchhoff publie en 1845, encore étudiant. Loi des nœuds : tout le courant qui arrive à un carrefour en repart, rien ne se perd. Loi des mailles : sur une boucle, les tensions se compensent. Avec ces deux lois, on calcule n'importe quel circuit, si compliqué soit-il."
-      }
-     ],
-     "retenir": {
-      "fr": "Série : R = R₁ + R₂. Dérivation : 1/R = 1/R₁ + 1/R₂ (deux fois 100 Ω = 50 Ω). Lois de Kirchhoff, 1845."
-     },
-     "source": "Kirchhoff, Annalen der Physik, 1845",
-     "figure": "mc_elec_assembler"
-    },
-    {
-     "id": "danger",
-     "titre": {
-      "fr": "C'est le courant qui tue"
-     },
-     "texte": [
-      {
-       "fr": "Ce qui blesse, c'est le courant qui traverse le corps, plus que la tension seule. Quelques dizaines de milliampères suffisent à provoquer des troubles graves du cœur. C'est pourquoi les maisons ont un disjoncteur différentiel de 30 mA : il compare le courant qui part et celui qui revient, et coupe en une fraction de seconde si une partie s'échappe, par exemple à travers quelqu'un."
-      },
-      {
-       "fr": "Un oiseau posé sur un seul câble haute tension ne risque rien : ses deux pattes sont au même potentiel, aucun courant ne le traverse. Le danger viendrait de toucher deux câbles à la fois, ou un câble et le pylône. En France, le réseau domestique est à 230 V alternatif, 50 Hz ; l'Amérique du Nord utilise environ 120 V à 60 Hz."
-      }
-     ],
-     "retenir": {
-      "fr": "Le danger, c'est le courant à travers le corps : 30 mA pour le différentiel. Un seul câble, pas de courant : l'oiseau survit."
-     },
-     "source": "IEC 60479, effets du courant sur l'homme",
-     "figure": "mc_elec_danger"
-    }
-   ]
-  }
- },
- {
-  "id": "elec.puissance",
-  "stat": "etincelle",
-  "rang": 3,
-  "nom": {
-   "fr": "Puissance et énergie électrique"
-  },
-  "description": {
-   "fr": "Watts, kilowattheures, effet Joule et production d'électricité."
-  },
-  "prerequis": [
-   "elec.circuits"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "P = U × I : un appareil de 2 000 W sur 230 V tire environ 8,7 A."
-    },
-    {
-     "fr": "L'énergie facturée est en kilowattheures : 1 kW pendant 1 h."
-    },
-    {
-     "fr": "Effet Joule : un courant dans une résistance la chauffe (grille-pain, fusible)."
-    },
-    {
-     "fr": "Un appareil en veille consomme peu par heure, mais 24 h sur 24."
-    }
-   ],
-   "piege": {
-    "fr": "kW et kWh ne sont pas la même chose : l'un est une puissance, l'autre une énergie."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Puissances d'appareils courants\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"129.5\" width=\"74.7\" height=\"0.5\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"123.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">10 W</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">LED</text><rect class=\"f2\" x=\"132.7\" y=\"122.5\" width=\"74.7\" height=\"7.5\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"116.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">150 W</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">frigo</text><rect class=\"a\" x=\"219.3\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2000 W</text><text class=\"tm\" x=\"256.6666666666667\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">four</text></svg>",
-   "source": "ADEME, guide « Réduire sa facture d'électricité »"
-  },
-  "symbole": "W",
-  "embleme": "ampoule-edison",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "watts",
-     "titre": {
-      "fr": "Des volts fois des ampères"
-     },
-     "texte": [
-      {
-       "fr": "La puissance électrique P, en watts, est le produit de la tension U par l'intensité I : P = U × I. Un appareil sous 230 V qui tire 10 A consomme P = 230 V × 10 A = 2 300 W. Dans l'autre sens, une bouilloire de 2 000 W tire I = P ÷ U = 2 000 ÷ 230 ≈ 8,7 A. Le watt porte le nom de James Watt, l'ingénieur de la machine à vapeur."
-      },
-      {
-       "fr": "Le watt et le joule ne mesurent pas la même chose. Le joule est une énergie, le watt une puissance, c'est-à-dire une énergie par seconde : 1 W = 1 J/s. Une ampoule de 5 W dépense 5 joules chaque seconde. Une LED éclaire autant qu'une ampoule à incandescence en consommant environ 5 à 8 fois moins, car l'ancienne transformait surtout l'électricité en chaleur."
-      }
-     ],
-     "retenir": {
-      "fr": "P = U × I : 230 V × 10 A = 2 300 W. Watt = joule par seconde."
-     },
-     "source": "Bureau international des poids et mesures, brochure SI"
-    },
-    {
-     "id": "kwh",
-     "titre": {
-      "fr": "Ce que dit la facture"
-     },
-     "texte": [
-      {
-       "fr": "Sur une facture, on paie une énergie, en kilowattheures : la puissance multipliée par la durée, E = P × t. Un radiateur de 2 000 W, soit 2 kW, allumé 3 heures consomme E = 2 kW × 3 h = 6 kWh. Une ampoule de 5 W allumée 1 000 heures : E = 5 W × 1 000 h = 5 000 Wh = 5 kWh. Un kilowattheure vaut 1 000 W × 3 600 s = 3 600 000 joules."
-      },
-      {
-       "fr": "Le piège : un appareil en veille consomme peu par heure, souvent quelques watts, mais 24 heures sur 24. Quelques watts toute l'année finissent par peser plus qu'un appareil puissant utilisé quelques minutes. Pour savoir ce qui coûte, il faut toujours multiplier la puissance par le temps d'usage."
-      }
-     ],
-     "retenir": {
-      "fr": "E = P × t : 2 kW pendant 3 h = 6 kWh. 1 kWh = 3,6 millions de joules. La veille coûte par sa durée."
-     },
-     "source": "ADEME, guide « Réduire sa facture d'électricité »",
-     "figure": "mc_elec_kwh"
-    },
-    {
-     "id": "joule",
-     "titre": {
-      "fr": "Le courant qui chauffe"
-     },
-     "texte": [
-      {
-       "fr": "En 1841, James Prescott Joule mesure la chaleur dégagée par un fil parcouru par un courant : elle est proportionnelle à la résistance et au carré de l'intensité. En combinant P = U × I et la loi d'Ohm U = R × I, on obtient P = R × I². C'est l'effet Joule : le grille-pain, la bouilloire, le radiateur et le fusible qui fond l'exploitent."
-      },
-      {
-       "fr": "Ce carré explique le transport à très haute tension. Pour une même puissance P = U × I, monter la tension fait baisser l'intensité. Or les pertes dans les câbles valent R × I² : diviser l'intensité par 10 divise les pertes par 10 × 10 = 100. C'est pourquoi les lignes partent des centrales à des centaines de milliers de volts."
-      }
-     ],
-     "retenir": {
-      "fr": "P = R × I² (Joule, 1841). Haute tension = faible intensité = pertes divisées par le carré."
-     },
-     "source": "Joule, Philosophical Magazine, 1841",
-     "figure": "mc_elec_joule"
-    }
-   ]
-  }
- },
- {
-  "id": "elec.magnetisme",
-  "stat": "etincelle",
-  "rang": 4,
-  "nom": {
-   "fr": "Magnétisme et induction"
-  },
-  "description": {
-   "fr": "Aimants, boussoles, électroaimants, moteurs et alternateurs."
-  },
-  "prerequis": [
-   "elec.ohm",
-   "elec.puissance"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Un courant crée un champ magnétique (Ørsted, 1820) : c'est le principe de l'électroaimant."
-    },
-    {
-     "fr": "Un champ magnétique qui varie crée un courant (induction, Faraday 1831) : c'est l'alternateur."
-    },
-    {
-     "fr": "Un moteur électrique transforme l'énergie électrique en mouvement ; un alternateur fait l'inverse."
-    },
-    {
-     "fr": "Le pôle nord d'une boussole pointe vers le pôle Nord géographique, qui est un pôle sud magnétique."
-    }
-   ],
-   "piege": {
-    "fr": "Casser un aimant en deux ne sépare pas les pôles : on obtient deux aimants complets."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 108\" role=\"img\" aria-label=\"Moteur et alternateur, deux faces du même phénomène\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Moteur</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Alternateur</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"100\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">électricité → mouvement</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">courant → champ</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">mouvement → électricité</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">champ variable → courant</text></svg>",
-   "source": "Faraday, Experimental Researches in Electricity, 1839"
-  },
-  "symbole": "NS",
-  "embleme": "bobine-faraday",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "oersted",
-     "titre": {
-      "fr": "La boussole qui bouge"
-     },
-     "texte": [
-      {
-       "fr": "En 1820, Hans Christian Ørsted remarque qu'un fil parcouru par un courant fait dévier l'aiguille d'une boussole posée à côté. Selon la tradition, c'était pendant un cours. C'est la preuve qu'électricité et magnétisme sont liés : un courant crée un champ magnétique autour de lui. André-Marie Ampère en tire les lois en quelques semaines ; l'unité d'intensité porte son nom."
-      },
-      {
-       "fr": "Enroulez le fil autour d'un noyau de fer et le champ se concentre : c'est l'électroaimant, inventé par William Sturgeon en 1824. Contrairement à un aimant, on l'allume et on l'éteint : grues de ferrailleurs, sonnettes, haut-parleurs. Dans un moteur électrique, ces forces font tourner un axe : l'énergie électrique devient mouvement."
-      }
-     ],
-     "retenir": {
-      "fr": "Un courant crée un champ magnétique (Ørsted, 1820). Électroaimant : Sturgeon, 1824. Moteur : électricité → mouvement."
-     },
-     "source": "Ørsted, Experimenta circa effectum conflictus electrici in acum magneticam, 1820",
-     "figure": "mc_elec_oersted"
-    },
-    {
-     "id": "faraday",
-     "titre": {
-      "fr": "L'aimant qui fait le courant"
-     },
-     "texte": [
-      {
-       "fr": "En 1831, Michael Faraday fait l'inverse : il déplace un aimant près d'une bobine de fil, et un courant y apparaît. Pas quand l'aimant est immobile, seulement quand le champ varie. C'est l'induction électromagnétique. Faraday, apprenti relieur devenu assistant de Humphry Davy, ne maniait guère que l'algèbre la plus simple : il pensait en lignes de force, une image qui guidera Maxwell."
-      },
-      {
-       "fr": "Presque toute notre électricité vient de là. Dans un alternateur, un aimant tourne devant des bobines : charbon, gaz, nucléaire, barrage ou éolienne ne servent qu'à le faire tourner. Le moteur fait l'inverse, et certaines voitures électriques font les deux, en récupérant l'énergie au freinage. La plaque à induction aussi : son champ variable crée des courants dans le fond de la casserole, qui chauffe par effet Joule."
-      }
-     ],
-     "retenir": {
-      "fr": "Un champ qui varie crée un courant (Faraday, 1831). Alternateur = aimant qui tourne devant des bobines."
-     },
-     "source": "Faraday, Experimental Researches in Electricity, 1839",
-     "schema_fiche": true
-    },
-    {
-     "id": "terre",
-     "titre": {
-      "fr": "La Terre est un aimant"
-     },
-     "texte": [
-      {
-       "fr": "L'aiguille d'une boussole s'aligne sur le champ magnétique terrestre, produit par les mouvements du fer liquide dans le noyau externe. Piège classique : le pôle nord de l'aiguille est attiré par un pôle sud magnétique. Le pôle situé dans l'Arctique est donc, au sens magnétique, un pôle sud. Et casser un aimant en deux ne sépare pas ses pôles : chaque morceau devient un aimant complet."
-      },
-      {
-       "fr": "Ce champ nous protège. Il dévie la plupart des particules chargées venues du Soleil. Près des pôles, certaines s'engouffrent et excitent l'oxygène et l'azote de la haute atmosphère, qui émettent du vert, du rouge ou du violet : ce sont les aurores polaires."
-      }
-     ],
-     "retenir": {
-      "fr": "Champ terrestre = fer liquide du noyau. L'Arctique abrite un pôle sud magnétique. Aurores = particules solaires guidées vers les pôles."
-     },
-     "source": "NOAA, National Centers for Environmental Information, Geomagnetism",
-     "figure": "mc_elec_terre"
-    }
-   ]
-  }
- },
- {
-  "id": "elec.em",
-  "stat": "etincelle",
-  "rang": 5,
-  "nom": {
-   "fr": "Ondes électromagnétiques"
-  },
-  "description": {
-   "fr": "Radio, micro-ondes, infrarouge, rayons X : le spectre de Maxwell."
-  },
-  "prerequis": [
-   "elec.magnetisme"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Radio, micro-ondes, infrarouge, visible, ultraviolet, X et gamma : la même onde à des fréquences différentes."
-    },
-    {
-     "fr": "Toutes se propagent à la vitesse de la lumière dans le vide (Maxwell, 1865)."
-    },
-    {
-     "fr": "Plus la fréquence est élevée, plus chaque photon porte d'énergie : seuls une partie des UV, les X et les gamma sont ionisants."
-    },
-    {
-     "fr": "Le micro-ondes chauffe surtout l'eau des aliments en agitant ses molécules."
-    }
-   ],
-   "piege": {
-    "fr": "Les ondes radio et Wi-Fi ne sont pas ionisantes : elles n'ont pas assez d'énergie pour casser l'ADN."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Le spectre électromagnétique\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">radio</text><circle class=\"f\" cx=\"79.3\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"79.33333333333334\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">micro-</text><text class=\"tm\" x=\"79.33333333333334\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">ondes</text><circle class=\"f\" cx=\"124.7\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"124.66666666666667\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">infra-</text><text class=\"tm\" x=\"124.66666666666667\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">rouge</text><circle class=\"a\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"170.0\" y=\"91.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">visible</text><circle class=\"f\" cx=\"215.3\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"215.33333333333334\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">UV</text><circle class=\"f\" cx=\"260.7\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"260.6666666666667\" y=\"91.8\" font-size=\"11\" text-anchor=\"middle\">rayons X</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"37.9\" font-size=\"11\" text-anchor=\"middle\">gamma</text><text class=\"tm\" x=\"16\" y=\"118\" font-size=\"11\" text-anchor=\"start\">basse fréquence</text><text class=\"tm\" x=\"324\" y=\"118\" font-size=\"11\" text-anchor=\"end\">haute fréquence</text></svg>",
-   "source": "Maxwell, A Dynamical Theory of the Electromagnetic Field, 1865"
-  },
-  "symbole": "∿",
-  "embleme": "antenne",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "maxwell",
-     "titre": {
-      "fr": "La lumière est électrique"
-     },
-     "texte": [
-      {
-       "fr": "En 1865, James Clerk Maxwell met en équations l'électricité et le magnétisme. Ses équations prédisent des ondes qui se propagent à une vitesse qu'il calcule : celle de la lumière. Il en conclut que la lumière est elle-même une onde électromagnétique. Un champ électrique qui varie crée un champ magnétique, qui crée à son tour un champ électrique : l'onde s'entretient seule, même dans le vide."
-      },
-      {
-       "fr": "Restait à le prouver. À partir de 1886, Heinrich Hertz produit et détecte des ondes radio dans son laboratoire. Interrogé sur leurs applications, il aurait répondu : « Rien, je suppose. » Quinze ans plus tard, en 1901, Guglielmo Marconi transmet un « S » en morse à travers l'Atlantique, de la Cornouailles à Terre-Neuve."
-      }
-     ],
-     "retenir": {
-      "fr": "Maxwell (1865) : la lumière est une onde électromagnétique. Hertz (1886) : les ondes radio existent. Marconi (1901) : l'Atlantique."
-     },
-     "source": "Maxwell, A Dynamical Theory of the Electromagnetic Field, 1865",
-     "figure": "mc_elec_maxwell"
-    },
-    {
-     "id": "spectre",
-     "titre": {
-      "fr": "Une seule onde, mille noms"
-     },
-     "texte": [
-      {
-       "fr": "Radio, micro-ondes, infrarouge, visible, ultraviolet, rayons X et gamma : c'est la même onde, à des fréquences différentes. Toutes vont à la vitesse de la lumière c, environ 300 000 km/s, et vérifient c = λ × f : longueur d'onde fois fréquence. Pour le Wi-Fi à 2,4 GHz : λ = c ÷ f = 300 000 000 m/s ÷ 2 400 000 000 Hz = 0,125 m, soit 12,5 cm. Notre œil ne voit qu'une fine tranche, d'environ 400 nm (violet) à 700 nm (rouge)."
-      },
-      {
-       "fr": "Plus la fréquence est haute, plus chaque grain de lumière, chaque photon, porte d'énergie. Seuls une partie des ultraviolets, les rayons X et les gamma en ont assez pour arracher des électrons et abîmer l'ADN : ce sont les rayonnements ionisants, d'où les coups de soleil. Les ondes radio et le Wi-Fi n'en ont pas assez : ils peuvent chauffer, pas casser l'ADN."
-      }
-     ],
-     "retenir": {
-      "fr": "Même onde, fréquences différentes. c = λ × f : Wi-Fi 2,4 GHz = 12,5 cm. Ionisants : une partie des UV, X, gamma."
-     },
-     "source": "NASA, Tour of the Electromagnetic Spectrum",
-     "schema_fiche": true
-    },
-    {
-     "id": "usages",
-     "titre": {
-      "fr": "Des rayons X au micro-ondes"
-     },
-     "texte": [
-      {
-       "fr": "En 1895, Wilhelm Röntgen découvre des rayons inconnus, qu'il appelle X, capables de traverser la chair et de révéler les os. Il reçoit en 1901 le tout premier prix Nobel de physique, et refuse de breveter sa découverte. Six semaines environ après la découverte, il radiographie déjà la main de sa femme."
-      },
-      {
-       "fr": "Le radar, développé intensément pendant la Seconde Guerre mondiale, envoie des ondes et écoute leur écho. En 1945, chez Raytheon, l'ingénieur Percy Spencer travaille près d'un magnétron de radar quand une barre chocolatée fond dans sa poche : il en tire le four à micro-ondes, qui agite les molécules d'eau des aliments."
-      }
-     ],
-     "retenir": {
-      "fr": "Röntgen (1895) : rayons X, premier Nobel de physique (1901). Spencer (1945) : le micro-ondes, né d'un chocolat fondu."
-     },
-     "source": "Fondation Nobel, prix de physique 1901",
-     "figure": "mc_elec_usages"
-    }
-   ]
-  }
- },
- {
-  "id": "elec.electronique",
-  "stat": "etincelle",
-  "rang": 6,
-  "nom": {
-   "fr": "Électronique"
-  },
-  "description": {
-   "fr": "Diodes, transistors, condensateurs et circuits intégrés."
-  },
-  "prerequis": [
-   "elec.em"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Une diode ne laisse passer le courant que dans un sens."
-    },
-    {
-     "fr": "Un transistor est un interrupteur ou un amplificateur commandé par un petit courant ou une tension."
-    },
-    {
-     "fr": "Un condensateur stocke des charges et les restitue vite (flash d'appareil photo)."
-    },
-    {
-     "fr": "Un circuit intégré réunit des milliards de transistors sur une puce."
-    }
-   ],
-   "piege": {
-    "fr": "Le transistor de 1947 n'était pas en silicium mais en germanium."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Le transistor commande un grand courant avec un petit\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">petit</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">signal</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">transistor</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">grand</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">courant</text></svg>",
-   "source": "Bardeen et Brattain, Physical Review, 1948"
-  },
-  "symbole": "⊳",
-  "embleme": "puce",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "tubes",
-     "titre": {
-      "fr": "Avant le transistor, les lampes"
-     },
-     "texte": [
-      {
-       "fr": "Les premiers ordinateurs calculaient avec des tubes à vide, des ampoules de verre qui laissent passer ou bloquent un courant d'électrons. L'ENIAC, achevé en 1945 aux États-Unis, en comptait plus de 17 000. Ils chauffaient, consommaient beaucoup et grillaient régulièrement : trouver le tube mort faisait partie du travail."
-      },
-      {
-       "fr": "Tout l'enjeu de l'électronique est là : commander un courant avec un autre. La diode, le composant le plus simple, ne laisse passer le courant que dans un sens ; elle sert à transformer l'alternatif en continu. Le condensateur stocke des charges et les rend d'un coup, comme pour le flash d'un appareil photo."
-      }
-     ],
-     "retenir": {
-      "fr": "ENIAC : plus de 17 000 tubes. Diode = sens unique. Condensateur = réserve de charges rendue d'un coup."
-     },
-     "source": "Goldstine, The Computer from Pascal to von Neumann, 1972",
-     "figure": "mc_elec_tubes"
-    },
-    {
-     "id": "transistor",
-     "titre": {
-      "fr": "Un interrupteur sans pièce mobile"
-     },
-     "texte": [
-      {
-       "fr": "En décembre 1947, aux laboratoires Bell, John Bardeen et Walter Brattain font fonctionner le premier transistor, un petit montage en germanium ; William Shockley, leur chef, en conçoit bientôt une version plus pratique. Les trois partagent le Nobel de physique 1956. Bardeen en recevra un second en 1972, pour la supraconductivité."
-      },
-      {
-       "fr": "Le transistor est fait d'un semi-conducteur : un matériau qui conduit moins bien qu'un métal, mais dont on peut commander la conduction. Un petit courant ou une petite tension sur une borne règle un grand courant entre les deux autres. Il sert d'amplificateur dans une radio, et d'interrupteur ultra-rapide dans un ordinateur. Le silicium a remplacé le germanium, d'où la Silicon Valley."
-      }
-     ],
-     "retenir": {
-      "fr": "Transistor : Bell, 1947, germanium, Nobel 1956. Un petit signal commande un grand courant."
-     },
-     "source": "Bardeen et Brattain, Physical Review, 1948",
-     "schema_fiche": true
-    },
-    {
-     "id": "puces",
-     "titre": {
-      "fr": "Des milliards sur un ongle"
-     },
-     "texte": [
-      {
-       "fr": "Le 12 septembre 1958, chez Texas Instruments, Jack Kilby montre le premier circuit intégré : plusieurs composants sur un même morceau de germanium. Environ six mois plus tard, Robert Noyce, chez Fairchild, en réalise une version en silicium, bien plus facile à fabriquer. Kilby reçoit le Nobel de physique en 2000 ; Noyce, mort en 1990, ne pouvait plus le partager."
-      },
-      {
-       "fr": "En 1965, Gordon Moore remarque que le nombre de transistors par puce double à un rythme régulier : chaque année, puis, en 1975, il corrige à tous les deux ans. Cette « loi de Moore » a tenu des décennies. Un grand processeur de 2023 compte de quelques dizaines à plus de cent milliards de transistors. Les LED sont aussi des diodes : la LED bleue, qui a permis la lumière blanche, a valu le Nobel 2014."
-      }
-     ],
-     "retenir": {
-      "fr": "Circuit intégré : Kilby 1958 (germanium), Noyce 1959 (silicium). Loi de Moore : doublement tous les deux ans."
-     },
-     "source": "Moore, Electronics, 1965 ; Fondation Nobel, prix de physique 2000",
-     "figure": "mc_elec_moore"
-    }
-   ]
-  }
- },
- {
-  "id": "elec.energies",
-  "stat": "etincelle",
-  "rang": 7,
-  "nom": {
-   "fr": "Réseau et énergies"
-  },
-  "description": {
-   "fr": "Centrales, renouvelables, stockage et transport du courant."
-  },
-  "prerequis": [
-   "elec.em"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Une centrale thermique (charbon, gaz, nucléaire) chauffe de l'eau, la vapeur fait tourner une turbine et un alternateur."
-    },
-    {
-     "fr": "Éolien et solaire sont intermittents : il faut stocker ou compléter."
-    },
-    {
-     "fr": "Le courant est transporté en haute tension pour réduire les pertes par effet Joule."
-    },
-    {
-     "fr": "Les stations de pompage (STEP) stockent l'énergie en remontant de l'eau."
-    }
-   ],
-   "piege": {
-    "fr": "Une centrale nucléaire ne rejette pas de fumée : les panaches blancs sont de la vapeur d'eau."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 430 96\" role=\"img\" aria-label=\"Le principe d'une centrale thermique\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"53.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chaleur</text><line class=\"al\" x1=\"99.0\" y1=\"52.0\" x2=\"115.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M108.9 55.4 L115.0 52.0 L108.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"118.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"161.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">vapeur</text><line class=\"al\" x1=\"207.0\" y1=\"52.0\" x2=\"223.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M216.9 55.4 L223.0 52.0 L216.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"226.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"269.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">turbine</text><line class=\"al\" x1=\"315.0\" y1=\"52.0\" x2=\"331.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M324.9 55.4 L331.0 52.0 L324.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"334.0\" y=\"20\" width=\"86.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"377.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">alternateur</text></svg>",
-   "source": "RTE, Bilan électrique annuel"
-  },
-  "symbole": "kW",
-  "embleme": "bobine-tesla",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "centrale",
-     "titre": {
-      "fr": "Une grosse bouilloire"
-     },
-     "texte": [
-      {
-       "fr": "Une centrale thermique, au charbon, au gaz ou nucléaire, fait toujours la même chose : chauffer de l'eau. La vapeur fait tourner une turbine, la turbine entraîne un alternateur, et l'induction de Faraday fait le reste. Dans une centrale nucléaire, la chaleur vient de la fission de noyaux d'uranium. Les grands panaches blancs des tours de refroidissement ne sont pas de la fumée, mais de la vapeur d'eau."
-      },
-      {
-       "fr": "Les éoliennes et les barrages font tourner l'alternateur directement, sans vapeur. Le panneau solaire, lui, n'a rien qui tourne : il transforme la lumière en électricité par l'effet photovoltaïque, observé par Edmond Becquerel en 1839, à 19 ans. En 2023, selon RTE, le nucléaire a produit environ 65 % de l'électricité française."
-      }
-     ],
-     "retenir": {
-      "fr": "Thermique = eau chauffée, vapeur, turbine, alternateur. Panaches = vapeur d'eau. Solaire : Becquerel, 1839."
-     },
-     "source": "RTE, Bilan électrique 2023"
-    },
-    {
-     "id": "guerre",
-     "titre": {
-      "fr": "La guerre des courants"
-     },
-     "texte": [
-      {
-       "fr": "À la fin du XIXe siècle, Thomas Edison défend le courant continu ; George Westinghouse, qui exploite les brevets de moteur de Nikola Tesla, défend l'alternatif. Le continu d'Edison, à 110 V, ne portait pas à plus d'un mille environ : il fallait une petite centrale par quartier. En 1882, sa compagnie d'éclairage s'installe à New York sur ce modèle."
-      },
-      {
-       "fr": "L'alternatif gagne grâce au transformateur, qui ne marche qu'avec un courant variable, puisqu'il repose sur l'induction. Il permet de monter la tension pour transporter loin avec peu de pertes, puis de la redescendre chez l'usager. En France, le courant change de sens cent fois par seconde : 50 Hz. La fusion de 1892 qui crée General Electric met fin à la bataille."
-      }
-     ],
-     "retenir": {
-      "fr": "Edison : continu. Westinghouse et Tesla : alternatif. L'alternatif gagne grâce au transformateur."
-     },
-     "source": "Hughes, Networks of Power, 1983",
-     "figure": "mc_elec_guerre"
-    },
-    {
-     "id": "equilibre",
-     "titre": {
-      "fr": "Produire exactement ce qu'on consomme"
-     },
-     "texte": [
-      {
-       "fr": "Le réseau a une contrainte que peu de gens connaissent : à chaque instant, la production doit égaler la consommation. Si l'on consomme plus qu'on ne produit, la fréquence descend sous 50 Hz ; trop d'écart, et des coupures se déclenchent pour protéger le réseau. Le soir d'hiver, quand tout le monde rentre et cuisine, il faut des moyens qui démarrent vite."
-      },
-      {
-       "fr": "Le vent et le soleil ne se commandent pas : il faut stocker ou compléter. Les stations de pompage, les STEP, remontent de l'eau dans un lac quand l'électricité abonde et la turbinent quand on en manque. Les batteries lithium-ion jouent le même rôle à plus petite échelle ; elles ont valu le Nobel de chimie 2019 à Goodenough, Whittingham et Yoshino."
-      }
-     ],
-     "retenir": {
-      "fr": "Production = consommation à chaque instant, sinon la fréquence dérive. Stocker : STEP, batteries (Nobel 2019)."
-     },
-     "source": "RTE, Bilan électrique annuel",
-     "figure": "mc_elec_equilibre"
-    }
-   ]
-  }
- },
- {
-  "id": "elec.numerique",
-  "stat": "etincelle",
-  "rang": 8,
-  "nom": {
-   "fr": "Du transistor à l'ordinateur"
-  },
-  "description": {
-   "fr": "Binaire, portes logiques, processeurs et mémoire."
-  },
-  "prerequis": [
-   "elec.electronique",
-   "elec.energies"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Le binaire n'utilise que 0 et 1 : 1011 en binaire vaut 8 + 2 + 1 = 11."
-    },
-    {
-     "fr": "Un octet = 8 bits, soit 256 valeurs."
-    },
-    {
-     "fr": "Portes logiques ET, OU, NON : construites avec des transistors, elles font tous les calculs."
-    },
-    {
-     "fr": "Loi de Moore : le nombre de transistors par puce a doublé environ tous les deux ans pendant des décennies."
-    }
-   ],
-   "piege": {
-    "fr": "Un kilooctet vaut 1 000 octets selon le SI ; 1 024 octets s'appelle un kibioctet."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 148\" role=\"img\" aria-label=\"Tables des portes ET et OU\"><text class=\"t\" x=\"50.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A</text><text class=\"t\" x=\"130.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">B</text><text class=\"t\" x=\"210.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A ET B</text><text class=\"t\" x=\"290.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A OU B</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"50.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">0</text><text class=\"tm\" x=\"130.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"210.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"290.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"t\" x=\"50.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">0</text><text class=\"tm\" x=\"130.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"210.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"290.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"t\" x=\"50.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"130.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"210.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">0</text><text class=\"tm\" x=\"290.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">1</text><rect class=\"a\" x=\"10\" y=\"114\" width=\"320\" height=\"24\" rx=\"4\" opacity=\"0.25\"/><text class=\"t\" x=\"50.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"130.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"210.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"290.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">1</text></svg>",
-   "source": "Shannon, A Symbolic Analysis of Relay and Switching Circuits, 1938"
-  },
-  "symbole": "01",
-  "embleme": "ordinateur",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "binaire",
-     "titre": {
-      "fr": "Compter avec deux doigts"
-     },
-     "texte": [
-      {
-       "fr": "En binaire, on n'a que deux chiffres, 0 et 1, et chaque rang vaut le double du précédent : 1, 2, 4, 8… Ainsi 1011 = 1 × 8 + 0 × 4 + 1 × 2 + 1 × 1 = 11. Leibniz expose cette arithmétique dans un mémoire publié en 1705. Avec 3 bits, on code 2 × 2 × 2 = 8 valeurs ; avec un octet de 8 bits, 2⁸ = 256."
-      },
-      {
-       "fr": "Pourquoi deux chiffres ? Parce qu'un transistor sait très bien faire deux choses : laisser passer ou bloquer. Textes, images, sons : tout est codé en 0 et en 1. Un détail d'unités : selon le Système international, un kilooctet vaut 1 000 octets ; les 1 024 octets s'appellent un kibioctet."
-      }
-     ],
-     "retenir": {
-      "fr": "1011 = 8 + 2 + 1 = 11 (Leibniz, 1705). 8 bits = 256 valeurs. Un transistor : ouvert ou fermé."
-     },
-     "source": "Leibniz, Explication de l'arithmétique binaire, Mémoires de l'Académie royale des sciences, 1705",
-     "figure": "mc_elec_binaire"
-    },
-    {
-     "id": "portes",
-     "titre": {
-      "fr": "La logique en circuits"
-     },
-     "texte": [
-      {
-       "fr": "Au XIXe siècle, George Boole fait de la logique une algèbre : vrai et faux deviennent 1 et 0, et « et », « ou », « non » deviennent des opérations. En 1937, à 21 ans, Claude Shannon montre dans son mémoire de master au MIT, publié en 1938, que des circuits de relais peuvent réaliser toute cette algèbre. On l'a appelé le mémoire de master peut-être le plus important du siècle."
-      },
-      {
-       "fr": "La porte ET donne 1 seulement si ses deux entrées valent 1 ; la porte OU donne 1 si au moins une vaut 1 ; la porte NON inverse. Construites avec quelques transistors, ces portes s'assemblent en additionneurs, en mémoires, puis en processeurs. Un ordinateur n'est, au fond, qu'un immense assemblage de ces trois décisions."
-      }
-     ],
-     "retenir": {
-      "fr": "Boole : la logique devient algèbre. Shannon (1937) : des circuits la calculent. ET, OU, NON suffisent à tout."
-     },
-     "source": "Shannon, A Symbolic Analysis of Relay and Switching Circuits, 1938",
-     "schema_fiche": true
-    },
-    {
-     "id": "machines",
-     "titre": {
-      "fr": "Des plans de Babbage au bug de 1947"
-     },
-     "texte": [
-      {
-       "fr": "Au XIXe siècle, Charles Babbage conçoit la machine analytique, un calculateur mécanique programmable. Elle n'a jamais été construite de son vivant. Ada Lovelace en publie pourtant, en 1843, le premier programme : un calcul des nombres de Bernoulli. Elle pressent aussi que la machine pourrait manipuler autre chose que des nombres, de la musique par exemple."
-      },
-      {
-       "fr": "La guerre accélère tout. En 1943-1944, Colossus aide à Bletchley Park à casser des messages chiffrés allemands ; il restera secret jusque dans les années 1970. En 1945, John von Neumann décrit l'architecture où programme et données partagent la même mémoire, celle de presque tous nos ordinateurs. Et en 1947, l'équipe de Grace Hopper colle dans son cahier un papillon de nuit trouvé dans un relais : « premier cas réel de bug trouvé »."
-      }
-     ],
-     "retenir": {
-      "fr": "Babbage : la machine jamais construite ; Lovelace (1843) : le premier programme. Von Neumann (1945) : programme et données ensemble."
-     },
-     "source": "Lovelace, notes sur la machine analytique, 1843 ; von Neumann, First Draft of a Report on the EDVAC, 1945",
-     "figure": "mc_elec_machines"
-    }
-   ]
-  }
- }
 ]
