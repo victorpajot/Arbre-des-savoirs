@@ -936,6 +936,7 @@ svg.grille .interro { transition: opacity .3s; }
 .liberation .in { max-width: 460px; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .liberation .zero { font-size: 44px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--bad); }
 .liberation .cadenas { color: var(--bad); overflow: visible; }
+.liberation .btn.sec { background: var(--surface); }
 .liberation .anse { transform-box: fill-box; transform-origin: 100% 100%; }
 .liberation h2 { margin: 0; }
 .liberation .mot { width: 100%; text-align: left; }
@@ -2163,10 +2164,12 @@ function demarrerJeu() {
       '<div class="zero">0:00</div>' +
       '<svg class="cadenas" viewBox="0 0 64 72" width="96" height="108" aria-hidden="true"><path class="anse" d="M18 32 V20 a14 14 0 0 1 28 0 V32" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>' +
       '<rect x="8" y="30" width="48" height="38" rx="7" fill="currentColor"/><circle cx="32" cy="46" r="5" fill="var(--surface)"/><rect x="29.5" y="48" width="5" height="11" rx="2" fill="var(--surface)"/></svg>' +
-      __('<h2>Peine purgée</h2><div class="mot"></div><button type="button" class="btn large">Sortir du mur</button></div></div>'));
+      __('<h2>Peine purgée</h2><div class="mot"></div><button type="button" class="btn large" data-a="sortir">Sortir du mur</button><button type="button" class="btn sec large" data-a="rester">Rester encore un peu</button></div></div>'));
     var m = comite(M.replique(C, P, ["mur_libere"]));
     if (m) z.querySelector(".mot").appendChild(m);
-    z.querySelector(".btn").addEventListener("click", function () { z.remove(); rendre(); window.scrollTo(0, 0); toast(__("Tu peux rejouer.")); });
+    // v35 (Victor) : deux choix. Sortir ramène à l'accueil, rester laisse sur le mur pour réviser.
+    z.querySelector('[data-a="sortir"]').addEventListener("click", function () { z.remove(); vue = "aujourdhui"; rendre(); window.scrollTo(0, 0); toast(__("Tu peux rejouer.")); });
+    z.querySelector('[data-a="rester"]').addEventListener("click", function () { z.remove(); rendre(); });
     document.body.appendChild(z);
     z.querySelector(".btn").focus({ preventScroll: true });
   }
