@@ -104,6 +104,7 @@ Un fichier par type de contenu. Chacun est une liste (ou un dictionnaire) qui s'
 ```
 
 - **Rangs** : 1 à 4 forment le premier losange (1 en haut, 2 et 3 au milieu, 4 en bas), 5 à 8 le second, accroché sous le 4. Prérequis : 2 et 3 requièrent 1 ; 4 requiert 2 et 3 ; 5 requiert 4 ; 6 et 7 requièrent 5 ; 8 requiert 6 et 7. Une compétence peut aussi requérir celle d'un autre pack, s'il est dans `requiert`.
+- **Arbre de 12 ou 16 compétences** (exemple : `packs/sagesse/`, Philosophes en 16) : quand le plateau a beaucoup de cases d'époques différentes pour un arbre, on l'agrandit par losanges de quatre (haut, deux au milieu, bas), chacun accroché sous le bas du précédent. Les rangs restent de 1 à 8, croissants dans l'ordre du fichier, plusieurs compétences par rang, un seul rang 1 ; le jeu dessine les losanges dans l'ordre du fichier. Chaque case d'époque évoque d'abord la compétence de son époque (`evoque`), pour ne pas faire jouer une période sans rapport.
 - **Schéma** : un SVG en ligne, `viewBox` d'environ 400 de large, `role="img"` et un `aria-label`. Pas de couleurs en dur : des classes que le jeu colore selon le thème clair ou sombre : `t` (texte), `tm` (texte discret), `l` (trait), `lm` (trait discret), `f` (forme pleine), `f2` (forme discrète), `a` (remplissage d'accent), `al` (trait d'accent), `ok`, `ko`, `fond`.
 - **Emblème** : l'id d'un dessin (`dessins.json` d'un pack), d'un objet du cabinet ou d'une icône du plateau (`plateau.json › icones`). C'est le badge de la compétence.
 
@@ -173,7 +174,7 @@ Chaque arbre a au moins **3** répliques `theme_jouer@<arbre>` (au lancement d'u
 ```json
 {"id": "thales-eau", "annee": -585, "titre": {"fr": "Thalès et l'eau"}, "stat": "sagesse", "epoque": "antiquite",
  "icone": "puits", "histoire": {"fr": "40 à 140 mots, faits vérifiés"}, "replique": {"fr": "Alyca, qui vouvoie"},
- "source": "Platon, Théétète, 174a", "evoque": ["philo.antiquite"], "special": {"type": "eureka"}}
+ "source": "Platon, Théétète, 174a", "evoque": ["philo.presocratiques"], "special": {"type": "eureka"}}
 ```
 
 - Pas de champ `n` : l'assemblage attribue à chaque `id` un numéro définitif, gardé dans `packs/socle/numeros_cases.json` (à committer). Ne jamais changer l'`id` d'une case publiée.

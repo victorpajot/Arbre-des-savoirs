@@ -296,6 +296,15 @@ def obtenir(o, chemin):
     return o
 
 
+def rangs_valides(rangs):
+    """Un arbre a 8 compétences, une par rang de 1 à 8. Un grand arbre (Philosophes) en a un multiple de 4, en losanges
+    de quatre : rangs croissants dans l'ordre du fichier, de 1 à 8, chacun présent, un seul rang 1 (la porte de l'arbre)."""
+    if sorted(rangs) == list(range(1, 9)):
+        return True
+    return (len(rangs) >= 8 and len(rangs) % 4 == 0 and rangs == sorted(rangs) and rangs.count(1) == 1
+            and set(rangs) == set(range(1, 9)))
+
+
 def lire_liste(m, nom):
     f = m["_dossier"] / nom
     return lire(f) if f.exists() else []
@@ -564,9 +573,9 @@ def completude(m):
     for a in lire_liste(m, "arbres.json"):
         st = a["id"]
         siennes = [c for c in comps if c.get("stat") == st]
-        rangs = sorted(c.get("rang") for c in siennes)
-        if rangs != list(range(1, 9)):
-            err(f"l'arbre « {st} » a 8 compétences, une par rang de 1 à 8 (il a les rangs {rangs})")
+        rangs = [c.get("rang") for c in siennes]
+        if not rangs_valides(rangs):
+            err(f"l'arbre « {st} » a 8 compétences, une par rang de 1 à 8, ou un multiple de 4 rangées par rang croissant de 1 à 8 avec un seul rang 1 (il a les rangs {rangs})")
         for c in siennes:
             n = sum(q.get("competence") == c["id"] for q in questions)
             if n < QUESTIONS_MIN:
