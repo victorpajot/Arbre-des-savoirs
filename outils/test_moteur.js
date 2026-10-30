@@ -209,7 +209,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.ok(P.succes["tour-complet"]);
     const rec = M.verifierRecompenses(C3, P, t0);
     // v15 : seules les cases où le pion s'est arrêté dévoilent leur date et leurs livres.
-    const casesFrise = C3.evenements.filter(e => e.case);
+    // Une date dont la case a quitté le plateau (le Web, 2026-10-30) se débloque à son époque : hors de ce contrôle.
+    const casesFrise = C3.evenements.filter(e => e.case && C3.plateau.cases.some(k => k.n === e.case));
     assert.ok(casesFrise.every(e => !!P.evenements[e.id] === !!P.plateau.visites[e.case]), "une date par case foulée, aucune par case survolée");
     assert.ok(casesFrise.some(e => !P.evenements[e.id]), "des cases survolées restent cachées");
     assert.ok(C3.livres.filter(l => l.condition.type === "case_atteinte").every(l => !P.plateau.visites[l.condition.n] || P.livres[l.id] || P.gagnables["livres:" + l.id]), "livres des cases foulées gagnables");
