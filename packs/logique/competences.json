@@ -1,853 +1,853 @@
 [
-  {
-    "id": "math.arithmetique",
-    "stat": "logique",
-    "rang": 1,
-    "nom": {
-      "fr": "Arithmétique et fractions"
-    },
-    "description": {
-      "fr": "Les opérations, les priorités de calcul, les fractions et les nombres premiers."
-    },
-    "prerequis": [],
-    "fiche": {
-      "essentiel": [
-        {
-          "fr": "Priorités : parenthèses, puissances, puis multiplications et divisions (de gauche à droite), puis additions et soustractions."
-        },
-        {
-          "fr": "Pour additionner des fractions, on les met au même dénominateur : 3/4 + 1/8 = 6/8 + 1/8 = 7/8. On n'additionne jamais les dénominateurs."
-        },
-        {
-          "fr": "Diviser par une fraction, c'est multiplier par son inverse : 2 ÷ 1/2 = 4."
-        },
-        {
-          "fr": "Un nombre premier a exactement deux diviseurs, 1 et lui-même. 1 n'est donc pas premier ; 2 est le seul premier pair."
-        }
-      ],
-      "piege": {
-        "fr": "6 ÷ 2 × 3 vaut 9, pas 1 : à priorité égale, la convention est de calculer de gauche à droite."
-      },
-      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 100\" role=\"img\" aria-label=\"Une barre coupée en 4 dont 3 parts colorées, une barre coupée en 8 dont 1 part colorée\"><text class=\"t\" x=\"20\" y=\"30\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">3/4</text><text class=\"t\" x=\"20\" y=\"80\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">1/8</text><rect class=\"a\" x=\"70\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"130\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"190\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"250\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\"/><rect class=\"a\" x=\"70\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"100\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"130\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"160\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"190\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"220\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"250\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"280\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/></svg>",
-      "source": "Programme de mathématiques du cycle 4, Éduscol"
-    },
-    "symbole": "½",
-    "embleme": "boulier",
-    "masterclass": {
-      "chapitres": [
-        {
-          "id": "priorites",
-          "titre": {
-            "fr": "Dans quel ordre calculer"
-          },
-          "texte": [
-            {
-              "fr": "Un calcul s'écrit sur une ligne, mais il ne se lit pas forcément de gauche à droite. La convention : d'abord les parenthèses, puis les puissances, puis les multiplications et divisions, enfin les additions et soustractions. 2 + 3 × 4 vaut donc 14, pas 20."
-            },
-            {
-              "fr": "Quand deux opérations ont la même priorité, on avance de gauche à droite. 6 ÷ 2 × 3, c'est 3 × 3 = 9, et pas 6 ÷ 6 = 1. Ce n'est pas une loi de la nature mais une règle d'écriture, adoptée pour que tout le monde lise le même calcul de la même façon. En cas de doute, une paire de parenthèses coûte moins cher qu'une dispute. Cette règle est récente : la multiplication passe avant l'addition depuis la notation algébrique du XVIIe siècle, et le nom d'ordre des opérations ne s'impose qu'à la fin du XIXe ou au début du XXe siècle, avec les manuels scolaires. Dans les années 1920, on se disputait encore pour savoir si la multiplication passait avant la division."
-            }
-          ],
-          "retenir": {
-            "fr": "Parenthèses, puissances, × et ÷, puis + et −. À égalité, de gauche à droite."
-          },
-          "source": "Programme de mathématiques du cycle 4, Éduscol",
-          "figure": "mc_math_priorites"
-        },
-        {
-          "id": "fractions",
-          "titre": {
-            "fr": "Les fractions sans se tromper"
-          },
-          "texte": [
-            {
-              "fr": "Pour additionner des fractions, il faut qu'elles parlent de parts de même taille : on les met au même dénominateur. 3/4 + 1/8, c'est 6/8 + 1/8 = 7/8. Additionner les dénominateurs (4 + 8) n'a aucun sens : on ne coupe pas le gâteau en douze en ajoutant deux parts."
-            },
-            {
-              "fr": "Multiplier, c'est plus simple : on multiplie en haut et en bas, et la moitié d'un tiers fait 1/2 × 1/3 = 1/6. Diviser par une fraction, c'est multiplier par son inverse : 2 ÷ 1/2 = 2 × 2 = 4, puisqu'il y a quatre demis dans deux. Les Égyptiens, eux, écrivaient presque tout en sommes de fractions de numérateur 1 : 2/5 devenait 1/3 + 1/15. On le voit sur le papyrus Rhind, copié vers 1550 avant notre ère par le scribe Ahmès, qui s'ouvre sur une table de 2/n écrits en fractions unitaires."
-            }
-          ],
-          "retenir": {
-            "fr": "Additionner : même dénominateur d'abord. Diviser par une fraction : multiplier par son inverse."
-          },
-          "source": "Programme de mathématiques du cycle 4, Éduscol",
-          "schema_fiche": true,
-          "reperes": [
-            {
-              "fr": "On le voit sur le papyrus Rhind, copié vers 1550 avant notre ère par le scribe Ahmès, qui s'ouvre sur une table de 2/n écrits en fractions unitaires."
-            }
-          ]
-        },
-        {
-          "id": "premiers",
-          "titre": {
-            "fr": "Les nombres premiers ne s'arrêtent jamais"
-          },
-          "texte": [
-            {
-              "fr": "Un nombre premier a exactement deux diviseurs : 1 et lui-même. 2, 3, 5, 7, 11, 13… 1 n'est pas premier, puisqu'il n'a qu'un diviseur, et 2 est le seul premier pair. Tout entier se décompose en produit de premiers : ce sont les briques de la multiplication."
-            },
-            {
-              "fr": "Y en a-t-il une infinité ? Euclide le démontre vers 300 avant notre ère, livre IX des Éléments. Prenez une liste finie de premiers, multipliez-les tous et ajoutez 1. Le résultat n'est divisible par aucun d'eux, puisqu'il reste toujours 1. Donc il est premier, ou il a un facteur premier qui manquait à la liste. Aucune liste n'est jamais complète."
-            }
-          ],
-          "retenir": {
-            "fr": "Premier = exactement deux diviseurs (1 n'est pas premier). Il y en a une infinité (Euclide, Éléments IX, 20)."
-          },
-          "source": "Euclide, Éléments, livre IX, proposition 20",
-          "figure": "mc_math_premiers"
-        }
-      ]
-    }
+ {
+  "id": "math.arithmetique",
+  "stat": "logique",
+  "rang": 1,
+  "nom": {
+   "fr": "Arithmétique et fractions"
   },
-  {
-    "id": "math.proportions",
-    "stat": "logique",
-    "rang": 2,
-    "nom": {
-      "fr": "Proportions et pourcentages"
-    },
-    "description": {
-      "fr": "Règle de trois, échelles, hausses et baisses en pourcentage."
-    },
-    "prerequis": [
-      "math.arithmetique"
-    ],
-    "fiche": {
-      "essentiel": [
-        {
-          "fr": "La règle de trois marche quand deux grandeurs sont proportionnelles : si 3 kg coûtent 12 €, 5 kg coûtent 5 × 12 / 3 = 20 €."
-        },
-        {
-          "fr": "Une hausse de t % multiplie par (1 + t/100), une baisse par (1 − t/100). On enchaîne les évolutions en multipliant les coefficients."
-        },
-        {
-          "fr": "+50 % puis −50 % ne ramène pas au départ : 1,5 × 0,5 = 0,75, soit une baisse de 25 %."
-        },
-        {
-          "fr": "Point de pourcentage et pourcentage diffèrent : passer de 10 % à 12 %, c'est +2 points, mais +20 %."
-        }
-      ],
-      "piege": {
-        "fr": "Une baisse de 20 % ne se rattrape pas par une hausse de 20 % : il faut +25 %."
-      },
-      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Hausse de 50 % puis baisse de 50 % : on finit à 75\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"63.3\" width=\"74.7\" height=\"66.7\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"57.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">100</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">départ</text><rect class=\"f2\" x=\"132.7\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">150</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+50 %</text><rect class=\"a\" x=\"219.3\" y=\"80.0\" width=\"74.7\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">75</text><text class=\"tm\" x=\"256.6666666666667\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">puis −50 %</text></svg>",
-      "source": "INSEE, « Évolutions et pourcentages », fiche méthode"
-    },
-    "symbole": "%",
-    "embleme": "camembert",
-    "masterclass": {
-      "chapitres": [
-        {
-          "id": "regle",
-          "titre": {
-            "fr": "La règle de trois"
-          },
-          "texte": [
-            {
-              "fr": "Deux grandeurs sont proportionnelles quand l'une s'obtient en multipliant l'autre par un même nombre : le prix et le poids des pommes, la farine et le nombre de convives. Doubler l'une double l'autre."
-            },
-            {
-              "fr": "La règle de trois passe par l'unité. Si 3 kg coûtent 12 €, 1 kg coûte 4 €, et 5 kg coûtent 20 €. Une recette pour 4 qui demande 300 g de farine en demande 75 g par personne, donc 450 g pour 6. Attention : elle ne marche que si la proportionnalité est vraie. Neuf femmes ne font pas un bébé en un mois. La règle est très ancienne : les mathématiciens chinois la connaissaient avant le IIe siècle, et elle figure dans Les Neuf Chapitres sur l'art du calcul ; l'Europe ne l'adoptera que bien plus tard."
-            }
-          ],
-          "retenir": {
-            "fr": "Proportionnel = multiplier par un même nombre. Règle de trois : passer par l'unité."
-          },
-          "source": "Programme de mathématiques du cycle 4, Éduscol",
-          "figure": "mc_math_regle_trois",
-          "reperes": [
-            {
-              "fr": "La règle est très ancienne : les mathématiciens chinois la connaissaient avant le IIe siècle, et elle figure dans Les Neuf Chapitres sur l'art du calcul ; l'Europe ne l'adoptera que bien plus tard."
-            }
-          ]
-        },
-        {
-          "id": "coefficients",
-          "titre": {
-            "fr": "Les pourcentages se multiplient"
-          },
-          "texte": [
-            {
-              "fr": "Une hausse de t % multiplie par (1 + t/100), une baisse par (1 − t/100). +25 %, c'est × 1,25 ; −20 %, c'est × 0,8. Pour enchaîner des évolutions, on multiplie les coefficients, on n'additionne pas les pourcentages. Les Romains comptaient déjà en centièmes : l'empereur Auguste lève une taxe d'un centième sur les ventes aux enchères, la centesima rerum venalium. Le signe % vient de l'italien per cento, peu à peu abrégé jusqu'à deux petits ronds séparés d'un trait."
-            },
-            {
-              "fr": "D'où les surprises. +50 % puis −50 % : 1,5 × 0,5 = 0,75, on a perdu 25 %. Après une baisse de 20 %, il faut +25 % pour revenir, car 0,8 × 1,25 = 1. Et pour retrouver un prix hors taxe à partir de 120 € TTC avec 20 % de TVA, on divise par 1,2 : 100 €, pas 96 €."
-            }
-          ],
-          "retenir": {
-            "fr": "Hausse de t % = × (1 + t/100). On enchaîne en multipliant. −20 % se rattrape par +25 %."
-          },
-          "source": "INSEE, « Évolutions et pourcentages », fiche méthode",
-          "schema_fiche": true
-        },
-        {
-          "id": "points",
-          "titre": {
-            "fr": "Points ou pour cent ?"
-          },
-          "texte": [
-            {
-              "fr": "Quand un taux passe de 10 % à 12 %, il a gagné 2 points de pourcentage. Mais relativement à son point de départ, il a augmenté de 20 %, puisque 2 est le cinquième de 10. Les deux phrases sont justes ; elles ne disent pas la même chose."
-            },
-            {
-              "fr": "C'est un terrain de jeu pour les titres. Un taux d'intérêt qui passe de 2 % à 3 % : « +1 point » sonne calme, « +50 % » sonne alarmant. Un risque qui passe de 1 sur 10 000 à 2 sur 10 000 « double », mais reste minuscule. Demandez toujours : un pourcentage de quoi ?"
-            }
-          ],
-          "retenir": {
-            "fr": "Point de pourcentage = différence entre deux taux. Pourcentage = variation relative. 10 % → 12 % : +2 points, +20 %."
-          },
-          "source": "INSEE, « Évolutions et pourcentages », fiche méthode",
-          "figure": "mc_math_points"
-        }
-      ]
-    }
+  "description": {
+   "fr": "Les opérations, les priorités de calcul, les fractions et les nombres premiers."
   },
-  {
-    "id": "math.probabilites",
-    "stat": "logique",
-    "rang": 3,
-    "nom": {
-      "fr": "Probabilités"
+  "prerequis": [],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Priorités : parenthèses, puissances, puis multiplications et divisions (de gauche à droite), puis additions et soustractions."
     },
-    "description": {
-      "fr": "Le hasard, l'indépendance, les paradoxes qui trompent l'intuition."
+    {
+     "fr": "Pour additionner des fractions, on les met au même dénominateur : 3/4 + 1/8 = 6/8 + 1/8 = 7/8. On n'additionne jamais les dénominateurs."
     },
-    "prerequis": [
-      "math.arithmetique"
-    ],
-    "fiche": {
-      "essentiel": [
-        {
-          "fr": "Probabilité = cas favorables ÷ cas possibles, à condition que les cas soient équiprobables."
-        },
-        {
-          "fr": "Deux événements indépendants : on multiplie leurs probabilités. Deux pile de suite : 1/2 × 1/2 = 1/4."
-        },
-        {
-          "fr": "Le hasard n'a pas de mémoire : après dix pile, le onzième lancer a toujours une chance sur deux (erreur du joueur)."
-        },
-        {
-          "fr": "Monty Hall : changer de porte fait gagner 2 fois sur 3, car l'animateur sait où est la voiture et n'ouvre jamais celle-là."
-        },
-        {
-          "fr": "Espérance = somme de chaque gain × sa probabilité."
-        }
-      ],
-      "piege": {
-        "fr": "Avec deux dés, 7 est la somme la plus probable (6 issues sur 36), pas 12 (1 sur 36)."
-      },
-      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 232\" role=\"img\" aria-label=\"Tableau des 36 résultats possibles avec deux dés\"><text class=\"tm\" x=\"52\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"24\" y=\"47\" font-size=\"13\" text-anchor=\"middle\">1</text><rect class=\"f2\" x=\"38\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"82\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">2</text><text class=\"tm\" x=\"24\" y=\"77\" font-size=\"13\" text-anchor=\"middle\">2</text><rect class=\"f2\" x=\"68\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"112\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">3</text><text class=\"tm\" x=\"24\" y=\"107\" font-size=\"13\" text-anchor=\"middle\">3</text><rect class=\"f2\" x=\"98\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"142\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">4</text><text class=\"tm\" x=\"24\" y=\"137\" font-size=\"13\" text-anchor=\"middle\">4</text><rect class=\"f2\" x=\"128\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"172\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">5</text><text class=\"tm\" x=\"24\" y=\"167\" font-size=\"13\" text-anchor=\"middle\">5</text><rect class=\"f2\" x=\"158\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"202\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">6</text><text class=\"tm\" x=\"24\" y=\"197\" font-size=\"13\" text-anchor=\"middle\">6</text><rect class=\"f2\" x=\"188\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"130\" y=\"222\" font-size=\"12\" text-anchor=\"middle\">36 issues équiprobables (dé 1 × dé 2)</text></svg>",
-      "source": "Feller, An Introduction to Probability Theory and Its Applications, 1968"
+    {
+     "fr": "Diviser par une fraction, c'est multiplier par son inverse : 2 ÷ 1/2 = 4."
     },
-    "symbole": "⚄",
-    "embleme": "des-pascal",
-    "masterclass": {
-      "chapitres": [
-        {
-          "id": "compter",
-          "titre": {
-            "fr": "Compter les cas"
-          },
-          "texte": [
-            {
-              "fr": "La probabilité, au départ, c'est compter : cas favorables divisés par cas possibles, à condition que tous les cas aient la même chance. Un 6 avec un dé : 1 sur 6. Avec deux dés, il y a 36 couples possibles ; six donnent 7, un seul donne 12. Le 7 sort donc six fois plus souvent que le 12."
-            },
-            {
-              "fr": "Cette science est née autour d'une table de jeu. Vers 1654, le chevalier de Méré pose à Blaise Pascal le « problème des partis » : comment partager l'enjeu d'une partie interrompue ? Pascal en discute par lettres avec Pierre de Fermat, et leurs réponses posent les bases du calcul des probabilités. En 1657, Christiaan Huygens en tire le premier traité."
-            }
-          ],
-          "retenir": {
-            "fr": "Probabilité = cas favorables ÷ cas possibles (cas équiprobables). Pascal et Fermat, 1654 ; Huygens, 1657."
-          },
-          "source": "Huygens, De ratiociniis in ludo aleae, 1657",
-          "reperes": [
-            {
-              "fr": "Vers 1654, le chevalier de Méré pose à Blaise Pascal le « problème des partis » : comment partager l'enjeu d'une partie interrompue ?"
-            }
-          ]
-        },
-        {
-          "id": "memoire",
-          "titre": {
-            "fr": "Le hasard n'a pas de mémoire"
-          },
-          "texte": [
-            {
-              "fr": "Deux événements indépendants ne s'influencent pas : on multiplie leurs probabilités. Deux « pile » de suite : 1/2 × 1/2 = 1/4. Et après dix « pile », le onzième lancer a toujours une chance sur deux : la pièce ne sait pas ce qu'elle a fait avant."
-            },
-            {
-              "fr": "Croire le contraire, c'est l'erreur du joueur, et elle coûte cher. Le 18 août 1913, au casino de Monte-Carlo, la bille tombe 26 fois de suite sur le noir. Les joueurs, persuadés que le rouge « devait » sortir, misent de plus en plus gros contre le noir et perdent des millions de francs."
-            }
-          ],
-          "retenir": {
-            "fr": "Indépendants : on multiplie. Une série passée ne change pas le prochain tirage (erreur du joueur, Monte-Carlo 1913)."
-          },
-          "source": "Feller, An Introduction to Probability Theory and Its Applications, 1968",
-          "figure": "mc_math_arbre",
-          "reperes": [
-            {
-              "fr": "Le 18 août 1913, au casino de Monte-Carlo, la bille tombe 26 fois de suite sur le noir."
-            }
-          ]
-        },
-        {
-          "id": "intuition",
-          "titre": {
-            "fr": "Quand l'intuition se trompe"
-          },
-          "texte": [
-            {
-              "fr": "Le jeu de Monty Hall : trois portes, une voiture derrière l'une. Vous en choisissez une, l'animateur, qui sait tout, ouvre une autre porte perdante et vous propose de changer. Changer fait gagner 2 fois sur 3 : votre premier choix n'avait qu'une chance sur trois, et l'animateur ne vous a rien appris sur lui. En septembre 1990, Marilyn vos Savant le publie dans le magazine Parade. Elle reçoit environ 10 000 lettres, dont près de 1 000 de docteurs, la plupart pour dire qu'elle a tort. Même Paul Erdős n'est convaincu que par une simulation."
-            },
-            {
-              "fr": "Autre piège : les tests sur des maladies rares. Une maladie touche 1 personne sur 1 000, le test est fiable à 99 %. Sur 100 000 personnes, 100 sont malades et 99 sont détectées, mais 1 % des 99 900 bien portants sont aussi positifs, environ 1 000. Un positif n'a donc qu'environ une chance sur onze d'être malade. Quand le cas de départ est rare, les fausses alarmes l'emportent."
-            }
-          ],
-          "retenir": {
-            "fr": "Monty Hall : changer de porte gagne 2 fois sur 3. Test positif pour une maladie rare : souvent une fausse alarme. Toujours partir de la fréquence de base."
-          },
-          "source": "vos Savant, Parade, 1990 ; Gigerenzer, Calculated Risks, 2002",
-          "figure": "mc_math_monty"
-        }
-      ]
+    {
+     "fr": "Un nombre premier a exactement deux diviseurs, 1 et lui-même. 1 n'est donc pas premier ; 2 est le seul premier pair."
     }
+   ],
+   "piege": {
+    "fr": "6 ÷ 2 × 3 vaut 9, pas 1 : à priorité égale, la convention est de calculer de gauche à droite."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 100\" role=\"img\" aria-label=\"Une barre coupée en 4 dont 3 parts colorées, une barre coupée en 8 dont 1 part colorée\"><text class=\"t\" x=\"20\" y=\"30\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">3/4</text><text class=\"t\" x=\"20\" y=\"80\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">1/8</text><rect class=\"a\" x=\"70\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"130\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"190\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"250\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\"/><rect class=\"a\" x=\"70\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"100\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"130\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"160\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"190\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"220\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"250\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"280\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/></svg>",
+   "source": "Programme de mathématiques du cycle 4, Éduscol"
   },
-  {
-    "id": "math.logique",
-    "stat": "logique",
-    "rang": 4,
-    "nom": {
-      "fr": "Logique formelle"
-    },
-    "description": {
-      "fr": "Implication, négation, syllogismes et raisonnement par l'absurde."
-    },
-    "prerequis": [
-      "math.proportions",
-      "math.probabilites"
-    ],
-    "fiche": {
-      "essentiel": [
-        {
-          "fr": "« Si A alors B » est faux dans un seul cas : A vrai et B faux."
-        },
-        {
-          "fr": "La contraposée « si non B alors non A » est équivalente. La réciproque « si B alors A » ne l'est pas."
-        },
-        {
-          "fr": "Nier « tous les cygnes sont blancs », c'est dire « au moins un cygne n'est pas blanc », pas « aucun cygne n'est blanc »."
-        },
-        {
-          "fr": "Raisonnement par l'absurde : on suppose le contraire de ce qu'on veut prouver et on aboutit à une contradiction."
-        }
-      ],
-      "piege": {
-        "fr": "Affirmer le conséquent : « s'il pleut, le sol est mouillé ; le sol est mouillé, donc il pleut » est invalide."
+  "symbole": "½",
+  "embleme": "boulier",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "priorites",
+     "titre": {
+      "fr": "Dans quel ordre calculer"
+     },
+     "texte": [
+      {
+       "fr": "Un calcul s'écrit sur une ligne, mais il ne se lit pas forcément de gauche à droite. La convention : d'abord les parenthèses, puis les puissances, puis les multiplications et divisions, enfin les additions et soustractions. 2 + 3 × 4 vaut donc 14, pas 20."
       },
-      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 148\" role=\"img\" aria-label=\"Table de vérité de l'implication\"><text class=\"t\" x=\"63.333333333333336\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A</text><text class=\"t\" x=\"170.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">B</text><text class=\"t\" x=\"276.6666666666667\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">si A alors B</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"63.333333333333336\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">vrai</text><rect class=\"a\" x=\"10\" y=\"62\" width=\"320\" height=\"24\" rx=\"4\" opacity=\"0.25\"/><text class=\"t\" x=\"63.333333333333336\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">faux</text><text class=\"t\" x=\"63.333333333333336\" y=\"105\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">vrai</text><text class=\"t\" x=\"63.333333333333336\" y=\"131\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">vrai</text></svg>",
-      "source": "Copi, Introduction to Logic, 14e éd."
+      {
+       "fr": "Quand deux opérations ont la même priorité, on avance de gauche à droite. 6 ÷ 2 × 3, c'est 3 × 3 = 9, et pas 6 ÷ 6 = 1. Ce n'est pas une loi de la nature mais une règle d'écriture, adoptée pour que tout le monde lise le même calcul de la même façon. En cas de doute, une paire de parenthèses coûte moins cher qu'une dispute. Cette règle est récente : la multiplication passe avant l'addition depuis la notation algébrique du XVIIe siècle, et le nom d'ordre des opérations ne s'impose qu'à la fin du XIXe ou au début du XXe siècle, avec les manuels scolaires. Dans les années 1920, on se disputait encore pour savoir si la multiplication passait avant la division."
+      }
+     ],
+     "retenir": {
+      "fr": "Parenthèses, puissances, × et ÷, puis + et −. À égalité, de gauche à droite."
+     },
+     "source": "Programme de mathématiques du cycle 4, Éduscol",
+     "figure": "mc_math_priorites"
     },
-    "symbole": "∧",
-    "embleme": "ardoise-boole",
-    "masterclass": {
-      "chapitres": [
-        {
-          "id": "implication",
-          "titre": {
-            "fr": "Si… alors…"
-          },
-          "texte": [
-            {
-              "fr": "« S'il pleut, le sol est mouillé. » Cette phrase n'est fausse que dans un seul cas : il pleut et le sol est sec. S'il ne pleut pas, elle ne dit rien : le sol peut être sec ou mouillé (par l'arrosage), l'implication reste vraie. Cette définition remonte à Philon, un logicien grec de l'école dite dialectique, actif entre la fin du IVe et le milieu du IIIe siècle avant notre ère : pour lui, un « si… alors » n'est faux que si la première partie est vraie et la seconde fausse."
-            },
-            {
-              "fr": "Sa contraposée, « si le sol est sec, il n'a pas plu », dit exactement la même chose. Sa réciproque, « si le sol est mouillé, il a plu », non : c'est l'erreur dite affirmation du conséquent. Une bonne part des raisonnements bancals mélangent une implication et sa réciproque."
-            }
-          ],
-          "retenir": {
-            "fr": "« Si A alors B » n'est faux que si A est vrai et B faux. Contraposée (non B → non A) équivalente ; réciproque (B → A) non."
-          },
-          "source": "Copi, Introduction to Logic, 14e éd."
-        },
-        {
-          "id": "negation",
-          "titre": {
-            "fr": "Nier correctement"
-          },
-          "texte": [
-            {
-              "fr": "Pour contredire « tous les cygnes sont blancs », pas besoin de prouver qu'aucun cygne n'est blanc : un seul cygne noir suffit. La négation de « tous » est « au moins un ne… pas ». Et la négation de « il existe » est « aucun »."
-            },
-            {
-              "fr": "Pour les « et » et les « ou », il y a les lois de De Morgan, du nom du logicien Augustus De Morgan : « non (A et B) » équivaut à « non A ou non B », et « non (A ou B) » à « non A et non B ». Ne pas être à la fois riche et célèbre, c'est ne pas être riche, ou ne pas être célèbre, ou aucun des deux. De Morgan les énonce explicitement en 1847 dans Formal Logic, mais elles étaient connues bien avant : Guillaume d'Ockham les écrit en toutes lettres au XIVe siècle."
-            }
-          ],
-          "retenir": {
-            "fr": "Non (tous) = au moins un ne… pas. Non (A et B) = non A ou non B ; non (A ou B) = non A et non B (De Morgan)."
-          },
-          "source": "De Morgan, Formal Logic, 1847",
-          "figure": "mc_math_negation",
-          "reperes": [
-            {
-              "fr": "De Morgan les énonce explicitement en 1847 dans Formal Logic, mais elles étaient connues bien avant : Guillaume d'Ockham les écrit en toutes lettres au XIVe siècle."
-            }
-          ]
-        },
-        {
-          "id": "absurde",
-          "titre": {
-            "fr": "Prouver par l'absurde"
-          },
-          "texte": [
-            {
-              "fr": "Pour prouver qu'une chose est vraie, on peut supposer qu'elle est fausse et montrer que cela mène à une contradiction. Si l'hypothèse contraire est intenable, c'est qu'elle est fausse."
-            },
-            {
-              "fr": "L'exemple le plus célèbre : √2 n'est pas une fraction. Supposons √2 = a/b, fraction simplifiée au maximum. Alors a² = 2b², donc a est pair ; en l'écrivant 2k, on trouve b² = 2k², donc b est pair aussi. Mais une fraction simplifiée ne peut pas avoir deux termes pairs : contradiction. Aristote fait déjà allusion à ce raisonnement. C'est vers 350 avant notre ère, dans les Premiers Analytiques, où il décrit la démonstration « par l'impossible ». La légende selon laquelle les pythagoriciens auraient noyé Hippase pour l'avoir révélé, en revanche, ne repose sur à peu près rien."
-            }
-          ],
-          "retenir": {
-            "fr": "Par l'absurde : supposer le contraire, aboutir à une contradiction. Exemple : √2 n'est pas une fraction."
-          },
-          "source": "Aristote, Premiers Analytiques ; Euclide, Éléments, livre X",
-          "figure": "mc_math_absurde"
-        }
-      ]
-    }
-  },
-  {
-    "id": "math.algebre",
-    "stat": "logique",
-    "rang": 5,
-    "nom": {
-      "fr": "Algèbre et équations"
-    },
-    "description": {
-      "fr": "Inconnues, équations, identités remarquables et systèmes."
-    },
-    "prerequis": [
-      "math.logique"
-    ],
-    "fiche": {
-      "essentiel": [
-        {
-          "fr": "Résoudre une équation : faire la même opération des deux côtés jusqu'à isoler l'inconnue."
-        },
-        {
-          "fr": "Identités remarquables : (a + b)² = a² + 2ab + b², (a − b)² = a² − 2ab + b², (a + b)(a − b) = a² − b²."
-        },
-        {
-          "fr": "(a + b)² n'est pas a² + b² : on oublie le double produit 2ab."
-        },
-        {
-          "fr": "Un système de deux équations à deux inconnues se résout par substitution ou par combinaison."
-        },
-        {
-          "fr": "Second degré ax² + bx + c = 0 : discriminant Δ = b² − 4ac ; si Δ > 0, deux solutions (−b ± √Δ) ÷ 2a."
-        }
-      ],
-      "piege": {
-        "fr": "Diviser les deux côtés par x fait perdre la solution x = 0 : on factorise plutôt."
+    {
+     "id": "fractions",
+     "titre": {
+      "fr": "Les fractions sans se tromper"
+     },
+     "texte": [
+      {
+       "fr": "Pour additionner des fractions, il faut qu'elles parlent de parts de même taille : on les met au même dénominateur. 3/4 + 1/8, c'est 6/8 + 1/8 = 7/8. Additionner les dénominateurs (4 + 8) n'a aucun sens : on ne coupe pas le gâteau en douze en ajoutant deux parts."
       },
-      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Résoudre 3x + 5 = 20 étape par étape\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x + 5 = 20</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x = 15</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">x = 5</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">on retire 5, puis on divise par 3</text></svg>",
-      "source": "Programme de mathématiques de seconde, Éduscol"
+      {
+       "fr": "Multiplier, c'est plus simple : on multiplie en haut et en bas, et la moitié d'un tiers fait 1/2 × 1/3 = 1/6. Diviser par une fraction, c'est multiplier par son inverse : 2 ÷ 1/2 = 2 × 2 = 4, puisqu'il y a quatre demis dans deux. Les Égyptiens, eux, écrivaient presque tout en sommes de fractions de numérateur 1 : 2/5 devenait 1/3 + 1/15. On le voit sur le papyrus Rhind, copié vers 1550 avant notre ère par le scribe Ahmès, qui s'ouvre sur une table de 2/n écrits en fractions unitaires."
+      }
+     ],
+     "retenir": {
+      "fr": "Additionner : même dénominateur d'abord. Diviser par une fraction : multiplier par son inverse."
+     },
+     "source": "Programme de mathématiques du cycle 4, Éduscol",
+     "schema_fiche": true,
+     "reperes": [
+      {
+       "fr": "On le voit sur le papyrus Rhind, copié vers 1550 avant notre ère par le scribe Ahmès, qui s'ouvre sur une table de 2/n écrits en fractions unitaires."
+      }
+     ]
     },
-    "symbole": "x²",
-    "embleme": "tablette",
-    "masterclass": {
-      "chapitres": [
-        {
-          "id": "balance",
-          "titre": {
-            "fr": "L'équation comme une balance"
-          },
-          "texte": [
-            {
-              "fr": "Une équation est une balance en équilibre. On peut tout faire, pourvu qu'on le fasse des deux côtés. 3x + 5 = 20 : on retire 5 de chaque côté, 3x = 15 ; on divise chaque côté par 3, x = 5. On vérifie : 3 × 5 + 5 = 20."
-            },
-            {
-              "fr": "Le mot algèbre vient de là. Vers 820, à Bagdad, al-Khwârizmî écrit un traité dont le titre nomme deux gestes : al-jabr, la « restauration », qui fait passer un terme retranché de l'autre côté, et al-muqâbala, l'« équilibrage », qui retire la même quantité des deux côtés. Traduit en latin en 1145, al-jabr est devenu algèbre."
-            }
-          ],
-          "retenir": {
-            "fr": "Même opération des deux côtés jusqu'à isoler l'inconnue. Algèbre vient d'al-jabr, la restauration (al-Khwârizmî, vers 820)."
-          },
-          "source": "al-Khwârizmî, Abrégé du calcul par la restauration et la comparaison, vers 820",
-          "reperes": [
-            {
-              "fr": "Traduit en latin en 1145, al-jabr est devenu algèbre."
-            }
-          ]
-        },
-        {
-          "id": "identites",
-          "titre": {
-            "fr": "Le carré qui oublie un morceau"
-          },
-          "texte": [
-            {
-              "fr": "(a + b)² n'est pas a² + b². Dessinez un carré de côté a + b : il contient un carré a², un carré b², et deux rectangles a × b. D'où (a + b)² = a² + 2ab + b². Le 2ab est le morceau qu'on oublie. Avec a = 3 et b = 4 : 49, et non 25. Ce dessin est la proposition 4 du livre II des Éléments d'Euclide, vers 300 avant notre ère : « le carré sur la droite entière égale les carrés sur les segments et deux fois le rectangle qu'ils forment »."
-            },
-            {
-              "fr": "Les deux autres identités suivent : (a − b)² = a² − 2ab + b², et (a + b)(a − b) = a² − b². Cette dernière sert à factoriser : x² − 9 = (x − 3)(x + 3). Et elle sauve du calcul mental : 21 × 19 = 20² − 1² = 399."
-            }
-          ],
-          "retenir": {
-            "fr": "(a + b)² = a² + 2ab + b² ; (a − b)² = a² − 2ab + b² ; (a + b)(a − b) = a² − b²."
-          },
-          "source": "Programme de mathématiques de seconde, Éduscol",
-          "figure": "mc_math_identite"
-        },
-        {
-          "id": "second-degre",
-          "titre": {
-            "fr": "Quand l'inconnue est au carré"
-          },
-          "texte": [
-            {
-              "fr": "Une équation ax² + bx + c = 0 se règle avec le discriminant Δ = b² − 4ac. S'il est positif, deux solutions, (−b ± √Δ) ÷ 2a ; nul, une seule ; négatif, aucune parmi les nombres réels. Pour x² − 5x + 6 = 0 : Δ = 25 − 24 = 1, et les solutions sont 2 et 3."
-            },
-            {
-              "fr": "Al-Khwârizmî résolvait déjà ces équations en « complétant le carré ». Les plus anciennes traces sont pourtant bien plus vieilles : vers 2000 avant notre ère, des tablettes d'argile babyloniennes résolvent des problèmes de côtés et d'aires de rectangles par des étapes qui reviennent à notre formule. Les lettres sont venues bien plus tard : à la fin du XVIe siècle, François Viète désigne les inconnues par des voyelles et les quantités connues par des consonnes, avant que Descartes n'impose x, y, z. Un piège à garder en tête : diviser les deux côtés par x fait perdre la solution x = 0 ; on factorise plutôt."
-            }
-          ],
-          "retenir": {
-            "fr": "Δ = b² − 4ac : positif, deux solutions ; nul, une ; négatif, aucune réelle. Ne jamais diviser par x : factoriser."
-          },
-          "source": "Viète, In artem analyticem isagoge, 1591",
-          "figure": "mc_math_discriminant"
-        }
-      ]
-    }
-  },
-  {
-    "id": "math.statistiques",
-    "stat": "logique",
-    "rang": 6,
-    "nom": {
-      "fr": "Statistiques"
-    },
-    "description": {
-      "fr": "Moyenne, médiane, écart type, corrélation et échantillons."
-    },
-    "prerequis": [
-      "math.algebre"
-    ],
-    "fiche": {
-      "essentiel": [
-        {
-          "fr": "La moyenne est sensible aux valeurs extrêmes ; la médiane coupe la population en deux moitiés et y résiste."
-        },
-        {
-          "fr": "Quand Bill Gates entre dans un bar, la moyenne des fortunes explose ; la médiane ne bouge presque pas."
-        },
-        {
-          "fr": "L'écart type mesure la dispersion autour de la moyenne."
-        },
-        {
-          "fr": "Corrélation n'est pas causalité : glaces et noyades montent ensemble l'été, à cause de la chaleur."
-        }
-      ],
-      "piege": {
-        "fr": "Un salaire moyen supérieur au salaire médian ne veut pas dire que la plupart gagnent plus que la moyenne : c'est l'inverse."
+    {
+     "id": "premiers",
+     "titre": {
+      "fr": "Les nombres premiers ne s'arrêtent jamais"
+     },
+     "texte": [
+      {
+       "fr": "Un nombre premier a exactement deux diviseurs : 1 et lui-même. 2, 3, 5, 7, 11, 13… 1 n'est pas premier, puisqu'il n'a qu'un diviseur, et 2 est le seul premier pair. Tout entier se décompose en produit de premiers : ce sont les briques de la multiplication."
       },
-      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Cinq valeurs : médiane 2, moyenne 4 tirée par la valeur 12\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"121.7\" width=\"40.0\" height=\"8.3\" rx=\"3\"/><text class=\"t\" x=\"66.0\" y=\"115.66666666666667\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"66.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">A</text><rect class=\"f2\" x=\"98.0\" y=\"113.3\" width=\"40.0\" height=\"16.7\" rx=\"3\"/><text class=\"t\" x=\"118.0\" y=\"107.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"118.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">B</text><rect class=\"f2\" x=\"150.0\" y=\"113.3\" width=\"40.0\" height=\"16.7\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"107.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">C</text><rect class=\"f2\" x=\"202.0\" y=\"105.0\" width=\"40.0\" height=\"25.0\" rx=\"3\"/><text class=\"t\" x=\"222.0\" y=\"99.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3</text><text class=\"tm\" x=\"222.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">D</text><rect class=\"a\" x=\"254.0\" y=\"30.0\" width=\"40.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"274.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">12</text><text class=\"tm\" x=\"274.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">E</text></svg>",
-      "source": "INSEE, « Moyenne et médiane », définitions"
-    },
-    "symbole": "σ",
-    "embleme": "courbe-cloche",
-    "masterclass": {
-      "chapitres": [
-        {
-          "id": "milieu",
-          "titre": {
-            "fr": "Moyenne ou médiane ?"
-          },
-          "texte": [
-            {
-              "fr": "La moyenne additionne tout et divise ; la médiane range les valeurs et prend celle du milieu. Dans 2, 3, 3, 8, 100, la médiane est 3, la moyenne 23,2 : le 100 tire tout vers le haut. Quand Bill Gates entre dans un bar, la fortune moyenne des clients explose ; la médiane ne bouge presque pas."
-            },
-            {
-              "fr": "C'est pourquoi on parle souvent de salaire médian. Quand le salaire moyen dépasse le médian, cela veut dire que quelques hauts salaires tirent la moyenne, et que la plupart des gens gagnent moins que la moyenne, pas plus. Le mot médiane, en statistique, on le doit au Britannique Francis Galton, à la fin du XIXe siècle."
-            }
-          ],
-          "retenir": {
-            "fr": "Médiane = valeur du milieu, insensible aux extrêmes. Moyenne tirée par les valeurs extrêmes."
-          },
-          "source": "INSEE, « Moyenne et médiane », définitions",
-          "reperes": [
-            {
-              "fr": "Le mot médiane, en statistique, on le doit au Britannique Francis Galton, à la fin du XIXe siècle."
-            }
-          ]
-        },
-        {
-          "id": "dispersion",
-          "titre": {
-            "fr": "Serré ou étalé"
-          },
-          "texte": [
-            {
-              "fr": "Deux classes peuvent avoir la même moyenne, 10 sur 20, l'une où tout le monde a entre 9 et 11, l'autre partagée entre des 2 et des 18. L'écart type mesure cet étalement autour de la moyenne : petit, les valeurs sont serrées ; grand, elles sont dispersées. Le mot écart type est inventé par Karl Pearson, qui l'imprime pour la première fois en 1894 ; Gauss parlait d'« erreur moyenne »."
-            },
-            {
-              "fr": "Pour beaucoup de mesures, tailles ou erreurs de mesure, les valeurs suivent une courbe en cloche, la loi normale. Alors environ 68 % des valeurs tombent à moins d'un écart type de la moyenne, et environ 95 % à moins de deux. Au XIXe siècle, Adolphe Quetelet applique ces outils à la société et décrit un « homme moyen »."
-            }
-          ],
-          "retenir": {
-            "fr": "Écart type = dispersion autour de la moyenne. Loi normale : ≈ 68 % à un écart type, ≈ 95 % à deux."
-          },
-          "source": "INSEE, définitions ; Quetelet, Sur l'homme, 1835",
-          "figure": "mc_math_normale",
-          "reperes": [
-            {
-              "fr": "Le mot écart type est inventé par Karl Pearson, qui l'imprime pour la première fois en 1894 ; Gauss parlait d'« erreur moyenne »."
-            },
-            {
-              "fr": "Au XIXe siècle, Adolphe Quetelet applique ces outils à la société et décrit un « homme moyen »."
-            }
-          ]
-        },
-        {
-          "id": "echantillon",
-          "titre": {
-            "fr": "Le gros sondage qui s'est planté"
-          },
-          "texte": [
-            {
-              "fr": "En 1936, le magazine Literary Digest interroge environ 10 millions d'Américains et reçoit 2,4 millions de réponses. Verdict : Alf Landon battra Franklin Roosevelt. Roosevelt gagne avec environ 61 % des voix et tous les États sauf deux. George Gallup, avec environ 50 000 personnes, avait vu juste."
-            },
-            {
-              "fr": "Le problème n'était pas la taille mais le choix : abonnés du magazine, propriétaires de voitures, abonnés au téléphone, des Américains plus riches que la moyenne. Un grand échantillon biaisé reste biaisé. Le tirage au hasard compte plus que le nombre. Et même avec un bon échantillon, une corrélation ne prouve pas une cause : glaces et noyades montent ensemble l'été, à cause de la chaleur."
-            }
-          ],
-          "retenir": {
-            "fr": "Un échantillon tiré au hasard vaut mieux qu'un énorme échantillon biaisé (Literary Digest, 1936). Corrélation n'est pas causalité."
-          },
-          "source": "Squire, Public Opinion Quarterly, 1988",
-          "figure": "mc_math_sondage",
-          "reperes": [
-            {
-              "fr": "En 1936, le magazine Literary Digest interroge environ 10 millions d'Américains et reçoit 2,4 millions de réponses."
-            }
-          ]
-        }
-      ]
+      {
+       "fr": "Y en a-t-il une infinité ? Euclide le démontre vers 300 avant notre ère, livre IX des Éléments. Prenez une liste finie de premiers, multipliez-les tous et ajoutez 1. Le résultat n'est divisible par aucun d'eux, puisqu'il reste toujours 1. Donc il est premier, ou il a un facteur premier qui manquait à la liste. Aucune liste n'est jamais complète."
+      }
+     ],
+     "retenir": {
+      "fr": "Premier = exactement deux diviseurs (1 n'est pas premier). Il y en a une infinité (Euclide, Éléments IX, 20)."
+     },
+     "source": "Euclide, Éléments, livre IX, proposition 20",
+     "figure": "mc_math_premiers"
     }
-  },
-  {
-    "id": "math.geometrie",
-    "stat": "logique",
-    "rang": 7,
-    "nom": {
-      "fr": "Géométrie et trigonométrie"
-    },
-    "description": {
-      "fr": "Angles, aires, volumes, Pythagore, sinus et cosinus."
-    },
-    "prerequis": [
-      "math.algebre"
-    ],
-    "fiche": {
-      "essentiel": [
-        {
-          "fr": "Pythagore : dans un triangle rectangle, le carré de l'hypoténuse vaut la somme des carrés des deux autres côtés (3, 4, 5)."
-        },
-        {
-          "fr": "Aire du disque π r², périmètre 2 π r ; volume de la sphère 4/3 π r³."
-        },
-        {
-          "fr": "Doubler les longueurs multiplie les aires par 4 et les volumes par 8."
-        },
-        {
-          "fr": "Dans un triangle rectangle : sinus = opposé / hypoténuse, cosinus = adjacent / hypoténuse, tangente = opposé / adjacent."
-        },
-        {
-          "fr": "cos 60° = 1/2 : c'est la moitié d'un triangle équilatéral."
-        }
-      ],
-      "piege": {
-        "fr": "La somme des angles d'un triangle vaut 180°, mais seulement sur un plan : sur une sphère, elle dépasse 180°."
-      },
-      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Agrandir une figure : longueurs, aires et volumes\"><text class=\"t\" x=\"50.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">côté ×</text><text class=\"t\" x=\"130.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">longueur</text><text class=\"t\" x=\"210.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">aire</text><text class=\"t\" x=\"290.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">volume</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"50.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"130.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 2</text><text class=\"tm\" x=\"210.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 4</text><text class=\"tm\" x=\"290.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 8</text><text class=\"t\" x=\"50.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3</text><text class=\"tm\" x=\"130.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 3</text><text class=\"tm\" x=\"210.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 9</text><text class=\"tm\" x=\"290.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 27</text></svg>",
-      "source": "Euclide, Éléments, livre I, proposition 47"
-    },
-    "symbole": "△",
-    "embleme": "compas-euclide",
-    "masterclass": {
-      "chapitres": [
-        {
-          "id": "pythagore",
-          "titre": {
-            "fr": "Le théorème plus vieux que Pythagore"
-          },
-          "texte": [
-            {
-              "fr": "Dans un triangle rectangle, le carré du grand côté, l'hypoténuse, est égal à la somme des carrés des deux autres : a² + b² = c². Avec 3 et 4, on trouve 9 + 16 = 25, donc une hypoténuse de 5. C'est le triangle des maçons, qui permet de tracer un angle droit avec une simple corde."
-            },
-            {
-              "fr": "Le nom est trompeur. La tablette babylonienne Plimpton 322, vers 1800 avant notre ère, aligne déjà quinze lignes de triplets comme (3, 4, 5) : plus de mille ans avant Pythagore. La démonstration écrite la plus ancienne qui nous soit parvenue est celle d'Euclide, livre I des Éléments, proposition 47."
-            }
-          ],
-          "retenir": {
-            "fr": "a² + b² = c² dans un triangle rectangle (3, 4, 5). Connu des Babyloniens vers 1800 av. J.-C. ; démontré par Euclide (I, 47)."
-          },
-          "source": "Euclide, Éléments, livre I, proposition 47",
-          "figure": "mc_math_pythagore",
-          "reperes": [
-            {
-              "fr": "La tablette babylonienne Plimpton 322, vers 1800 avant notre ère, aligne déjà quinze lignes de triplets comme (3, 4, 5) : plus de mille ans avant Pythagore."
-            }
-          ]
-        },
-        {
-          "id": "echelle",
-          "titre": {
-            "fr": "Agrandir change tout"
-          },
-          "texte": [
-            {
-              "fr": "Doublez toutes les longueurs d'une figure : son aire est multipliée par 4 (2 × 2), son volume par 8 (2 × 2 × 2). Un cube de 3 cm de côté fait 27 cm³ ; un cube de 6 cm en fait 216, huit fois plus."
-            },
-            {
-              "fr": "C'est pour cela qu'un éléphant n'est pas une souris agrandie. Si une souris doublait de taille, son poids, qui suit le volume, serait multiplié par 8, mais la section de ses os, qui suit l'aire, seulement par 4. Galilée l'avait déjà remarqué : les grands animaux ont des os proportionnellement plus gros. Il décrit le premier cette loi du carré et du cube en 1638, dans ses Discours concernant deux sciences nouvelles. Pour le cercle, retenez aire π r² et périmètre 2 π r ; pour la sphère, volume 4/3 π r³."
-            }
-          ],
-          "retenir": {
-            "fr": "Longueurs × k → aires × k², volumes × k³. Disque : π r² ; cercle : 2 π r ; sphère : 4/3 π r³."
-          },
-          "source": "Galilée, Discours concernant deux sciences nouvelles, 1638",
-          "schema_fiche": true
-        },
-        {
-          "id": "trigo",
-          "titre": {
-            "fr": "Mesurer la Terre avec une ombre"
-          },
-          "texte": [
-            {
-              "fr": "Dans un triangle rectangle, les rapports de côtés ne dépendent que de l'angle. Sinus = opposé ÷ hypoténuse, cosinus = adjacent ÷ hypoténuse, tangente = opposé ÷ adjacent : SOH CAH TOA. Coupez un triangle équilatéral de côté 2 en deux : l'angle de 60° a un côté adjacent de 1 pour une hypoténuse de 2, donc cos 60° = 1/2."
-            },
-            {
-              "fr": "Avec un angle et une distance, on mesure l'inaccessible. Au IIIe siècle avant notre ère, Ératosthène sait qu'à midi du solstice d'été, le Soleil éclaire le fond des puits à Syène. Le même jour à Alexandrie, une ombre fait un angle d'environ 7,2°, un cinquantième de tour. Les deux villes étant à 5 000 stades, la Terre fait donc environ 50 × 5 000 = 250 000 stades de tour : un ordre de grandeur remarquablement juste."
-            }
-          ],
-          "retenir": {
-            "fr": "SOH CAH TOA. cos 60° = 1/2. Ératosthène : 7,2° = 1/50 de tour, donc la Terre fait 50 fois la distance Syène-Alexandrie."
-          },
-          "source": "Cléomède, Théorie élémentaire, Ier siècle",
-          "figure": "mc_math_eratosthene",
-          "reperes": [
-            {
-              "fr": "Au IIIe siècle avant notre ère, Ératosthène sait qu'à midi du solstice d'été, le Soleil éclaire le fond des puits à Syène."
-            }
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "id": "math.infini",
-    "stat": "logique",
-    "rang": 8,
-    "nom": {
-      "fr": "Suites, limites et infini"
-    },
-    "description": {
-      "fr": "Suites, séries, limites et les paradoxes de l'infini."
-    },
-    "prerequis": [
-      "math.statistiques",
-      "math.geometrie"
-    ],
-    "fiche": {
-      "essentiel": [
-        {
-          "fr": "Une suite géométrique de raison inférieure à 1 en valeur absolue tend vers 0 ; sa somme peut être finie : 1/2 + 1/4 + 1/8 + … = 1."
-        },
-        {
-          "fr": "0,999… = 1 exactement : c'est la même somme infinie écrite autrement."
-        },
-        {
-          "fr": "La série harmonique 1 + 1/2 + 1/3 + … diverge, même si ses termes tendent vers 0."
-        },
-        {
-          "fr": "Cantor : il y a autant d'entiers pairs que d'entiers, mais strictement plus de réels que d'entiers."
-        }
-      ],
-      "piege": {
-        "fr": "Que les termes tendent vers 0 ne suffit pas pour qu'une somme infinie soit finie."
-      },
-      "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Les sommes 1/2 + 1/4 + … s'approchent de 1 sans le dépasser\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"80.0\" width=\"53.0\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"72.5\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,5</text><text class=\"tm\" x=\"72.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">1/2</text><rect class=\"f2\" x=\"111.0\" y=\"55.0\" width=\"53.0\" height=\"75.0\" rx=\"3\"/><text class=\"t\" x=\"137.5\" y=\"49.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,75</text><text class=\"tm\" x=\"137.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/4</text><rect class=\"f2\" x=\"176.0\" y=\"42.5\" width=\"53.0\" height=\"87.5\" rx=\"3\"/><text class=\"t\" x=\"202.5\" y=\"36.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,875</text><text class=\"tm\" x=\"202.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/8</text><rect class=\"a\" x=\"241.0\" y=\"36.2\" width=\"53.0\" height=\"93.8\" rx=\"3\"/><text class=\"t\" x=\"267.5\" y=\"30.25\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,9375</text><text class=\"tm\" x=\"267.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/16</text></svg>",
-      "source": "Cantor, Beiträge zur Begründung der transfiniten Mengenlehre, 1895"
-    },
-    "symbole": "∞",
-    "embleme": "ouroboros",
-    "masterclass": {
-      "chapitres": [
-        {
-          "id": "sommes",
-          "titre": {
-            "fr": "Additionner sans fin et trouver 1"
-          },
-          "texte": [
-            {
-              "fr": "1/2 + 1/4 + 1/8 + 1/16 + … : chaque terme comble la moitié de ce qui manque pour arriver à 1. La somme s'en approche autant qu'on veut sans jamais le dépasser : elle vaut exactement 1. Une infinité de termes peut donc donner un résultat fini. Archimède se servait déjà d'une somme de ce genre pour calculer l'aire d'un morceau de parabole."
-            },
-            {
-              "fr": "C'est la réponse au paradoxe de Zénon : pour rattraper la tortue, Achille doit franchir une infinité d'étapes, mais leurs durées forment une somme finie, et il la rattrape. Le paradoxe date du Ve siècle avant notre ère, chez Zénon d'Élée ; c'est Aristote qui nous le rapporte, dans sa Physique. C'est aussi pourquoi 0,999… avec une infinité de 9 est égal à 1 : c'est la somme 9/10 + 9/100 + 9/1 000 + …, qui vaut exactement 1."
-            }
-          ],
-          "retenir": {
-            "fr": "Une somme infinie peut être finie : 1/2 + 1/4 + … = 1. Et 0,999… = 1 exactement."
-          },
-          "source": "Stewart, Analyse, concepts et contextes"
-        },
-        {
-          "id": "harmonique",
-          "titre": {
-            "fr": "Des termes qui rétrécissent, une somme infinie"
-          },
-          "texte": [
-            {
-              "fr": "Piège : que les termes tendent vers zéro ne suffit pas. La série harmonique, 1 + 1/2 + 1/3 + 1/4 + …, a des termes de plus en plus petits, et pourtant sa somme dépasse n'importe quel nombre."
-            },
-            {
-              "fr": "Nicole Oresme le démontre vers 1350 en regroupant les termes : 1/3 + 1/4 dépasse 1/2, 1/5 + … + 1/8 dépasse 1/2, 1/9 + … + 1/16 aussi, et ainsi de suite. On empile une infinité de moitiés. Elle grandit pourtant très lentement : il faut plus de 12 000 termes pour dépasser 10."
-            }
-          ],
-          "retenir": {
-            "fr": "Termes qui tendent vers 0 ≠ somme finie. La série harmonique diverge (Oresme, vers 1350)."
-          },
-          "source": "Oresme, Quaestiones super geometriam Euclidis, vers 1350",
-          "figure": "mc_math_oresme"
-        },
-        {
-          "id": "cantor",
-          "titre": {
-            "fr": "Des infinis plus grands que d'autres"
-          },
-          "texte": [
-            {
-              "fr": "Il y a autant de nombres pairs que de nombres entiers : on les associe un à un, 1 avec 2, 2 avec 4, n avec 2n, et personne ne reste seul. C'est l'esprit de l'hôtel de Hilbert : complet avec une infinité de chambres, il loge encore un client en décalant chacun d'une chambre."
-            },
-            {
-              "fr": "Mais tous les infinis ne se valent pas. Georg Cantor montre dès 1874 qu'on ne peut pas numéroter les nombres réels, et en 1891 il en donne la preuve célèbre, l'argument diagonal : supposez une liste complète, fabriquez un nombre qui diffère du premier à la 1re décimale, du deuxième à la 2e, et ainsi de suite. Il n'est nulle part dans la liste. Il y a strictement plus de réels que d'entiers."
-            }
-          ],
-          "retenir": {
-            "fr": "Autant de pairs que d'entiers (correspondance un à un). Plus de réels que d'entiers (Cantor, 1874 ; argument diagonal, 1891)."
-          },
-          "source": "Cantor, Jahresbericht der Deutschen Mathematiker-Vereinigung, 1891",
-          "figure": "mc_math_cantor",
-          "reperes": [
-            {
-              "fr": "Georg Cantor montre dès 1874 qu'on ne peut pas numéroter les nombres réels, et en 1891 il en donne la preuve célèbre, l'argument diagonal : supposez une liste complète, fabriquez un nombre qui diffère du premier à la 1re décimale, du deuxième à la 2e, et ainsi de suite."
-            }
-          ]
-        }
-      ]
-    }
+   ]
   }
+ },
+ {
+  "id": "math.geometrie",
+  "stat": "logique",
+  "rang": 2,
+  "nom": {
+   "fr": "Géométrie et trigonométrie"
+  },
+  "description": {
+   "fr": "Angles, aires, volumes, Pythagore, sinus et cosinus."
+  },
+  "prerequis": [
+   "math.arithmetique"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Pythagore : dans un triangle rectangle, le carré de l'hypoténuse vaut la somme des carrés des deux autres côtés (3, 4, 5)."
+    },
+    {
+     "fr": "Aire du disque π r², périmètre 2 π r ; volume de la sphère 4/3 π r³."
+    },
+    {
+     "fr": "Doubler les longueurs multiplie les aires par 4 et les volumes par 8."
+    },
+    {
+     "fr": "Dans un triangle rectangle : sinus = opposé / hypoténuse, cosinus = adjacent / hypoténuse, tangente = opposé / adjacent."
+    },
+    {
+     "fr": "cos 60° = 1/2 : c'est la moitié d'un triangle équilatéral."
+    }
+   ],
+   "piege": {
+    "fr": "La somme des angles d'un triangle vaut 180°, mais seulement sur un plan : sur une sphère, elle dépasse 180°."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Agrandir une figure : longueurs, aires et volumes\"><text class=\"t\" x=\"50.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">côté ×</text><text class=\"t\" x=\"130.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">longueur</text><text class=\"t\" x=\"210.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">aire</text><text class=\"t\" x=\"290.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">volume</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"50.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"130.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 2</text><text class=\"tm\" x=\"210.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 4</text><text class=\"tm\" x=\"290.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">× 8</text><text class=\"t\" x=\"50.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3</text><text class=\"tm\" x=\"130.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 3</text><text class=\"tm\" x=\"210.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 9</text><text class=\"tm\" x=\"290.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">× 27</text></svg>",
+   "source": "Euclide, Éléments, livre I, proposition 47"
+  },
+  "symbole": "△",
+  "embleme": "compas-euclide",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "pythagore",
+     "titre": {
+      "fr": "Le théorème plus vieux que Pythagore"
+     },
+     "texte": [
+      {
+       "fr": "Dans un triangle rectangle, le carré du grand côté, l'hypoténuse, est égal à la somme des carrés des deux autres : a² + b² = c². Avec 3 et 4, on trouve 9 + 16 = 25, donc une hypoténuse de 5. C'est le triangle des maçons, qui permet de tracer un angle droit avec une simple corde."
+      },
+      {
+       "fr": "Le nom est trompeur. La tablette babylonienne Plimpton 322, vers 1800 avant notre ère, aligne déjà quinze lignes de triplets comme (3, 4, 5) : plus de mille ans avant Pythagore. La démonstration écrite la plus ancienne qui nous soit parvenue est celle d'Euclide, livre I des Éléments, proposition 47."
+      }
+     ],
+     "retenir": {
+      "fr": "a² + b² = c² dans un triangle rectangle (3, 4, 5). Connu des Babyloniens vers 1800 av. J.-C. ; démontré par Euclide (I, 47)."
+     },
+     "source": "Euclide, Éléments, livre I, proposition 47",
+     "figure": "mc_math_pythagore",
+     "reperes": [
+      {
+       "fr": "La tablette babylonienne Plimpton 322, vers 1800 avant notre ère, aligne déjà quinze lignes de triplets comme (3, 4, 5) : plus de mille ans avant Pythagore."
+      }
+     ]
+    },
+    {
+     "id": "echelle",
+     "titre": {
+      "fr": "Agrandir change tout"
+     },
+     "texte": [
+      {
+       "fr": "Doublez toutes les longueurs d'une figure : son aire est multipliée par 4 (2 × 2), son volume par 8 (2 × 2 × 2). Un cube de 3 cm de côté fait 27 cm³ ; un cube de 6 cm en fait 216, huit fois plus."
+      },
+      {
+       "fr": "C'est pour cela qu'un éléphant n'est pas une souris agrandie. Si une souris doublait de taille, son poids, qui suit le volume, serait multiplié par 8, mais la section de ses os, qui suit l'aire, seulement par 4. Galilée l'avait déjà remarqué : les grands animaux ont des os proportionnellement plus gros. Il décrit le premier cette loi du carré et du cube en 1638, dans ses Discours concernant deux sciences nouvelles. Pour le cercle, retenez aire π r² et périmètre 2 π r ; pour la sphère, volume 4/3 π r³."
+      }
+     ],
+     "retenir": {
+      "fr": "Longueurs × k → aires × k², volumes × k³. Disque : π r² ; cercle : 2 π r ; sphère : 4/3 π r³."
+     },
+     "source": "Galilée, Discours concernant deux sciences nouvelles, 1638",
+     "schema_fiche": true
+    },
+    {
+     "id": "trigo",
+     "titre": {
+      "fr": "Mesurer la Terre avec une ombre"
+     },
+     "texte": [
+      {
+       "fr": "Dans un triangle rectangle, les rapports de côtés ne dépendent que de l'angle. Sinus = opposé ÷ hypoténuse, cosinus = adjacent ÷ hypoténuse, tangente = opposé ÷ adjacent : SOH CAH TOA. Coupez un triangle équilatéral de côté 2 en deux : l'angle de 60° a un côté adjacent de 1 pour une hypoténuse de 2, donc cos 60° = 1/2."
+      },
+      {
+       "fr": "Avec un angle et une distance, on mesure l'inaccessible. Au IIIe siècle avant notre ère, Ératosthène sait qu'à midi du solstice d'été, le Soleil éclaire le fond des puits à Syène. Le même jour à Alexandrie, une ombre fait un angle d'environ 7,2°, un cinquantième de tour. Les deux villes étant à 5 000 stades, la Terre fait donc environ 50 × 5 000 = 250 000 stades de tour : un ordre de grandeur remarquablement juste."
+      }
+     ],
+     "retenir": {
+      "fr": "SOH CAH TOA. cos 60° = 1/2. Ératosthène : 7,2° = 1/50 de tour, donc la Terre fait 50 fois la distance Syène-Alexandrie."
+     },
+     "source": "Cléomède, Théorie élémentaire, Ier siècle",
+     "figure": "mc_math_eratosthene",
+     "reperes": [
+      {
+       "fr": "Au IIIe siècle avant notre ère, Ératosthène sait qu'à midi du solstice d'été, le Soleil éclaire le fond des puits à Syène."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "math.proportions",
+  "stat": "logique",
+  "rang": 3,
+  "nom": {
+   "fr": "Proportions et pourcentages"
+  },
+  "description": {
+   "fr": "Règle de trois, échelles, hausses et baisses en pourcentage."
+  },
+  "prerequis": [
+   "math.arithmetique"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "La règle de trois marche quand deux grandeurs sont proportionnelles : si 3 kg coûtent 12 €, 5 kg coûtent 5 × 12 / 3 = 20 €."
+    },
+    {
+     "fr": "Une hausse de t % multiplie par (1 + t/100), une baisse par (1 − t/100). On enchaîne les évolutions en multipliant les coefficients."
+    },
+    {
+     "fr": "+50 % puis −50 % ne ramène pas au départ : 1,5 × 0,5 = 0,75, soit une baisse de 25 %."
+    },
+    {
+     "fr": "Point de pourcentage et pourcentage diffèrent : passer de 10 % à 12 %, c'est +2 points, mais +20 %."
+    }
+   ],
+   "piege": {
+    "fr": "Une baisse de 20 % ne se rattrape pas par une hausse de 20 % : il faut +25 %."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Hausse de 50 % puis baisse de 50 % : on finit à 75\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"63.3\" width=\"74.7\" height=\"66.7\" rx=\"3\"/><text class=\"t\" x=\"83.33333333333334\" y=\"57.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">100</text><text class=\"tm\" x=\"83.33333333333334\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">départ</text><rect class=\"f2\" x=\"132.7\" y=\"30.0\" width=\"74.7\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">150</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+50 %</text><rect class=\"a\" x=\"219.3\" y=\"80.0\" width=\"74.7\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"256.6666666666667\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">75</text><text class=\"tm\" x=\"256.6666666666667\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">puis −50 %</text></svg>",
+   "source": "INSEE, « Évolutions et pourcentages », fiche méthode"
+  },
+  "symbole": "%",
+  "embleme": "camembert",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "regle",
+     "titre": {
+      "fr": "La règle de trois"
+     },
+     "texte": [
+      {
+       "fr": "Deux grandeurs sont proportionnelles quand l'une s'obtient en multipliant l'autre par un même nombre : le prix et le poids des pommes, la farine et le nombre de convives. Doubler l'une double l'autre."
+      },
+      {
+       "fr": "La règle de trois passe par l'unité. Si 3 kg coûtent 12 €, 1 kg coûte 4 €, et 5 kg coûtent 20 €. Une recette pour 4 qui demande 300 g de farine en demande 75 g par personne, donc 450 g pour 6. Attention : elle ne marche que si la proportionnalité est vraie. Neuf femmes ne font pas un bébé en un mois. La règle est très ancienne : les mathématiciens chinois la connaissaient avant le IIe siècle, et elle figure dans Les Neuf Chapitres sur l'art du calcul ; l'Europe ne l'adoptera que bien plus tard."
+      }
+     ],
+     "retenir": {
+      "fr": "Proportionnel = multiplier par un même nombre. Règle de trois : passer par l'unité."
+     },
+     "source": "Programme de mathématiques du cycle 4, Éduscol",
+     "figure": "mc_math_regle_trois",
+     "reperes": [
+      {
+       "fr": "La règle est très ancienne : les mathématiciens chinois la connaissaient avant le IIe siècle, et elle figure dans Les Neuf Chapitres sur l'art du calcul ; l'Europe ne l'adoptera que bien plus tard."
+      }
+     ]
+    },
+    {
+     "id": "coefficients",
+     "titre": {
+      "fr": "Les pourcentages se multiplient"
+     },
+     "texte": [
+      {
+       "fr": "Une hausse de t % multiplie par (1 + t/100), une baisse par (1 − t/100). +25 %, c'est × 1,25 ; −20 %, c'est × 0,8. Pour enchaîner des évolutions, on multiplie les coefficients, on n'additionne pas les pourcentages. Les Romains comptaient déjà en centièmes : l'empereur Auguste lève une taxe d'un centième sur les ventes aux enchères, la centesima rerum venalium. Le signe % vient de l'italien per cento, peu à peu abrégé jusqu'à deux petits ronds séparés d'un trait."
+      },
+      {
+       "fr": "D'où les surprises. +50 % puis −50 % : 1,5 × 0,5 = 0,75, on a perdu 25 %. Après une baisse de 20 %, il faut +25 % pour revenir, car 0,8 × 1,25 = 1. Et pour retrouver un prix hors taxe à partir de 120 € TTC avec 20 % de TVA, on divise par 1,2 : 100 €, pas 96 €."
+      }
+     ],
+     "retenir": {
+      "fr": "Hausse de t % = × (1 + t/100). On enchaîne en multipliant. −20 % se rattrape par +25 %."
+     },
+     "source": "INSEE, « Évolutions et pourcentages », fiche méthode",
+     "schema_fiche": true
+    },
+    {
+     "id": "points",
+     "titre": {
+      "fr": "Points ou pour cent ?"
+     },
+     "texte": [
+      {
+       "fr": "Quand un taux passe de 10 % à 12 %, il a gagné 2 points de pourcentage. Mais relativement à son point de départ, il a augmenté de 20 %, puisque 2 est le cinquième de 10. Les deux phrases sont justes ; elles ne disent pas la même chose."
+      },
+      {
+       "fr": "C'est un terrain de jeu pour les titres. Un taux d'intérêt qui passe de 2 % à 3 % : « +1 point » sonne calme, « +50 % » sonne alarmant. Un risque qui passe de 1 sur 10 000 à 2 sur 10 000 « double », mais reste minuscule. Demandez toujours : un pourcentage de quoi ?"
+      }
+     ],
+     "retenir": {
+      "fr": "Point de pourcentage = différence entre deux taux. Pourcentage = variation relative. 10 % → 12 % : +2 points, +20 %."
+     },
+     "source": "INSEE, « Évolutions et pourcentages », fiche méthode",
+     "figure": "mc_math_points"
+    }
+   ]
+  }
+ },
+ {
+  "id": "math.algebre",
+  "stat": "logique",
+  "rang": 4,
+  "nom": {
+   "fr": "Algèbre et équations"
+  },
+  "description": {
+   "fr": "Inconnues, équations, identités remarquables et systèmes."
+  },
+  "prerequis": [
+   "math.geometrie",
+   "math.proportions"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Résoudre une équation : faire la même opération des deux côtés jusqu'à isoler l'inconnue."
+    },
+    {
+     "fr": "Identités remarquables : (a + b)² = a² + 2ab + b², (a − b)² = a² − 2ab + b², (a + b)(a − b) = a² − b²."
+    },
+    {
+     "fr": "(a + b)² n'est pas a² + b² : on oublie le double produit 2ab."
+    },
+    {
+     "fr": "Un système de deux équations à deux inconnues se résout par substitution ou par combinaison."
+    },
+    {
+     "fr": "Second degré ax² + bx + c = 0 : discriminant Δ = b² − 4ac ; si Δ > 0, deux solutions (−b ± √Δ) ÷ 2a."
+    }
+   ],
+   "piege": {
+    "fr": "Diviser les deux côtés par x fait perdre la solution x = 0 : on factorise plutôt."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Résoudre 3x + 5 = 20 étape par étape\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x + 5 = 20</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x = 15</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">x = 5</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">on retire 5, puis on divise par 3</text></svg>",
+   "source": "Programme de mathématiques de seconde, Éduscol"
+  },
+  "symbole": "x²",
+  "embleme": "tablette",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "balance",
+     "titre": {
+      "fr": "L'équation comme une balance"
+     },
+     "texte": [
+      {
+       "fr": "Une équation est une balance en équilibre. On peut tout faire, pourvu qu'on le fasse des deux côtés. 3x + 5 = 20 : on retire 5 de chaque côté, 3x = 15 ; on divise chaque côté par 3, x = 5. On vérifie : 3 × 5 + 5 = 20."
+      },
+      {
+       "fr": "Le mot algèbre vient de là. Vers 820, à Bagdad, al-Khwârizmî écrit un traité dont le titre nomme deux gestes : al-jabr, la « restauration », qui fait passer un terme retranché de l'autre côté, et al-muqâbala, l'« équilibrage », qui retire la même quantité des deux côtés. Traduit en latin en 1145, al-jabr est devenu algèbre."
+      }
+     ],
+     "retenir": {
+      "fr": "Même opération des deux côtés jusqu'à isoler l'inconnue. Algèbre vient d'al-jabr, la restauration (al-Khwârizmî, vers 820)."
+     },
+     "source": "al-Khwârizmî, Abrégé du calcul par la restauration et la comparaison, vers 820",
+     "reperes": [
+      {
+       "fr": "Traduit en latin en 1145, al-jabr est devenu algèbre."
+      }
+     ]
+    },
+    {
+     "id": "identites",
+     "titre": {
+      "fr": "Le carré qui oublie un morceau"
+     },
+     "texte": [
+      {
+       "fr": "(a + b)² n'est pas a² + b². Dessinez un carré de côté a + b : il contient un carré a², un carré b², et deux rectangles a × b. D'où (a + b)² = a² + 2ab + b². Le 2ab est le morceau qu'on oublie. Avec a = 3 et b = 4 : 49, et non 25. Ce dessin est la proposition 4 du livre II des Éléments d'Euclide, vers 300 avant notre ère : « le carré sur la droite entière égale les carrés sur les segments et deux fois le rectangle qu'ils forment »."
+      },
+      {
+       "fr": "Les deux autres identités suivent : (a − b)² = a² − 2ab + b², et (a + b)(a − b) = a² − b². Cette dernière sert à factoriser : x² − 9 = (x − 3)(x + 3). Et elle sauve du calcul mental : 21 × 19 = 20² − 1² = 399."
+      }
+     ],
+     "retenir": {
+      "fr": "(a + b)² = a² + 2ab + b² ; (a − b)² = a² − 2ab + b² ; (a + b)(a − b) = a² − b²."
+     },
+     "source": "Programme de mathématiques de seconde, Éduscol",
+     "figure": "mc_math_identite"
+    },
+    {
+     "id": "second-degre",
+     "titre": {
+      "fr": "Quand l'inconnue est au carré"
+     },
+     "texte": [
+      {
+       "fr": "Une équation ax² + bx + c = 0 se règle avec le discriminant Δ = b² − 4ac. S'il est positif, deux solutions, (−b ± √Δ) ÷ 2a ; nul, une seule ; négatif, aucune parmi les nombres réels. Pour x² − 5x + 6 = 0 : Δ = 25 − 24 = 1, et les solutions sont 2 et 3."
+      },
+      {
+       "fr": "Al-Khwârizmî résolvait déjà ces équations en « complétant le carré ». Les plus anciennes traces sont pourtant bien plus vieilles : vers 2000 avant notre ère, des tablettes d'argile babyloniennes résolvent des problèmes de côtés et d'aires de rectangles par des étapes qui reviennent à notre formule. Les lettres sont venues bien plus tard : à la fin du XVIe siècle, François Viète désigne les inconnues par des voyelles et les quantités connues par des consonnes, avant que Descartes n'impose x, y, z. Un piège à garder en tête : diviser les deux côtés par x fait perdre la solution x = 0 ; on factorise plutôt."
+      }
+     ],
+     "retenir": {
+      "fr": "Δ = b² − 4ac : positif, deux solutions ; nul, une ; négatif, aucune réelle. Ne jamais diviser par x : factoriser."
+     },
+     "source": "Viète, In artem analyticem isagoge, 1591",
+     "figure": "mc_math_discriminant"
+    }
+   ]
+  }
+ },
+ {
+  "id": "math.logique",
+  "stat": "logique",
+  "rang": 5,
+  "nom": {
+   "fr": "Logique formelle"
+  },
+  "description": {
+   "fr": "Implication, négation, syllogismes et raisonnement par l'absurde."
+  },
+  "prerequis": [
+   "math.algebre"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "« Si A alors B » est faux dans un seul cas : A vrai et B faux."
+    },
+    {
+     "fr": "La contraposée « si non B alors non A » est équivalente. La réciproque « si B alors A » ne l'est pas."
+    },
+    {
+     "fr": "Nier « tous les cygnes sont blancs », c'est dire « au moins un cygne n'est pas blanc », pas « aucun cygne n'est blanc »."
+    },
+    {
+     "fr": "Raisonnement par l'absurde : on suppose le contraire de ce qu'on veut prouver et on aboutit à une contradiction."
+    }
+   ],
+   "piege": {
+    "fr": "Affirmer le conséquent : « s'il pleut, le sol est mouillé ; le sol est mouillé, donc il pleut » est invalide."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 148\" role=\"img\" aria-label=\"Table de vérité de l'implication\"><text class=\"t\" x=\"63.333333333333336\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A</text><text class=\"t\" x=\"170.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">B</text><text class=\"t\" x=\"276.6666666666667\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">si A alors B</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"63.333333333333336\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">vrai</text><rect class=\"a\" x=\"10\" y=\"62\" width=\"320\" height=\"24\" rx=\"4\" opacity=\"0.25\"/><text class=\"t\" x=\"63.333333333333336\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">faux</text><text class=\"t\" x=\"63.333333333333336\" y=\"105\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">vrai</text><text class=\"t\" x=\"63.333333333333336\" y=\"131\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">vrai</text></svg>",
+   "source": "Copi, Introduction to Logic, 14e éd."
+  },
+  "symbole": "∧",
+  "embleme": "ardoise-boole",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "implication",
+     "titre": {
+      "fr": "Si… alors…"
+     },
+     "texte": [
+      {
+       "fr": "« S'il pleut, le sol est mouillé. » Cette phrase n'est fausse que dans un seul cas : il pleut et le sol est sec. S'il ne pleut pas, elle ne dit rien : le sol peut être sec ou mouillé (par l'arrosage), l'implication reste vraie. Cette définition remonte à Philon, un logicien grec de l'école dite dialectique, actif entre la fin du IVe et le milieu du IIIe siècle avant notre ère : pour lui, un « si… alors » n'est faux que si la première partie est vraie et la seconde fausse."
+      },
+      {
+       "fr": "Sa contraposée, « si le sol est sec, il n'a pas plu », dit exactement la même chose. Sa réciproque, « si le sol est mouillé, il a plu », non : c'est l'erreur dite affirmation du conséquent. Une bonne part des raisonnements bancals mélangent une implication et sa réciproque."
+      }
+     ],
+     "retenir": {
+      "fr": "« Si A alors B » n'est faux que si A est vrai et B faux. Contraposée (non B → non A) équivalente ; réciproque (B → A) non."
+     },
+     "source": "Copi, Introduction to Logic, 14e éd."
+    },
+    {
+     "id": "negation",
+     "titre": {
+      "fr": "Nier correctement"
+     },
+     "texte": [
+      {
+       "fr": "Pour contredire « tous les cygnes sont blancs », pas besoin de prouver qu'aucun cygne n'est blanc : un seul cygne noir suffit. La négation de « tous » est « au moins un ne… pas ». Et la négation de « il existe » est « aucun »."
+      },
+      {
+       "fr": "Pour les « et » et les « ou », il y a les lois de De Morgan, du nom du logicien Augustus De Morgan : « non (A et B) » équivaut à « non A ou non B », et « non (A ou B) » à « non A et non B ». Ne pas être à la fois riche et célèbre, c'est ne pas être riche, ou ne pas être célèbre, ou aucun des deux. De Morgan les énonce explicitement en 1847 dans Formal Logic, mais elles étaient connues bien avant : Guillaume d'Ockham les écrit en toutes lettres au XIVe siècle."
+      }
+     ],
+     "retenir": {
+      "fr": "Non (tous) = au moins un ne… pas. Non (A et B) = non A ou non B ; non (A ou B) = non A et non B (De Morgan)."
+     },
+     "source": "De Morgan, Formal Logic, 1847",
+     "figure": "mc_math_negation",
+     "reperes": [
+      {
+       "fr": "De Morgan les énonce explicitement en 1847 dans Formal Logic, mais elles étaient connues bien avant : Guillaume d'Ockham les écrit en toutes lettres au XIVe siècle."
+      }
+     ]
+    },
+    {
+     "id": "absurde",
+     "titre": {
+      "fr": "Prouver par l'absurde"
+     },
+     "texte": [
+      {
+       "fr": "Pour prouver qu'une chose est vraie, on peut supposer qu'elle est fausse et montrer que cela mène à une contradiction. Si l'hypothèse contraire est intenable, c'est qu'elle est fausse."
+      },
+      {
+       "fr": "L'exemple le plus célèbre : √2 n'est pas une fraction. Supposons √2 = a/b, fraction simplifiée au maximum. Alors a² = 2b², donc a est pair ; en l'écrivant 2k, on trouve b² = 2k², donc b est pair aussi. Mais une fraction simplifiée ne peut pas avoir deux termes pairs : contradiction. Aristote fait déjà allusion à ce raisonnement. C'est vers 350 avant notre ère, dans les Premiers Analytiques, où il décrit la démonstration « par l'impossible ». La légende selon laquelle les pythagoriciens auraient noyé Hippase pour l'avoir révélé, en revanche, ne repose sur à peu près rien."
+      }
+     ],
+     "retenir": {
+      "fr": "Par l'absurde : supposer le contraire, aboutir à une contradiction. Exemple : √2 n'est pas une fraction."
+     },
+     "source": "Aristote, Premiers Analytiques ; Euclide, Éléments, livre X",
+     "figure": "mc_math_absurde"
+    }
+   ]
+  }
+ },
+ {
+  "id": "math.probabilites",
+  "stat": "logique",
+  "rang": 6,
+  "nom": {
+   "fr": "Probabilités"
+  },
+  "description": {
+   "fr": "Le hasard, l'indépendance, les paradoxes qui trompent l'intuition."
+  },
+  "prerequis": [
+   "math.logique"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Probabilité = cas favorables ÷ cas possibles, à condition que les cas soient équiprobables."
+    },
+    {
+     "fr": "Deux événements indépendants : on multiplie leurs probabilités. Deux pile de suite : 1/2 × 1/2 = 1/4."
+    },
+    {
+     "fr": "Le hasard n'a pas de mémoire : après dix pile, le onzième lancer a toujours une chance sur deux (erreur du joueur)."
+    },
+    {
+     "fr": "Monty Hall : changer de porte fait gagner 2 fois sur 3, car l'animateur sait où est la voiture et n'ouvre jamais celle-là."
+    },
+    {
+     "fr": "Espérance = somme de chaque gain × sa probabilité."
+    }
+   ],
+   "piege": {
+    "fr": "Avec deux dés, 7 est la somme la plus probable (6 issues sur 36), pas 12 (1 sur 36)."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 232\" role=\"img\" aria-label=\"Tableau des 36 résultats possibles avec deux dés\"><text class=\"tm\" x=\"52\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">1</text><text class=\"tm\" x=\"24\" y=\"47\" font-size=\"13\" text-anchor=\"middle\">1</text><rect class=\"f2\" x=\"38\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"38\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"82\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">2</text><text class=\"tm\" x=\"24\" y=\"77\" font-size=\"13\" text-anchor=\"middle\">2</text><rect class=\"f2\" x=\"68\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"68\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"112\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">3</text><text class=\"tm\" x=\"24\" y=\"107\" font-size=\"13\" text-anchor=\"middle\">3</text><rect class=\"f2\" x=\"98\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"98\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"142\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">4</text><text class=\"tm\" x=\"24\" y=\"137\" font-size=\"13\" text-anchor=\"middle\">4</text><rect class=\"f2\" x=\"128\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"128\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"172\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">5</text><text class=\"tm\" x=\"24\" y=\"167\" font-size=\"13\" text-anchor=\"middle\">5</text><rect class=\"f2\" x=\"158\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"158\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"202\" y=\"22\" font-size=\"13\" text-anchor=\"middle\">6</text><text class=\"tm\" x=\"24\" y=\"197\" font-size=\"13\" text-anchor=\"middle\">6</text><rect class=\"f2\" x=\"188\" y=\"30\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"60\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"90\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"120\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"150\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"188\" y=\"180\" width=\"28\" height=\"28\" rx=\"3\"/><text class=\"tm\" x=\"130\" y=\"222\" font-size=\"12\" text-anchor=\"middle\">36 issues équiprobables (dé 1 × dé 2)</text></svg>",
+   "source": "Feller, An Introduction to Probability Theory and Its Applications, 1968"
+  },
+  "symbole": "⚄",
+  "embleme": "des-pascal",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "compter",
+     "titre": {
+      "fr": "Compter les cas"
+     },
+     "texte": [
+      {
+       "fr": "La probabilité, au départ, c'est compter : cas favorables divisés par cas possibles, à condition que tous les cas aient la même chance. Un 6 avec un dé : 1 sur 6. Avec deux dés, il y a 36 couples possibles ; six donnent 7, un seul donne 12. Le 7 sort donc six fois plus souvent que le 12."
+      },
+      {
+       "fr": "Cette science est née autour d'une table de jeu. Vers 1654, le chevalier de Méré pose à Blaise Pascal le « problème des partis » : comment partager l'enjeu d'une partie interrompue ? Pascal en discute par lettres avec Pierre de Fermat, et leurs réponses posent les bases du calcul des probabilités. En 1657, Christiaan Huygens en tire le premier traité."
+      }
+     ],
+     "retenir": {
+      "fr": "Probabilité = cas favorables ÷ cas possibles (cas équiprobables). Pascal et Fermat, 1654 ; Huygens, 1657."
+     },
+     "source": "Huygens, De ratiociniis in ludo aleae, 1657",
+     "reperes": [
+      {
+       "fr": "Vers 1654, le chevalier de Méré pose à Blaise Pascal le « problème des partis » : comment partager l'enjeu d'une partie interrompue ?"
+      }
+     ]
+    },
+    {
+     "id": "memoire",
+     "titre": {
+      "fr": "Le hasard n'a pas de mémoire"
+     },
+     "texte": [
+      {
+       "fr": "Deux événements indépendants ne s'influencent pas : on multiplie leurs probabilités. Deux « pile » de suite : 1/2 × 1/2 = 1/4. Et après dix « pile », le onzième lancer a toujours une chance sur deux : la pièce ne sait pas ce qu'elle a fait avant."
+      },
+      {
+       "fr": "Croire le contraire, c'est l'erreur du joueur, et elle coûte cher. Le 18 août 1913, au casino de Monte-Carlo, la bille tombe 26 fois de suite sur le noir. Les joueurs, persuadés que le rouge « devait » sortir, misent de plus en plus gros contre le noir et perdent des millions de francs."
+      }
+     ],
+     "retenir": {
+      "fr": "Indépendants : on multiplie. Une série passée ne change pas le prochain tirage (erreur du joueur, Monte-Carlo 1913)."
+     },
+     "source": "Feller, An Introduction to Probability Theory and Its Applications, 1968",
+     "figure": "mc_math_arbre",
+     "reperes": [
+      {
+       "fr": "Le 18 août 1913, au casino de Monte-Carlo, la bille tombe 26 fois de suite sur le noir."
+      }
+     ]
+    },
+    {
+     "id": "intuition",
+     "titre": {
+      "fr": "Quand l'intuition se trompe"
+     },
+     "texte": [
+      {
+       "fr": "Le jeu de Monty Hall : trois portes, une voiture derrière l'une. Vous en choisissez une, l'animateur, qui sait tout, ouvre une autre porte perdante et vous propose de changer. Changer fait gagner 2 fois sur 3 : votre premier choix n'avait qu'une chance sur trois, et l'animateur ne vous a rien appris sur lui. En septembre 1990, Marilyn vos Savant le publie dans le magazine Parade. Elle reçoit environ 10 000 lettres, dont près de 1 000 de docteurs, la plupart pour dire qu'elle a tort. Même Paul Erdős n'est convaincu que par une simulation."
+      },
+      {
+       "fr": "Autre piège : les tests sur des maladies rares. Une maladie touche 1 personne sur 1 000, le test est fiable à 99 %. Sur 100 000 personnes, 100 sont malades et 99 sont détectées, mais 1 % des 99 900 bien portants sont aussi positifs, environ 1 000. Un positif n'a donc qu'environ une chance sur onze d'être malade. Quand le cas de départ est rare, les fausses alarmes l'emportent."
+      }
+     ],
+     "retenir": {
+      "fr": "Monty Hall : changer de porte gagne 2 fois sur 3. Test positif pour une maladie rare : souvent une fausse alarme. Toujours partir de la fréquence de base."
+     },
+     "source": "vos Savant, Parade, 1990 ; Gigerenzer, Calculated Risks, 2002",
+     "figure": "mc_math_monty"
+    }
+   ]
+  }
+ },
+ {
+  "id": "math.statistiques",
+  "stat": "logique",
+  "rang": 7,
+  "nom": {
+   "fr": "Statistiques"
+  },
+  "description": {
+   "fr": "Moyenne, médiane, écart type, corrélation et échantillons."
+  },
+  "prerequis": [
+   "math.logique"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "La moyenne est sensible aux valeurs extrêmes ; la médiane coupe la population en deux moitiés et y résiste."
+    },
+    {
+     "fr": "Quand Bill Gates entre dans un bar, la moyenne des fortunes explose ; la médiane ne bouge presque pas."
+    },
+    {
+     "fr": "L'écart type mesure la dispersion autour de la moyenne."
+    },
+    {
+     "fr": "Corrélation n'est pas causalité : glaces et noyades montent ensemble l'été, à cause de la chaleur."
+    }
+   ],
+   "piege": {
+    "fr": "Un salaire moyen supérieur au salaire médian ne veut pas dire que la plupart gagnent plus que la moyenne : c'est l'inverse."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Cinq valeurs : médiane 2, moyenne 4 tirée par la valeur 12\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"121.7\" width=\"40.0\" height=\"8.3\" rx=\"3\"/><text class=\"t\" x=\"66.0\" y=\"115.66666666666667\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"66.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">A</text><rect class=\"f2\" x=\"98.0\" y=\"113.3\" width=\"40.0\" height=\"16.7\" rx=\"3\"/><text class=\"t\" x=\"118.0\" y=\"107.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"118.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">B</text><rect class=\"f2\" x=\"150.0\" y=\"113.3\" width=\"40.0\" height=\"16.7\" rx=\"3\"/><text class=\"t\" x=\"170.0\" y=\"107.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"tm\" x=\"170.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">C</text><rect class=\"f2\" x=\"202.0\" y=\"105.0\" width=\"40.0\" height=\"25.0\" rx=\"3\"/><text class=\"t\" x=\"222.0\" y=\"99.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3</text><text class=\"tm\" x=\"222.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">D</text><rect class=\"a\" x=\"254.0\" y=\"30.0\" width=\"40.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"274.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">12</text><text class=\"tm\" x=\"274.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">E</text></svg>",
+   "source": "INSEE, « Moyenne et médiane », définitions"
+  },
+  "symbole": "σ",
+  "embleme": "courbe-cloche",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "milieu",
+     "titre": {
+      "fr": "Moyenne ou médiane ?"
+     },
+     "texte": [
+      {
+       "fr": "La moyenne additionne tout et divise ; la médiane range les valeurs et prend celle du milieu. Dans 2, 3, 3, 8, 100, la médiane est 3, la moyenne 23,2 : le 100 tire tout vers le haut. Quand Bill Gates entre dans un bar, la fortune moyenne des clients explose ; la médiane ne bouge presque pas."
+      },
+      {
+       "fr": "C'est pourquoi on parle souvent de salaire médian. Quand le salaire moyen dépasse le médian, cela veut dire que quelques hauts salaires tirent la moyenne, et que la plupart des gens gagnent moins que la moyenne, pas plus. Le mot médiane, en statistique, on le doit au Britannique Francis Galton, à la fin du XIXe siècle."
+      }
+     ],
+     "retenir": {
+      "fr": "Médiane = valeur du milieu, insensible aux extrêmes. Moyenne tirée par les valeurs extrêmes."
+     },
+     "source": "INSEE, « Moyenne et médiane », définitions",
+     "reperes": [
+      {
+       "fr": "Le mot médiane, en statistique, on le doit au Britannique Francis Galton, à la fin du XIXe siècle."
+      }
+     ]
+    },
+    {
+     "id": "dispersion",
+     "titre": {
+      "fr": "Serré ou étalé"
+     },
+     "texte": [
+      {
+       "fr": "Deux classes peuvent avoir la même moyenne, 10 sur 20, l'une où tout le monde a entre 9 et 11, l'autre partagée entre des 2 et des 18. L'écart type mesure cet étalement autour de la moyenne : petit, les valeurs sont serrées ; grand, elles sont dispersées. Le mot écart type est inventé par Karl Pearson, qui l'imprime pour la première fois en 1894 ; Gauss parlait d'« erreur moyenne »."
+      },
+      {
+       "fr": "Pour beaucoup de mesures, tailles ou erreurs de mesure, les valeurs suivent une courbe en cloche, la loi normale. Alors environ 68 % des valeurs tombent à moins d'un écart type de la moyenne, et environ 95 % à moins de deux. Au XIXe siècle, Adolphe Quetelet applique ces outils à la société et décrit un « homme moyen »."
+      }
+     ],
+     "retenir": {
+      "fr": "Écart type = dispersion autour de la moyenne. Loi normale : ≈ 68 % à un écart type, ≈ 95 % à deux."
+     },
+     "source": "INSEE, définitions ; Quetelet, Sur l'homme, 1835",
+     "figure": "mc_math_normale",
+     "reperes": [
+      {
+       "fr": "Le mot écart type est inventé par Karl Pearson, qui l'imprime pour la première fois en 1894 ; Gauss parlait d'« erreur moyenne »."
+      },
+      {
+       "fr": "Au XIXe siècle, Adolphe Quetelet applique ces outils à la société et décrit un « homme moyen »."
+      }
+     ]
+    },
+    {
+     "id": "echantillon",
+     "titre": {
+      "fr": "Le gros sondage qui s'est planté"
+     },
+     "texte": [
+      {
+       "fr": "En 1936, le magazine Literary Digest interroge environ 10 millions d'Américains et reçoit 2,4 millions de réponses. Verdict : Alf Landon battra Franklin Roosevelt. Roosevelt gagne avec environ 61 % des voix et tous les États sauf deux. George Gallup, avec environ 50 000 personnes, avait vu juste."
+      },
+      {
+       "fr": "Le problème n'était pas la taille mais le choix : abonnés du magazine, propriétaires de voitures, abonnés au téléphone, des Américains plus riches que la moyenne. Un grand échantillon biaisé reste biaisé. Le tirage au hasard compte plus que le nombre. Et même avec un bon échantillon, une corrélation ne prouve pas une cause : glaces et noyades montent ensemble l'été, à cause de la chaleur."
+      }
+     ],
+     "retenir": {
+      "fr": "Un échantillon tiré au hasard vaut mieux qu'un énorme échantillon biaisé (Literary Digest, 1936). Corrélation n'est pas causalité."
+     },
+     "source": "Squire, Public Opinion Quarterly, 1988",
+     "figure": "mc_math_sondage",
+     "reperes": [
+      {
+       "fr": "En 1936, le magazine Literary Digest interroge environ 10 millions d'Américains et reçoit 2,4 millions de réponses."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "math.infini",
+  "stat": "logique",
+  "rang": 8,
+  "nom": {
+   "fr": "Suites, limites et infini"
+  },
+  "description": {
+   "fr": "Suites, séries, limites et les paradoxes de l'infini."
+  },
+  "prerequis": [
+   "math.probabilites",
+   "math.statistiques"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Une suite géométrique de raison inférieure à 1 en valeur absolue tend vers 0 ; sa somme peut être finie : 1/2 + 1/4 + 1/8 + … = 1."
+    },
+    {
+     "fr": "0,999… = 1 exactement : c'est la même somme infinie écrite autrement."
+    },
+    {
+     "fr": "La série harmonique 1 + 1/2 + 1/3 + … diverge, même si ses termes tendent vers 0."
+    },
+    {
+     "fr": "Cantor : il y a autant d'entiers pairs que d'entiers, mais strictement plus de réels que d'entiers."
+    }
+   ],
+   "piege": {
+    "fr": "Que les termes tendent vers 0 ne suffit pas pour qu'une somme infinie soit finie."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Les sommes 1/2 + 1/4 + … s'approchent de 1 sans le dépasser\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"80.0\" width=\"53.0\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"72.5\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,5</text><text class=\"tm\" x=\"72.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">1/2</text><rect class=\"f2\" x=\"111.0\" y=\"55.0\" width=\"53.0\" height=\"75.0\" rx=\"3\"/><text class=\"t\" x=\"137.5\" y=\"49.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,75</text><text class=\"tm\" x=\"137.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/4</text><rect class=\"f2\" x=\"176.0\" y=\"42.5\" width=\"53.0\" height=\"87.5\" rx=\"3\"/><text class=\"t\" x=\"202.5\" y=\"36.5\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,875</text><text class=\"tm\" x=\"202.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/8</text><rect class=\"a\" x=\"241.0\" y=\"36.2\" width=\"53.0\" height=\"93.8\" rx=\"3\"/><text class=\"t\" x=\"267.5\" y=\"30.25\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">0,9375</text><text class=\"tm\" x=\"267.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">+1/16</text></svg>",
+   "source": "Cantor, Beiträge zur Begründung der transfiniten Mengenlehre, 1895"
+  },
+  "symbole": "∞",
+  "embleme": "ouroboros",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "sommes",
+     "titre": {
+      "fr": "Additionner sans fin et trouver 1"
+     },
+     "texte": [
+      {
+       "fr": "1/2 + 1/4 + 1/8 + 1/16 + … : chaque terme comble la moitié de ce qui manque pour arriver à 1. La somme s'en approche autant qu'on veut sans jamais le dépasser : elle vaut exactement 1. Une infinité de termes peut donc donner un résultat fini. Archimède se servait déjà d'une somme de ce genre pour calculer l'aire d'un morceau de parabole."
+      },
+      {
+       "fr": "C'est la réponse au paradoxe de Zénon : pour rattraper la tortue, Achille doit franchir une infinité d'étapes, mais leurs durées forment une somme finie, et il la rattrape. Le paradoxe date du Ve siècle avant notre ère, chez Zénon d'Élée ; c'est Aristote qui nous le rapporte, dans sa Physique. C'est aussi pourquoi 0,999… avec une infinité de 9 est égal à 1 : c'est la somme 9/10 + 9/100 + 9/1 000 + …, qui vaut exactement 1."
+      }
+     ],
+     "retenir": {
+      "fr": "Une somme infinie peut être finie : 1/2 + 1/4 + … = 1. Et 0,999… = 1 exactement."
+     },
+     "source": "Stewart, Analyse, concepts et contextes"
+    },
+    {
+     "id": "harmonique",
+     "titre": {
+      "fr": "Des termes qui rétrécissent, une somme infinie"
+     },
+     "texte": [
+      {
+       "fr": "Piège : que les termes tendent vers zéro ne suffit pas. La série harmonique, 1 + 1/2 + 1/3 + 1/4 + …, a des termes de plus en plus petits, et pourtant sa somme dépasse n'importe quel nombre."
+      },
+      {
+       "fr": "Nicole Oresme le démontre vers 1350 en regroupant les termes : 1/3 + 1/4 dépasse 1/2, 1/5 + … + 1/8 dépasse 1/2, 1/9 + … + 1/16 aussi, et ainsi de suite. On empile une infinité de moitiés. Elle grandit pourtant très lentement : il faut plus de 12 000 termes pour dépasser 10."
+      }
+     ],
+     "retenir": {
+      "fr": "Termes qui tendent vers 0 ≠ somme finie. La série harmonique diverge (Oresme, vers 1350)."
+     },
+     "source": "Oresme, Quaestiones super geometriam Euclidis, vers 1350",
+     "figure": "mc_math_oresme"
+    },
+    {
+     "id": "cantor",
+     "titre": {
+      "fr": "Des infinis plus grands que d'autres"
+     },
+     "texte": [
+      {
+       "fr": "Il y a autant de nombres pairs que de nombres entiers : on les associe un à un, 1 avec 2, 2 avec 4, n avec 2n, et personne ne reste seul. C'est l'esprit de l'hôtel de Hilbert : complet avec une infinité de chambres, il loge encore un client en décalant chacun d'une chambre."
+      },
+      {
+       "fr": "Mais tous les infinis ne se valent pas. Georg Cantor montre dès 1874 qu'on ne peut pas numéroter les nombres réels, et en 1891 il en donne la preuve célèbre, l'argument diagonal : supposez une liste complète, fabriquez un nombre qui diffère du premier à la 1re décimale, du deuxième à la 2e, et ainsi de suite. Il n'est nulle part dans la liste. Il y a strictement plus de réels que d'entiers."
+      }
+     ],
+     "retenir": {
+      "fr": "Autant de pairs que d'entiers (correspondance un à un). Plus de réels que d'entiers (Cantor, 1874 ; argument diagonal, 1891)."
+     },
+     "source": "Cantor, Jahresbericht der Deutschen Mathematiker-Vereinigung, 1891",
+     "figure": "mc_math_cantor",
+     "reperes": [
+      {
+       "fr": "Georg Cantor montre dès 1874 qu'on ne peut pas numéroter les nombres réels, et en 1891 il en donne la preuve célèbre, l'argument diagonal : supposez une liste complète, fabriquez un nombre qui diffère du premier à la 1re décimale, du deuxième à la 2e, et ainsi de suite."
+      }
+     ]
+    }
+   ]
+  }
+ }
 ]
