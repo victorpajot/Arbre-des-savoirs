@@ -56,6 +56,9 @@ def main():
         for f in c["fiche"].get("figures", []):
             if f not in figs:
                 erreurs.append(f"skills.json {c['id']} : figure inconnue {f}")
+        for ch in c.get("masterclass", {}).get("chapitres", []):
+            if ch.get("figure") and ch["figure"] not in figs:
+                erreurs.append(f"skills.json {c['id']} : figure de masterclass inconnue {ch['figure']}")
     for q in contenu["questions"]["questions"]:
         if q.get("figure") and q["figure"] not in figs:
             erreurs.append(f"questions.json {q['id']} : figure inconnue {q['figure']}")
