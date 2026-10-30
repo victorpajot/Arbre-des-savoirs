@@ -178,6 +178,21 @@ p { margin: 0; }
 .enonce { font-family: var(--f-display); font-size: 23px; font-weight: 700; line-height: 1.25; }
 .choix { display: flex; flex-direction: column; gap: 10px; }
 .choix button { text-align: left; border: 2px solid var(--line); background: var(--surface); border-radius: 12px; padding: 14px 16px; min-height: 52px; font-size: 17px; }
+/* Mode enfant (fil « Basile ») : dessins des questions, gros textes, bouton pour écouter. */
+.dessin-q { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; background: #FFF8EC; }
+.dessin-q .groupe { display: grid; gap: 4px; }
+.dessin-q .op { font-family: var(--f-display); font-size: 34px; font-weight: 800; color: #3B3B3B; }
+.dessin-q .it { position: relative; width: 44px; height: 44px; display: block; }
+.dessin-q .it svg { width: 44px; height: 44px; }
+.dessin-q .barre::after { content: ""; position: absolute; inset: 2px; background: linear-gradient(45deg, transparent 44%, #D94141 44%, #D94141 56%, transparent 56%); }
+.dessin-q .barre svg { opacity: .55; }
+.dessin-q .vide { border: 2px dashed #B9A88A; border-radius: 8px; }
+.dessin-q.seul svg { width: min(200px, 60vw); height: auto; }
+.ecouter { border: 2px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; font-size: 17px; font-weight: 700; cursor: pointer; }
+.comite .ecouter { padding: 2px 10px; font-size: 15px; margin-top: 4px; }
+body.enfant .enonce { font-size: 30px; }
+body.enfant .choix button { font-size: 26px; font-weight: 700; min-height: 64px; text-align: center; }
+body.enfant .retour p, body.enfant .comite p { font-size: 19px; }
 .choix button.bon { border-color: var(--good); background: color-mix(in srgb, var(--good) 14%, var(--surface)); }
 .choix button.faux { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--surface)); }
 .choix button:disabled { cursor: default; color: var(--ink); }
@@ -1191,7 +1206,16 @@ function demarrerJeu() {
   var RE_DE_IA = new RegExp("(^|[^A-Za-zÀ-ÿ])([dD])e [lL]" + APOS_IA + "IA(?![A-Za-z])", "g"), RE_IA = new RegExp("(^|[^A-Za-zÀ-ÿ])[lL]" + APOS_IA + "IA(?![A-Za-z])", "g");
   // En anglais, « the AI » devient Alyca.
   var RE_THE_AI = /(^|[^A-Za-z])[tT]he AI(?![A-Za-z])/g;
+  // Mode enfant (Victor) : le mur de la honte s'appelle « Révisions », chrono et rattrapage compris.
+  var REVISIONS = [[/([Aa])u mur de la honte/g, "$1ux Révisions"], [/([Dd])u mur de la honte/g, "$1es Révisions"], [/([Ll])e mur de la honte/g, function (m, l) { return l === "L" ? "Les Révisions" : "les Révisions"; }],
+    [/[Mm]ur de la honte/g, "Révisions"], [/Enfermé aux Révisions/g, "Aux Révisions"], [/Épinglé aux Révisions/g, "Mis de côté pour les Révisions"]];
+  function enfantiser(s) {
+    if (!s || !enfantP() || !/honte/.test(s)) return s;
+    REVISIONS.forEach(function (r) { s = s.replace(r[0], r[1]); });
+    return s;
+  }
   function nommerIA(s) {
+    s = enfantiser(s);
     var n = P && C && M.nomIA(C, P);
     if (!n || !s || (s.indexOf("IA") < 0 && s.indexOf("AI") < 0)) return s;
     return s.replace(RE_DE_IA, function (m, a, d, ap) { return a + d + ap + n; }).replace(RE_IA, function (m, a) { return a + n; })
@@ -1237,6 +1261,7 @@ function demarrerJeu() {
   }
   function retard(t) { var n = M.joursEntre(t, maintenant()); return n <= 0 ? __("dû aujourd'hui") : __("en retard de ") + n + " j"; }
   function toast(msg) {
+    msg = enfantiser(msg);
     var t = el('<div class="toast" role="status"></div>'); t.textContent = msg;
     document.body.appendChild(t); setTimeout(function () { t.remove(); }, Math.max(2600, msg.length * 60));
   }
@@ -1315,6 +1340,43 @@ function demarrerJeu() {
     var g = grilleSprite(id); if (!g) return "";
     return '<svg class="pix" viewBox="0 0 32 32" width="' + taille + '" height="' + taille + '"' + (label ? ' role="img" aria-label="' + esc(label) + '"' : ' aria-hidden="true"') + ">" +
       pixels(g, C.cabinet.palette, null, 0, 0, 1, verrou) + "</svg>";
+  }
+  // Fil « Basile » : le dessin d'une question (pixel art d'un pack). { id } seul : une grande image ; { id, groupes: [3, 2] } :
+  // des objets à compter, groupe par groupe avec un « + » ; « barres » barre les derniers du premier groupe (on les enlève) ;
+  // « vides » ajoute des cases vides (la boîte de 10).
+  function htmlDessinQ(d) {
+    if (!d || !grilleSprite(d.id)) return "";
+    if (!d.groupes) return '<div class="illus dessin-q seul">' + svgSprite(d.id, 200) + "</div>";
+    var sprite = svgSprite(d.id, 44), html = "";
+    d.groupes.forEach(function (n, gi) {
+      var vides = gi === 0 ? d.vides || 0 : 0, tot = n + vides, cols = Math.min(5, Math.max(1, tot)), items = "";
+      for (var i = 0; i < n; i++) items += '<span class="it' + (gi === 0 && d.barres && i >= n - d.barres ? " barre" : "") + '">' + sprite + "</span>";
+      for (var j = 0; j < vides; j++) items += '<span class="it vide"></span>';
+      if (gi) html += '<span class="op">+</span>';
+      html += '<div class="groupe" style="grid-template-columns:repeat(' + cols + ',44px)">' + (items || '<span class="op">0</span>') + "</div>";
+    });
+    return '<div class="illus dessin-q" aria-hidden="true">' + html + "</div>";
+  }
+  function htmlIllusQ(q) { return '<div>' + (q.illustration ? '<div class="illus">' + q.illustration + "</div>" : "") + htmlDessinQ(q.dessin) + "</div>"; }
+  function enfantP() { return !!(P && M.enfant(P)); }
+  // Vrai / faux : « Oui » et « Non » pour un enfant.
+  function libVF(v) { return enfantP() ? (v ? __("Oui") : __("Non")) : (v ? __("Vrai") : __("Faux")); }
+  // La voix : le plugin natif sur Android (la WebView n'a pas la synthèse vocale), sinon celle du navigateur.
+  function pourVoix(t) {
+    return String(t || "").replace(/\s*=\s*\?/g, " égale combien ?").replace(/\+\s*\?/g, "plus combien").replace(/\s*\+\s*/g, " plus ").replace(/\s*[−-]\s*(?=\d)/g, " moins ").replace(/\s+/g, " ").trim();
+  }
+  function parler(t) {
+    t = pourVoix(t); if (!t) return;
+    var lang = M.langue() === "en" ? "en-US" : "fr-FR", tts = plugin("TextToSpeech");
+    if (tts) { Promise.resolve(tts.stop()).catch(function () {}).then(function () { return tts.speak({ text: t, lang: lang, rate: 0.9 }); }).catch(function () {}); return; }
+    if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
+      speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(t); u.lang = lang; u.rate = 0.9; speechSynthesis.speak(u);
+    }
+  }
+  function boutonEcouter(texte) {
+    var b = el(__('<button type="button" class="ecouter" aria-label="Écouter">🔊 Écouter</button>'));
+    b.onclick = function (ev) { ev.stopPropagation(); parler(typeof texte === "function" ? texte() : texte); };
+    return b;
   }
   function svgMasque(m, expr, largeur, verrou) {
     var A = C.ia, c = pixels(m.base, A.palette, null, 0, 0, 1, verrou);
@@ -1427,6 +1489,7 @@ function demarrerJeu() {
       b.querySelector(".qui").appendChild(el('<span class="humeur">' + esc(tx(fh.palier.nom)) + "</span>"));
     }
     b.querySelector("p").textContent = tx(rep.texte);
+    if (enfantP()) b.querySelector("p").after(boutonEcouter(tx(rep.texte)));
     // v27 : furieuse, plus d'aparté : elle ne cite plus rien, elle grince.
     var a = rep.aparte === false || (fh && fh.palier.id === "furieuse") ? null : M.aparte(C, P, expr, graine, theme);
     if (a) {
@@ -2899,6 +2962,10 @@ function demarrerJeu() {
 
     var opt = el(__('<div class="bloc"><h2>Options</h2><label class="interrupteur" for="opt-chrono"><span><b>Chrono</b><br><span class="note">') + C.regles.chrono.secondes + __(' secondes par question. Chaque bonne réponse rapporte ') + C.regles.chrono.bonus_xp_par_bonne_reponse + __(' XP de plus.</span></span><input type="checkbox" id="opt-chrono"></label></div>'));
     var cb = opt.querySelector("input"); cb.checked = !!(P.options && P.options.chrono);
+    var oe = el(__('<label class="interrupteur" for="opt-enfant" style="border-top:1px solid var(--line);padding-top:12px;margin-top:12px"><span><b>Mode enfant</b><br><span class="note">Pour un enfant qui apprend à lire : les questions sont lues à voix haute, les textes sont plus gros, Alyca le tutoie et reste gentille, le mur de la honte devient « Révisions », pas d\'ultimatum ni de vol de crédits.</span></span><input type="checkbox" id="opt-enfant"></label>'));
+    var cbe = oe.querySelector("input"); cbe.checked = enfantP();
+    cbe.onchange = function () { P.options = P.options || {}; P.options.enfant = cbe.checked; if (cbe.checked) P.ultimatum = null; sauver(); rendre(); toast(cbe.checked ? __("Mode enfant activé") : __("Mode enfant désactivé")); };
+    opt.appendChild(oe);
     cb.onchange = function () { P.options = P.options || {}; P.options.chrono = cb.checked; sauver(); toast(cb.checked ? __("Chrono activé") : __("Chrono désactivé")); };
     if (NATIF) {
       var r = routine() || { active: false, heure: "08:00" };
@@ -3630,7 +3697,7 @@ function demarrerJeu() {
       __('<div class="eyebrow">Case ') + pg.case + " · " + esc(tx(k.titre)) + '</div><p class="etat-pion">' + esc(texteRegle(pg.regle)) + '</p></div><div id="piege-ia"></div><div id="piege-q"></div>', __("Piège"));
     var zia = feuille.querySelector("#piege-ia"), m = comite(M.replique(C, P, ["piege_question"]), true); if (m) zia.appendChild(m);
     var c = el('<div class="oubli" style="--c:' + couleur(kq.stat) + '"><div class="eyebrow" style="color:' + couleur(kq.stat) + '">' + esc(tx(kq.nom)) + __(" · niveau ") + kq.rang + '</div><p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
-    if (q.illustration) c.appendChild(el('<div class="illus">' + q.illustration + "</div>"));
+    if (q.illustration || q.dessin) c.appendChild(el(htmlIllusQ(q)));
     var zone = el('<div class="choix"></div>'), fait = false;
     function repondre(v, bt) {
       if (fait) return; fait = true;
@@ -4463,10 +4530,10 @@ function demarrerJeu() {
     if (v === null || v === undefined || v === "") return null;
     if (q.type === "place") { var xa = C.atomes.elements[Number(v) - 1]; return xa ? __("la case de ") + tx(xa.nom) + " (" + placeTexte(xa) + ")" : null; }
     if (q.type === "qcm") return typeof v === "string" ? v : q.choix[v] ? tx(q.choix[v]) : null;
-    if (q.type === "vrai_faux") return v === true || v === "true" ? __("Vrai") : __("Faux");
+    if (q.type === "vrai_faux") return libVF(v === true || v === "true");
     return String(v).replace(".", ",") + (q.unite ? " " + q.unite : "");
   }
-  function bonneReponse(q) { if (q.type === "place") return placeTexte(C.atomes.elements[q.reponse - 1]); return q.type === "qcm" ? tx(q.choix[q.reponse]) : q.type === "vrai_faux" ? (q.reponse ? __("Vrai") : __("Faux")) : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""); }
+  function bonneReponse(q) { if (q.type === "place") return placeTexte(C.atomes.elements[q.reponse - 1]); return q.type === "qcm" ? tx(q.choix[q.reponse]) : q.type === "vrai_faux" ? libVF(q.reponse) : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""); }
   function ouvrirHonte() { fermerFeuille(); vue = "honte"; rendre(); window.scrollTo(0, 0); }
   function ouvrirHonteSurBilan() {
     var z = el(__('<div class="quiz honte-dessus" role="dialog" aria-modal="true" aria-label="Le mur de la honte"><div class="in"></div></div>'));
@@ -4479,7 +4546,7 @@ function demarrerJeu() {
   function carteOubli(x, retenter) {
     var q = x.question, e = x.entree, donnee = texteReponse(q, e.rep);
     var c = el('<div class="oubli' + (e.efface ? " efface" : "") + '">' + (e.efface ? __('<span class="tampon">Réhabilitée</span>') : "") + '<p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
-    if (q.illustration) c.appendChild(el('<div class="illus">' + q.illustration + "</div>"));
+    if (q.illustration || q.dessin) c.appendChild(el(htmlIllusQ(q)));
     function corrige() {
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
       c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>" + htmlRepere(q)));
@@ -4519,7 +4586,7 @@ function demarrerJeu() {
       var b = el('<button type="button" data-v="' + i + '">' + esc(tx(q.choix[i])) + "</button>"); b.onclick = function () { repondre(i, b); }; zone.appendChild(b);
     });
     else if (q.type === "vrai_faux") [true, false].forEach(function (v) {
-      var b = el('<button type="button" data-v="' + v + '">' + (v ? __("Vrai") : __("Faux")) + "</button>"); b.onclick = function () { repondre(v, b); }; zone.appendChild(b);
+      var b = el('<button type="button" data-v="' + v + '">' + libVF(v) + "</button>"); b.onclick = function () { repondre(v, b); }; zone.appendChild(b);
     });
     else {
       var f = el(__('<form class="saisie"><input inputmode="decimal" autocomplete="off" aria-label="Ta réponse" placeholder="Ta réponse">') + (q.unite ? '<span class="unite">' + esc(q.unite) + "</span>" : "") + __('<button type="submit" class="btn">Valider</button></form>'));
@@ -4550,7 +4617,7 @@ function demarrerJeu() {
     var k = C.parId[q.competence];
     var b = el('<div class="bloc rattrapage" style="--c:' + couleur(k.stat) + '"><div class="eyebrow" style="color:' + couleur(k.stat) + __('">Rattrapage · ') + esc(tx(k.nom)) + __('</div><p class="note" style="margin:0 0 6px">Réussie, une minute de moins. La réponse se trouve dans les fiches de ce mur.</p></div>'));
     var c = el('<div class="oubli"><p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
-    if (q.illustration) c.appendChild(el('<div class="illus">' + q.illustration + "</div>"));
+    if (q.illustration || q.dessin) c.appendChild(el(htmlIllusQ(q)));
     var zone = el('<div class="choix"></div>'), fait = false;
     function repondre(v, bt) {
       if (fait) return; fait = true;
@@ -4573,7 +4640,7 @@ function demarrerJeu() {
       var bt = el('<button type="button" data-v="' + i + '">' + esc(tx(q.choix[i])) + "</button>"); bt.onclick = function () { repondre(i, bt); }; zone.appendChild(bt);
     });
     else if (q.type === "vrai_faux") [true, false].forEach(function (v) {
-      var bt = el('<button type="button" data-v="' + v + '">' + (v ? __("Vrai") : __("Faux")) + "</button>"); bt.onclick = function () { repondre(v, bt); }; zone.appendChild(bt);
+      var bt = el('<button type="button" data-v="' + v + '">' + libVF(v) + "</button>"); bt.onclick = function () { repondre(v, bt); }; zone.appendChild(bt);
     });
     else {
       var f = el(__('<form class="saisie"><input inputmode="decimal" autocomplete="off" aria-label="Ta réponse" placeholder="Ta réponse">') + (q.unite ? '<span class="unite">' + esc(q.unite) + "</span>" : "") + __('<button type="submit" class="btn">Valider</button></form>'));
@@ -5095,7 +5162,9 @@ function demarrerJeu() {
     inn.appendChild(pts);
     inn.appendChild(el('<p class="enonce">' + esc(tx(q.enonce)) + "</p>"));
     // Les schémas viennent du contenu du jeu (data/questions.json), pas de l'utilisateur.
-    if (q.illustration) inn.appendChild(el('<div class="illus">' + q.illustration + "</div>"));
+    if (q.illustration || q.dessin) inn.appendChild(el(htmlIllusQ(q)));
+    // Mode enfant : la question est lue à voix haute, et peut se réécouter.
+    if (enfantP()) { var ecq = el('<div class="rangee" style="justify-content:center"></div>'); ecq.appendChild(boutonEcouter(tx(q.enonce))); inn.appendChild(ecq); setTimeout(function () { parler(tx(q.enonce)); }, 250); }
     var barre = null;
     if (quiz.chrono) { barre = el('<div class="chrono" aria-live="off"><span class="num"></span><span class="barre"><i style="width:100%"></i></span></div>'); inn.appendChild(barre); }
 
@@ -5146,7 +5215,7 @@ function demarrerJeu() {
       });
     } else if (q.type === "vrai_faux") {
       [true, false].forEach(function (v) {
-        var b = el('<button type="button" data-v="' + v + '">' + (v ? __("Vrai") : __("Faux")) + "</button>");
+        var b = el('<button type="button" data-v="' + v + '">' + libVF(v) + "</button>");
         b.onclick = function () { repondre(v, b); };
         zoneRep.appendChild(b);
       });
@@ -5184,10 +5253,11 @@ function demarrerJeu() {
     var zoneRetour = el("<div></div>"); inn.appendChild(zoneRetour);
 
     function montrerRetour(ok) {
-      var rep = q.type === "qcm" ? tx(q.choix[q.reponse]) : (q.type === "vrai_faux" ? (q.reponse ? __("Vrai") : __("Faux")) : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""));
+      var rep = q.type === "qcm" ? tx(q.choix[q.reponse]) : (q.type === "vrai_faux" ? libVF(q.reponse) : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""));
       var tempsEcoule = quiz.tempsEcoule; quiz.tempsEcoule = false;
       zoneRetour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? __("Juste.") + (quiz.chrono ? " +" + C.regles.chrono.bonus_xp_par_bonne_reponse + __(" XP de bonus chrono.") : "") : (tempsEcoule ? __("Temps écoulé. ") : __("Raté. ")) + __("Réponse : ") + esc(rep) + ".") + "</b><p>" + esc(tx(q.explication)) + "</p>" + htmlRepere(q) +
         (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + htmlFigure(q.figure) + "</div>"));
+      if (enfantP()) { var rt = zoneRetour.lastChild; rt.appendChild(boutonEcouter(tx(q.explication))); parler((ok ? __("Bravo !") : __("Raté.")) + " " + tx(q.explication)); }
       var pq = portraitQuestion(q);
       if (pq) zoneRetour.appendChild(pq);
       if (M.estEclair(quiz.res[quiz.res.length - 1])) {
@@ -5477,6 +5547,7 @@ function demarrerJeu() {
     if (!C || !P) return;
     if (titre) return rendreTitre();
     document.body.classList.remove("sans-onglets");
+    document.body.classList.toggle("enfant", enfantP());
     var app = document.getElementById("app"); app.innerHTML = "";
     if (!document.querySelector(".quiz")) degelerAvatar();
     // v28 : enfermé, on ne quitte pas le mur.
@@ -5767,6 +5838,9 @@ function demarrerJeu() {
     if (NATIF) p.options.routine = { active: false, heure: A.routine.heure };
     P = p; provisoire = false;
     construireContenu(A.off); M.accorderPartie(C, P);
+    // Fil « Basile » : une partie qui n'allume que des packs pour enfants commence en mode enfant (modifiable dans les réglages).
+    var offN = M.packsEteints(INDEX, A.off), domaines = INDEX.packs.filter(function (m) { return m.sorte === "domaine" && !offN[m.id]; });
+    if (domaines.length && domaines.every(function (m) { return m.public === "enfant"; })) P.options.enfant = true;
     // Réglage temporaire « Voir toutes les cases » : il suit le joueur d'une partie à l'autre.
     if (toutes) M.voirToutesCases(C, P, true);
     sauver();
@@ -5784,15 +5858,15 @@ function demarrerJeu() {
       var requis = (m.requiert || []).filter(function (r) { return r !== "socle"; }).map(function (r) {
         var x = INDEX.packs.filter(function (y) { return y.id === r; })[0]; return x ? tx(x.nom) : r;
       });
-      var par = eteints[m.id] && off.indexOf(m.id) < 0;
+      var enfant = m.public === "enfant", par = eteints[m.id] && off.indexOf(m.id) < 0 && !(enfant && off.indexOf("+" + m.id) < 0);
       var l = el('<label class="interrupteur" style="margin-top:10px"><span><b>' + esc(tx(m.nom)) + "</b> " + (m.ajoute ? '<span class="badge-ext">' + __("ajouté") + "</span> " : "") +
         '<span class="note">' + (m.sorte === "jeu" ? __("jeu") : __("domaine")) + " · " + esc(m.version) + "</span><br>" +
         '<span class="note">' + esc(tx(m.description)) + (requis.length ? __(" Demande : ") + esc(requis.join(", ")) + "." : "") + (par ? __(" <b>Éteint avec un pack dont il dépend.</b>") : "") +
         '</span></span><input type="checkbox"></label>');
       var cb = l.querySelector("input"); cb.checked = !eteints[m.id]; cb.disabled = par;
       cb.onchange = function () {
-        var o = off.filter(function (x) { return x !== m.id; });
-        if (!cb.checked) o.push(m.id);
+        var o = off.filter(function (x) { return x !== m.id && x !== "+" + m.id; });
+        if (enfant) { if (cb.checked) o.push("+" + m.id); } else if (!cb.checked) o.push(m.id);
         // La liste suit chaque clic : sans cela, le clic suivant repartait de la liste d'origine et n'éteignait qu'un pack.
         off = o; changer(o);
       };
@@ -5958,6 +6032,10 @@ function demarrerJeu() {
     C = M.indexerContenu(d["regles.json"], d["skills.json"], d["questions.json"], d["succes.json"], { commentaires: d["commentaires.json"], objets: d["objets.json"],
       avatar: d["avatar.json"], ia: d["ia.json"], plateau: d["plateau.json"], frise: d["frise.json"], bibliotheque: d["bibliotheque.json"], ennemis: d["ennemis.json"], atomes: d["atomes.json"] });
     C.packsEteints = M.packsEteints(INDEX, off);
+    // Les arbres des packs pour enfants (pack.json « public »: « enfant ») : leurs répliques tutoient, le mode enfant les garde.
+    C.arbresEnfant = {};
+    var propStats = (INDEX && INDEX.proprietaires && INDEX.proprietaires["regles.json/stats"]) || {};
+    C.stats.forEach(function (st) { var pk = INDEX && INDEX.packs.filter(function (m) { return m.id === propStats[st.id]; })[0]; if (pk && pk.public === "enfant") C.arbresEnfant[st.id] = true; });
     poserCouleursArbres(C.stats);
   }
   function charger(nom) { return fetch("data/" + nom).then(function (r) { if (!r.ok) throw new Error(nom); return r.json(); }); }

@@ -46,6 +46,14 @@ for (const id of packs) {
   assert.ok(off.mecanique && off.fils && !off.socle);
 }
 
+// Fil « Basile » : un pack pour enfants reste éteint tant qu'on ne l'allume pas (« +cp ») ; une partie d'adulte ne le voit pas.
+{
+  assert.ok(M.packsEteints(index, []).cp, "le pack CP est éteint par défaut");
+  assert.ok(!M.packsEteints(index, ["+cp"]).cp, "« +cp » l'allume");
+  assert.ok(!complet.stats.some(s => s.id.startsWith("cp-")));
+  assert.ok(S.contenu(brut, ["+cp"]).stats.some(s => s.id === "cp-calcul"));
+}
+
 // Boutique : un pack éteint retire ses articles.
 assert.ok(!M.articleDe(S.contenu(brut, ["atomes"]), "relance") && M.articleDe(complet, "relance"));
 assert.ok(!M.articleDe(S.contenu(brut, ["ennemis"]), "chasser"));
@@ -121,7 +129,7 @@ for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "co
   const paquet = JSON.parse(fs.readFileSync(f, "utf8")); fs.unlinkSync(f);
   assert.equal(paquet.sources.verifiees, paquet.sources.total, "paquet : sources toutes vérifiées");
   // Les données sans Musique, puis Musique chargée en paquet : on retrouve l'assemblage complet.
-  const sans = JSON.parse(JSON.stringify(M.filtrerPacks(brut, index, ["musique"])));
+  const sans = JSON.parse(JSON.stringify(M.filtrerPacks(brut, index, ["musique", "+cp"])));
   const idx = JSON.parse(JSON.stringify(index));
   idx.packs = idx.packs.filter(m => m.id !== "musique");
   for (const ou of Object.keys(idx.proprietaires)) for (const k of Object.keys(idx.proprietaires[ou])) if (idx.proprietaires[ou][k] === "musique") delete idx.proprietaires[ou][k];

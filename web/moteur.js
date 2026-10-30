@@ -134,9 +134,11 @@
   // questions, ses objets, ses répliques… La progression n'est pas touchée : tout revient quand on le réactive.
 
   // Les packs éteints : ceux demandés, plus ceux qui en dépendent. Le socle ne s'éteint jamais.
+  // Fil « Basile » : un pack pour enfants (« public »: « enfant ») est éteint tant qu'on ne l'a pas allumé (« +id » dans la liste).
   function packsEteints(index, demandes) {
     var off = {}, liste = (index && index.packs) || [], change = true;
-    (demandes || []).forEach(function (id) { off[id] = true; });
+    liste.forEach(function (m) { if (m.public === "enfant" && (demandes || []).indexOf("+" + m.id) < 0) off[m.id] = true; });
+    (demandes || []).forEach(function (id) { if (id.charAt(0) !== "+") off[id] = true; });
     delete off.socle;
     while (change) {
       change = false;
@@ -306,6 +308,10 @@
     pl.idx = rt.indexOf(pl.position);
     if (pl.idx < 0) { pl.idx = 0; pl.position = rt[0]; }
   }
+
+  // Mode enfant (Victor, 2026-10-30, fil « Basile ») : une partie pour un enfant qui apprend à lire. Alyca le tutoie
+  // avec ses répliques « enfant_* », ne lance pas d'ultimatum, et les ennemis ne volent pas de crédits.
+  function enfant(partie) { return !!(partie && partie.options && partie.options.enfant); }
 
   // Le pack d'un élément (« questions.json/questions », id) ; « socle » s'il n'en a pas d'autre.
   function packDe(index, ou, id) {
@@ -1538,7 +1544,7 @@
       c.duelsPerdus = (c.duelsPerdus || 0) + 1;
       // v21 : l'ennemi garde sa case et le duel reste ouvert : il faut le battre pour passer, pas d'autre épreuve.
       // Vainqueur, il fait les poches du joueur.
-      var cr = partie.credits, vol = Math.min(cr.solde, Math.max(VOL_DUEL.min, Math.min(VOL_DUEL.max, Math.round(cr.solde * VOL_DUEL.part))));
+      var cr = partie.credits, vol = enfant(partie) ? 0 : Math.min(cr.solde, Math.max(VOL_DUEL.min, Math.min(VOL_DUEL.max, Math.round(cr.solde * VOL_DUEL.part))));
       if (vol > 0) { cr.solde -= vol; cr.voles = (cr.voles || 0) + vol; f.vole = (f.vole || 0) + vol; }
       out.vol = vol;
       partie.plateau.coups = (partie.plateau.coups || 0) + 1;
@@ -2164,7 +2170,7 @@
   }
   function tenterUltimatum(contenu, partie, t, alea) {
     var U = contenu.ia && contenu.ia.credits && contenu.ia.credits.ultimatum, cr = partie.credits;
-    if (!U || partie.ultimatum || cr.solde < U.solde_min || niveauGlobal(contenu, partie) < 1) return null;
+    if (!U || enfant(partie) || partie.ultimatum || cr.solde < U.solde_min || niveauGlobal(contenu, partie) < 1) return null;
     if (cr.jourUltimatum && joursEntre(cr.jourUltimatum, t) < U.delai_jours) return null;
     cr.jourUltimatum = t;
     if ((alea || Math.random)() >= U.chance) return null;
@@ -3183,9 +3189,24 @@
   function replique(contenu, partie, contextes, alea, vars, theme) {
     alea = alea || Math.random;
     // v27 : furieuse, elle ne plaisante plus. Chaque moment prend sa version sèche, sans ligne d'arbre.
-    var fav = faveurIA(contenu, partie, maintenant(partie)), furieuse = !!(fav && fav.palier.id === "furieuse");
+    var fav = faveurIA(contenu, partie, maintenant(partie)), petit = enfant(partie), furieuse = !petit && !!(fav && fav.palier.id === "furieuse");
     for (var i = 0; i < contextes.length; i++) {
       var ctx = contextes[i], lignes = contenu.commentairesPar[ctx];
+      if (petit) {
+        // Mode enfant : la version douce du moment, sinon celle de son groupe, sinon une réplique passe-partout.
+        var ek = ["enfant_" + ctx, "enfant_" + (GROUPE_THEME[ctx] || ""), "enfant_defaut"].filter(function (k) { return (contenu.commentairesPar[k] || []).length; })[0];
+        if (!lignes || !lignes.length || !ek) continue;
+        var lte = (contenu.arbresEnfant || {})[theme] ? lignesTheme(contenu, partie, ctx, theme) : null;
+        if (lte) { lignes = lte.lignes; ek = lte.cle; } else lignes = contenu.commentairesPar[ek];
+        var vuesE = partie.repliques[ek] || [], frE = lignes.filter(function (l) { return vuesE.indexOf(l.id) < 0; });
+        if (!frE.length) { vuesE = vuesE.slice(0, 1); frE = lignes.filter(function (l) { return vuesE.indexOf(l.id) < 0; }); }
+        var chE = frE[Math.floor(alea() * frE.length)];
+        partie.repliques[ek] = [chE.id].concat(vuesE);
+        var outE = habiller(contenu, chE, vars);
+        outE.contexte = ctx; outE.expression = expression(contenu, ctx);
+        if (theme) outE.theme = theme;
+        return outE;
+      }
       if (furieuse && FURIEUSE[ctx] !== null) {
         var fc = "furieuse_" + (FURIEUSE[ctx] || GROUPE_THEME[ctx] || "defaut");
         if (contenu.commentairesPar[fc] && contenu.commentairesPar[fc].length) { ctx = fc; lignes = contenu.commentairesPar[fc]; }
@@ -3229,6 +3250,8 @@
     else if (fv && fv.fermee && contenu.commentairesPar.faveur_nulle) ctx = "faveur_nulle";
     else if (fv && partie.faveur.remontee === cleJour(t) && contenu.commentairesPar.faveur_remontee) ctx = "faveur_remontee";
     else if (fv && fv.palier.id === "furieuse" && ctx !== "faveur_furieuse") ctx = FURIEUSE[ctx] === null ? ctx : "furieuse_" + (FURIEUSE[ctx] || "defaut");
+    if (enfant(partie)) ctx = partie.punition && contenu.commentairesPar.enfant_mur_force ? "enfant_mur_force" :
+      ctx === "mur_honte" && contenu.commentairesPar.enfant_honte ? "enfant_honte" : contenu.commentairesPar["enfant_" + ctx] ? "enfant_" + ctx : "enfant_accueil";
     var lignes = contenu.commentairesPar[ctx] || contenu.commentairesPar.accueil;
     if (!lignes || !lignes.length) return null;
     return habiller(contenu, lignes[Math.floor(debutJour(t) / JOUR) % lignes.length]);
@@ -3238,6 +3261,7 @@
     choisirLangue: choisirLangue, langue: langue, TX: TX, __: __, ordinalSiecle: ordinalSiecle, traduireChaines: traduireChaines,
     FORMAT_PARTIE: FORMAT_PARTIE,
     indexerContenu: indexerContenu,
+    enfant: enfant,
     packsEteints: packsEteints, filtrerPacks: filtrerPacks, verifierPaquet: verifierPaquet, ajouterPaquet: ajouterPaquet, ajouterTextes: ajouterTextes, packDe: packDe, accorderPartie: accorderPartie,
     maintenant: maintenant,
     debutJour: debutJour,

@@ -64,6 +64,7 @@ Pour voir le pack dans le jeu : `node mobile/construire.js`, puis servir `mobile
 - **`prefixe`** : chaque compétence et chaque question commence par `<prefixe>.` (`mus.son`, `mus.son.q01`). Une liste est permise (`["chim", "sci.atomes"]`).
 - **`ordre`** : place du pack dans l'assemblage et dans l'interface. Les domaines officiels vont de 10 à 110 : un nouveau domaine prend 120 ou plus.
 - **Les autres ids** (dessins, livres, dates, succès, savants) sont communs à tous les packs : deux packs qui utilisent le même id entrent en collision à l'assemblage. Préfixer ceux du pack (`mus-croche`, `carto-boussole`) ; un savant garde le nom de la personne (`bach`).
+- **`public`** (facultatif) : `"enfant"` pour un pack destiné aux jeunes enfants (exemple : `packs/cp/`). Il est éteint par défaut ; on l'allume dans l'assistant ou dans Réglages › Packs (le jeu note alors `+cp` dans la liste des packs). Une partie qui n'allume que des packs pour enfants passe en **mode enfant** : énoncés lus à voix haute, gros texte, Alyca gentille qui tutoie (répliques `enfant_*` du socle), pas d'ultimatum ni de vol de crédits, mur de la honte renommé « Révisions » (chrono gardé). Les répliques de thème d'un tel pack tutoient.
 - **Textes** : partout, un texte est un objet `{"fr": "…"}` dans la langue source du pack (`langue_source`). Les traductions ne vont pas à côté mais dans `langues/` (section 8).
 
 ## 4. Les fichiers d'un pack domaine
@@ -124,6 +125,7 @@ Trois types. Pour un QCM, **la bonne réponse est toujours en premier** (`"repon
 - Leurres plausibles, jamais absurdes ; un énoncé ne se répète pas d'une question à l'autre, ni d'un pack à l'autre.
 - **Questions de calcul** (règle de Victor) : l'explication pose la formule en lettres, fait le calcul complet, et dit qui a trouvé la formule ; le champ `source` donne la référence de cette attribution. Quand la formule n'a pas de découvreur (une définition comme f = 1/T, une règle de trois, une échelle), l'explication le dit (« c'est la définition de la fréquence ») et la question n'a pas de `source`. Une simple question de comptage (combien de noires dans une ronde) n'est pas une question de calcul.
 - L'explication apprend quelque chose de plus que la réponse : un fait, une date, une personne.
+- **`dessin`** (facultatif) : un dessin du pack affiché au-dessus des choix, pour qui lit mal. `{"id": "cp-chien"}` montre le dessin seul ; `{"id": "cp-pomme", "groupes": [3, 2]}` le répète en paquets (une addition à compter), `"barres": 2` en barre les derniers (une soustraction), `"vides": 4` ajoute des cases vides (une boîte de 10). Au plus 3 groupes de 0 à 20.
 
 ### Livres, dates, succès
 

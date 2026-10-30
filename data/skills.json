@@ -9781,6 +9781,550 @@
      }
     ]
    }
+  },
+  {
+   "id": "cp.compter",
+   "stat": "cp-calcul",
+   "rang": 1,
+   "nom": {
+    "fr": "Compter jusqu'à 10"
+   },
+   "description": {
+    "fr": "Dire combien il y a d'objets, jusqu'à 10."
+   },
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "On touche chaque objet une seule fois en disant un nombre : 1, 2, 3…"
+     },
+     {
+      "fr": "Le dernier nombre dit combien il y en a en tout."
+     },
+     {
+      "fr": "On peut compter dans n'importe quel ordre : on trouve toujours pareil."
+     }
+    ],
+    "piege": {
+     "fr": "Compter deux fois le même objet, ou en oublier un. Pour l'éviter, on pousse ou on barre chaque objet compté."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Cinq ronds numérotés de 1 à 5\"><circle class=\"a\" cx=\"60\" cy=\"50\" r=\"13\"/><text class=\"t\" x=\"60\" y=\"100\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\">1</text><circle class=\"a\" cx=\"130\" cy=\"50\" r=\"13\"/><text class=\"t\" x=\"130\" y=\"100\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\">2</text><circle class=\"a\" cx=\"200\" cy=\"50\" r=\"13\"/><text class=\"t\" x=\"200\" y=\"100\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\">3</text><circle class=\"a\" cx=\"270\" cy=\"50\" r=\"13\"/><text class=\"t\" x=\"270\" y=\"100\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\">4</text><circle class=\"a\" cx=\"340\" cy=\"50\" r=\"13\"/><text class=\"t\" x=\"340\" y=\"100\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\">5</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner les nombres, le calcul et la résolution de problèmes au CP, 2020"
+   },
+   "symbole": "123",
+   "embleme": "boulier"
+  },
+  {
+   "id": "cp.plus",
+   "stat": "cp-calcul",
+   "rang": 2,
+   "nom": {
+    "fr": "Ajouter jusqu'à 5"
+   },
+   "description": {
+    "fr": "Des additions dont le résultat ne dépasse pas 5."
+   },
+   "prerequis": [
+    "cp.compter"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Ajouter, c'est mettre ensemble : 3 + 2, c'est 3 et encore 2."
+     },
+     {
+      "fr": "On part du plus grand nombre et on avance : 3… 4, 5."
+     },
+     {
+      "fr": "3 + 2 et 2 + 3 donnent la même chose : 5."
+     }
+    ],
+    "piege": {
+     "fr": "Recompter tout depuis 1. Il est plus rapide de partir du premier nombre et d'avancer."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Trois ronds plus deux ronds font cinq ronds\"><circle class=\"a\" cx=\"40\" cy=\"55\" r=\"13\"/><circle class=\"a\" cx=\"75\" cy=\"55\" r=\"13\"/><circle class=\"a\" cx=\"110\" cy=\"55\" r=\"13\"/><text class=\"t\" x=\"150\" y=\"63\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\">+</text><circle class=\"a\" cx=\"190\" cy=\"55\" r=\"13\"/><circle class=\"a\" cx=\"225\" cy=\"55\" r=\"13\"/><text class=\"t\" x=\"265\" y=\"63\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\">=</text><text class=\"t\" x=\"320\" y=\"66\" text-anchor=\"middle\" font-size=\"34\" font-weight=\"700\">5</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner les nombres, le calcul et la résolution de problèmes au CP, 2020"
+   },
+   "symbole": "+",
+   "embleme": "cp-fraise"
+  },
+  {
+   "id": "cp.moins",
+   "stat": "cp-calcul",
+   "rang": 3,
+   "nom": {
+    "fr": "Enlever jusqu'à 5"
+   },
+   "description": {
+    "fr": "Des soustractions avec des nombres jusqu'à 5."
+   },
+   "prerequis": [
+    "cp.compter"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Enlever, c'est retirer : 5 − 2, c'est 5 et on en retire 2."
+     },
+     {
+      "fr": "On peut barrer ceux qu'on enlève et compter ce qui reste."
+     },
+     {
+      "fr": "Si on enlève tout, il reste 0 : 4 − 4 = 0."
+     }
+    ],
+    "piege": {
+     "fr": "Compter aussi les objets barrés. Seuls ceux qui restent comptent."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Cinq ronds dont deux barrés : il en reste trois\"><circle class=\"a\" cx=\"50\" cy=\"55\" r=\"13\"/><circle class=\"a\" cx=\"95\" cy=\"55\" r=\"13\"/><circle class=\"a\" cx=\"140\" cy=\"55\" r=\"13\"/><circle class=\"a\" cx=\"185\" cy=\"55\" r=\"13\"/><line class=\"l\" x1=\"170\" y1=\"70\" x2=\"200\" y2=\"40\"/><circle class=\"a\" cx=\"230\" cy=\"55\" r=\"13\"/><line class=\"l\" x1=\"215\" y1=\"70\" x2=\"245\" y2=\"40\"/><text class=\"t\" x=\"280\" y=\"63\" text-anchor=\"middle\" font-size=\"22\" font-weight=\"700\">→</text><text class=\"t\" x=\"335\" y=\"66\" text-anchor=\"middle\" font-size=\"34\" font-weight=\"700\">3</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner les nombres, le calcul et la résolution de problèmes au CP, 2020"
+   },
+   "symbole": "−",
+   "embleme": "cp-ballon-baudruche"
+  },
+  {
+   "id": "cp.plusdix",
+   "stat": "cp-calcul",
+   "rang": 4,
+   "nom": {
+    "fr": "Ajouter jusqu'à 10"
+   },
+   "description": {
+    "fr": "Des additions dont le résultat va jusqu'à 10."
+   },
+   "prerequis": [
+    "cp.plus",
+    "cp.moins"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "On part du plus grand nombre : pour 2 + 6, on part de 6 et on avance de 2 : 7, 8."
+     },
+     {
+      "fr": "On peut s'aider de ses doigts : une main, c'est 5."
+     },
+     {
+      "fr": "5 + 3, c'est une main et 3 doigts : 8."
+     }
+    ],
+    "piege": {
+     "fr": "Partir du plus petit nombre : on avance plus longtemps et on se trompe plus."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Sur la file des nombres, de 6 on avance de 3 et on arrive à 9\"><line class=\"l\" x1=\"20\" y1=\"70\" x2=\"380\" y2=\"70\"/><line class=\"lm\" x1=\"30\" y1=\"62\" x2=\"30\" y2=\"78\"/><text class=\"tm\" x=\"30\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">0</text><line class=\"lm\" x1=\"64\" y1=\"62\" x2=\"64\" y2=\"78\"/><text class=\"tm\" x=\"64\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">1</text><line class=\"lm\" x1=\"98\" y1=\"62\" x2=\"98\" y2=\"78\"/><text class=\"tm\" x=\"98\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">2</text><line class=\"lm\" x1=\"132\" y1=\"62\" x2=\"132\" y2=\"78\"/><text class=\"tm\" x=\"132\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">3</text><line class=\"lm\" x1=\"166\" y1=\"62\" x2=\"166\" y2=\"78\"/><text class=\"tm\" x=\"166\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">4</text><line class=\"lm\" x1=\"200\" y1=\"62\" x2=\"200\" y2=\"78\"/><text class=\"tm\" x=\"200\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">5</text><line class=\"lm\" x1=\"234\" y1=\"62\" x2=\"234\" y2=\"78\"/><text class=\"tm\" x=\"234\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">6</text><line class=\"lm\" x1=\"268\" y1=\"62\" x2=\"268\" y2=\"78\"/><text class=\"tm\" x=\"268\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">7</text><line class=\"lm\" x1=\"302\" y1=\"62\" x2=\"302\" y2=\"78\"/><text class=\"tm\" x=\"302\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">8</text><line class=\"lm\" x1=\"336\" y1=\"62\" x2=\"336\" y2=\"78\"/><text class=\"tm\" x=\"336\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">9</text><line class=\"lm\" x1=\"370\" y1=\"62\" x2=\"370\" y2=\"78\"/><text class=\"tm\" x=\"370\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">10</text><path class=\"al\" stroke-width=\"3\" d=\"M234 60 Q251 30 268 60\"/><path class=\"al\" stroke-width=\"3\" d=\"M268 60 Q285 30 302 60\"/><path class=\"al\" stroke-width=\"3\" d=\"M302 60 Q319 30 336 60\"/><text class=\"t\" x=\"250\" y=\"28\" text-anchor=\"middle\" font-size=\"18\" font-weight=\"700\">6 + 3 = 9</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner les nombres, le calcul et la résolution de problèmes au CP, 2020"
+   },
+   "symbole": "+",
+   "embleme": "cp-etoile"
+  },
+  {
+   "id": "cp.moinsdix",
+   "stat": "cp-calcul",
+   "rang": 5,
+   "nom": {
+    "fr": "Enlever jusqu'à 10"
+   },
+   "description": {
+    "fr": "Des soustractions avec des nombres jusqu'à 10."
+   },
+   "prerequis": [
+    "cp.plusdix"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Pour 9 − 4, on recule de 4 en partant de 9 : 8, 7, 6, 5."
+     },
+     {
+      "fr": "On peut aussi chercher ce qui manque : 4 + ? = 9. Il manque 5."
+     },
+     {
+      "fr": "Enlever 0 ne change rien : 7 − 0 = 7."
+     }
+    ],
+    "piege": {
+     "fr": "Compter le nombre de départ en reculant : pour 9 − 4, on dit 8, 7, 6, 5, pas 9, 8, 7, 6."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Sur la file des nombres, de 9 on recule de 4 et on arrive à 5\"><line class=\"l\" x1=\"20\" y1=\"70\" x2=\"380\" y2=\"70\"/><line class=\"lm\" x1=\"30\" y1=\"62\" x2=\"30\" y2=\"78\"/><text class=\"tm\" x=\"30\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">0</text><line class=\"lm\" x1=\"64\" y1=\"62\" x2=\"64\" y2=\"78\"/><text class=\"tm\" x=\"64\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">1</text><line class=\"lm\" x1=\"98\" y1=\"62\" x2=\"98\" y2=\"78\"/><text class=\"tm\" x=\"98\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">2</text><line class=\"lm\" x1=\"132\" y1=\"62\" x2=\"132\" y2=\"78\"/><text class=\"tm\" x=\"132\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">3</text><line class=\"lm\" x1=\"166\" y1=\"62\" x2=\"166\" y2=\"78\"/><text class=\"tm\" x=\"166\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">4</text><line class=\"lm\" x1=\"200\" y1=\"62\" x2=\"200\" y2=\"78\"/><text class=\"tm\" x=\"200\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">5</text><line class=\"lm\" x1=\"234\" y1=\"62\" x2=\"234\" y2=\"78\"/><text class=\"tm\" x=\"234\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">6</text><line class=\"lm\" x1=\"268\" y1=\"62\" x2=\"268\" y2=\"78\"/><text class=\"tm\" x=\"268\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">7</text><line class=\"lm\" x1=\"302\" y1=\"62\" x2=\"302\" y2=\"78\"/><text class=\"tm\" x=\"302\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">8</text><line class=\"lm\" x1=\"336\" y1=\"62\" x2=\"336\" y2=\"78\"/><text class=\"tm\" x=\"336\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">9</text><line class=\"lm\" x1=\"370\" y1=\"62\" x2=\"370\" y2=\"78\"/><text class=\"tm\" x=\"370\" y=\"104\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">10</text><path class=\"al\" stroke-width=\"3\" d=\"M234 60 Q217 30 200 60\"/><path class=\"al\" stroke-width=\"3\" d=\"M268 60 Q251 30 234 60\"/><path class=\"al\" stroke-width=\"3\" d=\"M302 60 Q285 30 268 60\"/><path class=\"al\" stroke-width=\"3\" d=\"M336 60 Q319 30 302 60\"/><text class=\"t\" x=\"240\" y=\"28\" text-anchor=\"middle\" font-size=\"18\" font-weight=\"700\">9 − 4 = 5</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner les nombres, le calcul et la résolution de problèmes au CP, 2020"
+   },
+   "symbole": "−",
+   "embleme": "cp-poisson"
+  },
+  {
+   "id": "cp.doubles",
+   "stat": "cp-calcul",
+   "rang": 6,
+   "nom": {
+    "fr": "Les doubles"
+   },
+   "description": {
+    "fr": "Deux fois le même nombre : 3 + 3, 4 + 4, 5 + 5…"
+   },
+   "prerequis": [
+    "cp.moinsdix"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Un double, c'est un nombre ajouté à lui-même : 4 + 4 = 8."
+     },
+     {
+      "fr": "Les doubles se retiennent par cœur : 1 + 1 = 2, 2 + 2 = 4, 3 + 3 = 6, 4 + 4 = 8, 5 + 5 = 10."
+     },
+     {
+      "fr": "Deux mains, c'est le double de 5 : 10 doigts."
+     }
+    ],
+    "piege": {
+     "fr": "Confondre le double et « plus deux » : le double de 4 est 8, pas 6."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Un domino quatre et quatre : le double de 4 est 8\"><rect class=\"f\" x=\"60\" y=\"20\" width=\"200\" height=\"90\" rx=\"12\"/><line class=\"l\" x1=\"160\" y1=\"24\" x2=\"160\" y2=\"106\"/><circle class=\"a\" cx=\"90\" cy=\"45\" r=\"9\"/><circle class=\"a\" cx=\"130\" cy=\"45\" r=\"9\"/><circle class=\"a\" cx=\"90\" cy=\"85\" r=\"9\"/><circle class=\"a\" cx=\"130\" cy=\"85\" r=\"9\"/><circle class=\"a\" cx=\"190\" cy=\"45\" r=\"9\"/><circle class=\"a\" cx=\"230\" cy=\"45\" r=\"9\"/><circle class=\"a\" cx=\"190\" cy=\"85\" r=\"9\"/><circle class=\"a\" cx=\"230\" cy=\"85\" r=\"9\"/><text class=\"t\" x=\"330\" y=\"75\" text-anchor=\"middle\" font-size=\"40\" font-weight=\"700\">8</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner les nombres, le calcul et la résolution de problèmes au CP, 2020"
+   },
+   "symbole": "2×",
+   "embleme": "cp-cerise"
+  },
+  {
+   "id": "cp.dix",
+   "stat": "cp-calcul",
+   "rang": 7,
+   "nom": {
+    "fr": "Faire 10"
+   },
+   "description": {
+    "fr": "Trouver ce qui manque pour arriver à 10."
+   },
+   "prerequis": [
+    "cp.moinsdix"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Dix, c'est deux mains pleines."
+     },
+     {
+      "fr": "Les paires qui font 10 : 1 et 9, 2 et 8, 3 et 7, 4 et 6, 5 et 5."
+     },
+     {
+      "fr": "Dans une boîte de 10 cases, on compte les cases vides."
+     }
+    ],
+    "piege": {
+     "fr": "Donner le nombre de cases pleines au lieu des cases vides."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Une boîte de dix cases : sept pleines, trois vides\"><rect class=\"a\" x=\"40\" y=\"15\" width=\"50\" height=\"40\" rx=\"6\"/><rect class=\"a\" x=\"95\" y=\"15\" width=\"50\" height=\"40\" rx=\"6\"/><rect class=\"a\" x=\"150\" y=\"15\" width=\"50\" height=\"40\" rx=\"6\"/><rect class=\"a\" x=\"205\" y=\"15\" width=\"50\" height=\"40\" rx=\"6\"/><rect class=\"a\" x=\"260\" y=\"15\" width=\"50\" height=\"40\" rx=\"6\"/><rect class=\"a\" x=\"40\" y=\"63\" width=\"50\" height=\"40\" rx=\"6\"/><rect class=\"a\" x=\"95\" y=\"63\" width=\"50\" height=\"40\" rx=\"6\"/><rect class=\"f2\" x=\"150\" y=\"63\" width=\"50\" height=\"40\" rx=\"6\"/><rect class=\"f2\" x=\"205\" y=\"63\" width=\"50\" height=\"40\" rx=\"6\"/><rect class=\"f2\" x=\"260\" y=\"63\" width=\"50\" height=\"40\" rx=\"6\"/><text class=\"t\" x=\"355\" y=\"70\" text-anchor=\"middle\" font-size=\"18\" font-weight=\"700\">7 + 3</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner les nombres, le calcul et la résolution de problèmes au CP, 2020"
+   },
+   "symbole": "10",
+   "embleme": "cp-cadeau"
+  },
+  {
+   "id": "cp.vingt",
+   "stat": "cp-calcul",
+   "rang": 8,
+   "nom": {
+    "fr": "Ajouter jusqu'à 20"
+   },
+   "description": {
+    "fr": "Des additions qui dépassent 10, jusqu'à 20."
+   },
+   "prerequis": [
+    "cp.doubles",
+    "cp.dix"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "10 + 3 = 13 : treize, c'est une dizaine et 3."
+     },
+     {
+      "fr": "Pour 8 + 5, on fait d'abord 10 : 8 + 2 = 10, puis 10 + 3 = 13."
+     },
+     {
+      "fr": "Après 10 viennent 11, 12, 13, 14, 15, 16, 17, 18, 19, puis 20."
+     }
+    ],
+    "piege": {
+     "fr": "Écrire 103 pour dix et trois : on écrit 13."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Une barre de dix et trois ronds font treize\"><rect class=\"a\" x=\"20\" y=\"40\" width=\"24\" height=\"30\" rx=\"4\"/><rect class=\"a\" x=\"46\" y=\"40\" width=\"24\" height=\"30\" rx=\"4\"/><rect class=\"a\" x=\"72\" y=\"40\" width=\"24\" height=\"30\" rx=\"4\"/><rect class=\"a\" x=\"98\" y=\"40\" width=\"24\" height=\"30\" rx=\"4\"/><rect class=\"a\" x=\"124\" y=\"40\" width=\"24\" height=\"30\" rx=\"4\"/><rect class=\"a\" x=\"150\" y=\"40\" width=\"24\" height=\"30\" rx=\"4\"/><rect class=\"a\" x=\"176\" y=\"40\" width=\"24\" height=\"30\" rx=\"4\"/><rect class=\"a\" x=\"202\" y=\"40\" width=\"24\" height=\"30\" rx=\"4\"/><rect class=\"a\" x=\"228\" y=\"40\" width=\"24\" height=\"30\" rx=\"4\"/><rect class=\"a\" x=\"254\" y=\"40\" width=\"24\" height=\"30\" rx=\"4\"/><circle class=\"a\" cx=\"300\" cy=\"55\" r=\"11\"/><circle class=\"a\" cx=\"330\" cy=\"55\" r=\"11\"/><circle class=\"a\" cx=\"360\" cy=\"55\" r=\"11\"/><text class=\"t\" x=\"150\" y=\"105\" text-anchor=\"middle\" font-size=\"18\" font-weight=\"700\">10</text><text class=\"t\" x=\"330\" y=\"105\" text-anchor=\"middle\" font-size=\"18\" font-weight=\"700\">3</text><text class=\"t\" x=\"240\" y=\"25\" text-anchor=\"middle\" font-size=\"18\" font-weight=\"700\">10 + 3 = 13</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner les nombres, le calcul et la résolution de problèmes au CP, 2020"
+   },
+   "symbole": "20",
+   "embleme": "cp-fusee"
+  },
+  {
+   "id": "cp.animaux",
+   "stat": "cp-mots",
+   "rang": 1,
+   "nom": {
+    "fr": "Les animaux de la ferme"
+   },
+   "description": {
+    "fr": "Lire chat, chien, lapin, vache…"
+   },
+   "prerequis": [],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Les lettres c et h ensemble font « ch » : chat, chien, cochon, cheval."
+     },
+     {
+      "fr": "Le t à la fin de chat ne s'entend pas."
+     },
+     {
+      "fr": "an se lit « an » : canard. in se lit « in » : lapin."
+     }
+    ],
+    "piege": {
+     "fr": "Confondre chat et chien : ils commencent pareil. On regarde la fin du mot."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 110\" role=\"img\" aria-label=\"Le mot chat écrit en quatre cases : le t final ne s'entend pas\"><rect class=\"f\" x=\"100\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"122\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">c</text><rect class=\"f\" x=\"150\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"172\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">h</text><rect class=\"f\" x=\"200\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"222\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">a</text><rect class=\"f2\" x=\"250\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"tm\" x=\"272\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">t</text><text class=\"tm\" x=\"200\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">les lettres en gris ne s'entendent pas</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-chat"
+  },
+  {
+   "id": "cp.fruits",
+   "stat": "cp-mots",
+   "rang": 2,
+   "nom": {
+    "fr": "Les fruits"
+   },
+   "description": {
+    "fr": "Lire pomme, poire, banane, fraise…"
+   },
+   "prerequis": [
+    "cp.animaux"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Le e à la fin de pomme, poire ou fraise ne s'entend presque pas."
+     },
+     {
+      "fr": "oi se lit « oua » : poire."
+     },
+     {
+      "fr": "Deux m dans pomme se lisent comme un seul."
+     }
+    ],
+    "piege": {
+     "fr": "Confondre pomme et poire : elles commencent toutes les deux par po."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 110\" role=\"img\" aria-label=\"Le mot pomme écrit en cases : le e final ne s'entend pas\"><rect class=\"f\" x=\"75\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"97\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">p</text><rect class=\"f\" x=\"125\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"147\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">o</text><rect class=\"f\" x=\"175\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"197\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">m</text><rect class=\"f\" x=\"225\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"247\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">m</text><rect class=\"f2\" x=\"275\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"tm\" x=\"297\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">e</text><text class=\"tm\" x=\"200\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">les lettres en gris ne s'entendent pas</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-banane"
+  },
+  {
+   "id": "cp.couleurs",
+   "stat": "cp-mots",
+   "rang": 3,
+   "nom": {
+    "fr": "Les couleurs"
+   },
+   "description": {
+    "fr": "Lire rouge, bleu, vert, jaune…"
+   },
+   "prerequis": [
+    "cp.animaux"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "ou se lit « ou » : rouge."
+     },
+     {
+      "fr": "Le t de vert ne s'entend pas."
+     },
+     {
+      "fr": "g devant e se lit « j » : rouge, orange."
+     }
+    ],
+    "piege": {
+     "fr": "Lire seulement la première lettre : rouge et rose commencent pareil."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 110\" role=\"img\" aria-label=\"Le mot rouge écrit en cases\"><rect class=\"f\" x=\"75\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"97\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">r</text><rect class=\"f\" x=\"125\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"147\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">o</text><rect class=\"f\" x=\"175\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"197\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">u</text><rect class=\"f\" x=\"225\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"247\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">g</text><rect class=\"f2\" x=\"275\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"tm\" x=\"297\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">e</text><text class=\"tm\" x=\"200\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">les lettres en gris ne s'entendent pas</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-fleur"
+  },
+  {
+   "id": "cp.maison",
+   "stat": "cp-mots",
+   "rang": 4,
+   "nom": {
+    "fr": "La maison"
+   },
+   "description": {
+    "fr": "Lire lit, table, porte, clé…"
+   },
+   "prerequis": [
+    "cp.fruits",
+    "cp.couleurs"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Le t de lit ne s'entend pas."
+     },
+     {
+      "fr": "é avec un accent se lit « é » : clé."
+     },
+     {
+      "fr": "ch se lit « ch » : chaise."
+     }
+    ],
+    "piege": {
+     "fr": "Lire lit comme « litt » : le t de la fin est muet."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 110\" role=\"img\" aria-label=\"Le mot lit écrit en trois cases : le t final ne s'entend pas\"><rect class=\"f\" x=\"125\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"147\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">l</text><rect class=\"f\" x=\"175\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"197\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">i</text><rect class=\"f2\" x=\"225\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"tm\" x=\"247\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">t</text><text class=\"tm\" x=\"200\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">les lettres en gris ne s'entendent pas</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-porte"
+  },
+  {
+   "id": "cp.nature",
+   "stat": "cp-mots",
+   "rang": 5,
+   "nom": {
+    "fr": "La nature"
+   },
+   "description": {
+    "fr": "Lire soleil, lune, arbre, fleur…"
+   },
+   "prerequis": [
+    "cp.maison"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "On coupe les mots en syllabes : so-leil, nu-age, é-toi-le."
+     },
+     {
+      "fr": "eu se lit « eu » : fleur."
+     },
+     {
+      "fr": "oi se lit « oua » : étoile."
+     }
+    ],
+    "piege": {
+     "fr": "Lire lune comme « lun » : le e de la fin fait entendre le n."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Le mot soleil coupé en deux syllabes : so et leil\"><rect class=\"f\" x=\"70\" y=\"20\" width=\"110\" height=\"60\" rx=\"10\"/><rect class=\"f\" x=\"200\" y=\"20\" width=\"140\" height=\"60\" rx=\"10\"/><text class=\"t\" x=\"125\" y=\"62\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">so</text><text class=\"t\" x=\"270\" y=\"62\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">leil</text><text class=\"tm\" x=\"200\" y=\"105\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">deux syllabes : deux coups de voix</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-soleil"
+  },
+  {
+   "id": "cp.objets",
+   "stat": "cp-mots",
+   "rang": 6,
+   "nom": {
+    "fr": "Les objets"
+   },
+   "description": {
+    "fr": "Lire ballon, robot, crayon, cadeau…"
+   },
+   "prerequis": [
+    "cp.nature"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "on se lit « on » : ballon, crayon."
+     },
+     {
+      "fr": "eau se lit « o » : cadeau, gâteau, chapeau."
+     },
+     {
+      "fr": "Le t de robot ne s'entend pas."
+     }
+    ],
+    "piege": {
+     "fr": "Lire eau lettre par lettre : e-a-u. Ces trois lettres font un seul son, « o »."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Le mot robot coupé en deux syllabes : ro et bot\"><rect class=\"f\" x=\"80\" y=\"20\" width=\"110\" height=\"60\" rx=\"10\"/><rect class=\"f\" x=\"210\" y=\"20\" width=\"110\" height=\"60\" rx=\"10\"/><text class=\"t\" x=\"135\" y=\"62\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">ro</text><text class=\"t\" x=\"265\" y=\"62\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">bot</text><text class=\"tm\" x=\"200\" y=\"105\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">le t de la fin ne s'entend pas</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-robot"
+  },
+  {
+   "id": "cp.transports",
+   "stat": "cp-mots",
+   "rang": 7,
+   "nom": {
+    "fr": "Ce qui roule et ce qui vole"
+   },
+   "description": {
+    "fr": "Lire vélo, bus, train, avion…"
+   },
+   "prerequis": [
+    "cp.nature"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "ain se lit « in » : train."
+     },
+     {
+      "fr": "eau se lit « o » : bateau."
+     },
+     {
+      "fr": "Le s de bus s'entend : on dit « buss »."
+     }
+    ],
+    "piege": {
+     "fr": "Lire le mot avec le mauvais dessin : bus et camion ont tous les deux des roues."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 110\" role=\"img\" aria-label=\"Le mot vélo écrit en cases, avec son accent\"><rect class=\"f\" x=\"100\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"122\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">v</text><rect class=\"f\" x=\"150\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"172\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">é</text><rect class=\"f\" x=\"200\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"222\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">l</text><rect class=\"f\" x=\"250\" y=\"20\" width=\"44\" height=\"54\" rx=\"8\"/><text class=\"t\" x=\"272\" y=\"58\" text-anchor=\"middle\" font-size=\"28\" font-weight=\"700\">o</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-velo"
+  },
+  {
+   "id": "cp.sauvages",
+   "stat": "cp-mots",
+   "rang": 8,
+   "nom": {
+    "fr": "Les animaux sauvages"
+   },
+   "description": {
+    "fr": "Lire lion, loup, singe, oiseau…"
+   },
+   "prerequis": [
+    "cp.objets",
+    "cp.transports"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "oi se lit « oua » et eau se lit « o » : oiseau."
+     },
+     {
+      "fr": "ou se lit « ou » : loup. Le p de la fin ne s'entend pas."
+     },
+     {
+      "fr": "in se lit « in » : singe, lapin."
+     }
+    ],
+    "piege": {
+     "fr": "Confondre lion et loup : ils commencent par la même lettre."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Le mot oiseau : oi se lit « oua » et eau se lit « o »\"><rect class=\"f\" x=\"60\" y=\"20\" width=\"90\" height=\"60\" rx=\"10\"/><rect class=\"f2\" x=\"160\" y=\"20\" width=\"60\" height=\"60\" rx=\"10\"/><rect class=\"f\" x=\"230\" y=\"20\" width=\"110\" height=\"60\" rx=\"10\"/><text class=\"t\" x=\"105\" y=\"62\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">oi</text><text class=\"t\" x=\"190\" y=\"62\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">s</text><text class=\"t\" x=\"285\" y=\"62\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">eau</text><text class=\"tm\" x=\"105\" y=\"105\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">« oua »</text><text class=\"tm\" x=\"285\" y=\"105\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">« o »</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-lion"
   }
  ],
  "figures": {

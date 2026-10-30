@@ -613,7 +613,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const C7 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const t0 = new Date(2026, 10, 2, 10, 0).getTime();
   const P = M.nouvellePartie(t0);
-  assert.deepEqual(C7.stats.filter(s => M.arbreOuvert(C7, P, s.id)).map(s => s.id).sort(), ["logique", "mecanique", "savoir"]);
+  // Les arbres du pack CP (pour enfants, éteint par défaut en jeu) sont ici chargés sans filtre : ils sont mis de côté.
+  assert.deepEqual(C7.stats.filter(s => M.arbreOuvert(C7, P, s.id) && !s.id.startsWith("cp-")).map(s => s.id).sort(), ["logique", "mecanique", "savoir"]);
   assert.equal(M.statut(C7, P, "rhet.argument", t0).etat, "fermee");
   assert.ok(!M.disponibles(C7, P, t0).some(c => c.stat === "eloquence"), "pas de quiz dans un arbre fermé");
   assert.equal(M.pionnierDe(C7, "eloquence").id, "pionnier-ciceron");
