@@ -1248,7 +1248,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const P = M.nouvellePartie(T);
   M.faveurIA(C, P, T); assert.equal(M.nomIA(C, P), null, "pas de nom au départ");
   P.faveur = { valeur: 90, maj: T }; M.faveurIA(C, P, T);
-  assert.equal(M.nomIA(C, P), "Alyca"); assert.equal(P.alyca.vu, false);
+  assert.equal(P.alyca.vu, false); assert.equal(M.nomIA(C, P), null, "pas de nom avant la scène de révélation"); P.alyca.vu = T; assert.equal(M.nomIA(C, P), "Alyca");
   P.faveur = { valeur: 5, maj: T + J }; M.faveurIA(C, P, T + 2 * J);
   assert.equal(M.nomIA(C, P), "Alyca", "fâchée, elle garde son nom donné");
   assert.equal(M.migrer(JSON.parse(JSON.stringify(P)), C).alyca.depuis, T);

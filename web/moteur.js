@@ -2903,7 +2903,8 @@
   }
   function rendreVisage(partie) { partie.farce = null; }
   // v25 : le nom de l'IA, une fois qu'elle l'a donné ; null avant.
-  function nomIA(contenu, partie) { return partie.alyca && contenu.ia && contenu.ia.alyca ? contenu.ia.alyca.nom : null; }
+  // v35 (Victor) : le nom ne sert qu'une fois la révélation vue, sinon on le découvre en douce, sans la scène.
+  function nomIA(contenu, partie) { return partie.alyca && partie.alyca.vu && contenu.ia && contenu.ia.alyca ? contenu.ia.alyca.nom : null; }
 
   function expression(contenu, contexte) {
     // Packs : « theme_reussi@cosmos » prend l'expression de « theme_reussi ».

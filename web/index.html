@@ -954,6 +954,32 @@ svg.grille .interro { transition: opacity .3s; }
   @keyframes cadenas-vert { to { color: var(--good); } }
   @keyframes anse-ouvre { to { transform: translate(-2px, -10px) rotate(-38deg); } }
 }
+/* v35 (Victor : « je ne me suis pas rendu compte du changement de nom ») : la révélation d'Alyca est une scène.
+   « L'IA » se raye et tombe, puis son nom s'écrit lettre à lettre, en or. */
+.alyca-scene { position: fixed; inset: 0; z-index: 60; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; cursor: pointer; }
+.alyca-scene .in { max-width: 460px; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; margin: auto; }
+.alyca-scene .ancien { position: relative; font-family: var(--f-display); font-size: 40px; font-weight: 800; color: var(--muted); height: 52px; }
+.alyca-scene .ancien::after { content: ""; position: absolute; left: -8%; right: -8%; top: 52%; height: 5px; border-radius: 3px; background: var(--bad); transform: scaleX(0); transform-origin: left; }
+.alyca-scene .ancien.raye::after { transform: scaleX(1); transition: transform .35s ease-out; }
+.alyca-scene .ancien.tombe { transform: translateY(70px) rotate(14deg); opacity: 0; transition: transform .6s ease-in, opacity .6s ease-in; }
+.alyca-scene .nom-ia { font-family: var(--f-mono); font-size: 48px; font-weight: 700; letter-spacing: .14em; color: #E0A800; text-shadow: 0 0 20px color-mix(in srgb, #F2C14E 70%, transparent); min-height: 60px; margin: -52px 0 0; }
+.alyca-scene .nom-ia span { display: inline-block; }
+.alyca-scene .suite { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.alyca-scene .suite[hidden] { display: none; }
+.alyca-scene .suite p { margin: 0; font-size: 17px; }
+.alyca-scene .note { font-size: 15px; text-align: left; }
+.alyca-scene .source { font-size: 13px; text-align: left; }
+.alyca-scene .btn { width: 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  .alyca-scene { animation: apparait 0.3s ease-out both; }
+  .alyca-scene .vitrine { animation: alyca-hoche 0.6s 0.3s ease-in-out; }
+  .alyca-scene .nom-ia span { animation: alyca-lettre 0.35s cubic-bezier(.3,1.7,.5,1) both; }
+  .alyca-scene .suite:not([hidden]) > * { animation: apparait 0.45s ease-out both; }
+  .alyca-scene .suite > :nth-child(2) { animation-delay: .5s !important; } .alyca-scene .suite > :nth-child(3) { animation-delay: 1s !important; }
+  .alyca-scene .suite > :nth-child(n+4) { animation-delay: 1.5s !important; }
+  @keyframes alyca-lettre { from { opacity: 0; transform: translateY(-26px) scale(1.8); } }
+  @keyframes alyca-hoche { 30% { transform: rotate(-8deg); } 70% { transform: rotate(6deg); } }
+}
 .piege-scene { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .piege-titre { font-size: 34px; font-weight: 800; color: var(--bad); letter-spacing: .02em; }
 .piege-verdict { font-size: 20px; font-weight: 800; margin: 10px 0 4px; }
@@ -2766,7 +2792,8 @@ function demarrerJeu() {
     feuille = f; document.getElementById("couche").appendChild(f);
     f.querySelector("button").focus();
   }
-  function fermerFeuille() { if (feuille) { feuille.remove(); feuille = null; } }
+  // v35 : une feuille fermée peut laisser passer la révélation d'Alyca qui attendait.
+  function fermerFeuille() { if (feuille) { feuille.remove(); feuille = null; setTimeout(revelerNom, 0); } }
 
   // --- Vue Personnage -------------------------------------------------------
   function vuePerso() {
@@ -5245,17 +5272,36 @@ function demarrerJeu() {
   }
 
   // v25 : comblée pour la première fois, l'IA donne son nom. Une seule fois, hors quiz.
+  // v35 (Victor) : une scène plutôt qu'une feuille : « L'IA » se raye et tombe, le nom s'écrit, puis elle parle.
   function revelerNom() {
     var A = C.ia && C.ia.alyca;
-    if (!A || !P.alyca || P.alyca.vu || feuille || document.querySelector(".quiz")) return;
-    P.alyca.vu = maintenant(); sauver();
+    if (!A || !P.alyca || P.alyca.vu || feuille || document.querySelector(".quiz, .liberation, .alyca-scene")) return;
     var R = A.revelation, m = M.masquesDuJour(C, P, maintenant())[0] || C.ia.masques[0];
-    feuilleSimple('<div class="alyca-rev"><span class="vitrine">' + svgMasque(m, "impressionnee", 96) + __('</span><div class="eyebrow">Faveur comblée</div><h2>') + esc(tx(R.titre)) + "</h2>" +
+    // Textes construits avant de marquer la scène vue : « L'IA » y reste « L'IA ».
+    var z = el('<div class="alyca-scene" role="dialog" aria-modal="true" aria-label="' + esc(A.nom) + '"><div class="in"><span class="vitrine">' + svgMasque(m, "impressionnee", 96) +
+      __('</span><div class="eyebrow">Faveur comblée</div><div class="ancien">L\'IA</div><div class="nom-ia" aria-live="polite"></div><div class="suite" hidden><h2>') + esc(tx(R.titre)) + "</h2>" +
       R.texte.map(function (x) { return "<p>" + gu(esc(tx(x))) + "</p>"; }).join("") +
-      '<p class="nom-ia">' + esc(A.nom) + "</p>" +
       '<p class="note">' + esc(tx(R.anecdote)) + '</p><p class="meta source">' + esc(R.source) + "</p>" +
-      '<button type="button" class="btn large" data-a="fermer">' + esc(tx(R.bouton)) + "</button></div>", A.nom);
-    var sec = feuille && feuille.querySelector(".feuille > .btn.sec"); if (sec) sec.remove();
+      '<button type="button" class="btn large">' + esc(tx(R.bouton)) + "</button></div></div></div>");
+    P.alyca.vu = maintenant(); sauver();
+    var ancien = z.querySelector(".ancien"), nom = z.querySelector(".nom-ia"), suite = z.querySelector(".suite"), minuteurs = [];
+    var lent = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: no-preference)").matches);
+    function plusTard(f, ms) { minuteurs.push(setTimeout(f, lent ? 0 : ms)); }
+    function finir() {
+      minuteurs.forEach(clearTimeout); minuteurs = [];
+      ancien.classList.add("raye", "tombe"); nom.innerHTML = A.nom.split("").map(function (c) { return "<span>" + esc(c) + "</span>"; }).join("");
+      if (suite.hidden) { suite.hidden = false; z.style.cursor = "auto"; var b = suite.querySelector(".btn"); b.focus({ preventScroll: true }); }
+    }
+    plusTard(function () { ancien.classList.add("raye"); }, 900);
+    plusTard(function () { ancien.classList.add("tombe"); }, 1500);
+    A.nom.split("").forEach(function (c, i) { plusTard(function () { var sp = el("<span></span>"); sp.textContent = c; nom.appendChild(sp); }, 2100 + 220 * i); });
+    plusTard(finir, 2100 + 220 * A.nom.length + 500);
+    // Toucher l'écran passe l'animation ; le bouton ferme.
+    z.addEventListener("click", function (ev) {
+      if (ev.target.closest(".btn")) { z.remove(); rendre(); return; }
+      if (suite.hidden) finir();
+    });
+    document.body.appendChild(z);
   }
 
   // --- Packs (v35) -----------------------------------------------------------
