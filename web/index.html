@@ -1127,6 +1127,7 @@ svg.grille .interro { transition: opacity .3s; }
 .fiche-pack { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 16px; margin: 0; } .fiche-pack dt { color: var(--muted); } .fiche-pack dd { margin: 0; }
 .controles { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .controles li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; font-size: 16px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+.lance .tout-cocher { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
 .controles .ok { color: var(--good); } .controles .at { color: var(--warn); }
 </style>
 
@@ -5713,14 +5714,23 @@ function demarrerJeu() {
       v.appendChild(enteteEtape(2, __("Tes domaines")));
       v.appendChild(el('<p class="note">' + __("Le jeu est fait de packs : un par domaine de savoir, un par jeu du plateau. Tous sont allumés ; éteins ceux qui ne te tentent pas. Rien n'est perdu : ils se rallument dans les réglages.") + "</p>"));
       var liste = el('<div class="bloc"></div>');
+      // Victor (2026-10-30) : « Tout cocher » allume ou éteint tous les packs d'un coup ; ensuite, chacun se règle à la main.
+      var tousIds = INDEX.packs.filter(function (m) { return m.sorte !== "socle"; }).map(function (m) { return m.id; });
+      var tc = el('<label class="interrupteur tout-cocher"><span><b>' + __("Tout cocher") + '</b></span><input type="checkbox"></label>');
+      var cbt = tc.querySelector("input"); cbt.checked = !A.off.length; cbt.indeterminate = A.off.length > 0 && A.off.length < tousIds.length;
+      cbt.onchange = function () { A.off = cbt.checked ? [] : tousIds.slice(); ecrireSession(CLE_ASSISTANT, A); rendre(); };
+      liste.appendChild(tc);
       listePacks(liste, A.off, function (off) { A.off = off; ecrireSession(CLE_ASSISTANT, A); rendre(); });
       v.appendChild(liste);
+      // Sans aucun domaine, il n'y a rien à apprendre : on en demande au moins un.
+      var offA = M.packsEteints(INDEX, A.off), aucun = !INDEX.packs.some(function (m) { return m.sorte === "domaine" && !offA[m.id]; });
+      if (aucun) v.appendChild(el('<p class="avertissement">' + __("Allume au moins un domaine de savoir pour commencer.") + "</p>"));
       var aj = el('<button type="button" class="btn sec large">＋ ' + __("Charger un pack") + "</button>");
       aj.onclick = ouvrirChargerPack;
       v.appendChild(aj);
       var bas = el('<div class="bas"><button type="button" class="btn sec">← ' + __("Retour") + '</button><button type="button" class="btn">' + __("Suivant →") + "</button></div>");
       bas.children[0].onclick = function () { A.etape = 1; rendre(); window.scrollTo(0, 0); };
-      bas.children[1].onclick = etapeSuivante;
+      bas.children[1].onclick = etapeSuivante; bas.children[1].disabled = aucun;
       v.appendChild(bas);
     } else {
       v.appendChild(enteteEtape(3, __("Prêt ?")));
