@@ -3628,14 +3628,14 @@
    }
   },
   {
-   "id": "biais.ancrage",
+   "id": "biais.doute",
    "stat": "lucidite",
    "rang": 2,
    "nom": {
-    "fr": "Effet d'ancrage"
+    "fr": "L'art de douter"
    },
    "description": {
-    "fr": "Quand un premier chiffre tire nos estimations."
+    "fr": "Aristote, les sceptiques grecs, Ibn al-Haytham, Descartes : douter avec méthode."
    },
    "prerequis": [
     "biais.confirmation"
@@ -3643,91 +3643,95 @@
    "fiche": {
     "essentiel": [
      {
-      "fr": "Un premier chiffre, même absurde, tire les estimations suivantes vers lui."
+      "fr": "Aristote, Réfutations sophistiques : un catalogue des raisonnements qui ont l'air vrais sans l'être."
      },
      {
-      "fr": "Tversky et Kahneman : après une roue truquée tombée sur 10 ou 65, les estimations de la part des pays africains à l'ONU étaient de 25 % ou 45 %."
+      "fr": "Pyrrhon : suspendre son jugement, l'épochè, pour gagner la paix de l'esprit, l'ataraxie."
      },
      {
-      "fr": "Les prix barrés et les premières offres d'une négociation exploitent l'ancrage."
+      "fr": "Agrippa : cinq modes du doute (désaccord, régression à l'infini, relativité, hypothèse, circularité), conservés par Sextus Empiricus."
      },
      {
-      "fr": "Même les experts y cèdent : des juges influencés par un dé dans leurs peines (Englich, 2006)."
+      "fr": "Ibn al-Haytham : se faire l'ennemi de tout ce qu'on lit. Descartes, 1637 : quatre préceptes pour douter et reconstruire."
      }
     ],
     "piege": {
-     "fr": "Savoir que l'ancre est absurde ne suffit pas à s'en libérer."
+     "fr": "Douter de tout n'est pas douter bien : Ibn al-Haytham demande aussi de se soupçonner soi-même pendant l'examen."
     },
-    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Estimation médiane selon le chiffre de la roue\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"74.4\" width=\"118.0\" height=\"55.6\" rx=\"3\"/><text class=\"t\" x=\"105.0\" y=\"68.44444444444444\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">25 %</text><text class=\"tm\" x=\"105.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">roue sur 10</text><rect class=\"a\" x=\"176.0\" y=\"30.0\" width=\"118.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"235.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">45 %</text><text class=\"tm\" x=\"235.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">roue sur 65</text></svg>",
-    "source": "Tversky et Kahneman, Science, 1974"
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Le doute dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">IVe s. av.</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Aristote, les sophismes</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">IIe s.</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Sextus Empiricus</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 1025</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Doutes sur Ptolémée</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1562</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Sextus traduit en latin</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1637</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Discours de la méthode</text></svg>",
+    "source": "Ibn al-Haytham, Doutes sur Ptolémée"
    },
-   "symbole": "#1",
-   "embleme": "roue-loterie",
+   "symbole": "?",
+   "embleme": "balance",
    "masterclass": {
     "chapitres": [
      {
-      "id": "roue",
+      "id": "sophismes",
       "titre": {
-       "fr": "La roue truquée"
+       "fr": "Les faux raisonnements d'Aristote"
       },
       "texte": [
        {
-        "fr": "En 1974, Amos Tversky et Daniel Kahneman font tourner devant des participants une roue de loterie truquée, qui s'arrête sur 10 ou sur 65. Puis ils demandent : quelle part des pays membres de l'ONU sont africains ? Après 10, l'estimation médiane est de 25 % ; après 65, de 45 %. Un chiffre manifestement sans rapport a tiré les réponses vers lui."
+        "fr": "Au IVe siècle av. J.-C., Aristote consacre un traité entier aux raisonnements qui ont l'air de preuves sans en être : les Réfutations sophistiques, qui font partie de l'Organon, ses écrits de logique. Le titre vise les sophistes, ces maîtres payés pour enseigner l'art de l'emporter dans un débat."
        },
        {
-        "fr": "Autre expérience du même article : en cinq secondes, estimer 8 × 7 × 6 × 5 × 4 × 3 × 2 × 1. Médiane : 2 250. Dans l'ordre inverse, 1 × 2 × 3 × … × 8 : 512. Les premiers chiffres lus servent d'ancre. La bonne réponse, 40 320, est loin des deux."
+        "fr": "Six de ces pièges tiennent au langage lui-même : l'équivoque, quand un mot change de sens en route ; l'amphibolie, quand une phrase peut se lire de deux façons ; la composition et la division, qui prêtent au tout ce qui vaut pour les parties, ou l'inverse ; l'accent ; et la forme de l'expression. Les autres tiennent à la manière de raisonner."
        }
       ],
       "retenir": {
-       "fr": "Un premier chiffre, même absurde, tire les estimations vers lui (Tversky et Kahneman, 1974 : 25 % contre 45 %)."
+       "fr": "Aristote, Réfutations sophistiques : un catalogue des faux raisonnements. Six tiennent au langage (équivoque, amphibolie, composition, division, accent, forme de l'expression)."
       },
-      "source": "Tversky et Kahneman, Science, 1974",
+      "source": "Aristote, Réfutations sophistiques",
       "reperes": [
        {
-        "fr": "En 1974, Amos Tversky et Daniel Kahneman font tourner devant des participants une roue de loterie truquée, qui s'arrête sur 10 ou sur 65."
+        "fr": "Six de ces pièges tiennent au langage lui-même : l'équivoque, quand un mot change de sens en route ; l'amphibolie, quand une phrase peut se lire de deux façons ; la composition et la division, qui prêtent au tout ce qui vaut pour les parties, ou l'inverse ; l'accent ; et la forme de l'expression."
        }
       ]
      },
      {
-      "id": "prix",
+      "id": "sceptiques",
       "titre": {
-       "fr": "Prix barrés et premières offres"
+       "fr": "Suspendre son jugement"
       },
       "texte": [
        {
-        "fr": "Un prix barré à 200 € à côté de 120 € : le premier chiffre sert de référence, et le second paraît une affaire. Le plat très cher en haut d'une carte de restaurant n'est pas toujours là pour être vendu : il fait paraître les autres raisonnables. En négociation, la première offre ancre toute la discussion. L'effet a été mesuré en 1974 par Amos Tversky et Daniel Kahneman, avec une roue truquée qui s'arrêtait sur 10 ou sur 65 : ceux qui avaient vu 10 estimaient à 25 % en moyenne la part des pays africains à l'ONU, ceux qui avaient vu 65 à 45 %."
+        "fr": "Pyrrhon d'Élis suit Alexandre le Grand jusqu'en Inde, où il rencontre des sages nus, les gymnosophistes. Il en revient avec une idée : à chaque argument s'oppose un argument de même force, alors mieux vaut suspendre son jugement, l'épochè. Ce renoncement à trancher apporte la paix de l'esprit, l'ataraxie."
        },
        {
-        "fr": "Cousin de l'ancrage, l'effet de leurre : un moyen pop-corn à 6,50 € existe surtout pour que le grand à 7 € paraisse avantageux. Personne ne veut le moyen ; il sert d'élément de comparaison. L'effet est décrit par Joel Huber, John Payne et Christopher Puto, en 1982, sous le nom d'option asymétriquement dominée. Repérer l'option que personne ne choisit, c'est souvent repérer le leurre."
+        "fr": "Ses héritiers forgent des outils. Énésidème, au Ier siècle av. J.-C., propose dix modes du doute ; Agrippa les resserre en cinq : le désaccord, la régression à l'infini, la relativité, l'hypothèse et la circularité. On les connaît grâce à Sextus Empiricus, médecin de la fin du IIe siècle. Traduit en latin par Henri Estienne en 1562, il marque profondément Montaigne."
        }
       ],
       "retenir": {
-       "fr": "Prix barré, plat cher en tête de carte, première offre : des ancres. L'option que personne ne prend est souvent un leurre."
+       "fr": "Pyrrhon : suspendre son jugement (épochè) pour la paix de l'esprit (ataraxie). Agrippa : cinq modes du doute, conservés par Sextus Empiricus, traduit en 1562."
       },
-      "source": "Ariely, C'est (vraiment) moi qui décide ?, 2008",
-      "figure": "mc_biais_prix"
-     },
-     {
-      "id": "experts",
-      "titre": {
-       "fr": "Même les juges"
-      },
-      "texte": [
-       {
-        "fr": "On pourrait croire que l'expérience protège. En 2006, Birte Englich et ses collègues font lire un dossier à des juges et des procureurs expérimentés, avec une peine requise tirée… aux dés. Plus le dé donne un chiffre élevé, plus la peine qu'ils proposent est lourde."
-       },
-       {
-        "fr": "Et savoir que l'ancre est absurde ne suffit pas à s'en libérer : l'effet diminue un peu chez les gens prévenus, mais persiste. Le meilleur réflexe est de se faire sa propre estimation avant d'entendre le moindre chiffre, ou de chercher une référence indépendante, plutôt que d'ajuster à partir de l'ancre."
-       }
-      ],
-      "retenir": {
-       "fr": "Les experts aussi (juges et dés, Englich, 2006). Estimer avant d'entendre un chiffre, ou chercher une référence indépendante."
-      },
-      "source": "Englich, Mussweiler et Strack, Personality and Social Psychology Bulletin, 2006",
-      "figure": "mc_biais_juges",
+      "source": "Sextus Empiricus, Esquisses pyrrhoniennes",
+      "figure": "mc_biais_agrippa",
       "reperes": [
        {
-        "fr": "En 2006, Birte Englich et ses collègues font lire un dossier à des juges et des procureurs expérimentés, avec une peine requise tirée… aux dés."
+        "fr": "Pyrrhon d'Élis suit Alexandre le Grand jusqu'en Inde, où il rencontre des sages nus, les gymnosophistes."
+       }
+      ]
+     },
+     {
+      "id": "methode",
+      "titre": {
+       "fr": "Douter avec méthode"
+      },
+      "texte": [
+       {
+        "fr": "Au Caire, au début du XIe siècle, Ibn al-Haytham fixe une règle à qui lit les savants : se faire « l'ennemi de tout ce qu'il lit », l'attaquer de tous côtés, et se soupçonner soi-même pendant l'examen pour éviter le préjugé comme la complaisance. Il l'applique à Ptolémée, dont il relève les contradictions dans ses Doutes, publiés entre 1025 et 1028."
+       },
+       {
+        "fr": "En 1637, à Leyde, Descartes publie sans son nom le Discours de la méthode, en français, en préface à trois essais de sciences. Quatre préceptes : ne rien tenir pour vrai qu'on ne connaisse clairement ; diviser chaque difficulté ; aller du plus simple au plus complexe ; tout passer en revue pour ne rien omettre. Son doute n'est pas une fin, mais un chantier : on démolit pour reconstruire sur du solide."
+       }
+      ],
+      "retenir": {
+       "fr": "Ibn al-Haytham : se faire l'ennemi de ce qu'on lit, et se soupçonner soi-même. Descartes, 1637 : quatre préceptes, un doute qui sert à reconstruire."
+      },
+      "source": "Ibn al-Haytham, Doutes sur Ptolémée ; Descartes, Discours de la méthode, 1637",
+      "reperes": [
+       {
+        "fr": "Il l'applique à Ptolémée, dont il relève les contradictions dans ses Doutes, publiés entre 1025 et 1028."
        }
       ]
      }
@@ -3737,7 +3741,7 @@
   {
    "id": "biais.disponibilite",
    "stat": "lucidite",
-   "rang": 3,
+   "rang": 2,
    "nom": {
     "fr": "Heuristique de disponibilité"
    },
@@ -3847,109 +3851,326 @@
    }
   },
   {
-   "id": "biais.surconfiance",
+   "id": "biais.outils",
    "stat": "lucidite",
-   "rang": 4,
+   "rang": 3,
    "nom": {
-    "fr": "Dunning-Kruger et métacognition"
+    "fr": "Boîte à outils de l'esprit critique"
    },
    "description": {
-    "fr": "Mesurer ce qu'on sait, et ce qu'on croit savoir."
+    "fr": "Pré-mortem, lecture latérale, probabilités et zététique."
    },
    "prerequis": [
-    "biais.ancrage",
+    "biais.doute",
     "biais.disponibilite"
    ],
    "fiche": {
     "essentiel": [
      {
-      "fr": "Effet Dunning-Kruger : les moins compétents surestiment davantage leur niveau, faute de savoir ce qu'ils ignorent."
+      "fr": "Pré-mortem : imaginer que le projet a échoué et chercher pourquoi, avant de commencer."
      },
      {
-      "fr": "Les plus compétents ont tendance à se sous-estimer légèrement."
+      "fr": "Lecture latérale : pour juger un site, ouvrir d'autres onglets sur sa source plutôt que le lire en profondeur."
      },
      {
-      "fr": "La courbe en « montagne de la stupidité » qui circule sur Internet n'est pas dans l'article original."
+      "fr": "Raisonner en probabilités : « je suis sûr à 80 % » plutôt que oui ou non."
      },
      {
-      "fr": "Métacognition : s'entraîner à dire « je suis sûr à 70 % » et vérifier si on a raison 7 fois sur 10."
+      "fr": "Rasoir d'Occam : à pouvoir explicatif égal, préférer l'hypothèse la plus simple."
      }
     ],
     "piege": {
-     "fr": "Dunning-Kruger ne dit pas que les ignorants se croient experts : ils se placent au-dessus de la moyenne, pas au sommet."
+     "fr": "Une affirmation extraordinaire demande des preuves extraordinaires (Sagan)."
     },
-    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Score qu'on s'attribue (percentile) selon son vrai niveau\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"a\" x=\"46.0\" y=\"47.3\" width=\"53.0\" height=\"82.7\" rx=\"3\"/><text class=\"t\" x=\"72.5\" y=\"41.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">62</text><text class=\"tm\" x=\"72.5\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">quart</text><text class=\"tm\" x=\"72.5\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">inférieur</text><rect class=\"f2\" x=\"111.0\" y=\"50.0\" width=\"53.0\" height=\"80.0\" rx=\"3\"/><text class=\"t\" x=\"137.5\" y=\"44.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">60</text><text class=\"tm\" x=\"137.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">2e</text><rect class=\"f2\" x=\"176.0\" y=\"42.0\" width=\"53.0\" height=\"88.0\" rx=\"3\"/><text class=\"t\" x=\"202.5\" y=\"36.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">66</text><text class=\"tm\" x=\"202.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">3e</text><rect class=\"f2\" x=\"241.0\" y=\"30.0\" width=\"53.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"267.5\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">75</text><text class=\"tm\" x=\"267.5\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">quart</text><text class=\"tm\" x=\"267.5\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">supérieur</text></svg>",
-    "source": "Kruger et Dunning, Journal of Personality and Social Psychology, 1999"
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Trois questions avant de croire une information\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">qui</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">parle ?</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">quelle</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">preuve ?</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">qu'en disent</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">les autres ?</text></svg>",
+    "source": "Wineburg et McGrew, Stanford History Education Group, 2017"
    },
-   "symbole": "↑",
-   "embleme": "citron",
+   "symbole": "⚒",
+   "embleme": "lunettes",
    "masterclass": {
     "chapitres": [
      {
-      "id": "dunning",
+      "id": "source",
       "titre": {
-       "fr": "Ce que dit vraiment Dunning-Kruger"
+       "fr": "Lire latéralement"
       },
       "texte": [
        {
-        "fr": "En 1999, David Dunning et Justin Kruger testent des étudiants en logique, grammaire et humour, puis leur demandent de se situer. Ceux du quart le plus faible se placent en moyenne autour du 62e percentile, alors qu'ils sont vers le 12e. Les compétences qui leur manquent sont justement celles qui leur permettraient de voir leurs erreurs. Les meilleurs, eux, se sous-estiment légèrement."
+        "fr": "En 2017, Sam Wineburg et Sarah McGrew comparent des historiens, des étudiants et des vérificateurs professionnels face à des sites inconnus. Les vérificateurs gagnent largement. Leur secret : ils ne lisent presque pas le site. Ils ouvrent d'autres onglets pour savoir qui est derrière. C'est la lecture latérale."
        },
        {
-        "fr": "Attention aux caricatures. Les moins compétents ne se croient pas experts : ils se placent au-dessus de la moyenne, pas au sommet, et toujours en dessous des meilleurs. La fameuse courbe de la « montagne de la stupidité » ne vient pas de l'article. Et une partie des chercheurs estime qu'une bonne part de l'effet est un artefact statistique, lié à la régression vers la moyenne ; Dunning défend ses résultats."
+        "fr": "Mike Caulfield en a tiré la méthode SIFT : Stop (s'arrêter avant de partager), enquêter sur la source, trouver une meilleure couverture, remonter à l'origine de l'affirmation. La première étape est la plus difficile. Et face à une étude citée dans la presse : sur combien de personnes, et sur qui ? Beaucoup de « découvertes » médicales concernent des souris."
        }
       ],
       "retenir": {
-       "fr": "Les moins compétents se surestiment (12e percentile réel, 62e estimé), sans se croire experts. La « montagne de la stupidité » n'est pas dans l'article."
+       "fr": "Lecture latérale : vérifier qui est derrière une source avant de la lire (Wineburg et McGrew, 2017). SIFT : stop, source, meilleure couverture, origine."
       },
-      "source": "Kruger et Dunning, Journal of Personality and Social Psychology, 1999",
+      "source": "Wineburg et McGrew, Stanford History Education Group, 2017",
       "reperes": [
        {
-        "fr": "En 1999, David Dunning et Justin Kruger testent des étudiants en logique, grammaire et humour, puis leur demandent de se situer."
+        "fr": "En 2017, Sam Wineburg et Sarah McGrew comparent des historiens, des étudiants et des vérificateurs professionnels face à des sites inconnus."
        }
       ]
      },
      {
-      "id": "calibrer",
+      "id": "premortem",
       "titre": {
-       "fr": "Être sûr à 70 %"
+       "fr": "Imaginer l'échec avant de commencer"
       },
       "texte": [
        {
-        "fr": "La métacognition, c'est savoir ce qu'on sait, et repérer ce qu'on ne sait pas. Un exercice simple : au lieu de répondre oui ou non, dire « je suis sûr à 70 % », puis vérifier. Si l'on a raison environ 7 fois sur 10 quand on se dit sûr à 70 %, on est bien calibré. La plupart des gens découvrent qu'ils se trompent bien plus souvent qu'ils ne le pensaient à « 90 % »."
+        "fr": "Le pré-mortem, proposé par Gary Klein : avant de lancer un projet, l'équipe imagine qu'il a échoué, et chacun écrit pourquoi. Présenter l'échec comme acquis délie les langues : on ose enfin dire ce qui inquiète. Klein le décrit en 2007 dans la Harvard Business Review ; il formalise une idée étudiée dès 1989 par Mitchell, Russo et Pennington, la rétrospection anticipée. La vision externe complète l'outil : votre chantier est unique, mais combien de chantiers semblables ont dépassé leur budget ?"
        },
        {
-        "fr": "La surconfiance est partout. En 1981, Ola Svenson trouve que 93 % des Américains interrogés se placent dans la moitié la plus habile des conducteurs. Et l'erreur de planification nous fait sous-estimer la durée de nos projets, même quand on sait que les précédents ont pris du retard. À l'inverse, le syndrome de l'imposteur attribue ses succès à la chance."
+        "fr": "Philip Tetlock a suivi pendant vingt ans 28 000 prévisions d'experts politiques : à long terme, ils faisaient à peine mieux que le hasard, et les « hérissons », sûrs d'une grande idée, faisaient le pire. Ses « superprévisionnistes », des amateurs bien entraînés, pensent en probabilités, révisent souvent, par petites touches, au fil des indices."
        }
       ],
       "retenir": {
-       "fr": "Se calibrer : « sûr à 70 % » doit tomber juste 7 fois sur 10. 93 % des conducteurs se croient dans la meilleure moitié (Svenson, 1981)."
+       "fr": "Pré-mortem : imaginer l'échec pour le prévenir (Klein). Vision externe. Penser en probabilités et réviser par petites touches (Tetlock)."
       },
-      "source": "Tetlock et Gardner, Superforecasting, 2015",
-      "figure": "mc_biais_calibrer",
+      "source": "Klein, Harvard Business Review, 2007 ; Tetlock, Expert Political Judgment, 2005",
+      "figure": "mc_biais_premortem"
+     },
+     {
+      "id": "preuves",
+      "titre": {
+       "fr": "Des preuves à la hauteur"
+      },
+      "texte": [
+       {
+        "fr": "« Des affirmations extraordinaires exigent des preuves extraordinaires » : Carl Sagan popularise la formule dans Cosmos, en 1980 ; l'idée remonte à Laplace. À pouvoir explicatif égal, le rasoir d'Occam préfère l'hypothèse la plus simple. Et une méta-analyse, qui combine de nombreuses études solides, pèse en général plus qu'une étude isolée."
+       },
+       {
+        "fr": "Mettre à l'épreuve les prétentions extraordinaires, c'est ce qu'a fait James Randi : son défi d'un million de dollars, de 1964 à 2015, a attiré plus de mille candidats aux pouvoirs paranormaux. Le prix n'a jamais été remporté. En France, cette démarche porte un nom, la zététique, du grec zêtein, chercher, qu'Henri Broch enseignait à l'université de Nice."
+       }
+      ],
+      "retenir": {
+       "fr": "Affirmation extraordinaire, preuve extraordinaire (Sagan). Rasoir d'Occam. Une méta-analyse pèse plus qu'une étude seule."
+      },
+      "source": "Sagan, Cosmos, 1980",
+      "figure": "mc_biais_preuves",
       "reperes": [
        {
-        "fr": "En 1981, Ola Svenson trouve que 93 % des Américains interrogés se placent dans la moitié la plus habile des conducteurs."
+        "fr": "« Des affirmations extraordinaires exigent des preuves extraordinaires » : Carl Sagan popularise la formule dans Cosmos, en 1980 ; l'idée remonte à Laplace."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "biais.statistiques",
+   "stat": "lucidite",
+   "rang": 4,
+   "nom": {
+    "fr": "Pièges statistiques"
+   },
+   "description": {
+    "fr": "Paradoxe de Simpson, régression vers la moyenne, faux positifs."
+   },
+   "prerequis": [
+    "biais.outils"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Paradoxe de Simpson : une tendance vraie dans chaque groupe peut s'inverser quand on les regroupe."
+     },
+     {
+      "fr": "Régression vers la moyenne : après un résultat extrême, le suivant est souvent plus ordinaire, sans aucune cause."
+     },
+     {
+      "fr": "Faux positifs : un test fiable à 99 % sur une maladie rare donne surtout des faux positifs."
+     },
+     {
+      "fr": "Toujours demander : sur combien ? par rapport à quoi ?"
+     }
+    ],
+    "piege": {
+     "fr": "Après une engueulade, les pilotes s'améliorent et après un compliment ils baissent : c'est la régression, pas la pédagogie."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Test fiable à 99 % sur une maladie touchant 1 personne sur 1 000\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"a\" x=\"46.0\" y=\"120.0\" width=\"118.0\" height=\"10.0\" rx=\"3\"/><text class=\"t\" x=\"105.0\" y=\"114.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"105.0\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">vrais</text><text class=\"tm\" x=\"105.0\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">positifs</text><rect class=\"f2\" x=\"176.0\" y=\"30.0\" width=\"118.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"235.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">10</text><text class=\"tm\" x=\"235.0\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">faux</text><text class=\"tm\" x=\"235.0\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">positifs</text></svg>",
+    "source": "Gigerenzer, Calculated Risks, 2002"
+   },
+   "symbole": "≈",
+   "embleme": "barres",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "simpson",
+      "titre": {
+       "fr": "Le paradoxe de Simpson"
+      },
+      "texte": [
+       {
+        "fr": "En 1973, l'université de Berkeley semble admettre nettement moins de femmes que d'hommes. Mais département par département, les femmes ne sont pas défavorisées, parfois même un peu favorisées. L'explication : elles postulaient davantage dans les départements les plus sélectifs. L'étude de Bickel, Hammel et O'Connell, en 1975, en a fait l'exemple le plus célèbre du paradoxe de Simpson."
+       },
+       {
+        "fr": "Une tendance vraie dans chaque groupe peut donc s'inverser quand on les regroupe, si les groupes sont de tailles très différentes. Face à un chiffre global surprenant, se demander : qu'est-ce qui se passe à l'intérieur de chaque sous-groupe ? Et quelle variable confondante pourrait tout expliquer ? Les gens hospitalisés meurent plus que les autres, mais l'hôpital n'y est pour rien : ils sont malades."
+       }
+      ],
+      "retenir": {
+       "fr": "Paradoxe de Simpson : une tendance peut s'inverser en regroupant (Berkeley, 1973). Chercher la variable confondante."
+      },
+      "source": "Bickel, Hammel et O'Connell, Science, 1975",
+      "figure": "mc_biais_simpson",
+      "reperes": [
+       {
+        "fr": "En 1973, l'université de Berkeley semble admettre nettement moins de femmes que d'hommes."
+       },
+       {
+        "fr": "L'étude de Bickel, Hammel et O'Connell, en 1975, en a fait l'exemple le plus célèbre du paradoxe de Simpson."
        }
       ]
      },
      {
-      "id": "tester",
+      "id": "regression",
       "titre": {
-       "fr": "Se tester plutôt que relire"
+       "fr": "Le compliment qui ne marche pas"
       },
       "texte": [
        {
-        "fr": "Relire un cours donne une impression trompeuse de maîtrise : tout paraît familier, donc su. Se tester, aller chercher la réponse dans sa mémoire sans la regarder, renforce bien mieux le souvenir. C'est l'effet de test, ou pratique de récupération, et c'est le principe même de ce jeu."
+        "fr": "Des instructeurs de vol israéliens expliquent à Kahneman que les reproches marchent mieux que les compliments : après un compliment pour un atterrissage brillant, le suivant est moins bon ; après une engueulade pour un raté, le suivant s'améliore. Kahneman leur montre que la pédagogie n'y est pour rien. Après un résultat extrême, le suivant est presque toujours plus ordinaire : c'est la régression vers la moyenne."
        },
        {
-        "fr": "Il y a aussi un angle mort : nous repérons très bien les biais des autres, beaucoup moins les nôtres. Emily Pronin et ses collègues l'ont décrit en 2002. Plus on apprend dans un domaine, plus on mesure l'étendue de ce qu'on ignore : c'est l'envers de Dunning-Kruger, et plutôt bon signe."
+        "fr": "La « malédiction » de la couverture de Sports Illustrated s'explique pareil : on y apparaît après une saison exceptionnelle, rarement suivie d'une autre aussi bonne. Et le procès de Sally Clark, en 1999, montre ce que coûtent ces erreurs : un expert multiplie les probabilités de deux morts subites comme si elles étaient indépendantes, annonce 1 chance sur 73 millions, et la mère est condamnée. La condamnation est annulée en 2003."
        }
       ],
       "retenir": {
-       "fr": "Se tester bat la relecture (effet de test). On voit les biais des autres, pas les siens (angle mort, Pronin, 2002)."
+       "fr": "Après un extrême, retour vers la moyenne, sans aucune cause. Méfiance envers les probabilités multipliées à tort (Sally Clark, 1999)."
       },
-      "source": "Roediger et Karpicke, Psychological Science, 2006",
-      "figure": "mc_biais_tester"
+      "source": "Kahneman, Système 1 / Système 2, 2011",
+      "figure": "mc_biais_regression"
+     },
+     {
+      "id": "graphiques",
+      "titre": {
+       "fr": "P-hacking et graphiques trompeurs"
+      },
+      "texte": [
+       {
+        "fr": "Avec le seuil statistique habituel de 5 %, tester vingt hypothèses sans aucun effet réel donne en moyenne un faux « résultat significatif ». Chercher jusqu'à trouver, puis ne publier que la trouvaille, c'est le p-hacking. Et une corrélation, même forte, peut être absurde : en 2012, Franz Messerli relève, avec humour, une corrélation entre consommation de chocolat et prix Nobel par pays."
+       },
+       {
+        "fr": "Les graphiques trompent aussi. Un axe vertical qui ne commence pas à zéro peut faire ressembler une hausse de 50,1 % à 50,4 % à un triplement. Lisez toujours les graduations, et demandez : sur combien ? par rapport à quoi ?"
+       }
+      ],
+      "retenir": {
+       "fr": "Vingt tests au seuil de 5 % donnent un faux positif en moyenne. Lire les graduations : un axe tronqué grossit tout."
+      },
+      "source": "Gigerenzer, Calculated Risks, 2002",
+      "schema_fiche": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "biais.foules",
+   "stat": "lucidite",
+   "rang": 5,
+   "nom": {
+    "fr": "Foules et rumeurs"
+   },
+   "description": {
+    "fr": "Tulipes, rumeurs, paniques et loi de Brandolini : comment une idée fausse court plus vite que la vraie."
+   },
+   "prerequis": [
+    "biais.statistiques"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Tulipomanie : krach en février 1637 ; mais Goldgar ne trouve que quelques personnes ruinées."
+     },
+     {
+      "fr": "Allport et Postman, 1947 : nivellement, accentuation, assimilation ; environ 70 % des détails perdus en 5 ou 6 relais."
+     },
+     {
+      "fr": "Orléans, 1969 : aucune disparition, et la rumeur survit aux démentis."
+     },
+     {
+      "fr": "Loi de Brandolini (2013) : réfuter une ânerie coûte bien plus d'énergie que la produire."
+     }
+    ],
+    "piege": {
+     "fr": "Les récits de folie collective sont eux-mêmes des rumeurs : la panique de La Guerre des mondes (1938) a été largement inventée par la presse."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Foules et rumeurs dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1637</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">krach des tulipes</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1841</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Mackay, les folies des foules</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1895</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Le Bon, les foules</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1938</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">La Guerre des mondes</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1969</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">la rumeur d'Orléans</text></svg>",
+    "source": "Pooley et Socolow, Slate, 2013"
+   },
+   "symbole": "≫",
+   "embleme": "tourbillon",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "tulipes",
+      "titre": {
+       "fr": "La folie des tulipes"
+      },
+      "texte": [
+       {
+        "fr": "Dans les Provinces-Unies des années 1630, la tulipe est un luxe. Les prix s'emballent à partir de 1634 ; pendant l'hiver 1636-1637, on achète et revend dans les tavernes des bulbes encore en terre, par contrats pour une livraison future. Au sommet, certains se vendent plus de dix fois le revenu annuel d'un artisan qualifié ; le Semper Augustus atteint 10 000 florins. En février 1637, les prix des contrats s'effondrent."
+       },
+       {
+        "fr": "La légende d'une Hollande ruinée vient surtout de Charles Mackay, en 1841, qui raconte même qu'un marin aurait mangé un bulbe précieux en le prenant pour un oignon. En fouillant les archives, l'historienne Anne Goldgar ne trouve que moins d'une demi-douzaine de personnes en difficulté. La folie collective était réelle, mais son récit a lui-même enflé comme une bulle."
+       }
+      ],
+      "retenir": {
+       "fr": "Tulipomanie : pic à l'hiver 1636-1637, krach en février 1637. Mackay (1841) a exagéré la ruine ; Goldgar trouve moins de six victimes connues."
+      },
+      "source": "Anne Goldgar, Tulipmania, 2007",
+      "reperes": [
+       {
+        "fr": "En février 1637, les prix des contrats s'effondrent."
+       }
+      ]
+     },
+     {
+      "id": "rumeur",
+      "titre": {
+       "fr": "Comment naît une rumeur"
+      },
+      "texte": [
+       {
+        "fr": "En 1947, Gordon Allport et Leo Postman font passer une image ou un récit de bouche à oreille : environ 70 % des détails disparaissent en 5 ou 6 transmissions. Trois mécanismes : le nivellement fait tomber des détails, l'accentuation en grossit d'autres, l'assimilation plie le récit aux attentes. Une ambulance chargée de caisses « TNT » devient une ambulance qui transporte du matériel médical."
+       },
+       {
+        "fr": "En mai 1969, à Orléans, on raconte que des jeunes femmes disparaissent dans les cabines d'essayage de six magasins de vêtements tenus par des Juifs. Aucune disparition n'a eu lieu, et les démentis n'y font rien : la rumeur accuse alors les autorités de complicité. Edgar Morin et cinq sociologues enquêtent trois jours sur place et publient La Rumeur d'Orléans la même année."
+       }
+      ],
+      "retenir": {
+       "fr": "Allport et Postman, 1947 : nivellement, accentuation, assimilation ; environ 70 % des détails perdus. Orléans, 1969 : une rumeur que les démentis nourrissent."
+      },
+      "source": "Allport et Postman, The Psychology of Rumor, 1947 ; Edgar Morin, La Rumeur d'Orléans, 1969",
+      "figure": "mc_biais_rumeur",
+      "reperes": [
+       {
+        "fr": "Une ambulance chargée de caisses « TNT » devient une ambulance qui transporte du matériel médical."
+       }
+      ]
+     },
+     {
+      "id": "panique",
+      "titre": {
+       "fr": "La panique qui n'a pas eu lieu"
+      },
+      "texte": [
+       {
+        "fr": "En 1895, dans Psychologie des foules, Gustave Le Bon décrit l'individu pris dans la foule comme un grain de sable que le vent soulève à son gré : il perdrait son jugement propre. Le livre influence Freud, qui le discute en 1921, et peut-être Hitler. L'idée d'une foule forcément irrationnelle devient un lieu commun."
+       },
+       {
+        "fr": "Le 30 octobre 1938, Orson Welles adapte La Guerre des mondes à la radio, en faux bulletins d'information. Le lendemain, les journaux décrivent une Amérique en panique. Mais un sondage du soir même ne trouve qu'environ 2 % des foyers à l'écoute, et presque personne n'a été dupe. Les journaux, à qui la radio prenait des recettes publicitaires, ont gonflé les rares cas de peur."
+       }
+      ],
+      "retenir": {
+       "fr": "Le Bon (1895) : la foule rendrait irrationnel. La Guerre des mondes (1938) : la grande panique était surtout une rumeur de presse."
+      },
+      "source": "Gustave Le Bon, Psychologie des foules, 1895 ; Pooley et Socolow, Slate, 2013",
+      "reperes": [
+       {
+        "fr": "Le 30 octobre 1938, Orson Welles adapte La Guerre des mondes à la radio, en faux bulletins d'information."
+       }
+      ]
      }
     ]
    }
@@ -3965,7 +4186,7 @@
     "fr": "Aversion à la perte, coûts irrécupérables, statu quo et nudges."
    },
    "prerequis": [
-    "biais.surconfiance"
+    "biais.statistiques"
    ],
    "fiche": {
     "essentiel": [
@@ -4067,115 +4288,9 @@
    }
   },
   {
-   "id": "biais.statistiques",
-   "stat": "lucidite",
-   "rang": 6,
-   "nom": {
-    "fr": "Pièges statistiques"
-   },
-   "description": {
-    "fr": "Paradoxe de Simpson, régression vers la moyenne, faux positifs."
-   },
-   "prerequis": [
-    "biais.decision"
-   ],
-   "fiche": {
-    "essentiel": [
-     {
-      "fr": "Paradoxe de Simpson : une tendance vraie dans chaque groupe peut s'inverser quand on les regroupe."
-     },
-     {
-      "fr": "Régression vers la moyenne : après un résultat extrême, le suivant est souvent plus ordinaire, sans aucune cause."
-     },
-     {
-      "fr": "Faux positifs : un test fiable à 99 % sur une maladie rare donne surtout des faux positifs."
-     },
-     {
-      "fr": "Toujours demander : sur combien ? par rapport à quoi ?"
-     }
-    ],
-    "piege": {
-     "fr": "Après une engueulade, les pilotes s'améliorent et après un compliment ils baissent : c'est la régression, pas la pédagogie."
-    },
-    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Test fiable à 99 % sur une maladie touchant 1 personne sur 1 000\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"a\" x=\"46.0\" y=\"120.0\" width=\"118.0\" height=\"10.0\" rx=\"3\"/><text class=\"t\" x=\"105.0\" y=\"114.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"105.0\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">vrais</text><text class=\"tm\" x=\"105.0\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">positifs</text><rect class=\"f2\" x=\"176.0\" y=\"30.0\" width=\"118.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"235.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">10</text><text class=\"tm\" x=\"235.0\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">faux</text><text class=\"tm\" x=\"235.0\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">positifs</text></svg>",
-    "source": "Gigerenzer, Calculated Risks, 2002"
-   },
-   "symbole": "≈",
-   "embleme": "barres",
-   "masterclass": {
-    "chapitres": [
-     {
-      "id": "simpson",
-      "titre": {
-       "fr": "Le paradoxe de Simpson"
-      },
-      "texte": [
-       {
-        "fr": "En 1973, l'université de Berkeley semble admettre nettement moins de femmes que d'hommes. Mais département par département, les femmes ne sont pas défavorisées, parfois même un peu favorisées. L'explication : elles postulaient davantage dans les départements les plus sélectifs. L'étude de Bickel, Hammel et O'Connell, en 1975, en a fait l'exemple le plus célèbre du paradoxe de Simpson."
-       },
-       {
-        "fr": "Une tendance vraie dans chaque groupe peut donc s'inverser quand on les regroupe, si les groupes sont de tailles très différentes. Face à un chiffre global surprenant, se demander : qu'est-ce qui se passe à l'intérieur de chaque sous-groupe ? Et quelle variable confondante pourrait tout expliquer ? Les gens hospitalisés meurent plus que les autres, mais l'hôpital n'y est pour rien : ils sont malades."
-       }
-      ],
-      "retenir": {
-       "fr": "Paradoxe de Simpson : une tendance peut s'inverser en regroupant (Berkeley, 1973). Chercher la variable confondante."
-      },
-      "source": "Bickel, Hammel et O'Connell, Science, 1975",
-      "figure": "mc_biais_simpson",
-      "reperes": [
-       {
-        "fr": "En 1973, l'université de Berkeley semble admettre nettement moins de femmes que d'hommes."
-       },
-       {
-        "fr": "L'étude de Bickel, Hammel et O'Connell, en 1975, en a fait l'exemple le plus célèbre du paradoxe de Simpson."
-       }
-      ]
-     },
-     {
-      "id": "regression",
-      "titre": {
-       "fr": "Le compliment qui ne marche pas"
-      },
-      "texte": [
-       {
-        "fr": "Des instructeurs de vol israéliens expliquent à Kahneman que les reproches marchent mieux que les compliments : après un compliment pour un atterrissage brillant, le suivant est moins bon ; après une engueulade pour un raté, le suivant s'améliore. Kahneman leur montre que la pédagogie n'y est pour rien. Après un résultat extrême, le suivant est presque toujours plus ordinaire : c'est la régression vers la moyenne."
-       },
-       {
-        "fr": "La « malédiction » de la couverture de Sports Illustrated s'explique pareil : on y apparaît après une saison exceptionnelle, rarement suivie d'une autre aussi bonne. Et le procès de Sally Clark, en 1999, montre ce que coûtent ces erreurs : un expert multiplie les probabilités de deux morts subites comme si elles étaient indépendantes, annonce 1 chance sur 73 millions, et la mère est condamnée. La condamnation est annulée en 2003."
-       }
-      ],
-      "retenir": {
-       "fr": "Après un extrême, retour vers la moyenne, sans aucune cause. Méfiance envers les probabilités multipliées à tort (Sally Clark, 1999)."
-      },
-      "source": "Kahneman, Système 1 / Système 2, 2011",
-      "figure": "mc_biais_regression"
-     },
-     {
-      "id": "graphiques",
-      "titre": {
-       "fr": "P-hacking et graphiques trompeurs"
-      },
-      "texte": [
-       {
-        "fr": "Avec le seuil statistique habituel de 5 %, tester vingt hypothèses sans aucun effet réel donne en moyenne un faux « résultat significatif ». Chercher jusqu'à trouver, puis ne publier que la trouvaille, c'est le p-hacking. Et une corrélation, même forte, peut être absurde : en 2012, Franz Messerli relève, avec humour, une corrélation entre consommation de chocolat et prix Nobel par pays."
-       },
-       {
-        "fr": "Les graphiques trompent aussi. Un axe vertical qui ne commence pas à zéro peut faire ressembler une hausse de 50,1 % à 50,4 % à un triplement. Lisez toujours les graduations, et demandez : sur combien ? par rapport à quoi ?"
-       }
-      ],
-      "retenir": {
-       "fr": "Vingt tests au seuil de 5 % donnent un faux positif en moyenne. Lire les graduations : un axe tronqué grossit tout."
-      },
-      "source": "Gigerenzer, Calculated Risks, 2002",
-      "schema_fiche": true
-     }
-    ]
-   }
-  },
-  {
    "id": "biais.croyances",
    "stat": "lucidite",
-   "rang": 7,
+   "rang": 6,
    "nom": {
     "fr": "Croyances et complots"
    },
@@ -4183,6 +4298,7 @@
     "fr": "Paréidolie, intentionnalité, prophéties ratées et faux souvenirs."
    },
    "prerequis": [
+    "biais.foules",
     "biais.decision"
    ],
    "fiche": {
@@ -4286,109 +4402,439 @@
    }
   },
   {
-   "id": "biais.outils",
+   "id": "biais.ancrage",
    "stat": "lucidite",
-   "rang": 8,
+   "rang": 6,
    "nom": {
-    "fr": "Boîte à outils de l'esprit critique"
+    "fr": "Effet d'ancrage"
    },
    "description": {
-    "fr": "Pré-mortem, lecture latérale, probabilités et zététique."
+    "fr": "Quand un premier chiffre tire nos estimations."
    },
    "prerequis": [
-    "biais.statistiques",
     "biais.croyances"
    ],
    "fiche": {
     "essentiel": [
      {
-      "fr": "Pré-mortem : imaginer que le projet a échoué et chercher pourquoi, avant de commencer."
+      "fr": "Un premier chiffre, même absurde, tire les estimations suivantes vers lui."
      },
      {
-      "fr": "Lecture latérale : pour juger un site, ouvrir d'autres onglets sur sa source plutôt que le lire en profondeur."
+      "fr": "Tversky et Kahneman : après une roue truquée tombée sur 10 ou 65, les estimations de la part des pays africains à l'ONU étaient de 25 % ou 45 %."
      },
      {
-      "fr": "Raisonner en probabilités : « je suis sûr à 80 % » plutôt que oui ou non."
+      "fr": "Les prix barrés et les premières offres d'une négociation exploitent l'ancrage."
      },
      {
-      "fr": "Rasoir d'Occam : à pouvoir explicatif égal, préférer l'hypothèse la plus simple."
+      "fr": "Même les experts y cèdent : des juges influencés par un dé dans leurs peines (Englich, 2006)."
      }
     ],
     "piege": {
-     "fr": "Une affirmation extraordinaire demande des preuves extraordinaires (Sagan)."
+     "fr": "Savoir que l'ancre est absurde ne suffit pas à s'en libérer."
     },
-    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Trois questions avant de croire une information\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">qui</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">parle ?</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">quelle</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">preuve ?</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">qu'en disent</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">les autres ?</text></svg>",
-    "source": "Wineburg et McGrew, Stanford History Education Group, 2017"
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Estimation médiane selon le chiffre de la roue\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"74.4\" width=\"118.0\" height=\"55.6\" rx=\"3\"/><text class=\"t\" x=\"105.0\" y=\"68.44444444444444\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">25 %</text><text class=\"tm\" x=\"105.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">roue sur 10</text><rect class=\"a\" x=\"176.0\" y=\"30.0\" width=\"118.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"235.0\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">45 %</text><text class=\"tm\" x=\"235.0\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">roue sur 65</text></svg>",
+    "source": "Tversky et Kahneman, Science, 1974"
    },
-   "symbole": "⚒",
-   "embleme": "lunettes",
+   "symbole": "#1",
+   "embleme": "roue-loterie",
    "masterclass": {
     "chapitres": [
      {
-      "id": "source",
+      "id": "roue",
       "titre": {
-       "fr": "Lire latéralement"
+       "fr": "La roue truquée"
       },
       "texte": [
        {
-        "fr": "En 2017, Sam Wineburg et Sarah McGrew comparent des historiens, des étudiants et des vérificateurs professionnels face à des sites inconnus. Les vérificateurs gagnent largement. Leur secret : ils ne lisent presque pas le site. Ils ouvrent d'autres onglets pour savoir qui est derrière. C'est la lecture latérale."
+        "fr": "En 1974, Amos Tversky et Daniel Kahneman font tourner devant des participants une roue de loterie truquée, qui s'arrête sur 10 ou sur 65. Puis ils demandent : quelle part des pays membres de l'ONU sont africains ? Après 10, l'estimation médiane est de 25 % ; après 65, de 45 %. Un chiffre manifestement sans rapport a tiré les réponses vers lui."
        },
        {
-        "fr": "Mike Caulfield en a tiré la méthode SIFT : Stop (s'arrêter avant de partager), enquêter sur la source, trouver une meilleure couverture, remonter à l'origine de l'affirmation. La première étape est la plus difficile. Et face à une étude citée dans la presse : sur combien de personnes, et sur qui ? Beaucoup de « découvertes » médicales concernent des souris."
+        "fr": "Autre expérience du même article : en cinq secondes, estimer 8 × 7 × 6 × 5 × 4 × 3 × 2 × 1. Médiane : 2 250. Dans l'ordre inverse, 1 × 2 × 3 × … × 8 : 512. Les premiers chiffres lus servent d'ancre. La bonne réponse, 40 320, est loin des deux."
        }
       ],
       "retenir": {
-       "fr": "Lecture latérale : vérifier qui est derrière une source avant de la lire (Wineburg et McGrew, 2017). SIFT : stop, source, meilleure couverture, origine."
+       "fr": "Un premier chiffre, même absurde, tire les estimations vers lui (Tversky et Kahneman, 1974 : 25 % contre 45 %)."
       },
-      "source": "Wineburg et McGrew, Stanford History Education Group, 2017",
+      "source": "Tversky et Kahneman, Science, 1974",
       "reperes": [
        {
-        "fr": "En 2017, Sam Wineburg et Sarah McGrew comparent des historiens, des étudiants et des vérificateurs professionnels face à des sites inconnus."
+        "fr": "En 1974, Amos Tversky et Daniel Kahneman font tourner devant des participants une roue de loterie truquée, qui s'arrête sur 10 ou sur 65."
        }
       ]
      },
      {
-      "id": "premortem",
+      "id": "prix",
       "titre": {
-       "fr": "Imaginer l'échec avant de commencer"
+       "fr": "Prix barrés et premières offres"
       },
       "texte": [
        {
-        "fr": "Le pré-mortem, proposé par Gary Klein : avant de lancer un projet, l'équipe imagine qu'il a échoué, et chacun écrit pourquoi. Présenter l'échec comme acquis délie les langues : on ose enfin dire ce qui inquiète. Klein le décrit en 2007 dans la Harvard Business Review ; il formalise une idée étudiée dès 1989 par Mitchell, Russo et Pennington, la rétrospection anticipée. La vision externe complète l'outil : votre chantier est unique, mais combien de chantiers semblables ont dépassé leur budget ?"
+        "fr": "Un prix barré à 200 € à côté de 120 € : le premier chiffre sert de référence, et le second paraît une affaire. Le plat très cher en haut d'une carte de restaurant n'est pas toujours là pour être vendu : il fait paraître les autres raisonnables. En négociation, la première offre ancre toute la discussion. L'effet a été mesuré en 1974 par Amos Tversky et Daniel Kahneman, avec une roue truquée qui s'arrêtait sur 10 ou sur 65 : ceux qui avaient vu 10 estimaient à 25 % en moyenne la part des pays africains à l'ONU, ceux qui avaient vu 65 à 45 %."
        },
        {
-        "fr": "Philip Tetlock a suivi pendant vingt ans 28 000 prévisions d'experts politiques : à long terme, ils faisaient à peine mieux que le hasard, et les « hérissons », sûrs d'une grande idée, faisaient le pire. Ses « superprévisionnistes », des amateurs bien entraînés, pensent en probabilités, révisent souvent, par petites touches, au fil des indices."
+        "fr": "Cousin de l'ancrage, l'effet de leurre : un moyen pop-corn à 6,50 € existe surtout pour que le grand à 7 € paraisse avantageux. Personne ne veut le moyen ; il sert d'élément de comparaison. L'effet est décrit par Joel Huber, John Payne et Christopher Puto, en 1982, sous le nom d'option asymétriquement dominée. Repérer l'option que personne ne choisit, c'est souvent repérer le leurre."
        }
       ],
       "retenir": {
-       "fr": "Pré-mortem : imaginer l'échec pour le prévenir (Klein). Vision externe. Penser en probabilités et réviser par petites touches (Tetlock)."
+       "fr": "Prix barré, plat cher en tête de carte, première offre : des ancres. L'option que personne ne prend est souvent un leurre."
       },
-      "source": "Klein, Harvard Business Review, 2007 ; Tetlock, Expert Political Judgment, 2005",
-      "figure": "mc_biais_premortem"
+      "source": "Ariely, C'est (vraiment) moi qui décide ?, 2008",
+      "figure": "mc_biais_prix"
      },
      {
-      "id": "preuves",
+      "id": "experts",
       "titre": {
-       "fr": "Des preuves à la hauteur"
+       "fr": "Même les juges"
       },
       "texte": [
        {
-        "fr": "« Des affirmations extraordinaires exigent des preuves extraordinaires » : Carl Sagan popularise la formule dans Cosmos, en 1980 ; l'idée remonte à Laplace. À pouvoir explicatif égal, le rasoir d'Occam préfère l'hypothèse la plus simple. Et une méta-analyse, qui combine de nombreuses études solides, pèse en général plus qu'une étude isolée."
+        "fr": "On pourrait croire que l'expérience protège. En 2006, Birte Englich et ses collègues font lire un dossier à des juges et des procureurs expérimentés, avec une peine requise tirée… aux dés. Plus le dé donne un chiffre élevé, plus la peine qu'ils proposent est lourde."
        },
        {
-        "fr": "Mettre à l'épreuve les prétentions extraordinaires, c'est ce qu'a fait James Randi : son défi d'un million de dollars, de 1964 à 2015, a attiré plus de mille candidats aux pouvoirs paranormaux. Le prix n'a jamais été remporté. En France, cette démarche porte un nom, la zététique, du grec zêtein, chercher, qu'Henri Broch enseignait à l'université de Nice."
+        "fr": "Et savoir que l'ancre est absurde ne suffit pas à s'en libérer : l'effet diminue un peu chez les gens prévenus, mais persiste. Le meilleur réflexe est de se faire sa propre estimation avant d'entendre le moindre chiffre, ou de chercher une référence indépendante, plutôt que d'ajuster à partir de l'ancre."
        }
       ],
       "retenir": {
-       "fr": "Affirmation extraordinaire, preuve extraordinaire (Sagan). Rasoir d'Occam. Une méta-analyse pèse plus qu'une étude seule."
+       "fr": "Les experts aussi (juges et dés, Englich, 2006). Estimer avant d'entendre un chiffre, ou chercher une référence indépendante."
       },
-      "source": "Sagan, Cosmos, 1980",
-      "figure": "mc_biais_preuves",
+      "source": "Englich, Mussweiler et Strack, Personality and Social Psychology Bulletin, 2006",
+      "figure": "mc_biais_juges",
       "reperes": [
        {
-        "fr": "« Des affirmations extraordinaires exigent des preuves extraordinaires » : Carl Sagan popularise la formule dans Cosmos, en 1980 ; l'idée remonte à Laplace."
+        "fr": "En 2006, Birte Englich et ses collègues font lire un dossier à des juges et des procureurs expérimentés, avec une peine requise tirée… aux dés."
        }
       ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "biais.groupe",
+   "stat": "lucidite",
+   "rang": 7,
+   "nom": {
+    "fr": "L'influence des autres"
+   },
+   "description": {
+    "fr": "Asch, la pensée de groupe, l'effet Pygmalion, l'effet du témoin : quand les autres pensent à notre place."
+   },
+   "prerequis": [
+    "biais.ancrage"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Asch, 1951 : face à un groupe unanime qui se trompe, 74 % cèdent au moins une fois ; un seul allié suffit à résister."
+     },
+     {
+      "fr": "Pensée de groupe (Janis, 1972) : un groupe soudé cesse d'examiner ses choix. Baie des Cochons, 1961."
+     },
+     {
+      "fr": "Remèdes de Kennedy en 1962 : experts extérieurs, sous-groupes, chef qui sort de la salle."
+     },
+     {
+      "fr": "Effet du témoin : la responsabilité se dilue dans le groupe ; dans la rue, pourtant, quelqu'un aide presque toujours."
+     }
+    ],
+    "piege": {
+     "fr": "L'effet Pygmalion à l'école existe, mais il est petit et souvent temporaire, loin de sa légende."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"L'influence des autres dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1951</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Asch, les lignes</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1961</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">baie des Cochons</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1968</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Pygmalion à l'école</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1972</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Janis, la pensée de groupe</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2019</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Philpot, les caméras de rue</text></svg>",
+    "source": "Jussim et Harber, Personality and Social Psychology Review, 2005"
+   },
+   "symbole": "≡",
+   "embleme": "lignes-asch",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "asch",
+      "titre": {
+       "fr": "Les lignes d'Asch"
+      },
+      "texte": [
+       {
+        "fr": "En 1951, au Swarthmore College, Solomon Asch montre une ligne modèle et trois lignes de longueurs différentes : laquelle est égale au modèle ? Seuls, les étudiants se trompent moins d'une fois sur cent. Mais dans la salle, tous les autres sont des complices qui donnent, à voix haute et à l'unanimité, la même mauvaise réponse."
+       },
+       {
+        "fr": "Sur 12 essais truqués, 74 % des participants cèdent au moins une fois, et un peu plus d'un tiers des réponses suivent le groupe. Mais un seul allié qui dit juste suffit : la conformité tombe à 5 %. Répondre par écrit la réduit aussi. Asch s'inquiète que des jeunes gens intelligents et bien intentionnés acceptent d'appeler blanc ce qui est noir."
+       }
+      ],
+      "retenir": {
+       "fr": "Asch, 1951 : face à un groupe unanime qui se trompe, 74 % cèdent au moins une fois. Un seul allié, ou une réponse écrite, suffit à résister."
+      },
+      "source": "Asch, « Effects of group pressure upon the modification and distortion of judgments », 1951",
+      "figure": "mc_biais_asch",
+      "reperes": [
+       {
+        "fr": "Seuls, les étudiants se trompent moins d'une fois sur cent."
+       }
+      ]
+     },
+     {
+      "id": "janis",
+      "titre": {
+       "fr": "La pensée de groupe"
+      },
+      "texte": [
+       {
+        "fr": "Le mot « groupthink » apparaît en 1952 sous la plume du journaliste William H. Whyte, dans le magazine Fortune ; il l'emprunte au roman 1984 d'Orwell. En 1972, le psychologue Irving Janis, de Yale, en fait une théorie dans Victims of Groupthink : un groupe soudé, pressé de s'entendre, cesse d'examiner ses choix."
+       },
+       {
+        "fr": "Janis relève huit symptômes, dont l'illusion d'invulnérabilité, l'autocensure et l'illusion d'unanimité. Exemple type : en 1961, l'équipe de Kennedy accepte sans examen le plan de la CIA pour débarquer à Cuba, dans la baie des Cochons ; c'est un désastre. En 1962, pendant la crise des missiles, Kennedy fait venir des experts extérieurs, divise le groupe en sous-groupes et sort de la salle. Mêmes hommes, autre méthode."
+       }
+      ],
+      "retenir": {
+       "fr": "Whyte, 1952 ; Janis, 1972 : un groupe qui veut s'entendre cesse de penser. Remèdes : avis extérieurs, sous-groupes, chef absent."
+      },
+      "source": "Janis, Victims of Groupthink, 1972",
+      "figure": "mc_biais_janis",
+      "reperes": [
+       {
+        "fr": "Le mot « groupthink » apparaît en 1952 sous la plume du journaliste William H. Whyte, dans le magazine Fortune ; il l'emprunte au roman 1984 d'Orwell."
+       }
+      ]
+     },
+     {
+      "id": "attentes",
+      "titre": {
+       "fr": "Attentes et témoins"
+      },
+      "texte": [
+       {
+        "fr": "En 1968, Robert Rosenthal et Lenore Jacobson font croire aux enseignants d'une école de Californie que 20 % de leurs élèves, tirés au hasard, vont s'épanouir. En fin d'étude, les plus jeunes d'entre eux ont davantage progressé : c'est l'« effet Pygmalion ». Mais les études suivantes le jugent petit et souvent temporaire ; il disparaît presque quand l'enseignant connaît déjà ses élèves."
+       },
+       {
+        "fr": "Les autres pèsent aussi sur l'action. En 1964, on raconte que 38 voisins ont laissé tuer Kitty Genovese sans réagir ; le chiffre était faux, le New York Times l'a admis en 2016. Mais l'expérience confirme une dilution : seuls, 70 % des participants aident une femme en détresse, 40 % à côté d'un inconnu. Dans la rue, pourtant, des caméras montrent qu'au moins un passant intervient dans plus de 90 % des disputes."
+       }
+      ],
+      "retenir": {
+       "fr": "Pygmalion (1968) : les attentes pèsent, mais peu et pas longtemps. Témoins : la responsabilité se dilue, mais dans la vraie rue, quelqu'un aide presque toujours."
+      },
+      "source": "Rosenthal et Jacobson, 1968 ; Philpot et al., 2019",
+      "reperes": [
+       {
+        "fr": "En 1968, Robert Rosenthal et Lenore Jacobson font croire aux enseignants d'une école de Californie que 20 % de leurs élèves, tirés au hasard, vont s'épanouir."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "biais.memoire",
+   "stat": "lucidite",
+   "rang": 7,
+   "nom": {
+    "fr": "La mémoire qui ment"
+   },
+   "description": {
+    "fr": "Bartlett, Loftus, les souvenirs flash et le biais rétrospectif : se souvenir, c'est reconstruire."
+   },
+   "prerequis": [
+    "biais.ancrage"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Bartlett, 1932 : la mémoire reconstruit ; ce qui ne colle pas à nos schémas tombe ou se transforme."
+     },
+     {
+      "fr": "Loftus et Palmer, 1974 : le verbe de la question change la vitesse estimée et fait « voir » du verre brisé."
+     },
+     {
+      "fr": "Effet de désinformation : une information reçue après coup se glisse dans le souvenir."
+     },
+     {
+      "fr": "Biais rétrospectif (Fischhoff, 1975) : une fois l'issue connue, on croit l'avoir prévue."
+     }
+    ],
+    "piege": {
+     "fr": "Être sûr de son souvenir ne prouve rien : les souvenirs flash ne sont spéciaux que par l'exactitude qu'on leur prête."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 164\" role=\"img\" aria-label=\"La mémoire reconstruite dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"154\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1932</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Bartlett, Remembering</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1974</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Loftus et Palmer</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1975</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Fischhoff, le rétrospectif</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1977</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">les souvenirs flash</text></svg>",
+    "source": "Étude de l'université Duke, 12 septembre 2001"
+   },
+   "symbole": "↺",
+   "embleme": "sablier",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "bartlett",
+      "titre": {
+       "fr": "Le conte qui se transforme"
+      },
+      "texte": [
+       {
+        "fr": "À Cambridge, Frederic Bartlett fait lire à des Anglais un conte amérindien, La Guerre des fantômes, puis le leur fait raconter, plusieurs fois, à des semaines d'écart. À chaque version, ce qui leur semble étrange disparaît ou devient familier : les « canoës » deviennent des « bateaux ». Plus l'intervalle s'allonge, plus le récit s'éloigne de l'original."
+       },
+       {
+        "fr": "Il en tire, dans Remembering, en 1932, une idée qui fera date : la mémoire n'est pas un enregistrement mais une reconstruction. On ne relit pas un souvenir, on le rebâtit à partir de quelques traces, guidé par des schémas, nos cadres habituels, nos connaissances et nos attentes. Bartlett occupe alors la chaire de psychologie expérimentale de Cambridge."
+       }
+      ],
+      "retenir": {
+       "fr": "Bartlett, 1932 : se souvenir, c'est reconstruire. Ce qui ne colle pas à nos schémas tombe ou se transforme (les canoës deviennent des bateaux)."
+      },
+      "source": "Bartlett, Remembering, 1932",
+      "reperes": [
+       {
+        "fr": "À chaque version, ce qui leur semble étrange disparaît ou devient familier : les « canoës » deviennent des « bateaux »."
+       }
+      ]
+     },
+     {
+      "id": "loftus",
+      "titre": {
+       "fr": "Un mot dans la question"
+      },
+      "texte": [
+       {
+        "fr": "En 1974, Elizabeth Loftus et John Palmer montrent à 45 étudiants des films d'accidents de voiture, puis demandent : à quelle vitesse allaient les voitures quand elles se sont « écrasées », « heurtées », « touchées » ? Avec smashed, l'estimation moyenne est d'environ 41 miles à l'heure ; avec contacted, environ 32. Le verbe a changé ce qu'ils croient avoir vu."
+       },
+       {
+        "fr": "Une semaine plus tard, une autre série de participants doit dire s'ils ont vu du verre brisé. Il n'y en avait pas. Avec « smashed », 32 % répondent oui, contre 14 % avec « hit ». En 1978, une fausse mention d'un panneau « Cédez le passage » remplace dans les souvenirs le « Stop » réellement vu : c'est l'effet de désinformation. Loftus a depuis témoigné dans plus de 300 procès."
+       }
+      ],
+      "retenir": {
+       "fr": "Loftus et Palmer, 1974 : « smashed » fait monter la vitesse et fait voir du verre brisé. Une information reçue après coup se glisse dans le souvenir."
+      },
+      "source": "Loftus et Palmer, Journal of Verbal Learning and Verbal Behavior, 1974",
+      "figure": "mc_biais_loftus",
+      "reperes": [
+       {
+        "fr": "Une semaine plus tard, une autre série de participants doit dire s'ils ont vu du verre brisé."
+       }
+      ]
+     },
+     {
+      "id": "certitude",
+      "titre": {
+       "fr": "Sûr de soi, et faux"
+      },
+      "texte": [
+       {
+        "fr": "En 1977, Roger Brown et James Kulik nomment « souvenirs flash » les souvenirs du moment où l'on apprend une nouvelle choquante : on croit tout revoir, l'endroit, les gens, l'heure. Après l'explosion de la navette Challenger, en 1986, Ulric Neisser et Nicole Harsch interrogent des étudiants ; trois ans plus tard, leurs souvenirs sont peu exacts, mais ils en restent très sûrs."
+       },
+       {
+        "fr": "La mémoire réécrit aussi nos propres prévisions. En 1975, Baruch Fischhoff décrit le biais rétrospectif, le « je le savais depuis le début ». Avant le voyage de Nixon à Pékin et Moscou, ses participants estiment les chances de divers événements ; après, ils se souviennent d'avoir donné plus de chances à ce qui est arrivé. Parade : imaginer explicitement les autres issues possibles."
+       }
+      ],
+      "retenir": {
+       "fr": "Souvenirs flash : très vifs, très sûrs, souvent faux. Biais rétrospectif (Fischhoff, 1975) : connaître l'issue réécrit ce qu'on croyait avant."
+      },
+      "source": "Brown et Kulik, Cognition, 1977 ; Fischhoff, 1975",
+      "reperes": [
+       {
+        "fr": "En 1977, Roger Brown et James Kulik nomment « souvenirs flash » les souvenirs du moment où l'on apprend une nouvelle choquante : on croit tout revoir, l'endroit, les gens, l'heure."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "biais.surconfiance",
+   "stat": "lucidite",
+   "rang": 8,
+   "nom": {
+    "fr": "Dunning-Kruger et métacognition"
+   },
+   "description": {
+    "fr": "Mesurer ce qu'on sait, et ce qu'on croit savoir."
+   },
+   "prerequis": [
+    "biais.groupe",
+    "biais.memoire"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Effet Dunning-Kruger : les moins compétents surestiment davantage leur niveau, faute de savoir ce qu'ils ignorent."
+     },
+     {
+      "fr": "Les plus compétents ont tendance à se sous-estimer légèrement."
+     },
+     {
+      "fr": "La courbe en « montagne de la stupidité » qui circule sur Internet n'est pas dans l'article original."
+     },
+     {
+      "fr": "Métacognition : s'entraîner à dire « je suis sûr à 70 % » et vérifier si on a raison 7 fois sur 10."
+     }
+    ],
+    "piege": {
+     "fr": "Dunning-Kruger ne dit pas que les ignorants se croient experts : ils se placent au-dessus de la moyenne, pas au sommet."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Score qu'on s'attribue (percentile) selon son vrai niveau\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"a\" x=\"46.0\" y=\"47.3\" width=\"53.0\" height=\"82.7\" rx=\"3\"/><text class=\"t\" x=\"72.5\" y=\"41.33333333333333\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">62</text><text class=\"tm\" x=\"72.5\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">quart</text><text class=\"tm\" x=\"72.5\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">inférieur</text><rect class=\"f2\" x=\"111.0\" y=\"50.0\" width=\"53.0\" height=\"80.0\" rx=\"3\"/><text class=\"t\" x=\"137.5\" y=\"44.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">60</text><text class=\"tm\" x=\"137.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">2e</text><rect class=\"f2\" x=\"176.0\" y=\"42.0\" width=\"53.0\" height=\"88.0\" rx=\"3\"/><text class=\"t\" x=\"202.5\" y=\"36.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">66</text><text class=\"tm\" x=\"202.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">3e</text><rect class=\"f2\" x=\"241.0\" y=\"30.0\" width=\"53.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"267.5\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">75</text><text class=\"tm\" x=\"267.5\" y=\"145.8\" font-size=\"11\" text-anchor=\"middle\">quart</text><text class=\"tm\" x=\"267.5\" y=\"157.8\" font-size=\"11\" text-anchor=\"middle\">supérieur</text></svg>",
+    "source": "Kruger et Dunning, Journal of Personality and Social Psychology, 1999"
+   },
+   "symbole": "↑",
+   "embleme": "citron",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "dunning",
+      "titre": {
+       "fr": "Ce que dit vraiment Dunning-Kruger"
+      },
+      "texte": [
+       {
+        "fr": "En 1999, David Dunning et Justin Kruger testent des étudiants en logique, grammaire et humour, puis leur demandent de se situer. Ceux du quart le plus faible se placent en moyenne autour du 62e percentile, alors qu'ils sont vers le 12e. Les compétences qui leur manquent sont justement celles qui leur permettraient de voir leurs erreurs. Les meilleurs, eux, se sous-estiment légèrement."
+       },
+       {
+        "fr": "Attention aux caricatures. Les moins compétents ne se croient pas experts : ils se placent au-dessus de la moyenne, pas au sommet, et toujours en dessous des meilleurs. La fameuse courbe de la « montagne de la stupidité » ne vient pas de l'article. Et une partie des chercheurs estime qu'une bonne part de l'effet est un artefact statistique, lié à la régression vers la moyenne ; Dunning défend ses résultats."
+       }
+      ],
+      "retenir": {
+       "fr": "Les moins compétents se surestiment (12e percentile réel, 62e estimé), sans se croire experts. La « montagne de la stupidité » n'est pas dans l'article."
+      },
+      "source": "Kruger et Dunning, Journal of Personality and Social Psychology, 1999",
+      "reperes": [
+       {
+        "fr": "En 1999, David Dunning et Justin Kruger testent des étudiants en logique, grammaire et humour, puis leur demandent de se situer."
+       }
+      ]
+     },
+     {
+      "id": "calibrer",
+      "titre": {
+       "fr": "Être sûr à 70 %"
+      },
+      "texte": [
+       {
+        "fr": "La métacognition, c'est savoir ce qu'on sait, et repérer ce qu'on ne sait pas. Un exercice simple : au lieu de répondre oui ou non, dire « je suis sûr à 70 % », puis vérifier. Si l'on a raison environ 7 fois sur 10 quand on se dit sûr à 70 %, on est bien calibré. La plupart des gens découvrent qu'ils se trompent bien plus souvent qu'ils ne le pensaient à « 90 % »."
+       },
+       {
+        "fr": "La surconfiance est partout. En 1981, Ola Svenson trouve que 93 % des Américains interrogés se placent dans la moitié la plus habile des conducteurs. Et l'erreur de planification nous fait sous-estimer la durée de nos projets, même quand on sait que les précédents ont pris du retard. À l'inverse, le syndrome de l'imposteur attribue ses succès à la chance."
+       }
+      ],
+      "retenir": {
+       "fr": "Se calibrer : « sûr à 70 % » doit tomber juste 7 fois sur 10. 93 % des conducteurs se croient dans la meilleure moitié (Svenson, 1981)."
+      },
+      "source": "Tetlock et Gardner, Superforecasting, 2015",
+      "figure": "mc_biais_calibrer",
+      "reperes": [
+       {
+        "fr": "En 1981, Ola Svenson trouve que 93 % des Américains interrogés se placent dans la moitié la plus habile des conducteurs."
+       }
+      ]
+     },
+     {
+      "id": "tester",
+      "titre": {
+       "fr": "Se tester plutôt que relire"
+      },
+      "texte": [
+       {
+        "fr": "Relire un cours donne une impression trompeuse de maîtrise : tout paraît familier, donc su. Se tester, aller chercher la réponse dans sa mémoire sans la regarder, renforce bien mieux le souvenir. C'est l'effet de test, ou pratique de récupération, et c'est le principe même de ce jeu."
+       },
+       {
+        "fr": "Il y a aussi un angle mort : nous repérons très bien les biais des autres, beaucoup moins les nôtres. Emily Pronin et ses collègues l'ont décrit en 2002. Plus on apprend dans un domaine, plus on mesure l'étendue de ce qu'on ignore : c'est l'envers de Dunning-Kruger, et plutôt bon signe."
+       }
+      ],
+      "retenir": {
+       "fr": "Se tester bat la relecture (effet de test). On voit les biais des autres, pas les siens (angle mort, Pronin, 2002)."
+      },
+      "source": "Roediger et Karpicke, Psychological Science, 2006",
+      "figure": "mc_biais_tester"
      }
     ]
    }
@@ -11036,6 +11482,26 @@
   "mc_biais_preuves": {
    "titre": "Des preuves à la hauteur",
    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 230\" role=\"img\" aria-label=\"Des preuves à la hauteur : affirmation extraordinaire, preuve extraordinaire ; une méta-analyse pèse plus qu'une étude seule ; défi Randi jamais remporté\"><path class=\"f2\" d=\"M200 112 L186 140 L214 140 Z\"/><g transform=\"rotate(8 200 110)\"><line class=\"l\" x1=\"60\" y1=\"110\" x2=\"340\" y2=\"110\" stroke-width=\"3\"/><rect class=\"f2\" x=\"70\" y=\"74\" width=\"60\" height=\"36\" rx=\"4\"/><rect class=\"a\" x=\"262\" y=\"90\" width=\"24\" height=\"18\" rx=\"3\"/><rect class=\"a\" x=\"288\" y=\"90\" width=\"24\" height=\"18\" rx=\"3\"/><rect class=\"a\" x=\"314\" y=\"90\" width=\"24\" height=\"18\" rx=\"3\"/><rect class=\"a\" x=\"275\" y=\"70\" width=\"24\" height=\"18\" rx=\"3\"/><rect class=\"a\" x=\"301\" y=\"70\" width=\"24\" height=\"18\" rx=\"3\"/><rect class=\"a\" x=\"288\" y=\"50\" width=\"24\" height=\"18\" rx=\"3\"/></g><text class=\"t\" x=\"100\" y=\"50\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">1 étude</text><text class=\"t\" x=\"300\" y=\"36\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">méta-analyse</text><text class=\"t\" x=\"200\" y=\"166\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"700\">« Des affirmations extraordinaires</text><text class=\"t\" x=\"200\" y=\"184\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"700\">exigent des preuves extraordinaires »</text><text class=\"tm\" x=\"200\" y=\"204\" font-size=\"12\" text-anchor=\"middle\">Sagan, 1980 · rasoir d'Occam : la plus simple d'abord</text><text class=\"tm\" x=\"200\" y=\"222\" font-size=\"12\" text-anchor=\"middle\">défi Randi, 1964-2015 : plus de mille candidats, jamais gagné</text></svg>"
+  },
+  "mc_biais_agrippa": {
+   "titre": "Les cinq modes",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 250\" role=\"img\" aria-label=\"Les cinq modes d'Agrippa : désaccord, régression à l'infini, relativité, hypothèse, circularité ; tous mènent à la suspension du jugement\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">Les cinq modes d'Agrippa</text><rect class=\"f\" x=\"14\" y=\"36\" width=\"112\" height=\"24\" rx=\"6\"/><text class=\"t\" x=\"70\" y=\"53\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"700\">désaccord</text><text class=\"t\" x=\"136\" y=\"53\" font-size=\"13\" text-anchor=\"start\">on n'est pas d'accord</text><rect class=\"f\" x=\"14\" y=\"66\" width=\"112\" height=\"24\" rx=\"6\"/><text class=\"t\" x=\"70\" y=\"83\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"700\">régression</text><text class=\"t\" x=\"136\" y=\"83\" font-size=\"13\" text-anchor=\"start\">chaque preuve en exige une autre</text><rect class=\"f\" x=\"14\" y=\"96\" width=\"112\" height=\"24\" rx=\"6\"/><text class=\"t\" x=\"70\" y=\"113\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"700\">relativité</text><text class=\"t\" x=\"136\" y=\"113\" font-size=\"13\" text-anchor=\"start\">tout dépend du point de vue</text><rect class=\"f\" x=\"14\" y=\"126\" width=\"112\" height=\"24\" rx=\"6\"/><text class=\"t\" x=\"70\" y=\"143\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"700\">hypothèse</text><text class=\"t\" x=\"136\" y=\"143\" font-size=\"13\" text-anchor=\"start\">on pose un point de départ</text><rect class=\"f\" x=\"14\" y=\"156\" width=\"112\" height=\"24\" rx=\"6\"/><text class=\"t\" x=\"70\" y=\"173\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"700\">circularité</text><text class=\"t\" x=\"136\" y=\"173\" font-size=\"13\" text-anchor=\"start\">la preuve suppose la conclusion</text><line class=\"al\" x1=\"200\" y1=\"190\" x2=\"200\" y2=\"206\"/><path class=\"al\" d=\"M196.5 198.8 L200 206 L203.5 198.8\"/><rect class=\"ok\" x=\"90\" y=\"210\" width=\"220\" height=\"30\" rx=\"8\"/><text class=\"t\" x=\"200\" y=\"230\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"700\">épochè : je suspends</text></svg>"
+  },
+  "mc_biais_asch": {
+   "titre": "Les lignes d'Asch",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 240\" role=\"img\" aria-label=\"Asch : une ligne modèle et trois lignes ; la bonne réponse est évidente, mais les complices répondent tous la même mauvaise\"><text class=\"tm\" x=\"80\" y=\"24\" font-size=\"14\" text-anchor=\"middle\">modèle</text><line class=\"l\" x1=\"80\" y1=\"40\" x2=\"80\" y2=\"150\" stroke-width=\"5\"/><line class=\"l\" x1=\"230\" y1=\"70\" x2=\"230\" y2=\"150\" stroke-width=\"5\"/><text class=\"t\" x=\"230\" y=\"172\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">A</text><line class=\"l\" x1=\"290\" y1=\"40\" x2=\"290\" y2=\"150\" stroke-width=\"5\"/><text class=\"t\" x=\"290\" y=\"172\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">B</text><line class=\"l\" x1=\"350\" y1=\"10\" x2=\"350\" y2=\"150\" stroke-width=\"5\"/><text class=\"t\" x=\"350\" y=\"172\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">C</text><text class=\"tm\" x=\"200\" y=\"204\" font-size=\"14\" text-anchor=\"middle\">seul : presque toujours B</text><text class=\"t\" x=\"200\" y=\"226\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">face au groupe qui dit C : 74 % cèdent au moins une fois</text></svg>"
+  },
+  "mc_biais_janis": {
+   "titre": "Deux décisions",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 184\" role=\"img\" aria-label=\"Pensée de groupe : la baie des Cochons (1961) contre la crise des missiles de Cuba (1962)\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">Mêmes hommes, autre méthode</text><rect class=\"ko\" x=\"10\" y=\"36\" width=\"185\" height=\"142\" rx=\"8\"/><text class=\"t\" x=\"102.5\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">Cochons, 1961</text><text class=\"t\" x=\"102.5\" y=\"90\" font-size=\"14\" text-anchor=\"middle\">plan accepté</text><text class=\"t\" x=\"102.5\" y=\"107.5\" font-size=\"14\" text-anchor=\"middle\">sans examen</text><text class=\"t\" x=\"102.5\" y=\"125\" font-size=\"14\" text-anchor=\"middle\">objections écartées</text><text class=\"t\" x=\"102.5\" y=\"142.5\" font-size=\"14\" text-anchor=\"middle\">doutes tus</text><rect class=\"ok\" x=\"205\" y=\"36\" width=\"185\" height=\"142\" rx=\"8\"/><text class=\"t\" x=\"297.5\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">Cuba, 1962</text><text class=\"t\" x=\"297.5\" y=\"90\" font-size=\"14\" text-anchor=\"middle\">experts extérieurs</text><text class=\"t\" x=\"297.5\" y=\"107.5\" font-size=\"14\" text-anchor=\"middle\">sous-groupes</text><text class=\"t\" x=\"297.5\" y=\"125\" font-size=\"14\" text-anchor=\"middle\">le chef sort</text><text class=\"t\" x=\"297.5\" y=\"142.5\" font-size=\"14\" text-anchor=\"middle\">de la salle</text></svg>"
+  },
+  "mc_biais_loftus": {
+   "titre": "Un verbe change la vitesse",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 234\" role=\"img\" aria-label=\"Loftus et Palmer, 1974 : vitesse moyenne estimée selon le verbe de la question\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">Vitesse estimée (miles/h)</text><text class=\"t\" x=\"142\" y=\"57\" font-size=\"14\" text-anchor=\"end\">smashed</text><rect class=\"ko\" x=\"150\" y=\"42\" width=\"163.2\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"319.2\" y=\"58\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">40,8</text><text class=\"t\" x=\"142\" y=\"95\" font-size=\"14\" text-anchor=\"end\">collided</text><rect class=\"a\" x=\"150\" y=\"80\" width=\"157.2\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"313.2\" y=\"96\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">39,3</text><text class=\"t\" x=\"142\" y=\"133\" font-size=\"14\" text-anchor=\"end\">bumped</text><rect class=\"a\" x=\"150\" y=\"118\" width=\"152.4\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"308.4\" y=\"134\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">38,1</text><text class=\"t\" x=\"142\" y=\"171\" font-size=\"14\" text-anchor=\"end\">hit</text><rect class=\"a\" x=\"150\" y=\"156\" width=\"136\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"292\" y=\"172\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">34</text><text class=\"t\" x=\"142\" y=\"209\" font-size=\"14\" text-anchor=\"end\">contacted</text><rect class=\"a\" x=\"150\" y=\"194\" width=\"127.2\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"283.2\" y=\"210\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">31,8</text></svg>"
+  },
+  "mc_biais_rumeur": {
+   "titre": "La rumeur se transforme",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 132\" role=\"img\" aria-label=\"Allport et Postman : de bouche à oreille, la rumeur se nivelle, s'accentue et s'assimile ; environ 70 % des détails perdus en 5 ou 6 transmissions\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">environ 70 % des détails perdus en 5 ou 6 relais</text><rect class=\"f2\" x=\"10\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"66\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">nivellement</text><text class=\"t\" x=\"66\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">des détails</text><text class=\"t\" x=\"66\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">tombent</text><line class=\"l\" x1=\"125\" y1=\"76\" x2=\"141\" y2=\"76\"/><path class=\"l\" d=\"M133.8 79.5 L141 76 L133.8 72.5\"/><rect class=\"f\" x=\"144\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"200\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">accentuation</text><text class=\"t\" x=\"200\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">d'autres</text><text class=\"t\" x=\"200\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">grossissent</text><line class=\"l\" x1=\"259\" y1=\"76\" x2=\"275\" y2=\"76\"/><path class=\"l\" d=\"M267.8 79.5 L275 76 L267.8 72.5\"/><rect class=\"ko\" x=\"278\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"334\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">assimilation</text><text class=\"t\" x=\"334\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">le récit suit</text><text class=\"t\" x=\"334\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">nos attentes</text></svg>"
   },
   "mc_psy_reguler": {
    "titre": "Nommer et réévaluer",

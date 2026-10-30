@@ -200,7 +200,7 @@
    "condition": {
     "type": "branche_complete",
     "stat": "lucidite",
-    "rang_max": 4
+    "rang_max": 3
    },
    "cache": true,
    "recompense": {
@@ -5647,6 +5647,110 @@
     "id": "couronne"
    },
    "theme": "eloquence"
+  },
+  {
+   "id": "fou-du-calife",
+   "nom": {
+    "fr": "Fou par prudence"
+   },
+   "description": {
+    "fr": "Maîtriser l'art de douter. Feindre la folie reste possible, mais l'IA ne s'y laissera pas prendre."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.doute"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Selon un récit, le calife fatimide al-Hakim avait chargé Ibn al-Haytham de régler les crues du Nil. Voyant que son projet de barrage était irréalisable, le savant aurait feint la folie pour échapper au châtiment, puis vécu caché jusqu'à la mort du calife, en 1021. C'est dans ces années qu'il écrit son Livre d'optique."
+    },
+    "source": "Récits des biographes médiévaux d'Ibn al-Haytham"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "ibn-al-haytham"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "noir-c-est-blanc",
+   "nom": {
+    "fr": "Appeler blanc ce qui est noir"
+   },
+   "description": {
+    "fr": "Maîtriser l'influence des autres. Si tout le monde vous félicite, vérifiez quand même la ligne."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.groupe"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Après ses expériences de 1951, où 74 % des étudiants ont suivi au moins une fois un groupe unanime dans l'erreur, Solomon Asch écrit : que des jeunes gens intelligents et bien intentionnés acceptent d'appeler blanc ce qui est noir est préoccupant."
+    },
+    "source": "Asch, « Effects of group pressure upon the modification and distortion of judgments », 1951"
+   },
+   "illustration": {
+    "type": "objet",
+    "id": "lignes-asch"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "verre-brise",
+   "nom": {
+    "fr": "Du verre brisé"
+   },
+   "description": {
+    "fr": "Maîtriser la mémoire qui ment. Vous vous souviendrez de ce succès. Pas forcément tel qu'il était."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.memoire"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Une semaine après un film d'accident, Loftus et Palmer demandent : « Avez-vous vu du verre brisé ? » Il n'y en avait pas. Ceux à qui l'on avait parlé de voitures qui s'étaient « écrasées » répondent oui à 32 % ; avec « heurtées », 14 % ; sans question sur la vitesse, 12 %."
+    },
+    "source": "Loftus et Palmer, Journal of Verbal Learning and Verbal Behavior, 1974"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "verre-eau"
+   },
+   "theme": "lucidite"
+  },
+  {
+   "id": "marin-oignon",
+   "nom": {
+    "fr": "Un oignon hors de prix"
+   },
+   "description": {
+    "fr": "Maîtriser foules et rumeurs. Vérifiez la source avant de croquer."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "biais.foules"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Charles Mackay raconte qu'un marin prit le bulbe de tulipe d'un marchand pour un oignon et le mangea, et que le bulbe était délicieux. Un bulbe de tulipe a en réalité mauvais goût et devient toxique mal préparé : l'anecdote a tout d'une rumeur."
+    },
+    "source": "Charles Mackay, Memoirs of Extraordinary Popular Delusions, 1841"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "plante"
+   },
+   "theme": "lucidite"
   },
   {
    "id": "sandale-etna",
