@@ -2984,6 +2984,7 @@ function demarrerJeu() {
         // v53 : la partie repart de zéro sous le même nom, avec sa langue et ses packs.
         var o = P; P = M.nouvellePartie(Date.now()); P.id = o.id; P.nom = o.nom;
         P.options = { langue: M.langue(), packsOff: packsDemandes(o).slice() };
+        if (o.options && o.options.toutesCases) M.voirToutesCases(C, P, true);
         sauver(); vue = "aujourdhui"; rendre(); toast(__("Nouvelle partie commencée"));
       };
       r.children[1].onclick = function () { rendre(); };
@@ -5746,12 +5747,16 @@ function demarrerJeu() {
   function commencerPartie() {
     var A = assistant;
     if (!provisoire && !archiver(P)) { toast(__("La mémoire de l'appareil est pleine : exporte puis supprime une partie dans « Charger une partie ».")); return; }
+    var toutes = !!(P && P.options && P.options.toutesCases);
     var p = M.nouvellePartie(Date.now());
     p.id = nouvelId(); p.nom = A.nom.trim() || nomLibre(__("Ma partie"));
     p.options = { langue: M.langue(), packsOff: A.off.slice() };
     if (NATIF) p.options.routine = { active: false, heure: A.routine.heure };
     P = p; provisoire = false;
-    construireContenu(A.off); M.accorderPartie(C, P); sauver();
+    construireContenu(A.off); M.accorderPartie(C, P);
+    // Réglage temporaire « Voir toutes les cases » : il suit le joueur d'une partie à l'autre.
+    if (toutes) M.voirToutesCases(C, P, true);
+    sauver();
     var routineVoulue = NATIF && A.routine.active, heure = A.routine.heure;
     entrerEnJeu();
     toast(__("Nouvelle partie : ") + P.nom);
