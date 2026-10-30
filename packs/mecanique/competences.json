@@ -32,7 +32,66 @@
    "source": "BIPM, Le Système international d'unités, 9e éd., 2019"
   },
   "symbole": "m",
-  "embleme": "metre-etalon"
+  "embleme": "metre-etalon",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "si",
+     "titre": {
+      "fr": "Sept unités pour tout mesurer"
+     },
+     "texte": [
+      {
+       "fr": "Le Système international repose sur sept unités de base : le mètre, le kilogramme, la seconde, l'ampère, le kelvin, la mole et la candela. Toutes les autres s'en déduisent : le newton est un kg·m/s², le joule un newton fois un mètre, le watt un joule par seconde."
+      },
+      {
+       "fr": "Depuis 1889, le kilogramme était un objet : un cylindre de platine iridié gardé à Sèvres. Problème : ses copies dérivaient par rapport à lui, jusqu'à 20 microgrammes par an, sans qu'on sache qui changeait. Depuis le 20 mai 2019, plus aucune unité ne dépend d'un objet : le kilogramme est défini en fixant la valeur exacte de la constante de Planck, comme le mètre l'est par la vitesse de la lumière."
+      }
+     ],
+     "retenir": {
+      "fr": "7 unités de base (m, kg, s, A, K, mol, cd). Depuis 2019, toutes définies par des constantes de la nature."
+     },
+     "source": "BIPM, Le Système international d'unités, 9e éd., 2019"
+    },
+    {
+     "id": "prefixes",
+     "titre": {
+      "fr": "Les préfixes et le piège des carrés"
+     },
+     "texte": [
+      {
+       "fr": "Les préfixes comptent par mille : kilo 10³, méga 10⁶, giga 10⁹, téra 10¹² ; et dans l'autre sens milli 10⁻³, micro 10⁻⁶, nano 10⁻⁹. Un ordre de grandeur, c'est la puissance de 10 la plus proche : un humain fait environ 1 m, une cellule 10 µm, un atome 0,1 nm."
+      },
+      {
+       "fr": "Le piège, ce sont les surfaces et les volumes : le préfixe passe lui aussi au carré ou au cube. 1 km², c'est 1 000 × 1 000 = 1 000 000 m². 1 m³, c'est 100 × 100 × 100 = 1 000 000 cm³. Et 1 litre, c'est un cube de 10 cm de côté, 1 dm³."
+      }
+     ],
+     "retenir": {
+      "fr": "Préfixes par mille (k, M, G, T ; m, µ, n). Pour une surface, le préfixe passe au carré ; pour un volume, au cube."
+     },
+     "source": "BIPM, Le Système international d'unités, 9e éd., 2019",
+     "schema_fiche": true
+    },
+    {
+     "id": "orbiter",
+     "titre": {
+      "fr": "La sonde perdue pour une unité"
+     },
+     "texte": [
+      {
+       "fr": "Une valeur sans unité ne veut rien dire. En septembre 1999, la sonde Mars Climate Orbiter s'approche trop de Mars et disparaît. La cause : un logiciel au sol fournissait des impulsions en livres-force·seconde, unités anglo-saxonnes, alors qu'un autre les lisait en newtons·seconde. Un facteur 4,45 d'écart, et une sonde perdue."
+      },
+      {
+       "fr": "Autre confusion fréquente : la masse et le poids. La masse, en kilogrammes, est la quantité de matière ; elle ne change pas d'un astre à l'autre. Le poids, en newtons, est la force avec laquelle un astre vous attire. Sur la Lune, un astronaute garde sa masse, mais son poids est divisé par six environ."
+      }
+     ],
+     "retenir": {
+      "fr": "Toujours écrire l'unité. Masse (kg) ≠ poids (N) : sur la Lune, même masse, poids divisé par 6."
+     },
+     "source": "NASA, Mars Climate Orbiter Mishap Investigation Board, 1999"
+    }
+   ]
+  }
  },
  {
   "id": "phys.forces",
@@ -72,7 +131,65 @@
    "source": "Newton, Philosophiae Naturalis Principia Mathematica, 1687"
   },
   "symbole": "F",
-  "embleme": "pomme-newton"
+  "embleme": "pomme-newton",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "inertie",
+     "titre": {
+      "fr": "Le mouvement n'a pas besoin de moteur"
+     },
+     "texte": [
+      {
+       "fr": "Pendant deux mille ans, on a cru qu'un objet en mouvement s'arrête quand on cesse de le pousser. C'est ce qu'on voit tous les jours, à cause des frottements. Galilée, puis Newton, renversent l'idée : sans force nette, un objet garde sa vitesse, en ligne droite, pour toujours. C'est la première loi de Newton, le principe d'inertie."
+      },
+      {
+       "fr": "Une balle lancée n'emporte donc pas de « force du lancer » : une fois lâchée, seuls son poids et l'air agissent sur elle. Et la Lune ne tombe pas parce que la Terre la tire tout en la laissant filer : sans gravitation, l'inertie l'enverrait en ligne droite."
+      }
+     ],
+     "retenir": {
+      "fr": "Sans force nette, la vitesse ne change pas (1re loi). Une force sert à changer le mouvement, pas à l'entretenir."
+     },
+     "source": "Newton, Philosophiae Naturalis Principia Mathematica, 1687"
+    },
+    {
+     "id": "fma",
+     "titre": {
+      "fr": "F = m × a et action-réaction"
+     },
+     "texte": [
+      {
+       "fr": "La deuxième loi dit ce que fait une force : elle accélère, et d'autant moins que l'objet est massif. F = m × a : 20 newtons accélèrent 10 kg à 2 m/s². Newton l'énonce en 1687 dans les Principia, mais en mots ; c'est Euler qui l'écrit sous forme d'équation au XVIIIe siècle."
+      },
+      {
+       "fr": "La troisième loi : quand A pousse B, B pousse A avec la même force, en sens inverse. Ces deux forces s'appliquent à deux objets différents, c'est pourquoi elles ne s'annulent pas. Une fusée pousse ses gaz vers l'arrière, les gaz poussent la fusée vers l'avant ; pas besoin d'air pour s'appuyer."
+      }
+     ],
+     "retenir": {
+      "fr": "F = m × a (2e loi). Action et réaction sont égales, opposées, et s'appliquent à deux objets différents (3e loi)."
+     },
+     "source": "Newton, Philosophiae Naturalis Principia Mathematica, 1687"
+    },
+    {
+     "id": "chute",
+     "titre": {
+      "fr": "La plume et le marteau"
+     },
+     "texte": [
+      {
+       "fr": "Sans air, tous les objets tombent avec la même accélération, environ 9,8 m/s² à la surface de la Terre, quelle que soit leur masse. Le 2 août 1971, sur la Lune, l'astronaute David Scott d'Apollo 15 lâche ensemble un marteau et une plume de faucon : ils touchent le sol en même temps."
+      },
+      {
+       "fr": "Après une seconde de chute libre, un objet va à environ 9,8 m/s, mais n'a parcouru que 4,9 m : la vitesse grandit avec le temps, la distance avec le carré du temps. Sur Terre, c'est l'air qui freine la plume, pas sa légèreté."
+      }
+     ],
+     "retenir": {
+      "fr": "Dans le vide, tout tombe ensemble (g ≈ 9,8 m/s²). Vitesse = g × t, distance = ½ g t²."
+     },
+     "source": "NASA, Apollo 15 Lunar Surface Journal, 1971"
+    }
+   ]
+  }
  },
  {
   "id": "phys.energie",
@@ -109,7 +226,66 @@
    "source": "Feynman, Leçons sur la physique, tome 1, chapitre 4"
   },
   "symbole": "E",
-  "embleme": "machine-joule"
+  "embleme": "machine-joule",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "formes",
+     "titre": {
+      "fr": "L'énergie change de costume"
+     },
+     "texte": [
+      {
+       "fr": "L'énergie ne se crée pas et ne disparaît pas : elle change de forme. L'eau en haut d'un barrage a de l'énergie potentielle, m g h ; en tombant, elle la convertit en mouvement, puis la turbine en électricité, puis votre lampe en lumière et en chaleur."
+      },
+      {
+       "fr": "Il a fallu prouver que la chaleur en fait partie. En 1845, James Joule montre qu'un même travail mécanique, dépensé en frottement dans l'eau, la réchauffe toujours de la même quantité : chaleur et travail sont deux formes d'une même chose. C'est pourquoi aucune machine ne peut rendre plus de 100 % de ce qu'elle reçoit : le mouvement perpétuel n'existe pas."
+      }
+     ],
+     "retenir": {
+      "fr": "L'énergie se conserve et change de forme. Joule (1845) : la chaleur est une forme d'énergie. Pas de rendement au-dessus de 100 %."
+     },
+     "source": "Feynman, Leçons sur la physique, tome 1, chapitre 4"
+    },
+    {
+     "id": "vitesse",
+     "titre": {
+      "fr": "Deux fois plus vite, quatre fois plus d'énergie"
+     },
+     "texte": [
+      {
+       "fr": "L'énergie de mouvement, l'énergie cinétique, vaut ½ m v². Elle grandit comme le carré de la vitesse : à 100 km/h, une voiture n'a pas deux fois l'énergie qu'elle a à 50 km/h, mais quatre fois."
+      },
+      {
+       "fr": "Cette énergie, les freins doivent la transformer en chaleur. À force de freinage égale, la distance de freinage est donc elle aussi multipliée par quatre quand la vitesse double. Leibniz mesurait déjà la « force vive » d'un corps par m v² en 1686 ; Coriolis y ajoute le ½ en 1829, pour que sa variation égale exactement le travail des forces."
+      }
+     ],
+     "retenir": {
+      "fr": "Énergie cinétique = ½ m v² : vitesse × 2 → énergie × 4 → distance de freinage × 4."
+     },
+     "source": "Coriolis, Du calcul de l'effet des machines, 1829",
+     "schema_fiche": true
+    },
+    {
+     "id": "puissance",
+     "titre": {
+      "fr": "Watts et kilowattheures"
+     },
+     "texte": [
+      {
+       "fr": "La puissance est un débit d'énergie : 1 watt, c'est 1 joule par seconde. Une ampoule de 10 W consomme 10 joules chaque seconde ; un radiateur de 2 000 W, deux cents fois plus."
+      },
+      {
+       "fr": "Le kilowattheure de votre facture n'est pas une puissance mais une énergie : une puissance tenue pendant une durée. 1 kWh = 1 000 W × 3 600 s = 3,6 millions de joules. L'ampoule de 10 W allumée 100 heures consomme 1 kWh. Les calories des étiquettes sont aussi de l'énergie : une kilocalorie vaut environ 4 184 joules."
+      }
+     ],
+     "retenir": {
+      "fr": "Puissance = énergie ÷ temps (W = J/s). kWh = énergie : 1 kWh = 3,6 millions de J."
+     },
+     "source": "BIPM, Le Système international d'unités, 9e éd., 2019"
+    }
+   ]
+  }
  },
  {
   "id": "phys.ondes",
@@ -150,7 +326,66 @@
    "source": "Hecht, Optics, 5e éd."
   },
   "symbole": "λ",
-  "embleme": "prisme-newton"
+  "embleme": "prisme-newton",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "onde",
+     "titre": {
+      "fr": "Une onde transporte de l'énergie, pas de matière"
+     },
+     "texte": [
+      {
+       "fr": "Quand une vague passe, le bouchon monte et descend, mais ne part pas avec elle. Une onde transporte de l'énergie sans emporter de matière. Sa vitesse est le produit de sa longueur d'onde par sa fréquence, et la fréquence est l'inverse de la période : une période de 0,01 s donne 100 Hz."
+      },
+      {
+       "fr": "Le son est une onde de pression qui a besoin d'un milieu : environ 340 m/s dans l'air, près de 1 500 m/s dans l'eau, rien dans le vide. La lumière, elle, traverse le vide à près de 300 000 km/s. D'où le calcul de l'orage : 3 secondes entre l'éclair et le tonnerre, c'est environ 1 km."
+      }
+     ],
+     "retenir": {
+      "fr": "Vitesse = longueur d'onde × fréquence ; fréquence = 1 ÷ période. Son ≈ 340 m/s dans l'air, rien dans le vide."
+     },
+     "source": "Hecht, Optics, 5e éd."
+    },
+    {
+     "id": "couleurs",
+     "titre": {
+      "fr": "Pourquoi le ciel est bleu"
+     },
+     "texte": [
+      {
+       "fr": "La lumière visible va d'environ 400 nm, le violet, à 700 nm, le rouge. Au-delà, l'œil ne voit plus : ultraviolets, rayons X d'un côté, infrarouges, micro-ondes, ondes radio de l'autre. Ce sont toutes des ondes électromagnétiques, qui ne diffèrent que par leur longueur d'onde."
+      },
+      {
+       "fr": "Les molécules d'air diffusent la lumière d'autant plus fort que sa longueur d'onde est courte, comme l'inverse de sa puissance quatrième : c'est la diffusion de Rayleigh, décrite par Lord Rayleigh à partir de 1871. Le bleu est donc renvoyé dans toutes les directions bien plus que le rouge, et le ciel paraît bleu. Au coucher du soleil, la lumière traverse beaucoup d'air, perd son bleu en route, et le soleil rougit."
+      }
+     ],
+     "retenir": {
+      "fr": "Visible : 400 nm (violet) à 700 nm (rouge). Ciel bleu : l'air diffuse bien plus les courtes longueurs d'onde (Rayleigh)."
+     },
+     "source": "Rayleigh, Philosophical Magazine, 1871",
+     "schema_fiche": true
+    },
+    {
+     "id": "doppler",
+     "titre": {
+      "fr": "La sirène qui change de note"
+     },
+     "texte": [
+      {
+       "fr": "Une ambulance qui s'approche paraît plus aiguë, puis plus grave quand elle s'éloigne. Quand la source avance, elle rattrape ses propres ondes et les tasse : la fréquence reçue monte. Quand elle recule, elle les étire : la fréquence baisse. C'est l'effet Doppler, proposé par Christian Doppler en 1842 et vérifié avec le son par Buys Ballot en 1845."
+      },
+      {
+       "fr": "Le même effet vaut pour la lumière et les ondes radio. Les radars de police mesurent la vitesse d'une voiture au décalage de fréquence de l'onde réfléchie. Et les astronomes lisent dans le décalage vers le rouge ou le bleu de la lumière d'une étoile si elle s'éloigne ou s'approche."
+      }
+     ],
+     "retenir": {
+      "fr": "Source qui approche : fréquence plus haute ; qui s'éloigne : plus basse (Doppler, 1842). Sert aux radars et en astronomie."
+     },
+     "source": "Doppler, Über das farbige Licht der Doppelsterne, 1842"
+    }
+   ]
+  }
  },
  {
   "id": "phys.fluides",
@@ -187,7 +422,65 @@
    "source": "Archimède, Des corps flottants, IIIe s. av. J.-C."
   },
   "symbole": "Pa",
-  "embleme": "couronne-hieron"
+  "embleme": "couronne-hieron",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "pression",
+     "titre": {
+      "fr": "Une force étalée sur une surface"
+     },
+     "texte": [
+      {
+       "fr": "La pression, c'est une force divisée par une surface. Une aiguille perce la peau avec une force minime parce que sa pointe est minuscule ; des raquettes à neige portent le même poids sur une grande surface, et on ne s'enfonce plus."
+      },
+      {
+       "fr": "Sous l'eau, chaque mètre ajoute le poids de l'eau au-dessus : environ 1 bar tous les 10 mètres, soit une atmosphère de plus. Simon Stevin montre en 1586 que cette pression ne dépend que de la hauteur de liquide, pas de la forme du récipient. À 30 m, un plongeur subit donc environ 4 bars : 1 pour l'air, 3 pour l'eau."
+      }
+     ],
+     "retenir": {
+      "fr": "Pression = force ÷ surface. Sous l'eau : +1 bar tous les 10 m, quelle que soit la forme du récipient (Stevin, 1586)."
+     },
+     "source": "Stevin, De Beghinselen des Waterwichts, 1586"
+    },
+    {
+     "id": "air",
+     "titre": {
+      "fr": "Le poids de l'air"
+     },
+     "texte": [
+      {
+       "fr": "L'air aussi pèse. En 1643, Evangelista Torricelli retourne un tube plein de mercure dans une cuve : la colonne descend et se stabilise vers 76 cm. Au-dessus, le vide ; ce qui tient la colonne, c'est la pression de l'air sur la cuve. Il vient d'inventer le baromètre."
+      },
+      {
+       "fr": "En 1648, à la demande de Pascal, son beau-frère Florin Périer monte le baromètre au sommet du puy de Dôme : la colonne y baisse d'environ 8 cm, car il y a moins d'air au-dessus. En 1654, Otto von Guericke fait le vide entre deux demi-sphères de cuivre, à Magdebourg : deux attelages de chevaux ne parviennent pas à les séparer. Au niveau de la mer, l'air appuie avec environ 1 013 hPa."
+      }
+     ],
+     "retenir": {
+      "fr": "L'air pèse : baromètre de Torricelli (1643), puy de Dôme (1648), hémisphères de Magdebourg (1654). ≈ 1 013 hPa au niveau de la mer."
+     },
+     "source": "Pascal, Récit de la grande expérience de l'équilibre des liqueurs, 1648"
+    },
+    {
+     "id": "archimede",
+     "titre": {
+      "fr": "Archimède et ce qui flotte"
+     },
+     "texte": [
+      {
+       "fr": "Tout corps plongé dans un fluide reçoit une poussée vers le haut égale au poids du fluide qu'il déplace. Un objet flotte si sa masse volumique moyenne est inférieure à celle du liquide. Un paquebot en acier flotte parce que sa coque est pleine d'air ; un sous-marin plonge en remplissant ses ballasts d'eau, et remonte en les vidant à l'air comprimé."
+      },
+      {
+       "fr": "Et le « Eurêka » ? L'histoire du bain et de la couronne du roi Hiéron n'apparaît par écrit que deux siècles plus tard, chez Vitruve, et plusieurs historiens en doutent : mesurer le débordement d'eau aurait été trop imprécis pour l'époque. Une balance, avec la couronne et un lingot d'or pur plongés dans l'eau, aurait en revanche suffi à démasquer la fraude."
+      }
+     ],
+     "retenir": {
+      "fr": "Poussée d'Archimède = poids du fluide déplacé. Ça flotte si c'est moins dense que le liquide, en moyenne."
+     },
+     "source": "Archimède, Des corps flottants, IIIe s. av. J.-C."
+    }
+   ]
+  }
  },
  {
   "id": "phys.thermo",
@@ -227,7 +520,66 @@
    "source": "Carnot, Réflexions sur la puissance motrice du feu, 1824"
   },
   "symbole": "°C",
-  "embleme": "feu"
+  "embleme": "feu",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "chaleur",
+     "titre": {
+      "fr": "Température et chaleur, ce n'est pas pareil"
+     },
+     "texte": [
+      {
+       "fr": "La température mesure l'agitation des particules ; la chaleur est de l'énergie qui passe d'un corps à un autre. Une étincelle est très chaude mais contient peu de chaleur ; une baignoire tiède en contient bien plus. Au XVIIIe siècle, on croyait la chaleur faite d'un fluide invisible, le calorique ; Rumford puis Joule montrent que c'est une forme d'énergie."
+      },
+      {
+       "fr": "Pour chauffer 1 kg d'eau de 1 °C, il faut environ 4 184 joules : Q = m × c × ΔT. Porter un litre de 20 à 100 °C demande donc 1 × 4 184 × 80 ≈ 335 000 J ; avec une plaque de 1 000 W, qui fournit 1 000 J par seconde, il faut environ 335 s, un peu plus de 5 minutes et demie. Et si le métal paraît plus froid que le bois à la même température, c'est qu'il emporte plus vite la chaleur de la main."
+      }
+     ],
+     "retenir": {
+      "fr": "Température = agitation ; chaleur = énergie transférée. Q = m × c × ΔT, avec c = 4 184 J/(kg·°C) pour l'eau."
+     },
+     "source": "Atkins, Chimie physique, 4e éd."
+    },
+    {
+     "id": "principes",
+     "titre": {
+      "fr": "Les deux grands principes"
+     },
+     "texte": [
+      {
+       "fr": "Premier principe : l'énergie se conserve. Une machine peut convertir la chaleur en travail, jamais en fabriquer à partir de rien. Second principe : la chaleur va spontanément du chaud vers le froid, jamais l'inverse, comme le formule Rudolf Clausius au XIXe siècle."
+      },
+      {
+       "fr": "Un réfrigérateur ne viole pas cette règle : il pompe la chaleur de l'intérieur vers l'extérieur en consommant de l'électricité, et c'est pourquoi son dos chauffe. Sans dépense d'énergie, le froid ne se fabrique pas."
+      }
+     ],
+     "retenir": {
+      "fr": "1er principe : l'énergie se conserve. 2e principe : la chaleur va seule du chaud vers le froid (Clausius)."
+     },
+     "source": "Clausius, Annalen der Physik, 1850"
+    },
+    {
+     "id": "carnot",
+     "titre": {
+      "fr": "Carnot, l'entropie et l'œuf cassé"
+     },
+     "texte": [
+      {
+       "fr": "En 1824, Sadi Carnot, jeune ingénieur de 28 ans, se demande ce qui limite les machines à vapeur. Sa réponse : une machine thermique prend de la chaleur à une source chaude, en transforme une partie en travail, et doit rendre le reste à une source froide. Son rendement maximal ne dépend que de l'écart de température entre les deux. Aucune ne peut tout convertir."
+      },
+      {
+       "fr": "Plus tard, Clausius invente l'entropie, et Ludwig Boltzmann l'explique : c'est une mesure du nombre de façons d'arranger les particules sans rien changer à ce qu'on voit, S = k log W, une formule gravée sur sa tombe à Vienne. Dans un système isolé, elle ne diminue pas. Un œuf cassé a infiniment plus d'arrangements possibles qu'un œuf entier : c'est pourquoi il ne se recolle pas tout seul."
+      }
+     ],
+     "retenir": {
+      "fr": "Rendement limité par l'écart de températures (Carnot, 1824). Entropie : S = k log W (Boltzmann) ; elle ne diminue pas dans un système isolé."
+     },
+     "source": "Carnot, Réflexions sur la puissance motrice du feu, 1824",
+     "schema_fiche": true
+    }
+   ]
+  }
  },
  {
   "id": "phys.relativite",
@@ -267,7 +619,65 @@
    "source": "Einstein, Zur Elektrodynamik bewegter Körper, 1905"
   },
   "symbole": "c",
-  "embleme": "relativite"
+  "embleme": "relativite",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "lumiere",
+     "titre": {
+      "fr": "Une vitesse que personne ne rattrape"
+     },
+     "texte": [
+      {
+       "fr": "En 1887, Michelson et Morley cherchent à mesurer le mouvement de la Terre à travers l'« éther », le milieu censé porter la lumière. Ils ne trouvent rien : la lumière va à la même vitesse dans toutes les directions. En 1905, Einstein, employé au bureau des brevets de Berne, en fait un principe : la vitesse de la lumière dans le vide est la même pour tous les observateurs, 299 792 458 m/s."
+      },
+      {
+       "fr": "La conséquence est vertigineuse : si la vitesse de la lumière ne change pas, c'est le temps et les longueurs qui s'ajustent. Une horloge en mouvement rapide bat plus lentement. Et rien de massif ne peut atteindre cette vitesse : l'énergie nécessaire deviendrait infinie. E = mc² dit aussi qu'un peu de masse vaut énormément d'énergie, car c² est immense."
+      }
+     ],
+     "retenir": {
+      "fr": "Même vitesse de la lumière pour tous (Einstein, 1905). Le temps ralentit pour une horloge rapide. E = mc²."
+     },
+     "source": "Einstein, Zur Elektrodynamik bewegter Körper, 1905"
+    },
+    {
+     "id": "horloges",
+     "titre": {
+      "fr": "Le temps mesuré en avion"
+     },
+     "texte": [
+      {
+       "fr": "En octobre 1971, Joseph Hafele et Richard Keating embarquent quatre horloges atomiques au césium sur des avions de ligne, une fois vers l'est, une fois vers l'ouest, puis les comparent à celles restées au sol. Vers l'est, elles ont perdu environ 59 milliardièmes de seconde ; vers l'ouest, gagné environ 273. C'est ce que prévoyait la relativité, à la précision de l'expérience près."
+      },
+      {
+       "fr": "Votre GPS en dépend. Les horloges des satellites avancent d'environ 45,8 microsecondes par jour parce qu'elles sont plus haut dans le champ de gravité, et retardent d'environ 7,2 parce qu'elles vont vite : environ 38 microsecondes d'avance nette. Sans correction, la position dériverait d'une dizaine de kilomètres par jour. Les horloges sont donc réglées un peu lentes avant le lancement."
+      }
+     ],
+     "retenir": {
+      "fr": "Mesuré en 1971 avec des horloges atomiques en avion. GPS : environ 38 µs d'avance par jour à corriger, sinon une dizaine de km d'erreur."
+     },
+     "source": "Hafele et Keating, Science, 1972"
+    },
+    {
+     "id": "generale",
+     "titre": {
+      "fr": "La gravité courbe l'espace-temps"
+     },
+     "texte": [
+      {
+       "fr": "En 1915, Einstein va plus loin : la gravitation n'est pas une force à distance mais une courbure de l'espace-temps par la masse. La matière dit à l'espace-temps comment se courber ; l'espace-temps dit à la matière comment bouger. La Terre ne tourne pas autour du Soleil parce qu'il la tire, mais parce qu'elle suit la ligne la plus droite possible dans un espace courbé."
+      },
+      {
+       "fr": "Les preuves s'accumulent. En 1919, pendant une éclipse, l'équipe d'Arthur Eddington mesure que la lumière des étoiles est déviée près du Soleil, deux fois plus que ne le prévoyait Newton. Et en 2015, les détecteurs LIGO captent pour la première fois des ondes gravitationnelles, frissons de l'espace-temps venus de la fusion de deux trous noirs."
+      }
+     ],
+     "retenir": {
+      "fr": "Relativité générale (1915) : la masse courbe l'espace-temps. Confirmée par l'éclipse de 1919 et les ondes gravitationnelles (2015)."
+     },
+     "source": "Einstein, Sitzungsberichte der Preußischen Akademie der Wissenschaften, 1915"
+    }
+   ]
+  }
  },
  {
   "id": "phys.quantique",
@@ -305,6 +715,65 @@
    "source": "Feynman, Leçons sur la physique, tome 3, chapitre 1"
   },
   "symbole": "ħ",
-  "embleme": "chat"
+  "embleme": "chat",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "quanta",
+     "titre": {
+      "fr": "La lumière en grains"
+     },
+     "texte": [
+      {
+       "fr": "En 1900, pour expliquer la lumière émise par les corps chauds, Max Planck suppose que l'énergie ne s'échange que par paquets, des quanta, d'énergie E = h f, proportionnelle à la fréquence. Il y voit un artifice de calcul. En 1905, Einstein les prend au sérieux : la lumière est faite de grains, les photons. Cela explique l'effet photoélectrique, et lui vaut le prix Nobel de 1921, pas la relativité."
+      },
+      {
+       "fr": "En 1913, Niels Bohr applique l'idée à l'atome : l'électron n'a droit qu'à certains niveaux d'énergie. En descendant d'un niveau, il émet un photon d'une couleur précise. C'est pourquoi chaque élément a sa signature lumineuse, ses raies, qui permettent de savoir de quoi sont faites des étoiles lointaines."
+      }
+     ],
+     "retenir": {
+      "fr": "E = h f : l'énergie va par paquets (Planck, 1900). Photons (Einstein, 1905). Niveaux d'énergie de l'atome (Bohr, 1913)."
+     },
+     "source": "Planck, Annalen der Physik, 1901 ; Einstein, Annalen der Physik, 1905"
+    },
+    {
+     "id": "dualite",
+     "titre": {
+      "fr": "Onde et grain à la fois"
+     },
+     "texte": [
+      {
+       "fr": "Envoyez des électrons un par un vers une plaque percée de deux fentes. Chacun arrive en un point précis de l'écran, comme un grain. Mais après des milliers d'impacts, ils dessinent des franges d'interférence, comme une onde passée par les deux fentes à la fois. L'expérience a été réalisée avec des électrons uniques en 1974, puis en 1989."
+      },
+      {
+       "fr": "C'est la dualité onde-particule. L'onde ne dit pas où la particule est, mais où elle a des chances d'être. En 1926, Einstein écrit à Max Born que Dieu ne joue pas aux dés : il n'a jamais accepté ce hasard fondamental. Les expériences, depuis, ont donné raison à Born."
+      }
+     ],
+     "retenir": {
+      "fr": "Les particules arrivent une par une, mais interfèrent comme des ondes. L'onde donne des probabilités (Born)."
+     },
+     "source": "Feynman, Leçons sur la physique, tome 3, chapitre 1",
+     "schema_fiche": true
+    },
+    {
+     "id": "incertitude",
+     "titre": {
+      "fr": "L'incertitude n'est pas une maladresse"
+     },
+     "texte": [
+      {
+       "fr": "En 1927, Werner Heisenberg montre qu'on ne peut pas connaître à la fois, avec une précision parfaite, la position et la vitesse d'une particule. Plus l'une est précise, plus l'autre est floue. Ce n'est pas un défaut des instruments : c'est la nature qui est ainsi faite."
+      },
+      {
+       "fr": "Cette physique étrange fait tourner le monde moderne. L'effet tunnel, qui laisse une particule franchir une barrière qu'elle ne devrait pas pouvoir passer, explique la radioactivité alpha et fait marcher les mémoires flash. Le laser repose sur l'émission stimulée, prédite par Einstein en 1917. Et le chat de Schrödinger, en 1935, était une critique : Schrödinger voulait montrer l'absurdité d'appliquer la superposition à un objet de tous les jours."
+      }
+     ],
+     "retenir": {
+      "fr": "Position et vitesse ne peuvent être toutes deux parfaitement connues (Heisenberg, 1927) : c'est une propriété de la nature."
+     },
+     "source": "Heisenberg, Zeitschrift für Physik, 1927"
+    }
+   ]
+  }
  }
 ]
