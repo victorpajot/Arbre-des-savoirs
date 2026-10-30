@@ -966,6 +966,8 @@ svg.grille .interro { transition: opacity .3s; }
 .points i.presque { background: var(--warn); }
 .sc-herbe { background: radial-gradient(circle at 50% 60%, color-mix(in srgb, #8A6A12 22%, var(--surface)), transparent 70%); }
 .sc-regle { font-size: 17px; margin: 0; }
+/* v35 (Victor) : l'or bruni des boutons passait pour un bouton éteint. Or vif, texte encre. */
+.btn.sc-go { background: #F2B807; color: #1F1600; }
 .sc-carte { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; background: var(--surface); border-radius: 18px; padding: 18px 16px; border-top: 5px solid #8A6A12; }
 .sc-carte .enonce { margin: 0; }
 .sc-texte { font-size: 17px; color: var(--muted); margin: 0; }
@@ -3558,13 +3560,13 @@ function demarrerJeu() {
     var cas = mode === "case", n = cas ? P.siecles.case : null;
     var b = el('<div class="bloc chrono-attente"><span class="vitrine">' + logoChrono(64) + '</span><div style="flex:1;min-width:0"><div class="eyebrow">' + (cas ? __("Case ") + n + __(" · Chrono") : __("L'IA t'attend")) + "</div>" +
       "<h2>" + (cas ? __("Chrono !") : __("Vérification d'archives")) + '</h2><p class="meta">' + (cas ? __("Cinq événements à dater. ") + M.reglesChrono(C).reussite + __(" justes, et ton pion avance.") : __("Une partie de Chrono offerte : des crédits à gagner, ton pion ne bouge pas. Jusqu'à ce soir.")) +
-      '</p><button type="button" class="btn" style="background:' + COULEUR_SPECIAL.chrono + __('">Dater</button></div></div>'));
+      '</p><button type="button" class="btn sc-go">' + __('Dater</button></div></div>'));
     b.querySelector(".btn").onclick = function () { ouvrirChrono(mode); };
     return b;
   }
   // Fin du trajet sur une case Chrono : un seul bouton, vers la partie.
   function boutonChrono(wrap, fermer) {
-    var go = el('<button type="button" class="btn large" style="background:' + COULEUR_SPECIAL.chrono + __('">Chrono !</button>'));
+    var go = el('<button type="button" class="btn large sc-go">' + __('Chrono !</button>'));
     go.onclick = function () { fermer(); ouvrirChrono("case"); };
     wrap.appendChild(go);
   }
@@ -3672,7 +3674,7 @@ function demarrerJeu() {
         (siecles.mode === "case" ? " " + R.reussite + __(" justes sur ") + j.questions.length + __(", et ton pion avance de ") + R.avance + __(" cases, plus le bonus du bouton Jouer.") : __(" Ton pion ne bouge pas.")) + '</p><div class="arbitre" style="width:100%"></div></div>');
       var m = comite(siecles.replique, true); if (m) sc.querySelector(".arbitre").appendChild(m);
       inn.appendChild(sc);
-      var go = el('<button type="button" class="btn large" style="background:' + COULEUR_SPECIAL.chrono + __('">Commencer</button>'));
+      var go = el('<button type="button" class="btn large sc-go">' + __('Commencer</button>'));
       go.onclick = function () { siecles.phase = "q"; rendreChrono(); };
       inn.appendChild(go); go.focus();
       var tard = el(__('<button type="button" class="btn sec large">Plus tard</button>')); tard.onclick = fermerChrono; inn.appendChild(tard);
@@ -3695,7 +3697,7 @@ function demarrerJeu() {
       var s = siecles.sel, sa = saisieChrono(q, s, rendreSaisie);
       function rendreSaisie() { var n = saisieChrono(q, s, rendreSaisie); sa.replaceWith(n); sa = n; }
       inn.appendChild(sa);
-      var ok = el('<button type="button" class="btn large" style="background:' + COULEUR_SPECIAL.chrono + __('">Valider</button>'));
+      var ok = el('<button type="button" class="btn large sc-go">' + __('Valider</button>'));
       ok.onclick = function () {
         siecles.rep = M.repondreChrono(C, P, anneeChrono(q, s), Date.now() - siecles.debutQ, maintenant());
         siecles.repliqueQ = M.replique(C, P, ["chrono_" + siecles.rep.verdict]);
@@ -4809,7 +4811,7 @@ function demarrerJeu() {
     // v34 : de temps en temps (une fois par jour au plus), Alyca offre une partie de Chrono.
     if (!sansChrono && C.plateau && C.plateau.regles.chrono && M.chronoSpontane(C, P, t)) {
       sauver();
-      var ch = el('<button type="button" class="btn large" style="background:' + COULEUR_SPECIAL.chrono + __('">L\'IA t\'offre un Chrono</button>'));
+      var ch = el('<button type="button" class="btn large sc-go">' + __('L\'IA t\'offre un Chrono</button>'));
       ch.onclick = function () { fermer(); ouvrirChrono("alyca"); };
       wrap.appendChild(ch);
     }
