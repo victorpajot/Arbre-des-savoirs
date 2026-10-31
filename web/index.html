@@ -709,6 +709,19 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .masterclass .mc-faux { color: var(--bad); margin: 4px 0; }
 .masterclass .mc-retenir { border-left: 4px solid #E0A800; padding: 6px 10px; background: color-mix(in srgb, #E0A800 12%, var(--surface)); border-radius: 6px; }
 .masterclass .mc-intro { margin: 4px 0 12px; }
+/* Victor (2026-10-31) : une couleur par époque sur chaque date citée (moyen mnémotechnique). */
+:root { --ep-antiquite: #B5562B; --ep-moyen-age: #2556B8; --ep-renaissance: #2E8040; --ep-classique: #9A6E00; --ep-xixe: #56636F; --ep-xxe: #7B3FC4; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ep-antiquite: #E8946A; --ep-moyen-age: #7EA4FF; --ep-renaissance: #66CC78; --ep-classique: #EDBB45; --ep-xixe: #AEBBC8; --ep-xxe: #BC97FF; } }
+:root[data-theme="dark"] { --ep-antiquite: #E8946A; --ep-moyen-age: #7EA4FF; --ep-renaissance: #66CC78; --ep-classique: #EDBB45; --ep-xixe: #AEBBC8; --ep-xxe: #BC97FF; }
+.date-ep { color: var(--ep); font-weight: 650; background: color-mix(in srgb, var(--ep) 13%, transparent); border-radius: 4px; padding: 0 3px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.date-ep svg { width: 14px; height: 14px; vertical-align: -2px; margin-right: 3px; }
+.ep-antiquite { --ep: var(--ep-antiquite); } .ep-moyen-age { --ep: var(--ep-moyen-age); } .ep-renaissance { --ep: var(--ep-renaissance); }
+.ep-classique { --ep: var(--ep-classique); } .ep-xixe { --ep: var(--ep-xixe); } .ep-xxe { --ep: var(--ep-xxe); }
+.legende-ep { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; font-size: 15px; }
+.date-ep svg { display: inline-block; }
+.legende-ep .date-ep { display: inline-flex; align-items: center; padding: 2px 6px; }
+.legende-ep .date-ep svg { margin-right: 5px; vertical-align: 0; }
+
 .masterclass .mc-retenir b { display: block; }
 .masterclass .mc-bon { color: var(--good); font-weight: 700; margin: 4px 0; }
 .btn.sc-mc { background: #E0A800; color: #1F1600; }
@@ -853,6 +866,8 @@ details.fiche-d[open] summary { margin-bottom: 10px; }
 .eres::-webkit-scrollbar { display: none; }
 .eres button { flex: none; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); font: inherit; font-size: 12px; cursor: pointer; }
 .eres button b { font-size: 13px; color: var(--ink); white-space: nowrap; }
+.eres button[class*="ep-"] { border-top: 3px solid var(--ep); }
+.eres button[class*="ep-"] b { color: var(--ep); }
 .eres button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); }
 .cylindre { isolation: isolate; position: relative; height: 230px; overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none; margin: 6px -8px 0; outline: none; }
 .cylindre:focus-visible { box-shadow: 0 0 0 2px var(--accent); border-radius: 14px; }
@@ -2432,7 +2447,7 @@ function demarrerJeu() {
     // elle a quelque chose à annoncer (rappel imposé, série, révision, arbre fermé).
     if (!atI && !enI && ici.replique && c.evoque && ["case", "rappel"].indexOf(c.raison) >= 0) rep = { texte: ici.replique, contexte: "jouer_case", theme: ici.stat, id: "case-" + ici.n };
     var bandeau = enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Ennemi</div><h2>') + esc(tx(enI.nom)) + __(' garde la case</h2><p class="titre-en">') + esc(tx(enI.titre)) + "</p>" + (enI.qui ? "<p>" + esc(tx(enI.qui)) + "</p>" : "") + __('<p>Bats-le pour voir ce qu\'il y a dessous.</p></div>') : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>') : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
-      __('<div class="eyebrow">Ton pion est case ') + ici.n + " · " + esc(formatAnnee(ici.annee)) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + esc(tx(ici.histoire)) + "</p></div>";
+      __('<div class="eyebrow">Ton pion est case ') + ici.n + " · " + pastilleDate(ici.annee) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + escD(tx(ici.histoire)) + "</p></div>";
     // v29 (Victor) : après la case, la phrase de l'IA, puis l'arbre choisi (icône, description, ton niveau) et l'épreuve.
     // Les savants et objets du thème passent à la fin.
     var nvA = M.niveau(C, M.xpParStat(C, P)[s.id] || 0), ferme = !M.arbreOuvert(C, P, s.id);
@@ -2808,6 +2823,50 @@ function demarrerJeu() {
   function cn(n) { var rt = P && P.plateau && P.plateau.route, i = rt ? rt.indexOf(n) : -1; return i >= 0 ? i + 1 : n; }
   // Date d'un livre ou d'une date de frise : le texte approché (« IIIe s. av. J.-C. ») s'il existe, sinon l'année.
   function dateDe(x) { return x.date ? tx(x.date) : formatAnnee(x.annee); }
+  // Victor (2026-10-31) : moyen mnémotechnique, une couleur par époque du plateau, la même sur chaque date citée.
+  // La pastille garde l'icône de l'époque (la couleur ne doit jamais être le seul indice).
+  function epoqueDe(a) {
+    var E = (C.plateau && C.plateau.epoques) || [];
+    for (var i = 0; i < E.length; i++) if ((E[i].debut == null || a >= E[i].debut) && (E[i].fin == null || a <= E[i].fin)) return E[i];
+    return null;
+  }
+  function pastilleDate(a, texte, sansIcone) {
+    var e = a == null ? null : epoqueDe(a);
+    var t = esc(texte != null ? texte : formatAnnee(a));
+    return e ? '<span class="date-ep ep-' + e.id + '" title="' + esc(tx(e.nom)) + '">' + (sansIcone ? "" : svgSprite(e.icone, 14, "")) + t + "</span>" : t;
+  }
+  // Moyen mnémotechnique : chaque époque a sa couleur, reprise par toutes les dates du jeu.
+  function legendeEpoques() {
+    var E = (C.plateau && C.plateau.epoques) || [], b = el(__('<div class="legende-ep" role="note" aria-label="Couleurs des époques"></div>'));
+    b.appendChild(el(__('<p class="note" style="margin:0;flex-basis:100%">Chaque date prend la couleur de son époque, partout dans le jeu.</p>')));
+    E.forEach(function (e) { b.appendChild(el('<span class="date-ep ep-' + e.id + '">' + svgSprite(e.icone, 14, "") + esc(tx(e.nom)) + "</span>")); });
+    return b;
+  }
+  var ROMAINS = { I: 1, V: 5, X: 10, L: 50, C: 100 };
+  function romain(r) { var n = 0; for (var i = 0; i < r.length; i++) { var v = ROMAINS[r[i]], w = ROMAINS[r[i + 1]] || 0; n += v < w ? -v : v; } return n; }
+  // Repère les dates dans un texte déjà échappé et les teinte de la couleur de leur époque.
+  var RE_DATES = new RegExp([
+    "\\b([IVX]+)(?:e|er|ème)(?:\\s|&nbsp;|\u00a0)+(?:siècle|s\\.)(?:(?:\\s|\u00a0)+av\\.(?:(?:\\s|\u00a0)+J\\.-C\\.)?)?",
+    "\\b(\\d{1,2})(?:st|nd|rd|th) century(?: BC)?",
+    "\\b(\\d{1,3}(?:[\\s\u00a0\u202f]\\d{3})?|\\d{1,4})(?:\\s|\u00a0)+(?:av\\.(?:\\s|\u00a0)+J\\.-C\\.|BC|BCE)",
+    "(?:\\b(?:[Ee]n|[Vv]ers|[Dd]ès|[Dd]epuis|jusqu&#39;en|jusqu’en|l&#39;an|[Ii]n|[Aa]round|[Bb]y|[Ss]ince|[Uu]ntil|[Ff]rom|c\\.)(?:\\s|\u00a0)+|\\b(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre|January|February|March|April|May|June|July|August|September|October|November|December)(?:\\s|\u00a0)+|\\(|^)(\\d{2,4})(?!\\d)(?![,.]\\d)(?!(?:\\s|\u00a0)\\d{3})(?!(?:\\s|\u00a0)+(?:av\\.|BC))(?!(?:\\s|\u00a0)*(?:%|km|kg|°|volts?|V\\b|ans|années|mètres|m\\b|hommes|personnes|exemplaires|pages|étoiles|secondes|minutes|heures|jours|mois|fois|cas|cm|mm|g\\b|litres|degrés|years|people|times))"
+  ].join("|"), "g");
+  function dater(html) {
+    if (!C.plateau || !C.plateau.epoques || !html) return html;
+    return html.replace(RE_DATES, function (m, sR, sN, av, an, off, all) {
+      var a, avJC = /av\.|BC/.test(m);
+      if (sR) { var n = romain(sR); if (!n || n > 21) return m; a = avJC ? -(n - 1) * 100 - 50 : (n - 1) * 100 + 50; }
+      else if (sN) { a = avJC ? -(+sN - 1) * 100 - 50 : (+sN - 1) * 100 + 50; }
+      else if (av) a = -parseInt(av.replace(/\D/g, ""), 10);
+      else if (an) { a = +an; if (a > new Date().getFullYear() + 1) return m; }
+      else return m;
+      var e = epoqueDe(a); if (!e) return m;
+      var nombre = sR || sN || av || an, i = m.indexOf(nombre), avant = m.slice(0, i), reste = m.slice(i);
+      // Le mot qui précède (« en », « vers ») reste hors de la pastille.
+      return avant + '<span class="date-ep ep-' + e.id + '">' + reste + "</span>";
+    });
+  }
+  function escD(s) { return dater(esc(s)); }
   function formatAnnee(a) {
     if (a == null) return "";
     var n = { a: (-a).toLocaleString(locale()) };
@@ -3358,6 +3417,7 @@ function demarrerJeu() {
   function blocFrise() {
     var t = maintenant(), b = el('<div class="bloc"></div>');
     b.appendChild(el(__('<p class="note">Les dates s\'ajoutent quand ton pion s\'arrête sur une case du plateau, ou quand tu maîtrises une compétence. Au premier tour, la frise suit ton pion : une date attend qu\'il ait atteint son époque.</p>')));
+    b.appendChild(legendeEpoques());
     var fl = el(__('<div class="filtres" role="group" aria-label="Filtrer par branche"></div>'));
     [null].concat(C.stats.map(function (s) { return s.id; })).forEach(function (id) {
       var bt = el('<button type="button" aria-pressed="' + (filtreFrise === id) + '"' + (id ? ' style="--c:' + couleur(id) + '"' : "") + ">" + (id ? esc(tx(stat(id).nom)) : __("Tout")) + "</button>");
@@ -3386,7 +3446,7 @@ function demarrerJeu() {
       var idx = evs.map(function (e) { return e.epoque; }).indexOf(ep.id); if (idx < 0) return;
       debutEre[ep.id] = idx;
       var nb = tous.filter(function (e) { return e.epoque === ep.id && P.evenements[e.id]; }).length, tot = tous.filter(function (e) { return e.epoque === ep.id; }).length;
-      var bt = el('<button type="button" data-ere="' + ep.id + '"><b>' + esc(tx(ep.nom)) + '</b><span class="num">' + nb + " / " + tot + "</span></button>");
+      var bt = el('<button type="button" class="ep-' + ep.id + '" data-ere="' + ep.id + '"><b>' + esc(tx(ep.nom)) + '</b><span class="num">' + nb + " / " + tot + "</span></button>");
       bt.onclick = function () { aller(debutEre[ep.id]); };
       eres.appendChild(bt);
     });
@@ -3396,7 +3456,7 @@ function demarrerJeu() {
       var ok = !!P.evenements[e.id], k = e.case ? M.caseN(C, e.case) : null, neuf = ok && t - P.evenements[e.id] < JOUR_MS;
       var visuel = k ? svgSprite(k.icone, 44, null, !ok) : '<span class="pastille-f" aria-hidden="true">' + esc(statActif(e.stat) ? tx(stat(e.stat).nom).charAt(0) : "·") + "</span>";
       var c = el('<button type="button" role="option" class="carte-f' + (ok ? "" : " ombre") + (neuf ? " nouveau" : "") + '" data-i="' + i + '" style="--c:' + couleur(e.stat) + '">' + visuel +
-        '<span class="an">' + esc(ok ? dateDe(e) : siecle(e.annee)) + "</span><b>" + (ok ? esc(tx(e.titre)) : "???") + "</b></button>");
+        '<span class="an">' + (ok ? pastilleDate(e.annee, dateDe(e), true) : esc(siecle(e.annee))) + "</span><b>" + (ok ? esc(tx(e.titre)) : "???") + "</b></button>");
       cyl.appendChild(c);
       return c;
     });
@@ -3519,7 +3579,7 @@ function demarrerJeu() {
     var html = '<div class="livre-fiche" style="--c:' + l.couleur + ';display:flex;flex-direction:column;gap:12px"><div class="tete"><div class="couv"><span class="vitrine">' + svgSprite(l.embleme, 44, null, !ok) + "</span></div><div>" +
       '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(dateDe(l)) + esc(avecArbre(s.id)) + "</div><h2>" + (ok ? esc(tx(l.titre)) : __("Livre à découvrir")) + "</h2>" + (ok ? '<p class="meta">' + esc(l.auteur) + "</p>" : "") + "</div></div>";
     if (ok) {
-      html += "<p>" + esc(tx(l.resume)) + "</p>" + htmlExtrait(l) + __("<h3>Pourquoi il a compté</h3><p>") + esc(tx(l.importance)) + __("</p><h3>L'anecdote</h3><p>") + esc(tx(l.anecdote)) + __('</p><div id="ia-livre"></div><p class="meta">Référence : ') + esc(l.source) + "</p>";
+      html += "<p>" + escD(tx(l.resume)) + "</p>" + htmlExtrait(l) + __("<h3>Pourquoi il a compté</h3><p>") + esc(tx(l.importance)) + __("</p><h3>L'anecdote</h3><p>") + esc(tx(l.anecdote)) + __('</p><div id="ia-livre"></div><p class="meta">Référence : ') + esc(l.source) + "</p>";
       if (!seul && dispo.length > 1) html += '<div class="nav"><button type="button" class="btn sec" data-a="prec"' + (i <= 0 ? " disabled" : "") + __('>← Précédent</button><button type="button" class="btn sec" data-a="suiv"') + (i >= dispo.length - 1 ? " disabled" : "") + __(">Suivant →</button></div>");
     } else {
       html += __('<p class="meta">Pour le placer sur l\'étagère : ') + esc(commentObtenir(l.condition)) + "</p>";
@@ -3812,7 +3872,7 @@ function demarrerJeu() {
       zone.querySelectorAll("button[data-v]").forEach(function (z) { if (z.getAttribute("data-v") === String(q.reponse)) z.classList.add("bon"); });
       var donnee = ok ? null : texteReponse(q, v);
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
-      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>" + htmlRepere(q)));
+      c.appendChild(el('<p class="expl-h">' + escD(tx(q.explication)) + "</p>" + htmlRepere(q)));
       if (q.illustration_explication) c.appendChild(el('<div class="illus">' + q.illustration_explication + "</div>"));
       if (!r) return;
       c.appendChild(el('<div class="piege-verdict ' + (r.dejoue ? "ok" : "ko") + '">' + (r.dejoue ? __("Piège déjoué !") : __("Le piège se déclenche")) + "</div>"));
@@ -4295,7 +4355,7 @@ function demarrerJeu() {
   var DATE_RE = /\b(1[0-9]{3}|20[0-2][0-9])\b|siècle|av\. J|avant notre ère/;
   // Un repère propre à la question (q.repere, vérifié) passe avant ceux de la compétence, même si l'explication est datée.
   function htmlRepere(q) {
-    if (q && q.repere) return '<p class="repere-h"><b>' + __("Un peu d'histoire") + "</b> " + esc(tx(q.repere.texte)) + '<span class="repere-src">' + esc(q.repere.source) + "</span></p>";
+    if (q && q.repere) return '<p class="repere-h"><b>' + __("Un peu d'histoire") + "</b> " + escD(tx(q.repere.texte)) + '<span class="repere-src">' + esc(q.repere.source) + "</span></p>";
     var k = q && C.parId[q.competence]; if (!aMasterclass(k) || !q.explication || DATE_RE.test(q.explication.fr || "")) return "";
     var mots = function (t) { return (t || "").toLowerCase().match(/[a-zà-ÿ]{5,}/g) || []; };
     var cles = {}; mots((q.enonce && q.enonce.fr) + " " + q.explication.fr).forEach(function (m) { cles[m] = 1; });
@@ -4321,7 +4381,7 @@ function demarrerJeu() {
     function blocQ(q, rep) {
       var dit = rep !== undefined ? texteReponse(q, rep) : null;
       return '<div class="mc-q"><p class="enonce-mc">' + esc(tx(q.enonce)) + "</p>" + (dit ? __('<p class="mc-faux">Tu as répondu : ') + esc(dit) + "</p>" : "") +
-        __('<p class="mc-bon">Bonne réponse : ') + esc(bonneReponse(q)) + "</p>" + (q.explication ? "<p>" + esc(tx(q.explication)) + "</p>" : "") + htmlRepere(q) +
+        __('<p class="mc-bon">Bonne réponse : ') + esc(bonneReponse(q)) + "</p>" + (q.explication ? "<p>" + escD(tx(q.explication)) + "</p>" : "") + htmlRepere(q) +
         (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + (q.figure ? htmlFigure(q.figure) : "") + "</div>";
     }
     // Le schéma de la fiche va dans le chapitre qui en parle (schema_fiche), sinon dans le premier.
@@ -4329,9 +4389,9 @@ function demarrerJeu() {
     var iSchema = k.masterclass.chapitres.findIndex(function (ch) { return ch.schema_fiche; });
     var intro = iSchema < 0 && k.fiche && k.fiche.schema ? '<div class="illus mc-intro">' + k.fiche.schema + "</div>" : "";
     var etapes = k.masterclass.chapitres.map(function (ch, i) {
-      return { titre: tx(ch.titre), html: (i === 0 ? intro : "") + ch.texte.map(function (x) { return "<p>" + esc(tx(x)) + "</p>"; }).join("") +
+      return { titre: tx(ch.titre), html: (i === 0 ? intro : "") + ch.texte.map(function (x) { return "<p>" + escD(tx(x)) + "</p>"; }).join("") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
-        __('<p class="mc-retenir"><b>À retenir</b>') + esc(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
+        __('<p class="mc-retenir"><b>À retenir</b>') + escD(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });
     if (rates.length) etapes.push({ titre: rates.length > 1 ? __("Tes erreurs, corrigées") : __("Ton erreur, corrigée"), html: rates.map(function (x) { return blocQ(C.questionParId[x.id], x.rep); }).join("") +
       __('<p class="meta">Elles t\'attendent au mur de la honte : retente-les dès demain.</p>') });
@@ -4629,7 +4689,7 @@ function demarrerJeu() {
   function htmlFiche(k) {
     var f = k.fiche; if (!f) return "";
     // Les schémas viennent du contenu du jeu (data/skills.json), pas de l'utilisateur.
-    return '<div class="fiche-rev"><ul>' + f.essentiel.map(function (x) { return "<li>" + esc(tx(x)) + "</li>"; }).join("") + "</ul>" +
+    return '<div class="fiche-rev"><ul>' + f.essentiel.map(function (x) { return "<li>" + escD(tx(x)) + "</li>"; }).join("") + "</ul>" +
       '<div class="illus">' + f.schema + "</div>" + (f.figures || []).map(function (id) { return htmlFigure(id, true); }).join("") +
       __('<p class="piege-h"><b>Le piège</b>') + esc(tx(f.piege)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(f.source) + "</p></div>";
   }
@@ -4656,7 +4716,7 @@ function demarrerJeu() {
     if (q.illustration || q.dessin) c.appendChild(el(htmlIllusQ(q)));
     function corrige() {
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
-      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>" + htmlRepere(q)));
+      c.appendChild(el('<p class="expl-h">' + escD(tx(q.explication)) + "</p>" + htmlRepere(q)));
       if (q.illustration_explication) c.appendChild(el('<div class="illus">' + q.illustration_explication + "</div>"));
       if (q.figure) c.appendChild(el(htmlFigure(q.figure)));
       if (q.atome && (q.type === "numerique" || q.type === "place") && C.atomes) c.appendChild(boutonGuide(C.atomes.elements[q.atome - 1]));
@@ -4734,7 +4794,7 @@ function demarrerJeu() {
       zone.querySelectorAll("button[data-v]").forEach(function (z) { if (z.getAttribute("data-v") === String(q.reponse)) z.classList.add("bon"); });
       var donnee = ok ? null : texteReponse(q, v);
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
-      c.appendChild(el('<p class="expl-h">' + esc(tx(q.explication)) + "</p>" + htmlRepere(q)));
+      c.appendChild(el('<p class="expl-h">' + escD(tx(q.explication)) + "</p>" + htmlRepere(q)));
       if (!r) return;
       if (r.libere) { liberation(); return; }
       var m = comite(r.replique, true); if (m) c.appendChild(m);
@@ -5363,7 +5423,7 @@ function demarrerJeu() {
     function montrerRetour(ok) {
       var rep = q.type === "qcm" ? tx(q.choix[q.reponse]) : (q.type === "vrai_faux" ? libVF(q.reponse) : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""));
       var tempsEcoule = quiz.tempsEcoule; quiz.tempsEcoule = false;
-      zoneRetour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? __("Juste.") + (quiz.chrono ? " +" + C.regles.chrono.bonus_xp_par_bonne_reponse + __(" XP de bonus chrono.") : "") : (tempsEcoule ? __("Temps écoulé. ") : __("Raté. ")) + __("Réponse : ") + esc(rep) + ".") + "</b><p>" + esc(tx(q.explication)) + "</p>" + htmlRepere(q) +
+      zoneRetour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? __("Juste.") + (quiz.chrono ? " +" + C.regles.chrono.bonus_xp_par_bonne_reponse + __(" XP de bonus chrono.") : "") : (tempsEcoule ? __("Temps écoulé. ") : __("Raté. ")) + __("Réponse : ") + esc(rep) + ".") + "</b><p>" + escD(tx(q.explication)) + "</p>" + htmlRepere(q) +
         (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + htmlFigure(q.figure) + "</div>"));
       if (voixP()) { var rt = zoneRetour.lastChild; rt.appendChild(boutonEcouter(tx(q.explication))); parler((ok ? __("Bravo !") : __("Raté.")) + " " + tx(q.explication)); }
       var pq = portraitQuestion(q);
