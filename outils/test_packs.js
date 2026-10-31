@@ -137,7 +137,9 @@ for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "co
   M.accorderPartie(S.contenu(brut, sauf([])), P);
   assert.equal(M.routeTour(S.contenu(brut, sauf([])), P).length, 1, "aucun domaine : l'arrivée seule");
   const C = S.contenu(brut, sauf(["logique"])); M.accorderPartie(C, P);
-  assert.ok(M.routeTour(C, P).length >= 24, "un domaine rallumé : la route se redessine");
+  // Une case par compétence (Victor, 2026-10-31) : un domaine seul peut avoir moins de 24 cases ; la route les prend toutes.
+  const nLogique = C.plateau.cases.filter(k => k.stat === "logique").length;
+  assert.ok(M.routeTour(C, P).length >= Math.min(24, nLogique), "un domaine rallumé : la route se redessine");
   console.log("OK : route d'une case redessinée quand un domaine revient");
 }
 // v53 : un pack de domaine chargé par le joueur (outils/packs.py paquet) se pose comme s'il avait été assemblé.
