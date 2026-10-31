@@ -2391,11 +2391,11 @@
     function ajouter(x) { if (x.debut < pre) x.max = 1; out.push(x); }
     (contenu.evenements || []).forEach(function (e) {
       if (partie.evenements && partie.evenements[e.id] != null && e.annee != null)
-        ajouter({ cle: "frise:" + e.id, sorte: "frise", id: e.id, titre: TX(e.titre), texte: sansDate(e.phrase), debut: e.annee, fin: e.annee, max: maxN, source: e.source, case: e.case || null, stat: e.stat });
+        ajouter({ cle: "frise:" + e.id, sorte: "frise", id: e.id, titre: TX(e.titre), texte: sansDate(e.phrase), debut: e.annee, fin: e.annee, max: e.date ? 1 : maxN, source: e.source, case: e.case || null, stat: e.stat });
     });
     (contenu.livres || []).forEach(function (l) {
       if (partie.livres && partie.livres[l.id] != null && l.annee != null)
-        ajouter({ cle: "livre:" + l.id, sorte: "livre", id: l.id, titre: TX(l.titre), auteur: l.auteur, texte: null, debut: l.annee, fin: l.annee, max: maxN, source: l.source, stat: l.stat });
+        ajouter({ cle: "livre:" + l.id, sorte: "livre", id: l.id, titre: TX(l.titre), auteur: l.auteur, texte: null, debut: l.annee, fin: l.annee, max: l.date ? 1 : maxN, source: l.source, stat: l.stat });
     });
     (contenu.avatar && contenu.avatar.savants || []).forEach(function (s) {
       var a = partie.savants && partie.savants[s.id] != null && lireAnnees(s.annees);

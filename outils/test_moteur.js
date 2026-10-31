@@ -1469,6 +1469,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
 // partie offerte par Alyca, niveaux par événement, crédits juste / proche / rapide.
 {
   const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  // Les dates approchées (champ date) ne se jouent qu'au siècle : test à part (C_DATES) ; le reste du bloc les traite en années.
+  const C_DATES = Object.assign({}, C, { evenements: C.evenements.map(e => Object.assign({}, e)) });
+  C.evenements.forEach(e => { delete e.date; }); (C.livres || []).forEach(l => { delete l.date; });
   const R = M.reglesChrono(C), T = new Date(2026, 9, 7, 10).getTime();
   // Créneaux : siècles au sens propre, pas d'an zéro, Préhistoire à part.
   assert.equal(M.creneau(1901, 100), 19); assert.equal(M.creneau(2000, 100), 19); assert.equal(M.creneau(2001, 100), 20);
@@ -1492,6 +1495,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const pool = M.reservoirChrono(C, P);
   assert.equal(pool.length, 13); assert.ok(pool.every(x => x.texte == null || !/\d{3,4}/.test(x.texte)), "pas de phrase qui donne la date");
   assert.ok(pool.find(x => x.id === "feu").max === 1, "la Préhistoire reste au siècle");
+  { const Q = prep(), approx = C_DATES.evenements.find(e => e.date && e.annee > -10000); Q.evenements[approx.id] = T;
+    assert.equal(M.reservoirChrono(C_DATES, Q).find(x => x.id === approx.id).max, 1, "date approchée : Chrono ne demande que le siècle"); }
   // Rien sans case ni offre ; trop peu d'éléments : pas de partie.
   assert.equal(M.lancerChrono(C, P, "case", T), null); assert.equal(M.lancerChrono(C, P, "alyca", T), null);
   const vide = M.nouvellePartie(T); vide.decalage = T - Date.now();

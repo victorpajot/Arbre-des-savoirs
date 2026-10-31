@@ -2760,6 +2760,8 @@ function demarrerJeu() {
   }
   // v36 : le numéro d'une case affiché au joueur est sa place sur la route du tour (les cases sont tirées à chaque tour).
   function cn(n) { var rt = P && P.plateau && P.plateau.route, i = rt ? rt.indexOf(n) : -1; return i >= 0 ? i + 1 : n; }
+  // Date d'un livre ou d'une date de frise : le texte approché (« IIIe s. av. J.-C. ») s'il existe, sinon l'année.
+  function dateDe(x) { return x.date ? tx(x.date) : formatAnnee(x.annee); }
   function formatAnnee(a) {
     if (a == null) return "";
     var n = { a: (-a).toLocaleString(locale()) };
@@ -3345,7 +3347,7 @@ function demarrerJeu() {
       var ok = !!P.evenements[e.id], k = e.case ? M.caseN(C, e.case) : null, neuf = ok && t - P.evenements[e.id] < JOUR_MS;
       var visuel = k ? svgSprite(k.icone, 44, null, !ok) : '<span class="pastille-f" aria-hidden="true">' + esc(statActif(e.stat) ? tx(stat(e.stat).nom).charAt(0) : "·") + "</span>";
       var c = el('<button type="button" role="option" class="carte-f' + (ok ? "" : " ombre") + (neuf ? " nouveau" : "") + '" data-i="' + i + '" style="--c:' + couleur(e.stat) + '">' + visuel +
-        '<span class="an">' + esc(ok ? formatAnnee(e.annee) : siecle(e.annee)) + "</span><b>" + (ok ? esc(tx(e.titre)) : "???") + "</b></button>");
+        '<span class="an">' + esc(ok ? dateDe(e) : siecle(e.annee)) + "</span><b>" + (ok ? esc(tx(e.titre)) : "???") + "</b></button>");
       cyl.appendChild(c);
       return c;
     });
@@ -3372,7 +3374,7 @@ function demarrerJeu() {
       nav.querySelector('[data-d="-1"]').disabled = pos === 0;
       nav.querySelector('[data-d="1"]').disabled = pos === evs.length - 1;
       eres.querySelectorAll("[data-ere]").forEach(function (x) { x.setAttribute("aria-pressed", x.getAttribute("data-ere") === e.epoque ? "true" : "false"); });
-      detail.innerHTML = '<div class="eyebrow" style="color:' + couleur(e.stat) + '">' + esc(ok ? formatAnnee(e.annee) : siecle(e.annee)) + esc(avecArbre(s.id)) + "</div><h3>" + (ok ? esc(tx(e.titre)) : __("Date à découvrir")) + "</h3><p>" + esc(ok ? tx(e.phrase) : __("Pour l'ajouter : ") + commentDater(e)) + "</p>" +
+      detail.innerHTML = '<div class="eyebrow" style="color:' + couleur(e.stat) + '">' + esc(ok ? dateDe(e) : siecle(e.annee)) + esc(avecArbre(s.id)) + "</div><h3>" + (ok ? esc(tx(e.titre)) : __("Date à découvrir")) + "</h3><p>" + esc(ok ? tx(e.phrase) : __("Pour l'ajouter : ") + commentDater(e)) + "</p>" +
         (ok ? __('<button type="button" class="btn">Lire l\'histoire</button>') : "");
       var bl = detail.querySelector("button"); if (bl) bl.onclick = function () { ouvrirEvenement(e); };
       var ere = eres.querySelector('[aria-pressed="true"]'); if (ere && ere.scrollIntoView && eres.scrollWidth > eres.clientWidth) eres.scrollLeft = ere.offsetLeft - 16;
@@ -3419,7 +3421,7 @@ function demarrerJeu() {
     var html = "";
     if (ok) {
       if (k) html += '<div class="vitrine" style="padding:14px">' + svgSprite(k.icone, 96, tx(e.titre)) + "</div>";
-      html += '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(formatAnnee(e.annee)) + esc(avecArbre(s.id)) + (k ? "" : "") + "</div><h2>" + esc(tx(e.titre)) + "</h2><p><b>" + esc(tx(e.phrase)) + "</b></p><p>" + esc(tx(k ? k.histoire : e.detail)) + __('</p><p class="meta">Source : ') + esc(e.source) + "</p>";
+      html += '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(dateDe(e)) + esc(avecArbre(s.id)) + (k ? "" : "") + "</div><h2>" + esc(tx(e.titre)) + "</h2><p><b>" + esc(tx(e.phrase)) + "</b></p><p>" + esc(tx(k ? k.histoire : e.detail)) + __('</p><p class="meta">Source : ') + esc(e.source) + "</p>";
     } else {
       html += '<div class="eyebrow">' + esc(siecle(e.annee)) + __("</div><h2>Date à découvrir</h2><p class=\"meta\">Pour l'ajouter à la frise : ") + esc(commentDater(e)) + "</p>";
     }
@@ -3466,7 +3468,7 @@ function demarrerJeu() {
     var ok = !!P.livres[l.id], s = stat(l.stat);
     var dispo = C.livres.filter(function (x) { return P.livres[x.id]; }), i = dispo.indexOf(l);
     var html = '<div class="livre-fiche" style="--c:' + l.couleur + ';display:flex;flex-direction:column;gap:12px"><div class="tete"><div class="couv"><span class="vitrine">' + svgSprite(l.embleme, 44, null, !ok) + "</span></div><div>" +
-      '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(formatAnnee(l.annee)) + esc(avecArbre(s.id)) + "</div><h2>" + (ok ? esc(tx(l.titre)) : __("Livre à découvrir")) + "</h2>" + (ok ? '<p class="meta">' + esc(l.auteur) + "</p>" : "") + "</div></div>";
+      '<div class="eyebrow" style="color:' + couleur(s.id) + '">' + esc(dateDe(l)) + esc(avecArbre(s.id)) + "</div><h2>" + (ok ? esc(tx(l.titre)) : __("Livre à découvrir")) + "</h2>" + (ok ? '<p class="meta">' + esc(l.auteur) + "</p>" : "") + "</div></div>";
     if (ok) {
       html += "<p>" + esc(tx(l.resume)) + "</p>" + htmlExtrait(l) + __("<h3>Pourquoi il a compté</h3><p>") + esc(tx(l.importance)) + __("</p><h3>L'anecdote</h3><p>") + esc(tx(l.anecdote)) + __('</p><div id="ia-livre"></div><p class="meta">Référence : ') + esc(l.source) + "</p>";
       if (!seul && dispo.length > 1) html += '<div class="nav"><button type="button" class="btn sec" data-a="prec"' + (i <= 0 ? " disabled" : "") + __('>← Précédent</button><button type="button" class="btn sec" data-a="suiv"') + (i >= dispo.length - 1 ? " disabled" : "") + __(">Suivant →</button></div>");
@@ -5578,7 +5580,7 @@ function demarrerJeu() {
       out.push(marquerTheme(carteRecompense(__("Nouvel objet au cabinet"), svgObjet(o, false, 80), tx(o.nom), "", { titre: __("Lire la notice"), html: "<p>" + esc(tx(o.notice)) + __('</p><cite>Source : ') + esc(o.source) + "</cite>" }), o, te));
     });
     (r.nouveauxLivres || []).forEach(function (l) {
-      var c = carteRecompense(__("Nouveau livre à la bibliothèque"), '<span class="vitrine" style="padding:8px;background:' + l.couleur + ';border-radius:12px">' + svgSprite(l.embleme, 64) + "</span>", tx(l.titre), l.auteur + ", " + formatAnnee(l.annee), l.extrait ? { titre: __("Dans le texte"), html: htmlExtrait(l) } : null, l.couleur);
+      var c = carteRecompense(__("Nouveau livre à la bibliothèque"), '<span class="vitrine" style="padding:8px;background:' + l.couleur + ';border-radius:12px">' + svgSprite(l.embleme, 64) + "</span>", tx(l.titre), l.auteur + ", " + dateDe(l), l.extrait ? { titre: __("Dans le texte"), html: htmlExtrait(l) } : null, l.couleur);
       var bt = el(__('<button type="button" class="btn">Ouvrir le livre</button>')); bt.onclick = function () { ouvrirLivre(l, true); };
       c.appendChild(bt); out.push(marquerTheme(c, l, te));
     });
