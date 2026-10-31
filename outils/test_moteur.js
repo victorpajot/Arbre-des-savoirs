@@ -79,8 +79,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const v1 = { format: 1, cree: t0, maj: t0, decalage: 0, succes: { "premier-pas": t0 }, jours: ["2026-10-24"], journal: [],
     compteurs: { quizParfaits: 1, quizRates: 0, rappelsReussis: 0, serieRappels: 0, perdues: 0, regagnees: 0 },
     competences: { "sci.atomes": { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + jour, xp: 70 },
-                   "sci.corps": { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + jour, xp: 60 },
-                   "sci.methode": { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + jour, xp: 60 } },
+                   "sci.egypte": { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + jour, xp: 60 },
+                   "sci.soigner": { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + jour, xp: 60 } },
     options: { chrono: false } };
   const P3 = M.migrer(JSON.parse(JSON.stringify(v1)));
   assert.equal(P3.format, 4);
@@ -89,7 +89,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Atomes compte désormais pour Alchimie ; le corps humain n'est pas gelé par la nouvelle branche Savoir
   const xp = M.xpParStat(C, P3);
   assert.equal(xp.alchimie, 70); assert.equal(xp.savoir, 120);
-  assert.equal(M.statut(C, P3, "sci.corps", t0).gelee, false);
+  assert.equal(M.statut(C, P3, "sci.egypte", t0).gelee, false);
   assert.equal(M.statut(C, P3, "sci.genetique", t0).etat, "verrouillee");
   assert.equal(M.statut(C, P3, "chim.etats", t0).etat, "disponible");
   const rec = M.verifierRecompenses(C, P3, t0);
