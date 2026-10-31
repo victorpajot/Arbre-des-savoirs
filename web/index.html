@@ -2708,7 +2708,14 @@ function demarrerJeu() {
       __('<button type="button" class="btn large" data-a="jouer">Jouer depuis cette case</button>');
     var enC = M.ennemisPlateau(C, P)[n] && C.ennemiParId[M.ennemisPlateau(C, P)[n]];
     if (enC) html = '<div class="garde-case">' + teteEnnemi(enC, 44) + "<p><b>" + esc(tx(enC.nom)) + __("</b> garde cette case. Passer ici déclenche un duel : cinq affirmations, vraies ou fausses, sans erreur.</p></div>") + html;
-    feuilleSimple(html, connue ? tx(k.titre) : __("Case ") + cn(n), { jouer: function () { fermerFeuille(); ouvrirJouer(); } });
+    // Victor : la masterclass des compétences que la case évoque s'ouvre dès le début, arbre fermé ou non.
+    var actions = { jouer: function () { fermerFeuille(); ouvrirJouer(); } }, CC = C.plateau.competences_cases || {};
+    if (connue) (CC[String(n)] || []).forEach(function (id) {
+      var kc = C.parId[id]; if (!aMasterclass(kc)) return;
+      html += '<button type="button" class="btn large sc-mc" data-a="mc-' + esc(id) + '">' + __("Masterclass : ") + esc(tx(kc.nom)) + "</button>";
+      actions["mc-" + id] = function () { fermerFeuille(); ouvrirMasterclass(id); };
+    });
+    feuilleSimple(html, connue ? tx(k.titre) : __("Case ") + cn(n), actions);
     var z = feuille.querySelector("#ia-case");
     if (z) z.appendChild(comite({ contexte: "plateau_avance", texte: k.replique, expression: ici ? "moqueuse" : "neutre", theme: k.stat }, true));
     brancherGalerie(feuille);
@@ -2965,7 +2972,7 @@ function demarrerJeu() {
       '<div class="eyebrow" style="color:' + couleur(k.stat) + '">' + esc(tx(s.nom)) + " · " + esc(tx(s.branche)) + "</div><h2>" + esc(tx(k.nom)) + "</h2><p>" + esc(tx(k.description)) + "</p>" +
       lignes.map(function (l) { return '<p class="meta">' + esc(l) + "</p>"; }).join("") +
       (k.fiche && st.etat !== "fermee" && st.etat !== "verrouillee" ? __('<details class="fiche-d"><summary>Fiche de révision</summary>') + htmlFiche(k) + "</details>" : "") +
-      (aMasterclass(k) && st.etat !== "fermee" ? '<button type="button" class="btn large sc-mc" data-a="masterclass">' + __("Masterclass : ") + esc(tx(k.nom)) + "</button>" : "") + bouton +
+      (aMasterclass(k) ? '<button type="button" class="btn large sc-mc" data-a="masterclass">' + __("Masterclass : ") + esc(tx(k.nom)) + "</button>" : "") + bouton +
       __('<button type="button" class="btn sec large" data-a="fermer">Fermer</button></div></div>'));
     f.onclick = function (ev) {
       var a = ev.target.getAttribute && ev.target.getAttribute("data-a");

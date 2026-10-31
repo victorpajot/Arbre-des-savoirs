@@ -948,7 +948,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const CH = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const t0 = new Date(2026, 9, 28, 10, 0).getTime(), J = 86400000;
   assert.ok(CH.competences.every(k => k.fiche && k.fiche.essentiel.length >= 3 && k.fiche.schema.startsWith("<svg")));
-  const P = M.nouvellePartie(t0); P.plateau.ennemis = {};
+  // Horloge du jeu calée sur t0 : sans cela, l'absence comptée jusqu'à aujourd'hui rend l'IA furieuse et change ses répliques.
+  const P = M.nouvellePartie(t0); P.plateau.ennemis = {}; P.decalage = t0 - Date.now();
   const qs = CH.questions.filter(q => q.competence === "math.probabilites").slice(0, 5);
   const res = qs.map((q, i) => ({ id: q.id, correct: i >= 2, rep: i < 2 ? 99 : null }));
   const r = M.terminerQuiz(CH, P, "math.probabilites", res, t0, { alea: () => 0.99 });
