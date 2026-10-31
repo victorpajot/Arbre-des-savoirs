@@ -1,60 +1,395 @@
 [
  {
-  "id": "rhet.argument",
+  "id": "rhet.origines",
   "stat": "eloquence",
   "rang": 1,
   "nom": {
-   "fr": "Structure d'un argument"
+   "fr": "Parler avant la rhétorique"
   },
   "description": {
-   "fr": "Prémisses, conclusion, déduction et induction."
+   "fr": "Ptahhotep, Enheduanna, les aèdes d'Homère : l'art de bien parler, des siècles avant qu'on lui donne un nom."
   },
   "prerequis": [],
   "fiche": {
    "essentiel": [
     {
-     "fr": "Un argument : des prémisses qui soutiennent une conclusion."
+     "fr": "Égypte : les Maximes de Ptahhotep, vizir de la Ve dynastie, conseillent de ne parler que si l'on a quelque chose à dire, et d'écouter."
     },
     {
-     "fr": "Déduction : si les prémisses sont vraies et la forme valide, la conclusion est forcément vraie."
+     "fr": "Mésopotamie : Enheduanna, prêtresse à Ur vers 2300 av. J.-C., serait le plus ancien auteur connu par son nom (attribution discutée)."
     },
     {
-     "fr": "Induction : on généralise à partir de cas ; la conclusion est probable, jamais certaine."
+     "fr": "Grèce : l'Iliade et l'Odyssée viennent d'une tradition orale ; les aèdes improvisaient avec des formules toutes prêtes."
     },
     {
-     "fr": "Un argument peut être valide avec des prémisses fausses : « tous les chats volent, Félix est un chat, donc Félix vole »."
+     "fr": "Milman Parry le montre à partir de 1928 : « l'Aurore aux doigts de rose » est une formule qui aide à composer en chantant."
     }
    ],
    "piege": {
-    "fr": "Valide n'est pas vrai : la validité porte sur la forme, la vérité sur le contenu."
+    "fr": "Le nom d'un auteur antique ne prouve pas qu'il a écrit le texte : les Maximes sont sans doute plus tardives que Ptahhotep, et les hymnes d'Enheduanna ne nous arrivent que par des copies postérieures de six siècles."
    },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Structure d'un argument\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">prémisse 1</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">prémisse 2</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">conclusion</text></svg>",
-   "source": "Aristote, Premiers Analytiques"
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Parler avant la rhétorique, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 2300 av.</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Enheduanna à Ur</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 2000 av.</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Maximes de Ptahhotep</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">VIIIe s. av.</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Iliade et Odyssée</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1847</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">papyrus Prisse retrouvé</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1928</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Parry, les formules</text></svg>",
+   "source": "Maximes de Ptahhotep, papyrus Prisse"
   },
-  "symbole": "∴",
-  "embleme": "engrenage",
+  "symbole": "☥",
+  "embleme": "papyrus",
   "masterclass": {
    "chapitres": [
     {
-     "id": "premisses",
+     "id": "ptahhotep",
      "titre": {
-      "fr": "Des raisons et une conclusion"
+      "fr": "Les conseils d'un vizir"
      },
      "texte": [
       {
-       "fr": "Un argument, ce sont des prémisses, les raisons, qui soutiennent une conclusion, ce qu'on veut établir. « Il faut réduire la vitesse, car cela sauve des vies » : la conclusion est « il faut réduire la vitesse », la prémisse vient après « car ». Repérer ces mots, car, puisque, donc, c'est déjà démonter l'argument."
+       "fr": "Les Maximes de Ptahhotep se présentent comme les leçons d'un vizir du roi Djedkare Isesi, de la Ve dynastie égyptienne, qui transmet sa charge à son fils. Selon la traduction de William Kelly Simpson, c'est un vieil homme de 96 ans. Le texte lui-même a sans doute été composé plus tard, au Moyen Empire : Simpson le place sous la XIIe dynastie, entre 2040 et 1782 av. J.-C. environ."
       },
       {
-       "fr": "Souvent, une prémisse reste sous-entendue : c'est l'enthymème. Le mot vient d'Aristote, au IVe siècle avant notre ère : dans sa Rhétorique, l'enthymème est le syllogisme de l'orateur, dont le public fournit lui-même la prémisse manquante. « Il a de la fièvre, donc il est malade » suppose que la fièvre signale une maladie. Bien des disputes viennent de là : on se bat sur la conclusion alors que le désaccord porte sur la prémisse cachée. Et c'est à celui qui avance une thèse d'en apporter la preuve."
+       "fr": "Une bonne partie des maximes parle de la parole. « Ne parle que si tu as quelque chose qui vaille la peine d'être dit. » « Un mot parfait est plus caché que les pierres précieuses » : on le trouve pourtant chez les servantes qui travaillent à la meule. Et surtout, écouter : le fonctionnaire doit laisser le plaignant vider son cœur avant de le renvoyer, car « écouter profite à celui qui écoute »."
       }
      ],
      "retenir": {
-      "fr": "Argument = prémisses (car, puisque) + conclusion (donc). Chercher la prémisse sous-entendue."
+      "fr": "Ptahhotep : parler peu et juste, écouter jusqu'au bout. Le mot parfait est rare, mais il peut venir de n'importe qui, même d'une servante à la meule."
+     },
+     "source": "Maximes de Ptahhotep, trad. W. K. Simpson",
+     "reperes": [
+      {
+       "fr": "Le texte lui-même a sans doute été composé plus tard, au Moyen Empire : Simpson le place sous la XIIe dynastie, entre 2040 et 1782 av. J.-C. environ."
+      }
+     ]
+    },
+    {
+     "id": "enheduanna",
+     "titre": {
+      "fr": "Le premier nom d'auteur ?"
+     },
+     "texte": [
+      {
+       "fr": "Vers 2300 av. J.-C., Enheduanna, fille du roi Sargon d'Akkad, est grande prêtresse du dieu-lune Nanna à Ur. On lui attribue des hymnes, dont L'Exaltation d'Inanna, ce qui ferait d'elle le plus ancien auteur connu par son nom."
+      },
+      {
+       "fr": "Prudence pourtant : les copies qui nous restent datent d'environ six siècles après elle, et bien des assyriologues doutent qu'elle les ait écrits. Son nom pourrait même désigner sa fonction plutôt qu'une personne. Avant la rhétorique, il y a donc déjà des textes faits pour être dits, chantés devant un dieu ou un roi."
+      }
+     ],
+     "retenir": {
+      "fr": "Enheduanna, prêtresse de Nanna à Ur vers 2300 av. J.-C. : peut-être le plus ancien auteur nommé, mais l'attribution est discutée."
+     },
+     "source": "Enheduanna, L'Exaltation d'Inanna (attribution discutée)",
+     "reperes": [
+      {
+       "fr": "Vers 2300 av. J.-C., Enheduanna, fille du roi Sargon d'Akkad, est grande prêtresse du dieu-lune Nanna à Ur."
+      }
+     ]
+    },
+    {
+     "id": "aedes",
+     "titre": {
+      "fr": "Les formules des aèdes"
+     },
+     "texte": [
+      {
+       "fr": "Aux VIIIe ou VIIe siècles av. J.-C., l'Iliade et l'Odyssée prennent forme en Grèce : deux longs poèmes en hexamètres dactyliques, de 24 chants chacun. Ils viennent d'une tradition orale. Les aèdes, des chanteurs professionnels, ne récitaient pas un texte appris par cœur : ils composaient en chantant."
+      },
+      {
+       "fr": "Leur secret : des formules toutes prêtes, qui tombent juste dans le mètre, comme « l'Aurore aux doigts de rose » ou « l'astucieux Ulysse ». Milman Parry le montre à partir de 1928. Quant à Homère lui-même, son existence reste un mystère : c'est la « question homérique »."
+      }
+     ],
+     "retenir": {
+      "fr": "Les aèdes improvisent avec des formules qui tiennent dans le mètre. Parry, 1928 : l'épopée homérique est née de l'oral."
+     },
+     "source": "Milman Parry, L'Épithète traditionnelle dans Homère, 1928",
+     "figure": "mc_rhet_aedes",
+     "reperes": [
+      {
+       "fr": "Milman Parry le montre à partir de 1928."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.sophistes",
+  "stat": "eloquence",
+  "rang": 2,
+  "nom": {
+   "fr": "Les sophistes"
+  },
+  "description": {
+   "fr": "Ve siècle av. J.-C. : Corax à Syracuse, Protagoras et Gorgias à Athènes. La parole s'enseigne, et se paie."
+  },
+  "prerequis": [
+   "rhet.origines"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Syracuse, Ve siècle av. J.-C. : après la chute du tyran, Corax et Tisias enseignent à plaider et l'argument du vraisemblable."
+    },
+    {
+     "fr": "Protagoras : « l'homme est la mesure de toutes choses » ; sur toute question, deux discours s'opposent."
+    },
+    {
+     "fr": "Gorgias, 427 av. J.-C. : la parole est « un puissant maître », elle agit sur l'âme comme les drogues sur le corps."
+    },
+    {
+     "fr": "Platon, Gorgias (vers 380 av. J.-C.) : la rhétorique n'est qu'un savoir-faire, une flatterie, comme la pâtisserie à côté de la médecine."
+    }
+   ],
+   "piege": {
+    "fr": "« Sophiste » n'était pas une insulte au départ : c'est Platon qui en fait le marchand de discours sans souci du vrai. Nous voyons les sophistes surtout à travers leurs adversaires."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 164\" role=\"img\" aria-label=\"Les sophistes dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"154\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">Ve s. av.</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Corax à Syracuse</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 490-420 av.</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Protagoras</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">427 av.</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Gorgias à Athènes</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 380 av.</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Platon, Gorgias</text></svg>",
+   "source": "Platon, Gorgias, vers 380 av. J.-C."
+  },
+  "symbole": "⇋",
+  "embleme": "masque",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "corax",
+     "titre": {
+      "fr": "Plaider à Syracuse"
+     },
+     "texte": [
+      {
+       "fr": "Au Ve siècle av. J.-C., à Syracuse, le tyran Thrasybule est renversé. Les citoyens dépossédés sous les tyrans se ruent au tribunal pour récupérer leurs biens, et doivent plaider eux-mêmes. Corax, avec son élève Tisias, leur enseigne comment faire."
+      },
+      {
+       "fr": "On lui prête l'argument du vraisemblable, retourné dans les deux sens : un homme faible accusé d'avoir battu un homme fort dira « Comment aurais-je pu ? » ; un homme fort dira « Je savais qu'on me soupçonnerait, je ne l'aurais jamais fait ». On ne connaît Corax que par Platon, Aristote et Cicéron : il pourrait même être légendaire."
+      }
+     ],
+     "retenir": {
+      "fr": "Corax et Tisias, Syracuse, Ve siècle av. J.-C. : la rhétorique naît au tribunal, avec l'argument du vraisemblable."
+     },
+     "source": "Aristote, Rhétorique, livre II ; Platon, Phèdre",
+     "figure": "mc_rhet_corax",
+     "reperes": [
+      {
+       "fr": "On ne connaît Corax que par Platon, Aristote et Cicéron : il pourrait même être légendaire."
+      }
+     ]
+    },
+    {
+     "id": "protagoras",
+     "titre": {
+      "fr": "Deux discours sur toute chose"
+     },
+     "texte": [
+      {
+       "fr": "Protagoras, né à Abdère vers 490 av. J.-C., ami de Périclès, parcourt la Grèce et enseigne contre salaire. Platon lui attribue l'invention du sophiste professionnel. Sa formule la plus célèbre : « L'homme est la mesure de toutes choses, de celles qui sont, qu'elles sont, de celles qui ne sont pas, qu'elles ne sont pas. »"
+      },
+      {
+       "fr": "Il soutient que sur toute question, deux discours s'opposent. Aristote lui reproche de prétendre « rendre plus fort l'argument le plus faible ». Diogène Laërce raconte que ses livres furent brûlés sur l'agora ; l'historien John Burnet en doute, car aucun contemporain n'en parle."
+      }
+     ],
+     "retenir": {
+      "fr": "Protagoras : l'homme est la mesure de toutes choses ; deux discours opposés sur toute question ; « rendre plus fort l'argument le plus faible »."
+     },
+     "source": "Diogène Laërce, Vies, livre IX",
+     "reperes": [
+      {
+       "fr": "Platon lui attribue l'invention du sophiste professionnel."
+      }
+     ]
+    },
+    {
+     "id": "gorgias",
+     "titre": {
+      "fr": "Gorgias et la réponse de Platon"
+     },
+     "texte": [
+      {
+       "fr": "En 427 av. J.-C., Gorgias, venu de Léontinoi en Sicile, arrive à Athènes en ambassadeur, vers soixante ans. Sa prose subjugue : antithèses, membres de phrase de même longueur, mêmes terminaisons. Dans son Éloge d'Hélène, il disculpe la femme la plus accusée de Grèce : elle a pu céder aux dieux, à la force, à l'amour ou à la parole. Or la parole est « un puissant maître » qui, avec le plus petit des corps, accomplit les actes les plus divins."
+      },
+      {
+       "fr": "Vers 380 av. J.-C., Platon lui répond dans un dialogue qui porte son nom, le Gorgias. Socrate y traite la rhétorique de simple savoir-faire, une flatterie qui devine ce qui plaît sans se soucier du meilleur : elle est à la politique ce que la pâtisserie est à la médecine, et la cosmétique à la gymnastique."
+      }
+     ],
+     "retenir": {
+      "fr": "Gorgias : la parole est un puissant maître. Platon : la rhétorique sans le vrai n'est qu'une flatterie, de la pâtisserie face à la médecine."
+     },
+     "source": "Gorgias, Éloge d'Hélène ; Platon, Gorgias",
+     "figure": "mc_rhet_platon",
+     "reperes": [
+      {
+       "fr": "Vers 380 av. J.-C., Platon lui répond dans un dialogue qui porte son nom, le Gorgias."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.orateurs",
+  "stat": "eloquence",
+  "rang": 2,
+  "nom": {
+   "fr": "Les orateurs d'Athènes"
+  },
+  "description": {
+   "fr": "Périclès, Lysias, Isocrate, Démosthène : la parole au cœur de la démocratie athénienne."
+  },
+  "prerequis": [
+   "rhet.origines"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Périclès, oraison funèbre, fin de la première année de la guerre du Péloponnèse : Athènes, « école de la Grèce » (rapportée par Thucydide)."
+    },
+    {
+     "fr": "Lysias, logographe : il écrit pour ses clients des plaidoiries à leur mesure, qu'ils prononcent eux-mêmes."
+    },
+    {
+     "fr": "Isocrate ouvre une école vers 392 av. J.-C. ; trop faible de voix pour l'assemblée, il écrit ses discours pour être lus."
+    },
+    {
+     "fr": "Démosthène (384-322) : les Philippiques contre Philippe de Macédoine, Sur la couronne en 330 contre Eschine."
+    }
+   ],
+   "piege": {
+    "fr": "Le texte d'un discours antique n'est pas forcément ce qui a été dit : Thucydide prévient qu'il rend l'esprit des discours, pas leurs mots exacts."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Les orateurs d'Athènes dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">431 av.</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">oraison de Périclès</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 403 av.</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Lysias logographe</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 392 av.</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">école d'Isocrate</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">351 av.</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Première Philippique</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">330 av.</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Sur la couronne</text></svg>",
+   "source": "Thucydide, Histoire de la guerre du Péloponnèse, II"
+  },
+  "symbole": "Ω",
+  "embleme": "cailloux-demosthene",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "pericles",
+     "titre": {
+      "fr": "L'éloge d'Athènes"
+     },
+     "texte": [
+      {
+       "fr": "À la fin de la première année de la guerre du Péloponnèse, Athènes enterre ses morts. Périclès prononce l'oraison funèbre. Au lieu de chanter les batailles, il fait l'éloge de la cité elle-même : une justice égale pour tous, une vie publique ouverte, des charges données au mérite. Athènes, dit-il, est « l'école de la Grèce »."
+      },
+      {
+       "fr": "Nous ne connaissons ce discours que par Thucydide, au livre II de son Histoire. Il présente ses discours comme fidèles à l'esprit de ce qui a été dit, pas au mot près. Platon, dans le Ménexène, en attribue même l'écriture à Aspasie, la compagne de Périclès."
+      }
+     ],
+     "retenir": {
+      "fr": "Périclès fait l'éloge d'Athènes, « école de la Grèce » ; mais le texte est celui de Thucydide, fidèle à l'esprit, pas aux mots."
+     },
+     "source": "Thucydide, Histoire de la guerre du Péloponnèse, II, 34-46",
+     "reperes": [
+      {
+       "fr": "Nous ne connaissons ce discours que par Thucydide, au livre II de son Histoire."
+      }
+     ]
+    },
+    {
+     "id": "logographes",
+     "titre": {
+      "fr": "Écrire pour les autres"
+     },
+     "texte": [
+      {
+       "fr": "À Athènes, chacun plaide lui-même sa cause. Ceux qui le peuvent achètent un discours à un logographe. Lysias, fils d'un Syracusain installé à Athènes à l'invitation de Périclès, en fait son métier vers 403 av. J.-C., après avoir vu son frère Polémarque forcé de boire la ciguë sous les Trente. Il adapte chaque discours à son client, et il est le premier à en faire un art."
+      },
+      {
+       "fr": "Isocrate, lui, a la voix trop faible pour parler devant l'assemblée. Il ouvre vers 392 av. J.-C. une école, jamais plus de neuf élèves à la fois, et écrit des discours faits pour être lus, comme le Panégyrique de 380. Il appelle son enseignement « philosophie ». Le canon des dix orateurs attiques, fixé plus tard, sans doute à Alexandrie, les réunit avec Démosthène."
+      }
+     ],
+     "retenir": {
+      "fr": "Lysias, logographe : des plaidoiries à la mesure de chaque client. Isocrate : une école et des discours écrits pour être lus."
+     },
+     "source": "Lysias, Discours ; Isocrate, Panégyrique",
+     "figure": "mc_rhet_logographe",
+     "reperes": [
+      {
+       "fr": "Il ouvre vers 392 av. J.-C. une école, jamais plus de neuf élèves à la fois, et écrit des discours faits pour être lus, comme le Panégyrique de 380."
+      }
+     ]
+    },
+    {
+     "id": "demosthene",
+     "titre": {
+      "fr": "Démosthène contre Philippe"
+     },
+     "texte": [
+      {
+       "fr": "Démosthène, né à Athènes en 384 av. J.-C., plaide à vingt ans contre ses tuteurs, qui ont dilapidé son héritage. Plutarque raconte qu'il avait la langue embarrassée : il parlait avec des cailloux dans la bouche, déclamait en courant, s'exerçait dans un cabinet souterrain et se rasait la moitié de la tête pour s'interdire de sortir."
+      },
+      {
+       "fr": "À partir de 351, ses Philippiques dénoncent Philippe II de Macédoine. En 330, dans Sur la couronne, il défend toute sa carrière contre Eschine, et gagne. Après la défaite d'Athènes, il s'empoisonne en 322 à Calaurie. Cicéron le jugeait seul supérieur à tous les autres orateurs."
+      }
+     ],
+     "retenir": {
+      "fr": "Démosthène : de ses cailloux aux Philippiques (351) et à Sur la couronne (330). Cicéron le place au-dessus de tous."
+     },
+     "source": "Plutarque, Vie de Démosthène",
+     "reperes": [
+      {
+       "fr": "En 330, dans Sur la couronne, il défend toute sa carrière contre Eschine, et gagne."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.persuasion",
+  "stat": "eloquence",
+  "rang": 2,
+  "nom": {
+   "fr": "Aristote et la persuasion"
+  },
+  "description": {
+   "fr": "IVe siècle av. J.-C. : ethos, pathos, logos, les trois genres de discours et le syllogisme."
+  },
+  "prerequis": [
+   "rhet.sophistes",
+   "rhet.orateurs"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Ethos : la crédibilité de l'orateur."
+    },
+    {
+     "fr": "Pathos : les émotions qu'il suscite chez le public."
+    },
+    {
+     "fr": "Logos : la force des raisons et des preuves."
+    },
+    {
+     "fr": "Un bon discours combine les trois ; la manipulation joue sur l'ethos et le pathos en l'absence de logos."
+    }
+   ],
+   "piege": {
+    "fr": "L'ethos ne se décrète pas : c'est le public qui accorde ou non sa confiance."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 184\" role=\"img\" aria-label=\"Les trois leviers de la persuasion selon Aristote\"><polygon class=\"f2\" points=\"170,22 72,160 268,160\"/><text class=\"tm\" x=\"170\" y=\"116.2\" font-size=\"12\" text-anchor=\"middle\">persuader</text><rect class=\"f\" x=\"110\" y=\"5\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170\" y=\"19.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">ethos</text><text class=\"t\" x=\"170\" y=\"33.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">crédibilité</text><rect class=\"f\" x=\"12\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"72\" y=\"157.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">pathos</text><text class=\"t\" x=\"72\" y=\"171.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">émotion</text><rect class=\"f\" x=\"208\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"268\" y=\"157.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">logos</text><text class=\"t\" x=\"268\" y=\"171.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">raison</text></svg>",
+   "source": "Aristote, Rhétorique, livre I"
+  },
+  "symbole": "☞",
+  "embleme": "rouleau-aristote",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "trois",
+     "titre": {
+      "fr": "Les trois leviers d'Aristote"
+     },
+     "texte": [
+      {
+       "fr": "Au IVe siècle avant notre ère, Aristote distingue dans sa Rhétorique trois façons de persuader. L'ethos, la crédibilité de l'orateur : on croit plus volontiers quelqu'un qui paraît compétent, honnête et bienveillant. Le pathos, les émotions suscitées chez le public. Le logos, la force des raisons et des preuves."
+      },
+      {
+       "fr": "Un bon discours combine les trois : des preuves solides, portées par quelqu'un de crédible, qui sait toucher son public. La manipulation, elle, joue l'ethos et le pathos quand le logos manque. Et l'ethos ne se décrète pas : c'est le public qui accorde ou non sa confiance. « Croyez-moi, je suis médecin depuis trente ans » n'est pas une preuve."
+      }
+     ],
+     "retenir": {
+      "fr": "Ethos = crédibilité ; pathos = émotion ; logos = raisons. Manipuler, c'est ethos et pathos sans logos."
      },
      "source": "Aristote, Rhétorique, livre I",
      "reperes": [
       {
-       "fr": "Le mot vient d'Aristote, au IVe siècle avant notre ère : dans sa Rhétorique, l'enthymème est le syllogisme de l'orateur, dont le public fournit lui-même la prémisse manquante."
+       "fr": "Au IVe siècle avant notre ère, Aristote distingue dans sa Rhétorique trois façons de persuader."
       }
      ]
     },
@@ -78,26 +413,1640 @@
      "figure": "mc_rhet_deduction"
     },
     {
-     "id": "induction",
+     "id": "genres",
      "titre": {
-      "fr": "La dinde de Russell"
+      "fr": "Trois auditoires, trois genres"
      },
      "texte": [
       {
-       "fr": "L'induction généralise à partir de cas : le soleil s'est levé tous les jours, donc il se lèvera demain. C'est indispensable, on ne vivrait pas sans, mais ce n'est jamais certain. David Hume le montre en 1739 : aucun raisonnement ne prouve que l'avenir ressemblera au passé ; nous le croyons par habitude."
+       "fr": "Au IVe siècle av. J.-C., à Athènes, Aristote définit la rhétorique comme la faculté de voir, dans chaque cas, ce qui peut persuader. Il en fait la contrepartie de la dialectique, l'art de discuter. Platon, dans le Gorgias, la jugeait immorale et indigne d'une étude sérieuse ; Aristote, lui, l'étudie."
       },
       {
-       "fr": "Bertrand Russell l'illustre avec un poulet nourri chaque matin par le fermier, et de plus en plus sûr de sa règle, jusqu'au jour où le fermier lui tord le cou. Une anecdote, même vécue, illustre ; elle ne prouve pas une règle générale. Pour cela, il faut beaucoup de cas, représentatifs."
+       "fr": "Il distingue trois genres de discours, qui répondent à trois sortes d'auditeurs. Le délibératif, pour l'assemblée qui débat des affaires politiques ; le judiciaire, pour le tribunal, où l'on accuse et l'on défend ; l'épidictique, pour l'éloge ou le blâme. Les manuels de communication le recopient encore."
       }
      ],
      "retenir": {
-      "fr": "Induction : du particulier au général, probable mais jamais certaine (Hume, 1739). Une anecdote ne prouve pas une règle."
+      "fr": "Aristote : la rhétorique voit ce qui peut persuader. Trois genres : délibératif (assemblée), judiciaire (tribunal), épidictique (éloge ou blâme)."
      },
-     "source": "Hume, Traité de la nature humaine, 1739 ; Russell, Problèmes de philosophie, 1912",
-     "figure": "mc_rhet_induction",
+     "source": "Aristote, Rhétorique, I",
      "reperes": [
       {
-       "fr": "David Hume le montre en 1739 : aucun raisonnement ne prouve que l'avenir ressemblera au passé ; nous le croyons par habitude."
+       "fr": "Il distingue trois genres de discours, qui répondent à trois sortes d'auditeurs."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.chine",
+  "stat": "eloquence",
+  "rang": 3,
+  "nom": {
+   "fr": "Persuader le prince en Chine"
+  },
+  "description": {
+   "fr": "Royaumes combattants : le cheval blanc de Gongsun Long, les stratèges de Guiguzi, les écailles du dragon de Han Fei."
+  },
+  "prerequis": [
+   "rhet.persuasion"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Gongsun Long, École des noms, IIIe siècle av. J.-C. : « un cheval blanc n'est pas un cheval », un paradoxe sur le sens des mots."
+    },
+    {
+     "fr": "Guiguzi, le « Sage de la vallée des démons » : maître légendaire des stratèges ambulants Su Qin et Zhang Yi."
+    },
+    {
+     "fr": "Le Zhan Guo Ce rassemble des anecdotes de manipulation politique, compilées sous les Han par Liu Xiang."
+    },
+    {
+     "fr": "Han Fei (mort en 233 av. J.-C.) : pour persuader un prince, connaître son caractère et ne jamais toucher ses « écailles à rebours »."
+    }
+   ],
+   "piege": {
+    "fr": "En Chine ancienne, on persuade un seul homme, le prince, et non une assemblée : l'art consiste moins à démontrer qu'à ne pas déplaire, sous peine de mort."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Persuader en Chine ancienne, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">IVe s. av.</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Guiguzi</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">IIIe s. av.</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Gongsun Long, le cheval blanc</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">233 av.</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">mort de Han Fei</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">Ier s. av.</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Liu Xiang compile le Zhan Guo Ce</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1973</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">textes de Mawangdui</text></svg>",
+   "source": "Han Fei, Han Feizi"
+  },
+  "symbole": "龍",
+  "embleme": "dragon",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "cheval-blanc",
+     "titre": {
+      "fr": "Un cheval blanc n'est pas un cheval"
+     },
+     "texte": [
+      {
+       "fr": "Au IIIe siècle av. J.-C., Gongsun Long, de l'École des noms, soutient un paradoxe resté célèbre : « un cheval blanc n'est pas un cheval ». Le texte est un dialogue entre un défenseur et un contradicteur. L'argument : « cheval » désigne une forme, « blanc » une couleur ; ce qui désigne une couleur et une forme n'est pas ce qui désigne une forme seule."
+      },
+      {
+       "fr": "Autre exemple du texte : si l'on demande un cheval, on peut amener un cheval jaune ou noir ; si l'on demande un cheval blanc, on ne le peut pas. Le paradoxe joue aussi sur le mot chinois 非, qui peut vouloir dire « n'est pas » ou « n'est pas identique à ». Seuls 6 des 14 chapitres de son livre ont survécu, et Mencius, Zhuangzi et le Liezi le critiquent."
+      }
+     ],
+     "retenir": {
+      "fr": "Gongsun Long : « un cheval blanc n'est pas un cheval ». Un paradoxe sur ce que les mots désignent, à la manière des sophistes grecs."
+     },
+     "source": "Gongsun Longzi, « Sur le cheval blanc »",
+     "figure": "mc_rhet_cheval",
+     "reperes": [
+      {
+       "fr": "Au IIIe siècle av. J.-C., Gongsun Long, de l'École des noms, soutient un paradoxe resté célèbre : « un cheval blanc n'est pas un cheval »."
+      }
+     ]
+    },
+    {
+     "id": "strateges",
+     "titre": {
+      "fr": "Les stratèges ambulants"
+     },
+     "texte": [
+      {
+       "fr": "Pendant les Royaumes combattants, des conseillers vont de cour en cour vendre leurs plans d'alliance. La tradition leur donne un maître, Guiguzi, le « Sage de la vallée des démons », au IVe siècle av. J.-C. : selon les Mémoires historiques de Sima Qian, il aurait formé Su Qin et Zhang Yi, fondateurs de l'école des Alliances verticales et horizontales."
+      },
+      {
+       "fr": "Le livre qui porte son nom a été compilé entre la fin des Royaumes combattants et la fin des Han. Son premier chapitre, « Ouvrir et fermer », enseigne à faire parler l'autre ou à se taire, et conseille de rester caché pour que l'interlocuteur croie ses décisions venues de lui-même. Les anecdotes de ces stratèges sont réunies dans le Zhan Guo Ce, compilé sous les Han par Liu Xiang."
+      }
+     ],
+     "retenir": {
+      "fr": "Guiguzi, maître légendaire de Su Qin et Zhang Yi : persuader sans se montrer. Le Zhan Guo Ce garde leurs ruses."
+     },
+     "source": "Guiguzi ; Sima Qian, Mémoires historiques",
+     "reperes": [
+      {
+       "fr": "Le livre qui porte son nom a été compilé entre la fin des Royaumes combattants et la fin des Han."
+      }
+     ]
+    },
+    {
+     "id": "han-fei",
+     "titre": {
+      "fr": "Les écailles du dragon"
+     },
+     "texte": [
+      {
+       "fr": "Han Fei, né vers 280 av. J.-C. dans la famille régnante de l'État de Han, bégaie, selon l'historien Sima Qian, mais écrit remarquablement. Élève du confucéen Xunzi avec Li Si, il devient le grand penseur du légisme. Le futur Premier Empereur, lisant ses textes, aurait dit qu'il mourrait sans regret s'il pouvait se lier d'amitié avec cet homme. En 233, Li Si, jaloux, le pousse à boire du poison."
+      },
+      {
+       "fr": "Son chapitre « Les difficultés de la persuasion » est un manuel de survie pour conseillers. Parlez des grands hommes, le prince croit qu'on vise ses défauts. Le favori Mi Zixia est d'abord loué, puis puni pour les mêmes actes, quand l'amour du prince tourne à la haine. Conclusion : le dragon est doux, on peut monter sur son dos ; mais sous sa gorge, il a des écailles à rebours, et qui les touche meurt. Le prince aussi en a."
+      }
+     ],
+     "retenir": {
+      "fr": "Han Fei : persuader un prince, c'est connaître son caractère, et ne jamais toucher ses écailles à rebours."
+     },
+     "source": "Han Fei, Han Feizi, chap. 12, « Les difficultés de la persuasion »",
+     "figure": "mc_rhet_dragon",
+     "reperes": [
+      {
+       "fr": "En 233, Li Si, jaloux, le pousse à boire du poison."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.ciceron",
+  "stat": "eloquence",
+  "rang": 3,
+  "nom": {
+   "fr": "Cicéron et l'éloquence romaine"
+  },
+  "description": {
+   "fr": "De l'avocat d'Arpinum au De oratore : l'orateur romain, ses cinq tâches et son palais de mémoire."
+  },
+  "prerequis": [
+   "rhet.chine"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Cicéron (106-43 av. J.-C.), « homme nouveau » d'Arpinum, devient le premier orateur de Rome en faisant condamner Verrès en 70."
+    },
+    {
+     "fr": "Les cinq parties de la rhétorique : inventio, dispositio, elocutio, memoria, actio (trouver, ordonner, formuler, mémoriser, prononcer)."
+    },
+    {
+     "fr": "De oratore (55 av. J.-C.) : l'orateur parfait sait parler de tout, avec abondance et variété."
+    },
+    {
+     "fr": "La Rhétorique à Herennius (vers 90 av. J.-C.) décrit pour la première fois la méthode des lieux, le palais de mémoire."
+    }
+   ],
+   "piege": {
+    "fr": "La Rhétorique à Herennius a longtemps été attribuée à Cicéron ; son auteur est en réalité inconnu."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Cicéron dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 90 av.</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Rhétorique à Herennius</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">70 av.</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Contre Verrès</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">63 av.</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Catilinaires</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">55 av.</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">De oratore</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">43 av.</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">mort de Cicéron</text></svg>",
+   "source": "Rhetorica ad Herennium, vers 90 av. J.-C."
+  },
+  "symbole": "✒",
+  "embleme": "colonnes",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "carriere",
+     "titre": {
+      "fr": "De l'avocat au consul"
+     },
+     "texte": [
+      {
+       "fr": "Marcus Tullius Cicéron naît le 3 janvier 106 av. J.-C. à Arpinum, à une centaine de kilomètres de Rome, dans une famille de chevaliers. Sans ancêtres consuls, c'est un « homme nouveau », qui monte par la parole. En 80, il défend Sextus Roscius, accusé de parricide, et ose attaquer Chrysogonus, affranchi du dictateur Sylla. En 70, il fait condamner Verrès, gouverneur corrompu de Sicile, contre le grand avocat Hortensius : le voilà premier orateur de Rome."
+      },
+      {
+       "fr": "Consul en 63, il déjoue la conjuration de Catilina : « Jusques à quand, Catilina, abuseras-tu de notre patience ? » Après la mort de César, ses Philippiques, nommées d'après celles de Démosthène, attaquent Marc Antoine. Proscrit, il est tué le 7 décembre 43 ; sa tête et ses mains sont clouées aux Rostres, la tribune des orateurs."
+      }
+     ],
+     "retenir": {
+      "fr": "Cicéron : un homme nouveau porté par la parole, de Verrès (70) aux Catilinaires (63) et aux Philippiques contre Antoine. Tué en 43."
+     },
+     "source": "Plutarque, Vie de Cicéron",
+     "reperes": [
+      {
+       "fr": "En 70, il fait condamner Verrès, gouverneur corrompu de Sicile, contre le grand avocat Hortensius : le voilà premier orateur de Rome."
+      }
+     ]
+    },
+    {
+     "id": "de-oratore",
+     "titre": {
+      "fr": "L'orateur parfait"
+     },
+     "texte": [
+      {
+       "fr": "En 55 av. J.-C., Cicéron écrit De oratore, un dialogue à la manière de Platon, en trois livres. La scène se passe en 91, dans la villa de Crassus à Tusculum. Crassus y définit l'orateur parfait : celui qui peut parler de tous les sujets avec abondance et variété. Il lui faut donc une vaste culture, droit, histoire, philosophie. Antoine, l'autre grand orateur du dialogue, pense qu'une bonne connaissance des hommes suffit."
+      },
+      {
+       "fr": "Le dialogue passe en revue les cinq tâches de l'orateur : trouver les arguments (inventio), les ordonner (dispositio), les mettre en mots (elocutio), les retenir (memoria) et les prononcer (actio), avec la voix, le geste et le visage. On y parle aussi d'humour : Antoine attribue une part du succès de Crassus à son esprit."
+      }
+     ],
+     "retenir": {
+      "fr": "De oratore, 55 av. J.-C. : l'orateur parfait parle de tout, avec culture ; cinq tâches, de l'invention à l'action."
+     },
+     "source": "Cicéron, De oratore, 55 av. J.-C.",
+     "figure": "mc_rhet_cinq",
+     "reperes": [
+      {
+       "fr": "La scène se passe en 91, dans la villa de Crassus à Tusculum."
+      }
+     ]
+    },
+    {
+     "id": "memoire",
+     "titre": {
+      "fr": "Le palais de mémoire"
+     },
+     "texte": [
+      {
+       "fr": "Comment retenir un discours de deux heures sans notes ? Cicéron raconte l'histoire de Simonide de Céos. Un banquet s'achève par l'effondrement de la salle ; les corps sont méconnaissables. Simonide, sorti juste avant, les identifie en se rappelant où chacun était assis. Il en tire une méthode : l'ordre des lieux garde l'ordre des choses."
+      },
+      {
+       "fr": "La Rhétorique à Herennius, un manuel latin écrit vers 90 av. J.-C. et longtemps attribué à Cicéron, contient la première description connue de cette méthode des lieux. On parcourt en pensée un bâtiment familier et l'on dépose dans chaque pièce une image frappante de ce qu'on veut dire. On l'appelle aujourd'hui le palais de mémoire."
+      }
+     ],
+     "retenir": {
+      "fr": "Simonide et le banquet effondré : la méthode des lieux, décrite pour la première fois dans la Rhétorique à Herennius. Le palais de mémoire."
+     },
+     "source": "Cicéron, De oratore, II ; Rhetorica ad Herennium, III",
+     "figure": "mc_rhet_palais",
+     "reperes": [
+      {
+       "fr": "Il en tire une méthode : l'ordre des lieux garde l'ordre des choses."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.inde",
+  "stat": "eloquence",
+  "rang": 3,
+  "nom": {
+   "fr": "Débattre en Inde ancienne"
+  },
+  "description": {
+   "fr": "Les Nyāya-sūtra et leurs règles du débat, l'argument en cinq membres, les controverses bouddhiques du Kathāvatthu."
+  },
+  "prerequis": [
+   "rhet.chine"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Les Nyāya-sūtra, attribués à Akṣapāda Gautama, datés entre le VIe siècle av. J.-C. et le IIe siècle : 5 livres, 528 sūtra."
+    },
+    {
+     "fr": "Trois façons de débattre : la discussion (vāda), la dispute pour gagner (jalpa), la chicane qui ne fait que démolir (vitaṇḍā)."
+    },
+    {
+     "fr": "L'argument en cinq membres : thèse, raison, règle générale, application, conclusion. « Il y a du feu sur la colline, car il y a de la fumée. »"
+    },
+    {
+     "fr": "Le Kathāvatthu, « Points de controverse », recense plus de 200 thèses débattues entre écoles bouddhiques."
+    }
+   ],
+   "piege": {
+    "fr": "L'argument indien n'est pas le syllogisme d'Aristote recopié : il ajoute une règle confirmée par l'expérience et répète thèse et conclusion, pour convaincre un auditoire autant que pour prouver."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 128\" role=\"img\" aria-label=\"Le débat en Inde ancienne, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"118\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">VIe s. av. - IIe s.</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Nyāya-sūtra</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 240 av.</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">concile d'Ashoka (tradition)</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">IIIe s. av.</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Kathāvatthu</text></svg>",
+   "source": "Akṣapāda Gautama, Nyāya-sūtra"
+  },
+  "symbole": "⁂",
+  "embleme": "feu-colline",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "nyaya",
+     "titre": {
+      "fr": "Seize catégories pour bien débattre"
+     },
+     "texte": [
+      {
+       "fr": "Les Nyāya-sūtra, texte fondateur de l'école Nyāya, sont attribués à Akṣapāda Gautama, dont on ne sait presque rien ; ils ont peut-être plusieurs auteurs. Leur date est incertaine : entre le VIe siècle av. J.-C. et le IIe siècle. Cinq livres de deux chapitres chacun, 528 aphorismes, les sūtra."
+      },
+      {
+       "fr": "Le premier sūtra énumère seize catégories. On y trouve les moyens de connaître, le doute, l'argument et ses membres, mais aussi trois façons de débattre : la discussion honnête (vāda), la dispute sophistique (jalpa) et la chicane (vitaṇḍā). Puis les pièges : les faux raisonnements (hetvābhāsa), les jeux de mots (chala), les répliques futiles (jāti) et les façons de perdre un débat (nigrahasthāna)."
+      }
+     ],
+     "retenir": {
+      "fr": "Nyāya-sūtra : 528 sūtra, seize catégories. Trois débats : vāda (discussion), jalpa (dispute), vitaṇḍā (chicane). Et les façons de perdre."
+     },
+     "source": "Akṣapāda Gautama, Nyāya-sūtra, I, 1, 1",
+     "reperes": [
+      {
+       "fr": "Leur date est incertaine : entre le VIe siècle av. J.-C. et le IIe siècle."
+      }
+     ]
+    },
+    {
+     "id": "cinq-membres",
+     "titre": {
+      "fr": "Le feu sur la colline"
+     },
+     "texte": [
+      {
+       "fr": "Les Nyāya-sūtra décrivent l'argument correct en cinq membres. La thèse : « il y a du feu sur la colline ». La raison : « car il y a de la fumée sur la colline ». La règle générale, confirmée par l'expérience : « partout où il y a de la fumée, il y a du feu ». L'application : « la colline est enfumée ». La conclusion : « donc il y a du feu sur la colline »."
+      },
+      {
+       "fr": "Le texte reconnaît quatre moyens de connaissance valide : la perception, l'inférence, la comparaison et le témoignage fiable. Il met en garde contre cinq sortes de faux raisonnements, et contre les ruses de ceux qui ne cherchent pas la vérité."
+      }
+     ],
+     "retenir": {
+      "fr": "Cinq membres : thèse, raison, règle générale, application, conclusion. Quatre moyens de connaître : perception, inférence, comparaison, témoignage."
+     },
+     "source": "Akṣapāda Gautama, Nyāya-sūtra, I, 1, 32-39",
+     "figure": "mc_rhet_feu",
+     "reperes": [
+      {
+       "fr": "Le texte reconnaît quatre moyens de connaissance valide : la perception, l'inférence, la comparaison et le témoignage fiable."
+      }
+     ]
+    },
+    {
+     "id": "kathavatthu",
+     "titre": {
+      "fr": "Les points de controverse"
+     },
+     "texte": [
+      {
+       "fr": "Chez les bouddhistes, le Kathāvatthu, « Points de controverse », est l'un des sept livres de l'Abhidhamma. La tradition l'attribue à Moggaliputta Tissa, lors du troisième concile bouddhique réuni sous l'empereur Ashoka, vers 240 av. J.-C. ; cette date est discutée."
+      },
+      {
+       "fr": "Il passe en revue plus de deux cents thèses disputées entre écoles, rangées en quatre groupes de cinquante, sous forme de questions et de réponses : on expose une thèse, on l'interroge, on montre ses contradictions. Le texte ne nomme pas de vainqueur : il enseigne la méthode autant que la doctrine."
+      }
+     ],
+     "retenir": {
+      "fr": "Kathāvatthu : plus de 200 points de controverse bouddhiques, en questions et réponses, attribué au concile d'Ashoka (vers 240 av. J.-C., date discutée)."
+     },
+     "source": "Kathāvatthu, Abhidhamma Piṭaka",
+     "reperes": [
+      {
+       "fr": "La tradition l'attribue à Moggaliputta Tissa, lors du troisième concile bouddhique réuni sous l'empereur Ashoka, vers 240 av. J.-C. ; cette date est discutée."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.quintilien",
+  "stat": "eloquence",
+  "rang": 3,
+  "nom": {
+   "fr": "Quintilien, former l'orateur"
+  },
+  "description": {
+   "fr": "Ier siècle : un maître d'école de Rome écrit en douze livres comment faire un orateur, du berceau à la tombe."
+  },
+  "prerequis": [
+   "rhet.ciceron",
+   "rhet.inde"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Quintilien, né vers 35 à Calagurris en Hispanie, tient à Rome une école publique de rhétorique ; Pline le Jeune est son élève."
+    },
+    {
+     "fr": "Vers 95, l'Institution oratoire, en douze livres, forme l'orateur depuis l'enfance."
+    },
+    {
+     "fr": "Sa définition, reprise de Caton l'Ancien : l'orateur est « un homme de bien habile à parler »."
+    },
+    {
+     "fr": "Le texte complet, perdu au Moyen Âge, est retrouvé par Pogge à Saint-Gall en 1416."
+    }
+   ],
+   "piege": {
+    "fr": "Pour Quintilien, l'éloquence n'est pas une technique neutre : un méchant habile à parler n'est pas un orateur. C'est une réponse directe au reproche de Platon."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Quintilien dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 35</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">naissance à Calagurris</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">68</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">retour à Rome avec Galba</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">90</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">précepteur chez Domitien</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 95</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Institution oratoire</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1416</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Pogge à Saint-Gall</text></svg>",
+   "source": "Quintilien, Institution oratoire, vers 95"
+  },
+  "symbole": "Ⅻ",
+  "embleme": "plume",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "ecole",
+     "titre": {
+      "fr": "Un maître d'école à Rome"
+     },
+     "texte": [
+      {
+       "fr": "Quintilien naît vers 35 à Calagurris, aujourd'hui Calahorra, en Hispanie. Son père l'envoie tôt étudier la rhétorique à Rome, au début du règne de Néron ; il prend pour modèle l'orateur Domitius Afer. En 68, il revient à Rome dans la suite de l'empereur Galba et, après la mort de celui-ci, ouvre une école publique de rhétorique."
+      },
+      {
+       "fr": "Pline le Jeune est son élève, et peut-être Tacite. Il cesse d'enseigner et de plaider en 88 ; en 90, l'empereur Domitien lui confie l'éducation de ses deux petits-neveux. Il a perdu jeune sa femme, puis ses deux fils, et il le raconte dans son livre."
+      }
+     ],
+     "retenir": {
+      "fr": "Quintilien : d'Hispanie à Rome, une école publique de rhétorique, Pline le Jeune pour élève, les petits-neveux de Domitien en 90."
+     },
+     "source": "Quintilien, Institution oratoire",
+     "reperes": [
+      {
+       "fr": "En 68, il revient à Rome dans la suite de l'empereur Galba et, après la mort de celui-ci, ouvre une école publique de rhétorique."
+      }
+     ]
+    },
+    {
+     "id": "institution",
+     "titre": {
+      "fr": "Un homme de bien habile à parler"
+     },
+     "texte": [
+      {
+       "fr": "Vers 95, Quintilien publie l'Institution oratoire, un manuel en douze livres. Il y suit l'orateur « du berceau à la tombe » : l'éducation du petit enfant, l'école du grammairien, puis du rhéteur, les parties de la rhétorique, le style, et enfin l'orateur accompli."
+      },
+      {
+       "fr": "Sa définition vient de Caton l'Ancien : l'orateur est « un homme de bien habile à parler ». Le parfait orateur est d'abord un homme de bien, ensuite seulement un bon parleur. C'est une réponse à Platon, pour qui la rhétorique n'était qu'une flatterie sans souci du juste."
+      }
+     ],
+     "retenir": {
+      "fr": "Institution oratoire, vers 95, douze livres : former l'orateur dès l'enfance. Vir bonus dicendi peritus : un homme de bien habile à parler."
+     },
+     "source": "Quintilien, Institution oratoire, XII",
+     "figure": "mc_rhet_berceau",
+     "reperes": [
+      {
+       "fr": "Sa définition vient de Caton l'Ancien : l'orateur est « un homme de bien habile à parler »."
+      }
+     ]
+    },
+    {
+     "id": "pogge",
+     "titre": {
+      "fr": "Sorti de la poussière"
+     },
+     "texte": [
+      {
+       "fr": "Au Moyen Âge, l'Institution oratoire ne circule plus qu'en morceaux. Pétrarque, qui n'en connaît qu'une version incomplète, adresse même une lettre à Quintilien. En 1416, l'humaniste Pogge, venu au concile de Constance, fouille l'abbaye de Saint-Gall et y trouve un manuscrit complet, enfoui dans la poussière."
+      },
+      {
+       "fr": "La redécouverte nourrit les humanistes. Érasme s'en inspire ; Luther dit préférer Quintilien à presque tous les auteurs ; Montaigne le lit aussi. L'idée d'éduquer l'orateur dès l'enfance devient un programme pour les écoles de la Renaissance."
+      }
+     ],
+     "retenir": {
+      "fr": "1416 : Pogge retrouve à Saint-Gall l'Institution oratoire complète. Érasme, Luther, Montaigne la lisent."
+     },
+     "source": "Pogge Bracciolini, manuscrits retrouvés en 1416",
+     "reperes": [
+      {
+       "fr": "En 1416, l'humaniste Pogge, venu au concile de Constance, fouille l'abbaye de Saint-Gall et y trouve un manuscrit complet, enfoui dans la poussière."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.chaire",
+  "stat": "eloquence",
+  "rang": 4,
+  "nom": {
+   "fr": "La chaire et l'école"
+  },
+  "description": {
+   "fr": "Augustin, le trivium, l'art de prêcher, la disputatio : la rhétorique au service de la foi et de l'enseignement."
+  },
+  "prerequis": [
+   "rhet.quintilien"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Augustin, ancien professeur de rhétorique à Milan, écrit De doctrina christiana (397-426) : le prédicateur doit enseigner, plaire et émouvoir."
+    },
+    {
+     "fr": "Le trivium (grammaire, logique, rhétorique) ouvre les sept arts libéraux, avant le quadrivium."
+    },
+    {
+     "fr": "Vers 1200, Alain de Lille ouvre la série des « arts de prêcher » : un thème biblique, divisé et développé."
+    },
+    {
+     "fr": "La disputatio : une question, les objections, la réponse. Clermont, 1095 : un sermon lance la première croisade."
+    }
+   ],
+   "piege": {
+    "fr": "On n'a aucun texte exact de l'appel de Clermont : cinq versions très différentes, toutes écrites des années plus tard. Le discours le plus influent du Moyen Âge nous est inconnu."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"La chaire et l'école dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">384</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Augustin à Milan</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">397-426</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">De doctrina christiana</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1095</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">appel de Clermont</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 1200</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Alain de Lille, l'art de prêcher</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1263</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">dispute de Barcelone</text></svg>",
+   "source": "Foucher de Chartres et Robert le Moine, récits du concile de Clermont"
+  },
+  "symbole": "✝",
+  "embleme": "enluminure",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "augustin",
+     "titre": {
+      "fr": "Le professeur devenu prédicateur"
+     },
+     "texte": [
+      {
+       "fr": "Augustin naît en 354 à Thagaste, en Afrique du Nord. Il étudie puis enseigne la rhétorique à Carthage, ouvre une école à Rome en 383, et décroche en 384 la chaire de rhétorique de Milan, où siège la cour impériale : le poste universitaire le plus en vue du monde latin. Il y admire l'évêque Ambroise, « maître de rhétorique ». Converti en 386, il abandonne sa carrière et devient évêque d'Hippone."
+      },
+      {
+       "fr": "Faut-il jeter la rhétorique païenne ? Non, répond-il dans De doctrina christiana, dont les trois premiers livres paraissent en 397 et le quatrième en 426. Le prédicateur doit, comme le disait Cicéron, enseigner, plaire et émouvoir, et choisir selon le sujet entre le style simple, le style tempéré et le style élevé. La rhétorique de Cicéron passe ainsi dans la chaire chrétienne."
+      }
+     ],
+     "retenir": {
+      "fr": "Augustin, professeur de rhétorique à Milan en 384, puis évêque : De doctrina christiana garde Cicéron pour la chaire. Enseigner, plaire, émouvoir."
+     },
+     "source": "Augustin, De doctrina christiana, IV",
+     "reperes": [
+      {
+       "fr": "Converti en 386, il abandonne sa carrière et devient évêque d'Hippone."
+      }
+     ]
+    },
+    {
+     "id": "trivium",
+     "titre": {
+      "fr": "Le trivium et l'art de prêcher"
+     },
+     "texte": [
+      {
+       "fr": "Dans les écoles médiévales, les sept arts libéraux commencent par le trivium : la grammaire, la logique (ou dialectique) et la rhétorique. Vient ensuite le quadrivium : arithmétique, géométrie, musique et astronomie. Le mot trivium n'apparaît qu'à la renaissance carolingienne, mais la division se lit déjà chez Martianus Capella. Et notre « trivial » viendrait du contraste entre le trivium, plus simple, et le quadrivium, plus difficile."
+      },
+      {
+       "fr": "Vers 1200, la Somme de l'art de prêcher d'Alain de Lille ouvre un genre nouveau, les « arts de prêcher ». On en connaît plus de deux cents. Ils enseignent le sermon thématique : un court texte biblique, le thème, divisé puis subdivisé, chaque partie développée avec l'appui des Écritures, des Pères ou d'exemples. Thème, division, développement : c'est la colonne vertébrale du sermon scolastique."
+      }
+     ],
+     "retenir": {
+      "fr": "Trivium : grammaire, logique, rhétorique. Vers 1200, les arts de prêcher : thème, division, développement."
+     },
+     "source": "Alain de Lille, Summa de arte praedicatoria, vers 1200",
+     "figure": "mc_rhet_sermon",
+     "reperes": [
+      {
+       "fr": "Vers 1200, la Somme de l'art de prêcher d'Alain de Lille ouvre un genre nouveau, les « arts de prêcher »."
+      }
+     ]
+    },
+    {
+     "id": "clermont",
+     "titre": {
+      "fr": "Un sermon et des disputes"
+     },
+     "texte": [
+      {
+       "fr": "Le 27 novembre 1095, au dernier jour du concile de Clermont, le pape Urbain II appelle les chrétiens à partir vers l'Orient et promet la rémission des péchés à ceux qui iront. Selon Robert le Moine, la foule crie « Dieu le veut ! ». Mais aucun texte exact du discours n'a survécu : il en existe cinq versions très différentes, toutes écrites des années plus tard."
+      },
+      {
+       "fr": "À l'université, on enseigne par la disputatio, selon une méthode fixée, appuyée sur les autorités écrites : une question, les objections, la réponse. Il y a aussi des disputes publiques : à Barcelone en 1263, le rabbin Nahmanide défend le judaïsme ; à Leipzig en 1519, Luther affronte Jean Eck."
+      }
+     ],
+     "retenir": {
+      "fr": "Clermont, 1095 : un sermon lance la croisade, mais son texte est perdu. La disputatio : question, objections, réponse."
+     },
+     "source": "Robert le Moine, Historia Hierosolymitana",
+     "reperes": [
+      {
+       "fr": "Mais aucun texte exact du discours n'a survécu : il en existe cinq versions très différentes, toutes écrites des années plus tard."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.arabe",
+  "stat": "eloquence",
+  "rang": 4,
+  "nom": {
+   "fr": "L'éloquence arabe"
+  },
+  "description": {
+   "fr": "Al-Jāḥiẓ à Bassora, puis la balāgha d'Ibn al-Muʿtazz, d'al-Jurjānī et d'al-Sakkākī : une science de l'éloquence."
+  },
+  "prerequis": [
+   "rhet.chaire"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Al-Jāḥiẓ (Bassora, 776-868 ou 869), « l'homme aux yeux exorbités » : le Livre de l'éloquence et de l'exposition fonde la théorie littéraire arabe."
+    },
+    {
+     "fr": "Sa définition : l'éloquence, c'est faire passer un message efficace, bref ou développé à volonté."
+    },
+    {
+     "fr": "La balāgha a trois branches : les significations (maʿānī), l'expression figurée (bayān), les ornements (badīʿ)."
+    },
+    {
+     "fr": "Al-Jurjānī (mort en 1078) la fonde comme science ; al-Sakkākī (mort en 1229) la range en trois parties."
+    }
+   ],
+   "piege": {
+    "fr": "La rhétorique arabe ne vient pas d'Aristote : elle naît de la poésie et du Coran, dont on cherche à expliquer le style jugé inimitable."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"L'éloquence arabe dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 860</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">al-Jāḥiẓ, al-Bayān</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">909</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">mort d'Ibn al-Muʿtazz</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1078</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">mort d'al-Jurjānī</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1229</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">mort d'al-Sakkākī</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1338</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">mort d'al-Qazwīnī</text></svg>",
+   "source": "Ibn al-Muʿtazz, Kitāb al-Badīʿ"
+  },
+  "symbole": "ب",
+  "embleme": "pile-livres",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "jahiz",
+     "titre": {
+      "fr": "L'homme aux yeux exorbités"
+     },
+     "texte": [
+      {
+       "fr": "Al-Jāḥiẓ naît à Bassora vers 776. Son surnom veut dire « l'homme aux yeux exorbités » : le calife al-Maʾmūn voulait lui confier ses enfants, puis y renonça parce que ses yeux leur faisaient peur. Proche des muʿtazilites, théologiens rationalistes, il aurait écrit deux cents livres ; on lui connaît le Livre des animaux, en sept parties, et le Livre des avares, un recueil d'anecdotes sur la pingrerie."
+      },
+      {
+       "fr": "Son Kitāb al-Bayān wa al-Tabyīn, le « Livre de l'éloquence et de l'exposition », est une vaste réflexion sur la communication humaine ; on le tient pour le début formel de la théorie littéraire arabe. Sa définition de l'éloquence a été largement reprise : savoir faire passer un message efficace, en restant bref ou en développant, à volonté."
+      }
+     ],
+     "retenir": {
+      "fr": "Al-Jāḥiẓ, Bassora, IXe siècle : le Livre de l'éloquence et de l'exposition. L'éloquence : un message efficace, bref ou développé à volonté."
+     },
+     "source": "Al-Jāḥiẓ, Kitāb al-Bayān wa al-Tabyīn",
+     "reperes": [
+      {
+       "fr": "Son Kitāb al-Bayān wa al-Tabyīn, le « Livre de l'éloquence et de l'exposition », est une vaste réflexion sur la communication humaine ; on le tient pour le début formel de la théorie littéraire arabe."
+      }
+     ]
+    },
+    {
+     "id": "trois-branches",
+     "titre": {
+      "fr": "Les trois branches de la balāgha"
+     },
+     "texte": [
+      {
+       "fr": "La balāgha, la rhétorique arabe classique, étudie comment la parole fait passer des idées, éveille le sentiment et émeut. Elle a trois branches. La science des significations (maʿānī) : construire la phrase qui convient à la situation et à l'auditoire. La science de l'expression (bayān) : les images, comparaison (tashbīh), métaphore (majāz), allusion (kināya). La science des ornements (badīʿ) : jeux de sonorités (jinās), prose rimée (sajʿ), antithèse (ṭibāq)."
+      },
+      {
+       "fr": "Le prince-poète Ibn al-Muʿtazz, mort en 909, est l'auteur du Kitāb al-Badīʿ. Il y catalogue cinq procédés, dont la métaphore (istiʿāra) et le jeu de mots (tajnīs), et soutient qu'ils ne sont pas des nouveautés : on les trouve déjà dans la poésie préislamique et dans le Coran."
+      }
+     ],
+     "retenir": {
+      "fr": "Balāgha : maʿānī (la phrase juste), bayān (les images), badīʿ (les ornements). Ibn al-Muʿtazz, mort en 909 : les figures viennent de la poésie ancienne et du Coran."
+     },
+     "source": "Ibn al-Muʿtazz, Kitāb al-Badīʿ",
+     "figure": "mc_rhet_balagha",
+     "reperes": [
+      {
+       "fr": "Le prince-poète Ibn al-Muʿtazz, mort en 909, est l'auteur du Kitāb al-Badīʿ."
+      }
+     ]
+    },
+    {
+     "id": "jurjani",
+     "titre": {
+      "fr": "Une science de l'inimitable"
+     },
+     "texte": [
+      {
+       "fr": "Pour les théologiens, le Coran est inimitable : c'est la doctrine de l'iʿjāz al-Qurʾān, qui cherche à expliquer ce que sa langue et son style ont d'unique. Al-Jurjānī, mort en 1078, en tire une théorie : la beauté ne tient pas aux mots isolés mais à leur agencement, le naẓm, le lien entre la syntaxe et le sens. Il écrit Les Preuves de l'inimitabilité et Les Secrets de l'éloquence ; on le tient pour le fondateur de la balāgha classique."
+      },
+      {
+       "fr": "Al-Sakkākī, mort en 1229, range la discipline en trois parties dans sa grande encyclopédie, La Clé des sciences. Al-Qazwīnī, mort en 1338, en tire un abrégé, puis un commentaire : ces manuels deviennent la base de l'enseignement dans les madrasas."
+      }
+     ],
+     "retenir": {
+      "fr": "Al-Jurjānī (mort en 1078) : l'éloquence est dans l'agencement des mots, le naẓm. Al-Sakkākī (1229) codifie, al-Qazwīnī (1338) abrège pour les madrasas."
+     },
+     "source": "Al-Jurjānī, Asrār al-Balāgha ; al-Sakkākī, Miftāḥ al-ʿUlūm",
+     "reperes": [
+      {
+       "fr": "Al-Sakkākī, mort en 1229, range la discipline en trois parties dans sa grande encyclopédie, La Clé des sciences."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.griots",
+  "stat": "eloquence",
+  "rang": 4,
+  "nom": {
+   "fr": "La parole des griots"
+  },
+  "description": {
+   "fr": "Afrique de l'Ouest : les griots, maîtres de la parole, gardent l'histoire du Mali et l'épopée de Soundiata."
+  },
+  "prerequis": [
+   "rhet.chaire"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Le griot (jeli en manding, gewel en wolof) : historien, généalogiste, chanteur de louanges, conseiller des rois et médiateur."
+    },
+    {
+     "fr": "Le métier se transmet dans des familles de griots, qui se marient entre elles, avec la kora, le ngoni ou le balafon."
+    },
+    {
+     "fr": "L'épopée de Soundiata raconte le fondateur de l'empire du Mali (règne 1235-1255) et son griot Balla Fasséké."
+    },
+    {
+     "fr": "En 1960, Djibril Tamsir Niane la publie en français d'après le récit du griot Djeli Mamoudou Kouyaté."
+    }
+   ],
+   "piege": {
+    "fr": "Une tradition orale n'est pas un document d'archives : même le Sosso Bala, balafon « vieux de 800 ans » inscrit par l'UNESCO, aurait été mis en avant comme relique dans les années 1970, selon les historiens Jan Jansen et Francis Simonis."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 164\" role=\"img\" aria-label=\"Les griots dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"154\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1235</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Soundiata, empire du Mali</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">XIVe s.</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">apogée du Mali</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1960</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Niane, Soundjata</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2001</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">le Sosso Bala à l'UNESCO</text></svg>",
+   "source": "Djibril Tamsir Niane, Soundjata ou l'épopée mandingue, 1960"
+  },
+  "symbole": "♫",
+  "embleme": "balafon",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "jeli",
+     "titre": {
+      "fr": "Les maîtres de la parole"
+     },
+     "texte": [
+      {
+       "fr": "En Afrique de l'Ouest, le griot (jeli ou jali en manding, gewel en wolof) est historien, conteur, chanteur de louanges, poète et musicien. Il garde la mémoire orale des peuples et des familles, conseille les familles royales et sert de médiateur dans les conflits. Le mot « griot » lui-même viendrait du français, peut-être d'un mot portugais qui voulait dire serviteur ; son origine reste obscure."
+      },
+      {
+       "fr": "Les griots forment un groupe héréditaire : la plupart se marient entre griots et transmettent leur art dans la famille. Leurs instruments : la kora, un luth-harpe à 21 cordes, le xalam, le ngoni, le balafon, un xylophone à calebasses."
+      }
+     ],
+     "retenir": {
+      "fr": "Le griot : historien, généalogiste, chanteur de louanges, conseiller et médiateur. Un art héréditaire, porté par la kora et le balafon."
+     },
+     "source": "Djibril Tamsir Niane, Soundjata ou l'épopée mandingue",
+     "reperes": [
+      {
+       "fr": "Il garde la mémoire orale des peuples et des familles, conseille les familles royales et sert de médiateur dans les conflits."
+      }
+     ]
+    },
+    {
+     "id": "soundiata",
+     "titre": {
+      "fr": "L'épopée de Soundiata"
+     },
+     "texte": [
+      {
+       "fr": "L'épopée de Soundiata, poème du peuple malinké, raconte Soundiata Keïta, fondateur de l'empire du Mali, qui règne de 1235 à sa mort en 1255. Enfant, il ne peut pas marcher ; une barre de fer se brise sous lui, et il se lève enfin en s'appuyant sur une branche de baobab. Devenu adulte, il affronte Soumaoro Kanté, roi du Sosso, que l'épopée peint en roi sorcier cruel."
+      },
+      {
+       "fr": "Son père lui a donné un griot, Balla Fasséké, pour le conseiller : c'est l'ancêtre de la lignée des griots Kouyaté. À son couronnement, Soundiata donne à l'assemblée une constitution orale, le Kouroukan Fouga. L'épopée se transmet de génération en génération, par la bouche des griots."
+      }
+     ],
+     "retenir": {
+      "fr": "Soundiata (règne 1235-1255) fonde le Mali ; son griot Balla Fasséké est l'ancêtre des Kouyaté. L'épopée vit par la voix des griots."
+     },
+     "source": "Djibril Tamsir Niane, Soundjata ou l'épopée mandingue",
+     "figure": "mc_rhet_soundiata",
+     "reperes": [
+      {
+       "fr": "L'épopée de Soundiata, poème du peuple malinké, raconte Soundiata Keïta, fondateur de l'empire du Mali, qui règne de 1235 à sa mort en 1255."
+      }
+     ]
+    },
+    {
+     "id": "sosso-bala",
+     "titre": {
+      "fr": "Le balafon du Sosso"
+     },
+     "texte": [
+      {
+       "fr": "Dans l'épopée, Balla Fasséké joue du balafon sacré de Soumaoro pour gagner une place à sa cour. Après la victoire de Soundiata, il en devient le gardien, et la charge passe à ses descendants, les Kouyaté. Ce balafon, le Sosso Bala, est conservé à Niagassola, en Guinée ; on le dit vieux de plus de 800 ans. En 2001, l'UNESCO le proclame chef-d'œuvre du patrimoine oral et immatériel de l'humanité."
+      },
+      {
+       "fr": "Les historiens Jan Jansen et Francis Simonis pensent pourtant que la famille Kouyaté en a fait une relique historique dans les années 1970. L'épopée elle-même nous est connue par des griots du XXe siècle : en 1960, Djibril Tamsir Niane publie en français la version du griot Djeli Mamoudou Kouyaté."
+      }
+     ],
+     "retenir": {
+      "fr": "Le Sosso Bala, balafon gardé par les Kouyaté, inscrit par l'UNESCO en 2001. Niane, 1960 : l'épopée mise par écrit d'après un griot."
+     },
+     "source": "Djibril Tamsir Niane, Soundjata ou l'épopée mandingue",
+     "reperes": [
+      {
+       "fr": "En 2001, l'UNESCO le proclame chef-d'œuvre du patrimoine oral et immatériel de l'humanité."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.imprimerie",
+  "stat": "eloquence",
+  "rang": 4,
+  "nom": {
+   "fr": "L'imprimerie et les humanistes"
+  },
+  "description": {
+   "fr": "Gutenberg, Luther, Érasme : quand la parole imprimée court plus vite que la parole dite."
+  },
+  "prerequis": [
+   "rhet.arabe",
+   "rhet.griots"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Vers 1450, à Mayence, Gutenberg combine caractères mobiles en métal, encre grasse et presse à vis ; sa Bible sort vers 1455."
+    },
+    {
+     "fr": "1517 : les 95 thèses de Luther sont imprimées à des centaines d'exemplaires ; son Sermon sur les indulgences est réimprimé vingt fois."
+    },
+    {
+     "fr": "Érasme, De copia (1512) : 195 façons de dire « ta lettre m'a fait grand plaisir ». Au moins 85 éditions de son vivant."
+    },
+    {
+     "fr": "L'Éloge de la folie (imprimé en 1511) : la Folie fait elle-même son éloge, et se moque de tout le monde."
+    }
+   ],
+   "piege": {
+    "fr": "L'image de Luther clouant ses thèses à la porte de l'église vient de Mélanchthon et reste douteuse : c'est l'imprimerie, plus que le marteau, qui a fait circuler ses idées."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 164\" role=\"img\" aria-label=\"L'imprimerie et les humanistes dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"154\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 1450</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">presse de Gutenberg</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1511</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Éloge de la folie</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1512</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Érasme, De copia</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1517</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">95 thèses</text></svg>",
+   "source": "Martin Luther, 95 thèses, 1517"
+  },
+  "symbole": "▤",
+  "embleme": "presse",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "gutenberg",
+     "titre": {
+      "fr": "La presse de Mayence"
+     },
+     "texte": [
+      {
+       "fr": "Vers 1450, à Mayence, Johannes Gutenberg combine des caractères métalliques mobiles, une encre grasse et une presse à vis, peut-être inspirée des pressoirs à vin ou à huile. Sa Bible sort vers 1455, à environ 180 exemplaires. Les caractères mobiles existaient déjà en Chine, avec Bi Sheng vers 1040, et en Corée."
+      },
+      {
+       "fr": "En Europe, l'imprimerie fait exploser la circulation des textes : on conserve encore quelque 27 500 ouvrages différents imprimés avant 1501. Pour la rhétorique, tout change : un discours, un sermon, un pamphlet peuvent désormais toucher des milliers de lecteurs qui n'ont jamais entendu l'orateur."
+      }
+     ],
+     "retenir": {
+      "fr": "Gutenberg, vers 1450 : caractères mobiles, encre grasse, presse à vis. 27 500 ouvrages imprimés avant 1501 nous restent."
+     },
+     "source": "Lucien Febvre et Henri-Jean Martin, L'Apparition du livre, 1958",
+     "reperes": [
+      {
+       "fr": "Sa Bible sort vers 1455, à environ 180 exemplaires."
+      }
+     ]
+    },
+    {
+     "id": "luther",
+     "titre": {
+      "fr": "Les thèses qui volent"
+     },
+     "texte": [
+      {
+       "fr": "Le 31 octobre 1517, Martin Luther envoie à Albert de Brandebourg, archevêque de Mayence, une lettre et 95 thèses contre la prédication des indulgences. L'image de Luther clouant ses thèses sur la porte de l'église de Wittenberg vient de Mélanchthon et reste douteuse."
+      },
+      {
+       "fr": "Ce qui est sûr, c'est l'imprimerie : des centaines d'exemplaires en latin circulent dès 1517, une traduction allemande suit la même année, et son Sermon sur les indulgences, écrit en allemand pour tous, est réimprimé vingt fois. Pour la première fois, une querelle de théologiens se joue devant tout un peuple de lecteurs."
+      }
+     ],
+     "retenir": {
+      "fr": "Luther, 1517 : 95 thèses envoyées par lettre, imprimées à des centaines d'exemplaires, traduites en allemand. Le clou sur la porte est douteux."
+     },
+     "source": "Martin Luther, 95 thèses, 1517",
+     "reperes": [
+      {
+       "fr": "Le 31 octobre 1517, Martin Luther envoie à Albert de Brandebourg, archevêque de Mayence, une lettre et 95 thèses contre la prédication des indulgences."
+      }
+     ]
+    },
+    {
+     "id": "erasme",
+     "titre": {
+      "fr": "L'abondance et la folie"
+     },
+     "texte": [
+      {
+       "fr": "En 1512, Érasme publie chez Josse Bade, à Paris, De copia, un manuel pour enrichir son style. Au chapitre 33, il donne 195 façons de dire une seule phrase : « ta lettre m'a fait grand plaisir ». L'élève apprend à varier, à reformuler, à amplifier. Le livre connaît au moins 85 éditions du vivant d'Érasme ; John Colet le lui avait demandé pour son école Saint-Paul de Londres."
+      },
+      {
+       "fr": "Trois ans plus tôt, en 1509, chez son ami Thomas More à Londres, il a écrit en une semaine, dit-il, l'Éloge de la folie, imprimé en 1511. Le titre latin, Moriae Encomium, joue sur le nom de More. C'est la Folie elle-même qui parle et fait son éloge, à la manière de Lucien, en se moquant des princes, des savants pédants et des abus de l'Église."
+      }
+     ],
+     "retenir": {
+      "fr": "Érasme : De copia (1512), 195 variations d'une phrase ; l'Éloge de la folie (1511), un faux éloge où la Folie parle."
+     },
+     "source": "Érasme, De copia, 1512 ; Éloge de la folie, 1511",
+     "figure": "mc_rhet_copia",
+     "reperes": [
+      {
+       "fr": "Au chapitre 33, il donne 195 façons de dire une seule phrase : « ta lettre m'a fait grand plaisir »."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.classique",
+  "stat": "eloquence",
+  "rang": 5,
+  "nom": {
+   "fr": "Controverses de l'âge classique"
+  },
+  "description": {
+   "fr": "Valladolid, la Propagande de la foi, la Logique de Port-Royal, Pascal : débattre et persuader de 1550 à 1700."
+  },
+  "prerequis": [
+   "rhet.imprimerie"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Valladolid, 1550-1551 : Las Casas contre Sepúlveda sur le sort des peuples amérindiens ; le jury ne tranche jamais."
+    },
+    {
+     "fr": "1622 : le pape Grégoire XV crée la Congrégation pour la propagation de la foi ; le mot « propagande » est né, encore neutre."
+    },
+    {
+     "fr": "1662 : La Logique ou l'art de penser d'Arnauld et Nicole, en français, manuel de raisonnement jusqu'au XXe siècle."
+    },
+    {
+     "fr": "Pascal, vers 1658 : l'art de persuader réunit l'art de convaincre (l'esprit) et l'art d'agréer (le cœur)."
+    }
+   ],
+   "piege": {
+    "fr": "Un débat sans verdict n'est pas un débat inutile : à Valladolid, chaque camp a crié victoire, aucun n'a obtenu ce qu'il voulait, mais les arguments de Las Casas ont traversé les siècles."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 164\" role=\"img\" aria-label=\"Les controverses de l'âge classique dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"154\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1550-1551</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">controverse de Valladolid</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1622</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Propaganda Fide</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 1658</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Pascal, l'art de persuader</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1662</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Logique de Port-Royal</text></svg>",
+   "source": "Bartolomé de las Casas, Apologia"
+  },
+  "symbole": "♔",
+  "embleme": "bougie",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "valladolid",
+     "titre": {
+      "fr": "Valladolid : un procès sans verdict"
+     },
+     "texte": [
+      {
+       "fr": "En 1550 et 1551, au collège San Gregorio de Valladolid, deux hommes s'affrontent devant une junte de docteurs et de théologiens réunie par le roi Charles Ier, l'empereur Charles Quint. Le dominicain Bartolomé de las Casas défend les peuples amérindiens ; l'humaniste Juan Ginés de Sepúlveda justifie leur soumission par la guerre."
+      },
+      {
+       "fr": "Sepúlveda s'appuie sur Aristote et sa « servitude naturelle » : certains peuples seraient faits pour obéir. Las Casas répond que cette définition ne s'applique pas aux Indiens. Les juges se séparent sans décision ; chaque camp crie victoire, aucun n'obtient ce qu'il voulait. Un débat d'idées, à armes égales, sur la conquête menée par le pays même qui l'organise."
+      }
+     ],
+     "retenir": {
+      "fr": "Valladolid, 1550-1551 : Las Casas contre Sepúlveda, Aristote au cœur du débat. Pas de verdict."
+     },
+     "source": "Bartolomé de las Casas, Apologia ; Juan Ginés de Sepúlveda, Democrates alter",
+     "reperes": [
+      {
+       "fr": "Les juges se séparent sans décision ; chaque camp crie victoire, aucun n'obtient ce qu'il voulait."
+      }
+     ]
+    },
+    {
+     "id": "port-royal",
+     "titre": {
+      "fr": "Penser juste, persuader bien"
+     },
+     "texte": [
+      {
+       "fr": "En 1662 paraît, sans nom d'auteur, La Logique ou l'art de penser. Ses auteurs, Antoine Arnauld et Pierre Nicole, sont des jansénistes de Port-Royal, et Pascal y a sans doute contribué. Le livre est écrit en français, non en latin, pour un large public. Il restera en usage jusqu'au XXe siècle ; le philosophe Ian Hacking l'a appelé le livre de logique le plus influent entre Aristote et la fin du XIXe siècle."
+      },
+      {
+       "fr": "Pascal, vers 1658, rédige De l'art de persuader pour un ouvrage destiné aux petites écoles de Port-Royal. Il y distingue deux portes : l'art de convaincre, qui s'adresse à l'esprit et à l'entendement et fait tenir un propos pour vrai ; l'art d'agréer, qui s'adresse au cœur et à la volonté et fait aimer. Persuader, c'est réunir les deux."
+      }
+     ],
+     "retenir": {
+      "fr": "Port-Royal, 1662 : la logique en français. Pascal : persuader = convaincre l'esprit + agréer le cœur."
+     },
+     "source": "Arnauld et Nicole, La Logique ou l'art de penser, 1662 ; Pascal, De l'art de persuader",
+     "figure": "mc_rhet_pascal",
+     "reperes": [
+      {
+       "fr": "En 1662 paraît, sans nom d'auteur, La Logique ou l'art de penser."
+      }
+     ]
+    },
+    {
+     "id": "propaganda",
+     "titre": {
+      "fr": "Propager la foi"
+     },
+     "texte": [
+      {
+       "fr": "En 1622, en pleine Contre-Réforme, le pape Grégoire XV crée la Sacra Congregatio de Propaganda Fide, chargée de propager la foi catholique dans les pays non catholiques. En latin, propaganda veut seulement dire « ce qui doit être propagé »."
+      },
+      {
+       "fr": "Le mot passe aux affaires profanes à partir des années 1790 et ne prend son sens péjoratif qu'au XXe siècle, notamment après les grandes campagnes de la Première Guerre mondiale. Une congrégation missionnaire a ainsi donné son nom à la manipulation des foules."
+      }
+     ],
+     "retenir": {
+      "fr": "1622 : Propaganda Fide, propager la foi. Le mot devient profane dans les années 1790, péjoratif au XXe siècle."
+     },
+     "source": "Grégoire XV, création de la Congrégation de la Propagande, 1622",
+     "reperes": [
+      {
+       "fr": "En 1622, en pleine Contre-Réforme, le pape Grégoire XV crée la Sacra Congregatio de Propaganda Fide, chargée de propager la foi catholique dans les pays non catholiques."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.figures",
+  "stat": "eloquence",
+  "rang": 5,
+  "nom": {
+   "fr": "Figures de style"
+  },
+  "description": {
+   "fr": "Métaphore, litote, chiasme, anaphore et les autres."
+  },
+  "prerequis": [
+   "rhet.classique"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Métaphore : comparaison sans outil (« cet homme est un lion ») ; comparaison : avec « comme »."
+    },
+    {
+     "fr": "Litote : dire moins pour suggérer plus (« va, je ne te hais point »). Euphémisme : adoucir (« il nous a quittés »)."
+    },
+    {
+     "fr": "Anaphore : répétition en début de phrase (« I have a dream »)."
+    },
+    {
+     "fr": "Chiasme : structure croisée A-B / B-A (« il faut manger pour vivre et non vivre pour manger »)."
+    }
+   ],
+   "piege": {
+    "fr": "Litote et euphémisme se confondent souvent : la litote renforce, l'euphémisme atténue."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 160\" role=\"img\" aria-label=\"Schéma du chiasme : manger, vivre, puis vivre, manger\"><text class=\"t\" x=\"70\" y=\"40\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">manger</text><text class=\"t\" x=\"250\" y=\"40\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">vivre</text><text class=\"t\" x=\"70\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">vivre</text><text class=\"t\" x=\"250\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">manger</text><line class=\"al\" x1=\"105\" y1=\"48\" x2=\"215\" y2=\"106\" stroke-width=\"2\"/><line class=\"al\" x1=\"215\" y1=\"48\" x2=\"105\" y2=\"106\" stroke-width=\"2\"/><text class=\"tm\" x=\"160\" y=\"150\" font-size=\"12\" text-anchor=\"middle\">A — B / B — A : les termes se croisent</text></svg>",
+   "source": "Fontanier, Les Figures du discours, 1827"
+  },
+  "symbole": "❦",
+  "embleme": "plume",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "images",
+     "titre": {
+      "fr": "Dire avec des images"
+     },
+     "texte": [
+      {
+       "fr": "La comparaison rapproche deux choses avec un outil, comme ou tel : « fort comme un lion ». La métaphore supprime l'outil : « cet homme est un lion ». La métonymie désigne une chose par une autre qui lui est liée : « boire un verre », on boit le contenu, pas le verre. Ces noms viennent d'une longue tradition de manuels : Dumarsais publie Des Tropes en 1730, puis Pierre Fontanier en dresse l'inventaire pour les lycéens, en 1821 et 1827."
+      },
+      {
+       "fr": "Ces figures ne sont pas réservées aux poètes. « Je meurs de faim » est une hyperbole, une exagération volontaire ; « il nous a quittés » est un euphémisme ; « boire un verre », une métonymie. On en fait tous, chaque jour, sans le savoir. Les nommer aide à les repérer chez ceux qui cherchent à nous convaincre."
+      }
+     ],
+     "retenir": {
+      "fr": "Comparaison = avec « comme » ; métaphore = sans outil ; métonymie = une chose pour une autre qui lui est liée."
+     },
+     "source": "Fontanier, Les Figures du discours, 1827",
+     "figure": "mc_rhet_images"
+    },
+    {
+     "id": "attenuer",
+     "titre": {
+      "fr": "Dire moins, dire plus"
+     },
+     "texte": [
+      {
+       "fr": "La litote dit moins pour faire entendre plus. Dans Le Cid, Chimène lance à Rodrigue « Va, je ne te hais point » : elle avoue qu'elle l'aime. La pièce est de Corneille, créée en 1637 : Rodrigue vient de tuer en duel le père de Chimène. L'euphémisme, lui, adoucit pour ménager : « il nous a quittés » pour « il est mort ». Les deux atténuent la forme, mais la litote renforce le sens, l'euphémisme l'amortit."
+      },
+      {
+       "fr": "L'ironie dit le contraire de ce qu'on pense, « quel temps magnifique ! » sous la pluie. La prétérition annonce qu'on ne dira pas ce qu'on est justement en train de dire : « je ne vous parlerai pas de ses mensonges… ». Et l'oxymore unit deux mots qui s'opposent : « cette obscure clarté qui tombe des étoiles »."
+      }
+     ],
+     "retenir": {
+      "fr": "Litote : dire moins pour suggérer plus (renforce). Euphémisme : adoucir (atténue). Ironie : dire le contraire."
+     },
+     "source": "Fontanier, Les Figures du discours, 1827",
+     "figure": "mc_rhet_attenuer",
+     "reperes": [
+      {
+       "fr": "La pièce est de Corneille, créée en 1637 : Rodrigue vient de tuer en duel le père de Chimène."
+      }
+     ]
+    },
+    {
+     "id": "rythme",
+     "titre": {
+      "fr": "Le son et l'ordre des mots"
+     },
+     "texte": [
+      {
+       "fr": "L'anaphore répète un mot en tête de phrase et martèle une idée : « Paris outragé ! Paris brisé ! Paris martyrisé ! », lance de Gaulle en 1944 ; « I have a dream », répète Martin Luther King en 1963. Le chiasme croise les termes, A-B puis B-A : « il faut manger pour vivre et non pas vivre pour manger » (Molière, L'Avare)."
+      },
+      {
+       "fr": "L'allitération joue sur les sons : « Pour qui sont ces serpents qui sifflent sur vos têtes ? » (Racine, Andromaque) fait entendre le sifflement par la répétition du « s ». Une figure n'est pas un ornement : elle aide à retenir, et c'est pourquoi les slogans en sont pleins."
+      }
+     ],
+     "retenir": {
+      "fr": "Anaphore : répétition en tête de phrase. Chiasme : A-B / B-A. Allitération : répétition d'un son."
+     },
+     "source": "Fontanier, Les Figures du discours, 1827",
+     "schema_fiche": true
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.sophismes",
+  "stat": "eloquence",
+  "rang": 5,
+  "nom": {
+   "fr": "Sophismes"
+  },
+  "description": {
+   "fr": "Les raisonnements fallacieux et comment les nommer."
+  },
+  "prerequis": [
+   "rhet.classique"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Homme de paille : déformer la position adverse pour la réfuter plus facilement."
+    },
+    {
+     "fr": "Ad hominem : attaquer la personne plutôt que l'argument."
+    },
+    {
+     "fr": "Faux dilemme : ne présenter que deux options quand il en existe d'autres."
+    },
+    {
+     "fr": "Pente glissante : affirmer sans preuve qu'un premier pas mène fatalement au pire."
+    }
+   ],
+   "piege": {
+    "fr": "Toute attaque personnelle n'est pas un ad hominem : signaler un conflit d'intérêts peut être pertinent."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Quatre sophismes et leur mécanisme\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Ce qu'on fait</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Son nom</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"164\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">déformer l'idée</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">viser la personne</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">deux choix seulement</text><rect class=\"f2\" x=\"14\" y=\"128\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"144.8\" font-size=\"11\" text-anchor=\"middle\">tout va déraper</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">homme de paille</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">ad hominem</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">faux dilemme</text><rect class=\"f\" x=\"178\" y=\"128\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"144.8\" font-size=\"11\" text-anchor=\"middle\">pente glissante</text></svg>",
+   "source": "Schopenhauer, L'Art d'avoir toujours raison, vers 1831"
+  },
+  "symbole": "≠",
+  "embleme": "labyrinthe",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "personne",
+     "titre": {
+      "fr": "Attaquer l'homme ou sa caricature"
+     },
+     "texte": [
+      {
+       "fr": "L'ad hominem attaque la personne au lieu de son argument : « tu dis ça, mais tu n'as même pas de diplôme ». Variante : « toi aussi tu fumes, donc ton conseil ne vaut rien ». L'incohérence de quelqu'un ne rend pas son argument faux. Attention toutefois : signaler un conflit d'intérêts réel peut être pertinent."
+      },
+      {
+       "fr": "L'homme de paille déforme la position adverse pour la réfuter plus facilement. On répond à « il faudrait moins de voitures en centre-ville » par « tu veux interdire aux gens de se déplacer ». On combat une caricature, pas la vraie position. Schopenhauer, vers 1831, rangeait déjà ces ruses dans son Art d'avoir toujours raison."
+      }
+     ],
+     "retenir": {
+      "fr": "Ad hominem : viser la personne. Homme de paille : réfuter une caricature. Un conflit d'intérêts réel reste pertinent."
+     },
+     "source": "Schopenhauer, L'Art d'avoir toujours raison, vers 1831",
+     "reperes": [
+      {
+       "fr": "Schopenhauer, vers 1831, rangeait déjà ces ruses dans son Art d'avoir toujours raison."
+      }
+     ]
+    },
+    {
+     "id": "logique",
+     "titre": {
+      "fr": "Les faux raisonnements"
+     },
+     "texte": [
+      {
+       "fr": "Le faux dilemme ne présente que deux options quand il en existe d'autres : « soit tu es avec nous, soit tu es contre nous ». La pente glissante affirme sans preuve qu'un premier pas mène fatalement au pire : « si on autorise ça, bientôt ce sera le chaos ». Aristote dressait déjà une liste de douze ou treize sophismes dans ses Réfutations sophistiques."
+      },
+      {
+       "fr": "Post hoc : « après cela, donc à cause de cela ». « J'ai pris mon parapluie et il a plu » ne fait pas du parapluie une machine à pluie. Le raisonnement circulaire met la conclusion dans la prémisse : « ce journal est fiable, puisqu'il le dit lui-même ». Et l'appel à l'ignorance : « personne n'a prouvé que les fantômes n'existent pas, donc ils existent »."
+      }
+     ],
+     "retenir": {
+      "fr": "Faux dilemme, pente glissante, post hoc, raisonnement circulaire, appel à l'ignorance : la forme cloche, même si le ton convainc."
+     },
+     "source": "Copi, Introduction to Logic, 14e éd.",
+     "figure": "mc_rhet_logique"
+    },
+    {
+     "id": "foule",
+     "titre": {
+      "fr": "La nature, la foule et l'autorité"
+     },
+     "texte": [
+      {
+       "fr": "L'appel à la nature : « c'est naturel, donc c'est bon ». L'arsenic et la ciguë sont naturels. L'appel à la foule : « tout le monde le fait, donc c'est bien ». Le nombre de partisans ne prouve pas qu'une idée est juste."
+      },
+      {
+       "fr": "L'argument d'autorité est plus subtil : citer un expert dans son domaine est légitime. Le sophisme, c'est l'autorité hors de sa compétence, un prix Nobel de physique qui tranche une question de médecine, ou présentée comme une preuve définitive. Et le Gish gallop noie l'adversaire sous une avalanche d'arguments faibles : il faut plus de temps pour réfuter chacun que pour les lancer. Le nom est donné en 1994 par l'anthropologue Eugenie Scott, d'après le créationniste Duane Gish, champion de la technique dans les débats."
+      }
+     ],
+     "retenir": {
+      "fr": "Naturel ≠ bon ; populaire ≠ vrai. L'autorité vaut dans son domaine, jamais comme preuve définitive."
+     },
+     "source": "Copi, Introduction to Logic, 14e éd.",
+     "figure": "mc_rhet_foule",
+     "reperes": [
+      {
+       "fr": "Le nom est donné en 1994 par l'anthropologue Eugenie Scott, d'après le créationniste Duane Gish, champion de la technique dans les débats."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.tribuns",
+  "stat": "eloquence",
+  "rang": 6,
+  "nom": {
+   "fr": "Les tribuns du XIXe siècle"
+  },
+  "description": {
+   "fr": "De Mirabeau à Zola : la parole publique contre le roi, l'esclavage et l'injustice."
+  },
+  "prerequis": [
+   "rhet.figures",
+   "rhet.sophismes"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "23 juin 1789 : le Tiers état refuse de se séparer ; Bailly répond que « la Nation assemblée ne peut recevoir d'ordre »."
+    },
+    {
+     "fr": "1851-1852 : Sojourner Truth à Akron, Frederick Douglass à Rochester : des voix noires contre l'esclavage."
+    },
+    {
+     "fr": "1858 : sept débats Lincoln-Douglas ; 1863 : Gettysburg, 271 mots."
+    },
+    {
+     "fr": "1898 : « J'accuse…! », la lettre ouverte de Zola sur l'affaire Dreyfus, en une de L'Aurore."
+    }
+   ],
+   "piege": {
+    "fr": "Les phrases les plus célèbres sont souvent réécrites après coup : la réplique de Mirabeau relève de la légende, et le refrain « Ain't I a Woman? » n'apparaît que dans une version publiée douze ans plus tard."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Les tribuns du XIXe siècle dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1789</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">séance royale du 23 juin</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1851</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Sojourner Truth à Akron</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1852</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Douglass, le 4 juillet</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1858</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">débats Lincoln-Douglas</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1898</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">J'accuse…!</text></svg>",
+   "source": "Frances Dana Gage, version de 1863 ; Marius Robinson, Anti-Slavery Bugle, 1851"
+  },
+  "symbole": "✊",
+  "embleme": "sablier",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "baionnettes",
+     "titre": {
+      "fr": "Par la volonté du peuple"
+     },
+     "texte": [
+      {
+       "fr": "Le 23 juin 1789, à Versailles, Louis XVI tient une séance royale dans la salle des Menus-Plaisirs. Il expose un programme de réformes et ordonne aux trois ordres de se séparer. La noblesse sort. Le Tiers état et une partie du clergé restent assis. Le grand maître des cérémonies, Dreux-Brézé, rappelle l'ordre du roi au doyen, Bailly, qui répond : « La Nation assemblée ne peut recevoir d'ordre. »"
+      },
+      {
+       "fr": "Selon la légende, Mirabeau aurait lancé que les députés sont là par la volonté du peuple et qu'on ne les en arrachera que par la puissance des baïonnettes. L'Assemblée vote aussitôt l'inviolabilité de ses membres. Le roi aurait répondu, d'après le récit qu'on en fait : « Eh bien, qu'ils restent ! » La parole tient tête au pouvoir, et gagne."
+      }
+     ],
+     "retenir": {
+      "fr": "23 juin 1789 : Bailly, « la Nation assemblée ne peut recevoir d'ordre » ; Mirabeau et les baïonnettes, en partie légende."
+     },
+     "source": "Séance royale du 23 juin 1789, procès-verbaux de l'Assemblée",
+     "reperes": [
+      {
+       "fr": "Le Tiers état et une partie du clergé restent assis."
+      }
+     ]
+    },
+    {
+     "id": "abolition",
+     "titre": {
+      "fr": "Des voix contre l'esclavage"
+     },
+     "texte": [
+      {
+       "fr": "Le 29 mai 1851, à la convention pour les droits des femmes d'Akron, dans l'Ohio, Sojourner Truth, ancienne esclave née dans l'État de New York, prend la parole. Le secrétaire de la convention, Marius Robinson, relit sa transcription avec elle et la publie le 21 juin. En 1863, Frances Dana Gage en publie une version très différente, avec un accent du Sud que Truth, qui parlait néerlandais jusqu'à neuf ans, n'avait pas, et un refrain : « Ain't I a Woman? », « Ne suis-je pas une femme ? »."
+      },
+      {
+       "fr": "Le 5 juillet 1852, à Rochester, devant la Société antiesclavagiste des dames, Frederick Douglass demande : « Qu'est-ce que votre 4 juillet pour l'esclave américain ? » La fête de l'indépendance, dit-il, lui révèle l'injustice et la cruauté dont il est la victime constante. Il retourne la fête nationale contre ceux qui la célèbrent."
+      }
+     ],
+     "retenir": {
+      "fr": "Sojourner Truth (1851), dont le célèbre refrain est une réécriture de 1863 ; Frederick Douglass (1852) : « Qu'est-ce que votre 4 juillet pour l'esclave ? »"
+     },
+     "source": "Frederick Douglass, What to the Slave Is the Fourth of July?, 1852",
+     "figure": "mc_rhet_truth",
+     "reperes": [
+      {
+       "fr": "Le 5 juillet 1852, à Rochester, devant la Société antiesclavagiste des dames, Frederick Douglass demande : « Qu'est-ce que votre 4 juillet pour l'esclave américain ? »"
+      }
+     ]
+    },
+    {
+     "id": "lincoln-zola",
+     "titre": {
+      "fr": "Débattre, puis accuser"
+     },
+     "texte": [
+      {
+       "fr": "D'août à octobre 1858, Abraham Lincoln et Stephen Douglas, candidats au Sénat pour l'Illinois, débattent sept fois dans sept villes. Le sujet : faut-il permettre l'esclavage dans les nouveaux États de l'Ouest ? La règle : une heure pour le premier, une heure et demie de réponse, une demi-heure de réplique. Douglas garde son siège, mais Lincoln devient une figure nationale. Le 19 novembre 1863, à Gettysburg, il ne prononce que 271 mots."
+      },
+      {
+       "fr": "Le 13 janvier 1898, L'Aurore, le quotidien de Clemenceau, publie en une une lettre d'Émile Zola au président Félix Faure : « J'accuse…! ». Zola y accuse nommément ceux qui ont fait condamner l'innocent capitaine Dreyfus, en sachant qu'il s'expose à un procès. Condamné pour diffamation le 23 février, il s'exile en Angleterre. Dreyfus sera gracié en 1899, puis réhabilité en 1906."
+      }
+     ],
+     "retenir": {
+      "fr": "Lincoln-Douglas, 1858 : sept débats de trois heures ; Gettysburg, 1863 : 271 mots. Zola, 1898 : « J'accuse…! », une lettre qui accuse en nommant."
+     },
+     "source": "Abraham Lincoln, Political Debates, 1860 ; Émile Zola, « J'accuse…! », 1898",
+     "reperes": [
+      {
+       "fr": "Condamné pour diffamation le 23 février, il s'exile en Angleterre."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.propagande",
+  "stat": "eloquence",
+  "rang": 6,
+  "nom": {
+   "fr": "Propagande et manipulation"
+  },
+  "description": {
+   "fr": "Répétition, novlangue, astroturfing et comment s'en protéger."
+  },
+  "prerequis": [
+   "rhet.tribuns"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Répétition : plus on entend une affirmation, plus elle paraît vraie (effet de vérité illusoire)."
+    },
+    {
+     "fr": "Novlangue : appauvrir ou retourner les mots pour rendre certaines pensées difficiles (Orwell, 1984)."
+    },
+    {
+     "fr": "Astroturfing : simuler un mouvement spontané de citoyens avec de faux comptes ou des groupes payés."
+    },
+    {
+     "fr": "Se protéger : chercher la source, croiser, se demander à qui profite le message."
+    }
+   ],
+   "piege": {
+    "fr": "Savoir qu'une affirmation est fausse ne protège pas complètement de l'effet de répétition."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Plus une phrase est répétée, plus elle paraît vraie\"><polyline class=\"l\" points=\"40,16 40,150 324,150\"/><path class=\"al\" d=\"M40 130 C 120 90, 200 60, 320 45\" fill=\"none\" stroke-width=\"3\"/><text class=\"tm\" x=\"46\" y=\"14\" font-size=\"11\" text-anchor=\"start\">crédibilité ressentie</text><text class=\"tm\" x=\"322\" y=\"166\" font-size=\"11\" text-anchor=\"end\">répétitions</text></svg>",
+   "source": "Hasher, Goldstein et Toppino, Journal of Verbal Learning and Verbal Behavior, 1977"
+  },
+  "symbole": "‼",
+  "embleme": "presse",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "repetition",
+     "titre": {
+      "fr": "Répéter jusqu'à ce que ça sonne vrai"
+     },
+     "texte": [
+      {
+       "fr": "En 1977, Lynn Hasher, David Goldstein et Thomas Toppino font noter à des étudiants, à deux semaines d'intervalle, la vérité de soixante affirmations plausibles. Certaines reviennent à chaque séance : la confiance qu'on leur accorde grimpe, qu'elles soient vraies ou fausses. C'est l'effet de vérité illusoire : une phrase déjà entendue se traite plus facilement, et cette facilité passe pour de la vérité."
+      },
+      {
+       "fr": "Pire : en 2015, Lisa Fazio et ses collègues montrent que savoir la bonne réponse ne protège pas complètement. D'où la stratégie de la « lance à incendie de mensonges », décrite par la RAND Corporation en 2016 : beaucoup de messages, vite, sur tous les canaux, sans souci de cohérence. Le but n'est pas de convaincre, mais de noyer."
+      }
+     ],
+     "retenir": {
+      "fr": "Effet de vérité illusoire (Hasher et al., 1977) : la répétition fait paraître vrai, même quand on sait que c'est faux (Fazio, 2015)."
+     },
+     "source": "Hasher, Goldstein et Toppino, Journal of Verbal Learning and Verbal Behavior, 1977",
+     "reperes": [
+      {
+       "fr": "En 1977, Lynn Hasher, David Goldstein et Thomas Toppino font noter à des étudiants, à deux semaines d'intervalle, la vérité de soixante affirmations plausibles."
+      }
+     ]
+    },
+    {
+     "id": "cadrage",
+     "titre": {
+      "fr": "Même chiffre, autre effet"
+     },
+     "texte": [
+      {
+       "fr": "La façon de présenter une information change la décision. En 1981, Amos Tversky et Daniel Kahneman soumettent un problème : une épidémie menace 600 personnes. Quand un plan est présenté comme « sauve 200 personnes », 72 % des gens le choisissent. Quand le même plan est présenté comme « 400 personnes mourront », 78 % préfèrent l'option risquée."
+      },
+      {
+       "fr": "C'est l'effet de cadrage : « 90 % de survie » rassure davantage que « 10 % de mortalité ». Les orateurs le savent, et choisissent aussi leur moment, le kairos des Grecs : le même argument ne porte pas pareil selon l'instant. Pour s'en défendre, reformuler soi-même le chiffre dans l'autre sens."
+      }
+     ],
+     "retenir": {
+      "fr": "Effet de cadrage (Tversky et Kahneman, 1981) : « sauver 200 » et « 400 mourront » ne sont pas reçus pareil. Reformuler dans l'autre sens."
+     },
+     "source": "Tversky et Kahneman, Science, 1981",
+     "figure": "mc_rhet_cadrage",
+     "reperes": [
+      {
+       "fr": "En 1981, Amos Tversky et Daniel Kahneman soumettent un problème : une épidémie menace 600 personnes."
+      }
+     ]
+    },
+    {
+     "id": "mots",
+     "titre": {
+      "fr": "Façonner les mots pour façonner la pensée"
+     },
+     "texte": [
+      {
+       "fr": "Le mot propagande vient de la Congrégation pour la propagation de la foi, créée par l'Église en 1622 ; il ne devient péjoratif qu'au XXe siècle. En 1928, Edward Bernays, neveu de Freud, publie Propaganda. En 1929, pour l'American Tobacco Company, il fait défiler à New York des femmes cigarette à la main, présentées comme des « torches de la liberté »."
+      },
+      {
+       "fr": "Dans 1984, George Orwell imagine la novlangue, qui appauvrit et retourne les mots pour rendre certaines pensées impossibles. Plus près de nous : les éléments de langage répétés par plusieurs responsables le même matin, ou le sifflet à chien, un message codé que seuls ses destinataires entendent. Et la fenêtre d'Overton : déplacer ce qui paraît dicible est souvent plus efficace que gagner un débat."
+      }
+     ],
+     "retenir": {
+      "fr": "Propagande vient de l'Église (1622). Bernays (1928-1929), novlangue d'Orwell, éléments de langage, fenêtre d'Overton."
+     },
+     "source": "Bernays, Propaganda, 1928",
+     "figure": "mc_rhet_mots",
+     "reperes": [
+      {
+       "fr": "Le mot propagande vient de la Congrégation pour la propagation de la foi, créée par l'Église en 1622 ; il ne devient péjoratif qu'au XXe siècle."
+      },
+      {
+       "fr": "En 1928, Edward Bernays, neveu de Freud, publie Propaganda."
+      }
+     ]
+    },
+    {
+     "id": "influence",
+     "titre": {
+      "fr": "Les ressorts de l'influence"
+     },
+     "texte": [
+      {
+       "fr": "En 1984, le psychologue Robert Cialdini publie Influence, où il décrit les leviers qui nous font dire oui. La preuve sociale : nous jugeons un comportement plus juste quand nous voyons d'autres l'adopter, d'où les « déjà 10 000 clients satisfaits ». L'autorité, la rareté, la réciprocité, la sympathie, l'engagement : chacun est un raccourci utile, que d'autres peuvent exploiter."
+      },
+      {
+       "fr": "La rhétorique classique, elle, découpait la préparation d'un discours en cinq étapes : trouver les arguments (inventio), les ordonner (dispositio), les mettre en mots (elocutio), les mémoriser (memoria), les prononcer (actio). Et elle conseillait de gagner d'abord la bienveillance de l'auditoire, la captatio benevolentiae."
+      }
+     ],
+     "retenir": {
+      "fr": "Cialdini (1984) : preuve sociale, autorité, rareté, réciprocité, sympathie, engagement. Cinq étapes classiques : inventio, dispositio, elocutio, memoria, actio."
+     },
+     "source": "Cialdini, Influence, 1984",
+     "figure": "mc_rhet_influence",
+     "reperes": [
+      {
+       "fr": "En 1984, le psychologue Robert Cialdini publie Influence, où il décrit les leviers qui nous font dire oui."
+      }
+     ]
+    },
+    {
+     "id": "vaccin",
+     "titre": {
+      "fr": "Se vacciner contre la manipulation"
+     },
+     "texte": [
+      {
+       "fr": "En 1961, le psychologue William McGuire propose la théorie de l'inoculation : comme un vaccin, une exposition à une forme affaiblie d'un argument manipulateur, accompagnée de sa réfutation, aide à résister à la version forte. Le « prébunking » la remet au goût du jour, par exemple avec le jeu Bad News de Jon Roozenbeek et Sander van der Linden, où l'on joue le rôle d'un fabricant de fausses nouvelles."
+      },
+      {
+       "fr": "Les réflexes de base restent simples : chercher la source, croiser avec d'autres, se demander à qui profite le message. Et se méfier aussi des légendes sur la crédulité des autres : la panique provoquée par La Guerre des mondes d'Orson Welles en 1938 a été largement exagérée par les journaux, ravis de discréditer la radio, leur concurrente."
+      }
+     ],
+     "retenir": {
+      "fr": "Inoculation (McGuire, 1961) : voir une manipulation affaiblie aide à y résister. Source, recoupement, à qui ça profite."
+     },
+     "source": "McGuire, Journal of Abnormal and Social Psychology, 1961",
+     "figure": "mc_rhet_inoculation",
+     "reperes": [
+      {
+       "fr": "En 1961, le psychologue William McGuire propose la théorie de l'inoculation : comme un vaccin, une exposition à une forme affaiblie d'un argument manipulateur, accompagnée de sa réfutation, aide à résister à la version forte."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "rhet.discours",
+  "stat": "eloquence",
+  "rang": 7,
+  "nom": {
+   "fr": "Grands discours du XXe siècle"
+  },
+  "description": {
+   "fr": "De Churchill à Malala : la radio, la télévision et la tribune des assemblées."
+  },
+  "prerequis": [
+   "rhet.propagande"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Churchill, 13 mai 1940 : « rien d'autre à offrir que du sang, du labeur, des larmes et de la sueur »."
+    },
+    {
+     "fr": "De Gaulle, 18 juin 1940, sur la BBC : presque personne ne l'entend, et personne ne l'enregistre."
+    },
+    {
+     "fr": "Kennedy-Nixon, 1960 : le premier débat présidentiel télévisé se joue aussi sur l'image."
+    },
+    {
+     "fr": "King, 1963 : « I have a dream », improvisé à l'appel de Mahalia Jackson. Veil, 1974 ; Badinter, 1981."
+    }
+   ],
+   "piege": {
+    "fr": "La voix de l'appel du 18 juin qu'on entend aujourd'hui est celle de l'appel du 22 juin : le discours fondateur n'a jamais été enregistré."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Grands discours du XXe siècle\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1940</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Churchill, de Gaulle</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1960</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Kennedy-Nixon à la télé</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1963</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">I have a dream</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1974</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Simone Veil</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2013</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Malala à l'ONU</text></svg>",
+   "source": "Charles de Gaulle, appel du 18 juin 1940, BBC"
+  },
+  "symbole": "«»",
+  "embleme": "cailloux-demosthene",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "bref",
+     "titre": {
+      "fr": "Deux minutes contre deux heures"
+     },
+     "texte": [
+      {
+       "fr": "Le 19 novembre 1863, à Gettysburg, l'orateur vedette est Edward Everett : il parle deux heures, plus de 13 000 mots. Abraham Lincoln parle ensuite environ deux minutes, 271 mots, et termine sur un gouvernement « du peuple, par le peuple, pour le peuple ». Le lendemain, Everett lui écrit qu'il aurait aimé approcher l'idée centrale de la cérémonie en deux heures autant que Lincoln l'avait fait en deux minutes."
+      },
+      {
+       "fr": "Les grands discours tiennent souvent en une phrase qu'on retient. Le 13 mai 1940, Churchill n'a « rien d'autre à offrir que du sang, du labeur, des larmes et de la sueur ». En 2013, le jour de ses 16 ans, Malala Yousafzai dit à l'ONU qu'« un enfant, un enseignant, un livre et un stylo peuvent changer le monde »."
+      }
+     ],
+     "retenir": {
+      "fr": "Gettysburg (1863) : 271 mots, deux minutes, contre deux heures pour Everett. La brièveté marque."
+     },
+     "source": "Library of Congress, Gettysburg Address",
+     "reperes": [
+      {
+       "fr": "Le 19 novembre 1863, à Gettysburg, l'orateur vedette est Edward Everett : il parle deux heures, plus de 13 000 mots."
+      },
+      {
+       "fr": "Le 13 mai 1940, Churchill n'a « rien d'autre à offrir que du sang, du labeur, des larmes et de la sueur »."
+      },
+      {
+       "fr": "En 2013, le jour de ses 16 ans, Malala Yousafzai dit à l'ONU qu'« un enfant, un enseignant, un livre et un stylo peuvent changer le monde »."
+      }
+     ]
+    },
+    {
+     "id": "improviser",
+     "titre": {
+      "fr": "Le rêve improvisé"
+     },
+     "texte": [
+      {
+       "fr": "Le 28 août 1963, à Washington, Martin Luther King lit un texte préparé. Le passage le plus célèbre, « I have a dream », n'y figurait pas : la chanteuse Mahalia Jackson lui aurait lancé « Parle-leur du rêve, Martin ! », et il quitte ses notes. Une anaphore construite en partie en improvisation, sur des formules qu'il avait déjà rodées ailleurs."
+      },
+      {
+       "fr": "Méfiance aussi envers les légendes de discours. L'appel du 18 juin 1940 n'a pas été enregistré : celui qu'on entend souvent est l'appel du 22 juin. Et Kennedy n'a pas dit « je suis un beignet » à Berlin en 1963 : « Ich bin ein Berliner » est correct et a été compris comme voulu ; le mythe est né vingt ans plus tard dans la presse anglophone."
+      }
+     ],
+     "retenir": {
+      "fr": "« I have a dream » (1963) était en partie improvisé. L'appel du 18 juin n'a pas été enregistré ; Kennedy n'a pas dit « je suis un beignet »."
+     },
+     "source": "Library of Congress ; Thucydide, La Guerre du Péloponnèse, II, 35-46",
+     "figure": "mc_rhet_improviser",
+     "reperes": [
+      {
+       "fr": "Le 28 août 1963, à Washington, Martin Luther King lit un texte préparé."
+      },
+      {
+       "fr": "L'appel du 18 juin 1940 n'a pas été enregistré : celui qu'on entend souvent est l'appel du 22 juin."
+      }
+     ]
+    },
+    {
+     "id": "tribune",
+     "titre": {
+      "fr": "Parler pour changer la loi"
+     },
+     "texte": [
+      {
+       "fr": "Le 26 novembre 1974, Simone Veil défend la loi sur l'interruption volontaire de grossesse devant une Assemblée de 481 hommes et 9 femmes. Elle subit insultes et menaces ; la loi passe. Le 17 septembre 1981, Robert Badinter plaide pour l'abolition de la peine de mort : « Demain, grâce à vous, la justice française ne sera plus une justice qui tue. » La loi est votée le lendemain."
+      },
+      {
+       "fr": "Le discours peut aussi s'écrire. Le 13 janvier 1898, Émile Zola publie « J'accuse… ! » dans L'Aurore pour défendre le capitaine Dreyfus ; condamné pour diffamation, il s'exile à Londres. Bien avant, Démosthène tonnait contre Philippe de Macédoine : ses Philippiques ont donné leur nom à tout discours violent contre quelqu'un."
+      }
+     ],
+     "retenir": {
+      "fr": "Veil (1974), Badinter (1981), Zola (1898) : des discours qui ont changé la loi ou l'opinion."
+     },
+     "source": "Assemblée nationale, comptes rendus des séances du 26 novembre 1974 et du 17 septembre 1981",
+     "figure": "mc_rhet_tribune",
+     "reperes": [
+      {
+       "fr": "Le 26 novembre 1974, Simone Veil défend la loi sur l'interruption volontaire de grossesse devant une Assemblée de 481 hommes et 9 femmes."
+      },
+      {
+       "fr": "Le 17 septembre 1981, Robert Badinter plaide pour l'abolition de la peine de mort : « Demain, grâce à vous, la justice française ne sera plus une justice qui tue. »"
+      },
+      {
+       "fr": "Le 13 janvier 1898, Émile Zola publie « J'accuse… ! » dans L'Aurore pour défendre le capitaine Dreyfus ; condamné pour diffamation, il s'exile à Londres."
       }
      ]
     }
@@ -107,15 +2056,15 @@
  {
   "id": "rhet.narration",
   "stat": "eloquence",
-  "rang": 2,
+  "rang": 7,
   "nom": {
-   "fr": "Raconter"
+   "fr": "Le récit décortiqué"
   },
   "description": {
-   "fr": "Structure d'un récit, suspense, voyage du héros et pouvoir des histoires."
+   "fr": "Propp, Campbell, Queneau, Hitchcock : ce que le XXe siècle a compris des histoires."
   },
   "prerequis": [
-   "rhet.argument"
+   "rhet.propagande"
   ],
   "fiche": {
    "essentiel": [
@@ -215,493 +2164,91 @@
   }
  },
  {
-  "id": "rhet.discours",
+  "id": "rhet.argument",
   "stat": "eloquence",
-  "rang": 3,
+  "rang": 8,
   "nom": {
-   "fr": "Grands discours"
+   "fr": "Argumenter et réfuter"
   },
   "description": {
-   "fr": "De Périclès à Malala : les discours qui ont changé quelque chose."
+   "fr": "Prémisses, induction, homme d'acier, schéma de Toulmin : les théories modernes de l'argumentation."
   },
   "prerequis": [
-   "rhet.argument"
+   "rhet.discours",
+   "rhet.narration"
   ],
   "fiche": {
    "essentiel": [
     {
-     "fr": "Périclès, oraison funèbre (431 av. J.-C.) : l'éloge de la démocratie athénienne."
+     "fr": "Un argument : des prémisses qui soutiennent une conclusion. L'induction généralise : sa conclusion n'est que probable."
     },
     {
-     "fr": "Lincoln à Gettysburg (1863) : environ 270 mots, deux minutes, « du peuple, par le peuple, pour le peuple »."
+     "fr": "L'homme d'acier : réfuter la version la plus solide de l'argument adverse (règles de Rapoport, Dennett, 2013)."
     },
     {
-     "fr": "Martin Luther King, « I have a dream » (1963) : une anaphore construite en partie en improvisation."
+     "fr": "Un seul contre-exemple suffit à réfuter une affirmation universelle : les cygnes noirs d'Australie, 1697."
     },
     {
-     "fr": "Malala Yousafzai à l'ONU (2013) : « un enfant, un professeur, un livre et un stylo peuvent changer le monde »."
+     "fr": "Toulmin, 1958 : thèse, données, garantie, fondement, qualificatif, réserves."
     }
    ],
    "piege": {
-    "fr": "Le passage « I have a dream » ne figurait pas dans le texte préparé : Mahalia Jackson lui a crié de parler du rêve."
+    "fr": "Gagner un débat n'est pas avoir raison : on peut écraser un mauvais défenseur d'une bonne idée."
    },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 124\" role=\"img\" aria-label=\"Quelques grands discours dans le temps\"><line class=\"l\" x1=\"16\" y1=\"60\" x2=\"324\" y2=\"60\"/><line class=\"l\" x1=\"300.0\" y1=\"60.0\" x2=\"326.0\" y2=\"60.0\" stroke-width=\"2\"/><path class=\"l\" d=\"M319.9 63.4 L326.0 60.0 L319.9 56.6\" stroke-width=\"2\"/><circle class=\"f\" cx=\"34.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"34.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Périclès</text><text class=\"tm\" x=\"34.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">−431</text><circle class=\"f\" cx=\"102.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"102.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\">Lincoln</text><text class=\"tm\" x=\"102.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\">1863</text><circle class=\"f\" cx=\"170.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"170.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Churchill</text><text class=\"tm\" x=\"170.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">1940</text><circle class=\"a\" cx=\"238.0\" cy=\"60\" r=\"5\"/><text class=\"t\" x=\"238.0\" y=\"85.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">King</text><text class=\"t\" x=\"238.0\" y=\"97.8\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1963</text><circle class=\"f\" cx=\"306.0\" cy=\"60\" r=\"5\"/><text class=\"tm\" x=\"306.0\" y=\"31.9\" font-size=\"11\" text-anchor=\"middle\">Malala</text><text class=\"tm\" x=\"306.0\" y=\"43.9\" font-size=\"11\" text-anchor=\"middle\">2013</text></svg>",
-   "source": "Thucydide, La Guerre du Péloponnèse, II, 35-46 ; Library of Congress"
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 164\" role=\"img\" aria-label=\"Argumenter et réfuter dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"154\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1697</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">cygnes noirs</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1958</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Toulmin</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2013</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">loi de Brandolini</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2013</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">règles de Rapoport, Dennett</text></svg>",
+   "source": "Stephen Toulmin, The Uses of Argument, 1958"
   },
-  "symbole": "«»",
-  "embleme": "cailloux-demosthene",
+  "symbole": "∴",
+  "embleme": "engrenage",
   "masterclass": {
    "chapitres": [
     {
-     "id": "bref",
+     "id": "premisses",
      "titre": {
-      "fr": "Deux minutes contre deux heures"
+      "fr": "Des raisons et une conclusion"
      },
      "texte": [
       {
-       "fr": "Le 19 novembre 1863, à Gettysburg, l'orateur vedette est Edward Everett : il parle deux heures, plus de 13 000 mots. Abraham Lincoln parle ensuite environ deux minutes, 271 mots, et termine sur un gouvernement « du peuple, par le peuple, pour le peuple ». Le lendemain, Everett lui écrit qu'il aurait aimé approcher l'idée centrale de la cérémonie en deux heures autant que Lincoln l'avait fait en deux minutes."
+       "fr": "Un argument, ce sont des prémisses, les raisons, qui soutiennent une conclusion, ce qu'on veut établir. « Il faut réduire la vitesse, car cela sauve des vies » : la conclusion est « il faut réduire la vitesse », la prémisse vient après « car ». Repérer ces mots, car, puisque, donc, c'est déjà démonter l'argument."
       },
       {
-       "fr": "Les grands discours tiennent souvent en une phrase qu'on retient. Le 13 mai 1940, Churchill n'a « rien d'autre à offrir que du sang, du labeur, des larmes et de la sueur ». En 2013, le jour de ses 16 ans, Malala Yousafzai dit à l'ONU qu'« un enfant, un enseignant, un livre et un stylo peuvent changer le monde »."
+       "fr": "Souvent, une prémisse reste sous-entendue : c'est l'enthymème. Le mot vient d'Aristote, au IVe siècle avant notre ère : dans sa Rhétorique, l'enthymème est le syllogisme de l'orateur, dont le public fournit lui-même la prémisse manquante. « Il a de la fièvre, donc il est malade » suppose que la fièvre signale une maladie. Bien des disputes viennent de là : on se bat sur la conclusion alors que le désaccord porte sur la prémisse cachée. Et c'est à celui qui avance une thèse d'en apporter la preuve."
       }
      ],
      "retenir": {
-      "fr": "Gettysburg (1863) : 271 mots, deux minutes, contre deux heures pour Everett. La brièveté marque."
-     },
-     "source": "Library of Congress, Gettysburg Address",
-     "reperes": [
-      {
-       "fr": "Le 19 novembre 1863, à Gettysburg, l'orateur vedette est Edward Everett : il parle deux heures, plus de 13 000 mots."
-      },
-      {
-       "fr": "Le 13 mai 1940, Churchill n'a « rien d'autre à offrir que du sang, du labeur, des larmes et de la sueur »."
-      },
-      {
-       "fr": "En 2013, le jour de ses 16 ans, Malala Yousafzai dit à l'ONU qu'« un enfant, un enseignant, un livre et un stylo peuvent changer le monde »."
-      }
-     ]
-    },
-    {
-     "id": "improviser",
-     "titre": {
-      "fr": "Le rêve improvisé"
-     },
-     "texte": [
-      {
-       "fr": "Le 28 août 1963, à Washington, Martin Luther King lit un texte préparé. Le passage le plus célèbre, « I have a dream », n'y figurait pas : la chanteuse Mahalia Jackson lui aurait lancé « Parle-leur du rêve, Martin ! », et il quitte ses notes. Une anaphore construite en partie en improvisation, sur des formules qu'il avait déjà rodées ailleurs."
-      },
-      {
-       "fr": "Méfiance aussi envers les légendes de discours. L'appel du 18 juin 1940 n'a pas été enregistré : celui qu'on entend souvent est l'appel du 22 juin. Et Kennedy n'a pas dit « je suis un beignet » à Berlin en 1963 : « Ich bin ein Berliner » est correct et a été compris comme voulu ; le mythe est né vingt ans plus tard dans la presse anglophone."
-      }
-     ],
-     "retenir": {
-      "fr": "« I have a dream » (1963) était en partie improvisé. L'appel du 18 juin n'a pas été enregistré ; Kennedy n'a pas dit « je suis un beignet »."
-     },
-     "source": "Library of Congress ; Thucydide, La Guerre du Péloponnèse, II, 35-46",
-     "figure": "mc_rhet_improviser",
-     "reperes": [
-      {
-       "fr": "Le 28 août 1963, à Washington, Martin Luther King lit un texte préparé."
-      },
-      {
-       "fr": "L'appel du 18 juin 1940 n'a pas été enregistré : celui qu'on entend souvent est l'appel du 22 juin."
-      }
-     ]
-    },
-    {
-     "id": "tribune",
-     "titre": {
-      "fr": "Parler pour changer la loi"
-     },
-     "texte": [
-      {
-       "fr": "Le 26 novembre 1974, Simone Veil défend la loi sur l'interruption volontaire de grossesse devant une Assemblée de 481 hommes et 9 femmes. Elle subit insultes et menaces ; la loi passe. Le 17 septembre 1981, Robert Badinter plaide pour l'abolition de la peine de mort : « Demain, grâce à vous, la justice française ne sera plus une justice qui tue. » La loi est votée le lendemain."
-      },
-      {
-       "fr": "Le discours peut aussi s'écrire. Le 13 janvier 1898, Émile Zola publie « J'accuse… ! » dans L'Aurore pour défendre le capitaine Dreyfus ; condamné pour diffamation, il s'exile à Londres. Bien avant, Démosthène tonnait contre Philippe de Macédoine : ses Philippiques ont donné leur nom à tout discours violent contre quelqu'un."
-      }
-     ],
-     "retenir": {
-      "fr": "Veil (1974), Badinter (1981), Zola (1898) : des discours qui ont changé la loi ou l'opinion."
-     },
-     "source": "Assemblée nationale, comptes rendus des séances du 26 novembre 1974 et du 17 septembre 1981",
-     "figure": "mc_rhet_tribune",
-     "reperes": [
-      {
-       "fr": "Le 26 novembre 1974, Simone Veil défend la loi sur l'interruption volontaire de grossesse devant une Assemblée de 481 hommes et 9 femmes."
-      },
-      {
-       "fr": "Le 17 septembre 1981, Robert Badinter plaide pour l'abolition de la peine de mort : « Demain, grâce à vous, la justice française ne sera plus une justice qui tue. »"
-      },
-      {
-       "fr": "Le 13 janvier 1898, Émile Zola publie « J'accuse… ! » dans L'Aurore pour défendre le capitaine Dreyfus ; condamné pour diffamation, il s'exile à Londres."
-      }
-     ]
-    }
-   ]
-  }
- },
- {
-  "id": "rhet.persuasion",
-  "stat": "eloquence",
-  "rang": 4,
-  "nom": {
-   "fr": "Ethos, pathos, logos"
-  },
-  "description": {
-   "fr": "Les trois leviers de la persuasion selon Aristote."
-  },
-  "prerequis": [
-   "rhet.narration",
-   "rhet.discours"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Ethos : la crédibilité de l'orateur."
-    },
-    {
-     "fr": "Pathos : les émotions qu'il suscite chez le public."
-    },
-    {
-     "fr": "Logos : la force des raisons et des preuves."
-    },
-    {
-     "fr": "Un bon discours combine les trois ; la manipulation joue sur l'ethos et le pathos en l'absence de logos."
-    }
-   ],
-   "piege": {
-    "fr": "L'ethos ne se décrète pas : c'est le public qui accorde ou non sa confiance."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 184\" role=\"img\" aria-label=\"Les trois leviers de la persuasion selon Aristote\"><polygon class=\"f2\" points=\"170,22 72,160 268,160\"/><text class=\"tm\" x=\"170\" y=\"116.2\" font-size=\"12\" text-anchor=\"middle\">persuader</text><rect class=\"f\" x=\"110\" y=\"5\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"170\" y=\"19.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">ethos</text><text class=\"t\" x=\"170\" y=\"33.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">crédibilité</text><rect class=\"f\" x=\"12\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"72\" y=\"157.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">pathos</text><text class=\"t\" x=\"72\" y=\"171.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">émotion</text><rect class=\"f\" x=\"208\" y=\"143\" width=\"120\" height=\"34\" rx=\"17\"/><text class=\"t\" x=\"268\" y=\"157.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">logos</text><text class=\"t\" x=\"268\" y=\"171.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">raison</text></svg>",
-   "source": "Aristote, Rhétorique, livre I"
-  },
-  "symbole": "☞",
-  "embleme": "rouleau-aristote",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "trois",
-     "titre": {
-      "fr": "Les trois leviers d'Aristote"
-     },
-     "texte": [
-      {
-       "fr": "Au IVe siècle avant notre ère, Aristote distingue dans sa Rhétorique trois façons de persuader. L'ethos, la crédibilité de l'orateur : on croit plus volontiers quelqu'un qui paraît compétent, honnête et bienveillant. Le pathos, les émotions suscitées chez le public. Le logos, la force des raisons et des preuves."
-      },
-      {
-       "fr": "Un bon discours combine les trois : des preuves solides, portées par quelqu'un de crédible, qui sait toucher son public. La manipulation, elle, joue l'ethos et le pathos quand le logos manque. Et l'ethos ne se décrète pas : c'est le public qui accorde ou non sa confiance. « Croyez-moi, je suis médecin depuis trente ans » n'est pas une preuve."
-      }
-     ],
-     "retenir": {
-      "fr": "Ethos = crédibilité ; pathos = émotion ; logos = raisons. Manipuler, c'est ethos et pathos sans logos."
+      "fr": "Argument = prémisses (car, puisque) + conclusion (donc). Chercher la prémisse sous-entendue."
      },
      "source": "Aristote, Rhétorique, livre I",
      "reperes": [
       {
-       "fr": "Au IVe siècle avant notre ère, Aristote distingue dans sa Rhétorique trois façons de persuader."
+       "fr": "Le mot vient d'Aristote, au IVe siècle avant notre ère : dans sa Rhétorique, l'enthymème est le syllogisme de l'orateur, dont le public fournit lui-même la prémisse manquante."
       }
      ]
     },
     {
-     "id": "cadrage",
+     "id": "induction",
      "titre": {
-      "fr": "Même chiffre, autre effet"
+      "fr": "La dinde de Russell"
      },
      "texte": [
       {
-       "fr": "La façon de présenter une information change la décision. En 1981, Amos Tversky et Daniel Kahneman soumettent un problème : une épidémie menace 600 personnes. Quand un plan est présenté comme « sauve 200 personnes », 72 % des gens le choisissent. Quand le même plan est présenté comme « 400 personnes mourront », 78 % préfèrent l'option risquée."
+       "fr": "L'induction généralise à partir de cas : le soleil s'est levé tous les jours, donc il se lèvera demain. C'est indispensable, on ne vivrait pas sans, mais ce n'est jamais certain. David Hume le montre en 1739 : aucun raisonnement ne prouve que l'avenir ressemblera au passé ; nous le croyons par habitude."
       },
       {
-       "fr": "C'est l'effet de cadrage : « 90 % de survie » rassure davantage que « 10 % de mortalité ». Les orateurs le savent, et choisissent aussi leur moment, le kairos des Grecs : le même argument ne porte pas pareil selon l'instant. Pour s'en défendre, reformuler soi-même le chiffre dans l'autre sens."
+       "fr": "Bertrand Russell l'illustre avec un poulet nourri chaque matin par le fermier, et de plus en plus sûr de sa règle, jusqu'au jour où le fermier lui tord le cou. Une anecdote, même vécue, illustre ; elle ne prouve pas une règle générale. Pour cela, il faut beaucoup de cas, représentatifs."
       }
      ],
      "retenir": {
-      "fr": "Effet de cadrage (Tversky et Kahneman, 1981) : « sauver 200 » et « 400 mourront » ne sont pas reçus pareil. Reformuler dans l'autre sens."
+      "fr": "Induction : du particulier au général, probable mais jamais certaine (Hume, 1739). Une anecdote ne prouve pas une règle."
      },
-     "source": "Tversky et Kahneman, Science, 1981",
-     "figure": "mc_rhet_cadrage",
+     "source": "Hume, Traité de la nature humaine, 1739 ; Russell, Problèmes de philosophie, 1912",
+     "figure": "mc_rhet_induction",
      "reperes": [
       {
-       "fr": "En 1981, Amos Tversky et Daniel Kahneman soumettent un problème : une épidémie menace 600 personnes."
+       "fr": "David Hume le montre en 1739 : aucun raisonnement ne prouve que l'avenir ressemblera au passé ; nous le croyons par habitude."
       }
      ]
     },
-    {
-     "id": "influence",
-     "titre": {
-      "fr": "Les ressorts de l'influence"
-     },
-     "texte": [
-      {
-       "fr": "En 1984, le psychologue Robert Cialdini publie Influence, où il décrit les leviers qui nous font dire oui. La preuve sociale : nous jugeons un comportement plus juste quand nous voyons d'autres l'adopter, d'où les « déjà 10 000 clients satisfaits ». L'autorité, la rareté, la réciprocité, la sympathie, l'engagement : chacun est un raccourci utile, que d'autres peuvent exploiter."
-      },
-      {
-       "fr": "La rhétorique classique, elle, découpait la préparation d'un discours en cinq étapes : trouver les arguments (inventio), les ordonner (dispositio), les mettre en mots (elocutio), les mémoriser (memoria), les prononcer (actio). Et elle conseillait de gagner d'abord la bienveillance de l'auditoire, la captatio benevolentiae."
-      }
-     ],
-     "retenir": {
-      "fr": "Cialdini (1984) : preuve sociale, autorité, rareté, réciprocité, sympathie, engagement. Cinq étapes classiques : inventio, dispositio, elocutio, memoria, actio."
-     },
-     "source": "Cialdini, Influence, 1984",
-     "figure": "mc_rhet_influence",
-     "reperes": [
-      {
-       "fr": "En 1984, le psychologue Robert Cialdini publie Influence, où il décrit les leviers qui nous font dire oui."
-      }
-     ]
-    }
-   ]
-  }
- },
- {
-  "id": "rhet.sophismes",
-  "stat": "eloquence",
-  "rang": 5,
-  "nom": {
-   "fr": "Sophismes"
-  },
-  "description": {
-   "fr": "Les raisonnements fallacieux et comment les nommer."
-  },
-  "prerequis": [
-   "rhet.persuasion"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Homme de paille : déformer la position adverse pour la réfuter plus facilement."
-    },
-    {
-     "fr": "Ad hominem : attaquer la personne plutôt que l'argument."
-    },
-    {
-     "fr": "Faux dilemme : ne présenter que deux options quand il en existe d'autres."
-    },
-    {
-     "fr": "Pente glissante : affirmer sans preuve qu'un premier pas mène fatalement au pire."
-    }
-   ],
-   "piege": {
-    "fr": "Toute attaque personnelle n'est pas un ad hominem : signaler un conflit d'intérêts peut être pertinent."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Quatre sophismes et leur mécanisme\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Ce qu'on fait</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Son nom</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"164\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">déformer l'idée</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">viser la personne</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">deux choix seulement</text><rect class=\"f2\" x=\"14\" y=\"128\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"144.8\" font-size=\"11\" text-anchor=\"middle\">tout va déraper</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">homme de paille</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">ad hominem</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">faux dilemme</text><rect class=\"f\" x=\"178\" y=\"128\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"144.8\" font-size=\"11\" text-anchor=\"middle\">pente glissante</text></svg>",
-   "source": "Schopenhauer, L'Art d'avoir toujours raison, vers 1831"
-  },
-  "symbole": "≠",
-  "embleme": "labyrinthe",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "personne",
-     "titre": {
-      "fr": "Attaquer l'homme ou sa caricature"
-     },
-     "texte": [
-      {
-       "fr": "L'ad hominem attaque la personne au lieu de son argument : « tu dis ça, mais tu n'as même pas de diplôme ». Variante : « toi aussi tu fumes, donc ton conseil ne vaut rien ». L'incohérence de quelqu'un ne rend pas son argument faux. Attention toutefois : signaler un conflit d'intérêts réel peut être pertinent."
-      },
-      {
-       "fr": "L'homme de paille déforme la position adverse pour la réfuter plus facilement. On répond à « il faudrait moins de voitures en centre-ville » par « tu veux interdire aux gens de se déplacer ». On combat une caricature, pas la vraie position. Schopenhauer, vers 1831, rangeait déjà ces ruses dans son Art d'avoir toujours raison."
-      }
-     ],
-     "retenir": {
-      "fr": "Ad hominem : viser la personne. Homme de paille : réfuter une caricature. Un conflit d'intérêts réel reste pertinent."
-     },
-     "source": "Schopenhauer, L'Art d'avoir toujours raison, vers 1831",
-     "reperes": [
-      {
-       "fr": "Schopenhauer, vers 1831, rangeait déjà ces ruses dans son Art d'avoir toujours raison."
-      }
-     ]
-    },
-    {
-     "id": "logique",
-     "titre": {
-      "fr": "Les faux raisonnements"
-     },
-     "texte": [
-      {
-       "fr": "Le faux dilemme ne présente que deux options quand il en existe d'autres : « soit tu es avec nous, soit tu es contre nous ». La pente glissante affirme sans preuve qu'un premier pas mène fatalement au pire : « si on autorise ça, bientôt ce sera le chaos ». Aristote dressait déjà une liste de douze ou treize sophismes dans ses Réfutations sophistiques."
-      },
-      {
-       "fr": "Post hoc : « après cela, donc à cause de cela ». « J'ai pris mon parapluie et il a plu » ne fait pas du parapluie une machine à pluie. Le raisonnement circulaire met la conclusion dans la prémisse : « ce journal est fiable, puisqu'il le dit lui-même ». Et l'appel à l'ignorance : « personne n'a prouvé que les fantômes n'existent pas, donc ils existent »."
-      }
-     ],
-     "retenir": {
-      "fr": "Faux dilemme, pente glissante, post hoc, raisonnement circulaire, appel à l'ignorance : la forme cloche, même si le ton convainc."
-     },
-     "source": "Copi, Introduction to Logic, 14e éd.",
-     "figure": "mc_rhet_logique"
-    },
-    {
-     "id": "foule",
-     "titre": {
-      "fr": "La nature, la foule et l'autorité"
-     },
-     "texte": [
-      {
-       "fr": "L'appel à la nature : « c'est naturel, donc c'est bon ». L'arsenic et la ciguë sont naturels. L'appel à la foule : « tout le monde le fait, donc c'est bien ». Le nombre de partisans ne prouve pas qu'une idée est juste."
-      },
-      {
-       "fr": "L'argument d'autorité est plus subtil : citer un expert dans son domaine est légitime. Le sophisme, c'est l'autorité hors de sa compétence, un prix Nobel de physique qui tranche une question de médecine, ou présentée comme une preuve définitive. Et le Gish gallop noie l'adversaire sous une avalanche d'arguments faibles : il faut plus de temps pour réfuter chacun que pour les lancer. Le nom est donné en 1994 par l'anthropologue Eugenie Scott, d'après le créationniste Duane Gish, champion de la technique dans les débats."
-      }
-     ],
-     "retenir": {
-      "fr": "Naturel ≠ bon ; populaire ≠ vrai. L'autorité vaut dans son domaine, jamais comme preuve définitive."
-     },
-     "source": "Copi, Introduction to Logic, 14e éd.",
-     "figure": "mc_rhet_foule",
-     "reperes": [
-      {
-       "fr": "Le nom est donné en 1994 par l'anthropologue Eugenie Scott, d'après le créationniste Duane Gish, champion de la technique dans les débats."
-      }
-     ]
-    }
-   ]
-  }
- },
- {
-  "id": "rhet.figures",
-  "stat": "eloquence",
-  "rang": 6,
-  "nom": {
-   "fr": "Figures de style"
-  },
-  "description": {
-   "fr": "Métaphore, litote, chiasme, anaphore et les autres."
-  },
-  "prerequis": [
-   "rhet.sophismes"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Métaphore : comparaison sans outil (« cet homme est un lion ») ; comparaison : avec « comme »."
-    },
-    {
-     "fr": "Litote : dire moins pour suggérer plus (« va, je ne te hais point »). Euphémisme : adoucir (« il nous a quittés »)."
-    },
-    {
-     "fr": "Anaphore : répétition en début de phrase (« I have a dream »)."
-    },
-    {
-     "fr": "Chiasme : structure croisée A-B / B-A (« il faut manger pour vivre et non vivre pour manger »)."
-    }
-   ],
-   "piege": {
-    "fr": "Litote et euphémisme se confondent souvent : la litote renforce, l'euphémisme atténue."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 160\" role=\"img\" aria-label=\"Schéma du chiasme : manger, vivre, puis vivre, manger\"><text class=\"t\" x=\"70\" y=\"40\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">manger</text><text class=\"t\" x=\"250\" y=\"40\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">vivre</text><text class=\"t\" x=\"70\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">vivre</text><text class=\"t\" x=\"250\" y=\"120\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">manger</text><line class=\"al\" x1=\"105\" y1=\"48\" x2=\"215\" y2=\"106\" stroke-width=\"2\"/><line class=\"al\" x1=\"215\" y1=\"48\" x2=\"105\" y2=\"106\" stroke-width=\"2\"/><text class=\"tm\" x=\"160\" y=\"150\" font-size=\"12\" text-anchor=\"middle\">A — B / B — A : les termes se croisent</text></svg>",
-   "source": "Fontanier, Les Figures du discours, 1827"
-  },
-  "symbole": "❦",
-  "embleme": "plume",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "images",
-     "titre": {
-      "fr": "Dire avec des images"
-     },
-     "texte": [
-      {
-       "fr": "La comparaison rapproche deux choses avec un outil, comme ou tel : « fort comme un lion ». La métaphore supprime l'outil : « cet homme est un lion ». La métonymie désigne une chose par une autre qui lui est liée : « boire un verre », on boit le contenu, pas le verre. Ces noms viennent d'une longue tradition de manuels : Dumarsais publie Des Tropes en 1730, puis Pierre Fontanier en dresse l'inventaire pour les lycéens, en 1821 et 1827."
-      },
-      {
-       "fr": "Ces figures ne sont pas réservées aux poètes. « Je meurs de faim » est une hyperbole, une exagération volontaire ; « il nous a quittés » est un euphémisme ; « boire un verre », une métonymie. On en fait tous, chaque jour, sans le savoir. Les nommer aide à les repérer chez ceux qui cherchent à nous convaincre."
-      }
-     ],
-     "retenir": {
-      "fr": "Comparaison = avec « comme » ; métaphore = sans outil ; métonymie = une chose pour une autre qui lui est liée."
-     },
-     "source": "Fontanier, Les Figures du discours, 1827",
-     "figure": "mc_rhet_images"
-    },
-    {
-     "id": "attenuer",
-     "titre": {
-      "fr": "Dire moins, dire plus"
-     },
-     "texte": [
-      {
-       "fr": "La litote dit moins pour faire entendre plus. Dans Le Cid, Chimène lance à Rodrigue « Va, je ne te hais point » : elle avoue qu'elle l'aime. La pièce est de Corneille, créée en 1637 : Rodrigue vient de tuer en duel le père de Chimène. L'euphémisme, lui, adoucit pour ménager : « il nous a quittés » pour « il est mort ». Les deux atténuent la forme, mais la litote renforce le sens, l'euphémisme l'amortit."
-      },
-      {
-       "fr": "L'ironie dit le contraire de ce qu'on pense, « quel temps magnifique ! » sous la pluie. La prétérition annonce qu'on ne dira pas ce qu'on est justement en train de dire : « je ne vous parlerai pas de ses mensonges… ». Et l'oxymore unit deux mots qui s'opposent : « cette obscure clarté qui tombe des étoiles »."
-      }
-     ],
-     "retenir": {
-      "fr": "Litote : dire moins pour suggérer plus (renforce). Euphémisme : adoucir (atténue). Ironie : dire le contraire."
-     },
-     "source": "Fontanier, Les Figures du discours, 1827",
-     "figure": "mc_rhet_attenuer",
-     "reperes": [
-      {
-       "fr": "La pièce est de Corneille, créée en 1637 : Rodrigue vient de tuer en duel le père de Chimène."
-      }
-     ]
-    },
-    {
-     "id": "rythme",
-     "titre": {
-      "fr": "Le son et l'ordre des mots"
-     },
-     "texte": [
-      {
-       "fr": "L'anaphore répète un mot en tête de phrase et martèle une idée : « Paris outragé ! Paris brisé ! Paris martyrisé ! », lance de Gaulle en 1944 ; « I have a dream », répète Martin Luther King en 1963. Le chiasme croise les termes, A-B puis B-A : « il faut manger pour vivre et non pas vivre pour manger » (Molière, L'Avare)."
-      },
-      {
-       "fr": "L'allitération joue sur les sons : « Pour qui sont ces serpents qui sifflent sur vos têtes ? » (Racine, Andromaque) fait entendre le sifflement par la répétition du « s ». Une figure n'est pas un ornement : elle aide à retenir, et c'est pourquoi les slogans en sont pleins."
-      }
-     ],
-     "retenir": {
-      "fr": "Anaphore : répétition en tête de phrase. Chiasme : A-B / B-A. Allitération : répétition d'un son."
-     },
-     "source": "Fontanier, Les Figures du discours, 1827",
-     "schema_fiche": true
-    }
-   ]
-  }
- },
- {
-  "id": "rhet.debat",
-  "stat": "eloquence",
-  "rang": 7,
-  "nom": {
-   "fr": "Réfuter et débattre"
-  },
-  "description": {
-   "fr": "Contre-exemples, concessions, règles du débat loyal et pièges de la réfutation."
-  },
-  "prerequis": [
-   "rhet.sophismes"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Un contre-exemple suffit à réfuter une affirmation universelle."
-    },
-    {
-     "fr": "Concéder un point renforce la crédibilité et recentre le débat sur l'essentiel."
-    },
-    {
-     "fr": "Principe de charité : réfuter la version la plus solide de l'argument adverse (l'homme d'acier)."
-    },
-    {
-     "fr": "Loi de Brandolini : réfuter une ânerie demande bien plus d'énergie que la produire."
-    }
-   ],
-   "piege": {
-    "fr": "Gagner un débat n'est pas avoir raison : on peut réfuter un mauvais défenseur d'une bonne idée."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Une réfutation loyale en trois temps\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">reformuler</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">concéder</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">réfuter</text></svg>",
-   "source": "Rapoport, règles reprises par Dennett, Intuition Pumps, 2013"
-  },
-  "symbole": "⇄",
-  "embleme": "bulles",
-  "masterclass": {
-   "chapitres": [
     {
      "id": "acier",
      "titre": {
@@ -745,145 +2292,26 @@
      "figure": "mc_rhet_refuter"
     },
     {
-     "id": "disputes",
+     "id": "toulmin",
      "titre": {
-      "fr": "De la disputatio aux débats télévisés"
+      "fr": "Le schéma de Toulmin"
      },
      "texte": [
       {
-       "fr": "Les universités médiévales enseignaient par la disputatio : une question, les objections, puis la réponse. Thomas d'Aquin construit toute sa Somme théologique ainsi. En 1550-1551, la controverse de Valladolid oppose Las Casas, qui défend la pleine humanité des Indiens, à Sepúlveda, qui justifie la conquête ; aucun vainqueur n'est officiellement désigné."
+       "fr": "En 1958, le philosophe britannique Stephen Toulmin publie The Uses of Argument. Il y démonte un argument ordinaire en pièces : la thèse, les données qui l'appuient, la garantie qui fait le pont entre les deux, le fondement de cette garantie, le qualificatif (« probablement ») et les réserves (« sauf si... »)."
       },
       {
-       "fr": "Et les corrections, servent-elles ? En 2010, Nyhan et Reifler observent un « effet retour de flamme » : corriger une fausse croyance la renforcerait. Mais des études bien plus larges, comme celle de Wood et Porter en 2019, montrent que c'est rare : en général, une correction fait un peu bouger les croyances. Corriger vaut donc la peine."
+       "fr": "Ses collègues de Leeds raillent son « livre anti-logique ». Mais les spécialistes américains de la rhétorique l'adoptent, et son schéma entre dans l'enseignement du débat. Il montre qu'un argument de la vie courante ne ressemble pas à un syllogisme : il est plus ou moins fort, et il a des exceptions."
       }
      ],
      "retenir": {
-      "fr": "Disputatio : question, objections, réponse. L'effet retour de flamme est rare : corriger fait en général un peu bouger."
+      "fr": "Toulmin, 1958 : thèse, données, garantie, fondement, qualificatif, réserves. Un argument réel est plus ou moins fort."
      },
-     "source": "Wood et Porter, Political Behavior, 2019",
-     "figure": "mc_rhet_disputes",
+     "source": "Stephen Toulmin, The Uses of Argument, 1958",
+     "figure": "mc_rhet_toulmin",
      "reperes": [
       {
-       "fr": "En 1550-1551, la controverse de Valladolid oppose Las Casas, qui défend la pleine humanité des Indiens, à Sepúlveda, qui justifie la conquête ; aucun vainqueur n'est officiellement désigné."
-      },
-      {
-       "fr": "En 2010, Nyhan et Reifler observent un « effet retour de flamme » : corriger une fausse croyance la renforcerait."
-      }
-     ]
-    }
-   ]
-  }
- },
- {
-  "id": "rhet.propagande",
-  "stat": "eloquence",
-  "rang": 8,
-  "nom": {
-   "fr": "Propagande et manipulation"
-  },
-  "description": {
-   "fr": "Répétition, novlangue, astroturfing et comment s'en protéger."
-  },
-  "prerequis": [
-   "rhet.figures",
-   "rhet.debat"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Répétition : plus on entend une affirmation, plus elle paraît vraie (effet de vérité illusoire)."
-    },
-    {
-     "fr": "Novlangue : appauvrir ou retourner les mots pour rendre certaines pensées difficiles (Orwell, 1984)."
-    },
-    {
-     "fr": "Astroturfing : simuler un mouvement spontané de citoyens avec de faux comptes ou des groupes payés."
-    },
-    {
-     "fr": "Se protéger : chercher la source, croiser, se demander à qui profite le message."
-    }
-   ],
-   "piege": {
-    "fr": "Savoir qu'une affirmation est fausse ne protège pas complètement de l'effet de répétition."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 172\" role=\"img\" aria-label=\"Plus une phrase est répétée, plus elle paraît vraie\"><polyline class=\"l\" points=\"40,16 40,150 324,150\"/><path class=\"al\" d=\"M40 130 C 120 90, 200 60, 320 45\" fill=\"none\" stroke-width=\"3\"/><text class=\"tm\" x=\"46\" y=\"14\" font-size=\"11\" text-anchor=\"start\">crédibilité ressentie</text><text class=\"tm\" x=\"322\" y=\"166\" font-size=\"11\" text-anchor=\"end\">répétitions</text></svg>",
-   "source": "Hasher, Goldstein et Toppino, Journal of Verbal Learning and Verbal Behavior, 1977"
-  },
-  "symbole": "‼",
-  "embleme": "presse",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "repetition",
-     "titre": {
-      "fr": "Répéter jusqu'à ce que ça sonne vrai"
-     },
-     "texte": [
-      {
-       "fr": "En 1977, Lynn Hasher, David Goldstein et Thomas Toppino font noter à des étudiants, à deux semaines d'intervalle, la vérité de soixante affirmations plausibles. Certaines reviennent à chaque séance : la confiance qu'on leur accorde grimpe, qu'elles soient vraies ou fausses. C'est l'effet de vérité illusoire : une phrase déjà entendue se traite plus facilement, et cette facilité passe pour de la vérité."
-      },
-      {
-       "fr": "Pire : en 2015, Lisa Fazio et ses collègues montrent que savoir la bonne réponse ne protège pas complètement. D'où la stratégie de la « lance à incendie de mensonges », décrite par la RAND Corporation en 2016 : beaucoup de messages, vite, sur tous les canaux, sans souci de cohérence. Le but n'est pas de convaincre, mais de noyer."
-      }
-     ],
-     "retenir": {
-      "fr": "Effet de vérité illusoire (Hasher et al., 1977) : la répétition fait paraître vrai, même quand on sait que c'est faux (Fazio, 2015)."
-     },
-     "source": "Hasher, Goldstein et Toppino, Journal of Verbal Learning and Verbal Behavior, 1977",
-     "reperes": [
-      {
-       "fr": "En 1977, Lynn Hasher, David Goldstein et Thomas Toppino font noter à des étudiants, à deux semaines d'intervalle, la vérité de soixante affirmations plausibles."
-      }
-     ]
-    },
-    {
-     "id": "mots",
-     "titre": {
-      "fr": "Façonner les mots pour façonner la pensée"
-     },
-     "texte": [
-      {
-       "fr": "Le mot propagande vient de la Congrégation pour la propagation de la foi, créée par l'Église en 1622 ; il ne devient péjoratif qu'au XXe siècle. En 1928, Edward Bernays, neveu de Freud, publie Propaganda. En 1929, pour l'American Tobacco Company, il fait défiler à New York des femmes cigarette à la main, présentées comme des « torches de la liberté »."
-      },
-      {
-       "fr": "Dans 1984, George Orwell imagine la novlangue, qui appauvrit et retourne les mots pour rendre certaines pensées impossibles. Plus près de nous : les éléments de langage répétés par plusieurs responsables le même matin, ou le sifflet à chien, un message codé que seuls ses destinataires entendent. Et la fenêtre d'Overton : déplacer ce qui paraît dicible est souvent plus efficace que gagner un débat."
-      }
-     ],
-     "retenir": {
-      "fr": "Propagande vient de l'Église (1622). Bernays (1928-1929), novlangue d'Orwell, éléments de langage, fenêtre d'Overton."
-     },
-     "source": "Bernays, Propaganda, 1928",
-     "figure": "mc_rhet_mots",
-     "reperes": [
-      {
-       "fr": "Le mot propagande vient de la Congrégation pour la propagation de la foi, créée par l'Église en 1622 ; il ne devient péjoratif qu'au XXe siècle."
-      },
-      {
-       "fr": "En 1928, Edward Bernays, neveu de Freud, publie Propaganda."
-      }
-     ]
-    },
-    {
-     "id": "vaccin",
-     "titre": {
-      "fr": "Se vacciner contre la manipulation"
-     },
-     "texte": [
-      {
-       "fr": "En 1961, le psychologue William McGuire propose la théorie de l'inoculation : comme un vaccin, une exposition à une forme affaiblie d'un argument manipulateur, accompagnée de sa réfutation, aide à résister à la version forte. Le « prébunking » la remet au goût du jour, par exemple avec le jeu Bad News de Jon Roozenbeek et Sander van der Linden, où l'on joue le rôle d'un fabricant de fausses nouvelles."
-      },
-      {
-       "fr": "Les réflexes de base restent simples : chercher la source, croiser avec d'autres, se demander à qui profite le message. Et se méfier aussi des légendes sur la crédulité des autres : la panique provoquée par La Guerre des mondes d'Orson Welles en 1938 a été largement exagérée par les journaux, ravis de discréditer la radio, leur concurrente."
-      }
-     ],
-     "retenir": {
-      "fr": "Inoculation (McGuire, 1961) : voir une manipulation affaiblie aide à y résister. Source, recoupement, à qui ça profite."
-     },
-     "source": "McGuire, Journal of Abnormal and Social Psychology, 1961",
-     "figure": "mc_rhet_inoculation",
-     "reperes": [
-      {
-       "fr": "En 1961, le psychologue William McGuire propose la théorie de l'inoculation : comme un vaccin, une exposition à une forme affaiblie d'un argument manipulateur, accompagnée de sa réfutation, aide à résister à la version forte."
+       "fr": "En 1958, le philosophe britannique Stephen Toulmin publie The Uses of Argument."
       }
      ]
     }

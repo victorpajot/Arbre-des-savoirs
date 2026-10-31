@@ -458,12 +458,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(c2.type, "rappel"); assert.equal(c2.comp.id, c.comp.id);
     // v15 : une case d'arbre fermé lance son premier quiz ; raté, l'arbre reste fermé ; réussi, il s'ouvre.
     {
-      const O = M.nouvellePartie(t0); O.plateau.position = 4;
+      // La première case de l'arbre Rhétorique : les Maximes de Ptahhotep (l'écriture est passée à la Logique).
+      const nP = C5.plateau.cases.find(k => k.id === "ptahhotep").n;
+      const O = M.nouvellePartie(t0); O.plateau.position = nP;
       const x = M.choixIA(C5, O, t0);
       assert.equal(x.raison, "ouvre_arbre"); assert.equal(x.stat, "eloquence");
       M.terminerQuiz(C5, O, x.comp.id, juste(O, x.comp.id, 5, 0), t0);
       assert.ok(!M.arbreOuvert(C5, O, "eloquence"), "raté : toujours fermé");
-      O.plateau.position = 4;
+      O.plateau.position = nP;
       M.terminerQuiz(C5, O, x.comp.id, juste(O, x.comp.id, 5, 5), t0 + 1000);
       assert.ok(M.arbreOuvert(C5, O, "eloquence"), "réussi : ouvert");
     }
