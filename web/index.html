@@ -2442,10 +2442,8 @@ function demarrerJeu() {
       : c.raison === "serie" ? __("Série de révisions : rappel ") + c.serie.n + __(" sur ") + c.serie.total + __(". Tout réussi, la prime est à toi ; un raté et la série s'arrête.")
       : c.raison === "ouvre_arbre" ? __("Arbre encore fermé : réussis ce quiz pour l'ouvrir.")
       : c.raison === "revision" ? __("Révision forcée par la case.")
-      : c.horsOrdre ? __("La case évoque ") + tx(k.nom) + (function () { var manque = k.prerequis.filter(function (p) { return !M.debloque(C, P, p); }).map(function (p) { return tx(C.parId[p].nom); }); return manque.length ? __(" : l'IA te la fait jouer tout de suite, même avant ") + manque.join(", ") + __(". Réussie, elle est acquise et ouvrira la suite de l'arbre quand ce prérequis le sera aussi.") : __(" : l'IA te la fait jouer tout de suite, même si l'arbre est encore fermé. Réussie, elle l'ouvre."); })()
-      : c.evoque ? __("La case évoque ") + tx(k.nom) + __(" : l'IA l'a prise.")
-      : kc && kc.stat === s.id ? __("C'est l'arbre de la case où tu te trouves.") : "";
-    var blocArbre = '<div class="arbre-choisi" style="--c:' + couleur(s.id) + '">' + iconeArbre(s.id, 56) + __('<div class="txt"><div class="eyebrow">Arbre choisi</div><b>') + esc(tx(s.nom)) + "</b><span>" + esc(tx(s.branche)) + "</span></div>" +
+      : "";
+    var blocArbre = '<div class="arbre-choisi" style="--c:' + couleur(s.id) + '">' + iconeArbre(s.id, 56) + __('<div class="txt"><div class="eyebrow">Arbre</div><b>') + esc(tx(s.nom)) + "</b><span>" + esc(tx(s.branche)) + "</span></div>" +
       '<div class="niv-a">' + (ferme ? ICONE_CADENAS + __("<small>Fermé</small>") : '<span class="num">' + nvA.niveau + "</span><small>" + titreNiveau(nvA.niveau) + "</small>") + "</div>" +
       '<p class="desc-a">' + esc(tx(s.description)) + (motif ? " " + esc(motif) : "") + "</p></div>";
     var nature = c.raison === "revision" ? __("Révision forcée") : c.type === "rappel" ? __("Rappel") : __("Quiz");
@@ -2458,7 +2456,7 @@ function demarrerJeu() {
       __('<button type="button" class="btn large" data-a="go">C\'est parti</button>') +
       (c.raison === "serie" ? __('<button type="button" class="btn sec large" data-a="stop-serie">Arrêter la série (sans prime)</button>') : "") +
       '<div id="ia-jouer"></div>' +
-      (enI || atI ? "" : galerieTheme(ici.stat)) + "</div>", __("L'IA a choisi"), {
+      (enI || atI ? "" : galerieTheme(ici.stat)) + "</div>", __("Ta case"), {
       go: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true }); },
       atome: function () { fermerFeuille(); if (atI) combattreAtome(atI.z); },
       "stop-serie": function () { M.abandonnerSerie(P); sauver(); fermerFeuille(); ouvrirJouer(); },
