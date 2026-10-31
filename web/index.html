@@ -154,6 +154,10 @@ p { margin: 0; }
 .feuille .meta { color: var(--muted); font-size: 14px; }
 
 .quiz { position: fixed; inset: 0; z-index: 30; background: var(--bg); overflow-y: auto; }
+/* Une fenêtre ouverte par-dessus fige la page de derrière : le doigt ne fait défiler que la fenêtre active (Victor). */
+html:has(body .voile, body .quiz, body .zoom-fig, body .liberation, body .alyca-scene, body .fete),
+body:has(.voile, .quiz, .zoom-fig, .liberation, .alyca-scene, .fete) { overflow: hidden; }
+.voile, .feuille, .quiz, .zoom-fig, .liberation, .alyca-scene, .fete { overscroll-behavior: contain; }
 .quiz .in { max-width: 560px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; gap: 18px;
   padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .quiz .haut { display: flex; align-items: center; gap: 12px; }
