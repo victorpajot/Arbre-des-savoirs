@@ -708,6 +708,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .masterclass .enonce-mc { font-weight: 700; font-size: 17px; }
 .masterclass .mc-faux { color: var(--bad); margin: 4px 0; }
 .masterclass .mc-retenir { border-left: 4px solid #E0A800; padding: 6px 10px; background: color-mix(in srgb, #E0A800 12%, var(--surface)); border-radius: 6px; }
+.masterclass .mc-intro { margin: 4px 0 12px; }
 .masterclass .mc-retenir b { display: block; }
 .masterclass .mc-bon { color: var(--good); font-weight: 700; margin: 4px 0; }
 .btn.sc-mc { background: #E0A800; color: #1F1600; }
@@ -4326,9 +4327,11 @@ function demarrerJeu() {
         (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + (q.figure ? htmlFigure(q.figure) : "") + "</div>";
     }
     // Le schéma de la fiche va dans le chapitre qui en parle (schema_fiche), sinon dans le premier.
-    var iSchema = Math.max(0, k.masterclass.chapitres.findIndex(function (ch) { return ch.schema_fiche; }));
+    // Victor (2026-10-31) : sans chapitre désigné, ce schéma résume toute la leçon (souvent une frise) : il ouvre l'étape 1, en introduction.
+    var iSchema = k.masterclass.chapitres.findIndex(function (ch) { return ch.schema_fiche; });
+    var intro = iSchema < 0 && k.fiche && k.fiche.schema ? '<div class="illus mc-intro">' + k.fiche.schema + "</div>" : "";
     var etapes = k.masterclass.chapitres.map(function (ch, i) {
-      return { titre: tx(ch.titre), html: ch.texte.map(function (x) { return "<p>" + esc(tx(x)) + "</p>"; }).join("") +
+      return { titre: tx(ch.titre), html: (i === 0 ? intro : "") + ch.texte.map(function (x) { return "<p>" + esc(tx(x)) + "</p>"; }).join("") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
         __('<p class="mc-retenir"><b>À retenir</b>') + esc(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });
