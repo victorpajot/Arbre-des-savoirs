@@ -591,7 +591,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       P.faveur = { valeur: 60, maj: t };
       M.verifierRecompenses(C6, P, t);
       const faire = M.rappelsDus(C6, P, t).map(k => ({ comp: k, type: "rappel" }));
-      for (let n = 0; n < 3; n++) { const c = M.choixIA(C6, P, t); if (c && (c.type === "quiz" || c.raison === "revision")) faire.push(c); }
+      for (let n = 0; n < 3; n++) { const c = M.choixIA(C6, P, t); if (c && (c.type === "quiz" || c.raison === "revision" || c.evoque)) faire.push(c); }
       for (const c of faire) {
         if (c.type === "quiz" && c.raison !== "ouvre_arbre" && !c.horsOrdre && !M.disponibles(C6, P, t).some(k => k.id === c.comp.id)) continue;
         const avant = butin(), reliques = Object.keys(P.objets).filter(id => !lot["objets:" + id]).length;
@@ -777,7 +777,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const qs = M.tirerQuestions(C9, P, "math.chine", 3);
   let r = M.terminerRappel(C9, P, "math.chine", qs.map(q => ({ id: q.id, correct: true })), t0);
   assert.ok(r.revision); assert.equal(P.revision, null); assert.equal(P.competences["math.chine"].palier, 3, "pas de palier gagné");
-  assert.ok(r.contextes.includes("revision_reussie")); assert.equal(r.plateau.a, rtDe(P)[12], "puis une case");
+  assert.ok(r.contextes.includes("revision_reussie")); assert.equal(r.plateau.a, rtDe(P)[11], "pion libéré sur sa case, qui garde son quiz (une case = un quiz)");
   // Révision ratée : la compétence reste, son rappel devient dû.
   [P, dep] = sur(14, 1, { type: "revision" }, P);
   const cible = P.revision.comp;
@@ -1477,6 +1477,46 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const ko = M.terminerRappel(C, P, "elec.torpille", [0, 1, 2].map(i => ({ id: "q" + i, correct: false })), T + 180000, { total: 3 });
   assert.equal(ko.issue, "echec"); assert.ok(e.maitrise, "gardée"); assert.equal(e.prochainRappel, T + 180000, "rappel dû");
   console.log("OK : une case = un quiz (rappel anticipé sur sa case)");
+}
+
+// Victor (2026-10-31) : une épreuve sur 3, Alyca impose un rappel dû (pion sur place) ; elle propose ensuite d'enchaîner
+// les rappels en attente contre une prime, versée seulement si tous sont réussis.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  C.plateau.regles.evenements = null;
+  const T = new Date(2026, 9, 8, 10).getTime(), J = 86400000, N = C.regles.rappels.force_tous;
+  const P = M.nouvellePartie(T); P.decalage = T - Date.now();
+  const ids = ["elec.ambre", "elec.torpille", "elec.boussole"];
+  ids.forEach(id => { P.competences[id] = { maitrise: true, palier: 1, prochainRappel: T - J, xp: 10, maitriseDepuis: T - 5 * J }; });
+  const libre = +Object.keys(C.plateau.competences_cases).find(n => !C.plateau.competences_cases[n].some(id => ids.includes(id)) && !C.plateau.competences_cases[n].some(id => id.startsWith("elec.")));
+  P.plateau.position = libre; P.depuisRappel = N - 1;
+  assert.notEqual(M.choixIA(C, P, T).raison, "rappel_force", "pas encore");
+  P.depuisRappel = N;
+  const x = M.choixIA(C, P, T);
+  assert.equal(x.raison, "rappel_force"); assert.ok(ids.includes(x.comp.id));
+  const pos = P.plateau.position;
+  const r = M.terminerRappel(C, P, x.comp.id, [0, 1, 2].map(i => ({ id: "q" + i, correct: true })), T, { total: 3, jouer: true });
+  assert.ok(r.horsCase); assert.equal(P.plateau.position, pos, "le pion reste sur sa case"); assert.equal(P.depuisRappel, 0);
+  const sp = M.serieProposable(C, P, T); assert.equal(sp.n, 2);
+  M.lancerSerie(C, P, T);
+  const solde = P.credits.solde;
+  for (let i = 0; i < 2; i++) {
+    const y = M.choixIA(C, P, T + i); assert.equal(y.raison, "serie"); assert.equal(y.serie.n, i + 1);
+    const ry = M.terminerRappel(C, P, y.comp.id, [0, 1, 2].map(j => ({ id: "s" + j, correct: true })), T + i, { total: 3, jouer: true });
+    if (i === 1) { assert.ok(ry.serie.fini && ry.serie.credits === sp.prime); }
+  }
+  assert.equal(P.credits.solde - solde >= sp.prime, true, "prime versée"); assert.equal(P.serie, null);
+  console.log("OK : rappel imposé une épreuve sur " + N + ", série de révisions et sa prime (" + sp.prime + ")");
+}
+
+// Victor (2026-10-31) : une année à taper est juste à 50 ans près.
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), {});
+  const q = C.questions.find(q => q.id === "elec.boussole.q10");
+  assert.ok(q.annee); assert.ok(M.corriger(q, String(q.reponse - 50)) && M.corriger(q, String(q.reponse + 50)));
+  assert.ok(!M.corriger(q, String(q.reponse + 51)));
+  assert.ok(!C.questions.find(q => q.id === "math.inde.q05").annee, "un âge n'est pas une année");
+  console.log("OK : années à 50 ans près (" + C.questions.filter(q => q.annee).length + " questions)");
 }
 
 // v31 : réussie avec des fautes, la faveur monte quand même un peu ; ratée, elle baisse.

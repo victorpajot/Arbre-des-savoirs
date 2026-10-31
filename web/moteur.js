@@ -69,8 +69,13 @@
   // --- Contenu ---------------------------------------------------------------
 
   // `extras` (facultatif) : { commentaires, objets, avatar, ia, plateau, frise, bibliotheque }, les fichiers du même nom.
+  // Victor (2026-10-31) : une année à taper est juste à `quiz.tolerance_annees` (50) ans près, avant ou après.
+  var ENONCE_ANNEE = /\bquelle ann[ée]e\b/i;
+  function estQuestionAnnee(q) { return q.type === "numerique" && !q.atome && ENONCE_ANNEE.test((q.enonce && q.enonce.fr) || "") && !/\bâge\b/i.test(q.enonce.fr); }
   function indexerContenu(regles, skills, questions, succes, extras) {
     extras = extras || {};
+    var TA = (regles.quiz && regles.quiz.tolerance_annees) || 0;
+    if (TA) questions.questions.forEach(function (q) { if (estQuestionAnnee(q)) { q.annee = true; q.tolerance = Math.max(q.tolerance || 0, TA); } });
     var c = {
       regles: regles,
       stats: regles.stats,
@@ -803,6 +808,7 @@
     var avant = verifierRecompenses(contenu, partie, t);
     if (reussi) ajouterButin(contenu, partie, avant, { type: "quiz", comp: id }, t, infos && infos.alea);
     var dep = jouerPlateau(contenu, partie, { type: "quiz", comp: id }, { reussi: reussi, parfait: parfait, chrono: chrono, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
+    if (jouer) partie.depuisRappel = (partie.depuisRappel || 0) + 1;
     var ag = agacerIA(contenu, partie, resultats.length - bonnes, !reussi, t);
     lotExceptionnel(partie, dep);
     var apres = verifierRecompenses(contenu, partie, t), rec = fusionRec(avant, apres);
@@ -838,6 +844,8 @@
     // « Une case = un quiz » (Victor, 2026-10-31) : sur sa case, une compétence acquise se rejoue en rappel même pas encore dû.
     // Ce rappel anticipé ne fait pas monter le palier ni ne décale l'échéance ; raté, le rappel devient dû sans perdre la compétence.
     var anticipe = !revision && t < e.prochainRappel;
+    var CCr = contenu.plateau && contenu.plateau.competences_cases, posR = partie.plateau && partie.plateau.position;
+    var horsCase = !!(CCr && posR != null && (CCr[String(posR)] || []).indexOf(id) < 0);
     retenirQuestions(e, resultats.map(function (x) { return x.id; }));
     marquerJour(partie, t);
     var nuit = compterSession(partie, resultats, t);
@@ -878,13 +886,24 @@
     if (jouer && contenu.parId[id]) consommerArbre(partie, contenu.parId[id].stat);
     var avant = verifierRecompenses(contenu, partie, t);
     if (reussi) ajouterButin(contenu, partie, avant, { type: "rappel", comp: id }, t, infos && infos.alea);
-    var dep = revision && !reussi ? null : jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi, parfait: false, chrono: false, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
+    // Un rappel qui n'est pas celui de la case (imposé, série) laisse le pion sur place : la case garde son quiz.
+    var dep = revision && !reussi ? null : jouerPlateau(contenu, partie, { type: "rappel", comp: id }, { reussi: reussi && !horsCase, parfait: false, chrono: false, jouer: jouer, uneCase: !!(infos && infos.uneCase) }, t);
+    if (jouer) partie.depuisRappel = anticipe ? (partie.depuisRappel || 0) + 1 : 0;
+    var serie = null, se = partie.serie;
+    if (se && se.ids[0] === id) {
+      se.ids.shift();
+      if (!reussi) { serie = { fini: true, rate: true, total: se.total, faits: se.total - se.ids.length }; partie.serie = null; }
+      else if (!se.ids.length) {
+        partie.credits.solde += se.prime; partie.credits.gagnes += se.prime;
+        serie = { fini: true, total: se.total, faits: se.total, credits: se.prime }; partie.serie = null;
+      } else serie = { fini: false, total: se.total, faits: se.total - se.ids.length, reste: se.ids.length, prime: se.prime };
+    }
     var ag = agacerIA(contenu, partie, resultats.length - bonnes, !reussi, t);
     lotExceptionnel(partie, dep);
     var apres = verifierRecompenses(contenu, partie, t), rec = fusionRec(avant, apres);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     var fa = reussi || revision || anticipe ? null : tenterFarce(contenu, partie, t, infos && infos.alea, contenu.parId[id] && contenu.parId[id].stat);
-    return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : anticipe ? "echec" : "perdue", anticipe: anticipe, bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
+    return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : anticipe ? "echec" : "perdue", anticipe: anticipe, horsCase: horsCase, serie: serie, bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
       avantPlateau: avant, apresPlateau: apres, theme: contenu.parId[id] ? contenu.parId[id].stat : null };
@@ -3102,6 +3121,30 @@
   // Un rappel dû passe d'abord (le plus en retard). Sinon, parmi les quiz ouverts, l'IA tire une raison :
   // la stat la plus faible ou le hasard. Le choix reste le même tant qu'on n'a pas joué.
   var RETARD_PRIORITAIRE = 2 * JOUR;
+  function rappelForceTous(contenu) { return (contenu.regles.rappels && contenu.regles.rappels.force_tous) || 3; }
+  // La série de révisions en cours : ses rappels restants encore dus et maîtrisés (les autres sont sautés).
+  function serieEnCours(contenu, partie, t) {
+    var se = partie.serie; if (!se) return null;
+    se.ids = se.ids.filter(function (id) { return contenu.parId[id] && estMaitrisee(partie, id); });
+    if (!se.ids.length) { partie.serie = null; return null; }
+    return se;
+  }
+  // Proposée après un rappel imposé : enchaîner tous les rappels dus ; tous réussis, prime en crédits.
+  function primeSerie(contenu, partie, n, t) {
+    var fav = faveurIA(contenu, partie, t), mult = fav ? fav.palier.butin : 1;
+    return Math.round(n * ((contenu.regles.rappels && contenu.regles.rappels.serie_credits_par_rappel) || 15) * mult);
+  }
+  function serieProposable(contenu, partie, t) {
+    if (partie.serie) return null;
+    var dus = rappelsDus(contenu, partie, t);
+    return dus.length >= 2 ? { n: dus.length, prime: primeSerie(contenu, partie, dus.length, t) } : null;
+  }
+  function lancerSerie(contenu, partie, t) {
+    var p = serieProposable(contenu, partie, t); if (!p) return null;
+    partie.serie = { ids: rappelsDus(contenu, partie, t).map(function (c) { return c.id; }), total: p.n, prime: p.prime, debut: t };
+    return partie.serie;
+  }
+  function abandonnerSerie(partie) { partie.serie = null; }
   // Victor (2026-10-31) : « une case = un quiz ». La case du pion donne toujours l'épreuve de sa compétence :
   // un quiz si elle n'est pas acquise (même verrouillée, hors ordre), un rappel si elle l'est, même pas encore dû.
   function choixIA(contenu, partie, t) {
@@ -3121,6 +3164,12 @@
     if (ach && k && k.stat !== ach.stat) evoque = [];
     function evoquee(c) { return evoque.indexOf(c.id) >= 0; }
     // Un rappel très en retard (RETARD_PRIORITAIRE) passe avant tout ; les autres attendent leur arbre.
+    // Victor (2026-10-31) : une série de révisions acceptée passe d'abord, puis, une épreuve sur `force_tous`,
+    // Alyca impose un rappel dû (le pion reste sur sa case). La case garde son quiz pour après.
+    var se = serieEnCours(contenu, partie, t);
+    if (se) return { comp: contenu.parId[se.ids[0]], type: "rappel", raison: "serie", stat: null, kase: k || null, serie: { n: se.total - se.ids.length + 1, total: se.total } };
+    var propreDu = dus.filter(evoquee)[0];
+    if (!propreDu && dus.length && (partie.depuisRappel || 0) >= rappelForceTous(contenu)) return { comp: dus[0], type: "rappel", raison: "rappel_force", stat: null, kase: k || null };
     if (!ach || (k && k.stat === ach.stat)) {
       var propre = evoque.map(function (id) { return contenu.parId[id]; }).filter(Boolean)[0];
       if (propre) {
@@ -3376,7 +3425,7 @@
     repliqueDuJour: repliqueDuJour,
     themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, casesParTour: casesParTour, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,

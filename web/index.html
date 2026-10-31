@@ -711,6 +711,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .masterclass .mc-retenir b { display: block; }
 .masterclass .mc-bon { color: var(--good); font-weight: 700; margin: 4px 0; }
 .btn.sc-mc { background: #E0A800; color: #1F1600; }
+.btn.sc-serie { background: #2E7D5B; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.btn.sc-serie small { font-size: 15px; font-weight: 500; opacity: .9; }
 .btn.mc-mur { width: 100%; margin: 6px 0 4px; }
 .nav-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .compte-z { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -2422,7 +2424,7 @@ function demarrerJeu() {
     // v15 : la case du pion annonce l'arbre de l'épreuve ; « hors case » quand cet arbre n'a rien à jouer.
     var sc = c.stat ? stat(c.stat) : s, kc = c.kase;
     // v35 (Victor) : noms de case et d'épreuve entre guillemets, sinon la phrase se lit mal.
-    var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: gu(tx(k.nom)), stat: tx(sc.nom), "case": kc ? gu(tx(kc.titre)) : "" }, c.raison === "hors_case" ? null : c.stat || (c.type === "quiz" ? k.stat : null)); sauver();
+    var rep = M.replique(C, P, ["jouer_" + c.raison], null, { comp: gu(tx(k.nom)), stat: tx(sc.nom), "case": kc ? gu(tx(kc.titre)) : "", n: c.serie ? c.serie.n : "", total: c.serie ? c.serie.total : "" }, c.raison === "hors_case" ? null : c.stat || (c.type === "quiz" ? k.stat : null)); sauver();
     // La case du pion en grand, avec son histoire, avant l'épreuve.
     var ici = M.caseN(C, P.plateau.position), atI = atomeSur(ici.n), enI = !atI && ennemiSur(ici.n);
     var bandeau = enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Ennemi</div><h2>') + esc(tx(enI.nom)) + __(' garde la case</h2><p class="titre-en">') + esc(tx(enI.titre)) + "</p>" + (enI.qui ? "<p>" + esc(tx(enI.qui)) + "</p>" : "") + __('<p>Bats-le pour voir ce qu\'il y a dessous.</p></div>') : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>') : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
@@ -2432,6 +2434,8 @@ function demarrerJeu() {
     var nvA = M.niveau(C, M.xpParStat(C, P)[s.id] || 0), ferme = !M.arbreOuvert(C, P, s.id);
     var motif = c.achat ? __("Faveur achetée : encore ") + M.arbreAchete(P).restant + __(" épreuve") + (M.arbreAchete(P).restant > 1 ? "s" : "") + __(" dans cet arbre.")
       : c.raison === "hors_case" && kc && statActif(kc.stat) ? __("Rien à jouer pour toi dans l'arbre ") + tx(stat(kc.stat).nom) + __(" de la case : l'IA improvise ailleurs.")
+      : c.raison === "rappel_force" ? __("Une épreuve sur ") + (C.regles.rappels.force_tous || 3) + __(", Alyca impose un rappel en attente : l'oubli n'attend pas.")
+      : c.raison === "serie" ? __("Série de révisions : rappel ") + c.serie.n + __(" sur ") + c.serie.total + __(". Tout réussi, la prime est à toi ; un raté et la série s'arrête.")
       : c.raison === "ouvre_arbre" ? __("Arbre encore fermé : réussis ce quiz pour l'ouvrir.")
       : c.raison === "revision" ? __("Révision forcée par la case.")
       : c.horsOrdre ? __("La case évoque ") + tx(k.nom) + (function () { var manque = k.prerequis.filter(function (p) { return !M.debloque(C, P, p); }).map(function (p) { return tx(C.parId[p].nom); }); return manque.length ? __(" : l'IA te la fait jouer tout de suite, même avant ") + manque.join(", ") + __(". Réussie, elle est acquise et ouvrira la suite de l'arbre quand ce prérequis le sera aussi.") : __(" : l'IA te la fait jouer tout de suite, même si l'arbre est encore fermé. Réussie, elle l'ouvre."); })()
@@ -2443,13 +2447,17 @@ function demarrerJeu() {
     var nature = c.raison === "revision" ? __("Révision forcée") : c.type === "rappel" ? __("Rappel") : __("Quiz");
     var blocEpreuve = '<div class="epreuve-choisie" style="--c:' + couleur(k.stat) + '">' + badgeComp(k, 52) + '<div class="txt"><div class="eyebrow">' + nature + __(" · niveau ") + k.rang + "</div><b>" + esc(tx(k.nom)) + "</b>" +
       (k.description ? "<span>" + esc(tx(k.description)) + "</span>" : "") + "</div>" +
+      (c.type === "rappel" && !c.evoque ? __('<span class="gain-e"><b>0</b><small>case</small></span>') +
+        __('<p class="meta">Ton pion reste sur sa case : elle garde son quiz pour après.</p></div>') :
       __('<span class="gain-e"><b>+1</b><small>case</small></span>') +
-      __('<p class="meta">Réussi, ton pion avance d\'une case. Parfois, Alyca met quelque chose sur ta route : un ennemi, un atome, une partie de Chrono ou un piège.</p></div>');
+      __('<p class="meta">Réussi, ton pion avance d\'une case. Parfois, Alyca met quelque chose sur ta route : un ennemi, un atome, une partie de Chrono ou un piège.</p></div>'));
     feuilleSimple('<div class="choix-ia">' + bandeau + '<div id="ia-jouer"></div>' + blocArbre + blocEpreuve +
       __('<button type="button" class="btn large" data-a="go">C\'est parti</button>') +
+      (c.raison === "serie" ? __('<button type="button" class="btn sec large" data-a="stop-serie">Arrêter la série (sans prime)</button>') : "") +
       (enI || atI ? "" : galerieTheme(ici.stat)) + "</div>", __("L'IA a choisi"), {
       go: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true }); },
       atome: function () { fermerFeuille(); if (atI) combattreAtome(atI.z); },
+      "stop-serie": function () { M.abandonnerSerie(P); sauver(); fermerFeuille(); ouvrirJouer(); },
     });
     feuille.querySelector("#ia-jouer").appendChild(comite(rep, true));
     brancherGalerie(feuille);
@@ -5316,7 +5324,7 @@ function demarrerJeu() {
         zoneRep.appendChild(b);
       });
     } else {
-      var f = el(__('<form class="saisie"><input id="saisie-num" inputmode="decimal" autocomplete="off" aria-label="Ta réponse" placeholder="Ta réponse">') + (q.unite ? '<span class="unite">' + esc(q.unite) + "</span>" : "") + __('<button type="submit" class="btn">Valider</button></form>'));
+      var f = el(__('<form class="saisie"><input id="saisie-num" inputmode="decimal" autocomplete="off" aria-label="Ta réponse" placeholder="Ta réponse">').replace('placeholder="' + __("Ta réponse"), 'placeholder="' + (q.annee ? __("Année, à 50 ans près") : __("Ta réponse"))) + (q.unite ? '<span class="unite">' + esc(q.unite) + "</span>" : "") + __('<button type="submit" class="btn">Valider</button></form>'));
       f.onsubmit = function (ev) {
         ev.preventDefault();
         var val = f.querySelector("input").value;
@@ -5359,6 +5367,12 @@ function demarrerJeu() {
       if (M.estEclair(quiz.res[quiz.res.length - 1])) {
         var mot = comite(M.replique(C, P, ["eclair"]));
         if (mot) { zoneRetour.appendChild(el('<div style="height:10px"></div>')); zoneRetour.appendChild(mot); }
+      }
+      // Victor (2026-10-31) : une année juste à 50 ans près, mais pas exacte : Alyca l'accorde, en le faisant remarquer.
+      var vA = ok && q.annee ? parseInt(String(quiz.res[quiz.res.length - 1].rep).replace(/\s/g, ""), 10) : NaN;
+      if (!isNaN(vA) && vA !== q.reponse) {
+        var mA = comite(M.replique(C, P, ["annee_approx"], null, { ecart: Math.abs(vA - q.reponse), annee: formatAnnee(q.reponse) }));
+        if (mA) { zoneRetour.appendChild(el('<div style="height:10px"></div>')); zoneRetour.appendChild(mA); }
       }
       // v15 : seuil hors d'atteinte, on coupe là. Les questions restantes ne sont pas dévoilées.
       var perdu = M.epreuvePerdue(C, quiz.mode === "rappel" ? "rappel" : "quiz", quiz.res.filter(function (x) { return x.correct; }).length, quiz.res.length, quiz.qs.length);
@@ -5507,12 +5521,16 @@ function demarrerJeu() {
       if (r.issue === "maitrisee") { titre = __("Compétence maîtrisée"); texte = __("Premier rappel ") + dansJours(r.prochainRappel) + "."; gain = '<span class="gain plus">+' + r.xp + __(" XP ") + esc(tx(s.nom)) + "</span>"; }
       else { titre = __("Pas encore"); texte = __("Il faut ") + besoin + __(" bonnes réponses sur ") + r.total + __(". Les explications t'aideront pour le prochain essai."); }
     } else {
-      if (r.revision && r.issue === "reussi") { titre = __("Révision réussie"); texte = __("Le souvenir tient. Prochain rappel le ") + dateCourte(r.prochainRappel) + ", " + dansJours(r.prochainRappel) + __(". Ton pion repart."); gain = '<span class="gain plus">+' + r.xp + __(" XP ") + esc(tx(s.nom)) + "</span>"; }
+      if (r.revision && r.issue === "reussi") { titre = __("Révision réussie"); texte = __("Le souvenir tient. Prochain rappel le ") + dateCourte(r.prochainRappel) + ", " + dansJours(r.prochainRappel) + __(". Ton pion est libre."); gain = '<span class="gain plus">+' + r.xp + __(" XP ") + esc(tx(s.nom)) + "</span>"; }
       else if (r.anticipe && r.issue === "echec") { titre = __("Rappel raté"); texte = __("Tu gardes la compétence, mais son rappel est dû dès maintenant. Ton pion reste sur sa case."); }
       else if (r.issue === "revision_ratee") { titre = __("Révision ratée"); texte = __("Tu gardes la compétence, mais son rappel est dû dès maintenant. Réussis-le vite pour ne pas la perdre."); }
       else if (r.issue === "reussi") { titre = __("Rappel réussi"); texte = __("Prochain rappel le ") + dateCourte(r.prochainRappel) + ", " + dansJours(r.prochainRappel) + "."; gain = '<span class="gain plus">+' + r.xp + __(" XP ") + esc(tx(s.nom)) + "</span>"; }
       else { titre = __("Compétence perdue"); texte = __("Il fallait ") + C.regles.rappels.bonnes_reponses_min + __(" bonnes réponses. Repasse le quiz complet pour la regagner."); gain = '<span class="gain moins">−' + r.xpPerdue + __(" XP ") + esc(tx(s.nom)) + "</span>"; }
     }
+    // Victor (2026-10-31) : rappels imposés et séries de révisions.
+    if (quiz.mode === "rappel" && r.horsCase && r.issue === "reussi" && quiz.jouer) texte += __(" Ton pion reste sur sa case : elle garde son quiz.");
+    if (r.serie) texte += " " + (r.serie.credits ? __("Série terminée : ") + r.serie.total + __(" rappels réussis, prime de ") + r.serie.credits + __(" crédits !") :
+      r.serie.rate ? __("Série interrompue : pas de prime cette fois.") : __("Série : ") + r.serie.faits + __(" sur ") + r.serie.total + __(". Encore ") + r.serie.reste + __(" pour la prime de ") + r.serie.prime + __(" crédits."));
     // v6 : trois temps, une chose à la fois. 1. le verdict et l'IA, 2. les récompenses une par une, 3. le pion qui avance.
     var cd = quiz.cartes || (quiz.cartes = r.apresPlateau ? cartesEnDeux(r, null, r.theme) : { recs: recompensesBilan(r), nAvant: null }), recs = cd.recs;
     var etapes = ["verdict"];
@@ -5553,7 +5571,15 @@ function demarrerJeu() {
     }
     else if (!suite && M.piegeEnAttente(P)) boutonPiege(wrap, fermerQuiz);
     else if (!suite && M.chronoEnAttente(P)) boutonChrono(wrap, fermerQuiz);
-    else if (!suite) finEpreuve(wrap, fermerQuiz);
+    else if (!suite) {
+      var sp = quiz.mode === "rappel" && quiz.jouer && r.horsCase && !r.serie && !P.serie && M.serieProposable(C, P, maintenant());
+      if (sp) {
+        var bs = el('<button type="button" class="btn large sc-serie">' + __("Enchaîner les ") + sp.n + __(" rappels en attente") + "<small>" + __("Tous réussis : ") + sp.prime + __(" crédits") + "</small></button>");
+        bs.onclick = function () { M.lancerSerie(C, P, maintenant()); sauver(); fermerQuiz(); ouvrirJouer(); };
+        wrap.appendChild(bs);
+      }
+      finEpreuve(wrap, fermerQuiz);
+    }
     else {
       var bt = el('<button type="button" class="btn large">' + libelle + "</button>");
       bt.onclick = function () { quiz.etape = e + 1; rendreQuiz(); };
