@@ -2416,8 +2416,8 @@ function demarrerJeu() {
       : c.raison === "hors_case" && kc && statActif(kc.stat) ? __("Rien à jouer pour toi dans l'arbre ") + tx(stat(kc.stat).nom) + __(" de la case : l'IA improvise ailleurs.")
       : c.raison === "ouvre_arbre" ? __("Arbre encore fermé : réussis ce quiz pour l'ouvrir.")
       : c.raison === "revision" ? __("Révision forcée par la case.")
+      : c.horsOrdre ? __("La case évoque ") + tx(k.nom) + (function () { var manque = k.prerequis.filter(function (p) { return !M.debloque(C, P, p); }).map(function (p) { return tx(C.parId[p].nom); }); return manque.length ? __(" : l'IA te la fait jouer tout de suite, même avant ") + manque.join(", ") + __(". Réussie, elle est acquise et ouvrira la suite de l'arbre quand ce prérequis le sera aussi.") : __(" : l'IA te la fait jouer tout de suite, même si l'arbre est encore fermé. Réussie, elle l'ouvre."); })()
       : c.evoque ? __("La case évoque ") + tx(k.nom) + __(" : l'IA l'a prise.")
-      : c.vers ? __("La case évoque ") + tx(c.vers.nom) + __(", encore verrouillée : l'IA te fait passer par ") + tx(k.nom) + __(", qui y mène.")
       : kc && kc.stat === s.id ? __("C'est l'arbre de la case où tu te trouves.") : "";
     var blocArbre = '<div class="arbre-choisi" style="--c:' + couleur(s.id) + '">' + iconeArbre(s.id, 56) + __('<div class="txt"><div class="eyebrow">Arbre choisi</div><b>') + esc(tx(s.nom)) + "</b><span>" + esc(tx(s.branche)) + "</span></div>" +
       '<div class="niv-a">' + (ferme ? ICONE_CADENAS + __("<small>Fermé</small>") : '<span class="num">' + nvA.niveau + "</span><small>" + titreNiveau(nvA.niveau) + "</small>") + "</div>" +
@@ -2891,7 +2891,7 @@ function demarrerJeu() {
     if (st.etat === "verrouillee") return __("Verrouillée");
     if (st.etat === "disponible") return st.dejaPerdue ? __("Perdue, à regagner") : __("Disponible");
     if (st.etat === "a_reviser") return __("Rappel à faire");
-    return (st.gelee ? __("Gelée · ") : __("Maîtrisée · ")) + __("rappel ") + dansJours(st.prochainRappel);
+    return (st.horsOrdre ? __("Acquise sur sa case · ") : st.gelee ? __("Gelée · ") : __("Maîtrisée · ")) + __("rappel ") + dansJours(st.prochainRappel);
   }
   function vueArbre() {
     var t = maintenant(), v = el('<div class="vue"></div>'), xp = M.xpParStat(C, P);
@@ -2966,7 +2966,8 @@ function demarrerJeu() {
     if (st.etat === "maitrisee" || st.etat === "a_reviser") {
       lignes.push(__("Rappel ") + ((e.palier || 0) + 1) + __(" sur ") + iv.length + (iv.length ? "+" : "") + " · " + (st.etat === "a_reviser" ? retard(e.prochainRappel) : __("prévu le ") + dateCourte(e.prochainRappel) + ", " + dansJours(e.prochainRappel)) + ".");
       lignes.push(__("Elle rapporte ") + (e.xp || 0) + __(" XP à ") + tx(s.nom) + ".");
-      if (st.gelee) lignes.push(__("Gelée : un prérequis a été perdu. Elle reste acquise, mais ne débloque plus rien tant qu'il n'est pas regagné."));
+      if (st.horsOrdre) lignes.push(__("Acquise sur sa case, avant son prérequis. Elle ouvrira la suite de l'arbre quand tu maîtriseras : ") + k.prerequis.filter(function (p) { return !M.debloque(C, P, p); }).map(function (p) { return tx(C.parId[p].nom); }).join(", ") + ".");
+      else if (st.gelee) lignes.push(__("Gelée : un prérequis a été perdu. Elle reste acquise, mais ne débloque plus rien tant qu'il n'est pas regagné."));
     }
     if (C.plateau && (st.etat === "disponible" || st.etat === "a_reviser")) {
       var v = M.valeurEpreuve(C, P, { type: st.etat === "disponible" ? "quiz" : "rappel", comp: id }, t);

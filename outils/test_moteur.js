@@ -467,7 +467,10 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       const nP = C5.plateau.cases.find(k => k.id === "ptahhotep").n;
       const O = M.nouvellePartie(t0); O.plateau.position = nP;
       const x = M.choixIA(C5, O, t0);
-      assert.equal(x.raison, "ouvre_arbre"); assert.equal(x.stat, "eloquence");
+      // Victor (2026-10-31) : la compétence évoquée par la case passe avant la porte de l'arbre, même arbre fermé.
+      const ev = C5.plateau.competences_cases[nP] || [];
+      if (ev.length) { assert.equal(x.raison, "case"); assert.ok(ev.includes(x.comp.id)); } else assert.equal(x.raison, "ouvre_arbre");
+      assert.equal(x.stat, "eloquence");
       M.terminerQuiz(C5, O, x.comp.id, juste(O, x.comp.id, 5, 0), t0);
       assert.ok(!M.arbreOuvert(C5, O, "eloquence"), "raté : toujours fermé");
       O.plateau.position = nP;
@@ -491,6 +494,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       const x = M.choixIA(C5, Q, t0);
       const jouable = M.disponibles(C5, Q, t0).some(c => c.stat === k.stat);
       const ferme = !M.arbreOuvert(C5, Q, k.stat);
+      // Victor (2026-10-31) : la case évoque une compétence non acquise, même verrouillée : c'est elle qu'on joue.
+      const ev = (C5.plateau.competences_cases[k.n] || []).filter(id => C5.parId[id] && !(Q.competences[id] && Q.competences[id].maitrise));
+      if (ev.length) { assert.equal(x.raison, "case", "case " + k.n); assert.ok(ev.includes(x.comp.id), "compétence de la case " + k.n); assert.equal(x.kase.n, k.n); return; }
       assert.equal(x.raison, ferme ? "ouvre_arbre" : jouable ? "case" : "hors_case", "case " + k.n);
       if (ferme) { assert.equal(x.comp.stat, k.stat); assert.equal(x.comp.rang, 1); }
       if (jouable) assert.equal(x.comp.stat, k.stat, "épreuve de l'arbre de la case " + k.n);
@@ -591,7 +597,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       const faire = M.rappelsDus(C6, P, t).map(k => ({ comp: k, type: "rappel" }));
       for (let n = 0; n < 3; n++) { const c = M.choixIA(C6, P, t); if (c && (c.type === "quiz" || c.raison === "revision")) faire.push(c); }
       for (const c of faire) {
-        if (c.type === "quiz" && c.raison !== "ouvre_arbre" && !M.disponibles(C6, P, t).some(k => k.id === c.comp.id)) continue;
+        if (c.type === "quiz" && c.raison !== "ouvre_arbre" && !c.horsOrdre && !M.disponibles(C6, P, t).some(k => k.id === c.comp.id)) continue;
         const avant = butin(), reliques = Object.keys(P.objets).filter(id => !lot["objets:" + id]).length;
         const q = M.tirerQuestions(C6, P, c.comp.id, c.type === "rappel" ? 3 : 5).map(x => ({ id: x.id, correct: rnd() < 0.85 }));
         const res = (c.type === "rappel" ? M.terminerRappel : M.terminerQuiz)(C6, P, c.comp.id, q, t, { jouer: true, alea: rnd });
@@ -1430,8 +1436,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const x = M.choixIA(C, P, T);
   assert.equal(x.stat, "savoir");
   const dispo = M.disponibles(C, P, T).some(c => c.id === "sci.genetique");
-  if (dispo) assert.equal(x.comp.id, "sci.genetique"); else assert.equal(x.vers && x.vers.id, "sci.genetique", "prérequis vers Génétique");
-  // Un rappel d'un autre arbre, à peine dû, ne passe plus devant la case.
+  // Victor (2026-10-31) : même verrouillée, la compétence de la case est jouée (l'ambre sur la case de l'ambre).
+  assert.equal(x.comp.id, "sci.genetique", "la case donne sa propre compétence");
+  if (!dispo) assert.ok(x.horsOrdre, "verrouillée : jouée hors ordre");
+  if (!dispo) {
+    const k = C.parId["sci.genetique"];
+    M.terminerQuiz(C, P, k.id, Array.from({ length: 5 }, (_, i) => ({ id: "q" + i, correct: true })), T, { total: 5 });
+    const st = M.statut(C, P, k.id, T);
+    assert.equal(st.etat, "maitrisee"); assert.ok(st.horsOrdre && st.gelee, "acquise hors ordre, ne débloque pas la suite");
+    assert.ok(C.competences.filter(c => c.prerequis.includes(k.id)).every(c => M.statut(C, P, c.id, T).etat !== "disponible"), "la suite reste fermée");
+  }
   console.log("OK : v31 case → compétence évoquée (" + x.comp.id + ")");
 }
 

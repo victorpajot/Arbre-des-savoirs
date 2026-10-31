@@ -549,6 +549,7 @@
       return {
         etat: t >= e.prochainRappel ? "a_reviser" : "maitrisee",
         gelee: !prerequisOk,
+        horsOrdre: !prerequisOk && !!e.horsOrdre,
         prochainRappel: e.prochainRappel,
         palier: e.palier,
       };
@@ -784,6 +785,7 @@
       e.palier = 0;
       e.prochainRappel = ajouterJours(t, r.rappels.intervalles_jours[0]);
       e.xp = xp;
+      e.horsOrdre = !k.prerequis.every(function (p) { return debloque(contenu, partie, p); });
     } else {
       partie.compteurs.quizRates++;
     }
@@ -3081,17 +3083,13 @@
     if (dusEvoques.length) return { comp: dusEvoques[0], type: "rappel", raison: "rappel", stat: st, kase: k || null, achat: !!ach, evoque: true };
     var dispoEvoques = dispo.filter(evoquee);
     if (dispoEvoques.length) return { comp: dispoEvoques[graine % dispoEvoques.length], type: "quiz", raison: "case", stat: st, kase: k, achat: !!ach, evoque: true };
-    // Compétence évoquée encore verrouillée : l'IA prend le prérequis jouable qui en rapproche (Cellule avant Génétique).
-    var chemin = [];
-    evoque.forEach(function (id) {
-      var file = (contenu.parId[id] ? contenu.parId[id].prerequis : []).slice(), vu = {};
-      while (file.length) {
-        var p = file.shift(); if (vu[p] || !contenu.parId[p]) continue; vu[p] = true;
-        if (dispo.some(function (c) { return c.id === p; })) { if (!chemin.some(function (x) { return x.comp.id === p; })) chemin.push({ comp: contenu.parId[p], vers: id }); }
-        else file = file.concat(contenu.parId[p].prerequis);
-      }
+    // Victor (2026-10-31) : la case de l'ambre donne le quiz de l'ambre, même verrouillé (prérequis manquant ou arbre
+    // fermé). Réussi, il est acquis ; il ne débloque la suite qu'une fois ses prérequis maîtrisés (hors ordre).
+    var horsOrdre = evoque.map(function (id) { return contenu.parId[id]; }).filter(function (c) {
+      if (!c || (ach && c.stat !== ach.stat)) return false;
+      var e = partie.competences[c.id]; return !(e && e.maitrise);
     });
-    if (chemin.length) { var ch = chemin[graine % chemin.length]; return { comp: ch.comp, type: "quiz", raison: "case", stat: st, kase: k, achat: !!ach, vers: contenu.parId[ch.vers] }; }
+    if (horsOrdre.length) { var ho = horsOrdre[graine % horsOrdre.length]; return { comp: ho, type: "quiz", raison: "case", stat: ho.stat, kase: k, achat: !!ach, evoque: true, horsOrdre: true }; }
     var porte = st && porteArbre(contenu, partie, st);
     if (porte) return { comp: porte, type: "quiz", raison: "ouvre_arbre", stat: st, kase: k };
     var dusIci = dus.filter(function (c) { return c.stat === st; });
