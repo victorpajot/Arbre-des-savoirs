@@ -450,7 +450,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     // v19 : bonus du bouton Jouer tiré entre 0 et 4.
     assert.equal(r.plateau.bonusJouer, 0); assert.equal(r.plateau.valeur, 1, "une case par épreuve réussie");
     // v31 : un rappel d'un autre arbre n'attend plus que son arbre… sauf s'il est très en retard.
+    // Victor (2026-10-31) : « une case = un quiz » : sur sa case, la compétence acquise revient en rappel.
     const t1 = P.competences[c.comp.id].prochainRappel + 3 * jour;
+    P.plateau.position = +Object.keys(C5.plateau.competences_cases).find(n => C5.plateau.competences_cases[n].includes(c.comp.id));
     const c2 = M.choixIA(C5, P, t1);
     assert.equal(c2.type, "rappel"); assert.equal(c2.comp.id, c.comp.id);
     // v15 : une case d'arbre fermé lance son premier quiz ; raté, l'arbre reste fermé ; réussi, il s'ouvre.
@@ -1455,22 +1457,26 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   console.log("OK : v31 case → compétence évoquée (" + x.comp.id + ")");
 }
 
-// Victor (2026-10-31) : compétence de la case déjà acquise → l'épreuve suivante montre sa propre case (la torpille → la boussole).
+// Victor (2026-10-31) : « une case = un quiz ». Déjà acquise, la compétence de la case revient en rappel anticipé :
+// réussi, ni palier ni échéance ne bougent ; raté, il devient dû sans perdre la compétence.
 {
   const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
   const T = new Date(2026, 9, 6, 10).getTime();
   const P = M.nouvellePartie(T); P.decalage = T - Date.now();
-  const scrib = C.plateau.cases.find(k => k.id === "torpille-scribonius" || /Scribonius/.test(k.titre.fr));
-  P.plateau.position = scrib.n;
+  const n = +Object.keys(C.plateau.competences_cases).find(k => C.plateau.competences_cases[k].includes("elec.torpille"));
+  P.plateau.position = n;
   const x0 = M.choixIA(C, P, T);
-  assert.equal(x0.comp.id, "elec.torpille"); assert.ok(!x0.kaseEpreuve, "sa propre case : rien à retourner");
+  assert.equal(x0.comp.id, "elec.torpille"); assert.equal(x0.type, "quiz");
   M.terminerQuiz(C, P, "elec.torpille", Array.from({ length: 5 }, (_, i) => ({ id: "q" + i, correct: true })), T, { total: 5 });
-  P.plateau.position = scrib.n; P.revision = null;
+  P.plateau.position = n; P.revision = null;
   const x = M.choixIA(C, P, T + 60000);
-  assert.notEqual(x.comp.id, "elec.torpille");
-  assert.ok(x.kaseEpreuve, "la case de l'épreuve est montrée");
-  assert.ok(C.plateau.competences_cases[x.kaseEpreuve.n].includes(x.comp.id), "la case montrée évoque l'épreuve");
-  console.log("OK : case acquise → case de l'épreuve (" + x.comp.id + ", " + x.kaseEpreuve.titre.fr + ")");
+  assert.equal(x.comp.id, "elec.torpille", "la case garde son quiz"); assert.equal(x.type, "rappel");
+  const e = P.competences["elec.torpille"], ech = e.prochainRappel, pal = e.palier || 0;
+  const ok = M.terminerRappel(C, P, "elec.torpille", [0, 1, 2].map(i => ({ id: "q" + i, correct: true })), T + 120000, { total: 3 });
+  assert.ok(ok.anticipe && ok.issue === "reussi"); assert.equal(e.prochainRappel, ech); assert.equal(e.palier || 0, pal);
+  const ko = M.terminerRappel(C, P, "elec.torpille", [0, 1, 2].map(i => ({ id: "q" + i, correct: false })), T + 180000, { total: 3 });
+  assert.equal(ko.issue, "echec"); assert.ok(e.maitrise, "gardée"); assert.equal(e.prochainRappel, T + 180000, "rappel dû");
+  console.log("OK : une case = un quiz (rappel anticipé sur sa case)");
 }
 
 // v31 : réussie avec des fautes, la faveur monte quand même un peu ; ratée, elle baisse.
