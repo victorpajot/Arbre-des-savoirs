@@ -1327,7 +1327,7 @@
     },
     "portraits": {
      "type": "array",
-     "description": "v15 : portraits des personnes qu'une question fait choisir par leur nom, montrés avec une biographie au retour de la question.",
+     "description": "v15 : portraits des personnes qu'une question fait choisir par leur nom, montrés avec une biographie au retour de la question. Aussi : les personnages importants des masterclass (personnages.json d'un pack), dont le portrait se pose à leur première mention.",
      "items": {
       "type": "object",
       "additionalProperties": false,
@@ -1369,6 +1369,13 @@
        },
        "theme": {
         "$ref": "#/$defs/theme"
+       },
+       "noms": {
+        "type": "array",
+        "description": "Victor (2026-10-31) : les autres façons dont les textes nomment la personne (« Démosthène », « Luther ») ; sans ce champ, le nom de famille seul suffit s'il a 5 lettres ou plus.",
+        "items": {
+         "$ref": "#/$defs/texte"
+        }
        }
       }
      }
@@ -3376,13 +3383,34 @@
         "type": "object",
         "description": "Réglages que le pack propose à la partie (M.REGLAGES) : une nouvelle partie prend ceux sur lesquels tous ses domaines allumés s'accordent.",
         "properties": {
-         "allume": {"type": "boolean", "description": "false : éteint par défaut, à allumer dans l'assistant ou les réglages."},
-         "ton": {"type": "string", "pattern": "^[a-z]+$", "description": "Ton d'Alyca : ses répliques « ton.<ton>.<moment> »."},
-         "voix": {"type": "boolean"},
-         "texte": {"enum": ["grand"]},
-         "ultimatum": {"type": "boolean"},
-         "vol": {"type": "boolean"},
-         "mur": {"enum": ["revisions"]}
+         "allume": {
+          "type": "boolean",
+          "description": "false : éteint par défaut, à allumer dans l'assistant ou les réglages."
+         },
+         "ton": {
+          "type": "string",
+          "pattern": "^[a-z]+$",
+          "description": "Ton d'Alyca : ses répliques « ton.<ton>.<moment> »."
+         },
+         "voix": {
+          "type": "boolean"
+         },
+         "texte": {
+          "enum": [
+           "grand"
+          ]
+         },
+         "ultimatum": {
+          "type": "boolean"
+         },
+         "vol": {
+          "type": "boolean"
+         },
+         "mur": {
+          "enum": [
+           "revisions"
+          ]
+         }
         },
         "additionalProperties": false
        }

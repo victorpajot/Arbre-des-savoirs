@@ -19,6 +19,7 @@ Un pack décrit ses portraits dans packs/<id>/portraits.json, une recette par sa
             cerveau, menottes, thermometre, diapason, metronome, globe, rouleau, aucun
 
     python3 outils/portrait.py <pack>             remplit couleurs, base et cheveux des savants du pack
+                                                  (savants.json) et des personnages de ses masterclass (personnages.json)
     python3 outils/portrait.py <pack> apercu.png  et dessine une planche pour vérifier à l'œil
 """
 import json
@@ -368,15 +369,21 @@ def main(args):
         return 1
     dossier = RACINE / "packs" / args[0]
     recettes = json.loads((dossier / "portraits.json").read_text(encoding="utf-8"))
-    chemin = dossier / "savants.json"
-    savants = json.loads(chemin.read_text(encoding="utf-8"))
-    par_id = {s["id"]: s for s in savants}
+    # Les savants jouables (savants.json) et les personnages des masterclass (personnages.json) se dessinent pareil.
+    fichiers = {}
+    par_id = {}
+    for nom in ("savants.json", "personnages.json"):
+        chemin = dossier / nom
+        if chemin.exists():
+            fichiers[chemin] = json.loads(chemin.read_text(encoding="utf-8"))
+            par_id.update({s["id"]: s for s in fichiers[chemin]})
     for r in recettes:
         if r["id"] not in par_id:
-            sys.exit(f"portraits.json : aucun savant « {r['id']} » dans savants.json")
+            sys.exit(f"portraits.json : aucun savant ni personnage « {r['id']} » (savants.json, personnages.json)")
         par_id[r["id"]]["couleurs"], par_id[r["id"]]["base"], par_id[r["id"]]["cheveux"] = portrait(r)
-    chemin.write_text(json.dumps(savants, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print(f"{len(recettes)} portraits dessinés dans {chemin.relative_to(RACINE)}")
+    for chemin, liste in fichiers.items():
+        chemin.write_text(json.dumps(liste, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    print(f"{len(recettes)} portraits dessinés dans {dossier.relative_to(RACINE)}")
     if len(args) > 1:
         from PIL import Image
         from dessin import PALETTE

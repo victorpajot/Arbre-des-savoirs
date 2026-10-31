@@ -37,6 +37,7 @@ EMPLACEMENTS = {
     "dessins.json": ("succes.json", ("dessins",)),
     "objets.json": ("objets.json", ("objets",)),
     "savants.json": ("avatar.json", ("savants",)),
+    "personnages.json": ("avatar.json", ("portraits",)),
     "accessoires.json": ("avatar.json", ("accessoires",)),
     "tenues.json": ("avatar.json", ("tenues_farce",)),
     "masques.json": ("ia.json", ("masques",)),

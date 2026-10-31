@@ -717,6 +717,11 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .date-ep svg { width: 14px; height: 14px; vertical-align: -2px; margin-right: 3px; }
 .ep-antiquite { --ep: var(--ep-antiquite); } .ep-moyen-age { --ep: var(--ep-moyen-age); } .ep-renaissance { --ep: var(--ep-renaissance); }
 .ep-classique { --ep: var(--ep-classique); } .ep-xixe { --ep: var(--ep-xixe); } .ep-xxe { --ep: var(--ep-xxe); }
+.mc-persos { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 14px 0 4px; }
+.mc-perso { display: flex; align-items: center; gap: 10px; margin: 0; flex: 1 1 150px; min-width: 0; }
+.mc-perso .cadre-p { flex: none; padding: 6px 8px 0; border-radius: 12px; background: var(--parchemin); border: 2px solid color-mix(in srgb, var(--accent) 45%, #fff); }
+.mc-perso figcaption { font-size: 14px; line-height: 1.3; }
+.mc-perso figcaption b { display: block; font-family: var(--f-display); font-size: 17px; }
 .legende-ep { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; font-size: 15px; }
 .date-ep svg { display: inline-block; }
 .legende-ep .date-ep { display: inline-flex; align-items: center; padding: 2px 6px; }
@@ -4372,6 +4377,56 @@ function demarrerJeu() {
   }
   function aMasterclass(k) { return !!(k && k.masterclass && k.masterclass.chapitres && k.masterclass.chapitres.length); }
   // `retour` (facultatif) : le texte du bouton qui ramène d'où on vient (le mur de la honte).
+  // Victor (2026-10-31) : « voir des personnages à chaque fois qu'on introduit un personnage important ».
+  // Chaque personne qui a un portrait (savants jouables, portraits des packs) est reconnue par son nom dans le texte :
+  // à sa première apparition dans la leçon, son portrait se pose à côté du paragraphe.
+  var indexPersonnes = null;
+  function personnesConnues() {
+    if (indexPersonnes) return indexPersonnes;
+    var L = [], vus = {}, parNom = {};
+    if (!C.avatar) return (indexPersonnes = L);
+    C.avatar.savants.map(function (x) { return [x, "savant"]; }).concat((C.avatar.portraits || []).map(function (x) { return [x, "portrait"]; })).forEach(function (pf) {
+      var x = pf[0], nom = tx(x.nom); if (vus[nom]) return; vus[nom] = 1;
+      var noms = [nom].concat((x.noms || []).map(tx)), mots = nom.split(" "), fam = null;
+      // Le nom de famille seul, s'il est assez long et propre à une seule personne connue.
+      if (!x.noms && mots.length > 1 && mots[mots.length - 1].length >= 5) { fam = mots[mots.length - 1]; parNom[fam] = (parNom[fam] || 0) + 1; }
+      L.push({ p: x, famille: pf[1], noms: noms, fam: fam });
+    });
+    function alt(ns) { return ns.map(function (n) { return n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }).sort(function (a, b) { return b.length - a.length; }).join("|"); }
+    L.forEach(function (e) {
+      var re = "(?<![\\p{L}'’-])(?:" + alt(e.noms) + ")(?![\\p{L}])";
+      // Le nom seul, pas précédé d'un autre prénom en milieu de phrase (« Michael Clark » n'est pas Mamie Clark).
+      if (e.fam && parNom[e.fam] === 1) re += "|(?<![\\p{L}'’-])(?<!(?<![.!?»:] |^)\\p{Lu}\\p{Ll}+ )" + alt([e.fam]) + "(?![\\p{L}])";
+      e.re = new RegExp(re, "u");
+    });
+    return (indexPersonnes = L);
+  }
+  function formatVie(t) {
+    var parts = String(t || "").split(" / "), nums = parts.map(function (x) { var m = /^(vers )?(-?\d+)$/.exec(x.trim()); return m ? { v: m[1] ? __("vers ") : "", n: +m[2] } : null; });
+    if (nums.some(function (x) { return !x; })) return { txt: t, a: null };
+    var tousAv = nums.every(function (x) { return x.n < 0; });
+    var txt = nums.map(function (x) { return x.v + Math.abs(x.n) + (x.n < 0 && !tousAv ? __(" av. J.-C.") : ""); }).join(" – ") + (tousAv ? __(" av. J.-C.") : "");
+    return { txt: txt, a: nums[0].n };
+  }
+  function htmlPersonnage(e) {
+    var v = formatVie(e.p.annees);
+    return '<figure class="mc-perso"><div class="cadre-p">' + svgSavant(e.p, 52) + "</div><figcaption><b>" + esc(tx(e.p.nom)) + "</b>" +
+      (v.a != null ? pastilleDate(v.a, v.txt, true) : esc(v.txt)) + "</figcaption></figure>";
+  }
+  // Le paragraphe, précédé des portraits des personnes qu'il cite pour la première fois dans la leçon.
+  function paragraphePersonnes(texte, vus) {
+    // Les noms trouvés dans le paragraphe ; un nom pris dans un plus long (« Luther » dans « Martin Luther King ») ne compte pas.
+    var tr = [];
+    personnesConnues().forEach(function (e) { var m = e.re.exec(texte); if (m) tr.push({ e: e, i: m.index, j: m.index + m[0].length }); });
+    tr = tr.filter(function (x) { return !tr.some(function (y) { return y !== x && y.i <= x.i && y.j >= x.j && y.j - y.i > x.j - x.i; }); })
+      .sort(function (a, b) { return a.i - b.i; });
+    var html = "", n = 0;
+    tr.forEach(function (x) {
+      if (vus[x.e.p.id] || n >= 2) return;
+      vus[x.e.p.id] = 1; html += htmlPersonnage(x.e); n++;
+    });
+    return (html ? '<div class="mc-persos">' + html + "</div>" : "") + "<p>" + escD(texte) + "</p>";
+  }
   function ouvrirMasterclass(id, rates, retour) {
     var k = C.parId[id]; if (!aMasterclass(k)) return;
     // Imposée par l'IA (deux épreuves ratées de suite) : sa réplique en tête, et la consigne tombe au dernier chapitre.
@@ -4388,8 +4443,9 @@ function demarrerJeu() {
     // Victor (2026-10-31) : sans chapitre désigné, ce schéma résume toute la leçon (souvent une frise) : il ouvre l'étape 1, en introduction.
     var iSchema = k.masterclass.chapitres.findIndex(function (ch) { return ch.schema_fiche; });
     var intro = iSchema < 0 && k.fiche && k.fiche.schema ? '<div class="illus mc-intro">' + k.fiche.schema + "</div>" : "";
+    var vusPerso = {};
     var etapes = k.masterclass.chapitres.map(function (ch, i) {
-      return { titre: tx(ch.titre), html: (i === 0 ? intro : "") + ch.texte.map(function (x) { return "<p>" + escD(tx(x)) + "</p>"; }).join("") +
+      return { titre: tx(ch.titre), html: (i === 0 ? intro : "") + ch.texte.map(function (x) { return paragraphePersonnes(tx(x), vusPerso); }).join("") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
         __('<p class="mc-retenir"><b>À retenir</b>') + escD(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });
