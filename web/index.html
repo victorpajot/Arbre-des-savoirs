@@ -2452,8 +2452,7 @@ function demarrerJeu() {
       (k.description ? "<span>" + esc(tx(k.description)) + "</span>" : "") + "</div>" +
       (c.type === "rappel" && !c.evoque ? __('<span class="gain-e"><b>0</b><small>case</small></span>') +
         __('<p class="meta">Ton pion reste sur sa case : elle garde son quiz pour après.</p></div>') :
-      __('<span class="gain-e"><b>+1</b><small>case</small></span>') +
-      __('<p class="meta">Réussi, ton pion avance d\'une case. Parfois, Alyca met quelque chose sur ta route : un ennemi, un atome, une partie de Chrono ou un piège.</p></div>'));
+      __('<span class="gain-e"><b>+1</b><small>case</small></span>') + "</div>");
     feuilleSimple('<div class="choix-ia">' + bandeau + blocArbre + blocEpreuve +
       __('<button type="button" class="btn large" data-a="go">C\'est parti</button>') +
       (c.raison === "serie" ? __('<button type="button" class="btn sec large" data-a="stop-serie">Arrêter la série (sans prime)</button>') : "") +
