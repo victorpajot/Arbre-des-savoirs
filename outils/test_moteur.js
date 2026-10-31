@@ -1455,6 +1455,24 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   console.log("OK : v31 case → compétence évoquée (" + x.comp.id + ")");
 }
 
+// Victor (2026-10-31) : compétence de la case déjà acquise → l'épreuve suivante montre sa propre case (la torpille → la boussole).
+{
+  const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
+  const T = new Date(2026, 9, 6, 10).getTime();
+  const P = M.nouvellePartie(T); P.decalage = T - Date.now();
+  const scrib = C.plateau.cases.find(k => k.id === "torpille-scribonius" || /Scribonius/.test(k.titre.fr));
+  P.plateau.position = scrib.n;
+  const x0 = M.choixIA(C, P, T);
+  assert.equal(x0.comp.id, "elec.torpille"); assert.ok(!x0.kaseEpreuve, "sa propre case : rien à retourner");
+  M.terminerQuiz(C, P, "elec.torpille", Array.from({ length: 5 }, (_, i) => ({ id: "q" + i, correct: true })), T, { total: 5 });
+  P.plateau.position = scrib.n; P.revision = null;
+  const x = M.choixIA(C, P, T + 60000);
+  assert.notEqual(x.comp.id, "elec.torpille");
+  assert.ok(x.kaseEpreuve, "la case de l'épreuve est montrée");
+  assert.ok(C.plateau.competences_cases[x.kaseEpreuve.n].includes(x.comp.id), "la case montrée évoque l'épreuve");
+  console.log("OK : case acquise → case de l'épreuve (" + x.comp.id + ", " + x.kaseEpreuve.titre.fr + ")");
+}
+
 // v31 : réussie avec des fautes, la faveur monte quand même un peu ; ratée, elle baisse.
 {
   const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });

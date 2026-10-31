@@ -3099,7 +3099,30 @@
   // Un rappel dû passe d'abord (le plus en retard). Sinon, parmi les quiz ouverts, l'IA tire une raison :
   // la stat la plus faible ou le hasard. Le choix reste le même tant qu'on n'a pas joué.
   var RETARD_PRIORITAIRE = 2 * JOUR;
+  // Victor (2026-10-31) : « décorrélation case / épreuve ». Chaque compétence a sa case (champ evoque des packs).
+  // Quand l'épreuve n'est pas celle de la case du pion (déjà acquise), on montre la case propre à l'épreuve,
+  // la plus proche en date de celle du pion.
+  function caseDeComp(contenu, id, annee) {
+    var CC = contenu.plateau && contenu.plateau.competences_cases; if (!CC) return null;
+    var best = null;
+    Object.keys(CC).forEach(function (n) {
+      if (CC[n].indexOf(id) < 0) return;
+      var k = caseN(contenu, +n); if (!k || k.arrivee) return;
+      var d = annee == null ? 0 : Math.abs((k.annee || 0) - annee);
+      if (!best || d < best.d || (d === best.d && k.n < best.k.n)) best = { k: k, d: d };
+    });
+    return best && best.k;
+  }
   function choixIA(contenu, partie, t) {
+    var r = choixIABrut(contenu, partie, t);
+    if (r && r.comp && !r.evoque && r.raison !== "revision") {
+      var k = contenu.plateau && partie.plateau && caseN(contenu, partie.plateau.position);
+      var ke = caseDeComp(contenu, r.comp.id, k ? k.annee : null);
+      if (ke && (!k || ke.n !== k.n)) r.kaseEpreuve = ke;
+    }
+    return r;
+  }
+  function choixIABrut(contenu, partie, t) {
     var rv = revisionEnCours(partie);
     if (rv && contenu.parId[rv.comp]) return { comp: contenu.parId[rv.comp], type: "rappel", raison: "revision" };
     var dus = rappelsDus(contenu, partie, t);
@@ -3135,6 +3158,12 @@
     if (dusIci.length) return { comp: dusIci[0], type: "rappel", raison: "rappel", stat: st, kase: k || null, achat: !!ach };
     if (st) {
       var ici = dispo.filter(function (c) { return c.stat === st; });
+      // La compétence de la case est acquise : on prend celle de cet arbre dont la case est la plus proche en date.
+      if (ici.length > 1 && k) {
+        var dist = function (c) { var kc = caseDeComp(contenu, c.id, k.annee); return kc ? Math.abs((kc.annee || 0) - (k.annee || 0)) : Infinity; };
+        var dmin = Math.min.apply(null, ici.map(dist));
+        if (dmin < Infinity) ici = ici.filter(function (c) { return dist(c) === dmin; });
+      }
       if (ici.length) return { comp: ici[graine % ici.length], type: "quiz", raison: "case", stat: st, kase: k, achat: !!ach };
     }
     if (dus.length) return { comp: dus[0], type: "rappel", raison: "rappel", stat: null, kase: k || null, achat: false };
@@ -3362,7 +3391,7 @@
     repliqueDuJour: repliqueDuJour,
     themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, casesParTour: casesParTour, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    choixIA: choixIA, caseDeComp: caseDeComp, casesParTour: casesParTour, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
