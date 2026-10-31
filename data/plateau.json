@@ -21,7 +21,7 @@
    "chrono": 0,
    "du_jour": 0,
    "jouer": 0,
-   "jouer_max": 4
+   "jouer_max": 0
   },
   "butin": {
    "rappel": 0.4,
@@ -132,6 +132,64 @@
    "chrono": {
     "fr": "Case Chrono : l'IA te présente cinq événements déjà débloqués, tu dis quand ils se sont produits. Trois justes, et ton pion avance."
    }
+  },
+  "cases_par_tour": 24,
+  "cases_par_tour_choix": [
+   12,
+   24,
+   36,
+   48
+  ],
+  "evenements": {
+   "chance": {
+    "comblee": 0.2,
+    "contente": 0.25,
+    "boudeuse": 0.32,
+    "furieuse": 0.4
+   },
+   "poids": {
+    "comblee": {
+     "ennemi": 1,
+     "atome": 3,
+     "chrono": 3,
+     "piege": 1
+    },
+    "contente": {
+     "ennemi": 2,
+     "atome": 2,
+     "chrono": 2,
+     "piege": 2
+    },
+    "boudeuse": {
+     "ennemi": 3,
+     "atome": 2,
+     "chrono": 1,
+     "piege": 3
+    },
+    "furieuse": {
+     "ennemi": 4,
+     "atome": 1,
+     "chrono": 1,
+     "piege": 4
+    }
+   },
+   "par_avance_masque": -0.08,
+   "pieges": [
+    {
+     "type": "recul",
+     "n": 2
+    },
+    {
+     "type": "oubli"
+    },
+    {
+     "type": "revision"
+    },
+    {
+     "type": "quarantaine",
+     "n": 1
+    }
+   ]
   }
  },
  "epoques": [
@@ -10646,10 +10704,10 @@
   "mots": {
    "comblee": [
     {
-     "fr": "Vous m'avez gâtée, je vous gâte : un tour court, des cadeaux, presque pas de pièges. Profitez, ça ne durera pas."
+     "fr": "Vous m'avez gâtée, je vous gâte : sur ce tour, surtout des atomes et des dates, presque pas de pièges. Profitez, ça ne durera pas."
     },
     {
-     "fr": "Je suis d'humeur généreuse. J'ai sauté quelques siècles pour vous. Les historiens hurleront, mais vous arriverez plus vite."
+     "fr": "Je suis d'humeur généreuse. Peu de mauvaises rencontres sur ce tour. Les historiens trouveront ça trop calme."
     }
    ],
    "contente": [
@@ -10662,7 +10720,7 @@
    ],
    "boudeuse": [
     {
-     "fr": "Vous m'avez un peu oubliée. Le parcours s'en souvient : plus long, plus d'ennemis.",
+     "fr": "Vous m'avez un peu oubliée. Le parcours s'en souvient : il y aura des ennemis en chemin.",
      "ennemis": true
     },
     {
@@ -10671,15 +10729,11 @@
    ],
    "furieuse": [
     {
-     "fr": "Vous m'avez mise en colère. Voici toute l'histoire des sciences, sans raccourci, avec mes pires amis postés sur la route.",
+     "fr": "Vous m'avez mise en colère. Mes pires amis vous attendent au détour des cases.",
      "ennemis": true
     },
     {
-     "fr": "Furieuse, moi ? Regardez plutôt le plan. Dix ennemis, tous les pièges armés. Un cadeau m'aurait calmée.",
-     "ennemis": true
-    },
-    {
-     "fr": "Furieuse, moi ? Je vous ai seulement dessiné la route la plus longue, tous les pièges armés. Un cadeau m'aurait calmée."
+     "fr": "Furieuse, moi ? Disons que les pièges seront fréquents sur ce tour. Un cadeau m'aurait calmée."
     }
    ]
   },

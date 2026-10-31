@@ -1073,6 +1073,13 @@ svg.grille .interro { transition: opacity .3s; }
 .fete h2 { margin: 0; }
 .fete .fete-case { padding: 16px; }
 .fete .fete-faveur { font-size: 17px; color: var(--good); margin: 0; }
+.fete.victoire h2 { font-size: 28px; }
+.fete.victoire .meta { font-size: 17px; }
+.fete .trophee { animation: trophee-arrive 900ms cubic-bezier(.2,1.4,.4,1) both; filter: drop-shadow(0 6px 12px rgba(0,0,0,.25)); }
+@keyframes trophee-arrive { from { transform: scale(.2) rotate(-25deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.fete .choix-victoire { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.fete .choix-victoire .donjon small { opacity: .7; margin-left: 6px; }
+@media (prefers-reduced-motion: reduce) { .fete .trophee { animation: none; } }
 .fete .mot { width: 100%; text-align: left; }
 .fete .btn { width: 100%; }
 .fete .feux { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
@@ -1581,6 +1588,17 @@ function demarrerJeu() {
   function blocLangue() {
     var b = el('<div class="bloc lance"><h2>' + __("Langue") + '</h2><p class="note">' + __("Le jeu redémarre dans la langue choisie. Ta progression ne change pas.") + "</p></div>");
     b.insertBefore(boutonLangue(), b.querySelector(".note"));
+    return b;
+  }
+  // Victor (2026-10-31) : la longueur des tours, au choix (12, 24, 36 ou 48 cases), à la création et dans les réglages.
+  function blocCasesTour(valeur, changer, note) {
+    var R = C.plateau.regles, choix = R.cases_par_tour_choix || [12, 24, 36, 48];
+    var b = el('<div class="bloc"><h2>' + __("Cases par tour") + '</h2><p class="note">' + note + '</p><div class="rangee choix-cases"></div></div>');
+    choix.forEach(function (n) {
+      var bt = el('<button type="button" class="btn' + (n === valeur ? "" : " sec") + '" aria-pressed="' + (n === valeur) + '">' + n + "</button>");
+      bt.onclick = function () { changer(n); };
+      b.querySelector(".choix-cases").appendChild(bt);
+    });
     return b;
   }
   function blocPacks() {
@@ -2425,34 +2443,16 @@ function demarrerJeu() {
     var nature = c.raison === "revision" ? __("Révision forcée") : c.type === "rappel" ? __("Rappel") : __("Quiz");
     var blocEpreuve = '<div class="epreuve-choisie" style="--c:' + couleur(k.stat) + '">' + badgeComp(k, 52) + '<div class="txt"><div class="eyebrow">' + nature + __(" · niveau ") + k.rang + "</div><b>" + esc(tx(k.nom)) + "</b>" +
       (k.description ? "<span>" + esc(tx(k.description)) + "</span>" : "") + "</div>" +
-      '<span class="gain-e' + (v.duJour ? " bonus" : "") + '"><b>+' + (bMin === bonus ? v.total + bonus : (v.total + bMin) + "–" + (v.total + bonus)) + __("</b><small>cases</small></span>") +
-      __('<p class="meta">Réussi, ton pion avance d\'autant. Bonus du bouton Jouer : ') + texteBonusJouer() + (M.bornesBonusJouer(C, P, t).furieuse ? __(", l'IA furieuse le bloque.") : __(", tiré au hasard.")) + "</p></div>";
+      __('<span class="gain-e"><b>+1</b><small>case</small></span>') +
+      __('<p class="meta">Réussi, ton pion avance d\'une case. Parfois, Alyca met quelque chose sur ta route : un ennemi, un atome, une partie de Chrono ou un piège.</p></div>');
     feuilleSimple('<div class="choix-ia">' + bandeau + '<div id="ia-jouer"></div>' + blocArbre + blocEpreuve +
       __('<button type="button" class="btn large" data-a="go">C\'est parti</button>') +
-      __('<button type="button" class="btn sec large" data-a="un">Avancer d\'une seule case</button>') +
-      __('<p class="meta">Une seule case : tu choisis l\'arbre, pas de bonus, et ton pion s\'arrête sur la case suivante pour la dévoiler. Tu peux aussi choisir toi-même une compétence dans l\'arbre, sans ce bonus.</p>') +
       (enI || atI ? "" : galerieTheme(ici.stat)) + "</div>", __("L'IA a choisi"), {
       go: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true }); },
       atome: function () { fermerFeuille(); if (atI) combattreAtome(atI.z); },
-      un: function () { if (c.raison === "revision") { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true, uneCase: true }); } else choisirArbreUneCase(); },
     });
     feuille.querySelector("#ia-jouer").appendChild(comite(rep, true));
     brancherGalerie(feuille);
-  }
-
-  // Une seule case : le joueur choisit l'arbre, l'IA choisit la compétence dedans.
-  function choisirArbreUneCase() {
-    var t = maintenant(), html = __('<div class="eyebrow">Avancer d\'une seule case</div><h2>Quel arbre ?</h2><p class="meta">Choisis l\'arbre qui t\'intéresse : l\'IA y prend un rappel à faire, sinon un quiz. Réussi, ton pion avance d\'une case, sans bonus.</p><div class="arbres-une">');
-    var choix = {};
-    C.stats.filter(function (s) { return M.arbreOuvert(C, P, s.id); }).forEach(function (s) {
-      var c = M.choixArbre(C, P, t, s.id); choix[s.id] = c;
-      html += '<button type="button" class="arbre-une" style="--c:' + couleur(s.id) + '" data-a="arbre-' + s.id + '"' + (c ? "" : " disabled") + "><b>" + esc(tx(s.nom)) + "</b><span>" +
-        (c ? (c.type === "rappel" ? __("Rappel : ") : __("Quiz : ")) + esc(tx(c.comp.nom)) : __("Rien à jouer pour l'instant")) + "</span></button>";
-    });
-    html += "</div>";
-    var actions = {};
-    Object.keys(choix).forEach(function (id) { if (choix[id]) actions["arbre-" + id] = function () { fermerFeuille(); lancerQuiz(choix[id].comp.id, choix[id].type, { jouer: true, uneCase: true }); }; });
-    feuilleSimple(html, __("Quel arbre ?"), actions);
   }
 
   // Fait avancer le pion case par case le long du chemin du dernier déplacement.
@@ -2500,15 +2500,41 @@ function demarrerJeu() {
   function feteArrivee(e, suite) {
     if (document.querySelector(".fete")) return;
     var k = e && e.case && M.caseN(C, e.case), couleurs = ["#F2B632", "#D94141", "#2E9D5B", "#5B8DEF", "#C36BE0", "#FFFFFF"], feux = "";
-    for (var f = 0; f < 6; f++) {
+    var victoire = !!(e && e.victoire);
+    for (var f = 0; f < (victoire ? 14 : 6); f++) {
       var x = 12 + (f * 37) % 76, y = 8 + (f * 23) % 30, c = couleurs[f % couleurs.length], rayons = "";
       for (var r = 0; r < 12; r++) {
         var ang = r * 30 * Math.PI / 180;
         rayons += '<i style="--dx:' + (Math.cos(ang) * 70).toFixed(0) + "px;--dy:" + (Math.sin(ang) * 70).toFixed(0) + 'px"></i>';
       }
-      feux += '<span class="feu" style="left:' + x + "%;top:" + y + "%;color:" + c + ";animation-delay:" + (f * 0.45).toFixed(2) + 's">' + rayons + "</span>";
+      feux += '<span class="feu" style="left:' + (victoire ? 6 + (f * 41) % 88 : x) + "%;top:" + (victoire ? 6 + (f * 29) % 60 : y) + "%;color:" + c + ";animation-delay:" + (f * (victoire ? 0.3 : 0.45)).toFixed(2) + 's">' + rayons + "</span>";
     }
     var fav = e && e.faveur;
+    // Victor (2026-10-31) : toutes les cases vues, c'est la victoire. Recommencer, allumer d'autres arbres, ou (bientôt) les donjons.
+    if (victoire) {
+      var pc = P.plateau.parcours || {}, nb = pc.total || C.plateau.cases.length - 1;
+      var zv = el(__('<div class="fete victoire" role="dialog" aria-modal="true" aria-label="Victoire"><div class="feux" aria-hidden="true">') + feux + '</div><div class="in">' +
+        __('<div class="eyebrow">Victoire · tour ') + e.tour + "</div>" + '<div class="trophee" aria-hidden="true">' + ICONE_TROPHEE + "</div>" +
+        __("<h2>Toute l'histoire est parcourue !</h2>") +
+        '<p class="meta">' + __("Tu as vu les {n} cases de tes arbres allumés, de la plus ancienne trace à aujourd'hui.", { n: nb }) + "</p>" +
+        (fav && fav.gain ? __('<p class="fete-faveur">Faveur de ') + esc(nommerIA(__("l'IA"))) + " : <b>+" + fav.gain + "</b> (" + fav.avant + " → " + fav.apres + ")</p>" : "") +
+        '<div class="mot"></div><div class="choix-victoire">' +
+        __('<button type="button" class="btn large" data-v="encore">Recommencer depuis le début</button>') +
+        __('<button type="button" class="btn sec large" data-v="arbres">Allumer d\'autres arbres</button>') +
+        __('<button type="button" class="btn sec large donjon" disabled>Donjons <small>bientôt</small></button>') + "</div></div></div>");
+      var repV = M.replique(C, P, ["tour_fini"]);
+      var mv = repV && comite(Object.assign({}, repV, { expression: "impressionnee", aparte: false }), true);
+      if (mv) zv.querySelector(".mot").appendChild(mv);
+      zv.querySelector('[data-v="encore"]').addEventListener("click", function () { zv.remove(); if (suite) suite(); });
+      zv.querySelector('[data-v="arbres"]').addEventListener("click", function () {
+        zv.remove(); if (suite) suite();
+        fermerFeuille(); vue = "perso"; ongletPerso = "reglages"; rendre(); window.scrollTo(0, 0);
+        toast(__("Allume d'autres arbres : leurs cases rejoindront l'histoire au prochain tour."));
+      });
+      document.body.appendChild(zv);
+      zv.querySelector(".btn").focus({ preventScroll: true });
+      return;
+    }
     var z = el(__('<div class="fete" role="dialog" aria-modal="true" aria-label="Tour terminé"><div class="feux" aria-hidden="true">') + feux + '</div><div class="in">' +
       __('<div class="eyebrow">Arrivée · tour ') + (e ? e.tour : "") + __(" terminé</div>") +
       (k ? '<div class="vitrine grande fete-case">' + svgSprite(k.icone, 200, tx(k.titre)) + "</div><h2>" + esc(tx(k.titre)) + "</h2>" : __("<h2>Arrivée !</h2>")) +
@@ -2532,9 +2558,12 @@ function demarrerJeu() {
   }
   var HUMEUR_PARCOURS = { comblee: "impressionnee", contente: "neutre", boudeuse: "decue", furieuse: "moqueuse" };
   function carteParcours(p) {
-    var f = M.formeParcours(C, p.forme), R = C.plateau.regles, saute = R.arrivee - R.depart + 1 - p.longueur;
+    var f = M.formeParcours(C, p.forme), cs = p.cases.slice(0, -1), a0 = cs.length ? M.anneeDe(C, cs[0]) : null, a1 = cs.length ? M.anneeDe(C, cs[cs.length - 1]) : null;
     var b = el(__('<div class="carte-parcours"><div class="eyebrow">Tour ') + p.tour + __(' · dessiné par l\'IA</div><div class="cp-tete"><span class="apercu">') + svgApercu(p.forme, 120) + '</span><div><h2>' + esc(majuscule(tx(f.nom))) + '</h2><p class="meta">' + esc(tx(f.notice)) + "</p></div></div>" +
-      '<ul class="cp-reglages"><li><b>' + p.longueur + __("</b> cases") + (saute ? " <span>(" + saute + __(" époques sautées)</span>") : "") + "</li><li><b>" + p.ennemis + __("</b> ennemis</li><li><b>") + p.atomes + __("</b> cases Mendeleïev</li><li><b>") + p.pieges + __("</b> pièges</li><li><b>") + p.cadeaux + __("</b> cases cadeau</li></ul><div class=\"z-ia\"></div></div>"));
+      // Victor (2026-10-31) : le tour suit l'histoire ; les rencontres viennent en chemin, selon l'humeur d'Alyca.
+      '<ul class="cp-reglages"><li><b>' + cs.length + __("</b> cases") + (a0 != null ? " <span>(" + esc(formatAnnee(a0)) + " → " + esc(formatAnnee(a1)) + ")</span>" : "") + "</li>" +
+      (p.total ? "<li>" + __("de la case ") + (p.debut + 1) + __(" à la case ") + (p.debut + cs.length) + __(" de l'histoire, sur ") + p.total + "</li>" : "") +
+      (p.fin ? "<li><b>" + __("Dernier tour") + "</b> : " + __("au bout, la victoire") + "</li>" : "") + '</ul><div class="z-ia"></div></div>');
     if (p.mot) { var m = comite({ texte: p.mot, contexte: "tour_fini", expression: HUMEUR_PARCOURS[p.palier] || "neutre", aparte: false }, true); if (m) b.querySelector(".z-ia").appendChild(m); }
     return b;
   }
@@ -2545,9 +2574,15 @@ function demarrerJeu() {
       if (pl.parcours && pl.parcours.tour === pl.tours + 1) z.appendChild(carteParcours(pl.parcours));
       return b;
     }
-    var don = C.plateau.parcours.donjon;
-    z.appendChild(el(__('<p class="meta">L\'IA a déjà dessiné ton prochain parcours, selon son humeur. Tu le découvres en repartant.</p>')));
+    var don = C.plateau.parcours.donjon, gagne = pl.victoire && pl.victoire.tour === pl.tours;
+    if (gagne) b.querySelector("h2").textContent = __("Victoire ! Et maintenant ?");
+    z.appendChild(el('<p class="meta">' + (gagne ? __("Toute l'histoire est parcourue. Le prochain tour la reprend depuis le début ; allume d'autres arbres pour y mêler leurs cases.") : __("Le prochain tour reprend l'histoire où celui-ci s'est arrêté. Tu le découvres en repartant.")) + "</p>"));
     var choix = el('<div class="choix-suite"><button type="button" class="btn large">' + svgApercu("serpentin", 24, "#fff") + __(' Refaire un tour</button><button type="button" class="btn sec large donjon" disabled>Donjon <small>bientôt</small></button></div>'));
+    if (gagne) {
+      var aa = el(__('<button type="button" class="btn sec large">Allumer d\'autres arbres</button>'));
+      aa.onclick = function () { fermerFeuille(); vue = "perso"; ongletPerso = "reglages"; rendre(); window.scrollTo(0, 0); };
+      choix.insertBefore(aa, choix.querySelector(".donjon"));
+    }
     choix.querySelector(".btn:not(.donjon)").onclick = function () {
       var r = M.choisirSuite(C, P, "tour", maintenant()); if (!r.ok) return;
       sauver();
@@ -2744,18 +2779,13 @@ function demarrerJeu() {
   }
   function ouvrirRegles() {
     var R = C.plateau.regles, rangs = R.valeurs.quiz_rang, st = stat(M.bonusDuJour(C, P, maintenant()));
-    var html = __('<div class="eyebrow">Plateau de l\'histoire</div><h2>Règles et barème</h2><p>Pas de dé : chaque épreuve réussie fait avancer ton pion d\'autant de cases que le rang de sa compétence.</p>') +
-      __("<p>Chaque tour, l'IA tire ses cases dans tes arbres allumés et les range par date : la plus ancienne ouvre la route, la sienne la ferme. Avec peu d'arbres allumés, le tour est plus court.</p>") +
-      __('<div class="bareme"><span>Épreuve réussie depuis l\'arbre</span><span class="num">+ rang</span><span>Épreuve réussie par Jouer</span><span class="num">+ rang ') + texteBonusJouer() + "</span>" +
-      __("<span>Quiz raté</span><span class=\"num\">") + R.echec.quiz + __("</span><span>Rappel raté</span><span class=\"num\">") + R.echec.rappel + "</span></div>" +
+    // Victor (2026-10-31) : une case par épreuve réussie ; parfois un événement ; parcours chronologique coupé au réglage.
+    var html = __('<div class="eyebrow">Plateau de l\'histoire</div><h2>Règles et barème</h2><p>Pas de dé : chaque épreuve réussie fait avancer ton pion d\'une case. Ratée, il reste sur place.</p>') +
+      __("<p>Les cases de tes arbres allumés sont mêlées et rangées par date. Un tour en prend ") + M.casesParTour(C, P) + __(" (réglable dans Réglages), puis la case d'Alyca le ferme. Le tour suivant reprend où le précédent s'est arrêté. Quand tu as vu toute l'histoire, c'est la victoire.</p>") +
+      __("<h3 style=\"font-size:17px\">Sur la route</h3><p class=\"meta\">Le plus souvent, le pion avance simplement. Parfois, Alyca met quelque chose sur la case suivante : un ennemi qui la garde (bats-le pour y entrer), un atome sauvage, une partie de Chrono ou un piège. Chaque rencontre demande son pack. Plus Alyca est fâchée, plus c'est fréquent, et plus ce sont des ennemis et des pièges.</p>") +
       __('<p class="meta">Butin : une épreuve réussie a une chance de faire tomber un objet, un livre, un accessoire ou un masque, plus grande pour les rangs élevés. Le butin est réparti sur ') + ((R.butin && R.butin.lots) || 7) + __(" tours du plateau.</p>") +
-      __("<h3 style=\"font-size:17px\">Cases spéciales</h3>") +
-      C.plateau.cases.filter(function (k) { return k.special; }).filter(function (k, i, a) { return k.special.type !== "eureka" || a.filter(function (x) { return x.special.type === "eureka"; })[0] === k; }).map(function (k) {
-        var nom = k.special.type === "eureka" ? __("Eurêka : ") + C.plateau.cases.filter(function (x) { return x.special && x.special.type === "eureka"; }).map(function (x) { return tx(x.titre); }).join(", ") : tx(k.titre);
-        return '<p class="meta"><b style="color:var(--ink)">' + esc(nom) + "</b> : " + esc(texteRegle(k.special)) + "</p>";
-      }).join("") +
       (R.chrono ? __('<p class="meta"><b style="color:var(--ink)">Chrono</b> : ') + esc(tx(R.textes.chrono)) + "</p>" : "") +
-      __('<p class="meta">Arrivée : tu termines le tour et repars de la plus ancienne case du tour suivant. Au tour suivant, les pièges et la quarantaine comptent double, et la prison demande ') + R.tour_suivant.quiz_parfaits_prison + __(" quiz parfaits.</p>");
+      __('<p class="meta">Au tour suivant, les pièges et la quarantaine comptent double, et la prison demande ') + R.tour_suivant.quiz_parfaits_prison + __(" quiz parfaits.</p>");
     if (P.plateau.historique.length) {
       html += __('<h3 style="font-size:17px">Derniers déplacements</h3><div class="trajet">') + P.plateau.historique.slice(0, 8).map(function (h) {
         var d = h.a - h.de;
@@ -2839,7 +2869,7 @@ function demarrerJeu() {
         __("<li>Réussis un quiz (4 bonnes réponses sur 5) pour maîtriser une compétence et gagner de l'XP.</li>") +
         __("<li>Les compétences maîtrisées reviennent en rappel après 1, 3, 7, 14, 30, 90 puis 180 jours.</li>") +
         __("<li>Rate un rappel et la compétence est perdue, avec son XP. Il faudra la regagner.</li>") +
-        __("<li>Pour jouer : le bouton Jouer, où l'IA choisit l'épreuve, ou une compétence choisie dans l'arbre. Réussie, elle fait avancer ton pion d'autant de cases que son rang, plus un bonus de 0 à 4 cases par Jouer.</li>") +
+        __("<li>Pour jouer : le bouton Jouer, où l'IA choisit l'épreuve, ou une compétence choisie dans l'arbre. Réussie, elle fait avancer ton pion d'une case ; parfois, Alyca met un ennemi, un atome, une partie de Chrono ou un piège sur la case suivante.</li>") +
         __("<li>Chaque épreuve réussie peut faire tomber un objet, un livre, un accessoire ou un masque. Pas toujours : il faudra plusieurs tours du plateau pour tout réunir.</li></ol></div>")));
     }
 
@@ -2951,6 +2981,7 @@ function demarrerJeu() {
     b.onclick = function () { ouvrirFeuille(C.parStat[s.id][0].id); };
     return b;
   }
+  var ICONE_TROPHEE = '<svg width="120" height="120" viewBox="0 0 24 24" shape-rendering="crispEdges"><path fill="#7A5418" d="M7 3h10v1h3v4h-1v1h-1v1h-1v1h-2v1h-1v3h2v1h1v3h-8v-3h1v-1h2v-3h-1v-1H8v-1H7V9H6V8H5V4h2z"/><path fill="#F2C14E" d="M8 4h8v5h-1v1h-1v1h-4v-1H9V9H8z"/><path fill="#FFE79A" d="M9 5h2v3H9z"/><path fill="#F2C14E" d="M6 5h1v2h1v1H7V7H6zM17 5h1v2h-1v1h-1V7h1z"/><path fill="#B8862B" d="M10 15h4v1h1v2H9v-2h1z"/></svg>';
   var ICONE_CADENAS = '<svg width="20" height="20" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>';
 
   function ouvrirFeuille(id) {
@@ -2971,8 +3002,7 @@ function demarrerJeu() {
     }
     if (C.plateau && (st.etat === "disponible" || st.etat === "a_reviser")) {
       var v = M.valeurEpreuve(C, P, { type: st.etat === "disponible" ? "quiz" : "rappel", comp: id }, t);
-      lignes.push(__("Plateau : ton pion avance de ") + v.total + (v.total > 1 ? __(" cases") : __(" case")) + __(" si tu réussis, le rang de la compétence") +
-        (st.etat === "a_reviser" ? __(", et recule de ") + (-v.echec) + __(" cases si tu rates.") : "."));
+      lignes.push(__("Plateau : ton pion avance d'une case si tu réussis."));
     }
     var bouton = "";
     if (st.etat === "disponible") bouton = __('<button type="button" class="btn large" data-a="quiz">Passer le quiz</button>');
@@ -3106,6 +3136,8 @@ function demarrerJeu() {
       test.appendChild(tp);
     }
     v.appendChild(blocLangue());
+    if (C.plateau) v.appendChild(blocCasesTour(M.casesParTour(C, P), function (n) { P.options = P.options || {}; P.options.casesTour = n; sauver(); rendre(); toast(__("{n} cases par tour, dès le prochain tour", { n: n })); },
+      __("Les cases de tes arbres allumés, rangées par date, sont coupées en tours de cette longueur. Le changement compte dès le prochain tour.")));
     if (INDEX) v.appendChild(blocPacks());
     v.appendChild(test);
 
@@ -3938,7 +3970,7 @@ function demarrerJeu() {
       var sc = el('<div class="apparition"><div class="herbe sc-herbe">' + logoChrono(130) + '</div><div class="eyebrow">' + (siecles.mode === "case" ? __("Case ") + cn(j.case) + __(" · Chrono") : __("Partie offerte par l'IA")) + __('</div><h2>Chrono</h2>') +
         __('<p class="sc-regle">Cinq événements que tu as déjà croisés. Dis quand ils se sont produits : au siècle d\'abord, plus finement quand tu les connais bien.</p>') +
         __('<p class="meta" style="margin:0">Juste : ') + R.points.juste + __(" crédits, ") + R.points.rapide + __(" de plus en moins de ") + Math.round(R.rapide_ms / 1000) + __(" s. Proche : ") + R.points.proche + __(". Sans faute : +") + R.points.parfait + "." +
-        (siecles.mode === "case" ? " " + R.reussite + __(" justes sur ") + j.questions.length + __(", et ton pion avance de ") + R.avance + __(" cases, plus le bonus du bouton Jouer.") : __(" Ton pion ne bouge pas.")) + '</p><div class="arbitre" style="width:100%"></div></div>');
+        (siecles.mode === "case" ? " " + R.reussite + __(" justes sur ") + j.questions.length + __(", et ton pion avance d'une case.") : __(" Ton pion ne bouge pas.")) + '</p><div class="arbitre" style="width:100%"></div></div>');
       var m = comite(siecles.replique, true); if (m) sc.querySelector(".arbitre").appendChild(m);
       inn.appendChild(sc);
       var go = el('<button type="button" class="btn large sc-go">' + __('Commencer</button>'));
@@ -5374,6 +5406,13 @@ function demarrerJeu() {
   }
 
   var NOM_ETAPE = {
+    // Victor (2026-10-31) : ce qu'Alyca pose sur la case suivante avant le pas.
+    surgit: function (e) {
+      return e.quoi === "ennemi" ? __("Alyca poste ") + nomEn(C.ennemiParId[e.ennemi]) + __(" sur la case suivante.")
+        : e.quoi === "atome" ? __("Un atome sauvage surgit sur la case suivante.")
+        : e.quoi === "chrono" ? __("Alyca ouvre une partie de Chrono sur la case suivante.")
+        : __("Alyca pose un piège sur la case suivante.");
+    },
     chrono: function (e) { return __("Case Chrono ") + e.case + __(" : cinq événements à dater, et ton pion repart."); },
     chrono_vide: function (e) { return __("Case Chrono ") + e.case + __(" : pas encore assez de dates débloquées. L'IA range son sablier."); },
     eureka: function (e) { return __("Eurêka, case ") + cn(e.case) + __(" : tu rejoues ") + e.n + __(" cases."); },
@@ -5419,8 +5458,7 @@ function demarrerJeu() {
     if (dep.valeur > 0 && (dep.cause === "cadeau" || dep.cause === "duel" || dep.cause === "atome")) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>" + (dep.cause === "cadeau" ? __("Cadeau de l'IA.") : dep.cause === "atome" ? __("L'atome réglé, le pion finit son trajet.") : __("Duel gagné : la fin du trajet.")) + "</span></div>"));
     else if (dep.valeur > 0 && (dep.cause === "achat" || dep.cause === "pot")) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + "</b><span>" + (dep.cause === "achat" ? __("Case achetée à la boutique.") : __("Pot-de-vin encaissé : l'IA pousse ton pion.")) + "</span></div>"));
     else if (dep.valeur > 0 && dep.uneCase) tj.appendChild(el(__('<div class="pas"><b>+1</b><span>Épreuve réussie : un seul pas, comme demandé.</span></div>')));
-    else if (dep.valeur > 0) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + __("</b><span>Épreuve réussie") + (v && v.duJour ? __(", bonus du jour compris") : "") +
-      (dep.bonusJouer ? ", dont +" + dep.bonusJouer + __(" tiré pour avoir laissé l'IA choisir") : dep.jouer ? __(", et 0 au tirage du bouton Jouer") : dep.valeur > (v ? v.total : 0) ? __(", avec bonus") : "") + ".</span></div>"));
+    else if (dep.valeur > 0) tj.appendChild(el('<div class="pas"><b>+' + dep.valeur + __("</b><span>Épreuve réussie : une case.</span></div>")));
     dep.etapes.forEach(function (e) { var f = NOM_ETAPE[e.type]; if (f) tj.appendChild(el('<div class="pas"><b>·</b><span>' + esc(f(e)) + "</span></div>")); });
     var k = M.caseN(C, dep.a), at = atomeSur(dep.a), enB = !at && ennemiSur(dep.a);
     if (enB) {
@@ -5879,6 +5917,8 @@ function demarrerJeu() {
         hr.onchange = function () { if (hr.value) A.routine.heure = hr.value; ecrireSession(CLE_ASSISTANT, A); rendre(); };
         v.appendChild(ro);
       }
+      if (C && C.plateau) v.appendChild(blocCasesTour(A.casesTour || C.plateau.regles.cases_par_tour || 24, function (n) { A.casesTour = n; ecrireSession(CLE_ASSISTANT, A); rendre(); },
+        __("Ton parcours suit l'histoire, de la plus ancienne case à la plus récente. Un tour en prend ce nombre, le suivant reprend où il s'est arrêté. Plus c'est court, plus tu boucles de tours.")));
       var off = M.packsEteints(INDEX, A.off), tous = INDEX.packs.filter(function (m) { return m.sorte !== "socle"; });
       var allumes = tous.filter(function (m) { return !off[m.id]; }).length;
       var rc = el('<div class="bloc"><h2>' + __("Récapitulatif") + '</h2><ul class="recap"><li>' + __("Partie") + "<span>" + esc(A.nom) + "</span></li><li>" + __("Langue") + "<span>" +
@@ -5899,6 +5939,7 @@ function demarrerJeu() {
     var p = M.nouvellePartie(Date.now());
     p.id = nouvelId(); p.nom = A.nom.trim() || nomLibre(__("Ma partie"));
     p.options = { langue: M.langue(), packsOff: A.off.slice() };
+    if (A.casesTour) p.options.casesTour = A.casesTour;
     if (NATIF) p.options.routine = { active: false, heure: A.routine.heure };
     P = p; provisoire = false;
     construireContenu(A.off); M.accorderPartie(C, P);

@@ -940,12 +940,8 @@
     // v11 : les masques du jour ajoutent ou retirent des cases, et durcissent ou adoucissent le rappel raté.
     var rj = reglesDuJour(contenu, partie, t), echec = epreuve.type === "rappel" ? r.echec.rappel : r.echec.quiz;
     if (epreuve.type === "rappel") echec = Math.round(echec * rj.echec);
-    return {
-      base: base, duJour: duJour, faveur: faveur, masques: rj.avance, total: Math.max(1, base + duJour + faveur + rj.avance),
-      parfait: epreuve.type === "quiz" ? r.bonus.parfait : 0,
-      chrono: epreuve.type === "quiz" ? r.bonus.chrono : 0,
-      echec: echec,
-    };
+    // Victor (2026-10-31) : une épreuve réussie fait avancer d'une seule case, ratée le pion reste. Plus de bonus d'avance.
+    return { base: 1, duJour: 0, faveur: 0, masques: 0, total: 1, parfait: 0, chrono: 0, echec: 0 };
   }
 
   // v36 : chaque arbre apporte ses cases ; le numéro `n` d'une case est son identité (pas sa place dans la liste).
@@ -972,32 +968,24 @@
   // ouvre toujours le tour ; les autres se répartissent entre les époques et les arbres, celles jamais vues d'abord.
   // Avec peu d'arbres allumés, le tour est plus court (choix de Victor) : jamais de case répétée ni hors sujet.
   function tirerCases(contenu, partie, longueur, g) {
-    var arr = arriveeN(contenu), vues = (partie.plateau && partie.plateau.visites) || {};
+    return tranche(contenu, partie, longueur).cases;
+  }
+  // Victor (2026-10-31) : les cases des arbres allumés, mêlées et rangées par date, coupées à `longueur` cases. Le tour
+  // suivant reprend après la dernière case du tour précédent (pl.departTour) ; on ne revoit pas les premières.
+  // `fin` : ce tour contient la dernière case de l'histoire, le boucler est une victoire.
+  function tranche(contenu, partie, longueur) {
+    var arr = arriveeN(contenu), pl = partie.plateau || {}, d = pl.departTour;
     var pool = contenu.plateau.cases.filter(function (k) { return k.n !== arr; }).sort(parDate);
-    var pris;
-    // Réglage temporaire « Voir toutes les cases » : le tour prend toutes les cases des arbres allumés.
-    if (toutesCases(partie) || pool.length <= longueur - 1) pris = pool;
-    else {
-      pris = [pool[0]];
-      var reste = pool.slice(1), k = longueur - 2, parEp = {}, eps = [];
-      reste.forEach(function (c) { if (!parEp[c.epoque]) { parEp[c.epoque] = []; eps.push(c.epoque); } parEp[c.epoque].push(c); });
-      // Quotas par époque, au prorata (plus forts restes), puis tirage tournant entre les arbres de l'époque.
-      var quotas = eps.map(function (e) { var q = k * parEp[e].length / reste.length; return { e: e, n: Math.floor(q), r: q - Math.floor(q) }; });
-      var manque = k - quotas.reduce(function (a, q) { return a + q.n; }, 0);
-      quotas.slice().sort(function (a, b) { return b.r - a.r || hacher(g + "|q|" + a.e) - hacher(g + "|q|" + b.e); }).slice(0, manque).forEach(function (q) { q.n++; });
-      quotas.forEach(function (q) {
-        var parStat = {}, stats = [];
-        parEp[q.e].forEach(function (c) { if (!parStat[c.stat]) { parStat[c.stat] = []; stats.push(c.stat); } parStat[c.stat].push(c); });
-        stats.sort(function (a, b) { return hacher(g + "|s|" + a) - hacher(g + "|s|" + b); });
-        stats.forEach(function (st) { parStat[st].sort(function (a, b) { return (vues[a.n] ? 1 : 0) - (vues[b.n] ? 1 : 0) || hacher(g + "|c|" + a.n) - hacher(g + "|c|" + b.n); }); });
-        for (var i = 0, n = 0; n < q.n; i++) {
-          var st = stats[i % stats.length], c = parStat[st].shift();
-          if (c) { pris.push(c); n++; }
-          if (stats.every(function (x) { return !parStat[x].length; })) break;
-        }
-      });
-    }
-    return pris.slice().sort(parDate).map(function (c) { return c.n; }).concat([arr]);
+    var i = 0;
+    if (d && !toutesCases(partie)) { while (i < pool.length && parDate(pool[i], d) <= 0) i++; if (i >= pool.length) i = 0; }
+    var pris = toutesCases(partie) ? pool : pool.slice(i, i + Math.max(1, longueur));
+    var dernier = pris[pris.length - 1];
+    return { cases: pris.map(function (c) { return c.n; }).concat([arr]), fin: !dernier || pool.indexOf(dernier) === pool.length - 1,
+      dernier: dernier ? { n: dernier.n, annee: dernier.annee } : null, debut: i, total: pool.length };
+  }
+  function casesParTour(contenu, partie) {
+    var R = contenu.plateau.regles, v = partie.options && partie.options.casesTour;
+    return (R.cases_par_tour_choix || []).indexOf(v) >= 0 ? v : R.cases_par_tour || 24;
   }
   // Une case est atteinte quand le pion s'y est arrêté (v15 : les cases survolées restent cachées ; le tirage des tours
   // suivants donne la priorité aux cases jamais vues). Une case dont le pack est éteint ne bloque rien : elle compte
@@ -1021,8 +1009,8 @@
   // v7 : la règle spéciale d'une case, en tenant compte des cases que l'IA a déplacées.
   function specialDe(contenu, partie, n) {
     var sp = partie.plateau.speciaux, x;
+    // Victor (2026-10-31) : plus de case spéciale fixe ; seules comptent celles posées en jeu (événements, Alyca, cadeaux).
     if (sp && Object.prototype.hasOwnProperty.call(sp, n)) x = sp[n];
-    else x = (caseN(contenu, n) || {}).special || chronoDeBase(contenu, n);
     // Pack atomes éteint : une case Mendeleïev redevient une case ordinaire.
     return x && x.type === "mendeleiev" && !contenu.atomes ? null : x;
   }
@@ -1094,16 +1082,15 @@
     var unPas = issue.reussi && issue.uneCase;
     // v19 : le bonus du bouton Jouer est tiré au hasard, entre bonus.jouer et bonus.jouer_max (0 à 4).
     // v20 : furieuse, l'IA ralentit le jeu : le tirage reste au minimum.
-    var bj = bornesBonusJouer(contenu, partie, t), bMin = bj.min, bMax = bj.max;
-    var bonusJouer = issue.reussi && issue.jouer && !unPas ? bMin + tirage("jouer|" + t + "|" + partie.journal.length, bMax - bMin + 1) : 0;
-    var valeur = unPas ? 1 : issue.reussi ? v.total + (issue.parfait ? v.parfait : 0) + (issue.chrono ? v.chrono : 0) + bonusJouer : v.echec;
+    // Victor (2026-10-31) : réussie, une case ; ratée, le pion reste. Plus de bonus Jouer.
+    var bonusJouer = 0;
+    var valeur = issue.reussi ? 1 : 0;
     var etapes = [];
     // v11 : l'objet tenu par l'avatar donne parfois un coup de pouce après une épreuve réussie.
     var tenu = issue.reussi && !unPas && partie.avatar && partie.avatar.main && (contenu.objets || []).filter(function (o) { return o.id === partie.avatar.main; })[0];
-    if (tenu && tenu.bonus && hacher(String(t) + "|" + tenu.id + "|" + partie.journal.length) % 100 < 100 * ((contenu.cabinet && contenu.cabinet.chance_bonus) || 0)) {
+    if (tenu && tenu.bonus && tenu.bonus.type !== "case" && hacher(String(t) + "|" + tenu.id + "|" + partie.journal.length) % 100 < 100 * ((contenu.cabinet && contenu.cabinet.chance_bonus) || 0)) {
       var bo = tenu.bonus;
-      if (bo.type === "case") valeur += bo.n;
-      else if (bo.type === "butin") partie.butinAssure = true;
+      if (bo.type === "butin") partie.butinAssure = true;
       else if (bo.type === "faveur") { var fv = faveurIA(contenu, partie, t); if (fv) partie.faveur = { valeur: Math.min(100, fv.valeur + bo.n), maj: t }; }
       etapes.push({ type: "bonus_objet", objet: tenu.id, bonus: bo.type, n: bo.n || 0 });
     }
@@ -1119,8 +1106,6 @@
     dep.valeurs = v;
     dep.bonusJouer = bonusJouer; dep.jouer = !!(issue.reussi && issue.jouer && !unPas);
     dep.uneCase = !!unPas;
-    var retouche = remanierRoute(contenu, partie, issue, t, issue.alea);
-    if (retouche) { dep.etapes.push(retouche); dep.contextes = contextesPlateau(dep); }
     return dep;
   }
 
@@ -1224,29 +1209,18 @@
     if (!formes.length) formes = PC.formes.filter(function (f) { return f.id !== avant; });
     // Le premier tour garde le serpentin d'origine.
     var forme = !pl.parcours && !pl.tours ? PC.formes.filter(function (f) { return f.id === "serpentin"; })[0] || formes[0] : formes[tirage(g + "|forme", formes.length)];
-    var longueur = H.cases[0] + tirage(g + "|long", H.cases[1] - H.cases[0] + 1);
+    var longueur = casesParTour(contenu, partie);
     var base = function (n) { return (caseN(contenu, n) || {}).special || chronoDeBase(contenu, n); };
     var melange = function (l, cle) { return l.slice().sort(function (a, b) { return hacher(g + cle + a) - hacher(g + cle + b); }); };
-    // v36 : les cases du tour sont tirées dans les arbres allumés et rangées par date (tirerCases).
-    var cases = tirerCases(contenu, partie, longueur, g);
-    // Les cases spéciales : on en retire, ou on en ajoute sur des cases ordinaires de la route (pas les trois premières).
-    var speciaux = {}, libres = melange(cases.filter(function (x, i) { return i > 3 && i < cases.length - 1 && !base(x); }), "|libre|");
-    function ajuster(types, ecart, nouvelle) {
-      var la = cases.filter(function (x) { var b = base(x); return b && types.indexOf(b.type) >= 0; });
-      if (ecart < 0) melange(la, "|ote|" + types[0]).slice(0, -ecart).forEach(function (x) { speciaux[x] = null; });
-      for (var k = 0; k < ecart && libres.length; k++) speciaux[libres.shift()] = nouvelle(k);
-      return la.length + ecart;
-    }
-    var nAtomes = !contenu.atomes ? 0 : ajuster(["mendeleiev"], H.atomes - cases.filter(function (x) { return base(x) && base(x).type === "mendeleiev"; }).length, function () { return { type: "mendeleiev" }; });
-    var nPieges = ajuster(TYPES_PIEGES, H.pieges, function (k) { return { type: "recul", n: 2 + k % 3, raison: { fr: "Piège ajouté par l'IA en dessinant ce parcours." } }; });
-    var nCadeaux = ajuster(["cadeau"], H.cadeaux, function () { return { type: "cadeau", raison: { fr: "Case cadeau ajoutée par l'IA, de bonne humeur ce jour-là." } }; });
-    // v34 : des cases Chrono, selon l'humeur (outils/parcours.py).
-    var nChrono = H.chrono == null ? 0 : ajuster(["chrono"], H.chrono - cases.filter(function (x) { return base(x) && base(x).type === "chrono"; }).length, function () { return { type: "chrono" }; });
-    var tours = pl.tours + 1, ennemis = Math.max(0, Math.min(PC.ennemis_max || 12, contenu.ennemis.length - 1, H.ennemis + Math.max(0, Math.floor((tours - 2) / 2)) * (PC.ennemis_par_deux_tours || 0)));
+    // Victor (2026-10-31) : les cases suivent la chronologie, coupées au réglage « Cases par tour ». Plus de case
+    // spéciale fixe ni d'ennemi posté : à chaque pas, un événement peut surgir sur la case suivante (tirerEvenement).
+    var tr = tranche(contenu, partie, longueur), cases = tr.cases, speciaux = {};
+    cases.forEach(function (x) { if (base(x)) speciaux[x] = null; });
+    var tours = pl.tours + 1, ennemis = 0, nAtomes = 0, nPieges = 0, nCadeaux = 0, nChrono = 0;
     // Sans le pack ennemis, Alyca ne promet pas d'ennemis sur la route.
     var mots = (PC.mots[palier] || []).filter(function (m) { return contenu.ennemis.length || !m.ennemis; });
     return { tour: tours, forme: forme.id, palier: palier, cases: cases, longueur: cases.length, ennemis: ennemis,
-      atomes: Math.max(0, nAtomes), pieges: Math.max(0, nPieges), cadeaux: Math.max(0, nCadeaux), chrono: Math.max(0, nChrono), speciaux: speciaux,
+      atomes: nAtomes, pieges: nPieges, cadeaux: nCadeaux, chrono: nChrono, speciaux: speciaux, fin: tr.fin, dernier: tr.dernier, debut: tr.debut, total: tr.total,
       mot: mots.length ? mots[tirage(g + "|mot", mots.length)] : null, dessine: t };
   }
   function appliquerParcours(contenu, partie) {
@@ -1302,6 +1276,53 @@
     var r = partie.revision;
     if (r && !estMaitrisee(partie, r.comp)) { partie.revision = null; return null; }
     return r || null;
+  }
+
+  // Victor (2026-10-31) : à chaque pas, Alyca tire parfois un événement qu'elle pose sur la case suivante : un ennemi
+  // (il la garde, vaincu le pion y entre), un atome sauvage, une partie de Chrono ou un piège. Chaque type demande son
+  // pack (ennemis, atomes, frise) ; l'humeur règle la fréquence et le mélange (plateau.json regles.evenements).
+  function evenementsPossibles(contenu, partie, t, rj) {
+    var R = contenu.plateau.regles, out = [];
+    if (contenu.ennemis && contenu.ennemis.length && contenu.placement && !(rj && rj.ennemis === "absents")) out.push("ennemi");
+    if (contenu.atomes && (partie.sauvages || []).length < contenu.atomes.regles.attente_max) out.push("atome");
+    if (R.chrono && chronoPossible(contenu, partie)) out.push("chrono");
+    if ((R.evenements && R.evenements.pieges || []).length) out.push("piege");
+    return out;
+  }
+  function tirerEvenement(contenu, partie, t, rj) {
+    var E = contenu.plateau.regles.evenements, pl = partie.plateau; if (!E) return null;
+    var rt = route(contenu, partie), j = pl.idx + 1;
+    if (j >= rt.length - 1) return null;
+    var n = rt[j], en = ennemisPlateau(contenu, partie);
+    if (en[n] || specialDe(contenu, partie, n) || (partie.sauvages || []).some(function (x) { return x.case === n; })) return null;
+    var fav = faveurIA(contenu, partie, t), palier = fav ? fav.palier.id : "contente";
+    var g = String(t) + "|ev|" + partie.journal.length + "|" + (partie.cree || 0);
+    var chance = (E.chance && E.chance[palier]) != null ? E.chance[palier] : 0.25;
+    // Les masques qui donnaient des cases de plus (ou de moins) écartent (ou attirent) les rencontres.
+    if (rj && rj.avance && E.par_avance_masque) chance = Math.max(0, Math.min(0.9, chance + E.par_avance_masque * rj.avance));
+    if (tirage(g + "|oui", 1000) >= Math.round(chance * 1000)) return null;
+    var types = evenementsPossibles(contenu, partie, t, rj), poids = (E.poids && E.poids[palier]) || {};
+    var total = types.reduce(function (a, x) { return a + (poids[x] != null ? poids[x] : 1); }, 0);
+    if (!total) return null;
+    var x = tirage(g + "|type", 1000) / 1000 * total, type = types[types.length - 1];
+    for (var i = 0; i < types.length; i++) { x -= poids[types[i]] != null ? poids[types[i]] : 1; if (x < 0) { type = types[i]; break; } }
+    if (type === "ennemi") {
+      var bete = partie.bestiaire || {}, poste = {}; Object.keys(en).forEach(function (k) { poste[en[k]] = 1; });
+      var choix = contenu.ennemis.filter(function (e) { return e.id !== contenu.reserve && !poste[e.id]; }).map(function (e) {
+        var f = bete[e.id], vu = f && (f.victoires || f.defaites);
+        return { id: e.id, score: (vu ? 0 : 1000) + (f ? f.defaites * 60 : 0) + hacher(g + "|" + e.id) % 400 };
+      }).sort(function (a, b) { return b.score - a.score; })[0];
+      if (!choix) return null;
+      en[n] = choix.id;
+      return { type: "surgit", quoi: "ennemi", case: n, ennemi: choix.id };
+    }
+    if (type === "piege") {
+      var L = E.pieges, sp = Object.assign({}, L[tirage(g + "|piege", L.length)], { evenement: true });
+      pl.speciaux[n] = sp;
+      return { type: "surgit", quoi: "piege", case: n, regle: sp.type };
+    }
+    pl.speciaux[n] = { type: type === "atome" ? "mendeleiev" : "chrono", evenement: true };
+    return { type: "surgit", quoi: type, case: n };
   }
 
   // v20 : les cases qu'un désarmement acheté rend inoffensives.
@@ -1372,6 +1393,7 @@
         if (spE && spE.type === "mendeleiev" && contenu.atomes) {
           // v19 : un atome qui apparaît arrête le pion sur sa case ; le reste du trajet attend le combat (ou qu'on le laisse partir).
           var ap = apparition(contenu, partie, e, t);
+          if (spE.evenement) pl.speciaux[e] = null;
           if (ap.type === "atome") {
             poser(j);
             ap.reste = cible - j; ap.arret = true;
@@ -1395,6 +1417,11 @@
         if (mf.serpentin == null && pl.meilleur != null) mf.serpentin = pl.meilleur;
         var coups = pl.coups || 0, record = coups > 0 && (mf[forme] == null || coups < mf[forme]);
         var fin = { type: "tour_fini", tour: pl.tours + 1, coups: coups, record: record, ancien: mf[forme], forme: forme, case: pl.route[der] };
+        // Victor (2026-10-31) : le tour suivant reprend après la dernière case de celui-ci. Toutes les cases vues : victoire,
+        // et l'histoire recommence au début (avec, peut-être, d'autres arbres allumés).
+        var pcF = pl.parcours || {};
+        if (pcF.fin && !toutesCases(partie)) { fin.victoire = true; c.victoires = (c.victoires || 0) + 1; pl.departTour = null; pl.victoire = { t: t, tour: pl.tours + 1 }; }
+        else if (pcF.dernier) pl.departTour = pcF.dernier;
         etapes.push(fin);
         if (record) mf[forme] = coups;
         if (coups > 0 && (pl.meilleur == null || coups < pl.meilleur)) pl.meilleur = coups;
@@ -1437,9 +1464,16 @@
         etapes.push({ type: "duel_attente", case: pl.position, ennemi: partie.duel.ennemi, reste: valeur });
       } else {
         var pas = valeur, garde = 0;
+        // Victor (2026-10-31) : le plus souvent on avance d'une case ; parfois un ennemi, un atome, une partie de Chrono
+        // ou un piège surgit sur la case suivante (selon les packs allumés et l'humeur d'Alyca).
+        if (cause === "quiz" || cause === "rappel" || cause === "chrono") {
+          var ev = tirerEvenement(contenu, partie, t, rj);
+          if (ev) etapes.push(ev);
+        }
         while (avancer(pas) && garde++ < MAX_ENCHAINEMENT) {
           var sp = specialDe(contenu, partie, pl.position);
           if (!sp) break;
+          if (sp.evenement) pl.speciaux[pl.position] = null;
           if (sp.type === "eureka") { c.eurekas++; etapes.push({ type: "eureka", case: pl.position, n: pas }); continue; }
           if (sp.type === "avance") { pas = sp.n; etapes.push({ type: "avance", case: pl.position, n: sp.n }); continue; }
           if (PIEGES[sp.type] && enPoche(partie, "desarme") && !(sp.type === "revision" && revisionEnCours(partie))) {
@@ -2068,6 +2102,11 @@
         var spA = specialDe(contenu, partie, a);
         pl.speciaux[a] = null; pl.speciaux[b] = spA;
         effet.de = a; effet.vers = b; effet.regle = spA.type;
+      } else if (libres.length) {
+        // Victor (2026-10-31) : plus de case spéciale fixe à déplacer ; Alyca en pose une sur une case devant (piège ou cadeau).
+        var E = R.evenements, choixE = ((E && E.pieges) || []).concat([{ type: "cadeau" }]);
+        var spN = Object.assign({ evenement: true }, choixE[Math.floor(alea() * choixE.length)]), bN = libres[Math.floor(alea() * libres.length)];
+        pl.speciaux[bN] = spN; effet.de = null; effet.vers = bN; effet.regle = spN.type;
       } else effet.type = "rien";
     } else if (R && cd.effet === "ennemi") {
       var en = ennemisPlateau(contenu, partie), presents = Object.keys(en).map(function (k) { return en[k]; });
@@ -2173,7 +2212,7 @@
       gain = Math.min(K.gain_max, Math.round(K.gain_base + m * K.gain_par_credit));
       if (issue === "egal") gain = Math.round(gain / 2);
       if (avant) partie.faveur = { valeur: Math.min(100, avant.valeur + gain), maj: t };
-      if (issue !== "egal" && contenu.plateau) {
+      if (issue !== "egal" && contenu.plateau && (K.avance || K.avance_double)) {
         var pas = record && m >= 2 * record ? K.avance_double : K.avance;
         dep = deplacer(contenu, partie, pas, t, "pot");
         if (dep) dep.contextes = contextesPlateau(dep);
@@ -3323,7 +3362,7 @@
     repliqueDuJour: repliqueDuJour,
     themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    choixIA: choixIA, casesParTour: casesParTour, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,

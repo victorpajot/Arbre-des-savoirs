@@ -126,6 +126,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json") };
   const C3 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const R = C3.plateau.regles, cases = C3.plateau.cases;
+  // Victor (2026-10-31) : les événements tirés à chaque pas sont testés à part ; ici, des pas sans surprise.
+  const EVENEMENTS = R.evenements; R.evenements = null;
   const t0 = new Date(2026, 9, 26, 10, 0).getTime();
   const tous = (P, id, ok, chrono) => M.tirerQuestions(C3, P, id, 5).map((q, i) => ({ id: q.id, correct: i < ok, chrono: !!chrono }));
 
@@ -151,47 +153,37 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(r.plateau.valeur, v.total + R.bonus.parfait + R.bonus.chrono, "parfait et chrono");
   }
 
-  // Rappel raté : recul de 2 cases, jamais avant le départ
+  // Victor (2026-10-31) : rappel raté, le pion reste sur place (plus de recul).
   {
     const P = M.nouvellePartie(t0);
     M.terminerQuiz(C3, P, "math.origines", tous(P, "math.origines", 4), t0);
     const avant = P.plateau.position;
     const r = M.terminerRappel(C3, P, "math.origines", tous(P, "math.origines", 0).slice(0, 3), t0 + 86400000);
-    assert.equal(r.plateau.a, Math.max(1, avant + R.echec.rappel));
-    assert.equal(P.compteurs.reculs, 1);
+    assert.equal(r.plateau.a, avant);
+    assert.equal(P.compteurs.reculs, 0);
   }
 
-  // Chaque case spéciale applique sa règle
+  // Victor (2026-10-31) : plus de case spéciale fixe ; un piège posé en jeu sur une case applique sa règle, une fois.
   {
-    const sur = (n, pas) => { const P = M.nouvellePartie(t0); P.plateau.position = n - pas; return [P, M.deplacer(C3, P, pas, t0, "test")]; };
-    const num = id => cases.find(c => c.id === id).n;
-    let [P, dep] = sur(9, 3);
-    assert.equal(dep.a, 12, "Eurêka : on rejoue la même distance"); assert.equal(P.compteurs.eurekas, 1);
-    [P, dep] = sur(num("incendie"), 1);
-    assert.equal(dep.a, num("incendie") - 3, "incendie : recul de 3");
-    [P, dep] = sur(num("fibonacci"), 1);
-    assert.equal(dep.etapes[0].type, "avance"); assert.equal(dep.a, num("fibonacci") + 3);
-    assert.equal(P.plateau.quarantaine, 1, "Fibonacci + 3 mène à la peste");
-    dep = M.deplacer(C3, P, 4, t0, "test");
-    assert.equal(dep.a, dep.de, "quarantaine : une épreuve réussie sans bouger");
-    dep = M.deplacer(C3, P, 3, t0, "test");
-    assert.equal(dep.a, dep.de + 3);
-    [P, dep] = sur(num("galilee-proces"), 2);
-    assert.equal(P.plateau.prison, 1);
-    assert.equal(M.deplacer(C3, P, 3, t0, "test").a, num("galilee-proces"), "prison : on ne bouge plus");
+    const P = M.nouvellePartie(t0); M.deplacer(C3, P, 0, t0, "test");
+    const rt = P.plateau.route;
+    const poser = (i, sp) => { P.plateau.speciaux[rt[i]] = Object.assign({ evenement: true }, sp); };
+    cases.filter(k => k.special).forEach(k => assert.equal(!!M.specialDe(C3, P, k.n), false, "case " + k.n + " : plus de règle fixe"));
+    P.plateau.idx = 5; P.plateau.position = rt[5];
+    poser(6, { type: "recul", n: 3 });
+    let dep = M.deplacer(C3, P, 1, t0, "test");
+    assert.equal(P.plateau.idx, 3, "recul de 3"); assert.equal(P.compteurs.reculs, 1);
+    assert.equal(M.specialDe(C3, P, rt[6]), null, "un piège tiré ne sert qu'une fois");
+    poser(4, { type: "quarantaine", n: 1 });
+    M.deplacer(C3, P, 1, t0, "test"); assert.equal(P.plateau.quarantaine, 1);
+    dep = M.deplacer(C3, P, 1, t0, "test"); assert.equal(dep.a, dep.de, "quarantaine : une épreuve réussie sans bouger");
+    M.deplacer(C3, P, 1, t0, "test"); assert.equal(P.plateau.idx, 5);
+    poser(6, { type: "prison" });
+    M.deplacer(C3, P, 1, t0, "test"); assert.equal(P.plateau.prison, 1);
+    assert.equal(M.deplacer(C3, P, 1, t0, "test").a, rt[6], "prison : on ne bouge plus");
     const r = M.terminerQuiz(C3, P, "math.origines", tous(P, "math.origines", 5), t0);
     assert.equal(P.plateau.prison, 0); assert.ok(r.plateau.contextes.includes("prison_liberation"));
-    assert.ok(r.plateau.a > num("galilee-proces"), "libéré par un quiz parfait, et on avance");
-    assert.ok(succesPuis(r, C3, P, t0).includes("eppur-si-muove"));
-    [P, dep] = sur(num("guillotine"), 1);
-    assert.equal(dep.a, cases[num("guillotine") - 1].special.vers, "guillotine : retour au début de l'époque");
-    [P, dep] = sur(num("solvay"), 3);
-    assert.equal(dep.a, num("solvay") - 4);
-    // Deuxième tour : pièges doublés, prison à deux quiz parfaits
-    P = M.nouvellePartie(t0); P.plateau.tours = 1; P.plateau.position = num("solvay") - 3;
-    assert.equal(M.deplacer(C3, P, 3, t0, "test").a, num("solvay") - 8);
-    P.plateau.position = num("galilee-proces") - 2; M.deplacer(C3, P, 2, t0, "test");
-    assert.equal(P.plateau.prison, 2);
+    assert.equal(r.plateau.a, rt[7], "libéré par un quiz parfait, et on avance d'une case");
   }
 
   // Du feu à l'IA en mode test, puis un nouveau tour
@@ -388,7 +380,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(r.issue, "premier"); assert.ok(r.gain > 0); assert.equal(P.credits.solde, 90 + r.recompenses.credits.reduce((a, c) => a + c.n, 0));
     assert.equal(M.corrompre(C5, P, 5, t0).raison, "jour", "un pot-de-vin par jour");
     const j = 86400000;
-    r = M.corrompre(C5, P, 20, t0 + j); assert.equal(r.issue, "genereux"); assert.ok(r.plateau, "plus que son record : le pion avance");
+    r = M.corrompre(C5, P, 20, t0 + j); assert.equal(r.issue, "genereux"); assert.ok(!r.plateau, "plus que son record : de la faveur, plus d'avance (Victor, 2026-10-31)");
     r = M.corrompre(C5, P, 20, t0 + 2 * j); assert.equal(r.issue, "egal"); assert.ok(!r.plateau);
     const avant = M.faveurIA(C5, P, t0 + 3 * j).valeur;
     r = M.corrompre(C5, P, 5, t0 + 3 * j); assert.equal(r.issue, "radin");
@@ -456,7 +448,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const r = M.terminerQuiz(C5, P, c.comp.id, juste(P, c.comp.id, 5, 5), t0, { jouer: true });
     const sans = M.valeurEpreuve(C5, P, { type: "quiz", comp: c.comp.id }, t0).total + C5.plateau.regles.bonus.parfait;
     // v19 : bonus du bouton Jouer tiré entre 0 et 4.
-    assert.ok(r.plateau.bonusJouer >= 0 && r.plateau.bonusJouer <= 4); assert.equal(r.plateau.valeur, sans + r.plateau.bonusJouer, "bonus Jouer ajouté à l'avance");
+    assert.equal(r.plateau.bonusJouer, 0); assert.equal(r.plateau.valeur, 1, "une case par épreuve réussie");
     // v31 : un rappel d'un autre arbre n'attend plus que son arbre… sauf s'il est très en retard.
     const t1 = P.competences[c.comp.id].prochainRappel + 3 * jour;
     const c2 = M.choixIA(C5, P, t1);
@@ -571,19 +563,21 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const t0 = new Date(2026, 9, 28, 10, 0).getTime();
   const juste = (P, id, n, ok) => M.tirerQuestions(C6, P, id, n).map((q, i) => ({ id: q.id, correct: i < ok }));
 
-  // Avance = rang de la compétence ; +2 par le bouton Jouer
+  // Victor (2026-10-31) : une épreuve réussie vaut une case, quel que soit le rang, sans bonus Jouer.
   {
     const k3 = C6.competences.filter(k => k.rang === 3)[0];
     const P = M.nouvellePartie(t0);
-    assert.equal(M.valeurEpreuve(C6, P, { type: "quiz", comp: k3.id }, t0).total, 3);
-    assert.equal(M.valeurEpreuve(C6, P, { type: "rappel", comp: k3.id }, t0).total, 3);
+    assert.equal(M.valeurEpreuve(C6, P, { type: "quiz", comp: k3.id }, t0).total, 1);
+    assert.equal(M.valeurEpreuve(C6, P, { type: "rappel", comp: k3.id }, t0).total, 1);
     const k1 = C6.competences.filter(k => k.rang === 1)[0];
     const r = M.terminerQuiz(C6, P, k1.id, juste(P, k1.id, 5, 5), t0, { jouer: true, alea: () => 0.99 });
-    assert.equal(r.plateau.valeur, 1 + r.plateau.bonusJouer, "rang 1 + tirage Jouer, sans bonus parfait");
+    assert.equal(r.plateau.valeur, 1, "une case"); assert.equal(r.plateau.bonusJouer, 0, "plus de bonus Jouer");
   }
 
   // Simulation : au plus un butin par épreuve, aucun lot avant son tour, collection incomplète au tour 7
   {
+    // Les événements de route (duels, pièges…) ne sont pas joués par cette simulation du butin.
+    const EV6 = C6.plateau.regles.evenements; C6.plateau.regles.evenements = null;
     let seed = 7; const rnd = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
     const P = M.nouvellePartie(t0); let t = t0;
     const butin = () => ["objets", "livres", "accessoires", "masques"].reduce((n, f) => n + Object.keys(P[f]).length, 0);
@@ -614,6 +608,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     }
     const total = C6.objets.length + C6.livres.length + C6.avatar.accessoires.length + C6.ia.masques.length;
     assert.ok(collectionAuTour7 != null && collectionAuTour7 < total, "collection incomplète après 7 tours (" + collectionAuTour7 + "/" + total + ")");
+    C6.plateau.regles.evenements = EV6;
   }
 
   // Savant : le dernier débloqué, sans choix du joueur
@@ -738,7 +733,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.ennemisPlateau(C8, G)[c.effet.case], "charlatan");
   c = M.donnerObjet(C8, G, "des-pascal", t0 + 3 * 86400000, () => 0);
   assert.equal(c.effet.type, "echange");
-  assert.equal(M.specialDe(C8, G, c.effet.de), null);
+  if (c.effet.de != null) assert.equal(M.specialDe(C8, G, c.effet.de), null);
   assert.equal(M.specialDe(C8, G, c.effet.vers).type, c.effet.regle);
   console.log("OK : v7 ennemis, duels, bestiaire, cadeaux à l'IA");
 }
@@ -749,31 +744,40 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json") };
   const C9 = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const t0 = new Date(2026, 9, 28, 10, 0).getTime(), J = 86400000;
-  const sur = (n, pas, P) => { P = P || M.nouvellePartie(t0); P.plateau.ennemis = {}; P.plateau.position = n - pas; return [P, M.deplacer(C9, P, pas, t0, "test")]; };
-  // Téléportation : Montaigne renvoie chez Averroès.
-  let [P, dep] = sur(32, 2);
-  assert.equal(dep.a, 24); assert.equal(dep.etapes[0].type, "teleport"); assert.equal(dep.etapes[0].n, 8);
-  // Recul : le zéro de Brahmagupta.
-  [P, dep] = sur(21, 1);
-  assert.equal(dep.a, 19); assert.equal(dep.etapes[0].type, "recul");
+  // Victor (2026-10-31) : les pièges ne sont plus fixes, on les pose sur la route (place i) ; pas d'événement tiré ici.
+  C9.plateau.regles.evenements = null;
+  const sur = (i, pas, sp, P) => {
+    P = P || M.nouvellePartie(t0); P.plateau.ennemis = {}; M.deplacer(C9, P, 0, t0, "test");
+    const rt = P.plateau.route; P.plateau.speciaux[rt[i]] = Object.assign({ evenement: true }, sp);
+    P.plateau.idx = i - pas; P.plateau.position = rt[i - pas];
+    return [P, M.deplacer(C9, P, pas, t0, "test")];
+  };
+  const rtDe = P => P.plateau.route;
+  // Téléportation : retour à une case plus ancienne de la route.
+  const P0 = M.nouvellePartie(t0); M.deplacer(C9, P0, 0, t0, "test"); const rt0 = P0.plateau.route;
+  let [P, dep] = sur(12, 2, { type: "teleport", vers: rt0[4] }, P0);
+  assert.equal(dep.a, rt0[4]); assert.equal(dep.etapes[0].type, "teleport"); assert.equal(dep.etapes[0].n, 8);
+  // Recul de deux cases.
+  [P, dep] = sur(8, 1, { type: "recul", n: 2 });
+  assert.equal(dep.a, rtDe(P)[6]); assert.equal(dep.etapes[0].type, "recul");
   // Révision forcée sans compétence maîtrisée : rien.
-  [P, dep] = sur(11, 1);
+  [P, dep] = sur(11, 1, { type: "revision" });
   assert.equal(dep.etapes[0].type, "revision_vide"); assert.equal(P.revision, undefined);
   // Avec deux compétences maîtrisées : l'IA prend celle dont le rappel est le plus lointain.
   P = M.nouvellePartie(t0);
   P.competences["math.origines"] = { maitrise: true, palier: 2, xp: 90, prochainRappel: t0 + 3 * J, maitriseDepuis: t0 - 9 * J };
   P.competences["math.chine"] = { maitrise: true, palier: 3, xp: 90, prochainRappel: t0 + 20 * J, maitriseDepuis: t0 - 30 * J };
-  [P, dep] = sur(11, 1, P);
+  [P, dep] = sur(11, 1, { type: "revision" }, P);
   assert.equal(P.revision.comp, "math.chine");
   assert.equal(M.choixIA(C9, P, t0).raison, "revision");
-  dep = M.deplacer(C9, P, 3, t0, "quiz");
-  assert.equal(dep.a, 11, "bloqué tant que la révision n'est pas faite"); assert.equal(dep.etapes[0].type, "bloque_revision");
+  dep = M.deplacer(C9, P, 1, t0, "quiz");
+  assert.equal(dep.a, rtDe(P)[11], "bloqué tant que la révision n'est pas faite"); assert.equal(dep.etapes[0].type, "bloque_revision");
   const qs = M.tirerQuestions(C9, P, "math.chine", 3);
   let r = M.terminerRappel(C9, P, "math.chine", qs.map(q => ({ id: q.id, correct: true })), t0);
   assert.ok(r.revision); assert.equal(P.revision, null); assert.equal(P.competences["math.chine"].palier, 3, "pas de palier gagné");
-  assert.ok(r.contextes.includes("revision_reussie")); assert.ok(r.plateau.a > 11);
+  assert.ok(r.contextes.includes("revision_reussie")); assert.equal(r.plateau.a, rtDe(P)[12], "puis une case");
   // Révision ratée : la compétence reste, son rappel devient dû.
-  [P, dep] = sur(42, 1, P);
+  [P, dep] = sur(14, 1, { type: "revision" }, P);
   const cible = P.revision.comp;
   r = M.terminerRappel(C9, P, cible, M.tirerQuestions(C9, P, cible, 3).map(q => ({ id: q.id, correct: false })), t0 + 1000);
   assert.ok(P.competences[cible].maitrise, "pas de perte"); assert.equal(P.competences[cible].prochainRappel, t0 + 1000);
@@ -782,7 +786,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Case cadeau : un objet sans épreuve, montré dans les récompenses.
   P = M.nouvellePartie(t0); M.verifierRecompenses(C9, P, t0);
   P.gagnables["objets:boulier"] = { famille: "objets", id: "boulier", depuis: t0 };
-  [P, dep] = sur(5, 2, P);
+  [P, dep] = sur(5, 2, { type: "cadeau" }, P);
   assert.equal(dep.etapes[0].type, "cadeau"); assert.ok(P.objets[dep.etapes[0].id]);
   const rec = M.verifierRecompenses(C9, P, t0);
   assert.ok(rec.objets.some(o => o.id === dep.etapes[0].id), "le cadeau apparaît dans les récompenses");
@@ -797,7 +801,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const CA = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const t0 = new Date(2026, 9, 28, 10, 0).getTime();
   let P = M.nouvellePartie(t0); P.plateau.ennemis = {};
-  // S'arrêter sur la case 53 fait apparaître un atome ; la traverser aussi (54 est un eurêka qui relance).
+  // S'arrêter sur une case où Alyca a posé un atome le fait apparaître (Victor, 2026-10-31 : plus de case Mendeleïev fixe).
+  P.plateau.speciaux = { 53: { type: "mendeleiev" } };
   P.plateau.position = 51;
   let dep = M.deplacer(CA, P, 2, t0, "test");
   assert.equal(dep.a, 53); assert.equal(dep.etapes[0].type, "atome"); assert.equal(dep.etapes[0].case, 53);
@@ -854,7 +859,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const tF = t0 + 6 * J;
   P.competences["math.chine"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: tF + J, maitriseDepuis: t0 };
   const v = M.valeurEpreuve(CF, P, { type: "quiz", comp: "math.chine" }, tF);
-  assert.equal(v.faveur, -1);
+  // Victor (2026-10-31) : plus de case de moins ; furieuse, les mauvaises rencontres sont plus fréquentes.
+  const EVc = CF.plateau.regles.evenements.chance; assert.equal(v.total, 1); assert.ok(EVc.furieuse > EVc.contente && EVc.contente > EVc.comblee);
   P.plateau.position = 2;
   const c = M.piegeIA(CF, P, tF);
   assert.ok(c > 2 && c <= 7); assert.equal(M.specialDe(CF, P, c).type, "recul"); assert.ok(M.specialDe(CF, P, c).ia);
@@ -871,7 +877,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(r.repete); assert.equal(r.gain, Math.round(F.gains["3"] / 2));
   // Comblée : une case de plus.
   P.faveur = { valeur: 90, maj: tF }; assert.equal(M.faveurIA(CF, P, tF).palier.id, "comblee");
-  assert.equal(M.valeurEpreuve(CF, P, { type: "quiz", comp: "math.chine" }, tF).faveur, 1);
+  assert.equal(M.valeurEpreuve(CF, P, { type: "quiz", comp: "math.chine" }, tF).total, 1);
   P.punition = null; assert.ok(M.repliqueDuJour(CF, P, tF).contexte === "faveur_comblee");
   const vieux = M.migrer(JSON.parse(JSON.stringify(Object.assign(M.nouvellePartie(t0), { faveur: undefined }))));
   assert.equal(vieux.faveur, null);
@@ -911,14 +917,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   imposer(["finale", "turc"], t1); assert.equal(M.questionsQuiz(CM, P, t1), Math.min(8, Q + 3));
   imposer(["homoncule"], t1); assert.equal(M.seuilAtome(CM, P, t1), Math.max(1, X.atomes.regles.seuil - 1));
   imposer(["tubes"], t1); assert.equal(M.seuilAtome(CM, P, t1), Math.min(X.atomes.regles.questions, X.atomes.regles.seuil + 1));
-  // Héron : une case de plus à l'épreuve réussie.
+  // Héron (Victor, 2026-10-31) : toujours une case, mais moins de surprises sur la route.
   P.competences["math.chine"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: t1 + J, maitriseDepuis: t0 };
-  imposer(["theatre"], t1); const base = M.valeurEpreuve(CM, P, { type: "quiz", comp: "math.chine" }, t1).total;
-  imposer(["heron"], t1); assert.equal(M.valeurEpreuve(CM, P, { type: "quiz", comp: "math.chine" }, t1).total, base + 1);
+  imposer(["heron"], t1); assert.equal(M.valeurEpreuve(CM, P, { type: "quiz", comp: "math.chine" }, t1).total, 1);
+  assert.equal(M.reglesDuJour(CM, P, t1).avance, 1); assert.ok(X.plateau.regles.evenements.par_avance_masque < 0);
   // Perceptron : un piège de recul est sans effet.
   const R = X.plateau.regles;
-  let caseRecul = null;
-  for (let c = R.depart + 1; c < R.arrivee; c++) { const sp = M.specialDe(CM, P, c); if (sp && sp.type === "recul") { caseRecul = c; break; } }
+  let caseRecul = 21;
+  P.plateau.speciaux = Object.assign(P.plateau.speciaux || {}, { 21: { type: "recul", n: 2 } });
   P.plateau.ennemis = {}; P.plateau.position = caseRecul - 1;
   imposer(["perceptron"], t1);
   let dep = M.deplacer(CM, P, 1, t1, "test");
@@ -938,7 +944,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(P.plateau.ennemis[rf.case], rf.ennemi);
   // Objet tenu : bonus parfois, butin assuré au tirage suivant.
   const P2 = M.nouvellePartie(t0); P2.plateau.ennemis = {};
-  const obj = X.objets.objets.find(o => o.bonus.type === "case");
+  const obj = X.objets.objets.find(o => o.bonus.type === "butin");
+  assert.ok(!X.objets.objets.some(o => o.bonus && o.bonus.type === "case"), "plus d'objet qui fait avancer (Victor, 2026-10-31)");
   P2.objets[obj.id] = t0; P2.avatar.main = obj.id;
   P2.competences["math.chine"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: t0 + 99 * J, maitriseDepuis: t0 };
   let bonus = 0;
@@ -1035,13 +1042,13 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   P.plateau.ennemis = {};
   M.deplacer(CP, P, 3, T, "test");
   assert.ok(M.caseDecouverte(P, 4) && !M.caseDecouverte(P, 2) && !M.caseDecouverte(P, 3), "cases survolées cachées");
-  const oubli = CP.plateau.cases.find(k => k.special && k.special.type === "oubli").n;
+  const oubli = 30; P.plateau.speciaux = Object.assign(P.plateau.speciaux || {}, { 30: { type: "oubli" } });
   P.plateau.position = oubli - 2; P.plateau.visites[oubli - 2] = 1;
   const dep = M.deplacer(CP, P, 2, T, "test");
   const et = dep.etapes.find(e => e.type === "oubli");
   assert.ok(et && !P.plateau.visites[et.vers - 0] === false && et.vers >= oubli - 15 && et.vers < oubli, "trou de mémoire : retour à une case jamais vue, 15 cases au plus");
   // Un pas seulement
-  P = M.nouvellePartie(T); P.plateau.ennemis = {};
+  P = M.nouvellePartie(T); P.plateau.ennemis = {}; CP.plateau.regles.evenements = null;
   const id = CP.competences.find(k => k.rang === 1).id, qs = CP.questionsPar[id].slice(0, 5);
   const r = M.terminerQuiz(CP, P, id, qs.map(q => ({ id: q.id, correct: true })), T, { jouer: true, uneCase: true });
   assert.equal(r.plateau.a, 2, "un seul pas"); assert.equal(P.plateau.coups, 1);
@@ -1149,6 +1156,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const T = new Date(2026, 9, 27, 10).getTime();
   const P = M.nouvellePartie(T); P.plateau.ennemis = {};
   const rt = P.plateau.route || Array.from({ length: 63 }, (_, i) => i + 1); P.plateau.route = rt;
+  P.plateau.speciaux = { 31: { type: "mendeleiev" } };
   const i31 = rt.indexOf(31); P.plateau.idx = i31 - 2; P.plateau.position = rt[i31 - 2];
   let dep = M.deplacer(CA, P, 5, T, "test");
   assert.equal(P.plateau.position, 31, "arrêt sur la case Mendeleïev");
@@ -1230,44 +1238,50 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   CP.ia.credits.emplettes = CE;
   console.log("OK : v20 articles de poche et emplettes de l'IA " + JSON.stringify(types));
 }
-// v20 : furieuse, l'IA bloque le bonus aléatoire du bouton Jouer à son minimum.
+// Victor (2026-10-31) : plus de bonus du bouton Jouer, quelle que soit l'humeur.
 {
   const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
     plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
   const CF = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const T = new Date(2026, 9, 28, 9).getTime();
   const P = M.nouvellePartie(T); P.faveur = { valeur: 2, maj: T };
-  const b = M.bornesBonusJouer(CF, P, T); assert.ok(b.furieuse); assert.equal(b.max, b.min);
-  P.faveur = { valeur: 90, maj: T }; assert.equal(M.bornesBonusJouer(CF, P, T).max, 4);
-  console.log("OK : v20 furieuse, bonus Jouer bloqué");
+  assert.equal(M.bornesBonusJouer(CF, P, T).max, 0);
+  P.faveur = { valeur: 90, maj: T }; assert.equal(M.bornesBonusJouer(CF, P, T).max, 0);
+  console.log("OK : plus de bonus Jouer");
 }
-// v21 : à chaque tour bouclé, l'IA dessine le parcours suivant selon son humeur.
+// Victor (2026-10-31) : les cases des arbres allumés, rangées par date, coupées au réglage « Cases par tour » (24) ;
+// le tour suivant reprend après la dernière case ; toutes vues, c'est la victoire et l'histoire recommence.
 {
   const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
     plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
   const CR = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const T = new Date(2026, 9, 28, 10).getTime();
   const boucler = (P, v) => { P.faveur = { valeur: v, maj: T }; P.plateau.ennemis = {}; P.duel = null; P.sauvages = []; const rt = M.routeTour(CR, P); P.plateau.idx = rt.length - 2; P.plateau.position = rt[rt.length - 2]; return M.deplacer(CR, P, 3, T, "test"); };
-  // Comblée : un tour court, peu d'ennemis.
-  const P = M.nouvellePartie(T);
+  const arr = CR.plateau.cases.find(k => k.arrivee).n;
+  const pool = CR.plateau.cases.filter(k => k.n !== arr).sort((a, b) => a.annee - b.annee || a.n - b.n).map(k => k.n);
+  const P = M.nouvellePartie(T); P.plateau.route = null; P.plateau.idx = null;
+  assert.equal(M.casesParTour(CR, P), 24, "24 cases par défaut");
+  const rt = M.routeTour(CR, P);
+  assert.equal(rt.length, 25); assert.deepEqual(rt.slice(0, 24), pool.slice(0, 24), "les plus anciennes d'abord, par date"); assert.equal(rt[24], arr);
+  assert.equal(Object.keys(M.ennemisPlateau(CR, P)).length, 0, "plus d'ennemi posté d'avance");
   const d1 = boucler(P, 95); assert.ok(d1.etapes.some(e => e.type === "tour_fini"));
   const tf = d1.etapes.find(e => e.type === "tour_fini");
-  assert.ok(tf.case > 0 && tf.faveur && tf.faveur.gain === 5 && M.faveurIA(CR, P, T).valeur === 100, "v32 : arrivée nommée, faveur en hausse (plafonnée à 100)");
-  const s1 = P.plateau.parcoursSuivant; assert.ok(s1 && s1.palier === "comblee" && s1.longueur >= 42 && s1.longueur <= 48 && s1.ennemis === 4);
-  assert.notEqual(s1.forme, "serpentin");
+  assert.ok(tf.case > 0 && tf.faveur && M.faveurIA(CR, P, T).valeur === 100, "v32 : arrivée nommée, faveur en hausse (plafonnée à 100)");
+  assert.ok(!tf.victoire);
+  const s1 = P.plateau.parcoursSuivant; assert.ok(s1 && s1.palier === "comblee");
+  assert.deepEqual(s1.cases.slice(0, 24), pool.slice(24, 48), "le tour suivant reprend après la dernière case");
   assert.equal(M.choisirSuite(CR, P, "donjon", T).raison, "bientot");
-  const c = M.choisirSuite(CR, P, "tour", T); assert.ok(c.ok);
-  assert.equal(M.routeTour(CR, P).length, s1.longueur); assert.equal(P.plateau.position, 1);
-  const en = M.ennemisPlateau(CR, P); assert.equal(Object.keys(en).length, 4);
-  Object.keys(en).forEach(n => assert.ok(s1.cases.indexOf(+n) >= 0, "ennemi sur la route"));
-  // Furieuse : toute la route, dix ennemis ou plus, des pièges ajoutés.
-  const d2 = boucler(P, 3); const s2 = P.plateau.parcoursSuivant;
-  assert.ok(s2.palier === "furieuse" && s2.longueur === 63 && s2.ennemis >= 10);
-  assert.ok(["spirale", "labyrinthe"].indexOf(s2.forme) >= 0);
-  // Sans choix, le parcours s'impose quand le pion repart.
-  M.deplacer(CR, P, 1, T + 1, "test"); assert.equal(P.plateau.parcours.forme, s2.forme); assert.equal(P.plateau.parcoursSuivant, null);
-  assert.ok(Object.keys(M.ennemisPlateau(CR, P)).length >= 10);
-  console.log("OK : v21 parcours dessinés par l'IA selon son humeur");
+  assert.ok(M.choisirSuite(CR, P, "tour", T).ok);
+  assert.deepEqual(M.routeTour(CR, P), s1.cases); assert.equal(P.plateau.position, pool[24]);
+  // Réglage : 12 cases par tour.
+  P.options.casesTour = 12; assert.equal(M.casesParTour(CR, P), 12);
+  boucler(P, 50); assert.deepEqual(P.plateau.parcoursSuivant.cases.slice(0, 12), pool.slice(48, 60));
+  P.options.casesTour = 48;
+  let fin = null;
+  for (let k = 0; k < 20 && !fin; k++) { M.choisirSuite(CR, P, "tour", T); fin = boucler(P, 50).etapes.find(e => e.type === "tour_fini" && e.victoire); }
+  assert.ok(fin, "toutes les cases vues : victoire"); assert.equal(P.compteurs.victoires, 1);
+  assert.equal(P.plateau.parcoursSuivant.cases[0], pool[0], "et l'histoire recommence au début");
+  console.log("OK : parcours chronologique, coupé au réglage, victoire au bout");
 }
 
 // v25 : Alyca donne son nom la première fois qu'elle est comblée, et le garde.
@@ -1284,22 +1298,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   console.log("OK : v25 Alyca révèle son nom, pour de bon");
 }
 
-// v26 : avancer d'une case à la boutique, 80 crédits, une fois par jour.
+// Victor (2026-10-31) : plus d'achat « Avancer d'une case ».
 {
   const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
-  const T = Date.UTC(2026, 9, 1, 8), J = 86400000;
+  const T = Date.UTC(2026, 9, 1, 8);
   const P = M.nouvellePartie(T); P.credits.solde = 200;
-  const avant = P.plateau.idx, gagnes = P.credits.gagnes || 0;
-  const r = M.acheter(C, P, "avancer", T);
-  assert.ok(r.ok); assert.equal(r.prix, 80); assert.equal(P.credits.solde, 120 + (P.credits.gagnes || 0) - gagnes);
-  const solde = P.credits.solde;
-  assert.equal(P.plateau.idx, avant + 1, "le pion avance d'une case");
-  const r2 = M.acheter(C, P, "avancer", T + 3600e3);
-  assert.equal(r2.ok, false); assert.equal(r2.raison, "jour"); assert.equal(P.credits.solde, solde);
-  assert.ok(M.acheter(C, P, "avancer", T + J).ok, "de nouveau le lendemain");
-  P.duel = { ennemi: C.ennemis[0].id, case: P.plateau.position, reste: 2, pret: true, depuis: T };
-  assert.equal(M.enRayon(C, P, "avancer", T + 2 * J).length, 0, "pas quand un duel retient le pion");
-  console.log("OK : v26 avancer d'une case à la boutique");
+  assert.ok(!M.acheter(C, P, "avancer", T).ok); assert.equal(P.credits.solde, 200);
+  assert.ok(!C.boutique || !(C.boutique.articles || C.boutique).some || !(C.boutique.articles || C.boutique).some(a => a.id === "avancer"));
+  console.log("OK : plus d'achat Avancer d'une case");
 }
 
 // v27 : furieuse, l'IA est sèche ; à 0, le jeu ferme jusqu'au lendemain, où sa faveur remonte d'elle-même.
@@ -1464,7 +1470,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
 {
   const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
   const T = new Date(2026, 9, 7, 10).getTime();
-  const prep = () => { const P = M.nouvellePartie(T); P.decalage = T - Date.now(); P.plateau.ennemis = {}; P.sauvages = []; const rt = M.routeTour(C, P); const i = rt.indexOf(21); P.plateau.idx = i - 1; P.plateau.position = rt[i - 1]; return P; };
+  C.plateau.regles.evenements = null;
+  const prep = () => { const P = M.nouvellePartie(T); P.decalage = T - Date.now(); P.plateau.ennemis = {}; P.sauvages = []; P.plateau.speciaux = { 21: { type: "recul", n: 2 } }; const rt = M.routeTour(C, P); const i = rt.indexOf(21); P.plateau.idx = i - 1; P.plateau.position = rt[i - 1]; return P; };
   let P = prep();
   let dep = M.deplacer(C, P, 1, T, "quiz");
   assert.ok(dep.etapes.some(e => e.type === "piege") && P.plateau.position === 21 && M.piegeEnAttente(P), "le pion s'arrête sur le piège");
@@ -1517,6 +1524,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.chronoSpontane(C, vide, T, () => 0), false, "réservoir trop maigre");
 
   // Case Chrono : le pion s'y arrête, Jouer lance la partie ; 3 justes sur 5, il avance.
+  // Victor (2026-10-31) : plus de case Chrono fixe ; Alyca en pose une sur la route (ici, à la main).
+  C.plateau.regles.evenements = null;
+  P.plateau.speciaux = { [R.cases[0]]: { type: "chrono" } };
   const rt = M.routeTour(C, P), i14 = rt.indexOf(R.cases[0]);
   P.plateau.idx = i14 - 2; P.plateau.position = rt[i14 - 2];
   let dep = M.deplacer(C, P, 2, T, "quiz");
@@ -1543,7 +1553,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(fin.reussi && !fin.parfait && fin.points === 2 * 3 + 1 + 1, "points : 3 justes, 1 rapide, 1 proche");
   assert.equal(P.credits.solde - credAvant >= fin.credits, true);
   assert.ok(fin.plateau && P.plateau.position !== posAvant && !M.chronoEnAttente(P), "réussi : le pion avance");
-  assert.ok(fin.plateau.valeurs.base === R.avance);
+  assert.ok(fin.plateau.valeurs.base === 1, "une case, comme toute épreuve");
   assert.equal(P.siecles.parties, 1);
   assert.ok(M.verifierRecompenses(C, P, T + 1).succes.concat(fin.recompenses.succes).some(s => s.id === "chrono-1") || P.succes["chrono-1"], "succès de la première partie");
   // Le faux est retenu, il revient en tête au prochain tirage.
@@ -1551,7 +1561,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(P.siecles.fiches[rate].rate);
 
   // Échec sur la case : la case est consommée, le pion ne bouge pas.
-  P = prep(); P.plateau.idx = i14 - 2; P.plateau.position = rt[i14 - 2]; M.deplacer(C, P, 2, T, "quiz");
+  P = prep(); P.plateau.speciaux = { [R.cases[0]]: { type: "chrono" } }; P.plateau.idx = i14 - 2; P.plateau.position = rt[i14 - 2]; M.deplacer(C, P, 2, T, "quiz");
   j = M.lancerChrono(C, P, "case", T, () => 0.1);
   j.questions.forEach(q => M.repondreChrono(C, P, M.anneeDuCreneau(M.creneau(q.debut, 100, R.prehistoire) + 9, 100), 20000, T));
   const ici = P.plateau.position; fin = M.terminerChrono(C, P, T);
@@ -1597,18 +1607,42 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   console.log("OK : v34 Chrono, le jeu des siècles");
 }
 
-// v34 : les parcours dessinés posent des cases Chrono selon l'humeur.
+// Victor (2026-10-31) : à chaque pas, Alyca tire parfois un événement qu'elle pose sur la case suivante ; plus souvent fâchée.
 {
   const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
   const T = new Date(2026, 9, 7, 10).getTime();
-  for (const [v, attendu] of [[90, 3], [60, 3], [30, 2], [10, 2]]) {
-    const P = M.nouvellePartie(T); P.decalage = T - Date.now(); P.faveur = { valeur: v, maj: T };
-    const p = M.dessinerParcours(C, P, T);
-    P.plateau.parcoursSuivant = p; M.choisirSuite(C, P, "tour", T);
-    const n = P.plateau.route.filter(c => { const sp = M.specialDe(C, P, c); return sp && sp.type === "chrono"; }).length;
-    assert.equal(n, attendu, "faveur " + v);
+  const neuve = (t, v) => { const P = M.nouvellePartie(t); P.plateau.route = null; P.plateau.idx = null; P.decalage = t - Date.now(); P.faveur = { valeur: v, maj: t }; M.routeTour(C, P); return P; };
+  const tirages = v => {
+    const vus = {}; let n = 0;
+    for (let k = 0; k < 400; k++) {
+      const t = T + k * 7919, P = neuve(t, v), e = M.tirerEvenement(C, P, t, null);
+      if (!e) continue;
+      n++; vus[e.quoi] = (vus[e.quoi] || 0) + 1;
+      const suivante = P.plateau.route[1]; assert.equal(e.case, suivante, "sur la case suivante");
+      if (e.quoi === "ennemi") assert.ok(M.ennemisPlateau(C, P)[suivante]); else assert.ok(M.specialDe(C, P, suivante).evenement);
+    }
+    return { n, vus };
+  };
+  const doux = tirages(90), dur = tirages(5);
+  assert.ok(doux.n > 30 && doux.n < 140, "comblée : " + doux.n + " / 400");
+  assert.ok(dur.n > doux.n, "furieuse : plus de rencontres (" + dur.n + ")");
+  assert.ok((dur.vus.ennemi || 0) > (doux.vus.ennemi || 0) && (dur.vus.piege || 0) > (doux.vus.piege || 0));
+  // Sans le pack ennemis, pas d'ennemi tiré.
+  const sansE = Object.assign({}, C, { ennemis: [], placement: null });
+  for (let k = 0; k < 100; k++) { const t = T + k * 7919, P = neuve(t, 5), e = M.tirerEvenement(sansE, P, t, null); assert.ok(!e || e.quoi !== "ennemi"); }
+  // Un vrai pas : l'ennemi tiré garde la case suivante, le pion y entre et le duel commence.
+  let vu = false;
+  for (let k = 0; k < 300 && !vu; k++) {
+    const t = T + k * 104729, P = neuve(t, 5);
+    const dep = M.deplacer(C, P, 1, t, "quiz"), ev = dep.etapes.find(e => e.type === "surgit");
+    if (ev && ev.quoi === "ennemi") {
+      vu = true;
+      assert.ok(P.duel && P.duel.case === P.plateau.position && P.plateau.position === ev.case && P.duel.reste === 0, "l'ennemi garde la case");
+      assert.ok(dep.etapes.some(e => e.type === "ennemi"));
+    }
   }
-  console.log("OK : v34 cases Chrono des parcours");
+  assert.ok(vu, "un ennemi finit par surgir");
+  console.log("OK : événements tirés à chaque pas " + JSON.stringify({ doux, dur }));
 }
 
 // v34 : sans assez d'éléments datés, une case Chrono ne retient pas le pion.
@@ -1616,6 +1650,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
   const T = new Date(2026, 9, 7, 10).getTime(), R = M.reglesChrono(C);
   const P = M.nouvellePartie(T); P.decalage = T - Date.now(); P.plateau.ennemis = {}; P.sauvages = [];
+  C.plateau.regles.evenements = null; P.plateau.speciaux = { [R.cases[0]]: { type: "chrono" } };
   const rt = M.routeTour(C, P), i = rt.indexOf(R.cases[0]); P.plateau.idx = i - 1; P.plateau.position = rt[i - 1];
   const dep = M.deplacer(C, P, 1, T, "quiz");
   assert.ok(dep.etapes.some(e => e.type === "chrono_vide") && !M.chronoEnAttente(P));
