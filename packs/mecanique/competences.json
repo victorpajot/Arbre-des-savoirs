@@ -1,15 +1,1345 @@
 [
  {
-  "id": "phys.unites",
+  "id": "phys.machines",
   "stat": "mecanique",
   "rang": 1,
   "nom": {
-   "fr": "Unités et ordres de grandeur"
+   "fr": "Machines simples"
   },
   "description": {
-   "fr": "Le Système international, les préfixes et les tailles du monde."
+   "fr": "Levier, roue, poulie, plan incliné : les outils qui démultiplient la force, des premiers agriculteurs à Galilée."
   },
   "prerequis": [],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Une machine simple change une force en direction ou en intensité : levier, roue et essieu, poulie, coin, vis et plan incliné."
+    },
+    {
+     "fr": "Loi du levier : l'avantage mécanique vaut le rapport des bras. Un bras trois fois plus long divise l'effort par trois."
+    },
+    {
+     "fr": "Héron d'Alexandrie compte cinq machines qui « mettent une charge en mouvement » : levier, treuil, poulie, coin et vis."
+    },
+    {
+     "fr": "En 1600, dans Le Mecaniche, Galilée explique qu'une machine ne crée pas d'énergie : elle la transforme."
+    }
+   ],
+   "piege": {
+    "fr": "Une machine ne donne rien gratuitement : la force gagnée se paie en distance. Pour soulever trois fois plus lourd, on pousse trois fois plus loin."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Les machines simples, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. -5000</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">balance à fléau en Égypte</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. -3500</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">chariots à roues à Uruk</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. -3000</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">le chadouf en Mésopotamie</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1586</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Stevin et le plan incliné</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1600</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Galilée, Le Mecaniche</text></svg>",
+   "source": "Galilée, Le Mecaniche, 1600 ; Héron d'Alexandrie, Mécaniques"
+  },
+  "symbole": "⚙",
+  "embleme": "ph-levier",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "levier",
+     "titre": {
+      "fr": "Le levier, du bâton à fouir au chadouf"
+     },
+     "texte": [
+      {
+       "fr": "Le premier levier est peut-être le bâton à fouir des premiers cultivateurs : l'historienne Autumn Stanley en fait même une invention des femmes de la préhistoire. Vers 5000 av. J.-C., les Égyptiens pèsent avec une balance à fléau, qui est un levier ; vers 3000 av. J.-C., en Mésopotamie, le chadouf, une perche à contrepoids, sert à puiser l'eau. Les Égyptiens soulèvent avec des leviers des obélisques de plus de 100 tonnes."
+      },
+      {
+       "fr": "Un levier tourne autour d'un pivot. Si l'effort s'applique loin du pivot et la charge tout près, l'effort est démultiplié : le rapport des forces vaut le rapport des distances au pivot. Il y a trois classes : pivot au milieu (la balançoire, le pied-de-biche), charge au milieu (la brouette, le casse-noix), effort au milieu (la pince à épiler, la canne à pêche)."
+      }
+     ],
+     "retenir": {
+      "fr": "Le levier démultiplie l'effort selon le rapport des bras. Trois classes : pivot, charge ou effort au milieu."
+     },
+     "source": "Wikipédia (en), « Lever »",
+     "figure": "mc_phys_levier",
+     "reperes": [
+      {
+       "fr": "Vers 5000 av. J.-C., les Égyptiens pèsent avec une balance à fléau, qui est un levier ; vers 3000 av. J.-C., en Mésopotamie, le chadouf, une perche à contrepoids, sert à puiser l'eau."
+      }
+     ]
+    },
+    {
+     "id": "roue",
+     "titre": {
+      "fr": "La roue et la poulie"
+     },
+     "texte": [
+      {
+       "fr": "Les plus anciens chariots à roues apparaissent dans les pictogrammes d'Uruk, en Mésopotamie, vers 3500-3350 av. J.-C. La roue de Ljubljana, en Slovénie, date de 3340-3030 av. J.-C., et un tour de potier d'Ukraine remonte au milieu du Ve millénaire. Les roues à rayons, plus légères, viennent vers 2000 av. J.-C. La roue seule n'est pas une machine : c'est la roue montée sur un essieu qui en est une."
+      },
+      {
+       "fr": "La poulie est attestée en Mésopotamie au début du IIe millénaire av. J.-C., et en Égypte sous la XIIe dynastie. Avec un palan, plusieurs poulies et une seule corde, l'avantage mécanique idéal égale le nombre de brins qui soutiennent la charge : quatre brins, et il suffit de tirer avec le quart du poids, mais quatre fois plus de corde."
+      }
+     ],
+     "retenir": {
+      "fr": "Roues vers 3500 av. J.-C., poulies au IIe millénaire. Palan : avantage = nombre de brins qui portent la charge."
+     },
+     "source": "Wikipédia (en), « Wheel » et « Pulley »",
+     "reperes": [
+      {
+       "fr": "La roue de Ljubljana, en Slovénie, date de 3340-3030 av. J.-C., et un tour de potier d'Ukraine remonte au milieu du Ve millénaire."
+      }
+     ]
+    },
+    {
+     "id": "galilee",
+     "titre": {
+      "fr": "De cinq machines à six, puis à Galilée"
+     },
+     "texte": [
+      {
+       "fr": "Au IIIe siècle av. J.-C., Archimède étudie le levier, la poulie et la vis. Héron d'Alexandrie en compte cinq qui « mettent une charge en mouvement » : le levier, le treuil, la poulie, le coin et la vis. Les savants de la Renaissance y ajoutent le plan incliné, dont le Flamand Simon Stevin calcule l'avantage mécanique en 1586."
+      },
+      {
+       "fr": "En 1600, dans Le Mecaniche, Galilée fait la théorie complète des machines simples et dit le premier qu'elles ne créent pas d'énergie : elles la transforment. Le frottement, lui, mange une partie du travail : Léonard de Vinci en a noté les règles sans les publier ; Amontons les retrouve en 1699, Coulomb les précise en 1785."
+      }
+     ],
+     "retenir": {
+      "fr": "Archimède (3 machines), Héron (5), la Renaissance (6, avec le plan incliné de Stevin, 1586), Galilée (1600) : une machine transforme l'énergie, sans en créer."
+     },
+     "source": "Galilée, Le Mecaniche, 1600",
+     "reperes": [
+      {
+       "fr": "En 1600, dans Le Mecaniche, Galilée fait la théorie complète des machines simples et dit le premier qu'elles ne créent pas d'énergie : elles la transforment."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.aristote",
+  "stat": "mecanique",
+  "rang": 2,
+  "nom": {
+   "fr": "Le mouvement selon Aristote"
+  },
+  "description": {
+   "fr": "Quatre éléments, des lieux naturels, pas de vide : la physique qui a régné presque deux mille ans, et ce qui clochait."
+  },
+  "prerequis": [
+   "phys.machines"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Sur Terre, quatre éléments : terre, eau, air, feu. Le ciel est fait d'un cinquième, l'éther, qui ne connaît que le mouvement circulaire."
+    },
+    {
+     "fr": "Mouvement naturel (la terre tombe, le feu monte) ou forcé : « tout ce qui est mû est mû par autre chose »."
+    },
+    {
+     "fr": "À forme égale, un corps tombe d'autant plus vite qu'il est lourd, et d'autant plus lentement que le milieu est dense."
+    },
+    {
+     "fr": "Le vide est impossible : un corps y irait infiniment vite."
+    }
+   ],
+   "piege": {
+    "fr": "Pour Aristote, c'est l'air qui pousse la flèche, de couche en couche. Faux : une fois lâchée, elle continue seule, et l'air la freine."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"La physique d'Aristote, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">-384</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">naissance d'Aristote</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">-322</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">mort d'Aristote</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">VIe s.</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Philopon le conteste</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1586</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Stevin lâche deux boules</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1638</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Galilée, les Discours</text></svg>",
+   "source": "Aristote, Physique, IVe siècle av. J.-C."
+  },
+  "symbole": "⇣",
+  "embleme": "rouleau-aristote",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "elements",
+     "titre": {
+      "fr": "Quatre éléments et un cinquième"
+     },
+     "texte": [
+      {
+       "fr": "Pour Aristote (384-322 av. J.-C.), tout ce qui est sous la Lune est fait de quatre éléments : la terre, l'eau, l'air et le feu. Chacun a son lieu naturel. La terre et l'eau vont vers le centre du monde, qui est aussi celui de la Terre ; l'eau forme une couche autour d'elle, l'air une autre, et le feu monte au-dessus, jusqu'à la sphère de la Lune."
+      },
+      {
+       "fr": "Au-delà, le ciel est fait d'un cinquième élément, l'éther, sans poids, éternel et inaltérable. Son seul mouvement possible est le cercle uniforme. Le Soleil, la Lune, les planètes et les étoiles sont portés par des sphères emboîtées, chacune animée par un moteur immobile qui l'attire comme un but, sans la pousser."
+      }
+     ],
+     "retenir": {
+      "fr": "Terre, eau, air, feu ont chacun leur lieu naturel ; le ciel, d'éther, ne tourne qu'en cercle."
+     },
+     "source": "Aristote, Physique et Du ciel",
+     "reperes": [
+      {
+       "fr": "Chacun a son lieu naturel."
+      }
+     ]
+    },
+    {
+     "id": "chute",
+     "titre": {
+      "fr": "Le lourd tombe plus vite"
+     },
+     "texte": [
+      {
+       "fr": "Aristote distingue le mouvement naturel, celui d'une pierre qui tombe ou d'une flamme qui monte, et le mouvement forcé, qu'il faut imposer. Son principe : « tout ce qui est mû est mû par autre chose », par un moteur en contact. À forme égale, un corps tombe d'autant plus vite qu'il est lourd, et d'autant plus lentement que le milieu est dense."
+      },
+      {
+       "fr": "D'où deux conséquences. Le vide est impossible : sans milieu pour freiner, un corps y irait infiniment vite. Et la flèche qui vole ? La corde a donné à l'air voisin le pouvoir de pousser ; cet air le passe à la couche suivante, et ainsi de suite, jusqu'à ce que ce pouvoir s'épuise. Il faudra des siècles pour se débarrasser de cette idée."
+      }
+     ],
+     "retenir": {
+      "fr": "Mouvement naturel ou forcé ; vitesse de chute ∝ poids ; pas de vide ; l'air pousse la flèche."
+     },
+     "source": "Aristote, Physique, livres IV à VIII",
+     "figure": "mc_phys_aristote",
+     "reperes": [
+      {
+       "fr": "Le vide est impossible : sans milieu pour freiner, un corps y irait infiniment vite."
+      }
+     ]
+    },
+    {
+     "id": "regne",
+     "titre": {
+      "fr": "Deux mille ans de règne"
+     },
+     "texte": [
+      {
+       "fr": "La Physique d'Aristote compte huit livres. On y trouve la nature, « principe de mouvement et de repos », les quatre causes (matérielle, formelle, efficiente et finale), l'infini, le lieu, le vide, et le temps, « nombre du mouvement selon l'avant et l'après ». Bertrand Russell écrit que ces ouvrages ont dominé la science jusqu'à Galilée."
+      },
+      {
+       "fr": "Ce règne dure presque deux mille ans, retouché par Philopon au VIe siècle, Avicenne au XIe, Buridan au XIVe. C'est Galilée qui le renverse de façon convaincante en Europe : les corps légers et lourds tombent presque à la même vitesse. Il relève même qu'Aristote, en jugeant l'eau dix fois plus dense que l'air, surestimait la densité de l'air d'un facteur quarante."
+      }
+     ],
+     "retenir": {
+      "fr": "Huit livres de Physique ; quatre causes ; près de deux mille ans de règne, jusqu'à Galilée."
+     },
+     "source": "Aristote, Physique",
+     "reperes": [
+      {
+       "fr": "La Physique d'Aristote compte huit livres."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.archimede",
+  "stat": "mecanique",
+  "rang": 2,
+  "nom": {
+   "fr": "Archimède, leviers et flotteurs"
+  },
+  "description": {
+   "fr": "À Syracuse, au IIIe siècle av. J.-C., Archimède démontre la loi du levier, trouve des centres de gravité et énonce la poussée des fluides."
+  },
+  "prerequis": [
+   "phys.machines"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Archimède vit à Syracuse, en Sicile, vers 287 - vers 212 av. J.-C. ; il meurt pendant le siège de la ville, tué par un soldat romain."
+    },
+    {
+     "fr": "De l'équilibre des plans : il démontre la loi du levier, puis trouve le centre de gravité du triangle, du parallélogramme et du segment de parabole."
+    },
+    {
+     "fr": "Des corps flottants : un corps plongé dans un fluide reçoit une poussée vers le haut égale au poids du fluide qu'il déplace."
+    },
+    {
+     "fr": "« Donnez-moi un endroit où me tenir, et je déplacerai la Terre » : la phrase est rapportée par Pappus d'Alexandrie, des siècles plus tard."
+    }
+   ],
+   "piege": {
+    "fr": "Archimède n'a pas inventé le levier, ni même été le premier à l'étudier : il en a donné une démonstration, avec le centre de gravité."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Archimède, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. -287</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">naissance à Syracuse</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. -212</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">tué au siège</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1586</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">la balance de Galilée</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1906</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Heiberg et le palimpseste</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1998</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">palimpseste vendu</text></svg>",
+   "source": "Archimède, De l'équilibre des plans ; Des corps flottants, IIIe siècle av. J.-C."
+  },
+  "symbole": "⚓",
+  "embleme": "miroir-ardent",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "levier",
+     "titre": {
+      "fr": "L'équilibre des plans"
+     },
+     "texte": [
+      {
+       "fr": "Le levier était connu bien avant Archimède, et d'autres l'avaient étudié, comme l'auteur des Problèmes mécaniques, un successeur d'Aristote. Mais dans De l'équilibre des plans, Archimède le démontre comme un théorème : sept postulats, quinze propositions au livre I, et la loi du levier en découle, avec la notion de centre de gravité."
+      },
+      {
+       "fr": "Il trouve ensuite le centre de gravité du parallélogramme, du triangle et du trapèze ; le livre II, dix propositions, est consacré au segment de parabole. Pappus d'Alexandrie lui prête une phrase restée célèbre : « Donnez-moi un endroit où me tenir, et je déplacerai la Terre. » En Occident latin, ces travaux restent presque inconnus jusqu'à la fin de la Renaissance, où Stevin et Galilée s'en emparent."
+      }
+     ],
+     "retenir": {
+      "fr": "De l'équilibre des plans : la loi du levier démontrée, et les centres de gravité des figures planes."
+     },
+     "source": "Archimède, De l'équilibre des plans",
+     "reperes": [
+      {
+       "fr": "Il trouve ensuite le centre de gravité du parallélogramme, du triangle et du trapèze ; le livre II, dix propositions, est consacré au segment de parabole."
+      }
+     ]
+    },
+    {
+     "id": "flotter",
+     "titre": {
+      "fr": "Des corps flottants"
+     },
+     "texte": [
+      {
+       "fr": "Vers la fin de sa vie, Archimède écrit Des corps flottants, en deux livres. Le premier s'ouvre sur la loi qui porte son nom : un corps plongé dans un fluide reçoit une poussée vers le haut égale au poids du fluide qu'il déplace ; et un corps entièrement immergé déplace un volume d'eau égal au sien. Un objet flotte donc si, à volume égal, il pèse moins que le liquide."
+      },
+      {
+       "fr": "Le livre II étudie l'équilibre de paraboloïdes flottants selon leur forme et leur densité : certains flottent la base en bas et le sommet hors de l'eau, comme des icebergs. Thomas Heath y voyait un véritable tour de force. Le texte grec n'existe plus qu'en un seul exemplaire, caché dans un livre de prières du XIIIe siècle : le palimpseste d'Archimède."
+      }
+     ],
+     "retenir": {
+      "fr": "Poussée d'Archimède = poids du fluide déplacé. Le texte grec ne survit que dans le palimpseste."
+     },
+     "source": "Archimède, Des corps flottants",
+     "figure": "mc_phys_flotter",
+     "reperes": [
+      {
+       "fr": "Le livre II étudie l'équilibre de paraboloïdes flottants selon leur forme et leur densité : certains flottent la base en bas et le sommet hors de l'eau, comme des icebergs."
+      }
+     ]
+    },
+    {
+     "id": "syracuse",
+     "titre": {
+      "fr": "Le savant du siège"
+     },
+     "texte": [
+      {
+       "fr": "Selon Plutarque, Archimède se vante de pouvoir déplacer n'importe quel poids ; le roi Hiéron le met au défi de bouger un navire, et il y parvient avec des poulies. Athénée parle du Syracusia, le plus grand navire de l'Antiquité. Ces récits se contredisent et sont peu vraisemblables. Pendant le siège de Syracuse par Rome, Plutarque, Polybe et Tite-Live décrivent des grues à griffes de fer qui soulèvent les navires romains et les laissent retomber."
+      },
+      {
+       "fr": "Les miroirs ardents qui auraient incendié la flotte sont bien moins crédibles : les trois plus anciens auteurs n'en parlent pas, et Descartes jugeait l'histoire fausse. Archimède meurt dans la prise de la ville, tué par un soldat romain malgré l'ordre du général Marcellus de l'épargner. Galilée l'appelait « surhumain » et « mon maître »."
+      }
+     ],
+     "retenir": {
+      "fr": "Griffes de fer : attestées par trois auteurs. Miroirs ardents : douteux. Archimède meurt au siège."
+     },
+     "source": "Plutarque, Vie de Marcellus ; Polybe ; Tite-Live",
+     "reperes": [
+      {
+       "fr": "Archimède meurt dans la prise de la ville, tué par un soldat romain malgré l'ordre du général Marcellus de l'épargner."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.alexandrie",
+  "stat": "mecanique",
+  "rang": 2,
+  "nom": {
+   "fr": "Les ingénieurs d'Alexandrie"
+  },
+  "description": {
+   "fr": "Héron, ses automates et sa sphère à vapeur ; la machine d'Anticythère et ses engrenages : la mécanique grecque fait des merveilles."
+  },
+  "prerequis": [
+   "phys.aristote",
+   "phys.archimede"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Héron d'Alexandrie, actif sans doute au Ier ou au IIe siècle, passe pour le plus grand expérimentateur de l'Antiquité."
+    },
+    {
+     "fr": "Ses Pneumatiques décrivent des machines mues par l'air, l'eau ou la vapeur, dont l'éolipyle, première machine à vapeur dont on ait la trace écrite."
+    },
+    {
+     "fr": "Il décrit aussi un distributeur d'eau qui marche avec une pièce, et un orgue actionné par le vent."
+    },
+    {
+     "fr": "La machine d'Anticythère, du IIe siècle av. J.-C., est le plus ancien calculateur analogique connu : au moins 30 engrenages de bronze."
+    }
+   ],
+   "piege": {
+    "fr": "L'éolipyle n'est pas l'ancêtre de la machine de Watt : c'est une curiosité sans usage pratique, restée sans suite."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Les ingénieurs d'Alexandrie, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">IIe s. av.</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">la machine d'Anticythère</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">62</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">l'éclipse de la Dioptre</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1901</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">remontée de l'épave</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1902</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Stais voit un engrenage</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2005</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">scanner aux rayons X</text></svg>",
+   "source": "Héron d'Alexandrie, Pneumatiques ; Freeth et al., Nature, 2006"
+  },
+  "symbole": "♨",
+  "embleme": "mecanisme-anticythere",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "heron",
+     "titre": {
+      "fr": "Le plus grand expérimentateur de l'Antiquité"
+     },
+     "texte": [
+      {
+       "fr": "On ne sait presque rien de la vie de Héron d'Alexandrie, ni où il est né. On suppose qu'il enseignait au Mouseion, le centre savant qui abritait la Bibliothèque. Pour le dater, on se sert d'une éclipse de Lune donnée en exemple dans sa Dioptre : en 1938, Otto Neugebauer montre qu'elle correspond le mieux à celle de 62 apr. J.-C. Mais Héron ne dit pas l'avoir observée : l'indice reste fragile."
+      },
+      {
+       "fr": "Ses livres couvrent tout : les Pneumatiques, sur les machines à air, à eau et à vapeur ; les Automates, pour les banquets et peut-être le théâtre ; les Mécaniques, sur le levage des lourdes charges, conservées seulement en arabe ; les Métriques, où figure sa formule de l'aire du triangle ; la Dioptre, avec un odomètre pour mesurer les distances."
+      }
+     ],
+     "retenir": {
+      "fr": "Héron, sans biographie : daté par une éclipse (62 ?). Pneumatiques, Automates, Mécaniques, Métriques, Dioptre."
+     },
+     "source": "Héron d'Alexandrie, Dioptre ; O. Neugebauer, 1938",
+     "reperes": [
+      {
+       "fr": "On ne sait presque rien de la vie de Héron d'Alexandrie, ni où il est né."
+      }
+     ]
+    },
+    {
+     "id": "merveilles",
+     "titre": {
+      "fr": "Vapeur, pièces et portes de temple"
+     },
+     "texte": [
+      {
+       "fr": "L'éolipyle est une sphère qui tourne sous la poussée de jets de vapeur : la première machine à vapeur dont on ait la trace écrite. Héron décrit aussi un orgue mû par une roue à vent, premier cas connu du vent qui actionne une machine, et un distributeur : on glisse une pièce, et il verse une quantité d'eau fixe pour les ablutions."
+      },
+      {
+       "fr": "Dans les temples, un feu allumé sur l'autel chauffe de l'air qui chasse de l'eau dans un seau ; le poids du seau tire une corde, et les portes s'ouvrent toutes seules. Ailleurs, un chariot avance tiré par un poids qui descend, avec des ficelles enroulées autour de l'essieu. Sa pompe foulante servira dans tout le monde romain, jusque dans les pompes à incendie."
+      }
+     ],
+     "retenir": {
+      "fr": "Éolipyle, orgue à vent, distributeur à pièce, portes automatiques, pompe : la mécanique comme spectacle."
+     },
+     "source": "Héron d'Alexandrie, Pneumatiques et Automates",
+     "figure": "mc_phys_heron",
+     "reperes": [
+      {
+       "fr": "Héron décrit aussi un orgue mû par une roue à vent, premier cas connu du vent qui actionne une machine, et un distributeur : on glisse une pièce, et il verse une quantité d'eau fixe pour les ablutions."
+      }
+     ]
+    },
+    {
+     "id": "anticythere",
+     "titre": {
+      "fr": "Le calculateur de l'épave"
+     },
+     "texte": [
+      {
+       "fr": "Au début de 1900, des pêcheurs d'éponges de Symi repèrent une épave près de l'île d'Anticythère. En 1901, on en remonte un bloc de bronze corrodé ; le 17 mai 1902, l'archéologue Valerios Stais remarque une roue dentée prise dans la pierre. Le bloc, divisé aujourd'hui en 82 fragments, est un planétaire à manivelle du IIe siècle av. J.-C. : le plus ancien calculateur analogique connu."
+      },
+      {
+       "fr": "En 2005, des scanners aux rayons X de l'université de Cardiff révèlent 35 engrenages, dont 30 encore visibles. La machine prédisait les éclipses des décennies à l'avance, suivait les phases de la Lune, les cycles de Méton et du Saros, et un cycle de jeux de quatre ans proche des Olympiades. L'épave date des années 70-60 av. J.-C. ; la fabrication de la machine, elle, se discute encore."
+      }
+     ],
+     "retenir": {
+      "fr": "Anticythère : 82 fragments, 30 engrenages visibles, éclipses et cycles prédits. Plus ancien calculateur analogique connu."
+     },
+     "source": "Freeth et al., Nature, 2006",
+     "reperes": [
+      {
+       "fr": "En 2005, des scanners aux rayons X de l'université de Cardiff révèlent 35 engrenages, dont 30 encore visibles."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.mohistes",
+  "stat": "mecanique",
+  "rang": 3,
+  "nom": {
+   "fr": "La physique des Mohistes"
+  },
+  "description": {
+   "fr": "En Chine, au temps des Royaumes combattants, les disciples de Mozi étudient la balance, la chute des poids et l'image dans la chambre noire."
+  },
+  "prerequis": [
+   "phys.alexandrie"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Mozi (vers 470 - vers 391 av. J.-C.), charpentier très habile, fonde l'école moïste : amour universel et refus des guerres de conquête."
+    },
+    {
+     "fr": "Le Canon moïste, écrit entre la fin du IVe et le milieu du IIIe siècle av. J.-C., traite de géométrie, d'optique et de mécanique."
+    },
+    {
+     "fr": "Il décrit l'image renversée d'une personne à travers un petit trou : l'une des plus anciennes descriptions écrites de la chambre noire."
+    },
+    {
+     "fr": "Sur la balance : ajoutez un poids d'un côté, ce côté penche ; un poids tombe tout droit, sauf si quelque chose le tire, le retient ou le pousse."
+    }
+   ],
+   "piege": {
+    "fr": "La science moïste n'a pas eu de suite en Chine : après l'unification de 221 av. J.-C., l'école s'éteint et ses textes, mal recopiés, deviennent presque illisibles."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"La physique des Mohistes, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. -470</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">naissance de Mozi</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. -391</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">mort de Mozi</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. -300</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">la mécanique du Canon</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">-221</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">unification par les Qin</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2016</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">le satellite Micius</text></svg>",
+   "source": "Mozi, Canon moïste (chapitres 40 à 45) ; J. Renn et M. Schemmel, Mechanics in the Mohist Canon, 2003"
+  },
+  "symbole": "墨",
+  "embleme": "ph-chambre-noire",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "mozi",
+     "titre": {
+      "fr": "Le charpentier qui empêchait les guerres"
+     },
+     "texte": [
+      {
+       "fr": "Mozi naît vers 470 av. J.-C. dans le pays de Lu, en Chine, et meurt vers 391. Charpentier, très habile à fabriquer des machines, il vient sans doute du monde des artisans. Il prêche l'« amour universel » : se soucier de tous de la même façon, et pas seulement de son clan. Pour lui, les guerres de conquête ne sont que du vol et du meurtre à grande échelle."
+      },
+      {
+       "fr": "Le chapitre « Gongshu » raconte qu'il marche dix jours pour aller au pays de Chu empêcher une attaque contre le petit État de Song. Devant le roi, il affronte l'ingénieur Gongshu Ban dans neuf simulations de siège et les gagne toutes. Menacé de mort, il répond que ses disciples ont déjà formé les soldats de Song à ses défenses. Le roi renonce. Les Mohistes étaient les meilleurs ingénieurs de la défense des villes."
+      }
+     ],
+     "retenir": {
+      "fr": "Mozi : charpentier, amour universel, refus des guerres de conquête. Ses disciples défendent les villes assiégées."
+     },
+     "source": "Mozi, chapitre « Gongshu »",
+     "reperes": [
+      {
+       "fr": "Devant le roi, il affronte l'ingénieur Gongshu Ban dans neuf simulations de siège et les gagne toutes."
+      }
+     ]
+    },
+    {
+     "id": "balance",
+     "titre": {
+      "fr": "La balance et le poids qui tombe"
+     },
+     "texte": [
+      {
+       "fr": "Le Canon moïste est formé des chapitres 40 à 45 du livre Mozi, écrits entre la fin du IVe et le milieu du IIIe siècle av. J.-C. Il donne des définitions, puis des thèses avec leurs explications, en logique, en géométrie, en optique et en mécanique. Ses passages de mécanique dateraient des environs de 300 av. J.-C."
+      },
+      {
+       "fr": "Sur la balance, il note : « Si l'on ajoute un poids d'un côté, ce côté penchera forcément. » Et sur la chute : un poids tombe tout droit, à moins que quelque chose ne le tire vers le haut, ne le retienne ou ne le pousse de côté. L'historien Joseph Needham a rapproché un passage du Mozi sur le mouvement et la force qui s'y oppose de la première loi de Newton."
+      }
+     ],
+     "retenir": {
+      "fr": "Le Canon moïste (vers 300 av. J.-C.) : la balance penche du côté chargé, le poids tombe droit sauf obstacle."
+     },
+     "source": "J. Renn et M. Schemmel, Mechanics in the Mohist Canon, Max Planck Institute for the History of Science, 2003",
+     "reperes": [
+      {
+       "fr": "Ses passages de mécanique dateraient des environs de 300 av. J.-C."
+      }
+     ]
+    },
+    {
+     "id": "chambre",
+     "titre": {
+      "fr": "L'image renversée"
+     },
+     "texte": [
+      {
+       "fr": "Le Mozi contient l'une des plus anciennes descriptions écrites d'une image à travers un trou d'épingle. La lumière qui vient des pieds d'une personne passe par le trou et frappe plus haut, elle forme le haut de l'image ; celle de la tête frappe plus bas et forme le bas. L'image se forme dans un « point de collecte », ou « chambre au trésor »."
+      },
+      {
+       "fr": "Les penseurs chinois suivants ne reprennent guère ces idées. En 1088, Shen Kuo explique à son tour le renversement : il compare le trou au pivot d'une rame. En Europe, le mot camera obscura n'apparaît qu'en 1604, chez Kepler."
+      }
+     ],
+     "retenir": {
+      "fr": "Dans le Mozi, la lumière passe en ligne droite par le trou : les pieds en haut, la tête en bas."
+     },
+     "source": "Mozi ; Shen Kuo, Mengxi bitan, 1088",
+     "figure": "mc_phys_mozi",
+     "reperes": [
+      {
+       "fr": "L'image se forme dans un « point de collecte », ou « chambre au trésor »."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.optique",
+  "stat": "mecanique",
+  "rang": 3,
+  "nom": {
+   "fr": "L'optique d'Ibn al-Haytham"
+  },
+  "description": {
+   "fr": "Au Caire, au XIe siècle, Ibn al-Haytham montre que voir, c'est recevoir la lumière, et il le vérifie par l'expérience."
+  },
+  "prerequis": [
+   "phys.mohistes"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Ibn al-Haytham, l'Alhazen des Latins, naît vers 965 à Bassora et meurt vers 1040 au Caire."
+    },
+    {
+     "fr": "Son Livre de l'optique, sept volumes écrits de 1011 à 1021, traite de la lumière, de la vision, de ses erreurs, de la réflexion et de la réfraction."
+    },
+    {
+     "fr": "Contre Euclide et Ptolémée, qui faisaient partir des rayons de l'œil, il montre que la vue vient de la lumière qui entre dans l'œil."
+    },
+    {
+     "fr": "Il vérifie par des expériences, comme des bougies placées devant le trou d'une chambre noire."
+    }
+   ],
+   "piege": {
+    "fr": "La lumière ne sort pas des yeux. Preuve d'Ibn al-Haytham : regarder le Soleil abîme l'œil, c'est bien que quelque chose y entre."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"L'optique d'Ibn al-Haytham, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 965</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">naissance à Bassora</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1021</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">le Livre de l'optique</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 1040</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">mort au Caire</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1572</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Risner l'imprime</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2015</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Année de la lumière</text></svg>",
+   "source": "Ibn al-Haytham, Kitab al-Manazir, 1011-1021"
+  },
+  "symbole": "⊗",
+  "embleme": "enluminure",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "caire",
+     "titre": {
+      "fr": "Le savant qui fit le fou"
+     },
+     "texte": [
+      {
+       "fr": "Ibn al-Haytham naît vers 965 à Bassora, en Irak, et passe l'essentiel de sa vie au Caire. Selon un récit, le calife al-Hakim le fait venir pour régler les crues du Nil. Il dessine un barrage près de l'actuel barrage d'Assouan, puis comprend sur le terrain que le projet est irréalisable. Pour éviter la colère du calife, il simule la folie."
+      },
+      {
+       "fr": "La légende dit qu'il resta enfermé chez lui jusqu'à la mort d'al-Hakim, en 1021 ; c'est pendant cette retraite qu'il écrit son Livre de l'optique. Il demandait au chercheur de vérité de « se faire l'ennemi de tout ce qu'il lit ». Un cratère de la Lune et l'astéroïde 59239 Alhazen portent son nom, et il figure sur le billet irakien de 10 000 dinars de 2003."
+      }
+     ],
+     "retenir": {
+      "fr": "Né à Bassora vers 965, au Caire ensuite ; simule la folie, écrit l'Optique dans sa retraite (1011-1021)."
+     },
+     "source": "Wikipédia (en), « Ibn al-Haytham »",
+     "reperes": [
+      {
+       "fr": "Pour éviter la colère du calife, il simule la folie."
+      }
+     ]
+    },
+    {
+     "id": "vision",
+     "titre": {
+      "fr": "Voir, c'est recevoir"
+     },
+     "texte": [
+      {
+       "fr": "Euclide et Ptolémée défendaient l'émission : l'œil enverrait des rayons vers les objets. Les disciples d'Aristote et de Galien pensaient plutôt que quelque chose venait des objets vers l'œil. Ibn al-Haytham tranche pour l'intromission : on voit parce que la lumière entre dans l'œil. Ses arguments : regarder le Soleil abîme les yeux, et il serait étrange que l'œil remplisse d'un coup tout le ciel nocturne en s'ouvrant."
+      },
+      {
+       "fr": "Le Livre de l'optique compte sept volumes : la lumière, les couleurs et la vision ; la perception ; les erreurs de la vue ; la réflexion, avec des preuves expérimentales ; et la réfraction au dernier livre. Traduit en latin à la fin du XIIe ou au début du XIIIe siècle, sous le titre De aspectibus, il est imprimé en 1572 par Friedrich Risner et nourrit l'optique européenne jusqu'au XVIIe siècle."
+      }
+     ],
+     "retenir": {
+      "fr": "Émission (Euclide, Ptolémée) contre intromission : Ibn al-Haytham prouve que la lumière entre dans l'œil."
+     },
+     "source": "Ibn al-Haytham, Kitab al-Manazir ; A. I. Sabra (trad.), 1989",
+     "figure": "mc_phys_vision",
+     "reperes": [
+      {
+       "fr": "Ibn al-Haytham tranche pour l'intromission : on voit parce que la lumière entre dans l'œil."
+      }
+     ]
+    },
+    {
+     "id": "bougies",
+     "titre": {
+      "fr": "Des bougies devant un trou"
+     },
+     "texte": [
+      {
+       "fr": "Ibn al-Haytham place plusieurs bougies devant une ouverture qui donne sur une pièce obscure, au mur blanc. Chaque bougie fait une tache de lumière sur le mur, juste en face d'elle, en ligne droite à travers le trou. Masquez une bougie : seule sa tache disparaît ; découvrez-la : elle revient. La lumière va en ligne droite, et chaque point lumineux envoie la sienne."
+      },
+      {
+       "fr": "Son œuvre contient la première description claire de la chambre noire, dont il se sert pour observer une éclipse partielle de Soleil. Son Livre de l'optique est daté d'environ 1027 dans certaines sources ; l'Année internationale de la lumière, en 2015, a fêté le millième anniversaire de ses travaux d'optique."
+      }
+     ],
+     "retenir": {
+      "fr": "Chaque bougie, une tache en face d'elle : la lumière va en ligne droite."
+     },
+     "source": "Ibn al-Haytham, Kitab al-Manazir",
+     "reperes": [
+      {
+       "fr": "Masquez une bougie : seule sa tache disparaît ; découvrez-la : elle revient."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.impetus",
+  "stat": "mecanique",
+  "rang": 3,
+  "nom": {
+   "fr": "L'impetus médiéval"
+  },
+  "description": {
+   "fr": "D'Alexandrie à Paris, Philopon, Avicenne et Buridan cherchent ce qui fait voler la flèche : une force imprimée, l'impetus."
+  },
+  "prerequis": [
+   "phys.mohistes"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Au VIe siècle, Jean Philopon rejette l'air qui pousse : le lanceur imprime au projectile une force immatérielle, qui s'épuise."
+    },
+    {
+     "fr": "Au XIe siècle, Avicenne parle d'une « inclination » (mayl) que le mobile reçoit du moteur et garde tant qu'elle n'est pas dépensée."
+    },
+    {
+     "fr": "Au XIVe siècle, à Paris, Jean Buridan l'appelle impetus : plus le moteur va vite, plus elle est forte ; l'air et la pesanteur l'affaiblissent."
+    },
+    {
+     "fr": "L'impetus annonce l'inertie et la quantité de mouvement de la mécanique classique."
+    }
+   ],
+   "piege": {
+    "fr": "L'impetus n'est pas l'inertie : c'est une force logée dans le corps, qui le pousse. Pour Newton, aucune force n'est nécessaire pour continuer en ligne droite."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"L'impetus, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">VIe s.</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Philopon</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">XIe s.</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Avicenne, le mayl</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">XIVe s.</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Buridan, l'impetus</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1473</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Louis XI l'interdit</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1516</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">ses Questions imprimées</text></svg>",
+   "source": "Jean Buridan, Quaestiones super octo libros Physicorum Aristotelis, XIVe siècle"
+  },
+  "symbole": "⇝",
+  "embleme": "ph-fleche",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "philopon",
+     "titre": {
+      "fr": "Philopon contre Aristote"
+     },
+     "texte": [
+      {
+       "fr": "Jean Philopon (vers 490 - vers 570), théologien chrétien d'Alexandrie, ose contredire Aristote. Pour lui, un projectile avance parce que le lanceur lui a imprimé une force cinétique immatérielle, et non parce que l'air le pousse. Cette force s'épuise d'elle-même, et le mouvement forcé laisse alors place au mouvement naturel : la pierre retombe."
+      },
+      {
+       "fr": "Il s'attaque aussi à la chute. Lâchez de la même hauteur deux poids, l'un bien plus lourd que l'autre : selon lui, la différence de temps est très petite, pas du tout celle que prévoit Aristote. Galilée le cite abondamment, et ce passage a inspiré ses Discours de 1638."
+      }
+     ],
+     "retenir": {
+      "fr": "Philopon : une force imprimée au projectile, qui s'épuise ; deux poids lâchés arrivent presque ensemble."
+     },
+     "source": "Jean Philopon, Commentaire sur la Physique d'Aristote",
+     "reperes": [
+      {
+       "fr": "Lâchez de la même hauteur deux poids, l'un bien plus lourd que l'autre : selon lui, la différence de temps est très petite, pas du tout celle que prévoit Aristote."
+      }
+     ]
+    },
+    {
+     "id": "mayl",
+     "titre": {
+      "fr": "L'inclination d'Avicenne"
+     },
+     "texte": [
+      {
+       "fr": "Déjà, au IIe siècle av. J.-C., l'astronome Hipparque pensait que la force du lancer passe dans le corps lancé et se dissipe pendant le mouvement. Au XIe siècle, Avicenne distingue la force de l'« inclination », le mayl : le mobile acquiert une inclination du moteur, et la garde jusqu'à ce qu'elle soit dépensée."
+      },
+      {
+       "fr": "Au XIIe siècle, Abu'l-Barakat al-Baghdadi parle d'une « inclination violente » qui s'éteint d'elle-même à mesure que le corps s'éloigne du moteur. Plus tard, en Europe, Albert de Saxe (1316-1390) développe ces idées, et Nicole Oresme a l'idée de représenter les lois du mouvement par des graphiques."
+      }
+     ],
+     "retenir": {
+      "fr": "Hipparque, Avicenne (le mayl), Abu'l-Barakat, puis Albert de Saxe et Oresme : la force du lancer passe dans le corps."
+     },
+     "source": "Avicenne, Physique du Shifa, IV, 14",
+     "reperes": [
+      {
+       "fr": "Au XIe siècle, Avicenne distingue la force de l'« inclination », le mayl : le mobile acquiert une inclination du moteur, et la garde jusqu'à ce qu'elle soit dépensée."
+      }
+     ]
+    },
+    {
+     "id": "buridan",
+     "titre": {
+      "fr": "Buridan nomme l'impetus"
+     },
+     "texte": [
+      {
+       "fr": "Jean Buridan (vers 1300 - vers 1358) enseigne toute sa vie à la faculté des arts de Paris, dont il aurait été recteur en 1328 et en 1340. Pour lui, le moteur imprime au mobile « une certaine puissance capable de mouvoir le mobile dans la direction même où le moteur meut le mobile » : l'impetus. Plus le lancer est rapide, plus l'impetus est fort ; la résistance de l'air et la pesanteur l'affaiblissent peu à peu."
+      },
+      {
+       "fr": "Une pierre garde longtemps son impetus ; une plume en reçoit si peu qu'il est aussitôt détruit. Buridan croyait-il pour autant à l'inertie ? Pour l'historien Jack Zupko, il reste un aristotélicien convaincu. Ses Questions sur les huit livres de la Physique d'Aristote sont imprimées à Paris en 1516. Quant à « l'âne de Buridan », il n'apparaît dans aucune de ses œuvres connues."
+      }
+     ],
+     "retenir": {
+      "fr": "Buridan : l'impetus, puissance imprimée, croît avec la vitesse, s'use par l'air et le poids."
+     },
+     "source": "Jean Buridan, Quaestiones super octo libros Physicorum Aristotelis",
+     "figure": "mc_phys_impetus",
+     "reperes": [
+      {
+       "fr": "Une pierre garde longtemps son impetus ; une plume en reçoit si peu qu'il est aussitôt détruit."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.lunettes",
+  "stat": "mecanique",
+  "rang": 3,
+  "nom": {
+   "fr": "Verres et lunettes"
+  },
+  "description": {
+   "fr": "Pierres de lecture, lunettes italiennes, verres pour myopes et longue-vue : la lentille change la vue, puis le ciel."
+  },
+  "prerequis": [
+   "phys.optique",
+   "phys.impetus"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Les premières lunettes naissent en Italie, sans doute à Pise ou à Florence, vers 1290 ; leur inventeur est inconnu."
+    },
+    {
+     "fr": "Un verre convexe corrige la presbytie et l'hypermétropie ; le verre concave, pour les myopes, n'apparaît qu'au milieu du XVe siècle."
+    },
+    {
+     "fr": "En 1604, Kepler explique pourquoi : le cristallin projette sur la rétine une image renversée."
+    },
+    {
+     "fr": "En 1608, Hans Lipperhey, lunetier à Middelbourg, demande un brevet pour une lunette qui grossit trois fois."
+    }
+   ],
+   "piege": {
+    "fr": "Salvino degli Armati n'a pas inventé les lunettes : l'attribution, lancée au XVIIe siècle, s'est révélée fausse."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Verres et lunettes, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1306</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">le sermon de Giordano</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1352</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">premières lunettes peintes</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1466</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">boutique d'opticien</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1604</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Kepler et la rétine</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1608</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">la lunette de Lipperhey</text></svg>",
+   "source": "Edward Rosen, « The Invention of Eyeglasses », 1956 ; Kepler, Ad Vitellionem Paralipomena, 1604"
+  },
+  "symbole": "⚭",
+  "embleme": "lunettes",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "pise",
+     "titre": {
+      "fr": "« Il n'y a pas vingt ans »"
+     },
+     "texte": [
+      {
+       "fr": "Au XIIIe siècle, en Italie, on lit avec des « pierres de lecture » : des loupes sans branches, posées sur la page. Robert Grosseteste, entre 1220 et 1235, parle de l'optique qui permet de lire « les plus petites lettres à des distances incroyables » ; Roger Bacon écrit sur le grossissement des lentilles en 1262. Puis, vers 1290, à Pise ou à Florence, quelqu'un monte deux verres sur une monture."
+      },
+      {
+       "fr": "Le 23 février 1306, le prêcheur Giordano da Pisa le dit en chaire : « Il n'y a pas encore vingt ans qu'on a trouvé l'art de faire des lunettes, qui font bien voir. » Le frère pisan Alessandro della Spina en fabrique et les partage « de bon cœur ». Venise réglemente leur vente dès 1301, avec le verre de Murano. L'attribution à un Florentin, Salvino degli Armati, lancée par Francesco Redi au XVIIe siècle, s'est révélée fausse."
+      }
+     ],
+     "retenir": {
+      "fr": "Pierres de lecture au XIIIe siècle, lunettes vers 1290 en Italie ; inventeur inconnu, Armati est une légende."
+     },
+     "source": "Edward Rosen, « The Invention of Eyeglasses », Journal of the History of Medicine, 1956",
+     "reperes": [
+      {
+       "fr": "Le 23 février 1306, le prêcheur Giordano da Pisa le dit en chaire : « Il n'y a pas encore vingt ans qu'on a trouvé l'art de faire des lunettes, qui font bien voir. »"
+      }
+     ]
+    },
+    {
+     "id": "verres",
+     "titre": {
+      "fr": "Convexe ou concave"
+     },
+     "texte": [
+      {
+       "fr": "Un verre correcteur dévie la lumière pour que l'image tombe sur la rétine. Les premiers verres, convexes, plus épais au centre, servent aux presbytes, dont le cristallin perd sa souplesse, en général après quarante ans, et aux hypermétropes. Les verres concaves, plus minces au centre, pour les myopes, n'apparaissent qu'au milieu du XVe siècle."
+      },
+      {
+       "fr": "La plus ancienne image de lunettes est peinte en 1352 par Tommaso da Modena : le cardinal Hugues de Saint-Cher, lisant dans un scriptorium. En 1466, Strasbourg a la première boutique de lunettier. La puissance d'un verre se mesure en dioptries, l'inverse de la distance focale en mètres, un mot proposé par Ferdinand Monoyer en 1872 : les lunettes de lecture vont de +1 à +4 dioptries."
+      }
+     ],
+     "retenir": {
+      "fr": "Convexe pour presbytes et hypermétropes, concave pour myopes (milieu XVe). Dioptrie = 1 ÷ focale en mètres."
+     },
+     "source": "Wikipédia (en), « Glasses » et « Dioptre »",
+     "figure": "mc_phys_verres",
+     "reperes": [
+      {
+       "fr": "En 1466, Strasbourg a la première boutique de lunettier."
+      }
+     ]
+    },
+    {
+     "id": "lunette",
+     "titre": {
+      "fr": "De la rétine à la longue-vue"
+     },
+     "texte": [
+      {
+       "fr": "En 1604, dans son Optique, Kepler est le premier à comprendre que le cristallin projette sur la rétine une image renversée, que le cerveau redresse ensuite. Il donne du même coup la première explication juste de l'effet des verres convexes et concaves sur la presbytie et la myopie. On tient ce livre pour le fondement de l'optique moderne."
+      },
+      {
+       "fr": "Le 2 octobre 1608, Hans Lipperhey, lunetier à Middelbourg, demande aux États généraux des Pays-Bas un brevet pour un instrument « pour voir les choses lointaines comme si elles étaient proches ». Sa lunette grossit trois fois. Le brevet est refusé : d'autres lunetiers revendiquent la même invention. La nouvelle court l'Europe ; Galilée améliore l'instrument, et Kepler, en 1611, en propose une version à deux lentilles convexes."
+      }
+     ],
+     "retenir": {
+      "fr": "Kepler (1604) : image renversée sur la rétine. Lipperhey (1608) : la lunette qui grossit trois fois."
+     },
+     "source": "Hans Lipperhey, demande de brevet, 1608 ; Kepler, Dioptrice, 1611",
+     "reperes": [
+      {
+       "fr": "Sa lunette grossit trois fois."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.galilee",
+  "stat": "mecanique",
+  "rang": 4,
+  "nom": {
+   "fr": "Galilée et la chute"
+  },
+  "description": {
+   "fr": "Plans inclinés, pendules et boulets : Galilée mesure la chute des corps et ruine la physique d'Aristote."
+  },
+  "prerequis": [
+   "phys.lunettes"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Dans un milieu sans aucune résistance, tous les corps tomberaient à la même vitesse (Discours, 1638)."
+    },
+    {
+     "fr": "La distance parcourue par un corps qui tombe croît comme le carré du temps : en deux fois plus de temps, quatre fois plus de chemin."
+    },
+    {
+     "fr": "Pour mesurer, Galilée ralentit la chute sur un plan incliné et chronomètre avec une horloge à eau."
+    },
+    {
+     "fr": "Un projectile suit une parabole : un mouvement uniforme à l'horizontale, accéléré à la verticale."
+    }
+   ],
+   "piege": {
+    "fr": "La tour de Pise : Galilée n'en a laissé aucun récit. C'est son élève Viviani qui la raconte, et la plupart des historiens y voient une expérience de pensée."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Galilée, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1564</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">naissance à Pise</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 1581</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">la lampe qui oscille</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1586</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">la balance hydrostatique</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1633</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">condamné par l'Inquisition</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1638</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">les Discours, à Leyde</text></svg>",
+   "source": "Galilée, Discours concernant deux sciences nouvelles, Leyde, 1638"
+  },
+  "symbole": "t²",
+  "embleme": "tour-pise",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "pise",
+     "titre": {
+      "fr": "La lampe et la tour"
+     },
+     "texte": [
+      {
+       "fr": "Galileo Galilei naît à Pise le 15 février 1564. Vers 1581, étudiant en médecine, il regarde osciller un lustre et compare la durée des oscillations aux battements de son cœur. Il refait l'essai avec deux pendules de même longueur, l'un lancé loin, l'autre à peine : ils battent ensemble. Il en conclut que la durée d'une oscillation ne dépend pas de son ampleur, ce qui n'est vrai qu'à peu près, comme le montrera Huygens."
+      },
+      {
+       "fr": "Entre 1589 et 1592, jeune professeur à Pise, il aurait lâché des poids inégaux du haut de la tour penchée. Le récit vient de son élève Vincenzo Viviani, écrit en 1654 et publié en 1717 ; Galilée, lui, n'en dit rien, et la plupart des historiens y voient une expérience de pensée. Son vrai argument est un raisonnement : attachez une pierre légère, donc lente selon Aristote, à une lourde ; l'ensemble devrait tomber à la fois plus lentement et plus vite. C'est absurde."
+      }
+     ],
+     "retenir": {
+      "fr": "La lampe de Pise (v. 1581) et la tour (1589-1592, selon Viviani) : légendes ; l'argument des pierres liées, lui, est de Galilée."
+     },
+     "source": "Vincenzo Viviani, Racconto istorico della vita di Galileo, 1654 (publié en 1717)",
+     "reperes": [
+      {
+       "fr": "Le récit vient de son élève Vincenzo Viviani, écrit en 1654 et publié en 1717 ; Galilée, lui, n'en dit rien, et la plupart des historiens y voient une expérience de pensée."
+      }
+     ]
+    },
+    {
+     "id": "plan",
+     "titre": {
+      "fr": "Le plan incliné et l'horloge à eau"
+     },
+     "texte": [
+      {
+       "fr": "Condamné par l'Inquisition le 22 juin 1633, Galilée finit sa vie en résidence surveillée à Arcetri. Il y écrit son dernier livre, les Discours concernant deux sciences nouvelles, publié en 1638 à Leyde, en Hollande, chez Elzevier. Trois personnages y dialoguent : Salviati, qui parle pour Galilée, Sagredo et Simplicio. Salviati l'affirme : dans un milieu sans aucune résistance, tous les corps tomberaient à la même vitesse."
+      },
+      {
+       "fr": "Pour mesurer une chute trop rapide pour l'œil, il la ralentit : une bille roule dans la rainure d'une poutre de douze coudées, inclinée. Le temps se mesure à l'eau qui s'écoule d'un grand vase par un petit tuyau, recueillie et pesée. Résultat : la distance croît comme le carré du temps. Et un projectile combine un mouvement uniforme à l'horizontale et une chute accélérée : il suit une parabole."
+      }
+     ],
+     "retenir": {
+      "fr": "Discours, 1638 : bille sur un plan incliné, temps pesé en eau, distance ∝ temps² ; projectile en parabole."
+     },
+     "source": "Galilée, Discours concernant deux sciences nouvelles, Leyde, 1638",
+     "figure": "mc_phys_galilee",
+     "reperes": [
+      {
+       "fr": "Résultat : la distance croît comme le carré du temps."
+      }
+     ]
+    },
+    {
+     "id": "navire",
+     "titre": {
+      "fr": "Le navire et l'inertie"
+     },
+     "texte": [
+      {
+       "fr": "Dans son Dialogue de 1632, Galilée enferme le lecteur dans la cabine d'un navire qui avance sans à-coups : tout s'y passe comme à quai, « et vous ne pourriez dire si le navire avance ou s'il est immobile ». Le mouvement uniforme ne se sent pas : c'est le principe de relativité de Galilée."
+      },
+      {
+       "fr": "Il en tire une idée neuve : sans obstacle, un corps garde sa vitesse, contre Aristote. Newton en fera sa première loi, en ligne droite, quand Galilée imaginait encore ce mouvement sur un cercle. Les Discours montrent aussi qu'une grande structure, bâtie avec les mêmes proportions qu'une petite, est forcément plus fragile : c'est pourquoi les os des grands animaux sont si épais."
+      }
+     ],
+     "retenir": {
+      "fr": "Le mouvement uniforme ne se sent pas (Dialogue, 1632) ; sans obstacle, un corps garde sa vitesse."
+     },
+     "source": "Galilée, Dialogue sur les deux grands systèmes du monde, 1632",
+     "reperes": [
+      {
+       "fr": "Le mouvement uniforme ne se sent pas : c'est le principe de relativité de Galilée."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.fluides",
+  "stat": "mecanique",
+  "rang": 4,
+  "nom": {
+   "fr": "Le poids de l'air"
+  },
+  "description": {
+   "fr": "Torricelli, Pascal et Guericke : au XVIIe siècle, on découvre que l'air pèse, et l'on fabrique du vide."
+  },
+  "prerequis": [
+   "phys.galilee"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Pression = force ÷ surface. Sous l'eau, elle augmente d'environ 1 bar tous les 10 m, quelle que soit la forme du récipient (Stevin, 1586)."
+    },
+    {
+     "fr": "1643 : Torricelli retourne un tube de mercure ; la colonne s'arrête vers 76 cm, et laisse du vide au-dessus. C'est le premier baromètre."
+    },
+    {
+     "fr": "1648 : à la demande de Pascal, Florin Périer monte le baromètre sur le puy de Dôme ; la colonne baisse avec l'altitude."
+    },
+    {
+     "fr": "8 mai 1654 : Guericke fait le vide entre deux demi-sphères ; trente chevaux ne parviennent pas à les séparer."
+    }
+   ],
+   "piege": {
+    "fr": "Le vide n'aspire rien : c'est l'air du dehors qui pousse. Laissez-le rentrer, et les demi-sphères tombent toutes seules."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Le poids de l'air, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1586</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Stevin, pression et hauteur</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1643</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">le tube de Torricelli</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1648</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Périer au puy de Dôme</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1654</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">les chevaux de Ratisbonne</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1738</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Bernoulli, Hydrodynamica</text></svg>",
+   "source": "Blaise Pascal, Récit de la grande expérience de l'équilibre des liqueurs, 1648 ; Gaspar Schott, Mechanica hydraulico-pneumatica, 1657"
+  },
+  "symbole": "Pa",
+  "embleme": "couronne-hieron",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "pression",
+     "titre": {
+      "fr": "Une force étalée sur une surface"
+     },
+     "texte": [
+      {
+       "fr": "La pression, c'est une force divisée par une surface. Une aiguille perce la peau avec une force minime parce que sa pointe est minuscule ; des raquettes à neige portent le même poids sur une grande surface, et on ne s'enfonce plus."
+      },
+      {
+       "fr": "Sous l'eau, chaque mètre ajoute le poids de l'eau au-dessus : environ 1 bar tous les 10 mètres, soit une atmosphère de plus. Simon Stevin montre en 1586 que cette pression ne dépend que de la hauteur de liquide, pas de la forme du récipient. À 30 m, un plongeur subit donc environ 4 bars : 1 pour l'air, 3 pour l'eau."
+      }
+     ],
+     "retenir": {
+      "fr": "Pression = force ÷ surface. Sous l'eau : +1 bar tous les 10 m, quelle que soit la forme du récipient (Stevin, 1586)."
+     },
+     "source": "Stevin, De Beghinselen des Waterwichts, 1586"
+    },
+    {
+     "id": "air",
+     "titre": {
+      "fr": "Le poids de l'air"
+     },
+     "texte": [
+      {
+       "fr": "L'air aussi pèse. En 1643, Evangelista Torricelli retourne un tube plein de mercure dans une cuve : la colonne descend et se stabilise vers 76 cm. Au-dessus, le vide ; ce qui tient la colonne, c'est la pression de l'air sur la cuve. Il vient d'inventer le baromètre."
+      },
+      {
+       "fr": "En 1648, à la demande de Pascal, son beau-frère Florin Périer monte le baromètre au sommet du puy de Dôme : la colonne y baisse d'environ 8 cm, car il y a moins d'air au-dessus. En 1654, Otto von Guericke fait le vide entre deux demi-sphères de cuivre, à Magdebourg : deux attelages de chevaux ne parviennent pas à les séparer. Au niveau de la mer, l'air appuie avec environ 1 013 hPa."
+      }
+     ],
+     "retenir": {
+      "fr": "L'air pèse : baromètre de Torricelli (1643), puy de Dôme (1648), hémisphères de Magdebourg (1654). ≈ 1 013 hPa au niveau de la mer."
+     },
+     "source": "Pascal, Récit de la grande expérience de l'équilibre des liqueurs, 1648",
+     "figure": "mc_phys_torricelli",
+     "reperes": [
+      {
+       "fr": "En 1643, Evangelista Torricelli retourne un tube plein de mercure dans une cuve : la colonne descend et se stabilise vers 76 cm."
+      },
+      {
+       "fr": "En 1648, à la demande de Pascal, son beau-frère Florin Périer monte le baromètre au sommet du puy de Dôme : la colonne y baisse d'environ 8 cm, car il y a moins d'air au-dessus."
+      },
+      {
+       "fr": "En 1654, Otto von Guericke fait le vide entre deux demi-sphères de cuivre, à Magdebourg : deux attelages de chevaux ne parviennent pas à les séparer."
+      }
+     ]
+    },
+    {
+     "id": "vide",
+     "titre": {
+      "fr": "Trente chevaux contre le vide"
+     },
+     "texte": [
+      {
+       "fr": "Aristote tenait le vide pour impossible. Otto von Guericke, bourgmestre de Magdebourg, en fabrique : il invente la première pompe à vide, un piston dans un cylindre, avec des clapets qui ne laissent passer l'air que dans un sens. Le 8 mai 1654, à Ratisbonne, devant la Diète impériale et l'empereur Ferdinand III, il vide l'air entre deux demi-sphères de métal d'environ 50 cm de diamètre."
+      },
+      {
+       "fr": "Trente chevaux, en deux attelages de quinze, tirent en sens contraires sans les séparer ; il suffit d'ouvrir la valve pour qu'elles se détachent. Avec un vide parfait, l'air les presserait l'une contre l'autre avec quelque 20 000 newtons, le poids de deux tonnes. Guericke recommence à Magdebourg en 1656 avec seize chevaux, puis à Berlin en 1663 avec vingt-quatre. Le jésuite Gaspar Schott est le premier à décrire l'expérience dans un livre, en 1657."
+      }
+     ],
+     "retenir": {
+      "fr": "8 mai 1654 : 30 chevaux ne séparent pas deux demi-sphères vidées d'air. C'est l'air du dehors qui les tient."
+     },
+     "source": "Gaspar Schott, Mechanica hydraulico-pneumatica, 1657",
+     "reperes": [
+      {
+       "fr": "Trente chevaux, en deux attelages de quinze, tirent en sens contraires sans les séparer ; il suffit d'ouvrir la valve pour qu'elles se détachent."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.huygens",
+  "stat": "mecanique",
+  "rang": 4,
+  "nom": {
+   "fr": "Huygens et le pendule"
+  },
+  "description": {
+   "fr": "L'horloge à pendule, la cycloïde, la force centrifuge et l'anneau de Saturne : Christiaan Huygens, qu'on a appelé le premier physicien théoricien."
+  },
+  "prerequis": [
+   "phys.galilee"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Le 25 décembre 1656, le Hollandais Christiaan Huygens invente l'horloge à pendule ; l'horloger Salomon Coster la construit."
+    },
+    {
+     "fr": "Les horloges passent d'environ 15 minutes d'écart par jour à environ 15 secondes."
+    },
+    {
+     "fr": "Dans l'Horologium oscillatorium (1673), il donne la période d'un pendule, T = 2π√(L/g), et montre que la cycloïde rend la chute de même durée d'où qu'on parte."
+    },
+    {
+     "fr": "Ses horloges devaient donner la longitude en mer, mais le roulis dérègle le pendule."
+    }
+   ],
+   "piege": {
+    "fr": "Un pendule simple n'est pas parfaitement régulier : la durée d'une oscillation dépend un peu de son ampleur. Galilée le croyait ; Huygens corrige avec la cycloïde."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Huygens, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1629</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">naissance à La Haye</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1655</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Titan, lune de Saturne</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1656</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">l'horloge à pendule</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1673</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Horologium oscillatorium</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1690</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Traité de la lumière</text></svg>",
+   "source": "Christiaan Huygens, Horologium oscillatorium, Paris, 1673"
+  },
+  "symbole": "⧖",
+  "embleme": "ph-horloge",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "horloge",
+     "titre": {
+      "fr": "Noël 1656"
+     },
+     "texte": [
+      {
+       "fr": "Le 25 décembre 1656, Christiaan Huygens invente l'horloge à pendule ; il la fait breveter l'année suivante et en confie la fabrication à Salomon Coster, horloger de La Haye. Le progrès est immense : les horloges dérivaient d'environ un quart d'heure par jour, elles n'en perdent plus qu'une quinzaine de secondes. Jusqu'aux années 1930, les horloges à pendule resteront les garde-temps les plus précis du monde."
+      },
+      {
+       "fr": "Galilée y avait pensé : en 1637, il décrit à son fils Vincenzo un mécanisme pour entretenir un pendule, que Vincenzo construit en partie en 1649. Un pendule « qui bat la seconde » mesure environ 0,994 m, pour un aller-retour de deux secondes. Robert Hooke invente vers 1658 l'échappement à ancre, dont William Clement revendique aussi l'invention."
+      }
+     ],
+     "retenir": {
+      "fr": "25 décembre 1656 : l'horloge à pendule. De 15 minutes à 15 secondes d'écart par jour."
+     },
+     "source": "Christiaan Huygens, horloge à pendule brevetée en 1657",
+     "figure": "mc_phys_huygens",
+     "reperes": [
+      {
+       "fr": "Le progrès est immense : les horloges dérivaient d'environ un quart d'heure par jour, elles n'en perdent plus qu'une quinzaine de secondes."
+      }
+     ]
+    },
+    {
+     "id": "cycloide",
+     "titre": {
+      "fr": "La courbe du temps égal"
+     },
+     "texte": [
+      {
+       "fr": "En 1673, Huygens publie à Paris l'Horologium oscillatorium, dédié à Louis XIV, en cinq parties. Il y cherche la courbe sur laquelle un corps qui glisse arrive en bas toujours dans le même temps, d'où qu'il parte : c'est la cycloïde, la courbe que trace un point d'une roue qui roule. Un pendule guidé par des joues en forme de cycloïde bat donc parfaitement régulièrement, ce qu'un pendule simple ne fait pas."
+      },
+      {
+       "fr": "Il y établit la formule de la période d'un pendule idéal, T = 2π√(L/g), étudie le pendule composé, et propose une mesure universelle des longueurs fondée sur le pendule qui bat la seconde. La dernière partie énonce, sans démonstration, treize propositions sur la force centrifuge ; les preuves ne paraîtront qu'en 1703. Newton les étudie de très près et reconnaîtra l'influence du livre sur ses Principia."
+      }
+     ],
+     "retenir": {
+      "fr": "Horologium (1673) : cycloïde, période T = 2π√(L/g), force centrifuge ; Newton s'en inspire."
+     },
+     "source": "Christiaan Huygens, Horologium oscillatorium, Paris, 1673",
+     "reperes": [
+      {
+       "fr": "Il y cherche la courbe sur laquelle un corps qui glisse arrive en bas toujours dans le même temps, d'où qu'il parte : c'est la cycloïde, la courbe que trace un point d'une roue qui roule."
+      }
+     ]
+    },
+    {
+     "id": "saturne",
+     "titre": {
+      "fr": "De Saturne à la longitude"
+     },
+     "texte": [
+      {
+       "fr": "Christiaan Huygens naît à La Haye le 14 avril 1629. Le 25 mars 1655, il découvre Titan, une lune de Saturne ; en 1659, il explique l'étrange forme de la planète par « un anneau mince et plat, qui ne la touche nulle part ». Entre 1652 et 1656, il trouve les premières lois correctes des chocs entre corps, publiées seulement après sa mort."
+      },
+      {
+       "fr": "Il espère que ses horloges donneront la longitude en mer. Mais le roulis dérègle le pendule : en 1660, un essai vers l'Espagne est ruiné par le gros temps, et un essai français à Cayenne finit mal. En 1666, il s'installe à Paris pour diriger l'Académie des sciences de Louis XIV ; en 1675, il dessine un ressort spiral pour les montres. On l'a appelé le premier physicien théoricien."
+      }
+     ],
+     "retenir": {
+      "fr": "Titan (1655), l'anneau de Saturne (1659), les chocs, la longitude manquée, l'Académie (1666)."
+     },
+     "source": "Wikipédia (en), « Christiaan Huygens »",
+     "reperes": [
+      {
+       "fr": "Il espère que ses horloges donneront la longitude en mer."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.forces",
+  "stat": "mecanique",
+  "rang": 4,
+  "nom": {
+   "fr": "Newton et les forces"
+  },
+  "description": {
+   "fr": "En 1687, les Principia : trois lois du mouvement et une gravitation universelle, la même pour la pomme et pour la Lune."
+  },
+  "prerequis": [
+   "phys.fluides",
+   "phys.huygens"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "1re loi : sans force nette, un objet garde sa vitesse. Le mouvement n'a pas besoin d'une force pour continuer."
+    },
+    {
+     "fr": "2e loi : F = m × a. La même force accélère moins un objet plus massif."
+    },
+    {
+     "fr": "3e loi : action et réaction sont égales et opposées, et s'appliquent à deux objets différents."
+    },
+    {
+     "fr": "Dans le vide, une plume et un marteau tombent ensemble (David Scott sur la Lune, 1971)."
+    },
+    {
+     "fr": "Accélération moyenne = variation de vitesse ÷ durée, en m/s²."
+    }
+   ],
+   "piege": {
+    "fr": "Un objet lancé n'emporte pas de « force du lancer » : une fois lâché, seuls le poids et l'air agissent."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Première loi de Newton : sans force nette, la vitesse ne change pas\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"149.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"84.5\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">force nette</text><text class=\"t\" x=\"84.5\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">nulle</text><line class=\"al\" x1=\"162.0\" y1=\"52.0\" x2=\"178.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M171.9 55.4 L178.0 52.0 L171.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"181.0\" y=\"20\" width=\"149.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"255.5\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">vitesse</text><text class=\"t\" x=\"255.5\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">constante</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">F = m × a : la force change la vitesse, pas le fait d'avancer</text></svg>",
+   "source": "Newton, Philosophiae Naturalis Principia Mathematica, 1687"
+  },
+  "symbole": "F",
+  "embleme": "pomme-newton",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "inertie",
+     "titre": {
+      "fr": "Le mouvement n'a pas besoin de moteur"
+     },
+     "texte": [
+      {
+       "fr": "Pendant deux mille ans, on a cru qu'un objet en mouvement s'arrête quand on cesse de le pousser. C'est ce qu'on voit tous les jours, à cause des frottements. Galilée, puis Newton, renversent l'idée : sans force nette, un objet garde sa vitesse, en ligne droite, pour toujours. C'est la première loi de Newton, le principe d'inertie. Newton l'énonce en 1687, en tête de ses Principia, parmi les « axiomes ou lois du mouvement »."
+      },
+      {
+       "fr": "Une balle lancée n'emporte donc pas de « force du lancer » : une fois lâchée, seuls son poids et l'air agissent sur elle. Et la Lune ne tombe pas parce que la Terre la tire tout en la laissant filer : sans gravitation, l'inertie l'enverrait en ligne droite."
+      }
+     ],
+     "retenir": {
+      "fr": "Sans force nette, la vitesse ne change pas (1re loi). Une force sert à changer le mouvement, pas à l'entretenir."
+     },
+     "source": "Newton, Philosophiae Naturalis Principia Mathematica, 1687"
+    },
+    {
+     "id": "fma",
+     "titre": {
+      "fr": "F = m × a et action-réaction"
+     },
+     "texte": [
+      {
+       "fr": "La deuxième loi dit ce que fait une force : elle accélère, et d'autant moins que l'objet est massif. F = m × a : 20 newtons accélèrent 10 kg à 2 m/s². Newton l'énonce en 1687 dans les Principia, mais en mots ; c'est Euler qui l'écrit sous forme d'équation au XVIIIe siècle."
+      },
+      {
+       "fr": "La troisième loi : quand A pousse B, B pousse A avec la même force, en sens inverse. Ces deux forces s'appliquent à deux objets différents, c'est pourquoi elles ne s'annulent pas. Une fusée pousse ses gaz vers l'arrière, les gaz poussent la fusée vers l'avant ; pas besoin d'air pour s'appuyer."
+      }
+     ],
+     "retenir": {
+      "fr": "F = m × a (2e loi). Action et réaction sont égales, opposées, et s'appliquent à deux objets différents (3e loi)."
+     },
+     "source": "Newton, Philosophiae Naturalis Principia Mathematica, 1687",
+     "figure": "mc_phys_fma"
+    },
+    {
+     "id": "chute",
+     "titre": {
+      "fr": "La plume et le marteau"
+     },
+     "texte": [
+      {
+       "fr": "Sans air, tous les objets tombent avec la même accélération, environ 9,8 m/s² à la surface de la Terre, quelle que soit leur masse. Le 2 août 1971, sur la Lune, l'astronaute David Scott d'Apollo 15 lâche ensemble un marteau et une plume de faucon : ils touchent le sol en même temps."
+      },
+      {
+       "fr": "Après une seconde de chute libre, un objet va à environ 9,8 m/s, mais n'a parcouru que 4,9 m : la vitesse grandit avec le temps, la distance avec le carré du temps. Sur Terre, c'est l'air qui freine la plume, pas sa légèreté."
+      }
+     ],
+     "retenir": {
+      "fr": "Dans le vide, tout tombe ensemble (g ≈ 9,8 m/s²). Vitesse = g × t, distance = ½ g t²."
+     },
+     "source": "NASA, Apollo 15 Lunar Surface Journal, 1971",
+     "figure": "mc_phys_chute",
+     "reperes": [
+      {
+       "fr": "Le 2 août 1971, sur la Lune, l'astronaute David Scott d'Apollo 15 lâche ensemble un marteau et une plume de faucon : ils touchent le sol en même temps."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.unites",
+  "stat": "mecanique",
+  "rang": 5,
+  "nom": {
+   "fr": "Le mètre et les unités"
+  },
+  "description": {
+   "fr": "De la Révolution au Système international : un mètre tiré de la Terre, puis des unités communes à tous."
+  },
+  "prerequis": [
+   "phys.forces"
+  ],
   "fiche": {
    "essentiel": [
     {
@@ -109,337 +1439,17 @@
   }
  },
  {
-  "id": "phys.forces",
-  "stat": "mecanique",
-  "rang": 2,
-  "nom": {
-   "fr": "Forces et mouvement"
-  },
-  "description": {
-   "fr": "Les lois de Newton, la gravitation, l'inertie."
-  },
-  "prerequis": [
-   "phys.unites"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "1re loi : sans force nette, un objet garde sa vitesse. Le mouvement n'a pas besoin d'une force pour continuer."
-    },
-    {
-     "fr": "2e loi : F = m × a. La même force accélère moins un objet plus massif."
-    },
-    {
-     "fr": "3e loi : action et réaction sont égales et opposées, et s'appliquent à deux objets différents."
-    },
-    {
-     "fr": "Dans le vide, une plume et un marteau tombent ensemble (David Scott sur la Lune, 1971)."
-    },
-    {
-     "fr": "Accélération moyenne = variation de vitesse ÷ durée, en m/s²."
-    }
-   ],
-   "piege": {
-    "fr": "Un objet lancé n'emporte pas de « force du lancer » : une fois lâché, seuls le poids et l'air agissent."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Première loi de Newton : sans force nette, la vitesse ne change pas\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"149.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"84.5\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">force nette</text><text class=\"t\" x=\"84.5\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">nulle</text><line class=\"al\" x1=\"162.0\" y1=\"52.0\" x2=\"178.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M171.9 55.4 L178.0 52.0 L171.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"181.0\" y=\"20\" width=\"149.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"255.5\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">vitesse</text><text class=\"t\" x=\"255.5\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">constante</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">F = m × a : la force change la vitesse, pas le fait d'avancer</text></svg>",
-   "source": "Newton, Philosophiae Naturalis Principia Mathematica, 1687"
-  },
-  "symbole": "F",
-  "embleme": "pomme-newton",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "inertie",
-     "titre": {
-      "fr": "Le mouvement n'a pas besoin de moteur"
-     },
-     "texte": [
-      {
-       "fr": "Pendant deux mille ans, on a cru qu'un objet en mouvement s'arrête quand on cesse de le pousser. C'est ce qu'on voit tous les jours, à cause des frottements. Galilée, puis Newton, renversent l'idée : sans force nette, un objet garde sa vitesse, en ligne droite, pour toujours. C'est la première loi de Newton, le principe d'inertie. Newton l'énonce en 1687, en tête de ses Principia, parmi les « axiomes ou lois du mouvement »."
-      },
-      {
-       "fr": "Une balle lancée n'emporte donc pas de « force du lancer » : une fois lâchée, seuls son poids et l'air agissent sur elle. Et la Lune ne tombe pas parce que la Terre la tire tout en la laissant filer : sans gravitation, l'inertie l'enverrait en ligne droite."
-      }
-     ],
-     "retenir": {
-      "fr": "Sans force nette, la vitesse ne change pas (1re loi). Une force sert à changer le mouvement, pas à l'entretenir."
-     },
-     "source": "Newton, Philosophiae Naturalis Principia Mathematica, 1687"
-    },
-    {
-     "id": "fma",
-     "titre": {
-      "fr": "F = m × a et action-réaction"
-     },
-     "texte": [
-      {
-       "fr": "La deuxième loi dit ce que fait une force : elle accélère, et d'autant moins que l'objet est massif. F = m × a : 20 newtons accélèrent 10 kg à 2 m/s². Newton l'énonce en 1687 dans les Principia, mais en mots ; c'est Euler qui l'écrit sous forme d'équation au XVIIIe siècle."
-      },
-      {
-       "fr": "La troisième loi : quand A pousse B, B pousse A avec la même force, en sens inverse. Ces deux forces s'appliquent à deux objets différents, c'est pourquoi elles ne s'annulent pas. Une fusée pousse ses gaz vers l'arrière, les gaz poussent la fusée vers l'avant ; pas besoin d'air pour s'appuyer."
-      }
-     ],
-     "retenir": {
-      "fr": "F = m × a (2e loi). Action et réaction sont égales, opposées, et s'appliquent à deux objets différents (3e loi)."
-     },
-     "source": "Newton, Philosophiae Naturalis Principia Mathematica, 1687",
-     "figure": "mc_phys_fma"
-    },
-    {
-     "id": "chute",
-     "titre": {
-      "fr": "La plume et le marteau"
-     },
-     "texte": [
-      {
-       "fr": "Sans air, tous les objets tombent avec la même accélération, environ 9,8 m/s² à la surface de la Terre, quelle que soit leur masse. Le 2 août 1971, sur la Lune, l'astronaute David Scott d'Apollo 15 lâche ensemble un marteau et une plume de faucon : ils touchent le sol en même temps."
-      },
-      {
-       "fr": "Après une seconde de chute libre, un objet va à environ 9,8 m/s, mais n'a parcouru que 4,9 m : la vitesse grandit avec le temps, la distance avec le carré du temps. Sur Terre, c'est l'air qui freine la plume, pas sa légèreté."
-      }
-     ],
-     "retenir": {
-      "fr": "Dans le vide, tout tombe ensemble (g ≈ 9,8 m/s²). Vitesse = g × t, distance = ½ g t²."
-     },
-     "source": "NASA, Apollo 15 Lunar Surface Journal, 1971",
-     "figure": "mc_phys_chute",
-     "reperes": [
-      {
-       "fr": "Le 2 août 1971, sur la Lune, l'astronaute David Scott d'Apollo 15 lâche ensemble un marteau et une plume de faucon : ils touchent le sol en même temps."
-      }
-     ]
-    }
-   ]
-  }
- },
- {
-  "id": "phys.fluides",
-  "stat": "mecanique",
-  "rang": 3,
-  "nom": {
-   "fr": "Pression et fluides"
-  },
-  "description": {
-   "fr": "Pression, poussée d'Archimède, flottaison et écoulements."
-  },
-  "prerequis": [
-   "phys.unites"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Pression = force ÷ surface. Une aiguille perce parce que sa surface est minuscule."
-    },
-    {
-     "fr": "Sous l'eau, la pression augmente d'environ 1 bar tous les 10 mètres."
-    },
-    {
-     "fr": "Archimède : tout corps plongé reçoit une poussée vers le haut égale au poids du fluide déplacé."
-    },
-    {
-     "fr": "Un objet flotte si sa masse volumique moyenne est inférieure à celle du liquide : un paquebot d'acier est plein d'air."
-    }
-   ],
-   "piege": {
-    "fr": "Un glaçon qui fond dans un verre plein ne le fait pas déborder : il déplaçait déjà son poids d'eau."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 168\" role=\"img\" aria-label=\"Pression sous l'eau, en bars\"><line class=\"lm\" x1=\"30\" y1=\"130\" x2=\"320\" y2=\"130\"/><rect class=\"f2\" x=\"46.0\" y=\"105.0\" width=\"53.0\" height=\"25.0\" rx=\"3\"/><text class=\"t\" x=\"72.5\" y=\"99.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">1 bar</text><text class=\"tm\" x=\"72.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">surface</text><rect class=\"f2\" x=\"111.0\" y=\"80.0\" width=\"53.0\" height=\"50.0\" rx=\"3\"/><text class=\"t\" x=\"137.5\" y=\"74.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">2 bar</text><text class=\"tm\" x=\"137.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">10 m</text><rect class=\"f2\" x=\"176.0\" y=\"55.0\" width=\"53.0\" height=\"75.0\" rx=\"3\"/><text class=\"t\" x=\"202.5\" y=\"49.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">3 bar</text><text class=\"tm\" x=\"202.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">20 m</text><rect class=\"a\" x=\"241.0\" y=\"30.0\" width=\"53.0\" height=\"100.0\" rx=\"3\"/><text class=\"t\" x=\"267.5\" y=\"24.0\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"700\">4 bar</text><text class=\"tm\" x=\"267.5\" y=\"151.8\" font-size=\"11\" text-anchor=\"middle\">30 m</text></svg>",
-   "source": "Archimède, Des corps flottants, IIIe s. av. J.-C."
-  },
-  "symbole": "Pa",
-  "embleme": "couronne-hieron",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "pression",
-     "titre": {
-      "fr": "Une force étalée sur une surface"
-     },
-     "texte": [
-      {
-       "fr": "La pression, c'est une force divisée par une surface. Une aiguille perce la peau avec une force minime parce que sa pointe est minuscule ; des raquettes à neige portent le même poids sur une grande surface, et on ne s'enfonce plus."
-      },
-      {
-       "fr": "Sous l'eau, chaque mètre ajoute le poids de l'eau au-dessus : environ 1 bar tous les 10 mètres, soit une atmosphère de plus. Simon Stevin montre en 1586 que cette pression ne dépend que de la hauteur de liquide, pas de la forme du récipient. À 30 m, un plongeur subit donc environ 4 bars : 1 pour l'air, 3 pour l'eau."
-      }
-     ],
-     "retenir": {
-      "fr": "Pression = force ÷ surface. Sous l'eau : +1 bar tous les 10 m, quelle que soit la forme du récipient (Stevin, 1586)."
-     },
-     "source": "Stevin, De Beghinselen des Waterwichts, 1586"
-    },
-    {
-     "id": "air",
-     "titre": {
-      "fr": "Le poids de l'air"
-     },
-     "texte": [
-      {
-       "fr": "L'air aussi pèse. En 1643, Evangelista Torricelli retourne un tube plein de mercure dans une cuve : la colonne descend et se stabilise vers 76 cm. Au-dessus, le vide ; ce qui tient la colonne, c'est la pression de l'air sur la cuve. Il vient d'inventer le baromètre."
-      },
-      {
-       "fr": "En 1648, à la demande de Pascal, son beau-frère Florin Périer monte le baromètre au sommet du puy de Dôme : la colonne y baisse d'environ 8 cm, car il y a moins d'air au-dessus. En 1654, Otto von Guericke fait le vide entre deux demi-sphères de cuivre, à Magdebourg : deux attelages de chevaux ne parviennent pas à les séparer. Au niveau de la mer, l'air appuie avec environ 1 013 hPa."
-      }
-     ],
-     "retenir": {
-      "fr": "L'air pèse : baromètre de Torricelli (1643), puy de Dôme (1648), hémisphères de Magdebourg (1654). ≈ 1 013 hPa au niveau de la mer."
-     },
-     "source": "Pascal, Récit de la grande expérience de l'équilibre des liqueurs, 1648",
-     "figure": "mc_phys_torricelli",
-     "reperes": [
-      {
-       "fr": "En 1643, Evangelista Torricelli retourne un tube plein de mercure dans une cuve : la colonne descend et se stabilise vers 76 cm."
-      },
-      {
-       "fr": "En 1648, à la demande de Pascal, son beau-frère Florin Périer monte le baromètre au sommet du puy de Dôme : la colonne y baisse d'environ 8 cm, car il y a moins d'air au-dessus."
-      },
-      {
-       "fr": "En 1654, Otto von Guericke fait le vide entre deux demi-sphères de cuivre, à Magdebourg : deux attelages de chevaux ne parviennent pas à les séparer."
-      }
-     ]
-    },
-    {
-     "id": "archimede",
-     "titre": {
-      "fr": "Archimède et ce qui flotte"
-     },
-     "texte": [
-      {
-       "fr": "Tout corps plongé dans un fluide reçoit une poussée vers le haut égale au poids du fluide qu'il déplace. Un objet flotte si sa masse volumique moyenne est inférieure à celle du liquide. Un paquebot en acier flotte parce que sa coque est pleine d'air ; un sous-marin plonge en remplissant ses ballasts d'eau, et remonte en les vidant à l'air comprimé."
-      },
-      {
-       "fr": "Et le « Eurêka » ? L'histoire du bain et de la couronne du roi Hiéron n'apparaît par écrit que deux siècles plus tard, chez Vitruve, et plusieurs historiens en doutent : mesurer le débordement d'eau aurait été trop imprécis pour l'époque. Une balance, avec la couronne et un lingot d'or pur plongés dans l'eau, aurait en revanche suffi à démasquer la fraude."
-      }
-     ],
-     "retenir": {
-      "fr": "Poussée d'Archimède = poids du fluide déplacé. Ça flotte si c'est moins dense que le liquide, en moyenne."
-     },
-     "source": "Archimède, Des corps flottants, IIIe s. av. J.-C.",
-     "figure": "mc_phys_archimede"
-    }
-   ]
-  }
- },
- {
-  "id": "phys.ondes",
-  "stat": "mecanique",
-  "rang": 4,
-  "nom": {
-   "fr": "Ondes et lumière"
-  },
-  "description": {
-   "fr": "Son, lumière, fréquences, couleurs et effet Doppler."
-  },
-  "prerequis": [
-   "phys.forces",
-   "phys.fluides"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Une onde transporte de l'énergie sans transporter de matière. Vitesse = longueur d'onde × fréquence."
-    },
-    {
-     "fr": "Le son a besoin d'un milieu (≈ 340 m/s dans l'air) ; la lumière traverse le vide (≈ 300 000 km/s)."
-    },
-    {
-     "fr": "Lumière visible : de 400 nm (violet) à 700 nm (rouge). Plus courte longueur d'onde, plus d'énergie."
-    },
-    {
-     "fr": "Effet Doppler : une source qui s'approche paraît plus aiguë, qui s'éloigne plus grave."
-    },
-    {
-     "fr": "Fréquence = 1 ÷ période : une période de 0,01 s donne 100 Hz."
-    }
-   ],
-   "piege": {
-    "fr": "Le ciel est bleu parce que l'air diffuse davantage les courtes longueurs d'onde, pas parce qu'il reflète la mer."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 100\" role=\"img\" aria-label=\"Spectre visible du violet (400 nm) au rouge (700 nm)\"><defs><linearGradient id=\"spectre\" x1=\"0\" x2=\"1\"><stop offset=\"0\" stop-color=\"#7A2BD9\"/><stop offset=\"0.18\" stop-color=\"#2B4BE0\"/><stop offset=\"0.36\" stop-color=\"#18A9C9\"/><stop offset=\"0.52\" stop-color=\"#2EB04A\"/><stop offset=\"0.68\" stop-color=\"#F2D22E\"/><stop offset=\"0.84\" stop-color=\"#F2852E\"/><stop offset=\"1\" stop-color=\"#D92B2B\"/></linearGradient></defs><rect x=\"20\" y=\"30\" width=\"300\" height=\"40\" rx=\"6\" fill=\"url(#spectre)\"/><text class=\"tm\" x=\"20\" y=\"92\" font-size=\"12\" text-anchor=\"start\">400 nm</text><text class=\"tm\" x=\"320\" y=\"92\" font-size=\"12\" text-anchor=\"end\">700 nm</text><text class=\"tm\" x=\"170\" y=\"20\" font-size=\"12\" text-anchor=\"middle\">longueur d'onde croissante →</text></svg>",
-   "source": "Hecht, Optics, 5e éd."
-  },
-  "symbole": "λ",
-  "embleme": "prisme-newton",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "onde",
-     "titre": {
-      "fr": "Une onde transporte de l'énergie, pas de matière"
-     },
-     "texte": [
-      {
-       "fr": "Quand une vague passe, le bouchon monte et descend, mais ne part pas avec elle. Une onde transporte de l'énergie sans emporter de matière. Sa vitesse est le produit de sa longueur d'onde par sa fréquence, et la fréquence est l'inverse de la période : une période de 0,01 s donne 100 Hz."
-      },
-      {
-       "fr": "Le son est une onde de pression qui a besoin d'un milieu : environ 340 m/s dans l'air, près de 1 500 m/s dans l'eau, rien dans le vide. La lumière, elle, traverse le vide à près de 300 000 km/s. D'où le calcul de l'orage : 3 secondes entre l'éclair et le tonnerre, c'est environ 1 km. La méthode est ancienne : vers 1630, le père Marin Mersenne chronométrait le délai entre l'éclair d'un coup de canon et sa détonation, sur une distance connue."
-      }
-     ],
-     "retenir": {
-      "fr": "Vitesse = longueur d'onde × fréquence ; fréquence = 1 ÷ période. Son ≈ 340 m/s dans l'air, rien dans le vide."
-     },
-     "source": "Hecht, Optics, 5e éd.",
-     "figure": "mc_phys_onde",
-     "reperes": [
-      {
-       "fr": "La méthode est ancienne : vers 1630, le père Marin Mersenne chronométrait le délai entre l'éclair d'un coup de canon et sa détonation, sur une distance connue."
-      }
-     ]
-    },
-    {
-     "id": "couleurs",
-     "titre": {
-      "fr": "Pourquoi le ciel est bleu"
-     },
-     "texte": [
-      {
-       "fr": "La lumière visible va d'environ 400 nm, le violet, à 700 nm, le rouge. Au-delà, l'œil ne voit plus : ultraviolets, rayons X d'un côté, infrarouges, micro-ondes, ondes radio de l'autre. Ce sont toutes des ondes électromagnétiques, qui ne diffèrent que par leur longueur d'onde."
-      },
-      {
-       "fr": "Les molécules d'air diffusent la lumière d'autant plus fort que sa longueur d'onde est courte, comme l'inverse de sa puissance quatrième : c'est la diffusion de Rayleigh, décrite par Lord Rayleigh à partir de 1871. Le bleu est donc renvoyé dans toutes les directions bien plus que le rouge, et le ciel paraît bleu. Au coucher du soleil, la lumière traverse beaucoup d'air, perd son bleu en route, et le soleil rougit."
-      }
-     ],
-     "retenir": {
-      "fr": "Visible : 400 nm (violet) à 700 nm (rouge). Ciel bleu : l'air diffuse bien plus les courtes longueurs d'onde (Rayleigh)."
-     },
-     "source": "Rayleigh, Philosophical Magazine, 1871",
-     "schema_fiche": true
-    },
-    {
-     "id": "doppler",
-     "titre": {
-      "fr": "La sirène qui change de note"
-     },
-     "texte": [
-      {
-       "fr": "Une ambulance qui s'approche paraît plus aiguë, puis plus grave quand elle s'éloigne. Quand la source avance, elle rattrape ses propres ondes et les tasse : la fréquence reçue monte. Quand elle recule, elle les étire : la fréquence baisse. C'est l'effet Doppler, proposé par Christian Doppler en 1842 et vérifié avec le son par Buys Ballot en 1845."
-      },
-      {
-       "fr": "Le même effet vaut pour la lumière et les ondes radio. Les radars de police mesurent la vitesse d'une voiture au décalage de fréquence de l'onde réfléchie. Et les astronomes lisent dans le décalage vers le rouge ou le bleu de la lumière d'une étoile si elle s'éloigne ou s'approche."
-      }
-     ],
-     "retenir": {
-      "fr": "Source qui approche : fréquence plus haute ; qui s'éloigne : plus basse (Doppler, 1842). Sert aux radars et en astronomie."
-     },
-     "source": "Doppler, Über das farbige Licht der Doppelsterne, 1842",
-     "figure": "mc_phys_doppler"
-    }
-   ]
-  }
- },
- {
   "id": "phys.energie",
   "stat": "mecanique",
   "rang": 5,
   "nom": {
-   "fr": "Énergie"
+   "fr": "Watt, Joule et l'énergie"
   },
   "description": {
-   "fr": "Énergie cinétique et potentielle, puissance, conservation."
+   "fr": "La machine à vapeur, puis l'équivalence du travail et de la chaleur : l'énergie change de forme, mais se conserve."
   },
   "prerequis": [
-   "phys.ondes"
+   "phys.unites"
   ],
   "fiche": {
    "essentiel": [
@@ -542,17 +1552,124 @@
   }
  },
  {
+  "id": "phys.ondes",
+  "stat": "mecanique",
+  "rang": 5,
+  "nom": {
+   "fr": "Ondes et lumière"
+  },
+  "description": {
+   "fr": "Des franges de Young au cor du train de Buys Ballot : le son, la lumière, les fréquences et l'effet Doppler."
+  },
+  "prerequis": [
+   "phys.unites"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Une onde transporte de l'énergie sans transporter de matière. Vitesse = longueur d'onde × fréquence."
+    },
+    {
+     "fr": "Le son a besoin d'un milieu (≈ 340 m/s dans l'air) ; la lumière traverse le vide (≈ 300 000 km/s)."
+    },
+    {
+     "fr": "Lumière visible : de 400 nm (violet) à 700 nm (rouge). Plus courte longueur d'onde, plus d'énergie."
+    },
+    {
+     "fr": "Effet Doppler : une source qui s'approche paraît plus aiguë, qui s'éloigne plus grave."
+    },
+    {
+     "fr": "Fréquence = 1 ÷ période : une période de 0,01 s donne 100 Hz."
+    }
+   ],
+   "piege": {
+    "fr": "Le ciel est bleu parce que l'air diffuse davantage les courtes longueurs d'onde, pas parce qu'il reflète la mer."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 100\" role=\"img\" aria-label=\"Spectre visible du violet (400 nm) au rouge (700 nm)\"><defs><linearGradient id=\"spectre\" x1=\"0\" x2=\"1\"><stop offset=\"0\" stop-color=\"#7A2BD9\"/><stop offset=\"0.18\" stop-color=\"#2B4BE0\"/><stop offset=\"0.36\" stop-color=\"#18A9C9\"/><stop offset=\"0.52\" stop-color=\"#2EB04A\"/><stop offset=\"0.68\" stop-color=\"#F2D22E\"/><stop offset=\"0.84\" stop-color=\"#F2852E\"/><stop offset=\"1\" stop-color=\"#D92B2B\"/></linearGradient></defs><rect x=\"20\" y=\"30\" width=\"300\" height=\"40\" rx=\"6\" fill=\"url(#spectre)\"/><text class=\"tm\" x=\"20\" y=\"92\" font-size=\"12\" text-anchor=\"start\">400 nm</text><text class=\"tm\" x=\"320\" y=\"92\" font-size=\"12\" text-anchor=\"end\">700 nm</text><text class=\"tm\" x=\"170\" y=\"20\" font-size=\"12\" text-anchor=\"middle\">longueur d'onde croissante →</text></svg>",
+   "source": "Hecht, Optics, 5e éd."
+  },
+  "symbole": "λ",
+  "embleme": "prisme-newton",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "onde",
+     "titre": {
+      "fr": "Une onde transporte de l'énergie, pas de matière"
+     },
+     "texte": [
+      {
+       "fr": "Quand une vague passe, le bouchon monte et descend, mais ne part pas avec elle. Une onde transporte de l'énergie sans emporter de matière. Sa vitesse est le produit de sa longueur d'onde par sa fréquence, et la fréquence est l'inverse de la période : une période de 0,01 s donne 100 Hz."
+      },
+      {
+       "fr": "Le son est une onde de pression qui a besoin d'un milieu : environ 340 m/s dans l'air, près de 1 500 m/s dans l'eau, rien dans le vide. La lumière, elle, traverse le vide à près de 300 000 km/s. D'où le calcul de l'orage : 3 secondes entre l'éclair et le tonnerre, c'est environ 1 km. La méthode est ancienne : vers 1630, le père Marin Mersenne chronométrait le délai entre l'éclair d'un coup de canon et sa détonation, sur une distance connue."
+      }
+     ],
+     "retenir": {
+      "fr": "Vitesse = longueur d'onde × fréquence ; fréquence = 1 ÷ période. Son ≈ 340 m/s dans l'air, rien dans le vide."
+     },
+     "source": "Hecht, Optics, 5e éd.",
+     "figure": "mc_phys_onde",
+     "reperes": [
+      {
+       "fr": "La méthode est ancienne : vers 1630, le père Marin Mersenne chronométrait le délai entre l'éclair d'un coup de canon et sa détonation, sur une distance connue."
+      }
+     ]
+    },
+    {
+     "id": "couleurs",
+     "titre": {
+      "fr": "Pourquoi le ciel est bleu"
+     },
+     "texte": [
+      {
+       "fr": "La lumière visible va d'environ 400 nm, le violet, à 700 nm, le rouge. Au-delà, l'œil ne voit plus : ultraviolets, rayons X d'un côté, infrarouges, micro-ondes, ondes radio de l'autre. Ce sont toutes des ondes électromagnétiques, qui ne diffèrent que par leur longueur d'onde."
+      },
+      {
+       "fr": "Les molécules d'air diffusent la lumière d'autant plus fort que sa longueur d'onde est courte, comme l'inverse de sa puissance quatrième : c'est la diffusion de Rayleigh, décrite par Lord Rayleigh à partir de 1871. Le bleu est donc renvoyé dans toutes les directions bien plus que le rouge, et le ciel paraît bleu. Au coucher du soleil, la lumière traverse beaucoup d'air, perd son bleu en route, et le soleil rougit."
+      }
+     ],
+     "retenir": {
+      "fr": "Visible : 400 nm (violet) à 700 nm (rouge). Ciel bleu : l'air diffuse bien plus les courtes longueurs d'onde (Rayleigh)."
+     },
+     "source": "Rayleigh, Philosophical Magazine, 1871",
+     "schema_fiche": true
+    },
+    {
+     "id": "doppler",
+     "titre": {
+      "fr": "La sirène qui change de note"
+     },
+     "texte": [
+      {
+       "fr": "Une ambulance qui s'approche paraît plus aiguë, puis plus grave quand elle s'éloigne. Quand la source avance, elle rattrape ses propres ondes et les tasse : la fréquence reçue monte. Quand elle recule, elle les étire : la fréquence baisse. C'est l'effet Doppler, proposé par Christian Doppler en 1842 et vérifié avec le son par Buys Ballot en 1845."
+      },
+      {
+       "fr": "Le même effet vaut pour la lumière et les ondes radio. Les radars de police mesurent la vitesse d'une voiture au décalage de fréquence de l'onde réfléchie. Et les astronomes lisent dans le décalage vers le rouge ou le bleu de la lumière d'une étoile si elle s'éloigne ou s'approche."
+      }
+     ],
+     "retenir": {
+      "fr": "Source qui approche : fréquence plus haute ; qui s'éloigne : plus basse (Doppler, 1842). Sert aux radars et en astronomie."
+     },
+     "source": "Doppler, Über das farbige Licht der Doppelsterne, 1842",
+     "figure": "mc_phys_doppler"
+    }
+   ]
+  }
+ },
+ {
   "id": "phys.thermo",
   "stat": "mecanique",
   "rang": 6,
   "nom": {
-   "fr": "Chaleur et thermodynamique"
+   "fr": "Carnot, Boltzmann et la chaleur"
   },
   "description": {
-   "fr": "Température, chaleur, entropie et machines thermiques."
+   "fr": "De la puissance motrice du feu à l'entropie : ce que les machines à vapeur ont appris aux physiciens."
   },
   "prerequis": [
-   "phys.energie"
+   "phys.energie",
+   "phys.ondes"
   ],
   "fiche": {
    "essentiel": [
@@ -658,6 +1775,117 @@
   }
  },
  {
+  "id": "phys.lumiere",
+  "stat": "mecanique",
+  "rang": 6,
+  "nom": {
+   "fr": "Mesurer la lumière"
+  },
+  "description": {
+   "fr": "Des lunes de Jupiter au miroir tournant : Rømer, Fizeau, Foucault et Michelson chronomètrent la lumière."
+  },
+  "prerequis": [
+   "phys.thermo"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "En 1676, Ole Rømer déduit des éclipses de Io que la lumière met environ 22 minutes à traverser l'orbite de la Terre."
+    },
+    {
+     "fr": "En 1849, Fizeau mesure la vitesse de la lumière sur Terre : une roue de 720 dents, un miroir à 8 633 m, et 313 000 km/s à 5 % près."
+    },
+    {
+     "fr": "En 1862, Foucault, avec un miroir tournant, trouve 298 000 km/s ; en 1926, Michelson, 299 796 km/s."
+    },
+    {
+     "fr": "Depuis 1983, la vitesse de la lumière vaut exactement 299 792 458 m/s : c'est elle qui définit le mètre."
+    }
+   ],
+   "piege": {
+    "fr": "Rømer n'a jamais donné de vitesse en kilomètres par seconde : il a mesuré un retard. Ce sont d'autres, comme Huygens, qui en tirent un ordre de grandeur."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Mesurer la lumière, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1676</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Rømer et les éclipses de Io</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1729</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Bradley, l'aberration</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1849</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">la roue dentée de Fizeau</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1862</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">le miroir de Foucault</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1983</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">c fixée, le mètre suit</text></svg>",
+   "source": "Ole Rømer, Journal des sçavans, 1676 ; Hippolyte Fizeau, Comptes rendus, 1849"
+  },
+  "symbole": "✺",
+  "embleme": "lune",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "romer",
+     "titre": {
+      "fr": "Les retards de Io"
+     },
+     "texte": [
+      {
+       "fr": "Galilée avait proposé en 1638 de mesurer la lumière avec deux lanternes : il ne put dire si elle était instantanée, seulement qu'elle était extraordinairement rapide. En 1676, à l'Observatoire de Paris, le Danois Ole Rømer chronomètre les éclipses de Io, une lune de Jupiter. Elles semblent en retard quand la Terre s'éloigne de Jupiter. Il annonce que l'émergence de Io du 16 novembre 1676 sera vue « environ dix minutes » plus tard que prévu."
+      },
+      {
+       "fr": "Le 21 novembre, il explique à l'Académie des sciences que la lumière met environ 22 minutes à traverser le diamètre de l'orbite terrestre. Il ne donne pas de vitesse ; Huygens en tire un ordre de grandeur. Cassini, son directeur, n'admettra jamais l'idée. Elle ne s'impose qu'après les mesures de James Bradley sur l'aberration des étoiles, faites en 1727 et publiées en 1729."
+      }
+     ],
+     "retenir": {
+      "fr": "Rømer (1676) : 22 minutes pour traverser l'orbite terrestre. La lumière n'est pas instantanée."
+     },
+     "source": "Ole Rømer, Démonstration touchant le mouvement de la lumière, Journal des sçavans, 7 décembre 1676",
+     "reperes": [
+      {
+       "fr": "Le 21 novembre, il explique à l'Académie des sciences que la lumière met environ 22 minutes à traverser le diamètre de l'orbite terrestre."
+      }
+     ]
+    },
+    {
+     "id": "fizeau",
+     "titre": {
+      "fr": "La roue dentée et le miroir tournant"
+     },
+     "texte": [
+      {
+       "fr": "En 1849, Hippolyte Fizeau fait passer un rayon entre les dents d'une roue de 720 dents qui tourne vite ; le rayon va jusqu'à un miroir placé à 8 633 m et revient. À 12,6 tours par seconde, le retour tombe sur une dent et la lumière disparaît ; à 25,2 tours, elle réapparaît dans le creux suivant. Il en déduit environ 313 000 km/s, à moins de 5 % de la vraie valeur."
+      },
+      {
+       "fr": "Léon Foucault, son ancien collaborateur devenu rival, remplace la roue par un miroir tournant. En 1850, il montre, sept semaines avant Fizeau, que la lumière va moins vite dans l'eau que dans l'air, contre la théorie des corpuscules. En 1862, il mesure 298 000 km/s, à 0,6 % près."
+      }
+     ],
+     "retenir": {
+      "fr": "Fizeau (1849) : roue de 720 dents, 313 000 km/s. Foucault (1862) : miroir tournant, 298 000 km/s."
+     },
+     "source": "Hippolyte Fizeau, Comptes rendus de l'Académie des sciences, 1849",
+     "figure": "mc_phys_vitesse_lumiere",
+     "reperes": [
+      {
+       "fr": "Il en déduit environ 313 000 km/s, à moins de 5 % de la vraie valeur."
+      }
+     ]
+    },
+    {
+     "id": "michelson",
+     "titre": {
+      "fr": "« Parce que c'est tellement amusant »"
+     },
+     "texte": [
+      {
+       "fr": "Albert Michelson naît en 1852 à Strelno, en Prusse, aujourd'hui Strzelno en Pologne, et grandit aux États-Unis. Professeur à l'Académie navale, il mesure la vitesse de la lumière en 1879 : 299 910 km/s, à 50 près. En 1887, avec Edward Morley, il cherche en vain le mouvement de la Terre dans l'éther. En 1907, il est le premier Américain à recevoir un prix Nobel de science."
+      },
+      {
+       "fr": "En 1926, depuis le mont Wilson, il envoie la lumière vers un miroir à environ 35 km : 299 796 km/s, à 4 près. Il meurt en 1931 en plein travail dans un tube à vide de 1,6 km. À qui lui demandait pourquoi la lumière, il aurait répondu : « Parce que c'est tellement amusant. » Depuis 1983, on ne mesure plus c : elle vaut exactement 299 792 458 m/s, et sert à définir le mètre."
+      }
+     ],
+     "retenir": {
+      "fr": "Michelson : 299 910 km/s (1879), Nobel 1907, 299 796 km/s (1926). Depuis 1983, c est fixée."
+     },
+     "source": "Albert A. Michelson, Astrophysical Journal, 1927",
+     "reperes": [
+      {
+       "fr": "En 1907, il est le premier Américain à recevoir un prix Nobel de science."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
   "id": "phys.relativite",
   "stat": "mecanique",
   "rang": 7,
@@ -668,7 +1896,7 @@
    "fr": "Vitesse de la lumière, temps dilaté, E = mc² et gravitation d'Einstein."
   },
   "prerequis": [
-   "phys.energie"
+   "phys.lumiere"
   ],
   "fiche": {
    "essentiel": [
@@ -781,7 +2009,7 @@
  {
   "id": "phys.quantique",
   "stat": "mecanique",
-  "rang": 8,
+  "rang": 7,
   "nom": {
    "fr": "Physique quantique"
   },
@@ -789,8 +2017,7 @@
    "fr": "Photons, dualité onde-particule, incertitude et atomes."
   },
   "prerequis": [
-   "phys.thermo",
-   "phys.relativite"
+   "phys.lumiere"
   ],
   "fiche": {
    "essentiel": [
@@ -892,6 +2119,118 @@
       },
       {
        "fr": "Le laser repose sur l'émission stimulée, prédite par Einstein en 1917."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "phys.grandescience",
+  "stat": "mecanique",
+  "rang": 8,
+  "nom": {
+   "fr": "La grande science"
+  },
+  "description": {
+   "fr": "Congrès Solvay, CERN, LIGO : au XXe siècle, la physique se fait à des centaines, avec des machines géantes."
+  },
+  "prerequis": [
+   "phys.relativite",
+   "phys.quantique"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "En 1911, le premier congrès Solvay réunit à Bruxelles Lorentz, Curie, Einstein, Rutherford et Poincaré sur « le rayonnement et les quanta »."
+    },
+    {
+     "fr": "Le CERN naît le 29 septembre 1954, quand 12 pays d'Europe de l'Ouest ratifient sa convention. Le Web y est inventé en 1989."
+    },
+    {
+     "fr": "Le 4 juillet 2012, les expériences ATLAS et CMS du LHC, un anneau de 27 km, annoncent un nouveau boson : le boson de Higgs, prédit en 1964."
+    },
+    {
+     "fr": "Le 14 septembre 2015, les deux détecteurs LIGO, à 3 002 km l'un de l'autre, captent des ondes gravitationnelles."
+    }
+   ],
+   "piege": {
+    "fr": "« Particule de Dieu » n'est pas un nom de physicien : il vient d'un livre de Leon Lederman (1993), et Peter Higgs lui-même l'a critiqué."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"La grande science, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1911</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">premier congrès Solvay</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1954</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">naissance du CERN</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1989</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">le Web, au CERN</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2012</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">le boson de Higgs</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2015</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">ondes gravitationnelles</text></svg>",
+   "source": "Instituts Solvay ; CERN ; LIGO Scientific Collaboration et Virgo, Physical Review Letters, 2016"
+  },
+  "symbole": "◬",
+  "embleme": "antenne",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "solvay",
+     "titre": {
+      "fr": "Bruxelles, 1911 et 1927"
+     },
+     "texte": [
+      {
+       "fr": "L'industriel belge Ernest Solvay finance des rencontres entre les meilleurs physiciens du monde. Le premier congrès Solvay se tient à Bruxelles du 30 octobre au 3 novembre 1911, sur « le rayonnement et les quanta », sous la présidence de Hendrik Lorentz. Albert Einstein, deuxième plus jeune, y côtoie Marie Curie, Ernest Rutherford et Henri Poincaré."
+      },
+      {
+       "fr": "Le cinquième congrès, du 24 au 29 octobre 1927, porte sur « électrons et photons ». Sur ses 29 participants, 17 ont reçu ou recevront un prix Nobel ; Marie Curie est la seule à en avoir reçu deux, dans deux sciences différentes. Einstein et Niels Bohr y sont les figures de proue d'un débat sur la mécanique quantique qui dure encore. Les congrès continuent aujourd'hui, en physique et en chimie."
+      }
+     ],
+     "retenir": {
+      "fr": "Solvay 1911 : les quanta. Solvay 1927 : 29 participants, 17 prix Nobel."
+     },
+     "source": "Instituts internationaux de physique et de chimie Solvay",
+     "reperes": [
+      {
+       "fr": "Sur ses 29 participants, 17 ont reçu ou recevront un prix Nobel ; Marie Curie est la seule à en avoir reçu deux, dans deux sciences différentes."
+      }
+     ]
+    },
+    {
+     "id": "cern",
+     "titre": {
+      "fr": "Un anneau de 27 kilomètres"
+     },
+     "texte": [
+      {
+       "fr": "Après le projet Manhattan, les États deviennent les grands mécènes de la science. On parle de « grande science » : gros budgets, grandes équipes, machines énormes, comme le cyclotron d'Ernest Lawrence. L'expression doit sa vogue à un article d'Alvin Weinberg, directeur du laboratoire d'Oak Ridge, en 1961. Le 29 septembre 1954, douze pays d'Europe de l'Ouest ratifient la convention du CERN, près de Genève."
+      },
+      {
+       "fr": "Au CERN, on découvre les bosons W et Z en 1983 (prix Nobel 1984 pour Carlo Rubbia et Simon van der Meer) et Tim Berners-Lee y invente le World Wide Web en 1989. Le grand collisionneur LHC, dans un tunnel de 27 km, fait circuler son premier faisceau le 10 septembre 2008. Le 4 juillet 2012, ses expériences ATLAS et CMS annoncent chacune un nouveau boson d'environ 125 GeV, au seuil des « cinq sigmas » : le boson de Higgs, prédit en 1964. Higgs et Englert reçoivent le Nobel en 2013."
+      }
+     ],
+     "retenir": {
+      "fr": "CERN 1954 (12 pays), W et Z (1983), le Web (1989), le LHC (27 km), le boson de Higgs (2012)."
+     },
+     "source": "CERN ; ATLAS et CMS, 4 juillet 2012",
+     "figure": "mc_phys_grandescience",
+     "reperes": [
+      {
+       "fr": "Le 29 septembre 1954, douze pays d'Europe de l'Ouest ratifient la convention du CERN, près de Genève."
+      }
+     ]
+    },
+    {
+     "id": "ligo",
+     "titre": {
+      "fr": "Un frisson de l'espace-temps"
+     },
+     "texte": [
+      {
+       "fr": "LIGO, ce sont deux observatoires américains, à Hanford et à Livingston, distants de 3 002 km, aux bras de 4 km. En 1994, avec 395 millions de dollars, c'est le plus gros projet jamais financé par la Fondation nationale des sciences américaine. Il doit mesurer des variations de longueur bien plus petites qu'un proton."
+      },
+      {
+       "fr": "Le 14 septembre 2015, à 9 h 50 min 45 s UTC, Livingston puis Hanford, 7 millisecondes plus tard, enregistrent un « chirp » de 0,2 s, de 35 à 250 hertz : deux trous noirs d'environ 36 et 29 masses solaires fusionnent en un seul d'environ 62. Trois masses solaires sont parties en ondes gravitationnelles. Les détecteurs n'étaient qu'en mode d'essai ; l'annonce tombe le 11 février 2016, et le Nobel 2017 récompense Rainer Weiss, Barry Barish et Kip Thorne."
+      }
+     ],
+     "retenir": {
+      "fr": "LIGO : deux détecteurs à 3 002 km, un signal le 14 septembre 2015, deux trous noirs fusionnés."
+     },
+     "source": "LIGO Scientific Collaboration et Virgo, Physical Review Letters 116, 061102, 2016",
+     "reperes": [
+      {
+       "fr": "Trois masses solaires sont parties en ondes gravitationnelles."
       }
      ]
     }

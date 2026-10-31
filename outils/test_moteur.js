@@ -134,7 +134,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const P = M.nouvellePartie(t0);
     const bonus = M.bonusDuJour(C3, P, t0);
     assert.equal(M.bonusDuJour(C3, P, t0 + 3600000), bonus, "bonus stable dans la journée");
-    for (const id of ["math.origines", "phys.unites", "philo.presocratiques"]) {
+    for (const id of ["math.origines", "phys.machines", "philo.presocratiques"]) {
       const Q = M.nouvellePartie(t0);
       const v = M.valeurEpreuve(C3, Q, { type: "quiz", comp: id }, t0);
       assert.equal(v.base, R.valeurs.quiz_rang["1"]);
@@ -1011,7 +1011,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const T = Date.UTC(2026, 0, 5, 9), P = M.nouvellePartie(T);
   M.verifierRecompenses(CS, P, T);
   P.competences["astro.ptolemee"] = { maitrise: true, maitriseDepuis: T, xp: 10 };
-  P.competences["phys.ondes"] = { maitrise: true, maitriseDepuis: T, xp: 10 };
+  P.competences["phys.optique"] = { maitrise: true, maitriseDepuis: T, xp: 10 };
   const a = M.verifierRecompenses(CS, P, T + 1), b = M.verifierRecompenses(CS, P, T + 2);
   assert.equal(a.savants.length + a.objets.length + a.livres.length, 1, "un seul déblocage d'un coup");
   assert.ok(b.savants.length + b.objets.length + b.livres.length <= 1);
