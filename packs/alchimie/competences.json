@@ -1,113 +1,998 @@
 [
  {
-  "id": "sci.atomes",
+  "id": "chim.feu",
   "stat": "alchimie",
   "rang": 1,
   "nom": {
-   "fr": "Atomes et éléments"
+   "fr": "Les arts du feu"
   },
   "description": {
-   "fr": "La structure de l'atome, les éléments et le tableau périodique."
+   "fr": "Argile cuite, pigments, verre et parfums : bien avant les chimistes, potiers, verriers et parfumeuses transforment la matière par le feu."
   },
   "prerequis": [],
   "fiche": {
    "essentiel": [
     {
-     "fr": "Un atome : un noyau (protons et neutrons) et des électrons autour."
+     "fr": "La Vénus de Dolní Věstonice, en Moravie, a été cuite entre 500 et 800 °C il y a 31 000 à 27 000 ans : c'est l'une des plus vieilles céramiques connues."
     },
     {
-     "fr": "Le numéro atomique (nombre de protons) définit l'élément."
+     "fr": "Dans la grotte de Xianrendong, en Chine, des tessons de poterie ont 20 000 à 19 000 ans ; des traces de brûlé suggèrent qu'on y cuisait."
     },
     {
-     "fr": "Le tableau périodique range les éléments par numéro ; une colonne regroupe des propriétés chimiques voisines."
+     "fr": "Le bleu égyptien (CaCuSi₄O₁₀), cuit entre 800 et 1 000 °C, est considéré comme le premier pigment de synthèse ; il apparaît vers 3250 av. J.-C."
     },
     {
-     "fr": "Un atome est presque vide : si le noyau était une bille, l'atome ferait la taille d'un stade."
+     "fr": "Vers 1200 av. J.-C., à Assur, la parfumeuse Tapputi distille et filtre ses mélanges : l'une des premières chimistes connues par son nom."
     }
    ],
    "piege": {
-    "fr": "Changer le nombre de neutrons donne un isotope du même élément, pas un autre élément."
+    "fr": "Ces artisans ne connaissaient ni atomes ni réactions : ils avaient des recettes, des fours et beaucoup d'essais. La chimie comme science viendra bien plus tard."
    },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Ce que chaque particule détermine\"><rect class=\"a\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">protons</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">font l'élément</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">neutrons</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">isotopes</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">électrons</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chimie</text></svg>",
-   "source": "IUPAC, Periodic Table of the Elements, 2022",
-   "figures": [
-    "atome"
-   ]
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Les arts du feu, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −27 000</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Vénus cuite</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −18 000</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">pots de Xianrendong</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −3250</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">bleu égyptien</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">−IIIe mill.</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">perles de verre</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −1200</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Tapputi</text></svg>",
+   "source": "Vénus de Dolní Věstonice ; grotte de Xianrendong (Wu et al., Science, 2012) ; bleu égyptien ; tablette de Tapputi"
   },
-  "symbole": "⚛",
-  "embleme": "atome",
+  "symbole": "Si",
+  "embleme": "chim-poterie",
   "masterclass": {
    "chapitres": [
     {
-     "id": "noyau",
+     "id": "argile",
      "titre": {
-      "fr": "Un noyau minuscule dans beaucoup de vide"
+      "fr": "L'argile qui devient pierre"
      },
      "texte": [
       {
-       "fr": "Un atome, c'est un noyau, fait de protons et de neutrons, entouré d'électrons. Presque toute sa masse est dans le noyau, et pourtant ce noyau est minuscule : l'atome est 27 000 à 60 000 fois plus large que lui, selon l'élément. Si le noyau était une bille, l'atome aurait la taille d'un stade."
+       "fr": "Le 13 juillet 1925, à Dolní Věstonice, en Moravie, on trouve dans une couche de cendres une statuette de femme cassée en deux. Elle est faite surtout de lœss, avec un peu d'argile, et a été cuite à basse température, entre 500 et 800 °C, il y a 31 000 à 27 000 ans. C'est l'une des plus vieilles céramiques connues : le feu a changé une boue en pierre."
       },
       {
-       "fr": "On l'a compris en tirant dessus. Entre 1906 et 1913, à Manchester, Hans Geiger et Ernest Marsden envoient des particules alpha sur une feuille d'or très fine, sous la direction d'Ernest Rutherford. Presque toutes passent tout droit, mais quelques-unes rebondissent vers l'arrière. En 1911, Rutherford en tire la conclusion : la charge positive et la masse sont concentrées dans un tout petit centre, le noyau."
+       "fr": "Les pots viennent plus tard. Dans la grotte de Xianrendong, dans la province du Jiangxi, en Chine, des tessons ont été datés de 20 000 à 19 000 ans, à la fin de la dernière glaciation. Beaucoup portent des traces de brûlé : on y faisait sans doute la cuisine. L'étude est parue en 2012 dans la revue Science."
       }
      ],
      "retenir": {
-      "fr": "Protons et neutrons dans le noyau, électrons autour. Le noyau porte presque toute la masse, mais l'atome est surtout du vide (Rutherford, 1911)."
+      "fr": "Cuire l'argile, c'est la première transformation chimique voulue : statuettes il y a environ 29 000 ans, pots de cuisine il y a 20 000 ans en Chine."
      },
-     "source": "Rutherford, Philosophical Magazine, 1911 ; expériences de Geiger et Marsden",
-     "figure": "mc_alch_rutherford",
+     "source": "Vénus de Dolní Věstonice ; Wu et al., Science, 2012",
      "reperes": [
       {
-       "fr": "Entre 1906 et 1913, à Manchester, Hans Geiger et Ernest Marsden envoient des particules alpha sur une feuille d'or très fine, sous la direction d'Ernest Rutherford."
-      },
-      {
-       "fr": "En 1911, Rutherford en tire la conclusion : la charge positive et la masse sont concentrées dans un tout petit centre, le noyau."
+       "fr": "C'est l'une des plus vieilles céramiques connues : le feu a changé une boue en pierre."
       }
      ]
     },
     {
-     "id": "numero",
+     "id": "bleu",
      "titre": {
-      "fr": "Le numéro qui fait l'élément"
+      "fr": "Le bleu et le verre"
      },
      "texte": [
       {
-       "fr": "Ce qui fait qu'un atome est du carbone plutôt que de l'azote, c'est son nombre de protons : le numéro atomique. Le carbone en a 6, l'oxygène 8, le fer 26. Changer ce nombre, c'est changer d'élément. C'est le jeune physicien anglais Henry Moseley qui le montre en 1913, en mesurant les rayons X des éléments : le numéro atomique est la charge du noyau, et il remet de l'ordre dans le tableau. Il est tué deux ans plus tard à Gallipoli, le 10 août 1915, à 27 ans."
+       "fr": "Les Égyptiens fabriquent un bleu que la nature ne leur donne pas : on mélange de la silice, de la chaux, du cuivre et un alcali, puis on cuit le tout plusieurs heures entre 800 et 1 000 °C. On obtient un silicate de calcium et de cuivre, CaCuSi₄O₁₀. Ce bleu égyptien, déjà sur un bol de la fin de la préhistoire égyptienne, vers 3250 av. J.-C., est considéré comme le premier pigment de synthèse."
       },
       {
-       "fr": "Les neutrons, eux, peuvent varier sans changer l'élément : on obtient des isotopes. Le carbone 12 et le carbone 14 ont tous deux 6 protons ; le second a deux neutrons de plus. Les électrons aussi peuvent varier : un atome qui en gagne ou en perd devient un ion, chargé, comme Na⁺ ou Cl⁻ dans le sel."
+       "fr": "Le verre naît de la même famille de recettes. Les plus vieux objets en verre sont des perles du milieu du IIIe millénaire av. J.-C., peut-être nées par hasard des scories du travail des métaux ou de la faïence. Pline l'Ancien raconte que des marchands phéniciens l'auraient découvert au bord d'un fleuve ; c'est une belle histoire, sans preuve. Le soufflage du verre, lui, apparaît au Ier siècle av. J.-C. sur la côte syro-judéenne."
       }
      ],
      "retenir": {
-      "fr": "Protons = identité de l'élément. Neutrons en plus ou en moins = isotope. Électrons en plus ou en moins = ion."
+      "fr": "Bleu égyptien vers 3250 av. J.-C., premier pigment de synthèse ; perles de verre au IIIe millénaire ; soufflage au Ier siècle av. J.-C."
      },
-     "source": "IUPAC, Periodic Table of the Elements, 2022",
-     "schema_fiche": true
-    },
-    {
-     "id": "tableau",
-     "titre": {
-      "fr": "Le pari de Mendeleïev"
-     },
-     "texte": [
-      {
-       "fr": "En 1869, Dmitri Mendeleïev range les éléments connus dans un tableau : en lignes par masse croissante, et en colonnes qui regroupent les éléments aux propriétés chimiques voisines. Là où rien ne colle, il laisse des cases vides et annonce que des éléments inconnus viendront les remplir."
-      },
-      {
-       "fr": "Il les nomme d'avance : eka-aluminium, eka-bore, eka-silicium. Le gallium est découvert en 1875 par Paul-Émile Lecoq de Boisbaudran, le scandium en 1879, le germanium en 1886 : ils prennent les places prévues. C'est ce qui a imposé son tableau."
-      }
-     ],
-     "retenir": {
-      "fr": "Une colonne du tableau = une famille aux propriétés voisines. Mendeleïev (1869) a prédit des éléments manquants, trouvés ensuite : gallium, scandium, germanium."
-     },
-     "source": "Mendeleïev, Zeitschrift für Chemie, 1869",
-     "figure": "mc_alch_mendeleiev",
+     "source": "Bleu égyptien ; histoire du verre",
+     "figure": "mc_chim_bleu",
      "reperes": [
       {
-       "fr": "En 1869, Dmitri Mendeleïev range les éléments connus dans un tableau : en lignes par masse croissante, et en colonnes qui regroupent les éléments aux propriétés chimiques voisines."
+       "fr": "Ce bleu égyptien, déjà sur un bol de la fin de la préhistoire égyptienne, vers 3250 av. J.-C., est considéré comme le premier pigment de synthèse."
+      }
+     ]
+    },
+    {
+     "id": "tapputi",
+     "titre": {
+      "fr": "Tapputi, parfumeuse d'Assur"
+     },
+     "texte": [
+      {
+       "fr": "Son nom complet, Tappūtī-Bēlet-Ekallim, signifie à peu près « assistante de la Dame du palais ». Elle travaille à Assur, en Mésopotamie, sous le roi Tukulti-Ninurta Ier. Une tablette cunéiforme d'environ 1200 av. J.-C. la montre à la tête d'un groupe de parfumeuses professionnelles, et surveillante au palais royal."
       },
       {
-       "fr": "Le gallium est découvert en 1875 par Paul-Émile Lecoq de Boisbaudran, le scandium en 1879, le germanium en 1886 : ils prennent les places prévues."
+       "fr": "Sa recette mêle des fleurs, de l'huile et du calame, avec du souchet, de la myrrhe et du baume. On ajoute de l'eau et d'autres solvants, puis on distille et on filtre plusieurs fois. Elle travaillait avec une autre personne dont seule la fin du nom, « -ninu », nous est parvenue. Tapputi compte parmi les premières chimistes dont l'histoire a gardé le nom."
+      }
+     ],
+     "retenir": {
+      "fr": "Vers 1200 av. J.-C., à Assur, Tapputi distille et filtre des parfums : une des premières chimistes connues par son nom."
+     },
+     "source": "Tablette cunéiforme d'Assur, vers 1200 av. J.-C.",
+     "reperes": [
+      {
+       "fr": "Tapputi compte parmi les premières chimistes dont l'histoire a gardé le nom."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.metaux",
+  "stat": "alchimie",
+  "rang": 2,
+  "nom": {
+   "fr": "Métaux et teintures"
+  },
+  "description": {
+   "fr": "Tirer le cuivre de la pierre, l'allier à l'étain, fondre le fer, et teindre en pourpre avec des milliers d'escargots de mer."
+  },
+  "prerequis": [
+   "chim.feu"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "À Pločnik, en Serbie, on a les plus vieilles traces sûres de cuivre travaillé à haute température, vers 5000 av. J.-C."
+    },
+    {
+     "fr": "Le bronze est un alliage de cuivre et d'étain ; l'âge du bronze commence au Proche-Orient vers le milieu du IVe millénaire av. J.-C."
+    },
+    {
+     "fr": "Fondre le fer demande environ 1 250 °C ; en Afrique, la culture Nok, au Nigeria, l'a peut-être maîtrisé seule entre le IXe siècle et 550 av. J.-C."
+    },
+    {
+     "fr": "La pourpre de Tyr vient d'escargots de mer, les murex : 12 000 escargots donnent à peine 1,4 g de teinture."
+    }
+   ],
+   "piege": {
+    "fr": "« Âge du bronze » et « âge du fer » ne tombent pas aux mêmes dates partout : chaque région a son calendrier, et l'Afrique n'a pas suivi celui de l'Europe."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Métaux et teintures, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −5000</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">cuivre de Pločnik</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">−IVe mill.</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">âge du bronze</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −1200</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">pourpre de Tyr</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">−IXe s.</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">fer des Nok ?</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">IVe s.</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">pourpre impériale</text></svg>",
+   "source": "Extraction du cuivre ; âge du bronze ; métallurgie du fer en Afrique ; pourpre de Tyr"
+  },
+  "symbole": "Cu",
+  "embleme": "chim-murex",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "cuivre",
+     "titre": {
+      "fr": "Le cuivre sort de la pierre"
+     },
+     "texte": [
+      {
+       "fr": "Le cuivre se trouve parfois pur, à l'état natif : on le martèle à froid. Des perles de cuivre de la grotte de Shanidar, en Irak, remontent à 8700 av. J.-C., et à Çayönü, en Anatolie, on martèle du cuivre natif entre 7200 et 6600 av. J.-C. Mais la plupart du cuivre est caché dans des minerais, mêlé à d'autres éléments."
+      },
+      {
+       "fr": "Pour le libérer, il faut le fondre dans le feu. À Pločnik, en Serbie, on trouve les plus vieilles traces sûres de ce travail à haute température, vers 5000 av. J.-C. Le cuivre allié à l'étain donne le bronze. Le Proche-Orient entre dans l'âge du bronze vers le milieu du IVe millénaire av. J.-C., avec Sumer ; dans le Caucase, la culture de Maïkop fait au même moment un bronze à l'arsenic."
+      }
+     ],
+     "retenir": {
+      "fr": "Cuivre natif martelé dès 8700 av. J.-C. ; fondu à Pločnik vers 5000 av. J.-C. ; bronze au Proche-Orient au IVe millénaire."
+     },
+     "source": "Extraction du cuivre ; âge du bronze",
+     "reperes": [
+      {
+       "fr": "À Pločnik, en Serbie, on trouve les plus vieilles traces sûres de ce travail à haute température, vers 5000 av. J.-C."
+      }
+     ]
+    },
+    {
+     "id": "fer",
+     "titre": {
+      "fr": "Le fer, et l'Afrique"
+     },
+     "texte": [
+      {
+       "fr": "Le fer est partout, mais le fondre demande environ 1 250 °C, bien plus que le cuivre : il reste hors de portée d'un usage courant jusqu'à la fin du IIe millénaire av. J.-C. Il se répand ensuite, après l'effondrement de l'âge du bronze, vers 1200 av. J.-C."
+      },
+      {
+       "fr": "L'Afrique a sa propre histoire du fer. Au Nigeria, la culture Nok l'aurait développé seule entre le IXe siècle et 550 av. J.-C. ; des sites de République centrafricaine et du Niger donnent des dates encore plus anciennes, discutées. En Tanzanie, Peter Schmidt et Donald Avery ont décrit en 1978 de l'acier fabriqué il y a 2 300 à 2 000 ans par les ancêtres des Haya, avec un préchauffage de l'air ; l'idée reste débattue."
+      }
+     ],
+     "retenir": {
+      "fr": "Le fer demande 1 250 °C ; l'Afrique l'a peut-être inventé de son côté, avec les Nok au Nigeria."
+     },
+     "source": "Métallurgie du fer en Afrique",
+     "figure": "mc_chim_temperatures",
+     "reperes": [
+      {
+       "fr": "Au Nigeria, la culture Nok l'aurait développé seule entre le IXe siècle et 550 av. J.-C."
+      }
+     ]
+    },
+    {
+     "id": "pourpre",
+     "titre": {
+      "fr": "La pourpre des empereurs"
+     },
+     "texte": [
+      {
+       "fr": "La pourpre de Tyr se tire d'escargots de mer, les murex. Les Phéniciens la produisent dès 1200 av. J.-C., peut-être plus tôt, et les Minoens de Crète les ont peut-être précédés. Il en faut des quantités folles : en 1908, le chimiste Paul Friedländer a tiré seulement 1,4 g de teinture pure de 12 000 escargots."
+      },
+      {
+       "fr": "Sa molécule colorée est le 6,6'-dibromo-indigo, un indigo qui porte deux atomes de brome. Si chère, elle devient un signe de pouvoir : à Rome, les plus hauts magistrats portent une toge bordée de pourpre, et au IVe siècle seul l'empereur a le droit d'en porter. À Byzance, un enfant né d'un empereur régnant est dit porphyrogénète, « né dans la pourpre »."
+      }
+     ],
+     "retenir": {
+      "fr": "Pourpre de Tyr : murex, 12 000 escargots pour 1,4 g, 6,6'-dibromo-indigo ; au IVe siècle, réservée à l'empereur."
+     },
+     "source": "Pourpre de Tyr ; P. Friedländer, 1908",
+     "figure": "mc_chim_pourpre",
+     "reperes": [
+      {
+       "fr": "Il en faut des quantités folles : en 1908, le chimiste Paul Friedländer a tiré seulement 1,4 g de teinture pure de 12 000 escargots."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.elements",
+  "stat": "alchimie",
+  "rang": 2,
+  "nom": {
+   "fr": "Les éléments des Grecs"
+  },
+  "description": {
+   "fr": "Quatre éléments, des atomes, cinq phases : en Grèce, en Inde et en Chine, on se demande de quoi le monde est fait."
+  },
+  "prerequis": [
+   "chim.feu"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Vers 450 av. J.-C., Empédocle propose quatre « racines » : le feu, l'air, l'eau et la terre, réunies par l'Amour et séparées par la Haine."
+    },
+    {
+     "fr": "Aristote donne à chaque élément deux qualités (le feu est chaud et sec, l'eau froide et humide) et ajoute l'éther pour les cieux."
+    },
+    {
+     "fr": "Leucippe et Démocrite imaginent des atomes indivisibles qui bougent dans le vide ; en Inde, Kanada parle de paramāṇu."
+    },
+    {
+     "fr": "En Chine, le wuxing compte cinq « phases » : métal, bois, eau, feu et terre."
+    }
+   ],
+   "piege": {
+    "fr": "Les atomes de Démocrite ne sont pas ceux de la chimie moderne : c'était une idée philosophique, sans expérience ni mesure. La chimie ne les retrouvera qu'avec Dalton, en 1808."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Les éléments des Grecs, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −450</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">quatre racines</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −420</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">atomes de Démocrite</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −360</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">le Timée</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">−IVe s.</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Aristote</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1808</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Dalton</text></svg>",
+   "source": "Éléments classiques ; Empédocle ; Démocrite ; Platon, Timée ; Kanada, Vaisheshika Sutra"
+  },
+  "symbole": "▽",
+  "embleme": "chim-elements",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "racines",
+     "titre": {
+      "fr": "Quatre racines et deux forces"
+     },
+     "texte": [
+      {
+       "fr": "Empédocle, né vers 494 av. J.-C. à Akragas, en Sicile, est le premier à réunir les quatre éléments en un ensemble : le feu, l'air, l'eau et la terre, qu'il appelle des « racines ». Deux forces les mènent : l'Amour les assemble, la Haine les sépare. Ses deux poèmes, De la nature et Purifications, comptaient 5 000 vers ; il en reste environ 550."
+      },
+      {
+       "fr": "Aristote reprend l'idée et la range. Chaque élément porte deux qualités : le feu est chaud et sec, l'air chaud et humide, l'eau froide et humide, la terre froide et sèche. Il ajoute un cinquième élément, l'éther, la matière des cieux. Ce système va régner jusqu'au XVIIe siècle, quand Boyle le mettra en doute."
+      }
+     ],
+     "retenir": {
+      "fr": "Empédocle : quatre racines, Amour et Haine. Aristote : deux qualités par élément, plus l'éther."
+     },
+     "source": "Empédocle, De la nature ; Aristote, De la génération et de la corruption",
+     "figure": "mc_chim_qualites",
+     "reperes": [
+      {
+       "fr": "Deux forces les mènent : l'Amour les assemble, la Haine les sépare."
+      }
+     ]
+    },
+    {
+     "id": "atomes",
+     "titre": {
+      "fr": "Des atomes et du vide"
+     },
+     "texte": [
+      {
+       "fr": "À Abdère, en Thrace, Démocrite, né vers 460 av. J.-C., reprend l'idée de son maître Leucippe : tout est fait de corps minuscules et indivisibles, les atomes, trop petits pour être vus, infinis en nombre et toujours en mouvement dans le vide. Le goût, la couleur ou la chaleur ne sont que des conventions ; en vérité, il n'y a que des atomes et du vide."
+      },
+      {
+       "fr": "Il aurait écrit près de quatre-vingts traités ; aucun ne nous est parvenu en entier. En Inde, à une date incertaine entre le VIe et le IIe siècle av. J.-C., le sage Kanada fonde l'école Vaisheshika : on peut tout diviser, mais seulement jusqu'à des grains éternels et indivisibles, les paramāṇu. Son nom même signifie « mangeur d'atomes »."
+      }
+     ],
+     "retenir": {
+      "fr": "Démocrite : atomes et vide. Kanada, en Inde : les paramāṇu. Deux atomismes nés loin l'un de l'autre."
+     },
+     "source": "Démocrite, fragments ; Kanada, Vaisheshika Sutra",
+     "reperes": [
+      {
+       "fr": "Le goût, la couleur ou la chaleur ne sont que des conventions ; en vérité, il n'y a que des atomes et du vide."
+      }
+     ]
+    },
+    {
+     "id": "solides",
+     "titre": {
+      "fr": "Des solides, et cinq phases"
+     },
+     "texte": [
+      {
+       "fr": "Dans le Timée, écrit vers 360 av. J.-C., Platon donne une forme à chaque élément : la terre est un cube, l'air un octaèdre, l'eau un icosaèdre et le feu un tétraèdre. Leurs faces sont faites de triangles. Le dodécaèdre reste à part, lié aux constellations. Au Moyen Âge, en Occident latin, le Timée sera longtemps la seule œuvre de Platon qu'on trouve d'ordinaire dans les bibliothèques des monastères."
+      },
+      {
+       "fr": "Ailleurs, d'autres listes. L'Inde compte cinq grands éléments, les pancha mahabhuta : la terre, l'eau, le feu, l'air et l'espace. La Chine parle de wuxing, mot à mot cinq « phases » : le métal, le bois, l'eau, le feu et la terre. Ce sont moins des substances que des étapes de changement."
+      }
+     ],
+     "retenir": {
+      "fr": "Platon : un solide par élément. Inde : cinq grands éléments. Chine : cinq phases du changement."
+     },
+     "source": "Platon, Timée, vers 360 av. J.-C. ; éléments classiques",
+     "reperes": [
+      {
+       "fr": "Ce sont moins des substances que des étapes de changement."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.alexandrie",
+  "stat": "alchimie",
+  "rang": 2,
+  "nom": {
+   "fr": "L'alchimie d'Alexandrie"
+  },
+  "description": {
+   "fr": "En Égypte romaine, entre recettes d'orfèvres et visions mystiques, naît l'alchimie : Marie la Juive décrit des appareils, Zosime écrit les premiers livres."
+  },
+  "prerequis": [
+   "chim.metaux",
+   "chim.elements"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Les papyrus de Leyde et de Stockholm, en grec, vers 300, rassemblent des recettes d'artisans : imiter l'or et l'argent, teindre, colorer des pierres."
+    },
+    {
+     "fr": "Marie la Juive, à Alexandrie entre le Ier et le IIIe siècle, décrit le tribikos, un alambic à trois bras, et le kérotakis ; le bain-marie porte son nom."
+    },
+    {
+     "fr": "Zosime de Panopolis, vers 300, écrit les plus anciens livres d'alchimie connus, pour son élève Théosébie."
+    },
+    {
+     "fr": "Le mot vient de l'arabe al-kīmiyā, lui-même du grec khēmeía, d'origine discutée."
+    }
+   ],
+   "piege": {
+    "fr": "L'alchimie n'est pas qu'une chasse à l'or : ses ateliers ont décrit des appareils et des gestes, comme distiller, que la chimie a gardés."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"L'alchimie d'Alexandrie, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">Ier-IIIe s.</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Marie la Juive</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">292</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">livres brûlés</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 300</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">papyrus de Leyde</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 300</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Zosime</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">Xe-XIe s.</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">copie de Cléopâtre</text></svg>",
+   "source": "Papyrus X de Leyde ; papyrus de Stockholm ; Marie la Juive ; Zosime de Panopolis"
+  },
+  "symbole": "☿",
+  "embleme": "ouroboros",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "papyrus",
+     "titre": {
+      "fr": "Les recettes des orfèvres"
+     },
+     "texte": [
+      {
+       "fr": "En 1828, le vice-consul de Suède à Alexandrie, Jean d'Anastasi, vend aux Pays-Bas des papyrus trouvés à Thèbes. L'un d'eux, le papyrus X de Leyde, écrit en grec vers la fin du IIIe siècle, contient 111 recettes : extraire et imiter les métaux précieux, fabriquer des pierres précieuses et de la pourpre, des encres d'or et d'argent."
+      },
+      {
+       "fr": "Son jumeau, le papyrus de Stockholm, sans doute de la même main, rassemble 154 recettes : teindre les tissus, colorer les pierres, purifier les perles, imiter l'or et l'argent. Anastasi l'offre à la Suède en 1832. Ce sont des carnets d'artisans, sans mystique : ils montrent d'où vient l'alchimie, l'atelier."
+      }
+     ],
+     "retenir": {
+      "fr": "Papyrus de Leyde (111 recettes) et de Stockholm (154 recettes), vers 300 : imiter l'or, teindre, colorer les pierres."
+     },
+     "source": "Papyrus X de Leyde ; papyrus de Stockholm",
+     "reperes": [
+      {
+       "fr": "Ce sont des carnets d'artisans, sans mystique : ils montrent d'où vient l'alchimie, l'atelier."
+      }
+     ]
+    },
+    {
+     "id": "marie",
+     "titre": {
+      "fr": "Marie la Juive et ses appareils"
+     },
+     "texte": [
+      {
+       "fr": "Marie la Juive a vécu à Alexandrie, sans doute entre le Ier et le IIIe siècle. On la connaît surtout par Zosime, qui décrit ses expériences et ses instruments. Elle donne la première description du tribikos, un alambic à trois bras pour purifier par distillation, et elle se sert du kérotakis, un récipient fermé coiffé d'une feuille de cuivre, pour chauffer des substances et recueillir leurs vapeurs."
+      },
+      {
+       "fr": "Son nom survit dans nos cuisines : le bain-marie, « bain de Marie ». Plonger un récipient dans un liquide qui bout l'empêche de dépasser la température d'ébullition : on chauffe doucement, sans brûler. On lui prête aussi un axiome énigmatique : « Un devient deux, deux devient trois, et du troisième naît l'un comme quatrième. »"
+      }
+     ],
+     "retenir": {
+      "fr": "Marie la Juive : tribikos, kérotakis, et le bain-marie qui porte son nom."
+     },
+     "source": "Zosime de Panopolis, à propos de Marie la Juive",
+     "figure": "mc_chim_bain_marie",
+     "reperes": [
+      {
+       "fr": "Son nom survit dans nos cuisines : le bain-marie, « bain de Marie »."
+      }
+     ]
+    },
+    {
+     "id": "zosime",
+     "titre": {
+      "fr": "Zosime et le Grand Œuvre"
+     },
+     "texte": [
+      {
+       "fr": "Zosime est né à Panopolis, aujourd'hui Akhmim, en Haute-Égypte, et a sans doute vécu vers 300. Il écrit les plus anciens livres d'alchimie connus, qu'il appelle Cheirokmeta, des lettres à son élève Théosébie, et le récit de ses propres rêves. Il donne l'une des premières définitions de l'alchimie : l'étude de la composition des eaux, du mouvement, de la croissance, de ce qui prend corps et se défait."
+      },
+      {
+       "fr": "Le contexte est rude : en 292, après avoir écrasé une révolte à Alexandrie, l'empereur Dioclétien fait brûler les livres d'alchimie. Le but reste la chrysopée, changer des métaux vils, comme le plomb, en or. Un document attribué à « Cléopâtre l'alchimiste », un pseudonyme, montre un serpent qui se mord la queue, l'ouroboros, autour de la devise : « Un est le Tout »."
+      }
+     ],
+     "retenir": {
+      "fr": "Zosime, vers 300 : les premiers livres d'alchimie. En 292, Dioclétien fait brûler les livres d'alchimie."
+     },
+     "source": "Zosime de Panopolis, Cheirokmeta ; Chrysopée de Cléopâtre",
+     "reperes": [
+      {
+       "fr": "Il écrit les plus anciens livres d'alchimie connus, qu'il appelle Cheirokmeta, des lettres à son élève Théosébie, et le récit de ses propres rêves."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.chine",
+  "stat": "alchimie",
+  "rang": 3,
+  "nom": {
+   "fr": "L'alchimie chinoise"
+  },
+  "description": {
+   "fr": "En Chine, les alchimistes taoïstes cherchent l'élixir d'immortalité : ils empoisonnent des empereurs au mercure, et trouvent la poudre noire."
+  },
+  "prerequis": [
+   "chim.alexandrie"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Le waidan, l'« alchimie externe », prépare des élixirs à partir de cinabre, de mercure, de soufre, de plomb ou d'arsenic ; le neidan, l'« alchimie interne », passe par la méditation et le souffle."
+    },
+    {
+     "fr": "Le cinabre, un sulfure de mercure rouge, libère du mercure liquide quand on le grille."
+    },
+    {
+     "fr": "Vers 317, Ge Hong achève le Baopuzi, dont les chapitres intérieurs décrivent l'alchimie de l'or et du cinabre."
+    },
+    {
+     "fr": "En cherchant l'élixir de vie, des alchimistes découvrent la poudre noire, huoyao, le « remède de feu » ; la première formule sûre date de 808."
+    }
+   ],
+   "piege": {
+    "fr": "L'élixir d'immortalité a surtout raccourci des vies : le mercure, l'arsenic et le plomb sont des poisons, et plusieurs empereurs en sont sans doute morts."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"L'alchimie chinoise, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">−210</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">mort de Qin Shi Huang</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">317</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">le Baopuzi</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">808</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">formule de poudre</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">820</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Xianzong meurt</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1044</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Wujing Zongyao</text></svg>",
+   "source": "Alchimie chinoise ; Ge Hong, Baopuzi, 317 ; poudre noire ; empoisonnements aux élixirs"
+  },
+  "symbole": "丹",
+  "embleme": "chim-chaudron",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "elixir",
+     "titre": {
+      "fr": "Le cinabre et l'élixir"
+     },
+     "texte": [
+      {
+       "fr": "Les alchimistes chinois distinguent deux voies. Le waidan, l'alchimie externe, fabrique des élixirs avec du cinabre, du réalgar, du mercure, du soufre, du plomb ou de l'arsenic. Le neidan, l'alchimie interne, transforme le corps lui-même par la méditation, la visualisation et des exercices de respiration."
+      },
+      {
+       "fr": "Le cinabre est la star : un minerai rouge, sulfure de mercure, la source la plus courante de mercure dans la nature. Grillé, il libère du mercure liquide, un métal qui coule. Ge Hong décrira d'ailleurs la réaction d'oxydoréduction du mercure."
+      }
+     ],
+     "retenir": {
+      "fr": "Waidan : élixirs de cinabre et de mercure. Neidan : alchimie du corps. Le cinabre grillé donne du mercure."
+     },
+     "source": "Alchimie chinoise",
+     "reperes": [
+      {
+       "fr": "Le cinabre est la star : un minerai rouge, sulfure de mercure, la source la plus courante de mercure dans la nature."
+      }
+     ]
+    },
+    {
+     "id": "gehong",
+     "titre": {
+      "fr": "Ge Hong, le maître qui embrasse la simplicité"
+     },
+     "texte": [
+      {
+       "fr": "Ge Hong, né en 283, termine en 317 le Baopuzi, « Le Maître qui embrasse la simplicité ». L'ouvrage compte 20 chapitres intérieurs et 50 extérieurs ; les intérieurs traitent de l'alchimie, dont un chapitre sur l'or et le cinabre et un autre sur « le jaune et le blanc », l'or et l'argent. On y trouve peut-être la plus ancienne description de la préparation de l'or mussif, un sulfure d'étain doré."
+      },
+      {
+       "fr": "Ge Hong était aussi médecin. Dans ses Prescriptions d'urgence à portée de coude, il recommande l'armoise annuelle contre le paludisme. Seize siècles plus tard, cette page a inspiré la chimiste Tu Youyou, qui en a tiré l'artémisinine et a partagé le prix Nobel de médecine 2015."
+      }
+     ],
+     "retenir": {
+      "fr": "Ge Hong, Baopuzi, 317 : l'alchimie de l'or et du cinabre. Son remède à l'armoise a mené à l'artémisinine de Tu Youyou, Nobel 2015."
+     },
+     "source": "Ge Hong, Baopuzi, 317 ; Zhouhou beiji fang",
+     "reperes": [
+      {
+       "fr": "Ge Hong, né en 283, termine en 317 le Baopuzi, « Le Maître qui embrasse la simplicité »."
+      }
+     ]
+    },
+    {
+     "id": "poudre",
+     "titre": {
+      "fr": "Des empereurs empoisonnés, et une poudre"
+     },
+     "texte": [
+      {
+       "fr": "Les élixirs tuent. Le premier empereur, Qin Shi Huang, mort en 210 av. J.-C., cherchait désespérément l'élixir de vie ; on soupçonne des pilules de mercure, sans certitude, et son tombeau contiendrait, selon Sima Qian, « cent rivières de mercure ». Sous les Tang, au moins cinq empereurs sont incapacités ou tués par des élixirs, dont Xianzong, mort en 820, et Wuzong, en 846."
+      },
+      {
+       "fr": "Mais en chauffant soufre, salpêtre et charbon, les alchimistes trouvent autre chose : la poudre noire, huoyao, le « remède de feu ». La première formule sûre date de 808 ; une cinquantaine d'années plus tard, un texte taoïste met en garde : des adeptes ont chauffé ensemble soufre, réalgar et salpêtre avec du miel, et ont brûlé leurs mains, leurs visages et même leur maison."
+      }
+     ],
+     "retenir": {
+      "fr": "Les élixirs au mercure ont tué des empereurs ; la quête de l'élixir a donné la poudre noire, dont la première formule date de 808."
+     },
+     "source": "Empoisonnements aux élixirs ; poudre noire",
+     "figure": "mc_chim_salpetre",
+     "reperes": [
+      {
+       "fr": "La première formule sûre date de 808 ; une cinquantaine d'années plus tard, un texte taoïste met en garde : des adeptes ont chauffé ensemble soufre, réalgar et salpêtre avec du miel, et ont brûlé leurs mains, leurs visages et même leur maison."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.jabir",
+  "stat": "alchimie",
+  "rang": 3,
+  "nom": {
+   "fr": "Jabir et al-Razi"
+  },
+  "description": {
+   "fr": "Dans le monde islamique, l'alchimie devient une science de laboratoire : mesures, classifications, sels et appareils. Elle nous lègue ses mots."
+  },
+  "prerequis": [
+   "chim.chine"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Le corpus de Jabir ibn Hayyan, sans doute écrit par une école d'alchimistes entre 850 et 950, compte environ 215 traités conservés."
+    },
+    {
+     "fr": "Pour Jabir, les métaux naissent dans la terre d'un mélange de soufre et de mercure : cette théorie règne jusqu'au XVIIIe siècle."
+    },
+    {
+     "fr": "Vers 900, le médecin persan al-Razi classe les substances et décrit le matériel de laboratoire presque sans mystique."
+    },
+    {
+     "fr": "Alchimie, alcali, élixir, alambic, alcool : la chimie parle encore arabe ; « alcool » vient d'al-kuḥl, le khôl."
+    }
+   ],
+   "piege": {
+    "fr": "« Jabir » n'est peut-être pas une seule personne : la plupart des historiens voient dans son corpus l'œuvre d'une école anonyme, plus tardive que le Jabir de la tradition."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Jabir et al-Razi, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">806-816</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">mort de Jabir ?</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">850-950</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">corpus jabirien</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 900</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">al-Razi</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">XIIe s.</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Livre des Soixante-dix</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 1310</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">pseudo-Geber</text></svg>",
+   "source": "Jabir ibn Hayyan, corpus jabirien (P. Kraus) ; Abu Bakr al-Razi, Sirr al-Asrar"
+  },
+  "symbole": "Hg",
+  "embleme": "alambic",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "jabir",
+     "titre": {
+      "fr": "Jabir, un nom pour une école"
+     },
+     "texte": [
+      {
+       "fr": "La tradition fait de Jabir ibn Hayyan un alchimiste mort entre 806 et 816, élève de l'imam Jafar al-Sadiq. Mais l'historien Paul Kraus, qui a le premier catalogué ses écrits, les a datés d'environ 850 à 950. Pour beaucoup, « Jabir » est le pseudonyme d'une école anonyme d'alchimistes chiites. On connaît environ 600 titres, dont quelque 215 nous sont parvenus."
+      },
+      {
+       "fr": "Pour Jabir, les métaux se forment dans la terre par le mélange de soufre et de mercure : une théorie qui fondera toutes les idées sur les métaux jusqu'au XVIIIe siècle. Il veut tout mesurer, avec une « science de la balance ». Un élixir, al-iksīr, doit soigner les métaux malades pour les changer en or. Le corpus donne aussi la plus ancienne recette connue pour tirer le sel ammoniac de substances organiques, comme le sang ou les cheveux."
+      }
+     ],
+     "retenir": {
+      "fr": "Le corpus de Jabir (850-950) : soufre et mercure font les métaux, l'élixir les guérit, la balance les mesure."
+     },
+     "source": "Jabir ibn Hayyan, corpus jabirien ; P. Kraus",
+     "figure": "mc_chim_soufre_mercure",
+     "reperes": [
+      {
+       "fr": "On connaît environ 600 titres, dont quelque 215 nous sont parvenus."
+      }
+     ]
+    },
+    {
+     "id": "razi",
+     "titre": {
+      "fr": "Al-Razi range le laboratoire"
+     },
+     "texte": [
+      {
+       "fr": "Abu Bakr al-Razi, né vers 865 à Rey, en Iran, et que l'Occident appellera Rhazès, est d'abord médecin : son traité De la variole et de la rougeole est l'un des plus anciens à distinguer les deux maladies. En chimie, ses Secrets et son Secret des secrets donnent la première classification ordonnée des substances, des réactions et des appareils, avec très peu de mystique."
+      },
+      {
+       "fr": "Il range les minéraux en six familles : quatre esprits, dont le mercure, le soufre et le sel ammoniac, sept corps, les métaux, treize pierres, sept vitriols, sept borates et onze sels. Il décrit le creuset, le soufflet, la cornue, l'alambic, les fioles et les béchers. Il croyait pourtant à la transmutation, et a même écrit contre al-Kindi qui la niait."
+      }
+     ],
+     "retenir": {
+      "fr": "Al-Razi, vers 900 : six familles de minéraux et un inventaire du laboratoire. Il croyait encore à la transmutation."
+     },
+     "source": "Abu Bakr al-Razi, Kitab al-Asrar et Sirr al-Asrar",
+     "reperes": [
+      {
+       "fr": "Il range les minéraux en six familles : quatre esprits, dont le mercure, le soufre et le sel ammoniac, sept corps, les métaux, treize pierres, sept vitriols, sept borates et onze sels."
+      }
+     ]
+    },
+    {
+     "id": "mots",
+     "titre": {
+      "fr": "La chimie parle arabe"
+     },
+     "texte": [
+      {
+       "fr": "Le mot alchimie vient de l'arabe al-kīmiyā ; élixir, d'al-iksīr. « Alcool » a la plus drôle des histoires : al-kuḥl, c'est le khôl, une poudre très fine obtenue par sublimation de la stibine, qui servait à maquiller les yeux. Paracelse emploie déjà le mot pour un liquide volatil, et au XVIIIe siècle « alcool » ne désigne plus que l'esprit-de-vin."
+      },
+      {
+       "fr": "Les savants arabes distillent aussi le vin : un traité attribué à Jabir remarque qu'en ajoutant du sel au vin bouillant, ses vapeurs s'enflamment mieux, et la distillation du vin est décrite par al-Kindi (vers 801-873) et al-Farabi. Ces textes, traduits en latin au XIIe siècle, comme le Livre des Soixante-dix de Jabir par Gérard de Crémone, vont nourrir l'Europe."
+      }
+     ],
+     "retenir": {
+      "fr": "Alchimie, élixir, alcool : des mots arabes. « Alcool » vient du khôl, une poudre pour les yeux."
+     },
+     "source": "Étymologie d'alcool ; histoire de la distillation",
+     "reperes": [
+      {
+       "fr": "« Alcool » a la plus drôle des histoires : al-kuḥl, c'est le khôl, une poudre très fine obtenue par sublimation de la stibine, qui servait à maquiller les yeux."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.distiller",
+  "stat": "alchimie",
+  "rang": 3,
+  "nom": {
+   "fr": "Distiller au Moyen Âge"
+  },
+  "description": {
+   "fr": "De Byzance à Bologne, on apprend à séparer : eau-de-vie, acides puissants, feu grégeois. L'alambic devient l'outil roi."
+  },
+  "prerequis": [
+   "chim.chine"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Vers 672, le feu grégeois des Byzantins brûle sur l'eau ; son secret s'est perdu, on suppose une base de pétrole."
+    },
+    {
+     "fr": "Au XIIe siècle, des textes latins donnent des recettes d'« eau ardente » distillée du vin ; au XIIIe, Taddeo Alderotti concentre l'alcool à 90 %."
+    },
+    {
+     "fr": "Vers 1310, les écrits latins du pseudo-Geber donnent la plus ancienne recette connue d'acide nitrique, et l'eau régale, qui dissout l'or."
+    },
+    {
+     "fr": "Au XIVe siècle, Jean de Roquetaillade voit dans l'alcool une « quintessence » qui garde de la corruption."
+    }
+   ],
+   "piege": {
+    "fr": "Distiller ne crée rien : on sépare ce qui bout à des températures différentes. L'alcool bout avant l'eau, il s'échappe le premier."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Distiller au Moyen Âge, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 672</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">feu grégeois</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">XIIe s.</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">eau ardente</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">XIIIe s.</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Alderotti, 90 %</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 1310</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">acide nitrique</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1500</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Brunschwig</text></svg>",
+   "source": "Histoire de la distillation ; pseudo-Geber ; Taddeo Alderotti ; feu grégeois"
+  },
+  "symbole": "≋",
+  "embleme": "tonneau",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "feu",
+     "titre": {
+      "fr": "Le feu qui brûle sur l'eau"
+     },
+     "texte": [
+      {
+       "fr": "Vers 672, un architecte nommé Callinicos, venu d'Héliopolis en Syrie, apporte aux Byzantins une arme incendiaire. Projetée par des siphons depuis les navires, elle continue de brûler sur l'eau et aide à repousser les flottes arabes devant Constantinople. Les Byzantins gardent si bien le secret qu'il s'est perdu ; on suppose aujourd'hui un mélange à base de pétrole, sans certitude."
+      },
+      {
+       "fr": "La distillation, elle, voyage partout. En Inde, des cornues et des récipients en terre cuite des premiers siècles de notre ère, les « alambics du Gandhara », ne donnaient qu'un distillat très faible. En Chine, elle a peut-être commencé dès les Han orientaux, aux Ier et IIe siècles ; un alambic du XIIe siècle a été retrouvé dans le Hebei."
+      }
+     ],
+     "retenir": {
+      "fr": "Le feu grégeois (v. 672) garde son secret. La distillation est pratiquée en Inde et en Chine dès les premiers siècles."
+     },
+     "source": "Théophane le Confesseur, Chronographie ; histoire de la distillation",
+     "reperes": [
+      {
+       "fr": "Les Byzantins gardent si bien le secret qu'il s'est perdu ; on suppose aujourd'hui un mélange à base de pétrole, sans certitude."
+      }
+     ]
+    },
+    {
+     "id": "eau-de-vie",
+     "titre": {
+      "fr": "L'eau ardente, l'eau-de-vie"
+     },
+     "texte": [
+      {
+       "fr": "Au XIIe siècle, des textes latins donnent des recettes d'aqua ardens, l'« eau ardente », tirée du vin distillé avec du sel. À la fin du XIIIe siècle, toute l'Europe des chimistes la connaît. À Bologne, le médecin florentin Taddeo Alderotti décrit une distillation répétée, dans un alambic refroidi à l'eau, qui atteint 90 % d'alcool."
+      },
+      {
+       "fr": "On l'appelle aussi aqua vitae, l'« eau de vie ». Au XIVe siècle, l'alchimiste Jean de Roquetaillade y voit une « quintessence », un cinquième élément impérissable et vivifiant, et étudie ses vertus médicales. Le nom a donné ceux de nos alcools : whiskey vient de l'irlandais uisce beatha, et on dit eau-de-vie en France, akvavit en Scandinavie."
+      }
+     ],
+     "retenir": {
+      "fr": "Eau ardente au XIIe siècle ; 90 % d'alcool avec Alderotti ; l'aqua vitae a donné whiskey, eau-de-vie et akvavit."
+     },
+     "source": "Taddeo Alderotti ; histoire de l'aqua vitae",
+     "figure": "mc_chim_alambic",
+     "reperes": [
+      {
+       "fr": "À Bologne, le médecin florentin Taddeo Alderotti décrit une distillation répétée, dans un alambic refroidi à l'eau, qui atteint 90 % d'alcool."
+      }
+     ]
+    },
+    {
+     "id": "acides",
+     "titre": {
+      "fr": "Des eaux qui rongent l'or"
+     },
+     "texte": [
+      {
+       "fr": "Vers 1310, un auteur latin anonyme signe ses livres « Geber », pour profiter du prestige de Jabir : c'est le pseudo-Geber, peut-être Paul de Tarente. Sa Somme de la perfection explique que les métaux sont faits de corpuscules de soufre et de mercure, une idée qui passera jusqu'à Boyle par Daniel Sennert."
+      },
+      {
+       "fr": "Surtout, ses textes donnent la plus ancienne recette connue d'acide nitrique, l'« eau forte », et décrivent l'eau régale, un mélange d'acide nitrique et d'acide chlorhydrique. Cette « eau royale » dissout l'or et le platine, ce qu'aucun des deux acides ne fait seul. Avec ces acides minéraux, bien plus puissants que le vinaigre, la chimie gagne des outils neufs."
+      }
+     ],
+     "retenir": {
+      "fr": "Pseudo-Geber, vers 1310 : corpuscules de soufre et de mercure, acide nitrique, eau régale qui dissout l'or."
+     },
+     "source": "Pseudo-Geber, Summa perfectionis, vers 1310",
+     "reperes": [
+      {
+       "fr": "Cette « eau royale » dissout l'or et le platine, ce qu'aucun des deux acides ne fait seul."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.paracelse",
+  "stat": "alchimie",
+  "rang": 3,
+  "nom": {
+   "fr": "Paracelse"
+  },
+  "description": {
+   "fr": "À la Renaissance, Paracelse met la chimie au service de la médecine, Biringuccio et Agricola l'impriment pour les mineurs et les fondeurs."
+  },
+  "prerequis": [
+   "chim.jabir",
+   "chim.distiller"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Paracelse (1493-1541) soigne avec des minéraux et des métaux, et brûle le Canon d'Avicenne à Bâle le 23 juin 1527."
+    },
+    {
+     "fr": "À ses yeux, tout corps tient de trois principes, les tria prima : le soufre qui brûle, le mercure qui coule, le sel qui reste."
+    },
+    {
+     "fr": "« Seule la dose fait le poison » : un principe toujours enseigné en toxicologie."
+    },
+    {
+     "fr": "Biringuccio (Pirotechnia, 1540) et Agricola (De re metallica, 1556) impriment les savoirs des fondeurs et des mineurs."
+    }
+   ],
+   "piege": {
+    "fr": "Paracelse n'est pas un chimiste moderne : il reste alchimiste, astrologue et mystique. Ce qui compte, c'est qu'il a fait entrer les remèdes chimiques en médecine."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Paracelse, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1526</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">le zinc nommé</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1527</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Bâle</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1534</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">maladies des mineurs</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1540</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Pirotechnia</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1556</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">De re metallica</text></svg>",
+   "source": "Paracelse ; V. Biringuccio, De la pirotechnia, 1540 ; G. Agricola, De re metallica, 1556"
+  },
+  "symbole": "☤",
+  "embleme": "pierre-philosophale",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "bale",
+     "titre": {
+      "fr": "Le scandale de Bâle"
+     },
+     "texte": [
+      {
+       "fr": "Theophrastus Bombast von Hohenheim naît le 10 novembre 1493 en Suisse, à Einsiedeln. Il signe Paracelse, un nom attesté pour la première fois en 1529, qui veut dire soit « haut », soit « au-delà de Celse », le médecin romain. Le 23 juin 1527, à Bâle, il brûle sur la place du marché le Canon d'Avicenne, la bible des médecins."
+      },
+      {
+       "fr": "Il veut soigner avec des produits chimiques et des minéraux. Il invente une analyse chimique des urines, observe les maladies des mineurs et les effets des métaux sur le corps, et donne sans doute vers 1526 son nom moderne au zinc. Il vante l'opium et une pilule qu'il appelle laudanum, dont il n'a pas laissé la recette complète."
+      }
+     ],
+     "retenir": {
+      "fr": "Paracelse : le Canon d'Avicenne brûlé en 1527, la médecine par les minéraux, le zinc nommé vers 1526."
+     },
+     "source": "Paracelse",
+     "reperes": [
+      {
+       "fr": "Le 23 juin 1527, à Bâle, il brûle sur la place du marché le Canon d'Avicenne, la bible des médecins."
+      }
+     ]
+    },
+    {
+     "id": "tria",
+     "titre": {
+      "fr": "Trois principes et une dose"
+     },
+     "texte": [
+      {
+       "fr": "Paracelse ajoute un troisième principe au soufre et au mercure des alchimistes : le sel. Ce sont les tria prima. Le soufre est ce qui brûle, le mercure ce qui coule et change, le sel ce qui reste solide. Dans le corps humain, ils deviennent l'âme, l'esprit et le corps."
+      },
+      {
+       "fr": "Sa phrase la plus célèbre vient de sa Troisième défense : « Seule la dose détermine qu'une chose n'est pas un poison. » En latin, on retient sola dosis facit venenum. C'est toujours la base de la toxicologie : l'eau elle-même tue à trop forte dose, et un poison peut soigner à petite dose."
+      }
+     ],
+     "retenir": {
+      "fr": "Tria prima : soufre, mercure, sel. Seule la dose fait le poison."
+     },
+     "source": "Paracelse, Septem Defensiones, troisième défense",
+     "figure": "mc_chim_tria_prima",
+     "reperes": [
+      {
+       "fr": "Sa phrase la plus célèbre vient de sa Troisième défense : « Seule la dose détermine qu'une chose n'est pas un poison. »"
+      }
+     ]
+    },
+    {
+     "id": "mines",
+     "titre": {
+      "fr": "Les livres des fondeurs et des mineurs"
+     },
+     "texte": [
+      {
+       "fr": "Le Siennois Vannoccio Biringuccio, mort vers 1539, laisse De la pirotechnia, imprimé à Venise en 1540. En dix livres, il traite des minerais, des essais, de la fonte, de la séparation de l'or et de l'argent, des alliages et de l'art de couler les métaux, surtout les cloches et les canons. C'est le premier récit imprimé du vrai travail de fonderie."
+      },
+      {
+       "fr": "Quatorze ans plus tard, en 1556, paraît De re metallica de Georg Bauer, dit Agricola, mort l'année précédente. Ses douze livres et 292 gravures sur bois décrivent la prospection, les puits, les machines, les essais, la fonte et la séparation des métaux. Le futur président américain Herbert Hoover et sa femme Lou le traduiront en anglais en 1912."
+      }
+     ],
+     "retenir": {
+      "fr": "Pirotechnia (1540) et De re metallica (1556) : la chimie des métaux sort des ateliers et entre dans les livres."
+     },
+     "source": "V. Biringuccio, De la pirotechnia, 1540 ; G. Agricola, De re metallica, 1556",
+     "reperes": [
+      {
+       "fr": "C'est le premier récit imprimé du vrai travail de fonderie."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.boyle",
+  "stat": "alchimie",
+  "rang": 4,
+  "nom": {
+   "fr": "Boyle le sceptique"
+  },
+  "description": {
+   "fr": "En 1661, Robert Boyle doute des quatre éléments, mesure l'air avec une pompe et veut qu'on prouve tout par l'expérience. Il reste pourtant alchimiste."
+  },
+  "prerequis": [
+   "chim.paracelse"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "En 1659, Boyle et Robert Hooke perfectionnent la pompe à vide d'Otto von Guericke pour étudier l'air."
+    },
+    {
+     "fr": "Loi de Boyle (1662) : à température constante, la pression d'un gaz fois son volume reste constante, PV = k."
+    },
+    {
+     "fr": "The Sceptical Chymist (1661) attaque les quatre éléments d'Aristote et les trois principes de Paracelse : la matière est faite de corpuscules."
+    },
+    {
+     "fr": "Vers 1669, à Hambourg, Hennig Brand tire le phosphore de l'urine en cherchant la pierre philosophale."
+    }
+   ],
+   "piege": {
+    "fr": "Boyle n'a pas tourné le dos à l'alchimie : il croyait à la transmutation des métaux. Le « père de la chimie moderne » cherchait aussi à faire de l'or."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Boyle le sceptique, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1659</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">pompe à air</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1661</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Sceptical Chymist</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1662</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">loi de Boyle</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 1669</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">phosphore de Brand</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1679</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Mariotte</text></svg>",
+   "source": "Robert Boyle, The Sceptical Chymist, 1661 ; New Experiments Physico-Mechanicall, 1660"
+  },
+  "symbole": "PV",
+  "embleme": "chim-pompe",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "pompe",
+     "titre": {
+      "fr": "La pompe et le ressort de l'air"
+     },
+     "texte": [
+      {
+       "fr": "Robert Boyle naît le 25 janvier 1627 au château de Lismore, en Irlande, quatorzième enfant du comte de Cork. Riche et curieux, il fait construire avec Robert Hooke une pompe à air, achevée en 1659, qui améliore celle de l'Allemand Otto von Guericke. En 1660, il publie ses Nouvelles expériences sur le ressort de l'air."
+      },
+      {
+       "fr": "Dans un tube en J fermé, il verse du mercure pour comprimer l'air de l'autre côté. Résultat, publié en 1662 : à température constante, le produit de la pression par le volume d'un gaz ne change pas, PV = k. Richard Towneley et Henry Power l'avaient remarqué avant lui ; en France, Edme Mariotte le retrouve seul en 1679, d'où le nom de loi de Boyle-Mariotte."
+      }
+     ],
+     "retenir": {
+      "fr": "Pompe à air en 1659 ; loi de Boyle en 1662 : PV = constante à température fixée. Mariotte la retrouve en 1679."
+     },
+     "source": "Robert Boyle, New Experiments Physico-Mechanicall, 1660 ; loi de Boyle, 1662",
+     "reperes": [
+      {
+       "fr": "Résultat, publié en 1662 : à température constante, le produit de la pression par le volume d'un gaz ne change pas, PV = k."
+      }
+     ]
+    },
+    {
+     "id": "sceptique",
+     "titre": {
+      "fr": "Le chimiste sceptique"
+     },
+     "texte": [
+      {
+       "fr": "En 1661, à Londres, Boyle publie The Sceptical Chymist, un dialogue dans un jardin. Carnéade, le sceptique qui reçoit, y discute avec Thémistius, l'aristotélicien, Philoponus, le chimiste, et Éleuthérius, l'arbitre. Il s'attaque aux quatre éléments d'Aristote et aux trois principes de Paracelse, et conteste que le feu décompose tous les corps en leurs éléments."
+      },
+      {
+       "fr": "Pour Boyle, la matière est faite de corpuscules et de groupes de corpuscules en mouvement. Un élément serait un corps « primitif et simple, parfaitement sans mélange » ; il doute même qu'aucune substance connue, or et argent compris, en soit un. Après ce livre, les quatre éléments et les trois principes passent peu à peu de mode."
+      }
+     ],
+     "retenir": {
+      "fr": "The Sceptical Chymist (1661) : un dialogue contre les quatre éléments et les trois principes ; la matière est faite de corpuscules."
+     },
+     "source": "Robert Boyle, The Sceptical Chymist, Londres, 1661",
+     "reperes": [
+      {
+       "fr": "Pour Boyle, la matière est faite de corpuscules et de groupes de corpuscules en mouvement."
+      }
+     ]
+    },
+    {
+     "id": "alchimiste",
+     "titre": {
+      "fr": "Un sceptique qui croyait à l'or"
+     },
+     "texte": [
+      {
+       "fr": "Boyle est un fondateur de la Royal Society, dont il devient membre en 1663. Mais il est aussi alchimiste et croit que les métaux peuvent se transformer. Il aide même à faire abroger la vieille loi anglaise qui interdisait de « multiplier » l'or et l'argent : c'est chose faite avec le Royal Mines Act de 1688."
+      },
+      {
+       "fr": "Les chercheurs d'or trouvent parfois autre chose. Vers 1669, à Hambourg, l'alchimiste Hennig Brand fait bouillir quelque 5 700 litres d'urine pour en tirer 120 grammes d'une matière qui luit dans le noir : le phosphore, « porteur de lumière ». Johann Kunckel le retrouve en 1678, et Boyle en 1680. Plus tôt dans le siècle, le Flamand Jan Baptist van Helmont avait inventé le mot « gaz », d'après le grec chaos."
+      }
+     ],
+     "retenir": {
+      "fr": "Boyle, fondateur de la Royal Society, restait alchimiste ; Brand, cherchant l'or, trouve le phosphore vers 1669."
+     },
+     "source": "Robert Boyle ; Hennig Brand, 1669",
+     "figure": "mc_chim_phosphore",
+     "reperes": [
+      {
+       "fr": "Il aide même à faire abroger la vieille loi anglaise qui interdisait de « multiplier » l'or et l'argent : c'est chose faite avec le Royal Mines Act de 1688."
       }
      ]
     }
@@ -117,15 +1002,15 @@
  {
   "id": "chim.etats",
   "stat": "alchimie",
-  "rang": 2,
+  "rang": 4,
   "nom": {
-   "fr": "États de la matière"
+   "fr": "Les airs et les états"
   },
   "description": {
-   "fr": "Solide, liquide, gaz, changements d'état et lois des gaz."
+   "fr": "Au XVIIIe siècle, Black, Cavendish et Priestley découvrent que l'air est fait de plusieurs gaz : solides, liquides, gaz et changements d'état."
   },
   "prerequis": [
-   "sci.atomes"
+   "chim.boyle"
   ],
   "fiche": {
    "essentiel": [
@@ -156,25 +1041,25 @@
   "masterclass": {
    "chapitres": [
     {
-     "id": "agitation",
+     "id": "airs",
      "titre": {
-      "fr": "Même matière, autre agitation"
+      "fr": "La chasse aux airs"
      },
      "texte": [
       {
-       "fr": "Glace, eau, vapeur : ce sont les mêmes molécules H₂O. Ce qui change, c'est leur agitation et leur distance. Dans un solide, elles vibrent sur place ; dans un liquide, elles glissent les unes sur les autres ; dans un gaz, elles filent et s'éloignent."
+       "fr": "Au XVIIIe siècle, l'air cesse d'être un élément unique : on découvre qu'il en existe plusieurs sortes. Joseph Black, né à Bordeaux en 1728, chauffe du calcaire ou le traite par un acide et recueille un gaz qu'il nomme « air fixe », notre dioxyde de carbone. Plus dense que l'air, il n'entretient ni la flamme ni la vie animale. En le faisant buller dans l'eau de chaux, Black montre que la respiration et la fermentation en produisent aussi."
       },
       {
-       "fr": "Chaque passage a son nom : fusion (solide → liquide), vaporisation (liquide → gaz), condensation (gaz → liquide), solidification (liquide → solide), sublimation (solide → gaz directement, comme la glace carbonique). Chauffez encore un gaz et ses atomes perdent des électrons : c'est le plasma, celui des étoiles et des éclairs. Le mot plasma est proposé en 1928 par le chimiste américain Irving Langmuir."
+       "fr": "En 1766, l'Anglais Henry Cavendish décrit un « air inflammable » obtenu en versant certains acides sur certains métaux : l'hydrogène. En août 1774, Joseph Priestley chauffe de l'oxyde de mercure avec la lumière du soleil concentrée et obtient un gaz où une souris survit étonnamment longtemps : l'oxygène, qu'il appelle « air déphlogistiqué ». Black, lui, enseigne à Glasgow à partir de 1756, puis à Édimbourg à partir de 1766, et dégage en 1761 la notion de chaleur latente, celle qu'absorbe la glace qui fond sans se réchauffer."
       }
      ],
      "retenir": {
-      "fr": "Solide, liquide, gaz = mêmes molécules, agitation différente. Sublimation = solide → gaz directement."
+      "fr": "Air fixe (Black), air inflammable (Cavendish, 1766), air déphlogistiqué (Priestley, 1774) : l'air est un mélange de gaz différents."
      },
-     "source": "Atkins, Chimie physique, 4e éd.",
+     "source": "Joseph Black, d'après sa biographie ; Henry Cavendish, 1766 ; Joseph Priestley, Experiments and Observations on Different Kinds of Air, 1775",
      "reperes": [
       {
-       "fr": "Le mot plasma est proposé en 1928 par le chimiste américain Irving Langmuir."
+       "fr": "En 1766, l'Anglais Henry Cavendish décrit un « air inflammable » obtenu en versant certains acides sur certains métaux : l'hydrogène."
       }
      ]
     },
@@ -220,118 +1105,6 @@
   }
  },
  {
-  "id": "chim.quotidien",
-  "stat": "alchimie",
-  "rang": 3,
-  "nom": {
-   "fr": "Chimie du quotidien"
-  },
-  "description": {
-   "fr": "Cuisine, savon, médicaments, piles et matériaux."
-  },
-  "prerequis": [
-   "sci.atomes"
-  ],
-  "fiche": {
-   "essentiel": [
-    {
-     "fr": "Le savon a une tête qui aime l'eau et une queue qui aime les graisses : il emprisonne la graisse dans des micelles."
-    },
-    {
-     "fr": "La réaction de Maillard (sucres + protéines à la chaleur) dore le pain et grille la viande."
-    },
-    {
-     "fr": "Une pile transforme une réaction d'oxydoréduction en courant."
-    },
-    {
-     "fr": "Le paracétamol et l'aspirine sont des molécules de synthèse ; l'aspirine dérive de l'écorce de saule."
-    }
-   ],
-   "piege": {
-    "fr": "Mélanger eau de Javel et vinaigre dégage du chlore toxique : ne jamais combiner les produits ménagers."
-   },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Comment le savon emporte la graisse\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">graisse</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">savon</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">tête + queue</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">micelle</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">rincée</text></svg>",
-   "source": "This, Révélations gastronomiques, 1995"
-  },
-  "symbole": "⚗",
-  "embleme": "flacon",
-  "masterclass": {
-   "chapitres": [
-    {
-     "id": "savon",
-     "titre": {
-      "fr": "Comment le savon attrape la graisse"
-     },
-     "texte": [
-      {
-       "fr": "Le savon se fabrique en mélangeant des graisses ou des huiles avec une base forte, la soude : les graisses se coupent en sels d'acides gras, et il reste de la glycérine. C'est la saponification. Des traces de matières savonneuses remontent à environ 2800 avant notre ère, à Babylone."
-      },
-      {
-       "fr": "Chaque molécule de savon a une tête qui aime l'eau et une queue qui aime la graisse. Dans l'eau, les queues plongent dans la graisse et les têtes restent tournées vers l'extérieur : elles forment des petites billes, les micelles, qui emprisonnent la saleté. Le rinçage les emporte."
-      }
-     ],
-     "retenir": {
-      "fr": "Savon = graisse + soude (saponification). Tête qui aime l'eau, queue qui aime la graisse : les micelles emportent la saleté."
-     },
-     "source": "This, Révélations gastronomiques, 1995",
-     "reperes": [
-      {
-       "fr": "Des traces de matières savonneuses remontent à environ 2800 avant notre ère, à Babylone."
-      }
-     ]
-    },
-    {
-     "id": "cuisine",
-     "titre": {
-      "fr": "La croûte dorée de Maillard"
-     },
-     "texte": [
-      {
-       "fr": "La croûte du pain, la viande grillée, le café torréfié : c'est la réaction de Maillard, décrite en 1912 par le chimiste français Louis Camille Maillard. Des sucres et des acides aminés réagissent à la chaleur et donnent des centaines de molécules brunes et parfumées."
-      },
-      {
-       "fr": "Elle va vite autour de 140 à 165 °C. Voilà pourquoi une viande bouillie ne dore pas : dans l'eau, on ne dépasse pas 100 °C. Pour griller, il faut une poêle chaude et une surface sèche."
-      }
-     ],
-     "retenir": {
-      "fr": "Maillard (1912) : sucres + acides aminés + chaleur (140 à 165 °C) = brunissement et arômes. Pas de croûte dans l'eau bouillante."
-     },
-     "source": "Maillard, Comptes rendus de l'Académie des sciences, 1912",
-     "figure": "mc_alch_maillard",
-     "reperes": [
-      {
-       "fr": "La croûte du pain, la viande grillée, le café torréfié : c'est la réaction de Maillard, décrite en 1912 par le chimiste français Louis Camille Maillard."
-      }
-     ]
-    },
-    {
-     "id": "remedes",
-     "titre": {
-      "fr": "Du saule à l'aspirine, et ce qu'il ne faut pas mélanger"
-     },
-     "texte": [
-      {
-       "fr": "Les plantes riches en salicylés, comme le saule, figurent déjà sur des tablettes sumériennes et dans le papyrus Ebers égyptien ; vers 400 avant notre ère, Hippocrate décrit une tisane contre la fièvre. En 1897, chez Bayer, on cherche une version moins agressive pour l'estomac, et dès 1899 l'acide acétylsalicylique se vend dans le monde entier sous le nom d'Aspirin."
-      },
-      {
-       "fr": "La chimie de la maison a aussi ses dangers. L'eau de Javel mélangée à un acide, comme un détartrant ou du vinaigre, libère du dichlore, un gaz toxique. Règle simple : ne jamais mélanger deux produits ménagers."
-      }
-     ],
-     "retenir": {
-      "fr": "L'aspirine vient du saule (Bayer, 1899). Javel + acide = dichlore toxique : ne jamais mélanger les produits ménagers."
-     },
-     "source": "Jeffreys, Aspirin: The Remarkable Story of a Wonder Drug, 2004",
-     "figure": "mc_alch_aspirine",
-     "reperes": [
-      {
-       "fr": "En 1897, chez Bayer, on cherche une version moins agressive pour l'estomac, et dès 1899 l'acide acétylsalicylique se vend dans le monde entier sous le nom d'Aspirin."
-      }
-     ]
-    }
-   ]
-  }
- },
- {
   "id": "chim.reactions",
   "stat": "alchimie",
   "rang": 4,
@@ -339,11 +1112,10 @@
    "fr": "Réactions et oxydoréduction"
   },
   "description": {
-   "fr": "Équations, combustion, catalyse, oxydation et réduction."
+   "fr": "Scheele trouve l'« air du feu » vers 1771 et publie trop tard : équations, combustion, catalyse, oxydation et réduction."
   },
   "prerequis": [
-   "chim.etats",
-   "chim.quotidien"
+   "chim.boyle"
   ],
   "fiche": {
    "essentiel": [
@@ -435,110 +1207,111 @@
   }
  },
  {
-  "id": "chim.liaisons",
+  "id": "chim.lavoisier",
   "stat": "alchimie",
-  "rang": 5,
+  "rang": 4,
   "nom": {
-   "fr": "Liaisons et molécules"
+   "fr": "Lavoisier"
   },
   "description": {
-   "fr": "Comment les atomes s'assemblent : liaisons covalentes, ioniques, polarité."
+   "fr": "Dans les années 1770 et 1780, Antoine Lavoisier pèse tout, nomme l'oxygène, renomme la chimie entière. La Révolution lui coupe la tête."
   },
   "prerequis": [
+   "chim.etats",
    "chim.reactions"
   ],
   "fiche": {
    "essentiel": [
     {
-     "fr": "Liaison covalente : deux atomes partagent une paire d'électrons (H₂O, CH₄)."
+     "fr": "En 1774, Lavoisier montre que la masse totale se conserve lors d'une réaction : « Rien ne se perd, rien ne se crée, tout se transforme. »"
     },
     {
-     "fr": "Liaison ionique : un atome cède un électron à l'autre ; les ions s'attirent (NaCl)."
+     "fr": "Il nomme l'oxygène en 1778 et montre en 1783 que l'eau n'est pas un élément, mais un composé d'hydrogène et d'oxygène."
     },
     {
-     "fr": "Une molécule est polaire si les charges sont mal réparties : l'eau l'est, d'où ses propriétés de solvant."
+     "fr": "En 1787, avec Guyton de Morveau, Berthollet et Fourcroy, il publie une nouvelle nomenclature chimique, celle que nous utilisons encore."
     },
     {
-     "fr": "Les liaisons hydrogène entre molécules d'eau expliquent son point d'ébullition élevé."
+     "fr": "Son Traité élémentaire de chimie (1789) liste une trentaine d'éléments ; fermier général, il est guillotiné le 8 mai 1794."
     }
    ],
    "piege": {
-    "fr": "La glace flotte parce que ses liaisons hydrogène l'organisent en réseau plus aéré que l'eau liquide."
+    "fr": "Lavoisier n'a pas découvert l'oxygène : Scheele et Priestley l'avaient isolé avant lui. Son apport est d'avoir compris ce qu'il était, et tué le phlogistique."
    },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" role=\"img\" aria-label=\"Liaisons covalente et ionique\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Covalente</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Ionique</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"132\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">partage d'électrons</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">H₂O, CH₄</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">molécules</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">transfert d'électrons</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">NaCl</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">cristaux d'ions</text></svg>",
-   "source": "Pauling, The Nature of the Chemical Bond, 1939",
-   "figures": [
-    "eau",
-    "atome"
-   ]
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Lavoisier, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1771</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">mariage</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1774</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">la masse se conserve</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1783</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">l'eau, un composé</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1787</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">nomenclature</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1794</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">guillotiné</text></svg>",
+   "source": "Antoine Lavoisier, Traité élémentaire de chimie, 1789 ; Méthode de nomenclature chimique, 1787"
   },
-  "symbole": "H₂O",
-  "embleme": "modele-moleculaire",
+  "symbole": "O₂",
+  "embleme": "diamant-lavoisier",
   "masterclass": {
    "chapitres": [
     {
-     "id": "partage",
+     "id": "masse",
      "titre": {
-      "fr": "Partager des électrons"
+      "fr": "Peser avant, peser après"
      },
      "texte": [
       {
-       "fr": "En 1916, Gilbert Lewis propose une idée simple : deux atomes restent liés quand ils partagent une paire d'électrons. C'est la liaison covalente. Dans H₂, chaque hydrogène apporte un électron ; la paire appartient aux deux à la fois."
+       "fr": "Antoine Lavoisier naît à Paris le 26 août 1743. À 26 ans, il entre à l'Académie des sciences et achète une part de la Ferme générale, la compagnie qui collecte les impôts. Sa méthode tient en un geste : tout peser, avant et après chaque réaction, gaz compris."
       },
       {
-       "fr": "Deux atomes peuvent partager une, deux ou trois paires : liaison simple, double ou triple. Les deux oxygènes de O₂ sont reliés par une double liaison. Le carbone, avec ses quatre électrons de valence, forme quatre liaisons : c'est ce qui lui permet de bâtir des chaînes et des cycles."
+       "fr": "En 1774, il montre que la masse totale ne change pas au cours d'une transformation chimique. Son Traité le dira : « Rien ne se perd, rien ne se crée, tout se transforme. » En 1783, apprenant les expériences de Cavendish, il brûle avec Laplace de l'hydrogène dans l'oxygène et obtient de l'eau : l'eau n'est pas un élément, c'est un composé."
       }
      ],
      "retenir": {
-      "fr": "Liaison covalente = une paire d'électrons partagée (Lewis, 1916). Simple, double ou triple selon le nombre de paires. Le carbone fait 4 liaisons."
+      "fr": "1774 : la masse se conserve. 1783 : hydrogène et oxygène font de l'eau, qui n'est donc pas un élément."
      },
-     "source": "Lewis, Journal of the American Chemical Society, 1916",
+     "source": "Antoine Lavoisier, Traité élémentaire de chimie, 1789",
      "reperes": [
       {
-       "fr": "En 1916, Gilbert Lewis propose une idée simple : deux atomes restent liés quand ils partagent une paire d'électrons."
+       "fr": "En 1774, il montre que la masse totale ne change pas au cours d'une transformation chimique."
       }
      ]
     },
     {
-     "id": "electronegativite",
+     "id": "oxygene",
      "titre": {
-      "fr": "Qui tire le plus fort ?"
+      "fr": "L'oxygène, et des mots neufs"
      },
      "texte": [
       {
-       "fr": "Dans une liaison, les deux atomes ne tirent pas les électrons avec la même force. Linus Pauling chiffre cette force en 1932 : l'électronégativité. Le fluor est le plus gourmand (3,98), l'oxygène suit (3,44), l'hydrogène est à 2,20, le sodium à 0,93."
+       "fr": "En 1774, Priestley obtient un « air déphlogistiqué » en chauffant de l'oxyde de mercure ; Scheele l'avait isolé avant lui. Lavoisier comprend ce que c'est : un élément, qui se combine aux corps quand ils brûlent. Il le nomme oxygène en 1778, d'après des mots grecs signifiant « qui forme les acides ». Le phlogistique, ce fluide censé s'échapper des corps qui brûlent, n'a plus de raison d'être."
       },
       {
-       "fr": "Tout dépend de l'écart. Presque nul (jusqu'à 0,3 environ) : partage équitable. Entre 0,3 et 1,7 : la liaison est polaire, un côté porte un peu de charge négative. Au-delà de 1,7, c'est en général ionique : un atome prend carrément l'électron. Entre le sodium et le chlore (3,16), l'écart dépasse 2 : le sel est fait d'ions Na⁺ et Cl⁻. Ces seuils sont des repères, pas des frontières nettes."
+       "fr": "En 1787, avec Louis-Bernard Guyton de Morveau, Claude-Louis Berthollet et Antoine François de Fourcroy, il publie la Méthode de nomenclature chimique. Un nom doit désormais dire de quoi le corps est fait. Ce système est la base de la nomenclature moderne : « acide sulfurique », « sulfates » et « sulfites » viennent de cette réforme."
       }
      ],
      "retenir": {
-      "fr": "Électronégativité (Pauling, 1932) : petit écart = covalente, écart moyen = polaire, grand écart (plus de 1,7) = ionique."
+      "fr": "Oxygène nommé en 1778, « qui forme les acides » ; nomenclature de 1787 : le nom dit la composition."
      },
-     "source": "Pauling, Journal of the American Chemical Society, 1932",
-     "figure": "mc_alch_electroneg"
-    },
-    {
-     "id": "eau",
-     "titre": {
-      "fr": "L'eau, une molécule tordue"
-     },
-     "texte": [
-      {
-       "fr": "Dans l'eau, l'oxygène tire les électrons plus fort que les hydrogènes, et la molécule est coudée, à environ 104,5° : un côté négatif (l'oxygène), un côté positif (les hydrogènes). Elle est polaire. Le côté hydrogène d'une molécule s'accroche au côté oxygène d'une voisine : c'est la liaison hydrogène, et chaque molécule peut en former jusqu'à quatre. Que l'eau ne soit pas un élément mais un composé d'hydrogène et d'oxygène, Lavoisier et Laplace l'annoncent à l'Académie des sciences en novembre 1783. Henry Cavendish avait obtenu de l'eau en brûlant de l'hydrogène dès 1781, sans l'interpréter ainsi."
-      },
-      {
-       "fr": "Ces accroches expliquent les bizarreries de l'eau. Le sulfure d'hydrogène, H₂S, presque deux fois plus lourd, est un gaz à température ambiante, alors que l'eau ne bout qu'à 100 °C. Et en gelant, les liaisons hydrogène rangent les molécules en réseau aéré : la glace (0,917 g/mL) est environ 9 % moins dense que l'eau liquide. Elle flotte, et les lacs gèlent par le dessus."
-      }
-     ],
-     "retenir": {
-      "fr": "L'eau est polaire et coudée ; ses liaisons hydrogène expliquent son ébullition à 100 °C et la glace qui flotte."
-     },
-     "source": "Pauling, The Nature of the Chemical Bond, 1939",
-     "figure": "eau",
+     "source": "Méthode de nomenclature chimique, 1787 ; Antoine Lavoisier",
+     "figure": "mc_chim_phlogistique",
      "reperes": [
       {
-       "fr": "Henry Cavendish avait obtenu de l'eau en brûlant de l'hydrogène dès 1781, sans l'interpréter ainsi."
+       "fr": "Il le nomme oxygène en 1778, d'après des mots grecs signifiant « qui forme les acides »."
+      }
+     ]
+    },
+    {
+     "id": "traite",
+     "titre": {
+      "fr": "Le Traité et la guillotine"
+     },
+     "texte": [
+      {
+       "fr": "En 1789, l'année de la Révolution, paraît le Traité élémentaire de chimie. Lavoisier y dresse une liste provisoire d'une trentaine de substances simples, des éléments qu'on ne sait pas décomposer ; on y trouve encore la lumière et le calorique, la « matière de la chaleur ». Sa femme, Marie-Anne Paulze, épousée en 1771 quand elle avait 13 ans, l'assiste au laboratoire, traduit pour lui des ouvrages anglais et dessine les planches des appareils."
+      },
+      {
+       "fr": "Commissaire des poudres dès 1775, il loge et travaille à l'Arsenal ; il y forme Éleuthère Irénée du Pont. Mais il était fermier général. Arrêté sous la Terreur, il est guillotiné le 8 mai 1794. Le mathématicien Lagrange dira : « Il ne leur a fallu qu'un moment pour faire tomber cette tête, et cent années peut-être ne suffiront pas pour en reproduire une semblable. »"
+      }
+     ],
+     "retenir": {
+      "fr": "Traité de 1789 : une trentaine d'éléments, dont la lumière et le calorique. Lavoisier, fermier général, guillotiné le 8 mai 1794."
+     },
+     "source": "Antoine Lavoisier, Traité élémentaire de chimie, 1789 ; Lagrange",
+     "reperes": [
+      {
+       "fr": "Arrêté sous la Terreur, il est guillotiné le 8 mai 1794."
       }
      ]
     }
@@ -546,111 +1319,114 @@
   }
  },
  {
-  "id": "chim.acides",
+  "id": "sci.atomes",
   "stat": "alchimie",
-  "rang": 6,
+  "rang": 5,
   "nom": {
-   "fr": "Acides et bases"
+   "fr": "Atomes et tableau périodique"
   },
   "description": {
-   "fr": "Le pH, la neutralisation et les acides du quotidien."
+   "fr": "Dalton (1808), Avogadro (1811), puis Mendeleïev (1869) et ses cases vides : les atomes, les éléments et leur tableau."
   },
   "prerequis": [
-   "chim.liaisons"
+   "chim.lavoisier"
   ],
   "fiche": {
    "essentiel": [
     {
-     "fr": "pH < 7 : acide ; pH = 7 : neutre ; pH > 7 : basique."
+     "fr": "Un atome : un noyau (protons et neutrons) et des électrons autour."
     },
     {
-     "fr": "L'échelle est logarithmique : pH 3 est dix fois plus acide que pH 4."
+     "fr": "Le numéro atomique (nombre de protons) définit l'élément."
     },
     {
-     "fr": "Acide + base → sel + eau (neutralisation)."
+     "fr": "Le tableau périodique range les éléments par numéro ; une colonne regroupe des propriétés chimiques voisines."
     },
     {
-     "fr": "Citron ≈ 2, vinaigre ≈ 3, eau pure 7, eau de Javel ≈ 12."
-    },
-    {
-     "fr": "pH = −log[H⁺] : 10⁻³ mol/L d'ions H⁺ donne un pH de 3, 10⁻⁷ donne 7."
+     "fr": "Un atome est presque vide : si le noyau était une bille, l'atome ferait la taille d'un stade."
     }
    ],
    "piege": {
-    "fr": "Une baisse d'une unité de pH n'est pas une petite variation : c'est dix fois plus d'ions H⁺."
+    "fr": "Changer le nombre de neutrons donne un isotope du même élément, pas un autre élément."
    },
-   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 335 110\" role=\"img\" aria-label=\"Échelle de pH de 0 à 14 : acide, neutre, basique\"><rect x=\"10\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E53939\"/><text class=\"tm\" x=\"20\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">0</text><rect x=\"31\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E57039\"/><text class=\"tm\" x=\"41\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">1</text><rect x=\"52\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5A839\"/><text class=\"tm\" x=\"62\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">2</text><rect x=\"73\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5DF39\"/><text class=\"t\" x=\"83\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3</text><rect x=\"94\" y=\"24\" width=\"20\" height=\"34\" fill=\"#B4E539\"/><text class=\"tm\" x=\"104\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">4</text><rect x=\"115\" y=\"24\" width=\"20\" height=\"34\" fill=\"#7CE539\"/><text class=\"tm\" x=\"125\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">5</text><rect x=\"136\" y=\"24\" width=\"20\" height=\"34\" fill=\"#45E539\"/><text class=\"tm\" x=\"146\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">6</text><rect x=\"157\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E564\"/><text class=\"t\" x=\"167\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">7</text><rect x=\"178\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E59B\"/><text class=\"tm\" x=\"188\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">8</text><rect x=\"199\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E5D3\"/><text class=\"tm\" x=\"209\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">9</text><rect x=\"220\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39C0E5\"/><text class=\"tm\" x=\"230\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">10</text><rect x=\"241\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3989E5\"/><text class=\"tm\" x=\"251\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">11</text><rect x=\"262\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3951E5\"/><text class=\"tm\" x=\"272\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">12</text><rect x=\"283\" y=\"24\" width=\"20\" height=\"34\" fill=\"#5839E5\"/><text class=\"tm\" x=\"293\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">13</text><rect x=\"304\" y=\"24\" width=\"20\" height=\"34\" fill=\"#8F39E5\"/><text class=\"tm\" x=\"314\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">14</text><text class=\"t\" x=\"60\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">acide</text><text class=\"t\" x=\"167\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">neutre</text><text class=\"t\" x=\"275\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">basique</text><text class=\"tm\" x=\"20\" y=\"100\" font-size=\"12\" text-anchor=\"start\">citron ≈ 2</text><text class=\"tm\" x=\"167\" y=\"100\" font-size=\"12\" text-anchor=\"middle\">eau pure 7</text><text class=\"tm\" x=\"325\" y=\"100\" font-size=\"12\" text-anchor=\"end\">Javel ≈ 12</text></svg>",
-   "source": "Sørensen, Biochemische Zeitschrift, 1909"
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Ce que chaque particule détermine\"><rect class=\"a\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"56.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">protons</text><text class=\"t\" x=\"56.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">font l'élément</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">neutrons</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">isotopes</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">électrons</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">chimie</text></svg>",
+   "source": "IUPAC, Periodic Table of the Elements, 2022",
+   "figures": [
+    "atome"
+   ]
   },
-  "symbole": "pH",
-  "embleme": "papier-tournesol",
+  "symbole": "⚛",
+  "embleme": "atome",
   "masterclass": {
    "chapitres": [
     {
-     "id": "ph",
+     "id": "dalton",
      "titre": {
-      "fr": "Une échelle qui compte par dix"
+      "fr": "Les atomes de Dalton"
      },
      "texte": [
       {
-       "fr": "En 1909, au laboratoire Carlsberg de Copenhague, Søren Sørensen invente le pH pour mesurer l'acidité. Sous 7, la solution est acide ; à 7, neutre ; au-dessus, basique. Le jus de citron est vers 2, le vinaigre vers 3, l'eau pure à 7, l'eau de Javel vers 12."
+       "fr": "En 1808, à Manchester, le professeur quaker John Dalton publie A New System of Chemical Philosophy. Chaque élément y est fait d'atomes identiques, avec un poids qui lui est propre, et les composés naissent d'atomes combinés en proportions de nombres entiers. Il dresse une table de poids atomiques, l'hydrogène servant de référence. Il se trompe parfois : il écrit l'eau OH."
       },
       {
-       "fr": "Le piège, c'est que l'échelle est logarithmique : le pH est l'exposant de la concentration en ions H⁺, changé de signe. 10⁻³ mol/L donne un pH de 3, 10⁻⁴ un pH de 4. Descendre d'une seule unité, c'est donc dix fois plus d'ions H⁺ ; de deux unités, cent fois plus."
+       "fr": "En 1811, l'Italien Amedeo Avogadro propose que des volumes égaux de gaz, à la même température et à la même pression, contiennent le même nombre de molécules. Des expériences semblent la contredire, et il faut attendre le congrès de Karlsruhe, en 1860, pour que Stanislao Cannizzaro montre qu'elle permet de calculer les masses atomiques. Le terrain est alors prêt pour Mendeleïev."
       }
      ],
      "retenir": {
-      "fr": "pH = −log[H⁺] (Sørensen, 1909). Une unité de moins = 10 fois plus acide."
+      "fr": "Dalton, 1808 : un élément, une sorte d'atome, un poids propre. Avogadro, 1811 : volumes égaux de gaz, même nombre de molécules."
      },
-     "source": "Sørensen, Biochemische Zeitschrift, 1909",
+     "source": "John Dalton, A New System of Chemical Philosophy, 1808 ; Amedeo Avogadro, Journal de physique, 1811",
      "reperes": [
       {
-       "fr": "En 1909, au laboratoire Carlsberg de Copenhague, Søren Sørensen invente le pH pour mesurer l'acidité."
+       "fr": "En 1808, à Manchester, le professeur quaker John Dalton publie A New System of Chemical Philosophy."
       }
      ]
     },
     {
-     "id": "donner",
+     "id": "tableau",
      "titre": {
-      "fr": "Un acide donne, une base prend"
+      "fr": "Le pari de Mendeleïev"
      },
      "texte": [
       {
-       "fr": "La définition la plus utile date de 1923 : le Danois Johannes Brønsted et l'Anglais Martin Lowry, chacun de leur côté, disent qu'un acide est une espèce qui cède un ion H⁺, et une base une espèce qui le capte. Avant eux, Svante Arrhenius, à partir de ses travaux de 1884 sur les ions dans l'eau, parlait d'acides qui libèrent des H⁺ en solution."
+       "fr": "En 1869, Dmitri Mendeleïev range les éléments connus dans un tableau : en lignes par masse croissante, et en colonnes qui regroupent les éléments aux propriétés chimiques voisines. Là où rien ne colle, il laisse des cases vides et annonce que des éléments inconnus viendront les remplir."
       },
       {
-       "fr": "Quand un acide rencontre une base en bonnes proportions, les H⁺ de l'un et les OH⁻ de l'autre forment de l'eau, et il reste un sel : c'est la neutralisation. C'est ce que fait le bicarbonate d'un médicament contre les brûlures d'estomac : il neutralise une partie de l'acide chlorhydrique du suc gastrique."
+       "fr": "Il les nomme d'avance : eka-aluminium, eka-bore, eka-silicium. Le gallium est découvert en 1875 par Paul-Émile Lecoq de Boisbaudran, le scandium en 1879, le germanium en 1886 : ils prennent les places prévues. C'est ce qui a imposé son tableau."
       }
      ],
      "retenir": {
-      "fr": "Acide = donneur de H⁺, base = capteur de H⁺ (Brønsted et Lowry, 1923). Acide + base → sel + eau."
+      "fr": "Une colonne du tableau = une famille aux propriétés voisines. Mendeleïev (1869) a prédit des éléments manquants, trouvés ensuite : gallium, scandium, germanium."
      },
-     "source": "Brønsted, Recueil des Travaux Chimiques des Pays-Bas, 1923 ; Lowry, Journal of the Society of Chemical Industry, 1923",
-     "figure": "mc_alch_acide_base",
+     "source": "Mendeleïev, Zeitschrift für Chemie, 1869",
+     "figure": "mc_alch_mendeleiev",
      "reperes": [
       {
-       "fr": "Avant eux, Svante Arrhenius, à partir de ses travaux de 1884 sur les ions dans l'eau, parlait d'acides qui libèrent des H⁺ en solution."
+       "fr": "En 1869, Dmitri Mendeleïev range les éléments connus dans un tableau : en lignes par masse croissante, et en colonnes qui regroupent les éléments aux propriétés chimiques voisines."
+      },
+      {
+       "fr": "Le gallium est découvert en 1875 par Paul-Émile Lecoq de Boisbaudran, le scandium en 1879, le germanium en 1886 : ils prennent les places prévues."
       }
      ]
     },
     {
-     "id": "tampon",
+     "id": "numero",
      "titre": {
-      "fr": "Le sang ne plaisante pas avec le pH"
+      "fr": "Le numéro qui fait l'élément"
      },
      "texte": [
       {
-       "fr": "Le sang humain se tient entre pH 7,35 et 7,45. En dehors de cette fenêtre étroite, on tombe vite en acidose ou en alcalose. Ce qui le maintient, c'est un tampon : un couple acide faible et base, ici l'acide carbonique et le bicarbonate, qui absorbe les H⁺ en trop ou en fournit quand il en manque."
+       "fr": "Ce qui fait qu'un atome est du carbone plutôt que de l'azote, c'est son nombre de protons : le numéro atomique. Le carbone en a 6, l'oxygène 8, le fer 26. Changer ce nombre, c'est changer d'élément. C'est le jeune physicien anglais Henry Moseley qui le montre en 1913, en mesurant les rayons X des éléments : le numéro atomique est la charge du noyau, et il remet de l'ordre dans le tableau. Il est tué deux ans plus tard à Gallipoli, le 10 août 1915, à 27 ans."
       },
       {
-       "fr": "Les océans, eux, n'ont pas un tampon infini. Ils absorbent une partie du CO₂ que nous émettons, qui forme de l'acide carbonique : le pH de surface est passé d'environ 8,2 à 8,1 depuis le XIXe siècle. Un dixième d'unité seulement, mais sur une échelle par dix, cela fait environ 30 % d'ions H⁺ en plus."
+       "fr": "Les neutrons, eux, peuvent varier sans changer l'élément : on obtient des isotopes. Le carbone 12 et le carbone 14 ont tous deux 6 protons ; le second a deux neutrons de plus. Les électrons aussi peuvent varier : un atome qui en gagne ou en perd devient un ion, chargé, comme Na⁺ ou Cl⁻ dans le sel."
       }
      ],
      "retenir": {
-      "fr": "Un tampon (acide faible + sa base) amortit les variations de pH : le sang reste entre 7,35 et 7,45 grâce au bicarbonate."
+      "fr": "Protons = identité de l'élément. Neutrons en plus ou en moins = isotope. Électrons en plus ou en moins = ion."
      },
-     "source": "Hall, Guyton and Hall Textbook of Medical Physiology",
-     "figure": "mc_alch_tampon"
+     "source": "IUPAC, Periodic Table of the Elements, 2022",
+     "schema_fiche": true
     }
    ]
   }
@@ -658,15 +1434,15 @@
  {
   "id": "chim.organique",
   "stat": "alchimie",
-  "rang": 7,
+  "rang": 5,
   "nom": {
-   "fr": "Chimie organique"
+   "fr": "La chimie du carbone"
   },
   "description": {
-   "fr": "Le carbone, les hydrocarbures, les polymères et les molécules du vivant."
+   "fr": "En 1828, Wöhler fabrique de l'urée à partir d'un sel minéral ; en 1865, Kekulé ferme le cycle du benzène : hydrocarbures, cycles, polymères."
   },
   "prerequis": [
-   "chim.liaisons"
+   "sci.atomes"
   ],
   "fiche": {
    "essentiel": [
@@ -778,18 +1554,239 @@
   }
  },
  {
+  "id": "chim.industrie",
+  "stat": "alchimie",
+  "rang": 5,
+  "nom": {
+   "fr": "Explosifs et industrie"
+  },
+  "description": {
+   "fr": "Au XIXe siècle, la chimie devient une industrie : soude, colorants, dynamite, engrais. Elle nourrit le monde et arme les guerres."
+  },
+  "prerequis": [
+   "sci.atomes"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "En 1791, Nicolas Leblanc brevette un procédé pour tirer la soude du sel marin ; ses usines empestent l'air d'acide chlorhydrique."
+    },
+    {
+     "fr": "En 1856, William Perkin, 18 ans, cherche la quinine et trouve la mauvéine, l'un des premiers colorants de synthèse."
+    },
+    {
+     "fr": "En 1866, Alfred Nobel imbibe la nitroglycérine dans la diatomite : la dynamite, brevetée en 1867."
+    },
+    {
+     "fr": "En 1909, Fritz Haber fabrique de l'ammoniac avec l'azote de l'air ; Carl Bosch l'industrialise en 1913 : engrais et explosifs."
+    }
+   ],
+   "piege": {
+    "fr": "Le même procédé peut nourrir et tuer : l'ammoniac de Haber fait des engrais et des explosifs, et Haber lui-même a dirigé les premières attaques au chlore."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Explosifs et industrie, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1791</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">soude Leblanc</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1856</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">mauvéine</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1867</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">dynamite</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1913</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">usine Haber-Bosch</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1915</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">chlore à Ypres</text></svg>",
+   "source": "Procédé Leblanc ; W. H. Perkin, mauvéine, 1856 ; A. Nobel, dynamite, 1867 ; procédé Haber-Bosch"
+  },
+  "symbole": "NH₃",
+  "embleme": "chim-dynamite",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "couleurs",
+     "titre": {
+      "fr": "De la soude et du mauve"
+     },
+     "texte": [
+      {
+       "fr": "En 1783, l'Académie des sciences promet 2 400 livres à qui saura tirer de l'alcali du sel marin. Nicolas Leblanc, médecin du duc d'Orléans, brevette sa solution en 1791 : la soude, le carbonate de sodium, indispensable au verre, aux textiles, au savon et au papier. Ses usines rejettent de l'acide chlorhydrique dans l'air ; en 1863, le Parlement britannique vote l'Alkali Act, la première loi moderne contre la pollution de l'air."
+      },
+      {
+       "fr": "En 1856, à 18 ans, l'Anglais William Henry Perkin tente de synthétiser la quinine, le remède du paludisme. En nettoyant un ballon avec de l'alcool, il remarque une couleur pourpre : la mauvéine, l'un des premiers colorants de synthèse fabriqués en masse. Il la brevette, ouvre une usine à Greenford l'année suivante, et le « mauve » devient la couleur à la mode entre 1859 et 1861."
+      }
+     ],
+     "retenir": {
+      "fr": "Soude Leblanc en 1791, et première loi antipollution en 1863 ; mauvéine de Perkin en 1856, par hasard."
+     },
+     "source": "Procédé Leblanc ; W. H. Perkin, 1856",
+     "reperes": [
+      {
+       "fr": "En nettoyant un ballon avec de l'alcool, il remarque une couleur pourpre : la mauvéine, l'un des premiers colorants de synthèse fabriqués en masse."
+      }
+     ]
+    },
+    {
+     "id": "dynamite",
+     "titre": {
+      "fr": "Dompter la nitroglycérine"
+     },
+     "texte": [
+      {
+       "fr": "La nitroglycérine est un explosif liquide terriblement instable. En 1864, une explosion dans l'usine familiale tue Emil, le petit frère du Suédois Alfred Nobel. En 1866, Nobel l'imbibe dans une terre poreuse, la diatomite : la pâte se transporte et se manipule sans sauter au moindre choc. C'est la dynamite, brevetée en 1867."
+      },
+      {
+       "fr": "La dynamite fait la fortune de Nobel, qui déposera 355 brevets. Par un testament signé à Paris le 27 novembre 1895, il lègue environ 94 % de sa fortune pour créer les prix qui portent son nom."
+      }
+     ],
+     "retenir": {
+      "fr": "Dynamite (1866-1867) : la nitroglycérine domptée par la diatomite. Nobel lègue 94 % de sa fortune aux prix Nobel."
+     },
+     "source": "Alfred Nobel, brevet de la dynamite, 1867",
+     "reperes": [
+      {
+       "fr": "C'est la dynamite, brevetée en 1867."
+      }
+     ]
+    },
+    {
+     "id": "haber",
+     "titre": {
+      "fr": "Du pain avec de l'air"
+     },
+     "texte": [
+      {
+       "fr": "L'air est fait aux quatre cinquièmes d'azote. À l'été 1909, Fritz Haber et Robert Le Rossignol fabriquent de l'ammoniac à partir de cet azote, sous haute pression, sur un catalyseur au fer. Carl Bosch, chez BASF, en fait une industrie : la première usine tourne en 1913. Aujourd'hui, près de la moitié de l'azote de nos corps vient de ce procédé, par les engrais."
+      },
+      {
+       "fr": "Le même ammoniac fait des explosifs : sans lui, l'Allemagne aurait sans doute perdu la guerre en quelques mois. Haber va plus loin. Le 22 avril 1915, à Ypres, il assiste en personne au premier lâcher de chlore par l'armée allemande. Le 2 mai, sa femme, la chimiste Clara Immerwahr, se suicide avec son arme de service. Haber reçoit le Nobel de chimie 1918, Bosch celui de 1931."
+      }
+     ],
+     "retenir": {
+      "fr": "Haber-Bosch : l'ammoniac tiré de l'air nourrit la moitié de l'humanité et fournit des explosifs. Haber dirige aussi la guerre chimique."
+     },
+     "source": "Fritz Haber, Nobel Lecture, 1920 ; procédé Haber-Bosch",
+     "figure": "mc_chim_haber_bosch",
+     "reperes": [
+      {
+       "fr": "Aujourd'hui, près de la moitié de l'azote de nos corps vient de ce procédé, par les engrais."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.acides",
+  "stat": "alchimie",
+  "rang": 6,
+  "nom": {
+   "fr": "Acides, bases et pH"
+  },
+  "description": {
+   "fr": "En 1909, à la brasserie Carlsberg, Sørensen invente le pH : acidité, neutralisation et tampons."
+  },
+  "prerequis": [
+   "chim.organique",
+   "chim.industrie"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "pH < 7 : acide ; pH = 7 : neutre ; pH > 7 : basique."
+    },
+    {
+     "fr": "L'échelle est logarithmique : pH 3 est dix fois plus acide que pH 4."
+    },
+    {
+     "fr": "Acide + base → sel + eau (neutralisation)."
+    },
+    {
+     "fr": "Citron ≈ 2, vinaigre ≈ 3, eau pure 7, eau de Javel ≈ 12."
+    },
+    {
+     "fr": "pH = −log[H⁺] : 10⁻³ mol/L d'ions H⁺ donne un pH de 3, 10⁻⁷ donne 7."
+    }
+   ],
+   "piege": {
+    "fr": "Une baisse d'une unité de pH n'est pas une petite variation : c'est dix fois plus d'ions H⁺."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 335 110\" role=\"img\" aria-label=\"Échelle de pH de 0 à 14 : acide, neutre, basique\"><rect x=\"10\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E53939\"/><text class=\"tm\" x=\"20\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">0</text><rect x=\"31\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E57039\"/><text class=\"tm\" x=\"41\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">1</text><rect x=\"52\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5A839\"/><text class=\"tm\" x=\"62\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">2</text><rect x=\"73\" y=\"24\" width=\"20\" height=\"34\" fill=\"#E5DF39\"/><text class=\"t\" x=\"83\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3</text><rect x=\"94\" y=\"24\" width=\"20\" height=\"34\" fill=\"#B4E539\"/><text class=\"tm\" x=\"104\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">4</text><rect x=\"115\" y=\"24\" width=\"20\" height=\"34\" fill=\"#7CE539\"/><text class=\"tm\" x=\"125\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">5</text><rect x=\"136\" y=\"24\" width=\"20\" height=\"34\" fill=\"#45E539\"/><text class=\"tm\" x=\"146\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">6</text><rect x=\"157\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E564\"/><text class=\"t\" x=\"167\" y=\"76\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">7</text><rect x=\"178\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E59B\"/><text class=\"tm\" x=\"188\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">8</text><rect x=\"199\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39E5D3\"/><text class=\"tm\" x=\"209\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">9</text><rect x=\"220\" y=\"24\" width=\"20\" height=\"34\" fill=\"#39C0E5\"/><text class=\"tm\" x=\"230\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">10</text><rect x=\"241\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3989E5\"/><text class=\"tm\" x=\"251\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">11</text><rect x=\"262\" y=\"24\" width=\"20\" height=\"34\" fill=\"#3951E5\"/><text class=\"tm\" x=\"272\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">12</text><rect x=\"283\" y=\"24\" width=\"20\" height=\"34\" fill=\"#5839E5\"/><text class=\"tm\" x=\"293\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">13</text><rect x=\"304\" y=\"24\" width=\"20\" height=\"34\" fill=\"#8F39E5\"/><text class=\"tm\" x=\"314\" y=\"76\" font-size=\"12\" text-anchor=\"middle\">14</text><text class=\"t\" x=\"60\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">acide</text><text class=\"t\" x=\"167\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">neutre</text><text class=\"t\" x=\"275\" y=\"16\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">basique</text><text class=\"tm\" x=\"20\" y=\"100\" font-size=\"12\" text-anchor=\"start\">citron ≈ 2</text><text class=\"tm\" x=\"167\" y=\"100\" font-size=\"12\" text-anchor=\"middle\">eau pure 7</text><text class=\"tm\" x=\"325\" y=\"100\" font-size=\"12\" text-anchor=\"end\">Javel ≈ 12</text></svg>",
+   "source": "Sørensen, Biochemische Zeitschrift, 1909"
+  },
+  "symbole": "pH",
+  "embleme": "papier-tournesol",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "ph",
+     "titre": {
+      "fr": "Une échelle qui compte par dix"
+     },
+     "texte": [
+      {
+       "fr": "En 1909, au laboratoire Carlsberg de Copenhague, Søren Sørensen invente le pH pour mesurer l'acidité. Sous 7, la solution est acide ; à 7, neutre ; au-dessus, basique. Le jus de citron est vers 2, le vinaigre vers 3, l'eau pure à 7, l'eau de Javel vers 12."
+      },
+      {
+       "fr": "Le piège, c'est que l'échelle est logarithmique : le pH est l'exposant de la concentration en ions H⁺, changé de signe. 10⁻³ mol/L donne un pH de 3, 10⁻⁴ un pH de 4. Descendre d'une seule unité, c'est donc dix fois plus d'ions H⁺ ; de deux unités, cent fois plus."
+      }
+     ],
+     "retenir": {
+      "fr": "pH = −log[H⁺] (Sørensen, 1909). Une unité de moins = 10 fois plus acide."
+     },
+     "source": "Sørensen, Biochemische Zeitschrift, 1909",
+     "reperes": [
+      {
+       "fr": "En 1909, au laboratoire Carlsberg de Copenhague, Søren Sørensen invente le pH pour mesurer l'acidité."
+      }
+     ]
+    },
+    {
+     "id": "donner",
+     "titre": {
+      "fr": "Un acide donne, une base prend"
+     },
+     "texte": [
+      {
+       "fr": "La définition la plus utile date de 1923 : le Danois Johannes Brønsted et l'Anglais Martin Lowry, chacun de leur côté, disent qu'un acide est une espèce qui cède un ion H⁺, et une base une espèce qui le capte. Avant eux, Svante Arrhenius, à partir de ses travaux de 1884 sur les ions dans l'eau, parlait d'acides qui libèrent des H⁺ en solution."
+      },
+      {
+       "fr": "Quand un acide rencontre une base en bonnes proportions, les H⁺ de l'un et les OH⁻ de l'autre forment de l'eau, et il reste un sel : c'est la neutralisation. C'est ce que fait le bicarbonate d'un médicament contre les brûlures d'estomac : il neutralise une partie de l'acide chlorhydrique du suc gastrique."
+      }
+     ],
+     "retenir": {
+      "fr": "Acide = donneur de H⁺, base = capteur de H⁺ (Brønsted et Lowry, 1923). Acide + base → sel + eau."
+     },
+     "source": "Brønsted, Recueil des Travaux Chimiques des Pays-Bas, 1923 ; Lowry, Journal of the Society of Chemical Industry, 1923",
+     "figure": "mc_alch_acide_base",
+     "reperes": [
+      {
+       "fr": "Avant eux, Svante Arrhenius, à partir de ses travaux de 1884 sur les ions dans l'eau, parlait d'acides qui libèrent des H⁺ en solution."
+      }
+     ]
+    },
+    {
+     "id": "tampon",
+     "titre": {
+      "fr": "Le sang ne plaisante pas avec le pH"
+     },
+     "texte": [
+      {
+       "fr": "Le sang humain se tient entre pH 7,35 et 7,45. En dehors de cette fenêtre étroite, on tombe vite en acidose ou en alcalose. Ce qui le maintient, c'est un tampon : un couple acide faible et base, ici l'acide carbonique et le bicarbonate, qui absorbe les H⁺ en trop ou en fournit quand il en manque."
+      },
+      {
+       "fr": "Les océans, eux, n'ont pas un tampon infini. Ils absorbent une partie du CO₂ que nous émettons, qui forme de l'acide carbonique : le pH de surface est passé d'environ 8,2 à 8,1 depuis le XIXe siècle. Un dixième d'unité seulement, mais sur une échelle par dix, cela fait environ 30 % d'ions H⁺ en plus."
+      }
+     ],
+     "retenir": {
+      "fr": "Un tampon (acide faible + sa base) amortit les variations de pH : le sang reste entre 7,35 et 7,45 grâce au bicarbonate."
+     },
+     "source": "Hall, Guyton and Hall Textbook of Medical Physiology",
+     "figure": "mc_alch_tampon"
+    }
+   ]
+  }
+ },
+ {
   "id": "chim.noyau",
   "stat": "alchimie",
-  "rang": 8,
+  "rang": 6,
   "nom": {
    "fr": "Radioactivité et noyau"
   },
   "description": {
-   "fr": "Isotopes, demi-vie, fission, fusion et datation."
+   "fr": "Le tiroir de Becquerel (1896), le radium des Curie, puis la fission : isotopes, demi-vie et énergie du noyau."
   },
   "prerequis": [
-   "chim.acides",
-   "chim.organique"
+   "chim.acides"
   ],
   "fiche": {
    "essentiel": [
@@ -897,6 +1894,341 @@
       },
       {
        "fr": "Le 2 décembre 1942, sous les gradins du stade Stagg Field de l'université de Chicago, sur un ancien court de squash, la pile d'Enrico Fermi, de l'uranium dans 45 000 blocs de graphite, entretient la première réaction en chaîne contrôlée, à environ un demi-watt."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.liaisons",
+  "stat": "alchimie",
+  "rang": 7,
+  "nom": {
+   "fr": "Liaisons et molécules"
+  },
+  "description": {
+   "fr": "En 1916, Lewis fait de la liaison une paire d'électrons partagée ; en 1939, Pauling écrit La Nature de la liaison chimique."
+  },
+  "prerequis": [
+   "chim.noyau"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Liaison covalente : deux atomes partagent une paire d'électrons (H₂O, CH₄)."
+    },
+    {
+     "fr": "Liaison ionique : un atome cède un électron à l'autre ; les ions s'attirent (NaCl)."
+    },
+    {
+     "fr": "Une molécule est polaire si les charges sont mal réparties : l'eau l'est, d'où ses propriétés de solvant."
+    },
+    {
+     "fr": "Les liaisons hydrogène entre molécules d'eau expliquent son point d'ébullition élevé."
+    }
+   ],
+   "piege": {
+    "fr": "La glace flotte parce que ses liaisons hydrogène l'organisent en réseau plus aéré que l'eau liquide."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" role=\"img\" aria-label=\"Liaisons covalente et ionique\"><text class=\"t\" x=\"90\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Covalente</text><text class=\"t\" x=\"250\" y=\"20\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">Ionique</text><line class=\"lm\" x1=\"170\" y1=\"8\" x2=\"170\" y2=\"132\"/><rect class=\"f2\" x=\"14\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">partage d'électrons</text><rect class=\"f2\" x=\"14\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">H₂O, CH₄</text><rect class=\"f2\" x=\"14\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"88\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">molécules</text><rect class=\"f\" x=\"178\" y=\"32\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"48.9\" font-size=\"11\" text-anchor=\"middle\">transfert d'électrons</text><rect class=\"f\" x=\"178\" y=\"64\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"80.8\" font-size=\"11\" text-anchor=\"middle\">NaCl</text><rect class=\"f\" x=\"178\" y=\"96\" width=\"148\" height=\"26\" rx=\"6\"/><text class=\"t\" x=\"252\" y=\"112.8\" font-size=\"11\" text-anchor=\"middle\">cristaux d'ions</text></svg>",
+   "source": "Pauling, The Nature of the Chemical Bond, 1939",
+   "figures": [
+    "eau",
+    "atome"
+   ]
+  },
+  "symbole": "H₂O",
+  "embleme": "modele-moleculaire",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "partage",
+     "titre": {
+      "fr": "Partager des électrons"
+     },
+     "texte": [
+      {
+       "fr": "En 1916, Gilbert Lewis propose une idée simple : deux atomes restent liés quand ils partagent une paire d'électrons. C'est la liaison covalente. Dans H₂, chaque hydrogène apporte un électron ; la paire appartient aux deux à la fois."
+      },
+      {
+       "fr": "Deux atomes peuvent partager une, deux ou trois paires : liaison simple, double ou triple. Les deux oxygènes de O₂ sont reliés par une double liaison. Le carbone, avec ses quatre électrons de valence, forme quatre liaisons : c'est ce qui lui permet de bâtir des chaînes et des cycles."
+      }
+     ],
+     "retenir": {
+      "fr": "Liaison covalente = une paire d'électrons partagée (Lewis, 1916). Simple, double ou triple selon le nombre de paires. Le carbone fait 4 liaisons."
+     },
+     "source": "Lewis, Journal of the American Chemical Society, 1916",
+     "reperes": [
+      {
+       "fr": "En 1916, Gilbert Lewis propose une idée simple : deux atomes restent liés quand ils partagent une paire d'électrons."
+      }
+     ]
+    },
+    {
+     "id": "electronegativite",
+     "titre": {
+      "fr": "Qui tire le plus fort ?"
+     },
+     "texte": [
+      {
+       "fr": "Dans une liaison, les deux atomes ne tirent pas les électrons avec la même force. Linus Pauling chiffre cette force en 1932 : l'électronégativité. Le fluor est le plus gourmand (3,98), l'oxygène suit (3,44), l'hydrogène est à 2,20, le sodium à 0,93."
+      },
+      {
+       "fr": "Tout dépend de l'écart. Presque nul (jusqu'à 0,3 environ) : partage équitable. Entre 0,3 et 1,7 : la liaison est polaire, un côté porte un peu de charge négative. Au-delà de 1,7, c'est en général ionique : un atome prend carrément l'électron. Entre le sodium et le chlore (3,16), l'écart dépasse 2 : le sel est fait d'ions Na⁺ et Cl⁻. Ces seuils sont des repères, pas des frontières nettes."
+      }
+     ],
+     "retenir": {
+      "fr": "Électronégativité (Pauling, 1932) : petit écart = covalente, écart moyen = polaire, grand écart (plus de 1,7) = ionique."
+     },
+     "source": "Pauling, Journal of the American Chemical Society, 1932",
+     "figure": "mc_alch_electroneg"
+    },
+    {
+     "id": "eau",
+     "titre": {
+      "fr": "L'eau, une molécule tordue"
+     },
+     "texte": [
+      {
+       "fr": "Dans l'eau, l'oxygène tire les électrons plus fort que les hydrogènes, et la molécule est coudée, à environ 104,5° : un côté négatif (l'oxygène), un côté positif (les hydrogènes). Elle est polaire. Le côté hydrogène d'une molécule s'accroche au côté oxygène d'une voisine : c'est la liaison hydrogène, et chaque molécule peut en former jusqu'à quatre. Que l'eau ne soit pas un élément mais un composé d'hydrogène et d'oxygène, Lavoisier et Laplace l'annoncent à l'Académie des sciences en novembre 1783. Henry Cavendish avait obtenu de l'eau en brûlant de l'hydrogène dès 1781, sans l'interpréter ainsi."
+      },
+      {
+       "fr": "Ces accroches expliquent les bizarreries de l'eau. Le sulfure d'hydrogène, H₂S, presque deux fois plus lourd, est un gaz à température ambiante, alors que l'eau ne bout qu'à 100 °C. Et en gelant, les liaisons hydrogène rangent les molécules en réseau aéré : la glace (0,917 g/mL) est environ 9 % moins dense que l'eau liquide. Elle flotte, et les lacs gèlent par le dessus."
+      }
+     ],
+     "retenir": {
+      "fr": "L'eau est polaire et coudée ; ses liaisons hydrogène expliquent son ébullition à 100 °C et la glace qui flotte."
+     },
+     "source": "Pauling, The Nature of the Chemical Bond, 1939",
+     "figure": "eau",
+     "reperes": [
+      {
+       "fr": "Henry Cavendish avait obtenu de l'eau en brûlant de l'hydrogène dès 1781, sans l'interpréter ainsi."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.quotidien",
+  "stat": "alchimie",
+  "rang": 7,
+  "nom": {
+   "fr": "La chimie du quotidien"
+  },
+  "description": {
+   "fr": "Bakélite (1907), nylon (1935) : au XXe siècle, la chimie entre dans la cuisine, la salle de bains et l'armoire à pharmacie."
+  },
+  "prerequis": [
+   "chim.noyau"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Le savon a une tête qui aime l'eau et une queue qui aime les graisses : il emprisonne la graisse dans des micelles."
+    },
+    {
+     "fr": "La réaction de Maillard (sucres + protéines à la chaleur) dore le pain et grille la viande."
+    },
+    {
+     "fr": "Une pile transforme une réaction d'oxydoréduction en courant."
+    },
+    {
+     "fr": "Le paracétamol et l'aspirine sont des molécules de synthèse ; l'aspirine dérive de l'écorce de saule."
+    }
+   ],
+   "piege": {
+    "fr": "Mélanger eau de Javel et vinaigre dégage du chlore toxique : ne jamais combiner les produits ménagers."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 96\" role=\"img\" aria-label=\"Comment le savon emporte la graisse\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">graisse</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">savon</text><text class=\"t\" x=\"170.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">tête + queue</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"49.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">micelle</text><text class=\"t\" x=\"284.0\" y=\"63.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">rincée</text></svg>",
+   "source": "This, Révélations gastronomiques, 1995"
+  },
+  "symbole": "⚗",
+  "embleme": "flacon",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "savon",
+     "titre": {
+      "fr": "Comment le savon attrape la graisse"
+     },
+     "texte": [
+      {
+       "fr": "Le savon se fabrique en mélangeant des graisses ou des huiles avec une base forte, la soude : les graisses se coupent en sels d'acides gras, et il reste de la glycérine. C'est la saponification. Des traces de matières savonneuses remontent à environ 2800 avant notre ère, à Babylone."
+      },
+      {
+       "fr": "Chaque molécule de savon a une tête qui aime l'eau et une queue qui aime la graisse. Dans l'eau, les queues plongent dans la graisse et les têtes restent tournées vers l'extérieur : elles forment des petites billes, les micelles, qui emprisonnent la saleté. Le rinçage les emporte."
+      }
+     ],
+     "retenir": {
+      "fr": "Savon = graisse + soude (saponification). Tête qui aime l'eau, queue qui aime la graisse : les micelles emportent la saleté."
+     },
+     "source": "This, Révélations gastronomiques, 1995",
+     "reperes": [
+      {
+       "fr": "Des traces de matières savonneuses remontent à environ 2800 avant notre ère, à Babylone."
+      }
+     ]
+    },
+    {
+     "id": "cuisine",
+     "titre": {
+      "fr": "La croûte dorée de Maillard"
+     },
+     "texte": [
+      {
+       "fr": "La croûte du pain, la viande grillée, le café torréfié : c'est la réaction de Maillard, décrite en 1912 par le chimiste français Louis Camille Maillard. Des sucres et des acides aminés réagissent à la chaleur et donnent des centaines de molécules brunes et parfumées."
+      },
+      {
+       "fr": "Elle va vite autour de 140 à 165 °C. Voilà pourquoi une viande bouillie ne dore pas : dans l'eau, on ne dépasse pas 100 °C. Pour griller, il faut une poêle chaude et une surface sèche."
+      }
+     ],
+     "retenir": {
+      "fr": "Maillard (1912) : sucres + acides aminés + chaleur (140 à 165 °C) = brunissement et arômes. Pas de croûte dans l'eau bouillante."
+     },
+     "source": "Maillard, Comptes rendus de l'Académie des sciences, 1912",
+     "figure": "mc_alch_maillard",
+     "reperes": [
+      {
+       "fr": "La croûte du pain, la viande grillée, le café torréfié : c'est la réaction de Maillard, décrite en 1912 par le chimiste français Louis Camille Maillard."
+      }
+     ]
+    },
+    {
+     "id": "remedes",
+     "titre": {
+      "fr": "Du saule à l'aspirine, et ce qu'il ne faut pas mélanger"
+     },
+     "texte": [
+      {
+       "fr": "Les plantes riches en salicylés, comme le saule, figurent déjà sur des tablettes sumériennes et dans le papyrus Ebers égyptien ; vers 400 avant notre ère, Hippocrate décrit une tisane contre la fièvre. En 1897, chez Bayer, on cherche une version moins agressive pour l'estomac, et dès 1899 l'acide acétylsalicylique se vend dans le monde entier sous le nom d'Aspirin."
+      },
+      {
+       "fr": "La chimie de la maison a aussi ses dangers. L'eau de Javel mélangée à un acide, comme un détartrant ou du vinaigre, libère du dichlore, un gaz toxique. Règle simple : ne jamais mélanger deux produits ménagers."
+      }
+     ],
+     "retenir": {
+      "fr": "L'aspirine vient du saule (Bayer, 1899). Javel + acide = dichlore toxique : ne jamais mélanger les produits ménagers."
+     },
+     "source": "Jeffreys, Aspirin: The Remarkable Story of a Wonder Drug, 2004",
+     "figure": "mc_alch_aspirine",
+     "reperes": [
+      {
+       "fr": "En 1897, chez Bayer, on cherche une version moins agressive pour l'estomac, et dès 1899 l'acide acétylsalicylique se vend dans le monde entier sous le nom d'Aspirin."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "chim.aujourdhui",
+  "stat": "alchimie",
+  "rang": 8,
+  "nom": {
+   "fr": "La chimie d'aujourd'hui"
+  },
+  "description": {
+   "fr": "Des ballons de 60 atomes, un trou dans l'ozone refermé par un traité, des éléments qui vivent une milliseconde, et une chimie qui veut moins polluer."
+  },
+  "prerequis": [
+   "chim.liaisons",
+   "chim.quotidien"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "En 1985, à l'université Rice, Kroto, Curl, Smalley et leurs étudiants découvrent le C₆₀, une cage de 60 atomes de carbone : Nobel de chimie 1996."
+    },
+    {
+     "fr": "En 1974, Mario Molina et Sherwood Rowland montrent que les CFC détruisent l'ozone ; le protocole de Montréal (1987) les interdit peu à peu."
+    },
+    {
+     "fr": "En 1998, Paul Anastas et John Warner publient les douze principes de la chimie verte : mieux vaut éviter un déchet que le traiter."
+    },
+    {
+     "fr": "Le 28 novembre 2016, les éléments 113 à 118 reçoivent leur nom ; le nihonium est le premier nommé par une équipe asiatique."
+    }
+   ],
+   "piege": {
+    "fr": "La chimie d'aujourd'hui n'est pas que pollution : c'est aussi elle qui a trouvé la cause du trou d'ozone et la façon de le refermer."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"La chimie d'aujourd'hui, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1974</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">CFC et ozone</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1985</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">C₆₀</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1987</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">protocole de Montréal</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1998</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">chimie verte</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2016</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">tableau à 118</text></svg>",
+   "source": "Kroto et al., Nature, 1985 ; Molina et Rowland, Nature, 1974 ; protocole de Montréal, 1987 ; Anastas et Warner, Green Chemistry, 1998 ; UICPA, 2016"
+  },
+  "symbole": "C₆₀",
+  "embleme": "chim-fullerene",
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "c60",
+     "titre": {
+      "fr": "Un ballon de soixante atomes"
+     },
+     "texte": [
+      {
+       "fr": "En 1985, à l'université Rice, au Texas, Harold Kroto, Robert Curl, Richard Smalley et leurs étudiants James Heath et Sean O'Brien vaporisent du graphite au laser. Dans la suie apparaît une molécule de 60 atomes de carbone exactement : une cage de 12 pentagones et 20 hexagones, la forme d'un ballon de football."
+      },
+      {
+       "fr": "Ils la nomment buckminsterfullerène, en hommage à l'architecte Richard Buckminster Fuller et à ses dômes géodésiques ; Fuller était mort en 1983. Kroto, Curl et Smalley reçoivent le prix Nobel de chimie 1996. On a depuis observé le C₆₀ dans l'espace, autour d'étoiles mourantes, dans des nébuleuses planétaires."
+      }
+     ],
+     "retenir": {
+      "fr": "C₆₀, 1985 : 60 carbones, 12 pentagones et 20 hexagones. Nobel 1996 pour Kroto, Curl et Smalley."
+     },
+     "source": "Kroto, Heath, O'Brien, Curl et Smalley, Nature, 1985",
+     "reperes": [
+      {
+       "fr": "Dans la suie apparaît une molécule de 60 atomes de carbone exactement : une cage de 12 pentagones et 20 hexagones, la forme d'un ballon de football."
+      }
+     ]
+    },
+    {
+     "id": "ozone",
+     "titre": {
+      "fr": "Le trou et le traité"
+     },
+     "texte": [
+      {
+       "fr": "En 1974, à l'université de Californie à Irvine, le Mexicain Mario Molina et Sherwood Rowland publient dans Nature une alerte : les chlorofluorocarbures, les CFC des bombes aérosol et des frigos, montent dans la stratosphère, y libèrent du chlore, et ce chlore détruit l'ozone qui nous protège. En 1985, Joe Farman, Brian Gardiner et Jon Shanklin mesurent un ozone anormalement bas au-dessus de l'Antarctique."
+      },
+      {
+       "fr": "Le protocole de Montréal, signé le 16 septembre 1987, organise la sortie des CFC. C'est le premier traité de l'histoire de l'ONU ratifié par tous les pays ; Kofi Annan l'a dit peut-être l'accord international le plus réussi. La couche d'ozone devrait retrouver son niveau de 1980 vers 2040 presque partout, vers 2066 au-dessus de l'Antarctique. Molina, Rowland et Paul Crutzen ont reçu le Nobel de chimie 1995."
+      }
+     ],
+     "retenir": {
+      "fr": "1974 : les CFC détruisent l'ozone. 1987 : le protocole de Montréal. Retour de l'ozone vers 2040, 2066 en Antarctique."
+     },
+     "source": "Molina et Rowland, Nature, 1974 ; protocole de Montréal, 1987",
+     "figure": "mc_chim_ozone",
+     "reperes": [
+      {
+       "fr": "Le protocole de Montréal, signé le 16 septembre 1987, organise la sortie des CFC."
+      }
+     ]
+    },
+    {
+     "id": "tableau",
+     "titre": {
+      "fr": "Un tableau complet, une chimie verte"
+     },
+     "texte": [
+      {
+       "fr": "Le 28 novembre 2016, l'Union internationale de chimie nomme quatre nouveaux éléments. Le 113, fabriqué atome par atome par l'équipe de Kōsuke Morita au RIKEN, au Japon, devient le nihonium, de Nihon, le Japon : pour la première fois, des chercheurs asiatiques nomment un élément. Le 118, créé à Doubna, en Russie, en 2002, devient l'oganesson, en l'honneur du physicien Iouri Oganessian. On n'en a détecté que quelques atomes, qui vivent moins d'une milliseconde."
+      },
+      {
+       "fr": "La chimie veut aussi se racheter. En 1998, Paul Anastas, de l'agence américaine de l'environnement, et John Warner publient douze principes de chimie verte : concevoir des produits et des procédés qui réduisent ou suppriment les substances dangereuses. Le premier dit qu'il vaut mieux éviter un déchet que le nettoyer. En 2005, le Nobel de chimie récompense la métathèse, en citant explicitement son apport à la chimie verte."
+      }
+     ],
+     "retenir": {
+      "fr": "2016 : nihonium et oganesson complètent la septième ligne du tableau. 1998 : les douze principes de la chimie verte."
+     },
+     "source": "UICPA, 2016 ; Anastas et Warner, Green Chemistry: Theory and Practice, 1998",
+     "reperes": [
+      {
+       "fr": "On n'en a détecté que quelques atomes, qui vivent moins d'une milliseconde."
       }
      ]
     }

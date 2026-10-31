@@ -91,13 +91,13 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(xp.alchimie, 70); assert.equal(xp.savoir, 120);
   assert.equal(M.statut(C, P3, "sci.egypte", t0).gelee, false);
   assert.equal(M.statut(C, P3, "sci.genetique", t0).etat, "verrouillee");
-  assert.equal(M.statut(C, P3, "chim.etats", t0).etat, "disponible");
+  assert.equal(M.statut(C, P3, "chim.feu", t0).etat, "disponible");
   const rec = M.verifierRecompenses(C, P3, t0);
   assert.ok(rec.gagnables.some(o => o.id === "tableau-mendeleiev"));
   // Quiz raté en 20 s, à 3 h du matin, avec des réponses éclair : la panoplie moqueuse
   const nuit = new Date(2026, 9, 25, 3, 0).getTime();
-  const qs = M.tirerQuestions(C, P3, "chim.etats", 5).map(q => ({ id: q.id, correct: false, ms: 900 }));
-  let r3 = M.terminerQuiz(C, P3, "chim.etats", qs, nuit, { duree: 20000 });
+  const qs = M.tirerQuestions(C, P3, "chim.feu", 5).map(q => ({ id: q.id, correct: false, ms: 900 }));
+  let r3 = M.terminerQuiz(C, P3, "chim.feu", qs, nuit, { duree: 20000 });
   // v19 : au plus 2 récompenses par épreuve ordinaire ; le reste tombe ensuite (ici aux visites suivantes).
   assert.ok(r3.nouveauxSucces.length <= 2, "2 récompenses au plus");
   const ids = succesPuis(r3, C, P3, nuit);
@@ -108,8 +108,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(rep.contexte, "quiz_zero"); assert.equal(P3.repliques.quiz_zero[0], rep.id);
   assert.notEqual(M.replique(C, P3, ["quiz_zero"], () => 0).id, rep.id);
   // Trois échecs d'affilée sur le même quiz
-  M.terminerQuiz(C, P3, "chim.etats", qs, nuit);
-  r3 = M.terminerQuiz(C, P3, "chim.etats", qs, nuit);
+  M.terminerQuiz(C, P3, "chim.feu", qs, nuit);
+  r3 = M.terminerQuiz(C, P3, "chim.feu", qs, nuit);
   assert.ok(r3.nouveauxSucces.some(s => s.id === "perseverance"));
   // Mode test, retour après absence, réplique du jour
   assert.ok(M.avancerHorloge(C, P3, 7).succes.some(s => s.id === "voyageur-temporel"));
