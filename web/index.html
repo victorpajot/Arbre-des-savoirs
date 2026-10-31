@@ -165,6 +165,8 @@ body:has(.voile, .quiz, .zoom-fig, .liberation, .alyca-scene, .fete) { overflow:
 .quiz .haut .titre b { display: block; font-family: var(--f-display); font-size: 18px; }
 .quiz .fermer { border: 0; background: var(--surface); border-radius: 999px; width: 44px; height: 44px; font-size: 22px; line-height: 1; }
 .points { display: flex; gap: 6px; }
+/* Code de la question (son id), tout en haut : Victor le cite pour signaler une question. */
+.code-q { margin: 0 0 -10px; text-align: right; font-family: var(--f-mono); font-size: 10px; line-height: 1; color: var(--muted); opacity: 0.5; user-select: all; -webkit-user-select: all; }
 .points i { flex: 1; height: 6px; border-radius: 3px; background: var(--line); }
 .points i.ok { background: var(--good); }
 .points i.ko { background: var(--bad); }
@@ -3618,6 +3620,7 @@ function demarrerJeu() {
     var haut = el('<div class="haut"><span class="vitrine-en">' + teteEnnemi(e, 40) + __('</span><div class="titre"><span class="eyebrow" style="color:#D94141">Duel · affirmation ') + (duel.i + 1) + __(" sur ") + duel.qs.length + "</span><b>" + esc(tx(e.nom)) + __('</b></div><button type="button" class="fermer" aria-label="Abandonner le duel">×</button></div>'));
     // Abandonner ne compte pas : le duel reste à faire.
     haut.querySelector(".fermer").onclick = fermerDuel;
+    if (q.id) inn.appendChild(el('<p class="code-q">' + esc(q.id) + "</p>"));
     inn.appendChild(haut);
     var pts = el('<div class="points"></div>');
     duel.qs.forEach(function (_, i) { var r = duel.res[i]; pts.appendChild(el('<i class="' + (r ? (r.correct ? "ok" : "ko") : (i === duel.i ? "cur" : "")) + '"></i>')); });
@@ -4604,7 +4607,7 @@ function demarrerJeu() {
   // Carte d'une question du mur. `retenter` : la réponse reste cachée tant qu'on n'a pas répondu.
   function carteOubli(x, retenter) {
     var q = x.question, e = x.entree, donnee = texteReponse(q, e.rep);
-    var c = el('<div class="oubli' + (e.efface ? " efface" : "") + '">' + (e.efface ? __('<span class="tampon">Réhabilitée</span>') : "") + '<p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
+    var c = el('<div class="oubli' + (e.efface ? " efface" : "") + '">' + (e.efface ? __('<span class="tampon">Réhabilitée</span>') : "") + (q.id ? '<p class="code-q">' + esc(q.id) + "</p>" : "") + '<p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
     if (q.illustration || q.dessin) c.appendChild(el(htmlIllusQ(q)));
     function corrige() {
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
@@ -5212,6 +5215,7 @@ function demarrerJeu() {
       }
       fermerQuiz();
     };
+    if (q.id) inn.appendChild(el('<p class="code-q">' + esc(q.id) + "</p>"));
     inn.appendChild(haut);
     var pts = el('<div class="points" aria-label="' + __("Question {i} sur {n}", { i: quiz.i + 1, n: quiz.qs.length }) + '"></div>');
     quiz.qs.forEach(function (_, i) {
