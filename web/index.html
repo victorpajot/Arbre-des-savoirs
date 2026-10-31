@@ -5562,7 +5562,8 @@ function demarrerJeu() {
     var ratees = r.total - r.bonnes;
     // v14 : le mur s'ouvre par-dessus le bilan ; « ← Bilan » ramène à la même étape, pour voir la suite des récompenses.
     // v35 (Victor) : une épreuve ratée propose d'abord la masterclass de la compétence, erreurs en tête.
-    if (ratees > 0 && (nom === "verdict" || !suite) && ["echec", "revision_ratee", "perdue"].indexOf(r.issue) >= 0 && aMasterclass(k) && !(!suite && M.masterclassImposee(C, P))) {
+    // Victor, 2026-10-31 : proposée aussi après une réussite, sans erreurs à corriger ; « ← Retour au bilan » ramène à la même étape.
+    if ((nom === "verdict" || !suite) && aMasterclass(k) && !(!suite && M.masterclassImposee(C, P))) {
       var mc = el('<button type="button" class="btn large sc-mc">' + __("Masterclass : ") + esc(tx(k.nom)) + "</button>");
       mc.onclick = function () { ouvrirMasterclass(quiz.id, quiz.res.filter(function (x) { return !x.correct; }).map(function (x) { return { id: x.id, rep: x.rep }; })); };
       wrap.appendChild(mc);
