@@ -204,7 +204,7 @@
   var FORMAT_PAQUET = "arbre-des-savoirs/pack";
   // Où un pack de domaine a le droit d'écrire : les emplacements d'outils/packs.py (EMPLACEMENTS).
   var EMPLACEMENTS_PAQUET = ["regles.json/stats", "skills.json/competences", "skills.json/figures", "questions.json/questions", "succes.json/succes",
-    "succes.json/dessins", "objets.json/objets", "avatar.json/savants", "avatar.json/accessoires", "avatar.json/tenues_farce", "ia.json/masques",
+    "succes.json/dessins", "objets.json/objets", "avatar.json/savants", "avatar.json/portraits", "avatar.json/accessoires", "avatar.json/tenues_farce", "ia.json/masques",
     "bibliotheque.json/livres", "frise.json/evenements", "commentaires.json/commentaires", "commentaires.json/apartes", "ia.json/credits/piques",
     "plateau.json/cases", "plateau.json/competences_cases", "ennemis.json/mythes", "ia.json/credits/boutique/articles"];
   function ajouterTextes(dico) { Object.keys(dico || {}).forEach(function (k) { if (DICO[k] == null) DICO[k] = dico[k]; }); }
@@ -386,6 +386,7 @@
       objets: {},
       accessoires: {},
       savants: {},
+      personnes: {},
       avatar: { tete: null, visage: null, main: null, savant: null },
       compteurs: {
         quizParfaits: 0, quizRates: 0, rappelsReussis: 0, serieRappels: 0, perdues: 0, regagnees: 0,
@@ -455,6 +456,7 @@
     out.objets = p.objets || {};
     out.accessoires = p.accessoires || {};
     out.savants = p.savants || {};
+    out.personnes = p.personnes || {};
     out.avatar = Object.assign({ tete: null, visage: null, main: null, savant: null }, p.avatar || {});
     if (p.format < 4) {
       var c4 = contenu || { regles: { xp: { rappel_par_etape: [5, 10, 15, 20, 30, 40, 50], par_rappel_reussi: 5 } } };
@@ -749,6 +751,14 @@
   var MASTERCLASS_APRES_ECHECS = 2;
   function aLecon(k) { return !!(k && k.masterclass && k.masterclass.chapitres && k.masterclass.chapitres.length); }
   // La masterclass imposée, si sa compétence existe encore (pack allumé) ; sinon rien.
+  // Victor (2026-10-31) : le Pokédex des personnages. Une personne est rencontrée quand le jeu la montre (masterclass, quiz,
+  // case) ; un savant débloqué par un succès compte aussi. Renvoie vrai la première fois.
+  function rencontrer(partie, id, t) {
+    if (!partie.personnes) partie.personnes = {};
+    if (partie.personnes[id] != null || (partie.savants && partie.savants[id] != null)) return false;
+    partie.personnes[id] = t == null ? Date.now() : t; return true;
+  }
+  function rencontre(partie, id) { return (partie.personnes && partie.personnes[id] != null) || (partie.savants && partie.savants[id] != null); }
   function masterclassImposee(contenu, partie) {
     var m = partie.masterclass; return m && aLecon(contenu.parId[m.id]) ? m : null;
   }
@@ -3428,7 +3438,7 @@
     choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
-    ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
+    ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,
     valeurEpreuve: valeurEpreuve,

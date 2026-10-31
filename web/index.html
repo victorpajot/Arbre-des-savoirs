@@ -722,6 +722,11 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .mc-perso .cadre-p { flex: none; padding: 6px 8px 0; border-radius: 12px; background: var(--parchemin); border: 2px solid color-mix(in srgb, var(--accent) 45%, #fff); }
 .mc-perso figcaption { font-size: 14px; line-height: 1.3; }
 .mc-perso figcaption b { display: block; font-family: var(--f-display); font-size: 17px; }
+.mc-perso { cursor: pointer; }
+.mc-perso .neuf-p { display: block; font-size: 13px; font-weight: 700; color: var(--good); }
+.mc-perso.neuf .cadre-p { box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 45%, transparent); }
+.persos-q .mc-persos { margin-top: 12px; }
+.bio-p { font-size: 17px; }
 .legende-ep { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; font-size: 15px; }
 .date-ep svg { display: inline-block; }
 .legende-ep .date-ep { display: inline-flex; align-items: center; padding: 2px 6px; }
@@ -1496,6 +1501,8 @@ function demarrerJeu() {
   function gelerAvatar() { avatarGele = { sv: M.savantActuel(C, P) }; }
   function degelerAvatar() { avatarGele = null; }
   function savantIncarne() {
+    // Victor (2026-10-31) : l'avatar n'incarne plus de savant ; les savants vont au Pokédex des personnages (Collections).
+    return null;
     // v6 : le dernier savant débloqué par les succès, sans choix du joueur.
     if (avatarGele) return avatarGele.sv;
     return M.savantActuel(C, P);
@@ -2452,7 +2459,7 @@ function demarrerJeu() {
     // elle a quelque chose à annoncer (rappel imposé, série, révision, arbre fermé).
     if (!atI && !enI && ici.replique && c.evoque && ["case", "rappel"].indexOf(c.raison) >= 0) rep = { texte: ici.replique, contexte: "jouer_case", theme: ici.stat, id: "case-" + ici.n };
     var bandeau = enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Ennemi</div><h2>') + esc(tx(enI.nom)) + __(' garde la case</h2><p class="titre-en">') + esc(tx(enI.titre)) + "</p>" + (enI.qui ? "<p>" + esc(tx(enI.qui)) + "</p>" : "") + __('<p>Bats-le pour voir ce qu\'il y a dessous.</p></div>') : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>') : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
-      __('<div class="eyebrow">Ton pion est case ') + ici.n + " · " + pastilleDate(ici.annee) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + escD(tx(ici.histoire)) + "</p></div>";
+      __('<div class="eyebrow">Ton pion est case ') + ici.n + " · " + pastilleDate(ici.annee) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + escD(tx(ici.histoire)) + "</p>" + rangeePersonnes(tx(ici.histoire)) + "</div>";
     // v29 (Victor) : après la case, la phrase de l'IA, puis l'arbre choisi (icône, description, ton niveau) et l'épreuve.
     // Les savants et objets du thème passent à la fin.
     var nvA = M.niveau(C, M.xpParStat(C, P)[s.id] || 0), ferme = !M.arbreOuvert(C, P, s.id);
@@ -3259,7 +3266,6 @@ function demarrerJeu() {
       { id: "visage", nom: __("Visage"), choix: C.avatar.accessoires.filter(function (a) { return a.emplacement === "visage" && P.accessoires[a.id]; }) },
       { id: "main", nom: __("En main"), choix: sv ? [] : C.objets.filter(function (o) { return P.objets[o.id]; }) },
     ];
-    if (C.avatar.savants) b.appendChild(blocSavants());
     var rien = slots.every(function (sl) { return !sl.choix.length; });
     if (rien) { eq.appendChild(el(__('<p class="note">Les accessoires se gagnent avec certains succès, les objets dans le Cabinet. Ton avatar les portera ici.</p>'))); return b; }
     slots.forEach(function (sl) {
@@ -3392,19 +3398,55 @@ function demarrerJeu() {
     var v = el('<div class="vue"></div>');
     var comptes = { objets: [Object.keys(P.objets).length, C.objets.length], frise: [Object.keys(P.evenements).length, C.evenements.length], livres: [Object.keys(P.livres).length, C.livres.length],
       bestiaire: [Object.keys(P.bestiaire || {}).length, C.ennemis.length],
+      personnages: [personnesConnues().filter(function (e) { return M.rencontre(P, e.p.id); }).length, personnesConnues().length],
       atomes: [C.atomes ? C.atomes.elements.filter(function (e) { return M.estCapture(P, e.z); }).length : 0, C.atomes ? C.atomes.elements.length : 0] };
     if (collection === "boutique" && !M.boutique(C)) collection = "objets";
     var cpt = comptes[collection];
     v.appendChild(el(__('<div class="entete"><div><div class="eyebrow">Histoire des sciences</div><h1>Collections</h1></div><div class="num" style="font-size:20px;font-weight:700">') + (cpt ? cpt[0] + " / " + cpt[1] : P.credits.solde + __(" crédits")) + "</div></div>"));
     var seg = el(__('<div class="segments" role="group" aria-label="Collection"></div>'));
-    [["frise", __("Frise")], ["livres", __("Livres")], ["objets", __("Objets")]].concat(C.atomes ? [["atomes", __("Atomes")]] : []).concat(M.boutique(C) ? [["boutique", __("Boutique")]] : []).forEach(function (c) {
+    [["frise", __("Frise")], ["personnages", __("Personnages")], ["livres", __("Livres")], ["objets", __("Objets")]].concat(C.atomes ? [["atomes", __("Atomes")]] : []).concat(M.boutique(C) ? [["boutique", __("Boutique")]] : []).forEach(function (c) {
       var bt = el('<button type="button" aria-pressed="' + (collection === c[0]) + '">' + c[1] + "</button>");
       bt.onclick = function () { collection = c[0]; rendre(); };
       seg.appendChild(bt);
     });
     v.appendChild(seg);
-    v.appendChild(collection === "frise" ? blocFrise() : collection === "livres" ? blocBibliotheque() : collection === "atomes" ? blocTableau() : collection === "boutique" ? blocBoutique() : blocCabinet());
+    v.appendChild(collection === "frise" ? blocFrise() : collection === "livres" ? blocBibliotheque() : collection === "personnages" ? blocPersonnages() : collection === "atomes" ? blocTableau() : collection === "boutique" ? blocBoutique() : blocCabinet());
     return v;
+  }
+  // Victor (2026-10-31) : un Pokédex de tous les personnages croisés (cases, quiz, masterclass, succès), rangés par époque.
+  // Ceux qu'on n'a pas encore rencontrés restent en silhouette grise.
+  function anneePersonne(p) {
+    var t = String(p.annees || ""), m = /-?\d+/.exec(t); if (m) return +m[0];
+    var r = /\b([IVX]+)e siècle( av)?/.exec(t); if (!r) return null;
+    var n = romain(r[1]); return r[2] ? -(n - 1) * 100 - 50 : (n - 1) * 100 + 50;
+  }
+  function blocPersonnages() {
+    var L = personnesConnues(), b = el('<div class="bloc"></div>');
+    b.appendChild(el(__('<p class="note">Chaque personnage que tu croises sur une case, dans un quiz ou une masterclass rejoint ta collection. Touche un portrait pour lire sa fiche.</p>')));
+    var E = (C.plateau && C.plateau.epoques) || [];
+    E.forEach(function (ep) {
+      var ici = L.filter(function (e) { var a = anneePersonne(e.p); var x = a == null ? null : epoqueDe(a); return x && x.id === ep.id; })
+        .sort(function (a, c) { return anneePersonne(a.p) - anneePersonne(c.p); });
+      if (!ici.length) return;
+      var nv = ici.filter(function (e) { return M.rencontre(P, e.p.id); }).length;
+      b.appendChild(el('<div class="titre-arbre-sv"><span class="date-ep ep-' + ep.id + '">' + svgSprite(ep.icone, 14, "") + esc(tx(ep.nom)) + '</span><span class="meta">' + nv + __(" sur ") + ici.length + "</span></div>"));
+      var g = el('<div class="savants"></div>'); b.appendChild(g);
+      ici.forEach(function (e) {
+        var ok = M.rencontre(P, e.p.id);
+        var bt = el('<button type="button" class="' + (ok ? "" : "verrou") + '" aria-label="' + esc(ok ? tx(e.p.nom) : __("Personnage à rencontrer")) + '">' + svgSavant(e.p, 44, !ok) + "<span>" + esc(ok ? tx(e.p.nom) : "?") + "</span></button>");
+        bt.onclick = function () { ouvrirPersonne(e); };
+        g.appendChild(bt);
+      });
+    });
+    return b;
+  }
+  function ouvrirPersonne(e) {
+    var s = e.p, ok = M.rencontre(P, s.id), v = formatVie(s.annees), bio = tx(e.famille === "savant" ? s.notice : s.bio);
+    feuilleSimple('<div class="vitrine" style="padding:12px;width:132px;margin:0 auto">' + svgSavant(s, 108, !ok) + "</div>" +
+      (ok ? '<div class="eyebrow">' + (v.a != null ? pastilleDate(v.a, v.txt) : esc(v.txt)) + "</div><h2>" + esc(tx(s.nom)) + "</h2>" + (s.theme ? pastilleTheme(s.theme) : "") + '<p class="bio-p">' + escD(bio) + __('</p><p class="meta">Source : ') + esc(s.source) + "</p>"
+        : __("<h2>Personnage à rencontrer</h2><p class=\"meta\">") + (v.a != null ? __("Son époque : ") + esc(tx((epoqueDe(v.a) || { nom: { fr: "" } }).nom)) + ". " : "") +
+          (e.famille === "savant" && s.condition ? esc(conditionTexte(s.condition)) + __(", ou le croiser en jouant.") : __("Tu le croiseras sur une case, dans un quiz ou une masterclass.")) + "</p>"),
+      ok ? tx(s.nom) : __("Personnage à rencontrer"));
   }
   function blocCabinet() {
     var n = Object.keys(P.objets).length;
@@ -4403,18 +4445,30 @@ function demarrerJeu() {
   }
   function formatVie(t) {
     var parts = String(t || "").split(" / "), nums = parts.map(function (x) { var m = /^(vers )?(-?\d+)$/.exec(x.trim()); return m ? { v: m[1] ? __("vers ") : "", n: +m[2] } : null; });
-    if (nums.some(function (x) { return !x; })) return { txt: t, a: null };
+    if (nums.some(function (x) { return !x; })) return { txt: t, a: anneePersonne({ annees: t }) };
     var tousAv = nums.every(function (x) { return x.n < 0; });
     var txt = nums.map(function (x) { return x.v + Math.abs(x.n) + (x.n < 0 && !tousAv ? __(" av. J.-C.") : ""); }).join(" – ") + (tousAv ? __(" av. J.-C.") : "");
     return { txt: txt, a: nums[0].n };
   }
   function htmlPersonnage(e) {
-    var v = formatVie(e.p.annees);
-    return '<figure class="mc-perso"><div class="cadre-p">' + svgSavant(e.p, 52) + "</div><figcaption><b>" + esc(tx(e.p.nom)) + "</b>" +
-      (v.a != null ? pastilleDate(v.a, v.txt, true) : esc(v.txt)) + "</figcaption></figure>";
+    var v = formatVie(e.p.annees), neuf = M.rencontrer(P, e.p.id);
+    if (neuf) sauver();
+    return '<figure class="mc-perso' + (neuf ? " neuf" : "") + '" data-perso="' + e.p.id + '"><div class="cadre-p">' + svgSavant(e.p, 52) + "</div><figcaption><b>" + esc(tx(e.p.nom)) + "</b>" +
+      (v.a != null ? pastilleDate(v.a, v.txt, true) : esc(v.txt)) + (neuf ? __('<span class="neuf-p">Nouveau personnage</span>') : "") + "</figcaption></figure>";
   }
+  // Les personnes qu'un texte nomme (quiz, case), en ligne de portraits ; chacune devient rencontrée. `sauf` : déjà montrée.
+  function rangeePersonnes(texte, sauf, max) {
+    var vus = {}; if (sauf) vus[sauf] = 1;
+    var h = paragraphePersonnes(texte, vus, max || 2);
+    return h.indexOf('class="mc-persos"') === 0 ? h.slice(0, h.lastIndexOf("<p>")) : "";
+  }
+  // Toucher un portrait ouvre sa fiche.
+  document.addEventListener("click", function (ev) {
+    var f = ev.target.closest && ev.target.closest("[data-perso]"); if (!f) return;
+    var e = personnesConnues().filter(function (x) { return x.p.id === f.getAttribute("data-perso"); })[0]; if (e) ouvrirPersonne(e);
+  });
   // Le paragraphe, précédé des portraits des personnes qu'il cite pour la première fois dans la leçon.
-  function paragraphePersonnes(texte, vus) {
+  function paragraphePersonnes(texte, vus, max) {
     // Les noms trouvés dans le paragraphe ; un nom pris dans un plus long (« Luther » dans « Martin Luther King ») ne compte pas.
     var tr = [];
     personnesConnues().forEach(function (e) { var m = e.re.exec(texte); if (m) tr.push({ e: e, i: m.index, j: m.index + m[0].length }); });
@@ -4422,7 +4476,7 @@ function demarrerJeu() {
       .sort(function (a, b) { return a.i - b.i; });
     var html = "", n = 0;
     tr.forEach(function (x) {
-      if (vus[x.e.p.id] || n >= 2) return;
+      if (vus[x.e.p.id] || n >= (max || 2)) return;
       vus[x.e.p.id] = 1; html += htmlPersonnage(x.e); n++;
     });
     return (html ? '<div class="mc-persos">' + html + "</div>" : "") + "<p>" + escD(texte) + "</p>";
@@ -5483,7 +5537,10 @@ function demarrerJeu() {
         (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + htmlFigure(q.figure) + "</div>"));
       if (voixP()) { var rt = zoneRetour.lastChild; rt.appendChild(boutonEcouter(tx(q.explication))); parler((ok ? __("Bravo !") : __("Raté.")) + " " + tx(q.explication)); }
       var pq = portraitQuestion(q);
-      if (pq) zoneRetour.appendChild(pq);
+      if (pq) { zoneRetour.appendChild(pq); if (M.rencontrer(P, q.portrait.id)) sauver(); }
+      // Victor (2026-10-31) : les personnes dont parlent la question et son explication, en portrait.
+      var rp = rangeePersonnes(tx(q.enonce) + " " + tx(q.explication || ""), pq ? q.portrait.id : null);
+      if (rp) zoneRetour.appendChild(el('<div class="persos-q">' + rp + "</div>"));
       if (M.estEclair(quiz.res[quiz.res.length - 1])) {
         var mot = comite(M.replique(C, P, ["eclair"]));
         if (mot) { zoneRetour.appendChild(el('<div style="height:10px"></div>')); zoneRetour.appendChild(mot); }
@@ -5780,7 +5837,7 @@ function demarrerJeu() {
       c.appendChild(bt); out.push(marquerTheme(c, l, te));
     });
     (r.nouveauxSavants || []).forEach(function (sv) {
-      out.push(marquerTheme(carteSavant(__("Nouveau savant jouable"), svgSavant(sv, 80), tx(sv.nom), sv.annees + __(". Le dernier savant débloqué devient ton personnage, d'office. Personne ne t'a demandé ton avis."), { titre: __("Sa biographie"), html: "<p>" + esc(tx(sv.notice)) + "</p>" + (sv.source ? __("<cite>Source : ") + esc(sv.source) + "</cite>" : "") }), sv, te));
+      out.push(marquerTheme(carteSavant(__("Nouveau personnage"), svgSavant(sv, 80), tx(sv.nom), formatVie(sv.annees).txt + __(". Il rejoint tes Personnages, dans Collections."), { titre: __("Sa biographie"), html: "<p>" + esc(tx(sv.notice)) + "</p>" + (sv.source ? __("<cite>Source : ") + esc(sv.source) + "</cite>" : "") }), sv, te));
     });
     (r.nouveauxAccessoires || []).forEach(function (a) {
       out.push(carteRecompense(__("Nouvel accessoire"), svgRogne(a.pixels, C.avatar.palette, 80), tx(a.nom), __("À essayer sur ton avatar, dans l'onglet Personnage."), null));
