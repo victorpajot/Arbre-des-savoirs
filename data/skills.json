@@ -2,102 +2,333 @@
  "format": 1,
  "competences": [
   {
-   "id": "math.arithmetique",
+   "id": "math.origines",
    "stat": "logique",
    "rang": 1,
    "nom": {
-    "fr": "Arithmétique et fractions"
+    "fr": "Compter avant d'écrire"
    },
    "description": {
-    "fr": "Les opérations, les priorités de calcul, les fractions et les nombres premiers."
+    "fr": "Des os entaillés il y a 40 000 ans aux comptables d'Uruk : les nombres sont nés bien avant les chiffres."
    },
    "prerequis": [],
    "fiche": {
     "essentiel": [
      {
-      "fr": "Priorités : parenthèses, puissances, puis multiplications et divisions (de gauche à droite), puis additions et soustractions."
+      "fr": "L'os de Lebombo, trouvé dans la Border Cave, entre l'Afrique du Sud et l'Eswatini, a entre 42 000 et 43 000 ans : un péroné de babouin entaillé, peut-être un bâton de comptage."
      },
      {
-      "fr": "Pour additionner des fractions, on les met au même dénominateur : 3/4 + 1/8 = 6/8 + 1/8 = 7/8. On n'additionne jamais les dénominateurs."
+      "fr": "L'os d'Ishango, trouvé en 1950 au Congo, porte 168 entailles en trois colonnes ; il aurait environ 20 000 ans."
      },
      {
-      "fr": "Diviser par une fraction, c'est multiplier par son inverse : 2 ÷ 1/2 = 4."
+      "fr": "On y a lu des nombres premiers ou un calendrier lunaire, mais rien ne le prouve : la prudence s'impose."
      },
      {
-      "fr": "Un nombre premier a exactement deux diviseurs, 1 et lui-même. 1 n'est donc pas premier ; 2 est le seul premier pair."
+      "fr": "À Uruk, vers 3200 av. J.-C., les premières tablettes servent à compter l'orge et les moutons : l'écriture naît de la comptabilité."
      }
     ],
     "piege": {
-     "fr": "6 ÷ 2 × 3 vaut 9, pas 1 : à priorité égale, la convention est de calculer de gauche à droite."
+     "fr": "Une série d'encoches n'est pas forcément un calcul : on projette volontiers nos nombres modernes sur des objets dont on ignore l'usage."
     },
-    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 100\" role=\"img\" aria-label=\"Une barre coupée en 4 dont 3 parts colorées, une barre coupée en 8 dont 1 part colorée\"><text class=\"t\" x=\"20\" y=\"30\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">3/4</text><text class=\"t\" x=\"20\" y=\"80\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">1/8</text><rect class=\"a\" x=\"70\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"130\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"190\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"250\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\"/><rect class=\"a\" x=\"70\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"100\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"130\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"160\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"190\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"220\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"250\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"280\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/></svg>",
-    "source": "Programme de mathématiques du cycle 4, Éduscol"
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Compter avant d'écrire, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −41 000</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">os de Lebombo</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −20 000</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">os d'Ishango</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">−IVe mill.</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">jetons d'argile</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −3200</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">tablettes d'Uruk</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1950</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Ishango découvert</text></svg>",
+    "source": "Os de Lebombo et d'Ishango ; D. Schmandt-Besserat, Before Writing, 1992"
    },
-   "symbole": "½",
-   "embleme": "boulier",
+   "symbole": "Ⅲ",
+   "embleme": "os-encoches",
    "masterclass": {
     "chapitres": [
      {
-      "id": "priorites",
+      "id": "lebombo",
       "titre": {
-       "fr": "Dans quel ordre calculer"
+       "fr": "Les plus vieilles encoches"
       },
       "texte": [
        {
-        "fr": "Un calcul s'écrit sur une ligne, mais il ne se lit pas forcément de gauche à droite. La convention : d'abord les parenthèses, puis les puissances, puis les multiplications et divisions, enfin les additions et soustractions. 2 + 3 × 4 vaut donc 14, pas 20."
+        "fr": "Dans la Border Cave, une grotte des monts Lebombo à la frontière de l'Afrique du Sud et de l'Eswatini, on a trouvé un péroné de babouin d'environ 8 cm, couvert d'entailles. Vingt-quatre datations au carbone 14 lui donnent entre 42 000 et 43 000 ans."
        },
        {
-        "fr": "Quand deux opérations ont la même priorité, on avance de gauche à droite. 6 ÷ 2 × 3, c'est 3 × 3 = 9, et pas 6 ÷ 6 = 1. Ce n'est pas une loi de la nature mais une règle d'écriture, adoptée pour que tout le monde lise le même calcul de la même façon. En cas de doute, une paire de parenthèses coûte moins cher qu'une dispute. Cette règle est récente : la multiplication passe avant l'addition depuis la notation algébrique du XVIIe siècle, et le nom d'ordre des opérations ne s'impose qu'à la fin du XIXe ou au début du XXe siècle, avec les manuels scolaires. Dans les années 1920, on se disputait encore pour savoir si la multiplication passait avant la division."
+        "fr": "À quoi servait-il ? On a supposé un bâton de comptage, mais ce n'est qu'une hypothèse. Son découvreur, Peter Beaumont, pense plutôt que les entailles ont été faites lors de rituels. Les formes des entailles montrent qu'on a utilisé plusieurs outils tranchants."
        }
       ],
       "retenir": {
-       "fr": "Parenthèses, puissances, × et ÷, puis + et −. À égalité, de gauche à droite."
+       "fr": "Lebombo : 42 000 à 43 000 ans, peut-être un bâton de comptage, peut-être un objet rituel. Le plus vieux témoin possible du comptage."
       },
-      "source": "Programme de mathématiques du cycle 4, Éduscol",
-      "figure": "mc_math_priorites"
-     },
-     {
-      "id": "fractions",
-      "titre": {
-       "fr": "Les fractions sans se tromper"
-      },
-      "texte": [
-       {
-        "fr": "Pour additionner des fractions, il faut qu'elles parlent de parts de même taille : on les met au même dénominateur. 3/4 + 1/8, c'est 6/8 + 1/8 = 7/8. Additionner les dénominateurs (4 + 8) n'a aucun sens : on ne coupe pas le gâteau en douze en ajoutant deux parts."
-       },
-       {
-        "fr": "Multiplier, c'est plus simple : on multiplie en haut et en bas, et la moitié d'un tiers fait 1/2 × 1/3 = 1/6. Diviser par une fraction, c'est multiplier par son inverse : 2 ÷ 1/2 = 2 × 2 = 4, puisqu'il y a quatre demis dans deux. Les Égyptiens, eux, écrivaient presque tout en sommes de fractions de numérateur 1 : 2/5 devenait 1/3 + 1/15. On le voit sur le papyrus Rhind, copié vers 1550 avant notre ère par le scribe Ahmès, qui s'ouvre sur une table de 2/n écrits en fractions unitaires."
-       }
-      ],
-      "retenir": {
-       "fr": "Additionner : même dénominateur d'abord. Diviser par une fraction : multiplier par son inverse."
-      },
-      "source": "Programme de mathématiques du cycle 4, Éduscol",
-      "schema_fiche": true,
+      "source": "Os de Lebombo, Border Cave",
       "reperes": [
        {
-        "fr": "On le voit sur le papyrus Rhind, copié vers 1550 avant notre ère par le scribe Ahmès, qui s'ouvre sur une table de 2/n écrits en fractions unitaires."
+        "fr": "Vingt-quatre datations au carbone 14 lui donnent entre 42 000 et 43 000 ans."
        }
       ]
      },
      {
-      "id": "premiers",
+      "id": "ishango",
       "titre": {
-       "fr": "Les nombres premiers ne s'arrêtent jamais"
+       "fr": "L'os d'Ishango"
       },
       "texte": [
        {
-        "fr": "Un nombre premier a exactement deux diviseurs : 1 et lui-même. 2, 3, 5, 7, 11, 13… 1 n'est pas premier, puisqu'il n'a qu'un diviseur, et 2 est le seul premier pair. Tout entier se décompose en produit de premiers : ce sont les briques de la multiplication."
+        "fr": "En 1950, le Belge Jean de Heinzelin fouille près d'Ishango, au bord de la Semliki, au Congo alors belge. Il trouve un os d'une dizaine de centimètres, un éclat de quartz fixé au bout, portant 168 entailles rangées en trois colonnes. Le site aurait environ 20 000 ans, une date encore discutée. L'os est conservé à Bruxelles."
        },
        {
-        "fr": "Y en a-t-il une infinité ? Euclide le démontre vers 300 avant notre ère, livre IX des Éléments. Prenez une liste finie de premiers, multipliez-les tous et ajoutez 1. Le résultat n'est divisible par aucun d'eux, puisqu'il reste toujours 1. Donc il est premier, ou il a un facteur premier qui manquait à la liste. Aucune liste n'est jamais complète."
+        "fr": "Une colonne semble montrer les nombres premiers entre 10 et 20 ; Alexander Marshack y a vu un calendrier lunaire de six mois. Mais une coïncidence est possible, et un second os du même niveau ne montre rien de tel. L'historien Olivier Keller met en garde : il ne faut pas plaquer nos nombres modernes sur cet objet."
        }
       ],
       "retenir": {
-       "fr": "Premier = exactement deux diviseurs (1 n'est pas premier). Il y en a une infinité (Euclide, Éléments IX, 20)."
+       "fr": "Ishango : 168 entailles, environ 20 000 ans. Nombres premiers et calendrier lunaire sont des hypothèses, pas des preuves."
       },
-      "source": "Euclide, Éléments, livre IX, proposition 20",
-      "figure": "mc_math_premiers"
+      "source": "Os d'Ishango, Institut royal des sciences naturelles de Belgique",
+      "figure": "mc_math_ishango",
+      "reperes": [
+       {
+        "fr": "Il trouve un os d'une dizaine de centimètres, un éclat de quartz fixé au bout, portant 168 entailles rangées en trois colonnes."
+       }
+      ]
+     },
+     {
+      "id": "uruk",
+      "titre": {
+       "fr": "Les comptables d'Uruk"
+      },
+      "texte": [
+       {
+        "fr": "Au IVe millénaire av. J.-C., au Proche-Orient, on compte avec de petits jetons d'argile. L'archéologue Denise Schmandt-Besserat a montré à partir de 1977 qu'ils servaient de compteurs, et que l'écriture est née de la gestion des récoltes et des échanges, une idée aujourd'hui largement acceptée, même si certaines de ses conclusions sont discutées."
+       },
+       {
+        "fr": "À Uruk, vers 3200 av. J.-C., les premières tablettes d'argile notent des sacs d'orge, des moutons, des rations de bière. Le plus ancien nom de personne connu est peut-être celui d'un comptable, Kushim, au bas d'un reçu d'orge. Les nombres ont été écrits avant les mots."
+       }
+      ],
+      "retenir": {
+       "fr": "Jetons d'argile au IVe millénaire, tablettes d'Uruk vers 3200 av. J.-C. : l'écriture est née pour compter."
+      },
+      "source": "Denise Schmandt-Besserat, Before Writing, 1992",
+      "figure": "mc_math_uruk",
+      "reperes": [
+       {
+        "fr": "À Uruk, vers 3200 av. J.-C., les premières tablettes d'argile notent des sacs d'orge, des moutons, des rations de bière."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.babylone",
+   "stat": "logique",
+   "rang": 2,
+   "nom": {
+    "fr": "Babylone et la base 60"
+   },
+   "description": {
+    "fr": "Les scribes de Mésopotamie calculent en base 60, avec des tables et des chiffres qui changent de valeur selon leur place."
+   },
+   "prerequis": [
+    "math.origines"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Les Babyloniens comptent en base 60 : nos 60 minutes, 60 secondes et 360 degrés en viennent."
+     },
+     {
+      "fr": "60 a beaucoup de diviseurs (1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60) : les partages tombent juste."
+     },
+     {
+      "fr": "Leur numération est de position, avec deux signes seulement, un clou pour l'unité et un chevron pour la dizaine ; pas de zéro au départ."
+     },
+     {
+      "fr": "La tablette YBC 7289, vers 1800-1600 av. J.-C., donne √2 avec six chiffres exacts ; Plimpton 322 aligne des triplets pythagoriciens."
+     }
+    ],
+    "piege": {
+     "fr": "Sans zéro ni virgule, le même nombre écrit pouvait valoir 23, 23 × 60 ou 23/60 : il fallait deviner l'ordre de grandeur d'après le contexte."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Babylone et la base 60, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −1800</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Plimpton 322</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −1800/−1600</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">YBC 7289 et √2</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">plus tard</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">un signe pour une place vide</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1922</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Plimpton achète la tablette</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1945</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Neugebauer et Sachs</text></svg>",
+    "source": "Mathématiques babyloniennes ; tablettes YBC 7289 et Plimpton 322"
+   },
+   "symbole": "√2",
+   "embleme": "tablette",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "base60",
+      "titre": {
+       "fr": "Pourquoi 60 ?"
+      },
+      "texte": [
+       {
+        "fr": "Les scribes de Mésopotamie comptent en base 60. Ce choix a un avantage : 60 se divise par 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30 et 60. Un tiers, un quart, un cinquième d'une quantité tombent juste. Pour multiplier et diviser, ils utilisent des tables toutes faites, notamment des tables d'inverses."
+       },
+       {
+        "fr": "Nous en avons hérité sans y penser : 60 secondes dans une minute, 60 minutes dans une heure, 360 degrés dans un cercle. Les nombres dont l'inverse s'écrit sans fin en base 60, comme 7, 11 ou 13, posaient problème : les scribes en donnaient des valeurs approchées."
+       }
+      ],
+      "retenir": {
+       "fr": "Base 60 : beaucoup de diviseurs, des tables d'inverses, et l'héritage de nos heures, minutes et degrés."
+      },
+      "source": "Mathématiques babyloniennes",
+      "reperes": [
+       {
+        "fr": "Ce choix a un avantage : 60 se divise par 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30 et 60."
+       }
+      ]
+     },
+     {
+      "id": "position",
+      "titre": {
+       "fr": "Deux signes et une place"
+      },
+      "texte": [
+       {
+        "fr": "Pour écrire les 59 chiffres de leur base, les Babyloniens n'ont que deux signes : un clou pour l'unité, un chevron pour la dizaine. Mais la place d'un chiffre change sa valeur, comme chez nous : c'est une vraie numération de position, contrairement aux chiffres égyptiens ou romains."
+       },
+       {
+        "fr": "Il manque pourtant deux choses : un zéro et une virgule. Le même nombre écrit peut valoir 23, 23 × 60 ou 23/60, et il faut le deviner d'après le contexte. Plus tard, des textes babyloniens notent une place vide par un signe, mais seulement au milieu d'un nombre, jamais à la fin."
+       }
+      ],
+      "retenir": {
+       "fr": "Clou et chevron, valeur selon la place, mais ni zéro ni virgule : le contexte décide."
+      },
+      "source": "Numération cunéiforme babylonienne",
+      "figure": "mc_math_base60",
+      "reperes": [
+       {
+        "fr": "Pour écrire les 59 chiffres de leur base, les Babyloniens n'ont que deux signes : un clou pour l'unité, un chevron pour la dizaine."
+       }
+      ]
+     },
+     {
+      "id": "racine",
+      "titre": {
+       "fr": "La racine de 2 d'un élève"
+      },
+      "texte": [
+       {
+        "fr": "La tablette YBC 7289, faite dans le sud de la Mésopotamie entre 1800 et 1600 av. J.-C., est petite et ronde : une tablette de brouillon qu'un élève tenait dans la main. On y voit un carré et ses diagonales. Sur la diagonale, une valeur de √2 : 1;24,51,10 en base 60, soit 1,41421296."
+       },
+       {
+        "fr": "L'erreur est inférieure à une part sur deux millions : environ six chiffres décimaux exacts, la meilleure précision de calcul connue dans l'Antiquité. La tablette est conservée à l'université Yale. Une autre tablette célèbre, Plimpton 322, aligne quinze lignes liées à des triplets pythagoriciens."
+       }
+      ],
+      "retenir": {
+       "fr": "YBC 7289 : √2 ≈ 1;24,51,10, soit 1,41421296, à six chiffres près, sur un brouillon d'élève."
+      },
+      "source": "Tablette YBC 7289, Yale Babylonian Collection",
+      "reperes": [
+       {
+        "fr": "Sur la diagonale, une valeur de √2 : 1;24,51,10 en base 60, soit 1,41421296."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.egypte",
+   "stat": "logique",
+   "rang": 2,
+   "nom": {
+    "fr": "L'Égypte et le papyrus Rhind"
+   },
+   "description": {
+    "fr": "Fractions à numérateur 1, aire du disque, volume d'une pyramide tronquée : les manuels des scribes égyptiens."
+   },
+   "prerequis": [
+    "math.origines"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Vers 1550 av. J.-C., le scribe Ahmès recopie un manuel plus ancien : le papyrus Rhind, 91 problèmes, au British Museum."
+     },
+     {
+      "fr": "Les Égyptiens écrivent les fractions comme des sommes de fractions de numérateur 1, toutes différentes : 2/5 = 1/3 + 1/15."
+     },
+     {
+      "fr": "Pour l'aire d'un disque, ils prennent le carré des 8/9 du diamètre : cela revient à π ≈ 256/81, environ 3,16."
+     },
+     {
+      "fr": "Le papyrus de Moscou calcule juste le volume d'une pyramide tronquée : 56."
+     }
+    ],
+    "piege": {
+     "fr": "π ≈ 3,16 n'est pas une erreur grossière : les Égyptiens ne cherchaient pas π, ils avaient une recette d'aire précise à moins de 1 % près."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Les mathématiques égyptiennes, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −1850</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">papyrus de Moscou</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −1550</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Ahmès recopie le Rhind</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1858</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Rhind l'achète à Louxor</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1865</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">British Museum</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1892-1893</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Golenichtchev et le papyrus de Moscou</text></svg>",
+    "source": "Papyrus Rhind, British Museum ; papyrus de Moscou"
+   },
+   "symbole": "⅟",
+   "embleme": "pyramide",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "ahmes",
+      "titre": {
+       "fr": "Le manuel d'Ahmès"
+      },
+      "texte": [
+       {
+        "fr": "Vers 1550 av. J.-C., la 33e année du règne du roi hyksos Apophis, le scribe Ahmès recopie un manuel plus ancien, du temps d'Amenemhat III. Il l'annonce lui-même : « Le scribe Ahmès écrit cette copie. » Le texte promet un « calcul exact pour enquêter sur les choses, et la connaissance de tout ce qui existe »."
+       },
+       {
+        "fr": "Il contient 91 problèmes : partages de pains, surfaces de champs, pentes de pyramides. Le problème 79 aligne 7 maisons, 49 chats, 343 souris, 2 401 épis et 16 807 mesures de grain : une suite où chaque terme est sept fois le précédent. L'Écossais Alexander Rhind l'achète à Louxor en 1858 ; il est au British Museum depuis 1865."
+       }
+      ],
+      "retenir": {
+       "fr": "Ahmès, vers 1550 av. J.-C. : 91 problèmes recopiés d'un texte plus ancien. Rhind l'achète en 1858."
+      },
+      "source": "Papyrus Rhind, British Museum",
+      "reperes": [
+       {
+        "fr": "Il contient 91 problèmes : partages de pains, surfaces de champs, pentes de pyramides."
+       }
+      ]
+     },
+     {
+      "id": "fractions",
+      "titre": {
+       "fr": "Des fractions de numérateur 1"
+      },
+      "texte": [
+       {
+        "fr": "Les scribes égyptiens écrivent les fractions comme des sommes de fractions de numérateur 1, toutes différentes : ce qu'on appelle aujourd'hui des fractions égyptiennes. Le papyrus Rhind s'ouvre sur une table qui décompose 2/n pour tous les n impairs de 3 à 101. Par exemple, 2/5 = 1/3 + 1/15."
+       },
+       {
+        "fr": "Ces sommes servent à partager. Cinq pains pour huit personnes ? Chacun reçoit une moitié de pain et un huitième. Bien plus tard, en 1202, Fibonacci décrit une méthode pour décomposer n'importe quelle fraction de cette manière : prendre à chaque fois la plus grande fraction de numérateur 1 qui tient dans le reste."
+       }
+      ],
+      "retenir": {
+       "fr": "Fractions égyptiennes : sommes de 1/n toutes différentes. Table des 2/n de 3 à 101 dans le papyrus Rhind."
+      },
+      "source": "Papyrus Rhind ; fractions égyptiennes",
+      "figure": "mc_math_pains",
+      "reperes": [
+       {
+        "fr": "Le papyrus Rhind s'ouvre sur une table qui décompose 2/n pour tous les n impairs de 3 à 101."
+       }
+      ]
+     },
+     {
+      "id": "volumes",
+      "titre": {
+       "fr": "Le disque et la pyramide tronquée"
+      },
+      "texte": [
+       {
+        "fr": "Pour l'aire d'un disque, Ahmès enlève un neuvième du diamètre et élève le reste au carré : aire = (8/9 × d)². Comparée à la formule moderne, cette recette revient à prendre π = 256/81, environ 3,16, à moins de 1 % de la vraie valeur."
+       },
+       {
+        "fr": "Le papyrus de Moscou, écrit vers 1850 av. J.-C., va plus loin. Son problème 14 calcule le volume d'une pyramide tronquée de base carrée : 4 de côté en bas, 2 en haut, 6 de haut. Le scribe trouve 56, la bonne réponse. Le papyrus, acheté à Thèbes par Vladimir Golenichtchev en 1892 ou 1893, est au musée Pouchkine."
+       }
+      ],
+      "retenir": {
+       "fr": "Disque : (8/9 d)², soit π ≈ 3,16. Pyramide tronquée du papyrus de Moscou : 56, juste."
+      },
+      "source": "Papyrus Rhind, problème 48 ; papyrus de Moscou, problème 14",
+      "reperes": [
+       {
+        "fr": "Le scribe trouve 56, la bonne réponse."
+       }
+      ]
      }
     ]
    }
@@ -107,13 +338,14 @@
    "stat": "logique",
    "rang": 2,
    "nom": {
-    "fr": "Géométrie et trigonométrie"
+    "fr": "Géométrie grecque"
    },
    "description": {
-    "fr": "Angles, aires, volumes, Pythagore, sinus et cosinus."
+    "fr": "De Thalès à Euclide, les Grecs démontrent : tout part de quelques postulats, et chaque théorème se prouve."
    },
    "prerequis": [
-    "math.arithmetique"
+    "math.babylone",
+    "math.egypte"
    ],
    "fiche": {
     "essentiel": [
@@ -214,14 +446,556 @@
    }
   },
   {
-   "id": "math.proportions",
+   "id": "math.archimede",
    "stat": "logique",
    "rang": 3,
    "nom": {
-    "fr": "Proportions et pourcentages"
+    "fr": "Archimède et π"
    },
    "description": {
-    "fr": "Règle de trois, échelles, hausses et baisses en pourcentage."
+    "fr": "Encadrer π, peser des figures, compter les grains de sable de l'univers : le géomètre de Syracuse."
+   },
+   "prerequis": [
+    "math.geometrie"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Archimède vit à Syracuse, vers 287-212 av. J.-C. ; il meurt tué par un soldat romain pendant le siège de la ville."
+     },
+     {
+      "fr": "Avec des polygones à 96 côtés, il montre que π est entre 223/71 et 22/7, soit entre 3,1408 et 3,1429."
+     },
+     {
+      "fr": "Son résultat préféré : une sphère a les deux tiers du volume et de la surface du cylindre qui l'enferme ; on le grava sur sa tombe."
+     },
+     {
+      "fr": "Sa Méthode, perdue, est retrouvée en 1906 sous un livre de prières : le palimpseste d'Archimède."
+     }
+    ],
+    "piege": {
+     "fr": "« Ne dérange pas mes cercles » n'apparaît dans aucune source antique : c'est une légende plus tardive."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Archimède, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. −250</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">La Mesure du cercle</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">−212</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">mort au siège de Syracuse</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1229</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">le parchemin est gratté</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1906</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Heiberg le déchiffre</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1998</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">vente à 2 millions de dollars</text></svg>",
+    "source": "Archimède, De la mesure du cercle ; palimpseste d'Archimède"
+   },
+   "symbole": "π",
+   "embleme": "couronne-hieron",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "cercle",
+      "titre": {
+       "fr": "Coincer le cercle"
+      },
+      "texte": [
+       {
+        "fr": "Vers 250 av. J.-C., dans La Mesure du cercle, Archimède place le cercle entre deux polygones réguliers, l'un dedans, l'autre dehors. Il double le nombre de côtés : 6, 12, 24, 48, puis 96. Le périmètre du cercle est toujours coincé entre ceux des deux polygones."
+       },
+       {
+        "fr": "Il en tire un encadrement : π est plus grand que 223/71 et plus petit que 22/7, soit entre 3,1408 et 3,1429. Il montre aussi que l'aire d'un disque est celle d'un triangle rectangle dont les côtés de l'angle droit sont le rayon et la circonférence. Sa méthode, qui approche une courbe par des figures de plus en plus fines, annonce le calcul infinitésimal."
+       }
+      ],
+      "retenir": {
+       "fr": "Polygones de 96 côtés : 223/71 < π < 22/7. L'aire du disque est celle d'un triangle de côtés r et 2πr."
+      },
+      "source": "Archimède, De la mesure du cercle",
+      "figure": "mc_math_polygones",
+      "reperes": [
+       {
+        "fr": "Il en tire un encadrement : π est plus grand que 223/71 et plus petit que 22/7, soit entre 3,1408 et 3,1429."
+       }
+      ]
+     },
+     {
+      "id": "sphere",
+      "titre": {
+       "fr": "La sphère et le cylindre"
+      },
+      "texte": [
+       {
+        "fr": "Archimède montre qu'une sphère a exactement les deux tiers du volume du cylindre qui l'enferme, et aussi les deux tiers de sa surface, bases comprises. C'est le résultat dont il était le plus fier : il voulut qu'une sphère dans un cylindre orne sa tombe."
+       },
+       {
+        "fr": "En 212 av. J.-C., Syracuse tombe aux mains des Romains ; un soldat tue Archimède malgré l'ordre de l'épargner. Bien plus tard, Cicéron, alors questeur en Sicile, retrouve la tombe sous les broussailles, près de la porte d'Agrigente, grâce à la sphère et au cylindre sculptés. Quant aux derniers mots « Ne dérange pas mes cercles », aucune source antique ne les rapporte."
+       }
+      ],
+      "retenir": {
+       "fr": "Sphère = 2/3 du cylindre, en volume comme en surface. Gravé sur sa tombe, que Cicéron retrouva."
+      },
+      "source": "Archimède, De la sphère et du cylindre ; Cicéron, Tusculanes",
+      "reperes": [
+       {
+        "fr": "Archimède montre qu'une sphère a exactement les deux tiers du volume du cylindre qui l'enferme, et aussi les deux tiers de sa surface, bases comprises."
+       }
+      ]
+     },
+     {
+      "id": "palimpseste",
+      "titre": {
+       "fr": "Le livre sous le livre"
+      },
+      "texte": [
+       {
+        "fr": "En 1229, près de Jérusalem, des moines démontent un vieux manuscrit grec, grattent et lavent ses pages, et les réutilisent pour un livre de prières. Sous les prières dormaient des textes d'Archimède, dont La Méthode, où il explique comment il trouvait ses résultats en « pesant » des figures."
+       },
+       {
+        "fr": "En 1906, à Constantinople, le Danois Johan Ludvig Heiberg reconnaît Archimède sous les prières et photographie le manuscrit. Disparu ensuite, il réapparaît en 1998 : vendu 2 millions de dollars à New York, il est étudié de 1999 à 2008 au Walters Art Museum de Baltimore, aux ultraviolets, aux infrarouges, puis aux rayons X."
+       }
+      ],
+      "retenir": {
+       "fr": "Palimpseste : effacé en 1229, reconnu par Heiberg en 1906, seule copie de La Méthode."
+      },
+      "source": "Palimpseste d'Archimède, Walters Art Museum",
+      "reperes": [
+       {
+        "fr": "En 1906, à Constantinople, le Danois Johan Ludvig Heiberg reconnaît Archimède sous les prières et photographie le manuscrit."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.chine",
+   "stat": "logique",
+   "rang": 3,
+   "nom": {
+    "fr": "Les Neuf chapitres chinois"
+   },
+   "description": {
+    "fr": "Nombres négatifs, systèmes d'équations, π à sept décimales : la Chine calcule avec des baguettes."
+   },
+   "prerequis": [
+    "math.archimede"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Les Neuf chapitres sur l'art du calcul, compilés sur plusieurs siècles avant notre ère, sont fixés au plus tard en 93 ; Liu Hui les commente en 263."
+     },
+     {
+      "fr": "On y calcule avec des nombres négatifs : des baguettes rouges et noires distinguent les deux signes."
+     },
+     {
+      "fr": "Le chapitre 8, fangcheng, résout des systèmes jusqu'à cinq inconnues par une méthode identique à l'élimination de Gauss."
+     },
+     {
+      "fr": "Au Ve siècle, Zu Chongzhi coince π entre 3,1415926 et 3,1415927 : un record tenu plus de neuf siècles."
+     }
+    ],
+    "piege": {
+     "fr": "On appelle cette méthode « élimination de Gauss », mais les calculateurs chinois l'utilisaient plus de seize siècles avant Gauss."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 164\" role=\"img\" aria-label=\"Les Neuf chapitres, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"154\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">Xe-IIe s. av.</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">rédaction des Neuf chapitres</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">au plus tard 93</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">texte fixé</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">263</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">commentaire de Liu Hui</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">Ve s.</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Zu Chongzhi et 355/113</text></svg>",
+    "source": "Les Neuf chapitres sur l'art du calcul, commentaire de Liu Hui, 263"
+   },
+   "symbole": "九",
+   "embleme": "baguettes",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "neuf",
+      "titre": {
+       "fr": "Un manuel en neuf chapitres"
+      },
+      "texte": [
+       {
+        "fr": "Les Neuf chapitres sur l'art du calcul ont été rédigés par plusieurs générations de savants, entre le Xe et le IIe siècle av. J.-C., et fixés au plus tard en 93 de notre ère. Comme le papyrus Rhind, c'est un recueil de problèmes pratiques : arpenter des champs, échanger du millet contre du riz, partager des impôts, creuser des canaux."
+       },
+       {
+        "fr": "Le chapitre 7, « Excès et déficit », résout des problèmes par ce que l'Europe appellera la règle de fausse position. Le chapitre 9, gougu, traite des triangles rectangles, comme le 3-4-5. Et le texte donne des règles pour additionner et soustraire des nombres négatifs, représentés par des baguettes de couleur."
+       }
+      ],
+      "retenir": {
+       "fr": "Neuf chapitres de problèmes pratiques, fixés au plus tard en 93 : fausse position, triangles rectangles, nombres négatifs."
+      },
+      "source": "Les Neuf chapitres sur l'art du calcul",
+      "reperes": [
+       {
+        "fr": "Le chapitre 7, « Excès et déficit », résout des problèmes par ce que l'Europe appellera la règle de fausse position."
+       }
+      ]
+     },
+     {
+      "id": "fangcheng",
+      "titre": {
+       "fr": "Le tableau de baguettes"
+      },
+      "texte": [
+       {
+        "fr": "Le chapitre 8, fangcheng, résout des systèmes d'équations à plusieurs inconnues. Les coefficients sont posés en tableau avec des baguettes sur une planche à calcul, puis on soustrait une colonne d'une autre jusqu'à ne garder qu'une inconnue par ligne. L'exemple le plus complexe compte cinq inconnues."
+       },
+       {
+        "fr": "C'est exactement ce que nous appelons l'élimination de Gauss, du nom du mathématicien allemand du XIXe siècle. Les soustractions faisaient apparaître des nombres négatifs : les Chinois les acceptaient, avec des baguettes rouges et noires, quand l'Europe les tiendra longtemps pour absurdes."
+       }
+      ],
+      "retenir": {
+       "fr": "Fangcheng : un tableau de coefficients, des colonnes soustraites, jusqu'à 5 inconnues. L'élimination « de Gauss », deux millénaires plus tôt."
+      },
+      "source": "Les Neuf chapitres, chapitre 8",
+      "figure": "mc_math_fangcheng",
+      "reperes": [
+       {
+        "fr": "L'exemple le plus complexe compte cinq inconnues."
+       }
+      ]
+     },
+     {
+      "id": "liu-hui",
+      "titre": {
+       "fr": "Liu Hui et les 3 072 côtés"
+      },
+      "texte": [
+       {
+        "fr": "En 263, Liu Hui publie un commentaire des Neuf chapitres. Avant lui, on prenait souvent π = 3. Comme Archimède, il inscrit des polygones dans un cercle ; il pousse jusqu'à 3 072 côtés et obtient 3,14159. Il calcule aussi des volumes, mais avoue ne pas trouver celui de la sphère : il le laisse « à un futur mathématicien »."
+       },
+       {
+        "fr": "Au Ve siècle, Zu Chongzhi va plus loin : π est entre 3,1415926 et 3,1415927. Il propose deux fractions, 22/7, « le rapport approché », et 355/113, « le rapport serré ». Ce record de précision tiendra plus de neuf cents ans. Son livre, le Zhui Shu, est perdu depuis la dynastie Song."
+       }
+      ],
+      "retenir": {
+       "fr": "Liu Hui : 3 072 côtés, 3,14159. Zu Chongzhi : 355/113, record pendant plus de 900 ans."
+      },
+      "source": "Liu Hui, commentaire des Neuf chapitres, 263 ; Zu Chongzhi",
+      "reperes": [
+       {
+        "fr": "Comme Archimède, il inscrit des polygones dans un cercle ; il pousse jusqu'à 3 072 côtés et obtient 3,14159."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.inde",
+   "stat": "logique",
+   "rang": 3,
+   "nom": {
+    "fr": "L'Inde et le zéro"
+   },
+   "description": {
+    "fr": "Aryabhata, Brahmagupta, l'école du Kerala : le zéro devient un nombre et π une série infinie."
+   },
+   "prerequis": [
+    "math.archimede"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "En 499, Aryabhata, 23 ans, donne π ≈ 62 832/20 000 = 3,1416 et dit que la Terre tourne sur elle-même."
+     },
+     {
+      "fr": "En 628, Brahmagupta traite zéro comme un nombre à part entière, avec des règles de calcul pour zéro et les négatifs."
+     },
+     {
+      "fr": "Le manuscrit de Bakhshali note zéro par un point ; sa datation est encore débattue."
+     },
+     {
+      "fr": "Vers 1400, Madhava, au Kerala, écrit π comme une somme infinie, environ un siècle avant l'Europe."
+     }
+    ],
+    "piege": {
+     "fr": "Nos « chiffres arabes » sont en fait indiens : l'Europe les a reçus par le monde arabe, d'où le nom."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Les mathématiques indiennes, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">499</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Aryabhata, π ≈ 3,1416</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">628</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Brahmagupta et le zéro</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">v. 1400</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Madhava, séries infinies</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1881</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Bakhshali découvert</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">2017</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">datation au carbone</text></svg>",
+    "source": "Brahmagupta, Brahmasphutasiddhanta, 628 ; Aryabhata, Aryabhatiya, 499"
+   },
+   "symbole": "0",
+   "embleme": "zero",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "aryabhata",
+      "titre": {
+       "fr": "Aryabhata, 23 ans"
+      },
+      "texte": [
+       {
+        "fr": "Aryabhata naît en 476. Son traité, l'Aryabhatiya, dit qu'il a 23 ans en 499. Il y donne une règle : la circonférence d'un cercle de diamètre 20 000 « peut être approchée » par 62 832. Cela fait π ≈ 3,1416. Le mot « approchée » laisse penser qu'il savait la valeur inexacte."
+       },
+       {
+        "fr": "Il utilise une numération de position, sans symbole pour le zéro, dresse une table de sinus de 3,75° en 3,75° et affirme que la Terre tourne sur son axe chaque jour, ce qui explique le mouvement apparent des étoiles."
+       }
+      ],
+      "retenir": {
+       "fr": "Aryabhata, 499 : π ≈ 62 832/20 000 = 3,1416, « approché » ; la Terre tourne sur elle-même."
+      },
+      "source": "Aryabhata, Aryabhatiya, 499",
+      "reperes": [
+       {
+        "fr": "Cela fait π ≈ 3,1416."
+       }
+      ]
+     },
+     {
+      "id": "zero",
+      "titre": {
+       "fr": "Zéro devient un nombre"
+      },
+      "texte": [
+       {
+        "fr": "En 628, à 30 ans, Brahmagupta, né à Bhillamala dans l'ouest de l'Inde, compose le Brahmasphutasiddhanta. C'est le plus ancien texte connu qui traite zéro comme un nombre à part entière, avec ses propres règles : un négatif plus zéro reste négatif ; deux négatifs multipliés donnent un positif."
+       },
+       {
+        "fr": "Il se trompe sur un point : pour lui, zéro divisé par zéro fait zéro ; et il ne tranche pas pour un nombre divisé par zéro. Le zéro comme marque d'une place vide existait déjà ; le manuscrit de Bakhshali, trouvé en 1881 et conservé à Oxford, le note par un point. Ses dates restent discutées : en 2017, trois feuillets ont donné des âges très différents, et Oxford a révisé l'ensemble en 2024."
+       }
+      ],
+      "retenir": {
+       "fr": "Brahmagupta, 628 : zéro est un nombre, avec des règles. Erreur : 0/0 = 0. Bakhshali : zéro noté par un point."
+      },
+      "source": "Brahmagupta, Brahmasphutasiddhanta, 628",
+      "figure": "mc_math_zero",
+      "reperes": [
+       {
+        "fr": "En 628, à 30 ans, Brahmagupta, né à Bhillamala dans l'ouest de l'Inde, compose le Brahmasphutasiddhanta."
+       }
+      ]
+     },
+     {
+      "id": "kerala",
+      "titre": {
+       "fr": "L'école du Kerala"
+      },
+      "texte": [
+       {
+        "fr": "Au sud de l'Inde, au Kerala, Madhava de Sangamagrama, vers 1340-1425, fonde une école d'astronomes et de mathématiciens. On lui attribue des séries infinies pour le sinus, le cosinus et l'arc tangente, et pour π une somme sans fin, aujourd'hui appelée série de Madhava-Leibniz."
+       },
+       {
+        "fr": "Avec des termes correctifs, il obtient 11 décimales exactes de π. Si ces résultats sont bien de lui, ils précèdent d'un siècle environ ceux de l'Écossais James Gregory, en 1667. On les connaît par des textes plus tardifs, comme le Yuktibhasa de Jyeshtadeva, vers 1530, et rien ne prouve qu'ils aient atteint l'Europe avant le XIXe siècle."
+       }
+      ],
+      "retenir": {
+       "fr": "Madhava, Kerala, vers 1400 : séries infinies pour π et le sinus, un siècle avant l'Europe."
+      },
+      "source": "Madhava de Sangamagrama ; Jyeshtadeva, Yuktibhasa, v. 1530",
+      "reperes": [
+       {
+        "fr": "Avec des termes correctifs, il obtient 11 décimales exactes de π."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.algebre",
+   "stat": "logique",
+   "rang": 3,
+   "nom": {
+    "fr": "Al-Khwarizmi et l'algèbre"
+   },
+   "description": {
+    "fr": "À Bagdad, vers 820, al-Khwarizmi range les équations en formes types et donne une recette pour chacune : l'algèbre a un nom."
+   },
+   "prerequis": [
+    "math.chine",
+    "math.inde"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Résoudre une équation : faire la même opération des deux côtés jusqu'à isoler l'inconnue."
+     },
+     {
+      "fr": "Identités remarquables : (a + b)² = a² + 2ab + b², (a − b)² = a² − 2ab + b², (a + b)(a − b) = a² − b²."
+     },
+     {
+      "fr": "(a + b)² n'est pas a² + b² : on oublie le double produit 2ab."
+     },
+     {
+      "fr": "Un système de deux équations à deux inconnues se résout par substitution ou par combinaison."
+     },
+     {
+      "fr": "Second degré ax² + bx + c = 0 : discriminant Δ = b² − 4ac ; si Δ > 0, deux solutions (−b ± √Δ) ÷ 2a."
+     }
+    ],
+    "piege": {
+     "fr": "Diviser les deux côtés par x fait perdre la solution x = 0 : on factorise plutôt."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Résoudre 3x + 5 = 20 étape par étape\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x + 5 = 20</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x = 15</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">x = 5</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">on retire 5, puis on divise par 3</text></svg>",
+    "source": "Programme de mathématiques de seconde, Éduscol"
+   },
+   "symbole": "x²",
+   "embleme": "tablette",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "balance",
+      "titre": {
+       "fr": "L'équation comme une balance"
+      },
+      "texte": [
+       {
+        "fr": "Une équation est une balance en équilibre. On peut tout faire, pourvu qu'on le fasse des deux côtés. 3x + 5 = 20 : on retire 5 de chaque côté, 3x = 15 ; on divise chaque côté par 3, x = 5. On vérifie : 3 × 5 + 5 = 20."
+       },
+       {
+        "fr": "Le mot algèbre vient de là. Vers 820, à Bagdad, al-Khwârizmî écrit un traité dont le titre nomme deux gestes : al-jabr, la « restauration », qui fait passer un terme retranché de l'autre côté, et al-muqâbala, l'« équilibrage », qui retire la même quantité des deux côtés. Traduit en latin en 1145, al-jabr est devenu algèbre."
+       }
+      ],
+      "retenir": {
+       "fr": "Même opération des deux côtés jusqu'à isoler l'inconnue. Algèbre vient d'al-jabr, la restauration (al-Khwârizmî, vers 820)."
+      },
+      "source": "al-Khwârizmî, Abrégé du calcul par la restauration et la comparaison, vers 820",
+      "reperes": [
+       {
+        "fr": "Traduit en latin en 1145, al-jabr est devenu algèbre."
+       }
+      ]
+     },
+     {
+      "id": "identites",
+      "titre": {
+       "fr": "Le carré qui oublie un morceau"
+      },
+      "texte": [
+       {
+        "fr": "(a + b)² n'est pas a² + b². Dessinez un carré de côté a + b : il contient un carré a², un carré b², et deux rectangles a × b. D'où (a + b)² = a² + 2ab + b². Le 2ab est le morceau qu'on oublie. Avec a = 3 et b = 4 : 49, et non 25. Ce dessin est la proposition 4 du livre II des Éléments d'Euclide, vers 300 avant notre ère : « le carré sur la droite entière égale les carrés sur les segments et deux fois le rectangle qu'ils forment »."
+       },
+       {
+        "fr": "Les deux autres identités suivent : (a − b)² = a² − 2ab + b², et (a + b)(a − b) = a² − b². Cette dernière sert à factoriser : x² − 9 = (x − 3)(x + 3). Et elle sauve du calcul mental : 21 × 19 = 20² − 1² = 399."
+       }
+      ],
+      "retenir": {
+       "fr": "(a + b)² = a² + 2ab + b² ; (a − b)² = a² − 2ab + b² ; (a + b)(a − b) = a² − b²."
+      },
+      "source": "Programme de mathématiques de seconde, Éduscol",
+      "figure": "mc_math_identite"
+     },
+     {
+      "id": "second-degre",
+      "titre": {
+       "fr": "Quand l'inconnue est au carré"
+      },
+      "texte": [
+       {
+        "fr": "Une équation ax² + bx + c = 0 se règle avec le discriminant Δ = b² − 4ac. S'il est positif, deux solutions, (−b ± √Δ) ÷ 2a ; nul, une seule ; négatif, aucune parmi les nombres réels. Pour x² − 5x + 6 = 0 : Δ = 25 − 24 = 1, et les solutions sont 2 et 3."
+       },
+       {
+        "fr": "Al-Khwârizmî résolvait déjà ces équations en « complétant le carré ». Les plus anciennes traces sont pourtant bien plus vieilles : vers 2000 avant notre ère, des tablettes d'argile babyloniennes résolvent des problèmes de côtés et d'aires de rectangles par des étapes qui reviennent à notre formule. Les lettres sont venues bien plus tard : à la fin du XVIe siècle, François Viète désigne les inconnues par des voyelles et les quantités connues par des consonnes, avant que Descartes n'impose x, y, z. Un piège à garder en tête : diviser les deux côtés par x fait perdre la solution x = 0 ; on factorise plutôt."
+       }
+      ],
+      "retenir": {
+       "fr": "Δ = b² − 4ac : positif, deux solutions ; nul, une ; négatif, aucune réelle. Ne jamais diviser par x : factoriser."
+      },
+      "source": "Viète, In artem analyticem isagoge, 1591",
+      "figure": "mc_math_discriminant"
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.arithmetique",
+   "stat": "logique",
+   "rang": 4,
+   "nom": {
+    "fr": "Fibonacci et les chiffres"
+   },
+   "description": {
+    "fr": "En 1202, Léonard de Pise apporte aux marchands d'Europe les chiffres indiens et le calcul écrit : fractions, règles et calcul mental."
+   },
+   "prerequis": [
+    "math.algebre"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Priorités : parenthèses, puissances, puis multiplications et divisions (de gauche à droite), puis additions et soustractions."
+     },
+     {
+      "fr": "Pour additionner des fractions, on les met au même dénominateur : 3/4 + 1/8 = 6/8 + 1/8 = 7/8. On n'additionne jamais les dénominateurs."
+     },
+     {
+      "fr": "Diviser par une fraction, c'est multiplier par son inverse : 2 ÷ 1/2 = 4."
+     },
+     {
+      "fr": "Un nombre premier a exactement deux diviseurs, 1 et lui-même. 1 n'est donc pas premier ; 2 est le seul premier pair."
+     }
+    ],
+    "piege": {
+     "fr": "6 ÷ 2 × 3 vaut 9, pas 1 : à priorité égale, la convention est de calculer de gauche à droite."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 100\" role=\"img\" aria-label=\"Une barre coupée en 4 dont 3 parts colorées, une barre coupée en 8 dont 1 part colorée\"><text class=\"t\" x=\"20\" y=\"30\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">3/4</text><text class=\"t\" x=\"20\" y=\"80\" font-size=\"15\" text-anchor=\"start\" font-weight=\"700\">1/8</text><rect class=\"a\" x=\"70\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"130\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"a\" x=\"190\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"250\" y=\"12\" width=\"58\" height=\"28\" rx=\"3\"/><rect class=\"a\" x=\"70\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\" opacity=\"0.5\"/><rect class=\"f2\" x=\"100\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"130\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"160\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"190\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"220\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"250\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/><rect class=\"f2\" x=\"280\" y=\"62\" width=\"28\" height=\"28\" rx=\"3\"/></svg>",
+    "source": "Programme de mathématiques du cycle 4, Éduscol"
+   },
+   "symbole": "½",
+   "embleme": "boulier",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "priorites",
+      "titre": {
+       "fr": "Dans quel ordre calculer"
+      },
+      "texte": [
+       {
+        "fr": "Un calcul s'écrit sur une ligne, mais il ne se lit pas forcément de gauche à droite. La convention : d'abord les parenthèses, puis les puissances, puis les multiplications et divisions, enfin les additions et soustractions. 2 + 3 × 4 vaut donc 14, pas 20."
+       },
+       {
+        "fr": "Quand deux opérations ont la même priorité, on avance de gauche à droite. 6 ÷ 2 × 3, c'est 3 × 3 = 9, et pas 6 ÷ 6 = 1. Ce n'est pas une loi de la nature mais une règle d'écriture, adoptée pour que tout le monde lise le même calcul de la même façon. En cas de doute, une paire de parenthèses coûte moins cher qu'une dispute. Cette règle est récente : la multiplication passe avant l'addition depuis la notation algébrique du XVIIe siècle, et le nom d'ordre des opérations ne s'impose qu'à la fin du XIXe ou au début du XXe siècle, avec les manuels scolaires. Dans les années 1920, on se disputait encore pour savoir si la multiplication passait avant la division."
+       }
+      ],
+      "retenir": {
+       "fr": "Parenthèses, puissances, × et ÷, puis + et −. À égalité, de gauche à droite."
+      },
+      "source": "Programme de mathématiques du cycle 4, Éduscol",
+      "figure": "mc_math_priorites"
+     },
+     {
+      "id": "fractions",
+      "titre": {
+       "fr": "Les fractions sans se tromper"
+      },
+      "texte": [
+       {
+        "fr": "Pour additionner des fractions, il faut qu'elles parlent de parts de même taille : on les met au même dénominateur. 3/4 + 1/8, c'est 6/8 + 1/8 = 7/8. Additionner les dénominateurs (4 + 8) n'a aucun sens : on ne coupe pas le gâteau en douze en ajoutant deux parts."
+       },
+       {
+        "fr": "Multiplier, c'est plus simple : on multiplie en haut et en bas, et la moitié d'un tiers fait 1/2 × 1/3 = 1/6. Diviser par une fraction, c'est multiplier par son inverse : 2 ÷ 1/2 = 2 × 2 = 4, puisqu'il y a quatre demis dans deux. Les Égyptiens, eux, écrivaient presque tout en sommes de fractions de numérateur 1 : 2/5 devenait 1/3 + 1/15. On le voit sur le papyrus Rhind, copié vers 1550 avant notre ère par le scribe Ahmès, qui s'ouvre sur une table de 2/n écrits en fractions unitaires."
+       }
+      ],
+      "retenir": {
+       "fr": "Additionner : même dénominateur d'abord. Diviser par une fraction : multiplier par son inverse."
+      },
+      "source": "Programme de mathématiques du cycle 4, Éduscol",
+      "schema_fiche": true,
+      "reperes": [
+       {
+        "fr": "On le voit sur le papyrus Rhind, copié vers 1550 avant notre ère par le scribe Ahmès, qui s'ouvre sur une table de 2/n écrits en fractions unitaires."
+       }
+      ]
+     },
+     {
+      "id": "premiers",
+      "titre": {
+       "fr": "Les nombres premiers ne s'arrêtent jamais"
+      },
+      "texte": [
+       {
+        "fr": "Un nombre premier a exactement deux diviseurs : 1 et lui-même. 2, 3, 5, 7, 11, 13… 1 n'est pas premier, puisqu'il n'a qu'un diviseur, et 2 est le seul premier pair. Tout entier se décompose en produit de premiers : ce sont les briques de la multiplication."
+       },
+       {
+        "fr": "Y en a-t-il une infinité ? Euclide le démontre vers 300 avant notre ère, livre IX des Éléments. Prenez une liste finie de premiers, multipliez-les tous et ajoutez 1. Le résultat n'est divisible par aucun d'eux, puisqu'il reste toujours 1. Donc il est premier, ou il a un facteur premier qui manquait à la liste. Aucune liste n'est jamais complète."
+       }
+      ],
+      "retenir": {
+       "fr": "Premier = exactement deux diviseurs (1 n'est pas premier). Il y en a une infinité (Euclide, Éléments IX, 20)."
+      },
+      "source": "Euclide, Éléments, livre IX, proposition 20",
+      "figure": "mc_math_premiers"
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.proportions",
+   "stat": "logique",
+   "rang": 4,
+   "nom": {
+    "fr": "Proportions et règle de trois"
+   },
+   "description": {
+    "fr": "Des marchands de la Renaissance à nos soldes : la règle de trois, les rapports, les intérêts et les pourcentages."
    },
    "prerequis": [
     "math.arithmetique"
@@ -317,209 +1091,112 @@
    }
   },
   {
-   "id": "math.algebre",
+   "id": "math.cardan",
    "stat": "logique",
    "rang": 4,
    "nom": {
-    "fr": "Algèbre et équations"
+    "fr": "Les équations de la Renaissance"
    },
    "description": {
-    "fr": "Inconnues, équations, identités remarquables et systèmes."
+    "fr": "Secrets, défis publics et racines de nombres négatifs : l'Italie résout le troisième et le quatrième degré."
    },
    "prerequis": [
-    "math.geometrie",
-    "math.proportions"
+    "math.arithmetique"
    ],
    "fiche": {
     "essentiel": [
      {
-      "fr": "Résoudre une équation : faire la même opération des deux côtés jusqu'à isoler l'inconnue."
+      "fr": "En 1539, Tartaglia confie à Cardan sa méthode pour le troisième degré, en vers, contre la promesse de la garder secrète."
      },
      {
-      "fr": "Identités remarquables : (a + b)² = a² + 2ab + b², (a − b)² = a² − 2ab + b², (a + b)(a − b) = a² − b²."
+      "fr": "Cardan apprend que Scipione del Ferro l'avait trouvée avant, et publie tout en 1545 dans l'Ars Magna, avec le quatrième degré de son élève Ferrari."
      },
      {
-      "fr": "(a + b)² n'est pas a² + b² : on oublie le double produit 2ab."
+      "fr": "Dans l'Ars Magna apparaissent les premières racines de nombres négatifs : 5 + √−15."
      },
      {
-      "fr": "Un système de deux équations à deux inconnues se résout par substitution ou par combinaison."
-     },
-     {
-      "fr": "Second degré ax² + bx + c = 0 : discriminant Δ = b² − 4ac ; si Δ > 0, deux solutions (−b ± √Δ) ÷ 2a."
+      "fr": "En 1572, Bombelli donne les règles de calcul de ces nombres : il est tenu pour l'inventeur des nombres complexes."
      }
     ],
     "piege": {
-     "fr": "Diviser les deux côtés par x fait perdre la solution x = 0 : on factorise plutôt."
+     "fr": "La « formule de Cardan » est due au moins autant à del Ferro et à Tartaglia : les historiens parlent aujourd'hui de formule de Cardan-Tartaglia."
     },
-    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 122\" role=\"img\" aria-label=\"Résoudre 3x + 5 = 20 étape par étape\"><rect class=\"f\" x=\"10.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"56.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x + 5 = 20</text><line class=\"al\" x1=\"105.0\" y1=\"52.0\" x2=\"121.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M114.9 55.4 L121.0 52.0 L114.9 48.6\" stroke-width=\"2\"/><rect class=\"f\" x=\"124.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\"/><text class=\"t\" x=\"170.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">3x = 15</text><line class=\"al\" x1=\"219.0\" y1=\"52.0\" x2=\"235.0\" y2=\"52.0\" stroke-width=\"2\"/><path class=\"al\" d=\"M228.9 55.4 L235.0 52.0 L228.9 48.6\" stroke-width=\"2\"/><rect class=\"a\" x=\"238.0\" y=\"20\" width=\"92.0\" height=\"64\" rx=\"8\" opacity=\"0.35\"/><text class=\"t\" x=\"284.0\" y=\"56.2\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">x = 5</text><text class=\"tm\" x=\"170.0\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">on retire 5, puis on divise par 3</text></svg>",
-    "source": "Programme de mathématiques de seconde, Éduscol"
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Les équations de la Renaissance, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1512</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Tartaglia blessé à Brescia</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1539</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">le secret confié à Cardan</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1545</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Ars Magna</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1572</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">L'Algebra de Bombelli</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1591</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Viète écrit avec des lettres</text></svg>",
+    "source": "Jérôme Cardan, Ars Magna, 1545 ; Rafael Bombelli, L'Algebra, 1572"
    },
-   "symbole": "x²",
-   "embleme": "tablette",
+   "symbole": "∛",
+   "embleme": "engrenage",
    "masterclass": {
     "chapitres": [
      {
-      "id": "balance",
+      "id": "secret",
       "titre": {
-       "fr": "L'équation comme une balance"
+       "fr": "Le secret du bègue"
       },
       "texte": [
        {
-        "fr": "Une équation est une balance en équilibre. On peut tout faire, pourvu qu'on le fasse des deux côtés. 3x + 5 = 20 : on retire 5 de chaque côté, 3x = 15 ; on divise chaque côté par 3, x = 5. On vérifie : 3 × 5 + 5 = 20."
+        "fr": "En 1512, des soldats français mettent Brescia à sac ; un jeune garçon, Niccolò Fontana, a la mâchoire et le palais tranchés d'un coup de sabre. Il en garde un défaut d'élocution et un surnom, Tartaglia, « le bègue ». Autodidacte, il travaille seul, « accompagné de la seule fille de la pauvreté qu'on appelle l'industrie »."
        },
        {
-        "fr": "Le mot algèbre vient de là. Vers 820, à Bagdad, al-Khwârizmî écrit un traité dont le titre nomme deux gestes : al-jabr, la « restauration », qui fait passer un terme retranché de l'autre côté, et al-muqâbala, l'« équilibrage », qui retire la même quantité des deux côtés. Traduit en latin en 1145, al-jabr est devenu algèbre."
+        "fr": "Tartaglia sait résoudre certaines équations du troisième degré. Jérôme Cardan, médecin milanais, finit par le convaincre de lui livrer la méthode, contre la promesse de ne pas la publier. Tartaglia la lui donne en vers, pour trois formes d'équations."
        }
       ],
       "retenir": {
-       "fr": "Même opération des deux côtés jusqu'à isoler l'inconnue. Algèbre vient d'al-jabr, la restauration (al-Khwârizmî, vers 820)."
+       "fr": "Tartaglia, « le bègue » blessé en 1512, livre sa méthode du troisième degré à Cardan, en vers, sous le sceau du secret."
       },
-      "source": "al-Khwârizmî, Abrégé du calcul par la restauration et la comparaison, vers 820",
+      "source": "Niccolò Fontana Tartaglia",
       "reperes": [
        {
-        "fr": "Traduit en latin en 1145, al-jabr est devenu algèbre."
+        "fr": "Il en garde un défaut d'élocution et un surnom, Tartaglia, « le bègue »."
        }
       ]
      },
      {
-      "id": "identites",
+      "id": "ars-magna",
       "titre": {
-       "fr": "Le carré qui oublie un morceau"
+       "fr": "Le Grand Art"
       },
       "texte": [
        {
-        "fr": "(a + b)² n'est pas a² + b². Dessinez un carré de côté a + b : il contient un carré a², un carré b², et deux rectangles a × b. D'où (a + b)² = a² + 2ab + b². Le 2ab est le morceau qu'on oublie. Avec a = 3 et b = 4 : 49, et non 25. Ce dessin est la proposition 4 du livre II des Éléments d'Euclide, vers 300 avant notre ère : « le carré sur la droite entière égale les carrés sur les segments et deux fois le rectangle qu'ils forment »."
+        "fr": "Cardan découvre ensuite que Scipione del Ferro avait trouvé la même formule avant Tartaglia. Il s'estime délié de sa promesse et publie tout en 1545 dans l'Ars Magna, avec la méthode de son élève Lodovico Ferrari pour les équations du quatrième degré, qui s'appuie elle-même sur le troisième."
        },
        {
-        "fr": "Les deux autres identités suivent : (a − b)² = a² − 2ab + b², et (a + b)(a − b) = a² − b². Cette dernière sert à factoriser : x² − 9 = (x − 3)(x + 3). Et elle sauve du calcul mental : 21 × 19 = 20² − 1² = 399."
+        "fr": "Tartaglia est furieux ; un défi public l'oppose ensuite à Ferrari. Les historiens parlent aujourd'hui de formule de Cardan-Tartaglia. Cardan, lui, était un personnage étonnant : médecin recherché, joueur invétéré, auteur du premier traité systématique sur les probabilités, le Livre des jeux de hasard, écrit vers 1564."
        }
       ],
       "retenir": {
-       "fr": "(a + b)² = a² + 2ab + b² ; (a − b)² = a² − 2ab + b² ; (a + b)(a − b) = a² − b²."
+       "fr": "Ars Magna, 1545 : troisième degré (del Ferro, Tartaglia) et quatrième (Ferrari). Formule de Cardan-Tartaglia."
       },
-      "source": "Programme de mathématiques de seconde, Éduscol",
-      "figure": "mc_math_identite"
-     },
-     {
-      "id": "second-degre",
-      "titre": {
-       "fr": "Quand l'inconnue est au carré"
-      },
-      "texte": [
-       {
-        "fr": "Une équation ax² + bx + c = 0 se règle avec le discriminant Δ = b² − 4ac. S'il est positif, deux solutions, (−b ± √Δ) ÷ 2a ; nul, une seule ; négatif, aucune parmi les nombres réels. Pour x² − 5x + 6 = 0 : Δ = 25 − 24 = 1, et les solutions sont 2 et 3."
-       },
-       {
-        "fr": "Al-Khwârizmî résolvait déjà ces équations en « complétant le carré ». Les plus anciennes traces sont pourtant bien plus vieilles : vers 2000 avant notre ère, des tablettes d'argile babyloniennes résolvent des problèmes de côtés et d'aires de rectangles par des étapes qui reviennent à notre formule. Les lettres sont venues bien plus tard : à la fin du XVIe siècle, François Viète désigne les inconnues par des voyelles et les quantités connues par des consonnes, avant que Descartes n'impose x, y, z. Un piège à garder en tête : diviser les deux côtés par x fait perdre la solution x = 0 ; on factorise plutôt."
-       }
-      ],
-      "retenir": {
-       "fr": "Δ = b² − 4ac : positif, deux solutions ; nul, une ; négatif, aucune réelle. Ne jamais diviser par x : factoriser."
-      },
-      "source": "Viète, In artem analyticem isagoge, 1591",
-      "figure": "mc_math_discriminant"
-     }
-    ]
-   }
-  },
-  {
-   "id": "math.logique",
-   "stat": "logique",
-   "rang": 5,
-   "nom": {
-    "fr": "Logique formelle"
-   },
-   "description": {
-    "fr": "Implication, négation, syllogismes et raisonnement par l'absurde."
-   },
-   "prerequis": [
-    "math.algebre"
-   ],
-   "fiche": {
-    "essentiel": [
-     {
-      "fr": "« Si A alors B » est faux dans un seul cas : A vrai et B faux."
-     },
-     {
-      "fr": "La contraposée « si non B alors non A » est équivalente. La réciproque « si B alors A » ne l'est pas."
-     },
-     {
-      "fr": "Nier « tous les cygnes sont blancs », c'est dire « au moins un cygne n'est pas blanc », pas « aucun cygne n'est blanc »."
-     },
-     {
-      "fr": "Raisonnement par l'absurde : on suppose le contraire de ce qu'on veut prouver et on aboutit à une contradiction."
-     }
-    ],
-    "piege": {
-     "fr": "Affirmer le conséquent : « s'il pleut, le sol est mouillé ; le sol est mouillé, donc il pleut » est invalide."
-    },
-    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 148\" role=\"img\" aria-label=\"Table de vérité de l'implication\"><text class=\"t\" x=\"63.333333333333336\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A</text><text class=\"t\" x=\"170.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">B</text><text class=\"t\" x=\"276.6666666666667\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">si A alors B</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"63.333333333333336\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">vrai</text><rect class=\"a\" x=\"10\" y=\"62\" width=\"320\" height=\"24\" rx=\"4\" opacity=\"0.25\"/><text class=\"t\" x=\"63.333333333333336\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">faux</text><text class=\"t\" x=\"63.333333333333336\" y=\"105\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">vrai</text><text class=\"t\" x=\"63.333333333333336\" y=\"131\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">vrai</text></svg>",
-    "source": "Copi, Introduction to Logic, 14e éd."
-   },
-   "symbole": "∧",
-   "embleme": "ardoise-boole",
-   "masterclass": {
-    "chapitres": [
-     {
-      "id": "implication",
-      "titre": {
-       "fr": "Si… alors…"
-      },
-      "texte": [
-       {
-        "fr": "« S'il pleut, le sol est mouillé. » Cette phrase n'est fausse que dans un seul cas : il pleut et le sol est sec. S'il ne pleut pas, elle ne dit rien : le sol peut être sec ou mouillé (par l'arrosage), l'implication reste vraie. Cette définition remonte à Philon, un logicien grec de l'école dite dialectique, actif entre la fin du IVe et le milieu du IIIe siècle avant notre ère : pour lui, un « si… alors » n'est faux que si la première partie est vraie et la seconde fausse."
-       },
-       {
-        "fr": "Sa contraposée, « si le sol est sec, il n'a pas plu », dit exactement la même chose. Sa réciproque, « si le sol est mouillé, il a plu », non : c'est l'erreur dite affirmation du conséquent. Une bonne part des raisonnements bancals mélangent une implication et sa réciproque."
-       }
-      ],
-      "retenir": {
-       "fr": "« Si A alors B » n'est faux que si A est vrai et B faux. Contraposée (non B → non A) équivalente ; réciproque (B → A) non."
-      },
-      "source": "Copi, Introduction to Logic, 14e éd."
-     },
-     {
-      "id": "negation",
-      "titre": {
-       "fr": "Nier correctement"
-      },
-      "texte": [
-       {
-        "fr": "Pour contredire « tous les cygnes sont blancs », pas besoin de prouver qu'aucun cygne n'est blanc : un seul cygne noir suffit. La négation de « tous » est « au moins un ne… pas ». Et la négation de « il existe » est « aucun »."
-       },
-       {
-        "fr": "Pour les « et » et les « ou », il y a les lois de De Morgan, du nom du logicien Augustus De Morgan : « non (A et B) » équivaut à « non A ou non B », et « non (A ou B) » à « non A et non B ». Ne pas être à la fois riche et célèbre, c'est ne pas être riche, ou ne pas être célèbre, ou aucun des deux. De Morgan les énonce explicitement en 1847 dans Formal Logic, mais elles étaient connues bien avant : Guillaume d'Ockham les écrit en toutes lettres au XIVe siècle."
-       }
-      ],
-      "retenir": {
-       "fr": "Non (tous) = au moins un ne… pas. Non (A et B) = non A ou non B ; non (A ou B) = non A et non B (De Morgan)."
-      },
-      "source": "De Morgan, Formal Logic, 1847",
-      "figure": "mc_math_negation",
+      "source": "Jérôme Cardan, Ars Magna, 1545",
+      "figure": "mc_math_cardan",
       "reperes": [
        {
-        "fr": "De Morgan les énonce explicitement en 1847 dans Formal Logic, mais elles étaient connues bien avant : Guillaume d'Ockham les écrit en toutes lettres au XIVe siècle."
+        "fr": "Il s'estime délié de sa promesse et publie tout en 1545 dans l'Ars Magna, avec la méthode de son élève Lodovico Ferrari pour les équations du quatrième degré, qui s'appuie elle-même sur le troisième."
        }
       ]
      },
      {
-      "id": "absurde",
+      "id": "imaginaires",
       "titre": {
-       "fr": "Prouver par l'absurde"
+       "fr": "Aussi subtil qu'inutile"
       },
       "texte": [
        {
-        "fr": "Pour prouver qu'une chose est vraie, on peut supposer qu'elle est fausse et montrer que cela mène à une contradiction. Si l'hypothèse contraire est intenable, c'est qu'elle est fausse."
+        "fr": "Au chapitre 37 de l'Ars Magna, Cardan cherche deux nombres dont la somme fait 10 et le produit 40. Il trouve 5 + √−15 et 5 − √−15 : leur produit vaut bien 25 + 15 = 40. Mais la racine d'un nombre négatif n'a aucun sens pour lui. Il juge ce résultat « sophistique », « aussi subtil qu'inutile »."
        },
        {
-        "fr": "L'exemple le plus célèbre : √2 n'est pas une fraction. Supposons √2 = a/b, fraction simplifiée au maximum. Alors a² = 2b², donc a est pair ; en l'écrivant 2k, on trouve b² = 2k², donc b est pair aussi. Mais une fraction simplifiée ne peut pas avoir deux termes pairs : contradiction. Aristote fait déjà allusion à ce raisonnement. C'est vers 350 avant notre ère, dans les Premiers Analytiques, où il décrit la démonstration « par l'impossible ». La légende selon laquelle les pythagoriciens auraient noyé Hippase pour l'avoir révélé, en revanche, ne repose sur à peu près rien."
+        "fr": "En 1572, Rafael Bombelli, dans L'Algebra, ose calculer avec ces nombres. Il nomme « plus de moins » ce que nous notons i, et pose les règles : « plus de moins par plus de moins fait moins ». Il obtient ainsi des solutions là où Cardan avait renoncé. On le tient pour l'inventeur des nombres complexes."
        }
       ],
       "retenir": {
-       "fr": "Par l'absurde : supposer le contraire, aboutir à une contradiction. Exemple : √2 n'est pas une fraction."
+       "fr": "5 + √−15 chez Cardan (1545), règles de calcul chez Bombelli (1572) : naissance des nombres complexes."
       },
-      "source": "Aristote, Premiers Analytiques ; Euclide, Éléments, livre X",
-      "figure": "mc_math_absurde"
+      "source": "Rafael Bombelli, L'Algebra, 1572",
+      "reperes": [
+       {
+        "fr": "Il trouve 5 + √−15 et 5 − √−15 : leur produit vaut bien 25 + 15 = 40."
+       }
+      ]
      }
     ]
    }
@@ -527,15 +1204,16 @@
   {
    "id": "math.probabilites",
    "stat": "logique",
-   "rang": 6,
+   "rang": 4,
    "nom": {
-    "fr": "Probabilités"
+    "fr": "Pascal, Fermat et le hasard"
    },
    "description": {
-    "fr": "Le hasard, l'indépendance, les paradoxes qui trompent l'intuition."
+    "fr": "En 1654, une lettre sur un jeu interrompu fonde le calcul des probabilités."
    },
    "prerequis": [
-    "math.logique"
+    "math.proportions",
+    "math.cardan"
    ],
    "fiche": {
     "essentiel": [
@@ -635,17 +1313,351 @@
    }
   },
   {
-   "id": "math.statistiques",
+   "id": "math.logarithmes",
    "stat": "logique",
-   "rang": 7,
+   "rang": 5,
    "nom": {
-    "fr": "Statistiques"
+    "fr": "Logarithmes et décimales"
    },
    "description": {
-    "fr": "Moyenne, médiane, écart type, corrélation et échantillons."
+    "fr": "Napier, Briggs, Stevin : transformer les multiplications en additions et écrire les fractions avec une virgule."
    },
    "prerequis": [
-    "math.logique"
+    "math.probabilites"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "En 1614, John Napier publie les logarithmes : 57 pages d'explications et 90 pages de tables."
+     },
+     {
+      "fr": "Un logarithme change une multiplication en addition : log(a × b) = log a + log b."
+     },
+     {
+      "fr": "En 1615, Henry Briggs rend visite à Napier ; il calculera les logarithmes en base 10, à 14 décimales."
+     },
+     {
+      "fr": "Napier popularise le point décimal, après les décimales de Simon Stevin en 1585."
+     }
+    ],
+    "piege": {
+     "fr": "Les logarithmes de Napier ne sont pas nos logarithmes en base 10 : c'est Briggs qui fait ce choix, plus commode."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 164\" role=\"img\" aria-label=\"Les logarithmes, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"154\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1585</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Stevin, La Disme</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1614</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Napier, les logarithmes</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1615</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Briggs chez Napier</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1617</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Rabdologie, les bâtons</text></svg>",
+    "source": "John Napier, Mirifici Logarithmorum Canonis Descriptio, 1614"
+   },
+   "symbole": "log",
+   "embleme": "batons-napier",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "napier",
+      "titre": {
+       "fr": "Le baron de Merchiston"
+      },
+      "texte": [
+       {
+        "fr": "John Napier naît en 1550 à la tour de Merchiston, à Édimbourg, et y passe sa vie. En 1614, il publie en latin la Description de la merveilleuse règle des logarithmes : environ 57 pages d'explications et 90 pages de tables. Il le dit lui-même : rien n'est plus pénible, en mathématiques, que les longues multiplications et divisions."
+       },
+       {
+        "fr": "Ses tables servent d'abord à la trigonométrie sphérique, cœur de l'astronomie et de la navigation. Napier passait pour magicien : on disait qu'il gardait une araignée noire dans une boîte et que son coq noir était un esprit familier. Il s'en servit pour démasquer un voleur parmi ses domestiques."
+       }
+      ],
+      "retenir": {
+       "fr": "Napier, 1614 : 57 pages et 90 pages de tables pour en finir avec les longues multiplications."
+      },
+      "source": "John Napier, Mirifici Logarithmorum Canonis Descriptio, 1614",
+      "reperes": [
+       {
+        "fr": "En 1614, il publie en latin la Description de la merveilleuse règle des logarithmes : environ 57 pages d'explications et 90 pages de tables."
+       }
+      ]
+     },
+     {
+      "id": "briggs",
+      "titre": {
+       "fr": "Multiplier en additionnant"
+      },
+      "texte": [
+       {
+        "fr": "L'idée d'un logarithme : chaque nombre reçoit un « exposant », et multiplier deux nombres revient à additionner leurs exposants. Avec la base 10, log 100 = 2 et log 1 000 = 3, et 100 × 1 000 = 100 000, dont le logarithme est 2 + 3 = 5. Avec une table, une multiplication de grands nombres devient une addition et une lecture."
+       },
+       {
+        "fr": "En 1615, le mathématicien anglais Henry Briggs vient voir Napier ; ils discutent d'une autre échelle. Napier lui confie le calcul de nouvelles tables : ce seront les logarithmes en base 10, que Briggs calcule à 14 décimales."
+       }
+      ],
+      "retenir": {
+       "fr": "log(a × b) = log a + log b. Briggs, 1615 : la base 10, à 14 décimales."
+      },
+      "source": "Henry Briggs ; John Napier",
+      "figure": "mc_math_log",
+      "reperes": [
+       {
+        "fr": "Napier lui confie le calcul de nouvelles tables : ce seront les logarithmes en base 10, que Briggs calcule à 14 décimales."
+       }
+      ]
+     },
+     {
+      "id": "decimales",
+      "titre": {
+       "fr": "La virgule et les bâtons"
+      },
+      "texte": [
+       {
+        "fr": "En 1585, le Flamand Simon Stevin publie La Disme : il propose d'écrire les fractions en dixièmes, centièmes, millièmes, comme les entiers. Napier améliore sa notation en introduisant le point pour séparer la partie entière de la partie décimale, notre virgule."
+       },
+       {
+        "fr": "Les logarithmes ont été le principal facteur de l'adoption générale des décimales. Napier invente aussi des réglettes numérotées pour multiplier, les « bâtons de Napier », décrites dans sa Rabdologie, publiée après sa mort en 1617."
+       }
+      ],
+      "retenir": {
+       "fr": "Stevin, 1585 : les décimales. Napier : le point décimal et ses bâtons (1617)."
+      },
+      "source": "Simon Stevin, La Disme, 1585 ; John Napier, Rabdologia, 1617",
+      "reperes": [
+       {
+        "fr": "Napier améliore sa notation en introduisant le point pour séparer la partie entière de la partie décimale, notre virgule."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.calcul",
+   "stat": "logique",
+   "rang": 5,
+   "nom": {
+    "fr": "Le calcul infinitésimal"
+   },
+   "description": {
+    "fr": "Newton et Leibniz inventent chacun de leur côté le calcul des pentes et des aires, puis se disputent la paternité."
+   },
+   "prerequis": [
+    "math.logarithmes"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "En 1666, à 23 ans, Newton invente sa méthode des fluxions, mais ne la publie qu'en 1704."
+     },
+     {
+      "fr": "En 1684, Leibniz publie le premier sa méthode, avec la notation dx et le signe ∫ que nous utilisons encore."
+     },
+     {
+      "fr": "En 1696, L'Hôpital publie le premier manuel de calcul différentiel ; il payait Jean Bernoulli 300 livres par an."
+     },
+     {
+      "fr": "Le rapport de la Royal Society qui donne raison à Newton a été écrit par Newton lui-même ; on pense aujourd'hui qu'ils ont trouvé chacun de leur côté."
+     }
+    ],
+    "piege": {
+     "fr": "Le calcul n'a pas surgi de rien : Archimède et l'école du Kerala approchaient déjà des courbes par des sommes infinies."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Le calcul infinitésimal, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1666</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Newton, les fluxions</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1684</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Leibniz publie</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1696</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">L'Hôpital, premier manuel</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1699</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Fatio accuse Leibniz</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1713</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Commercium epistolicum</text></svg>",
+    "source": "G. W. Leibniz, Nova methodus, 1684 ; querelle Newton-Leibniz"
+   },
+   "symbole": "∫",
+   "embleme": "pomme-newton",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "newton",
+      "titre": {
+       "fr": "Les fluxions de Newton"
+      },
+      "texte": [
+       {
+        "fr": "En 1666, Isaac Newton a 23 ans. Il met au point sa méthode des fluxions : une façon de calculer comment une quantité varie à chaque instant, une vitesse, ou la pente d'une courbe en un point, et à l'inverse de retrouver une quantité à partir de sa variation, comme une aire sous une courbe."
+       },
+       {
+        "fr": "Mais Newton garde sa méthode pour lui, la fait circuler en manuscrit auprès de quelques proches, et ne la publie qu'en 1704. Sa notation, un point au-dessus de la lettre, existe encore en physique, mais c'est celle de Leibniz qui s'imposera."
+       }
+      ],
+      "retenir": {
+       "fr": "Newton, 1666, 23 ans : les fluxions, vitesses et pentes. Publiées seulement en 1704."
+      },
+      "source": "Isaac Newton, méthode des fluxions",
+      "reperes": [
+       {
+        "fr": "En 1666, Isaac Newton a 23 ans."
+       }
+      ]
+     },
+     {
+      "id": "leibniz",
+      "titre": {
+       "fr": "Les notations de Leibniz"
+      },
+      "texte": [
+       {
+        "fr": "En 1684, l'Allemand Gottfried Wilhelm Leibniz publie le premier une méthode de calcul : Nova methodus pro maximis et minimis, une « nouvelle méthode pour les maxima et les minima ». Il écrit dx pour une variation infiniment petite, dy/dx pour une pente, et ∫ pour une somme, un S allongé."
+       },
+       {
+        "fr": "Ces notations sont si commodes qu'elles s'imposent. En 1696, le marquis de L'Hôpital publie le premier manuel de calcul différentiel, l'Analyse des infiniment petits, sans nom d'auteur. Il payait au mathématicien suisse Jean Bernoulli 300 livres par an pour ses découvertes : la célèbre « règle de L'Hôpital » est sans doute de Bernoulli."
+       }
+      ],
+      "retenir": {
+       "fr": "Leibniz, 1684 : dx, dy/dx, ∫. L'Hôpital, 1696 : premier manuel, avec la règle de Bernoulli."
+      },
+      "source": "G. W. Leibniz, Nova methodus, 1684 ; L'Hôpital, Analyse des infiniment petits, 1696",
+      "reperes": [
+       {
+        "fr": "Il payait au mathématicien suisse Jean Bernoulli 300 livres par an pour ses découvertes : la célèbre « règle de L'Hôpital » est sans doute de Bernoulli."
+       }
+      ]
+     },
+     {
+      "id": "querelle",
+      "titre": {
+       "fr": "Juge et partie"
+      },
+      "texte": [
+       {
+        "fr": "En 1699, le Suisse Nicolas Fatio de Duillier accuse publiquement Leibniz d'avoir copié Newton. La querelle enfle. En 1712, la Royal Society de Londres, que préside Newton, nomme une commission ; son rapport, le Commercium epistolicum, publié au début de 1713, donne raison à Newton."
+       },
+       {
+        "fr": "Ce rapport a été entièrement orchestré par Newton lui-même. La commission n'a jamais demandé sa version à Leibniz, qui ne l'a vu qu'à l'automne 1714. Aujourd'hui, les historiens s'accordent : les deux hommes ont développé leurs idées chacun de leur côté."
+       }
+      ],
+      "retenir": {
+       "fr": "Fatio accuse en 1699 ; la Royal Society tranche en 1713 sous la plume de Newton. Verdict des historiens : découvertes indépendantes."
+      },
+      "source": "Querelle Newton-Leibniz",
+      "figure": "mc_math_querelle",
+      "reperes": [
+       {
+        "fr": "Ce rapport a été entièrement orchestré par Newton lui-même."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.graphes",
+   "stat": "logique",
+   "rang": 5,
+   "nom": {
+    "fr": "Euler et les graphes"
+   },
+   "description": {
+    "fr": "Des ponts de Königsberg aux cartes à quatre couleurs : une géométrie sans mesures, faite de points et de liens."
+   },
+   "prerequis": [
+    "math.logarithmes"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "En 1736, Euler montre qu'on ne peut pas traverser les sept ponts de Königsberg une fois chacun : premier théorème de la théorie des graphes."
+     },
+     {
+      "fr": "Un tel trajet exige zéro ou deux terres touchées par un nombre impair de ponts ; Königsberg en a quatre."
+     },
+     {
+      "fr": "Pour tout polyèdre convexe, sommets − arêtes + faces = 2 : le cube fait 8 − 12 + 6 = 2."
+     },
+     {
+      "fr": "Quatre couleurs suffisent pour toute carte : conjecturé en 1852, démontré en 1976 avec un ordinateur."
+     }
+    ],
+    "piege": {
+     "fr": "Un graphe n'est pas un dessin à l'échelle : seules comptent les liaisons, pas les distances ni les formes."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"La théorie des graphes, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1736</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">les ponts de Königsberg</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1758</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Euler, S − A + F = 2</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1852</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Guthrie et les quatre couleurs</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1890</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Heawood trouve l'erreur de Kempe</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1976</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Appel et Haken, par ordinateur</text></svg>",
+    "source": "Leonhard Euler, Solutio problematis ad geometriam situs pertinentis, 1736"
+   },
+   "symbole": "⋈",
+   "embleme": "pont",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "ponts",
+      "titre": {
+       "fr": "Les sept ponts"
+      },
+      "texte": [
+       {
+        "fr": "À Königsberg, la rivière Pregel entoure deux îles reliées aux rives par sept ponts. Peut-on se promener en passant une fois et une seule sur chaque pont ? Leonhard Euler présente sa réponse à l'Académie de Saint-Pétersbourg le 26 août 1735 ; l'article, daté de 1736, paraît en 1741."
+       },
+       {
+        "fr": "Il oublie la carte et ne garde que des terres, reliées par des ponts. Un tel trajet exige que chaque terre soit touchée par un nombre pair de ponts, sauf au plus deux, le départ et l'arrivée. Or une terre en a cinq et les trois autres trois chacune : c'est impossible. Aujourd'hui, Königsberg s'appelle Kaliningrad ; il reste cinq ponts aux emplacements d'origine, et la promenade est devenue possible, d'une île à l'autre."
+       }
+      ],
+      "retenir": {
+       "fr": "Euler, 1736 : au plus deux terres de degré impair pour passer une fois sur chaque pont. Königsberg en avait quatre."
+      },
+      "source": "Leonhard Euler, Solutio problematis, 1736",
+      "figure": "mc_math_ponts",
+      "reperes": [
+       {
+        "fr": "Or une terre en a cinq et les trois autres trois chacune : c'est impossible."
+       }
+      ]
+     },
+     {
+      "id": "polyedres",
+      "titre": {
+       "fr": "Sommets, arêtes, faces"
+      },
+      "texte": [
+       {
+        "fr": "Prenez un cube : 8 sommets, 12 arêtes, 6 faces. 8 − 12 + 6 = 2. Un tétraèdre : 4 − 6 + 4 = 2. Pour tout polyèdre convexe, on trouve toujours 2. Euler publie cette formule en 1758 ; Francesco Maurolico l'avait notée en 1537 pour les solides de Platon, dans un manuscrit resté inédit."
+       },
+       {
+        "fr": "Comme pour les ponts, peu importent les longueurs et les angles : seul compte qui est relié à qui. Cauchy en donne une démonstration en 1811. Cette « géométrie de position » deviendra la topologie."
+       }
+      ],
+      "retenir": {
+       "fr": "S − A + F = 2 pour tout polyèdre convexe : Euler, 1758 ; Maurolico, 1537, inédit ; Cauchy démontre en 1811."
+      },
+      "source": "Leonhard Euler, Elementa doctrinae solidorum, 1758",
+      "reperes": [
+       {
+        "fr": "Euler publie cette formule en 1758 ; Francesco Maurolico l'avait notée en 1537 pour les solides de Platon, dans un manuscrit resté inédit."
+       }
+      ]
+     },
+     {
+      "id": "couleurs",
+      "titre": {
+       "fr": "Quatre couleurs et un ordinateur"
+      },
+      "texte": [
+       {
+        "fr": "En 1852, Francis Guthrie colorie une carte des comtés d'Angleterre et remarque que quatre couleurs suffisent pour que deux comtés voisins n'aient jamais la même. Est-ce vrai pour toute carte ? En 1879, Alfred Kempe publie une démonstration, acceptée de tous, jusqu'à ce que Percy Heawood y trouve une erreur en 1890."
+       },
+       {
+        "fr": "En 1976, Kenneth Appel et Wolfgang Haken, à l'université de l'Illinois, ramènent le problème à 1 834 configurations, vérifiées par ordinateur en plus de mille heures de calcul. C'est la première grande démonstration qu'aucun humain ne peut vérifier à la main, et beaucoup de mathématiciens ont douté qu'elle en soit vraiment une."
+       }
+      ],
+      "retenir": {
+       "fr": "Guthrie, 1852 ; Kempe faux, 1879 ; Appel et Haken, 1976, 1 834 cas par ordinateur."
+      },
+      "source": "K. Appel et W. Haken, 1976",
+      "reperes": [
+       {
+        "fr": "En 1976, Kenneth Appel et Wolfgang Haken, à l'université de l'Illinois, ramènent le problème à 1 834 configurations, vérifiées par ordinateur en plus de mille heures de calcul."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.statistiques",
+   "stat": "logique",
+   "rang": 6,
+   "nom": {
+    "fr": "Compter les populations"
+   },
+   "description": {
+    "fr": "Des registres de décès de Londres à la courbe en cloche de Gauss : mesurer des foules et leurs écarts."
+   },
+   "prerequis": [
+    "math.calcul",
+    "math.graphes"
    ],
    "fiche": {
     "essentiel": [
@@ -750,18 +1762,230 @@
    }
   },
   {
-   "id": "math.infini",
+   "id": "math.revolutions",
    "stat": "logique",
-   "rang": 8,
+   "rang": 6,
    "nom": {
-    "fr": "Suites, limites et infini"
+    "fr": "Les révolutions du XIXe siècle"
    },
    "description": {
-    "fr": "Suites, séries, limites et les paradoxes de l'infini."
+    "fr": "Des géométries où les parallèles se rencontrent, des équations qu'on ne peut pas résoudre : les mathématiques changent de nature."
    },
    "prerequis": [
-    "math.probabilites",
     "math.statistiques"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "Le cinquième postulat d'Euclide, celui des parallèles, a résisté pendant des siècles à toutes les tentatives de démonstration."
+     },
+     {
+      "fr": "En 1829, Lobatchevski le nie et obtient une géométrie cohérente ; Bolyai publie la même idée en 1832."
+     },
+     {
+      "fr": "Gauss y avait pensé avant sans rien publier ; c'est lui qui forge le nom de « géométrie non euclidienne »."
+     },
+     {
+      "fr": "Galois, mort à 20 ans en 1832, montre pourquoi les équations de degré cinq ne se résolvent pas en général par radicaux, avec la notion de groupe."
+     }
+    ],
+    "piege": {
+     "fr": "Une géométrie non euclidienne n'est pas fausse : elle est aussi cohérente que celle d'Euclide, simplement sur une autre surface."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Les révolutions du XIXe siècle, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1733</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">Saccheri croit l'avoir réfutée</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1829</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Lobatchevski</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1832</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Bolyai ; mort de Galois</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1846</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Liouville publie Galois</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1854</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Riemann</text></svg>",
+    "source": "Nikolaï Lobatchevski, 1829 ; János Bolyai, Appendix, 1832 ; Évariste Galois, 1832"
+   },
+   "symbole": "∠",
+   "embleme": "selle",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "paralleles",
+      "titre": {
+       "fr": "Le postulat qui résiste"
+      },
+      "texte": [
+       {
+        "fr": "Parmi les postulats d'Euclide, le cinquième, celui des parallèles, paraît moins évident que les autres. Pendant des siècles, on tente de le démontrer à partir des quatre premiers : Ibn al-Haytham au XIe siècle, Omar Khayyam au XIIe, puis l'Italien Saccheri en 1733."
+       },
+       {
+        "fr": "Saccheri croit avoir montré que la géométrie sans ce postulat est absurde ; en réalité, il vient de la découvrir sans le savoir. En 1829, le Russe Nikolaï Lobatchevski fait l'inverse : il nie le postulat et obtient une géométrie cohérente, où les angles d'un triangle font moins de 180°."
+       }
+      ],
+      "retenir": {
+       "fr": "Le 5e postulat résiste d'Ibn al-Haytham à Saccheri ; Lobatchevski le nie en 1829 : triangles de moins de 180°."
+      },
+      "source": "Nikolaï Lobatchevski, Sur les principes de la géométrie, Kazan, 1829",
+      "figure": "mc_math_triangles",
+      "reperes": [
+       {
+        "fr": "Saccheri croit avoir montré que la géométrie sans ce postulat est absurde ; en réalité, il vient de la découvrir sans le savoir."
+       }
+      ]
+     },
+     {
+      "id": "bolyai",
+      "titre": {
+       "fr": "Un étrange nouvel univers"
+      },
+      "texte": [
+       {
+        "fr": "En 1823, le jeune officier hongrois János Bolyai écrit à son père : « à partir de rien, j'ai créé un étrange nouvel univers ». Sa géométrie paraît en 1832, en appendice du manuel de mathématiques de son père, le Tentamen. Gauss, consulté, répond que la louer reviendrait à se louer lui-même : il y pensait depuis longtemps."
+       },
+       {
+        "fr": "Bolyai soupçonne qu'on a renseigné Gauss en secret, et se brouille avec son père. Son tempérament était à l'avenant : défié par treize officiers de sa garnison, il les affronte l'un après l'autre en jouant du violon entre deux duels, et les désarme ou les blesse tous. En 1854, Riemann généralise : il existe toute une famille de géométries."
+       }
+      ],
+      "retenir": {
+       "fr": "Bolyai : « un étrange nouvel univers », publié en 1832. Gauss : « je le savais ». Riemann, 1854 : toute une famille de géométries."
+      },
+      "source": "János Bolyai, Appendix, 1832",
+      "reperes": [
+       {
+        "fr": "Sa géométrie paraît en 1832, en appendice du manuel de mathématiques de son père, le Tentamen."
+       }
+      ]
+     },
+     {
+      "id": "galois",
+      "titre": {
+       "fr": "Vingt ans et un groupe"
+      },
+      "texte": [
+       {
+        "fr": "Évariste Galois naît en 1811 à Bourg-la-Reine. Cauchy refuse un premier mémoire ; un deuxième, confié à Fourier, se perd à sa mort ; en 1831, Poisson juge le troisième « incompréhensible », tout en l'invitant à publier son travail complet. Le 29 mai 1832, Galois écrit à son ami Auguste Chevalier une lettre qui résume ses idées."
+       },
+       {
+        "fr": "Le lendemain, il est blessé en duel ; il meurt le 31 mai, à 20 ans. À son frère, il dit : « Ne pleure pas, Alfred ! J'ai besoin de tout mon courage pour mourir à vingt ans ! » Il laissait la notion de groupe et une nouvelle preuve que les équations de degré cinq ou plus ne se résolvent pas en général par radicaux, après celle d'Abel en 1824. Liouville le publie en 1846."
+       }
+      ],
+      "retenir": {
+       "fr": "Galois, 1811-1832 : mémoires refusés, perdus, incompris ; la notion de groupe ; publié par Liouville en 1846."
+      },
+      "source": "Évariste Galois, lettre à Auguste Chevalier, 29 mai 1832",
+      "reperes": [
+       {
+        "fr": "Le 29 mai 1832, Galois écrit à son ami Auguste Chevalier une lettre qui résume ses idées."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.logique",
+   "stat": "logique",
+   "rang": 7,
+   "nom": {
+    "fr": "Boole et la logique"
+   },
+   "description": {
+    "fr": "En 1854, George Boole met la pensée en équations : vrai, faux, et, ou, non."
+   },
+   "prerequis": [
+    "math.revolutions"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "« Si A alors B » est faux dans un seul cas : A vrai et B faux."
+     },
+     {
+      "fr": "La contraposée « si non B alors non A » est équivalente. La réciproque « si B alors A » ne l'est pas."
+     },
+     {
+      "fr": "Nier « tous les cygnes sont blancs », c'est dire « au moins un cygne n'est pas blanc », pas « aucun cygne n'est blanc »."
+     },
+     {
+      "fr": "Raisonnement par l'absurde : on suppose le contraire de ce qu'on veut prouver et on aboutit à une contradiction."
+     }
+    ],
+    "piege": {
+     "fr": "Affirmer le conséquent : « s'il pleut, le sol est mouillé ; le sol est mouillé, donc il pleut » est invalide."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 148\" role=\"img\" aria-label=\"Table de vérité de l'implication\"><text class=\"t\" x=\"63.333333333333336\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">A</text><text class=\"t\" x=\"170.0\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">B</text><text class=\"t\" x=\"276.6666666666667\" y=\"22\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">si A alors B</text><line class=\"l\" x1=\"10\" y1=\"32\" x2=\"330\" y2=\"32\"/><text class=\"t\" x=\"63.333333333333336\" y=\"53\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"53\" font-size=\"12\" text-anchor=\"middle\">vrai</text><rect class=\"a\" x=\"10\" y=\"62\" width=\"320\" height=\"24\" rx=\"4\" opacity=\"0.25\"/><text class=\"t\" x=\"63.333333333333336\" y=\"79\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">V</text><text class=\"tm\" x=\"170.0\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"79\" font-size=\"12\" text-anchor=\"middle\">faux</text><text class=\"t\" x=\"63.333333333333336\" y=\"105\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">V</text><text class=\"tm\" x=\"276.6666666666667\" y=\"105\" font-size=\"12\" text-anchor=\"middle\">vrai</text><text class=\"t\" x=\"63.333333333333336\" y=\"131\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"700\">F</text><text class=\"tm\" x=\"170.0\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">F</text><text class=\"tm\" x=\"276.6666666666667\" y=\"131\" font-size=\"12\" text-anchor=\"middle\">vrai</text></svg>",
+    "source": "Copi, Introduction to Logic, 14e éd."
+   },
+   "symbole": "∧",
+   "embleme": "ardoise-boole",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "implication",
+      "titre": {
+       "fr": "Si… alors…"
+      },
+      "texte": [
+       {
+        "fr": "« S'il pleut, le sol est mouillé. » Cette phrase n'est fausse que dans un seul cas : il pleut et le sol est sec. S'il ne pleut pas, elle ne dit rien : le sol peut être sec ou mouillé (par l'arrosage), l'implication reste vraie. Cette définition remonte à Philon, un logicien grec de l'école dite dialectique, actif entre la fin du IVe et le milieu du IIIe siècle avant notre ère : pour lui, un « si… alors » n'est faux que si la première partie est vraie et la seconde fausse."
+       },
+       {
+        "fr": "Sa contraposée, « si le sol est sec, il n'a pas plu », dit exactement la même chose. Sa réciproque, « si le sol est mouillé, il a plu », non : c'est l'erreur dite affirmation du conséquent. Une bonne part des raisonnements bancals mélangent une implication et sa réciproque."
+       }
+      ],
+      "retenir": {
+       "fr": "« Si A alors B » n'est faux que si A est vrai et B faux. Contraposée (non B → non A) équivalente ; réciproque (B → A) non."
+      },
+      "source": "Copi, Introduction to Logic, 14e éd."
+     },
+     {
+      "id": "negation",
+      "titre": {
+       "fr": "Nier correctement"
+      },
+      "texte": [
+       {
+        "fr": "Pour contredire « tous les cygnes sont blancs », pas besoin de prouver qu'aucun cygne n'est blanc : un seul cygne noir suffit. La négation de « tous » est « au moins un ne… pas ». Et la négation de « il existe » est « aucun »."
+       },
+       {
+        "fr": "Pour les « et » et les « ou », il y a les lois de De Morgan, du nom du logicien Augustus De Morgan : « non (A et B) » équivaut à « non A ou non B », et « non (A ou B) » à « non A et non B ». Ne pas être à la fois riche et célèbre, c'est ne pas être riche, ou ne pas être célèbre, ou aucun des deux. De Morgan les énonce explicitement en 1847 dans Formal Logic, mais elles étaient connues bien avant : Guillaume d'Ockham les écrit en toutes lettres au XIVe siècle."
+       }
+      ],
+      "retenir": {
+       "fr": "Non (tous) = au moins un ne… pas. Non (A et B) = non A ou non B ; non (A ou B) = non A et non B (De Morgan)."
+      },
+      "source": "De Morgan, Formal Logic, 1847",
+      "figure": "mc_math_negation",
+      "reperes": [
+       {
+        "fr": "De Morgan les énonce explicitement en 1847 dans Formal Logic, mais elles étaient connues bien avant : Guillaume d'Ockham les écrit en toutes lettres au XIVe siècle."
+       }
+      ]
+     },
+     {
+      "id": "absurde",
+      "titre": {
+       "fr": "Prouver par l'absurde"
+      },
+      "texte": [
+       {
+        "fr": "Pour prouver qu'une chose est vraie, on peut supposer qu'elle est fausse et montrer que cela mène à une contradiction. Si l'hypothèse contraire est intenable, c'est qu'elle est fausse."
+       },
+       {
+        "fr": "L'exemple le plus célèbre : √2 n'est pas une fraction. Supposons √2 = a/b, fraction simplifiée au maximum. Alors a² = 2b², donc a est pair ; en l'écrivant 2k, on trouve b² = 2k², donc b est pair aussi. Mais une fraction simplifiée ne peut pas avoir deux termes pairs : contradiction. Aristote fait déjà allusion à ce raisonnement. C'est vers 350 avant notre ère, dans les Premiers Analytiques, où il décrit la démonstration « par l'impossible ». La légende selon laquelle les pythagoriciens auraient noyé Hippase pour l'avoir révélé, en revanche, ne repose sur à peu près rien."
+       }
+      ],
+      "retenir": {
+       "fr": "Par l'absurde : supposer le contraire, aboutir à une contradiction. Exemple : √2 n'est pas une fraction."
+      },
+      "source": "Aristote, Premiers Analytiques ; Euclide, Éléments, livre X",
+      "figure": "mc_math_absurde"
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.infini",
+   "stat": "logique",
+   "rang": 7,
+   "nom": {
+    "fr": "Cantor et les infinis"
+   },
+   "description": {
+    "fr": "Suites, limites, et la découverte de Cantor : il y a des infinis plus grands que d'autres."
+   },
+   "prerequis": [
+    "math.revolutions"
    ],
    "fiche": {
     "essentiel": [
@@ -846,6 +2070,118 @@
       "reperes": [
        {
         "fr": "Georg Cantor montre dès 1874 qu'on ne peut pas numéroter les nombres réels, et en 1891 il en donne la preuve célèbre, l'argument diagonal : supposez une liste complète, fabriquez un nombre qui diffère du premier à la 1re décimale, du deuxième à la 2e, et ainsi de suite."
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "math.calculabilite",
+   "stat": "logique",
+   "rang": 8,
+   "nom": {
+    "fr": "Gödel et Turing"
+   },
+   "description": {
+    "fr": "Hilbert voulait tout savoir ; Gödel et Turing montrent ce qu'aucun système et aucune machine ne pourront jamais décider."
+   },
+   "prerequis": [
+    "math.logique",
+    "math.infini"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "En 1900, à Paris, Hilbert présente sa liste de problèmes ; en 1930, à Königsberg, il proclame : « Nous devons savoir. Nous saurons. »"
+     },
+     {
+      "fr": "La veille, Gödel annonce son premier théorème d'incomplétude ; il le publie en 1931."
+     },
+     {
+      "fr": "Tout système cohérent capable d'arithmétique contient des énoncés qu'il ne peut ni démontrer ni réfuter, et ne peut prouver sa propre cohérence."
+     },
+     {
+      "fr": "En 1936, Church et Turing montrent qu'aucun algorithme ne peut décider de tout ; la machine de Turing devient le modèle des ordinateurs."
+     }
+    ],
+    "piege": {
+     "fr": "Gödel ne dit pas que « tout est relatif » : ses théorèmes portent sur des systèmes formels précis, capables d'un minimum d'arithmétique."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Gödel et Turing, dans le temps\"><line class=\"lm\" x1=\"92\" y1=\"14\" x2=\"92\" y2=\"190\"/><circle class=\"a\" cx=\"92\" cy=\"26\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"31\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1900</text><text class=\"t\" x=\"106\" y=\"31\" font-size=\"15\" text-anchor=\"start\">les problèmes de Hilbert</text><circle class=\"a\" cx=\"92\" cy=\"62\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"67\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1928</text><text class=\"t\" x=\"106\" y=\"67\" font-size=\"15\" text-anchor=\"start\">Hilbert et Ackermann posent la question</text><circle class=\"a\" cx=\"92\" cy=\"98\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"103\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">7 sept. 1930</text><text class=\"t\" x=\"106\" y=\"103\" font-size=\"15\" text-anchor=\"start\">Gödel annonce</text><circle class=\"a\" cx=\"92\" cy=\"134\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"139\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1931</text><text class=\"t\" x=\"106\" y=\"139\" font-size=\"15\" text-anchor=\"start\">Gödel publie</text><circle class=\"a\" cx=\"92\" cy=\"170\" r=\"6\"/><text class=\"t\" x=\"80\" y=\"175\" font-size=\"15\" text-anchor=\"end\" font-weight=\"700\">1936</text><text class=\"t\" x=\"106\" y=\"175\" font-size=\"15\" text-anchor=\"start\">Church et Turing</text></svg>",
+    "source": "Kurt Gödel, 1931 ; Alan Turing, « On Computable Numbers », 1936"
+   },
+   "symbole": "⊢",
+   "embleme": "ruban-turing",
+   "masterclass": {
+    "chapitres": [
+     {
+      "id": "hilbert",
+      "titre": {
+       "fr": "Nous devons savoir"
+      },
+      "texte": [
+       {
+        "fr": "En 1900, au congrès international de Paris, David Hilbert présente une liste de problèmes ouverts ; il en publiera vingt-trois. Son grand projet : fonder toutes les mathématiques sur un ensemble d'axiomes complet et cohérent, dont on prouverait qu'il ne mène jamais à une contradiction."
+       },
+       {
+        "fr": "En 1928, avec Wilhelm Ackermann, il pose le problème de la décision : existe-t-il une méthode mécanique qui dise, pour tout énoncé, s'il est vrai ? Le 8 septembre 1930, à Königsberg, il conclut un discours par une formule devenue célèbre, gravée sur sa tombe à Göttingen : « Nous devons savoir. Nous saurons. »"
+       }
+      ],
+      "retenir": {
+       "fr": "Hilbert : des axiomes complets et cohérents, une méthode de décision. « Nous devons savoir. Nous saurons. » (1930)"
+      },
+      "source": "David Hilbert, discours de Königsberg, 8 septembre 1930",
+      "reperes": [
+       {
+        "fr": "Le 8 septembre 1930, à Königsberg, il conclut un discours par une formule devenue célèbre, gravée sur sa tombe à Göttingen : « Nous devons savoir. Nous saurons. »"
+       }
+      ]
+     },
+     {
+      "id": "godel",
+      "titre": {
+       "fr": "La veille, Gödel"
+      },
+      "texte": [
+       {
+        "fr": "La veille du discours de Hilbert, le 7 septembre 1930, au même congrès de Königsberg, un logicien autrichien de 24 ans, Kurt Gödel, annonce timidement lors d'une table ronde un résultat qui ruine ce rêve. Presque personne n'y prête attention, sauf John von Neumann, qui le prend à part."
+       },
+       {
+        "fr": "Publiés en 1931, ses deux théorèmes disent ceci. Tout système d'axiomes cohérent capable de faire un peu d'arithmétique contient des énoncés qu'il ne peut ni démontrer ni réfuter. Et un tel système ne peut pas prouver sa propre cohérence. Von Neumann trouve le second de son côté et l'écrit à Gödel le 20 novembre 1930 : Gödel l'avait déjà envoyé à la revue trois jours plus tôt."
+       }
+      ],
+      "retenir": {
+       "fr": "Gödel, 1931 : des énoncés indécidables dans tout système cohérent assez riche, qui ne peut prouver sa propre cohérence."
+      },
+      "source": "Kurt Gödel, Über formal unentscheidbare Sätze, 1931",
+      "figure": "mc_math_godel",
+      "reperes": [
+       {
+        "fr": "Publiés en 1931, ses deux théorèmes disent ceci."
+       }
+      ]
+     },
+     {
+      "id": "turing",
+      "titre": {
+       "fr": "La machine qui ne sait pas s'arrêter"
+      },
+      "texte": [
+       {
+        "fr": "En 1936, l'Américain Alonzo Church et le Britannique Alan Turing répondent, chacun de son côté, au problème de la décision de Hilbert : non, aucune méthode générale ne peut trancher tous les énoncés. Turing publie « On Computable Numbers », dans les Proceedings de la London Mathematical Society."
+       },
+       {
+        "fr": "Pour le prouver, Turing imagine une machine abstraite qui lit et écrit des symboles sur un ruban : elle peut exécuter n'importe quel calcul, c'est le modèle de tous nos ordinateurs. Puis il montre qu'aucune méthode générale ne peut dire, pour toute machine, si elle finira par s'arrêter : c'est le problème de l'arrêt."
+       }
+      ],
+      "retenir": {
+       "fr": "Church et Turing, 1936 : pas de méthode de décision universelle. La machine de Turing et le problème de l'arrêt."
+      },
+      "source": "Alan Turing, « On Computable Numbers », 1936",
+      "reperes": [
+       {
+        "fr": "Puis il montre qu'aucune méthode générale ne peut dire, pour toute machine, si elle finira par s'arrêter : c'est le problème de l'arrêt."
        }
       ]
      }
@@ -13210,6 +14546,58 @@
   "mc_math_cantor": {
    "titre": "Compter l'infini",
    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 240\" role=\"img\" aria-label=\"Les entiers associés un à un aux pairs ; l'argument diagonal de Cantor\"><text class=\"t\" x=\"80\" y=\"22\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"700\">autant de pairs</text><text class=\"t\" x=\"50\" y=\"46\" font-size=\"15\" text-anchor=\"middle\">1</text><line class=\"lm\" x1=\"62\" y1=\"41\" x2=\"100\" y2=\"41\"/><path class=\"lm\" d=\"M92.8 44.5 L100 41 L92.8 37.5\"/><text class=\"t\" x=\"116\" y=\"46\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">2</text><text class=\"t\" x=\"50\" y=\"76\" font-size=\"15\" text-anchor=\"middle\">2</text><line class=\"lm\" x1=\"62\" y1=\"71\" x2=\"100\" y2=\"71\"/><path class=\"lm\" d=\"M92.8 74.5 L100 71 L92.8 67.5\"/><text class=\"t\" x=\"116\" y=\"76\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">4</text><text class=\"t\" x=\"50\" y=\"106\" font-size=\"15\" text-anchor=\"middle\">3</text><line class=\"lm\" x1=\"62\" y1=\"101\" x2=\"100\" y2=\"101\"/><path class=\"lm\" d=\"M92.8 104.5 L100 101 L92.8 97.5\"/><text class=\"t\" x=\"116\" y=\"106\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">6</text><text class=\"t\" x=\"50\" y=\"136\" font-size=\"15\" text-anchor=\"middle\">4</text><line class=\"lm\" x1=\"62\" y1=\"131\" x2=\"100\" y2=\"131\"/><path class=\"lm\" d=\"M92.8 134.5 L100 131 L92.8 127.5\"/><text class=\"t\" x=\"116\" y=\"136\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">8</text><text class=\"t\" x=\"50\" y=\"166\" font-size=\"15\" text-anchor=\"middle\">5</text><line class=\"lm\" x1=\"62\" y1=\"161\" x2=\"100\" y2=\"161\"/><path class=\"lm\" d=\"M92.8 164.5 L100 161 L92.8 157.5\"/><text class=\"t\" x=\"116\" y=\"166\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">10</text><text class=\"t\" x=\"80\" y=\"200\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">n ↔ 2n</text><text class=\"t\" x=\"290\" y=\"22\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"700\">plus de réels</text><text class=\"tm\" x=\"222\" y=\"52\" font-size=\"15\" text-anchor=\"end\">0,</text><rect class=\"a\" x=\"226\" y=\"34\" width=\"22\" height=\"24\" rx=\"4\"/><text class=\"t\" x=\"237\" y=\"52\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">5</text><text class=\"t\" x=\"263\" y=\"52\" font-size=\"15\" text-anchor=\"middle\">1</text><text class=\"t\" x=\"289\" y=\"52\" font-size=\"15\" text-anchor=\"middle\">0</text><text class=\"t\" x=\"315\" y=\"52\" font-size=\"15\" text-anchor=\"middle\">7</text><text class=\"tm\" x=\"222\" y=\"82\" font-size=\"15\" text-anchor=\"end\">0,</text><text class=\"t\" x=\"237\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">3</text><rect class=\"a\" x=\"252\" y=\"64\" width=\"22\" height=\"24\" rx=\"4\"/><text class=\"t\" x=\"263\" y=\"82\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">3</text><text class=\"t\" x=\"289\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">8</text><text class=\"t\" x=\"315\" y=\"82\" font-size=\"15\" text-anchor=\"middle\">2</text><text class=\"tm\" x=\"222\" y=\"112\" font-size=\"15\" text-anchor=\"end\">0,</text><text class=\"t\" x=\"237\" y=\"112\" font-size=\"15\" text-anchor=\"middle\">9</text><text class=\"t\" x=\"263\" y=\"112\" font-size=\"15\" text-anchor=\"middle\">1</text><rect class=\"a\" x=\"278\" y=\"94\" width=\"22\" height=\"24\" rx=\"4\"/><text class=\"t\" x=\"289\" y=\"112\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">4</text><text class=\"t\" x=\"315\" y=\"112\" font-size=\"15\" text-anchor=\"middle\">6</text><text class=\"tm\" x=\"222\" y=\"142\" font-size=\"15\" text-anchor=\"end\">0,</text><text class=\"t\" x=\"237\" y=\"142\" font-size=\"15\" text-anchor=\"middle\">2</text><text class=\"t\" x=\"263\" y=\"142\" font-size=\"15\" text-anchor=\"middle\">7</text><text class=\"t\" x=\"289\" y=\"142\" font-size=\"15\" text-anchor=\"middle\">0</text><rect class=\"a\" x=\"304\" y=\"124\" width=\"22\" height=\"24\" rx=\"4\"/><text class=\"t\" x=\"315\" y=\"142\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">5</text><text class=\"tm\" x=\"290\" y=\"180\" font-size=\"13\" text-anchor=\"middle\">changer chaque chiffre</text><text class=\"tm\" x=\"290\" y=\"198\" font-size=\"13\" text-anchor=\"middle\">de la diagonale :</text><text class=\"t\" x=\"290\" y=\"222\" font-size=\"13\" text-anchor=\"middle\" font-weight=\"700\">un nombre absent de la liste</text></svg>"
+  },
+  "mc_math_uruk": {
+   "titre": "Du jeton à l'écriture",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 132\" role=\"img\" aria-label=\"Du jeton à l'écriture : des jetons d'argile comptent les biens, les tablettes d'Uruk les notent, l'écriture suit\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">compter d'abord, raconter ensuite</text><rect class=\"f2\" x=\"10\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"66\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">jetons</text><text class=\"t\" x=\"66\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">d'argile</text><text class=\"t\" x=\"66\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">IVe mill.</text><line class=\"l\" x1=\"125\" y1=\"76\" x2=\"141\" y2=\"76\"/><path class=\"l\" d=\"M133.8 79.5 L141 76 L133.8 72.5\"/><rect class=\"f\" x=\"144\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"200\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">tablettes</text><text class=\"t\" x=\"200\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">d'Uruk</text><text class=\"t\" x=\"200\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">v. −3200</text><line class=\"l\" x1=\"259\" y1=\"76\" x2=\"275\" y2=\"76\"/><path class=\"l\" d=\"M267.8 79.5 L275 76 L267.8 72.5\"/><rect class=\"ok\" x=\"278\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"334\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">l'écriture</text><text class=\"t\" x=\"334\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">des lois,</text><text class=\"t\" x=\"334\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">des mythes</text></svg>"
+  },
+  "mc_math_ishango": {
+   "titre": "Les colonnes d'Ishango",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 158\" role=\"img\" aria-label=\"Les entailles de l'os d'Ishango, en trois colonnes : 168 au total\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">Les colonnes d'Ishango</text><text class=\"t\" x=\"142\" y=\"57\" font-size=\"14\" text-anchor=\"end\">colonne G : 11, 13, 17, 19</text><rect class=\"a\" x=\"150\" y=\"42\" width=\"180\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"336\" y=\"58\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">60</text><text class=\"t\" x=\"142\" y=\"95\" font-size=\"14\" text-anchor=\"end\">colonne M</text><rect class=\"a\" x=\"150\" y=\"80\" width=\"144\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"300\" y=\"96\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">48</text><text class=\"t\" x=\"142\" y=\"133\" font-size=\"14\" text-anchor=\"end\">colonne D</text><rect class=\"a\" x=\"150\" y=\"118\" width=\"180\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"336\" y=\"134\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">60</text></svg>"
+  },
+  "mc_math_base60": {
+   "titre": "La place sans le zéro",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 162\" role=\"img\" aria-label=\"Le même signe babylonien selon sa place : un clou seul vaut 1, à la place d'avant il vaut 60, à la place d'après 1/60 ; sans zéro ni virgule, le contexte tranche\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">Sans zéro ni virgule, il faut deviner</text><rect class=\"f\" x=\"10\" y=\"36\" width=\"185\" height=\"120\" rx=\"8\"/><text class=\"t\" x=\"102.5\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">chez nous, base 10</text><text class=\"t\" x=\"102.5\" y=\"90\" font-size=\"14\" text-anchor=\"middle\">2 3 = 23</text><text class=\"t\" x=\"102.5\" y=\"107.5\" font-size=\"14\" text-anchor=\"middle\">2 3 0 = 230</text><text class=\"t\" x=\"102.5\" y=\"125\" font-size=\"14\" text-anchor=\"middle\">0,23 = 23/100</text><rect class=\"f2\" x=\"205\" y=\"36\" width=\"185\" height=\"120\" rx=\"8\"/><text class=\"t\" x=\"297.5\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">à Babylone, base 60</text><text class=\"t\" x=\"297.5\" y=\"90\" font-size=\"14\" text-anchor=\"middle\">23 = 23</text><text class=\"t\" x=\"297.5\" y=\"107.5\" font-size=\"14\" text-anchor=\"middle\">23 = 23 × 60 ?</text><text class=\"t\" x=\"297.5\" y=\"125\" font-size=\"14\" text-anchor=\"middle\">23 = 23/60 ?</text></svg>"
+  },
+  "mc_math_pains": {
+   "titre": "Partager à l'égyptienne",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 158\" role=\"img\" aria-label=\"Cinq pains pour huit : chacun reçoit 1/2 + 1/8 de pain, soit 5/8 ; en fractions égyptiennes, pas de « 5/8 », mais une somme de 1/n\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">Partager à l'égyptienne (en huitièmes)</text><text class=\"t\" x=\"142\" y=\"57\" font-size=\"14\" text-anchor=\"end\">1/2 pain</text><rect class=\"a\" x=\"150\" y=\"42\" width=\"144\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"300\" y=\"58\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">4</text><text class=\"t\" x=\"142\" y=\"95\" font-size=\"14\" text-anchor=\"end\">1/8 pain</text><rect class=\"a\" x=\"150\" y=\"80\" width=\"36\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"192\" y=\"96\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">1</text><text class=\"t\" x=\"142\" y=\"133\" font-size=\"14\" text-anchor=\"end\">total : 5/8</text><rect class=\"a\" x=\"150\" y=\"118\" width=\"180\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"336\" y=\"134\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">5</text></svg>"
+  },
+  "mc_math_polygones": {
+   "titre": "Doubler les côtés",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 234\" role=\"img\" aria-label=\"Le périmètre d'un polygone à n côtés autour d'un cercle de diamètre 1 se rapproche de π quand n double\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">Polygone dehors, diamètre 1</text><text class=\"t\" x=\"142\" y=\"57\" font-size=\"14\" text-anchor=\"end\">6 côtés</text><rect class=\"a\" x=\"150\" y=\"42\" width=\"180\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"336\" y=\"58\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">3,464</text><text class=\"t\" x=\"142\" y=\"95\" font-size=\"14\" text-anchor=\"end\">12 côtés</text><rect class=\"a\" x=\"150\" y=\"80\" width=\"167.061\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"323.061\" y=\"96\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">3,215</text><text class=\"t\" x=\"142\" y=\"133\" font-size=\"14\" text-anchor=\"end\">24 côtés</text><rect class=\"a\" x=\"150\" y=\"118\" width=\"164.203\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"320.203\" y=\"134\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">3,160</text><text class=\"t\" x=\"142\" y=\"171\" font-size=\"14\" text-anchor=\"end\">48 côtés</text><rect class=\"a\" x=\"150\" y=\"156\" width=\"163.476\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"319.476\" y=\"172\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">3,146</text><text class=\"t\" x=\"142\" y=\"209\" font-size=\"14\" text-anchor=\"end\">96 côtés</text><rect class=\"a\" x=\"150\" y=\"194\" width=\"163.32\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"319.32\" y=\"210\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">3,143</text></svg>"
+  },
+  "mc_math_fangcheng": {
+   "titre": "Le tableau fangcheng",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 132\" role=\"img\" aria-label=\"Fangcheng : les coefficients posés en baguettes ; on soustrait une colonne d'une autre ; à la fin, une inconnue par ligne\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">jusqu'à cinq inconnues, avec des négatifs</text><rect class=\"f2\" x=\"10\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"66\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">coefficients</text><text class=\"t\" x=\"66\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">en baguettes</text><text class=\"t\" x=\"66\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">sur la planche</text><line class=\"l\" x1=\"125\" y1=\"76\" x2=\"141\" y2=\"76\"/><path class=\"l\" d=\"M133.8 79.5 L141 76 L133.8 72.5\"/><rect class=\"f\" x=\"144\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"200\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">soustraire</text><text class=\"t\" x=\"200\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">une colonne</text><text class=\"t\" x=\"200\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">d'une autre</text><line class=\"l\" x1=\"259\" y1=\"76\" x2=\"275\" y2=\"76\"/><path class=\"l\" d=\"M267.8 79.5 L275 76 L267.8 72.5\"/><rect class=\"ok\" x=\"278\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"334\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">une inconnue</text><text class=\"t\" x=\"334\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">par ligne</text><text class=\"t\" x=\"334\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">lue d'un coup</text></svg>"
+  },
+  "mc_math_zero": {
+   "titre": "Les règles du zéro",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 162\" role=\"img\" aria-label=\"Les règles de Brahmagupta en 628 : justes pour l'addition et la multiplication, fausses pour zéro divisé par zéro\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">Zéro, nombre à part entière</text><rect class=\"ok\" x=\"10\" y=\"36\" width=\"185\" height=\"120\" rx=\"8\"/><text class=\"t\" x=\"102.5\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">justes</text><text class=\"t\" x=\"102.5\" y=\"90\" font-size=\"14\" text-anchor=\"middle\">négatif + 0 = négatif</text><text class=\"t\" x=\"102.5\" y=\"107.5\" font-size=\"14\" text-anchor=\"middle\">0 − 0 = 0</text><text class=\"t\" x=\"102.5\" y=\"125\" font-size=\"14\" text-anchor=\"middle\">négatif × négatif = positif</text><rect class=\"ko\" x=\"205\" y=\"36\" width=\"185\" height=\"120\" rx=\"8\"/><text class=\"t\" x=\"297.5\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">à revoir</text><text class=\"t\" x=\"297.5\" y=\"90\" font-size=\"14\" text-anchor=\"middle\">0 ÷ 0 = 0 (faux)</text><text class=\"t\" x=\"297.5\" y=\"107.5\" font-size=\"14\" text-anchor=\"middle\">a ÷ 0 : ne tranche pas</text><text class=\"t\" x=\"297.5\" y=\"125\" font-size=\"14\" text-anchor=\"middle\">aujourd'hui : non défini</text></svg>"
+  },
+  "mc_math_cardan": {
+   "titre": "Trois pères pour une formule",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 132\" role=\"img\" aria-label=\"Qui a trouvé la formule du troisième degré ? Del Ferro d'abord, Tartaglia ensuite, Cardan publie en 1545 avec Ferrari\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">une formule, trois pères, et un procès d'honneur</text><rect class=\"f2\" x=\"10\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"66\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">del Ferro</text><text class=\"t\" x=\"66\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">trouve,</text><text class=\"t\" x=\"66\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">se tait</text><line class=\"l\" x1=\"125\" y1=\"76\" x2=\"141\" y2=\"76\"/><path class=\"l\" d=\"M133.8 79.5 L141 76 L133.8 72.5\"/><rect class=\"f\" x=\"144\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"200\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">Tartaglia</text><text class=\"t\" x=\"200\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">retrouve,</text><text class=\"t\" x=\"200\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">confie en vers</text><line class=\"l\" x1=\"259\" y1=\"76\" x2=\"275\" y2=\"76\"/><path class=\"l\" d=\"M267.8 79.5 L275 76 L267.8 72.5\"/><rect class=\"ok\" x=\"278\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"334\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">Cardan</text><text class=\"t\" x=\"334\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">publie</text><text class=\"t\" x=\"334\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">en 1545</text></svg>"
+  },
+  "mc_math_log": {
+   "titre": "Multiplier en additionnant",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 114\" role=\"img\" aria-label=\"Multiplier avec des logarithmes : 100 × 1 000 ; on additionne 2 + 3 = 5 ; on relit 10⁵ = 100 000\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">une multiplication devient une addition</text><rect class=\"f2\" x=\"10\" y=\"34\" width=\"112\" height=\"66\" rx=\"8\"/><text class=\"t\" x=\"66\" y=\"63.15\" font-size=\"14\" text-anchor=\"middle\">100 × 1 000</text><text class=\"t\" x=\"66\" y=\"80.65\" font-size=\"14\" text-anchor=\"middle\">à multiplier</text><line class=\"l\" x1=\"125\" y1=\"67\" x2=\"141\" y2=\"67\"/><path class=\"l\" d=\"M133.8 70.5 L141 67 L133.8 63.5\"/><rect class=\"f\" x=\"144\" y=\"34\" width=\"112\" height=\"66\" rx=\"8\"/><text class=\"t\" x=\"200\" y=\"63.15\" font-size=\"14\" text-anchor=\"middle\">log : 2 + 3</text><text class=\"t\" x=\"200\" y=\"80.65\" font-size=\"14\" text-anchor=\"middle\">on additionne</text><line class=\"l\" x1=\"259\" y1=\"67\" x2=\"275\" y2=\"67\"/><path class=\"l\" d=\"M267.8 70.5 L275 67 L267.8 63.5\"/><rect class=\"ok\" x=\"278\" y=\"34\" width=\"112\" height=\"66\" rx=\"8\"/><text class=\"t\" x=\"334\" y=\"63.15\" font-size=\"14\" text-anchor=\"middle\">5 → 10⁵</text><text class=\"t\" x=\"334\" y=\"80.65\" font-size=\"14\" text-anchor=\"middle\">= 100 000</text></svg>"
+  },
+  "mc_math_querelle": {
+   "titre": "Deux chemins",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 162\" role=\"img\" aria-label=\"Newton et Leibniz : deux chemins vers le même calcul\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">Chacun de son côté</text><rect class=\"f\" x=\"10\" y=\"36\" width=\"185\" height=\"120\" rx=\"8\"/><text class=\"t\" x=\"102.5\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">Newton</text><text class=\"t\" x=\"102.5\" y=\"90\" font-size=\"14\" text-anchor=\"middle\">trouve en 1666</text><text class=\"t\" x=\"102.5\" y=\"107.5\" font-size=\"14\" text-anchor=\"middle\">publie en 1704</text><text class=\"t\" x=\"102.5\" y=\"125\" font-size=\"14\" text-anchor=\"middle\">notation : un point</text><rect class=\"f2\" x=\"205\" y=\"36\" width=\"185\" height=\"120\" rx=\"8\"/><text class=\"t\" x=\"297.5\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">Leibniz</text><text class=\"t\" x=\"297.5\" y=\"90\" font-size=\"14\" text-anchor=\"middle\">trouve de son côté</text><text class=\"t\" x=\"297.5\" y=\"107.5\" font-size=\"14\" text-anchor=\"middle\">publie en 1684</text><text class=\"t\" x=\"297.5\" y=\"125\" font-size=\"14\" text-anchor=\"middle\">notation : dx, ∫</text></svg>"
+  },
+  "mc_math_ponts": {
+   "titre": "Quatre terres impaires",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 196\" role=\"img\" aria-label=\"Königsberg vue par Euler : nombre de ponts touchant chaque terre ; les quatre sont impairs, la promenade est impossible\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">Ponts par terre</text><text class=\"t\" x=\"142\" y=\"57\" font-size=\"14\" text-anchor=\"end\">île centrale</text><rect class=\"a\" x=\"150\" y=\"42\" width=\"180\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"336\" y=\"58\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">5</text><text class=\"t\" x=\"142\" y=\"95\" font-size=\"14\" text-anchor=\"end\">rive nord</text><rect class=\"a\" x=\"150\" y=\"80\" width=\"108\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"264\" y=\"96\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">3</text><text class=\"t\" x=\"142\" y=\"133\" font-size=\"14\" text-anchor=\"end\">rive sud</text><rect class=\"a\" x=\"150\" y=\"118\" width=\"108\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"264\" y=\"134\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">3</text><text class=\"t\" x=\"142\" y=\"171\" font-size=\"14\" text-anchor=\"end\">île est</text><rect class=\"a\" x=\"150\" y=\"156\" width=\"108\" height=\"22\" rx=\"4\"/><text class=\"t\" x=\"264\" y=\"172\" font-size=\"14\" text-anchor=\"start\" font-weight=\"700\">3</text></svg>"
+  },
+  "mc_math_triangles": {
+   "titre": "Deux géométries",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 140\" role=\"img\" aria-label=\"Somme des angles d'un triangle selon la géométrie : moins de 180° chez Lobatchevski, exactement 180° chez Euclide, plus de 180° sur une sphère\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">Nier le cinquième postulat</text><rect class=\"f\" x=\"10\" y=\"36\" width=\"185\" height=\"98\" rx=\"8\"/><text class=\"t\" x=\"102.5\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">Euclide, plan</text><text class=\"t\" x=\"102.5\" y=\"90\" font-size=\"14\" text-anchor=\"middle\">une seule parallèle</text><text class=\"t\" x=\"102.5\" y=\"107.5\" font-size=\"14\" text-anchor=\"middle\">angles : 180°</text><rect class=\"f2\" x=\"205\" y=\"36\" width=\"185\" height=\"98\" rx=\"8\"/><text class=\"t\" x=\"297.5\" y=\"62\" font-size=\"16\" text-anchor=\"middle\" font-weight=\"700\">Lobatchevski, 1829</text><text class=\"t\" x=\"297.5\" y=\"90\" font-size=\"14\" text-anchor=\"middle\">plusieurs parallèles</text><text class=\"t\" x=\"297.5\" y=\"107.5\" font-size=\"14\" text-anchor=\"middle\">angles : moins de 180°</text></svg>"
+  },
+  "mc_math_godel": {
+   "titre": "Le rêve de Hilbert",
+   "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 132\" role=\"img\" aria-label=\"Le rêve de Hilbert et ses deux réponses : Gödel en 1931 sur la démonstration, Turing en 1936 sur le calcul\"><text class=\"tm\" x=\"200\" y=\"22\" font-size=\"15\" text-anchor=\"middle\">« Nous devons savoir » : pas tout</text><rect class=\"f2\" x=\"10\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"66\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">Hilbert :</text><text class=\"t\" x=\"66\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">tout prouver,</text><text class=\"t\" x=\"66\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">tout décider</text><line class=\"l\" x1=\"125\" y1=\"76\" x2=\"141\" y2=\"76\"/><path class=\"l\" d=\"M133.8 79.5 L141 76 L133.8 72.5\"/><rect class=\"ko\" x=\"144\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"200\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">Gödel, 1931 :</text><text class=\"t\" x=\"200\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">des énoncés</text><text class=\"t\" x=\"200\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">indécidables</text><line class=\"l\" x1=\"259\" y1=\"76\" x2=\"275\" y2=\"76\"/><path class=\"l\" d=\"M267.8 79.5 L275 76 L267.8 72.5\"/><rect class=\"ko\" x=\"278\" y=\"34\" width=\"112\" height=\"84\" rx=\"8\"/><text class=\"t\" x=\"334\" y=\"63.4\" font-size=\"14\" text-anchor=\"middle\">Turing, 1936 :</text><text class=\"t\" x=\"334\" y=\"80.9\" font-size=\"14\" text-anchor=\"middle\">pas de méthode</text><text class=\"t\" x=\"334\" y=\"98.4\" font-size=\"14\" text-anchor=\"middle\">universelle</text></svg>"
   },
   "mc_phys_si": {
    "titre": "Sept unités pour tout mesurer",

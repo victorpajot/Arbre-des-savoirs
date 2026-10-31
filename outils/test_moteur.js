@@ -16,45 +16,45 @@ const P = M.nouvellePartie(t);
 const jour = 86400000;
 const res = (id, n, ok) => M.tirerQuestions(C, P, id, n).map((q, i) => ({ id: q.id, correct: i < ok }));
 
-assert.equal(M.statut(C, P, "math.arithmetique", t).etat, "disponible");
-assert.equal(M.statut(C, P, "math.proportions", t).etat, "verrouillee");
-let r = M.terminerQuiz(C, P, "math.arithmetique", res("math.arithmetique", 5, 3), t);
+assert.equal(M.statut(C, P, "math.origines", t).etat, "disponible");
+assert.equal(M.statut(C, P, "math.egypte", t).etat, "verrouillee");
+let r = M.terminerQuiz(C, P, "math.origines", res("math.origines", 5, 3), t);
 assert.equal(r.issue, "echec");
 assert.deepEqual(r.nouveauxSucces.map(s => s.id).filter(id => id !== "honte-1"), ["tour-de-pise"]);
-r = M.terminerQuiz(C, P, "math.arithmetique", res("math.arithmetique", 5, 5), t);
+r = M.terminerQuiz(C, P, "math.origines", res("math.origines", 5, 5), t);
 assert.equal(r.issue, "maitrisee"); assert.equal(r.xp, 70);
 // v19 : deux récompenses au plus par épreuve ordinaire ; les autres tombent ensuite.
 assert.ok(r.nouveauxSucces.length <= 2);
-{ const ids = succesPuis(r, C, P, t); for (const id of ["egal-recorde", "premier-pas"]) assert.ok(ids.includes(id), id); }
+{ const ids = succesPuis(r, C, P, t); for (const id of ["kushim", "premier-pas"]) assert.ok(ids.includes(id), id); }
 // v6 : objets et accessoires deviennent du butin gagnable ; ici, sans plateau, aucun ne tombe
 assert.deepEqual(r.nouveauxObjets, []);
 assert.ok(P.gagnables["objets:boulier"] && P.gagnables["accessoires:lunettes-rondes"]);
 assert.ok(r.contextes.includes("quiz_parfait_facile"));
-assert.equal(M.statut(C, P, "math.proportions", t).etat, "disponible");
+assert.equal(M.statut(C, P, "math.egypte", t).etat, "disponible");
 assert.equal(M.rappelsDus(C, P, t).length, 0);
 // Rappel dû le lendemain à minuit
 t += jour; assert.equal(M.rappelsDus(C, P, t).length, 1);
-r = M.terminerRappel(C, P, "math.arithmetique", res("math.arithmetique", 3, 2), t);
+r = M.terminerRappel(C, P, "math.origines", res("math.origines", 3, 2), t);
 assert.equal(r.issue, "reussi"); assert.equal(M.joursEntre(t, r.prochainRappel), 3);
 assert.equal(M.xpParStat(C, P).logique, 75);
 // Maîtriser proportions, puis perdre arithmétique : proportions est gelée, algèbre (rang 4) reste verrouillée
-r = M.terminerQuiz(C, P, "math.proportions", res("math.proportions", 5, 4), t);
+r = M.terminerQuiz(C, P, "math.egypte", res("math.egypte", 5, 4), t);
 assert.equal(r.issue, "maitrisee");
-r = M.terminerQuiz(C, P, "math.geometrie", res("math.geometrie", 5, 4), t);
-assert.equal(M.statut(C, P, "math.algebre", t).etat, "disponible");
+r = M.terminerQuiz(C, P, "math.babylone", res("math.babylone", 5, 4), t);
+assert.equal(M.statut(C, P, "math.geometrie", t).etat, "disponible");
 t += 3 * jour;
-r = M.terminerRappel(C, P, "math.arithmetique", res("math.arithmetique", 3, 1), t);
+r = M.terminerRappel(C, P, "math.origines", res("math.origines", 3, 1), t);
 assert.equal(r.issue, "perdue"); assert.equal(r.xpPerdue, 75);
 assert.ok(succesPuis(r, C, P, t).includes("lucide"));
-assert.equal(M.statut(C, P, "math.arithmetique", t).etat, "disponible");
-assert.equal(M.statut(C, P, "math.proportions", t).gelee, true);
-assert.equal(M.statut(C, P, "math.logique", t).etat, "verrouillee");
-r = M.terminerQuiz(C, P, "math.arithmetique", res("math.arithmetique", 5, 4), t);
+assert.equal(M.statut(C, P, "math.origines", t).etat, "disponible");
+assert.equal(M.statut(C, P, "math.egypte", t).gelee, true);
+assert.equal(M.statut(C, P, "math.archimede", t).etat, "verrouillee");
+r = M.terminerQuiz(C, P, "math.origines", res("math.origines", 5, 4), t);
 assert.ok(succesPuis(r, C, P, t).includes("resilience"));
-assert.equal(M.statut(C, P, "math.proportions", t).gelee, false);
+assert.equal(M.statut(C, P, "math.egypte", t).gelee, false);
 // Questions récentes évitées
-const vues = P.competences["math.arithmetique"].recentes;
-const tir = M.tirerQuestions(C, P, "math.arithmetique", 5).map(q => q.id);
+const vues = P.competences["math.origines"].recentes;
+const tir = M.tirerQuestions(C, P, "math.origines", 5).map(q => q.id);
 assert.ok(tir.every(id => !vues.includes(id)));
 // Correction numérique
 const qn = C.questionParId["phys.ondes.q03"];
@@ -134,7 +134,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const P = M.nouvellePartie(t0);
     const bonus = M.bonusDuJour(C3, P, t0);
     assert.equal(M.bonusDuJour(C3, P, t0 + 3600000), bonus, "bonus stable dans la journée");
-    for (const id of ["math.arithmetique", "phys.unites", "philo.presocratiques"]) {
+    for (const id of ["math.origines", "phys.unites", "philo.presocratiques"]) {
       const Q = M.nouvellePartie(t0);
       const v = M.valeurEpreuve(C3, Q, { type: "quiz", comp: id }, t0);
       assert.equal(v.base, R.valeurs.quiz_rang["1"]);
@@ -144,19 +144,19 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       assert.equal(r.plateau.valeurs.total, v.total);
     }
     const Q = M.nouvellePartie(t0);
-    const v = M.valeurEpreuve(C3, Q, { type: "quiz", comp: "math.arithmetique" }, t0);
-    let r = M.terminerQuiz(C3, Q, "math.arithmetique", tous(Q, "math.arithmetique", 3), t0);
+    const v = M.valeurEpreuve(C3, Q, { type: "quiz", comp: "math.origines" }, t0);
+    let r = M.terminerQuiz(C3, Q, "math.origines", tous(Q, "math.origines", 3), t0);
     assert.equal(r.plateau.a, 1, "quiz raté : on reste sur place");
-    r = M.terminerQuiz(C3, Q, "math.arithmetique", tous(Q, "math.arithmetique", 5, true), t0);
+    r = M.terminerQuiz(C3, Q, "math.origines", tous(Q, "math.origines", 5, true), t0);
     assert.equal(r.plateau.valeur, v.total + R.bonus.parfait + R.bonus.chrono, "parfait et chrono");
   }
 
   // Rappel raté : recul de 2 cases, jamais avant le départ
   {
     const P = M.nouvellePartie(t0);
-    M.terminerQuiz(C3, P, "math.arithmetique", tous(P, "math.arithmetique", 4), t0);
+    M.terminerQuiz(C3, P, "math.origines", tous(P, "math.origines", 4), t0);
     const avant = P.plateau.position;
-    const r = M.terminerRappel(C3, P, "math.arithmetique", tous(P, "math.arithmetique", 0).slice(0, 3), t0 + 86400000);
+    const r = M.terminerRappel(C3, P, "math.origines", tous(P, "math.origines", 0).slice(0, 3), t0 + 86400000);
     assert.equal(r.plateau.a, Math.max(1, avant + R.echec.rappel));
     assert.equal(P.compteurs.reculs, 1);
   }
@@ -179,7 +179,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     [P, dep] = sur(num("galilee-proces"), 2);
     assert.equal(P.plateau.prison, 1);
     assert.equal(M.deplacer(C3, P, 3, t0, "test").a, num("galilee-proces"), "prison : on ne bouge plus");
-    const r = M.terminerQuiz(C3, P, "math.arithmetique", tous(P, "math.arithmetique", 5), t0);
+    const r = M.terminerQuiz(C3, P, "math.origines", tous(P, "math.origines", 5), t0);
     assert.equal(P.plateau.prison, 0); assert.ok(r.plateau.contextes.includes("prison_liberation"));
     assert.ok(r.plateau.a > num("galilee-proces"), "libéré par un quiz parfait, et on avance");
     assert.ok(succesPuis(r, C3, P, t0).includes("eppur-si-muove"));
@@ -282,7 +282,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const t0 = new Date(2026, 9, 26, 10, 0).getTime();
   const tous = (P, id, ok) => M.tirerQuestions(C4, P, id, 5).map((q, i) => ({ id: q.id, correct: i < ok }));
   assert.deepEqual([1, 2, 7, 12].map(i => M.xpRappel(C4, i)), [5, 10, 50, 50]);
-  assert.equal(C4.parStat.logique.length, 8);
+  assert.equal(C4.parStat.logique.length, 20);
   assert.equal(C4.regles.xp.paliers_niveau.length - 1, 20);
 
   // Le second losange s'ouvre quand le sommet du premier est maîtrisé
@@ -294,10 +294,15 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(M.statut(C4, P, L[5], t0).etat, "verrouillee");
     vider(C4, P, t0);
     assert.ok(P.succes["branche-logique"], "le premier losange suffit au succès de branche");
-    const r = M.terminerQuiz(C4, P, L[4], tous(P, L[4], 5), t0);
-    assert.ok(succesPuis(r, C4, P, t0).includes("plus-ultra"));
+    M.terminerQuiz(C4, P, L[4], tous(P, L[4], 5), t0);
     assert.equal(M.statut(C4, P, L[7], t0).etat, "verrouillee");
-    for (const id of L.slice(5)) M.terminerQuiz(C4, P, id, tous(P, id, 5), t0);
+    // plus-ultra : la première compétence de rang 5 maîtrisée
+    const r5 = L.findIndex(id => C4.parId[id].rang >= 5);
+    for (const id of L.slice(5, r5)) M.terminerQuiz(C4, P, id, tous(P, id, 5), t0);
+    vider(C4, P, t0);
+    const r = M.terminerQuiz(C4, P, L[r5], tous(P, L[r5], 5), t0);
+    assert.ok(succesPuis(r, C4, P, t0).includes("plus-ultra"));
+    for (const id of L.slice(r5 + 1)) M.terminerQuiz(C4, P, id, tous(P, id, 5), t0);
     vider(C4, P, t0);
     assert.ok(P.succes["nains-geants"] && P.succes["cultiver-jardin"]);
   }
@@ -369,7 +374,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const P = M.nouvellePartie(t0);
     assert.equal(P.credits.solde, 0);
     const sc = C5.succes.find(x => x.id === "premier-pas");
-    P.competences["math.arithmetique"] = { maitrise: true, maitriseDepuis: t0, palier: 1, prochainRappel: t0 + 86400000, xp: 20 };
+    P.competences["math.origines"] = { maitrise: true, maitriseDepuis: t0, palier: 1, prochainRappel: t0 + 86400000, xp: 20 };
     const rec = M.verifierRecompenses(C5, P, t0);
     const cr = rec.credits.find(c => c.succes === "premier-pas");
     assert.ok(cr && cr.base === M.tarifSucces(C5, sc) && cr.mot && cr.mot.fr, "un succès rapporte des crédits, avec un mot de l'IA");
@@ -405,7 +410,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // v17 : ultimatum de l'IA
   {
     const P = M.nouvellePartie(t0);
-    ["math.arithmetique", "phys.unites", "sci.methode"].forEach(id => { P.competences[id] = { maitrise: true, maitriseDepuis: t0, palier: 1, prochainRappel: t0 + 86400000, xp: 400 }; });
+    ["math.origines", "phys.unites", "sci.methode"].forEach(id => { P.competences[id] = { maitrise: true, maitriseDepuis: t0, palier: 1, prochainRappel: t0 + 86400000, xp: 400 }; });
     P.credits.solde = 100;
     const nv = M.niveauGlobal(C5, P); assert.ok(nv >= 2);
     assert.equal(M.tenterUltimatum(C5, P, t0, () => 0.99), null, "pas à tous les coups");
@@ -545,9 +550,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Migration : une sauvegarde v4 avec un masque choisi se charge, le choix est oublié
   {
     const v4 = JSON.parse(JSON.stringify(M.nouvellePartie(t0))); v4.masqueChoisi = "theatre"; delete v4.farce;
-    v4.competences["math.arithmetique"] = { maitrise: true, palier: 2, xp: 90, prochainRappel: t0 };
+    v4.competences["math.origines"] = { maitrise: true, palier: 2, xp: 90, prochainRappel: t0 };
     const p = M.migrer(v4, C5);
-    assert.ok(!("masqueChoisi" in p)); assert.equal(p.farce, null); assert.equal(p.competences["math.arithmetique"].xp, 90);
+    assert.ok(!("masqueChoisi" in p)); assert.equal(p.farce, null); assert.equal(p.competences["math.origines"].xp, 90);
   }
   console.log("OK : v5 bouton Jouer, masques selon le ton, apartés, farces, migration");
 }
@@ -750,16 +755,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(dep.etapes[0].type, "revision_vide"); assert.equal(P.revision, undefined);
   // Avec deux compétences maîtrisées : l'IA prend celle dont le rappel est le plus lointain.
   P = M.nouvellePartie(t0);
-  P.competences["math.arithmetique"] = { maitrise: true, palier: 2, xp: 90, prochainRappel: t0 + 3 * J, maitriseDepuis: t0 - 9 * J };
-  P.competences["math.probabilites"] = { maitrise: true, palier: 3, xp: 90, prochainRappel: t0 + 20 * J, maitriseDepuis: t0 - 30 * J };
+  P.competences["math.origines"] = { maitrise: true, palier: 2, xp: 90, prochainRappel: t0 + 3 * J, maitriseDepuis: t0 - 9 * J };
+  P.competences["math.chine"] = { maitrise: true, palier: 3, xp: 90, prochainRappel: t0 + 20 * J, maitriseDepuis: t0 - 30 * J };
   [P, dep] = sur(11, 1, P);
-  assert.equal(P.revision.comp, "math.probabilites");
+  assert.equal(P.revision.comp, "math.chine");
   assert.equal(M.choixIA(C9, P, t0).raison, "revision");
   dep = M.deplacer(C9, P, 3, t0, "quiz");
   assert.equal(dep.a, 11, "bloqué tant que la révision n'est pas faite"); assert.equal(dep.etapes[0].type, "bloque_revision");
-  const qs = M.tirerQuestions(C9, P, "math.probabilites", 3);
-  let r = M.terminerRappel(C9, P, "math.probabilites", qs.map(q => ({ id: q.id, correct: true })), t0);
-  assert.ok(r.revision); assert.equal(P.revision, null); assert.equal(P.competences["math.probabilites"].palier, 3, "pas de palier gagné");
+  const qs = M.tirerQuestions(C9, P, "math.chine", 3);
+  let r = M.terminerRappel(C9, P, "math.chine", qs.map(q => ({ id: q.id, correct: true })), t0);
+  assert.ok(r.revision); assert.equal(P.revision, null); assert.equal(P.competences["math.chine"].palier, 3, "pas de palier gagné");
   assert.ok(r.contextes.includes("revision_reussie")); assert.ok(r.plateau.a > 11);
   // Révision ratée : la compétence reste, son rappel devient dû.
   [P, dep] = sur(42, 1, P);
@@ -841,8 +846,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   f = M.faveurIA(CF, P, t0 + 6 * J); assert.equal(f.palier.id, "furieuse");
   // Furieuse : butin nul, une case de moins, et un piège par jour devant le pion.
   const tF = t0 + 6 * J;
-  P.competences["math.probabilites"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: tF + J, maitriseDepuis: t0 };
-  const v = M.valeurEpreuve(CF, P, { type: "quiz", comp: "math.probabilites" }, tF);
+  P.competences["math.chine"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: tF + J, maitriseDepuis: t0 };
+  const v = M.valeurEpreuve(CF, P, { type: "quiz", comp: "math.chine" }, tF);
   assert.equal(v.faveur, -1);
   P.plateau.position = 2;
   const c = M.piegeIA(CF, P, tF);
@@ -860,7 +865,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(r.repete); assert.equal(r.gain, Math.round(F.gains["3"] / 2));
   // Comblée : une case de plus.
   P.faveur = { valeur: 90, maj: tF }; assert.equal(M.faveurIA(CF, P, tF).palier.id, "comblee");
-  assert.equal(M.valeurEpreuve(CF, P, { type: "quiz", comp: "math.probabilites" }, tF).faveur, 1);
+  assert.equal(M.valeurEpreuve(CF, P, { type: "quiz", comp: "math.chine" }, tF).faveur, 1);
   P.punition = null; assert.ok(M.repliqueDuJour(CF, P, tF).contexte === "faveur_comblee");
   const vieux = M.migrer(JSON.parse(JSON.stringify(Object.assign(M.nouvellePartie(t0), { faveur: undefined }))));
   assert.equal(vieux.faveur, null);
@@ -901,9 +906,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   imposer(["homoncule"], t1); assert.equal(M.seuilAtome(CM, P, t1), Math.max(1, X.atomes.regles.seuil - 1));
   imposer(["tubes"], t1); assert.equal(M.seuilAtome(CM, P, t1), Math.min(X.atomes.regles.questions, X.atomes.regles.seuil + 1));
   // Héron : une case de plus à l'épreuve réussie.
-  P.competences["math.probabilites"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: t1 + J, maitriseDepuis: t0 };
-  imposer(["theatre"], t1); const base = M.valeurEpreuve(CM, P, { type: "quiz", comp: "math.probabilites" }, t1).total;
-  imposer(["heron"], t1); assert.equal(M.valeurEpreuve(CM, P, { type: "quiz", comp: "math.probabilites" }, t1).total, base + 1);
+  P.competences["math.chine"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: t1 + J, maitriseDepuis: t0 };
+  imposer(["theatre"], t1); const base = M.valeurEpreuve(CM, P, { type: "quiz", comp: "math.chine" }, t1).total;
+  imposer(["heron"], t1); assert.equal(M.valeurEpreuve(CM, P, { type: "quiz", comp: "math.chine" }, t1).total, base + 1);
   // Perceptron : un piège de recul est sans effet.
   const R = X.plateau.regles;
   let caseRecul = null;
@@ -929,11 +934,11 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const P2 = M.nouvellePartie(t0); P2.plateau.ennemis = {};
   const obj = X.objets.objets.find(o => o.bonus.type === "case");
   P2.objets[obj.id] = t0; P2.avatar.main = obj.id;
-  P2.competences["math.probabilites"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: t0 + 99 * J, maitriseDepuis: t0 };
+  P2.competences["math.chine"] = { maitrise: true, palier: 1, xp: 50, prochainRappel: t0 + 99 * J, maitriseDepuis: t0 };
   let bonus = 0;
   for (let k = 0; k < 40; k++) {
     P2.plateau.position = R.depart;
-    const r = M.jouerPlateau(CM, P2, { type: "quiz", comp: "math.probabilites" }, { reussi: true }, t0 + k * 1000);
+    const r = M.jouerPlateau(CM, P2, { type: "quiz", comp: "math.chine" }, { reussi: true }, t0 + k * 1000);
     if (r.etapes.some(e => e.type === "bonus_objet")) bonus++;
   }
   assert.ok(bonus > 2 && bonus < 25, "bonus de l'objet de temps en temps (" + bonus + "/40)");
@@ -952,16 +957,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(CH.competences.every(k => k.fiche && k.fiche.essentiel.length >= 3 && k.fiche.schema.startsWith("<svg")));
   // Horloge du jeu calée sur t0 : sans cela, l'absence comptée jusqu'à aujourd'hui rend l'IA furieuse et change ses répliques.
   const P = M.nouvellePartie(t0); P.plateau.ennemis = {}; P.decalage = t0 - Date.now();
-  const qs = CH.questions.filter(q => q.competence === "math.probabilites").slice(0, 5);
+  const qs = CH.questions.filter(q => q.competence === "math.chine").slice(0, 5);
   const res = qs.map((q, i) => ({ id: q.id, correct: i >= 2, rep: i < 2 ? 99 : null }));
-  const r = M.terminerQuiz(CH, P, "math.probabilites", res, t0, { alea: () => 0.99 });
+  const r = M.terminerQuiz(CH, P, "math.chine", res, t0, { alea: () => 0.99 });
   assert.equal(P.oublis.length, 2); assert.equal(P.oublis[0].rep, 99); assert.equal(P.compteurs.hontes, 2);
   assert.ok(r.nouveauxSucces.some(s => s.id === "honte-1"));
   let mur = M.murDeLaHonte(CH, P, t0 + 3600000);
-  assert.equal(mur.aujourdhui.length, 2); assert.equal(mur.restantes, 2); assert.equal(mur.aujourdhui[0].question.competence, "math.probabilites");
+  assert.equal(mur.aujourdhui.length, 2); assert.equal(mur.restantes, 2); assert.equal(mur.aujourdhui[0].question.competence, "math.chine");
   assert.equal(M.repliqueDuJour(CH, P, t0 + 3600000).contexte, "mur_honte");
   // La même question ratée deux fois le même jour n'apparaît qu'une fois.
-  M.terminerQuiz(CH, P, "math.probabilites", res, t0 + 5 * 3600000, { alea: () => 0.99 });
+  M.terminerQuiz(CH, P, "math.chine", res, t0 + 5 * 3600000, { alea: () => 0.99 });
   assert.equal(M.murDeLaHonte(CH, P, t0 + 6 * 3600000).aujourdhui.length, 2);
   // On ne retente pas le jour même.
   const i0 = M.murDeLaHonte(CH, P, t0 + 6 * 3600000).aujourdhui[0].index;
@@ -978,7 +983,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.retenterOubli(CH, P, ia, true, t0 + J + 2000), null, "déjà effacée");
   assert.equal(M.murDeLaHonte(CH, P, t0 + J + 3000).aRetenter, 1, "les deux épingles de la même question sont effacées");
   // Après 30 jours, elles quittent le mur.
-  M.terminerQuiz(CH, P, "math.logique", CH.questions.filter(q => q.competence === "math.logique").slice(0, 5).map(q => ({ id: q.id, correct: false })), t0 + 31 * J, { alea: () => 0.99 });
+  M.terminerQuiz(CH, P, "math.archimede", CH.questions.filter(q => q.competence === "math.archimede").slice(0, 5).map(q => ({ id: q.id, correct: false })), t0 + 31 * J, { alea: () => 0.99 });
   assert.ok(P.oublis.every(e => e.t >= t0 + J), "plus de 30 jours : retiré du mur");
   const vieux = M.migrer(JSON.parse(JSON.stringify(Object.assign(M.nouvellePartie(t0), { oublis: undefined }))));
   assert.deepEqual(vieux.oublis, []);
@@ -1392,8 +1397,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") });
   const T = new Date(2026, 9, 4, 10).getTime(), J = 86400000;
   const P = M.nouvellePartie(T - 2 * J); P.decalage = T - Date.now();
-  const qs = C.questions.filter(q => q.competence === "math.probabilites").slice(0, 2);
-  M.terminerQuiz(C, P, "math.probabilites", qs.map(q => ({ id: q.id, correct: false })), T - J, { alea: () => 0.99 });
+  const qs = C.questions.filter(q => q.competence === "math.chine").slice(0, 2);
+  M.terminerQuiz(C, P, "math.chine", qs.map(q => ({ id: q.id, correct: false })), T - J, { alea: () => 0.99 });
   P.faveur = { valeur: 50, maj: T }; M.faveurIA(C, P, T);
   P.punition = { restant: 300000, total: 300000, palier: "furieuse", rang: 2, depuis: T, n: 1 };
   const x = M.murDeLaHonte(C, P, T).avant[0];
@@ -1675,14 +1680,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
 {
   const T0 = new Date(2026, 9, 24, 9, 0).getTime();
   const PM = M.nouvellePartie(T0);
-  const rate = M.tirerQuestions(C, PM, "math.arithmetique", 5).map((q) => ({ id: q.id, correct: false, rep: 0 }));
-  M.terminerQuiz(C, PM, "math.arithmetique", rate, T0);
+  const rate = M.tirerQuestions(C, PM, "math.origines", 5).map((q) => ({ id: q.id, correct: false, rep: 0 }));
+  M.terminerQuiz(C, PM, "math.origines", rate, T0);
   assert.ok(!M.masterclassImposee(C, PM), "un seul échec n'impose rien");
-  M.terminerQuiz(C, PM, "math.arithmetique", rate, T0 + 1000);
+  M.terminerQuiz(C, PM, "math.origines", rate, T0 + 1000);
   const mi = M.masterclassImposee(C, PM);
-  assert.ok(mi && mi.id === "math.arithmetique" && mi.rates.length === 5);
-  assert.ok(!M.masterclassLue(PM, "math.proportions") && M.masterclassImposee(C, PM), "une autre leçon ne lève rien");
-  assert.ok(M.masterclassLue(PM, "math.arithmetique") && !M.masterclassImposee(C, PM));
+  assert.ok(mi && mi.id === "math.origines" && mi.rates.length === 5);
+  assert.ok(!M.masterclassLue(PM, "math.egypte") && M.masterclassImposee(C, PM), "une autre leçon ne lève rien");
+  assert.ok(M.masterclassLue(PM, "math.origines") && !M.masterclassImposee(C, PM));
   // Les repères d'histoire de chaque chapitre recopient mot pour mot son texte vérifié.
   C.competences.forEach(function (k) { (k.masterclass ? k.masterclass.chapitres : []).forEach(function (ch) {
     const corps = ch.texte.map((x) => x.fr).join(" ");
