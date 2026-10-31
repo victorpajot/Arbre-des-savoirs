@@ -353,8 +353,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(C4.avatar.savants.length >= 81, "v18 : au moins quatre-vingt-un savants");
   assert.ok(C4.competences.every(k => C4.avatar.savants.some(s => s.theme === k.stat)), "v18 : chaque arbre a ses savants");
   assert.deepEqual(M.verifierRecompenses(C4, P, t0).savants, []);
-  // Hypatie arrive avec l'astronomie d'observation
-  P.competences["astro.observer"] = { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + 86400000, xp: 70 };
+  // Hypatie arrive avec le ciel de Ptolémée (elle a édité l'Almageste)
+  P.competences["astro.ptolemee"] = { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + 86400000, xp: 70 };
   const rec = M.verifierRecompenses(C4, P, t0);
   assert.deepEqual(rec.savants.map(s => s.id), ["hypatie"]);
   assert.ok(P.savants.hypatie);
@@ -1010,7 +1010,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const CS = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const T = Date.UTC(2026, 0, 5, 9), P = M.nouvellePartie(T);
   M.verifierRecompenses(CS, P, T);
-  P.competences["astro.observer"] = { maitrise: true, maitriseDepuis: T, xp: 10 };
+  P.competences["astro.ptolemee"] = { maitrise: true, maitriseDepuis: T, xp: 10 };
   P.competences["phys.ondes"] = { maitrise: true, maitriseDepuis: T, xp: 10 };
   const a = M.verifierRecompenses(CS, P, T + 1), b = M.verifierRecompenses(CS, P, T + 2);
   assert.equal(a.savants.length + a.objets.length + a.livres.length, 1, "un seul déblocage d'un coup");
