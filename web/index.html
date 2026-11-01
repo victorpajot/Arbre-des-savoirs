@@ -1967,7 +1967,7 @@ function demarrerJeu() {
   }
   // Victor (2026-11-01) : toutes les cases au même niveau de saturation et de clarté ; seule la teinte de l'arbre change.
   var TEINTES_CASE = { pastel: [0.42, 0.80], moyen: [0.48, 0.72], soutenu: [0.55, 0.64], vif: [0.68, 0.70] };
-  var TEINTE_CASE = (function () { try { return localStorage.getItem("arbre.teintecase") || "moyen"; } catch (e) { return "moyen"; } })();
+  var TEINTE_CASE = (function () { try { return localStorage.getItem("arbre.teintecase") || "vif"; } catch (e) { return "vif"; } })();
   function couleurCase(k) {
     var st = statActif(k.stat), r = TEINTES_CASE[TEINTE_CASE];
     if (!st) return r ? depuisHSL([40, r[0] * 0.35, r[1]]) : "#D8D2C4";
