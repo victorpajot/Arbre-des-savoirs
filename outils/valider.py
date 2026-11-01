@@ -60,6 +60,8 @@ def main():
         for ch in c.get("masterclass", {}).get("chapitres", []):
             if ch.get("figure") and ch["figure"] not in figs:
                 erreurs.append(f"skills.json {c['id']} : figure de masterclass inconnue {ch['figure']}")
+            if ch.get("dessin") and ch["dessin"] not in set(contenu["succes"].get("dessins", {})) | set(contenu["plateau"]["icones"]) | {o["id"] for o in contenu["objets"]["objets"]}:
+                erreurs.append(f"skills.json {c['id']} : dessin de masterclass inconnu {ch['dessin']}")
             # Les repères d'histoire des quiz recopient mot pour mot une phrase vérifiée du chapitre.
             corps = " ".join(t["fr"] for t in ch["texte"])
             for h in ch.get("reperes", []):

@@ -34,7 +34,7 @@ def textes(o):
             # Un extrait porte sa propre vérification : il ne remet pas en cause la fiche qui le contient.
             # `reperes` et `cles` (masterclass) ne font que recopier des phrases du texte vérifié (contrôlé par valider.py).
             # `repere` et `etymologie` (question) sont vérifiés pour eux-mêmes : ils ne remettent pas en cause la question.
-            if k in ("lot", "verification", "extrait", "reperes", "repere", "etymologie", "cles"):
+            if k in ("lot", "verification", "extrait", "reperes", "repere", "etymologie", "cles", "dessin"):
                 continue
             yield from textes(o[k])
     elif isinstance(o, list):

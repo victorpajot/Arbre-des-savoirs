@@ -387,6 +387,7 @@ body.plateau-plein { overflow: hidden; }
 /* Schémas des questions */
 .illus { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
 .illus svg { display: block; width: 100%; height: auto; max-height: 320px; }
+.illus.dessin-q { background: #FFF8EC; } /* le pixel art est cerné de noir : toujours sur fond crème, même en sombre */
 .illus .t { fill: var(--ink); font-family: var(--f-body); }
 .illus .tm { fill: var(--muted); font-family: var(--f-body); }
 .illus .l { stroke: var(--ink); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -4912,6 +4913,8 @@ function demarrerJeu() {
       var cles = (ch.cles || []).map(tx).sort(function (a, b) { return b.length - a.length; }), etatCles = { vus: {}, n: 0, max: 99 };
       var livres = livresEtape(ch.texte.map(tx).join(" "));
       return { titre: tx(ch.titre), html: (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux, livres), cles, etatCles); }).join("") +
+        // Victor (2026-11-01) : un dessin en pixel art de l'instrument ou de l'objet dont parle l'étape (champ dessin).
+        (ch.dessin ? htmlDessinQ({ id: ch.dessin }) : "") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
         __('<p class="mc-retenir"><b>À retenir</b>') + escD(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });
