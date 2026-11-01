@@ -2282,9 +2282,10 @@ function demarrerJeu() {
   // cote (posé à côté de la route, du côté du haut), petit (réduit, sur le bord de la case).
   var MODE_PION = (function () { try { return localStorage.getItem("arbre.pion") || "cote"; } catch (e) { return "cote"; } })();
   function positionPion(n) {
+    // Victor (2026-11-01, « j'ai peur des animations dans les virages ») : le pion flotte toujours droit au-dessus de sa case,
+    // à la même hauteur : il suit la route sans jamais changer de bord dans les virages.
     var p = centreCase(n); if (MODE_PION === "dessus") return p;
-    var a = pointRoute(abscisse(n))[2], nx = -Math.sin(a), ny = Math.cos(a); if (ny > 0) { nx = -nx; ny = -ny; }
-    var d = MODE_PION === "petit" ? 22 : 40; return [p[0] + nx * d, p[1] + ny * d + 17];
+    return [p[0], p[1] - (MODE_PION === "petit" ? 16 : 26)];
   }
   function cadrePion(n) { var p = centreCase(n); return borner(p[0] - CADRE / 2, p[1] - 14 - CADRE / 2); }
   function boiteVue(c) { return c[0].toFixed(1) + " " + c[1].toFixed(1) + " " + CADRE + " " + CADRE; }
