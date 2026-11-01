@@ -2922,6 +2922,18 @@ function demarrerJeu() {
     if (mot && rdj) mot.setAttribute("data-contexte", rdj.contexte);
     // v10 : la bulle de l'IA ouvre sa fiche, dans l'onglet IA du personnage ; sa faveur s'affiche dessous.
     function versIA() { if (mot && mot.getAttribute("data-contexte") === "mur_honte") { ouvrirHonte(); return; } vue = "perso"; ongletPerso = "ia"; rendre(); window.scrollTo(0, 0); }
+    // Victor (2026-11-01) : l'accueil commence par ce qu'on joue : ce qui retient le pion (ultimatum, duel, atome, piège,
+    // masterclass, Chrono), puis Jouer et le plateau ; ensuite Alyca, le mur de la honte, et le personnage en dernier.
+    if (P.ultimatum) v.appendChild(blocUltimatum());
+    if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
+    if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
+    if (M.piegeEnAttente(P)) v.appendChild(blocPiegeAccueil());
+    if (M.masterclassImposee(C, P)) v.appendChild(blocMasterclassAccueil());
+    if (M.chronoEnAttente(P)) v.appendChild(blocChronoAccueil("case"));
+    else if (M.offreChrono(P, maintenant())) v.appendChild(blocChronoAccueil("alyca"));
+    if (C.plateau && P.plateau.parcoursSuivant) v.appendChild(blocSuiteTour());
+    if (C.plateau) v.appendChild(boutonJouer());
+    if (C.plateau) v.appendChild(blocPlateau());
     if (mot) {
       mot.classList.add("cliquable"); mot.setAttribute("role", "button"); mot.setAttribute("tabindex", "0"); mot.setAttribute("aria-label", __("Ouvrir la fiche de l'IA"));
       var fm = faveurMini(t); if (fm) mot.querySelector("div").appendChild(fm);
@@ -2929,8 +2941,9 @@ function demarrerJeu() {
       mot.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); versIA(); } };
       v.appendChild(mot);
     }
-    if (P.ultimatum) v.appendChild(blocUltimatum());
     var em = M.empletteAVoir(P); if (em) v.appendChild(blocEmplette(em));
+    var bf = blocFarce(); if (bf) v.appendChild(bf);
+    var bh = blocHonte(); if (bh) v.appendChild(bh);
     var sn = M.surnom(C, P, t);
     var perso = el(__('<div class="bloc perso-v5" role="button" tabindex="0" aria-label="Ouvrir la fiche du personnage"><div class="perso"><div class="avatar-cadre rang-') + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + __('</div><div><div class="niv-ligne"><div class="niv"><small>Niveau</small><span class="num">') + ng + __('</span></div><div class="niv cred"><small>Crédits</small><span class="num">') + P.credits.solde + '</span></div></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div>" + (sn ? '<p class="surnom">' + esc(sn.texte) + __('<small>d\'après l\'IA</small></p>') : "") + '<p class="meta">' + nbMait + (nbMait > 1 ? __(" compétences") : __(" compétence")) + (nbMait > 1 ? __(" maîtrisées") : __(" maîtrisée")) + __(" sur ") + C.competences.length + "</p></div></div></div>");
     perso.onclick = function () { vue = "perso"; ongletPerso = "avatar"; rendre(); window.scrollTo(0, 0); };
@@ -2951,19 +2964,7 @@ function demarrerJeu() {
       cred.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); versBoutique(ev); } };
     }
     perso.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); perso.onclick(); } };
-    // Le personnage vient juste après l'IA (sa bulle, ses exigences, ses emplettes).
     v.appendChild(perso);
-    if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
-    if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
-    if (M.piegeEnAttente(P)) v.appendChild(blocPiegeAccueil());
-    if (M.masterclassImposee(C, P)) v.appendChild(blocMasterclassAccueil());
-    if (M.chronoEnAttente(P)) v.appendChild(blocChronoAccueil("case"));
-    else if (M.offreChrono(P, maintenant())) v.appendChild(blocChronoAccueil("alyca"));
-    if (C.plateau && P.plateau.parcoursSuivant) v.appendChild(blocSuiteTour());
-    if (C.plateau) v.appendChild(boutonJouer());
-    var bh = blocHonte(); if (bh) v.appendChild(bh);
-    var bf = blocFarce(); if (bf) v.appendChild(bf);
-    if (C.plateau) v.appendChild(blocPlateau());
 
     if (!P.journal.length) {
       v.appendChild(el(__('<div class="bloc intro"><h2>Comment ça marche</h2><ol>') +
