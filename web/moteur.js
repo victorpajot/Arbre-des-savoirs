@@ -2980,6 +2980,11 @@
     if (b.famille === "masques") partie.masque = b.chose.id;
     return b;
   }
+  // Le butin en attente rattaché à la compétence de l'épreuve (champ competence, ou condition sur elle).
+  function butinLie(ouvert, epreuve) {
+    var c = epreuve && epreuve.comp; if (!c) return [];
+    return ouvert.filter(function (b) { var x = b.chose; return x.competence === c || (x.condition && x.condition.id === c); });
+  }
   // Après une épreuve réussie : au plus un butin, tiré au hasard. `alea` (facultatif) pour les tests.
   function tirerButin(contenu, partie, epreuve, t, alea) {
     alea = alea || Math.random;
@@ -2991,9 +2996,11 @@
     var mult = epreuve.type === "duel" ? 1 : reglesDuJour(contenu, partie, t).butin;
     if (!assure && (!ouvert.length || alea() >= chanceButin(contenu, epreuve) * (fav ? fav.palier.butin : 1) * mult)) return null;
     // v18 : trois fois sur quatre, le butin vient du thème de l'épreuve quand il y en a un en attente.
-    var th = themeEpreuve(contenu, partie, epreuve), pool = duTheme(ouvert, th, t + "|" + partie.journal.length, function (x) { return x.chose; });
+    // Victor (2026-11-01) : d'abord ce qui tient à l'épreuve elle-même (livre, objet… de sa compétence), sinon le thème.
+    var lies = butinLie(ouvert, epreuve);
+    var th = themeEpreuve(contenu, partie, epreuve), pool = lies.length ? lies : duTheme(ouvert, th, t + "|" + partie.journal.length, function (x) { return x.chose; });
     var b = pool[Math.floor(alea() * pool.length)];
-    if (b.famille === "livres") b = livreDeLaCase(contenu, partie, ouvert, alea, themeDe(b.chose)) || b;
+    if (!lies.length && b.famille === "livres") b = livreDeLaCase(contenu, partie, ouvert, alea, themeDe(b.chose)) || b;
     partie[b.famille][b.chose.id] = t; compterLot(lot, b.famille);
     delete partie.gagnables[cleButin(b.famille, b.chose.id)];
     if (b.famille === "masques") partie.masque = b.chose.id;

@@ -480,6 +480,12 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
         const b = M.tirerButin(C5, B, { type: "duel" }, t0, () => 0.01 * i);
         if (b && b.famille === "livres") assert.ok(Number(b.chose.annee) <= 475);
       }
+      // Victor (2026-11-01) : quand l'épreuve a son propre livre en attente, c'est lui qui tombe.
+      const L = M.nouvellePartie(t0); L.plateau.position = 4;
+      C5.livres.forEach(l => { L.gagnables["livres:" + l.id] = { famille: "livres", id: l.id, depuis: t0 }; });
+      const lie = M.butinOuvert(C5, L).filter(b => b.famille === "livres").map(b => b.chose).slice(-1)[0];
+      const autre = M.tirerButin(C5, L, { type: "quiz", comp: lie.competence }, t0, () => 0.001);
+      assert.ok(autre && (autre.chose.competence === lie.competence || (autre.chose.condition || {}).id === lie.competence), "butin rattaché à l'épreuve d'abord");
     }
     // v15 : la case du pion dicte l'arbre de l'épreuve ; arbre sans rien de jouable, l'IA improvise hors case.
     const Q = M.nouvellePartie(t0);
