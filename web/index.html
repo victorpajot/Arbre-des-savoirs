@@ -748,6 +748,7 @@ body.plateau-plein { overflow: hidden; }
 .date-ep svg { width: 14px; height: 14px; vertical-align: -2px; margin-right: 3px; }
 .ep-antiquite { --ep: var(--ep-antiquite); } .ep-moyen-age { --ep: var(--ep-moyen-age); } .ep-renaissance { --ep: var(--ep-renaissance); }
 .ep-classique { --ep: var(--ep-classique); } .ep-xixe { --ep: var(--ep-xixe); } .ep-xxe { --ep: var(--ep-xxe); }
+.mc-cle { background: linear-gradient(transparent 62%, color-mix(in srgb, var(--c, var(--accent)) 38%, transparent) 62%); color: inherit; font-weight: 700; padding: 0 1px; }
 .mc-puce { display: inline-flex; align-items: center; gap: 3px; padding: 0 6px 0 2px; margin: 0 1px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 8%, transparent); font: inherit; color: inherit; cursor: pointer; vertical-align: baseline; line-height: 1.35; }
 .mc-puce .tete-p { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; overflow: hidden; background: var(--parchemin); }
 .mc-puce .tete-p svg { width: 20px; height: 20px; }
@@ -4750,6 +4751,35 @@ function demarrerJeu() {
     return { foyer: foyer, sujets: sujets };
   }
   // Le paragraphe, précédé des portraits des personnes qu'il cite pour la première fois dans la leçon.
+  // Victor (2026-11-01) : les mots essentiels d'une leçon sont les bonnes réponses de ses quiz (QCM) que le texte contient :
+  // ce qui est surligné, c'est ce qui sera demandé. Les plus longues d'abord ; pas les nombres (les dates ont leurs pastilles).
+  function termesCles(compId) {
+    var vus = {}, out = [];
+    (C.questionsPar[compId] || []).forEach(function (q) {
+      if (q.type !== "qcm") return;
+      var t = String(tx(q.choix[q.reponse]) || "").trim().replace(/[.!?…]+$/, "");
+      if (t.length < 4 || t.length > 40 || /^[\d\s.,%–-]+$/.test(t) || /\d{3}/.test(t) || vus[t.toLowerCase()]) return;
+      vus[t.toLowerCase()] = 1; out.push(t);
+    });
+    return out.sort(function (a, b) { return b.length - a.length; });
+  }
+  // Surligne dans un HTML (hors balises) la première occurrence de chaque terme pas encore vu ; `etat` = {vus, n, max}.
+  function surlignerCles(html, termes, etat) {
+    if (!termes.length || etat.n >= etat.max) return html;
+    var bouts = html.split(/(<[^>]+>)/), dansPuce = 0;
+    termes.forEach(function (t) {
+      if (etat.n >= etat.max || etat.vus[t]) return;
+      var re = new RegExp("(^|[^\\p{L}])(" + esc(t).replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")(?![\\p{L}])", "iu");
+      for (var i = 0; i < bouts.length; i++) {
+        var b = bouts[i];
+        if (b.charAt(0) === "<") { if (/^<button[^>]*mc-puce/.test(b)) dansPuce = 1; else if (/^<\/button/.test(b)) dansPuce = 0; continue; }
+        if (dansPuce || !re.test(b)) continue;
+        bouts[i] = b.replace(re, function (m, a, mot) { return a + '<mark class="mc-cle">' + mot + "</mark>"; });
+        etat.vus[t] = 1; etat.n++; break;
+      }
+    });
+    return bouts.join("");
+  }
   function paragraphePersonnes(texte, vus, max, principaux) {
     // Les noms trouvés dans le paragraphe ; un nom pris dans un plus long (« Luther » dans « Martin Luther King ») ne compte pas.
     var tr = personnesDans(texte);
@@ -4829,6 +4859,7 @@ function demarrerJeu() {
     if (frise) iSchema = -2;
     var intro = iSchema === -1 && k.fiche && k.fiche.schema ? '<div class="illus mc-intro">' + k.fiche.schema + "</div>" : "";
     var fp = foyersPersonnes(k.masterclass.chapitres, k.id), foyers = fp.foyer;
+    var cles = termesCles(k.id);
     var etapes = k.masterclass.chapitres.map(function (ch, i) {
       var vusPerso = {}; Object.keys(foyers).forEach(function (id) { if (foyers[id] !== i) vusPerso[id] = 1; });
       var tout = ch.texte.map(tx).concat([tx(ch.titre), tx(ch.retenir)]).join(" ");
@@ -4848,7 +4879,8 @@ function demarrerJeu() {
       ch.texte.forEach(function (x) { personnesDans(tx(x)).forEach(function (y) { if (!premiere) premiere = y.e.p.id; nbPar[y.e.p.id] = (nbPar[y.e.p.id] || 0) + 1; }); });
       Object.keys(nbPar).forEach(function (id) { if (nbPar[id] >= 2) principaux[id] = 1; });
       if (premiere && !Object.keys(principaux).some(function (id) { return nbPar[id]; })) principaux[premiere] = 1;
-      return { titre: tx(ch.titre), html: (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x) { return paragraphePersonnes(tx(x), vusPerso, 2, principaux); }).join("") +
+      var etatCles = { vus: {}, n: 0, max: 4 };
+      return { titre: tx(ch.titre), html: (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux), cles, etatCles); }).join("") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
         __('<p class="mc-retenir"><b>À retenir</b>') + escD(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });
@@ -4856,7 +4888,7 @@ function demarrerJeu() {
       var q = C.questionParId[x.id]; return tx(q.enonce) + " " + (q.explication ? tx(q.explication) : ""); }).join(" ")) : "") + rates.map(function (x) { return blocQ(C.questionParId[x.id], x.rep); }).join("") +
       __('<p class="meta">Elles t\'attendent au mur de la honte : retente-les dès demain.</p>') });
     var n = 0, titre = __("Masterclass : ") + tx(k.nom);
-    feuilleSimple('<div class="guide-z masterclass"></div>', titre, {
+    feuilleSimple('<div class="guide-z masterclass" style="--c:' + couleur(k.stat) + '"></div>', titre, {
       prec: function () { if (n > 0) { n--; montrer(); } }, suiv: function () { if (n < etapes.length - 1) { n++; montrer(); } }
     }, retour);
     // Victor (2026-11-01) : pendant la lecture, plus rien du jeu derrière : la feuille prend tout l'écran, quelle que soit l'étape.
