@@ -254,7 +254,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
   .vue > .bloc.plateau .grille-cadre { margin-inline: -15px; margin-top: -15px; }
   .vue > .bloc.plateau .grille-cadre svg.grille.libre { border-radius: var(--r) var(--r) 0 0; }
 }
-.grille-cadre .cam { position: absolute; right: 8px; bottom: 32px; display: flex; gap: 6px; }
+.grille-cadre .cam { position: absolute; right: 8px; bottom: 10px; display: flex; gap: 6px; }
 .grille-cadre .cam button[data-cam="plus"], .grille-cadre .cam button[data-cam="moins"] { width: 38px; padding: 0; font-size: 20px; line-height: 1; }
 .grille-cadre .cam button { font: inherit; font-size: 13px; font-weight: 600; padding: 8px 12px; min-height: 36px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.12); cursor: pointer; }
 .plateau .tete { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
@@ -2665,18 +2665,15 @@ function demarrerJeu() {
   }
   function blocPlateau() {
     var pl = P.plateau, t = maintenant(), k = M.caseN(C, pl.position), st = stat(M.bonusDuJour(C, P, t));
-    var fp = pl.parcours && M.formeParcours(C, pl.parcours.forme), mf = (pl.meilleurs && pl.meilleurs[formeActuelle()]) || (formeActuelle() === "serpentin" ? pl.meilleur : null);
-    var b = el('<section class="bloc plateau"><div class="tete"><h2>' + (fp ? esc(majuscule(tx(fp.nom))) : __("Plateau de l\'histoire")) + '</h2><span class="num">' + (pl.tours ? __("Tour ") + (pl.tours + 1) + " · " : "") + __("case ") + (pl.idx + 1) + " / " + M.routeTour(C, P).length + "</span></div>" +
-      // v15 : le compteur du tour, pour viser le parcours le plus court.
-      '<p class="compteur-tour"><b>' + (pl.coups || 0) + __("</b> épreuve") + ((pl.coups || 0) > 1 ? "s" : "") + __(" dans ce tour") + (mf ? __(" · record sur ce parcours : <b>") + mf + "</b>" : __(" · pas encore de record sur ce parcours")) + "</p></section>");
+    var fp = pl.parcours && M.formeParcours(C, pl.parcours.forme);
+    var b = el('<section class="bloc plateau"><div class="tete"><h2>' + (fp ? esc(majuscule(tx(fp.nom))) : __("Plateau de l\'histoire")) + '</h2><span class="num">' + (pl.tours ? __("Tour ") + (pl.tours + 1) + " · " : "") + __("case ") + (pl.idx + 1) + " / " + M.routeTour(C, P).length + "</span></div></section>");
+      // Victor (2026-11-01) : plus de compteur d'épreuves ni de record sous le plateau, ni de légende du fond.
     var grille = el('<div class="grille-cadre"></div>'), glisse = false, finGlisse = 0;
     function majGrille() {
       grille.innerHTML = svgPlateau();
       var cam = el(__('<div class="cam"><button type="button" data-cam="moins" aria-label="Dézoomer">−</button><button type="button" data-cam="plus" aria-label="Zoomer">+</button>') +
         (vueEnsemble() ? __('<button type="button" data-cam="pion">Mon pion</button>') : __('<button type="button" data-cam="large">Vue d\'ensemble</button>')) + "</div>");
       grille.appendChild(cam);
-      var ton = M.humeur(P);
-      grille.appendChild(el('<div class="ciel-ia" aria-hidden="true">' + __("Fond : ") + esc((DECORS[ton] || DECORS.neutre).nom) + __(", car l'IA est ") + esc(NOM_HUMEUR[ton] || ton) + "</div>"));
     }
     majGrille();
     function svgLibre() { return grille.querySelector("svg.libre"); }
