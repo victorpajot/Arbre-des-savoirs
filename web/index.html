@@ -375,6 +375,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .illus .f { fill: color-mix(in srgb, var(--accent) 20%, var(--surface)); stroke: var(--ink); stroke-width: 1.5; }
 .illus .f2 { fill: color-mix(in srgb, var(--warn) 24%, var(--surface)); stroke: color-mix(in srgb, var(--warn) 70%, var(--surface)); stroke-width: 1.2; }
 .illus .a { fill: var(--accent); }
+.mc-frise.guidee .loin { opacity: 0.35; }
+.mc-frise circle.ici { stroke: var(--surface); stroke-width: 3; paint-order: stroke; filter: drop-shadow(0 0 4px var(--accent)); }
+.mc-frise text.ici { font-weight: 700; }
 .illus .al { stroke: var(--accent); fill: none; }
 .illus .fond { fill: var(--surface); }
 .illus .jaune { fill: #F2B632; }
@@ -4481,6 +4484,44 @@ function demarrerJeu() {
     });
     return (html ? '<div class="mc-persos">' + html + "</div>" : "") + "<p>" + escD(texte) + "</p>";
   }
+  // Une frise du schéma de fiche : au moins 3 points alignés (verticalement ou horizontalement), dont 2 datés.
+  // Renvoie null si ce n'en est pas une, sinon une fonction (texte de l'étape) → HTML de la frise, les points
+  // dont le texte cite la date ou les mots mis en avant, les autres estompés.
+  function friseLecon(svg) {
+    var t = document.createElement("template"); t.innerHTML = svg.trim();
+    var s = t.content.querySelector("svg"); if (!s) return null;
+    var cs = [].slice.call(s.querySelectorAll("circle")), ts = [].slice.call(s.querySelectorAll("text"));
+    function plus(attr) { var n = {}, best = null; cs.forEach(function (c) { var v = c.getAttribute(attr); n[v] = (n[v] || 0) + 1; if (!best || n[v] > n[best]) best = v; }); return best && n[best] >= 3 ? best : null; }
+    var vx = plus("cx"), hy = vx ? null : plus("cy"); if (!vx && !hy) return null;
+    var pts = cs.filter(function (c) { return vx ? c.getAttribute("cx") === vx : c.getAttribute("cy") === hy; }).map(function (c) {
+      var cx = +c.getAttribute("cx"), cy = +c.getAttribute("cy");
+      var row = ts.filter(function (x) { return vx ? Math.abs(+x.getAttribute("y") - cy) <= 12 : Math.abs(+x.getAttribute("x") - cx) <= 30; });
+      return { c: c, row: row, txt: row.map(function (x) { return x.textContent; }).join(" ") };
+    });
+    if (pts.some(function (p) { return /°/.test(p.txt); }) || pts.filter(function (p) { return /\d{3,4}|\b[IVX]+e\b/.test(p.txt); }).length < 2) return null;
+    var VIDES = { avant: 1, apres: 1, entre: 1, pendant: 1, depuis: 1, contre: 1, selon: 1, leurs: 1, avec: 1, pour: 1, sans: 1, sous: 1, moins: 1, toute: 1, premier: 1, premiere: 1, premiers: 1, grand: 1, grande: 1, grands: 1, after: 1, before: 1, first: 1, their: 1, with: 1, about: 1 };
+    function norm(x) { return x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+    pts.forEach(function (p) {
+      p.ans = p.txt.match(/\d{3,4}/g) || [];
+      p.siecles = (p.txt.match(/\b[IVX]+e\b/g) || []);
+      p.mots = (norm(p.txt).match(/[a-z]{5,}/g) || []).filter(function (w) { return !VIDES[w]; });
+    });
+    return function (texte) {
+      var n = norm(texte);
+      var on = pts.map(function (p) {
+        return p.ans.some(function (a) { return new RegExp("(?<!\\d)" + a + "(?!\\d)").test(texte); }) ||
+          p.siecles.some(function (r) { return new RegExp("\\b" + r + "\\b").test(texte); }) ||
+          p.mots.some(function (m) { return new RegExp("\\b" + m.slice(0, Math.max(5, m.length - 2))).test(n); });
+      });
+      var aucun = on.indexOf(true) < 0, c = s.cloneNode(true), ccs = [].slice.call(c.querySelectorAll("circle")), cts = [].slice.call(c.querySelectorAll("text"));
+      if (!aucun) pts.forEach(function (p, i) {
+        var cc = ccs[cs.indexOf(p.c)]; cc.classList.add(on[i] ? "ici" : "loin");
+        if (on[i]) cc.setAttribute("r", (+p.c.getAttribute("r") || 6) * 1.5);
+        p.row.forEach(function (x) { cts[ts.indexOf(x)].classList.add(on[i] ? "ici" : "loin"); });
+      });
+      return '<div class="illus mc-frise' + (aucun ? "" : " guidee") + '">' + c.outerHTML + "</div>";
+    };
+  }
   function ouvrirMasterclass(id, rates, retour) {
     var k = C.parId[id]; if (!aMasterclass(k)) return;
     // Imposée par l'IA (deux épreuves ratées de suite) : sa réplique en tête, et la consigne tombe au dernier chapitre.
@@ -4496,14 +4537,20 @@ function demarrerJeu() {
     // Le schéma de la fiche va dans le chapitre qui en parle (schema_fiche), sinon dans le premier.
     // Victor (2026-10-31) : sans chapitre désigné, ce schéma résume toute la leçon (souvent une frise) : il ouvre l'étape 1, en introduction.
     var iSchema = k.masterclass.chapitres.findIndex(function (ch) { return ch.schema_fiche; });
-    var intro = iSchema < 0 && k.fiche && k.fiche.schema ? '<div class="illus mc-intro">' + k.fiche.schema + "</div>" : "";
+    // Victor (2026-11-01) : quand le schéma de la fiche est une frise, elle revient en tête de chaque étape,
+    // et les points dont parle l'étape sont mis en avant.
+    var frise = k.fiche && k.fiche.schema ? friseLecon(k.fiche.schema) : null;
+    if (frise) iSchema = -2;
+    var intro = iSchema === -1 && k.fiche && k.fiche.schema ? '<div class="illus mc-intro">' + k.fiche.schema + "</div>" : "";
     var vusPerso = {};
     var etapes = k.masterclass.chapitres.map(function (ch, i) {
-      return { titre: tx(ch.titre), html: (i === 0 ? intro : "") + ch.texte.map(function (x) { return paragraphePersonnes(tx(x), vusPerso); }).join("") +
+      var tout = ch.texte.map(tx).concat([tx(ch.titre), tx(ch.retenir)]).join(" ");
+      return { titre: tx(ch.titre), html: (frise ? frise(tout) : i === 0 ? intro : "") + ch.texte.map(function (x) { return paragraphePersonnes(tx(x), vusPerso); }).join("") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
         __('<p class="mc-retenir"><b>À retenir</b>') + escD(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });
-    if (rates.length) etapes.push({ titre: rates.length > 1 ? __("Tes erreurs, corrigées") : __("Ton erreur, corrigée"), html: rates.map(function (x) { return blocQ(C.questionParId[x.id], x.rep); }).join("") +
+    if (rates.length) etapes.push({ titre: rates.length > 1 ? __("Tes erreurs, corrigées") : __("Ton erreur, corrigée"), html: (frise ? frise(rates.map(function (x) {
+      var q = C.questionParId[x.id]; return tx(q.enonce) + " " + (q.explication ? tx(q.explication) : ""); }).join(" ")) : "") + rates.map(function (x) { return blocQ(C.questionParId[x.id], x.rep); }).join("") +
       __('<p class="meta">Elles t\'attendent au mur de la honte : retente-les dès demain.</p>') });
     var n = 0, titre = __("Masterclass : ") + tx(k.nom);
     feuilleSimple('<div class="guide-z masterclass"></div>', titre, {
