@@ -1935,7 +1935,10 @@ function demarrerJeu() {
     if (v === "bombe") {
       // Victor (2026-11-01) : le bombé, en dégradé continu : 14 bandes de plus en plus claires vers le centre.
       var out = sep, N = 14;
-      for (var b = 1; b <= N; b++) { var t = b / N; out += ligne(seg(0.9), eclaircir(fond, 0.7 * t * t), (W - 1.6) * (1 - 0.82 * t)); }
+      // Victor (2026-11-01) : bords un peu plus foncés et saturés, centre plus clair et désaturé, jamais blanc.
+      var h = versHSL(fond), bord = [h[0], Math.min(1, h[1] * 1.12 + 0.03), Math.max(0, h[2] - 0.06)], coeur = [h[0], h[1] * 0.6, Math.min(0.86, h[2] + 0.06)];
+      out = ligne(seg(0.3), "#1E1A2B", W) + ligne(seg(0.9), depuisHSL(bord), W - 1.6);
+      for (var b = 1; b <= N; b++) { var t = b / N, u = t * t; out += ligne(seg(0.9), depuisHSL([h[0], bord[1] + (coeur[1] - bord[1]) * u, bord[2] + (coeur[2] - bord[2]) * u]), (W - 1.6) * (1 - 0.82 * t)); }
       return out;
     }
     if (v === "bords") return sep + ligne(seg(-0.05), "#F8F1E1", W - 10);
@@ -1947,6 +1950,21 @@ function demarrerJeu() {
   var DEFS_CASE = '<defs><pattern id="grainCase" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="none"/>' +
     '<circle cx="1.2" cy="1.5" r="0.45" fill="#8A6F3E" fill-opacity="0.35"/><circle cx="4.6" cy="3.2" r="0.35" fill="#8A6F3E" fill-opacity="0.3"/>' +
     '<circle cx="2.8" cy="5.6" r="0.4" fill="#8A6F3E" fill-opacity="0.28"/><path d="M5.2,0.6 l1.2,0.9 M0.4,4.2 l1.1,-0.5" stroke="#8A6F3E" stroke-opacity="0.22" stroke-width="0.35"/></pattern></defs>';
+  function versHSL(hex) {
+    var v = parseInt(hex.slice(1), 16), r = (v >> 16) / 255, g = ((v >> 8) & 255) / 255, b = (v & 255) / 255;
+    var mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn, h = 0, s = 0;
+    if (d) {
+      s = d / (1 - Math.abs(2 * l - 1));
+      h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+      h = (h * 60 + 360) % 360;
+    }
+    return [h, s, l];
+  }
+  function depuisHSL(c) {
+    var h = c[0], s = c[1], l = c[2], k = (1 - Math.abs(2 * l - 1)) * s, x = k * (1 - Math.abs((h / 60) % 2 - 1)), m = l - k / 2;
+    var rgb = h < 60 ? [k, x, 0] : h < 120 ? [x, k, 0] : h < 180 ? [0, k, x] : h < 240 ? [0, x, k] : h < 300 ? [x, 0, k] : [k, 0, x];
+    return "#" + rgb.map(function (v) { return Math.round((v + m) * 255).toString(16).padStart(2, "0"); }).join("");
+  }
   function couleurCase(k) {
     var st = statActif(k.stat); if (!st) return "#D8D2C4";
     return eclaircir(st.couleur, M.arbreOuvert(C, P, k.stat) ? 0.38 : 0.78);
