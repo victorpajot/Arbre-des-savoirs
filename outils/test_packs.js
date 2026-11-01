@@ -85,6 +85,8 @@ function coherence(off, depuis, C, P) {
   for (const [k, fam] of Object.entries(FAM)) for (const [id, v] of Object.entries(P[k] || {}))
     if (typeof v === "number" && v > depuis && eteints[de(fam, id)]) pb.push(`${k} ${id}`);
   for (const j of P.journal) if (j.t > depuis && j.comp && !C.parId[j.comp]) pb.push(`épreuve ${j.comp}`);
+  // Victor (2026-11-01) : une date du socle rattachée à un arbre éteint ne se débloque pas.
+  for (const e of C.evenements || []) if (P.evenements[e.id] > depuis && e.stat && !C.parStat[e.stat]) pb.push(`date ${e.id}`);
   for (const k of Object.keys(C.commentairesPar)) if (k.includes("@") && eteints[k.split("@")[1]]) pb.push(`répliques ${k}`);
   if (P.lot && P.lot.t > depuis && P.lot.theme && !C.parStat[P.lot.theme]) pb.push(`butin au thème ${P.lot.theme}`);
   const pc = P.plateau.parcours;

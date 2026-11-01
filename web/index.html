@@ -3422,7 +3422,7 @@ function demarrerJeu() {
   }
   function vueCollections() {
     var v = el('<div class="vue"></div>');
-    var comptes = { objets: [Object.keys(P.objets).length, C.objets.length], frise: [Object.keys(P.evenements).length, C.evenements.length], livres: [Object.keys(P.livres).length, C.livres.length],
+    var comptes = { objets: [Object.keys(P.objets).length, C.objets.length], frise: (function () { var a = C.evenements.filter(function (e) { return !e.stat || statActif(e.stat); }); return [a.filter(function (e) { return P.evenements[e.id] != null; }).length, a.length]; })(), livres: [Object.keys(P.livres).length, C.livres.length],
       bestiaire: [Object.keys(P.bestiaire || {}).length, C.ennemis.length],
       personnages: [personnesConnues().filter(function (e) { return M.rencontre(P, e.p.id); }).length, personnesConnues().length],
       atomes: [C.atomes ? C.atomes.elements.filter(function (e) { return M.estCapture(P, e.z); }).length : 0, C.atomes ? C.atomes.elements.length : 0] };
@@ -3499,7 +3499,8 @@ function demarrerJeu() {
     });
     b.appendChild(fl);
     // v14 : par défaut, la frise ne montre que les dates découvertes ; un interrupteur révèle les autres, en ombre.
-    var tous = C.evenements.filter(function (e) { return !filtreFrise || e.stat === filtreFrise; });
+    // Victor (2026-11-01) : les dates d'un arbre éteint ne s'affichent pas, même gagnées dans une autre partie.
+    var tous = C.evenements.filter(function (e) { return (!e.stat || statActif(e.stat)) && (!filtreFrise || e.stat === filtreFrise); });
     var nbVues = tous.filter(function (e) { return P.evenements[e.id]; }).length;
     var tg = el(__('<label class="interrupteur" for="frise-toutes" style="margin:4px 0 8px"><span class="note" style="margin:0">Montrer aussi les dates à découvrir (') + (tous.length - nbVues) + ')</span><input type="checkbox" id="frise-toutes"></label>');
     tg.querySelector("input").checked = friseToutes;

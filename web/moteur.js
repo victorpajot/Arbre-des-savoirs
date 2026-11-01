@@ -2906,6 +2906,8 @@
         liste.forEach(function (x) {
           if (f[2][x.id] || (FAMILLES_LOT[f[0]] && lot.n) || (f[0] !== "evenements" && lotPlein(lot)) || !conditionRemplie(contenu, partie, x.condition, t)) return;
           if (f[0] === "evenements" && !dateAtteinte(contenu, partie, x)) return;
+          // Victor (2026-11-01) : une date d'un arbre éteint ne se débloque pas (la case qui la porte n'est pas sur la route).
+          if (f[0] === "evenements" && x.stat && contenu.parStat && !contenu.parStat[x.stat]) return;
           f[2][x.id] = t; out[f[0]].push(x); change = true; compterLot(lot, f[0]);
           if (f[0] === "succes") { var cr = crediterSucces(contenu, partie, x); if (cr) out.credits.push(cr); }
         });
