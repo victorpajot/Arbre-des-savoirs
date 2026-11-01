@@ -820,6 +820,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 /* Victor (2026-10-30) : l'histoire des sciences sous chaque correction. */
 .repere-h { margin: 8px 0 0 !important; padding-left: 10px; border-left: 3px solid var(--warn); font-size: 16px; line-height: 1.5; color: var(--ink); }
 .repere-src { display: block; margin-top: 4px; font-size: 13px; color: var(--muted); font-style: italic; }
+.etymo-h { border-left-color: var(--accent, #6a8fd0); }
+.etymo-h b { color: var(--accent, #6a8fd0) !important; }
 .repere-h b { display: block; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--warn); }
 .oubli.efface { opacity: 0.75; }
 .oubli .tampon { align-self: flex-end; transform: rotate(-4deg); border: 2px solid var(--good); color: var(--good); font-weight: 800; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; }
@@ -4461,7 +4463,15 @@ function demarrerJeu() {
   // Rien si l'explication date déjà sa découverte.
   var DATE_RE = /\b(1[0-9]{3}|20[0-2][0-9])\b|siècle|av\. J|avant notre ère/;
   // Un repère propre à la question (q.repere, vérifié) passe avant ceux de la compétence, même si l'explication est datée.
+  // Victor (2026-11-01) : l'étymologie du terme savant (q.etymologie, vérifiée) aide à le retenir ; elle passe avant le repère.
   function htmlRepere(q) {
+    return htmlEtymologie(q) + htmlRepereSeul(q);
+  }
+  function htmlEtymologie(q) {
+    if (!q || !q.etymologie) return "";
+    return '<p class="repere-h etymo-h"><b>' + __("D'où vient le mot") + "</b> " + escD(tx(q.etymologie.texte)) + '<span class="repere-src">' + esc(q.etymologie.source) + "</span></p>";
+  }
+  function htmlRepereSeul(q) {
     if (q && q.repere) return '<p class="repere-h"><b>' + __("Un peu d'histoire") + "</b> " + escD(tx(q.repere.texte)) + '<span class="repere-src">' + esc(q.repere.source) + "</span></p>";
     var k = q && C.parId[q.competence]; if (!aMasterclass(k) || !q.explication || DATE_RE.test(q.explication.fr || "")) return "";
     var mots = function (t) { return (t || "").toLowerCase().match(/[a-zà-ÿ]{5,}/g) || []; };

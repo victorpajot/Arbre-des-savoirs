@@ -498,6 +498,24 @@
         "minLength": 5,
         "description": "Référence de l'attribution citée dans l'explication (questions de calcul) ; vérifiée par verifier_sources.py."
        },
+       "etymologie": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "texte",
+         "source"
+        ],
+        "description": "Victor (2026-11-01) : l'étymologie du terme savant que la question fait apprendre (prétérition, chiasme…), pour l'ancrer en mémoire ; affichée sous la correction, vérifiée par verifier_sources.py (clé questions:<id>:etymologie).",
+        "properties": {
+         "texte": {
+          "$ref": "#/$defs/texte"
+         },
+         "source": {
+          "type": "string",
+          "minLength": 5
+         }
+        }
+       },
        "repere": {
         "type": "object",
         "additionalProperties": false,
