@@ -1052,9 +1052,11 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(M.caseDecouverte(P, 4) && !M.caseDecouverte(P, 2) && !M.caseDecouverte(P, 3), "cases survolées cachées");
   const oubli = 30; P.plateau.speciaux = Object.assign(P.plateau.speciaux || {}, { 30: { type: "oubli" } });
   P.plateau.position = oubli - 2; P.plateau.visites[oubli - 2] = 1;
+  // Victor (2026-11-01, « Recul fixe ») : même quand toutes les cases derrière ont été vues, le trou de mémoire fait reculer de 5.
+  for (let k = 1; k < oubli; k++) P.plateau.visites[k] = 1;
   const dep = M.deplacer(CP, P, 2, T, "test");
   const et = dep.etapes.find(e => e.type === "oubli");
-  assert.ok(et && !P.plateau.visites[et.vers - 0] === false && et.vers >= oubli - 15 && et.vers < oubli, "trou de mémoire : retour à une case jamais vue, 15 cases au plus");
+  assert.ok(et && et.n === 5 && !dep.etapes.some(e => e.type === "oubli_vide"), "trou de mémoire : recul fixe de 5 cases");
   // Un pas seulement
   P = M.nouvellePartie(T); P.plateau.ennemis = {}; CP.plateau.regles.evenements = null;
   const id = CP.competences.find(k => k.rang === 1).id, qs = CP.questionsPar[id].slice(0, 5);

@@ -1141,15 +1141,14 @@
     return dep;
   }
 
-  // v15 : la case où l'IA (ou un ennemi) renvoie le pion : la plus ancienne, parmi les OUBLI_FENETRE cases derrière lui,
-  // où il ne s'est jamais arrêté ; si tout y est dévoilé, la plus ancienne où il ne s'est pas arrêté dans ce tour.
-  var OUBLI_FENETRE = 15;
-  // `avant` et le résultat sont des places sur la route du tour.
+  // La case où le trou de mémoire (ou un ennemi) renvoie le pion. `avant` et le résultat sont des places sur la route du tour.
+  // Victor (2026-11-01, carte « Recul fixe ») : depuis qu'on avance case par case, plus aucune case n'est sautée, et
+  // « la plus ancienne case jamais dévoilée » n'existait plus. Le trou de mémoire (et l'ennemi qui renvoie) fait
+  // désormais reculer le pion de OUBLI_RECUL cases.
+  var OUBLI_RECUL = 5;
   function caseOubliee(contenu, partie, avant) {
-    var pl = partie.plateau, rt = route(contenu, partie), d = Math.max(1, avant - OUBLI_FENETRE);
-    for (var j = d; j < avant; j++) if (!pl.visites[rt[j]]) return j;
-    for (j = d; j < avant; j++) if (!(pl.arrets && pl.arrets[rt[j]])) return j;
-    return null;
+    route(contenu, partie);
+    return avant > 0 ? Math.max(0, avant - OUBLI_RECUL) : null;
   }
   // v15 : la route du tour, de la case départ à l'arrivée. Sans retouche de l'IA, toutes les cases dans l'ordre.
   function route(contenu, partie) {
