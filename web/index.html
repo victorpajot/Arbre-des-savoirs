@@ -748,6 +748,11 @@ body.plateau-plein { overflow: hidden; }
 .date-ep svg { width: 14px; height: 14px; vertical-align: -2px; margin-right: 3px; }
 .ep-antiquite { --ep: var(--ep-antiquite); } .ep-moyen-age { --ep: var(--ep-moyen-age); } .ep-renaissance { --ep: var(--ep-renaissance); }
 .ep-classique { --ep: var(--ep-classique); } .ep-xixe { --ep: var(--ep-xixe); } .ep-xxe { --ep: var(--ep-xxe); }
+.mc-puce { display: inline-flex; align-items: center; gap: 3px; padding: 0 6px 0 2px; margin: 0 1px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 8%, transparent); font: inherit; color: inherit; cursor: pointer; vertical-align: baseline; line-height: 1.35; }
+.mc-puce .tete-p { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; overflow: hidden; background: var(--parchemin); }
+.mc-puce .tete-p svg { width: 20px; height: 20px; }
+.mc-fiche-p { margin: -4px 0 12px; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.mc-fiche-p .bio-p { margin: 8px 0 0; font-size: 15px; }
 .mc-persos { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 14px 0 4px; }
 .mc-perso { display: flex; align-items: center; gap: 10px; margin: 0; flex: 1 1 150px; min-width: 0; }
 .mc-perso .cadre-p { flex: none; padding: 6px 8px 0; border-radius: 12px; background: var(--parchemin); border: 2px solid color-mix(in srgb, var(--accent) 45%, #fff); }
@@ -4699,7 +4704,15 @@ function demarrerJeu() {
   // Toucher un portrait ouvre sa fiche.
   document.addEventListener("click", function (ev) {
     var f = ev.target.closest && ev.target.closest("[data-perso]"); if (!f) return;
-    var e = personnesConnues().filter(function (x) { return x.p.id === f.getAttribute("data-perso"); })[0]; if (e) ouvrirPersonne(e);
+    var e = personnesConnues().filter(function (x) { return x.p.id === f.getAttribute("data-perso"); })[0]; if (!e) return;
+    // La pastille d'un personnage secondaire déplie sa fiche sous le paragraphe, sans quitter la leçon.
+    if (f.classList.contains("mc-puce")) {
+      var p = f.closest("p"), suiv = p && p.nextElementSibling, deja = suiv && suiv.classList.contains("mc-fiche-p") && suiv.getAttribute("data-id") === e.p.id;
+      if (suiv && suiv.classList.contains("mc-fiche-p")) suiv.remove();
+      if (!deja && p) p.insertAdjacentHTML("afterend", '<div class="mc-fiche-p" data-id="' + e.p.id + '">' + htmlPersonnage(e).replace(' data-perso="' + e.p.id + '"', "") + '<p class="bio-p">' + escD(tx(e.famille === "savant" ? e.p.notice : e.p.bio)) + "</p></div>");
+      return;
+    }
+    ouvrirPersonne(e);
   });
   // Les personnes nommées dans un texte, dans l'ordre ; un nom pris dans un plus long (« Luther » dans « Martin Luther King ») ne compte pas.
   function personnesDans(texte) {
@@ -4737,15 +4750,25 @@ function demarrerJeu() {
     return { foyer: foyer, sujets: sujets };
   }
   // Le paragraphe, précédé des portraits des personnes qu'il cite pour la première fois dans la leçon.
-  function paragraphePersonnes(texte, vus, max) {
+  function paragraphePersonnes(texte, vus, max, principaux) {
     // Les noms trouvés dans le paragraphe ; un nom pris dans un plus long (« Luther » dans « Martin Luther King ») ne compte pas.
     var tr = personnesDans(texte);
-    var html = "", n = 0;
+    var html = "", n = 0, puces = [];
     tr.forEach(function (x) {
-      if (vus[x.e.p.id] || n >= (max || 2)) return;
+      if (vus[x.e.p.id]) return;
+      // Victor (2026-11-01) : un personnage secondaire de l'étape n'a plus de grand portrait : son nom devient une pastille
+      // (mini-tête + nom) dans la phrase ; la toucher déplie sa fiche sous le paragraphe.
+      if (principaux && !principaux[x.e.p.id]) { vus[x.e.p.id] = 1; puces.push(x); return; }
+      if (n >= (max || 2)) return;
       vus[x.e.p.id] = 1; html += htmlPersonnage(x.e); n++;
     });
-    return (html ? '<div class="mc-persos">' + html + "</div>" : "") + "<p>" + escD(texte) + "</p>";
+    var corps = "", d = 0;
+    puces.forEach(function (x) {
+      corps += escD(texte.slice(d, x.i)) + '<button type="button" class="mc-puce" data-perso="' + x.e.p.id + '"><span class="tete-p">' + svgSavant(x.e.p, 20) + "</span>" + esc(texte.slice(x.i, x.j)) + "</button>";
+      d = x.j;
+    });
+    corps += escD(texte.slice(d));
+    return (html ? '<div class="mc-persos">' + html + "</div>" : "") + "<p>" + corps + "</p>";
   }
   // Une frise du schéma de fiche : au moins 3 points alignés (verticalement ou horizontalement), dont 2 datés.
   // Renvoie null si ce n'en est pas une, sinon une fonction (texte de l'étape) → HTML de la frise, les points
@@ -4816,7 +4839,16 @@ function demarrerJeu() {
         fp.sujets.forEach(function (sid) { if (cites[sid] || vusPerso[sid]) return; var e = personnesConnues().filter(function (x) { return x.p.id === sid; })[0]; if (e) { tete += htmlPersonnage(e); vusPerso[sid] = 1; } });
         if (tete) tete = '<div class="mc-persos">' + tete + "</div>";
       }
-      return { titre: tx(ch.titre), html: (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x) { return paragraphePersonnes(tx(x), vusPerso); }).join("") +
+      // Principaux de l'étape : nommés par son titre, sujets de la leçon (étape 1), présents dans au moins deux paragraphes,
+      // ou la première personne nommée par l'étape (celle dont l'étape raconte l'histoire) ; les autres sont secondaires.
+      var principaux = {}, nbPar = {}, premiere = null;
+      personnesDans(tx(ch.titre)).forEach(function (y) { principaux[y.e.p.id] = 1; });
+      if (i === 0) fp.sujets.forEach(function (sid) { principaux[sid] = 1; });
+      fp.sujets.forEach(function (sid) { if (foyers[sid] === i) principaux[sid] = 1; });
+      ch.texte.forEach(function (x) { personnesDans(tx(x)).forEach(function (y) { if (!premiere) premiere = y.e.p.id; nbPar[y.e.p.id] = (nbPar[y.e.p.id] || 0) + 1; }); });
+      Object.keys(nbPar).forEach(function (id) { if (nbPar[id] >= 2) principaux[id] = 1; });
+      if (premiere && !Object.keys(principaux).some(function (id) { return nbPar[id]; })) principaux[premiere] = 1;
+      return { titre: tx(ch.titre), html: (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x) { return paragraphePersonnes(tx(x), vusPerso, 2, principaux); }).join("") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
         __('<p class="mc-retenir"><b>À retenir</b>') + escD(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });
