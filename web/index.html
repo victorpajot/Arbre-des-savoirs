@@ -1932,13 +1932,18 @@ function demarrerJeu() {
     var ligne = function (pts, coul, w) { return '<polyline points="' + pts + '" fill="none" stroke="' + coul + '" stroke-width="' + w + '" stroke-linejoin="round"/>'; };
     var v = FOND_CASE, sep = ligne(seg(0.3), "#1E1A2B", W) + ligne(seg(0.9), fond, W - 1.6);
     if (v === "plein") return sep;
-    if (v === "bombe") return sep + ligne(seg(0.9), eclaircir(fond, 0.4), W - 11) + ligne(seg(0.9), eclaircir(fond, 0.72), W - 19);
+    if (v === "bombe") {
+      // Victor (2026-11-01) : le bombé, en dégradé continu : 14 bandes de plus en plus claires vers le centre.
+      var out = sep, N = 14;
+      for (var b = 1; b <= N; b++) { var t = b / N; out += ligne(seg(0.9), eclaircir(fond, 0.7 * t * t), (W - 1.6) * (1 - 0.82 * t)); }
+      return out;
+    }
     if (v === "bords") return sep + ligne(seg(-0.05), "#F8F1E1", W - 10);
     if (v === "papier") return sep + ligne(seg(-0.05), "#F3E8CF", W - 10) + ligne(seg(-0.05), "url(#grainCase)", W - 10);
     return ligne(seg(1.1), "#1E1A2B", W) + ligne(seg(2), "#fff", W - 2.2) + ligne(seg(3.1), fond, W - 4.6);
   }
   // Essais de fonds de case (Victor, 2026-11-01) : choisis par la clé locale arbre.fondcase le temps de comparer.
-  var FOND_CASE = (function () { try { return localStorage.getItem("arbre.fondcase") || "filet"; } catch (e) { return "filet"; } })();
+  var FOND_CASE = (function () { try { return localStorage.getItem("arbre.fondcase") || "bombe"; } catch (e) { return "bombe"; } })();
   var DEFS_CASE = '<defs><pattern id="grainCase" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="none"/>' +
     '<circle cx="1.2" cy="1.5" r="0.45" fill="#8A6F3E" fill-opacity="0.35"/><circle cx="4.6" cy="3.2" r="0.35" fill="#8A6F3E" fill-opacity="0.3"/>' +
     '<circle cx="2.8" cy="5.6" r="0.4" fill="#8A6F3E" fill-opacity="0.28"/><path d="M5.2,0.6 l1.2,0.9 M0.4,4.2 l1.1,-0.5" stroke="#8A6F3E" stroke-opacity="0.22" stroke-width="0.35"/></pattern></defs>';
