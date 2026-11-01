@@ -2288,9 +2288,10 @@ function demarrerJeu() {
     // à la même hauteur : il suit la route sans jamais changer de bord dans les virages.
     var p = centreCase(n); if (MODE_PION === "dessus") return p;
     // Tout en haut du plateau, il descend juste ce qu'il faut pour ne pas sortir du cadre.
-    return [p[0], p[1] - Math.min(MODE_PION === "petit" ? 16 : 26, Math.max(0, p[1] - 40))];
+    return [p[0], p[1] - Math.min(MODE_PION === "petit" ? 16 : 26, Math.max(0, p[1] - 48))];
   }
-  function cadrePion(n) { var p = centreCase(n); return borner(p[0] - CADRE / 2, p[1] - 14 - CADRE / 2); }
+  // Cadre du zoom : centré entre le pion (qui flotte au-dessus) et sa case.
+  function cadrePion(n) { var p = centreCase(n), q = positionPion(n); return borner(p[0] - CADRE / 2, (p[1] + q[1]) / 2 - 14 - CADRE / 2); }
   function boiteVue(c) { return c[0].toFixed(1) + " " + c[1].toFixed(1) + " " + CADRE + " " + CADRE; }
   function glisserVue(svg, cible, ms) {
     var d = svg.getAttribute("viewBox").split(" ").map(Number), t0 = null;
@@ -5711,7 +5712,7 @@ function demarrerJeu() {
     if (c) {
       // Victor (2026-11-01) : épreuve ratée et la même revient (le pion n'a pas bougé) : « Rejouer ».
       var rate = quiz && quiz.fin && quiz.id === c.comp.id && (quiz.mode === "quiz" ? quiz.fin.issue !== "maitrisee" : quiz.fin.issue !== "reussi");
-      var j = el('<button type="button" class="btn large">' + (rate ? __("Rejouer") : __("Jouer l'épreuve suivante")) + "</button>");
+      var j = el('<button type="button" class="btn large">' + (rate ? __("Rejouer : ") : __("Jouer : ")) + esc(tx(c.comp.nom)) + "</button>");
       j.onclick = function () { fermer(); ouvrirJouer(); };
       wrap.appendChild(j);
     }
@@ -5961,9 +5962,10 @@ function demarrerJeu() {
     duel_attente: function (e) { return tx(C.ennemiParId[e.ennemi].nom) + __(" te bloque toujours. Le duel reprend, pour ") + e.reste + (e.reste > 1 ? __(" cases") : __(" case")) + "."; },
   };
   function blocDeplacement(dep, rep, avecPlateau) {
-    var d = dep.a - dep.de, fini = dep.etapes.some(function (e) { return e.type === "tour_fini"; });
+    // Victor (2026-11-01) : l'avance se compte en places sur la route (pas en numéros de case, qui ne se suivent pas).
+    var d = dep.places && dep.places.length > 1 ? dep.places[dep.places.length - 1] - dep.places[0] : 0, fini = dep.etapes.some(function (e) { return e.type === "tour_fini"; });
     var titre = fini ? __("Tour complet !") : d > 0 ? __("Le pion avance de ") + d + (d > 1 ? __(" cases") : __(" case")) : d < 0 ? __("Le pion recule de ") + (-d) + __(" case") + (d < -1 ? "s" : "") : __("Le pion reste sur place");
-    var b = el('<div class="bloc plateau"><div class="tete"><h2>' + esc(titre) + __('</h2><span class="num">case ') + dep.de + " → " + dep.a + '</span></div><div class="trajet"></div></div>');
+    var b = el('<div class="bloc plateau"><div class="tete"><h2>' + esc(titre) + '</h2></div><div class="trajet"></div></div>');
     var tj = b.querySelector(".trajet"), v = dep.valeurs;
     // v15 : pion bloqué par un ennemi (duel à reprendre) : pas de trajet, mais la rencontre se rejoue sur la case.
     var rejoue = dep.etapes.some(function (e) { return e.type === "duel_attente"; });
@@ -5975,16 +5977,16 @@ function demarrerJeu() {
     dep.etapes.forEach(function (e) { var f = NOM_ETAPE[e.type]; if (f) tj.appendChild(el('<div class="pas"><b>·</b><span>' + esc(f(e)) + "</span></div>")); });
     var k = M.caseN(C, dep.a), at = atomeSur(dep.a), enB = !at && ennemiSur(dep.a);
     if (enB) {
-      b.appendChild(el('<div class="case-act" style="cursor:default"><span class="vitrine">' + teteEnnemi(enB, 44) + __('</span><span><span class="num">Case ') + k.n + __(" · Ennemi</span><b>") + esc(tx(enB.nom)) + __("</b><span>Il garde la case. Ce qu'il y a dessous, tu le verras quand il sera vaincu.</span></span></div>")));
+      b.appendChild(el('<div class="case-act" style="cursor:default"><span class="vitrine">' + teteEnnemi(enB, 44) + __('</span><span><span class="num">') + __("Ennemi</span><b>") + esc(tx(enB.nom)) + __("</b><span>Il garde la case. Ce qu'il y a dessous, tu le verras quand il sera vaincu.</span></span></div>")));
       var me = comite(rep, true); if (me) b.appendChild(me);
       return b;
     }
     if (at) {
-      b.appendChild(el('<div class="case-act" style="cursor:default"><span class="vitrine">' + tuileAtome(C.atomes.elements[at.z - 1], true, 44) + __('</span><span><span class="num">Case ') + k.n + __(" · Mendeleïev</span><b>Un atome sauvage</b><span>Il bloque la case. Ce qu'il y a dessous attendra.</span></span></div>")));
+      b.appendChild(el('<div class="case-act" style="cursor:default"><span class="vitrine">' + tuileAtome(C.atomes.elements[at.z - 1], true, 44) + __('</span><span><span class="num">') + __("Mendeleïev</span><b>Un atome sauvage</b><span>Il bloque la case. Ce qu'il y a dessous attendra.</span></span></div>")));
       var ma = comite(rep, true); if (ma) b.appendChild(ma);
       return b;
     }
-    var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + __('</span><span><span class="num">Case ') + k.n + " · " + esc(formatAnnee(k.annee)) + "</span><b>" + esc(tx(k.titre)) + "</b><span>" + esc(tx(k.replique)) + "</span></span></button>");
+    var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + "</span><b>" + esc(tx(k.titre)) + "</b><span>" + esc(tx(k.replique)) + "</span></span></button>");
     act.onclick = function () { ouvrirCase(k.n); };
     b.appendChild(act);
     var m = comite(rep, true); if (m) b.appendChild(m);
@@ -6114,7 +6116,10 @@ function demarrerJeu() {
     // v14 : le mur s'ouvre par-dessus le bilan ; « ← Bilan » ramène à la même étape, pour voir la suite des récompenses.
     // v35 (Victor) : une épreuve ratée propose d'abord la masterclass de la compétence, erreurs en tête.
     // Victor, 2026-10-31 : proposée aussi après une réussite, sans erreurs à corriger ; « ← Retour au bilan » ramène à la même étape.
-    if ((nom === "verdict" || !suite) && aMasterclass(k) && !(!suite && M.masterclassImposee(C, P))) {
+    // Victor (2026-11-01) : en fin de bilan, la leçon n'est proposée que si l'épreuve est ratée (elle revient au « Rejouer ») ;
+    // réussie, le pion est déjà ailleurs : la leçon reste au verdict seulement.
+    var rateeQ = quiz.mode === "quiz" ? r.issue !== "maitrisee" : r.issue !== "reussi";
+    if ((nom === "verdict" || (!suite && rateeQ)) && aMasterclass(k) && !(!suite && M.masterclassImposee(C, P))) {
       var mc = el('<button type="button" class="btn large sc-mc">' + __("Masterclass : ") + esc(tx(k.nom)) + "</button>");
       mc.onclick = function () { ouvrirMasterclass(quiz.id, quiz.res.filter(function (x) { return !x.correct; }).map(function (x) { return { id: x.id, rep: x.rep }; })); };
       wrap.appendChild(mc);
