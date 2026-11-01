@@ -1965,9 +1965,14 @@ function demarrerJeu() {
     var rgb = h < 60 ? [k, x, 0] : h < 120 ? [x, k, 0] : h < 180 ? [0, k, x] : h < 240 ? [0, x, k] : h < 300 ? [x, 0, k] : [k, 0, x];
     return "#" + rgb.map(function (v) { return Math.round((v + m) * 255).toString(16).padStart(2, "0"); }).join("");
   }
+  // Victor (2026-11-01) : toutes les cases au même niveau de saturation et de clarté ; seule la teinte de l'arbre change.
+  var TEINTES_CASE = { pastel: [0.42, 0.80], moyen: [0.48, 0.72], soutenu: [0.55, 0.64], vif: [0.68, 0.70] };
+  var TEINTE_CASE = (function () { try { return localStorage.getItem("arbre.teintecase") || "moyen"; } catch (e) { return "moyen"; } })();
   function couleurCase(k) {
-    var st = statActif(k.stat); if (!st) return "#D8D2C4";
-    return eclaircir(st.couleur, M.arbreOuvert(C, P, k.stat) ? 0.38 : 0.78);
+    var st = statActif(k.stat), r = TEINTES_CASE[TEINTE_CASE];
+    if (!st) return r ? depuisHSL([40, r[0] * 0.35, r[1]]) : "#D8D2C4";
+    if (!r) return eclaircir(st.couleur, M.arbreOuvert(C, P, k.stat) ? 0.38 : 0.78);
+    return depuisHSL([versHSL(st.couleur)[0], r[0], r[1]]);
   }
   var COULEUR_SPECIAL = { eureka: "#E0A800", avance: "#2E9D5B", recul: "#D94141", teleport: "#7A3FD1", retour_epoque: "#7A3FD1", revision: "#14899E", cadeau: "#C2185B", mendeleiev: "#1565C0", prison: "#5D6470", quarantaine: "#D9721F", oubli: "#8E5BB5", chrono: "#8A6A12" };
   var BORD_SPECIAL = COULEUR_SPECIAL;
