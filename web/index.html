@@ -376,6 +376,9 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .illus .f2 { fill: color-mix(in srgb, var(--warn) 24%, var(--surface)); stroke: color-mix(in srgb, var(--warn) 70%, var(--surface)); stroke-width: 1.2; }
 .illus .a { fill: var(--accent); }
 .mc-frise.guidee .loin { opacity: 0.35; }
+.sc-ep-boutons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.sc-ep-boutons .date-ep { display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 10px; border-radius: 12px; font: 600 16px/1.2 var(--f-body); text-align: left; cursor: pointer; border: 2px solid currentColor; }
+.date-ep.sc-ep-pris { align-self: flex-start; border: 0; cursor: pointer; font: 600 15px var(--f-body); padding: 4px 10px; border-radius: 999px; }
 .mc-frise circle.ici { stroke: var(--surface); stroke-width: 3; paint-order: stroke; filter: drop-shadow(0 0 4px var(--accent)); }
 .mc-frise text.ici { font-weight: 700; }
 .illus .al { stroke: var(--accent); fill: none; }
@@ -3139,10 +3142,17 @@ function demarrerJeu() {
     if (ongletPerso === "ennemis") v.appendChild(blocBestiaire());
     if (ongletPerso !== "reglages") return v;
 
-    var opt = el(__('<div class="bloc"><h2>Options</h2><label class="interrupteur" for="opt-chrono"><span><b>Chrono</b><br><span class="note">') + C.regles.chrono.secondes + __(' secondes par question. Chaque bonne réponse rapporte ') + C.regles.chrono.bonus_xp_par_bonne_reponse + __(' XP de plus.</span></span><input type="checkbox" id="opt-chrono"></label></div>'));
+    var opt = el(__('<div class="bloc"><h2>Options</h2><label class="interrupteur" for="opt-chrono"><span><b>Questions chronométrées</b><br><span class="note">') + C.regles.chrono.secondes + __(' secondes par question. Chaque bonne réponse rapporte ') + C.regles.chrono.bonus_xp_par_bonne_reponse + __(' XP de plus.</span></span><input type="checkbox" id="opt-chrono"></label></div>'));
     var cb = opt.querySelector("input"); cb.checked = !!(P.options && P.options.chrono);
     blocReglagesPartie(opt);
     cb.onchange = function () { P.options = P.options || {}; P.options.chrono = cb.checked; sauver(); toast(cb.checked ? __("Chrono activé") : __("Chrono désactivé")); };
+    // Victor (2026-11-01) : le jeu Chrono (les dates à replacer) se coupe ici.
+    if (C.plateau && C.plateau.regles.chrono) {
+      var jc = el(__('<label class="interrupteur" for="opt-jeu-chrono" style="border-top:1px solid var(--line);padding-top:12px"><span><b>Jeu Chrono</b><br><span class="note">Replacer des événements dans le temps, sur les cases Chrono ou quand Alyca en propose une partie.</span></span><input type="checkbox" id="opt-jeu-chrono"></label>'));
+      var cj = jc.querySelector("input"); cj.checked = M.chronoActif(P);
+      cj.onchange = function () { P.options = P.options || {}; P.options.jeuChrono = cj.checked; sauver(); toast(cj.checked ? __("Jeu Chrono activé") : __("Jeu Chrono désactivé")); rendre(); };
+      opt.appendChild(jc);
+    }
     if (NATIF) {
       var r = routine() || { active: false, heure: "08:00" };
       var ro = el(__('<div class="interrupteur" style="border-top:1px solid var(--line);padding-top:12px"><label for="opt-routine"><b>Routine du matin</b><br><span class="note">Notification quotidienne avec tes rappels du jour.</span></label><input type="checkbox" id="opt-routine"></div>'));
@@ -4023,12 +4033,39 @@ function demarrerJeu() {
     var y = 10 * k10 + s.y; return y === 0 ? 1 : y;
   }
   // La saisie : un curseur (siècle, ou centaine d'années), puis des boutons pour affiner selon le niveau.
+  // Victor (2026-11-01) : d'abord l'époque (ses couleurs), puis le curseur ne parcourt que ses siècles.
+  function uniteChrono(pas, a) { return pas === 100 ? M.creneau(a, 100, M.reglesChrono(C).prehistoire) : pas === 50 ? M.creneau(a, 100) : Math.floor(M.creneau(a, 10) / 10); }
+  function bornesEpoque(q, ep) {
+    var b = bornesChrono(q.pas), e = ((C.plateau && C.plateau.epoques) || []).filter(function (x) { return x.id === ep; })[0];
+    if (!e) return b;
+    return [e.debut == null ? b[0] : Math.max(b[0], uniteChrono(q.pas, e.debut)), e.fin == null ? b[1] : Math.min(b[1], uniteChrono(q.pas, e.fin))];
+  }
+  function choixEpoque(q, s, maj) {
+    var E = (C.plateau && C.plateau.epoques) || [];
+    var z = el(__('<div class="sc-saisie sc-epoques"><div class="eyebrow">D\'abord, quelle époque ?</div><div class="sc-ep-boutons"></div></div>')), w = z.querySelector(".sc-ep-boutons");
+    E.forEach(function (e) {
+      var x = el('<button type="button" class="date-ep ep-' + e.id + '">' + svgSprite(e.icone, 30, "") + "<span>" + esc(tx(e.nom)) + "</span></button>");
+      x.onclick = function () { var b = bornesEpoque(q, e.id); s.ep = e.id; s.k = Math.round((b[0] + b[1]) / 2); s.h = 0; s.d = 0; s.y = s.k === 0 && q.pas === 1 ? 1 : 0; maj(); };
+      w.appendChild(x);
+    });
+    return z;
+  }
   function saisieChrono(q, s, maj) {
-    var R = M.reglesChrono(C), b = bornesChrono(q.pas);
+    var R = M.reglesChrono(C), b = s.ep ? bornesEpoque(q, s.ep) : bornesChrono(q.pas);
+    var ep = s.ep && ((C.plateau && C.plateau.epoques) || []).filter(function (x) { return x.id === s.ep; })[0];
     var z = el(__('<div class="sc-saisie"><div class="sc-choisi" aria-live="polite"></div><div class="sc-curseur"><button type="button" class="sc-pas" data-d="-1" aria-label="Plus tôt">◀</button>') +
       '<input type="range" min="' + b[0] + '" max="' + b[1] + '" step="1" value="' + s.k + '" aria-label="' + (q.pas >= 50 ? __("Siècle") : __("Centaine d'années")) + __('"><button type="button" class="sc-pas" data-d="1" aria-label="Plus tard">▶</button></div>') +
       '<div class="sc-repere"><span>' + esc(q.pas === 100 ? __("Préhistoire") : formatAnnee(R.prehistoire)) + __("</span><span>XXIe s.</span></div><div class=\"sc-fins\"></div></div>"));
     var curseur = z.querySelector("input"), fins = z.querySelector(".sc-fins");
+    if (ep) {
+      var rep = z.querySelector(".sc-repere"); rep.innerHTML = "";
+      var chg = el('<button type="button" class="date-ep ep-' + ep.id + ' sc-ep-pris">' + svgSprite(ep.icone, 16, "") + esc(tx(ep.nom)) + __(" · changer</button>"));
+      chg.onclick = function () { s.ep = null; maj(); };
+      z.insertBefore(chg, z.firstChild);
+      if (b[0] === b[1]) z.querySelector(".sc-curseur").style.display = "none";
+      else { rep.appendChild(el("<span>" + esc(libUnite(b[0])) + "</span>")); rep.appendChild(el("<span>" + esc(libUnite(b[1])) + "</span>")); }
+    }
+    function libUnite(k) { return q.pas === 100 ? M.texteCreneau(k, 100, R.prehistoire) : q.pas === 50 ? M.texteSiecle(k) : texteCentaine(k); }
     function ligne(lib, valeurs, cle, nom) {
       var w = el('<div class="sc-ligne"><span class="eyebrow">' + esc(lib) + '</span><div class="sc-boutons"></div></div>'), bt = w.querySelector(".sc-boutons");
       valeurs.forEach(function (v) {
@@ -4112,11 +4149,11 @@ function demarrerJeu() {
     inn.appendChild(carte);
     if (siecles.phase === "q") {
       // Sélection de départ : au milieu de la frise, pour ne rien souffler.
-      if (!siecles.sel || siecles.sel.cle !== q.cle) { var b = bornesChrono(q.pas); siecles.sel = { cle: q.cle, k: Math.round((b[0] + b[1]) / 2), h: 0, d: 0, y: 0 }; siecles.debutQ = Date.now(); }
-      var s = siecles.sel, sa = saisieChrono(q, s, rendreSaisie);
-      function rendreSaisie() { var n = saisieChrono(q, s, rendreSaisie); sa.replaceWith(n); sa = n; }
+      if (!siecles.sel || siecles.sel.cle !== q.cle) { var b = bornesChrono(q.pas); siecles.sel = { cle: q.cle, ep: null, k: Math.round((b[0] + b[1]) / 2), h: 0, d: 0, y: 0 }; siecles.debutQ = Date.now(); }
+      var s = siecles.sel, faire = function () { return s.ep ? saisieChrono(q, s, rendreSaisie) : choixEpoque(q, s, rendreSaisie); }, sa = faire();
+      function rendreSaisie() { var n = faire(); sa.replaceWith(n); sa = n; ok.disabled = !s.ep; }
       inn.appendChild(sa);
-      var ok = el('<button type="button" class="btn large sc-go">' + __('Valider</button>'));
+      var ok = el('<button type="button" class="btn large sc-go"' + (s.ep ? "" : " disabled") + ">" + __('Valider</button>'));
       ok.onclick = function () {
         siecles.rep = M.repondreChrono(C, P, anneeChrono(q, s), Date.now() - siecles.debutQ, maintenant());
         siecles.repliqueQ = M.replique(C, P, ["chrono_" + siecles.rep.verdict]);

@@ -1632,7 +1632,15 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(!fin.reussi && P.plateau.position === ici && !M.chronoEnAttente(P) && fin.agacement && fin.agacement.perte > 0);
 
   // Alyca : une offre par jour au plus ; partie bonus, le pion ne bouge pas.
-  P = prep();
+  // Victor (2026-11-01) : jamais avant la 5e case du premier tour, et coupé par le réglage « Jeu Chrono ».
+  P = prep(); P.plateau.idx = 2;
+  assert.equal(M.chronoPossible(C, P), false, "pas de Chrono au tout début");
+  assert.equal(M.chronoSpontane(C, P, T, () => 0.1), false);
+  P.plateau.idx = 5; assert.equal(M.chronoPossible(C, P), true, "Chrono possible dès la 5e case");
+  P.options.jeuChrono = false;
+  assert.equal(M.chronoPossible(C, P), false, "réglage coupé");
+  assert.equal(M.chronoSpontane(C, P, T, () => 0.1), false);
+  P = prep(); P.plateau.idx = 5;
   assert.equal(M.chronoSpontane(C, P, T, () => 0.9), false);
   assert.equal(M.chronoSpontane(C, P, T, () => 0.1), true); assert.ok(M.offreChrono(P, T));
   j = M.lancerChrono(C, P, "alyca", T, () => 0.5);

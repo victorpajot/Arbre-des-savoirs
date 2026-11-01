@@ -1522,7 +1522,7 @@
           } else if (sp.type === "chrono" && contenu.plateau.regles.chrono) {
             // v34 (Victor) : case Chrono. Le pion s'arrête ; la partie de Chrono sert d'épreuve de la case.
             if (chronoPossible(contenu, partie)) { etatChrono(partie).case = pl.position; etapes.push({ type: "chrono", case: pl.position }); }
-            else etapes.push({ type: "chrono_vide", case: pl.position });
+            else if (chronoActif(partie)) etapes.push({ type: "chrono_vide", case: pl.position });
           } else if (sp.type === "cadeau") {
             var cad = tirerCadeau(contenu, partie, t);
             if (cad) {
@@ -2482,13 +2482,20 @@
     return out;
   }
   // La case du pion attend sa partie de Chrono.
-  function chronoEnAttente(partie) { var s = partie.siecles; return !!(s && s.case && partie.plateau && s.case === partie.plateau.position); }
+  function chronoEnAttente(partie) { var s = partie.siecles; return !!(s && chronoActif(partie) && s.case && partie.plateau && s.case === partie.plateau.position); }
   // Alyca propose une partie aujourd'hui (et elle n'est pas encore jouée).
-  function offreChrono(partie, t) { var s = partie.siecles; return !!(s && s.offre && s.offre === cleJour(t)); }
-  function chronoPossible(contenu, partie) { var R = reglesChrono(contenu); return !!(R && reservoirChrono(contenu, partie).length >= R.min_reservoir); }
+  function offreChrono(partie, t) { var s = partie.siecles; return !!(s && chronoActif(partie) && s.offre && s.offre === cleJour(t)); }
+  // Victor (2026-11-01) : désactivable dans les Réglages (options.jeuChrono), et jamais avant la 5e case du premier tour.
+  function chronoActif(partie) { return !(partie.options && partie.options.jeuChrono === false); }
+  function chronoPossible(contenu, partie) {
+    var R = reglesChrono(contenu), pl = partie.plateau || {};
+    if (!R || !chronoActif(partie)) return false;
+    if (!pl.tours && (pl.idx || 0) < (R.case_min || 5)) return false;
+    return reservoirChrono(contenu, partie).length >= R.min_reservoir;
+  }
   // Après une épreuve : Alyca lance-t-elle une partie d'elle-même ? Une chance sur trois, une fois par jour au plus.
   function chronoSpontane(contenu, partie, t, alea) {
-    var R = reglesChrono(contenu); if (!R) return false;
+    var R = reglesChrono(contenu); if (!R || !chronoActif(partie)) return false;
     var s = etatChrono(partie), jour = cleJour(t);
     if (s.offre === jour) return true;
     if (s.joueJour === jour || chronoEnAttente(partie) || s.jeu || !chronoPossible(contenu, partie)) return false;
@@ -3448,7 +3455,7 @@
     jouerPlateau: jouerPlateau,
     murDeLaHonte: murDeLaHonte,
     reglesChrono: reglesChrono, etatChrono: etatChrono, creneau: creneau, anneeDuCreneau: anneeDuCreneau, texteCreneau: texteCreneau, texteSiecle: texteSiecle,
-    reservoirChrono: reservoirChrono, chronoEnAttente: chronoEnAttente, offreChrono: offreChrono, chronoPossible: chronoPossible, chronoSpontane: chronoSpontane,
+    reservoirChrono: reservoirChrono, chronoEnAttente: chronoEnAttente, offreChrono: offreChrono, chronoPossible: chronoPossible, chronoActif: chronoActif, chronoSpontane: chronoSpontane,
     lancerChrono: lancerChrono, jeuChrono: jeuChrono, repondreChrono: repondreChrono, terminerChrono: terminerChrono, statsChrono: statsChrono,
     retenterOubli: retenterOubli,
   };
