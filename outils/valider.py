@@ -3,6 +3,7 @@
 Usage : python3 outils/valider.py   (code de sortie 1 en cas d'erreur)
 """
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -64,6 +65,10 @@ def main():
             for h in ch.get("reperes", []):
                 if h["fr"] not in corps:
                     erreurs.append(f"skills.json {c['id']}/{ch['id']} : repère d'histoire absent du texte du chapitre")
+            # Les mots essentiels (choisis à la main) se lisent tels quels dans le texte de l'étape.
+            for m in ch.get("cles", []):
+                if not re.search(r"(?<!\w)" + re.escape(m["fr"]) + r"(?!\w)", corps, re.I):
+                    erreurs.append(f"skills.json {c['id']}/{ch['id']} : mot clé « {m['fr']} » absent du texte de l'étape")
     for q in contenu["questions"]["questions"]:
         if q.get("figure") and q["figure"] not in figs:
             erreurs.append(f"questions.json {q['id']} : figure inconnue {q['figure']}")

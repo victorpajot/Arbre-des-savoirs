@@ -32,9 +32,9 @@ def textes(o):
     elif isinstance(o, dict):
         for k in sorted(o):
             # Un extrait porte sa propre vérification : il ne remet pas en cause la fiche qui le contient.
-            # `reperes` (masterclass) ne fait que recopier des phrases du texte vérifié (contrôlé par valider.py).
+            # `reperes` et `cles` (masterclass) ne font que recopier des phrases du texte vérifié (contrôlé par valider.py).
             # `repere` et `etymologie` (question) sont vérifiés pour eux-mêmes : ils ne remettent pas en cause la question.
-            if k in ("lot", "verification", "extrait", "reperes", "repere", "etymologie"):
+            if k in ("lot", "verification", "extrait", "reperes", "repere", "etymologie", "cles"):
                 continue
             yield from textes(o[k])
     elif isinstance(o, list):

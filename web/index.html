@@ -752,6 +752,11 @@ body.plateau-plein { overflow: hidden; }
 .mc-puce { display: inline-flex; align-items: center; gap: 3px; padding: 0 6px 0 2px; margin: 0 1px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 8%, transparent); font: inherit; color: inherit; cursor: pointer; vertical-align: baseline; line-height: 1.35; }
 .mc-puce .tete-p { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; overflow: hidden; background: var(--parchemin); }
 .mc-puce .tete-p svg { width: 20px; height: 20px; }
+.mc-puce.mc-livre { border-color: color-mix(in srgb, var(--lc) 55%, transparent); background: color-mix(in srgb, var(--lc) 12%, transparent); }
+.mc-livre .couv-p { display: inline-grid; place-items: center; width: 16px; height: 20px; border-radius: 2px 4px 4px 2px; background: var(--lc); box-shadow: inset 2px 0 0 rgba(0,0,0,.25); }
+.mc-livre .couv-p svg { width: 14px; height: 14px; }
+.mc-fiche-l .tete-l { display: flex; gap: 10px; align-items: center; }
+.mc-fiche-l .tete-l .vitrine { padding: 6px; border-radius: 10px; }
 .mc-fiche-p { margin: -4px 0 12px; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 6%, transparent); }
 .mc-fiche-p .bio-p { margin: 8px 0 0; font-size: 15px; }
 .mc-persos { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 14px 0 4px; }
@@ -4702,6 +4707,17 @@ function demarrerJeu() {
     var h = paragraphePersonnes(texte, vus, max || 2);
     return h.indexOf('class="mc-persos"') === 0 ? h.slice(0, h.lastIndexOf("<p>")) : "";
   }
+  // La pastille d'un livre déplie sa fiche sous le paragraphe (titre et auteur seulement tant qu'il n'est pas sur l'étagère).
+  document.addEventListener("click", function (ev) {
+    var f = ev.target.closest && ev.target.closest("[data-livre]"); if (!f) return;
+    var l = (C.livres || []).filter(function (x) { return x.id === f.getAttribute("data-livre"); })[0]; if (!l) return;
+    var p = f.closest("p"), suiv = p && p.nextElementSibling, deja = suiv && suiv.classList.contains("mc-fiche-p") && suiv.getAttribute("data-id") === "livre:" + l.id;
+    if (suiv && suiv.classList.contains("mc-fiche-p")) suiv.remove();
+    if (deja || !p) return;
+    var ok = !!P.livres[l.id];
+    p.insertAdjacentHTML("afterend", '<div class="mc-fiche-p mc-fiche-l" data-id="livre:' + l.id + '" style="--lc:' + l.couleur + '"><div class="tete-l"><span class="vitrine" style="background:' + l.couleur + '">' + svgSprite(l.embleme, 36) + "</span><div><b><i>" + esc(tx(l.titre)) + '</i></b><p class="meta" style="margin:0">' + esc(l.auteur) + " · " + esc(dateDe(l)) + "</p></div></div>" +
+      (ok ? '<p class="bio-p">' + escD(tx(l.resume)) + "</p>" : '<p class="meta">' + __("Pas encore sur ton étagère : ") + esc(commentObtenir(l.condition)) + "</p>") + "</div>");
+  });
   // Toucher un portrait ouvre sa fiche.
   document.addEventListener("click", function (ev) {
     var f = ev.target.closest && ev.target.closest("[data-perso]"); if (!f) return;
@@ -4753,15 +4769,16 @@ function demarrerJeu() {
   // Le paragraphe, précédé des portraits des personnes qu'il cite pour la première fois dans la leçon.
   // Victor (2026-11-01) : les mots essentiels d'une leçon sont les bonnes réponses de ses quiz (QCM) que le texte contient :
   // ce qui est surligné, c'est ce qui sera demandé. Les plus longues d'abord ; pas les nombres (les dates ont leurs pastilles).
-  function termesCles(compId) {
-    var vus = {}, out = [];
-    (C.questionsPar[compId] || []).forEach(function (q) {
-      if (q.type !== "qcm") return;
-      var t = String(tx(q.choix[q.reponse]) || "").trim().replace(/[.!?…]+$/, "");
-      if (t.length < 4 || t.length > 40 || /^[\d\s.,%–-]+$/.test(t) || /\d{3}/.test(t) || vus[t.toLowerCase()]) return;
-      vus[t.toLowerCase()] = 1; out.push(t);
+  // Victor (2026-11-01, carte « Choisis à la main ») : chaque étape de masterclass porte ses mots essentiels (champ `cles`),
+  // choisis à la main ; ils sont surlignés à la couleur de l'arbre, sans toucher aux dates (couleur de l'époque).
+  // Les livres cités dans une étape (titre exact ; un titre d'un seul mot demande aussi le nom de l'auteur dans l'étape).
+  function livresEtape(texte) {
+    return (C.livres || []).filter(function (l) {
+      var t = tx(l.titre); if (!t || texte.indexOf(t) < 0) return false;
+      if (/\s/.test(t)) return true;
+      var nom = String(l.auteur || "").split(/[\s,]+/).filter(function (m) { return m.length > 3 && /^\p{Lu}/u.test(m); });
+      return nom.some(function (m) { return texte.indexOf(m) >= 0; });
     });
-    return out.sort(function (a, b) { return b.length - a.length; });
   }
   // Surligne dans un HTML (hors balises) la première occurrence de chaque terme pas encore vu ; `etat` = {vus, n, max}.
   function surlignerCles(html, termes, etat) {
@@ -4780,9 +4797,18 @@ function demarrerJeu() {
     });
     return bouts.join("");
   }
-  function paragraphePersonnes(texte, vus, max, principaux) {
+  function paragraphePersonnes(texte, vus, max, principaux, livres) {
     // Les noms trouvés dans le paragraphe ; un nom pris dans un plus long (« Luther » dans « Martin Luther King ») ne compte pas.
     var tr = personnesDans(texte);
+    // Victor (2026-11-01, carte « Pastille livre ») : un livre cité devient une pastille (mini-couverture à sa couleur + titre
+    // en italique) ; la toucher déplie sa fiche sous le paragraphe.
+    var lv = [];
+    (livres || []).forEach(function (l) {
+      if (vus["livre:" + l.id]) return;
+      var t = tx(l.titre), i = texte.indexOf(t);
+      if (i < 0 || tr.some(function (x) { return x.i < i + t.length && x.j > i; })) return;
+      vus["livre:" + l.id] = 1; lv.push({ l: l, i: i, j: i + t.length });
+    });
     var html = "", n = 0, puces = [];
     tr.forEach(function (x) {
       if (vus[x.e.p.id]) return;
@@ -4793,8 +4819,11 @@ function demarrerJeu() {
       vus[x.e.p.id] = 1; html += htmlPersonnage(x.e); n++;
     });
     var corps = "", d = 0;
-    puces.forEach(function (x) {
-      corps += escD(texte.slice(d, x.i)) + '<button type="button" class="mc-puce" data-perso="' + x.e.p.id + '"><span class="tete-p">' + svgSavant(x.e.p, 20) + "</span>" + esc(texte.slice(x.i, x.j)) + "</button>";
+    puces.concat(lv).sort(function (a, b) { return a.i - b.i; }).forEach(function (x) {
+      if (x.i < d) return;
+      corps += escD(texte.slice(d, x.i)) + (x.l
+        ? '<button type="button" class="mc-puce mc-livre" data-livre="' + x.l.id + '" style="--lc:' + x.l.couleur + '"><span class="couv-p">' + svgSprite(x.l.embleme, 16) + "</span><i>" + esc(texte.slice(x.i, x.j)) + "</i></button>"
+        : '<button type="button" class="mc-puce" data-perso="' + x.e.p.id + '"><span class="tete-p">' + svgSavant(x.e.p, 20) + "</span>" + esc(texte.slice(x.i, x.j)) + "</button>");
       d = x.j;
     });
     corps += escD(texte.slice(d));
@@ -4859,7 +4888,6 @@ function demarrerJeu() {
     if (frise) iSchema = -2;
     var intro = iSchema === -1 && k.fiche && k.fiche.schema ? '<div class="illus mc-intro">' + k.fiche.schema + "</div>" : "";
     var fp = foyersPersonnes(k.masterclass.chapitres, k.id), foyers = fp.foyer;
-    var cles = termesCles(k.id);
     var etapes = k.masterclass.chapitres.map(function (ch, i) {
       var vusPerso = {}; Object.keys(foyers).forEach(function (id) { if (foyers[id] !== i) vusPerso[id] = 1; });
       var tout = ch.texte.map(tx).concat([tx(ch.titre), tx(ch.retenir)]).join(" ");
@@ -4879,8 +4907,9 @@ function demarrerJeu() {
       ch.texte.forEach(function (x) { personnesDans(tx(x)).forEach(function (y) { if (!premiere) premiere = y.e.p.id; nbPar[y.e.p.id] = (nbPar[y.e.p.id] || 0) + 1; }); });
       Object.keys(nbPar).forEach(function (id) { if (nbPar[id] >= 2) principaux[id] = 1; });
       if (premiere && !Object.keys(principaux).some(function (id) { return nbPar[id]; })) principaux[premiere] = 1;
-      var etatCles = { vus: {}, n: 0, max: 4 };
-      return { titre: tx(ch.titre), html: (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux), cles, etatCles); }).join("") +
+      var cles = (ch.cles || []).map(tx).sort(function (a, b) { return b.length - a.length; }), etatCles = { vus: {}, n: 0, max: 99 };
+      var livres = livresEtape(ch.texte.map(tx).join(" "));
+      return { titre: tx(ch.titre), html: (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux, livres), cles, etatCles); }).join("") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
         __('<p class="mc-retenir"><b>À retenir</b>') + escD(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });
