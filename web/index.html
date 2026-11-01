@@ -376,6 +376,10 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .illus .f2 { fill: color-mix(in srgb, var(--warn) 24%, var(--surface)); stroke: color-mix(in srgb, var(--warn) 70%, var(--surface)); stroke-width: 1.2; }
 .illus .a { fill: var(--accent); }
 .mc-frise.guidee .loin { opacity: 0.35; }
+.rencontres { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 10px; width: 100%; margin-top: 8px; }
+.rencontres .mc-perso { flex: 0 1 96px; }
+.rencontres .mc-perso { flex-direction: column; text-align: center; gap: 4px; }
+.rencontres .mc-perso figcaption b { font-size: 15px; }
 .sc-ep-boutons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 .sc-ep-boutons .date-ep { display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 10px; border-radius: 12px; font: 600 16px/1.2 var(--f-body); text-align: left; cursor: pointer; border: 2px solid currentColor; }
 .date-ep.sc-ep-pris { align-self: flex-start; border: 0; cursor: pointer; font: 600 15px var(--f-body); padding: 4px 10px; border-radius: 999px; }
@@ -1504,6 +1508,9 @@ function demarrerJeu() {
   // v32 (Victor) : pendant une épreuve et son bilan, l'avatar garde le savant d'avant ; le nouveau n'apparaît
   // qu'avec la carte qui l'annonce (ou au retour à l'accueil, si on n'est pas allé jusque-là).
   var avatarGele = null;
+  // Victor (2026-11-01) : les personnages croisés pendant une épreuve se montrent ensemble au bilan. Le compte part du lancement.
+  // Les personnes vues pour la première fois (case, quiz, masterclass) attendent le prochain bilan.
+  var rencontresAMontrer = [];
   function gelerAvatar() { avatarGele = { sv: M.savantActuel(C, P) }; }
   function degelerAvatar() { avatarGele = null; }
   function savantIncarne() {
@@ -4492,7 +4499,7 @@ function demarrerJeu() {
   }
   function htmlPersonnage(e) {
     var v = formatVie(e.p.annees), neuf = M.rencontrer(P, e.p.id);
-    if (neuf) sauver();
+    if (neuf) { sauver(); rencontresAMontrer.push(e.p.id); }
     return '<figure class="mc-perso' + (neuf ? " neuf" : "") + '" data-perso="' + e.p.id + '"><div class="cadre-p">' + svgSavant(e.p, 52) + "</div><figcaption><b>" + esc(tx(e.p.nom)) + "</b>" +
       (v.a != null ? pastilleDate(v.a, v.txt, true) : esc(v.txt)) + (neuf ? __('<span class="neuf-p">Nouveau personnage</span>') : "") + "</figcaption></figure>";
   }
@@ -5640,7 +5647,7 @@ function demarrerJeu() {
         (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + htmlFigure(q.figure) + "</div>"));
       if (voixP()) { var rt = zoneRetour.lastChild; rt.appendChild(boutonEcouter(tx(q.explication))); parler((ok ? __("Bravo !") : __("Raté.")) + " " + tx(q.explication)); }
       var pq = portraitQuestion(q);
-      if (pq) { zoneRetour.appendChild(pq); if (M.rencontrer(P, q.portrait.id)) sauver(); }
+      if (pq) { zoneRetour.appendChild(pq); if (M.rencontrer(P, q.portrait.id)) { sauver(); rencontresAMontrer.push(q.portrait.id); } }
       // Victor (2026-10-31) : les personnes dont parlent la question et son explication, en portrait.
       var rp = rangeePersonnes(tx(q.enonce) + " " + tx(q.explication || ""), pq ? q.portrait.id : null);
       if (rp) zoneRetour.appendChild(el('<div class="persos-q">' + rp + "</div>"));
@@ -5789,9 +5796,34 @@ function demarrerJeu() {
     function cartes(x, farce) { return recompensesBilan({ nouveauxSucces: x.succes, masque: x.masque, nouveauxObjets: x.objets, nouveauxLivres: x.livres,
       nouveauxSavants: x.savants, nouveauxAccessoires: x.accessoires, nouveauxEvenements: x.evenements, theme: theme,
       farce: farce ? r.farce : null, repliqueFarce: farce ? r.repliqueFarce : null }); }
-    if (!r.apresPlateau) { var t = cartes(rec || {}); return { recs: t, nAvant: t.length }; }
-    var a = cartes(r.avantPlateau || {}, true), b = cartes(r.apresPlateau);
+    // Les savants gagnés et les personnes croisées pendant l'épreuve : une seule carte, avec les récompenses de l'épreuve.
+    var savants = [];
+    [rec, r.avantPlateau, r.apresPlateau].forEach(function (x) { if (x && x.savants) savants = savants.concat(x.savants); });
+    function sans(x) { return x ? Object.assign({}, x, { savants: [] }) : x; }
+    var groupe = carteRencontres(savants);
+    if (!r.apresPlateau) { var t = cartes(sans(rec) || {}); if (groupe) t.push(groupe); return { recs: t, nAvant: t.length }; }
+    var a = cartes(sans(r.avantPlateau) || {}, true), b = cartes(sans(r.apresPlateau));
+    if (groupe) a.push(groupe);
     return { recs: a.concat(b), nAvant: a.length };
+  }
+  function carteRencontres(savants) {
+    var ids = {}, liste = [];
+    (savants || []).forEach(function (sv) { ids[sv.id] = 1; });
+    rencontresAMontrer.forEach(function (id) { ids[id] = 1; }); rencontresAMontrer = [];
+    personnesConnues().forEach(function (e) { if (ids[e.p.id]) { liste.push(e); delete ids[e.p.id]; } });
+    (savants || []).forEach(function (sv) { if (ids[sv.id]) liste.push({ p: sv, famille: "savant" }); });
+    if (!liste.length) return null;
+    liste.sort(function (a, b) { return (formatVie(a.p.annees).a || 0) - (formatVie(b.p.annees).a || 0); });
+    var n = liste.length, grille = '<div class="rencontres">' + liste.map(function (e) {
+      var v = formatVie(e.p.annees);
+      return '<figure class="mc-perso" data-perso="' + e.p.id + '"><div class="cadre-p">' + svgSavant(e.p, 56) + "</div><figcaption><b>" + esc(tx(e.p.nom)) + "</b>" +
+        (v.a != null ? pastilleDate(v.a, v.txt, true) : esc(v.txt)) + "</figcaption></figure>";
+    }).join("") + "</div>";
+    var c = carteSavant(n > 1 ? __("Nouveaux personnages") : __("Nouveau personnage"), "", n > 1 ? n + __(" personnages croisés") : __("1 personnage croisé"),
+      (n > 1 ? __("Ils rejoignent") : __("Il rejoint")) + __(" tes Personnages, dans Collections. Touche un portrait pour lire sa fiche."), null);
+    var vis = c.querySelector(".badge-r"); if (vis) vis.remove();
+    c.appendChild(el(grille));
+    return c;
   }
   function bilan() {
     var r = quiz.fin, k = C.parId[quiz.id], s = stat(k.stat);
