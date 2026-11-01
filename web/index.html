@@ -5709,7 +5709,9 @@ function demarrerJeu() {
       wrap.appendChild(ch);
     }
     if (c) {
-      var j = el(__('<button type="button" class="btn large">Jouer l\'épreuve suivante</button>'));
+      // Victor (2026-11-01) : épreuve ratée et la même revient (le pion n'a pas bougé) : « Rejouer ».
+      var rate = quiz && quiz.fin && quiz.id === c.comp.id && (quiz.mode === "quiz" ? quiz.fin.issue !== "maitrisee" : quiz.fin.issue !== "reussi");
+      var j = el('<button type="button" class="btn large">' + (rate ? __("Rejouer") : __("Jouer l'épreuve suivante")) + "</button>");
       j.onclick = function () { fermer(); ouvrirJouer(); };
       wrap.appendChild(j);
     }
