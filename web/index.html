@@ -4507,13 +4507,31 @@ function demarrerJeu() {
     var f = ev.target.closest && ev.target.closest("[data-perso]"); if (!f) return;
     var e = personnesConnues().filter(function (x) { return x.p.id === f.getAttribute("data-perso"); })[0]; if (e) ouvrirPersonne(e);
   });
+  // Les personnes nommées dans un texte, dans l'ordre ; un nom pris dans un plus long (« Luther » dans « Martin Luther King ») ne compte pas.
+  function personnesDans(texte) {
+    var tr = [];
+    personnesConnues().forEach(function (e) { var m = e.re.exec(texte); if (m) tr.push({ e: e, i: m.index, j: m.index + m[0].length }); });
+    return tr.filter(function (x) { return !tr.some(function (y) { return y !== x && y.i <= x.i && y.j >= x.j && y.j - y.i > x.j - x.i; }); })
+      .sort(function (a, b) { return a.i - b.i; });
+  }
+  // Victor (2026-11-01) : le portrait va dans l'étape qui parle vraiment de la personne, pas là où elle est à peine citée.
+  // L'étape dont le titre la nomme, sinon celle où elle revient dans le plus de paragraphes (la première en cas d'égalité).
+  function foyersPersonnes(chapitres) {
+    var score = {}, foyer = {};
+    chapitres.forEach(function (ch, i) {
+      personnesDans(tx(ch.titre)).forEach(function (x) { var c = score[x.e.p.id] || (score[x.e.p.id] = {}); c[i] = (c[i] || 0) + 100; });
+      ch.texte.forEach(function (t) { personnesDans(tx(t)).forEach(function (x) { var c = score[x.e.p.id] || (score[x.e.p.id] = {}); c[i] = (c[i] || 0) + 1; }); });
+    });
+    Object.keys(score).forEach(function (id) {
+      var best = -1; Object.keys(score[id]).forEach(function (i) { i = +i; if (best < 0 || score[id][i] > score[id][best] || (score[id][i] === score[id][best] && i < best)) best = i; });
+      foyer[id] = best;
+    });
+    return foyer;
+  }
   // Le paragraphe, précédé des portraits des personnes qu'il cite pour la première fois dans la leçon.
   function paragraphePersonnes(texte, vus, max) {
     // Les noms trouvés dans le paragraphe ; un nom pris dans un plus long (« Luther » dans « Martin Luther King ») ne compte pas.
-    var tr = [];
-    personnesConnues().forEach(function (e) { var m = e.re.exec(texte); if (m) tr.push({ e: e, i: m.index, j: m.index + m[0].length }); });
-    tr = tr.filter(function (x) { return !tr.some(function (y) { return y !== x && y.i <= x.i && y.j >= x.j && y.j - y.i > x.j - x.i; }); })
-      .sort(function (a, b) { return a.i - b.i; });
+    var tr = personnesDans(texte);
     var html = "", n = 0;
     tr.forEach(function (x) {
       if (vus[x.e.p.id] || n >= (max || 2)) return;
@@ -4579,8 +4597,9 @@ function demarrerJeu() {
     var frise = k.fiche && k.fiche.schema ? friseLecon(k.fiche.schema) : null;
     if (frise) iSchema = -2;
     var intro = iSchema === -1 && k.fiche && k.fiche.schema ? '<div class="illus mc-intro">' + k.fiche.schema + "</div>" : "";
-    var vusPerso = {};
+    var foyers = foyersPersonnes(k.masterclass.chapitres);
     var etapes = k.masterclass.chapitres.map(function (ch, i) {
+      var vusPerso = {}; Object.keys(foyers).forEach(function (id) { if (foyers[id] !== i) vusPerso[id] = 1; });
       var tout = ch.texte.map(tx).concat([tx(ch.titre), tx(ch.retenir)]).join(" ");
       return { titre: tx(ch.titre), html: (frise ? frise(tout) : i === 0 ? intro : "") + ch.texte.map(function (x) { return paragraphePersonnes(tx(x), vusPerso); }).join("") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
