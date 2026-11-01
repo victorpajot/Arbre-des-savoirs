@@ -2766,8 +2766,7 @@ function demarrerJeu() {
     }
     if (pl.prison) b.appendChild(el(__('<p class="etat-pion">Assigné à résidence : ton pion ne bougera plus avant ') + (pl.prison > 1 ? pl.prison + __(" quiz parfaits") : __("un quiz parfait")) + ".</p>"));
     else if (pl.quarantaine) b.appendChild(el((pl.quarantaine > 1 ? __('<p class="etat-pion">Quarantaine : tes {n} prochaines épreuves réussies ne feraient pas avancer ton pion.</p>', { n: pl.quarantaine }) : __('<p class="etat-pion">Quarantaine : ta prochaine épreuve réussie ne ferait pas avancer ton pion.</p>'))));
-    var regles = el(__('<button type="button" class="btn sec">Règles et barème</button>')); regles.onclick = ouvrirRegles;
-    b.appendChild(regles);
+    // Victor (2026-11-01) : accueil épuré ; « Règles et barème » passe dans Personnage › Réglages.
     return b;
   }
   // v18 : « Sur ce thème » : les savants et les objets de l'arbre de la case, découverts ou à découvrir.
@@ -3165,6 +3164,7 @@ function demarrerJeu() {
     if (ongletPerso === "ia") { v.appendChild(blocIA()); v.appendChild(blocFaveur()); var bi = blocBourseIA(); if (bi) v.appendChild(bi); v.appendChild(blocCadeauxIA()); v.appendChild(blocCorruption()); v.appendChild(blocMasques(Object.keys(P.succes).length)); }
     if (ongletPerso === "ennemis") v.appendChild(blocBestiaire());
     if (ongletPerso !== "reglages") return v;
+    if (C.plateau) { var rg = el(__('<div class="bloc"><h2>Règles du plateau</h2><p class="meta" style="margin:0">Comment avance ton pion, ce qui t\'attend sur les cases, et ce que rapporte chaque épreuve.</p><button type="button" class="btn sec">Règles et barème</button></div>')); rg.querySelector("button").onclick = ouvrirRegles; v.appendChild(rg); }
 
     var opt = el(__('<div class="bloc"><h2>Options</h2><label class="interrupteur" for="opt-chrono"><span><b>Questions chronométrées</b><br><span class="note">') + C.regles.chrono.secondes + __(' secondes par question. Chaque bonne réponse rapporte ') + C.regles.chrono.bonus_xp_par_bonne_reponse + __(' XP de plus.</span></span><input type="checkbox" id="opt-chrono"></label></div>'));
     var cb = opt.querySelector("input"); cb.checked = !!(P.options && P.options.chrono);
