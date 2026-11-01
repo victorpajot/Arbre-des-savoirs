@@ -1920,6 +1920,12 @@ function demarrerJeu() {
     function m(c) { return Math.round(c + (255 - c) * w).toString(16).padStart(2, "0"); }
     return "#" + m(r) + m(g) + m(b);
   }
+  // Victor (2026-11-01, choix « Double filet ») : chaque case est bordée d'un trait sombre puis d'un filet blanc, façon carte ancienne.
+  function traitCase(s, pas, fond) {
+    var W = LARGEUR_ROUTE, seg = function (r) { return morceauRoute(s - pas / 2 + r, s + pas / 2 - r); };
+    var ligne = function (pts, coul, w) { return '<polyline points="' + pts + '" fill="none" stroke="' + coul + '" stroke-width="' + w + '" stroke-linejoin="round"/>'; };
+    return ligne(seg(1.1), "#1E1A2B", W) + ligne(seg(2), "#fff", W - 2.2) + ligne(seg(3.1), fond, W - 4.6);
+  }
   function couleurCase(k) {
     var st = statActif(k.stat); if (!st) return "#D8D2C4";
     return eclaircir(st.couleur, M.arbreOuvert(C, P, k.stat) ? 0.38 : 0.78);
@@ -2347,7 +2353,7 @@ function demarrerJeu() {
         var atC = atomeSur(n);
         var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : atC ? "#BBD3F2" : chronoSur(n) ? "#F3E2A9" : ennemis[n] ? "#F2C4C4" : couleurCase(k);
         var encre = sp && connue ? "#fff" : "#1E1A2B";
-        c += '<g data-n="' + n + '" data-p="' + place + '" style="cursor:pointer"><polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="' + fond + '" stroke-width="' + LARGEUR_ROUTE + '" stroke-linejoin="round"/>';
+        c += '<g data-n="' + n + '" data-p="' + place + '" style="cursor:pointer">' + traitCase(s, pas, fond);
         if (vue) c += '<polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="' + LARGEUR_ROUTE + '"/>';
         // v15 : case remise sur la route par l'IA (hors de l'ordre chronologique) : liseré pointillé.
         if (i > pl.idx && n < rt[i - 1]) c += '<polyline points="' + morceauRoute(s - pas / 2 + 3, s + pas / 2 - 3) + '" fill="none" stroke="#1E1A2B" stroke-width="' + (LARGEUR_ROUTE - 4) + '" stroke-opacity="0.55" stroke-dasharray="3 3"/>';
