@@ -4556,16 +4556,25 @@ function demarrerJeu() {
   }
   // Victor (2026-11-01) : le portrait va dans l'étape qui parle vraiment de la personne, pas là où elle est à peine citée.
   // L'étape dont le titre la nomme, sinon celle où elle revient dans le plus de paragraphes (la première en cas d'égalité).
-  function foyersPersonnes(chapitres) {
-    var score = {}, foyer = {};
+  // Victor (2026-11-01) : la personne dont la leçon fait le portrait (le savant lié à la compétence, Cicéron pour
+  // « Cicéron et l'éloquence romaine ») ouvre l'étape 1, là où sa vie est racontée. Une personne citée en passant
+  // (un seul paragraphe de toute la leçon, jamais dans un titre) n'a pas de portrait sur cette étape : elle lui volerait la place.
+  function foyersPersonnes(chapitres, compId) {
+    var score = {}, foyer = {}, paras = {};
     chapitres.forEach(function (ch, i) {
-      personnesDans(tx(ch.titre)).forEach(function (x) { var c = score[x.e.p.id] || (score[x.e.p.id] = {}); c[i] = (c[i] || 0) + 100; });
-      ch.texte.forEach(function (t) { personnesDans(tx(t)).forEach(function (x) { var c = score[x.e.p.id] || (score[x.e.p.id] = {}); c[i] = (c[i] || 0) + 1; }); });
+      personnesDans(tx(ch.titre)).forEach(function (x) { var c = score[x.e.p.id] || (score[x.e.p.id] = {}); c[i] = (c[i] || 0) + 100; paras[x.e.p.id] = 99; });
+      ch.texte.forEach(function (t) { personnesDans(tx(t)).forEach(function (x) { var c = score[x.e.p.id] || (score[x.e.p.id] = {}); c[i] = (c[i] || 0) + 1; paras[x.e.p.id] = (paras[x.e.p.id] || 0) + 1; }); });
     });
+    var sujet = compId && C.avatar ? C.avatar.savants.filter(function (s) { return s.condition && s.condition.type === "competence_maitrisee" && s.condition.id === compId && score[s.id]; })[0] : null;
     Object.keys(score).forEach(function (id) {
       var best = -1; Object.keys(score[id]).forEach(function (i) { i = +i; if (best < 0 || score[id][i] > score[id][best] || (score[id][i] === score[id][best] && i < best)) best = i; });
       foyer[id] = best;
     });
+    if (sujet) {
+      var etape = Math.min.apply(null, Object.keys(score[sujet.id]).map(Number));
+      foyer[sujet.id] = etape;
+      Object.keys(foyer).forEach(function (id) { if (id !== sujet.id && foyer[id] === etape && paras[id] === 1) foyer[id] = -1; });
+    }
     return foyer;
   }
   // Le paragraphe, précédé des portraits des personnes qu'il cite pour la première fois dans la leçon.
@@ -4637,7 +4646,7 @@ function demarrerJeu() {
     var frise = k.fiche && k.fiche.schema ? friseLecon(k.fiche.schema) : null;
     if (frise) iSchema = -2;
     var intro = iSchema === -1 && k.fiche && k.fiche.schema ? '<div class="illus mc-intro">' + k.fiche.schema + "</div>" : "";
-    var foyers = foyersPersonnes(k.masterclass.chapitres);
+    var foyers = foyersPersonnes(k.masterclass.chapitres, k.id);
     var etapes = k.masterclass.chapitres.map(function (ch, i) {
       var vusPerso = {}; Object.keys(foyers).forEach(function (id) { if (foyers[id] !== i) vusPerso[id] = 1; });
       var tout = ch.texte.map(tx).concat([tx(ch.titre), tx(ch.retenir)]).join(" ");
