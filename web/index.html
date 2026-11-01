@@ -4511,11 +4511,20 @@ function demarrerJeu() {
     return { txt: txt, a: nums[0].n };
   }
   function htmlPersonnage(e) {
-    var v = formatVie(e.p.annees), neuf = M.rencontrer(P, e.p.id);
-    if (neuf) { sauver(); rencontresAMontrer.push(e.p.id); }
+    var v = formatVie(e.p.annees);
     // Victor (2026-11-01) : plus de « Nouveau personnage » sous le portrait, qui semblait aléatoire ; les nouveaux se retrouvent tous au bilan.
     return '<figure class="mc-perso" data-perso="' + e.p.id + '"><div class="cadre-p">' + svgSavant(e.p, 52) + "</div><figcaption><b>" + esc(tx(e.p.nom)) + "</b>" +
       (v.a != null ? pastilleDate(v.a, v.txt, true) : esc(v.txt)) + "</figcaption></figure>";
+  }
+  // Victor (2026-11-01) : un personnage n'est rencontré que là où on le lit vraiment : la question (et son explication),
+  // ou la page de masterclass affichée. Les portraits de la case le montrent sans le débloquer.
+  function rencontrerDans(noeud) {
+    var neuf = false;
+    [].forEach.call(noeud.querySelectorAll("[data-perso]"), function (f) {
+      var id = f.getAttribute("data-perso");
+      if (M.rencontrer(P, id)) { neuf = true; rencontresAMontrer.push(id); }
+    });
+    if (neuf) sauver();
   }
   // Les personnes qu'un texte nomme (quiz, case), en ligne de portraits ; chacune devient rencontrée. `sauf` : déjà montrée.
   function rangeePersonnes(texte, sauf, max) {
@@ -4637,6 +4646,7 @@ function demarrerJeu() {
       var z = feuille.querySelector(".masterclass"), x = etapes[n];
       z.innerHTML = '<div class="eyebrow">' + esc(titre) + __(" · étape ") + (n + 1) + __(" sur ") + etapes.length + "</div><h2>" + esc(x.titre) + "</h2>" + x.html +
         '<div class="nav-guide"><button type="button" class="btn sec" data-a="prec"' + (n ? "" : " disabled") + __('>← Précédent</button><button type="button" class="btn" data-a="suiv"') + (n < etapes.length - 1 ? "" : " disabled") + __(">Suivant →</button></div>");
+      rencontrerDans(z);
       if (imp && n === 0 && imp.mot) { var mi = comite(imp.mot, true); if (mi) z.insertBefore(mi, z.querySelector("h2")); }
       if (imp && n === etapes.length - 1 && M.masterclassLue(P, id)) {
         var ml = comite(M.replique(C, P, ["masterclass_lue"]), true); sauver();
@@ -5664,7 +5674,7 @@ function demarrerJeu() {
       if (pq) { zoneRetour.appendChild(pq); if (M.rencontrer(P, q.portrait.id)) { sauver(); rencontresAMontrer.push(q.portrait.id); } }
       // Victor (2026-10-31) : les personnes dont parlent la question et son explication, en portrait.
       var rp = rangeePersonnes(tx(q.enonce) + " " + tx(q.explication || ""), pq ? q.portrait.id : null);
-      if (rp) zoneRetour.appendChild(el('<div class="persos-q">' + rp + "</div>"));
+      if (rp) { var zrp = el('<div class="persos-q">' + rp + "</div>"); zoneRetour.appendChild(zrp); rencontrerDans(zrp); }
       if (M.estEclair(quiz.res[quiz.res.length - 1])) {
         var mot = comite(M.replique(C, P, ["eclair"]));
         if (mot) { zoneRetour.appendChild(el('<div style="height:10px"></div>')); zoneRetour.appendChild(mot); }
