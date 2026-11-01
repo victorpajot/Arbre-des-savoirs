@@ -4513,8 +4513,9 @@ function demarrerJeu() {
   function htmlPersonnage(e) {
     var v = formatVie(e.p.annees), neuf = M.rencontrer(P, e.p.id);
     if (neuf) { sauver(); rencontresAMontrer.push(e.p.id); }
-    return '<figure class="mc-perso' + (neuf ? " neuf" : "") + '" data-perso="' + e.p.id + '"><div class="cadre-p">' + svgSavant(e.p, 52) + "</div><figcaption><b>" + esc(tx(e.p.nom)) + "</b>" +
-      (v.a != null ? pastilleDate(v.a, v.txt, true) : esc(v.txt)) + (neuf ? __('<span class="neuf-p">Nouveau personnage</span>') : "") + "</figcaption></figure>";
+    // Victor (2026-11-01) : plus de « Nouveau personnage » sous le portrait, qui semblait aléatoire ; les nouveaux se retrouvent tous au bilan.
+    return '<figure class="mc-perso" data-perso="' + e.p.id + '"><div class="cadre-p">' + svgSavant(e.p, 52) + "</div><figcaption><b>" + esc(tx(e.p.nom)) + "</b>" +
+      (v.a != null ? pastilleDate(v.a, v.txt, true) : esc(v.txt)) + "</figcaption></figure>";
   }
   // Les personnes qu'un texte nomme (quiz, case), en ligne de portraits ; chacune devient rencontrée. `sauf` : déjà montrée.
   function rangeePersonnes(texte, sauf, max) {
