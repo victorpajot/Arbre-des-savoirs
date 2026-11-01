@@ -2278,6 +2278,14 @@ function demarrerJeu() {
   function borner(x, y) {
     return [Math.max(ETENDUE[0], Math.min(ETENDUE[0] + ETENDUE[2] - CADRE, x)), Math.max(ETENDUE[1], Math.min(ETENDUE[1] + ETENDUE[3] - CADRE, y))];
   }
+  // Victor (2026-11-01) : le pion ne doit plus cacher le logo de sa case. Essais (clé arbre.pion) : dessus (ancien),
+  // cote (posé à côté de la route, du côté du haut), petit (réduit, sur le bord de la case).
+  var MODE_PION = (function () { try { return localStorage.getItem("arbre.pion") || "cote"; } catch (e) { return "cote"; } })();
+  function positionPion(n) {
+    var p = centreCase(n); if (MODE_PION === "dessus") return p;
+    var a = pointRoute(abscisse(n))[2], nx = -Math.sin(a), ny = Math.cos(a); if (ny > 0) { nx = -nx; ny = -ny; }
+    var d = MODE_PION === "petit" ? 22 : 40; return [p[0] + nx * d, p[1] + ny * d + 17];
+  }
   function cadrePion(n) { var p = centreCase(n); return borner(p[0] - CADRE / 2, p[1] - 14 - CADRE / 2); }
   function boiteVue(c) { return c[0].toFixed(1) + " " + c[1].toFixed(1) + " " + CADRE + " " + CADRE; }
   function glisserVue(svg, cible, ms) {
@@ -2402,6 +2410,9 @@ function demarrerJeu() {
         var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : atC ? "#BBD3F2" : chronoSur(n) ? "#F3E2A9" : ennemis[n] ? "#F2C4C4" : couleurCase(k);
         var encre = sp && connue ? "#fff" : "#1E1A2B";
         c += '<g data-n="' + n + '" data-p="' + place + '" style="cursor:pointer">' + traitCase(s, pas, fond);
+        // Victor (2026-11-01) : la case du pion a un liseré doré.
+        if (ici) { var dL = LARGEUR_ROUTE / 2 - 1.4, gL = morceauDecale(s - pas / 2 + 1.2, s + pas / 2 - 1.2, dL), dR = morceauDecale(s - pas / 2 + 1.2, s + pas / 2 - 1.2, -dL).split(" ").reverse().join(" ");
+          c += '<polygon points="' + gL + " " + dR + '" fill="none" stroke="#1E1A2B" stroke-width="4.6" stroke-linejoin="round"/><polygon class="liseret-ici" points="' + gL + " " + dR + '" fill="none" stroke="#FFC93C" stroke-width="2.6" stroke-linejoin="round"/>'; }
         if (vue) c += '<polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="' + LARGEUR_ROUTE + '"/>';
         // v15 : case remise sur la route par l'IA (hors de l'ordre chronologique) : liseré pointillé.
         // Victor (2026-11-01) : pointillés le long des deux bords, plus de rayures en travers qui brouillent la case.
@@ -2445,7 +2456,9 @@ function demarrerJeu() {
     var ici = animPion && animPion.places ? animPion.places[0] : pl.idx + 1, pos = centreCase(ici);
     var vb = bilan ? boiteVue(cadrePion(ici)) : texteVue();
     // v8 : le pion se repère d'un coup d'œil, même en vue d'ensemble : halo qui pulse, double contour, flèche au-dessus.
-    var pion = '<g id="pion" data-n="pion" style="cursor:pointer" transform="translate(' + pos[0].toFixed(1) + " " + pos[1].toFixed(1) + ')"><g transform="translate(0 -17) scale(0.82)"><circle r="25" fill="#FFD447" opacity="0.45" class="halo-pion"/><ellipse cx="0" cy="17" rx="14" ry="4" fill="#000" opacity="0.3"/>' +
+    pos = positionPion(ici);
+    var echPion = MODE_PION === "petit" ? 0.6 : 0.82;
+    var pion = '<g id="pion" data-n="pion" style="cursor:pointer" transform="translate(' + pos[0].toFixed(1) + " " + pos[1].toFixed(1) + ')"><g transform="translate(0 -17) scale(' + echPion + ')"><circle r="25" fill="#FFD447" opacity="0.45" class="halo-pion"/><ellipse cx="0" cy="17" rx="14" ry="4" fill="#000" opacity="0.3"/>' +
       '<circle r="19.5" fill="#1E1A2B"/><circle r="17.5" fill="var(--parchemin)" stroke="#FFD447" stroke-width="3.5"/>' +
       '<path class="fleche-pion" d="M0,-24 L-6,-33 H6 Z" fill="#FFD447" stroke="#1E1A2B" stroke-width="1.6" stroke-linejoin="round"/>' +
       '<svg x="-14.5" y="-14.5" width="29" height="29" viewBox="8 1 24 24" class="pix">' + pixelsAvatar(0, 0) + "</svg></g>" +
@@ -2609,7 +2622,7 @@ function demarrerJeu() {
     }
     var svgP = g.ownerSVGElement, suivre = svgP && svgP.classList.contains("zoom");
     function poser(n, ms) {
-      var p = centreCase(n); g.setAttribute("transform", "translate(" + p[0] + " " + p[1] + ")");
+      var p = positionPion(n); g.setAttribute("transform", "translate(" + p[0] + " " + p[1] + ")");
       if (suivre) { if (ms) glisserVue(svgP, cadrePion(n), ms); else svgP.setAttribute("viewBox", boiteVue(cadrePion(n))); }
     }
     var reduit = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
