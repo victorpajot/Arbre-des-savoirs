@@ -247,11 +247,12 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 /* Victor (2026-11-01) : sur l'accueil, le parcours prend toute la largeur de l'écran (bloc et plateau bord à bord sur mobile). */
 @media (max-width: 600px) {
   .vue > .bloc.plateau { margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); border-radius: 0; border-inline: 0; }
-  .vue > .bloc.plateau .grille-cadre { margin-inline: -16px; }
+  .vue > .bloc.plateau .grille-cadre { margin-inline: -16px; margin-top: -16px; }
   .vue > .bloc.plateau .grille-cadre svg.grille.libre { border-radius: 0; }
 }
 @media (min-width: 601px) {
-  .vue > .bloc.plateau .grille-cadre { margin-inline: -15px; }
+  .vue > .bloc.plateau .grille-cadre { margin-inline: -15px; margin-top: -15px; }
+  .vue > .bloc.plateau .grille-cadre svg.grille.libre { border-radius: var(--r) var(--r) 0 0; }
 }
 .grille-cadre .cam { position: absolute; right: 8px; bottom: 32px; display: flex; gap: 6px; }
 .grille-cadre .cam button[data-cam="plus"], .grille-cadre .cam button[data-cam="moins"] { width: 38px; padding: 0; font-size: 20px; line-height: 1; }
@@ -2755,7 +2756,8 @@ function demarrerJeu() {
       var n = g.getAttribute("data-n");
       if (n === "pion") ouvrirCase(P.plateau.position); else if (n === "objectif") ouvrirObjectif(); else ouvrirCase(+n);
     };
-    b.appendChild(grille);
+    // Victor (2026-11-01) : le plateau d'abord, juste sous Jouer ; son nom et son compteur viennent dessous.
+    b.insertBefore(grille, b.firstChild);
     var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</span><b>" + esc(tx(k.titre)) + __("</b><span>Lire l'histoire de la case</span></span></button>"));
     act.onclick = function () { ouvrirCase(k.n); };
     b.appendChild(act);
