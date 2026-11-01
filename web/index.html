@@ -1013,6 +1013,7 @@ svg.grille .interro { transition: opacity .3s; }
 .succes details summary::-webkit-details-marker { display: none; }
 .succes .tete-s { display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: center; }
 .voile.dessus { z-index: 35; }
+.voile.opaque { background: var(--surface); }
 @media (prefers-reduced-motion: no-preference) {
   .recompense.anim .badge-r { animation: tombe 0.7s cubic-bezier(.2,.9,.3,1.3) both; }
   .recompense.anim h3, .recompense.anim .desc, .recompense.anim details, .recompense.anim .genre { animation: apparait 0.5s 0.35s ease-out both; }
@@ -4825,6 +4826,8 @@ function demarrerJeu() {
     feuilleSimple('<div class="guide-z masterclass"></div>', titre, {
       prec: function () { if (n > 0) { n--; montrer(); } }, suiv: function () { if (n < etapes.length - 1) { n++; montrer(); } }
     }, retour);
+    // Victor (2026-11-01) : pendant la lecture, plus rien du jeu derrière : la feuille prend tout l'écran, quelle que soit l'étape.
+    feuille.classList.add("opaque"); feuille.querySelector(".feuille").classList.add("pleine");
     function montrer() {
       var z = feuille.querySelector(".masterclass"), x = etapes[n];
       z.innerHTML = '<div class="eyebrow">' + esc(titre) + __(" · étape ") + (n + 1) + __(" sur ") + etapes.length + "</div><h2>" + esc(x.titre) + "</h2>" + x.html +
