@@ -249,6 +249,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .grille-cadre.plein svg.grille.libre { width: 100%; height: 100%; aspect-ratio: auto; border-radius: 0 !important; }
 .grille-cadre.plein .cam { bottom: calc(14px + env(safe-area-inset-bottom, 0px)); right: 12px; }
 .grille-cadre .fermer-plein { display: none; }
+.grille-cadre.ensemble svg.grille.libre { touch-action: pan-y; }
 .grille-cadre .agrandir { display: grid; place-items: center; position: absolute; top: 8px; right: 8px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.12); cursor: pointer; padding: 0; }
 .grille-cadre.plein .agrandir { display: none; }
 .grille-cadre.plein .fermer-plein { display: grid; place-items: center; position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 12px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 22px; line-height: 1; box-shadow: 0 1px 4px rgba(0,0,0,.25); cursor: pointer; }
@@ -2700,10 +2701,12 @@ function demarrerJeu() {
       if (large) { camera.w = LARGEUR_MAX; camera.cx = camera.cy = null; }
       appliquer();
     }
-    if (pleinEcran) basculerPlein(true);
+    if (pleinEcran) basculerPlein(true); else appliquer();
     function svgLibre() { return grille.querySelector("svg.libre"); }
     function appliquer() {
       var svg = svgLibre(); if (svg) svg.setAttribute("viewBox", texteVue());
+      // Victor (2026-11-01) : dézoomé, le plateau entier est visible : glisser vers le bas fait défiler l'accueil.
+      grille.classList.toggle("ensemble", vueEnsemble() && !pleinEcran);
       var cam = grille.querySelector(".cam"), bt = cam && cam.querySelector('[data-cam="large"], [data-cam="pion"]');
       if (bt && (bt.getAttribute("data-cam") === "pion") !== vueEnsemble()) {
         bt.outerHTML = vueEnsemble() ? __('<button type="button" data-cam="pion">Mon pion</button>') : __('<button type="button" data-cam="large">Vue d\'ensemble</button>');
