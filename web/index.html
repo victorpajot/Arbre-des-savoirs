@@ -244,6 +244,13 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .plateau svg.grille { display: block; width: 100%; height: auto; touch-action: manipulation; }
 .grille-cadre svg.grille.libre { aspect-ratio: 2 / 3; touch-action: none; cursor: grab; border-radius: 12px; background: #1E1A2B; overscroll-behavior: contain; }
 .grille-cadre { position: relative; user-select: none; -webkit-user-select: none; }
+/* Victor (2026-11-01) : double toucher sur le plateau = plein écran, croix en haut à droite pour fermer. */
+.grille-cadre.plein { position: fixed; inset: 0; z-index: 15; margin: 0 !important; background: #1E1A2B; }
+.grille-cadre.plein svg.grille.libre { width: 100%; height: 100%; aspect-ratio: auto; border-radius: 0 !important; }
+.grille-cadre.plein .cam { bottom: calc(14px + env(safe-area-inset-bottom, 0px)); right: 12px; }
+.grille-cadre .fermer-plein { display: none; }
+.grille-cadre.plein .fermer-plein { display: grid; place-items: center; position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 12px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 22px; line-height: 1; box-shadow: 0 1px 4px rgba(0,0,0,.25); cursor: pointer; }
+body.plateau-plein { overflow: hidden; }
 /* Victor (2026-11-01) : sur l'accueil, le parcours prend toute la largeur de l'écran (bloc et plateau bord à bord sur mobile). */
 @media (max-width: 600px) {
   .vue > .bloc.plateau { margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); border-radius: 0; border-inline: 0; }
@@ -2199,6 +2206,12 @@ function demarrerJeu() {
   // au doigt, sans que la page bouge. Le cadre a toujours le même format (2 × 3) ; la vue d'ensemble montre tout.
   var RATIO_VUE = 1.5, LARGEUR_MAX = MONDE[1] / RATIO_VUE, LARGEUR_MIN = 120;
   var camera = { w: LARGEUR_MAX, cx: null, cy: null };
+  // Plein écran : la vue prend les proportions de l'écran (RATIO_VUE), puis revient à 2 sur 3 en sortant.
+  var pleinEcran = false;
+  function regleRatio() {
+    RATIO_VUE = pleinEcran ? Math.max(1, window.innerHeight / Math.max(1, window.innerWidth)) : 1.5;
+    LARGEUR_MAX = pleinEcran ? MONDE[0] : MONDE[1] / RATIO_VUE;
+  }
   function vueCamera() {
     var w = Math.max(LARGEUR_MIN, Math.min(LARGEUR_MAX, camera.w)), h = w * RATIO_VUE;
     var cx = camera.cx == null ? MONDE[0] / 2 : camera.cx, cy = camera.cy == null ? MONDE[1] / 2 : camera.cy;
@@ -2674,8 +2687,17 @@ function demarrerJeu() {
       var cam = el(__('<div class="cam"><button type="button" data-cam="moins" aria-label="Dézoomer">−</button><button type="button" data-cam="plus" aria-label="Zoomer">+</button>') +
         (vueEnsemble() ? __('<button type="button" data-cam="pion">Mon pion</button>') : __('<button type="button" data-cam="large">Vue d\'ensemble</button>')) + "</div>");
       grille.appendChild(cam);
+      grille.appendChild(el(__('<button type="button" class="fermer-plein" data-cam="fermer" aria-label="Quitter le plein écran">✕</button>')));
     }
     majGrille();
+    function basculerPlein(oui) {
+      var large = vueEnsemble();
+      pleinEcran = oui; regleRatio();
+      grille.classList.toggle("plein", oui); document.body.classList.toggle("plateau-plein", oui);
+      if (large) { camera.w = LARGEUR_MAX; camera.cx = camera.cy = null; }
+      appliquer();
+    }
+    if (pleinEcran) basculerPlein(true);
     function svgLibre() { return grille.querySelector("svg.libre"); }
     function appliquer() {
       var svg = svgLibre(); if (svg) svg.setAttribute("viewBox", texteVue());
@@ -2746,13 +2768,23 @@ function demarrerJeu() {
         else if (a === "moins") zoomer(1.5);
         else if (a === "large") { camera.w = LARGEUR_MAX; camera.cx = camera.cy = null; appliquer(); }
         else if (a === "pion") { var p = centreCase(P.plateau.idx + 1); camera.w = 190; camera.cx = p[0]; camera.cy = p[1]; appliquer(); }
+        else if (a === "fermer") basculerPlein(false);
         return;
       }
       if (Date.now() - finGlisse < 350) return;
-      var g = ev.target.closest && ev.target.closest("[data-n]"); if (!g) return;
+      if (!(ev.target.closest && ev.target.closest("svg.libre"))) return;
+      // Double toucher : plein écran (ou sortie). Un toucher seul ouvre la case, après un court délai pour laisser venir le second.
+      var maint = Date.now();
+      if (maint - dernierToucher < 320) { dernierToucher = 0; clearTimeout(attenteToucher); basculerPlein(!pleinEcran); return; }
+      dernierToucher = maint;
+      var g = ev.target.closest("[data-n]"); if (!g) return;
       var n = g.getAttribute("data-n");
-      if (n === "pion") ouvrirCase(P.plateau.position); else if (n === "objectif") ouvrirObjectif(); else ouvrirCase(+n);
+      clearTimeout(attenteToucher);
+      attenteToucher = setTimeout(function () {
+        if (n === "pion") ouvrirCase(P.plateau.position); else if (n === "objectif") ouvrirObjectif(); else ouvrirCase(+n);
+      }, 320);
     };
+    var dernierToucher = 0, attenteToucher = null;
     // Victor (2026-11-01) : le plateau d'abord, juste sous Jouer ; son nom et son compteur viennent dessous.
     b.insertBefore(grille, b.firstChild);
     var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</span><b>" + esc(tx(k.titre)) + __("</b><span>Lire l'histoire de la case</span></span></button>"));
