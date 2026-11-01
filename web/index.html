@@ -1913,6 +1913,12 @@ function demarrerJeu() {
     for (var i = 0; i <= n; i++) { var p = pointRoute(s0 + (s1 - s0) * i / n); out.push(p[0].toFixed(1) + "," + p[1].toFixed(1)); }
     return out.join(" ");
   }
+  // Le morceau de route décalé de d (positif à droite du sens de marche), pour suivre un bord de la route.
+  function morceauDecale(s0, s1, d) {
+    var out = [], n = Math.max(2, Math.ceil((s1 - s0) / 3));
+    for (var i = 0; i <= n; i++) { var p = pointRoute(s0 + (s1 - s0) * i / n); out.push((p[0] - Math.sin(p[2]) * d).toFixed(1) + "," + (p[1] + Math.cos(p[2]) * d).toFixed(1)); }
+    return out.join(" ");
+  }
   var TEINTE_EPOQUE = { antiquite: "#C9A227", "moyen-age": "#A04B57", renaissance: "#2F8C78", classique: "#4A6CC2", xixe: "#9A6534", xxe: "#7A4FB8" };
   // v15 : chaque case prend la couleur de son arbre, éclaircie pour garder le numéro lisible ; arbre fermé, couleur délavée.
   function eclaircir(hex, w) {
@@ -1924,8 +1930,18 @@ function demarrerJeu() {
   function traitCase(s, pas, fond) {
     var W = LARGEUR_ROUTE, seg = function (r) { return morceauRoute(s - pas / 2 + r, s + pas / 2 - r); };
     var ligne = function (pts, coul, w) { return '<polyline points="' + pts + '" fill="none" stroke="' + coul + '" stroke-width="' + w + '" stroke-linejoin="round"/>'; };
+    var v = FOND_CASE, sep = ligne(seg(0.3), "#1E1A2B", W) + ligne(seg(0.9), fond, W - 1.6);
+    if (v === "plein") return sep;
+    if (v === "bombe") return sep + ligne(seg(0.9), eclaircir(fond, 0.4), W - 11) + ligne(seg(0.9), eclaircir(fond, 0.72), W - 19);
+    if (v === "bords") return sep + ligne(seg(-0.05), "#F8F1E1", W - 10);
+    if (v === "papier") return sep + ligne(seg(-0.05), "#F3E8CF", W - 10) + ligne(seg(-0.05), "url(#grainCase)", W - 10);
     return ligne(seg(1.1), "#1E1A2B", W) + ligne(seg(2), "#fff", W - 2.2) + ligne(seg(3.1), fond, W - 4.6);
   }
+  // Essais de fonds de case (Victor, 2026-11-01) : choisis par la clé locale arbre.fondcase le temps de comparer.
+  var FOND_CASE = (function () { try { return localStorage.getItem("arbre.fondcase") || "filet"; } catch (e) { return "filet"; } })();
+  var DEFS_CASE = '<defs><pattern id="grainCase" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="none"/>' +
+    '<circle cx="1.2" cy="1.5" r="0.45" fill="#8A6F3E" fill-opacity="0.35"/><circle cx="4.6" cy="3.2" r="0.35" fill="#8A6F3E" fill-opacity="0.3"/>' +
+    '<circle cx="2.8" cy="5.6" r="0.4" fill="#8A6F3E" fill-opacity="0.28"/><path d="M5.2,0.6 l1.2,0.9 M0.4,4.2 l1.1,-0.5" stroke="#8A6F3E" stroke-opacity="0.22" stroke-width="0.35"/></pattern></defs>';
   function couleurCase(k) {
     var st = statActif(k.stat); if (!st) return "#D8D2C4";
     return eclaircir(st.couleur, M.arbreOuvert(C, P, k.stat) ? 0.38 : 0.78);
@@ -2343,10 +2359,11 @@ function demarrerJeu() {
     var rt = laRoute(); nb = rt.length;
     var cle = [M.caseDecouverte(P, -1), pl.atteinte, pl.tours, pl.position, pl.idx, rt.join(","), loin, ton, JSON.stringify(ennemis), JSON.stringify(pl.speciaux || {}), (P.sauvages || []).map(function (x) { return x.case; }).join(","), C.stats.filter(function (s) { return M.arbreOuvert(C, P, s.id); }).length].join("/");
     if (cachePlateau.cle !== cle) {
-      var c = decorPlateau(ton), pas = pasCase(), fleches = "", gardes = "";
+      var c = decorPlateau(ton) + DEFS_CASE, pas = pasCase(), fleches = "", gardes = "";
       // Victor (2026-11-01) : logos aussi grands que possible sans se chevaucher : une case sur deux est décalée
       // de part et d'autre de l'axe de la route (en quinconce), ce qui double la place disponible le long de la route.
-      var TL = Math.max(12, Math.min(26, 2 * pas - 1)), DEC = Math.min(TL / 2 + 0.5, LARGEUR_ROUTE / 2);
+      // Quand les cases sont assez longues (tour normal), pas de quinconce : le logo est centré et déborde un peu de la route.
+      var seul = pas >= 28, TL = seul ? Math.min(40, pas - 2) : Math.max(12, Math.min(26, 2 * pas - 1)), DEC = seul ? 0 : Math.min(TL / 2 + 0.5, LARGEUR_ROUTE / 2);
       var toute = morceauRoute(0, geo().total);
       c += '<polyline points="' + toute + '" fill="none" stroke="#000" stroke-opacity="0.22" stroke-width="' + (LARGEUR_ROUTE + 8) + '" stroke-linejoin="round" stroke-linecap="round" transform="translate(0 3)"/>' +
         '<polyline points="' + toute + '" fill="none" stroke="#fff" stroke-width="' + (LARGEUR_ROUTE + 6) + '" stroke-linejoin="round" stroke-linecap="round"/>';
@@ -2359,7 +2376,8 @@ function demarrerJeu() {
         c += '<g data-n="' + n + '" data-p="' + place + '" style="cursor:pointer">' + traitCase(s, pas, fond);
         if (vue) c += '<polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="' + LARGEUR_ROUTE + '"/>';
         // v15 : case remise sur la route par l'IA (hors de l'ordre chronologique) : liseré pointillé.
-        if (i > pl.idx && n < rt[i - 1]) c += '<polyline points="' + morceauRoute(s - pas / 2 + 3, s + pas / 2 - 3) + '" fill="none" stroke="#1E1A2B" stroke-width="' + (LARGEUR_ROUTE - 4) + '" stroke-opacity="0.55" stroke-dasharray="3 3"/>';
+        // Victor (2026-11-01) : pointillés le long des deux bords, plus de rayures en travers qui brouillent la case.
+        if (i > pl.idx && n < rt[i - 1]) [-1, 1].forEach(function (cote) { c += '<polyline points="' + morceauDecale(s - pas / 2 + 2, s + pas / 2 - 2, cote * (LARGEUR_ROUTE / 2 - 3.2)) + '" fill="none" stroke="#1E1A2B" stroke-width="1.6" stroke-opacity="0.7" stroke-dasharray="2.6 2"/>'; });
         if (proche) c += '<polyline class="avenir" points="' + morceauRoute(s - pas / 2 + 3, s + pas / 2 - 3) + '" fill="none" stroke="#fff" stroke-width="' + (LARGEUR_ROUTE - 7) + '" stroke-opacity="0.5"/>';
         if (connue) {
           // Victor (2026-11-01) : plus de numéro sur les cases ; le logo aussi grand que la case le permet (il peut déborder un peu).
@@ -4568,7 +4586,8 @@ function demarrerJeu() {
     L.forEach(function (e) {
       var re = "(?<![\\p{L}'’-])(?:" + alt(e.noms) + ")(?![\\p{L}])";
       // Le nom seul, pas précédé d'un autre prénom en milieu de phrase (« Michael Clark » n'est pas Mamie Clark).
-      if (e.fam && parNom[e.fam] === 1) re += "|(?<![\\p{L}'’-])(?<!(?<![.!?»:] |^)\\p{Lu}\\p{Ll}+ )" + alt([e.fam]) + "(?![\\p{L}])";
+      // Ni suivi d'un nom (« James Joule » n'est pas William James), ni dans « prix Nobel » ou « le Nobel ».
+      if (e.fam && parNom[e.fam] === 1) re += "|(?<![\\p{L}'’-])(?<!(?<![.!?»:] |^)\\p{Lu}\\p{Ll}+ )(?<![Pp]rix |le |du |au |un )" + alt([e.fam]) + "(?![\\p{L}])(?! \\p{Lu}\\p{Ll})";
       e.re = new RegExp(re, "u");
     });
     return (indexPersonnes = L);
@@ -4625,17 +4644,22 @@ function demarrerJeu() {
       personnesDans(tx(ch.titre)).forEach(function (x) { var c = score[x.e.p.id] || (score[x.e.p.id] = {}); c[i] = (c[i] || 0) + 100; paras[x.e.p.id] = 99; });
       ch.texte.forEach(function (t) { personnesDans(tx(t)).forEach(function (x) { var c = score[x.e.p.id] || (score[x.e.p.id] = {}); c[i] = (c[i] || 0) + 1; paras[x.e.p.id] = (paras[x.e.p.id] || 0) + 1; }); });
     });
-    var sujet = compId && C.avatar ? C.avatar.savants.filter(function (s) { return s.condition && s.condition.type === "competence_maitrisee" && s.condition.id === compId && score[s.id]; })[0] : null;
+    // Victor (2026-11-01, Quintilien) : les sujets de la leçon sont d'abord les personnes que nomme son titre
+    // (« Quintilien, former l'orateur », « Pascal, Fermat et le hasard ») ; à défaut, le savant lié à la compétence.
+    var k = compId && C.parId[compId];
+    var sujets = k ? personnesDans(tx(k.nom)).map(function (x) { return x.e.p.id; }) : [], parTitre = sujets.length > 0;
+    sujets.forEach(function (id) { score[id] = score[id] || {}; paras[id] = 99; });
+    if (!sujets.length && compId && C.avatar) sujets = C.avatar.savants.filter(function (s) { return s.condition && s.condition.type === "competence_maitrisee" && s.condition.id === compId && score[s.id]; }).map(function (s) { return s.id; }).slice(0, 1);
     Object.keys(score).forEach(function (id) {
       var best = -1; Object.keys(score[id]).forEach(function (i) { i = +i; if (best < 0 || score[id][i] > score[id][best] || (score[id][i] === score[id][best] && i < best)) best = i; });
       foyer[id] = best;
     });
-    if (sujet) {
-      var etape = Math.min.apply(null, Object.keys(score[sujet.id]).map(Number));
-      foyer[sujet.id] = etape;
-      Object.keys(foyer).forEach(function (id) { if (id !== sujet.id && foyer[id] === etape && paras[id] === 1) foyer[id] = -1; });
-    }
-    return foyer;
+    // Les personnes du titre ouvrent l'étape 1, même si elle ne les cite pas encore ; le savant lié, la première étape qui le cite.
+    sujets.forEach(function (sid) { foyer[sid] = parTitre ? 0 : Math.min.apply(null, Object.keys(score[sid]).map(Number)); });
+    sujets.forEach(function (sid) {
+      Object.keys(foyer).forEach(function (id) { if (sujets.indexOf(id) < 0 && foyer[id] === foyer[sid] && paras[id] === 1) foyer[id] = -1; });
+    });
+    return { foyer: foyer, sujets: sujets };
   }
   // Le paragraphe, précédé des portraits des personnes qu'il cite pour la première fois dans la leçon.
   function paragraphePersonnes(texte, vus, max) {
@@ -4706,11 +4730,18 @@ function demarrerJeu() {
     var frise = k.fiche && k.fiche.schema ? friseLecon(k.fiche.schema) : null;
     if (frise) iSchema = -2;
     var intro = iSchema === -1 && k.fiche && k.fiche.schema ? '<div class="illus mc-intro">' + k.fiche.schema + "</div>" : "";
-    var foyers = foyersPersonnes(k.masterclass.chapitres, k.id);
+    var fp = foyersPersonnes(k.masterclass.chapitres, k.id), foyers = fp.foyer;
     var etapes = k.masterclass.chapitres.map(function (ch, i) {
       var vusPerso = {}; Object.keys(foyers).forEach(function (id) { if (foyers[id] !== i) vusPerso[id] = 1; });
       var tout = ch.texte.map(tx).concat([tx(ch.titre), tx(ch.retenir)]).join(" ");
-      return { titre: tx(ch.titre), html: (frise ? frise(tout) : i === 0 ? intro : "") + ch.texte.map(function (x) { return paragraphePersonnes(tx(x), vusPerso); }).join("") +
+      // Le sujet de la leçon que l'étape 1 ne nomme pas encore : son portrait l'ouvre quand même.
+      var tete = "";
+      if (i === 0) {
+        var cites = {}; ch.texte.forEach(function (x) { personnesDans(tx(x)).forEach(function (y) { cites[y.e.p.id] = 1; }); });
+        fp.sujets.forEach(function (sid) { if (cites[sid] || vusPerso[sid]) return; var e = personnesConnues().filter(function (x) { return x.p.id === sid; })[0]; if (e) { tete += htmlPersonnage(e); vusPerso[sid] = 1; } });
+        if (tete) tete = '<div class="mc-persos">' + tete + "</div>";
+      }
+      return { titre: tx(ch.titre), html: (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x) { return paragraphePersonnes(tx(x), vusPerso); }).join("") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
         __('<p class="mc-retenir"><b>À retenir</b>') + escD(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });
