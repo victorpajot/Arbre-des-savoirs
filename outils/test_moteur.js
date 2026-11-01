@@ -1580,11 +1580,23 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const P = M.nouvellePartie(T); P.decalage = T - Date.now(); P.plateau.ennemis = {}; P.sauvages = []; P.faveur = { valeur: 60, maj: T };
     for (const e of C.evenements.slice(0, 12)) P.evenements[e.id] = T;
     P.savants.aristote = T;
+    // Victor (2026-11-01) : Chrono ne puise que dans ce qui tient aux compétences apprises ; ici, toutes.
+    const cc = C.plateau.competences_cases, ids = new Set();
+    for (const e of C.evenements.slice(0, 12)) {
+      if (e.condition.type === "competence_maitrisee") ids.add(e.condition.id);
+      else (cc[String(e.condition.n)] || [C.parStat[e.stat][0].id]).forEach(id => ids.add(id));
+    }
+    ids.add(C.parStat[C.avatar.savants.find(s => s.id === "aristote").theme][0].id);
+    ids.forEach(id => { P.competences[id] = { maitrise: true, maitriseDepuis: T, palier: 6, prochainRappel: T + 400 * 86400000, xp: 80 }; });
+    // Les succès que ces compétences ouvrent sont déjà là : le lot reste libre pour ceux de Chrono.
+    for (let i = 0; i < 60; i++) { P.lot = null; const r = M.verifierRecompenses(C, P, T - 1); if (!r.succes.length && !r.savants.length && !r.livres.length) break; } P.lot = null; P.savants = { aristote: T }; P.livres = {}; P.objets = {};
     return P;
   };
+  { const N = prep(); N.competences = {};
+    assert.equal(M.reservoirChrono(C, N).length, 0, "rien sans compétence apprise"); }
   let P = prep();
   const pool = M.reservoirChrono(C, P);
-  assert.equal(pool.length, 13); assert.ok(pool.every(x => x.texte == null || !/\d{3,4}/.test(x.texte)), "pas de phrase qui donne la date");
+  assert.ok(C.evenements.slice(0, 12).every(e => pool.some(x => x.cle === "frise:" + e.id)) && pool.some(x => x.cle === "savant:aristote"), "les 12 dates et Aristote, chacun lié à une compétence apprise"); assert.ok(pool.every(x => x.texte == null || !/\d{3,4}/.test(x.texte)), "pas de phrase qui donne la date");
   assert.ok(pool.find(x => x.id === "feu").max === 1, "la Préhistoire reste au siècle");
   { const Q = prep(), approx = C_DATES.evenements.find(e => e.date && e.annee > -10000); Q.evenements[approx.id] = T;
     assert.equal(M.reservoirChrono(C_DATES, Q).find(x => x.id === approx.id).max, 1, "date approchée : Chrono ne demande que le siècle"); }
@@ -1662,14 +1674,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   P = prep(); const s = M.etatChrono(P);
   const ar = M.reservoirChrono(C, P).find(x => x.id === "aristote");
   assert.ok(ar.debut === -384 && ar.fin === -322);
-  for (let n = 0; n < 2; n++) {
+  // Assez de parties pour que des événements reviennent (le réservoir s'épuise d'abord).
+  for (let n = 0; n < 8; n++) {
     s.offre = M.cleJour(T); s.joueJour = null;
     j = M.lancerChrono(C, P, "alyca", T + n, () => 0.5);
-    j.questions.forEach(q => M.repondreChrono(C, P, q.sorte === "savant" ? -330 : q.debut, 20000, T + n));
+    j.questions.forEach(q => M.repondreChrono(C, P, q.id === "aristote" && q.pas >= 50 ? -330 : q.debut, 20000, T + n));
     M.terminerChrono(C, P, T + n);
   }
-  assert.ok(Object.values(s.fiches).every(f => f.niveau === 2 || f.vus < 2), "deux justes : demi-siècle");
-  const f2 = Object.keys(s.fiches).find(k => s.fiches[k].niveau === 2);
+  const maxDe = {}; M.reservoirChrono(C, P).forEach(x => { maxDe[x.cle] = x.max; });
+  assert.ok(Object.keys(s.fiches).every(k => s.fiches[k].niveau >= Math.min(2, maxDe[k]) || s.fiches[k].vus < 2), "deux justes : demi-siècle");
+  const f2 = Object.keys(s.fiches).find(k => s.fiches[k].niveau >= 2);
   s.fiches[f2].niveau = 4;
   s.offre = M.cleJour(T); s.joueJour = null; s.fiches[f2].rate = true;
   j = M.lancerChrono(C, P, "alyca", T + 5, () => 0.5);

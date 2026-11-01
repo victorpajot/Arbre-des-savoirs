@@ -2460,8 +2460,24 @@
   // Tout ce que le joueur a débloqué et qui porte une date : le réservoir de Chrono.
   function reservoirChrono(contenu, partie) {
     var R = reglesChrono(contenu); if (!R) return [];
-    var out = [], pre = R.prehistoire, maxN = R.niveaux.length;
-    function ajouter(x) { if (x.debut < pre) x.max = 1; out.push(x); }
+    var out = [], pre = R.prehistoire, maxN = R.niveaux.length, cc = contenu.plateau && contenu.plateau.competences_cases || {};
+    // Victor (2026-11-01) : seulement ce qui tient à une compétence déjà apprise (sa condition, ou la compétence de sa case).
+    function arbreAppris(st) { return !!(st && contenu.parStat[st] && contenu.parStat[st].some(function (k) { return estMaitrisee(partie, k.id); })); }
+    function appris(c, o) {
+      if (!c) return false;
+      if (c.type === "competence_maitrisee") return estMaitrisee(partie, c.id);
+      // Une case sans compétence propre : il faut au moins une compétence apprise dans son arbre.
+      if (c.type === "case_atteinte") return cc[String(c.n)] ? cc[String(c.n)].some(function (id) { return estMaitrisee(partie, id); }) : arbreAppris(o.stat || o.theme);
+      if (c.type === "branche_complete") return true;
+      // Autre condition (un succès, les tours…) : l'arbre de la chose doit avoir au moins une compétence apprise.
+      return arbreAppris(o.stat || o.theme);
+    }
+    var source = {};
+    (contenu.evenements || []).forEach(function (e) { source["frise:" + e.id] = e; });
+    (contenu.livres || []).forEach(function (e) { source["livre:" + e.id] = e; });
+    (contenu.avatar && contenu.avatar.savants || []).forEach(function (e) { source["savant:" + e.id] = e; });
+    (contenu.objets || []).forEach(function (e) { source["objet:" + e.id] = e; });
+    function ajouter(x) { var o = source[x.cle]; if (!o || !appris(o.condition, o)) return; if (x.debut < pre) x.max = 1; x.theme = x.theme || x.stat || null; out.push(x); }
     (contenu.evenements || []).forEach(function (e) {
       if (partie.evenements && partie.evenements[e.id] != null && e.annee != null)
         ajouter({ cle: "frise:" + e.id, sorte: "frise", id: e.id, titre: TX(e.titre), texte: sansDate(e.phrase), debut: e.annee, fin: e.annee, max: e.date ? 1 : maxN, source: e.source, case: e.case || null, stat: e.stat });
@@ -2517,15 +2533,21 @@
     // Trop peu d'éléments datés : la case ne retient pas le pion.
     if (pool.length < R.min_reservoir) { if (mode === "case") s.case = null; return null; }
     alea = alea || Math.random;
-    var prio = function (x) { var f = s.fiches[x.cle]; return !f ? 2 : f.rate ? 3 : 1; };
+    // Victor (2026-11-01) : l'arbre de la partie d'abord (celui de la case) ; les autres arbres ne font que compléter.
+    var th = themeCase(contenu, partie);
+    var memeArbre = th ? pool.filter(function (x) { return x.theme === th; }) : [];
+    if (memeArbre.length >= R.evenements) pool = memeArbre;
+    var prio = function (x) { var f = s.fiches[x.cle]; return (th && x.theme === th ? 10 : 0) + (!f ? 2 : f.rate ? 3 : 1); };
     var tries = melanger(pool, alea).sort(function (a, b) {
       var pa = prio(a), pb = prio(b);
       if (pa !== pb) return pb - pa;
-      return pa === 1 ? (s.fiches[a.cle].dernier || 0) - (s.fiches[b.cle].dernier || 0) : 0;
+      return pa % 10 === 1 ? (s.fiches[a.cle].dernier || 0) - (s.fiches[b.cle].dernier || 0) : 0;
     });
     var choix = [], siecles = {};
-    tries.forEach(function (x) { var k = creneau(x.debut, 100, R.prehistoire); if (choix.length < R.evenements && !siecles[k]) { siecles[k] = 1; choix.push(x); } });
-    tries.forEach(function (x) { if (choix.length < R.evenements && choix.indexOf(x) < 0) choix.push(x); });
+    [tries.filter(function (x) { return th && x.theme === th; }), tries].forEach(function (liste) {
+      liste.forEach(function (x) { var k = creneau(x.debut, 100, R.prehistoire); if (choix.length < R.evenements && !siecles[k] && choix.indexOf(x) < 0) { siecles[k] = 1; choix.push(x); } });
+      liste.forEach(function (x) { if (choix.length < R.evenements && choix.indexOf(x) < 0) choix.push(x); });
+    });
     s.jeu = { mode: mode, depuis: t, case: mode === "case" ? s.case : null, reponses: [], questions: choix.map(function (x) {
       var f = s.fiches[x.cle], n = Math.min(f ? f.niveau : 1, x.max), N = niveauChrono(R, n);
       return Object.assign({}, x, { niveau: n, pas: N.pas, proche: N.proche, nomNiveau: TX(N.nom), naissance: x.sorte === "savant" && N.pas < 50 });
