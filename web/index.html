@@ -244,6 +244,15 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .plateau svg.grille { display: block; width: 100%; height: auto; touch-action: manipulation; }
 .grille-cadre svg.grille.libre { aspect-ratio: 2 / 3; touch-action: none; cursor: grab; border-radius: 12px; background: #1E1A2B; overscroll-behavior: contain; }
 .grille-cadre { position: relative; user-select: none; -webkit-user-select: none; }
+/* Victor (2026-11-01) : sur l'accueil, le parcours prend toute la largeur de l'écran (bloc et plateau bord à bord sur mobile). */
+@media (max-width: 600px) {
+  .vue > .bloc.plateau { margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); border-radius: 0; border-inline: 0; }
+  .vue > .bloc.plateau .grille-cadre { margin-inline: -16px; }
+  .vue > .bloc.plateau .grille-cadre svg.grille.libre { border-radius: 0; }
+}
+@media (min-width: 601px) {
+  .vue > .bloc.plateau .grille-cadre { margin-inline: -15px; }
+}
 .grille-cadre .cam { position: absolute; right: 8px; bottom: 32px; display: flex; gap: 6px; }
 .grille-cadre .cam button[data-cam="plus"], .grille-cadre .cam button[data-cam="moins"] { width: 38px; padding: 0; font-size: 20px; line-height: 1; }
 .grille-cadre .cam button { font: inherit; font-size: 13px; font-weight: 600; padding: 8px 12px; min-height: 36px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.12); cursor: pointer; }
