@@ -1519,7 +1519,7 @@
             etapes.push({ type: "piege", case: pl.position, regle: sp.type });
           } else if (PIEGES[sp.type]) {
             subir(sp);
-          } else if (sp.type === "chrono" && contenu.plateau.regles.chrono) {
+          } else if (sp.type === "chrono" && !sp.libre && contenu.plateau.regles.chrono) {
             // v34 (Victor) : case Chrono. Le pion s'arrête ; la partie de Chrono sert d'épreuve de la case.
             if (chronoPossible(contenu, partie)) { etatChrono(partie).case = pl.position; etapes.push({ type: "chrono", case: pl.position }); }
             else if (chronoActif(partie)) etapes.push({ type: "chrono_vide", case: pl.position });
@@ -2477,7 +2477,14 @@
     (contenu.livres || []).forEach(function (e) { source["livre:" + e.id] = e; });
     (contenu.avatar && contenu.avatar.savants || []).forEach(function (e) { source["savant:" + e.id] = e; });
     (contenu.objets || []).forEach(function (e) { source["objet:" + e.id] = e; });
-    function ajouter(x) { var o = source[x.cle]; if (!o || !appris(o.condition, o)) return; if (x.debut < pre) x.max = 1; x.theme = x.theme || x.stat || null; out.push(x); }
+    function ajouter(x) {
+      var o = source[x.cle]; if (!o || !appris(o.condition, o)) return; if (x.debut < pre) x.max = 1; x.theme = x.theme || x.stat || null;
+      // Ce qui relie la chose au plateau : sa case, et la compétence dont elle dépend.
+      var c = o.condition || {};
+      x.lienCase = o.case || (c.type === "case_atteinte" ? c.n : null);
+      x.lienComp = o.competence || (c.type === "competence_maitrisee" ? c.id : null);
+      out.push(x);
+    }
     (contenu.evenements || []).forEach(function (e) {
       if (partie.evenements && partie.evenements[e.id] != null && e.annee != null)
         ajouter({ cle: "frise:" + e.id, sorte: "frise", id: e.id, titre: TX(e.titre), texte: sansDate(e.phrase), debut: e.annee, fin: e.annee, max: e.date ? 1 : maxN, source: e.source, case: e.case || null, stat: e.stat });
@@ -2534,17 +2541,22 @@
     if (pool.length < R.min_reservoir) { if (mode === "case") s.case = null; return null; }
     alea = alea || Math.random;
     // Victor (2026-11-01) : l'arbre de la partie d'abord (celui de la case) ; les autres arbres ne font que compléter.
+    // Victor (2026-11-01) : Chrono se joue avant la case ; il revient sur les cases déjà passées (leur date, leur compétence).
+    var pl = partie.plateau || {}, cc = contenu.plateau && contenu.plateau.competences_cases || {}, passees = {}, compsPassees = {};
+    Object.keys(pl.visites || {}).forEach(function (n) { if (+n !== pl.position) { passees[n] = 1; (cc[n] || []).forEach(function (id) { compsPassees[id] = 1; }); } });
+    var passe = function (x) { return !!((x.lienCase != null && passees[x.lienCase]) || (x.lienComp && compsPassees[x.lienComp])); };
     var th = themeCase(contenu, partie);
-    var memeArbre = th ? pool.filter(function (x) { return x.theme === th; }) : [];
-    if (memeArbre.length >= R.evenements) pool = memeArbre;
-    var prio = function (x) { var f = s.fiches[x.cle]; return (th && x.theme === th ? 10 : 0) + (!f ? 2 : f.rate ? 3 : 1); };
+    var dejaVu = pool.filter(passe), memeArbre = th ? pool.filter(function (x) { return x.theme === th; }) : [];
+    if (dejaVu.length >= R.evenements) pool = dejaVu;
+    else if (dejaVu.length + memeArbre.length >= R.evenements) pool = pool.filter(function (x) { return passe(x) || x.theme === th; });
+    var prio = function (x) { var f = s.fiches[x.cle]; return (passe(x) ? 20 : 0) + (th && x.theme === th ? 10 : 0) + (!f ? 2 : f.rate ? 3 : 1); };
     var tries = melanger(pool, alea).sort(function (a, b) {
       var pa = prio(a), pb = prio(b);
       if (pa !== pb) return pb - pa;
       return pa % 10 === 1 ? (s.fiches[a.cle].dernier || 0) - (s.fiches[b.cle].dernier || 0) : 0;
     });
     var choix = [], siecles = {};
-    [tries.filter(function (x) { return th && x.theme === th; }), tries].forEach(function (liste) {
+    [tries.filter(passe), tries.filter(function (x) { return th && x.theme === th; }), tries].forEach(function (liste) {
       liste.forEach(function (x) { var k = creneau(x.debut, 100, R.prehistoire); if (choix.length < R.evenements && !siecles[k] && choix.indexOf(x) < 0) { siecles[k] = 1; choix.push(x); } });
       liste.forEach(function (x) { if (choix.length < R.evenements && choix.indexOf(x) < 0) choix.push(x); });
     });
@@ -2601,7 +2613,10 @@
       montees: j.reponses.filter(function (r) { return r.niveauApres > r.niveauAvant; }).length,
       contextes: [parfait ? "chrono_parfait" : reussi ? "chrono_bilan_bon" : "chrono_bilan_rate"] };
     if (enCase) {
-      // La case est jouée, réussie ou non : on n'y revient pas.
+      // La case est jouée, réussie ou non : on n'y revient pas. Victor (2026-11-01) : elle se libère, comme après un atome.
+      var spC = partie.plateau.speciaux && partie.plateau.speciaux[s.case];
+      if (spC && spC.type === "chrono") spC.libre = true;
+      out.caseLibre = s.case;
       s.case = null;
       ouvrirLot(partie, t, themeCase(contenu, partie));
       var avant = verifierRecompenses(contenu, partie, t);

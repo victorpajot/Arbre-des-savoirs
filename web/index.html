@@ -2160,7 +2160,9 @@ function demarrerJeu() {
   // v19 : un atome sauvage qui attend sur une case la recouvre : on ne la voit pas tant qu'il est là.
   // Pareil pour un ennemi qui la garde : la case reste cachée tant qu'il n'est pas vaincu.
   function ennemiSur(n) { var id = C.plateau && M.ennemisPlateau(C, P)[n]; return id ? C.ennemiParId[id] || null : null; }
-  function caseConnue(n) { return M.caseDecouverte(P, n) && !atomeSur(n) && !ennemiSur(n); }
+  function caseConnue(n) { return M.caseDecouverte(P, n) && !atomeSur(n) && !ennemiSur(n) && !chronoSur(n); }
+  // Victor (2026-11-01) : une partie de Chrono recouvre sa case, comme un atome, jusqu'à ce qu'elle soit jouée.
+  function chronoSur(n) { var sp = C.plateau && M.specialDe(C, P, n); return !!(sp && sp.type === "chrono" && !sp.libre && M.chronoActif(P)); }
   function nomEpoque(id) { var e = C.plateau.epoques.filter(function (x) { return x.id === id; })[0]; return e ? tx(e.nom) : ""; }
   function texteRegle(sp) {
     if (!sp) return "";
@@ -2265,7 +2267,8 @@ function demarrerJeu() {
     var p = centreCase(place), en = M.ennemisPlateau(C, P)[n] && C.ennemiParId[M.ennemisPlateau(C, P)[n]];
     var atP = atomeSur(n);
     var enP = !atP && ennemiSur(n);
-    var titre = atP ? __("Un atome sauvage") : enP ? tx(enP.nom) : tx(k.titre); if (titre.length > 30) titre = titre.slice(0, 29) + "…";
+    var chP = !atP && !enP && chronoSur(n);
+    var titre = atP ? __("Un atome sauvage") : enP ? tx(enP.nom) : chP ? __("Une partie de Chrono") : tx(k.titre); if (titre.length > 30) titre = titre.slice(0, 29) + "…";
     var lw = Math.max(96, Math.min(150, titre.length * 4.6 + 18));
     if (atP) lw = Math.max(lw, 124);
     if (enP) lw = Math.max(lw, 100);
@@ -2284,9 +2287,9 @@ function demarrerJeu() {
     var h = '<rect class="voile-ombre" ' + tout + ' fill="' + (en ? "#3A0D12" : "#14101F") + '"/>' +
       '<rect class="voile-flash" ' + tout + ' fill="' + (en ? "#D94141" : "#FFD447") + '"/>' +
       '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="30" fill="' + (en ? "#D94141" : "#FFD447") + '" opacity="0.35" class="halo-vedette"/>' +
-      '<g transform="translate(' + (dx || 0).toFixed(1) + " " + (dy || 0).toFixed(1) + ')"><g class="vedette">' + (atP || enP ? cacherIcone(g.innerHTML) : g.innerHTML) + "</g></g>" +
+      '<g transform="translate(' + (dx || 0).toFixed(1) + " " + (dy || 0).toFixed(1) + ')"><g class="vedette">' + (atP || enP || chP ? cacherIcone(g.innerHTML) : g.innerHTML) + "</g></g>" +
       '<g class="etiquette-case"><rect x="' + (p[0] - lw / 2).toFixed(1) + '" y="' + ly.toFixed(1) + '" width="' + lw.toFixed(1) + '" height="27" rx="7" fill="#1E1A2B" stroke="' + (en ? "#D94141" : "#FFD447") + '" stroke-width="2"/>' +
-      '<text x="' + p[0].toFixed(1) + '" y="' + (ly + 11).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="800" font-family="JetBrains Mono, monospace" fill="' + (en ? "#FF9C9C" : "#FFD447") + __('">CASE ') + n + " · " + (atP ? __("MENDELEÏEV") : enP ? __("ENNEMI") : esc(formatAnnee(k.annee))) + "</text>" +
+      '<text x="' + p[0].toFixed(1) + '" y="' + (ly + 11).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="800" font-family="JetBrains Mono, monospace" fill="' + (en ? "#FF9C9C" : "#FFD447") + __('">CASE ') + n + " · " + (atP ? __("MENDELEÏEV") : enP ? __("ENNEMI") : chP ? "CHRONO" : esc(formatAnnee(k.annee))) + "</text>" +
       '<text x="' + p[0].toFixed(1) + '" y="' + (ly + 22).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">' + esc(titre) + "</text></g>";
     if (en) h += '<g class="vs-ennemi" transform="translate(' + p[0].toFixed(1) + " " + (p[1] - 44).toFixed(1) + ')"><g class="bond">' +
       '<circle r="24" fill="#fff" stroke="#D94141" stroke-width="4"/><svg x="-21" y="-21" width="42" height="42" viewBox="8 1 24 24" class="pix">' + pixelsEnnemi(en) + "</svg>" +
@@ -2314,7 +2317,7 @@ function demarrerJeu() {
         var k = M.caseN(C, n), place = i + 1, s = abscisse(place), p = pointRoute(s), x = p[0], y = p[1], connue = caseConnue(n), sp = M.specialDe(C, P, n);
         var ici = i === pl.idx, proche = i > pl.idx && i <= pl.idx + loin, vue = i < pl.idx;
         var atC = atomeSur(n);
-        var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : atC ? "#BBD3F2" : ennemis[n] ? "#F2C4C4" : couleurCase(k);
+        var fond = sp && connue ? COULEUR_SPECIAL[sp.type] : atC ? "#BBD3F2" : chronoSur(n) ? "#F3E2A9" : ennemis[n] ? "#F2C4C4" : couleurCase(k);
         var encre = sp && connue ? "#fff" : "#1E1A2B";
         c += '<g data-n="' + n + '" data-p="' + place + '" style="cursor:pointer"><polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="' + fond + '" stroke-width="' + LARGEUR_ROUTE + '" stroke-linejoin="round"/>';
         if (vue) c += '<polyline points="' + morceauRoute(s - pas / 2 + 1.1, s + pas / 2 - 1.1) + '" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="' + LARGEUR_ROUTE + '"/>';
@@ -2329,6 +2332,9 @@ function demarrerJeu() {
         } else if (ennemis[n]) {
           // v19 : la case gardée par un ennemi : une croix rouge, et le numéro de la case.
           c += '<g transform="translate(' + x.toFixed(1) + " " + (y - 3).toFixed(1) + ')"><circle r="10.5" fill="#D94141" stroke="#fff" stroke-width="2"/><path d="M-4.6,-4.6 L4.6,4.6 M4.6,-4.6 L-4.6,4.6" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/></g>' +
+            '<text x="' + x.toFixed(1) + '" y="' + (y + 16).toFixed(1) + '" text-anchor="middle" font-size="7.5" font-weight="800" font-family="JetBrains Mono, monospace" fill="#1E1A2B">' + place + "</text>";
+        } else if (chronoSur(n)) {
+          c += '<g transform="translate(' + x.toFixed(1) + " " + (y - 3).toFixed(1) + ')"><circle r="10.5" fill="' + COULEUR_SPECIAL.chrono + '" stroke="#fff" stroke-width="2"/><g transform="scale(1.55)">' + (PICTO_SPECIAL.chrono || "") + "</g></g>" +
             '<text x="' + x.toFixed(1) + '" y="' + (y + 16).toFixed(1) + '" text-anchor="middle" font-size="7.5" font-weight="800" font-family="JetBrains Mono, monospace" fill="#1E1A2B">' + place + "</text>";
         } else if (atC) {
           // v19 : l'atome qui recouvre la case : son logo, en grand, et le numéro de la case.
@@ -3889,7 +3895,9 @@ function demarrerJeu() {
   // v19 : la case est libre ! Après un duel gagné ou un atome réglé, la case cachée se dévoile, avec son thème.
   function carteLiberee(n, quoi) {
     var k = M.caseN(C, n); if (!k) return null;
-    var couv = quoi === "atome"
+    var couv = quoi === "chrono"
+      ? '<svg viewBox="-12 -12 24 24" width="120" height="120" aria-hidden="true"><circle r="10.5" fill="' + COULEUR_SPECIAL.chrono + '" stroke="#fff" stroke-width="2"/><g transform="scale(1.55)">' + (PICTO_SPECIAL.chrono || "") + "</g></svg>"
+      : quoi === "atome"
       ? '<svg viewBox="-12 -12 24 24" width="120" height="120" aria-hidden="true"><circle r="10.5" fill="' + COULEUR_SPECIAL.mendeleiev + '" stroke="#fff" stroke-width="2"/><g transform="scale(1.55)">' + PICTO_SPECIAL.mendeleiev + "</g></svg>"
       : '<svg viewBox="-12 -12 24 24" width="120" height="120" aria-hidden="true"><circle r="10.5" fill="#D94141" stroke="#fff" stroke-width="2"/><path d="M-4.6,-4.6 L4.6,4.6 M4.6,-4.6 L-4.6,4.6" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/></svg>';
     var b = el('<div class="liberee"' + (k.stat ? ' style="--c:' + couleur(k.stat) + '"' : "") + __('><div class="eyebrow">Case ') + k.n + " · " + esc(formatAnnee(k.annee)) + '</div>' +
@@ -4193,6 +4201,8 @@ function demarrerJeu() {
     var r = siecles.fin, rec = r.recompenses || {}, R = M.reglesChrono(C);
     var cd = siecles.cartes || (siecles.cartes = cartesEnDeux(r, rec, null)), recs = cd.recs;
     var etapes = ["verdict"];
+    // Victor (2026-11-01) : la case jouée se libère, comme après un atome.
+    if (r.caseLibre && M.caseN(C, r.caseLibre)) etapes.push("libre");
     etapesRecompenses(etapes, recs, r.plateau, cd.nAvant, siecles);
     var i = siecles.etape = Math.min(siecles.etape, etapes.length - 1), nom = etapes[i];
     var wrap = el('<div style="display:flex;flex-direction:column;gap:14px"></div>');
@@ -4215,6 +4225,8 @@ function demarrerJeu() {
       z.appendChild(liste);
       var m = comite(r.replique); if (m) z.appendChild(m);
       ligneAgacement(z, r.agacement);
+    } else if (nom === "libre") {
+      var cl = carteLiberee(r.caseLibre, "chrono"); if (cl) z.appendChild(cl);
     } else if (nom === "plateau") {
       z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
       setTimeout(function () { animerPion(z); }, 50);
@@ -4230,7 +4242,7 @@ function demarrerJeu() {
     if (!suite && M.chronoEnAttente(P)) { boutonChrono(wrap, function () { siecles = null; var q = document.querySelector(".quiz.siecles"); if (q) q.remove(); }); return wrap; }
     if (!suite) finEpreuve(wrap, fermerChrono, true);
     else {
-      var bt = el('<button type="button" class="btn large">' + (suite === "plateau" ? __("Voir le plateau") : suite === "suite" ? "Et maintenant ?" : __("Récompense")) + "</button>");
+      var bt = el('<button type="button" class="btn large">' + (suite === "libre" ? __("Libérer la case") : suite === "plateau" ? __("Voir le plateau") : suite === "suite" ? "Et maintenant ?" : __("Récompense")) + "</button>");
       bt.onclick = function () { siecles.etape = i + 1; rendreChrono(); };
       wrap.appendChild(bt);
     }

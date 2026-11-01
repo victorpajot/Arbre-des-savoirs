@@ -1650,6 +1650,12 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(!fin.reussi && P.plateau.position === ici && !M.chronoEnAttente(P) && fin.agacement && fin.agacement.perte > 0);
 
   // Alyca : une offre par jour au plus ; partie bonus, le pion ne bouge pas.
+  // Victor (2026-11-01) : Chrono revient d'abord sur les cases déjà passées.
+  { const V = prep(); V.plateau.idx = 6; const ev = C.evenements.slice(0, 12).filter(e => e.case && e.case !== V.plateau.position).slice(0, 2);
+    V.plateau.visites = {}; ev.forEach(e => { V.plateau.visites[e.case] = 1; });
+    V.siecles = undefined; M.etatChrono(V).offre = M.cleJour(T);
+    const jv = M.lancerChrono(C, V, "alyca", T, () => 0.5);
+    assert.ok(ev.every(e => jv.questions.some(q => q.cle === "frise:" + e.id)), "les dates des cases passées d'abord"); }
   // Victor (2026-11-01) : jamais avant la 5e case du premier tour, et coupé par le réglage « Jeu Chrono ».
   P = prep(); P.plateau.idx = 2;
   assert.equal(M.chronoPossible(C, P), false, "pas de Chrono au tout début");
