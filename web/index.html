@@ -249,6 +249,8 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .grille-cadre.plein svg.grille.libre { width: 100%; height: 100%; aspect-ratio: auto; border-radius: 0 !important; }
 .grille-cadre.plein .cam { bottom: calc(14px + env(safe-area-inset-bottom, 0px)); right: 12px; }
 .grille-cadre .fermer-plein { display: none; }
+.grille-cadre .agrandir { display: grid; place-items: center; position: absolute; top: 8px; right: 8px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.12); cursor: pointer; padding: 0; }
+.grille-cadre.plein .agrandir { display: none; }
 .grille-cadre.plein .fermer-plein { display: grid; place-items: center; position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 12px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 22px; line-height: 1; box-shadow: 0 1px 4px rgba(0,0,0,.25); cursor: pointer; }
 body.plateau-plein { overflow: hidden; }
 /* Victor (2026-11-01) : sur l'accueil, le parcours prend toute la largeur de l'écran (bloc et plateau bord à bord sur mobile). */
@@ -2688,6 +2690,7 @@ function demarrerJeu() {
         (vueEnsemble() ? __('<button type="button" data-cam="pion">Mon pion</button>') : __('<button type="button" data-cam="large">Vue d\'ensemble</button>')) + "</div>");
       grille.appendChild(cam);
       grille.appendChild(el(__('<button type="button" class="fermer-plein" data-cam="fermer" aria-label="Quitter le plein écran">✕</button>')));
+      grille.appendChild(el(__('<button type="button" class="agrandir" data-cam="agrandir" aria-label="Plateau en plein écran"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>')));
     }
     majGrille();
     function basculerPlein(oui) {
@@ -2769,6 +2772,7 @@ function demarrerJeu() {
         else if (a === "large") { camera.w = LARGEUR_MAX; camera.cx = camera.cy = null; appliquer(); }
         else if (a === "pion") { var p = centreCase(P.plateau.idx + 1); camera.w = 190; camera.cx = p[0]; camera.cy = p[1]; appliquer(); }
         else if (a === "fermer") basculerPlein(false);
+        else if (a === "agrandir") basculerPlein(true);
         return;
       }
       if (Date.now() - finGlisse < 350) return;
