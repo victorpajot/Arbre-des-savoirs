@@ -566,6 +566,7 @@ body.plateau-plein { overflow: hidden; }
 .galerie-theme .tete-g { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 15px; margin-bottom: 8px; }
 .galerie-theme .tete-g b { color: var(--c); }
 .galerie-theme .tete-g span { font-size: 13px; color: var(--muted); }
+.galerie-theme .sous-g { font-size: 13px; color: var(--muted); margin: 6px 0 4px; }
 .galerie-theme .rang-g { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
 .galerie-theme .rang-g button { flex: 0 0 auto; display: grid; place-items: center; width: 48px; height: 52px; padding: 0; border-radius: 10px; border: 2px solid transparent; background: var(--surface); cursor: pointer; }
 .galerie-theme .rang-g button.choisi { border-color: var(--c); }
@@ -2285,7 +2286,8 @@ function demarrerJeu() {
     // Victor (2026-11-01, « j'ai peur des animations dans les virages ») : le pion flotte toujours droit au-dessus de sa case,
     // à la même hauteur : il suit la route sans jamais changer de bord dans les virages.
     var p = centreCase(n); if (MODE_PION === "dessus") return p;
-    return [p[0], p[1] - (MODE_PION === "petit" ? 16 : 26)];
+    // Tout en haut du plateau, il descend juste ce qu'il faut pour ne pas sortir du cadre.
+    return [p[0], p[1] - Math.min(MODE_PION === "petit" ? 16 : 26, Math.max(0, p[1] - 40))];
   }
   function cadrePion(n) { var p = centreCase(n); return borner(p[0] - CADRE / 2, p[1] - 14 - CADRE / 2); }
   function boiteVue(c) { return c[0].toFixed(1) + " " + c[1].toFixed(1) + " " + CADRE + " " + CADRE; }
@@ -2877,16 +2879,35 @@ function demarrerJeu() {
   }
   // v18 : « Sur ce thème » : les savants et les objets de l'arbre de la case, découverts ou à découvrir.
   // Toucher un portrait l'ouvre juste en dessous, sans quitter la feuille.
+  // Victor (2026-11-01) : la galerie suit tout ce qui s'est ajouté depuis : savants, personnages rencontrés, objets et livres
+  // du thème, une rangée chacun, avec son compte.
+  function elementsTheme(th) {
+    var rangDe = function (x) { var k = x.condition && x.condition.id && C.parId[x.condition.id]; return k ? k.rang : 9; };
+    var parRang = function (a, b) { return rangDe(a) - rangDe(b); };
+    return [
+      { g: "s", nom: __("Savants"), l: C.avatar.savants.filter(function (x) { return x.theme === th; }).sort(parRang), ok: function (x) { return !!(P.savants && P.savants[x.id]); } },
+      { g: "p", nom: __("Personnages"), l: (C.avatar.portraits || []).filter(function (x) { return (x.theme || ((INDEX && INDEX.proprietaires && INDEX.proprietaires["avatar.json/portraits"]) || {})[x.id]) === th; }).sort(function (a, b) { return (anneePersonne(a) || 0) - (anneePersonne(b) || 0); }), ok: function (x) { return M.rencontre(P, x.id); } },
+      { g: "o", nom: __("Objets"), l: C.objets.filter(function (x) { return x.theme === th; }).sort(parRang), ok: function (x) { return !!P.objets[x.id]; } },
+      { g: "l", nom: __("Livres"), l: (C.livres || []).filter(function (x) { return x.stat === th; }).sort(function (a, b) { return (a.annee || 0) - (b.annee || 0); }), ok: function (x) { return !!(P.livres && P.livres[x.id]); } }
+    ].filter(function (r) { return r.l.length; });
+  }
   function galerieTheme(th) {
     if (!th || !statActif(th)) return "";
-    var rangDe = function (x) { var k = x.condition && x.condition.id && C.parId[x.condition.id]; return k ? k.rang : 9; };
-    var sv = C.avatar.savants.filter(function (x) { return x.theme === th; }).sort(function (a, b) { return rangDe(a) - rangDe(b); });
-    var ob = C.objets.filter(function (x) { return x.theme === th; }).sort(function (a, b) { return rangDe(a) - rangDe(b); });
-    var vus = sv.filter(function (x) { return P.savants && P.savants[x.id]; }).length + ob.filter(function (x) { return P.objets[x.id]; }).length;
-    var h = '<div class="galerie-theme" style="--c:' + couleur(th) + __('"><div class="tete-g"><b>Sur ce thème : ') + esc(tx(stat(th).nom)) + "</b><span>" + vus + __(" sur ") + (sv.length + ob.length) + __(' découverts</span></div><div class="rang-g">');
-    sv.forEach(function (x) { var ok = P.savants && P.savants[x.id]; h += '<button type="button" data-g="s:' + x.id + '" aria-label="' + esc(ok ? tx(x.nom) : __("Savant à découvrir")) + '">' + svgSavant(x, 34, !ok) + "</button>"; });
-    ob.forEach(function (x) { var ok = P.objets[x.id]; h += '<button type="button" data-g="o:' + x.id + '" aria-label="' + esc(ok ? tx(x.nom) : __("Objet à découvrir")) + '">' + svgObjet(x, !ok, 34) + "</button>"; });
-    return h + '</div><div class="detail-g" hidden></div></div>';
+    var rangs = elementsTheme(th), vus = 0, total = 0;
+    rangs.forEach(function (r) { total += r.l.length; vus += r.l.filter(r.ok).length; });
+    var h = '<div class="galerie-theme" style="--c:' + couleur(th) + __('"><div class="tete-g"><b>Sur ce thème : ') + esc(tx(stat(th).nom)) + "</b><span>" + vus + __(" sur ") + total + __(" découverts</span></div>");
+    rangs.forEach(function (r) {
+      h += '<div class="sous-g">' + esc(r.nom) + " · " + r.l.filter(r.ok).length + " / " + r.l.length + '</div><div class="rang-g">';
+      r.l.forEach(function (x) {
+        var ok = r.ok(x), nom = tx(x.nom || x.titre), img;
+        if (r.g === "o") img = svgObjet(x, !ok, 34);
+        else if (r.g === "l") img = svgSprite(x.embleme, 34, ok ? nom : "", !ok);
+        else img = svgSavant(x, 34, !ok);
+        h += '<button type="button" data-g="' + r.g + ":" + x.id + '" aria-label="' + esc(ok ? nom : __("À découvrir")) + '">' + img + "</button>";
+      });
+      h += "</div>";
+    });
+    return h + '<div class="detail-g" hidden></div></div>';
   }
   function brancherGalerie(z) {
     var g = z && z.querySelector(".galerie-theme"); if (!g) return;
@@ -2897,6 +2918,12 @@ function demarrerJeu() {
         if (v[0] === "s") {
           x = C.avatar.savants.filter(function (y) { return y.id === v[1]; })[0]; ok = P.savants && P.savants[x.id];
           h = ok ? "<b>" + esc(tx(x.nom)) + "</b> · " + esc(x.annees) + "<p>" + esc(tx(x.notice)) + "</p>" : __("<b>Savant à découvrir</b><p>") + esc(conditionTexte(x.condition)) + ".</p>";
+        } else if (v[0] === "p") {
+          x = C.avatar.portraits.filter(function (y) { return y.id === v[1]; })[0]; ok = M.rencontre(P, x.id);
+          h = ok ? "<b>" + esc(tx(x.nom)) + "</b> · " + esc(formatVie(x.annees).txt) + "<p>" + esc(tx(x.bio)) + "</p>" : __("<b>Personnage à rencontrer</b><p>Il apparaît dans une question ou une masterclass de ce thème.</p>");
+        } else if (v[0] === "l") {
+          x = C.livres.filter(function (y) { return y.id === v[1]; })[0]; ok = P.livres && P.livres[x.id];
+          h = ok ? "<b>" + esc(tx(x.titre)) + "</b> · " + esc(x.auteur) + ", " + esc(x.date ? tx(x.date) : String(x.annee)) + "<p>" + esc(tx(x.resume)) + "</p>" : __("<b>Livre à découvrir</b><p>") + esc(conditionTexte(x.condition)) + ".</p>";
         } else {
           x = C.objets.filter(function (y) { return y.id === v[1]; })[0]; ok = P.objets[x.id];
           h = ok ? "<b>" + esc(tx(x.nom)) + "</b><p>" + esc(tx(x.notice)) + "</p>" : __("<b>Objet à découvrir</b><p>") + esc(conditionTexte(x.condition)) + ".</p>";
@@ -3036,7 +3063,7 @@ function demarrerJeu() {
     // v10 : la bulle de l'IA ouvre sa fiche, dans l'onglet IA du personnage ; sa faveur s'affiche dessous.
     function versIA() { if (mot && mot.getAttribute("data-contexte") === "mur_honte") { ouvrirHonte(); return; } vue = "perso"; ongletPerso = "ia"; rendre(); window.scrollTo(0, 0); }
     // Victor (2026-11-01) : l'accueil commence par ce qu'on joue : ce qui retient le pion (ultimatum, duel, atome, piège,
-    // masterclass, Chrono), puis Jouer et le plateau ; ensuite Alyca, le mur de la honte, et le personnage en dernier.
+    // masterclass, Chrono), puis le plateau et Jouer ; ensuite Alyca, le mur de la honte, et le personnage en dernier.
     if (P.ultimatum) v.appendChild(blocUltimatum());
     if (P.duel && C.ennemiParId[P.duel.ennemi]) v.appendChild(blocDefi(true));
     if (C.atomes && M.atomeSauvage(C, P)) v.appendChild(blocSauvage());
@@ -3045,8 +3072,12 @@ function demarrerJeu() {
     if (M.chronoEnAttente(P)) v.appendChild(blocChronoAccueil("case"));
     else if (M.offreChrono(P, maintenant())) v.appendChild(blocChronoAccueil("alyca"));
     if (C.plateau && P.plateau.parcoursSuivant) v.appendChild(blocSuiteTour());
-    if (C.plateau) v.appendChild(boutonJouer());
-    if (C.plateau) v.appendChild(blocPlateau());
+    // Victor (2026-11-01) : le bouton Jouer passe juste sous le plateau, avant sa description.
+    if (C.plateau) {
+      var bp = blocPlateau(), gc = bp.querySelector(".grille-cadre"), bj = boutonJouer();
+      if (gc && gc.parentNode) gc.parentNode.insertBefore(bj, gc.nextSibling); else v.appendChild(bj);
+      v.appendChild(bp);
+    }
     if (mot) {
       mot.classList.add("cliquable"); mot.setAttribute("role", "button"); mot.setAttribute("tabindex", "0"); mot.setAttribute("aria-label", __("Ouvrir la fiche de l'IA"));
       var fm = faveurMini(t); if (fm) mot.querySelector("div").appendChild(fm);
