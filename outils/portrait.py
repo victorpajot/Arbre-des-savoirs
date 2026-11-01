@@ -16,7 +16,7 @@ Un pack décrit ses portraits dans packs/<id>/portraits.json, une recette par sa
   barbe     null ou [style, famille, teinte] ; styles : pleine, longue, fleuve, favoris
   objet     tenu dans la main : astrolabe, compas, lentille, lunette, pomme, plume, balance, carnet, carte, fiole,
             craie, ardoise, photo51, ruban, trajectoire, tableau, col_cygne, bobine, lampe, des, loupe, livre,
-            cerveau, menottes, thermometre, diapason, metronome, globe, rouleau, aucun
+            cerveau, menottes, thermometre, diapason, metronome, globe, rouleau, kora, aucun
 
     python3 outils/portrait.py <pack>             remplit couleurs, base et cheveux des savants du pack
                                                   (savants.json) et des personnages de ses masterclass (personnages.json)
@@ -342,7 +342,18 @@ def objet(t, nom):
         t.peindre(rect(28, 27, 37, 28) | rect(28, 40, 37, 41), "bois", "cyl_h", 2)
         for y in range(30, 39, 2):
             t.poser(rect(30, y, 35, y), "A")
-
+    elif nom == "kora":
+        # Kora des griots : un long manche de bois planté dans une grosse calebasse tendue de peau, 21 cordes
+        # tendues du bas de la calebasse au manche, de part et d'autre d'un grand chevalet.
+        t.peindre(bande((31, 46), (37, 13), 1.1), "bois", "cyl_v", 2)
+        t.peindre(disque(30, 38, 7.2), "orange", "sphere", 1)
+        t.peindre(disque(29.5, 37.5, 5.6), "parchemin", "sphere", 2)
+        # La nappe de cordes : un voile clair entre le chevalet et le manche, rayé de cordes.
+        t.peindre(poly([(29, 31), (32, 31), (36.5, 16), (35.5, 16)]), "gris", "plat", 4)
+        for x0 in (29.5, 30.5, 31.5):
+            t.poser(trait(x0, 31, 36, 16), "g")
+        t.peindre(rect(29, 31, 31, 41), "bois", "plat", 2)
+        t.poser({(30, 33), (30, 36), (30, 39)}, "H")
 
 def portrait(r):
     """Une recette → (couleurs, base, cheveux)."""
