@@ -2430,10 +2430,11 @@ function demarrerJeu() {
   }
   // v5 : bouton « Jouer ». L'IA choisit l'épreuve, l'annonce, et la réussir rapporte des cases en plus.
   var ICONE_JOUER = '<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>';
+  // Victor (2026-11-01) : le bouton Jouer ne parle plus d'Alyca, seulement de la case.
   function boutonJouer() {
     var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? bonusJouerMax() : 0, enDuel = M.duelBloquant(P), ferme = M.jeuFerme(C, P, maintenant());
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + __('</span><span><b>Jouer</b><span class="s">') +
-      (ferme ? __("Enfermé au mur de la honte : encore ") + dureePeine(P.punition.restant) + "." : enDuel ? esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + __(" te barre la route : revanche obligatoire.") : c ? (c.raison === "revision" ? __("Révision forcée. ") : c.type === "rappel" ? __("Un rappel t'attend. ") : "") + (c.raison === "case" ? __("Case ") + esc(tx(stat(c.stat).nom)) + __(" : l'IA y choisit l'épreuve.") : c.raison === "ouvre_arbre" ? __("Case ") + esc(tx(stat(c.stat).nom)) + __(" : un arbre fermé à ouvrir.") : __("L'IA choisit l'épreuve.")) : __("Rien à jouer pour l'instant.")) + "</span></span>" + (c && bonus && !ferme ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
+      (ferme ? __("Enfermé au mur de la honte : encore ") + dureePeine(P.punition.restant) + "." : enDuel ? esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + __(" te barre la route : revanche obligatoire.") : c ? (c.raison === "revision" ? __("Révision forcée. ") : c.type === "rappel" ? __("Un rappel t'attend. ") : "") + (c.raison === "case" ? __("Case ") + esc(tx(stat(c.stat).nom)) + "." : c.raison === "ouvre_arbre" ? __("Case ") + esc(tx(stat(c.stat).nom)) + __(" : un arbre fermé à ouvrir.") : __("Une épreuve t'attend.")) : __("Rien à jouer pour l'instant.")) + "</span></span>" + (c && bonus && !ferme ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
     if (!c && !enDuel) b.disabled = true;
     b.onclick = ouvrirJouer;
     return b;
