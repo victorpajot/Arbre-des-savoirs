@@ -901,11 +901,11 @@
     if (jouer) partie.depuisRappel = anticipe ? (partie.depuisRappel || 0) + 1 : 0;
     var serie = null, se = partie.serie;
     if (se && se.ids[0] === id) {
-      se.ids.shift();
+      (se.faitsIds || (se.faitsIds = [])).push(se.ids.shift());
       if (!reussi) { serie = { fini: true, rate: true, total: se.total, faits: se.total - se.ids.length }; partie.serie = null; }
       else if (!se.ids.length) {
         partie.credits.solde += se.prime; partie.credits.gagnes += se.prime;
-        serie = { fini: true, total: se.total, faits: se.total, credits: se.prime }; partie.serie = null;
+        serie = { fini: true, total: se.total, faits: se.total, credits: se.prime, ids: se.faitsIds.slice(), solde: partie.credits.solde }; partie.serie = null;
       } else serie = { fini: false, total: se.total, faits: se.total - se.ids.length, reste: se.ids.length, prime: se.prime };
     }
     var ag = agacerIA(contenu, partie, resultats.length - bonnes, !reussi, t);
@@ -3194,7 +3194,9 @@
   // Proposée après un rappel imposé : enchaîner tous les rappels dus ; tous réussis, prime en crédits.
   function primeSerie(contenu, partie, n, t) {
     var fav = faveurIA(contenu, partie, t), mult = fav ? fav.palier.butin : 1;
-    return Math.round(n * ((contenu.regles.rappels && contenu.regles.rappels.serie_credits_par_rappel) || 15) * mult);
+    // Victor (2026-11-02) : une série bouclée doit rapporter « pas mal de crédits » : un tarif par rappel et une prime fixe.
+    var R = contenu.regles.rappels || {};
+    return Math.round((n * (R.serie_credits_par_rappel || 30) + (R.serie_credits_bonus || 0)) * mult);
   }
   function serieProposable(contenu, partie, t) {
     if (partie.serie) return null;

@@ -499,6 +499,9 @@ body.plateau-plein { overflow: hidden; }
 .tuile-r .v { width: 76px; height: 76px; display: grid; place-items: center; border-radius: 14px; background: #FFF8EC; border: 2px solid color-mix(in srgb, var(--c) 45%, transparent); }
 .tuile-r.ici .v { border: 3px solid var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 25%, transparent); }
 .tuiles-rappel.serie .tuile-r:not(.ici) { opacity: .7; }
+.carte-serie h3 { font-size: 30px; color: #B8862B; }
+.carte-serie .tuiles-rappel { margin: 10px 0 0; }
+.carte-serie .tuile-r .v { width: 64px; height: 64px; }
 .tuile-r figcaption { font-size: 14px; line-height: 1.25; color: var(--ink); }
 .tuile-r figcaption b { display: block; font-size: 12px; color: var(--muted); font-weight: 700; }
 .emplette { border: 2px solid #E0B12E; background: color-mix(in srgb, #FFD447 12%, var(--surface)); }
@@ -6167,15 +6170,15 @@ function demarrerJeu() {
   }
   // Les cartes d'un résultat coupé en deux : {recs, nAvant}. Sans coupe, tout passe avant le plateau.
   function cartesEnDeux(r, rec, theme) {
-    function cartes(x, farce) { return recompensesBilan({ nouveauxSucces: x.succes, masque: x.masque, nouveauxObjets: x.objets, nouveauxLivres: x.livres,
+    function cartes(x, farce, premier) { return recompensesBilan({ nouveauxSucces: x.succes, masque: x.masque, nouveauxObjets: x.objets, nouveauxLivres: x.livres,
       nouveauxSavants: x.savants, nouveauxAccessoires: x.accessoires, nouveauxEvenements: x.evenements, theme: theme,
-      farce: farce ? r.farce : null, repliqueFarce: farce ? r.repliqueFarce : null }); }
+      farce: farce ? r.farce : null, repliqueFarce: farce ? r.repliqueFarce : null, serie: farce || premier ? r.serie : null }); }
     // Les savants gagnés et les personnes croisées pendant l'épreuve : une seule carte, avec les récompenses de l'épreuve.
     var savants = [];
     [rec, r.avantPlateau, r.apresPlateau].forEach(function (x) { if (x && x.savants) savants = savants.concat(x.savants); });
     function sans(x) { return x ? Object.assign({}, x, { savants: [] }) : x; }
     var groupe = carteRencontres(savants);
-    if (!r.apresPlateau) { var t = cartes(sans(rec) || {}); if (groupe) t.push(groupe); return { recs: t, nAvant: t.length }; }
+    if (!r.apresPlateau) { var t = cartes(sans(rec) || {}, false, true); if (groupe) t.push(groupe); return { recs: t, nAvant: t.length }; }
     var a = cartes(sans(r.avantPlateau) || {}, true), b = cartes(sans(r.apresPlateau));
     if (groupe) a.push(groupe);
     return { recs: a.concat(b), nAvant: a.length };
@@ -6323,6 +6326,19 @@ function demarrerJeu() {
   function carteSavant() { var c = carteRecompense.apply(null, arguments); c.classList.add("carte-savant"); return c; }
   function recompensesBilan(r) {
     var out = [], te = r.theme || (r.ennemi && r.ennemi.theme) || null;
+    // Victor (2026-11-02) : une série de rappels bouclée a son écran de récompense : la prime en grand et les cases ravivées.
+    if (r.serie && r.serie.credits) {
+      var cs = carteRecompense(__("Série de rappels bouclée"), svgBourse(96), "+" + r.serie.credits + __(" crédits"),
+        __("Tes {n} rappels réussis d'affilée : la mémoire tient, la bourse aussi.", { n: r.serie.total }) + (r.serie.solde != null ? " " + __("Ta bourse : {s} crédits.", { s: r.serie.solde }) : ""), null, "#E0A800");
+      cs.classList.add("carte-serie");
+      var tu = "";
+      (r.serie.ids || []).forEach(function (id) {
+        var comp = C.parId[id], kc = comp && casesDeComp(id)[0]; if (!comp) return;
+        tu += '<figure class="tuile-r ici" style="--c:' + couleur((kc && kc.stat) || comp.stat) + '"><div class="v">' + (kc ? svgSprite(kc.icone, 56, tx(kc.titre)) : badgeComp(comp, 56)) + "</div><figcaption>" + esc(tx(comp.nom)) + "</figcaption></figure>";
+      });
+      if (tu) cs.appendChild(el('<div class="tuiles-rappel" style="--c:#E0A800">' + tu + "</div>"));
+      out.push(cs);
+    }
     (r.nouveauxSucces || []).forEach(function (sc) {
       var re = sc.recompense;
       var carte = carteRecompense(__("Succès débloqué"), illustrationSucces(sc, 96), tx(sc.nom), tx(sc.description), { titre: re.type === "citation" ? __("Lire la citation") : __("Lire l'anecdote"), html: citationSucces(re) });
