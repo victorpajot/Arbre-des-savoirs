@@ -19,7 +19,7 @@ FICHIERS = [("regles.json", "regles"), ("skills.json", "skills"), ("questions.js
 
 
 # Les manipulations des ateliers de donjon que l'interface sait afficher.
-TYPES_EPREUVE = {"retenue", "binaire", "carte", "moulin", "boucle", "portes", "ruban", "plan", "transistors", "debug"}
+TYPES_EPREUVE = {"retenue", "binaire", "carte", "moulin", "boucle", "portes", "ruban", "plan", "transistors", "debug", "recensement", "additionneur", "adresse", "cycle"}
 
 
 def charger(nom):

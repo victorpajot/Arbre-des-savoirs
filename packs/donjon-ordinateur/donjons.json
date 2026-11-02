@@ -5,7 +5,7 @@
    "fr": "Le donjon de l'ordinateur"
   },
   "accroche": {
-   "fr": "Dix ateliers, trois siècles, une machine à assembler pièce par pièce."
+   "fr": "Quatorze ateliers, trois siècles, une machine à assembler pièce par pièce."
   },
   "description": {
    "fr": "Ici, on ne remonte pas le temps pour le plaisir : on construit. Chaque atelier vous apprend l'idée d'un inventeur, vous la fait réaliser, et vous laisse une pièce de l'ordinateur. Au bout, on allume."
@@ -457,13 +457,349 @@
      "fr": "Le salon d'Ada Lovelace"
     },
     "lieu": {
-     "fr": "Londres, 1843"
+     "fr": "Angleterre, 1843"
     },
     "recit": {
      "fr": "Dans sa note G, Ada Lovelace écrit, opération par opération, le calcul que la machine de Babbage devrait faire. Les mêmes cartes peuvent resservir plusieurs fois : son calcul annonce les boucles des programmes d'aujourd'hui."
     },
     "consigne": {
      "fr": "Suivez le programme pas à pas, comme la machine, et donnez le nombre affiché à la fin."
+    }
+   },
+   {
+    "id": "hollerith",
+    "savant": null,
+    "competences": [
+     "inf.jacquard"
+    ],
+    "source": "Wikipédia (en), « Tabulating machine »",
+    "epreuve": {
+     "type": "recensement",
+     "instances": [
+      {
+       "colonnes": [
+        "Homme",
+        "Femme",
+        "Marié·e",
+        "Né·e à l'étranger"
+       ],
+       "cartes": [
+        [
+         1,
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         1,
+         1,
+         1
+        ],
+        [
+         0,
+         1,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0,
+         1
+        ],
+        [
+         0,
+         1,
+         1,
+         0
+        ],
+        [
+         1,
+         0,
+         1,
+         1
+        ]
+       ],
+       "colonne": 1,
+       "attendu": 3
+      },
+      {
+       "colonnes": [
+        "Homme",
+        "Femme",
+        "Marié·e",
+        "Né·e à l'étranger"
+       ],
+       "cartes": [
+        [
+         1,
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         1,
+         1,
+         1
+        ],
+        [
+         0,
+         1,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         0,
+         1
+        ],
+        [
+         0,
+         1,
+         1,
+         0
+        ],
+        [
+         1,
+         0,
+         1,
+         1
+        ]
+       ],
+       "colonne": 2,
+       "attendu": 4
+      },
+      {
+       "colonnes": [
+        "Homme",
+        "Femme",
+        "Marié·e",
+        "Né·e à l'étranger"
+       ],
+       "cartes": [
+        [
+         0,
+         1,
+         0,
+         1
+        ],
+        [
+         0,
+         1,
+         1,
+         0
+        ],
+        [
+         1,
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         1,
+         1,
+         1
+        ],
+        [
+         1,
+         0,
+         0,
+         0
+        ],
+        [
+         0,
+         1,
+         0,
+         0
+        ]
+       ],
+       "colonne": 2,
+       "attendu": 3
+      },
+      {
+       "colonnes": [
+        "Homme",
+        "Femme",
+        "Marié·e",
+        "Né·e à l'étranger"
+       ],
+       "cartes": [
+        [
+         0,
+         1,
+         0,
+         1
+        ],
+        [
+         0,
+         1,
+         1,
+         0
+        ],
+        [
+         1,
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         1,
+         1,
+         1
+        ],
+        [
+         1,
+         0,
+         0,
+         0
+        ],
+        [
+         0,
+         1,
+         0,
+         0
+        ]
+       ],
+       "colonne": 3,
+       "attendu": 2
+      },
+      {
+       "colonnes": [
+        "Homme",
+        "Femme",
+        "Marié·e",
+        "Né·e à l'étranger"
+       ],
+       "cartes": [
+        [
+         1,
+         0,
+         0,
+         0
+        ],
+        [
+         1,
+         0,
+         1,
+         1
+        ],
+        [
+         0,
+         1,
+         1,
+         0
+        ],
+        [
+         1,
+         0,
+         1,
+         0
+        ],
+        [
+         0,
+         1,
+         0,
+         1
+        ],
+        [
+         1,
+         0,
+         0,
+         1
+        ]
+       ],
+       "colonne": 3,
+       "attendu": 3
+      }
+     ]
+    },
+    "composants": [
+     {
+      "id": "lecteur",
+      "nom": {
+       "fr": "Le lecteur de cartes"
+      },
+      "role": {
+       "fr": "Faire entrer les données dans la machine, par l'électricité."
+      }
+     }
+    ],
+    "nom": {
+     "fr": "Le recensement de Hollerith"
+    },
+    "lieu": {
+     "fr": "États-Unis, 1890"
+    },
+    "recit": {
+     "fr": "Pour le recensement américain de 1890, les réponses (âge, État, sexe…) sont poinçonnées sur des cartes. Dans la machine d'Herman Hollerith, des tiges traversent les trous et plongent dans du mercure : le courant passe et fait avancer un compteur. Sa société, fondée en 1896, fusionne en 1911 dans une entreprise rebaptisée IBM en 1924."
+    },
+    "consigne": {
+     "fr": "Passez les cartes dans la machine : chaque trou de la colonne demandée fait avancer le compteur d'un cran. Réglez le compteur sur le total."
+    }
+   },
+   {
+    "id": "turing",
+    "savant": "turing",
+    "competences": [
+     "math.calculabilite"
+    ],
+    "source": "Wikipédia (en), « Universal Turing machine »",
+    "epreuve": {
+     "type": "ruban",
+     "instances": [
+      {
+       "ruban": "1011",
+       "attendu": "1100"
+      },
+      {
+       "ruban": "0111",
+       "attendu": "1000"
+      },
+      {
+       "ruban": "1001",
+       "attendu": "1010"
+      },
+      {
+       "ruban": "0110",
+       "attendu": "0111"
+      },
+      {
+       "ruban": "1111",
+       "attendu": "10000"
+      },
+      {
+       "ruban": "1010",
+       "attendu": "1011"
+      }
+     ]
+    },
+    "composants": [
+     {
+      "id": "commande",
+      "nom": {
+       "fr": "L'unité de commande"
+      },
+      "role": {
+       "fr": "Lire les règles et décider, pas à pas, de l'action suivante."
+      }
+     }
+    ],
+    "nom": {
+     "fr": "Le ruban de Turing"
+    },
+    "lieu": {
+     "fr": "« On Computable Numbers », 1936"
+    },
+    "recit": {
+     "fr": "En 1936, dans son article « On Computable Numbers », Alan Turing imagine une machine qui lit et écrit des symboles sur un ruban, case par case, en suivant une table de règles. Une machine universelle peut imiter n'importe quelle autre machine de Turing, dont on lui donne la description."
+    },
+    "consigne": {
+     "fr": "La machine part de la case la plus à droite. Règle : un 1 devient 0 et elle avance à gauche ; un 0 (ou une case vide) devient 1 et elle s'arrête. Écrivez le ruban final."
     }
    },
    {
@@ -550,63 +886,154 @@
     }
    },
    {
-    "id": "turing",
-    "savant": "turing",
+    "id": "stibitz",
+    "savant": null,
     "competences": [
-     "math.calculabilite"
+     "inf.shannon",
+     "inf.binaire"
     ],
-    "source": "Wikipédia (en), « Universal Turing machine »",
+    "source": "Wikipédia (en), « George Stibitz » et « 74181 »",
     "epreuve": {
-     "type": "ruban",
+     "type": "additionneur",
      "instances": [
       {
-       "ruban": "1011",
-       "attendu": "1100"
+       "a": "0110",
+       "b": "0111",
+       "attendu": "01101"
       },
       {
-       "ruban": "0111",
-       "attendu": "1000"
+       "a": "1011",
+       "b": "0110",
+       "attendu": "10001"
       },
       {
-       "ruban": "1001",
-       "attendu": "1010"
+       "a": "0101",
+       "b": "0011",
+       "attendu": "01000"
       },
       {
-       "ruban": "0110",
-       "attendu": "0111"
+       "a": "1100",
+       "b": "0101",
+       "attendu": "10001"
       },
       {
-       "ruban": "1111",
-       "attendu": "10000"
+       "a": "0111",
+       "b": "0001",
+       "attendu": "01000"
       },
       {
-       "ruban": "1010",
-       "attendu": "1011"
+       "a": "1001",
+       "b": "0110",
+       "attendu": "01111"
+      },
+      {
+       "a": "1101",
+       "b": "1101",
+       "attendu": "11010"
       }
      ]
     },
     "composants": [
      {
-      "id": "commande",
+      "id": "ual",
       "nom": {
-       "fr": "L'unité de commande"
+       "fr": "L'unité arithmétique et logique"
       },
       "role": {
-       "fr": "Lire les règles et décider, pas à pas, de l'action suivante."
+       "fr": "Additionner, soustraire, comparer : du calcul fait de portes."
       }
      }
     ],
     "nom": {
-     "fr": "Le ruban de Turing"
+     "fr": "La table de cuisine de Stibitz"
     },
     "lieu": {
-     "fr": "« On Computable Numbers », 1936"
+     "fr": "Laboratoires Bell, 1937"
     },
     "recit": {
-     "fr": "En 1936, dans son article « On Computable Numbers », Alan Turing imagine une machine qui lit et écrit des symboles sur un ruban, case par case, en suivant une table de règles. Une machine universelle peut imiter n'importe quelle autre machine de Turing, dont on lui donne la description."
+     "fr": "En novembre 1937, George Stibitz, ingénieur aux laboratoires Bell, assemble avec des relais un additionneur binaire, le Model K, du nom de la table de cuisine sur laquelle il l'aurait monté. Pour un chiffre, une porte OU exclusif donne la somme, une porte ET la retenue ; on enchaîne les étages chiffre par chiffre. En 1970, Texas Instruments loge pour la première fois une unité arithmétique et logique complète sur une seule puce : le 74181, qui calcule sur 4 bits."
     },
     "consigne": {
-     "fr": "La machine part de la case la plus à droite. Règle : un 1 devient 0 et elle avance à gauche ; un 0 (ou une case vide) devient 1 et elle s'arrête. Écrivez le ruban final."
+     "fr": "Additionnez les deux nombres de 4 bits, de droite à gauche, en reportant la retenue. La case de gauche reçoit la dernière retenue : allumée, le résultat ne tient plus sur 4 bits (un dépassement)."
+    }
+   },
+   {
+    "id": "bell",
+    "savant": "bardeen",
+    "competences": [
+     "elec.numerique"
+    ],
+    "source": "Wikipédia (en), « Harvard Mark I », « Vacuum tube », « ENIAC », « Transistor »",
+    "epreuve": {
+     "type": "transistors",
+     "instances": [
+      {
+       "montage": "A en série avec B",
+       "entrees": {
+        "A": 1,
+        "B": 0
+       },
+       "attendu": 0
+      },
+      {
+       "montage": "A en parallèle avec B",
+       "entrees": {
+        "A": 1,
+        "B": 0
+       },
+       "attendu": 1
+      },
+      {
+       "montage": "A en série avec (B en parallèle avec C)",
+       "entrees": {
+        "A": 1,
+        "B": 0,
+        "C": 1
+       },
+       "attendu": 1
+      },
+      {
+       "montage": "(A en série avec B) en parallèle avec C",
+       "entrees": {
+        "A": 1,
+        "B": 0,
+        "C": 0
+       },
+       "attendu": 0
+      },
+      {
+       "montage": "A en série avec B en série avec C",
+       "entrees": {
+        "A": 1,
+        "B": 1,
+        "C": 1
+       },
+       "attendu": 1
+      }
+     ]
+    },
+    "composants": [
+     {
+      "id": "transistor",
+      "nom": {
+       "fr": "Le transistor"
+      },
+      "role": {
+       "fr": "Un interrupteur électrique minuscule, des milliards par puce."
+      }
+     }
+    ],
+    "nom": {
+     "fr": "Du relais au transistor"
+    },
+    "lieu": {
+     "fr": "1944-1947"
+    },
+    "recit": {
+     "fr": "En 1944, le Harvard Mark I calcule avec 3 500 relais : environ trois additions par seconde. Les tubes à vide (la valve de Fleming en 1904, la grille de De Forest en 1907) basculent sans pièce mobile : l'ENIAC, inauguré en 1946, fait 5 000 additions par seconde, mais plusieurs tubes grillent presque chaque jour. Du 17 novembre au 23 décembre 1947, aux laboratoires Bell, John Bardeen et Walter Brattain mettent au point le transistor, dans le groupe de William Shockley."
+    },
+    "consigne": {
+     "fr": "Chaque transistor laisse passer le courant quand son entrée vaut 1. Dites si la lampe s'allume (1) ou reste éteinte (0)."
     }
    },
    {
@@ -672,82 +1099,197 @@
     }
    },
    {
-    "id": "bell",
-    "savant": "bardeen",
+    "id": "memoire",
+    "savant": null,
     "competences": [
-     "elec.numerique"
+     "inf.programme"
     ],
-    "source": "Wikipédia (en), « Transistor »",
+    "source": "Wikipédia (en), « Williams tube »",
     "epreuve": {
-     "type": "transistors",
+     "type": "adresse",
+     "taille": 8,
      "instances": [
       {
-       "montage": "A en série avec B",
-       "entrees": {
-        "A": 1,
-        "B": 0
-       },
-       "attendu": 0
+       "adresse": "011101",
+       "attendu": [
+        3,
+        5
+       ]
       },
       {
-       "montage": "A en parallèle avec B",
-       "entrees": {
-        "A": 1,
-        "B": 0
-       },
-       "attendu": 1
+       "adresse": "110010",
+       "attendu": [
+        6,
+        2
+       ]
       },
       {
-       "montage": "A en série avec (B en parallèle avec C)",
-       "entrees": {
-        "A": 1,
-        "B": 0,
-        "C": 1
-       },
-       "attendu": 1
+       "adresse": "001111",
+       "attendu": [
+        1,
+        7
+       ]
       },
       {
-       "montage": "(A en série avec B) en parallèle avec C",
-       "entrees": {
-        "A": 1,
-        "B": 0,
-        "C": 0
-       },
-       "attendu": 0
+       "adresse": "100000",
+       "attendu": [
+        4,
+        0
+       ]
       },
       {
-       "montage": "A en série avec B en série avec C",
-       "entrees": {
-        "A": 1,
-        "B": 1,
-        "C": 1
-       },
-       "attendu": 1
+       "adresse": "010110",
+       "attendu": [
+        2,
+        6
+       ]
+      },
+      {
+       "adresse": "111001",
+       "attendu": [
+        7,
+        1
+       ]
       }
      ]
     },
     "composants": [
      {
-      "id": "transistor",
+      "id": "ram",
       "nom": {
-       "fr": "Le transistor"
+       "fr": "La mémoire vive"
       },
       "role": {
-       "fr": "Un interrupteur électrique minuscule, des milliards par puce."
+       "fr": "Garder des milliers de bits, chacun à son adresse."
       }
      }
     ],
     "nom": {
-     "fr": "Le laboratoire Bell"
+     "fr": "Le tube de Williams"
     },
     "lieu": {
-     "fr": "Murray Hill, 1947"
+     "fr": "Manchester, 1947-1948"
     },
     "recit": {
-     "fr": "Du 17 novembre au 23 décembre 1947, aux laboratoires Bell, John Bardeen et Walter Brattain mettent au point le transistor, dans le groupe de William Shockley. Les circuits numériques s'en servent comme d'interrupteurs électroniques."
+     "fr": "À l'université de Manchester, Freddie Williams et Tom Kilburn gardent des bits sous forme de points sur l'écran d'un tube cathodique : chaque point porte une petite charge, 1 ou 0. Pour lire ou écrire, la machine donne une adresse, une ligne et une colonne, et le faisceau va droit à ce point : c'est une mémoire à accès direct, l'ancêtre de la RAM."
     },
     "consigne": {
-     "fr": "Chaque transistor laisse passer le courant quand son entrée vaut 1. Dites si la lampe s'allume (1) ou reste éteinte (0)."
+     "fr": "Notre mémoire a 8 lignes et 8 colonnes. Dans l'adresse, les 3 premiers bits donnent la ligne, les 3 derniers la colonne (lignes et colonnes comptées à partir de 0). Touchez la case visée."
+    }
+   },
+   {
+    "id": "processeur",
+    "savant": null,
+    "competences": [
+     "inf.programme"
+    ],
+    "source": "Wikipédia (en), « Manchester Baby » et « Instruction cycle »",
+    "epreuve": {
+     "type": "cycle",
+     "instances": [
+      {
+       "lignes": [
+        "0 : CHARGER_A 14",
+        "1 : CHARGER_B 15",
+        "2 : AJOUTER B A",
+        "3 : RANGER_A 13",
+        "4 : ARRÊT"
+       ],
+       "memoire": {
+        "14": 3,
+        "15": 14
+       },
+       "attendu": 17
+      },
+      {
+       "lignes": [
+        "0 : CHARGER_A 14",
+        "1 : CHARGER_B 15",
+        "2 : SOUSTRAIRE B A",
+        "3 : RANGER_A 13",
+        "4 : ARRÊT"
+       ],
+       "memoire": {
+        "14": 20,
+        "15": 6
+       },
+       "attendu": 14
+      },
+      {
+       "lignes": [
+        "0 : CHARGER_A 14",
+        "1 : CHARGER_B 15",
+        "2 : SOUSTRAIRE B A",
+        "3 : SAUTER_SI_NÉGATIF 5",
+        "4 : SAUTER 2",
+        "5 : AJOUTER B A",
+        "6 : RANGER_A 13",
+        "7 : ARRÊT"
+       ],
+       "memoire": {
+        "14": 5,
+        "15": 2
+       },
+       "attendu": 1
+      },
+      {
+       "lignes": [
+        "0 : CHARGER_A 14",
+        "1 : CHARGER_B 15",
+        "2 : SOUSTRAIRE B A",
+        "3 : SAUTER_SI_NÉGATIF 5",
+        "4 : SAUTER 2",
+        "5 : AJOUTER B A",
+        "6 : RANGER_A 13",
+        "7 : ARRÊT"
+       ],
+       "memoire": {
+        "14": 11,
+        "15": 4
+       },
+       "attendu": 3
+      },
+      {
+       "lignes": [
+        "0 : CHARGER_A 14",
+        "1 : CHARGER_B 15",
+        "2 : SOUSTRAIRE B A",
+        "3 : SAUTER_SI_NÉGATIF 5",
+        "4 : SAUTER 2",
+        "5 : AJOUTER B A",
+        "6 : RANGER_A 13",
+        "7 : ARRÊT"
+       ],
+       "memoire": {
+        "14": 9,
+        "15": 3
+       },
+       "attendu": 0
+      }
+     ]
+    },
+    "composants": [
+     {
+      "id": "processeur",
+      "nom": {
+       "fr": "Le processeur"
+      },
+      "role": {
+       "fr": "Chercher, décoder, exécuter, et recommencer."
+      }
+     }
+    ],
+    "nom": {
+     "fr": "Le cycle de la Baby"
+    },
+    "lieu": {
+     "fr": "Manchester, 1948"
+    },
+    "recit": {
+     "fr": "Le 21 juin 1948, la Baby de Manchester exécute un programme rangé dans sa mémoire. Le processeur répète sans fin le même cycle : chercher l'instruction dont l'adresse est dans le compteur de programme, la décoder, l'exécuter, puis passer à la suivante, sauf si l'instruction est un saut."
+    },
+    "consigne": {
+     "fr": "Exécutez le programme comme le processeur : une instruction à la fois, dans l'ordre, sauf saut. CHARGER_A 14 copie la case 14 dans le registre A ; AJOUTER B A fait A ← A + B ; SOUSTRAIRE B A fait A ← A − B ; RANGER_A 13 copie A dans la case 13 ; SAUTER 2 repart à l'adresse 2 ; SAUTER_SI_NÉGATIF 5 n'y saute que si A est négatif. Que contient la case 13 à la fin ?"
     }
    },
    {
@@ -828,7 +1370,7 @@
   ],
   "allumage": {
    "texte": {
-    "fr": "Toutes les pièces sont en place. Le compteur, le binaire, les cartes, le moulin et le magasin, l'algorithme, les portes, l'unité de commande, le programme enregistré, le transistor et le compilateur. Il ne reste qu'à appuyer."
+    "fr": "Toutes les pièces sont en place, de la roue à retenue de Pascal au compilateur de Grace Hopper : le binaire, les cartes, le moulin, l'algorithme, les portes, l'unité de calcul, le transistor, la mémoire et le processeur. Il ne reste qu'à appuyer."
    }
   },
   "repliques": {

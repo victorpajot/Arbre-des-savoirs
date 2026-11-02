@@ -1927,7 +1927,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Un rappel raté sur le binaire : la pièce tombe en panne, l'ordinateur ne s'allume pas.
   Object.assign(PD.competences["inf.binaire"], { maitrise: false, perdue: true });
   const panne = M.allumer(CD, PD, "ordinateur", tt);
-  assert.equal(panne.raison, "panne"); assert.deepEqual(panne.pannes.map((p) => p.piece.id), ["binaire"]);
+  assert.equal(panne.raison, "panne"); assert.deepEqual(panne.pannes.map((p) => p.piece.id), ["binaire", "ual"], "le binaire perdu met en panne le code et l'UAL");
   PD.competences["inf.binaire"].maitrise = true;
   assert.ok(M.bilanDonjon(CD, PD, "ordinateur").pret, "réparée au rappel réussi");
   assert.ok(M.allumer(CD, PD, "ordinateur", tt).ok); assert.equal(M.allumer(CD, PD, "ordinateur", tt).raison, "deja");
@@ -1938,5 +1938,5 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const relue = M.migrer(JSON.parse(JSON.stringify(PD)), CD);
   assert.ok(relue.donjons.ordinateur.allume && M.migrer({ format: 1 }, CD).donjons, "migration");
   assert.ok(M.repliqueDonjon(CD, "ordinateur", "allumage").fr);
-  console.log("OK : donjon de l'ordinateur, 10 ateliers, bug, panne, allumage");
+  console.log("OK : donjon de l'ordinateur, 14 ateliers, bug, panne, allumage");
 }

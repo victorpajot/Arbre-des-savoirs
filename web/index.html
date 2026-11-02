@@ -1273,6 +1273,31 @@ svg.grille .interro { transition: opacity .3s; }
 @keyframes djAllume { from { filter: brightness(0); } 60% { filter: brightness(1.6); } to { filter: none; } }
 @keyframes djDanse { from { transform: translate(-6px, 4px); opacity: .5; } to { transform: translate(6px, -4px); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .dj-ecran, .dj-ecran i, .dj-plan.allume .dj-piece.posee { animation: none; } }
+.dj-cartes-h { display: flex; flex-direction: column; gap: 4px; }
+.dj-carte-h { display: grid; grid-template-columns: 22px repeat(4, 54px); gap: 4px; align-items: center; background: #EADBB8; border-radius: 4px; padding: 4px 6px; }
+.dj-carte-h.tete { background: none; }
+.dj-carte-h .n { font: 600 13px var(--f-mono); color: #6B5320; }
+.dj-carte-h .lbl { font-size: 12px; line-height: 1.1; text-align: center; color: var(--muted); }
+.dj-carte-h .lbl.vise { color: var(--ink); font-weight: 800; }
+.dj-carte-h .cel { height: 18px; border-radius: 3px; }
+.dj-carte-h .cel.trou { background: #2B2116; width: 18px; justify-self: center; border-radius: 50%; }
+.dj-carte-h .cel.vise { outline: 2px dashed #4F6273; outline-offset: 1px; }
+.dj-addition { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.dj-addition .ligne { display: flex; gap: 6px; align-items: center; }
+.dj-addition .ligne > span { width: 52px; text-align: right; font: 800 26px var(--f-mono); }
+.dj-addition .ligne > b { width: 52px; text-align: center; font: 800 28px var(--f-mono); }
+.dj-addition .res { border-top: 3px solid var(--ink); padding-top: 6px; }
+.dj-addition .res .dj-bit { width: 52px; }
+.dj-bit.sortie { border-style: dashed; }
+.dj-adr { font-family: var(--f-mono); } .dj-adr span:first-child { color: #B5473A; } .dj-adr span:last-child { color: #2E6FB0; }
+.dj-memoire { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 3px; width: min(100%, 330px); }
+.dj-memoire i { font: 600 12px var(--f-mono); text-align: center; align-self: center; font-style: normal; }
+.dj-memoire i.lbl:nth-child(-n+9) { color: #2E6FB0; }
+.dj-memoire i.lbl { color: #B5473A; }
+.dj-memoire button { aspect-ratio: 1; border: 0; border-radius: 50%; background: #1C3A2A; padding: 0; min-width: 0; }
+.dj-memoire button.on { background: #7CFFA8; box-shadow: 0 0 8px #7CFFA8; }
+.dj-cases-mem { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; font: 600 16px var(--f-mono); }
+.dj-cases-mem span { background: var(--bg); border: 2px solid var(--line); border-radius: 8px; padding: 4px 10px; }
 .dj-entree { display: grid; gap: 4px; width: 100%; text-align: left; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); padding: 12px 14px; margin-top: 8px; color: var(--ink); }
 .dj-entree b { font-size: 19px; } .dj-entree small { font-size: 15px; color: var(--muted); }
 .dj-jauge { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
@@ -4452,6 +4477,7 @@ function demarrerJeu() {
     if (ep.type === "transistors") return att ? __("la lampe s'allume") : __("la lampe reste éteinte");
     if (ep.type === "carte") return __("voir la carte ci-dessus");
     if (ep.type === "plan") return att.join(", ");
+    if (ep.type === "adresse") return __("ligne ") + att[0] + __(", colonne ") + att[1];
     if (ep.type === "moulin") return att.join(" puis ");
     return String(att);
   }
@@ -4588,9 +4614,69 @@ function demarrerJeu() {
       return function () { return ch[0] == null ? -1 : ch[0]; };
     },
   };
-  function programmeEtNombre(z, lignes, fige, libelle) {
+  // Hollerith, Stibitz, Williams, la Baby (Victor, 2026-11-02 : ateliers tirés de ses notes).
+  // Hollerith : les cartes du recensement, et le compteur à régler sur le total de la colonne demandée.
+  ETABLIS.recensement = function (z, x, ep, fige) {
+    var n = donjon.rep == null ? 0 : donjon.rep; donjon.rep = n;
+    z.appendChild(el('<p class="dj-cible">' + __("Colonne à compter : ") + "<b>" + esc(x.colonnes[x.colonne]) + "</b></p>"));
+    var pile = el('<div class="dj-cartes-h"></div>');
+    x.cartes.forEach(function (c, i) {
+      var k = el('<div class="dj-carte-h"><span class="n">' + (i + 1) + "</span></div>");
+      c.forEach(function (v, j) { k.appendChild(el('<span class="cel' + (v ? " trou" : "") + (j === x.colonne ? " vise" : "") + '" title="' + esc(x.colonnes[j]) + '"></span>')); });
+      pile.appendChild(k);
+    });
+    var tete = el('<div class="dj-carte-h tete"><span class="n"></span>' + x.colonnes.map(function (c, j) { return '<span class="lbl' + (j === x.colonne ? " vise" : "") + '">' + esc(c) + "</span>"; }).join("") + "</div>");
+    pile.insertBefore(tete, pile.firstChild);
+    z.appendChild(pile);
+    var cpt = el('<div class="dj-roue"><button type="button" aria-label="+1">▲</button><b>' + n + '</b><button type="button" aria-label="−1">▼</button></div>');
+    cpt.querySelectorAll("button").forEach(function (bt, k) { bt.disabled = fige; bt.onclick = function () { donjon.rep = Math.max(0, Math.min(x.cartes.length, donjon.rep + (k ? -1 : 1))); cpt.querySelector("b").textContent = donjon.rep; }; });
+    z.appendChild(el('<p class="note">' + __("Le compteur") + "</p>")); z.appendChild(cpt);
+    return function () { return donjon.rep; };
+  };
+  // Stibitz : l'addition posée en binaire ; on allume les cases du résultat, la retenue de sortie à gauche.
+  ETABLIS.additionneur = function (z, x, ep, fige) {
+    var bits = donjon.rep || (donjon.rep = [0, 0, 0, 0, 0]);
+    var g = el('<div class="dj-addition"></div>');
+    g.appendChild(el('<div class="ligne"><span></span>' + x.a.split("").map(function (c) { return "<b>" + c + "</b>"; }).join("") + "</div>"));
+    g.appendChild(el('<div class="ligne"><span>+</span>' + x.b.split("").map(function (c) { return "<b>" + c + "</b>"; }).join("") + "</div>"));
+    var r = el('<div class="ligne res"></div>');
+    bits.forEach(function (v, i) {
+      var bt = el('<button type="button" class="dj-bit' + (v ? " on" : "") + (i === 0 ? " sortie" : "") + '"><b>' + v + "</b></button>");
+      bt.disabled = fige; bt.onclick = function () { bits[i] = 1 - bits[i]; bt.classList.toggle("on", !!bits[i]); bt.querySelector("b").textContent = bits[i]; };
+      r.appendChild(bt);
+    });
+    g.appendChild(r);
+    z.appendChild(g);
+    z.appendChild(el('<p class="note">' + __("La case de gauche, en pointillé : la retenue de sortie.") + "</p>"));
+    return function () { return bits.join(""); };
+  };
+  // Williams : une mémoire de 8 × 8 points ; on touche la case que vise l'adresse.
+  ETABLIS.adresse = function (z, x, ep, fige) {
+    var n = ep.taille, ch = donjon.rep || (donjon.rep = [null, null]);
+    z.appendChild(el('<p class="dj-cible">' + __("Adresse : ") + '<b class="dj-adr"><span>' + x.adresse.slice(0, 3) + "</span> <span>" + x.adresse.slice(3) + "</span></b></p>"));
+    var g = el('<div class="dj-memoire" style="--n:' + (n + 1) + '"></div>');
+    g.appendChild(el("<i></i>"));
+    for (var c = 0; c < n; c++) g.appendChild(el('<i class="lbl">' + c + "</i>"));
+    for (var l = 0; l < n; l++) {
+      g.appendChild(el('<i class="lbl">' + l + "</i>"));
+      for (var k = 0; k < n; k++) (function (l, k) {
+        var bt = el('<button type="button" aria-label="' + __("Ligne ") + l + __(", colonne ") + k + '"' + (ch[0] === l && ch[1] === k ? ' class="on"' : "") + "></button>");
+        bt.disabled = fige; bt.onclick = function () { ch[0] = l; ch[1] = k; g.querySelectorAll("button").forEach(function (y) { y.classList.toggle("on", y === bt); }); };
+        g.appendChild(bt);
+      })(l, k);
+    }
+    z.appendChild(g);
+    z.appendChild(el('<p class="note">' + __("Lignes à gauche, colonnes en haut.") + "</p>"));
+    return function () { return ch[0] == null ? [] : ch.slice(); };
+  };
+  // La Baby : le programme en mémoire, les cases de données, et la valeur finale de la case 13.
+  ETABLIS.cycle = function (z, x, ep, fige) {
+    z.appendChild(el('<div class="dj-cases-mem">' + Object.keys(x.memoire).map(function (k) { return "<span>" + __("case ") + k + " : <b>" + x.memoire[k] + "</b></span>"; }).join("") + "<span>" + __("case ") + "13 : <b>?</b></span></div>"));
+    return programmeEtNombre(z, x.lignes, fige, __("Case 13 à la fin"), true);
+  };
+  function programmeEtNombre(z, lignes, fige, libelle, adresses) {
     var r = el('<div class="dj-code"></div>');
-    lignes.forEach(function (l, i) { var d = el('<div><span class="n">' + (i + 1) + "</span><code></code></div>"); d.querySelector("code").textContent = l; r.appendChild(d); });
+    lignes.forEach(function (l, i) { var d = el("<div>" + (adresses ? "" : '<span class="n">' + (i + 1) + "</span>") + "<code></code></div>"); d.querySelector("code").textContent = l; r.appendChild(d); });
     z.appendChild(r);
     var s = el('<label class="dj-saisie">' + libelle + ' <input type="text" inputmode="decimal" autocomplete="off"></label>'), inp = s.querySelector("input");
     inp.value = donjon.rep || ""; inp.disabled = fige; inp.oninput = function () { donjon.rep = inp.value; };
