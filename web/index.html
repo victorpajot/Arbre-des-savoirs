@@ -247,11 +247,16 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 /* Victor (2026-11-01) : double toucher sur le plateau = plein écran, croix en haut à droite pour fermer. */
 .grille-cadre.plein { position: fixed; inset: 0; z-index: 15; margin: 0 !important; background: #1E1A2B; }
 .grille-cadre.plein svg.grille.libre { width: 100%; height: 100%; aspect-ratio: auto; border-radius: 0 !important; }
-.grille-cadre.plein .cam { bottom: calc(14px + env(safe-area-inset-bottom, 0px)); right: 12px; }
 .grille-cadre .fermer-plein { display: none; }
 .grille-cadre.ensemble svg.grille.libre { touch-action: pan-y; }
 .grille-cadre .agrandir { display: grid; place-items: center; position: absolute; top: 8px; right: 8px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.12); cursor: pointer; padding: 0; }
 .grille-cadre.plein .agrandir { display: none; }
+/* Victor (2026-11-02) : plateau agrandi, bouton rond « Jouer » en bas à droite, comme le bouton Jouer de l'accueil. */
+.grille-cadre .jouer-plein { display: none; }
+.grille-cadre.plein .jouer-plein { display: grid; place-items: center; position: absolute; right: 12px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: 60px; height: 60px; border-radius: 50%; border: 0; padding: 0; background: var(--accent); color: var(--accent-ink); box-shadow: 0 2px 10px rgba(0,0,0,.35); cursor: pointer; }
+.grille-cadre.plein .jouer-plein svg { margin-left: 3px; }
+.grille-cadre.plein .jouer-plein:disabled { opacity: .45; cursor: default; }
+.grille-cadre.plein .cam { right: 84px; bottom: calc(26px + env(safe-area-inset-bottom, 0px)); }
 .grille-cadre.plein .fermer-plein { display: grid; place-items: center; position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 12px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 22px; line-height: 1; box-shadow: 0 1px 4px rgba(0,0,0,.25); cursor: pointer; }
 body.plateau-plein { overflow: hidden; }
 /* Victor (2026-11-01) : sur l'accueil, le parcours prend toute la largeur de l'écran (bloc et plateau bord à bord sur mobile). */
@@ -2816,6 +2821,9 @@ function demarrerJeu() {
         (vueEnsemble() ? __('<button type="button" data-cam="pion">Mon pion</button>') : __('<button type="button" data-cam="large">Vue d\'ensemble</button>')) + "</div>");
       grille.appendChild(cam);
       grille.appendChild(el(__('<button type="button" class="fermer-plein" data-cam="fermer" aria-label="Quitter le plein écran">✕</button>')));
+      var jp = el(__('<button type="button" class="jouer-plein" data-cam="jouer" aria-label="Jouer">') + ICONE_JOUER.replace(/26/g, "30") + "</button>");
+      if (!M.choixIA(C, P, maintenant()) && !M.duelBloquant(P)) jp.disabled = true;
+      grille.appendChild(jp);
       grille.appendChild(el(__('<button type="button" class="agrandir" data-cam="agrandir" aria-label="Plateau en plein écran"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>')));
     }
     majGrille();
@@ -2901,6 +2909,7 @@ function demarrerJeu() {
         else if (a === "pion") { var p = centreCase(P.plateau.idx + 1); camera.w = 190; camera.cx = p[0]; camera.cy = p[1]; appliquer(); }
         else if (a === "fermer") basculerPlein(false);
         else if (a === "agrandir") basculerPlein(true);
+        else if (a === "jouer") { basculerPlein(false); ouvrirJouer(); }
         return;
       }
       if (Date.now() - finGlisse < 350) return;
