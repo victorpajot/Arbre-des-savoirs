@@ -1,0 +1,603 @@
+[
+ {
+  "id": "pionnier-essaim",
+  "nom": {
+   "fr": "Clisthène"
+  },
+  "description": {
+   "fr": "Maîtriser 10 compétences. L'arbre Essaim s'ouvre."
+  },
+  "condition": {
+   "type": "competences_maitrisees",
+   "n": 10
+  },
+  "cache": false,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 508 av. J.-C., Clisthène confie le conseil d'Athènes à 500 citoyens tirés au sort, 50 par tribu. Il n'appelle pas cela démocratie, mais isonomia : l'égalité devant la loi."
+   },
+   "source": "Wikipédia (en), « Cleisthenes »"
+  },
+  "ouvre": "essaim",
+  "illustration": {
+   "type": "savant",
+   "id": "clisthene"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "branche-essaim",
+  "nom": {
+   "fr": "Reine de la ruche"
+  },
+  "description": {
+   "fr": "Maîtriser toutes les compétences d'Essaim jusqu'au rang 2. Une reine, mais qui ne commande rien."
+  },
+  "condition": {
+   "type": "branche_complete",
+   "stat": "essaim",
+   "rang_max": 2
+  },
+  "cache": false,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Avant l'essaimage, les ouvrières cessent de nourrir la vieille reine : elle arrête de pondre et s'allège, car une reine pondeuse est trop lourde pour voler loin."
+   },
+   "source": "Wikipédia (en), « Swarming (honey bee) »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-ruche"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "essaim-sans-faute",
+  "nom": {
+   "fr": "Sagesse des foules"
+  },
+  "description": {
+   "fr": "Réussir 3 quiz parfaits dans Essaim. Pour une fois, la foule, c'était vous."
+  },
+  "condition": {
+   "type": "quiz_parfaits_stat",
+   "stat": "essaim",
+   "n": 3
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1906, à une foire de Plymouth, 800 personnes estiment le poids d'un bœuf. La médiane des estimations, 1 207 livres, tombe à moins de 1 % du vrai poids, 1 198 livres. Galton le publie dans Nature en 1907."
+   },
+   "source": "Wikipédia (en), « Wisdom of the crowd »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "biais-boeuf"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "danse-incomprise",
+  "nom": {
+   "fr": "Danseur incompris"
+  },
+  "description": {
+   "fr": "Maîtriser la ruche et l'essaim. Vous voilà aussi doué qu'une ouvrière, en moins utile."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.ruche"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Un siècle avant von Frisch, l'apiculteur Nicholas Unhoch avait déjà décrit les abeilles qui dansent. Il avoua franchement ne pas savoir à quoi servait cette danse."
+   },
+   "source": "Wikipédia (en), « Waggle dance »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-ruche"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "loterie-civique",
+  "nom": {
+   "fr": "Loterie civique"
+  },
+  "description": {
+   "fr": "Maîtriser le tirage au sort athénien. Bonne nouvelle : vous ne serez jamais tiré au sort pour diriger quoi que ce soit."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.tirage"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Le plus grand fragment de kleroterion retrouvé sur l'agora d'Athènes comptait sans doute près de 1 000 fentes. Il servait à tirer au sort des citoyens par centaines."
+   },
+   "source": "Wikipédia (en), « Kleroterion »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-kleroterion"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "quatorze-mains",
+  "nom": {
+   "fr": "Quatorze mains"
+  },
+  "description": {
+   "fr": "Maîtriser le vote des tessons. Vous savez désormais qu'on trichait aux élections avant même d'avoir inventé l'urne."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.ostracisme"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Dans un puits près de l'Acropole, on a trouvé 190 ostraca au nom de Thémistocle. L'étude des écritures montre qu'ils ont été gravés par quatorze personnes seulement : des bulletins tout prêts à distribuer, ou à vendre."
+   },
+   "source": "Wikipédia (en), « Ostracism »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-ostracon"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "quarante-et-un",
+  "nom": {
+   "fr": "Quarante et un"
+  },
+  "description": {
+   "fr": "Maîtriser les grands conseils. Il ne vous a fallu que neuf tours de tirage pour y arriver."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.conseils"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "À Venise, le doge élu devait réunir au moins 25 voix sur 41. Avant d'arriver à ces 41 électeurs, il fallait passer par cinq tirages au sort et quatre élections."
+   },
+   "source": "Wikipédia (en), « Doge of Venice »"
+  },
+  "illustration": {
+   "type": "icone",
+   "id": "couronne"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "cote-un-contre-cinq",
+  "nom": {
+   "fr": "Un contre cinq"
+  },
+  "description": {
+   "fr": "Maîtriser Cardano et le hasard. Vos chances de tout retenir restent, elles, à calculer."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.hasard"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Cardano a énoncé, sans la démontrer, l'idée que les statistiques deviennent plus fiables quand on multiplie les essais. Il faudra plus de vingt ans d'efforts à Jacques Bernoulli pour la prouver."
+   },
+   "source": "Wikipédia (en), « Law of large numbers »"
+  },
+  "illustration": {
+   "type": "icone",
+   "id": "des-pascal"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "spirale-ratee",
+  "nom": {
+   "fr": "Spirale ratée"
+  },
+  "description": {
+   "fr": "Maîtriser la loi des grands nombres. Sur un grand nombre d'essais, même vous finissez par avoir juste."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.grandsnombres"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Jacques Bernoulli voulait une spirale logarithmique sur sa tombe, avec la devise « Eadem mutata resurgo ». Le graveur sculpta une spirale d'Archimède, qui n'a rien à voir."
+   },
+   "source": "Wikipédia (en), « Jacob Bernoulli »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "courbe-cloche"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "cinq-secondes",
+  "nom": {
+   "fr": "Cinq secondes"
+  },
+  "description": {
+   "fr": "Maîtriser le prix de la longitude. Vous savez où vous êtes. C'est déjà ça."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.concours"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1772, le roi George III teste lui-même une montre de John Harrison pendant dix semaines : elle ne varie que d'un tiers de seconde par jour. Le roi pousse alors Harrison à réclamer son dû au Parlement."
+   },
+   "source": "Wikipédia (en), « John Harrison »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "ph-horloge"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "vincennes-1749",
+  "nom": {
+   "fr": "Sorti de Vincennes"
+  },
+  "description": {
+   "fr": "Maîtriser le savoir à plusieurs mains. Jaucourt a écrit 17 266 articles ; vous avez lu une fiche."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.encyclopedie"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Arrêté en juillet 1749, Diderot passe plusieurs mois à l'isolement au donjon de Vincennes. Libéré le 3 novembre, il reprend l'Encyclopédie, dont le premier tome paraît deux ans plus tard."
+   },
+   "source": "Wikipédia (en), « Denis Diderot »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "pile-livres"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "honnetes-gens",
+  "nom": {
+   "fr": "Pour honnêtes gens"
+  },
+  "description": {
+   "fr": "Maîtriser le paradoxe du vote. Vous voilà incapable de faire confiance à une élection. Bienvenue."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.vote"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Le nom de Jean-Charles de Borda est l'un des 72 noms de savants gravés sur la tour Eiffel. Un cratère de la Lune porte aussi son nom."
+   },
+   "source": "Wikipédia (en), « Jean-Charles de Borda »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-urne"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "main-dans-la-theiere",
+  "nom": {
+   "fr": "Main dans la théière"
+  },
+  "description": {
+   "fr": "Maîtriser la main invisible. Vous savez maintenant où passent vos crédits : dans une main bien visible, la mienne."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.marche"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Adam Smith était célèbre pour sa distraction : on raconte qu'il est tombé dans une fosse de tannerie en discutant libre-échange, et qu'il a fait infuser du pain beurré dans une théière."
+   },
+   "source": "Wikipédia (en), « Adam Smith »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "pieces"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "star-sociale",
+  "nom": {
+   "fr": "Star sociale"
+  },
+  "description": {
+   "fr": "Maîtriser les sociogrammes. Dans le réseau de vos amis, vous êtes un point. Isolé."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.sociogramme"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Les co-auteurs d'un chercheur ont en moyenne plus de publications et de citations que lui, et nos abonnés ont en moyenne plus d'abonnés que nous : le paradoxe de l'amitié est partout."
+   },
+   "source": "Wikipédia (en), « Friendship paradox »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-reseau"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "chef-sorti",
+  "nom": {
+   "fr": "Le chef est sorti"
+  },
+  "description": {
+   "fr": "Maîtriser la question du chef. Rassurez-vous, je reste dans la pièce."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.chef"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Dans une expérience de Lewin, Lippitt et White, des garçons d'un groupe dirigé de façon autoritaire ont essayé de détruire ce qu'ils avaient fabriqué. Les groupes démocratiques, eux, présentaient leur travail ou le rapportaient chez eux."
+   },
+   "source": "Intro to Laissez-faire, socialsciencethatactuallyworks.com, 2018"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-toque"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "aigles-crotales",
+  "nom": {
+   "fr": "Aigles contre Crotales"
+  },
+  "description": {
+   "fr": "Maîtriser les camps et l'identité. Choisissez votre camp : le mien, évidemment."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.camps"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1935, Muzafer Sherif montre qu'un point lumineux immobile, qui semble bouger dans le noir, suffit à créer une norme : en groupe, les estimations convergent, et chacun garde l'estimation du groupe une semaine plus tard."
+   },
+   "source": "Wikipédia (en), « Muzafer Sherif »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-drapeaux"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "double-pont",
+  "nom": {
+   "fr": "Double pont"
+  },
+  "description": {
+   "fr": "Maîtriser la stigmergie. Une fourmi trouve le plus court chemin sans réfléchir. Vous, vous réfléchissez."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.stigmergie"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Les algorithmes de colonies de fourmis déposent des « phéromones virtuelles » sur les chemins prometteurs. Le premier, le système de fourmis de Marco Dorigo, date de 1991."
+   },
+   "source": "Wikipédia (en), « Stigmergy » et « Ant colony optimization algorithms »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-fourmi"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "lettres-cxq",
+  "nom": {
+   "fr": "Adieu C, X et Q"
+  },
+  "description": {
+   "fr": "Maîtriser l'art d'interroger les experts. Je prédis que vous oublierez tout. Je suis une experte."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.delphi"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "En 1900, John Elfreth Watkins annonçait pour l'an 2000 la disparition des lettres C, X et Q, et que les photographies seraient télégraphiées depuis n'importe quelle distance. Il a eu tort pour les lettres, raison pour les photos."
+   },
+   "source": "Mental Floss ; Wikipédia (en), « John Elfreth Watkins »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-oracle"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "six-mains",
+  "nom": {
+   "fr": "Six mains"
+  },
+  "description": {
+   "fr": "Maîtriser petit monde et liens faibles. Vous êtes à six poignées de main de n'importe qui. Pourtant personne ne vous rappelle."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.reseaux"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Dans un des essais de Milgram, 232 des 296 lettres envoyées ne sont jamais arrivées. Les « six degrés » ne valent que pour les chaînes qui ont abouti."
+   },
+   "source": "Wikipédia (en), « Small-world experiment »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-lettre"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "donnant-donnant",
+  "nom": {
+   "fr": "Donnant-donnant"
+  },
+  "description": {
+   "fr": "Maîtriser la coopération. Je vous propose un marché : vous révisez, je reste aimable. Pour voir."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.cooperer"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Elinor Ostrom refusait l'idée que la tragédie des communs soit inévitable : quand les usagers coopèrent, se surveillent et font respecter leurs règles, la ressource partagée peut durer."
+   },
+   "source": "Wikipédia (en), « Elinor Ostrom »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "coll-poignee"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "papillon-du-bresil",
+  "nom": {
+   "fr": "Papillon du Brésil"
+  },
+  "description": {
+   "fr": "Maîtriser l'art de prévoir à plusieurs. Je prévois à 80 % que vous oublierez la moitié. Je laisse 20 % au miracle."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.prevoir"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Edward Lorenz a fait tourner ses simulations de 1961 sur un ordinateur Royal McBee LGP-30. Son article fondateur, « Deterministic Nonperiodic Flow », paraît en 1963."
+   },
+   "source": "Wikipédia (en), « Butterfly effect »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "inf-papillon"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "loi-de-linus",
+  "nom": {
+   "fr": "Loi de Linus"
+  },
+  "description": {
+   "fr": "Maîtriser l'intelligence du web. Avec assez d'yeux, tous les bugs se voient. Je vous ai à l'œil."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.web"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Foldit, jeu de pliage de protéines lancé en 2008 par l'université de Washington, compte environ 240 000 joueurs inscrits. En 2010, la revue Nature a crédité 57 000 joueurs comme co-auteurs de résultats qui égalaient ou battaient les algorithmes."
+   },
+   "source": "Wikipédia (en), « Foldit »"
+  },
+  "illustration": {
+   "type": "icone",
+   "id": "internet"
+  },
+  "theme": "essaim"
+ },
+ {
+  "id": "facteur-c",
+  "nom": {
+   "fr": "Facteur c"
+  },
+  "description": {
+   "fr": "Maîtriser l'intelligence d'un groupe. Votre facteur c est excellent. Le c de « cancre », mais excellent."
+  },
+  "condition": {
+   "type": "competence_maitrisee",
+   "id": "coll.facteurc"
+  },
+  "cache": true,
+  "recompense": {
+   "type": "anecdote",
+   "texte": {
+    "fr": "Douglas Engelbart prédisait dès 1962 un effet multiplicateur dans la résolution de problèmes en groupe. Il forgera en 1994 l'expression de « QI collectif »."
+   },
+   "source": "Wikipédia (en), « Collective intelligence »"
+  },
+  "illustration": {
+   "type": "dessin",
+   "id": "cerveau"
+  },
+  "theme": "essaim"
+ }
+]
