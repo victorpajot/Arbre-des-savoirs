@@ -4202,6 +4202,10 @@ function demarrerJeu() {
     if (q.sorte === "livre") { var l = (C.livres || []).filter(function (x) { return x.id === q.id; })[0]; if (l) return '<span class="vitrine" style="padding:8px;background:' + l.couleur + ';border-radius:12px">' + svgSprite(l.embleme, Math.round(taille * 0.8)) + "</span>"; }
     var k = q.case && M.caseN(C, q.case);
     if (k) return svgSprite(k.icone, taille, q.titre);
+    // Victor (2026-11-02) : sans case, une date de la frise prend l'emblème de sa compétence (le dragon pour la Chine),
+    // plus l'icône de son époque : tout le XXe siècle affichait un atome, même les soies de Mawangdui.
+    var kc = q.lienComp && C.parId[q.lienComp];
+    if (kc && kc.embleme && grilleSprite(kc.embleme)) return svgSprite(kc.embleme, taille, q.titre);
     var ep = (C.plateau.epoques || []).filter(function (x) { return x.debut == null ? q.debut <= x.fin : q.debut >= x.debut && (x.fin == null || q.debut <= x.fin); })[0];
     return ep ? svgSprite(ep.icone, taille) : logoChrono(taille);
   }
