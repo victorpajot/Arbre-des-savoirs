@@ -4291,7 +4291,8 @@ function demarrerJeu() {
     var curseur = z.querySelector("input"), fins = z.querySelector(".sc-fins");
     if (ep) {
       var rep = z.querySelector(".sc-repere"); rep.innerHTML = "";
-      var chg = el('<button type="button" class="date-ep ep-' + ep.id + ' sc-ep-pris">' + svgSprite(ep.icone, 16, "") + esc(tx(ep.nom)) + __(" · changer</button>"));
+      // Victor (2026-11-02) : plus le mot « changer » ; toucher l'époque rouvre quand même la liste.
+      var chg = el('<button type="button" class="date-ep ep-' + ep.id + ' sc-ep-pris" aria-label="' + esc(tx(ep.nom)) + __(' : choisir une autre époque">') + svgSprite(ep.icone, 16, "") + esc(tx(ep.nom)) + "</button>");
       chg.onclick = function () { s.ep = null; maj(); };
       // Victor (2026-11-02) : des flèches pour passer à l'époque voisine (Antiquité → Moyen Âge) sans repasser par la liste.
       var ligneEp = el('<div class="sc-ep-ligne"></div>'), av = voisineEpoque(q, s.ep, -1), ap = voisineEpoque(q, s.ep, 1);
