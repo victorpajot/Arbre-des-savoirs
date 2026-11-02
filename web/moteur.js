@@ -103,6 +103,7 @@
       frise: extras.frise || null,
       livres: extras.bibliotheque ? extras.bibliotheque.livres : [],
       atomes: extras.atomes || null,
+      donjons: extras.donjons || null,
       parId: {},
       parStat: {},
       questionsPar: {},
@@ -415,6 +416,7 @@
       emplettes: [],
       atomes: {},
       sauvages: [],
+      donjons: {},
       siecles: null,
       faveur: null,
       colere: null,
@@ -497,6 +499,8 @@
     // v9 : tableau périodique (z → fiche) et atomes sauvages en attente de combat.
     out.atomes = p.atomes || {};
     out.sauvages = p.sauvages || [];
+    // Donjons : pièces posées, bugs, allumage (vides dans une ancienne partie).
+    out.donjons = p.donjons || {};
     // v34 : Chrono, le jeu des siècles (posé au premier besoin).
     out.siecles = p.siecles || null;
     // v10 : faveur de l'IA (posée au premier besoin) et jour de son dernier piège.
@@ -1262,14 +1266,180 @@
     route(contenu, partie);
     return p;
   }
-  // Le choix de fin de tour : « tour » (refaire un tour sur le nouveau parcours) ou « donjon » (pas encore ouvert).
+  // Le choix de fin de tour : « tour » (refaire un tour sur le nouveau parcours) ou « donjon » : un détour par le donjon
+  // ouvert (le premier pas fini, sinon le premier) ; le nouveau tour attend le retour, déjà dessiné.
   function choisirSuite(contenu, partie, choix, t) {
-    if (choix === "donjon") return { ok: false, raison: "bientot" };
+    var dj = null;
+    if (choix === "donjon") {
+      var ouverts = donjonsOuverts(contenu, partie);
+      if (!ouverts.length) return { ok: false, raison: "ferme" };
+      dj = (ouverts.filter(function (d) { return !(partie.donjons && partie.donjons[d.id] && partie.donjons[d.id].allume); })[0] || ouverts[0]).id;
+    }
     var p = appliquerParcours(contenu, partie);
     if (!p) return { ok: false, raison: "aucun" };
     partie.maj = t;
-    return { ok: true, parcours: p };
+    return dj ? { ok: true, parcours: p, donjon: dj, entree: entrerDonjon(contenu, partie, dj, t) } : { ok: true, parcours: p };
   }
+  // --- Donjons (Victor, 2026-10-31) -------------------------------------------
+  // Un donjon fait construire une invention, atelier par atelier. Chaque atelier fait d'abord manipuler l'idée d'un
+  // inventeur (l'épreuve), puis la vérifie par des questions : un quiz ordinaire si la compétence n'est pas encore
+  // maîtrisée, sinon un contrôle de quelques questions qui ne change rien à la progression. Réussi, il pose ses pièces.
+  // État : partie.donjons[id] = { poses: { piece: t }, manips: { atelier: t }, bug, bugsChasses, allume, entre }.
+  // Un rappel raté met en panne les pièces de sa compétence (déduit, rien à stocker) jusqu'au rappel réussi.
+  function listeDonjons(contenu) { return (contenu.donjons && contenu.donjons.donjons) || []; }
+  function donjonDe(contenu, id) { return listeDonjons(contenu).filter(function (d) { return d.id === id; })[0] || null; }
+  function compterDonjons(partie, f) {
+    var d = partie.donjons || {};
+    return Object.keys(d).reduce(function (s, id) { return s + f(d[id]); }, 0);
+  }
+  // Un arbre réussi : toutes ses compétences maîtrisées en même temps.
+  function arbreReussi(contenu, partie, stat) {
+    var ks = contenu.parStat[stat] || [];
+    return ks.length > 0 && ks.every(function (k) { return estMaitrisee(partie, k.id); });
+  }
+  // Ouvert quand ses arbres d'origine sont réussis, ou d'office si la nouvelle partie l'a choisi (réglage de test).
+  function donjonOuvert(contenu, partie, id) {
+    var dj = donjonDe(contenu, id); if (!dj) return false;
+    var choisis = (partie.options && partie.options.donjons) || [];
+    if (choisis.indexOf(id) >= 0) return true;
+    var arbres = dj.arbres.filter(function (s) { return contenu.parStat[s]; });
+    return arbres.length > 0 && arbres.every(function (s) { return arbreReussi(contenu, partie, s); });
+  }
+  function donjonsOuverts(contenu, partie) { return listeDonjons(contenu).filter(function (d) { return donjonOuvert(contenu, partie, d.id); }); }
+  function etatDonjon(partie, id) {
+    partie.donjons = partie.donjons || {};
+    return partie.donjons[id] || (partie.donjons[id] = { poses: {}, manips: {}, bug: null, bugsChasses: 0, allume: null, entre: null });
+  }
+  function atelierPose(etat, at) { return at.composants.every(function (c) { return etat.poses[c.id] != null; }); }
+  // Le premier atelier dont les pièces ne sont pas toutes posées : c'est là qu'on reprend.
+  function atelierCourant(contenu, partie, id) {
+    var dj = donjonDe(contenu, id); if (!dj) return null;
+    var e = etatDonjon(partie, id);
+    return dj.ateliers.filter(function (a) { return !atelierPose(e, a); })[0] || null;
+  }
+  // Pièces en panne : posées, mais une compétence de leur atelier a été perdue à un rappel raté.
+  function piecesEnPanne(contenu, partie, id) {
+    var dj = donjonDe(contenu, id); if (!dj) return [];
+    var e = etatDonjon(partie, id), out = [];
+    dj.ateliers.forEach(function (a) {
+      if (!atelierPose(e, a)) return;
+      var perdues = a.competences.filter(function (c) { var s = partie.competences[c]; return !!(s && s.perdue && !s.maitrise); });
+      if (perdues.length) a.composants.forEach(function (c) { out.push({ piece: c, atelier: a, competences: perdues }); });
+    });
+    return out;
+  }
+  // Le tableau de bord du donjon : ce que l'interface affiche sur le plan de la machine.
+  function bilanDonjon(contenu, partie, id) {
+    var dj = donjonDe(contenu, id); if (!dj) return null;
+    var e = etatDonjon(partie, id), pannes = piecesEnPanne(contenu, partie, id), enPanne = {};
+    pannes.forEach(function (p) { enPanne[p.piece.id] = true; });
+    var pieces = [];
+    dj.ateliers.forEach(function (a) { a.composants.forEach(function (c) { pieces.push({ id: c.id, piece: c, atelier: a.id, posee: e.poses[c.id] != null, panne: !!enPanne[c.id] }); }); });
+    var cour = atelierCourant(contenu, partie, id);
+    return { donjon: dj, ouvert: donjonOuvert(contenu, partie, id), pieces: pieces, posees: pieces.filter(function (p) { return p.posee; }).length,
+      total: pieces.length, atelier: cour, manipFaite: !!(cour && e.manips[cour.id]), bug: e.bug, pannes: pannes, allume: e.allume,
+      pret: !cour && !e.bug && !pannes.length && !e.allume };
+  }
+  function entrerDonjon(contenu, partie, id, t) {
+    if (!donjonOuvert(contenu, partie, id)) return { ok: false, raison: "ferme" };
+    var e = etatDonjon(partie, id), premiere = !e.entre;
+    if (premiere) e.entre = t;
+    partie.maj = t;
+    return { ok: true, premiere: premiere, bilan: bilanDonjon(contenu, partie, id) };
+  }
+  // L'épreuve de l'atelier en cours, tirée parmi ses variantes. Un bug à chasser passe avant tout.
+  function epreuveAtelier(contenu, partie, id, alea) {
+    if (!donjonOuvert(contenu, partie, id)) return { ok: false, raison: "ferme" };
+    var e = etatDonjon(partie, id), a = atelierCourant(contenu, partie, id);
+    if (e.bug) return { ok: false, raison: "bug" };
+    if (!a) return { ok: false, raison: "fini" };
+    var inst = a.epreuve.instances, i = Math.floor((alea || Math.random)() * inst.length);
+    return { ok: true, atelier: a, n: i, instance: inst[i], type: a.epreuve.type, epreuve: a.epreuve };
+  }
+  // Réponses comparées sans tenir compte des espaces, de la casse ni du type (« 32 » vaut 32, [1, 0] vaut ["1", "0"]).
+  function memeReponse(a, b) {
+    if (Array.isArray(a) || Array.isArray(b)) {
+      if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+      return a.every(function (x, i) { return memeReponse(x, b[i]); });
+    }
+    if (typeof a === "number" || typeof b === "number") { var x = lireNombre(a), y = lireNombre(b); return !isNaN(x) && !isNaN(y) && Math.abs(x - y) < 1e-9; }
+    return String(a).replace(/\s+/g, " ").trim().toLowerCase() === String(b).replace(/\s+/g, " ").trim().toLowerCase();
+  }
+  function verifierEpreuve(contenu, partie, id, n, reponse, t) {
+    var a = atelierCourant(contenu, partie, id); if (!a) return { ok: false, raison: "fini" };
+    var inst = a.epreuve.instances[n]; if (!inst) return { ok: false, raison: "instance" };
+    var juste = memeReponse(reponse, inst.attendu), e = etatDonjon(partie, id);
+    if (juste) e.manips[a.id] = t;
+    partie.maj = t;
+    return { ok: true, juste: juste, attendu: inst.attendu };
+  }
+  // Après la manipulation, les questions de l'atelier : « quiz » sur la première compétence pas encore maîtrisée
+  // (l'interface lance le quiz ordinaire, puis appelle finirAtelier), sinon « controle » : quelques questions tirées.
+  function questionsAtelier(contenu, partie, id, alea) {
+    var dj = donjonDe(contenu, id), a = atelierCourant(contenu, partie, id); if (!a) return null;
+    var nouvelle = a.competences.filter(function (c) { return contenu.parId[c] && !estMaitrisee(partie, c); })[0];
+    if (nouvelle) return { mode: "quiz", competence: nouvelle, atelier: a };
+    var qs = [];
+    a.competences.forEach(function (c) { qs = qs.concat(tirerQuestions(contenu, partie, c, dj.questions_atelier, alea)); });
+    return { mode: "controle", atelier: a, questions: melanger(qs, alea || Math.random).slice(0, dj.questions_atelier), seuil: dj.reussite_atelier };
+  }
+  // Fin de l'atelier. `resultats` : ceux du contrôle (mode « controle ») ; en mode « quiz », le quiz ordinaire est déjà
+  // terminé (terminerQuiz) et l'atelier est réussi si la compétence est désormais maîtrisée.
+  function finirAtelier(contenu, partie, id, resultats, t, alea) {
+    var dj = donjonDe(contenu, id), e = etatDonjon(partie, id), a = atelierCourant(contenu, partie, id);
+    if (!a) return { ok: false, raison: "fini" };
+    if (!e.manips[a.id]) return { ok: false, raison: "manipulation" };
+    var reussi = resultats ? resultats.filter(function (x) { return x.correct; }).length >= dj.reussite_atelier
+      : a.competences.every(function (c) { return !contenu.parId[c] || estMaitrisee(partie, c); });
+    partie.maj = t;
+    if (!reussi) { delete e.manips[a.id]; return { ok: true, reussi: false, atelier: a, contexte: "atelier_rate" }; }
+    a.composants.forEach(function (c) { e.poses[c.id] = t; });
+    var suivant = atelierCourant(contenu, partie, id), bug = null;
+    // Un bug se glisse parfois entre deux ateliers (jamais après le dernier) ; il faudra le chasser avant de continuer.
+    if (suivant && (alea || Math.random)() < dj.bug.chance) {
+      var faits = dj.ateliers.filter(function (x) { return atelierPose(e, x); });
+      var cible = faits[Math.floor((alea || Math.random)() * faits.length)];
+      var nom = Math.floor((alea || Math.random)() * dj.bug.noms.length);
+      bug = e.bug = { nom: nom, atelier: cible.id, competences: cible.competences.filter(function (c) { return contenu.parId[c]; }), depuis: t, q: null };
+    }
+    var nouveaux = verifierSucces(contenu, partie, t);
+    return { ok: true, reussi: true, atelier: a, poses: a.composants, suivant: suivant, bug: bug, succes: nouveaux,
+      contexte: bug ? "bug" : "atelier_reussi" };
+  }
+  // Le bug se chasse par une question sur l'atelier qu'il grignote ; la question reste la même jusqu'à la réponse.
+  function questionBug(contenu, partie, id, alea) {
+    var e = etatDonjon(partie, id), b = e.bug; if (!b) return null;
+    if (b.q && contenu.questionParId[b.q]) return contenu.questionParId[b.q];
+    var qs = []; b.competences.forEach(function (c) { qs = qs.concat(contenu.questionsPar[c] || []); });
+    if (!qs.length) { e.bug = null; return null; }
+    var q = qs[Math.floor((alea || Math.random)() * qs.length)];
+    b.q = q.id;
+    return q;
+  }
+  function chasserBug(contenu, partie, id, correct, t) {
+    var e = etatDonjon(partie, id); if (!e.bug) return { ok: false, raison: "aucun" };
+    partie.maj = t;
+    if (!correct) { e.bug.q = null; return { ok: true, chasse: false, contexte: "bug_rate" }; }
+    e.bug = null; e.bugsChasses = (e.bugsChasses || 0) + 1;
+    return { ok: true, chasse: true, contexte: "bug_chasse", succes: verifierSucces(contenu, partie, t) };
+  }
+  // L'allumage : toutes les pièces posées, aucun bug, aucune panne.
+  function allumer(contenu, partie, id, t) {
+    var b = bilanDonjon(contenu, partie, id); if (!b) return { ok: false, raison: "inconnu" };
+    if (b.allume) return { ok: false, raison: "deja" };
+    if (b.atelier) return { ok: false, raison: "pieces" };
+    if (b.bug) return { ok: false, raison: "bug" };
+    if (b.pannes.length) return { ok: false, raison: "panne", pannes: b.pannes };
+    etatDonjon(partie, id).allume = t;
+    partie.maj = t;
+    return { ok: true, texte: b.donjon.allumage.texte, contexte: "allumage", succes: verifierSucces(contenu, partie, t) };
+  }
+  // Une réplique d'Alyca, cheffe de chantier, pour un moment du donjon.
+  function repliqueDonjon(contenu, id, moment, alea) {
+    var dj = donjonDe(contenu, id), l = dj && dj.repliques[moment]; if (!l || !l.length) return null;
+    return l[Math.floor((alea || Math.random)() * l.length)];
+  }
+
   function formeParcours(contenu, id) { return contenu.plateau && contenu.plateau.parcours ? contenu.plateau.parcours.formes.filter(function (f) { return f.id === id; })[0] || null : null; }
   function caseDecouverte(partie, n) { return toutesCases(partie) || !!(partie.plateau.visites[n] || partie.plateau.position === n); }
   function toutesCases(partie) { return !!(partie.options && partie.options.toutesCases); }
@@ -2828,6 +2998,10 @@
       case "dates_niveau": return datesAuNiveau(partie, cond.niveau) >= cond.n;
       case "dates_rapides": return !!partie.siecles && partie.siecles.rapides >= cond.n;
       case "dates_fausses": return !!partie.siecles && partie.siecles.faux >= cond.n;
+      // Donjons (v-donjon) : pièces posées, bugs chassés (tous donjons confondus), donjon allumé.
+      case "composants_poses": return compterDonjons(partie, function (e) { return Object.keys(e.poses || {}).length; }) >= cond.n;
+      case "bugs_chasses": return compterDonjons(partie, function (e) { return e.bugsChasses || 0; }) >= cond.n;
+      case "donjon_fini": return !!(partie.donjons && partie.donjons[cond.id] && partie.donjons[cond.id].allume);
       case "eurekas": return c.eurekas >= cond.n;
       case "reculs": return c.reculs >= cond.n;
       default: return false;
@@ -3499,7 +3673,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,

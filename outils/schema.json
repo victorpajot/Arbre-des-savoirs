@@ -822,7 +822,10 @@
       "dates_niveau",
       "dates_rapides",
       "dates_fausses",
-      "toutes"
+      "toutes",
+      "composants_poses",
+      "bugs_chasses",
+      "donjon_fini"
      ]
     },
     "n": {
@@ -3470,6 +3473,225 @@
       "type": "object",
       "additionalProperties": {
        "type": "string"
+      }
+     }
+    }
+   }
+  },
+  "donjons": {
+   "type": "object",
+   "description": "Donjons : un donjon fait construire une invention, atelier par atelier (Victor, 2026-10-31). Chaque atelier fait manipuler l'idée d'un inventeur puis pose une ou plusieurs pièces.",
+   "additionalProperties": false,
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "donjons": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "nom",
+       "accroche",
+       "description",
+       "arbres",
+       "icone",
+       "questions_atelier",
+       "reussite_atelier",
+       "bug",
+       "ateliers",
+       "allumage",
+       "repliques"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "accroche": {
+        "$ref": "#/$defs/texte"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       },
+       "arbres": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+         "type": "string"
+        },
+        "description": "Le donjon s'ouvre quand ces arbres sont réussis (toutes leurs compétences maîtrisées)."
+       },
+       "icone": {
+        "type": "string"
+       },
+       "questions_atelier": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Questions de contrôle d'un atelier bâti sur une compétence déjà apprise."
+       },
+       "reussite_atelier": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "bug": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "chance",
+         "noms"
+        ],
+        "properties": {
+         "chance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+         },
+         "noms": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+           "$ref": "#/$defs/texte"
+          }
+         }
+        }
+       },
+       "ateliers": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "id",
+          "nom",
+          "lieu",
+          "savant",
+          "competences",
+          "recit",
+          "source",
+          "consigne",
+          "epreuve",
+          "composants"
+         ],
+         "properties": {
+          "id": {
+           "$ref": "#/$defs/id"
+          },
+          "nom": {
+           "$ref": "#/$defs/texte"
+          },
+          "lieu": {
+           "$ref": "#/$defs/texte"
+          },
+          "savant": {
+           "type": [
+            "string",
+            "null"
+           ]
+          },
+          "competences": {
+           "type": "array",
+           "minItems": 1,
+           "items": {
+            "type": "string"
+           }
+          },
+          "recit": {
+           "$ref": "#/$defs/texte"
+          },
+          "source": {
+           "type": "string",
+           "minLength": 1
+          },
+          "consigne": {
+           "$ref": "#/$defs/texte"
+          },
+          "epreuve": {
+           "type": "object",
+           "required": [
+            "type",
+            "instances"
+           ],
+           "properties": {
+            "type": {
+             "type": "string"
+            },
+            "instances": {
+             "type": "array",
+             "minItems": 1,
+             "items": {
+              "type": "object",
+              "required": [
+               "attendu"
+              ]
+             }
+            }
+           }
+          },
+          "composants": {
+           "type": "array",
+           "minItems": 1,
+           "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+             "id",
+             "nom",
+             "role"
+            ],
+            "properties": {
+             "id": {
+              "$ref": "#/$defs/id"
+             },
+             "nom": {
+              "$ref": "#/$defs/texte"
+             },
+             "role": {
+              "$ref": "#/$defs/texte"
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       "allumage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "texte"
+        ],
+        "properties": {
+         "texte": {
+          "$ref": "#/$defs/texte"
+         }
+        }
+       },
+       "repliques": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "array",
+         "minItems": 1,
+         "items": {
+          "$ref": "#/$defs/texte"
+         }
+        },
+        "required": [
+         "entree",
+         "atelier_reussi",
+         "atelier_rate",
+         "bug",
+         "bug_chasse",
+         "bug_rate",
+         "panne",
+         "allumage"
+        ]
+       }
       }
      }
     }

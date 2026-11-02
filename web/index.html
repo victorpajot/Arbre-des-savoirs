@@ -6889,7 +6889,7 @@ function demarrerJeu() {
   function construireContenu(off) {
     var d = M.filtrerPacks(BRUT, INDEX, off);
     C = M.indexerContenu(d["regles.json"], d["skills.json"], d["questions.json"], d["succes.json"], { commentaires: d["commentaires.json"], objets: d["objets.json"],
-      avatar: d["avatar.json"], ia: d["ia.json"], plateau: d["plateau.json"], frise: d["frise.json"], bibliotheque: d["bibliotheque.json"], ennemis: d["ennemis.json"], atomes: d["atomes.json"] });
+      avatar: d["avatar.json"], ia: d["ia.json"], plateau: d["plateau.json"], frise: d["frise.json"], bibliotheque: d["bibliotheque.json"], ennemis: d["ennemis.json"], atomes: d["atomes.json"], donjons: d["donjons.json"] });
     C.packsEteints = M.packsEteints(INDEX, off);
     // Le ton de chaque arbre (pack.json « reglages »: { « ton » }) : un ton choisi ne garde que les lignes d'arbre sur ce ton.
     C.tonArbres = {};
@@ -6910,7 +6910,7 @@ function demarrerJeu() {
   }
 
   var FICHIERS = ["regles.json", "skills.json", "questions.json", "succes.json", "commentaires.json", "objets.json", "avatar.json",
-    "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json", "packs.json"];
+    "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json", "donjons.json", "packs.json"];
   Promise.all(FICHIERS.map(charger)).then(function (d) {
     BRUT = {}; FICHIERS.forEach(function (f, i) { BRUT[f] = M.traduireChaines(d[i]); });
     INDEX = BRUT["packs.json"];

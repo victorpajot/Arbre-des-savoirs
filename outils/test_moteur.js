@@ -1266,7 +1266,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
 // le tour suivant reprend après la dernière case ; toutes vues, c'est la victoire et l'histoire recommence.
 {
   const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
-    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json") };
+    plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json"), donjons: d("donjons.json") };
   const CR = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), X);
   const T = new Date(2026, 9, 28, 10).getTime();
   const boucler = (P, v) => { P.faveur = { valeur: v, maj: T }; P.plateau.ennemis = {}; P.duel = null; P.sauvages = []; const rt = M.routeTour(CR, P); P.plateau.idx = rt.length - 2; P.plateau.position = rt[rt.length - 2]; return M.deplacer(CR, P, 3, T, "test"); };
@@ -1283,8 +1283,12 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(!tf.victoire);
   const s1 = P.plateau.parcoursSuivant; assert.ok(s1 && s1.palier === "comblee");
   assert.deepEqual(s1.cases.slice(0, 24), pool.slice(24, 48), "le tour suivant reprend après la dernière case");
-  assert.equal(M.choisirSuite(CR, P, "donjon", T).raison, "bientot");
-  assert.ok(M.choisirSuite(CR, P, "tour", T).ok);
+  assert.equal(M.choisirSuite(CR, P, "donjon", T).raison, "ferme", "aucun donjon ouvert");
+  // Détour par le donjon : il s'ouvre, et le tour suivant est déjà posé pour le retour.
+  P.options.donjons = ["ordinateur"];
+  const sd = M.choisirSuite(CR, P, "donjon", T);
+  assert.ok(sd.ok && sd.donjon === "ordinateur" && sd.entree.ok && sd.entree.premiere, "détour par le donjon");
+  delete P.options.donjons;
   assert.deepEqual(M.routeTour(CR, P), s1.cases); assert.equal(P.plateau.position, pool[24]);
   // Réglage : 12 cases par tour.
   P.options.casesTour = 12; assert.equal(M.casesParTour(CR, P), 12);
@@ -1864,4 +1868,75 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   tout(C.parStat.etincelle.map((k) => k.id));
   assert.ok(gagne(), "Logique + Étincelle ouvrent le Code");
   console.log("OK : donjon de l'ordinateur, pionnier à deux arbres");
+}
+
+// Donjons (Victor, 2026-11-02) : ateliers dans l'ordre, manipulation puis questions, pièces posées, bugs à chasser,
+// panne au rappel raté, allumage ; ouvert par Logique + Étincelle réussies, ou choisi dans la nouvelle partie.
+{
+  const T0 = new Date(2026, 10, 2, 9, 0).getTime();
+  const CD = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+    { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), donjons: d("donjons.json") });
+  const PD = M.nouvellePartie(T0);
+  const maitriser = (ids) => ids.forEach((id) => { PD.competences[id] = Object.assign(PD.competences[id] || {}, { maitrise: true, maitriseDepuis: T0 }); });
+  assert.ok(!M.donjonOuvert(CD, PD, "ordinateur"), "fermé au départ");
+  PD.options.donjons = ["ordinateur"]; assert.ok(M.donjonOuvert(CD, PD, "ordinateur"), "ouvert par le réglage de nouvelle partie");
+  delete PD.options.donjons;
+  maitriser(CD.parStat.logique.map((k) => k.id));
+  assert.ok(!M.donjonOuvert(CD, PD, "ordinateur"), "la Logique seule ne suffit pas");
+  maitriser(CD.parStat.etincelle.map((k) => k.id));
+  assert.ok(M.donjonOuvert(CD, PD, "ordinateur"), "Logique + Étincelle réussies");
+  assert.ok(M.entrerDonjon(CD, PD, "ordinateur", T0).premiere);
+  const dj = M.donjonDe(CD, "ordinateur");
+  let tt = T0, bugs = 0, sansBug = () => 0.99;
+  dj.ateliers.forEach((a, i) => {
+    assert.equal(M.atelierCourant(CD, PD, "ordinateur").id, a.id, "ateliers dans l'ordre");
+    const ep = M.epreuveAtelier(CD, PD, "ordinateur", () => 0);
+    assert.ok(ep.ok && ep.atelier.id === a.id);
+    assert.equal(M.finirAtelier(CD, PD, "ordinateur", [], tt).raison, "manipulation", "pas de questions avant la manipulation");
+    assert.ok(!M.verifierEpreuve(CD, PD, "ordinateur", ep.n, "faux", tt).juste);
+    // La réponse attendue, même tapée en texte, passe.
+    const att = ep.instance.attendu, rep = Array.isArray(att) ? att.map(String) : String(att);
+    assert.ok(M.verifierEpreuve(CD, PD, "ordinateur", ep.n, rep, tt).juste, a.id + " : réponse attendue acceptée");
+    const qa = M.questionsAtelier(CD, PD, "ordinateur");
+    let fin;
+    if (qa.mode === "quiz") {
+      assert.ok(qa.competence.startsWith("inf."), "quiz ordinaire sur la compétence nouvelle");
+      M.terminerQuiz(CD, PD, qa.competence, M.tirerQuestions(CD, PD, qa.competence, 5).map((q) => ({ id: q.id, correct: true })), tt);
+      fin = M.finirAtelier(CD, PD, "ordinateur", null, tt, i === 2 ? () => 0 : sansBug);
+    } else {
+      assert.equal(qa.questions.length, dj.questions_atelier, "contrôle sur une compétence déjà maîtrisée");
+      const rate = M.finirAtelier(CD, PD, "ordinateur", qa.questions.map((q) => ({ id: q.id, correct: false })), tt);
+      assert.ok(rate.ok && !rate.reussi, "contrôle raté : rien n'est posé");
+      assert.equal(M.finirAtelier(CD, PD, "ordinateur", [], tt).raison, "manipulation", "raté : on refait la manipulation");
+      M.verifierEpreuve(CD, PD, "ordinateur", ep.n, att, tt);
+      fin = M.finirAtelier(CD, PD, "ordinateur", qa.questions.map((q) => ({ id: q.id, correct: true })), tt, sansBug);
+    }
+    assert.ok(fin.reussi && fin.poses.length === a.composants.length, a.id + " : pièces posées");
+    if (fin.bug) {
+      bugs++;
+      assert.equal(M.epreuveAtelier(CD, PD, "ordinateur").raison, "bug", "le bug passe avant l'atelier suivant");
+      const q1 = M.questionBug(CD, PD, "ordinateur", () => 0);
+      assert.ok(q1 && M.questionBug(CD, PD, "ordinateur") === q1, "même question jusqu'à la réponse");
+      assert.ok(!M.chasserBug(CD, PD, "ordinateur", false, tt).chasse);
+      assert.ok(M.chasserBug(CD, PD, "ordinateur", true, tt).chasse);
+    }
+    tt += 60000;
+  });
+  assert.equal(bugs, 1, "un bug tiré, un bug chassé"); assert.equal(PD.donjons.ordinateur.bugsChasses, 1);
+  assert.ok(!M.atelierCourant(CD, PD, "ordinateur"), "toutes les pièces posées");
+  // Un rappel raté sur le binaire : la pièce tombe en panne, l'ordinateur ne s'allume pas.
+  Object.assign(PD.competences["inf.binaire"], { maitrise: false, perdue: true });
+  const panne = M.allumer(CD, PD, "ordinateur", tt);
+  assert.equal(panne.raison, "panne"); assert.deepEqual(panne.pannes.map((p) => p.piece.id), ["binaire"]);
+  PD.competences["inf.binaire"].maitrise = true;
+  assert.ok(M.bilanDonjon(CD, PD, "ordinateur").pret, "réparée au rappel réussi");
+  assert.ok(M.allumer(CD, PD, "ordinateur", tt).ok); assert.equal(M.allumer(CD, PD, "ordinateur", tt).raison, "deja");
+  for (let i = 0; i < 40 && !PD.succes["ordinateur-allume"]; i++) M.verifierRecompenses(CD, PD, tt + i);
+  ["premiere-piece", "ordinateur-allume"].forEach((id) => assert.ok(PD.succes[id], "succès " + id));
+  assert.ok(!PD.succes["chasseur-de-bugs"], "trois bugs pour le chasseur");
+  // La partie se sauvegarde et se relit avec son donjon.
+  const relue = M.migrer(JSON.parse(JSON.stringify(PD)), CD);
+  assert.ok(relue.donjons.ordinateur.allume && M.migrer({ format: 1 }, CD).donjons, "migration");
+  assert.ok(M.repliqueDonjon(CD, "ordinateur", "allumage").fr);
+  console.log("OK : donjon de l'ordinateur, 10 ateliers, bug, panne, allumage");
 }
