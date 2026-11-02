@@ -825,7 +825,9 @@
       "toutes",
       "composants_poses",
       "bugs_chasses",
-      "donjon_fini"
+      "donjon_fini",
+      "proces_gagne",
+      "proces_perdus"
      ]
     },
     "n": {
@@ -3690,6 +3692,268 @@
          "bug_rate",
          "panne",
          "allumage"
+        ]
+       }
+      }
+     }
+    },
+    "proces": {
+     "type": "array",
+     "description": "Le Procès (Victor, 2026-11-02) : un donjon de rhétorique, huit salles qui préparent une plaidoirie, puis le verdict.",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "nom",
+       "accroche",
+       "description",
+       "arbres",
+       "mentor",
+       "fictif",
+       "affaire",
+       "seuil",
+       "salles",
+       "vrai",
+       "repliques"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "accroche": {
+        "$ref": "#/$defs/texte"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       },
+       "arbres": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+         "type": "string"
+        }
+       },
+       "mentor": {
+        "type": "string"
+       },
+       "fictif": {
+        "$ref": "#/$defs/texte"
+       },
+       "affaire": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "titre",
+         "faits"
+        ],
+        "properties": {
+         "titre": {
+          "$ref": "#/$defs/texte"
+         },
+         "faits": {
+          "$ref": "#/$defs/texte"
+         }
+        }
+       },
+       "seuil": {
+        "type": "number",
+        "exclusiveMinimum": 0,
+        "maximum": 1
+       },
+       "salles": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "id",
+          "nom",
+          "type",
+          "consigne",
+          "lecon"
+         ],
+         "properties": {
+          "id": {
+           "$ref": "#/$defs/id"
+          },
+          "nom": {
+           "$ref": "#/$defs/texte"
+          },
+          "type": {
+           "enum": [
+            "choix",
+            "multi",
+            "ordre",
+            "audience"
+           ]
+          },
+          "consigne": {
+           "$ref": "#/$defs/texte"
+          },
+          "lecon": {
+           "type": "object",
+           "additionalProperties": false,
+           "required": [
+            "id",
+            "texte"
+           ],
+           "properties": {
+            "id": {
+             "$ref": "#/$defs/id"
+            },
+            "texte": {
+             "$ref": "#/$defs/texte"
+            },
+            "source": {
+             "type": "string",
+             "minLength": 1
+            }
+           }
+          },
+          "choisir": {
+           "type": "integer",
+           "minimum": 1
+          },
+          "options": {
+           "type": "array",
+           "minItems": 2,
+           "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+             "texte",
+             "points",
+             "retour"
+            ],
+            "properties": {
+             "texte": {
+              "$ref": "#/$defs/texte"
+             },
+             "points": {
+              "type": "integer",
+              "minimum": 0
+             },
+             "retour": {
+              "$ref": "#/$defs/texte"
+             },
+             "alyca": {
+              "$ref": "#/$defs/texte"
+             }
+            }
+           }
+          },
+          "items": {
+           "type": "array",
+           "minItems": 2,
+           "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+             "nom",
+             "role"
+            ],
+            "properties": {
+             "nom": {
+              "$ref": "#/$defs/texte"
+             },
+             "role": {
+              "$ref": "#/$defs/texte"
+             }
+            }
+           }
+          },
+          "echanges": {
+           "type": "array",
+           "minItems": 1,
+           "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+             "attaque",
+             "options"
+            ],
+            "properties": {
+             "attaque": {
+              "$ref": "#/$defs/texte"
+             },
+             "options": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+               "type": "object",
+               "additionalProperties": false,
+               "required": [
+                "texte",
+                "points",
+                "retour"
+               ],
+               "properties": {
+                "texte": {
+                 "$ref": "#/$defs/texte"
+                },
+                "points": {
+                 "type": "integer",
+                 "minimum": 0
+                },
+                "retour": {
+                 "$ref": "#/$defs/texte"
+                },
+                "alyca": {
+                 "$ref": "#/$defs/texte"
+                }
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       "vrai": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "id",
+         "titre",
+         "texte",
+         "source"
+        ],
+        "properties": {
+         "id": {
+          "$ref": "#/$defs/id"
+         },
+         "titre": {
+          "$ref": "#/$defs/texte"
+         },
+         "texte": {
+          "$ref": "#/$defs/texte"
+         },
+         "source": {
+          "type": "string",
+          "minLength": 1
+         }
+        }
+       },
+       "repliques": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "array",
+         "minItems": 1,
+         "items": {
+          "$ref": "#/$defs/texte"
+         }
+        },
+        "required": [
+         "entree",
+         "mentor",
+         "acquitte",
+         "condamne"
         ]
        }
       }

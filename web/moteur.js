@@ -417,6 +417,7 @@
       atomes: {},
       sauvages: [],
       donjons: {},
+      proces: {},
       siecles: null,
       faveur: null,
       colere: null,
@@ -501,6 +502,7 @@
     out.sauvages = p.sauvages || [];
     // Donjons : pièces posées, bugs, allumage (vides dans une ancienne partie).
     out.donjons = p.donjons || {};
+    out.proces = p.proces || {};
     // v34 : Chrono, le jeu des siècles (posé au premier besoin).
     out.siecles = p.siecles || null;
     // v10 : faveur de l'IA (posée au premier besoin) et jour de son dernier piège.
@@ -1271,14 +1273,14 @@
   function choisirSuite(contenu, partie, choix, t) {
     var dj = null;
     if (choix === "donjon") {
-      var ouverts = donjonsOuverts(contenu, partie);
+      var ouverts = entreesDonjons(contenu, partie);
       if (!ouverts.length) return { ok: false, raison: "ferme" };
-      dj = (ouverts.filter(function (d) { return !(partie.donjons && partie.donjons[d.id] && partie.donjons[d.id].allume); })[0] || ouverts[0]).id;
+      dj = ouverts.filter(function (d) { return !d.fini; })[0] || ouverts[0];
     }
     var p = appliquerParcours(contenu, partie);
     if (!p) return { ok: false, raison: "aucun" };
     partie.maj = t;
-    return dj ? { ok: true, parcours: p, donjon: dj, entree: entrerDonjon(contenu, partie, dj, t) } : { ok: true, parcours: p };
+    return dj ? { ok: true, parcours: p, donjon: dj.id, sorte: dj.sorte, entree: dj.sorte === "proces" ? entrerProces(contenu, partie, dj.id, t) : entrerDonjon(contenu, partie, dj.id, t) } : { ok: true, parcours: p };
   }
   // --- Donjons (Victor, 2026-10-31) -------------------------------------------
   // Un donjon fait construire une invention, atelier par atelier. Chaque atelier fait d'abord manipuler l'idée d'un
@@ -1440,6 +1442,92 @@
     return l[Math.floor((alea || Math.random)() * l.length)];
   }
 
+  // --- Le Procès (Victor, 2026-11-02) : donjon de rhétorique ------------------------------------------------------
+  // Huit salles préparent une plaidoirie (choix, tri, ordre, audience) ; chacune rapporte des points. Au bout, le
+  // verdict : acquittée si le total atteint le seuil. Perdu, on fait appel : tout recommence, rien n'est retenu contre vous.
+  // État : partie.proces[id] = { salle, points: { salle: n }, essais, perdus, acquitte, entre, dernier }.
+  function listeProces(contenu) { return (contenu.donjons && contenu.donjons.proces) || []; }
+  function procesDe(contenu, id) { return listeProces(contenu).filter(function (d) { return d.id === id; })[0] || null; }
+  function procesOuvert(contenu, partie, id) {
+    var pr = procesDe(contenu, id); if (!pr) return false;
+    if (((partie.options && partie.options.donjons) || []).indexOf(id) >= 0) return true;
+    var arbres = pr.arbres.filter(function (s) { return contenu.parStat[s]; });
+    return arbres.length > 0 && arbres.every(function (s) { return arbreReussi(contenu, partie, s); });
+  }
+  function etatProces(partie, id) {
+    partie.proces = partie.proces || {};
+    return partie.proces[id] || (partie.proces[id] = { salle: 0, points: {}, essais: 0, perdus: 0, acquitte: null, entre: null, dernier: null });
+  }
+  function maxSalle(s) {
+    var meilleur = function (opts) { return Math.max.apply(null, opts.map(function (o) { return o.points; })); };
+    if (s.type === "choix") return meilleur(s.options);
+    if (s.type === "multi") return s.choisir;
+    if (s.type === "ordre") return s.items.length;
+    return s.echanges.reduce(function (n, e) { return n + meilleur(e.options); }, 0);
+  }
+  function salleProces(contenu, partie, id) {
+    var pr = procesDe(contenu, id); if (!pr) return null;
+    return pr.salles[etatProces(partie, id).salle] || null;
+  }
+  function entrerProces(contenu, partie, id, t) {
+    if (!procesOuvert(contenu, partie, id)) return { ok: false, raison: "ferme" };
+    var e = etatProces(partie, id), premiere = !e.entre;
+    if (premiere) e.entre = t;
+    partie.maj = t;
+    return { ok: true, premiere: premiere, proces: procesDe(contenu, id), etat: e };
+  }
+  // `reponse` : un index (choix), des index (multi : autant que `choisir` ; ordre : les items dans l'ordre donné ;
+  // audience : une option par échange). Renvoie les points, le maximum et le retour du mentor pour chaque choix.
+  function repondreSalle(contenu, partie, id, reponse, t) {
+    var s = salleProces(contenu, partie, id); if (!s) return { ok: false, raison: "fini" };
+    var pts = 0, retours = [], max = maxSalle(s);
+    if (s.type === "choix") {
+      var o = s.options[reponse]; if (!o) return { ok: false, raison: "reponse" };
+      pts = o.points; retours.push(o.retour);
+    } else if (s.type === "multi") {
+      if (!Array.isArray(reponse) || reponse.length !== s.choisir || reponse.some(function (i, k) { return !s.options[i] || reponse.indexOf(i) !== k; })) return { ok: false, raison: "reponse" };
+      reponse.forEach(function (i) { pts += s.options[i].points; retours.push(s.options[i].retour); });
+    } else if (s.type === "ordre") {
+      if (!Array.isArray(reponse) || reponse.length !== s.items.length || reponse.slice().sort().join() !== s.items.map(function (_, i) { return i; }).sort().join()) return { ok: false, raison: "reponse" };
+      reponse.forEach(function (i, k) { if (i === k) pts++; });
+    } else {
+      if (!Array.isArray(reponse) || reponse.length !== s.echanges.length || reponse.some(function (i, k) { return !s.echanges[k].options[i]; })) return { ok: false, raison: "reponse" };
+      reponse.forEach(function (i, k) { var x = s.echanges[k].options[i]; pts += x.points; retours.push(x.retour); });
+    }
+    var e = etatProces(partie, id);
+    e.points[s.id] = pts; e.salle++;
+    partie.maj = t;
+    return { ok: true, salle: s, points: pts, max: max, retours: retours, lecon: s.lecon, suivante: salleProces(contenu, partie, id) };
+  }
+  function scoreProces(contenu, partie, id) {
+    var pr = procesDe(contenu, id), e = etatProces(partie, id), total = 0, max = 0;
+    pr.salles.forEach(function (s) { total += e.points[s.id] || 0; max += maxSalle(s); });
+    return { total: total, max: max, seuil: Math.ceil(pr.seuil * max - 1e-9) };
+  }
+  // Toutes les salles passées : le jury rend son verdict ; la partie suivante (l'appel) repart de la première salle.
+  function verdictProces(contenu, partie, id, t) {
+    var pr = procesDe(contenu, id); if (!pr) return { ok: false, raison: "inconnu" };
+    var e = etatProces(partie, id);
+    if (e.salle < pr.salles.length) return { ok: false, raison: "salles" };
+    var sc = scoreProces(contenu, partie, id), acquitte = sc.total >= sc.seuil;
+    e.essais++;
+    if (acquitte) { if (!e.acquitte) e.acquitte = t; } else e.perdus++;
+    e.dernier = { total: sc.total, max: sc.max, seuil: sc.seuil, acquitte: acquitte, t: t, points: e.points };
+    e.salle = 0; e.points = {};
+    partie.maj = t;
+    return { ok: true, acquitte: acquitte, total: sc.total, max: sc.max, seuil: sc.seuil, vrai: pr.vrai, contexte: acquitte ? "acquitte" : "condamne", succes: verifierSucces(contenu, partie, t) };
+  }
+  function repliqueProces(contenu, id, moment, alea) {
+    var pr = procesDe(contenu, id), l = pr && pr.repliques[moment]; if (!l || !l.length) return null;
+    return l[Math.floor((alea || Math.random)() * l.length)];
+  }
+  // Les donjons ouverts, toutes sortes confondues : { sorte: "construction" | "proces", id, nom, fini }.
+  function entreesDonjons(contenu, partie) {
+    var out = [];
+    donjonsOuverts(contenu, partie).forEach(function (d) { out.push({ sorte: "construction", id: d.id, nom: d.nom, fini: !!(partie.donjons && partie.donjons[d.id] && partie.donjons[d.id].allume) }); });
+    listeProces(contenu).forEach(function (d) { if (procesOuvert(contenu, partie, d.id)) out.push({ sorte: "proces", id: d.id, nom: d.nom, fini: !!(partie.proces && partie.proces[d.id] && partie.proces[d.id].acquitte) }); });
+    return out;
+  }
   function formeParcours(contenu, id) { return contenu.plateau && contenu.plateau.parcours ? contenu.plateau.parcours.formes.filter(function (f) { return f.id === id; })[0] || null : null; }
   function caseDecouverte(partie, n) { return toutesCases(partie) || !!(partie.plateau.visites[n] || partie.plateau.position === n); }
   function toutesCases(partie) { return !!(partie.options && partie.options.toutesCases); }
@@ -3002,6 +3090,8 @@
       case "composants_poses": return compterDonjons(partie, function (e) { return Object.keys(e.poses || {}).length; }) >= cond.n;
       case "bugs_chasses": return compterDonjons(partie, function (e) { return e.bugsChasses || 0; }) >= cond.n;
       case "donjon_fini": return !!(partie.donjons && partie.donjons[cond.id] && partie.donjons[cond.id].allume);
+      case "proces_gagne": return !!(partie.proces && partie.proces[cond.id] && partie.proces[cond.id].acquitte);
+      case "proces_perdus": return Object.keys(partie.proces || {}).reduce(function (n, k) { return n + (partie.proces[k].perdus || 0); }, 0) >= cond.n;
       case "eurekas": return c.eurekas >= cond.n;
       case "reculs": return c.reculs >= cond.n;
       default: return false;
@@ -3673,7 +3763,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,

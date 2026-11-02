@@ -139,7 +139,7 @@ def main():
         if cond["type"] == "donjon_fini" and cond.get("id") not in {d["id"] for d in (contenu.get("donjons") or {}).get("donjons", [])}:
             erreurs.append(f"{ou} : donjon inconnu {cond.get('id')}")
         besoin = {"competence_maitrisee": "id", "succes": "id", "ennemi_vaincu": "id", "famille_capturee": "famille", "branche_complete": "stat", "quiz_parfaits_stat": "stat",
-                  "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None, "toutes": "conditions", "donjon_fini": "id"}.get(cond["type"], "n")
+                  "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None, "toutes": "conditions", "donjon_fini": "id", "proces_gagne": "id"}.get(cond["type"], "n")
         if besoin and besoin not in cond:
             erreurs.append(f"{ou} : la condition {cond['type']} demande « {besoin} »")
 
@@ -229,6 +229,17 @@ def main():
             pieces += [c["id"] for c in at_["composants"]]
         if len(pieces) != len(set(pieces)):
             erreurs.append(f"donjons.json {dj['id']} : pièce en double")
+    for pr in (contenu.get("donjons") or {}).get("proces", []):
+        ou = f"donjons.json proces/{pr['id']}"
+        erreurs += [f"{ou} : arbre inconnu {s_}" for s_ in pr["arbres"] if s_ not in stats]
+        if pr["mentor"] not in savants:
+            erreurs.append(f"{ou} : mentor inconnu {pr['mentor']}")
+        for sa in pr["salles"]:
+            besoin_s = {"choix": "options", "multi": "options", "ordre": "items", "audience": "echanges"}[sa["type"]]
+            if besoin_s not in sa:
+                erreurs.append(f"{ou}/{sa['id']} : la salle {sa['type']} demande « {besoin_s} »")
+            if sa["type"] == "multi" and not (sa.get("choisir") and sum(1 for o in sa.get("options", []) if o["points"]) >= sa["choisir"]):
+                erreurs.append(f"{ou}/{sa['id']} : pas assez de bons choix pour « choisir »")
     # v9 : atomes du jeu de Mendeleïev.
     at = contenu["atomes"]
     for i, e in enumerate(at["elements"], 1):

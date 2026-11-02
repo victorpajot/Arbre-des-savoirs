@@ -54,6 +54,7 @@ EMPLACEMENTS = {
     "atomes.json": ("atomes.json", ("elements",)),
     "boutique.json": ("ia.json", ("credits", "boutique", "articles")),
     "donjons.json": ("donjons.json", ("donjons",)),
+    "proces.json": ("donjons.json", ("proces",)),
 }
 PAR_CHEMIN = {(f, c): nom for nom, (f, c) in EMPLACEMENTS.items()}
 AUTRES = {"pack.json", "verifications.json", "ordre.json", "portraits.json", "numeros_cases.json", "LISEZMOI.md"}

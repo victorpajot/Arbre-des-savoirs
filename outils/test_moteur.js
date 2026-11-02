@@ -1940,3 +1940,38 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(M.repliqueDonjon(CD, "ordinateur", "allumage").fr);
   console.log("OK : donjon de l'ordinateur, 14 ateliers, bug, panne, allumage");
 }
+
+// Le Procès (Victor, 2026-11-02) : ouvert par l'Éloquence réussie (ou choisi), huit salles notées, verdict, appel.
+{
+  const T0 = new Date(2026, 10, 2, 9, 0).getTime();
+  const CP = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+    { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), donjons: d("donjons.json") });
+  const PP = M.nouvellePartie(T0);
+  assert.ok(!M.procesOuvert(CP, PP, "roscius"));
+  CP.parStat.eloquence.forEach((k) => { PP.competences[k.id] = { maitrise: true, maitriseDepuis: T0 }; });
+  assert.ok(M.procesOuvert(CP, PP, "roscius"), "ouvert par l'Éloquence réussie");
+  assert.ok(M.entreesDonjons(CP, PP).some((e) => e.sorte === "proces" && e.id === "roscius"));
+  assert.ok(M.entrerProces(CP, PP, "roscius", T0).premiere);
+  const pr = M.procesDe(CP, "roscius");
+  // Les meilleurs choix de chaque salle.
+  const meilleur = (opts) => opts.reduce((b, o, i) => (o.points > opts[b].points ? i : b), 0);
+  const parfait = (s) => s.type === "choix" ? meilleur(s.options)
+    : s.type === "multi" ? s.options.map((o, i) => [o.points, i]).sort((a, b) => b[0] - a[0]).slice(0, s.choisir).map((x) => x[1])
+    : s.type === "ordre" ? s.items.map((_, i) => i) : s.echanges.map((e) => meilleur(e.options));
+  const pire = (s) => s.type === "choix" ? s.options.findIndex((o) => !o.points)
+    : s.type === "multi" ? s.options.map((o, i) => [o.points, i]).sort((a, b) => a[0] - b[0]).slice(0, s.choisir).map((x) => x[1])
+    : s.type === "ordre" ? s.items.map((_, i) => s.items.length - 1 - i) : s.echanges.map((e) => e.options.findIndex((o) => !o.points));
+  assert.equal(M.repondreSalle(CP, PP, "roscius", [0, 0, 1], T0).raison, "reponse", "le dossier refuse un fait choisi deux fois");
+  assert.equal(M.verdictProces(CP, PP, "roscius", T0).raison, "salles", "pas de verdict avant la dernière salle");
+  pr.salles.forEach((s) => { const r = M.repondreSalle(CP, PP, "roscius", pire(s), T0); assert.ok(r.ok && r.lecon, s.id); });
+  const perdu = M.verdictProces(CP, PP, "roscius", T0 + 1);
+  assert.ok(perdu.ok && !perdu.acquitte && perdu.vrai.source, "mauvaise plaidoirie : condamnée");
+  assert.equal(M.salleProces(CP, PP, "roscius").id, pr.salles[0].id, "l'appel repart de la première salle");
+  pr.salles.forEach((s) => { const r = M.repondreSalle(CP, PP, "roscius", parfait(s), T0 + 2); assert.equal(r.points, r.max, s.id + " : le meilleur choix vaut le maximum"); });
+  const gagne = M.verdictProces(CP, PP, "roscius", T0 + 3);
+  assert.ok(gagne.acquitte && gagne.total === gagne.max, "plaidoirie parfaite : acquittée");
+  for (let i = 0; i < 40 && !(PP.succes["acquittement"] && PP.succes["en-appel"]); i++) M.verifierRecompenses(CP, PP, T0 + 10 + i);
+  assert.ok(PP.succes["acquittement"] && PP.succes["en-appel"], "succès du Procès");
+  assert.ok(M.migrer(JSON.parse(JSON.stringify(PP)), CP).proces.roscius.acquitte, "migration");
+  console.log("OK : le Procès, huit salles, verdict, appel");
+}

@@ -1298,6 +1298,27 @@ svg.grille .interro { transition: opacity .3s; }
 .dj-memoire button.on { background: #7CFFA8; box-shadow: 0 0 8px #7CFFA8; }
 .dj-cases-mem { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; font: 600 16px var(--f-mono); }
 .dj-cases-mem span { background: var(--bg); border: 2px solid var(--line); border-radius: 8px; padding: 4px 10px; }
+.pr-fictif { align-self: flex-start; font-size: 15px; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: color-mix(in srgb, #8E5BA8 16%, var(--surface)); color: var(--ink); border: 2px dashed #8E5BA8; }
+.pr-mentor { display: flex; gap: 10px; align-items: flex-start; background: color-mix(in srgb, #C9962A 12%, var(--surface)); border-left: 4px solid #C9962A; border-radius: 12px; padding: 10px 12px; }
+.pr-mentor .vitrine { flex: none; width: 46px; height: 54px; display: grid; place-items: center; }
+.pr-mentor .qui { font-size: 13px; font-weight: 700; color: var(--muted); }
+.pr-mentor p { font-size: 17px; line-height: 1.45; margin: 2px 0 0; }
+.choix button.pr-sel { border-color: #8E5BA8; background: color-mix(in srgb, #8E5BA8 14%, var(--surface)); }
+.pr-ordre button { display: flex; gap: 12px; align-items: center; }
+.pr-ordre small { display: block; color: var(--muted); font-size: 15px; }
+.pr-num { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font: 800 16px var(--f-mono); }
+.pr-sel .pr-num { background: #8E5BA8; border-color: #8E5BA8; color: #fff; }
+.pr-points { display: flex; gap: 6px; } .pr-points i { flex: 1; height: 6px; border-radius: 3px; background: var(--line); } .pr-points i.fait { background: #8E5BA8; } .pr-points i.cur { background: var(--ink); }
+.pr-attaque { background: color-mix(in srgb, var(--bad) 8%, var(--surface)); border: 2px solid color-mix(in srgb, var(--bad) 50%, var(--line)); border-radius: 14px; padding: 12px 14px; }
+.pr-attaque .qui { font-size: 13px; font-weight: 700; color: var(--bad); text-transform: uppercase; letter-spacing: .04em; }
+.pr-attaque p { font-family: var(--f-display); font-size: 21px; font-weight: 700; margin: 4px 0 0; }
+.pr-score { align-self: center; font: 600 22px var(--f-mono); } .pr-score b { font-size: 44px; }
+.pr-plan { margin: 0; padding-left: 22px; font-size: 17px; line-height: 1.5; }
+.pr-lecon { border-left: 4px solid #8E5BA8; }
+.pr-verdict { text-align: center; border-radius: 16px; padding: 18px; }
+.pr-verdict h2 { font-size: 34px; } .pr-verdict p { font-size: 18px; margin: 4px 0 0; }
+.pr-verdict.ok { background: color-mix(in srgb, var(--good) 16%, var(--surface)); border: 2px solid var(--good); }
+.pr-verdict.ko { background: color-mix(in srgb, var(--bad) 12%, var(--surface)); border: 2px solid var(--bad); }
 .dj-entree { display: grid; gap: 4px; width: 100%; text-align: left; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); padding: 12px 14px; margin-top: 8px; color: var(--ink); }
 .dj-entree b { font-size: 19px; } .dj-entree small { font-size: 15px; color: var(--muted); }
 .dj-jauge { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
@@ -2851,13 +2872,13 @@ function demarrerJeu() {
         '<div class="mot"></div><div class="choix-victoire">' +
         __('<button type="button" class="btn large" data-v="encore">Recommencer depuis le début</button>') +
         __('<button type="button" class="btn sec large" data-v="arbres">Allumer d\'autres arbres</button>') +
-        (M.donjonsOuverts(C, P).length ? __('<button type="button" class="btn sec large" data-v="donjon">Détour par le donjon</button>') : __('<button type="button" class="btn sec large donjon" disabled>Donjon <small>fermé : réussis ses arbres</small></button>')) + "</div></div></div>");
+        (M.entreesDonjons(C, P).length ? __('<button type="button" class="btn sec large" data-v="donjon">Détour par le donjon</button>') : __('<button type="button" class="btn sec large donjon" disabled>Donjon <small>fermé : réussis ses arbres</small></button>')) + "</div></div></div>");
       var repV = M.replique(C, P, ["tour_fini"]);
       var mv = repV && comite(Object.assign({}, repV, { expression: "impressionnee", aparte: false }), true);
       if (mv) zv.querySelector(".mot").appendChild(mv);
       zv.querySelector('[data-v="encore"]').addEventListener("click", function () { zv.remove(); if (suite) suite(); });
       var vd = zv.querySelector('[data-v="donjon"]');
-      if (vd) vd.addEventListener("click", function () { zv.remove(); if (suite) suite(); var d0 = M.donjonsOuverts(C, P)[0]; if (d0) ouvrirDonjon(d0.id); });
+      if (vd) vd.addEventListener("click", function () { zv.remove(); if (suite) suite(); var d0 = M.entreesDonjons(C, P)[0]; if (d0) ouvrirEntree(d0.sorte, d0.id); });
       zv.querySelector('[data-v="arbres"]').addEventListener("click", function () {
         zv.remove(); if (suite) suite();
         fermerFeuille(); vue = "perso"; ongletPerso = "reglages"; rendre(); window.scrollTo(0, 0);
@@ -2911,11 +2932,11 @@ function demarrerJeu() {
     z.appendChild(el('<p class="meta">' + (gagne ? __("Toute l'histoire est parcourue. Le prochain tour la reprend depuis le début ; allume d'autres arbres pour y mêler leurs cases.") : __("Le prochain tour reprend l'histoire où celui-ci s'est arrêté. Tu le découvres en repartant.")) + "</p>"));
     var choix = el('<div class="choix-suite"><button type="button" class="btn large">' + svgApercu("serpentin", 24, "#fff") + __(' Refaire un tour</button><button type="button" class="btn sec large donjon">Détour par le donjon</button></div>'));
     var bDon = choix.querySelector(".donjon");
-    if (!M.donjonsOuverts(C, P).length) { bDon.disabled = true; bDon.innerHTML = __("Donjon <small>fermé : réussis ses arbres</small>"); }
+    if (!M.entreesDonjons(C, P).length) { bDon.disabled = true; bDon.innerHTML = __("Donjon <small>fermé : réussis ses arbres</small>"); }
     bDon.onclick = function () {
       var r = M.choisirSuite(C, P, "donjon", maintenant()); if (!r.ok) return;
       sauver(); if (quiz) fermerQuiz(); else if (duel) fermerDuel(); else if (combat) fermerCombat(); else rendre();
-      ouvrirDonjon(r.donjon);
+      ouvrirEntree(r.sorte, r.donjon);
     };
     if (gagne) {
       var aa = el(__('<button type="button" class="btn sec large">Allumer d\'autres arbres</button>'));
@@ -4771,9 +4792,151 @@ function demarrerJeu() {
     (r.succes || []).forEach(function (s) { inn.appendChild(el('<div class="dj-succes">🏆 ' + __("Succès : ") + "<b>" + esc(tx(s.nom)) + "</b></div>")); });
     var go = el('<button type="button" class="btn large">' + __("Retour au plan") + "</button>"); go.onclick = function () { allerDonjon("plan", { res: null }); }; inn.appendChild(go);
   }
+  // --- Le Procès (Victor, 2026-11-02) : huit salles, puis le verdict d'Alyca, présidente du tribunal --------------
+  var proces = null;
+  function ouvrirProces(id) {
+    var r = M.entrerProces(C, P, id, maintenant());
+    if (!r.ok) { toast(__("Ce donjon n'est pas encore ouvert.")); return; }
+    fermerFeuille();
+    proces = { id: id, phase: "intro", premiere: r.premiere, replique: M.repliqueProces(C, id, "entree") };
+    sauver(); rendreProces();
+  }
+  function fermerProces() { proces = null; var z = document.querySelector(".quiz.proces"); if (z) z.remove(); rendre(); }
+  function allerProces(phase, extra) { Object.assign(proces, { phase: phase }, extra || {}); rendreProces(); var z = document.querySelector(".quiz.proces"); if (z) z.scrollTop = 0; }
+  // Le mentor parle : son portrait, son nom, sa phrase.
+  function paroleMentor(pr, texte) {
+    var s = savantDe(pr.mentor);
+    var b = el('<div class="pr-mentor">' + (s ? '<span class="vitrine">' + svgSavant(s, 40) + "</span>" : "") + '<div><div class="qui">' + esc(s ? tx(s.nom) : "") + __(" · ton mentor") + "</div><p></p></div></div>");
+    b.querySelector("p").textContent = texte;
+    return b;
+  }
+  function rendreProces() {
+    var ancien = document.querySelector(".quiz.proces"); if (ancien) ancien.remove();
+    if (!proces) return;
+    var pr = M.procesDe(C, proces.id); if (!pr) { proces = null; return; }
+    var e = M.etatProces(P, proces.id);
+    var z = el('<div class="quiz donjon proces" role="dialog" aria-modal="true" aria-label="' + esc(tx(pr.nom)) + '"><div class="in"></div></div>'), inn = z.querySelector(".in");
+    var haut = el('<div class="haut"><div class="titre"><span class="eyebrow">' + __("Donjon · salle ") + Math.max(1, Math.min(proces.phase === "retour" ? e.salle : e.salle + 1, pr.salles.length)) + " / " + pr.salles.length + "</span><b>" + esc(tx(pr.nom)) +
+      '</b></div><button type="button" class="fermer" aria-label="' + __("Reprendre plus tard") + '">×</button></div>');
+    haut.querySelector(".fermer").onclick = fermerProces;
+    inn.appendChild(haut);
+    document.getElementById("couche").appendChild(z);
+    ({ intro: procesIntro, salle: procesSalle, retour: procesRetour, verdict: procesVerdict, vrai: procesVrai })[proces.phase](inn, pr, e);
+    var f = z.querySelector(".btn"); if (f) f.focus({ preventScroll: true });
+  }
+  function procesIntro(inn, pr, e) {
+    inn.appendChild(el('<div class="pr-fictif">' + esc(tx(pr.fictif)) + "</div>"));
+    var a = el('<div class="bloc"><div class="eyebrow">' + __("Le dossier") + "</div><h2></h2><p class=\"dj-recit\"></p></div>");
+    a.querySelector("h2").textContent = tx(pr.affaire.titre); a.querySelector("p").textContent = tx(pr.affaire.faits);
+    inn.appendChild(a);
+    var m = repliqueAlyca(proces.replique && tx(proces.replique), "moqueuse"); if (m) inn.appendChild(m);
+    var l = pr.repliques.mentor; if (l && l.length) inn.appendChild(paroleMentor(pr, tx(l[e.salle ? 1 % l.length : 0])));
+    if (e.dernier) inn.appendChild(el('<div class="dj-verdict ' + (e.dernier.acquitte ? "ok" : "ko") + '">' + (e.dernier.acquitte ? __("Dernier verdict : acquittée") : __("Dernier verdict : condamnée")) + " (" + e.dernier.total + " / " + e.dernier.max + ")</div>"));
+    var s = pr.salles[e.salle];
+    var go = el('<button type="button" class="btn large">' + (e.salle ? __("Reprendre : ") : e.essais ? __("Faire appel : ") : __("Entrer : ")) + __("salle ") + (e.salle + 1) + " · " + esc(tx(s.nom)) + "</button>");
+    go.onclick = function () { allerProces("salle", { sel: [], aud: null }); };
+    inn.appendChild(go);
+    if (e.essais) { var v = el('<button type="button" class="btn sec large">' + __("Le vrai procès") + "</button>"); v.onclick = function () { allerProces("vrai"); }; inn.appendChild(v); }
+    inn.appendChild(el('<p class="note">' + esc(tx(pr.description)) + "</p>"));
+  }
+  function procesSalle(inn, pr, e) {
+    var s = M.salleProces(C, P, proces.id); if (!s) { allerProces("verdict"); return; }
+    inn.appendChild(el('<div class="eyebrow">' + __("Salle ") + (e.salle + 1) + " · " + esc(tx(s.nom)) + "</div>"));
+    var c = el('<p class="enonce"></p>'); c.textContent = tx(s.consigne); inn.appendChild(c);
+    var sel = proces.sel, valider = el('<button type="button" class="btn large">' + __("Plaider") + "</button>");
+    function envoyer(rep) { var r = M.repondreSalle(C, P, proces.id, rep, maintenant()); sauver(); if (r.ok) allerProces("retour", { res: r }); }
+    if (s.type === "choix" || s.type === "multi") {
+      var n = s.type === "choix" ? 1 : s.choisir, zone = el('<div class="choix"></div>');
+      if (n > 1) inn.appendChild(el('<p class="meta">' + __("Choisis-en ") + n + ".</p>"));
+      s.options.forEach(function (o, i) {
+        var bt = el('<button type="button"' + (sel.indexOf(i) >= 0 ? ' class="pr-sel"' : "") + "></button>"); bt.textContent = tx(o.texte);
+        bt.onclick = function () {
+          var k = sel.indexOf(i);
+          if (k >= 0) sel.splice(k, 1); else { if (n === 1) sel.length = 0; if (sel.length < n) sel.push(i); }
+          rendreProces();
+        };
+        zone.appendChild(bt);
+      });
+      inn.appendChild(zone);
+      valider.disabled = sel.length !== n;
+      valider.onclick = function () { envoyer(n === 1 ? sel[0] : sel.slice()); };
+      inn.appendChild(valider);
+    } else if (s.type === "ordre") {
+      // On touche les parties dans l'ordre voulu ; elles se numérotent.
+      var liste = el('<div class="choix pr-ordre"></div>'), ordreAff = proces.melange || (proces.melange = M.melanger(s.items.map(function (_, i) { return i; }), Math.random));
+      ordreAff.forEach(function (i) {
+        var it = s.items[i], k = sel.indexOf(i);
+        var bt = el('<button type="button"' + (k >= 0 ? ' class="pr-sel"' : "") + '><span class="pr-num">' + (k >= 0 ? k + 1 : "") + "</span><span><b></b><small></small></span></button>");
+        bt.querySelector("b").textContent = tx(it.nom); bt.querySelector("small").textContent = tx(it.role);
+        bt.onclick = function () { var j = sel.indexOf(i); if (j >= 0) sel.splice(j); else sel.push(i); rendreProces(); };
+        liste.appendChild(bt);
+      });
+      inn.appendChild(el('<p class="meta">' + __("Touche les parties dans l'ordre. Touche une partie déjà numérotée pour reprendre à partir d'elle.") + "</p>"));
+      inn.appendChild(liste);
+      valider.disabled = sel.length !== s.items.length;
+      valider.onclick = function () { envoyer(sel.slice()); proces.melange = null; };
+      inn.appendChild(valider);
+    } else {
+      // L'audience : maître Érard attaque, on répond, la présidente tranche, échange après échange.
+      var au = proces.aud || (proces.aud = { i: 0, choix: [], vu: false });
+      var x = s.echanges[au.i];
+      inn.appendChild(el('<div class="pr-points">' + s.echanges.map(function (_, k) { return '<i class="' + (k < au.choix.length ? "fait" : k === au.i ? "cur" : "") + '"></i>'; }).join("") + "</div>"));
+      var at = el('<div class="pr-attaque"><div class="qui">' + __("Maître Érard, l'accusation") + "</div><p></p></div>"); at.querySelector("p").textContent = tx(x.attaque); inn.appendChild(at);
+      var zo = el('<div class="choix"></div>'), pris = au.vu ? au.choix[au.i] : null;
+      x.options.forEach(function (o, i) {
+        var bt = el("<button type=\"button\"></button>"); bt.textContent = tx(o.texte);
+        if (au.vu) { bt.disabled = true; if (i === pris) bt.classList.add(o.points ? "bon" : "faux"); }
+        else bt.onclick = function () { au.choix.push(i); au.vu = true; rendreProces(); };
+        zo.appendChild(bt);
+      });
+      inn.appendChild(zo);
+      if (au.vu) {
+        var o = x.options[pris];
+        if (o.alyca) { var ma = repliqueAlyca(tx(o.alyca), o.points ? "impressionnee" : "moqueuse"); if (ma) inn.appendChild(ma); }
+        inn.appendChild(paroleMentor(pr, tx(o.retour)));
+        var dernier = au.i + 1 >= s.echanges.length;
+        var nx = el('<button type="button" class="btn large">' + (dernier ? __("Fin de l'audience") : __("Attaque suivante")) + "</button>");
+        nx.onclick = function () { if (dernier) envoyer(au.choix.slice()); else { au.i++; au.vu = false; rendreProces(); } };
+        inn.appendChild(nx);
+      }
+    }
+  }
+  function procesRetour(inn, pr, e) {
+    var r = proces.res; if (!r) { allerProces("intro"); return; }
+    inn.appendChild(el('<div class="eyebrow">' + __("Salle ") + (pr.salles.indexOf(r.salle) + 1) + " · " + esc(tx(r.salle.nom)) + "</div>"));
+    inn.appendChild(el('<div class="pr-score"><b>' + r.points + "</b> / " + r.max + "</div>"));
+    if (r.salle.type === "ordre") {
+      inn.appendChild(el('<ol class="pr-plan">' + r.salle.items.map(function (it) { return "<li><b>" + esc(tx(it.nom)) + "</b> : " + esc(tx(it.role)) + "</li>"; }).join("") + "</ol>"));
+    }
+    r.retours.forEach(function (t) { inn.appendChild(paroleMentor(pr, tx(t))); });
+    var l = el('<div class="bloc pr-lecon"><div class="eyebrow">' + __("La leçon") + '</div><p class="dj-recit"></p>' + (r.lecon.source ? '<p class="meta source"></p>' : "") + "</div>");
+    l.querySelector(".dj-recit").textContent = tx(r.lecon.texte); if (r.lecon.source) l.querySelector(".source").textContent = __("Source : ") + r.lecon.source;
+    inn.appendChild(l);
+    var go = el('<button type="button" class="btn large">' + (r.suivante ? __("Salle suivante : ") + esc(tx(r.suivante.nom)) : __("Entendre le verdict")) + "</button>");
+    go.onclick = function () { allerProces(r.suivante ? "salle" : "verdict", { res: null, sel: [], aud: null }); };
+    inn.appendChild(go);
+  }
+  function procesVerdict(inn, pr, e) {
+    var v = proces.verdict || (proces.verdict = M.verdictProces(C, P, proces.id, maintenant()));
+    sauver();
+    if (!v.ok) { allerProces("intro", { verdict: null }); return; }
+    inn.appendChild(el('<div class="pr-verdict ' + (v.acquitte ? "ok" : "ko") + '"><div class="eyebrow">' + __("Le verdict") + "</div><h2>" + (v.acquitte ? __("Acquittée !") : __("Condamnée")) + "</h2><p>" + v.total + " / " + v.max + __(" points (il en fallait ") + v.seuil + ")</p></div>"));
+    var m = repliqueAlyca(tx(M.repliqueProces(C, proces.id, v.contexte)), v.acquitte ? "decue" : "moqueuse"); if (m) inn.appendChild(m);
+    (v.succes || []).forEach(function (s) { inn.appendChild(el('<div class="dj-succes">🏆 ' + __("Succès : ") + "<b>" + esc(tx(s.nom)) + "</b></div>")); });
+    var vr = el('<button type="button" class="btn large">' + __("Le vrai procès") + "</button>"); vr.onclick = function () { allerProces("vrai", { verdict: null }); }; inn.appendChild(vr);
+    if (!v.acquitte) { var ap = el('<button type="button" class="btn sec large">' + __("Faire appel") + "</button>"); ap.onclick = function () { allerProces("salle", { verdict: null, sel: [], aud: null }); }; inn.appendChild(ap); }
+  }
+  function procesVrai(inn, pr) {
+    var b = el('<div class="bloc"><div class="eyebrow">' + __("Ce qui s'est vraiment passé") + '</div><h2></h2><p class="dj-recit"></p><p class="meta source"></p></div>');
+    b.querySelector("h2").textContent = tx(pr.vrai.titre); b.querySelector(".dj-recit").textContent = tx(pr.vrai.texte); b.querySelector(".source").textContent = __("Source : ") + pr.vrai.source;
+    inn.appendChild(b);
+    var go = el('<button type="button" class="btn large">' + __("Retour au tribunal") + "</button>"); go.onclick = function () { allerProces("intro"); }; inn.appendChild(go);
+  }
   // L'entrée du donjon sur l'accueil : visible dès qu'il est ouvert.
+  function ouvrirEntree(sorte, id) { if (sorte === "proces") ouvrirProces(id); else ouvrirDonjon(id); }
   function blocDonjons() {
-    var ouverts = M.donjonsOuverts(C, P); if (!ouverts.length) return null;
+    var ouverts = M.donjonsOuverts(C, P), tribunaux = M.entreesDonjons(C, P).filter(function (x) { return x.sorte === "proces"; });
+    if (!ouverts.length && !tribunaux.length) return null;
     var b = el('<section class="bloc dj-accueil"><div class="eyebrow">' + __("Donjon") + "</div></section>");
     ouverts.forEach(function (d) {
       var bi = M.bilanDonjon(C, P, d.id);
@@ -4782,6 +4945,15 @@ function demarrerJeu() {
       l.querySelector("small").textContent = bi.allume ? __("Allumé. Il tourne, et il te regarde.") : bi.bug ? __("Un bug t'attend sur le chantier.") : bi.pannes.length ? __("Une pièce est en panne.") : bi.posees + " / " + bi.total + __(" pièces posées");
       l.querySelector(".dj-jauge i").style.width = Math.round(100 * bi.posees / bi.total) + "%";
       l.onclick = function () { ouvrirDonjon(d.id); };
+      b.appendChild(l);
+    });
+    tribunaux.forEach(function (x) {
+      var pr = M.procesDe(C, x.id), e = M.etatProces(P, x.id);
+      var l = el('<button type="button" class="dj-entree"><b></b><small></small><span class="dj-jauge"><i></i></span></button>');
+      l.querySelector("b").textContent = tx(pr.nom);
+      l.querySelector("small").textContent = e.acquitte ? __("Lucie est acquittée. Alyca ne s'en remet pas.") : e.salle ? __("Salle ") + (e.salle + 1) + " / " + pr.salles.length : e.essais ? __("Condamnée. L'appel vous attend.") : tx(pr.accroche);
+      l.querySelector(".dj-jauge i").style.width = Math.round(100 * (e.acquitte ? 1 : e.salle / pr.salles.length)) + "%";
+      l.onclick = function () { ouvrirProces(x.id); };
       b.appendChild(l);
     });
     return b;
@@ -7239,8 +7411,8 @@ function demarrerJeu() {
   }
   // Victor (2026-11-02) : pour tester, les donjons s'ouvrent d'office dès la nouvelle partie.
   function blocChoixDonjons(A) {
-    var tous = (BRUT["donjons.json"] && BRUT["donjons.json"].donjons) || []; if (!tous.length) return null;
-    var off = M.packsEteints(INDEX, A.off), prop = (INDEX.proprietaires && INDEX.proprietaires["donjons.json/donjons"]) || {};
+    var bd = BRUT["donjons.json"] || {}, tous = (bd.donjons || []).concat(bd.proces || []); if (!tous.length) return null;
+    var off = M.packsEteints(INDEX, A.off), pp = INDEX.proprietaires || {}, prop = Object.assign({}, pp["donjons.json/donjons"] || {}, pp["donjons.json/proces"] || {});
     var b = el('<div class="bloc"><h2>' + __("Donjons") + '</h2><p class="note">' + __("Un donjon s'ouvre quand tu as réussi les arbres dont il découle. Coche-le pour l'ouvrir dès le départ et l'essayer.") + "</p></div>");
     A.donjons = A.donjons || [];
     tous.forEach(function (d) {
@@ -7263,7 +7435,7 @@ function demarrerJeu() {
     p.options = { langue: M.langue(), packsOff: A.off.slice() };
     if (A.casesTour) p.options.casesTour = A.casesTour;
     // Donjons ouverts d'office (pour les essayer sans réussir leurs arbres), si leur pack reste allumé.
-    var offD = M.packsEteints(INDEX, A.off), propD = (INDEX.proprietaires && INDEX.proprietaires["donjons.json/donjons"]) || {};
+    var offD = M.packsEteints(INDEX, A.off), ppD = INDEX.proprietaires || {}, propD = Object.assign({}, ppD["donjons.json/donjons"] || {}, ppD["donjons.json/proces"] || {});
     var dOk = (A.donjons || []).filter(function (id) { return !offD[propD[id]]; });
     if (dOk.length) p.options.donjons = dOk;
     if (NATIF) p.options.routine = { active: false, heure: A.routine.heure };

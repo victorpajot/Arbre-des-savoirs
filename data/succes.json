@@ -10188,6 +10188,58 @@
     "id": "ordinateur"
    },
    "theme": "informatique"
+  },
+  {
+   "id": "acquittement",
+   "nom": {
+    "fr": "Acquittée !"
+   },
+   "description": {
+    "fr": "Gagner le Procès et sauver Lucie. Cicéron, lui, l'a fait pour de vrai."
+   },
+   "condition": {
+    "type": "proces_gagne",
+    "id": "roscius"
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "La loi de Brandolini, formulée par le programmeur italien Alberto Brandolini en janvier 2013 : réfuter une ânerie demande un ordre de grandeur d'énergie de plus que la produire."
+    },
+    "source": "Wikipédia (en), « Brandolini's law »"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "ciceron"
+   },
+   "theme": "eloquence"
+  },
+  {
+   "id": "en-appel",
+   "nom": {
+    "fr": "En appel"
+   },
+   "description": {
+    "fr": "Perdre le Procès une première fois. La présidente a apprécié."
+   },
+   "condition": {
+    "type": "proces_perdus",
+    "n": 1
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le parricide était puni, à Rome, de la peine du sac : le condamné y était cousu avec plusieurs animaux, puis jeté au Tibre ou à la mer."
+    },
+    "source": "Wikipédia (en), « Pro Roscio Amerino »"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "ciceron"
+   },
+   "theme": "eloquence"
   }
  ],
  "dessins": {
