@@ -1460,10 +1460,16 @@
         pl.tours++;
         pl.atteinte = R.arrivee; pl.anneeMax = null;
         pl.ennemis = null; pl.speciaux = Object.assign({}, pl.parcours && pl.parcours.speciaux); ennemis = rj.ennemis === "absents" ? {} : ennemisPlateau(contenu, partie);
-        pl.route = null; der = route(contenu, partie).length - 1;
-        pl.idx = 0; pl.position = pl.route[0]; pl.arrets[pl.position] = 1;
-        chemin.push(pl.position); places.push(1);
-        if (contenu.plateau.parcours) pl.parcoursSuivant = dessinerParcours(contenu, partie, t);
+        // Victor (2026-11-02) : le pion reste sur l'arrivée tant que le joueur n'a pas choisi « Refaire un tour » (ou relancé
+        // une épreuve) : c'est appliquerParcours qui le ramène au départ du nouveau parcours.
+        if (contenu.plateau.parcours) {
+          pl.parcoursSuivant = dessinerParcours(contenu, partie, t);
+          pl.arrets[pl.position] = 1;
+        } else {
+          pl.route = null; der = route(contenu, partie).length - 1;
+          pl.idx = 0; pl.position = pl.route[0]; pl.arrets[pl.position] = 1;
+          chemin.push(pl.position); places.push(1);
+        }
         // v32 (Victor) : boucler un tour ravit l'IA. Le parcours suivant est déjà dessiné, selon l'humeur d'avant.
         var Ag = contenu.ia && contenu.ia.credits && contenu.ia.credits.agacement, fv = faveurIA(contenu, partie, t);
         if (Ag && Ag.tour_fini && fv) {

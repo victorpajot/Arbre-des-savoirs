@@ -196,7 +196,10 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       if (dep.etapes.some(e => e.type === "tour_fini")) fini = dep;
     }
     assert.ok(fini, "arrivée atteinte");
-    assert.equal(P.plateau.tours, 1); assert.equal(P.plateau.position, R.depart);
+    assert.equal(P.plateau.tours, 1);
+    // Victor (2026-11-02) : le pion attend sur l'arrivée jusqu'au choix « Refaire un tour ».
+    if (C3.plateau.parcours) { assert.equal(P.plateau.position, R.arrivee, "le pion reste sur l'arrivée"); assert.ok(M.choisirSuite(C3, P, "tour", t0).ok); assert.equal(P.plateau.idx, 0, "puis repart du début du nouveau parcours"); }
+    else assert.equal(P.plateau.position, R.depart);
     assert.ok(fini.contextes.includes("tour_fini"));
     assert.ok(P.succes["tour-complet"]);
     const rec = M.verifierRecompenses(C3, P, t0);
