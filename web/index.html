@@ -491,6 +491,9 @@ body.plateau-plein { overflow: hidden; }
 .case-jouer { --c: var(--accent); margin: 0 0 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
 .case-jouer .vitrine.grande { display: grid; place-items: center; padding: 16px; margin-bottom: 10px; border-radius: 16px; background: color-mix(in srgb, var(--c) 16%, transparent); }
 .case-jouer h2 { margin: 2px 0 6px; }
+.sc-ep-ligne { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
+.sc-ep-ligne .sc-ep-pris { margin: 0; }
+.sc-ep-fl[disabled] { opacity: .35; }
 .tuiles-rappel { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 14px 10px; margin-bottom: 10px; border-radius: 16px; background: color-mix(in srgb, var(--c) 16%, transparent); }
 .tuile-r { --c: var(--accent); margin: 0; width: 92px; display: grid; justify-items: center; gap: 4px; text-align: center; }
 .tuile-r .v { width: 76px; height: 76px; display: grid; place-items: center; border-radius: 14px; background: #FFF8EC; border: 2px solid color-mix(in srgb, var(--c) 45%, transparent); }
@@ -4259,6 +4262,16 @@ function demarrerJeu() {
     if (!e) return b;
     return [e.debut == null ? b[0] : Math.max(b[0], uniteChrono(q.pas, e.debut)), e.fin == null ? b[1] : Math.min(b[1], uniteChrono(q.pas, e.fin))];
   }
+  // L'époque voisine (sens -1 ou 1) qui a au moins un cran pour ce niveau de question.
+  function voisineEpoque(q, id, sens) {
+    var E = (C.plateau && C.plateau.epoques) || [], i = E.map(function (x) { return x.id; }).indexOf(id);
+    for (var j = i + sens; i >= 0 && j >= 0 && j < E.length; j += sens) { var b = bornesEpoque(q, E[j].id); if (b[0] <= b[1]) return E[j]; }
+    return null;
+  }
+  function allerEpoque(q, s, e, sens) {
+    if (!e) return;
+    var b = bornesEpoque(q, e.id); s.ep = e.id; s.k = sens > 0 ? b[0] : b[1]; s.h = 0; s.d = 0; s.y = s.k === 0 && q.pas === 1 ? 1 : 0;
+  }
   function choixEpoque(q, s, maj) {
     var E = (C.plateau && C.plateau.epoques) || [];
     var z = el(__('<div class="sc-saisie sc-epoques"><div class="eyebrow">D\'abord, quelle époque ?</div><div class="sc-ep-boutons"></div></div>')), w = z.querySelector(".sc-ep-boutons");
@@ -4280,7 +4293,14 @@ function demarrerJeu() {
       var rep = z.querySelector(".sc-repere"); rep.innerHTML = "";
       var chg = el('<button type="button" class="date-ep ep-' + ep.id + ' sc-ep-pris">' + svgSprite(ep.icone, 16, "") + esc(tx(ep.nom)) + __(" · changer</button>"));
       chg.onclick = function () { s.ep = null; maj(); };
-      z.insertBefore(chg, z.firstChild);
+      // Victor (2026-11-02) : des flèches pour passer à l'époque voisine (Antiquité → Moyen Âge) sans repasser par la liste.
+      var ligneEp = el('<div class="sc-ep-ligne"></div>'), av = voisineEpoque(q, s.ep, -1), ap = voisineEpoque(q, s.ep, 1);
+      var bAv = el('<button type="button" class="sc-pas sc-ep-fl" aria-label="' + esc(av ? __("Époque précédente : ") + tx(av.nom) : __("Pas d'époque avant")) + '"' + (av ? "" : " disabled") + ">◀</button>");
+      var bAp = el('<button type="button" class="sc-pas sc-ep-fl" aria-label="' + esc(ap ? __("Époque suivante : ") + tx(ap.nom) : __("Pas d'époque après")) + '"' + (ap ? "" : " disabled") + ">▶</button>");
+      bAv.onclick = function () { allerEpoque(q, s, av, -1); maj(); };
+      bAp.onclick = function () { allerEpoque(q, s, ap, 1); maj(); };
+      ligneEp.appendChild(bAv); ligneEp.appendChild(chg); ligneEp.appendChild(bAp);
+      z.insertBefore(ligneEp, z.firstChild);
       if (b[0] === b[1]) z.querySelector(".sc-curseur").style.display = "none";
       else { rep.appendChild(el("<span>" + esc(libUnite(b[0])) + "</span>")); rep.appendChild(el("<span>" + esc(libUnite(b[1])) + "</span>")); }
     }
@@ -4311,7 +4331,11 @@ function demarrerJeu() {
       z.querySelector(".sc-choisi").innerHTML = "<b>" + esc(M.texteCreneau(M.creneau(anneeChrono(q, s), q.pas, R.prehistoire), q.pas, R.prehistoire)) + "</b>" + (q.pas < 100 ? "<small>" + esc(lib) + "</small>" : "");
     }
     curseur.oninput = function () { s.k = +curseur.value; if (q.pas === 1 && s.k === 0 && s.d === 0 && s.y === 0) s.y = 1; dessiner(); };
-    z.querySelectorAll(".sc-pas").forEach(function (x) { x.onclick = function () { s.k = Math.max(b[0], Math.min(b[1], s.k + +x.getAttribute("data-d"))); curseur.value = s.k; dessiner(); }; });
+    z.querySelectorAll(".sc-curseur .sc-pas").forEach(function (x) { x.onclick = function () {
+      var d = +x.getAttribute("data-d"), v = s.ep && voisineEpoque(q, s.ep, d);
+      // Au bout de l'époque, la flèche passe à la voisine, à son siècle le plus proche.
+      if (s.ep && v && (d < 0 ? s.k <= b[0] : s.k >= b[1])) { allerEpoque(q, s, v, d); maj(); return; }
+      s.k = Math.max(b[0], Math.min(b[1], s.k + d)); curseur.value = s.k; dessiner(); }; });
     dessiner();
     z.redessiner = dessiner;
     return z;
