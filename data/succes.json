@@ -10713,6 +10713,607 @@
    "theme": "essaim"
   },
   {
+   "id": "pionnier-mnemosyne",
+   "nom": {
+    "fr": "Simonide"
+   },
+   "description": {
+    "fr": "Maîtriser 10 compétences. L'arbre Mnémosyne s'ouvre."
+   },
+   "condition": {
+    "type": "competences_maitrisees",
+    "n": 10
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dans le De oratore de Cicéron, écrit en 55 av. J.-C., l'orateur Antoine fait de Simonide de Céos l'inventeur de l'art de la mémoire, et affirme que seuls ceux qui ont une mémoire puissante savent ce qu'ils vont dire."
+    },
+    "source": "Wikipédia (en), « De Oratore »"
+   },
+   "ouvre": "mnemosyne",
+   "illustration": {
+    "type": "savant",
+    "id": "simonide"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "branche-mnemosyne",
+   "nom": {
+    "fr": "Fille du Ciel et de la Terre"
+   },
+   "description": {
+    "fr": "Maîtriser toutes les compétences de Mnémosyne jusqu'au rang 2. La mémoire a des parents prestigieux ; vous, des rappels."
+   },
+   "condition": {
+    "type": "branche_complete",
+    "stat": "mnemosyne",
+    "rang_max": 2
+   },
+   "cache": false,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Selon le marbre de Paros, une chronique grecque gravée dans la pierre, Simonide de Céos mourut en 468 ou 467 av. J.-C., à l'âge de 90 ans."
+    },
+    "source": "Wikipédia (en), « Simonides of Ceos »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mnemo-banquet"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "mnemosyne-sans-faute",
+   "nom": {
+    "fr": "Cartes de vitesse"
+   },
+   "description": {
+    "fr": "Réussir 3 quiz parfaits dans Mnémosyne. Rapide, juste, presque inquiétant."
+   },
+   "condition": {
+    "type": "quiz_parfaits_stat",
+    "stat": "mnemosyne",
+    "n": 3
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le record des cartes de vitesse, retenir un jeu de 52 cartes mélangé le plus vite possible, est de 12,74 secondes, par Shijir-Erdene Bat-Enkh, en 2018."
+    },
+    "source": "Wikipédia (en), « World Memory Championships »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mnemo-cartes"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "perle-rouge",
+   "nom": {
+    "fr": "Perle rouge"
+   },
+   "description": {
+    "fr": "Maîtriser l'art de retenir sans écrire. Sur votre lukasa, je mettrais une perle grise."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.sansecrire"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Il existait trois sortes de lukasa. La plus secrète, la « longue main du bassin sacré », portait les secrets de la royauté divine et était faite pour un seul souverain : il n'en reste aucun exemplaire."
+    },
+    "source": "Wikipédia (en), « Lukasa »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mnemo-lukasa"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "art-d-oublier",
+   "nom": {
+    "fr": "Art d'oublier"
+   },
+   "description": {
+    "fr": "Maîtriser Simonide et le banquet. Thémistocle voulait apprendre à oublier : vous, c'est inné."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.simonide"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Selon Cicéron, quand Simonide propose de lui enseigner l'art de la mémoire, Thémistocle répond qu'il préférerait un art d'oublier."
+    },
+    "source": "Wikipédia (en), « Simonides of Ceos »"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "simonide"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "remede-ou-poison",
+   "nom": {
+    "fr": "Remède pour se rappeler"
+   },
+   "description": {
+    "fr": "Maîtriser Platon contre l'écriture. Vous avez l'apparence de la sagesse. C'est déjà ça."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.platon"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dans le Phèdre, Thamus prédit que les gens qui liront sans enseignement paraîtront savants tout en étant ignorants, et seront pénibles à fréquenter."
+    },
+    "source": "Wikipédia (en), « Phaedrus (dialogue) »"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "platon-athenes"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "lieu-bien-eclaire",
+   "nom": {
+    "fr": "Lieu bien éclairé"
+   },
+   "description": {
+    "fr": "Maîtriser les lieux et les images. Rangez-moi quelque part de bien en vue."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.lieux"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "La méthode des lieux connaît une renaissance spectaculaire à la Renaissance. Matteo Ricci l'adapte même en Chine pour mémoriser caractères chinois, textes confucéens et enseignements chrétiens."
+    },
+    "source": "Wikipédia (en), « Method of loci »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mnemo-chemin"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "trois-cent-soixante",
+   "nom": {
+    "fr": "Trois cent soixante lieux"
+   },
+   "description": {
+    "fr": "Maîtriser les prodiges antiques. Métrodore avait 360 lieux ; vous en avez un : votre canapé."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.prodiges"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dans sa préface de l'Histoire naturelle, parue à partir de 77, Pline dit avoir réuni environ 20 000 faits tirés de 2 000 livres de 100 auteurs."
+    },
+    "source": "Wikipédia (en), « Natural History (Pliny) »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mnemo-zodiaque"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "debut-bien-defini",
+   "nom": {
+    "fr": "Un début bien défini"
+   },
+   "description": {
+    "fr": "Maîtriser la mémoire des moines. Hugues voulait un début net. Le vôtre est flou, et la suite aussi."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.moines"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Hugues de Saint-Victor quitte sa terre natale, sans doute la Saxe, et rejoint Paris sur le conseil de son oncle, vers 1115-1120. Il y passe le reste de sa vie et finit par diriger l'école de Saint-Victor."
+    },
+    "source": "Wikipédia (en), « Hugh of Saint Victor »"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "hugues-saint-victor"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "savoir-organise",
+   "nom": {
+    "fr": "Savoir organisé"
+   },
+   "description": {
+    "fr": "Maîtriser les roues de Lulle. Votre mémoire n'est pas magique non plus, mais elle, ça se voit."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.lulle"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Des traités d'alchimie attribués à tort à Lulle ont inspiré des occultistes comme Agrippa et Giordano Bruno. Lulle lui-même n'en avait écrit aucun."
+    },
+    "source": "Wikipédia (en), « Ramon Llull »"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "raymond-lulle"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "code-civil-a-dix-ans",
+   "nom": {
+    "fr": "Code civil à dix ans"
+   },
+   "description": {
+    "fr": "Maîtriser les palais de mémoire. Pierre de Ravenne savait le code civil à dix ans. Vous savez le code du wifi."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.palais"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Pierre de Ravenne finit sa carrière comme professeur de droit à Cologne, à partir de 1506, avant de partir pour Mayence en 1508, où il meurt peu après."
+    },
+    "source": "Wikipédia (en), « Peter of Ravenna »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mnemo-palais"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "mecene",
+   "nom": {
+    "fr": "Mécène"
+   },
+   "description": {
+    "fr": "Maîtriser les chiffres en sons. MéCèNe, 302. C'est aussi le nombre de fois où je vous ai prévenu."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.majeur"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Hérigone faisait partie, avec Étienne Pascal et Claude Mydorge, d'une commission chargée de juger la méthode de Jean-Baptiste Morin pour trouver la longitude grâce à la Lune."
+    },
+    "source": "Wikipédia (en), « Pierre Hérigone »"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "pierre-herigone"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "wid-zof",
+   "nom": {
+    "fr": "WID ZOF"
+   },
+   "description": {
+    "fr": "Maîtriser la courbe de l'oubli. Votre courbe à vous ressemble à une falaise."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.oubli"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Ebbinghaus a donné une formule de l'oubli avec deux constantes, c = 1,25 et k = 1,84, le temps étant compté en minutes depuis la fin de l'apprentissage."
+    },
+    "source": "Wikipédia (en), « Forgetting curve »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "sablier"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "boite-en-carton",
+   "nom": {
+    "fr": "Boîte en carton"
+   },
+   "description": {
+    "fr": "Maîtriser la répétition espacée. Vos révisions sont espacées, ça oui. De plusieurs mois."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.espacee"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 1932, dans Psychology of Study, C. A. Mace proposait déjà de réviser après un jour, deux jours, quatre jours, huit jours, et ainsi de suite."
+    },
+    "source": "Wikipédia (en), « Spaced repetition »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mnemo-boite"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "homme-fier",
+   "nom": {
+    "fr": "Le 1 est un homme fier"
+   },
+   "description": {
+    "fr": "Maîtriser la mémoire prodigieuse. Chez vous, tous les chiffres ont la même personnalité : absents."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.prodigieuse"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le père de Solomon Cherechevski était libraire. Le fils, lui, n'avait pas besoin de livres pour retenir."
+    },
+    "source": "Wikipédia (en), « Solomon Shereshevsky »"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "alexandre-louria"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "dessin-en-miroir",
+   "nom": {
+    "fr": "Dessin en miroir"
+   },
+   "description": {
+    "fr": "Maîtriser les mémoires multiples. Vos gestes progressent ; vos souvenirs, eux, restent à la porte."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.multiples"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le cerveau d'Henry Molaison a été découpé le 4 décembre 2009 en 2 401 tranches à l'université de Californie à San Diego, pour être étudié en détail."
+    },
+    "source": "Wikipédia (en), « Henry Molaison »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mnemo-hippocampe"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "plus-ou-moins-deux",
+   "nom": {
+    "fr": "Plus ou moins deux"
+   },
+   "description": {
+    "fr": "Maîtriser le chiffre magique. Sept éléments en tête ? Vous jouez dans la catégorie moins deux."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.chiffre"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "George Miller a été élu en 1991 lauréat de la National Medal of Science, et a dirigé à partir de 1986 WordNet, une immense base de données des mots anglais."
+    },
+    "source": "Wikipédia (en), « George Armitage Miller »"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "george-miller"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "traitement-profond",
+   "nom": {
+    "fr": "Traitement profond"
+   },
+   "description": {
+    "fr": "Maîtriser l'art de comprendre pour retenir. Pour une fois, vous êtes allé au fond des choses."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.comprendre"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "En 2000, Alan Baddeley ajoute à son modèle un quatrième élément, le tampon épisodique, qui relie la mémoire de travail à la mémoire à long terme."
+    },
+    "source": "Wikipédia (en), « Baddeley's model of working memory »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "cerveau"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "madeleine",
+   "nom": {
+    "fr": "Madeleine"
+   },
+   "description": {
+    "fr": "Maîtriser les sens et le contexte. Je vous offrirais bien une madeleine, mais vous oublieriez de la manger."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.contexte"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Le premier volume de Proust fut refusé par plusieurs éditeurs, dont la Nouvelle Revue française, sur l'avis d'André Gide. Proust paya l'éditeur Grasset pour le publier en 1913."
+    },
+    "source": "Wikipédia (en), « In Search of Lost Time »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mnemo-madeleine"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "feuille-blanche",
+   "nom": {
+    "fr": "Feuille blanche"
+   },
+   "description": {
+    "fr": "Maîtriser l'art de se tester. Votre feuille blanche est restée blanche, mais l'intention compte."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.tester"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dès 1890, dans ses Principes de psychologie, William James écrivait qu'on imprime mieux les choses par la répétition active que par la répétition passive."
+    },
+    "source": "Wikipédia (en), « Testing effect »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "cp-crayon"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "albert-einstein-15",
+   "nom": {
+    "fr": "A. E. = 15"
+   },
+   "description": {
+    "fr": "Maîtriser les championnats de mémoire. Dans le système Dominic, votre score s'écrit O. O."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.championnats"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dans le système Dominic, 2739 devient Bill Gates (27 = B. G.) qui fait l'action de 39 (C. N.) : par exemple, un coup de pied retourné. Une personne, une action, quatre chiffres."
+    },
+    "source": "Wikipédia (en), « Dominic system »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "mnemo-cartes"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "hippocampe-muscle",
+   "nom": {
+    "fr": "Hippocampe musclé"
+   },
+   "description": {
+    "fr": "Maîtriser le cerveau des champions. Votre hippocampe est désormais classé monument historique."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.champions"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dans l'étude de Dresler, un groupe entraîné à un jeu de mémoire avec des cartes ne gagne en moyenne que 11 mots, contre 36 pour le groupe entraîné aux lieux."
+    },
+    "source": "Smithsonian Magazine, mars 2017"
+   },
+   "illustration": {
+    "type": "savant",
+    "id": "eleanor-maguire"
+   },
+   "theme": "mnemosyne"
+  },
+  {
+   "id": "nuit-blanche",
+   "nom": {
+    "fr": "Nuit blanche"
+   },
+   "description": {
+    "fr": "Maîtriser l'attention et le sommeil. Allez dormir. C'est un ordre, et c'est pour votre bien. Et pour le mien."
+   },
+   "condition": {
+    "type": "competence_maitrisee",
+    "id": "mnemo.sommeil"
+   },
+   "cache": true,
+   "recompense": {
+    "type": "anecdote",
+    "texte": {
+     "fr": "Dans une étude de Walker et ses collègues (2005), le groupe qui avait dormi une nuit faisait nettement moins d'erreurs sur une séquence de gestes que le groupe resté éveillé la journée, retesté 12 heures plus tard."
+    },
+    "source": "Wikipédia (en), « Sleep and memory »"
+   },
+   "illustration": {
+    "type": "dessin",
+    "id": "lune"
+   },
+   "theme": "mnemosyne"
+  },
+  {
    "id": "premiere-piece",
    "nom": {
     "fr": "Première pièce"
@@ -17810,6 +18411,448 @@
    "................................",
    "................................",
    "................................",
+   "................................",
+   "................................",
+   "................................"
+  ],
+  "mnemo-lukasa": [
+   "................................",
+   ".......kkkkkkkkkkkkkkkkkk.......",
+   "......kttttttttTTtttttttbk......",
+   "......kbbbbbbbTTTTbbbbbbBk......",
+   ".......ktbbbbbbTTbbbbbbBk.......",
+   ".......ktbbbffbbbbbbbbbBk.......",
+   ".......kbbbffrRbbbbbbbbBk.......",
+   "........ktbrrR1bbbbbbbBk........",
+   "........ktbb11bbbbbbbbBk........",
+   "........ktbbbbbbTbbbbbBk........",
+   "........kbbbbbbbbbbbbbBk........",
+   ".........ktbbbTbbbTbbBk.........",
+   ".........ktbbbbbbbbbbBk.........",
+   ".........kbbbbbbbbbbbBk.........",
+   "..........ktbbbbbbbbBk..........",
+   "..........ktbbbbbbbbBkk.........",
+   ".........kHHHHHHHHHHHHHk........",
+   "..........ktbbbbbbbbBkk.........",
+   ".........ktbbbbbbbbbbbk.........",
+   ".........ktbbbbbbbbbbBk.........",
+   ".........ktbbbbbbbbbbBk.........",
+   "........ktbbbbbbbbbbbbbk........",
+   "........ktbbTbbbbbbbbbBk........",
+   "........ktbbbbbbbbbxbbBk........",
+   "........ktbbbbTbbbxxUbBk........",
+   ".......ktbbbbbbbbbxuUbbbk.......",
+   ".......ktbbbbbbbTbbUbbbBk.......",
+   ".......ktbbbbbbbbbbbbbbBk.......",
+   "......ktbbbbbbbbbbbbbbbbbk......",
+   "......kbBBBBBBBBBBBBBBBBBk......",
+   ".......kkkkkkkkkkkkkkkkkk.......",
+   "................................"
+  ],
+  "mnemo-banquet": [
+   "................................",
+   "................................",
+   "...............kk...............",
+   "..............kfrk..............",
+   "............kkfrrrkk............",
+   "...........kffrrrrfrk...........",
+   ".........kkfrrrrrrrrrkk.........",
+   ".......kkffrrrrrrrrrrfrkk.......",
+   "......kffrrrrrrrrrrrrrrfrkkkk...",
+   "....kkfrrrrrrrrrrrrrrrrrrrBBBk..",
+   "...kffrrrrrrrrrrrrrBBBBBBBfrk...",
+   "..krRRRRRRRRRRBBBBBRRRRRRRRRrk..",
+   "...kkkkBBBBBBBkkkkkkkkkkkkkkk...",
+   "...kBTTTkkkkkk...........kTTTk..",
+   "....kTTTk................kTTTk..",
+   "....kTTTk................kTTTk..",
+   "....kTTTk................kTTTk..",
+   "....kTTTk................kTTTk..",
+   "....kTTTk..kk.....kk.....kTTTk..",
+   "....kTTTk.kjykkkkkMmkk...kTTTk..",
+   "....kTTTkkty4tttttmDtbkk.kTTTk..",
+   "....kTTTttbbbbbbbbbbbbtbkkTTTk..",
+   "....kTTTbBbbbbbbbbbbbbBBkkTTTk..",
+   "....kTTTkkbBBBBttBBBBBkk.kTTTk..",
+   "....kTTTk.kkkkktbBkkkk...kTTTk..",
+   "....kTTTk.....kttBk......kTTTk..",
+   "....kTTTk.....ktbBk......kTTTk..",
+   "....kTTTk.....kttBk......kTTTk..",
+   "..kkkTTTkkkkkkktbBkkkkkkkkTTTkk.",
+   ".kllllllllllllllllllllllllllllzk",
+   ".kzggggggggggggggggggggggggggggk",
+   "..kkkkkkkkkkkkkkkkkkkkkkkkkkkkk."
+  ],
+  "mnemo-chemin": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "......................kkk.......",
+   ".....................kxxuk......",
+   "..........kkk.......kxxxuUk.....",
+   ".........kjjyk......kxxuUUk.....",
+   "........kjjjyYk.....kuuUU3k.....",
+   "........kjjyYYk......k333k......",
+   "........kyyYY4k......kVkVk......",
+   ".........k444k......kVVkVVk.....",
+   ".........kVkVk......kVk.kVk.....",
+   "........kVkkVVk.....kVk.kVVk....",
+   "........kVk.kVk....kVk...kVk....",
+   ".......kVVk.kVVk...kVk...kVVk...",
+   ".......kVk...kVk...kVk....kVkk..",
+   "......kVVk...kVVk.kVk.....kqqpk.",
+   "......kVk.....kVk.kVk....kqqqpPk",
+   ".....kVVk.....kVVkVVk....kqqpp5k",
+   ".....kVk.......kVkVk.....kpppP5k",
+   ".....kVk.......kiiek......kP55k.",
+   "...kkVk.......kiiieEk......kkk..",
+   "..kffrk.......kiieEEk...........",
+   ".kfffrRk......keeEE2k...........",
+   ".kffrr1k.......k222k............",
+   ".krrrR1k........kkk.............",
+   "..kR11k.........................",
+   "...kkk..........................",
+   "................................",
+   "................................"
+  ],
+  "mnemo-zodiaque": [
+   "................................",
+   "................................",
+   "............kkkkkkkk............",
+   "..........kkyyyyyyyykk..........",
+   "........kkyyyyyyyyyyyykk........",
+   ".......kyyyyyKKKKKKyyyyyk.......",
+   "......kyyyKKKKKTTKKKKKyyyk......",
+   ".....kyyyKjyKKKKKKKKjyKyyyk.....",
+   "....kyyyKKY4KKKKKKKKY4NKyyyk....",
+   "....kyyKKKKKKKKKKKKKKKKKKyyk....",
+   "...kyyKjyKKKKKKKKKKKKKNjyNyyk...",
+   "...kyyKy4KKKKKKKKKKKKKKy4Nyyk...",
+   "..kyyyKKKKKKKKKKKKKKKKNKNNyyyk..",
+   "..kyyKKKKKKKKKjjjyKKKKKNKNNyyk..",
+   "..kyyKKKKKKKKjjjjy4KNKNNNNNyyk..",
+   "..kyyKTKKKKKKjjjjyYKKNKNNTNyyk..",
+   "..kyyKTKKKKKKyyyyY4KNKNNNTNyyk..",
+   "..kyyKKKKKKKKYyYY44KKNKNNNNyyk..",
+   "..kyyKKKKKKKKK4444NKNNNNNNNyyk..",
+   "..kyyyKKKKKKKKKKKNKNKNNNNNyyyk..",
+   "...kyyKjyKKKNKNKNKNNNNNjyNyyk...",
+   "...kyyKy4KKKKKKNKNKNNNNy4Nyyk...",
+   "....kyyKNKNKNKNNNNNNNNNNNyyk....",
+   "....kyyyKNjyKNKNNNNNjyNNyyyk....",
+   ".....kyyyNY4NNNNNNNNY4Nyyyk.....",
+   "......kyyyNNNNNTTNNNNNyyyk......",
+   ".......kyyyyyNNNNNNyyyyyk.......",
+   "........kkyyyyyyyyyyyykk........",
+   "..........kkyyyyyyyykk..........",
+   "............kkkkkkkk............",
+   "................................",
+   "................................"
+  ],
+  "mnemo-arche": [
+   "................................",
+   "................................",
+   "................................",
+   "...............kk...............",
+   "..............kbBk..............",
+   "............kkbBBBkk............",
+   "...........kbbBBBBbBk...........",
+   ".........kkbBBBBBBBBBkk.........",
+   "........kbbBBBBBBBBBBbBk........",
+   ".......kBHHHHHHHHHHHHHHBk.......",
+   "........kttttttttttttttbk.......",
+   "........ktbbbbbbbbbbbbbBk.......",
+   "........ktbNNbbNNbbNNbbBk.......",
+   "........ktbNNbbNNbbNNbbBk.......",
+   "........ktbNNbbNNbbNNbbBk.......",
+   "........ktbbbbbbbbbbbbbBk.......",
+   "........ktbbbbbbbbbbbbbBk.......",
+   "..kkkkkkkbBBBBBBBBBBBBBBkkkkkk..",
+   ".kbttttttttttttttttttttttttttbk.",
+   "..ktbbbbbbbbbbbbbbbbbbbbbbbbBk..",
+   "..kbbbbbbbbbbbbbbbbbbbbbbbbbBk..",
+   "...ktbbbbbbbbbbbbbbbbbbbbbbBk...",
+   "...kbbbbbbbbbbbbbbbbbbbbbbbBk...",
+   "....ktbbbbbbbbbbbbbbbbbbbbBk....",
+   "....kbbbbbbbbbbbbbbbbbbbbbBk....",
+   ".....kbBBBBBBBBBBBBBBBBBBBk.....",
+   ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+   "kcccccccccccccccccccccccccccccck",
+   "kcccccccccccccccccccccccccccccck",
+   "kcccccccccccccccccccccccccccccck",
+   ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+   "................................"
+  ],
+  "mnemo-palais": [
+   "................................",
+   "................................",
+   "...............kk...............",
+   "..............kTTk..............",
+   "............kkTTTTkk............",
+   "..........kkTTTTTTTTkk..........",
+   ".........kTTTTTTTTTTTTk.........",
+   ".......kkTTTTTTjjTTTTTTkk.......",
+   ".....kkTTTTTTTjjyYTTTTTTTkk.....",
+   "....kTTTTTTTTTTYYTTTTTTTTTTk....",
+   "...kTTTTTTTTTTTTTTTTTTTTTTTTk...",
+   "...klllllllllllllllllllllllzk...",
+   "...klzzzzzzzzzzzzzzzzzzzzzzgk...",
+   "...kzgggggggggggggggggggggggk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "....kTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "...kkTTTkkTTTkkTTTkkTTTkkTTTk...",
+   "..klllllllllllllllllllllllllzk..",
+   "..klzzzzzzzzzzzzzzzzzzzzzzzzgk..",
+   "..kzgggggggggggggggggggggggggk..",
+   "...kkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "................................"
+  ],
+  "mnemo-chiffres": [
+   "................................",
+   "................................",
+   "................................",
+   "...kkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "..kvvvvvvvvvvvvvvvvvvvvvvvvvVk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVNNNVNNNVNNNVVVVVVVVVVVAk..",
+   "..kvVVVVNVNVNVVVNVVVVVVVVVVVAk..",
+   "..kvVVVNNVNVNVNNNVVVVVVVVVVVAk..",
+   "..kvVVVVNVNVNVNVVVVVVVVVVVVVAk..",
+   "..kvVVNNNVNNNVNNNVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVRVRVVVVVRRRVVVVVVVVVVVAk..",
+   "..kvVVRRRVRRRVVVRVVVVVVVVVVVAk..",
+   "..kvVVRRRVVVVVVRRVVVVVVVVVVVAk..",
+   "..kvVVRVRVRRRVVVRVVVVVVVVVVVAk..",
+   "..kvVVRVRVVVVVRRRVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kvVVVVVVVVVVVVVVVVVVVVVVVVAk..",
+   "..kVAAAAAAAAAAAAAAAAAAAAAAAAAk..",
+   "...kkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "................................",
+   "................................",
+   "................................"
+  ],
+  "mnemo-boite": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "...............kkkk.............",
+   "..........kkkkkvvvVk............",
+   ".....kkkkkvvvVkvVVAk............",
+   "....kvvvVkvVVAkvVVAk.kkkk.......",
+   "....kvVVAkvVVAkvVVAkkvvvVk......",
+   "....kvVVAkvVVAkvVVAkkvVVAk......",
+   "....kvVVAkvVVAkvVVAkkvVVAk......",
+   "....kvVVAkvVVAkvVVAkkvVVAk......",
+   "...kkvVVAkvVVAkvVVAkkvVVAkkkk...",
+   "..kttvVVAtvVVAtvVVAttvVVAtttbk..",
+   "..ktbVAAAHVAAAHVAAAbHVAAAbbbBk..",
+   "..ktbbbbbHbbbbHbbbbbHbbbbbbbBk..",
+   "..ktbbbbbHbbbbHbbbbbHbbbbbbbBk..",
+   "..ktbbbbbHbbbbHbbbbbHbbbbbbbBk..",
+   "..ktbbbbbHbbbbHbbbbbHbbbbbbbBk..",
+   "..ktbbbbbHbbbbHbbbbbHbbbbbbbBk..",
+   "..ktbbbbbHbbbbHbbbbbHbbbbbbbBk..",
+   "..ktbbbbbHbbbbHbbbbbHbbbbbbbBk..",
+   "..ktbbbbbHbbbbHbbbbbHbbbbbbbBk..",
+   "..ktbbbbbHbbbbHbbbbbHbbbbbbbBk..",
+   "..ktbbbbbHbbbbHbbbbbHbbbbbbbBk..",
+   "..ktbbbbbHbbbbHbbbbbHbbbbbbbBk..",
+   "..kbBBBBBHBBBBHBBBBBHBBBBBBBBk..",
+   "...kkkkkkkkkkkkkkkkkkkkkkkkkk...",
+   "................................",
+   "................................",
+   "................................"
+  ],
+  "mnemo-hippocampe": [
+   "................................",
+   "................................",
+   "................................",
+   "..............kkkkkk...kkkk.....",
+   ".............kaaaaookkkaaaok....",
+   "............kaaaaaaoaaaoooOk....",
+   "............kaaaaNNoaooOOOOk....",
+   "............kaaaaooOoOOkkkk.....",
+   "............koooooOOOkk.........",
+   "........k..kaaaaaoOOk...........",
+   ".......kykkaaaaaooOk............",
+   "......kyykOOaaaaaook............",
+   ".....kyyykaaaaaaoooOk...........",
+   ".....kyyykaaaaaaaooOk...........",
+   "......kyykOOaaaaooOOk...........",
+   ".......kykaaaaaooooOk...........",
+   "........kkoaoaooooOOk...........",
+   ".........kOOaooooOOOk...........",
+   "..........koooooOOOk............",
+   "..........kOoOooOOOk............",
+   "...........kOOoooOk.............",
+   "............kkookk..............",
+   ".............kook.k.............",
+   "............kook.kok............",
+   "............kookkoook...........",
+   "...........koook.kook...........",
+   "............kook..kook..........",
+   ".............kookkooook.........",
+   "..............kooooook..........",
+   "..............kooookk...........",
+   "...............kokk.............",
+   "................k..............."
+  ],
+  "mnemo-sept": [
+   "................................",
+   "................................",
+   "............kkkkkkkk............",
+   "..........kkqqqqqpppkk..........",
+   "........kkqqqqqqqqppppkk........",
+   ".......kqqqqqqqqqqqpqppPk.......",
+   "......kqqqqqqqqqqqpqppppPk......",
+   ".....kqqqqqqqqqqqqqqqppppPk.....",
+   "....kqqqqTTTTTTTTTTTTTTpPP5k....",
+   "....kqqqqTTTTTTTTTTTTTTppPPk....",
+   "...kqqqqqTTTTTTTTTTTTTTpPPP5k...",
+   "...kqqqqqqqqqqqqqqqTTTTppPP5k...",
+   "..kpqqqqqqqqqqqqqqTTTTppPPP55k..",
+   "..kpqqqqqqqqqqqqqpTTTTpPpPP55k..",
+   "..kqqqqqqqqqqqqqpTTTTpPPPP555k..",
+   "..kpqqqqqqqqqqqpqTTTTppPPPP55k..",
+   "..kppqqqqqqqpqppTTTTppPPPP555k..",
+   "..kpqpqqqqqpqpqpTTTTpPPPP5555k..",
+   "..kppppqpqpppppTTTTpPPPP55555k..",
+   "..kPppppqpqppppTTTTPPPPPP5555k..",
+   "...kpppppppppppTTTTPPP5P5555k...",
+   "...kppppppppppTTTTPPPPP55555k...",
+   "....kPPpPpPpPpTTTTPP5P55555k....",
+   "....kPPPpPpPpTTTTPPPP555555k....",
+   ".....kPPPPPPPTTTTP55555555k.....",
+   "......k5PPPPTTTTP55555555k......",
+   ".......k555P5P5555555555k.......",
+   "........kk555555555555kk........",
+   "..........kk55555555kk..........",
+   "............kkkkkkkk............",
+   "................................",
+   "................................"
+  ],
+  "mnemo-madeleine": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "..............k.................",
+   ".............kzk....k...........",
+   ".........k...kzzk..kzk..........",
+   "........kzk...kzk..kzk..........",
+   "........kzzk.kzzk...kzk.........",
+   ".........kzk.kzk...kzk..........",
+   "........kzzk..k....kzk..........",
+   "........kzk.........kkkk........",
+   ".........k..kkkkkkkkjjjyk.......",
+   "........kkkkjjjjjjjjyyyyyk......",
+   ".......kjjOjyyOyyyOyyyOyYk......",
+   "......kjyyOyyyOyyyOyyyOyyyk.....",
+   "......kjyyOyyyOyyyOyyyOyyyyk....",
+   ".....kjyyyOyyyOyyyOyyyOyyyYk....",
+   ".....kjyyyOOyyOOyyOOyyOOyyyyk...",
+   ".....kjyyyyOyyyOyyyOyyyOyyyYk...",
+   "....kjyyyyyOyyyOyyyOyyyOyyYk....",
+   "....kyyyyyyOyyyOyyyOyyyOyyYk....",
+   "....kkyyyyyOyyyOYYYOYYYOYYkk....",
+   "...kTTTyYYYYYYYYTTTTTTTTTTTTk...",
+   "..kTTTTTTTTTTTTTTTTTTTTTTTTTTk..",
+   "..kTTTTTTTTTTTTTTTTTTTTTTTTTTk..",
+   "...kTTTTTTTTTTTTTTTTTTTTTTTTk...",
+   "....kkTTTTTTTTTTTTTTTTTTTTkk....",
+   "......kkkkTTTTTTTTTTTTkkkk......",
+   "..........kkkkkkkkkkkk..........",
+   "................................",
+   "................................"
+  ],
+  "mnemo-cartes": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "..............kk................",
+   "..........kkkkTTkkkkkkkkkkk.....",
+   "......kkkkTTTTTTTTTTTTTTTTTk....",
+   "....kkTTTTTTTTTTTTTTTTTTTTTk....",
+   "...kTTTTTTTTTTTTTTTTTTTTTTTk....",
+   "...kTTTTTTTTTTTTTTTTTTTTTTTk....",
+   "...kTTTTTTTTTTTTTTTTTTTTTTTk....",
+   "...kTTTTTKTTTTTTTTTTrTTTTTTk....",
+   "....kTTTKKNTTTTTTTTfrrTTTTTk....",
+   "....kTTTKKNTTTTTTTTfrRTTTTTk....",
+   "....kTTTTNTTTTTTTTfrrrrTTTTk....",
+   "....kTTTTTTTTTTTTfrrrrrrTTTk....",
+   "....kTTTTTTTTTTTTrrrrrrRTTTk....",
+   "....kTTTTTTTTTTTTTrrrrRTTTTk....",
+   "....kTTTTTTTTTTTTTTfrRTTTTTk....",
+   ".....kTTTTTTTTTTTTTrrRTTTTTk....",
+   ".....kTTTTTTTTTTTTTTrTTTTTTk....",
+   ".....kTTTTTTTTTTTTTTTTTTTTTk....",
+   ".....kTTTTTTTTTTTTTTTTTTTTTk....",
+   ".....kTTTTTTTTTTTTTTTTTTTTTk....",
+   ".....kTTTTTTTTTTTTTTTTTTTTTk....",
+   ".....kTTTTTTTTTTTTTTTTTTTTTk....",
+   "......kTTTTTTTTTTTTTTTTTTTTk....",
+   "......kTTTTTTTTTTTTTTTTTTTTk....",
+   "......kTTTTTTkkkkkkkkkkkkkk.....",
+   "......kTTkkkk...................",
+   ".......kk.......................",
+   "................................"
+  ],
+  "mnemo-taxi": [
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   "................................",
+   ".............kkkkkkk............",
+   "............kjjjjjjyk...........",
+   "............kjyyyyyYk...........",
+   "......kkkkkkkyYYYYYYkkkk........",
+   ".....kKKKKKKKKKKKKKKKKKNk.......",
+   "....kKNNddddddcNNdddddcNNk......",
+   "....kKNNdcccccCNNdccccccNNk.....",
+   "...kKNNdccccccCNNdcccccCNNk.....",
+   "..kKNNNdccccccCNNdcccccccNNk....",
+   "..kKNNcCCCCCCCCNNcCCCCCCCcNNk...",
+   ".kKNNNNNNNNNNNNNNNNNNNNNNNNNNk..",
+   ".kKNNNNNNNNNNNNNNNNNNNNNNNNNNk..",
+   ".kKNNNNNNNNNNNNNNNNNNNNNNNNNNk..",
+   ".kKNNNNNNNNNNNNNNNNNNNNNNNNNNk..",
+   ".kKNNNNNNNNNNNNNNNNNNNNNNNNNNNk.",
+   ".kKNNNwwlzNNNNNNNNNNNNwwlzNNNNk.",
+   ".kNNNwwwwzGNNNNNNNNNNwwwwzGNNNk.",
+   "..kkkwwwlzGkkkkkkkkkkwwwlzGkkk..",
+   "....klllzgGk........klllzgGk....",
+   "....kgzzgGnk........kgzzgGnk....",
+   ".....kGGnnk..........kGGnnk.....",
+   "......kkkk............kkkk......",
    "................................",
    "................................",
    "................................"
