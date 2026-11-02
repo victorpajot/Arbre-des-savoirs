@@ -491,6 +491,13 @@ body.plateau-plein { overflow: hidden; }
 .case-jouer { --c: var(--accent); margin: 0 0 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
 .case-jouer .vitrine.grande { display: grid; place-items: center; padding: 16px; margin-bottom: 10px; border-radius: 16px; background: color-mix(in srgb, var(--c) 16%, transparent); }
 .case-jouer h2 { margin: 2px 0 6px; }
+.tuiles-rappel { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 14px 10px; margin-bottom: 10px; border-radius: 16px; background: color-mix(in srgb, var(--c) 16%, transparent); }
+.tuile-r { --c: var(--accent); margin: 0; width: 92px; display: grid; justify-items: center; gap: 4px; text-align: center; }
+.tuile-r .v { width: 76px; height: 76px; display: grid; place-items: center; border-radius: 14px; background: #FFF8EC; border: 2px solid color-mix(in srgb, var(--c) 45%, transparent); }
+.tuile-r.ici .v { border: 3px solid var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 25%, transparent); }
+.tuiles-rappel.serie .tuile-r:not(.ici) { opacity: .7; }
+.tuile-r figcaption { font-size: 14px; line-height: 1.25; color: var(--ink); }
+.tuile-r figcaption b { display: block; font-size: 12px; color: var(--muted); font-weight: 700; }
 .emplette { border: 2px solid #E0B12E; background: color-mix(in srgb, #FFD447 12%, var(--surface)); }
 .emplette .em-tete { display: flex; gap: 14px; align-items: center; margin: 6px 0 10px; }
 .emplette .em-tete .vitrine { flex: none; display: grid; place-items: center; width: 88px; height: 88px; border-radius: 16px; background: color-mix(in srgb, #FFD447 30%, var(--surface)); animation: scintille-em 2.4s ease-in-out infinite; }
@@ -2587,8 +2594,10 @@ function demarrerJeu() {
     var ici = M.caseN(C, P.plateau.position), atI = atomeSur(ici.n), enI = !atI && ennemiSur(ici.n);
     // Victor (2026-10-31) : sous « C'est parti », Alyca lance un trait d'humour propre à la case (sa réplique), sauf quand
     // elle a quelque chose à annoncer (rappel imposé, série, révision, arbre fermé).
-    if (!atI && !enI && ici.replique && c.evoque && ["case", "rappel"].indexOf(c.raison) >= 0) rep = { texte: ici.replique, contexte: "jouer_case", theme: ici.stat, id: "case-" + ici.n };
-    var bandeau = enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Ennemi</div><h2>') + esc(tx(enI.nom)) + __(' garde la case</h2><p class="titre-en">') + esc(tx(enI.titre)) + "</p>" + (enI.qui ? "<p>" + esc(tx(enI.qui)) + "</p>" : "") + __('<p>Bats-le pour voir ce qu\'il y a dessous.</p></div>') : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>') : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
+    if (!atI && !enI && ici.replique && c.evoque && c.type !== "rappel" && c.raison === "case") rep = { texte: ici.replique, contexte: "jouer_case", theme: ici.stat, id: "case-" + ici.n };
+    // Victor (2026-11-02) : un rappel ne parle pas de la case du pion : bandeau « Rappel » et, en tuiles, les cases d'où
+    // viennent le ou les rappels (série : un rappel par tuile, celui-ci en avant).
+    var bandeau = !enI && !atI && c.type === "rappel" ? bandeauRappel(c, k) : enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Ennemi</div><h2>') + esc(tx(enI.nom)) + __(' garde la case</h2><p class="titre-en">') + esc(tx(enI.titre)) + "</p>" + (enI.qui ? "<p>" + esc(tx(enI.qui)) + "</p>" : "") + __('<p>Bats-le pour voir ce qu\'il y a dessous.</p></div>') : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>') : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
       __('<div class="eyebrow">Ton pion est case ') + ici.n + " · " + pastilleDate(ici.annee) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + escD(tx(ici.histoire)) + "</p>" + rangeePersonnes(tx(ici.histoire)) + "</div>";
     // v29 (Victor) : après la case, la phrase de l'IA, puis l'arbre choisi (icône, description, ton niveau) et l'épreuve.
     // Les savants et objets du thème passent à la fin.
@@ -2613,13 +2622,40 @@ function demarrerJeu() {
       __('<button type="button" class="btn large" data-a="go">C\'est parti</button>') +
       (c.raison === "serie" ? __('<button type="button" class="btn sec large" data-a="stop-serie">Arrêter la série (sans prime)</button>') : "") +
       '<div id="ia-jouer"></div>' +
-      (enI || atI ? "" : galerieTheme(ici.stat)) + "</div>", __("Ta case"), {
+      (enI || atI ? "" : galerieTheme(c.type === "rappel" ? k.stat : ici.stat)) + "</div>", !enI && !atI && c.type === "rappel" ? __("Rappel") : __("Ta case"), {
       go: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true }); },
       atome: function () { fermerFeuille(); if (atI) combattreAtome(atI.z); },
       "stop-serie": function () { M.abandonnerSerie(P); sauver(); fermerFeuille(); ouvrirJouer(); },
     });
     feuille.querySelector("#ia-jouer").appendChild(comite(rep, true));
     brancherGalerie(feuille);
+  }
+
+  // Les cases du plateau qui évoquent une compétence (competences_cases), celles déjà découvertes d'abord.
+  function casesDeComp(id) {
+    var CC = (C.plateau && C.plateau.competences_cases) || {}, L = [];
+    Object.keys(CC).forEach(function (n) { if (CC[n].indexOf(id) >= 0) { var kc = M.caseN(C, +n); if (kc) L.push(kc); } });
+    var vues = L.filter(function (kc) { return M.caseDecouverte(P, kc.n); });
+    return (vues.length ? vues : L).sort(function (a, b) { return a.n - b.n; });
+  }
+  function bandeauRappel(c, k) {
+    var ids = c.raison === "serie" && P.serie ? P.serie.ids.slice() : [k.id], tuiles = "", titres = [];
+    ids.forEach(function (id, i) {
+      var cs = casesDeComp(id), kc = cs[0], comp = C.parId[id]; if (!comp) return;
+      // Pour le rappel en cours, toutes ses cases ; pour les suivants de la série, la première seulement.
+      (i === 0 ? cs : kc ? [kc] : []).forEach(function (x) {
+        if (i === 0) titres.push(gu(tx(x.titre)));
+        tuiles += '<figure class="tuile-r' + (i === 0 ? " ici" : "") + '" style="--c:' + couleur(x.stat || comp.stat) + '"><div class="v">' + svgSprite(x.icone, 64, tx(x.titre)) +
+          "</div><figcaption><b>" + __("Case ") + x.n + "</b>" + esc(tx(x.titre)) + "</figcaption></figure>";
+      });
+      if (!cs.length) tuiles += '<figure class="tuile-r' + (i === 0 ? " ici" : "") + '" style="--c:' + couleur(comp.stat) + '"><div class="v">' + badgeComp(comp, 64) + "</div><figcaption>" + esc(tx(comp.nom)) + "</figcaption></figure>";
+    });
+    var se = c.raison === "serie" && c.serie;
+    var txt = se ? __("Ces rappels viennent des cases que tu as déjà traversées. Celui-ci d'abord.")
+      : titres.length ? (titres.length > 1 ? __("Ce rappel vient des cases ") : __("Ce rappel vient de la case ")) + titres.join(", ") + "."
+      : __("Une compétence que tu as acquise : il faut la raviver avant qu'elle s'efface.");
+    return '<div class="case-jouer rappel-jouer" style="--c:' + couleur(k.stat) + '"><div class="tuiles-rappel' + (se ? " serie" : "") + '">' + tuiles + "</div>" +
+      '<div class="eyebrow">' + __("Rappel") + (se ? __(" · série, ") + se.n + __(" sur ") + se.total : "") + "</div><h2>" + __("Rappel : ") + esc(gu(tx(k.nom))) + "</h2><p>" + esc(txt) + "</p></div>";
   }
 
   // Fait avancer le pion case par case le long du chemin du dernier déplacement.
