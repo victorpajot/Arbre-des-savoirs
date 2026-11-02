@@ -1852,3 +1852,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   }); });
   console.log("OK : masterclass imposée après deux échecs, repères d'histoire");
 }
+
+// Donjons (2026-11-02) : l'arbre du Code s'ouvre quand la Logique ET l'Étincelle sont réussies (condition « toutes »).
+{
+  const T0 = new Date(2026, 10, 2, 9, 0).getTime();
+  const PI = M.nouvellePartie(T0);
+  const tout = (ids) => ids.forEach((id) => { PI.competences[id] = Object.assign(PI.competences[id] || {}, { maitrise: true, maitriseDepuis: T0 }); });
+  const gagne = () => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].flatMap((i) => M.verifierSucces(C, PI, T0 + i)).some((s) => s.id === "pionnier-informatique") || !!PI.succes["pionnier-informatique"];
+  tout(C.parStat.logique.map((k) => k.id));
+  assert.ok(!gagne(), "la Logique seule n'ouvre pas le Code");
+  tout(C.parStat.etincelle.map((k) => k.id));
+  assert.ok(gagne(), "Logique + Étincelle ouvrent le Code");
+  console.log("OK : donjon de l'ordinateur, pionnier à deux arbres");
+}

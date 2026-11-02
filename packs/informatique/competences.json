@@ -1,0 +1,298 @@
+[
+ {
+  "id": "inf.pascaline",
+  "stat": "informatique",
+  "rang": 1,
+  "nom": {
+   "fr": "La Pascaline"
+  },
+  "description": {
+   "fr": "En 1642, un jeune homme de 19 ans fait additionner des roues dentées pour aider son père à compter les impôts."
+  },
+  "prerequis": [],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Blaise Pascal commence sa machine en 1642, à 19 ans, pour soulager les calculs de son père, chargé des impôts à Rouen. Il la présente en 1645."
+    },
+    {
+     "fr": "Chaque roue porte les chiffres 0 à 9 ; quand une roue passe de 9 à 0, une pièce, le sautoir, tombe sous son propre poids et fait avancer la roue suivante d'un cran : c'est la retenue."
+    },
+    {
+     "fr": "La machine ne sait qu'additionner. Pour soustraire, on additionne le complément à 9 du nombre."
+    },
+    {
+     "fr": "Pascal fait une cinquantaine de prototypes ; une vingtaine de machines sont construites et neuf existent encore."
+    }
+   ],
+   "piege": {
+    "fr": "La Pascaline n'est pas la toute première machine à calculer décrite : en 1623, Wilhelm Schickard dessine une « horloge à calculer ». Mais c'est la première produite en plusieurs exemplaires et conservée."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"La Pascaline : trois roues 0, 9, 9 ; ajouter 1 fait passer la retenue des unités aux dizaines puis aux centaines\"><circle class=\"f2\" cx=\"90\" cy=\"80\" r=\"40\"/><circle class=\"l\" cx=\"90\" cy=\"80\" r=\"40\" fill=\"none\"/><text class=\"t\" x=\"90\" y=\"92\" font-size=\"34\" text-anchor=\"middle\" font-weight=\"700\">0</text><text class=\"tm\" x=\"90\" y=\"145\" font-size=\"14\" text-anchor=\"middle\">centaines</text><circle class=\"f2\" cx=\"200\" cy=\"80\" r=\"40\"/><circle class=\"l\" cx=\"200\" cy=\"80\" r=\"40\" fill=\"none\"/><text class=\"t\" x=\"200\" y=\"92\" font-size=\"34\" text-anchor=\"middle\" font-weight=\"700\">9</text><text class=\"tm\" x=\"200\" y=\"145\" font-size=\"14\" text-anchor=\"middle\">dizaines</text><circle class=\"f2\" cx=\"310\" cy=\"80\" r=\"40\"/><circle class=\"l\" cx=\"310\" cy=\"80\" r=\"40\" fill=\"none\"/><text class=\"t\" x=\"310\" y=\"92\" font-size=\"34\" text-anchor=\"middle\" font-weight=\"700\">9</text><text class=\"tm\" x=\"310\" y=\"145\" font-size=\"14\" text-anchor=\"middle\">unités</text><path class=\"al\" d=\"M300 30 C 270 5, 220 5, 200 30\" fill=\"none\" stroke-width=\"3\"/><path class=\"al\" d=\"M190 30 C 160 5, 110 5, 95 30\" fill=\"none\" stroke-width=\"3\"/><text class=\"t\" x=\"200\" y=\"185\" font-size=\"15\" text-anchor=\"middle\">+1 aux unités : 099 devient 100, la retenue tombe de roue en roue</text></svg>",
+   "source": "Wikipédia (en), « Pascal's calculator »"
+  },
+  "symbole": "+1",
+  "embleme": "inf-pascaline"
+ },
+ {
+  "id": "inf.binaire",
+  "stat": "informatique",
+  "rang": 2,
+  "nom": {
+   "fr": "Leibniz et le binaire"
+  },
+  "description": {
+   "fr": "Leibniz fait multiplier une machine par additions répétées, et rêve d'écrire tous les nombres avec seulement 0 et 1."
+  },
+  "prerequis": [
+   "inf.pascaline"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "En 1673, Leibniz présente à la Royal Society de Londres le modèle en bois d'une machine qui multiplie et divise, en plus d'additionner et de soustraire."
+    },
+    {
+     "fr": "Son cœur est le cylindre cannelé, ou roue de Leibniz : des dents de longueurs différentes. On en a mis dans des calculatrices mécaniques jusqu'à la Curta, dans les années 1970."
+    },
+    {
+     "fr": "En binaire, chaque position vaut le double de sa voisine de droite : 1, 2, 4, 8… Ainsi 1101 vaut 8 + 4 + 1 = 13."
+    },
+    {
+     "fr": "Leibniz écrit sur le binaire dès 1679, mais publie son « Explication de l'arithmétique binaire » en 1705, après avoir reçu du jésuite Bouvet les hexagrammes chinois du Yi Jing."
+    }
+   ],
+   "piege": {
+    "fr": "Leibniz n'a pas construit de machine binaire : sa machine à calculer travaille en base 10. Le binaire n'entre dans les machines qu'au XXe siècle."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Le binaire : 1101 vaut 8 + 4 + 0 + 1 = 13\"><rect class=\"a\" x=\"52\" y=\"50\" width=\"56\" height=\"56\" rx=\"8\"/><text class=\"t\" x=\"80\" y=\"90\" font-size=\"30\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"80\" y=\"35\" font-size=\"15\" text-anchor=\"middle\">8</text><rect class=\"a\" x=\"132\" y=\"50\" width=\"56\" height=\"56\" rx=\"8\"/><text class=\"t\" x=\"160\" y=\"90\" font-size=\"30\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"160\" y=\"35\" font-size=\"15\" text-anchor=\"middle\">4</text><rect class=\"f2\" x=\"212\" y=\"50\" width=\"56\" height=\"56\" rx=\"8\"/><text class=\"t\" x=\"240\" y=\"90\" font-size=\"30\" text-anchor=\"middle\" font-weight=\"700\">0</text><text class=\"tm\" x=\"240\" y=\"35\" font-size=\"15\" text-anchor=\"middle\">2</text><rect class=\"a\" x=\"292\" y=\"50\" width=\"56\" height=\"56\" rx=\"8\"/><text class=\"t\" x=\"320\" y=\"90\" font-size=\"30\" text-anchor=\"middle\" font-weight=\"700\">1</text><text class=\"tm\" x=\"320\" y=\"35\" font-size=\"15\" text-anchor=\"middle\">1</text><text class=\"t\" x=\"200\" y=\"145\" font-size=\"20\" text-anchor=\"middle\" font-weight=\"700\">8 + 4 + 0 + 1 = 13</text><text class=\"tm\" x=\"200\" y=\"180\" font-size=\"14\" text-anchor=\"middle\">Chaque case vaut le double de sa voisine de droite</text></svg>",
+   "source": "Wikipédia (en), « Stepped reckoner » ; History of Information, « Leibniz Expounds on Binary Arithmetic »"
+  },
+  "symbole": "01",
+  "embleme": "zero"
+ },
+ {
+  "id": "inf.jacquard",
+  "stat": "informatique",
+  "rang": 3,
+  "nom": {
+   "fr": "Jacquard et les cartes perforées"
+  },
+  "description": {
+   "fr": "Un métier à tisser lyonnais lit son motif sur des cartes trouées : le premier programme qu'on change sans toucher à la machine."
+  },
+  "prerequis": [
+   "inf.pascaline"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Joseph Marie Jacquard présente son mécanisme à l'Exposition de l'an IX, à Paris, en 1801, et le brevète le 23 décembre 1801."
+    },
+    {
+     "fr": "Il remplace le « tireur de lacs », l'ouvrier qui levait à la main les fils du motif."
+    },
+    {
+     "fr": "Les cartes, reliées en chaîne, passent devant des aiguilles : là où il y a un trou, l'aiguille passe et soulève son fil ; sinon le fil reste en bas."
+    },
+    {
+     "fr": "Changer de motif, c'est changer de cartes : la machine reste la même. Babbage reprendra cette idée pour commander sa machine analytique."
+    }
+   ],
+   "piege": {
+    "fr": "Jacquard n'a pas tout inventé seul : il remonte notamment un métier conçu par Vaucanson au milieu du XVIIIe siècle. Son coup de génie est d'en faire un mécanisme fiable et diffusé."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 205\" role=\"img\" aria-label=\"Carte perforée de Jacquard : chaque trou laisse passer une aiguille qui soulève un fil de chaîne\"><rect class=\"f2\" x=\"40\" y=\"30\" width=\"320\" height=\"90\" rx=\"6\"/><rect class=\"fond\" x=\"62\" y=\"55\" width=\"16\" height=\"22\"/><line class=\"al\" x1=\"70\" y1=\"80\" x2=\"70\" y2=\"150\" stroke-width=\"3\"/><line class=\"lm\" x1=\"108\" y1=\"80\" x2=\"108\" y2=\"125\" stroke-width=\"3\"/><rect class=\"fond\" x=\"138\" y=\"55\" width=\"16\" height=\"22\"/><line class=\"al\" x1=\"146\" y1=\"80\" x2=\"146\" y2=\"150\" stroke-width=\"3\"/><rect class=\"fond\" x=\"176\" y=\"55\" width=\"16\" height=\"22\"/><line class=\"al\" x1=\"184\" y1=\"80\" x2=\"184\" y2=\"150\" stroke-width=\"3\"/><line class=\"lm\" x1=\"222\" y1=\"80\" x2=\"222\" y2=\"125\" stroke-width=\"3\"/><rect class=\"fond\" x=\"252\" y=\"55\" width=\"16\" height=\"22\"/><line class=\"al\" x1=\"260\" y1=\"80\" x2=\"260\" y2=\"150\" stroke-width=\"3\"/><line class=\"lm\" x1=\"298\" y1=\"80\" x2=\"298\" y2=\"125\" stroke-width=\"3\"/><line class=\"lm\" x1=\"336\" y1=\"80\" x2=\"336\" y2=\"125\" stroke-width=\"3\"/><text class=\"t\" x=\"200\" y=\"175\" font-size=\"15\" text-anchor=\"middle\">Un trou : l'aiguille passe et lève son fil</text><text class=\"tm\" x=\"200\" y=\"195\" font-size=\"14\" text-anchor=\"middle\">Pas de trou : le fil reste en bas</text></svg>",
+   "source": "Fondation Napoléon, « Jacquard, Joseph-Marie (1752-1834) » ; IEEE Computer Society, « Joseph-Marie Jacquard »"
+  },
+  "symbole": "▦",
+  "embleme": "inf-carte-perforee"
+ },
+ {
+  "id": "inf.babbage",
+  "stat": "informatique",
+  "rang": 4,
+  "nom": {
+   "fr": "Babbage, le moulin et le magasin"
+  },
+  "description": {
+   "fr": "En 1837, Charles Babbage dessine une machine qui sépare le calcul de la mémoire. Personne ne la construira."
+  },
+  "prerequis": [
+   "inf.binaire",
+   "inf.jacquard"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Après sa machine à différences, conçue dans les années 1820, Babbage décrit en 1837 sa machine analytique."
+    },
+    {
+     "fr": "Le « moulin » fait les quatre opérations et les comparaisons : c'est l'ancêtre de l'unité de calcul, l'ALU."
+    },
+    {
+     "fr": "Le « magasin » devait garder 1 000 nombres de 40 chiffres : c'est l'ancêtre de la mémoire."
+    },
+    {
+     "fr": "Des cartes perforées, comme celles des métiers Jacquard, donnent les ordres. La machine prévoit les branchements conditionnels et les boucles."
+    }
+   ],
+   "piege": {
+    "fr": "La machine analytique n'a jamais été construite. Son fils Henry en a bâti une petite partie du moulin, entre 1880 et 1910 ; elle est au Science Museum de Londres."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Machine analytique de Babbage : le magasin garde les nombres, le moulin calcule, les cartes perforées commandent\"><rect class=\"f2\" x=\"30\" y=\"40\" width=\"140\" height=\"100\" rx=\"10\"/><text class=\"t\" x=\"100\" y=\"80\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">Magasin</text><text class=\"tm\" x=\"100\" y=\"105\" font-size=\"13\" text-anchor=\"middle\">1000 nombres</text><text class=\"tm\" x=\"100\" y=\"122\" font-size=\"13\" text-anchor=\"middle\">de 40 chiffres</text><rect class=\"a\" x=\"230\" y=\"40\" width=\"140\" height=\"100\" rx=\"10\"/><text class=\"t\" x=\"300\" y=\"85\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">Moulin</text><text class=\"t\" x=\"300\" y=\"110\" font-size=\"16\" text-anchor=\"middle\">+ − × ÷</text><path class=\"al\" d=\"M172 75 L228 75\" stroke-width=\"3\"/><path class=\"al\" d=\"M228 105 L172 105\" stroke-width=\"3\"/><rect class=\"f2\" x=\"140\" y=\"160\" width=\"120\" height=\"30\" rx=\"4\"/><text class=\"t\" x=\"200\" y=\"181\" font-size=\"13\" text-anchor=\"middle\">cartes perforées</text><path class=\"lm\" d=\"M200 160 L200 142\" stroke-width=\"2\"/></svg>",
+   "source": "Wikipédia (en), « Analytical engine »"
+  },
+  "symbole": "⚙",
+  "embleme": "engrenage"
+ },
+ {
+  "id": "inf.lovelace",
+  "stat": "informatique",
+  "rang": 5,
+  "nom": {
+   "fr": "Ada Lovelace et la note G"
+  },
+  "description": {
+   "fr": "En traduisant un article sur la machine de Babbage, Ada Lovelace écrit des notes trois fois plus longues, dont un vrai programme."
+  },
+  "prerequis": [
+   "inf.babbage"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "En 1843, Ada Lovelace traduit en anglais l'article de l'Italien Menabrea sur la machine analytique, et y ajoute ses notes, signées A.A.L."
+    },
+    {
+     "fr": "Ses notes sont trois fois plus longues que l'article lui-même."
+    },
+    {
+     "fr": "La note G détaille, opération par opération, le calcul d'un nombre de Bernoulli par la machine : c'est souvent présenté comme le premier programme publié."
+    },
+    {
+     "fr": "Un algorithme est une suite d'instructions précises ; une boucle répète un groupe d'instructions tant qu'un test n'est pas satisfait."
+    }
+   ],
+   "piege": {
+    "fr": "Le programme de la note G contient une erreur : à l'opération 4, une division est écrite à l'envers. Personne ne l'a vue de son vivant, puisque la machine n'a jamais été construite."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Un algorithme avec une boucle : on calcule, on teste si c'est fini, sinon on recommence\"><rect class=\"f2\" x=\"120\" y=\"25\" width=\"160\" height=\"38\" rx=\"8\"/><text class=\"t\" x=\"200\" y=\"50\" font-size=\"15\" text-anchor=\"middle\">Lire les données</text><path class=\"lm\" d=\"M200 63 L200 80\" stroke-width=\"2\"/><rect class=\"f2\" x=\"120\" y=\"80\" width=\"160\" height=\"38\" rx=\"8\"/><text class=\"t\" x=\"200\" y=\"105\" font-size=\"15\" text-anchor=\"middle\">Calculer</text><path class=\"lm\" d=\"M200 118 L200 135\" stroke-width=\"2\"/><rect class=\"a\" x=\"120\" y=\"135\" width=\"160\" height=\"38\" rx=\"8\"/><text class=\"t\" x=\"200\" y=\"160\" font-size=\"15\" text-anchor=\"middle\">Fini ?</text><path class=\"al\" d=\"M120 154 C 60 154, 60 99, 118 99\" fill=\"none\" stroke-width=\"3\"/><text class=\"tm\" x=\"55\" y=\"130\" font-size=\"13\" text-anchor=\"middle\">non</text><path class=\"lm\" d=\"M280 154 L330 154\" stroke-width=\"2\"/><text class=\"tm\" x=\"355\" y=\"159\" font-size=\"13\" text-anchor=\"middle\">oui</text></svg>",
+   "source": "Wikipédia (en), « Note G »"
+  },
+  "symbole": "G",
+  "embleme": "plume"
+ },
+ {
+  "id": "inf.shannon",
+  "stat": "informatique",
+  "rang": 6,
+  "nom": {
+   "fr": "Shannon : la logique devient circuit"
+  },
+  "description": {
+   "fr": "En 1937, un étudiant du MIT montre que des interrupteurs peuvent faire de la logique de Boole, donc du calcul."
+  },
+  "prerequis": [
+   "inf.lovelace"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "En 1937, au MIT, Claude Shannon écrit son mémoire de master, « A Symbolic Analysis of Relay and Switching Circuits », publié en 1938."
+    },
+    {
+     "fr": "Il montre que l'algèbre de Boole sert à concevoir et simplifier les circuits de relais des centraux téléphoniques."
+    },
+    {
+     "fr": "Deux interrupteurs en série forment un ET : le courant ne passe que si les deux sont fermés. En parallèle, ils forment un OU."
+    },
+    {
+     "fr": "Le psychologue Howard Gardner l'a qualifié de « peut-être le plus important, et aussi le plus célèbre, mémoire de master du siècle »."
+    }
+   ],
+   "piege": {
+    "fr": "Shannon n'a pas inventé l'algèbre de Boole, qui date de 1854 : il l'a appliquée aux circuits électriques."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Deux interrupteurs en série forment un ET, en parallèle un OU\"><text class=\"t\" x=\"100\" y=\"25\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">En série : ET</text><text class=\"t\" x=\"300\" y=\"25\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">En parallèle : OU</text><path class=\"l\" d=\"M20 90 L50 90 M80 90 L120 90 M150 90 L180 90\" stroke-width=\"3\"/><path class=\"al\" d=\"M50 90 L78 76 M120 90 L148 76\" stroke-width=\"3\"/><text class=\"tm\" x=\"65\" y=\"120\" font-size=\"14\" text-anchor=\"middle\">A</text><text class=\"tm\" x=\"135\" y=\"120\" font-size=\"14\" text-anchor=\"middle\">B</text><circle class=\"a\" cx=\"190\" cy=\"90\" r=\"8\"/><path class=\"l\" d=\"M220 90 L250 90 L250 60 L280 60 M310 60 L340 60 L340 90 L370 90 M250 90 L250 120 L280 120 M310 120 L340 120 L340 90\" fill=\"none\" stroke-width=\"3\"/><path class=\"al\" d=\"M280 60 L308 46 M280 120 L308 106\" stroke-width=\"3\"/><text class=\"tm\" x=\"295\" y=\"85\" font-size=\"14\" text-anchor=\"middle\">A</text><text class=\"tm\" x=\"295\" y=\"145\" font-size=\"14\" text-anchor=\"middle\">B</text><circle class=\"a\" cx=\"380\" cy=\"90\" r=\"8\"/><text class=\"tm\" x=\"200\" y=\"185\" font-size=\"14\" text-anchor=\"middle\">La lampe s'allume si A et B / si A ou B sont fermés</text></svg>",
+   "source": "Wikipédia (en), « A Symbolic Analysis of Relay and Switching Circuits »"
+  },
+  "symbole": "∧",
+  "embleme": "elec-circuit"
+ },
+ {
+  "id": "inf.programme",
+  "stat": "informatique",
+  "rang": 7,
+  "nom": {
+   "fr": "Le programme enregistré"
+  },
+  "description": {
+   "fr": "Ranger le programme dans la mémoire, comme les données : l'idée qui fait de la calculatrice un ordinateur."
+  },
+  "prerequis": [
+   "inf.lovelace"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Dans une machine à programme enregistré, les instructions sont lues dans la même mémoire électronique que les données."
+    },
+    {
+     "fr": "L'idée remonte à la machine universelle théorique de Turing, en 1936."
+    },
+    {
+     "fr": "En juin 1945, John von Neumann la décrit pour l'EDVAC dans son « First Draft of a Report on the EDVAC »."
+    },
+    {
+     "fr": "Le 21 juin 1948, à Manchester, la « Baby » de Williams, Kilburn et Tootill exécute pour la première fois un programme enregistré : elle cherche le plus grand diviseur d'un nombre."
+    }
+   ],
+   "piege": {
+    "fr": "L'architecture dite « de von Neumann » ne vient pas de lui seul : son rapport reprend des idées discutées avec l'équipe de l'ENIAC, mais seul son nom y figure, pas ceux d'Eckert et Mauchly."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Programme enregistré : les instructions et les données sont rangées dans la même mémoire, lue par le processeur\"><rect class=\"f2\" x=\"30\" y=\"30\" width=\"150\" height=\"140\" rx=\"10\"/><text class=\"t\" x=\"105\" y=\"55\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">Mémoire</text><rect class=\"a\" x=\"45\" y=\"70\" width=\"120\" height=\"20\" rx=\"3\"/><text class=\"t\" x=\"105\" y=\"85\" font-size=\"12\" text-anchor=\"middle\">instruction</text><rect class=\"a\" x=\"45\" y=\"94\" width=\"120\" height=\"20\" rx=\"3\"/><text class=\"t\" x=\"105\" y=\"109\" font-size=\"12\" text-anchor=\"middle\">instruction</text><rect class=\"f\" x=\"45\" y=\"118\" width=\"120\" height=\"20\" rx=\"3\"/><text class=\"fond\" x=\"105\" y=\"133\" font-size=\"12\" text-anchor=\"middle\">donnée</text><rect class=\"f\" x=\"45\" y=\"142\" width=\"120\" height=\"20\" rx=\"3\"/><text class=\"fond\" x=\"105\" y=\"157\" font-size=\"12\" text-anchor=\"middle\">donnée</text><rect class=\"a\" x=\"240\" y=\"70\" width=\"130\" height=\"60\" rx=\"10\"/><text class=\"t\" x=\"305\" y=\"105\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">Processeur</text><path class=\"al\" d=\"M182 90 L238 90\" stroke-width=\"3\"/><path class=\"al\" d=\"M238 110 L182 110\" stroke-width=\"3\"/><text class=\"tm\" x=\"200\" y=\"192\" font-size=\"14\" text-anchor=\"middle\">Programme et données dans la même mémoire</text></svg>",
+   "source": "Wikipédia (en), « Stored-program computer » ; University of Manchester, Digital 60, « How it all began »"
+  },
+  "symbole": "↺",
+  "embleme": "ordinateur"
+ },
+ {
+  "id": "inf.hopper",
+  "stat": "informatique",
+  "rang": 8,
+  "nom": {
+   "fr": "Grace Hopper, le bug et le compilateur"
+  },
+  "description": {
+   "fr": "Une mathématicienne de la marine américaine apprend aux ordinateurs à lire des mots, et rend célèbre un papillon de nuit."
+  },
+  "prerequis": [
+   "inf.shannon",
+   "inf.programme"
+  ],
+  "fiche": {
+   "essentiel": [
+    {
+     "fr": "Grace Hopper (1906-1992) commence à programmer en 1944 sur le Mark I de Harvard, dans l'équipe de Howard Aiken."
+    },
+    {
+     "fr": "Le 9 septembre 1947, un papillon de nuit est retrouvé coincé dans un relais du Mark II ; on le scotche dans le cahier de bord : « First actual case of bug being found »."
+    },
+    {
+     "fr": "En 1952, elle termine le système A-0, l'un des premiers compilateurs : un programme qui traduit un programme en instructions machine."
+    },
+    {
+     "fr": "Ses travaux sur FLOW-MATIC inspirent le langage COBOL, défini en 1959."
+    }
+   ],
+   "piege": {
+    "fr": "Le papillon n'a pas inventé le mot « bug » : Edison l'employait déjà en 1878 pour les petits défauts. Le cahier dit « premier cas réel », justement parce que le mot existait."
+   },
+   "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Un compilateur traduit un programme écrit pour les humains en instructions de la machine\"><rect class=\"f2\" x=\"20\" y=\"60\" width=\"120\" height=\"70\" rx=\"8\"/><text class=\"t\" x=\"80\" y=\"90\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">PRIX × 2</text><text class=\"tm\" x=\"80\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">langage humain</text><rect class=\"a\" x=\"160\" y=\"70\" width=\"90\" height=\"50\" rx=\"25\"/><text class=\"t\" x=\"205\" y=\"100\" font-size=\"12\" text-anchor=\"middle\">compilateur</text><rect class=\"f2\" x=\"270\" y=\"60\" width=\"115\" height=\"70\" rx=\"8\"/><text class=\"t\" x=\"327\" y=\"90\" font-size=\"15\" text-anchor=\"middle\" font-weight=\"700\">0110 1011</text><text class=\"tm\" x=\"327\" y=\"112\" font-size=\"12\" text-anchor=\"middle\">langage machine</text><path class=\"al\" d=\"M140 95 L158 95 M250 95 L268 95\" stroke-width=\"3\"/><text class=\"tm\" x=\"200\" y=\"170\" font-size=\"14\" text-anchor=\"middle\">Il traduit, une fois pour toutes, avant que la machine calcule</text></svg>",
+   "source": "Wikipédia (en), « Grace Hopper » ; JSTOR Daily, « The Bug in the Computer Bug Story »"
+  },
+  "symbole": "🐞",
+  "embleme": "inf-papillon"
+ }
+]

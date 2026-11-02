@@ -821,7 +821,8 @@
       "dates_exactes_partie",
       "dates_niveau",
       "dates_rapides",
-      "dates_fausses"
+      "dates_fausses",
+      "toutes"
      ]
     },
     "n": {
@@ -853,6 +854,14 @@
     },
     "famille": {
      "$ref": "#/$defs/id"
+    },
+    "conditions": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "$ref": "#/$defs/condition"
+     },
+     "description": "Avec toutes : chaque condition doit être remplie."
     }
    }
   },

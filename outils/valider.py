@@ -121,6 +121,8 @@ def main():
     conditions += [(f"bibliotheque.json {l['id']}", l["condition"]) for l in contenu["bibliotheque"]["livres"]]
     conditions += [(f"ia.json {m['id']}", m["condition"]) for m in contenu["ia"]["masques"] if m.get("condition")]
     nb_cases = len(contenu["plateau"]["cases"])
+    # « toutes » : chaque sous-condition est vérifiée comme les autres.
+    conditions += [(ou, x) for ou, cond in list(conditions) if cond["type"] == "toutes" for x in cond.get("conditions", [])]
     for ou, cond in conditions:
         if cond.get("stat") and cond["stat"] not in stats:
             erreurs.append(f"{ou} : stat inconnue {cond['stat']}")
@@ -131,7 +133,7 @@ def main():
         if cond["type"] in ("case_atteinte", "case_visitee", "epoque_atteinte") and not 1 <= cond.get("n", 0) <= nb_cases:
             erreurs.append(f"{ou} : case hors du plateau {cond.get('n')}")
         besoin = {"competence_maitrisee": "id", "succes": "id", "ennemi_vaincu": "id", "famille_capturee": "famille", "branche_complete": "stat", "quiz_parfaits_stat": "stat",
-                  "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None}.get(cond["type"], "n")
+                  "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None, "toutes": "conditions"}.get(cond["type"], "n")
         if besoin and besoin not in cond:
             erreurs.append(f"{ou} : la condition {cond['type']} demande « {besoin} »")
 

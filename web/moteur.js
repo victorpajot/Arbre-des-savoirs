@@ -2769,6 +2769,8 @@
     switch (cond.type) {
       case "competences_maitrisees": return maitrisees.length >= cond.n;
       case "competence_maitrisee": return estMaitrisee(partie, cond.id);
+      // Donjons : plusieurs conditions à la fois (par exemple deux arbres réussis).
+      case "toutes": return (cond.conditions || []).every(function (x) { return conditionRemplie(contenu, partie, x, t); });
       case "quiz_parfaits_stat": return (c.parfaitsParStat[cond.stat] || 0) >= cond.n;
       case "quiz_eclair_rates": return c.quizEclairRates >= cond.n;
       case "quiz_zero": return c.quizZero >= cond.n;

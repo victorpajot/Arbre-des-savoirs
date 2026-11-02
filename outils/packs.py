@@ -217,6 +217,8 @@ def poser_lots(donnees):
             return 1 + cond["n"]
         if t == "branche_complete":
             return 4.5
+        if t == "toutes":
+            return sum(difficulte(x, prof + 1) for x in cond.get("conditions", []))
         return 3
 
     familles = [(donnees["objets.json"]["objets"], lambda x: x["condition"]["type"] != "tours_plateau"),
@@ -621,6 +623,8 @@ def liens_condition(m, nom, ident, cond, comps, arbres, succes):
     if not isinstance(cond, dict):
         return []
     t, out = cond.get("type"), []
+    if t == "toutes":
+        return [e for x in cond.get("conditions", []) for e in liens_condition(m, nom, ident, x, comps, arbres, succes)]
     if t == "competence_maitrisee" and cond.get("id") not in comps:
         out.append(f"[{m['id']}] {nom} › {ident} : la condition vise la compétence « {cond.get('id')} », introuvable")
     if t == "succes" and cond.get("id") not in succes:
