@@ -1263,6 +1263,19 @@ svg.grille .interro { transition: opacity .3s; }
 .dj-operation span:last-child { border-bottom: 3px solid var(--ink); padding-bottom: 2px; }
 .dj-roues { display: flex; gap: 8px; }
 .dj-roue { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.dj-etapes { display: flex; gap: 6px; list-style: none; padding: 0; margin: 0 0 10px; counter-reset: et; flex-wrap: wrap; justify-content: center; }
+.dj-etapes li { counter-increment: et; font-size: 15px; font-weight: 700; padding: 4px 10px; border-radius: 99px; border: 2px solid var(--line); color: var(--muted); }
+.dj-etapes li::before { content: counter(et) ". "; }
+.dj-etapes li.cur { border-color: var(--accent); color: var(--ink); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
+.dj-etapes li.fait { color: var(--good); border-color: var(--good); }
+.dj-roue small { font-size: 13px; font-weight: 700; color: var(--muted); }
+.dj-roue .crans { font: 700 15px var(--f-mono); color: var(--muted); } .dj-roue .crans.ok { color: var(--good); } .dj-roue .crans.trop { color: var(--bad); }
+.dj-roue.saut b { animation: dj-saut .6s ease-out; border-color: #E08A00; }
+@keyframes dj-saut { 0% { transform: rotate(-36deg) scale(1.1); } 100% { transform: none; } }
+.dj-saut { font-size: 17px; text-align: center; margin: 8px 0 0; font-weight: 600; color: #A35F00; } .dj-saut.trop { color: var(--bad); }
+.etabli-retenue .rangee { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+.etabli-retenue .dj-roues { justify-content: center; }
+.etabli-retenue .dj-roue button { font-size: 15px; padding: 0 8px; }
 .dj-roue b { width: 52px; height: 60px; display: grid; place-items: center; font: 800 32px var(--f-mono); border-radius: 50%; background: #E9D8B4; color: #3B2E1A; border: 3px solid #A8875A; }
 .dj-roue button, .dj-ruban button, .dj-bit { border: 2px solid var(--line); background: var(--bg); border-radius: 10px; min-width: 52px; min-height: 44px; font-size: 18px; color: var(--ink); }
 .dj-bits { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
@@ -4790,7 +4803,7 @@ function demarrerJeu() {
       inn.appendChild(el('<div class="dj-verdict ' + (j ? "ok" : "ko") + '">' + (j ? __("Ça marche !") : __("Pas tout à fait. La bonne réponse : ") + esc(texteAttendu(ep, donjon.res.attendu))) + "</div>"));
       var m = repliqueAlyca(tx(M.repliqueDonjon(C, donjon.id, j ? "atelier_reussi" : "atelier_rate")), j ? "neutre" : "moqueuse"); if (m) inn.appendChild(m);
       var s = el('<button type="button" class="btn large">' + (j ? __("Passer aux questions") : __("Une autre")) + "</button>");
-      s.onclick = function () { if (j) commencerQuestions(); else allerDonjon("epreuve", { ep: M.epreuveAtelier(C, P, donjon.id), res: null }); };
+      s.onclick = function () { if (j) commencerQuestions(); else allerDonjon("epreuve", { ep: M.epreuveAtelier(C, P, donjon.id), res: null, rep: null }); };
       inn.appendChild(s);
       return;
     }
@@ -4810,18 +4823,53 @@ function demarrerJeu() {
   // Chaque établi dessine sa manipulation dans `z` et renvoie une fonction qui lit la réponse montée.
   // `fige` : la réponse est déjà corrigée, on la montre sans pouvoir la changer.
   var ETABLIS = {
-    // La Pascaline : des roues de 0 à 9 qu'on tourne cran par cran.
+    // La Pascaline (Victor, 2026-11-03 : l'ancien établi n'était pas compris) : on ne fait qu'avancer une roue d'un cran.
+    // 1. inscrire le premier nombre, 2. ajouter le second, chiffre par chiffre ; une roue qui passe de 9 à 0 fait
+    // avancer sa voisine (le sautoir) ; 3. le résultat se lit sur les roues.
     retenue: function (z, x, ep, fige) {
-      var n = String(x.attendu).length, roues = donjon.rep || (donjon.rep = new Array(n).fill(0));
-      z.appendChild(el('<div class="dj-operation"><span>' + x.a + "</span><span>+ " + x.b + '</span></div>'));
-      var r = el('<div class="dj-roues"></div>');
-      roues.forEach(function (v, i) {
-        var w = el('<div class="dj-roue"><button type="button" aria-label="+1">▲</button><b>' + v + '</b><button type="button" aria-label="−1">▼</button></div>');
-        w.querySelectorAll("button").forEach(function (bt, k) { bt.disabled = fige; bt.onclick = function () { roues[i] = (roues[i] + (k ? 9 : 1)) % 10; w.querySelector("b").textContent = roues[i]; }; });
-        r.appendChild(w);
-      });
-      z.appendChild(r);
-      return function () { return Number(roues.join("")); };
+      var n = String(x.attendu).length, NOMS = [__("unités"), __("dizaines"), __("centaines"), __("milliers"), __("dizaines de mille")];
+      var st = donjon.rep && donjon.rep.roues ? donjon.rep : (donjon.rep = { roues: new Array(n).fill(0), etape: 0, crans: new Array(n).fill(0), saut: null });
+      var chiffre = function (v, r) { return Math.floor(v / Math.pow(10, r)) % 10; };
+      var cible = function (r) { return st.etape === 0 ? chiffre(x.a, r) : st.etape === 1 ? chiffre(x.b, r) : 0; };
+      var lire = function () { var v = 0; st.roues.forEach(function (d, r) { v += d * Math.pow(10, r); }); return v; };
+      function dessiner() {
+        z.innerHTML = "";
+        var et = [__("Inscris ") + x.a, __("Ajoute ") + x.b, __("Lis le résultat")];
+        z.appendChild(el('<ol class="dj-etapes">' + et.map(function (t, k) { return '<li class="' + (k < st.etape ? "fait" : k === st.etape ? "cur" : "") + '">' + esc(t) + "</li>"; }).join("") + "</ol>"));
+        var r = el('<div class="dj-roues"></div>'), trop = false, pret = true;
+        for (var k = n - 1; k >= 0; k--) (function (rg) {
+          var c = cible(rg), fait = st.crans[rg];
+          if (fait > c) trop = true; if (fait !== c) pret = false;
+          var w = el('<div class="dj-roue' + (st.saut === rg ? " saut" : "") + '"><small>' + esc(NOMS[rg] || "") + "</small><b>" + st.roues[rg] + '</b><button type="button">' + __("▲ 1 cran") + "</button>" +
+            (st.etape < 2 ? '<span class="crans' + (fait === c ? " ok" : fait > c ? " trop" : "") + '">' + fait + " / " + c + "</span>" : "") + "</div>");
+          var bt = w.querySelector("button"); bt.disabled = fige || st.etape >= 2;
+          bt.onclick = function () {
+            st.crans[rg]++; st.saut = null;
+            // Le cran, puis la retenue de proche en proche.
+            var q = rg; st.roues[q] = (st.roues[q] + 1) % 10;
+            while (st.roues[q] === 0 && q + 1 < n) { q++; st.roues[q] = (st.roues[q] + 1) % 10; st.saut = q; }
+            dessiner();
+          };
+          r.appendChild(w);
+        })(k);
+        z.appendChild(r);
+        if (st.saut != null) z.appendChild(el('<p class="dj-saut">' + __("Le sautoir tombe : la roue des ") + esc(NOMS[st.saut] || "") + __(" avance d'un cran. C'est la retenue.") + "</p>"));
+        if (fige) return;
+        if (trop) z.appendChild(el('<p class="dj-saut trop">' + __("Trop de crans : une Pascaline ne recule pas. Recommence.") + "</p>"));
+        var bas = el('<div class="rangee"></div>');
+        if (st.etape < 2 && pret) {
+          var go = el('<button type="button" class="btn">' + (st.etape === 0 ? __("Inscrit ! Ajouter ") + x.b + " →" : __("Ajouté ! Lire le résultat") + " →") + "</button>");
+          go.onclick = function () { st.etape++; st.crans = new Array(n).fill(0); st.saut = null; dessiner(); };
+          bas.appendChild(go);
+        }
+        if (st.etape === 2) z.appendChild(el('<p class="dj-cible">' + __("Les roues affichent ") + "<b>" + lire() + "</b>" + __(". Valide si c'est bien la somme.") + "</p>"));
+        var rz = el('<button type="button" class="btn sec">' + __("Recommencer") + "</button>");
+        rz.onclick = function () { donjon.rep = null; st = donjon.rep = { roues: new Array(n).fill(0), etape: 0, crans: new Array(n).fill(0), saut: null }; dessiner(); };
+        bas.appendChild(rz);
+        z.appendChild(bas);
+      }
+      dessiner();
+      return lire;
     },
     // Leibniz : des cases à allumer, chacune vaut le double de sa voisine de droite.
     binaire: function (z, x, ep, fige) {
