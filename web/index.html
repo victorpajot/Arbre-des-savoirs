@@ -529,7 +529,7 @@ body.plateau-plein { overflow: hidden; }
 .suite-tour h2 { margin: 0 0 6px; }
 .choix-suite { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
 .choix-suite .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-.choix-suite .donjon { opacity: .55; }
+.choix-suite .donjon:disabled { opacity: .55; }
 .choix-suite .donjon small { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 2px 8px; border-radius: 99px; background: color-mix(in srgb, var(--ink) 12%, transparent); }
 .carte-parcours { display: flex; flex-direction: column; gap: 10px; }
 .carte-parcours .cp-tete { display: flex; gap: 14px; align-items: center; }
@@ -2645,15 +2645,24 @@ function demarrerJeu() {
   function objectifTour() {
     var obs = C.plateau.objectifs || [];
     if (!obs.length) return null;
-    var o = obs[Math.min(P.plateau.tours, obs.length - 1)], r = C.objetParId ? C.objetParId[o.relique] : C.cabinet.objets.filter(function (x) { return x.id === o.relique; })[0];
-    return r ? { tour: P.plateau.tours + 1, nom: o.nom, relique: r, pixels: r.pixels } : null;
+    // Tour bouclé, suite pas encore choisie : c'est encore la relique du tour qui vient de finir (Victor, 2026-11-03).
+    var i = Math.max(0, P.plateau.tours - (P.plateau.parcoursSuivant ? 1 : 0));
+    var o = obs[Math.min(i, obs.length - 1)], r = C.objetParId ? C.objetParId[o.relique] : C.cabinet.objets.filter(function (x) { return x.id === o.relique; })[0];
+    return r ? { tour: i + 1, nom: o.nom, relique: r, pixels: r.pixels, atteint: !!P.plateau.parcoursSuivant } : null;
+  }
+  // Le pion attend sur l'arrivée : on montre la relique gagnée, pas la case de l'IA.
+  function carteArrivee() {
+    var ob = objectifTour(); if (!ob) return null;
+    var c = el('<button type="button" class="case-act"><span class="vitrine">' + svgObjet(ob.relique, false, 44) + '</span><span><span class="num">' + __("Arrivée · tour ") + ob.tour + "</span><b>" + esc(tx(ob.nom)) + "</b><span>" + __("Objectif atteint : il rejoint ton cabinet.") + "</span></span></button>");
+    c.onclick = ouvrirObjectif;
+    return c;
   }
   function ouvrirObjectif() {
     var ob = objectifTour(); if (!ob) return;
     var dejaVu = P.objets[ob.relique.id];
     feuilleSimple(__('<div class="eyebrow">Case centrale · objectif du tour ') + ob.tour + '</div><h2>' + esc(tx(ob.nom)) + '</h2><div class="vitrine" style="width:120px;height:120px;margin:4px auto;padding:12px">' + svgObjet(ob.relique, false, 96) + "</div>" +
-      __("<p>Atteins la dernière case, celle de l'IA, pour terminer le tour. L'objectif rejoint alors ton cabinet, avec un succès et un nouveau masque pour l'IA.</p>") +
-      (dejaVu ? '<p class="note">' + esc(tx(ob.relique.notice)) + __('</p><p class="meta">Source : ') + esc(ob.relique.source) + "</p>" : __('<p class="meta">Sa notice reste scellée jusqu\'à l\'arrivée.</p>')) +
+      (ob.atteint ? __("<p>Tour bouclé : l'objectif a rejoint ton cabinet. Choisis la suite pour repartir.</p>") : __("<p>Atteins la dernière case pour terminer le tour. L'objectif rejoint alors ton cabinet, avec un succès et un nouveau masque pour l'IA.</p>")) +
+      (dejaVu ? '<p class="note">' + esc(tx(ob.relique.notice)) + __('</p><p class="meta">Source : ') + esc(ob.relique.source) + "</p>" : ob.atteint ? "" : __('<p class="meta">Sa notice reste scellée jusqu\'à l\'arrivée.</p>')) +
       __('<p class="meta">Chaque tour change l\'objectif. Il en reste ') + Math.max(0, (C.plateau.objectifs || []).length - ob.tour) + __(" après celui-ci.</p>"), tx(ob.nom));
   }
   // Épreuves jouables maintenant, de la plus payante à la moins payante.
@@ -2931,7 +2940,7 @@ function demarrerJeu() {
       if (pl.parcours && pl.parcours.tour === pl.tours + 1) z.appendChild(carteParcours(pl.parcours));
       return b;
     }
-    var don = C.plateau.parcours.donjon, gagne = pl.victoire && pl.victoire.tour === pl.tours;
+    var gagne = pl.victoire && pl.victoire.tour === pl.tours;
     if (gagne) b.querySelector("h2").textContent = __("Victoire ! Et maintenant ?");
     z.appendChild(el('<p class="meta">' + (gagne ? __("Toute l'histoire est parcourue. Le prochain tour la reprend depuis le début ; allume d'autres arbres pour y mêler leurs cases.") : __("Le prochain tour reprend l'histoire où celui-ci s'est arrêté. Tu le découvres en repartant.")) + "</p>"));
     var choix = el('<div class="choix-suite"><button type="button" class="btn large">' + svgApercu("serpentin", 24, "#fff") + __(' Refaire un tour</button><button type="button" class="btn sec large donjon">Détour par le donjon</button></div>'));
@@ -2956,7 +2965,6 @@ function demarrerJeu() {
       b.querySelector("h2").textContent = __("Nouveau parcours");
     };
     z.appendChild(choix);
-    if (don) z.appendChild(el('<p class="note">' + esc(tx(don)) + "</p>"));
     return b;
   }
   function blocPlateau() {
@@ -3080,7 +3088,7 @@ function demarrerJeu() {
     b.insertBefore(grille, b.firstChild);
     var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</span><b>" + esc(nomCase(k)) + "</b><span>" + (compDeCase(k) ? esc(tx(k.titre)) + " · " : "") + __("Lire l'histoire de la case</span></span></button>"));
     act.onclick = function () { ouvrirCase(k.n); };
-    b.appendChild(act);
+    b.appendChild((pl.parcoursSuivant && carteArrivee()) || act);
     var rv = M.revisionEnCours(P);
     if (rv) {
       var kr = C.parId[rv.comp], br = el(__('<div class="revision-f"><p class="etat-pion">Révision forcée : l\'IA veut revoir « ') + esc(tx(kr.nom)) + __(" ». Ton pion ne bouge plus avant cette révision.</p></div>"));
@@ -6902,7 +6910,8 @@ function demarrerJeu() {
     }
     var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + (compDeCase(k) ? " · " + esc(tx(k.titre)) : "") + "</span><b>" + esc(nomCase(k)) + "</b><span>" + esc(tx(k.replique)) + "</span></span></button>");
     act.onclick = function () { ouvrirCase(k.n); };
-    b.appendChild(act);
+    var fin = k.arrivee && P.plateau.parcoursSuivant && carteArrivee();
+    b.appendChild(fin || act);
     var m = comite(rep, true); if (m) b.appendChild(m);
     return b;
   }
