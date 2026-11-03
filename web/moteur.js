@@ -1849,7 +1849,7 @@
     var tour = partie.plateau.tours + 2, proches = [];
     FAMILLES_BUTIN.forEach(function (f) {
       listeFamille(contenu, f).forEach(function (x) {
-        if (partie.gagnables && partie.gagnables[cleButin(f, x.id)] && !possede(partie, f, x.id) && x.lot <= tour) proches.push({ famille: f, chose: x });
+        if (f !== "livres" && partie.gagnables && partie.gagnables[cleButin(f, x.id)] && !possede(partie, f, x.id) && x.lot <= tour) proches.push({ famille: f, chose: x });
       });
     });
     var lot = lotDe(partie, t); if (lotPlein(lot)) return null;
@@ -3217,8 +3217,10 @@
   }
   // Butin qui peut tomber maintenant : gagnable, et dont le lot est ouvert (lot N à partir du tour N).
   // v15 : pas d'anachronisme. Un livre ne tombe que s'il est paru avant la fin de l'époque de la case du pion.
-  function butinOuvert(contenu, partie) {
-    var tour = (partie.plateau ? partie.plateau.tours : 0) + 1, out = [], fin = finEpoqueCase(contenu, partie);
+  // Victor (2026-11-03) : un livre ne tombe que sur le quiz ou le rappel de sa compétence (tirerButin) ; pour lui,
+  // `livresLies` lève le filtre d'époque, puisque l'épreuve est déjà la sienne.
+  function butinOuvert(contenu, partie, livresLies) {
+    var tour = (partie.plateau ? partie.plateau.tours : 0) + 1, out = [], fin = livresLies ? null : finEpoqueCase(contenu, partie);
     FAMILLES_BUTIN.forEach(function (f) {
       listeFamille(contenu, f).forEach(function (x) {
         if (f === "livres" && fin != null && Number(x.annee) > fin) return;
@@ -3271,19 +3273,9 @@
     return ici.length && tirage("theme|" + graine, PART_THEME) ? ici : liste;
   }
 
-  // Si le sort tombe sur un livre, l'IA prend de préférence un livre de l'époque de la case, sinon le plus récent permis.
-  // v18 : et, parmi eux, de préférence un livre du thème.
-  function livreDeLaCase(contenu, partie, ouvert, alea, theme) {
-    var e = epoqueCase(contenu, partie), livres = ouvert.filter(function (b) { return b.famille === "livres"; });
-    if (!e || !livres.length) return null;
-    var ici = livres.filter(function (b) { var a = Number(b.chose.annee); return (e.debut == null || a >= e.debut) && (e.fin == null || a <= e.fin); });
-    ici = duTheme(ici, theme, "livre|" + partie.journal.length, function (b) { return b.chose; });
-    if (ici.length) return ici[Math.floor(alea() * ici.length)];
-    return livres.slice().sort(function (a, b) { return Number(b.chose.annee) - Number(a.chose.annee); })[0];
-  }
   // v8 : case cadeau. Un objet du cabinet tombe sans épreuve ; à défaut, n'importe quel autre butin ouvert.
   function tirerCadeau(contenu, partie, t) {
-    var lot = lotDe(partie, t), ouvert = horsLot(lot, butinOuvert(contenu, partie)), objets = ouvert.filter(function (b) { return b.famille === "objets"; });
+    var lot = lotDe(partie, t), ouvert = horsLot(lot, butinOuvert(contenu, partie)).filter(function (b) { return b.famille !== "livres"; }), objets = ouvert.filter(function (b) { return b.famille === "objets"; });
     var liste = objets.length ? objets : ouvert;
     // v18 : un objet du thème de la case, si le cabinet en a un en attente.
     var th = themeCase(contenu, partie), ici = th ? liste.filter(function (b) { return themeDe(b.chose) === th; }) : [];
@@ -3304,7 +3296,16 @@
   function tirerButin(contenu, partie, epreuve, t, alea) {
     alea = alea || Math.random;
     var lot = lotDe(partie, t); if (lotPlein(lot)) return null;
-    var ouvert = horsLot(lot, butinOuvert(contenu, partie));
+    // Victor (2026-11-03) : le livre d'une compétence tombe sur son quiz ou son rappel réussi, à coup sûr, et jamais
+    // sur une autre épreuve.
+    var livre = (epreuve.type === "quiz" || epreuve.type === "rappel") ? butinLie(horsLot(lot, butinOuvert(contenu, partie, true)), epreuve).filter(function (b) { return b.famille === "livres"; })[0] : null;
+    if (livre) {
+      partie.livres[livre.chose.id] = t; compterLot(lot, "livres");
+      delete partie.gagnables[cleButin("livres", livre.chose.id)];
+      partie.maj = t;
+      return livre;
+    }
+    var ouvert = horsLot(lot, butinOuvert(contenu, partie)).filter(function (b) { return b.famille !== "livres"; });
     var fav = epreuve.type === "duel" ? null : faveurIA(contenu, partie, t);
     var assure = partie.butinAssure && epreuve.type !== "duel" && ouvert.length;
     if (assure) partie.butinAssure = false;
@@ -3315,7 +3316,6 @@
     var lies = butinLie(ouvert, epreuve);
     var th = themeEpreuve(contenu, partie, epreuve), pool = lies.length ? lies : duTheme(ouvert, th, t + "|" + partie.journal.length, function (x) { return x.chose; });
     var b = pool[Math.floor(alea() * pool.length)];
-    if (!lies.length && b.famille === "livres") b = livreDeLaCase(contenu, partie, ouvert, alea, themeDe(b.chose)) || b;
     partie[b.famille][b.chose.id] = t; compterLot(lot, b.famille);
     delete partie.gagnables[cleButin(b.famille, b.chose.id)];
     if (b.famille === "masques") partie.masque = b.chose.id;

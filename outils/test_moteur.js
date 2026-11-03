@@ -489,6 +489,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       const lie = M.butinOuvert(C5, L).filter(b => b.famille === "livres").map(b => b.chose).slice(-1)[0];
       const autre = M.tirerButin(C5, L, { type: "quiz", comp: lie.competence }, t0, () => 0.001);
       assert.ok(autre && (autre.chose.competence === lie.competence || (autre.chose.condition || {}).id === lie.competence), "butin rattaché à l'épreuve d'abord");
+      // Victor (2026-11-03) : un livre ne tombe que sur le quiz ou le rappel de sa compétence, à coup sûr, et toutes époques.
+      const V = M.nouvellePartie(t0); V.plateau.position = 4;
+      C5.livres.forEach(l => { V.gagnables["livres:" + l.id] = { famille: "livres", id: l.id, depuis: t0 }; });
+      for (let i = 0; i < 30; i++) {
+        const d = M.tirerButin(C5, V, { type: i % 2 ? "duel" : "chrono" }, t0, () => 0.01 * i);
+        assert.ok(!d || d.famille !== "livres", "pas de livre sur un duel ni un Chrono");
+      }
+      const recent = C5.livres.filter(l => Number(l.annee) > 1800 && l.lot <= 1)[0];
+      V.lot = null;
+      const r = M.tirerButin(C5, V, { type: "rappel", comp: recent.competence }, t0, () => 0.999);
+      assert.ok(r && r.famille === "livres" && r.chose.competence === recent.competence, "le rappel de sa compétence donne le livre, même hors époque");
     }
     // v15 : la case du pion dicte l'arbre de l'épreuve ; arbre sans rien de jouable, l'IA improvise hors case.
     const Q = M.nouvellePartie(t0);
