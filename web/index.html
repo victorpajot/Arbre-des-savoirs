@@ -252,6 +252,7 @@ textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); backgr
 .grille-cadre .agrandir { display: grid; place-items: center; position: absolute; top: 8px; right: 8px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.12); cursor: pointer; padding: 0; }
 .grille-cadre.plein .agrandir { display: none; }
 /* Victor (2026-11-02) : plateau agrandi, bouton rond « Jouer » en bas à droite, comme le bouton Jouer de l'accueil. */
+.sous-case { margin: -4px 0 8px; font-size: 17px; font-style: italic; color: var(--muted, #6B6880); }
 .grille-cadre .jouer-plein { display: none; }
 .grille-cadre.plein .jouer-plein { display: grid; place-items: center; position: absolute; right: 12px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: 60px; height: 60px; border-radius: 50%; border: 0; padding: 0; background: var(--accent); color: var(--accent-ink); box-shadow: 0 2px 10px rgba(0,0,0,.35); cursor: pointer; }
 .grille-cadre.plein .jouer-plein svg { margin-left: 3px; }
@@ -2391,7 +2392,7 @@ function demarrerJeu() {
     var atP = atomeSur(n);
     var enP = !atP && ennemiSur(n);
     var chP = !atP && !enP && chronoSur(n);
-    var titre = atP ? __("Un atome sauvage") : enP ? tx(enP.nom) : chP ? __("Une partie de Chrono") : tx(k.titre); if (titre.length > 30) titre = titre.slice(0, 29) + "…";
+    var titre = atP ? __("Un atome sauvage") : enP ? tx(enP.nom) : chP ? __("Une partie de Chrono") : nomCase(k); if (titre.length > 30) titre = titre.slice(0, 29) + "…";
     var lw = Math.max(96, Math.min(150, titre.length * 4.6 + 18));
     if (atP) lw = Math.max(lw, 124);
     if (enP) lw = Math.max(lw, 100);
@@ -2614,7 +2615,7 @@ function demarrerJeu() {
     // Victor (2026-11-02) : un rappel ne parle pas de la case du pion : bandeau « Rappel » et, en tuiles, les cases d'où
     // viennent le ou les rappels (série : un rappel par tuile, celui-ci en avant).
     var bandeau = !enI && !atI && c.type === "rappel" ? bandeauRappel(c, k) : enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Ennemi</div><h2>') + esc(tx(enI.nom)) + __(' garde la case</h2><p class="titre-en">') + esc(tx(enI.titre)) + "</p>" + (enI.qui ? "<p>" + esc(tx(enI.qui)) + "</p>" : "") + __('<p>Bats-le pour voir ce qu\'il y a dessous.</p></div>') : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>') : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
-      __('<div class="eyebrow">Ton pion est case ') + ici.n + " · " + pastilleDate(ici.annee) + "</div><h2>" + esc(tx(ici.titre)) + "</h2><p>" + escD(tx(ici.histoire)) + "</p>" + rangeePersonnes(tx(ici.histoire)) + "</div>";
+      __('<div class="eyebrow">Ton pion est case ') + ici.n + " · " + pastilleDate(ici.annee) + "</div>" + titreCase(ici) + "<p>" + escD(tx(ici.histoire)) + "</p>" + rangeePersonnes(tx(ici.histoire)) + "</div>";
     // v29 (Victor) : après la case, la phrase de l'IA, puis l'arbre choisi (icône, description, ton niveau) et l'épreuve.
     // Les savants et objets du thème passent à la fin.
     var nvA = M.niveau(C, M.xpParStat(C, P)[s.id] || 0), ferme = !M.arbreOuvert(C, P, s.id);
@@ -2937,7 +2938,7 @@ function demarrerJeu() {
     var dernierToucher = 0, attenteToucher = null;
     // Victor (2026-11-01) : le plateau d'abord, juste sous Jouer ; son nom et son compteur viennent dessous.
     b.insertBefore(grille, b.firstChild);
-    var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</span><b>" + esc(tx(k.titre)) + __("</b><span>Lire l'histoire de la case</span></span></button>"));
+    var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</span><b>" + esc(nomCase(k)) + "</b><span>" + (compDeCase(k) ? esc(tx(k.titre)) + " · " : "") + __("Lire l'histoire de la case</span></span></button>"));
     act.onclick = function () { ouvrirCase(k.n); };
     b.appendChild(act);
     var rv = M.revisionEnCours(P);
@@ -3006,12 +3007,16 @@ function demarrerJeu() {
       };
     });
   }
+  // Victor (2026-11-03) : une case porte le nom de son quiz ; l'événement daté qui l'illustre passe en sous-titre.
+  function compDeCase(k) { var l = k && C.plateau && (C.plateau.competences_cases || {})[k.n]; return l && l.length ? C.parId[l[0]] || null : null; }
+  function nomCase(k) { var c = compDeCase(k); return c ? tx(c.nom) : tx(k.titre); }
+  function titreCase(k) { var c = compDeCase(k); return "<h2>" + esc(nomCase(k)) + "</h2>" + (c ? '<p class="sous-case">' + esc(tx(k.titre)) + "</p>" : ""); }
   function ouvrirCase(n) {
     var k = M.caseN(C, n), connue = caseConnue(n), ici = P.plateau.position === n;
     var html = '<div class="vitrine" style="padding:16px">' + svgSprite(k.icone, 120, tx(k.titre), !connue) + "</div>";
     if (connue) {
       var spN = M.specialDe(C, P, n);
-      html += __('<div class="eyebrow">Case ') + n + " · " + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</div><h2>" + esc(tx(k.titre)) + "</h2>" +
+      html += __('<div class="eyebrow">Case ') + n + " · " + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</div>" + titreCase(k) +
         (spN ? '<p class="etat-pion">' + esc(texteRegle(spN)) + (spN.raison ? "<br><span class=\"meta\">" + esc(tx(spN.raison)) + "</span>" : "") + "</p>" : "") + "<p>" + esc(tx(k.histoire)) + __('</p><div id="ia-case"></div><p class="meta">Source : ') + esc(k.source) + "</p>" + galerieTheme(k.stat);
     } else {
       html += __('<div class="eyebrow">Case ') + n + " · " + esc(nomEpoque(k.epoque)) + __("</div><h2>Case à découvrir</h2><p class=\"meta\">Fais avancer ton pion jusqu'ici pour lire son histoire. Elle s'ajoutera aussi à la frise.</p>");
@@ -3028,7 +3033,7 @@ function demarrerJeu() {
       html += '<button type="button" class="btn large sc-mc" data-a="mc-' + esc(id) + '">' + __("Masterclass : ") + esc(tx(kc.nom)) + "</button>";
       actions["mc-" + id] = function () { fermerFeuille(); ouvrirMasterclass(id); };
     });
-    feuilleSimple(html, connue ? tx(k.titre) : __("Case ") + cn(n), actions);
+    feuilleSimple(html, connue ? nomCase(k) : __("Case ") + cn(n), actions);
     var z = feuille.querySelector("#ia-case");
     if (z) z.appendChild(comite({ contexte: "plateau_avance", texte: k.replique, expression: ici ? "moqueuse" : "neutre", theme: k.stat }, true));
     brancherGalerie(feuille);
@@ -3637,7 +3642,7 @@ function demarrerJeu() {
     if (cond.type === "case_atteinte" || cond.type === "case_visitee") {
       var k = M.caseN(C, cond.n);
       if (!k) return anC == null ? __("Continuer à jouer.") : __("Avancer jusqu'à l'année ") + formatAnnee(anC) + __(", ou finir un tour.");
-      return caseConnue(cond.n) ? __("S'arrêter sur la case « ") + tx(k.titre) + gf() + "." : __("S'arrêter sur une case encore cachée, datée de ") + formatAnnee(anC) + __(" : l'IA la met sur ta route tôt ou tard.");
+      return caseConnue(cond.n) ? __("S'arrêter sur la case « ") + nomCase(k) + gf() + "." : __("S'arrêter sur une case encore cachée, datée de ") + formatAnnee(anC) + __(" : l'IA la met sur ta route tôt ou tard.");
     }
     if (cond.type === "succes") { var sc = C.succes.filter(function (x) { return x.id === cond.id; })[0]; return __("Obtenir le succès « ") + tx(sc.nom) + gf() + "."; }
     return __("Continuer à jouer.");
@@ -4125,7 +4130,7 @@ function demarrerJeu() {
       : '<svg viewBox="-12 -12 24 24" width="120" height="120" aria-hidden="true"><circle r="10.5" fill="#D94141" stroke="#fff" stroke-width="2"/><path d="M-4.6,-4.6 L4.6,4.6 M4.6,-4.6 L-4.6,4.6" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/></svg>';
     var b = el('<div class="liberee"' + (k.stat ? ' style="--c:' + couleur(k.stat) + '"' : "") + __('><div class="eyebrow">Case ') + k.n + " · " + esc(formatAnnee(k.annee)) + '</div>' +
       '<div class="scene-lib"><div class="sous">' + svgSprite(k.icone, 120, tx(k.titre)) + '</div><div class="couvercle">' + couv + "</div></div>" +
-      __('<div class="grand">La case est libre !</div><div class="suite-lib"><h3>') + esc(tx(k.titre)) + "</h3>" + (k.stat ? pastilleTheme(k.stat) : "") + "<p>" + esc(tx(k.histoire)) + "</p></div></div>");
+      __('<div class="grand">La case est libre !</div><div class="suite-lib"><h3>') + esc(nomCase(k)) + "</h3>" + (compDeCase(k) ? '<p class="sous-case">' + esc(tx(k.titre)) + "</p>" : "") + (k.stat ? pastilleTheme(k.stat) : "") + "<p>" + esc(tx(k.histoire)) + "</p></div></div>");
     return b;
   }
   // v19 : l'atome qui a arrêté le pion pendant ce trajet (s'il attend toujours son combat).
@@ -4157,7 +4162,7 @@ function demarrerJeu() {
     sauver();
     var k = M.caseN(C, pg.case), kq = C.parId[q.competence];
     feuilleSimple(__('<div class="piege-scene"><div class="piege-titre">Piège !</div><span class="vitrine">') + svgSprite(k.icone, 96, tx(k.titre)) + '</span>' +
-      __('<div class="eyebrow">Case ') + pg.case + " · " + esc(tx(k.titre)) + '</div><p class="etat-pion">' + esc(texteRegle(pg.regle)) + '</p></div><div id="piege-ia"></div><div id="piege-q"></div>', __("Piège"));
+      __('<div class="eyebrow">Case ') + pg.case + " · " + esc(nomCase(k)) + '</div><p class="etat-pion">' + esc(texteRegle(pg.regle)) + '</p></div><div id="piege-ia"></div><div id="piege-q"></div>', __("Piège"));
     var zia = feuille.querySelector("#piege-ia"), m = comite(M.replique(C, P, ["piege_question"]), true); if (m) zia.appendChild(m);
     var c = el('<div class="oubli" style="--c:' + couleur(kq.stat) + '"><div class="eyebrow" style="color:' + couleur(kq.stat) + '">' + esc(tx(kq.nom)) + __(" · niveau ") + kq.rang + '</div><p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
     if (q.illustration || q.dessin) c.appendChild(el(htmlIllusQ(q)));
@@ -6171,7 +6176,7 @@ function demarrerJeu() {
       var ma = comite(rep, true); if (ma) b.appendChild(ma);
       return b;
     }
-    var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + "</span><b>" + esc(tx(k.titre)) + "</b><span>" + esc(tx(k.replique)) + "</span></span></button>");
+    var act = el('<button type="button" class="case-act"><span class="vitrine">' + svgSprite(k.icone, 44) + '</span><span><span class="num">' + esc(formatAnnee(k.annee)) + (compDeCase(k) ? " · " + esc(tx(k.titre)) : "") + "</span><b>" + esc(nomCase(k)) + "</b><span>" + esc(tx(k.replique)) + "</span></span></button>");
     act.onclick = function () { ouvrirCase(k.n); };
     b.appendChild(act);
     var m = comite(rep, true); if (m) b.appendChild(m);
