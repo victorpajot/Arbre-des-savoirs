@@ -1937,8 +1937,10 @@ function demarrerJeu() {
     for (j = i - 1; j >= 0; j--) if (rt[j] <= vers) return j + 1;
     return 1;
   }
-  function pasCase() { return (geo().total - 48) / laRoute().length; }
-  function abscisse(n) { return n > laRoute().length ? geo().total - 20 : 4 + (n - 0.5) * pasCase(); }
+  // Victor (2026-11-03) : la case d'arrivée (« Les IA d'aujourd'hui ») n'est plus dessinée : la relique du tour, au bout
+  // de la route, est l'arrivée. Les cases se partagent la route sans elle, et le pion arrivé se pose sur la relique.
+  function pasCase() { return (geo().total - 48) / Math.max(1, laRoute().length - 1); }
+  function abscisse(n) { return n >= laRoute().length ? geo().total - 20 : 4 + (n - 0.5) * pasCase(); }
   function centreCase(n) { var p = pointRoute(abscisse(n)); return [p[0], p[1]]; }
   function morceauRoute(s0, s1) {
     var out = [], n = Math.max(2, Math.ceil((s1 - s0) / 3));
@@ -2439,6 +2441,7 @@ function demarrerJeu() {
       c += '<polyline points="' + toute + '" fill="none" stroke="#000" stroke-opacity="0.22" stroke-width="' + (LARGEUR_ROUTE + 8) + '" stroke-linejoin="round" stroke-linecap="round" transform="translate(0 3)"/>' +
         '<polyline points="' + toute + '" fill="none" stroke="#fff" stroke-width="' + (LARGEUR_ROUTE + 6) + '" stroke-linejoin="round" stroke-linecap="round"/>';
       rt.forEach(function (n, i) {
+        if (i === rt.length - 1) return;
         var k = M.caseN(C, n), place = i + 1, s = abscisse(place), p = pointRoute(s), x = p[0], y = p[1], connue = caseConnue(n), sp = M.specialDe(C, P, n);
         var ici = i === pl.idx, proche = i > pl.idx && i <= pl.idx + loin, vue = i < pl.idx;
         var atC = atomeSur(n);
