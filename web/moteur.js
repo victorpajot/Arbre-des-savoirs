@@ -1464,12 +1464,25 @@
     partie.proces = partie.proces || {};
     return partie.proces[id] || (partie.proces[id] = { salle: 0, points: {}, essais: 0, perdus: 0, acquitte: null, entre: null, dernier: null });
   }
-  function maxSalle(s) {
+  // Procès v2 (Victor, 2026-11-03) : la fin de l'audience reprend la péroraison et la dernière phrase préparées
+  // (`reprend`), après celles de l'adversaire ; leurs options y valent `points_audience`.
+  function optionsEchange(pr, x) {
+    if (!x.reprend) return x.options;
+    var s = pr && pr.salles.filter(function (y) { return y.id === x.reprend; })[0];
+    return s ? s.options.map(function (o) { return { texte: o.texte, figure: o.figure, points: o.points_audience != null ? o.points_audience : o.points, retour: o.retour_audience || o.retour, plus: o.plus, moins: o.moins }; }) : [];
+  }
+  // Victor (2026-11-03) : les parties à ranger suivent le type de plan choisi (`selon`, `variantes`).
+  function itemsSalle(pr, s, choix) {
+    if (!s.selon || !s.variantes) return s.items;
+    var i = choix ? choix[s.selon] : null;
+    return (i != null && s.variantes[i]) || s.items;
+  }
+  function maxSalle(s, pr, choix) {
     var meilleur = function (opts) { return Math.max.apply(null, opts.map(function (o) { return o.points; })); };
     if (s.type === "choix") return meilleur(s.options);
     if (s.type === "multi") return s.choisir;
-    if (s.type === "ordre") return s.items.length;
-    return s.echanges.reduce(function (n, e) { return n + meilleur(e.options); }, 0);
+    if (s.type === "ordre") return itemsSalle(pr, s, choix).length;
+    return s.echanges.reduce(function (n, e) { return n + meilleur(optionsEchange(pr, e)); }, 0);
   }
   function salleProces(contenu, partie, id) {
     var pr = procesDe(contenu, id); if (!pr) return null;
@@ -1486,7 +1499,7 @@
   // audience : une option par échange). Renvoie les points, le maximum et le retour du mentor pour chaque choix.
   function repondreSalle(contenu, partie, id, reponse, t) {
     var s = salleProces(contenu, partie, id); if (!s) return { ok: false, raison: "fini" };
-    var pts = 0, retours = [], max = maxSalle(s);
+    var pr = procesDe(contenu, id), e0 = etatProces(partie, id), items = s.type === "ordre" ? itemsSalle(pr, s, e0.choix) : null, pts = 0, retours = [], max = maxSalle(s, pr, e0.choix);
     if (s.type === "choix") {
       var o = s.options[reponse]; if (!o) return { ok: false, raison: "reponse" };
       pts = o.points; retours.push(o.retour);
@@ -1494,20 +1507,22 @@
       if (!Array.isArray(reponse) || reponse.length !== s.choisir || reponse.some(function (i, k) { return !s.options[i] || reponse.indexOf(i) !== k; })) return { ok: false, raison: "reponse" };
       reponse.forEach(function (i) { pts += s.options[i].points; retours.push(s.options[i].retour); });
     } else if (s.type === "ordre") {
-      if (!Array.isArray(reponse) || reponse.length !== s.items.length || reponse.slice().sort().join() !== s.items.map(function (_, i) { return i; }).sort().join()) return { ok: false, raison: "reponse" };
+      if (!Array.isArray(reponse) || reponse.length !== items.length || reponse.slice().sort().join() !== items.map(function (_, i) { return i; }).sort().join()) return { ok: false, raison: "reponse" };
       reponse.forEach(function (i, k) { if (i === k) pts++; });
     } else {
-      if (!Array.isArray(reponse) || reponse.length !== s.echanges.length || reponse.some(function (i, k) { return !s.echanges[k].options[i]; })) return { ok: false, raison: "reponse" };
-      reponse.forEach(function (i, k) { var x = s.echanges[k].options[i]; pts += x.points; retours.push(x.retour); });
+      if (!Array.isArray(reponse) || reponse.length !== s.echanges.length || reponse.some(function (i, k) { return !optionsEchange(pr, s.echanges[k])[i]; })) return { ok: false, raison: "reponse" };
+      reponse.forEach(function (i, k) { var x = optionsEchange(pr, s.echanges[k])[i]; pts += x.points; retours.push(x.retour); });
     }
     var e = etatProces(partie, id);
     e.points[s.id] = pts; e.salle++;
+    // Les choix gardés : la clôture de l'audience propose d'abord la péroraison et la phrase préparées.
+    e.choix = e.choix || {}; e.choix[s.id] = reponse;
     partie.maj = t;
-    return { ok: true, salle: s, points: pts, max: max, retours: retours, lecon: s.lecon, suivante: salleProces(contenu, partie, id) };
+    return { ok: true, salle: s, points: pts, max: max, retours: retours, reponse: reponse, items: items, lecon: s.lecon, suivante: salleProces(contenu, partie, id) };
   }
   function scoreProces(contenu, partie, id) {
     var pr = procesDe(contenu, id), e = etatProces(partie, id), total = 0, max = 0;
-    pr.salles.forEach(function (s) { total += e.points[s.id] || 0; max += maxSalle(s); });
+    pr.salles.forEach(function (s) { total += e.points[s.id] || 0; max += maxSalle(s, pr, e.choix); });
     return { total: total, max: max, seuil: Math.ceil(pr.seuil * max - 1e-9) };
   }
   // Toutes les salles passées : le jury rend son verdict ; la partie suivante (l'appel) repart de la première salle.
@@ -1518,10 +1533,30 @@
     var sc = scoreProces(contenu, partie, id), acquitte = sc.total >= sc.seuil;
     e.essais++;
     if (acquitte) { if (!e.acquitte) e.acquitte = t; } else e.perdus++;
-    e.dernier = { total: sc.total, max: sc.max, seuil: sc.seuil, acquitte: acquitte, t: t, points: e.points };
-    e.salle = 0; e.points = {};
+    var votes = votesJury(pr, e.points, acquitte, e.choix);
+    e.dernier = { total: sc.total, max: sc.max, seuil: sc.seuil, acquitte: acquitte, t: t, points: e.points, votes: votes };
+    e.salle = 0; e.points = {}; e.choix = {};
     partie.maj = t;
-    return { ok: true, acquitte: acquitte, total: sc.total, max: sc.max, seuil: sc.seuil, vrai: pr.vrai, contexte: acquitte ? "acquitte" : "condamne", succes: verifierSucces(contenu, partie, t) };
+    return { ok: true, acquitte: acquitte, total: sc.total, max: sc.max, seuil: sc.seuil, vrai: pr.vrai, contexte: acquitte ? "acquitte" : "condamne", votes: votes, succes: verifierSucces(contenu, partie, t) };
+  }
+  // Chaque juré pèse les salles qui comptent pour lui (6 sur 10 suffisent) ; le verdict, lui, suit le total : on fait
+  // basculer les jurés les plus proches pour qu'il y ait une majorité (4 sur 6) dans le sens du verdict.
+  function votesJury(pr, points, acquitte, choix) {
+    var jury = pr.jury || []; if (!jury.length) return [];
+    var parId = {}; pr.salles.forEach(function (s) { parId[s.id] = s; });
+    var v = jury.map(function (j) {
+      var a = 0, m = 0;
+      j.salles.forEach(function (sid) { var s = parId[sid]; if (!s) return; a += points[sid] || 0; m += maxSalle(s, pr, choix); });
+      var r = m ? a / m : 0;
+      return { id: j.id, ratio: r, acquitte: r >= 0.6 };
+    });
+    var besoin = Math.floor(jury.length / 2) + 1, oui = function () { return v.filter(function (x) { return x.acquitte; }).length; };
+    var tri = v.slice().sort(function (a, b) { return acquitte ? b.ratio - a.ratio : a.ratio - b.ratio; });
+    tri.forEach(function (x) {
+      if (acquitte && oui() < besoin && !x.acquitte) x.acquitte = true;
+      if (!acquitte && oui() >= besoin && x.acquitte) x.acquitte = false;
+    });
+    return v.map(function (x) { return { id: x.id, acquitte: x.acquitte }; });
   }
   function repliqueProces(contenu, id, moment, alea) {
     var pr = procesDe(contenu, id), l = pr && pr.repliques[moment]; if (!l || !l.length) return null;
@@ -1855,7 +1890,7 @@
     var tour = partie.plateau.tours + 2, proches = [];
     FAMILLES_BUTIN.forEach(function (f) {
       listeFamille(contenu, f).forEach(function (x) {
-        if (partie.gagnables && partie.gagnables[cleButin(f, x.id)] && !possede(partie, f, x.id) && x.lot <= tour) proches.push({ famille: f, chose: x });
+        if (f !== "livres" && partie.gagnables && partie.gagnables[cleButin(f, x.id)] && !possede(partie, f, x.id) && x.lot <= tour) proches.push({ famille: f, chose: x });
       });
     });
     var lot = lotDe(partie, t); if (lotPlein(lot)) return null;
@@ -2825,8 +2860,13 @@
       return pa % 10 === 1 ? (s.fiches[a.cle].dernier || 0) - (s.fiches[b.cle].dernier || 0) : 0;
     });
     var choix = [], siecles = {};
-    [tries.filter(passe), tries.filter(function (x) { return th && x.theme === th; }), tries].forEach(function (liste) {
+    // Des siècles tous différents d'abord, en puisant dans les trois listes ; on ne complète avec un siècle déjà pris
+    // qu'ensuite (avant, la liste du thème se remplissait de doublons avant de regarder les autres).
+    var listes = [tries.filter(passe), tries.filter(function (x) { return th && x.theme === th; }), tries];
+    listes.forEach(function (liste) {
       liste.forEach(function (x) { var k = creneau(x.debut, 100, R.prehistoire); if (choix.length < R.evenements && !siecles[k] && choix.indexOf(x) < 0) { siecles[k] = 1; choix.push(x); } });
+    });
+    listes.forEach(function (liste) {
       liste.forEach(function (x) { if (choix.length < R.evenements && choix.indexOf(x) < 0) choix.push(x); });
     });
     s.jeu = { mode: mode, depuis: t, case: mode === "case" ? s.case : null, reponses: [], questions: choix.map(function (x) {
@@ -3218,8 +3258,10 @@
   }
   // Butin qui peut tomber maintenant : gagnable, et dont le lot est ouvert (lot N à partir du tour N).
   // v15 : pas d'anachronisme. Un livre ne tombe que s'il est paru avant la fin de l'époque de la case du pion.
-  function butinOuvert(contenu, partie) {
-    var tour = (partie.plateau ? partie.plateau.tours : 0) + 1, out = [], fin = finEpoqueCase(contenu, partie);
+  // Victor (2026-11-03) : un livre ne tombe que sur le quiz ou le rappel de sa compétence (tirerButin) ; pour lui,
+  // `livresLies` lève le filtre d'époque, puisque l'épreuve est déjà la sienne.
+  function butinOuvert(contenu, partie, livresLies) {
+    var tour = (partie.plateau ? partie.plateau.tours : 0) + 1, out = [], fin = livresLies ? null : finEpoqueCase(contenu, partie);
     FAMILLES_BUTIN.forEach(function (f) {
       listeFamille(contenu, f).forEach(function (x) {
         if (f === "livres" && fin != null && Number(x.annee) > fin) return;
@@ -3272,19 +3314,9 @@
     return ici.length && tirage("theme|" + graine, PART_THEME) ? ici : liste;
   }
 
-  // Si le sort tombe sur un livre, l'IA prend de préférence un livre de l'époque de la case, sinon le plus récent permis.
-  // v18 : et, parmi eux, de préférence un livre du thème.
-  function livreDeLaCase(contenu, partie, ouvert, alea, theme) {
-    var e = epoqueCase(contenu, partie), livres = ouvert.filter(function (b) { return b.famille === "livres"; });
-    if (!e || !livres.length) return null;
-    var ici = livres.filter(function (b) { var a = Number(b.chose.annee); return (e.debut == null || a >= e.debut) && (e.fin == null || a <= e.fin); });
-    ici = duTheme(ici, theme, "livre|" + partie.journal.length, function (b) { return b.chose; });
-    if (ici.length) return ici[Math.floor(alea() * ici.length)];
-    return livres.slice().sort(function (a, b) { return Number(b.chose.annee) - Number(a.chose.annee); })[0];
-  }
   // v8 : case cadeau. Un objet du cabinet tombe sans épreuve ; à défaut, n'importe quel autre butin ouvert.
   function tirerCadeau(contenu, partie, t) {
-    var lot = lotDe(partie, t), ouvert = horsLot(lot, butinOuvert(contenu, partie)), objets = ouvert.filter(function (b) { return b.famille === "objets"; });
+    var lot = lotDe(partie, t), ouvert = horsLot(lot, butinOuvert(contenu, partie)).filter(function (b) { return b.famille !== "livres"; }), objets = ouvert.filter(function (b) { return b.famille === "objets"; });
     var liste = objets.length ? objets : ouvert;
     // v18 : un objet du thème de la case, si le cabinet en a un en attente.
     var th = themeCase(contenu, partie), ici = th ? liste.filter(function (b) { return themeDe(b.chose) === th; }) : [];
@@ -3305,7 +3337,16 @@
   function tirerButin(contenu, partie, epreuve, t, alea) {
     alea = alea || Math.random;
     var lot = lotDe(partie, t); if (lotPlein(lot)) return null;
-    var ouvert = horsLot(lot, butinOuvert(contenu, partie));
+    // Victor (2026-11-03) : le livre d'une compétence tombe sur son quiz ou son rappel réussi, à coup sûr, et jamais
+    // sur une autre épreuve.
+    var livre = (epreuve.type === "quiz" || epreuve.type === "rappel") ? butinLie(horsLot(lot, butinOuvert(contenu, partie, true)), epreuve).filter(function (b) { return b.famille === "livres"; })[0] : null;
+    if (livre) {
+      partie.livres[livre.chose.id] = t; compterLot(lot, "livres");
+      delete partie.gagnables[cleButin("livres", livre.chose.id)];
+      partie.maj = t;
+      return livre;
+    }
+    var ouvert = horsLot(lot, butinOuvert(contenu, partie)).filter(function (b) { return b.famille !== "livres"; });
     var fav = epreuve.type === "duel" ? null : faveurIA(contenu, partie, t);
     var assure = partie.butinAssure && epreuve.type !== "duel" && ouvert.length;
     if (assure) partie.butinAssure = false;
@@ -3316,7 +3357,6 @@
     var lies = butinLie(ouvert, epreuve);
     var th = themeEpreuve(contenu, partie, epreuve), pool = lies.length ? lies : duTheme(ouvert, th, t + "|" + partie.journal.length, function (x) { return x.chose; });
     var b = pool[Math.floor(alea() * pool.length)];
-    if (!lies.length && b.famille === "livres") b = livreDeLaCase(contenu, partie, ouvert, alea, themeDe(b.chose)) || b;
     partie[b.famille][b.chose.id] = t; compterLot(lot, b.famille);
     delete partie.gagnables[cleButin(b.famille, b.chose.id)];
     if (b.famille === "masques") partie.masque = b.chose.id;
@@ -3913,7 +3953,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,
