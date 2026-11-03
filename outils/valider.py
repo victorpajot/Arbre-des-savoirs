@@ -240,6 +240,19 @@ def main():
                 erreurs.append(f"{ou}/{sa['id']} : la salle {sa['type']} demande « {besoin_s} »")
             if sa["type"] == "multi" and not (sa.get("choisir") and sum(1 for o in sa.get("options", []) if o["points"]) >= sa["choisir"]):
                 erreurs.append(f"{ou}/{sa['id']} : pas assez de bons choix pour « choisir »")
+            # Procès v2 : la clôture de l'audience reprend une salle de choix déjà passée, notée de nouveau (points_audience).
+            ids_avant = [x["id"] for x in pr["salles"][:pr["salles"].index(sa)]]
+            for e in sa.get("echanges", []):
+                if "reprend" in e:
+                    cible = next((x for x in pr["salles"] if x["id"] == e["reprend"]), None)
+                    if not cible or cible["type"] != "choix" or cible["id"] not in ids_avant:
+                        erreurs.append(f"{ou}/{sa['id']} : « reprend » doit viser une salle de choix déjà passée ({e['reprend']})")
+                    elif any("points_audience" not in o for o in cible["options"]) or "adversaire" not in e:
+                        erreurs.append(f"{ou}/{sa['id']} : clôture sans « adversaire » ou option sans « points_audience »")
+                elif "attaque" not in e or "options" not in e:
+                    erreurs.append(f"{ou}/{sa['id']} : un échange demande « attaque » et « options »")
+        for j in pr.get("jury", []):
+            erreurs += [f"{ou} : juré {j['id']}, salle inconnue {x}" for x in j["salles"] if x not in [y["id"] for y in pr["salles"]]]
     # v9 : atomes du jeu de Mendeleïev.
     at = contenu["atomes"]
     for i, e in enumerate(at["elements"], 1):

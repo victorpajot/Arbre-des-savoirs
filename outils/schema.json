@@ -3843,6 +3843,22 @@
              },
              "alyca": {
               "$ref": "#/$defs/texte"
+             },
+             "figure": {
+              "$ref": "#/$defs/texte"
+             },
+             "plus": {
+              "$ref": "#/$defs/texte"
+             },
+             "moins": {
+              "$ref": "#/$defs/texte"
+             },
+             "points_audience": {
+              "type": "integer",
+              "minimum": 0
+             },
+             "retour_audience": {
+              "$ref": "#/$defs/texte"
              }
             }
            }
@@ -3873,10 +3889,7 @@
            "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-             "attaque",
-             "options"
-            ],
+            "required": [],
             "properties": {
              "attaque": {
               "$ref": "#/$defs/texte"
@@ -3908,6 +3921,39 @@
                 }
                }
               }
+             },
+             "reprend": {
+              "type": "string",
+              "description": "Clôture de l'audience : reprend les options d'une salle (péroraison, dernière phrase) après la plaidoirie de l'adversaire."
+             },
+             "adversaire": {
+              "$ref": "#/$defs/texte"
+             },
+             "consigne": {
+              "$ref": "#/$defs/texte"
+             }
+            }
+           }
+          },
+          "autres": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+             "nom",
+             "plus",
+             "moins"
+            ],
+            "properties": {
+             "nom": {
+              "$ref": "#/$defs/texte"
+             },
+             "plus": {
+              "$ref": "#/$defs/texte"
+             },
+             "moins": {
+              "$ref": "#/$defs/texte"
              }
             }
            }
@@ -3955,6 +4001,105 @@
          "acquitte",
          "condamne"
         ]
+       },
+       "jury": {
+        "type": "array",
+        "description": "Les jurés : fiche, salles qui comptent pour eux (leur vote), mot au verdict, portrait 40 x 48.",
+        "items": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "id",
+          "nom",
+          "sexe",
+          "age",
+          "origine",
+          "metier",
+          "trait",
+          "salles",
+          "mot",
+          "base"
+         ],
+         "properties": {
+          "id": {
+           "$ref": "#/$defs/id"
+          },
+          "nom": {
+           "type": "string"
+          },
+          "sexe": {
+           "$ref": "#/$defs/texte"
+          },
+          "age": {
+           "type": "integer"
+          },
+          "origine": {
+           "$ref": "#/$defs/texte"
+          },
+          "metier": {
+           "$ref": "#/$defs/texte"
+          },
+          "trait": {
+           "$ref": "#/$defs/texte"
+          },
+          "salles": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "mot": {
+           "type": "object",
+           "additionalProperties": false,
+           "required": [
+            "acquitte",
+            "condamne"
+           ],
+           "properties": {
+            "acquitte": {
+             "$ref": "#/$defs/texte"
+            },
+            "condamne": {
+             "$ref": "#/$defs/texte"
+            }
+           }
+          },
+          "base": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          },
+          "couleurs": {
+           "type": "object",
+           "additionalProperties": {
+            "type": "string"
+           }
+          }
+         }
+        }
+       },
+       "jury_verdict": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "acquitte",
+         "condamne"
+        ],
+        "properties": {
+         "acquitte": {
+          "type": "array",
+          "items": {
+           "$ref": "#/$defs/texte"
+          }
+         },
+         "condamne": {
+          "type": "array",
+          "items": {
+           "$ref": "#/$defs/texte"
+          }
+         }
+        }
        }
       }
      }

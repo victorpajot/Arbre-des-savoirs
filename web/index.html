@@ -1320,6 +1320,42 @@ svg.grille .interro { transition: opacity .3s; }
 .pr-verdict h2 { font-size: 34px; } .pr-verdict p { font-size: 18px; margin: 4px 0 0; }
 .pr-verdict.ok { background: color-mix(in srgb, var(--good) 16%, var(--surface)); border: 2px solid var(--good); }
 .pr-verdict.ko { background: color-mix(in srgb, var(--bad) 12%, var(--surface)); border: 2px solid var(--bad); }
+.pr-direct { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.pr-direct select { font: inherit; font-size: 16px; padding: 6px 8px; border-radius: 8px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); max-width: 100%; }
+.pr-jures { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+.pr-jure { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 2px; border: 2px solid var(--line); border-radius: 10px; background: var(--surface); font: 600 13px var(--f-body, inherit); color: var(--ink); cursor: pointer; }
+.pr-jure.ouvert { border-color: #8E5BA8; background: color-mix(in srgb, #8E5BA8 12%, var(--surface)); }
+.pr-jure .vitrine, .pr-vote .vitrine { display: grid; place-items: center; }
+.pr-fiche { display: flex; gap: 12px; align-items: flex-start; margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, #8E5BA8 8%, var(--surface)); }
+.pr-fiche b { font-size: 18px; } .pr-fiche ul { list-style: none; padding: 0; margin: 4px 0; font-size: 16px; } .pr-fiche li span { color: var(--muted); font-size: 14px; }
+.pr-fiche p { font-size: 17px; margin: 4px 0 0; font-style: italic; }
+.pr-figure { display: block; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: #8E5BA8; margin-bottom: 2px; }
+.pr-prep { display: inline-block; margin-left: 8px; font-size: 12px; font-weight: 800; text-transform: uppercase; padding: 1px 8px; border-radius: 99px; background: #8E5BA8; color: #fff; vertical-align: middle; }
+.pr-portes { display: flex; flex-direction: column; gap: 10px; }
+.pr-porte { border-left: 4px solid var(--line); padding: 4px 0 4px 10px; } .pr-porte.pris.bon { border-left-color: var(--good); } .pr-porte.pris.faux { border-left-color: var(--bad); }
+.pr-porte .cite { font-weight: 700; font-size: 17px; margin: 0 0 4px; }
+.pr-pm { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-direction: column; gap: 4px; font-size: 17px; line-height: 1.4; }
+.pr-pm b { display: inline-block; width: 18px; } .pr-pm .plus b { color: var(--good); } .pr-pm .moins b { color: var(--bad); }
+.pr-autres summary { cursor: pointer; font-weight: 700; font-size: 16px; padding: 6px 0; }
+.pr-autres .pr-porte { margin-top: 8px; }
+.pr-attaque.plaidoirie p { font-size: 19px; font-style: italic; font-weight: 600; }
+.pr-retour-jury { text-align: center; font-size: 22px; }
+.pr-votes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.pr-vote { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto auto; column-gap: 8px; align-items: center; padding: 8px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); opacity: 0; animation: pr-vote .5s ease-out forwards; }
+.pr-vote .vitrine { grid-row: 1 / 4; } .pr-vote b { font-size: 16px; }
+.pr-vote .bulletin { font: 800 14px var(--f-mono, monospace); text-transform: uppercase; letter-spacing: .04em; }
+.pr-vote.ok { border-color: var(--good); } .pr-vote.ok .bulletin { color: var(--good); }
+.pr-vote.ko { border-color: var(--bad); } .pr-vote.ko .bulletin { color: var(--bad); }
+.pr-vote q { quotes: "« " " »"; grid-column: 1 / 3; font-size: 17px; font-style: italic; line-height: 1.35; margin-top: 4px; }
+.pr-presidente { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 14px; background: color-mix(in srgb, #8E5BA8 12%, var(--surface)); border: 2px solid #8E5BA8; }
+.pr-presidente .qui { font-size: 14px; font-weight: 700; color: var(--muted); } .pr-presidente p { font-family: var(--f-display); font-size: 20px; font-weight: 700; margin: 4px 0 0; }
+.apparait { opacity: 0; animation: pr-apparait .6s ease-out forwards; }
+.pr-verdict.tampon { animation-name: pr-tampon; }
+.pr-suite { display: flex; flex-direction: column; gap: 10px; }
+@keyframes pr-vote { from { opacity: 0; transform: translateY(10px) rotateX(70deg); } to { opacity: 1; transform: none; } }
+@keyframes pr-apparait { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes pr-tampon { 0% { opacity: 0; transform: scale(1.6) rotate(-6deg); } 70% { opacity: 1; transform: scale(.95) rotate(1deg); } 100% { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .pr-vote, .apparait { animation: none; opacity: 1; } }
 .dj-entree { display: grid; gap: 4px; width: 100%; text-align: left; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); padding: 12px 14px; margin-top: 8px; color: var(--ink); }
 .dj-entree b { font-size: 19px; } .dj-entree small { font-size: 15px; color: var(--muted); }
 .dj-jauge { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
@@ -4840,6 +4876,32 @@ function demarrerJeu() {
     ({ intro: procesIntro, salle: procesSalle, retour: procesRetour, verdict: procesVerdict, vrai: procesVrai })[proces.phase](inn, pr, e);
     var f = z.querySelector(".btn"); if (f) f.focus({ preventScroll: true });
   }
+  // Procès v2 (Victor, 2026-11-03) : le jury en pixel art, avec sa fiche ; on le découvre dès l'entrée.
+  function blocJury(pr, titre) {
+    var jury = pr.jury || []; if (!jury.length) return null;
+    var b = el('<div class="bloc pr-jury"><div class="eyebrow">' + esc(titre || __("Le jury")) + '</div><div class="pr-jures"></div></div>'), g = b.querySelector(".pr-jures");
+    jury.forEach(function (j) {
+      var bt = el('<button type="button" class="pr-jure' + (proces.jure === j.id ? " ouvert" : "") + '"><span class="vitrine">' + svgSavant(j, 46) + "</span><span>" + esc(j.nom.split(" ")[0]) + "</span></button>");
+      bt.onclick = function () { proces.jure = proces.jure === j.id ? null : j.id; rendreProces(); var f = document.querySelector(".pr-fiche"); if (f) f.scrollIntoView({ block: "nearest" }); };
+      g.appendChild(bt);
+    });
+    var j = jury.filter(function (x) { return x.id === proces.jure; })[0];
+    if (j) {
+      var f = el('<div class="pr-fiche"><span class="vitrine">' + svgSavant(j, 72) + '</span><div><b></b><ul></ul><p></p></div></div>');
+      f.querySelector("b").textContent = j.nom;
+      [[__("Âge"), j.age + __(" ans")], [__("Sexe"), tx(j.sexe)], [__("Origine"), tx(j.origine)], [__("Métier"), tx(j.metier)]].forEach(function (l) {
+        f.querySelector("ul").appendChild(el("<li><span>" + esc(l[0]) + "</span> " + esc(l[1]) + "</li>"));
+      });
+      f.querySelector("p").textContent = tx(j.trait);
+      b.appendChild(f);
+    } else b.appendChild(el('<p class="meta">' + __("Touche un juré pour lire sa fiche.") + "</p>"));
+    return b;
+  }
+  function boutonPlateau(inn, principal) {
+    var b = el('<button type="button" class="btn ' + (principal ? "" : "sec ") + 'large">' + __("Retour au plateau") + "</button>");
+    b.onclick = function () { fermerProces(); window.scrollTo(0, 0); };
+    inn.appendChild(b);
+  }
   function procesIntro(inn, pr, e) {
     inn.appendChild(el('<div class="pr-fictif">' + esc(tx(pr.fictif)) + "</div>"));
     var a = el('<div class="bloc"><div class="eyebrow">' + __("Le dossier") + "</div><h2></h2><p class=\"dj-recit\"></p></div>");
@@ -4847,25 +4909,40 @@ function demarrerJeu() {
     inn.appendChild(a);
     var m = repliqueAlyca(proces.replique && tx(proces.replique), "moqueuse"); if (m) inn.appendChild(m);
     var l = pr.repliques.mentor; if (l && l.length) inn.appendChild(paroleMentor(pr, tx(l[e.salle ? 1 % l.length : 0])));
+    var bj = blocJury(pr, __("Le jury : six habitants de la vallée")); if (bj) inn.appendChild(bj);
     if (e.dernier) inn.appendChild(el('<div class="dj-verdict ' + (e.dernier.acquitte ? "ok" : "ko") + '">' + (e.dernier.acquitte ? __("Dernier verdict : acquittée") : __("Dernier verdict : condamnée")) + " (" + e.dernier.total + " / " + e.dernier.max + ")</div>"));
     var s = pr.salles[e.salle];
-    var go = el('<button type="button" class="btn large">' + (e.salle ? __("Reprendre : ") : e.essais ? __("Faire appel : ") : __("Entrer : ")) + __("salle ") + (e.salle + 1) + " · " + esc(tx(s.nom)) + "</button>");
-    go.onclick = function () { allerProces("salle", { sel: [], aud: null }); };
+    // Gagné, on ne fait pas appel : on rejoue l'affaire, si on veut.
+    var quoi = e.salle ? __("Reprendre : ") : e.acquitte ? __("Rejouer l'affaire : ") : e.essais ? __("Faire appel : ") : __("Entrer : ");
+    var go = el('<button type="button" class="btn ' + (e.acquitte && !e.salle ? "sec " : "") + 'large">' + quoi + __("salle ") + (e.salle + 1) + " · " + esc(tx(s.nom)) + "</button>");
+    go.onclick = function () { allerProces("salle", { sel: [], aud: null, jure: null }); };
     inn.appendChild(go);
     if (e.essais) { var v = el('<button type="button" class="btn sec large">' + __("Le vrai procès") + "</button>"); v.onclick = function () { allerProces("vrai"); }; inn.appendChild(v); }
+    boutonPlateau(inn, e.acquitte && !e.salle);
     inn.appendChild(el('<p class="note">' + esc(tx(pr.description)) + "</p>"));
+  }
+  // Une option : sa figure de style (s'il y en a une) en petit, puis le texte.
+  function texteOption(bt, o) {
+    bt.textContent = "";
+    if (o.figure) bt.appendChild(el('<span class="pr-figure">' + esc(tx(o.figure)) + "</span>"));
+    bt.appendChild(document.createTextNode(tx(o.texte)));
+  }
+  // Cicéron sur un choix : ce qu'il apporte, ce qu'il coûte.
+  function plusMoins(o) {
+    return '<ul class="pr-pm">' + (o.plus ? '<li class="plus"><b>+</b> ' + esc(tx(o.plus)) + "</li>" : "") + (o.moins ? '<li class="moins"><b>−</b> ' + esc(tx(o.moins)) + "</li>" : "") + "</ul>";
   }
   function procesSalle(inn, pr, e) {
     var s = M.salleProces(C, P, proces.id); if (!s) { allerProces("verdict"); return; }
     inn.appendChild(el('<div class="eyebrow">' + __("Salle ") + (e.salle + 1) + " · " + esc(tx(s.nom)) + "</div>"));
-    var c = el('<p class="enonce"></p>'); c.textContent = tx(s.consigne); inn.appendChild(c);
     var sel = proces.sel, valider = el('<button type="button" class="btn large">' + __("Plaider") + "</button>");
-    function envoyer(rep) { var r = M.repondreSalle(C, P, proces.id, rep, maintenant()); sauver(); if (r.ok) allerProces("retour", { res: r }); }
+    function envoyer(rep) { var r = M.repondreSalle(C, P, proces.id, rep, maintenant()); sauver(); if (r.ok) allerProces("retour", { res: r, jure: null }); }
+    if (s.type !== "audience") { var c = el('<p class="enonce"></p>'); c.textContent = tx(s.consigne); inn.appendChild(c); }
+    if (s.id === "arguments" || s.id === "jury") { var bj = blocJury(pr); if (bj) inn.appendChild(bj); }
     if (s.type === "choix" || s.type === "multi") {
       var n = s.type === "choix" ? 1 : s.choisir, zone = el('<div class="choix"></div>');
       if (n > 1) inn.appendChild(el('<p class="meta">' + __("Choisis-en ") + n + ".</p>"));
       s.options.forEach(function (o, i) {
-        var bt = el('<button type="button"' + (sel.indexOf(i) >= 0 ? ' class="pr-sel"' : "") + "></button>"); bt.textContent = tx(o.texte);
+        var bt = el('<button type="button"' + (sel.indexOf(i) >= 0 ? ' class="pr-sel"' : "") + "></button>"); texteOption(bt, o);
         bt.onclick = function () {
           var k = sel.indexOf(i);
           if (k >= 0) sel.splice(k, 1); else { if (n === 1) sel.length = 0; if (sel.length < n) sel.push(i); }
@@ -4893,54 +4970,134 @@ function demarrerJeu() {
       valider.onclick = function () { envoyer(sel.slice()); proces.melange = null; };
       inn.appendChild(valider);
     } else {
-      // L'audience : maître Érard attaque, on répond, la présidente tranche, échange après échange.
+      // L'audience : maître Érard attaque, on répond, la présidente tranche ; puis les deux péroraisons, et les deux
+      // dernières phrases : la sienne d'abord, la tienne ensuite, préparée ou changée au dernier moment.
       var au = proces.aud || (proces.aud = { i: 0, choix: [], vu: false });
-      var x = s.echanges[au.i];
+      var x = s.echanges[au.i], opts = M.optionsEchange(pr, x), prep = x.reprend && e.choix ? e.choix[x.reprend] : null;
+      if (!au.i && !au.vu) { var c0 = el('<p class="enonce"></p>'); c0.textContent = tx(s.consigne); inn.appendChild(c0); }
       inn.appendChild(el('<div class="pr-points">' + s.echanges.map(function (_, k) { return '<i class="' + (k < au.choix.length ? "fait" : k === au.i ? "cur" : "") + '"></i>'; }).join("") + "</div>"));
-      var at = el('<div class="pr-attaque"><div class="qui">' + __("Maître Érard, l'accusation") + "</div><p></p></div>"); at.querySelector("p").textContent = tx(x.attaque); inn.appendChild(at);
+      var qui = x.reprend ? (x.reprend === "mots" ? __("Maître Érard, sa dernière phrase") : __("Maître Érard, sa péroraison")) : __("Maître Érard, l'accusation");
+      var at = el('<div class="pr-attaque' + (x.reprend ? " plaidoirie" : "") + '"><div class="qui">' + qui + "</div><p></p></div>"); at.querySelector("p").textContent = tx(x.reprend ? x.adversaire : x.attaque); inn.appendChild(at);
+      if (x.reprend && !au.vu) { var cs = el('<p class="enonce"></p>'); cs.textContent = tx(x.consigne); inn.appendChild(cs); }
       var zo = el('<div class="choix"></div>'), pris = au.vu ? au.choix[au.i] : null;
-      x.options.forEach(function (o, i) {
-        var bt = el("<button type=\"button\"></button>"); bt.textContent = tx(o.texte);
+      opts.forEach(function (o, i) {
+        var bt = el('<button type="button"></button>'); texteOption(bt, o);
+        if (prep === i) bt.appendChild(el('<span class="pr-prep">' + __("Préparée") + "</span>"));
         if (au.vu) { bt.disabled = true; if (i === pris) bt.classList.add(o.points ? "bon" : "faux"); }
         else bt.onclick = function () { au.choix.push(i); au.vu = true; rendreProces(); };
         zo.appendChild(bt);
       });
       inn.appendChild(zo);
       if (au.vu) {
-        var o = x.options[pris];
+        var o = opts[pris];
         if (o.alyca) { var ma = repliqueAlyca(tx(o.alyca), o.points ? "impressionnee" : "moqueuse"); if (ma) inn.appendChild(ma); }
         inn.appendChild(paroleMentor(pr, tx(o.retour)));
+        // Les autres répliques : ce qu'elles auraient donné.
+        var autres = opts.map(function (y, k) { return [y, k]; }).filter(function (p) { return p[1] !== pris; });
+        if (autres.length) {
+          var d = el('<details class="pr-autres"><summary>' + __("Et si tu avais répondu autrement ?") + "</summary></details>");
+          autres.forEach(function (p) {
+            var y = p[0], li = el('<div class="pr-porte"><p class="cite"></p></div>');
+            li.querySelector(".cite").textContent = (y.figure ? tx(y.figure) + " : " : "") + tx(y.texte);
+            li.appendChild(x.reprend && (y.plus || y.moins) ? el(plusMoins(y)) : paroleMentor(pr, tx(y.retour)));
+            d.appendChild(li);
+          });
+          inn.appendChild(d);
+        }
         var dernier = au.i + 1 >= s.echanges.length;
-        var nx = el('<button type="button" class="btn large">' + (dernier ? __("Fin de l'audience") : __("Attaque suivante")) + "</button>");
-        nx.onclick = function () { if (dernier) envoyer(au.choix.slice()); else { au.i++; au.vu = false; rendreProces(); } };
+        var nx = el('<button type="button" class="btn large">' + (dernier ? __("Fin de l'audience") : s.echanges[au.i + 1].reprend ? __("Les plaidoiries") : __("Attaque suivante")) + "</button>");
+        nx.onclick = function () { if (dernier) envoyer(au.choix.slice()); else { au.i++; au.vu = false; rendreProces(); var z = document.querySelector(".quiz.proces"); if (z) z.scrollTop = 0; } };
         inn.appendChild(nx);
       }
     }
   }
   function procesRetour(inn, pr, e) {
     var r = proces.res; if (!r) { allerProces("intro"); return; }
-    inn.appendChild(el('<div class="eyebrow">' + __("Salle ") + (pr.salles.indexOf(r.salle) + 1) + " · " + esc(tx(r.salle.nom)) + "</div>"));
+    var s = r.salle;
+    inn.appendChild(el('<div class="eyebrow">' + __("Salle ") + (pr.salles.indexOf(s) + 1) + " · " + esc(tx(s.nom)) + "</div>"));
     inn.appendChild(el('<div class="pr-score"><b>' + r.points + "</b> / " + r.max + "</div>"));
-    if (r.salle.type === "ordre") {
-      inn.appendChild(el('<ol class="pr-plan">' + r.salle.items.map(function (it) { return "<li><b>" + esc(tx(it.nom)) + "</b> : " + esc(tx(it.role)) + "</li>"; }).join("") + "</ol>"));
+    if (s.type === "ordre") {
+      inn.appendChild(el('<ol class="pr-plan">' + s.items.map(function (it) { return "<li><b>" + esc(tx(it.nom)) + "</b> : " + esc(tx(it.role)) + "</li>"; }).join("") + "</ol>"));
+      if (s.autres && s.autres.length) {
+        var pa = el('<div class="bloc pr-portes"><div class="eyebrow">' + __("Les autres plans possibles") + "</div></div>");
+        s.autres.forEach(function (a) { var d = el('<div class="pr-porte"><p class="cite"></p>' + plusMoins(a) + "</div>"); d.querySelector(".cite").textContent = tx(a.nom); pa.appendChild(d); });
+        inn.appendChild(pa);
+      }
+    } else if (s.type === "choix" || s.type === "multi") {
+      // Victor (2026-11-03) : Cicéron commente aussi les portes qu'on s'est fermées.
+      var pris = [].concat(r.reponse);
+      var ch = el('<div class="bloc pr-portes"><div class="eyebrow">' + (pris.length > 1 ? __("Tes choix") : __("Ton choix")) + "</div></div>");
+      pris.forEach(function (i) {
+        var o = s.options[i], d = el('<div class="pr-porte pris' + (o.points ? " bon" : " faux") + '"><p class="cite"></p></div>');
+        d.querySelector(".cite").textContent = (o.figure ? tx(o.figure) + " : " : "") + tx(o.texte);
+        d.appendChild(paroleMentor(pr, tx(o.retour))); d.appendChild(el(plusMoins(o)));
+        ch.appendChild(d);
+      });
+      inn.appendChild(ch);
+      var fe = el('<div class="bloc pr-portes"><div class="eyebrow">' + __("Les portes que tu t'es fermées") + "</div></div>");
+      s.options.forEach(function (o, i) {
+        if (pris.indexOf(i) >= 0) return;
+        var d = el('<div class="pr-porte' + (o.points ? " bon" : "") + '"><p class="cite"></p>' + plusMoins(o) + "</div>");
+        d.querySelector(".cite").textContent = (o.figure ? tx(o.figure) + " : " : "") + tx(o.texte);
+        fe.appendChild(d);
+      });
+      inn.appendChild(fe);
     }
-    r.retours.forEach(function (t) { inn.appendChild(paroleMentor(pr, tx(t))); });
     var l = el('<div class="bloc pr-lecon"><div class="eyebrow">' + __("La leçon") + '</div><p class="dj-recit"></p>' + (r.lecon.source ? '<p class="meta source"></p>' : "") + "</div>");
     l.querySelector(".dj-recit").textContent = tx(r.lecon.texte); if (r.lecon.source) l.querySelector(".source").textContent = __("Source : ") + r.lecon.source;
     inn.appendChild(l);
-    var go = el('<button type="button" class="btn large">' + (r.suivante ? __("Salle suivante : ") + esc(tx(r.suivante.nom)) : __("Entendre le verdict")) + "</button>");
+    var go = el('<button type="button" class="btn large">' + (r.suivante ? __("Salle suivante : ") + esc(tx(r.suivante.nom)) : __("Le jury se retire")) + "</button>");
     go.onclick = function () { allerProces(r.suivante ? "salle" : "verdict", { res: null, sel: [], aud: null }); };
     inn.appendChild(go);
   }
+  // Le verdict mis en scène : le jury revient, chaque juré vote, la présidente du jury parle, puis le verdict tombe.
   function procesVerdict(inn, pr, e) {
     var v = proces.verdict || (proces.verdict = M.verdictProces(C, P, proces.id, maintenant()));
     sauver();
     if (!v.ok) { allerProces("intro", { verdict: null }); return; }
-    inn.appendChild(el('<div class="pr-verdict ' + (v.acquitte ? "ok" : "ko") + '"><div class="eyebrow">' + __("Le verdict") + "</div><h2>" + (v.acquitte ? __("Acquittée !") : __("Condamnée")) + "</h2><p>" + v.total + " / " + v.max + __(" points (il en fallait ") + v.seuil + ")</p></div>"));
-    var m = repliqueAlyca(tx(M.repliqueProces(C, proces.id, v.contexte)), v.acquitte ? "decue" : "moqueuse"); if (m) inn.appendChild(m);
-    (v.succes || []).forEach(function (s) { inn.appendChild(el('<div class="dj-succes">🏆 ' + __("Succès : ") + "<b>" + esc(tx(s.nom)) + "</b></div>")); });
-    var vr = el('<button type="button" class="btn large">' + __("Le vrai procès") + "</button>"); vr.onclick = function () { allerProces("vrai", { verdict: null }); }; inn.appendChild(vr);
-    if (!v.acquitte) { var ap = el('<button type="button" class="btn sec large">' + __("Faire appel") + "</button>"); ap.onclick = function () { allerProces("salle", { verdict: null, sel: [], aud: null }); }; inn.appendChild(ap); }
+    var jury = pr.jury || [], vote = {}; (v.votes || []).forEach(function (x) { vote[x.id] = x.acquitte; });
+    var pas = 0.9, t0 = 0.6;
+    if (jury.length) {
+      inn.appendChild(el('<h2 class="pr-retour-jury">' + __("Le jury revient dans la salle.") + "</h2>"));
+      var g = el('<div class="pr-votes"></div>');
+      jury.forEach(function (j, k) {
+        var ok = vote[j.id], c = el('<div class="pr-vote ' + (ok ? "ok" : "ko") + '" style="animation-delay:' + (t0 + k * pas) + 's"><span class="vitrine">' + svgSavant(j, 52) + '</span><b></b><span class="bulletin">' + (ok ? __("Non coupable") : __("Coupable")) + '</span><q></q></div>');
+        c.querySelector("b").textContent = j.nom.split(" ")[0]; c.querySelector("q").textContent = tx(j.mot[ok ? "acquitte" : "condamne"]).replace(/^« | »$/g, "");
+        g.appendChild(c);
+      });
+      inn.appendChild(g);
+      var nOui = jury.filter(function (j) { return vote[j.id]; }).length, tf = t0 + jury.length * pas;
+      var pres = jury[0], lignes = (pr.jury_verdict || {})[v.contexte] || [], mot = lignes.length ? tx(lignes[Math.floor(Math.random() * lignes.length)]) : "";
+      var pj = el('<div class="pr-presidente apparait" style="animation-delay:' + tf + 's"><span class="vitrine">' + svgSavant(pres, 56) + '</span><div><div class="qui"></div><p></p></div></div>');
+      pj.querySelector(".qui").textContent = pres.nom + __(", présidente du jury · ") + nOui + __(" voix sur ") + jury.length + __(" pour l'acquittement");
+      pj.querySelector("p").textContent = mot;
+      inn.appendChild(pj);
+      t0 = tf + 1.2;
+    }
+    var bloc = el('<div class="pr-verdict apparait tampon ' + (v.acquitte ? "ok" : "ko") + '" style="animation-delay:' + t0 + 's"><div class="eyebrow">' + __("Le verdict") + "</div><h2>" + (v.acquitte ? __("Acquittée !") : __("Condamnée")) + "</h2><p>" + v.total + " / " + v.max + __(" points (il en fallait ") + v.seuil + ")</p></div>");
+    inn.appendChild(bloc);
+    var suite = el('<div class="pr-suite apparait" style="animation-delay:' + (t0 + 0.8) + 's"></div>');
+    var m = repliqueAlyca(tx(M.repliqueProces(C, proces.id, v.contexte)), v.acquitte ? "decue" : "moqueuse"); if (m) suite.appendChild(m);
+    (v.succes || []).forEach(function (s) { suite.appendChild(el('<div class="dj-succes">🏆 ' + __("Succès : ") + "<b>" + esc(tx(s.nom)) + "</b></div>")); });
+    if (v.acquitte) {
+      // Victor (2026-11-03) : gagné, pas d'appel forcé. Retour au plateau, un autre donjon, ou d'autres arbres.
+      boutonPlateau(suite, true);
+      var autres = M.entreesDonjons(C, P).filter(function (x) { return x.id !== proces.id; });
+      autres.forEach(function (x) {
+        var b = el('<button type="button" class="btn sec large"></button>'); b.textContent = __("Autre donjon : ") + tx(x.nom);
+        b.onclick = function () { fermerProces(); ouvrirEntree(x.sorte, x.id); };
+        suite.appendChild(b);
+      });
+      var aa = el('<button type="button" class="btn sec large">' + __("Allumer d'autres arbres") + "</button>");
+      aa.onclick = function () { fermerProces(); vue = "perso"; ongletPerso = "reglages"; rendre(); window.scrollTo(0, 0); };
+      suite.appendChild(aa);
+      var vr = el('<button type="button" class="btn sec large">' + __("Le vrai procès") + "</button>"); vr.onclick = function () { allerProces("vrai", { verdict: null }); }; suite.appendChild(vr);
+    } else {
+      var ap = el('<button type="button" class="btn large">' + __("Faire appel") + "</button>"); ap.onclick = function () { allerProces("salle", { verdict: null, sel: [], aud: null }); }; suite.appendChild(ap);
+      var vr2 = el('<button type="button" class="btn sec large">' + __("Le vrai procès") + "</button>"); vr2.onclick = function () { allerProces("vrai", { verdict: null }); }; suite.appendChild(vr2);
+      boutonPlateau(suite, false);
+    }
+    inn.appendChild(suite);
   }
   function procesVrai(inn, pr) {
     var b = el('<div class="bloc"><div class="eyebrow">' + __("Ce qui s'est vraiment passé") + '</div><h2></h2><p class="dj-recit"></p><p class="meta source"></p></div>');
@@ -7438,9 +7595,19 @@ function demarrerJeu() {
       l.querySelector("b").textContent = tx(d.nom);
       l.querySelector(".note").textContent = eteint ? __("Son pack est éteint.") : tx(d.accroche);
       var cb = l.querySelector("input"); cb.checked = !eteint && A.donjons.indexOf(d.id) >= 0; cb.disabled = eteint;
-      cb.onchange = function () { A.donjons = A.donjons.filter(function (x) { return x !== d.id; }); if (cb.checked) A.donjons.push(d.id); ecrireSession(CLE_ASSISTANT, A); };
+      cb.onchange = function () { A.donjons = A.donjons.filter(function (x) { return x !== d.id; }); if (cb.checked) A.donjons.push(d.id); else if (A.direct === d.id) A.direct = null; ecrireSession(CLE_ASSISTANT, A); rendre(); };
       b.appendChild(l);
     });
+    // Victor (2026-11-03) : lancer la partie directement dans un donjon coché, sans faire le parcours avant.
+    var coches = tous.filter(function (d) { return !off[prop[d.id]] && A.donjons.indexOf(d.id) >= 0; });
+    if (coches.length) {
+      var dir = el('<label class="pr-direct"><span><b>' + __("Commencer la partie") + '</b></span><select></select></label>'), se = dir.querySelector("select");
+      se.appendChild(el('<option value="">' + __("sur le plateau") + "</option>"));
+      coches.forEach(function (d) { var o = el("<option></option>"); o.value = d.id; o.textContent = __("dans le donjon : ") + tx(d.nom); se.appendChild(o); });
+      se.value = coches.some(function (d) { return d.id === A.direct; }) ? A.direct : "";
+      se.onchange = function () { A.direct = se.value || null; ecrireSession(CLE_ASSISTANT, A); };
+      b.appendChild(dir);
+    }
     return b;
   }
   function commencerPartie() {
@@ -7455,6 +7622,7 @@ function demarrerJeu() {
     var offD = M.packsEteints(INDEX, A.off), ppD = INDEX.proprietaires || {}, propD = Object.assign({}, ppD["donjons.json/donjons"] || {}, ppD["donjons.json/proces"] || {});
     var dOk = (A.donjons || []).filter(function (id) { return !offD[propD[id]]; });
     if (dOk.length) p.options.donjons = dOk;
+    var direct = A.direct && dOk.indexOf(A.direct) >= 0 ? A.direct : null, sorteDirect = direct && ((BRUT["donjons.json"] || {}).proces || []).some(function (d) { return d.id === direct; }) ? "proces" : "construction";
     if (NATIF) p.options.routine = { active: false, heure: A.routine.heure };
     P = p; provisoire = false;
     construireContenu(A.off); M.accorderPartie(C, P);
@@ -7468,6 +7636,7 @@ function demarrerJeu() {
     entrerEnJeu();
     toast(__("Nouvelle partie : ") + P.nom);
     if (routineVoulue) activerRoutine(heure);
+    if (direct) ouvrirEntree(sorteDirect, direct);
   }
 
   // Les packs et leurs interrupteurs (assistant et réglages). `off` : les packs demandés éteints ; `changer(off)` à chaque clic.

@@ -1968,21 +1968,32 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const meilleur = (opts) => opts.reduce((b, o, i) => (o.points > opts[b].points ? i : b), 0);
   const parfait = (s) => s.type === "choix" ? meilleur(s.options)
     : s.type === "multi" ? s.options.map((o, i) => [o.points, i]).sort((a, b) => b[0] - a[0]).slice(0, s.choisir).map((x) => x[1])
-    : s.type === "ordre" ? s.items.map((_, i) => i) : s.echanges.map((e) => meilleur(e.options));
+    : s.type === "ordre" ? s.items.map((_, i) => i) : s.echanges.map((e) => meilleur(M.optionsEchange(pr, e)));
   const pire = (s) => s.type === "choix" ? s.options.findIndex((o) => !o.points)
     : s.type === "multi" ? s.options.map((o, i) => [o.points, i]).sort((a, b) => a[0] - b[0]).slice(0, s.choisir).map((x) => x[1])
-    : s.type === "ordre" ? s.items.map((_, i) => s.items.length - 1 - i) : s.echanges.map((e) => e.options.findIndex((o) => !o.points));
+    : s.type === "ordre" ? s.items.map((_, i) => s.items.length - 1 - i) : s.echanges.map((e) => M.optionsEchange(pr, e).findIndex((o) => !o.points));
   assert.equal(M.repondreSalle(CP, PP, "roscius", [0, 0, 1], T0).raison, "reponse", "le dossier refuse un fait choisi deux fois");
   assert.equal(M.verdictProces(CP, PP, "roscius", T0).raison, "salles", "pas de verdict avant la dernière salle");
   pr.salles.forEach((s) => { const r = M.repondreSalle(CP, PP, "roscius", pire(s), T0); assert.ok(r.ok && r.lecon, s.id); });
   const perdu = M.verdictProces(CP, PP, "roscius", T0 + 1);
   assert.ok(perdu.ok && !perdu.acquitte && perdu.vrai.source, "mauvaise plaidoirie : condamnée");
+  assert.ok(perdu.votes.length === pr.jury.length && perdu.votes.filter((v) => v.acquitte).length < 4, "condamnée : pas de majorité pour acquitter");
   assert.equal(M.salleProces(CP, PP, "roscius").id, pr.salles[0].id, "l'appel repart de la première salle");
   pr.salles.forEach((s) => { const r = M.repondreSalle(CP, PP, "roscius", parfait(s), T0 + 2); assert.equal(r.points, r.max, s.id + " : le meilleur choix vaut le maximum"); });
   const gagne = M.verdictProces(CP, PP, "roscius", T0 + 3);
   assert.ok(gagne.acquitte && gagne.total === gagne.max, "plaidoirie parfaite : acquittée");
+  assert.ok(gagne.votes.every((v) => v.acquitte), "plaidoirie parfaite : le jury unanime");
+  // Procès v2 : la clôture de l'audience reprend la péroraison et la dernière phrase, avec leurs points d'audience.
+  const aud = pr.salles.find((s) => s.type === "audience"), clo = aud.echanges.filter((e) => e.reprend);
+  assert.ok(clo.length === 2 && clo.every((e) => M.optionsEchange(pr, e).length >= 2 && e.adversaire), "péroraisons de l'adversaire puis la tienne");
+  pr.salles.forEach((s) => { if (s.type === "choix" || s.type === "multi") assert.ok(s.options.every((o) => o.plus && o.moins), s.id + " : avantages et inconvénients de chaque choix"); });
+  // Un verdict juste au seuil : 4 voix au moins pour acquitter.
+  { const pts = {}; let tot = 0; const sc = M.scoreProces(CP, PP, "roscius");
+    pr.salles.forEach((s) => { const m = M.maxSalle(s, pr); const p = Math.min(m, Math.max(0, sc.seuil - tot)); pts[s.id] = p; tot += p; });
+    assert.ok(M.votesJury(pr, pts, true).filter((v) => v.acquitte).length >= 4, "acquittée au seuil : majorité");
+    assert.ok(M.votesJury(pr, pts, false).filter((v) => v.acquitte).length <= 3, "condamnée : minorité"); }
   for (let i = 0; i < 40 && !(PP.succes["acquittement"] && PP.succes["en-appel"]); i++) M.verifierRecompenses(CP, PP, T0 + 10 + i);
   assert.ok(PP.succes["acquittement"] && PP.succes["en-appel"], "succès du Procès");
   assert.ok(M.migrer(JSON.parse(JSON.stringify(PP)), CP).proces.roscius.acquitte, "migration");
-  console.log("OK : le Procès, huit salles, verdict, appel");
+  console.log("OK : le Procès, neuf salles, jury, verdict, appel");
 }
