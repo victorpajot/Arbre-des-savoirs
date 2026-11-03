@@ -327,6 +327,18 @@
   //   mur       : le nom du mur de la honte (« revisions »)
   var REGLAGES = ["ton", "voix", "texte", "ultimatum", "vol", "mur"];
   function reglage(partie, cle) { var r = partie && partie.options && partie.options.reglages; return r ? r[cle] : undefined; }
+  // Victor (2026-11-03) : allumer un pack allume aussi ce qu'il demande (récursivement) ; un donjon coché coche ses domaines.
+  function allumerPack(index, demandes, id) {
+    var liste = (index && index.packs) || [], out = (demandes || []).slice(), vus = {};
+    (function allumer(x) {
+      if (vus[x] || x === "socle") return; vus[x] = true;
+      var m = liste.filter(function (y) { return y.id === x; })[0]; if (!m) return;
+      out = out.filter(function (d) { return d !== x && d !== "+" + x; });
+      if (!allumeParDefaut(m)) out.push("+" + x);
+      (m.requiert || []).forEach(allumer);
+    })(id);
+    return out;
+  }
   function allumeParDefaut(m) { return !(m && m.reglages && m.reglages.allume === false); }
   // Les réglages d'une nouvelle partie : ceux sur lesquels tous les domaines allumés s'accordent. Un domaine qui ne
   // déclare rien garde le jeu tel quel : un pack pour enfants allumé avec un domaine adulte ne change rien.
@@ -3909,7 +3921,7 @@
     choisirLangue: choisirLangue, langue: langue, TX: TX, __: __, ordinalSiecle: ordinalSiecle, traduireChaines: traduireChaines,
     FORMAT_PARTIE: FORMAT_PARTIE,
     indexerContenu: indexerContenu,
-    reglage: reglage, REGLAGES: REGLAGES, allumeParDefaut: allumeParDefaut, reglagesDesPacks: reglagesDesPacks,
+    reglage: reglage, REGLAGES: REGLAGES, allumeParDefaut: allumeParDefaut, allumerPack: allumerPack, reglagesDesPacks: reglagesDesPacks,
     packsEteints: packsEteints, filtrerPacks: filtrerPacks, verifierPaquet: verifierPaquet, ajouterPaquet: ajouterPaquet, ajouterTextes: ajouterTextes, packDe: packDe, accorderPartie: accorderPartie,
     maintenant: maintenant,
     debutJour: debutJour,

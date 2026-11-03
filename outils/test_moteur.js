@@ -1996,6 +1996,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   for (let i = 0; i < 40 && !(PP.succes["acquittement"] && PP.succes["en-appel"]); i++) M.verifierRecompenses(CP, PP, T0 + 10 + i);
   assert.ok(PP.succes["acquittement"] && PP.succes["en-appel"], "succès du Procès");
   assert.ok(M.migrer(JSON.parse(JSON.stringify(PP)), CP).proces.roscius.acquitte, "migration");
+  { const IX = { packs: [{ id: "socle", sorte: "socle" }, { id: "a", requiert: ["socle"] }, { id: "b", requiert: ["socle", "a"], reglages: { allume: false } }, { id: "dj", sorte: "jeu", requiert: ["socle", "b"] }] };
+    const dem = M.allumerPack(IX, ["a", "dj", "x"], "dj"), off = M.packsEteints(IX, dem);
+    assert.ok(!off.dj && !off.b && !off.a && dem.includes("x") && dem.includes("+b"), "cocher un donjon allume les domaines qu'il demande"); }
   console.log("OK : le Procès, dix salles, jury, verdict, appel");
 }
 

@@ -7849,7 +7849,13 @@ function demarrerJeu() {
       var cbt = tc.querySelector("input"); cbt.checked = !A.off.length; cbt.indeterminate = A.off.length > 0 && A.off.length < tousIds.length;
       cbt.onchange = function () { A.off = cbt.checked ? [] : tousIds.slice(); ecrireSession(CLE_ASSISTANT, A); rendre(); };
       liste.appendChild(tc);
-      listePacks(liste, A.off, function (off) { A.off = off; ecrireSession(CLE_ASSISTANT, A); rendre(); });
+      listePacks(liste, A.off, function (off) {
+        // Un pack de donjon qu'on allume : ses donjons sont cochés d'office pour l'étape suivante.
+        var avant = M.packsEteints(INDEX, A.off), apres = M.packsEteints(INDEX, off), pp = INDEX.proprietaires || {}, prop = Object.assign({}, pp["donjons.json/donjons"] || {}, pp["donjons.json/proces"] || {});
+        A.donjons = (A.donjons || []).filter(function (id) { return !apres[prop[id]]; });
+        Object.keys(prop).forEach(function (id) { if (avant[prop[id]] && !apres[prop[id]] && A.donjons.indexOf(id) < 0) A.donjons.push(id); });
+        A.off = off; ecrireSession(CLE_ASSISTANT, A); rendre();
+      });
       v.appendChild(liste);
       // Sans aucun domaine, il n'y a rien à apprendre : on en demande au moins un.
       var offA = M.packsEteints(INDEX, A.off), aucun = !INDEX.packs.some(function (m) { return m.sorte === "domaine" && !offA[m.id]; });
@@ -7899,9 +7905,14 @@ function demarrerJeu() {
       var eteint = !!off[prop[d.id]];
       var l = el('<label class="interrupteur" style="margin-top:10px"><span><b></b><br><span class="note"></span></span><input type="checkbox"></label>');
       l.querySelector("b").textContent = tx(d.nom);
-      l.querySelector(".note").textContent = eteint ? __("Son pack est éteint.") : tx(d.accroche);
-      var cb = l.querySelector("input"); cb.checked = !eteint && A.donjons.indexOf(d.id) >= 0; cb.disabled = eteint;
-      cb.onchange = function () { A.donjons = A.donjons.filter(function (x) { return x !== d.id; }); if (cb.checked) A.donjons.push(d.id); else if (A.direct === d.id) A.direct = null; ecrireSession(CLE_ASSISTANT, A); rendre(); };
+      l.querySelector(".note").textContent = eteint ? __("Son pack est éteint : le cocher l'allume, avec ses domaines.") : tx(d.accroche);
+      var cb = l.querySelector("input"); cb.checked = !eteint && A.donjons.indexOf(d.id) >= 0;
+      cb.onchange = function () {
+        A.donjons = A.donjons.filter(function (x) { return x !== d.id; });
+        if (cb.checked) { A.donjons.push(d.id); if (prop[d.id]) A.off = M.allumerPack(INDEX, A.off, prop[d.id]); }
+        else if (A.direct === d.id) A.direct = null;
+        ecrireSession(CLE_ASSISTANT, A); rendre();
+      };
       b.appendChild(l);
     });
     // Victor (2026-11-03) : lancer la partie directement dans un donjon coché, sans faire le parcours avant.
@@ -7956,12 +7967,14 @@ function demarrerJeu() {
       var aAllumer = !M.allumeParDefaut(m), par = eteints[m.id] && off.indexOf(m.id) < 0 && !(aAllumer && off.indexOf("+" + m.id) < 0);
       var l = el('<label class="interrupteur" style="margin-top:10px"><span><b>' + esc(tx(m.nom)) + "</b> " + (m.ajoute ? '<span class="badge-ext">' + __("ajouté") + "</span> " : "") +
         '<span class="note">' + (m.sorte === "jeu" ? __("jeu") : __("domaine")) + " · " + esc(m.version) + "</span><br>" +
-        '<span class="note">' + esc(tx(m.description)) + (requis.length ? __(" Demande : ") + esc(requis.join(", ")) + "." : "") + (par ? __(" <b>Éteint avec un pack dont il dépend.</b>") : "") +
+        '<span class="note">' + esc(tx(m.description)) + (requis.length ? __(" Demande : ") + esc(requis.join(", ")) + "." : "") + (par ? __(" <b>Éteint avec un pack dont il dépend : le cocher le rallume.</b>") : "") +
         '</span></span><input type="checkbox"></label>');
-      var cb = l.querySelector("input"); cb.checked = !eteints[m.id]; cb.disabled = par;
+      var cb = l.querySelector("input"); cb.checked = !eteints[m.id];
       cb.onchange = function () {
         var o = off.filter(function (x) { return x !== m.id && x !== "+" + m.id; });
-        if (aAllumer) { if (cb.checked) o.push("+" + m.id); } else if (!cb.checked) o.push(m.id);
+        // Victor (2026-11-03) : cocher un pack (un donjon, par exemple) coche aussi les domaines qu'il demande.
+        if (cb.checked) o = M.allumerPack(INDEX, o, m.id);
+        else if (aAllumer) { /* déjà retiré */ } else o.push(m.id);
         // La liste suit chaque clic : sans cela, le clic suivant repartait de la liste d'origine et n'éteignait qu'un pack.
         off = o; changer(o);
       };
