@@ -2561,8 +2561,13 @@
       return pa % 10 === 1 ? (s.fiches[a.cle].dernier || 0) - (s.fiches[b.cle].dernier || 0) : 0;
     });
     var choix = [], siecles = {};
-    [tries.filter(passe), tries.filter(function (x) { return th && x.theme === th; }), tries].forEach(function (liste) {
+    // Des siècles tous différents d'abord, en puisant dans les trois listes ; on ne complète avec un siècle déjà pris
+    // qu'ensuite (avant, la liste du thème se remplissait de doublons avant de regarder les autres).
+    var listes = [tries.filter(passe), tries.filter(function (x) { return th && x.theme === th; }), tries];
+    listes.forEach(function (liste) {
       liste.forEach(function (x) { var k = creneau(x.debut, 100, R.prehistoire); if (choix.length < R.evenements && !siecles[k] && choix.indexOf(x) < 0) { siecles[k] = 1; choix.push(x); } });
+    });
+    listes.forEach(function (liste) {
       liste.forEach(function (x) { if (choix.length < R.evenements && choix.indexOf(x) < 0) choix.push(x); });
     });
     s.jeu = { mode: mode, depuis: t, case: mode === "case" ? s.case : null, reponses: [], questions: choix.map(function (x) {
