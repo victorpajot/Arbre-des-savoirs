@@ -25,7 +25,8 @@ DATA = RACINE / "data"
 
 # Les fichiers que lit le jeu, dans l'ordre où index.html les charge.
 FICHIERS_DATA = ["regles.json", "skills.json", "questions.json", "succes.json", "commentaires.json", "objets.json",
-                 "avatar.json", "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json"]
+                 "avatar.json", "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json",
+                 "donjons.json"]
 
 # Fichier d'un pack → (fichier de data, chemin dans ce fichier). Une liste s'ajoute à la liste, un dictionnaire au dictionnaire.
 EMPLACEMENTS = {
@@ -52,6 +53,8 @@ EMPLACEMENTS = {
     "mythes.json": ("ennemis.json", ("mythes",)),
     "atomes.json": ("atomes.json", ("elements",)),
     "boutique.json": ("ia.json", ("credits", "boutique", "articles")),
+    "donjons.json": ("donjons.json", ("donjons",)),
+    "proces.json": ("donjons.json", ("proces",)),
 }
 PAR_CHEMIN = {(f, c): nom for nom, (f, c) in EMPLACEMENTS.items()}
 AUTRES = {"pack.json", "verifications.json", "ordre.json", "portraits.json", "numeros_cases.json", "LISEZMOI.md"}
@@ -217,6 +220,8 @@ def poser_lots(donnees):
             return 1 + cond["n"]
         if t == "branche_complete":
             return 4.5
+        if t == "toutes":
+            return sum(difficulte(x, prof + 1) for x in cond.get("conditions", []))
         return 3
 
     familles = [(donnees["objets.json"]["objets"], lambda x: x["condition"]["type"] != "tours_plateau"),
@@ -621,6 +626,8 @@ def liens_condition(m, nom, ident, cond, comps, arbres, succes):
     if not isinstance(cond, dict):
         return []
     t, out = cond.get("type"), []
+    if t == "toutes":
+        return [e for x in cond.get("conditions", []) for e in liens_condition(m, nom, ident, x, comps, arbres, succes)]
     if t == "competence_maitrisee" and cond.get("id") not in comps:
         out.append(f"[{m['id']}] {nom} › {ident} : la condition vise la compétence « {cond.get('id')} », introuvable")
     if t == "succes" and cond.get("id") not in succes:

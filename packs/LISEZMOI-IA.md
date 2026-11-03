@@ -94,6 +94,7 @@ Un fichier par type de contenu. Chacun est une liste (ou un dictionnaire) qui s'
 | `evocations.json` | `{numéro de case: [compétences]}` : les cases d'autres packs dont l'histoire évoque le domaine. | `plateau.json › competences_cases` |
 | `dessins.json` | `{id: 32 lignes de 32 caractères}` : pixel art pour les emblèmes et succès. | `succes.json › dessins` |
 | `objets.json`, `masques.json`, `accessoires.json`, `tenues.json`, `apartes.json`, `figures.json`, `boutique.json` | Facultatifs : objets du cabinet, masques d'Alyca, accessoires, farces, apartés, figures interactives, articles de boutique. Copier la forme d'un pack existant (`grep -l` dans `packs/`). | voir `EMPLACEMENTS` dans `outils/packs.py` |
+| `donjons.json`, `proces.json` | Packs de jeu seulement : un donjon de construction (ateliers, épreuves, pièces : `packs/donjon-ordinateur/`) ou un procès (salles notées, verdict : `packs/donjon-proces/`). Chaque `source` (récit d'atelier, leçon, vrai procès) se vérifie comme les autres. | `donjons.json` › `donjons` / `proces` |
 
 `verifications.json` (le registre des sources contrôlées) est écrit par l'outil, jamais à la main. `ordre.json` et `donnees/` sont réservés au socle et aux packs de jeu.
 

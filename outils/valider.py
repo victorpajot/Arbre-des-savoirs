@@ -15,7 +15,11 @@ FICHIERS = [("regles.json", "regles"), ("skills.json", "skills"), ("questions.js
             ("succes.json", "succes"), ("commentaires.json", "commentaires"), ("objets.json", "objets"),
             ("avatar.json", "avatar"), ("ia.json", "ia"), ("plateau.json", "plateau"), ("frise.json", "frise"),
             ("bibliotheque.json", "bibliotheque"), ("ennemis.json", "ennemis"), ("atomes.json", "atomes"),
-            ("packs.json", "packs")]
+            ("donjons.json", "donjons"), ("packs.json", "packs")]
+
+
+# Les manipulations des ateliers de donjon que l'interface sait afficher.
+TYPES_EPREUVE = {"retenue", "binaire", "carte", "moulin", "boucle", "portes", "ruban", "plan", "transistors", "debug", "recensement", "additionneur", "adresse", "cycle"}
 
 
 def charger(nom):
@@ -121,6 +125,8 @@ def main():
     conditions += [(f"bibliotheque.json {l['id']}", l["condition"]) for l in contenu["bibliotheque"]["livres"]]
     conditions += [(f"ia.json {m['id']}", m["condition"]) for m in contenu["ia"]["masques"] if m.get("condition")]
     nb_cases = len(contenu["plateau"]["cases"])
+    # « toutes » : chaque sous-condition est vérifiée comme les autres.
+    conditions += [(ou, x) for ou, cond in list(conditions) if cond["type"] == "toutes" for x in cond.get("conditions", [])]
     for ou, cond in conditions:
         if cond.get("stat") and cond["stat"] not in stats:
             erreurs.append(f"{ou} : stat inconnue {cond['stat']}")
@@ -130,8 +136,10 @@ def main():
             erreurs.append(f"{ou} : succès inconnu {cond.get('id')}")
         if cond["type"] in ("case_atteinte", "case_visitee", "epoque_atteinte") and not 1 <= cond.get("n", 0) <= nb_cases:
             erreurs.append(f"{ou} : case hors du plateau {cond.get('n')}")
+        if cond["type"] == "donjon_fini" and cond.get("id") not in {d["id"] for d in (contenu.get("donjons") or {}).get("donjons", [])}:
+            erreurs.append(f"{ou} : donjon inconnu {cond.get('id')}")
         besoin = {"competence_maitrisee": "id", "succes": "id", "ennemi_vaincu": "id", "famille_capturee": "famille", "branche_complete": "stat", "quiz_parfaits_stat": "stat",
-                  "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None}.get(cond["type"], "n")
+                  "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None, "toutes": "conditions", "donjon_fini": "id", "proces_gagne": "id"}.get(cond["type"], "n")
         if besoin and besoin not in cond:
             erreurs.append(f"{ou} : la condition {cond['type']} demande « {besoin} »")
 
@@ -202,6 +210,36 @@ def main():
     for s in contenu["succes"]["succes"]:
         if s["condition"]["type"] == "ennemi_vaincu" and s["condition"]["id"] not in ids_en:
             erreurs.append(f"succes.json {s['id']} : ennemi inconnu")
+    # Donjons : ateliers sur des compétences et des savants connus, pièces uniques, chaque épreuve a sa réponse.
+    savants = {sv["id"] for sv in contenu["avatar"].get("savants", [])}
+    for dj in (contenu.get("donjons") or {}).get("donjons", []):
+        pieces = []
+        for s_ in dj.get("arbres", []):
+            if s_ not in stats:
+                erreurs.append(f"donjons.json {dj['id']} : arbre inconnu {s_}")
+        for at_ in dj["ateliers"]:
+            ou = f"donjons.json {dj['id']}/{at_['id']}"
+            erreurs += [f"{ou} : compétence inconnue {c}" for c in at_["competences"] if c not in comps]
+            if at_.get("savant") and at_["savant"] not in savants:
+                erreurs.append(f"{ou} : savant inconnu {at_['savant']}")
+            if at_["epreuve"]["type"] not in TYPES_EPREUVE:
+                erreurs.append(f"{ou} : épreuve inconnue {at_['epreuve']['type']}")
+            if not at_["epreuve"]["instances"] or any("attendu" not in x for x in at_["epreuve"]["instances"]):
+                erreurs.append(f"{ou} : chaque épreuve demande sa réponse « attendu »")
+            pieces += [c["id"] for c in at_["composants"]]
+        if len(pieces) != len(set(pieces)):
+            erreurs.append(f"donjons.json {dj['id']} : pièce en double")
+    for pr in (contenu.get("donjons") or {}).get("proces", []):
+        ou = f"donjons.json proces/{pr['id']}"
+        erreurs += [f"{ou} : arbre inconnu {s_}" for s_ in pr["arbres"] if s_ not in stats]
+        if pr["mentor"] not in savants:
+            erreurs.append(f"{ou} : mentor inconnu {pr['mentor']}")
+        for sa in pr["salles"]:
+            besoin_s = {"choix": "options", "multi": "options", "ordre": "items", "audience": "echanges"}[sa["type"]]
+            if besoin_s not in sa:
+                erreurs.append(f"{ou}/{sa['id']} : la salle {sa['type']} demande « {besoin_s} »")
+            if sa["type"] == "multi" and not (sa.get("choisir") and sum(1 for o in sa.get("options", []) if o["points"]) >= sa["choisir"]):
+                erreurs.append(f"{ou}/{sa['id']} : pas assez de bons choix pour « choisir »")
     # v9 : atomes du jeu de Mendeleïev.
     at = contenu["atomes"]
     for i, e in enumerate(at["elements"], 1):

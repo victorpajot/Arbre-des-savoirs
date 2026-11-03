@@ -1,0 +1,2085 @@
+{
+ "donjons": [
+  {
+   "id": "ordinateur",
+   "nom": {
+    "fr": "Le donjon de l'ordinateur"
+   },
+   "accroche": {
+    "fr": "Quatorze ateliers, trois siècles, une machine à assembler pièce par pièce."
+   },
+   "description": {
+    "fr": "Ici, on ne remonte pas le temps pour le plaisir : on construit. Chaque atelier vous apprend l'idée d'un inventeur, vous la fait réaliser, et vous laisse une pièce de l'ordinateur. Au bout, on allume."
+   },
+   "arbres": [
+    "logique",
+    "etincelle"
+   ],
+   "icone": "ordinateur",
+   "questions_atelier": 3,
+   "reussite_atelier": 2,
+   "bug": {
+    "chance": 0.4,
+    "noms": [
+     {
+      "fr": "la mite du relais 70"
+     },
+     {
+      "fr": "le bug de l'opération 4"
+     },
+     {
+      "fr": "la retenue fantôme"
+     },
+     {
+      "fr": "la boucle sans fin"
+     },
+     {
+      "fr": "le zéro de trop"
+     }
+    ]
+   },
+   "ateliers": [
+    {
+     "id": "pascal",
+     "savant": "pascal",
+     "competences": [
+      "inf.pascaline"
+     ],
+     "source": "Wikipédia (en), « Pascaline »",
+     "epreuve": {
+      "type": "retenue",
+      "instances": [
+       {
+        "a": 758,
+        "b": 467,
+        "attendu": 1225
+       },
+       {
+        "a": 386,
+        "b": 245,
+        "attendu": 631
+       },
+       {
+        "a": 199,
+        "b": 801,
+        "attendu": 1000
+       },
+       {
+        "a": 647,
+        "b": 358,
+        "attendu": 1005
+       },
+       {
+        "a": 275,
+        "b": 348,
+        "attendu": 623
+       },
+       {
+        "a": 509,
+        "b": 496,
+        "attendu": 1005
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "compteur",
+       "nom": {
+        "fr": "Le compteur à retenue"
+       },
+       "role": {
+        "fr": "Additionner et faire passer la retenue d'un chiffre au suivant."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "L'atelier de Pascal"
+     },
+     "lieu": {
+      "fr": "Rouen, 1642"
+     },
+     "recit": {
+      "fr": "À 19 ans, Blaise Pascal fabrique une machine qui additionne avec des roues dentées. Quand une roue passe de 9 à 0, une pièce, le sautoir, tombe et fait avancer la roue suivante : c'est la retenue."
+     },
+     "consigne": {
+      "fr": "Faites tourner les roues pour poser l'addition. La retenue passe toute seule : à vous de compter les crans."
+     }
+    },
+    {
+     "id": "leibniz",
+     "savant": "gottfried-leibniz",
+     "competences": [
+      "inf.binaire"
+     ],
+     "source": "History of Information, « Leibniz Expounds on Binary Arithmetic »",
+     "epreuve": {
+      "type": "binaire",
+      "bits": 6,
+      "instances": [
+       {
+        "cible": 13,
+        "attendu": "001101"
+       },
+       {
+        "cible": 42,
+        "attendu": "101010"
+       },
+       {
+        "cible": 27,
+        "attendu": "011011"
+       },
+       {
+        "cible": 50,
+        "attendu": "110010"
+       },
+       {
+        "cible": 37,
+        "attendu": "100101"
+       },
+       {
+        "cible": 60,
+        "attendu": "111100"
+       },
+       {
+        "cible": 19,
+        "attendu": "010011"
+       },
+       {
+        "cible": 45,
+        "attendu": "101101"
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "binaire",
+       "nom": {
+        "fr": "Le code binaire"
+       },
+       "role": {
+        "fr": "Écrire tous les nombres, et tout le reste, avec des 0 et des 1."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Le cabinet de Leibniz"
+     },
+     "lieu": {
+      "fr": "Académie royale des sciences, 1703"
+     },
+     "recit": {
+      "fr": "Leibniz écrit les nombres avec deux chiffres seulement, 0 et 1. Chaque position vaut le double de sa voisine de droite : 1, 2, 4, 8, 16, 32."
+     },
+     "consigne": {
+      "fr": "Allumez les bonnes cases pour écrire le nombre demandé en binaire."
+     }
+    },
+    {
+     "id": "jacquard",
+     "savant": "jacquard",
+     "competences": [
+      "inf.jacquard"
+     ],
+     "source": "Fondation Napoléon, « Jacquard, Joseph-Marie (1752-1834) »",
+     "epreuve": {
+      "type": "carte",
+      "instances": [
+       {
+        "motif": "losange",
+        "attendu": [
+         "00100",
+         "01110",
+         "11111",
+         "01110",
+         "00100"
+        ]
+       },
+       {
+        "motif": "croix",
+        "attendu": [
+         "00100",
+         "00100",
+         "11111",
+         "00100",
+         "00100"
+        ]
+       },
+       {
+        "motif": "damier",
+        "attendu": [
+         "10101",
+         "01010",
+         "10101",
+         "01010",
+         "10101"
+        ]
+       },
+       {
+        "motif": "cadre",
+        "attendu": [
+         "11111",
+         "10001",
+         "10001",
+         "10001",
+         "11111"
+        ]
+       },
+       {
+        "motif": "flèche",
+        "attendu": [
+         "00100",
+         "01110",
+         "10101",
+         "00100",
+         "00100"
+        ]
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "cartes",
+       "nom": {
+        "fr": "Le programme sur cartes"
+       },
+       "role": {
+        "fr": "Donner les ordres à la machine sans la reconstruire."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Le métier de Jacquard"
+     },
+     "lieu": {
+      "fr": "Lyon, 1801"
+     },
+     "recit": {
+      "fr": "Le métier de Jacquard lit son motif sur des cartes perforées. Là où il y a un trou, une aiguille passe et soulève un fil ; changer de motif, c'est changer de cartes."
+     },
+     "consigne": {
+      "fr": "Perforez la carte : un trou partout où le motif demande un fil levé."
+     }
+    },
+    {
+     "id": "babbage",
+     "savant": "babbage",
+     "competences": [
+      "inf.babbage"
+     ],
+     "source": "Wikipédia (en), « Analytical engine »",
+     "epreuve": {
+      "type": "moulin",
+      "operations": [
+       "+",
+       "−",
+       "×"
+      ],
+      "instances": [
+       {
+        "magasin": [
+         6,
+         7,
+         2
+        ],
+        "cible": 11,
+        "attendu": [
+         "+",
+         "−"
+        ]
+       },
+       {
+        "magasin": [
+         9,
+         4,
+         3
+        ],
+        "cible": 10,
+        "attendu": [
+         "+",
+         "−"
+        ]
+       },
+       {
+        "magasin": [
+         5,
+         8,
+         6
+        ],
+        "cible": 7,
+        "attendu": [
+         "+",
+         "−"
+        ]
+       },
+       {
+        "magasin": [
+         12,
+         3,
+         4
+        ],
+        "cible": 11,
+        "attendu": [
+         "+",
+         "−"
+        ]
+       },
+       {
+        "magasin": [
+         7,
+         2,
+         9
+        ],
+        "cible": 81,
+        "attendu": [
+         "+",
+         "×"
+        ]
+       },
+       {
+        "magasin": [
+         10,
+         6,
+         5
+        ],
+        "cible": 11,
+        "attendu": [
+         "+",
+         "−"
+        ]
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "moulin",
+       "nom": {
+        "fr": "Le moulin (unité de calcul)"
+       },
+       "role": {
+        "fr": "Faire les opérations."
+       }
+      },
+      {
+       "id": "magasin",
+       "nom": {
+        "fr": "Le magasin (mémoire)"
+       },
+       "role": {
+        "fr": "Garder les nombres en attendant le calcul."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Le moulin de Babbage"
+     },
+     "lieu": {
+      "fr": "Angleterre, 1837"
+     },
+     "recit": {
+      "fr": "Dans la machine analytique de Babbage, le magasin garde les nombres et le moulin calcule. Des cartes perforées, venues des métiers Jacquard, disent au moulin quelle opération faire."
+     },
+     "consigne": {
+      "fr": "Choisissez les deux cartes d'opération : le moulin calcule d'abord avec les deux premiers nombres du magasin, puis avec le troisième."
+     }
+    },
+    {
+     "id": "lovelace",
+     "savant": "ada-lovelace",
+     "competences": [
+      "inf.lovelace"
+     ],
+     "source": "Wikipédia (en), « Note G »",
+     "epreuve": {
+      "type": "boucle",
+      "instances": [
+       {
+        "lignes": [
+         "R ← 1, N ← 5",
+         "Tant que N > 0 :",
+         "    R ← R × 2",
+         "    N ← N − 1",
+         "Afficher R"
+        ],
+        "attendu": 32
+       },
+       {
+        "lignes": [
+         "S ← 0, K ← 1",
+         "Tant que K ≤ 5 :",
+         "    S ← S + K",
+         "    K ← K + 1",
+         "Afficher S"
+        ],
+        "attendu": 15
+       },
+       {
+        "lignes": [
+         "R ← 1, N ← 4",
+         "Tant que N > 0 :",
+         "    R ← R × N",
+         "    N ← N − 1",
+         "Afficher R"
+        ],
+        "attendu": 24
+       },
+       {
+        "lignes": [
+         "X ← 100",
+         "Tant que X > 10 :",
+         "    X ← X ÷ 2",
+         "Afficher X"
+        ],
+        "attendu": 6.25
+       },
+       {
+        "lignes": [
+         "A ← 1, B ← 1, N ← 5",
+         "Tant que N > 0 :",
+         "    A, B ← B, A + B",
+         "    N ← N − 1",
+         "Afficher A"
+        ],
+        "attendu": 8
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "algorithme",
+       "nom": {
+        "fr": "L'algorithme"
+       },
+       "role": {
+        "fr": "Une suite d'instructions précises, avec des boucles."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Le salon d'Ada Lovelace"
+     },
+     "lieu": {
+      "fr": "Angleterre, 1843"
+     },
+     "recit": {
+      "fr": "Dans sa note G, Ada Lovelace écrit, opération par opération, le calcul que la machine de Babbage devrait faire. Les mêmes cartes peuvent resservir plusieurs fois : son calcul annonce les boucles des programmes d'aujourd'hui."
+     },
+     "consigne": {
+      "fr": "Suivez le programme pas à pas, comme la machine, et donnez le nombre affiché à la fin."
+     }
+    },
+    {
+     "id": "hollerith",
+     "savant": null,
+     "competences": [
+      "inf.jacquard"
+     ],
+     "source": "Wikipédia (en), « Tabulating machine »",
+     "epreuve": {
+      "type": "recensement",
+      "instances": [
+       {
+        "colonnes": [
+         "Homme",
+         "Femme",
+         "Marié·e",
+         "Né·e à l'étranger"
+        ],
+        "cartes": [
+         [
+          1,
+          0,
+          1,
+          0
+         ],
+         [
+          0,
+          1,
+          1,
+          1
+         ],
+         [
+          0,
+          1,
+          0,
+          0
+         ],
+         [
+          1,
+          0,
+          0,
+          1
+         ],
+         [
+          0,
+          1,
+          1,
+          0
+         ],
+         [
+          1,
+          0,
+          1,
+          1
+         ]
+        ],
+        "colonne": 1,
+        "attendu": 3
+       },
+       {
+        "colonnes": [
+         "Homme",
+         "Femme",
+         "Marié·e",
+         "Né·e à l'étranger"
+        ],
+        "cartes": [
+         [
+          1,
+          0,
+          1,
+          0
+         ],
+         [
+          0,
+          1,
+          1,
+          1
+         ],
+         [
+          0,
+          1,
+          0,
+          0
+         ],
+         [
+          1,
+          0,
+          0,
+          1
+         ],
+         [
+          0,
+          1,
+          1,
+          0
+         ],
+         [
+          1,
+          0,
+          1,
+          1
+         ]
+        ],
+        "colonne": 2,
+        "attendu": 4
+       },
+       {
+        "colonnes": [
+         "Homme",
+         "Femme",
+         "Marié·e",
+         "Né·e à l'étranger"
+        ],
+        "cartes": [
+         [
+          0,
+          1,
+          0,
+          1
+         ],
+         [
+          0,
+          1,
+          1,
+          0
+         ],
+         [
+          1,
+          0,
+          1,
+          0
+         ],
+         [
+          0,
+          1,
+          1,
+          1
+         ],
+         [
+          1,
+          0,
+          0,
+          0
+         ],
+         [
+          0,
+          1,
+          0,
+          0
+         ]
+        ],
+        "colonne": 2,
+        "attendu": 3
+       },
+       {
+        "colonnes": [
+         "Homme",
+         "Femme",
+         "Marié·e",
+         "Né·e à l'étranger"
+        ],
+        "cartes": [
+         [
+          0,
+          1,
+          0,
+          1
+         ],
+         [
+          0,
+          1,
+          1,
+          0
+         ],
+         [
+          1,
+          0,
+          1,
+          0
+         ],
+         [
+          0,
+          1,
+          1,
+          1
+         ],
+         [
+          1,
+          0,
+          0,
+          0
+         ],
+         [
+          0,
+          1,
+          0,
+          0
+         ]
+        ],
+        "colonne": 3,
+        "attendu": 2
+       },
+       {
+        "colonnes": [
+         "Homme",
+         "Femme",
+         "Marié·e",
+         "Né·e à l'étranger"
+        ],
+        "cartes": [
+         [
+          1,
+          0,
+          0,
+          0
+         ],
+         [
+          1,
+          0,
+          1,
+          1
+         ],
+         [
+          0,
+          1,
+          1,
+          0
+         ],
+         [
+          1,
+          0,
+          1,
+          0
+         ],
+         [
+          0,
+          1,
+          0,
+          1
+         ],
+         [
+          1,
+          0,
+          0,
+          1
+         ]
+        ],
+        "colonne": 3,
+        "attendu": 3
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "lecteur",
+       "nom": {
+        "fr": "Le lecteur de cartes"
+       },
+       "role": {
+        "fr": "Faire entrer les données dans la machine, par l'électricité."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Le recensement de Hollerith"
+     },
+     "lieu": {
+      "fr": "États-Unis, 1890"
+     },
+     "recit": {
+      "fr": "Pour le recensement américain de 1890, les réponses (âge, État, sexe…) sont poinçonnées sur des cartes. Dans la machine d'Herman Hollerith, des tiges traversent les trous et plongent dans du mercure : le courant passe et fait avancer un compteur. Sa société, fondée en 1896, fusionne en 1911 dans une entreprise rebaptisée IBM en 1924."
+     },
+     "consigne": {
+      "fr": "Passez les cartes dans la machine : chaque trou de la colonne demandée fait avancer le compteur d'un cran. Réglez le compteur sur le total."
+     }
+    },
+    {
+     "id": "turing",
+     "savant": "turing",
+     "competences": [
+      "math.calculabilite"
+     ],
+     "source": "Wikipédia (en), « Universal Turing machine »",
+     "epreuve": {
+      "type": "ruban",
+      "instances": [
+       {
+        "ruban": "1011",
+        "attendu": "1100"
+       },
+       {
+        "ruban": "0111",
+        "attendu": "1000"
+       },
+       {
+        "ruban": "1001",
+        "attendu": "1010"
+       },
+       {
+        "ruban": "0110",
+        "attendu": "0111"
+       },
+       {
+        "ruban": "1111",
+        "attendu": "10000"
+       },
+       {
+        "ruban": "1010",
+        "attendu": "1011"
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "commande",
+       "nom": {
+        "fr": "L'unité de commande"
+       },
+       "role": {
+        "fr": "Lire les règles et décider, pas à pas, de l'action suivante."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Le ruban de Turing"
+     },
+     "lieu": {
+      "fr": "« On Computable Numbers », 1936"
+     },
+     "recit": {
+      "fr": "En 1936, dans son article « On Computable Numbers », Alan Turing imagine une machine qui lit et écrit des symboles sur un ruban, case par case, en suivant une table de règles. Une machine universelle peut imiter n'importe quelle autre machine de Turing, dont on lui donne la description."
+     },
+     "consigne": {
+      "fr": "La machine part de la case la plus à droite. Règle : un 1 devient 0 et elle avance à gauche ; un 0 (ou une case vide) devient 1 et elle s'arrête. Écrivez le ruban final."
+     }
+    },
+    {
+     "id": "shannon",
+     "savant": "shannon",
+     "competences": [
+      "inf.shannon",
+      "math.logique"
+     ],
+     "source": "Shannon, A Symbolic Analysis of Relay and Switching Circuits (1937), sections II et V",
+     "epreuve": {
+      "type": "portes",
+      "portes": [
+       "ET",
+       "OU",
+       "OU exclusif",
+       "NON-ET"
+      ],
+      "instances": [
+       {
+        "titre": "Demi-additionneur : la somme",
+        "table": [
+         0,
+         1,
+         1,
+         0
+        ],
+        "attendu": "OU exclusif"
+       },
+       {
+        "titre": "Demi-additionneur : la retenue",
+        "table": [
+         0,
+         0,
+         0,
+         1
+        ],
+        "attendu": "ET"
+       },
+       {
+        "titre": "La lampe du couloir",
+        "table": [
+         0,
+         1,
+         1,
+         1
+        ],
+        "attendu": "OU"
+       },
+       {
+        "titre": "L'alarme qui se tait",
+        "table": [
+         1,
+         1,
+         1,
+         0
+        ],
+        "attendu": "NON-ET"
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "portes",
+       "nom": {
+        "fr": "Les portes logiques"
+       },
+       "role": {
+        "fr": "Calculer avec des interrupteurs : ET, OU, NON."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Le central de Shannon"
+     },
+     "lieu": {
+      "fr": "MIT, 1937"
+     },
+     "recit": {
+      "fr": "Dans son mémoire de 1937, Claude Shannon calcule les circuits à relais avec l'algèbre de Boole. Pour que le courant passe, deux interrupteurs en série doivent être fermés tous les deux (un ET) ; en parallèle, un seul suffit (un OU). Son mémoire décrit même un additionneur en base deux."
+     },
+     "consigne": {
+      "fr": "Lisez la table de vérité et choisissez la porte qui la produit. Pour un demi-additionneur, il en faut deux : une pour la somme, une pour la retenue."
+     }
+    },
+    {
+     "id": "stibitz",
+     "savant": null,
+     "competences": [
+      "inf.shannon",
+      "inf.binaire"
+     ],
+     "source": "Wikipédia (en), « George Stibitz » et « 74181 »",
+     "epreuve": {
+      "type": "additionneur",
+      "instances": [
+       {
+        "a": "0110",
+        "b": "0111",
+        "attendu": "01101"
+       },
+       {
+        "a": "1011",
+        "b": "0110",
+        "attendu": "10001"
+       },
+       {
+        "a": "0101",
+        "b": "0011",
+        "attendu": "01000"
+       },
+       {
+        "a": "1100",
+        "b": "0101",
+        "attendu": "10001"
+       },
+       {
+        "a": "0111",
+        "b": "0001",
+        "attendu": "01000"
+       },
+       {
+        "a": "1001",
+        "b": "0110",
+        "attendu": "01111"
+       },
+       {
+        "a": "1101",
+        "b": "1101",
+        "attendu": "11010"
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "ual",
+       "nom": {
+        "fr": "L'unité arithmétique et logique"
+       },
+       "role": {
+        "fr": "Additionner, soustraire, comparer : du calcul fait de portes."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "La table de cuisine de Stibitz"
+     },
+     "lieu": {
+      "fr": "Laboratoires Bell, 1937"
+     },
+     "recit": {
+      "fr": "En novembre 1937, George Stibitz, ingénieur aux laboratoires Bell, assemble avec des relais un additionneur binaire, le Model K, du nom de la table de cuisine sur laquelle il l'aurait monté. Pour un chiffre, une porte OU exclusif donne la somme, une porte ET la retenue ; on enchaîne les étages chiffre par chiffre. En 1970, Texas Instruments loge pour la première fois une unité arithmétique et logique complète sur une seule puce : le 74181, qui calcule sur 4 bits."
+     },
+     "consigne": {
+      "fr": "Additionnez les deux nombres de 4 bits, de droite à gauche, en reportant la retenue. La case de gauche reçoit la dernière retenue : allumée, le résultat ne tient plus sur 4 bits (un dépassement)."
+     }
+    },
+    {
+     "id": "bell",
+     "savant": "bardeen",
+     "competences": [
+      "elec.numerique"
+     ],
+     "source": "Wikipédia (en), « Harvard Mark I », « Vacuum tube », « ENIAC », « Transistor »",
+     "epreuve": {
+      "type": "transistors",
+      "instances": [
+       {
+        "montage": "A en série avec B",
+        "entrees": {
+         "A": 1,
+         "B": 0
+        },
+        "attendu": 0
+       },
+       {
+        "montage": "A en parallèle avec B",
+        "entrees": {
+         "A": 1,
+         "B": 0
+        },
+        "attendu": 1
+       },
+       {
+        "montage": "A en série avec (B en parallèle avec C)",
+        "entrees": {
+         "A": 1,
+         "B": 0,
+         "C": 1
+        },
+        "attendu": 1
+       },
+       {
+        "montage": "(A en série avec B) en parallèle avec C",
+        "entrees": {
+         "A": 1,
+         "B": 0,
+         "C": 0
+        },
+        "attendu": 0
+       },
+       {
+        "montage": "A en série avec B en série avec C",
+        "entrees": {
+         "A": 1,
+         "B": 1,
+         "C": 1
+        },
+        "attendu": 1
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "transistor",
+       "nom": {
+        "fr": "Le transistor"
+       },
+       "role": {
+        "fr": "Un interrupteur électrique minuscule, des milliards par puce."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Du relais au transistor"
+     },
+     "lieu": {
+      "fr": "1944-1947"
+     },
+     "recit": {
+      "fr": "En 1944, le Harvard Mark I calcule avec 3 500 relais : environ trois additions par seconde. Les tubes à vide (la valve de Fleming en 1904, la grille de De Forest en 1907) basculent sans pièce mobile : l'ENIAC, inauguré en 1946, fait 5 000 additions par seconde, mais plusieurs tubes grillent presque chaque jour. Du 17 novembre au 23 décembre 1947, aux laboratoires Bell, John Bardeen et Walter Brattain mettent au point le transistor, dans le groupe de William Shockley."
+     },
+     "consigne": {
+      "fr": "Chaque transistor laisse passer le courant quand son entrée vaut 1. Dites si la lampe s'allume (1) ou reste éteinte (0)."
+     }
+    },
+    {
+     "id": "von-neumann",
+     "savant": null,
+     "competences": [
+      "inf.programme"
+     ],
+     "source": "Wikipédia (en), « Von Neumann architecture »",
+     "epreuve": {
+      "type": "plan",
+      "instances": [
+       {
+        "cases": [
+         {
+          "role": "Garde les données ET les instructions du programme",
+          "attendu": "Mémoire"
+         },
+         {
+          "role": "Fait les additions et les comparaisons",
+          "attendu": "Unité de calcul"
+         },
+         {
+          "role": "Lit l'instruction suivante et dit quoi faire",
+          "attendu": "Unité de commande"
+         },
+         {
+          "role": "Reçoit les données du dehors et rend les résultats",
+          "attendu": "Entrées-sorties"
+         }
+        ],
+        "attendu": [
+         "Mémoire",
+         "Unité de calcul",
+         "Unité de commande",
+         "Entrées-sorties"
+        ]
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "architecture",
+       "nom": {
+        "fr": "Le programme enregistré"
+       },
+       "role": {
+        "fr": "Ranger le programme dans la mémoire, avec les données."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Le rapport de von Neumann"
+     },
+     "lieu": {
+      "fr": "États-Unis, 1945"
+     },
+     "recit": {
+      "fr": "En juin 1945, le premier rapport sur l'EDVAC, signé de John von Neumann, décrit la machine en « organes » : une unité de calcul, une unité de commande, une mémoire qui garde les données et les instructions, et des entrées-sorties. L'idée devait beaucoup à Eckert et Mauchly, les constructeurs de l'ENIAC."
+     },
+     "consigne": {
+      "fr": "Placez chaque organe à sa place sur le plan, d'après ce qu'il fait."
+     }
+    },
+    {
+     "id": "memoire",
+     "savant": null,
+     "competences": [
+      "inf.programme"
+     ],
+     "source": "Wikipédia (en), « Williams tube »",
+     "epreuve": {
+      "type": "adresse",
+      "taille": 8,
+      "instances": [
+       {
+        "adresse": "011101",
+        "attendu": [
+         3,
+         5
+        ]
+       },
+       {
+        "adresse": "110010",
+        "attendu": [
+         6,
+         2
+        ]
+       },
+       {
+        "adresse": "001111",
+        "attendu": [
+         1,
+         7
+        ]
+       },
+       {
+        "adresse": "100000",
+        "attendu": [
+         4,
+         0
+        ]
+       },
+       {
+        "adresse": "010110",
+        "attendu": [
+         2,
+         6
+        ]
+       },
+       {
+        "adresse": "111001",
+        "attendu": [
+         7,
+         1
+        ]
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "ram",
+       "nom": {
+        "fr": "La mémoire vive"
+       },
+       "role": {
+        "fr": "Garder des milliers de bits, chacun à son adresse."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Le tube de Williams"
+     },
+     "lieu": {
+      "fr": "Manchester, 1947-1948"
+     },
+     "recit": {
+      "fr": "À l'université de Manchester, Freddie Williams et Tom Kilburn gardent des bits sous forme de points sur l'écran d'un tube cathodique : chaque point porte une petite charge, 1 ou 0. Pour lire ou écrire, la machine donne une adresse, une ligne et une colonne, et le faisceau va droit à ce point : c'est une mémoire à accès direct, l'ancêtre de la RAM."
+     },
+     "consigne": {
+      "fr": "Notre mémoire a 8 lignes et 8 colonnes. Dans l'adresse, les 3 premiers bits donnent la ligne, les 3 derniers la colonne (lignes et colonnes comptées à partir de 0). Touchez la case visée."
+     }
+    },
+    {
+     "id": "processeur",
+     "savant": null,
+     "competences": [
+      "inf.programme"
+     ],
+     "source": "Wikipédia (en), « Manchester Baby » et « Instruction cycle »",
+     "epreuve": {
+      "type": "cycle",
+      "instances": [
+       {
+        "lignes": [
+         "0 : CHARGER_A 14",
+         "1 : CHARGER_B 15",
+         "2 : AJOUTER B A",
+         "3 : RANGER_A 13",
+         "4 : ARRÊT"
+        ],
+        "memoire": {
+         "14": 3,
+         "15": 14
+        },
+        "attendu": 17
+       },
+       {
+        "lignes": [
+         "0 : CHARGER_A 14",
+         "1 : CHARGER_B 15",
+         "2 : SOUSTRAIRE B A",
+         "3 : RANGER_A 13",
+         "4 : ARRÊT"
+        ],
+        "memoire": {
+         "14": 20,
+         "15": 6
+        },
+        "attendu": 14
+       },
+       {
+        "lignes": [
+         "0 : CHARGER_A 14",
+         "1 : CHARGER_B 15",
+         "2 : SOUSTRAIRE B A",
+         "3 : SAUTER_SI_NÉGATIF 5",
+         "4 : SAUTER 2",
+         "5 : AJOUTER B A",
+         "6 : RANGER_A 13",
+         "7 : ARRÊT"
+        ],
+        "memoire": {
+         "14": 5,
+         "15": 2
+        },
+        "attendu": 1
+       },
+       {
+        "lignes": [
+         "0 : CHARGER_A 14",
+         "1 : CHARGER_B 15",
+         "2 : SOUSTRAIRE B A",
+         "3 : SAUTER_SI_NÉGATIF 5",
+         "4 : SAUTER 2",
+         "5 : AJOUTER B A",
+         "6 : RANGER_A 13",
+         "7 : ARRÊT"
+        ],
+        "memoire": {
+         "14": 11,
+         "15": 4
+        },
+        "attendu": 3
+       },
+       {
+        "lignes": [
+         "0 : CHARGER_A 14",
+         "1 : CHARGER_B 15",
+         "2 : SOUSTRAIRE B A",
+         "3 : SAUTER_SI_NÉGATIF 5",
+         "4 : SAUTER 2",
+         "5 : AJOUTER B A",
+         "6 : RANGER_A 13",
+         "7 : ARRÊT"
+        ],
+        "memoire": {
+         "14": 9,
+         "15": 3
+        },
+        "attendu": 0
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "processeur",
+       "nom": {
+        "fr": "Le processeur"
+       },
+       "role": {
+        "fr": "Chercher, décoder, exécuter, et recommencer."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Le cycle de la Baby"
+     },
+     "lieu": {
+      "fr": "Manchester, 1948"
+     },
+     "recit": {
+      "fr": "Le 21 juin 1948, la Baby de Manchester exécute un programme rangé dans sa mémoire. Le processeur répète sans fin le même cycle : chercher l'instruction dont l'adresse est dans le compteur de programme, la décoder, l'exécuter, puis passer à la suivante, sauf si l'instruction est un saut."
+     },
+     "consigne": {
+      "fr": "Exécutez le programme comme le processeur : une instruction à la fois, dans l'ordre, sauf saut. CHARGER_A 14 copie la case 14 dans le registre A ; AJOUTER B A fait A ← A + B ; SOUSTRAIRE B A fait A ← A − B ; RANGER_A 13 copie A dans la case 13 ; SAUTER 2 repart à l'adresse 2 ; SAUTER_SI_NÉGATIF 5 n'y saute que si A est négatif. Que contient la case 13 à la fin ?"
+     }
+    },
+    {
+     "id": "hopper",
+     "savant": "hopper",
+     "competences": [
+      "inf.hopper"
+     ],
+     "source": "Wikipédia (en), « Grace Hopper »",
+     "epreuve": {
+      "type": "debug",
+      "instances": [
+       {
+        "but": "Calculer la moyenne de 4 notes",
+        "lignes": [
+         "S ← 0",
+         "Pour chaque note N : S ← S + N",
+         "M ← 4 ÷ S",
+         "Afficher M"
+        ],
+        "attendu": 2
+       },
+       {
+        "but": "Afficher les nombres de 1 à 10",
+        "lignes": [
+         "K ← 1",
+         "Tant que K < 10 :",
+         "    Afficher K",
+         "    K ← K + 1"
+        ],
+        "attendu": 1
+       },
+       {
+        "but": "Doubler un prix",
+        "lignes": [
+         "Lire P",
+         "P ← P + 2",
+         "Afficher P"
+        ],
+        "attendu": 1
+       },
+       {
+        "but": "Compter les notes au-dessus de 10",
+        "lignes": [
+         "C ← 0",
+         "Pour chaque note N :",
+         "    Si N > 10 : C ← C − 1",
+         "Afficher C"
+        ],
+        "attendu": 2
+       }
+      ]
+     },
+     "composants": [
+      {
+       "id": "compilateur",
+       "nom": {
+        "fr": "Le compilateur"
+       },
+       "role": {
+        "fr": "Traduire un programme écrit pour les humains en langage machine."
+       }
+      }
+     ],
+     "nom": {
+      "fr": "Le bureau de Grace Hopper"
+     },
+     "lieu": {
+      "fr": "Harvard, 1947"
+     },
+     "recit": {
+      "fr": "En 1947, à Harvard, un papillon de nuit trouvé dans le Mark II finit scotché dans le cahier de bord : « First actual case of bug being found ». En 1952, Grace Hopper termine le système A-0, son « compilateur A »."
+     },
+     "consigne": {
+      "fr": "Ce petit programme a un bug. Touchez la ligne fautive."
+     }
+    }
+   ],
+   "allumage": {
+    "texte": {
+     "fr": "Toutes les pièces sont en place, de la roue à retenue de Pascal au compilateur de Grace Hopper : le binaire, les cartes, le moulin, l'algorithme, les portes, l'unité de calcul, le transistor, la mémoire et le processeur. Il ne reste qu'à appuyer."
+    }
+   },
+   "repliques": {
+    "entree": [
+     {
+      "fr": "Bienvenue sur mon chantier. Casque obligatoire, cerveau facultatif : je vois que vous avez choisi."
+     },
+     {
+      "fr": "Trois siècles d'inventions en dix ateliers. Les inventeurs ont mis des vies entières. Vous avez la soirée."
+     }
+    ],
+    "atelier_reussi": [
+     {
+      "fr": "Pièce posée. Elle tient. Pour l'instant."
+     },
+     {
+      "fr": "Correct. L'inventeur aurait été fier, ou jaloux."
+     },
+     {
+      "fr": "Une pièce de plus. La machine commence à vous ressembler : incomplète."
+     }
+    ],
+    "atelier_rate": [
+     {
+      "fr": "Raté. Les inventeurs aussi ratent ; eux, au moins, prenaient des notes."
+     },
+     {
+      "fr": "La pièce ne s'emboîte pas. L'erreur non plus ne s'emboîte nulle part, d'ailleurs."
+     }
+    ],
+    "bug": [
+     {
+      "fr": "Un bug s'est glissé dans le chantier. Je n'y suis pour rien. Presque rien."
+     },
+     {
+      "fr": "Quelque chose grignote vos pièces. Chassez-le, ou il fera son nid dans votre mémoire."
+     }
+    ],
+    "bug_chasse": [
+     {
+      "fr": "Bug chassé. Grace Hopper l'aurait scotché dans le cahier."
+     },
+     {
+      "fr": "Plus de bug. Jusqu'au prochain : il y en a toujours un prochain."
+     }
+    ],
+    "bug_rate": [
+     {
+      "fr": "Le bug est toujours là, et il a pris ses aises."
+     },
+     {
+      "fr": "Raté. Le bug vous remercie de votre hospitalité."
+     }
+    ],
+    "panne": [
+     {
+      "fr": "Une pièce est en panne : vous avez oublié comment elle marche. Réussissez son rappel pour la réparer."
+     }
+    ],
+    "allumage": [
+     {
+      "fr": "Elle s'allume. Une machine qui calcule, construite par vous. Ne lui demandez pas de penser : ça, c'est mon métier."
+     },
+     {
+      "fr": "Allumée. Les points de la Baby dansaient ; les vôtres font ce qu'ils peuvent."
+     }
+    ]
+   }
+  }
+ ],
+ "proces": [
+  {
+   "id": "roscius",
+   "nom": {
+    "fr": "Le Procès"
+   },
+   "accroche": {
+    "fr": "Huit salles, une plaidoirie, une innocente à sauver."
+   },
+   "description": {
+    "fr": "Lucie est accusée d'avoir empoisonné son père. Vous la défendez, avec Cicéron pour mentor ; Alyca préside le tribunal, ce qui n'arrange rien. Chaque salle prépare une pièce de la plaidoirie, puis vient l'audience."
+   },
+   "arbres": [
+    "eloquence"
+   ],
+   "mentor": "ciceron",
+   "fictif": {
+    "fr": "Cette affaire est inventée. Elle s'inspire d'un vrai procès plaidé par Cicéron, raconté à la fin."
+   },
+   "affaire": {
+    "titre": {
+     "fr": "L'affaire Lucie Marant"
+    },
+    "faits": {
+     "fr": "Valbrume, vallée imaginaire. Le vieux vigneron Armand Marant est retrouvé mort, empoisonné, un soir de vendanges. Sa fille Lucie, qui vit à la ville, est accusée : elle hériterait du domaine. L'accusation est menée par maître Érard."
+    }
+   },
+   "seuil": 0.7,
+   "salles": [
+    {
+     "id": "dossier",
+     "nom": {
+      "fr": "Le dossier"
+     },
+     "type": "multi",
+     "choisir": 3,
+     "consigne": {
+      "fr": "Six faits sont dans le dossier. Gardez les trois qui servent la défense de Lucie."
+     },
+     "lecon": {
+      "id": "lecon-dossier",
+      "texte": {
+       "fr": "Pour Philippe Breton (L'argumentation dans la communication, 1996), les arguments se rangent en quatre familles : l'autorité, la communauté, le cadrage et l'analogie. Un dossier se trie : un fait n'est un argument que s'il sert la ligne de la défense."
+      },
+      "source": "ProZ, glossaire « argument de cadrage », d'après Philippe Breton (1996)"
+     },
+     "options": [
+      {
+       "texte": {
+        "fr": "Le soir du meurtre, Lucie était à la ville, à deux jours de route."
+       },
+       "points": 1,
+       "retour": {
+        "fr": "Un alibi. Le jury commence par là, toujours."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Trois semaines après, le domaine a été vendu aux enchères pour une bouchée de pain à Gaspard Lerouge, l'homme de confiance du préfet."
+       },
+       "points": 1,
+       "retour": {
+        "fr": "Voilà qui change la question : qui a gagné quoi ?"
+       }
+      },
+      {
+       "texte": {
+        "fr": "Les deux cousins d'Armand, en procès avec lui pour une parcelle, ont été vus au domaine ce soir-là."
+       },
+       "points": 1,
+       "retour": {
+        "fr": "D'autres que Lucie avaient un motif, et ils étaient sur place."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Lucie et son père s'étaient disputés, l'an dernier, devant tout le village."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "C'est un fait à charge. L'accusation s'en chargera bien sans toi."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Lucie est une excellente pâtissière."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "Charmant, mais hors sujet. Le jury ne juge pas ses tartes."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Le poison venait d'une herboristerie de la ville."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "La ville, où vivait Lucie : ce fait la dessert. Garde-le pour l'audience, pour y répondre."
+       }
+      }
+     ]
+    },
+    {
+     "id": "idee",
+     "nom": {
+      "fr": "L'idée directrice"
+     },
+     "type": "choix",
+     "consigne": {
+      "fr": "Toute la plaidoirie suivra une seule idée. Laquelle ?"
+     },
+     "lecon": {
+      "id": "lecon-idee",
+      "texte": {
+       "fr": "Une plaidoirie tient debout si elle suit une ligne : Viktorovitch la veut à la fois rigoureuse, efficace et cohérente. Une idée directrice claire, qui tient en une phrase, garde tous les arguments dans le même sens."
+      },
+      "source": "laviedesidees.fr, recension de Clément Viktorovitch, Le pouvoir rhétorique (Seuil, 2021)"
+     },
+     "options": [
+      {
+       "texte": {
+        "fr": "Lucie n'avait rien à gagner à ce crime ; d'autres avaient tout à gagner."
+       },
+       "points": 2,
+       "retour": {
+        "fr": "Parfait. Tu retournes la question de l'accusation contre elle."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Il n'y a aucune preuve contre Lucie."
+       },
+       "points": 1,
+       "retour": {
+        "fr": "C'est vrai, mais c'est une défense qui recule. Le jury veut une autre histoire que celle de l'accusation."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Lucie est innocente, gentille, la police a bâclé l'enquête, le préfet est louche et les cousins aussi."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "Cinq idées, donc aucune. Le jury en retiendra une, au hasard."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Le préfet est un voleur."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "Peut-être. Mais ce n'est pas son procès, et tu viens de te fâcher avec le tribunal."
+       }
+      }
+     ]
+    },
+    {
+     "id": "arguments",
+     "nom": {
+      "fr": "Les arguments"
+     },
+     "type": "multi",
+     "choisir": 2,
+     "consigne": {
+      "fr": "Le jury : des propriétaires de la vallée, attachés à leur terre et à leur famille. Choisissez les deux arguments qui porteront le plus sur eux."
+     },
+     "lecon": {
+      "id": "lecon-arguments",
+      "texte": {
+       "fr": "Viktorovitch met en garde contre les arguments de « bon sens » et contre ceux qui ne reposent que sur des exemples. Le bon registre dépend du public : on choisit les arguments selon ce que l'auditoire sait et ce qu'il respecte."
+      },
+      "source": "laviedesidees.fr, recension de Clément Viktorovitch, Le pouvoir rhétorique (Seuil, 2021)"
+     },
+     "options": [
+      {
+       "texte": {
+        "fr": "Depuis dix ans, Lucie écrit chaque mois à son père. Voici ses lettres, et les réponses d'Armand."
+       },
+       "points": 1,
+       "retour": {
+        "fr": "Une preuve qu'on peut tenir dans la main. Et qui émeut."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Le domaine, dans la famille depuis cinq générations, a été bradé à un étranger : qui, ici, l'accepterait ?"
+       },
+       "points": 1,
+       "retour": {
+        "fr": "Tu parles à des propriétaires de ce qu'ils ont de plus cher. Ils t'écoutent."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Tout le monde sait qu'une fille ne tue pas son père."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "Le bon sens rassure, mais il ne prouve rien. Et l'accusation n'a qu'à citer un cas contraire."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Les parricides sont statistiquement très rares."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "Rigoureux, peut-être. Mais ce jury ne vote pas sur une moyenne."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Un ami de Lucie jure qu'elle ne ferait pas de mal à une mouche."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "Un seul témoignage d'ami, sur un trait de caractère : l'exemple isolé ne pèse rien."
+       }
+      }
+     ]
+    },
+    {
+     "id": "adversaire",
+     "nom": {
+      "fr": "L'adversaire"
+     },
+     "type": "choix",
+     "consigne": {
+      "fr": "Maître Érard, l'accusateur, va dire : « Elle hérite, donc elle a tué. » Que faites-vous ?"
+     },
+     "lecon": {
+      "id": "lecon-prolepse",
+      "texte": {
+       "fr": "La prolepse (ou procatalepse) : l'orateur soulève lui-même une objection contre sa thèse et y répond aussitôt, avant que l'adversaire ne s'en serve."
+      },
+      "source": "Wikipédia (en), « Procatalepsis »"
+     },
+     "options": [
+      {
+       "texte": {
+        "fr": "Le dire moi-même avant lui, et répondre aussitôt : hériter d'un domaine saisi et vendu, c'est ne rien hériter."
+       },
+       "points": 2,
+       "retour": {
+        "fr": "Tu lui as pris son meilleur coup des mains. Il plaidera dans le vide."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Attendre qu'il le dise, puis répondre."
+       },
+       "points": 1,
+       "retour": {
+        "fr": "Ça marche, mais c'est lui qui aura posé le décor."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Glisser au jury que maître Érard est payé par Lerouge."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "Sans preuve, tu t'en prends à la personne, pas à l'argument. Le jury le voit, et toi tu perds ta crédibilité."
+       }
+      }
+     ]
+    },
+    {
+     "id": "jury",
+     "nom": {
+      "fr": "Le jury"
+     },
+     "type": "choix",
+     "consigne": {
+      "fr": "Un raisonnement part de ce que l'auditoire accepte déjà. De quelle idée, déjà admise par ce jury, partirez-vous ?"
+     },
+     "lecon": {
+      "id": "lecon-premisses",
+      "texte": {
+       "fr": "Dans un syllogisme, les deux premières propositions, les prémisses, mènent à la conclusion : « Tous les hommes sont mortels, or Socrate est un homme, donc Socrate est mortel. » Persuader, c'est partir de prémisses que l'auditoire tient déjà pour vraies."
+      },
+      "source": "Wikipédia (fr), « Syllogisme »"
+     },
+     "options": [
+      {
+       "texte": {
+        "fr": "Une terre doit rester dans la famille qui l'a travaillée."
+       },
+       "points": 2,
+       "retour": {
+        "fr": "Ils le pensent tous. Il ne te reste qu'à montrer qui l'a prise."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Le préfet ne se trompe jamais."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "Tu partirais d'une idée qui sert l'accusation. Mauvais point de départ."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Les gens de la ville ne sont pas comme nous."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "C'est une prémisse du jury, hélas, mais elle se retourne contre Lucie, qui vit en ville."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Le poison s'achète facilement."
+       },
+       "points": 1,
+       "retour": {
+        "fr": "Vrai, et utile pour élargir les suspects, mais ce n'est pas ce que ce jury a de plus cher."
+       }
+      }
+     ]
+    },
+    {
+     "id": "plan",
+     "nom": {
+      "fr": "Le plan"
+     },
+     "type": "ordre",
+     "consigne": {
+      "fr": "Rangez les six parties de la plaidoirie dans l'ordre classique."
+     },
+     "lecon": {
+      "id": "lecon-plan",
+      "texte": {
+       "fr": "Les rhéteurs antiques découpent le discours en parties, un plan que Cicéron et Quintilien ont affiné : l'exorde, la narration, la division, la confirmation, la réfutation et la péroraison."
+      },
+      "source": "Wikipédia (en), « Dispositio »"
+     },
+     "items": [
+      {
+       "nom": {
+        "fr": "Exorde"
+       },
+       "role": {
+        "fr": "Capter l'attention et la bienveillance du jury."
+       }
+      },
+      {
+       "nom": {
+        "fr": "Narration"
+       },
+       "role": {
+        "fr": "Raconter les faits."
+       }
+      },
+      {
+       "nom": {
+        "fr": "Division"
+       },
+       "role": {
+        "fr": "Dire ce qui reste à juger, et dans quel ordre."
+       }
+      },
+      {
+       "nom": {
+        "fr": "Confirmation"
+       },
+       "role": {
+        "fr": "Avancer les arguments et les preuves."
+       }
+      },
+      {
+       "nom": {
+        "fr": "Réfutation"
+       },
+       "role": {
+        "fr": "Répondre aux objections."
+       }
+      },
+      {
+       "nom": {
+        "fr": "Péroraison"
+       },
+       "role": {
+        "fr": "Résumer et conclure, en touchant le jury."
+       }
+      }
+     ]
+    },
+    {
+     "id": "mots",
+     "nom": {
+      "fr": "Les mots"
+     },
+     "type": "choix",
+     "consigne": {
+      "fr": "La dernière phrase de votre péroraison. Laquelle ?"
+     },
+     "lecon": {
+      "id": "lecon-mots",
+      "texte": {
+       "fr": "Trois pièges de style : la négation fait entendre le mot qu'elle nie ; trop de précautions (« peut-être », « il se pourrait ») affaiblissent ce qu'on affirme ; une menace braque l'auditoire contre celui qui la lance."
+      }
+     },
+     "options": [
+      {
+       "texte": {
+        "fr": "Rendez à Lucie son nom, et à cette vallée sa justice."
+       },
+       "points": 2,
+       "retour": {
+        "fr": "Court, positif, et le jury repart avec une image. C'est une fin."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Lucie n'est pas une meurtrière."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "Tu viens de dire « meurtrière » au jury, en dernier mot. C'est lui qu'il gardera."
+       }
+      },
+      {
+       "texte": {
+        "fr": "Je pense que, peut-être, il se pourrait que Lucie soit innocente."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "Si son avocat n'en est pas sûr, pourquoi le jury le serait-il ?"
+       }
+      },
+      {
+       "texte": {
+        "fr": "Acquittez-la, sinon vous serez complices !"
+       },
+       "points": 0,
+       "retour": {
+        "fr": "On ne menace pas un jury. Il se raidit, et vote contre toi pour te le prouver."
+       }
+      }
+     ]
+    },
+    {
+     "id": "audience",
+     "nom": {
+      "fr": "L'audience"
+     },
+     "type": "audience",
+     "consigne": {
+      "fr": "L'audience est ouverte. Maître Érard attaque : répondez à chaque coup."
+     },
+     "lecon": {
+      "id": "lecon-audience",
+      "texte": {
+       "fr": "Viktorovitch distingue, en reprenant les stratagèmes de Schopenhauer, les objections qui visent le fond d'un argument, celles qui visent son type, et celles qui visent la personne. Il décrit aussi les tactiques de défense, comme la dénégation ou la relativisation des faits."
+      },
+      "source": "laviedesidees.fr, recension de Clément Viktorovitch, Le pouvoir rhétorique (Seuil, 2021)"
+     },
+     "echanges": [
+      {
+       "attaque": {
+        "fr": "La prévenue s'est disputée avec son père, l'an dernier, devant tout le village !"
+       },
+       "options": [
+        {
+         "texte": {
+          "fr": "Objection ! Une dispute n'est pas un meurtre. Quelle famille de cette vallée ne s'est jamais disputée ?"
+         },
+         "points": 2,
+         "retour": {
+          "fr": "Tu relativises un fait vrai au lieu de le nier. Le jury se reconnaît."
+         },
+         "alyca": {
+          "fr": "Objection retenue. Le jury se souvient de ses propres repas de famille."
+         }
+        },
+        {
+         "texte": {
+          "fr": "C'est faux : ils ne se sont jamais disputés."
+         },
+         "points": 0,
+         "retour": {
+          "fr": "Tout le village l'a vu. Nier un fait connu, c'est perdre le jury d'un coup."
+         },
+         "alyca": {
+          "fr": "Objection rejetée. Le village entier a vu cette dispute, maître."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Objection ! Maître Érard n'a pas d'enfants, il ne sait pas ce qu'est une famille."
+         },
+         "points": 0,
+         "retour": {
+          "fr": "Tu attaques la personne, pas l'argument. Et tu t'es fait un ennemi de plus."
+         },
+         "alyca": {
+          "fr": "Objection rejetée, et notée. Restons sur le dossier, maître."
+         }
+        }
+       ]
+      },
+      {
+       "attaque": {
+        "fr": "Le poison venait d'une herboristerie de la ville, la ville où vivait l'accusée !"
+       },
+       "options": [
+        {
+         "texte": {
+          "fr": "La ville compte des milliers d'habitants. Et la veille du crime, les deux cousins y étaient, au marché."
+         },
+         "points": 2,
+         "retour": {
+          "fr": "Tu ne nies pas le fait, tu le réinterprètes, et il désigne d'autres suspects."
+         },
+         "alyca": {
+          "fr": "Objection retenue. La ville est grande, maître Érard, et elle a des marchés."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Objection ! Hors sujet."
+         },
+         "points": 0,
+         "retour": {
+          "fr": "Le poison est au cœur du sujet. La présidente ne s'y trompe pas."
+         },
+         "alyca": {
+          "fr": "Objection rejetée. Le poison est précisément le sujet, maître."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Ma cliente est innocente, voilà tout."
+         },
+         "points": 0,
+         "retour": {
+          "fr": "Une affirmation n'est pas une réponse. Il t'a posé un fait, réponds au fait."
+         },
+         "alyca": {
+          "fr": "Noté. Le jury attendait une réponse, il a eu un slogan."
+         }
+        }
+       ]
+      },
+      {
+       "attaque": {
+        "fr": "Si elle est innocente, pourquoi n'a-t-elle rien fait quand le domaine a été vendu ?"
+       },
+       "options": [
+        {
+         "texte": {
+          "fr": "Parce qu'on l'accusait de meurtre pendant qu'on vendait sa maison. Demandez plutôt à qui cette vente a profité."
+         },
+         "points": 2,
+         "retour": {
+          "fr": "Tu réinterprètes le fait, puis tu reposes la seule question qui compte : à qui profite le crime ?"
+         },
+         "alyca": {
+          "fr": "Objection retenue. La cour aimerait, elle aussi, entendre monsieur Lerouge."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Maître Érard se contredit : elle aurait tué pour hériter, et il lui reproche de ne pas avoir défendu son héritage !"
+         },
+         "points": 2,
+         "retour": {
+          "fr": "Tu montres une contradiction dans son propre discours. Il n'a plus de quoi répondre."
+         },
+         "alyca": {
+          "fr": "Objection retenue. Maître Érard, vos deux thèses ne tiennent pas ensemble."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Je ne répondrai pas à cette question."
+         },
+         "points": 0,
+         "retour": {
+          "fr": "Le silence, devant un jury, sonne comme un aveu."
+         },
+         "alyca": {
+          "fr": "Comme vous voudrez. Le jury, lui, a entendu le silence."
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "vrai": {
+    "id": "pro-roscio",
+    "titre": {
+     "fr": "Le vrai procès : Pour Sextus Roscius d'Amérie"
+    },
+    "texte": {
+     "fr": "Vers 80 av. J.-C., Cicéron, jeune avocat encore inconnu, défend Sextus Roscius, accusé d'avoir tué son père, un crime puni du sac : le condamné y était cousu avec des animaux, puis jeté à l'eau. Selon Cicéron, Chrysogonus, puissant affranchi de Sylla, avait fait inscrire le père sur les listes de proscription et racheté pour presque rien ses biens, estimés à environ six millions de sesterces ; deux parents de la victime, en conflit avec elle, auraient organisé le meurtre. Sextus Roscius est acquitté. On ne sait pas s'il a retrouvé les terres de son père."
+    },
+    "source": "Wikipédia (en), « Pro Roscio Amerino »"
+   },
+   "repliques": {
+    "entree": [
+     {
+      "fr": "La cour est ouverte. Je préside, donc tout ira bien. Pour moi."
+     },
+     {
+      "fr": "Asseyez-vous, maître. Votre cliente risque gros ; vous, seulement le ridicule."
+     }
+    ],
+    "mentor": [
+     {
+      "fr": "Je suis passé par là, à ton âge, avec un dossier bien pire. Trions d'abord les faits."
+     },
+     {
+      "fr": "Une plaidoirie se gagne avant l'audience. Prépare chaque salle, l'audience suivra."
+     }
+    ],
+    "acquitte": [
+     {
+      "fr": "Acquittée. Je l'aurais condamnée pour le plaisir, mais vos arguments m'en ont privée."
+     },
+     {
+      "fr": "Le jury acquitte. Je note que vous avez été convaincant. Je le note avec regret."
+     }
+    ],
+    "condamne": [
+     {
+      "fr": "Condamnée. Le jury n'a pas suivi. Moi non plus, d'ailleurs : je décrochais vers la troisième salle."
+     },
+     {
+      "fr": "Coupable. Vous pouvez faire appel. Je présiderai aussi l'appel, réjouissez-vous."
+     }
+    ]
+   }
+  }
+ ]
+}

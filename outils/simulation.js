@@ -4,7 +4,7 @@
 const fs = require("fs"), path = require("path");
 const M = require("../web/moteur.js");
 const FICHIERS = ["regles.json", "skills.json", "questions.json", "succes.json", "commentaires.json", "objets.json", "avatar.json",
-  "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json", "packs.json"];
+  "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json", "donjons.json", "packs.json"];
 
 function charger() {
   const d = {};
@@ -15,7 +15,7 @@ function charger() {
 function contenu(brut, off) {
   const d = M.filtrerPacks(brut, brut["packs.json"], off);
   return M.indexerContenu(d["regles.json"], d["skills.json"], d["questions.json"], d["succes.json"], { commentaires: d["commentaires.json"], objets: d["objets.json"],
-    avatar: d["avatar.json"], ia: d["ia.json"], plateau: d["plateau.json"], frise: d["frise.json"], bibliotheque: d["bibliotheque.json"], ennemis: d["ennemis.json"], atomes: d["atomes.json"] });
+    avatar: d["avatar.json"], ia: d["ia.json"], plateau: d["plateau.json"], frise: d["frise.json"], bibliotheque: d["bibliotheque.json"], ennemis: d["ennemis.json"], atomes: d["atomes.json"], donjons: d["donjons.json"] });
 }
 
 // Un générateur pseudo-aléatoire fixe : la même graine rejoue la même partie.
