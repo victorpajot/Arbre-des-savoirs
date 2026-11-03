@@ -380,6 +380,42 @@ body.plateau-plein { overflow: hidden; }
 .equip .slot { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
 .equip .slot button { flex: none; border: 2px solid var(--line); background: var(--surface); border-radius: 10px; padding: 6px 10px; font-size: 13px; min-height: 40px; }
 .equip .slot button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); font-weight: 700; }
+/* Création du personnage et pouvoirs (Victor, 2026-11-03). */
+.crea h2 { margin: 2px 0 10px; }
+.crea-tete { display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: start; margin-bottom: 6px; }
+.crea-tete > .btn { grid-column: 1; justify-self: center; }
+.crea-tete .crea-bulle { grid-column: 2; grid-row: 1 / span 2; }
+.crea-apercu { display: flex; justify-content: center; padding: 6px; }
+.crea-ligne { margin: 14px 0 0; }
+.crea-ligne h3 { font-size: 15px; margin: 0 0 6px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.crea-cats { flex-wrap: wrap; gap: 6px; }
+.crea-grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; }
+.crea-grille button { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 4px; border: 2px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font-size: 14px; line-height: 1.15; cursor: pointer; min-height: 44px; }
+.crea-grille button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); font-weight: 700; }
+.crea-grille.pastilles { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+.crea-grille.pastilles i { width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(0,0,0,.25); display: block; }
+.crea > .btn.large { margin-top: 18px; width: 100%; }
+@media (max-width: 420px) { .crea-tete { grid-template-columns: 1fr; } .crea-tete .crea-bulle { grid-column: 1; grid-row: auto; } }
+.pouvoirs { display: flex; flex-direction: column; gap: 8px; }
+.pouvoir { display: flex; align-items: center; gap: 12px; text-align: left; padding: 10px 12px; border: 2px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.pouvoir span:nth-child(2) { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.pouvoir b { font-size: 17px; }
+.pouvoir small { font-size: 14px; color: var(--muted); }
+.pouvoir.verrou { opacity: .7; border-style: dashed; }
+.pouvoir .charges { font-weight: 800; font-size: 17px; color: var(--accent); }
+.pouvoir-ico { font-size: 26px; width: 40px; text-align: center; flex: none; }
+.pouvoir-ico.grand { font-size: 44px; width: 64px; }
+.pouvoir-tete { display: flex; align-items: center; gap: 12px; }
+.poche-quiz .pouvoir-case { border-color: #7E3FB0; background: color-mix(in srgb, #7E3FB0 10%, var(--surface)); }
+.pascaline { margin: 10px auto 0; max-width: 320px; padding: 12px; border-radius: 16px; background: #2B2B33; color: #F4F1EA; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+.pascaline .ecran { background: #C9D6B8; color: #1E1A2B; border-radius: 8px; padding: 8px 10px; font-family: "JetBrains Mono", monospace; min-height: 52px; display: flex; flex-direction: column; align-items: flex-end; overflow-wrap: anywhere; }
+.pascaline .ecran .expr { font-size: 16px; }
+.pascaline .ecran .res { font-size: 20px; }
+.pascaline .touches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0; }
+.pascaline .touches button { padding: 12px 0; font-size: 18px; font-weight: 700; border-radius: 10px; border: none; background: #4A4A55; color: #F4F1EA; cursor: pointer; }
+.pascaline .touches button[data-k="="] { background: #E08A00; color: #1E1A2B; }
+.pascaline .rangee { justify-content: space-between; }
+.retour.palais { margin-top: 12px; }
 
 /* Cabinet */
 .cabinet { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
@@ -1708,16 +1744,25 @@ function demarrerJeu() {
     return id && P.savants && P.savants[id] && C.avatar.savants ? C.avatar.savants.filter(function (s) { return s.id === id; })[0] || null : null;
   }
   // Un savant incarné remplace corps, tenue et cheveux ; les accessoires de tête deviennent des déguisements.
-  function pixelsAvatar(ox, oy) {
-    var A = C.avatar, rang = M.rangAvatar(C, P), eq = P.avatar || {}, pal = A.palette, sv = savantIncarne(), f = farce();
-    var tete = accessoire(eq.tete), visage = accessoire(eq.visage);
+  // Victor (2026-11-03) : l'apparence choisie à la création (espèce, teinte, regard, coiffure, barbe, tenue) remplace
+  // le corps et les cheveux d'origine ; sans création, l'avatar d'avant. `choix` (facultatif) : un aperçu, sans farce ni accessoire.
+  function pixelsAvatar(ox, oy, choix) {
+    var A = C.avatar, rang = M.rangAvatar(C, P), eq = P.avatar || {}, pal = A.palette, sv = choix ? null : savantIncarne(), f = choix ? null : farce();
+    var ap = choix ? M.apparence(C, { apparence: choix }) : M.apparence(C, P);
+    var tete = choix ? null : accessoire(eq.tete), visage = choix ? null : accessoire(eq.visage);
     // Farce de l'IA : l'accessoire imposé remplace celui du même emplacement.
     if (f && f.type === "accessoire") { if (f.emplacement === "tete") tete = accessoire(f.id, true); else visage = accessoire(f.id, true); }
-    // v25 : farce de tenue, les vêtements repeints par-dessus les couleurs du rang ou du savant.
-    var tf = f && f.type === "tenue" ? tenueFarce(f.id) : null, cs = sv ? sv.couleurs : rang.couleurs;
+    // v25 : farce de tenue, les vêtements repeints par-dessus les couleurs du rang, du savant ou de la tenue choisie.
+    var tf = f && f.type === "tenue" ? tenueFarce(f.id) : null, cs = sv ? sv.couleurs : ap && ap.tenue ? ap.couleurs : rang.couleurs;
     if (tf) cs = Object.assign({}, cs, tf.couleurs);
-    var c = sv ? pixels(sv.base, pal, cs, ox, oy, 1) : pixels(A.corps, pal, null, ox, oy, 1) + pixels(rang.tenue, pal, cs, ox, oy, 1);
-    if (!tete) c += pixels(sv ? sv.cheveux : A.cheveux, pal, null, ox, oy, 1);
+    var c;
+    if (sv) c = pixels(sv.base, pal, cs, ox, oy, 1);
+    else if (ap) {
+      c = pixels(ap.espece.corps, pal, ap.teinte.couleurs, ox, oy, 1) + pixels(ap.tenue ? ap.tenue.pixels : rang.tenue, pal, cs, ox, oy, 1);
+      if (ap.regard) c += pixels(ap.regard.pixels, pal, null, ox, oy, 1);
+      c += pixels(ap.barbe.pixels, pal, ap.cheveux.couleurs, ox, oy, 1);
+    } else c = pixels(A.corps, pal, null, ox, oy, 1) + pixels(rang.tenue, pal, cs, ox, oy, 1);
+    if (!tete) c += sv ? pixels(sv.cheveux, pal, null, ox, oy, 1) : ap ? pixels(ap.coiffure.pixels, pal, ap.cheveux.couleurs, ox, oy, 1) : pixels(A.cheveux, pal, null, ox, oy, 1);
     if (visage) c += pixels(visage.pixels, pal, null, ox, oy, 1);
     if (tete) c += pixels(tete.pixels, pal, null, ox, oy, 1);
     return c;
@@ -1727,6 +1772,169 @@ function demarrerJeu() {
     var c = pixelsAvatar(3, 0);
     if (objet) c += pixels(objet.pixels, C.cabinet.palette, null, 33, 24, 0.5);
     return '<svg class="pix" data-sig="' + signature(c) + '" viewBox="0 0 52 48" width="' + taille + '" height="' + Math.round(taille * 48 / 52) + __('" role="img" aria-label="Ton avatar, rang ') + esc(tx(rang.nom)) + '">' + c + "</svg>";
+  }
+
+  // --- Création du personnage (Victor, 2026-11-03) ------------------------------------------
+  // Espèce (humain, animal, extraterrestre, inclassable), teinte, regard, coiffure, barbe, tenue et sa couleur.
+  // Proposée à la fin de l'assistant de nouvelle partie, une fois aux parties en cours, puis dans Personnage › Avatar.
+  // Alyca commente chaque choix. Changer d'apparence plus tard reste gratuit.
+  var CHOIX_DEFAUT = { espece: "humain", teinte: "claire", regard: "normal", coiffure: "court", cheveux: "chatain", barbe: "aucune", tenue: "rang", couleur: null };
+  function svgPerso(choix, taille, tete) {
+    var vb = tete ? "1 0 38 36" : "0 0 40 48", h = tete ? taille : Math.round(taille * 1.2);
+    return '<svg class="pix" viewBox="' + vb + '" width="' + taille + '" height="' + h + '" aria-hidden="true">' + pixelsAvatar(0, 0, choix) + "</svg>";
+  }
+  function teintePastille(cs, defaut) { return (cs && (cs.s || cs["9"] || cs.h)) || defaut; }
+  function ouvrirCreation(premiere) {
+    var cr = C.avatar && C.avatar.creation; if (!cr) return;
+    var ch = Object.assign({}, CHOIX_DEFAUT, P.apparence || {}), dernier = null, cat = null;
+    if (!P.apparence) { P.options = P.options || {}; P.options.creationProposee = maintenant(); sauver(); }
+    var esp = function () { return cr.especes.filter(function (e) { return e.id === ch.espece; })[0] || cr.especes[0]; };
+    cat = esp().categorie;
+    feuilleSimple('<div class="crea"></div>', __("Ton personnage"), {}, premiere ? __("Garder l'apparence par défaut") : __("Annuler"));
+    feuille.classList.add("opaque"); var fe = feuille.querySelector(".feuille"); fe.classList.add("pleine");
+    function pique() {
+      if (!dernier) return { id: "crea-intro", texte: { fr: __("Avant de commencer, montre-moi à quoi tu ressembles. Je serai indulgente. Non, je plaisante.") }, aparte: false };
+      return { id: "crea-" + dernier.id, texte: dernier.pique, aparte: false };
+    }
+    function ligne(titre, items, cle, tete, pastille) {
+      var b = el('<section class="crea-ligne"><h3>' + esc(titre) + '</h3><div class="crea-grille' + (pastille ? " pastilles" : "") + '"></div></section>'), g = b.querySelector(".crea-grille");
+      items.forEach(function (it) {
+        var essai = Object.assign({}, ch); essai[cle] = it.id;
+        if (cle === "espece") { essai.teinte = it.teintes[0].id; essai.coiffure = it.coiffure; if (!it.yeux) essai.regard = "normal"; }
+        var vis = pastille ? '<i style="background:' + pastille(it) + '"></i>' : svgPerso(essai, 56, tete);
+        var bt = el('<button type="button" aria-pressed="' + (ch[cle] === it.id) + '">' + vis + "<span>" + esc(tx(it.nom)) + "</span></button>");
+        bt.onclick = function () {
+          ch[cle] = it.id;
+          if (cle === "espece") { ch.teinte = it.teintes[0].id; ch.coiffure = it.coiffure; }
+          if (cle === "tenue" && it.id !== "rang") ch.couleur = null;
+          if (it.pique) dernier = it;
+          dessiner();
+        };
+        g.appendChild(bt);
+      });
+      return b;
+    }
+    function hasard() {
+      var un = function (l) { return l[Math.floor(Math.random() * l.length)]; };
+      var e = un(cr.especes);
+      ch = { espece: e.id, teinte: un(e.teintes).id, regard: un(cr.regards).id, coiffure: Math.random() < 0.5 ? e.coiffure : un(cr.coiffures).id,
+        cheveux: un(cr.couleurs_cheveux).id, barbe: Math.random() < 0.6 ? "aucune" : un(cr.barbes).id, tenue: un(cr.tenues).id, couleur: Math.random() < 0.5 ? null : un(cr.couleurs_tenue).id };
+      cat = e.categorie; dernier = un([e, un(cr.tenues), un(cr.coiffures)]);
+      dessiner();
+    }
+    function dessiner() {
+      var z = fe.querySelector(".crea"), haut = fe.scrollTop, e = esp(), rang = M.rangAvatar(C, P);
+      z.innerHTML = '<div class="eyebrow">' + (premiere ? __("Nouvelle partie") : __("Personnage")) + "</div><h2>" + __("Ton personnage") + '</h2><div class="crea-tete"><div class="avatar-cadre crea-apercu">' + svgPerso(ch, 132) + '</div><div class="crea-bulle"></div></div>';
+      var hz = el('<button type="button" class="btn sec">🎲 ' + __("Au hasard") + "</button>"); hz.onclick = hasard;
+      z.querySelector(".crea-tete").appendChild(hz);
+      var bu = comite(pique()); if (bu) z.querySelector(".crea-bulle").appendChild(bu);
+      var cats = el('<section class="crea-ligne"><h3>' + __("Espèce") + '</h3><div class="rangee crea-cats"></div></section>');
+      cr.categories.forEach(function (c) {
+        var b = el('<button type="button" class="btn' + (c.id === cat ? "" : " sec") + '" aria-pressed="' + (c.id === cat) + '">' + esc(tx(c.nom)) + "</button>");
+        b.onclick = function () { cat = c.id; dessiner(); };
+        cats.querySelector(".crea-cats").appendChild(b);
+      });
+      z.appendChild(cats);
+      z.appendChild(ligne("", cr.especes.filter(function (x) { return x.categorie === cat; }), "espece", true)).querySelector("h3").remove();
+      if (e.teintes.length > 1) z.appendChild(ligne(e.categorie === "humain" ? __("Peau") : __("Couleur"), e.teintes, "teinte", false, function (t) { return teintePastille(t.couleurs, "#F2C9A0"); }));
+      if (e.yeux) z.appendChild(ligne(__("Regard"), cr.regards, "regard", true));
+      z.appendChild(ligne(__("Coiffure"), cr.coiffures, "coiffure", true));
+      z.appendChild(ligne(__("Couleur des cheveux"), cr.couleurs_cheveux, "cheveux", false, function (c) { return c.couleurs.h; }));
+      z.appendChild(ligne(__("Barbe"), cr.barbes, "barbe", true));
+      z.appendChild(ligne(__("Tenue"), [{ id: "rang", nom: { fr: __("Tenue du rang") }, pique: { fr: __("La tenue de ton rang. Elle changera quand tu monteras en grade. Si tu montes en grade.") } }].concat(cr.tenues), "tenue", false));
+      if (ch.tenue !== "rang") z.appendChild(ligne(__("Couleur de la tenue"), cr.couleurs_tenue, "couleur", false, function (c) { return c.hexa; }));
+      else z.appendChild(el('<p class="note">' + __("Rang actuel : ") + esc(tx(rang.nom)) + "." + "</p>"));
+      var ok = el('<button type="button" class="btn large">' + __("C'est moi !") + "</button>");
+      ok.onclick = function () {
+        M.choisirApparence(C, P, ch); P.options = P.options || {}; P.options.creationProposee = P.options.creationProposee || maintenant();
+        sauver(); fermerFeuille(); rendre(); toast(premiere ? __("Personnage créé. L'IA a déjà pris des notes.") : __("Nouvelle apparence enregistrée."));
+      };
+      z.appendChild(ok);
+      fe.scrollTop = haut;
+    }
+    dessiner();
+    fe.scrollTop = 0;
+  }
+
+  // --- Pouvoirs (Victor, 2026-11-03) : débloqués par les stats et les succès, ils se rechargent ------------
+  function libPeriode(p) { return p.charges.periode === "semaine" ? __("cette semaine") : __("aujourd'hui"); }
+  function conditionPouvoirTexte(p) {
+    var c = p.condition || {}, out = [];
+    if (c.succes) out.push(conditionTexte({ type: "succes", id: c.succes }));
+    if (c.niveau_global != null) out.push(__("niveau global ") + c.niveau_global);
+    if (c.niveau_stat) {
+      var noms = c.niveau_stat.stats.map(function (id) { var s = C.regles.stats.filter(function (x) { return x.id === id; })[0]; return s ? tx(s.nom) : null; }).filter(Boolean);
+      out.push(noms.length ? __("niveau ") + c.niveau_stat.min + __(" en ") + noms.join(__(", ou ")) : __("niveau global ") + c.niveau_stat.sinon_global);
+    }
+    return out.join(__(" et "));
+  }
+  function ouvrirPouvoir(id) {
+    var e = M.pouvoir(C, P, id, maintenant()); if (!e) return;
+    var p = e.pouvoir;
+    feuilleSimple('<div class="pouvoir-tete"><span class="pouvoir-ico">' + p.icone + '</span><div><div class="eyebrow">' + __("Pouvoir") + "</div><h2>" + esc(tx(p.nom)) + "</h2></div></div><p><b>" + esc(tx(p.effet)) + "</b></p>" +
+      (e.debloque ? '<p class="meta">' + e.reste + __(" sur ") + e.max + " " + libPeriode(p) + ".</p>" : '<p class="meta">' + __("À débloquer : ") + esc(conditionPouvoirTexte(p)) + ".</p>") +
+      "<p>" + esc(tx(p.notice)) + '</p><p class="meta">' + __("Source : ") + esc(p.source) + "</p>", tx(p.nom));
+  }
+  function blocPouvoirs() {
+    var liste = M.pouvoirs(C, P, maintenant()); if (!liste.length) return null;
+    var b = el('<div class="bloc"><h2>' + __("Pouvoirs") + '</h2><p class="note">' + __("Ils se débloquent avec tes niveaux et certains succès, et se rechargent tout seuls.") + '</p><div class="pouvoirs"></div></div>');
+    liste.forEach(function (e) {
+      var p = e.pouvoir, bt = el('<button type="button" class="pouvoir' + (e.debloque ? "" : " verrou") + '"><span class="pouvoir-ico">' + (e.debloque ? p.icone : "🔒") + "</span><span><b>" + esc(tx(p.nom)) + "</b><small>" +
+        esc(e.debloque ? tx(p.effet) : __("À débloquer : ") + conditionPouvoirTexte(p)) + "</small></span>" + (e.debloque ? '<span class="charges">' + e.reste + "/" + e.max + "</span>" : "") + "</button>");
+      bt.onclick = function () { ouvrirPouvoir(p.id); };
+      b.querySelector(".pouvoirs").appendChild(bt);
+    });
+    return b;
+  }
+  // Une fois hors quiz : la création proposée aux parties en cours, puis chaque pouvoir débloqué, annoncé par Alyca.
+  function scenesPersonnage() {
+    if (titre || feuille || !C.avatar || document.querySelector(".quiz, .liberation, .alyca-scene")) return;
+    if (!P.apparence && C.avatar.creation && !(P.options && P.options.creationProposee)) { ouvrirCreation(!P.journal.length); return; }
+    var nv = M.annoncerPouvoirs(C, P, maintenant()); if (!nv.length) return;
+    sauver();
+    var p = nv[0], e = M.pouvoir(C, P, p.id, maintenant());
+    feuilleSimple('<div class="pouvoir-tete"><span class="pouvoir-ico grand">' + p.icone + '</span><div><div class="eyebrow">' + __("Nouveau pouvoir") + "</div><h2>" + esc(tx(p.nom)) + "</h2></div></div><div class=\"bulle-p\"></div><p><b>" + esc(tx(p.effet)) + '</b></p><p class="meta">' +
+      e.max + " " + (p.charges.periode === "semaine" ? __("fois par semaine") : __("fois par jour")) + ".</p><p>" + esc(tx(p.notice)) + '</p><p class="meta">' + __("Source : ") + esc(p.source) + "</p>", tx(p.nom), {}, __("Merci du cadeau"));
+    var bu = comite({ id: "pouvoir-" + p.id, texte: p.pique, aparte: false }); if (bu) feuille.querySelector(".bulle-p").appendChild(bu);
+  }
+  // La Pascaline : une calculatrice simple (+ − × ÷, puissances, racine, parenthèses), sans eval.
+  function calculer(expr) {
+    var s = expr.replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-").replace(/,/g, "."), i = 0;
+    function voir() { while (s[i] === " ") i++; return s[i]; }
+    function somme() { var v = produit(); for (;;) { var c = voir(); if (c === "+") { i++; v += produit(); } else if (c === "-") { i++; v -= produit(); } else return v; } }
+    function produit() { var v = puiss(); for (;;) { var c = voir(); if (c === "*") { i++; v *= puiss(); } else if (c === "/") { i++; v /= puiss(); } else return v; } }
+    function puiss() { var v = unaire(); if (voir() === "^") { i++; return Math.pow(v, puiss()); } return v; }
+    function unaire() { var c = voir(); if (c === "-") { i++; return -unaire(); } if (c === "√") { i++; return Math.sqrt(unaire()); } return atome(); }
+    function atome() {
+      var c = voir();
+      if (c === "(") { i++; var v = somme(); if (voir() === ")") i++; return v; }
+      var m = /^\d*\.?\d+(e[-+]?\d+)?/.exec(s.slice(i)); if (!m) throw new Error("?");
+      i += m[0].length; return parseFloat(m[0]);
+    }
+    var v = somme(); if (i < s.length && voir() !== undefined) throw new Error("?");
+    return v;
+  }
+  function ouvrirPascaline(input) {
+    var z = el('<div class="pascaline" role="dialog" aria-label="' + __("La Pascaline") + '"><div class="ecran" aria-live="polite"><span class="expr"></span><b class="res"></b></div><div class="touches"></div>' +
+      '<div class="rangee"><button type="button" class="btn sec" data-k="fermer">' + __("Fermer") + '</button><button type="button" class="btn" data-k="poser">' + __("Mettre dans ma réponse") + "</button></div></div>");
+    var expr = "", res = null;
+    "( ) √ ^ 7 8 9 ÷ 4 5 6 × 1 2 3 − 0 , ⌫ + C =".split(" ").forEach(function (k) { z.querySelector(".touches").appendChild(el('<button type="button" data-k="' + k + '">' + k + "</button>")); });
+    function maj() {
+      z.querySelector(".expr").textContent = expr || "0";
+      z.querySelector(".res").textContent = res == null ? "" : isFinite(res) ? "= " + String(+res.toPrecision(10)).replace(".", ",") : __("Erreur");
+    }
+    z.onclick = function (ev) {
+      var b = ev.target.closest("button"); if (!b) return; var k = b.getAttribute("data-k");
+      if (k === "fermer") { z.remove(); return; }
+      if (k === "poser") { if (res != null && isFinite(res)) { input.value = String(+res.toPrecision(10)).replace(".", ","); z.remove(); input.focus(); } return; }
+      if (k === "C") { expr = ""; res = null; }
+      else if (k === "⌫") expr = expr.slice(0, -1);
+      else if (k === "=") { try { res = calculer(expr); } catch (e) { res = NaN; } }
+      else { expr += k; res = null; }
+      maj();
+    };
+    maj();
+    var q = document.querySelector(".quiz .saisie"); (q || document.body).after(z);
   }
 
   // v16 : quand l'avatar du joueur ou le masque de l'IA change, le nouveau apparaît en silhouette noire,
@@ -3482,7 +3690,7 @@ function demarrerJeu() {
     f.querySelector("button").focus();
   }
   // v35 : une feuille fermée peut laisser passer la révélation d'Alyca qui attendait.
-  function fermerFeuille() { if (feuille) { feuille.remove(); feuille = null; setTimeout(revelerNom, 0); } }
+  function fermerFeuille() { if (feuille) { feuille.remove(); feuille = null; setTimeout(function () { revelerNom(); if (C && P) scenesPersonnage(); }, 0); } }
 
   // --- Vue Personnage -------------------------------------------------------
   function vuePerso() {
@@ -3509,7 +3717,7 @@ function demarrerJeu() {
       seg.appendChild(bt);
     });
     v.appendChild(seg);
-    if (ongletPerso === "avatar") { v.appendChild(blocAvatar()); if (P.kit) v.appendChild(el(__('<div class="bloc"><h2>Équipement</h2><div class="article"><span class="vis">') + paquet("#B5651D", false, "⌖") + __('</span><span class="txt"><b>Kit du chasseur</b><span>Quand tu places un atome sur le tableau, tes atomes déjà capturés s\'affichent.</span><span class="stock">acheté le ') + esc(dateCourte(P.kit)) + "</span></span></div></div>")); }
+    if (ongletPerso === "avatar") { v.appendChild(blocAvatar()); var bpv = blocPouvoirs(); if (bpv) v.appendChild(bpv); if (P.kit) v.appendChild(el(__('<div class="bloc"><h2>Équipement</h2><div class="article"><span class="vis">') + paquet("#B5651D", false, "⌖") + __('</span><span class="txt"><b>Kit du chasseur</b><span>Quand tu places un atome sur le tableau, tes atomes déjà capturés s\'affichent.</span><span class="stock">acheté le ') + esc(dateCourte(P.kit)) + "</span></span></div></div>")); }
     if (ongletPerso === "ia") { v.appendChild(blocIA()); v.appendChild(blocFaveur()); var bi = blocBourseIA(); if (bi) v.appendChild(bi); v.appendChild(blocCadeauxIA()); v.appendChild(blocCorruption()); v.appendChild(blocMasques(Object.keys(P.succes).length)); }
     if (ongletPerso === "ennemis") v.appendChild(blocBestiaire());
     if (ongletPerso !== "reglages") return v;
@@ -3645,6 +3853,8 @@ function demarrerJeu() {
       (suivant ? __("Prochain rang, ") + esc(tx(suivant.nom)) + __(", au niveau global ") + suivant.niveau_min + "." : __("Le rang le plus haut. L'IA s'incline.")) + "</p></div></div>" +
       '<div class="equip"></div></div>');
     var eq = b.querySelector(".equip"), sv = savantIncarne(), bf = blocFarce();
+    // Victor (2026-11-03) : l'apparence se change ici, gratuitement.
+    if (C.avatar.creation) { var mir = el('<button type="button" class="btn sec">🪞 ' + (P.apparence ? __("Changer d'apparence") : __("Créer mon personnage")) + "</button>"); mir.onclick = function () { ouvrirCreation(false); }; eq.appendChild(mir); }
     if (bf) eq.appendChild(bf);
     if (sv) b.querySelector(".rang").insertAdjacentHTML("afterend", __('<div class="note" style="margin-top:2px">en <b>') + esc(tx(sv.nom)) + "</b></div>");
     var slots = [
@@ -3692,7 +3902,7 @@ function demarrerJeu() {
     var liste = C.avatar.savants, n = liste.filter(function (s) { return P.savants[s.id]; }).length, actuel = savantIncarne();
     var b = el(__('<div><div class="eyebrow">Savants · ') + n + __(" sur ") + liste.length + __('</div><p class="note">Ton avatar incarne le dernier savant que tes succès ont débloqué. Ton rang reste visible au cadre.</p><div class="savants"></div></div>'));
     var g = b.querySelector(".savants");
-    var toi = el('<button type="button"' + (actuel ? "" : ' class="actuel"') + ">" + '<svg class="pix" viewBox="0 0 40 48" width="44" height="53" aria-hidden="true">' + pixels(C.avatar.corps, C.avatar.palette, null, 0, 0, 1) + pixels(M.rangAvatar(C, P).tenue, C.avatar.palette, M.rangAvatar(C, P).couleurs, 0, 0, 1) + pixels(C.avatar.cheveux, C.avatar.palette, null, 0, 0, 1) + __("</svg><span>Toi</span></button>"));
+    var toi = el('<button type="button"' + (actuel ? "" : ' class="actuel"') + ">" + '<svg class="pix" viewBox="0 0 40 48" width="44" height="53" aria-hidden="true">' + pixelsAvatar(0, 0) + __("</svg><span>Toi</span></button>"));
     toi.disabled = true;
     g.appendChild(toi);
     // v18 : les savants rangés par arbre, chacun sous la couleur de son thème.
@@ -6632,6 +6842,33 @@ function demarrerJeu() {
     rendre();
   }
 
+  // Les pouvoirs jouables sur cette question : rasoir (QCM), Pascaline (nombre, hors dates), démon de Socrate (masterclass).
+  // Un pouvoir payé sur une question y reste ouvert (la Pascaline et la leçon se rouvrent sans nouvelle charge).
+  function barrePouvoirs(q, cur, zoneRep) {
+    var t = maintenant(), barre = el('<div class="poche-quiz pouvoirs-q"></div>');
+    function bouton(id, ok, faire) {
+      var e = M.pouvoir(C, P, id, t); if (!e || !e.debloque || !ok) return;
+      var paye = cur["pv_" + id]; if (!paye && !e.reste) return;
+      var p = e.pouvoir, b = el('<button type="button" class="joker-case pouvoir-case"><span aria-hidden="true">' + p.icone + "</span> " + esc(tx(p.nom)) + " <small>(" + (paye ? __("ouvert") : e.reste + " " + libPeriode(p)) + ")</small></button>");
+      b.onclick = function () {
+        if (quiz.repondu) { toast(__("Trop tard : tu as déjà répondu.")); return; }
+        if (!cur["pv_" + id]) { if (!M.utiliserPouvoir(C, P, id, maintenant())) return; cur["pv_" + id] = true; sauver(); b.querySelector("small").textContent = "(" + __("ouvert") + ")"; }
+        faire(b);
+      };
+      barre.appendChild(b);
+    }
+    bouton("rasoir", q.type === "qcm" && q.choix.length >= 3 && !cur.joker, function (b) {
+      cur.joker = M.joker(q);
+      zoneRep.querySelectorAll("button[data-v]").forEach(function (x) { if (cur.joker.indexOf(Number(x.getAttribute("data-v"))) >= 0) { x.classList.add("efface"); x.disabled = true; } });
+      b.remove();
+    });
+    bouton("pascaline", q.type === "numerique" && !q.annee, function () {
+      var old = document.querySelector(".quiz .pascaline"); if (old) { old.remove(); return; }
+      var inp = zoneRep.querySelector("input"); if (inp) ouvrirPascaline(inp);
+    });
+    bouton("demon", aMasterclass(C.parId[q.competence]) && !quiz.chrono, function () { ouvrirMasterclass(q.competence, null, __("← Retour à la question")); });
+    return barre.children.length ? barre : null;
+  }
   function rendreQuiz() {
     var ancien = document.querySelector(".quiz"); if (ancien) ancien.remove();
     if (!quiz) return;
@@ -6681,6 +6918,7 @@ function demarrerJeu() {
       if (!ok && !quiz.tempsEcoule && !cur.reessai && q.type !== "vrai_faux" && M.enPoche(P, "erreur")) { proposerReessai(valeur, bouton); return; }
       clearInterval(quiz.minuteur);
       var pq0 = document.querySelector(".quiz .poche-quiz .joker-case"); if (pq0) pq0.remove();
+      document.querySelectorAll(".quiz .pouvoir-case, .quiz .pascaline").forEach(function (x) { x.remove(); });
       quiz.repondu = true; quiz.res.push({ id: q.id, correct: ok, chrono: quiz.chrono && !cur.erreur, ms: Date.now() - quiz.debutQuestion, rep: valeur, erreur: !!cur.erreur });
       zoneRep.querySelectorAll("button").forEach(function (b) {
         b.disabled = true;
@@ -6737,8 +6975,11 @@ function demarrerJeu() {
     }
     // v20 : la poche. Le joker 50/50 se joue avant de répondre ; le droit à l'erreur s'annonce, il sert tout seul après une faute.
     var barreP = null, nj = M.enPoche(P, "joker"), ne = M.enPoche(P, "erreur");
+    // Victor (2026-11-03) : les pouvoirs du personnage, sous les réponses comme le joker.
+    var bpq = barrePouvoirs(q, cur, zoneRep);
+    if (bpq) barreP = bpq;
     if ((nj && q.type === "qcm" && q.choix.length >= 3 && !cur.joker) || (ne && !cur.reessai && q.type !== "vrai_faux")) {
-      barreP = el('<div class="poche-quiz"></div>');
+      barreP = barreP || el('<div class="poche-quiz"></div>');
       if (nj && q.type === "qcm" && q.choix.length >= 3 && !cur.joker) {
         var bj = el('<button type="button" class="joker-case">' + paquet("#E08A00", true, "½").replace('width="52" height="52"', 'width="28" height="28"') + __(" Jouer un joker 50/50 <small>(") + nj + __(" en stock)</small></button>"));
         bj.onclick = function () {
@@ -6784,7 +7025,7 @@ function demarrerJeu() {
       if (perdu && quiz.i < quiz.qs.length - 1) zoneRetour.appendChild(el(__('<p class="meta coupe">Le compte n\'y est plus : l\'IA arrête les frais et garde les dernières questions pour une autre fois.</p>')));
       var b = el('<button type="button" class="btn large">' + (dernier ? __("Voir le résultat") : __("Question suivante")) + "</button>");
       b.onclick = function () {
-        if (dernier) terminer(); else { quiz.i++; quiz.repondu = false; rendreQuiz(); }
+        if (dernier) { if (!proposerPalais(b)) terminer(false); } else { quiz.i++; quiz.repondu = false; rendreQuiz(); }
       };
       zoneRetour.appendChild(el('<div style="height:12px"></div>'));
       zoneRetour.appendChild(b);
@@ -6806,9 +7047,24 @@ function demarrerJeu() {
     }
   }
 
-  function terminer() {
+  // Victor (2026-11-03) : un rappel raté qui ferait perdre la compétence, le palais de mémoire peut le sauver. On demande.
+  function proposerPalais(bouton) {
+    var t = maintenant(), e = P.competences[quiz.id], rv = M.revisionEnCours(P), pv = M.pouvoir(C, P, "palais", t);
+    if (quiz.mode !== "rappel" || !pv || !pv.reste || !e || (rv && rv.comp === quiz.id) || t < e.prochainRappel) return false;
+    if (quiz.res.filter(function (x) { return x.correct; }).length >= C.regles.rappels.bonnes_reponses_min) return false;
+    var p = pv.pouvoir;
+    var box = el('<div class="retour ko palais"><b>' + p.icone + " " + esc(tx(p.nom)) + "</b><p>" + __("Ce rappel est raté : la compétence va être perdue. Utiliser ton palais de mémoire ? Elle reste acquise et son rappel revient tout de suite.") +
+      ' <small class="meta">(' + pv.reste + " " + libPeriode(p) + ')</small></p><div class="rangee"><button type="button" class="btn">' + __("Sauver la compétence") + '</button><button type="button" class="btn sec">' + __("Non, la perdre") + "</button></div></div>");
+    var bts = box.querySelectorAll("button");
+    bts[0].onclick = function () { box.remove(); terminer(true); };
+    bts[1].onclick = function () { box.remove(); terminer(false); };
+    bouton.parentNode.insertBefore(box, bouton); bouton.remove();
+    box.scrollIntoView({ block: "center" }); bts[0].focus({ preventScroll: true });
+    return true;
+  }
+  function terminer(palais) {
     var t = maintenant();
-    quiz.fin = quiz.mode === "rappel" ? M.terminerRappel(C, P, quiz.id, quiz.res, t, { jouer: quiz.jouer, uneCase: quiz.uneCase, total: quiz.qs.length })
+    quiz.fin = quiz.mode === "rappel" ? M.terminerRappel(C, P, quiz.id, quiz.res, t, { jouer: quiz.jouer, uneCase: quiz.uneCase, total: quiz.qs.length, palais: !!palais })
       : M.terminerQuiz(C, P, quiz.id, quiz.res, t, { duree: Date.now() - quiz.debut, jouer: quiz.jouer, uneCase: quiz.uneCase, total: quiz.qs.length });
     // Donjon : le quiz d'un atelier pose ses pièces s'il est réussi (ou répare une pièce en panne).
     if (quiz.donjon && quiz.mode === "quiz") quiz.fin.donjon = M.finirAtelier(C, P, quiz.donjon, null, t);
@@ -6954,6 +7210,7 @@ function demarrerJeu() {
       else { titre = __("Pas encore"); texte = __("Il faut ") + besoin + __(" bonnes réponses sur ") + r.total + __(". Les explications t'aideront pour le prochain essai."); }
     } else {
       if (r.revision && r.issue === "reussi") { titre = __("Révision réussie"); texte = __("Le souvenir tient. Prochain rappel le ") + dateCourte(r.prochainRappel) + ", " + dansJours(r.prochainRappel) + __(". Ton pion est libre."); gain = '<span class="gain plus">+' + r.xp + __(" XP ") + esc(tx(s.nom)) + "</span>"; }
+      else if (r.palais) { titre = __("Sauvé par le palais de mémoire"); texte = __("Rappel raté, mais tu gardes la compétence : son rappel est dû dès maintenant. Retente-le vite."); }
       else if (r.anticipe && r.issue === "echec") { titre = __("Rappel raté"); texte = __("Tu gardes la compétence, mais son rappel est dû dès maintenant. Ton pion reste sur sa case."); }
       else if (r.issue === "revision_ratee") { titre = __("Révision ratée"); texte = __("Tu gardes la compétence, mais son rappel est dû dès maintenant. Réussis-le vite pour ne pas la perdre."); }
       else if (r.issue === "reussi") { titre = __("Rappel réussi"); texte = __("Prochain rappel le ") + dateCourte(r.prochainRappel) + ", " + dansJours(r.prochainRappel) + "."; gain = '<span class="gain plus">+' + r.xp + __(" XP ") + esc(tx(s.nom)) + "</span>"; }
@@ -7133,6 +7390,7 @@ function demarrerJeu() {
     app.appendChild(vue === "arbre" ? vueArbre() : vue === "perso" ? vuePerso() : vue === "collections" ? vueCollections() : vue === "succes" ? vueSucces() : vue === "honte" ? vueHonte() : vueAujourdhui());
     rendreOnglets();
     revelerNom();
+    scenesPersonnage();
   }
 
   // v25 : comblée pour la première fois, l'IA donne son nom. Une seule fois, hors quiz.

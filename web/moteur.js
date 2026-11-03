@@ -389,6 +389,8 @@
       savants: {},
       personnes: {},
       avatar: { tete: null, visage: null, main: null, savant: null },
+      apparence: null,
+      pouvoirs: {},
       compteurs: {
         quizParfaits: 0, quizRates: 0, rappelsReussis: 0, serieRappels: 0, perdues: 0, regagnees: 0,
         quizJoues: 0, quizEclairRates: 0, quizZero: 0, quizNuit: 0, quizAube: 0, chronoParfaits: 0,
@@ -867,7 +869,9 @@
     var nuit = compterSession(partie, resultats, t);
     if (retard >= 7) partie.compteurs.rappelsRetard++;
     var xp = 0, xpPerdue = 0;
-    if ((revision || anticipe) && !reussi) {
+    // Victor (2026-11-03) : le pouvoir « palais de mémoire » sauve un rappel raté ; il revient tout de suite, sans perte.
+    var palais = !reussi && !revision && !anticipe && !!(infos && infos.palais) && utiliserPouvoir(contenu, partie, "palais", t);
+    if ((revision || anticipe || palais) && !reussi) {
       e.prochainRappel = t;
       partie.compteurs.serieRappels = 0;
     } else if (reussi) {
@@ -894,7 +898,7 @@
     partie.maj = t;
     var contextes = [];
     if (revision) contextes.push(reussi ? "revision_reussie" : "revision_ratee");
-    else if (!reussi && !anticipe) contextes.push("rappel_perdu");
+    else if (!reussi && !anticipe && !palais) contextes.push("rappel_perdu");
     if (nuit) contextes.push("nuit");
     if (!revision && reussi && retard >= 3) contextes.push("rappel_retard");
     if (!revision && reussi) contextes.push("rappel_reussi");
@@ -919,7 +923,7 @@
     var apres = verifierRecompenses(contenu, partie, t), rec = fusionRec(avant, apres);
     if (rec.masque) contextes.splice(contextes.length - 1, 0, "masque");
     var fa = reussi || revision || anticipe ? null : tenterFarce(contenu, partie, t, infos && infos.alea, contenu.parId[id] && contenu.parId[id].stat);
-    return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : anticipe ? "echec" : "perdue", anticipe: anticipe, horsCase: horsCase, serie: serie, bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
+    return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : anticipe || palais ? "echec" : "perdue", anticipe: anticipe, palais: palais, horsCase: horsCase, serie: serie, bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
       avantPlateau: avant, apresPlateau: apres, theme: contenu.parId[id] ? contenu.parId[id].stat : null };
@@ -3348,6 +3352,106 @@
     return rang;
   }
 
+  // --- Personnage : apparence choisie et pouvoirs (Victor, 2026-11-03) -------------------------
+  // `partie.apparence` : { espece, teinte, regard, coiffure, cheveux, barbe, tenue, couleur } (ids de avatar.creation),
+  // null tant que le joueur n'a pas créé son personnage (l'avatar d'avant : humain, cheveux courts, tenue du rang).
+  function parId1(liste, id, defaut) {
+    liste = liste || [];
+    return liste.filter(function (x) { return x.id === id; })[0] || liste.filter(function (x) { return x.id === defaut; })[0] || liste[0] || null;
+  }
+  function apparence(contenu, partie) {
+    var cr = contenu.avatar && contenu.avatar.creation; if (!cr || !partie.apparence) return null;
+    var a = partie.apparence, esp = parId1(cr.especes, a.espece, "humain");
+    var tenue = a.tenue && a.tenue !== "rang" ? parId1(cr.tenues, a.tenue) : null;
+    var couleur = tenue ? ((parId1(cr.couleurs_tenue, a.couleur) || {}).hexa || tenue.couleur) : null;
+    if (tenue && !a.couleur) couleur = tenue.couleur;
+    return {
+      espece: esp, teinte: parId1(esp.teintes, a.teinte), regard: esp.yeux ? parId1(cr.regards, a.regard, "normal") : null,
+      coiffure: parId1(cr.coiffures, a.coiffure, esp.coiffure), cheveux: parId1(cr.couleurs_cheveux, a.cheveux, "chatain"),
+      barbe: parId1(cr.barbes, a.barbe, "aucune"), tenue: tenue, couleurs: tenue ? couleursTenue(tenue, couleur) : null,
+    };
+  }
+  function nuance(h, f) {
+    var c = [1, 3, 5].map(function (i) { return parseInt(h.slice(i, i + 2), 16); });
+    c = c.map(function (v) { return Math.max(0, Math.min(255, Math.round(f < 1 ? v * f : v + (255 - v) * (f - 1)))); });
+    return "#" + c.map(function (v) { return (v < 16 ? "0" : "") + v.toString(16).toUpperCase(); }).join("");
+  }
+  // Une tenue « assortie » (bas de la même couleur que le haut par défaut) suit la couleur choisie jusqu'au pantalon.
+  function couleursTenue(tenue, principal) {
+    var bas = tenue.bas === tenue.couleur ? principal : tenue.bas, d = tenue.detail;
+    return { "!": nuance(principal, 0.68), X: principal, "*": nuance(principal, 1.32), "~": nuance(bas, 0.7), Z: bas, "+": nuance(d, 0.7), Q: d };
+  }
+  function choisirApparence(contenu, partie, choix) {
+    var cr = contenu.avatar && contenu.avatar.creation; if (!cr) return false;
+    var a = {}, cles = { espece: cr.especes, regard: cr.regards, coiffure: cr.coiffures, cheveux: cr.couleurs_cheveux, barbe: cr.barbes, couleur: cr.couleurs_tenue };
+    Object.keys(cles).forEach(function (k) { if (choix[k] && parId1(cles[k], choix[k]).id === choix[k]) a[k] = choix[k]; });
+    var esp = parId1(cr.especes, a.espece, "humain"); a.espece = esp.id;
+    a.teinte = parId1(esp.teintes, choix.teinte).id;
+    a.tenue = choix.tenue === "rang" || !choix.tenue ? "rang" : parId1(cr.tenues, choix.tenue).id;
+    partie.apparence = a;
+    return true;
+  }
+
+  // Pouvoirs : débloqués quand leur condition est remplie (succès, niveau global, niveau d'arbre), ils se rechargent
+  // chaque jour ou chaque semaine (lundi). `partie.pouvoirs[id]` = { vu, periode, utilises }.
+  function niveauArbres(contenu, partie, ids) {
+    var xp = xpParStat(contenu, partie), best = -1;
+    (ids || []).forEach(function (id) { if (xp[id] != null) best = Math.max(best, niveau(contenu, xp[id]).niveau); });
+    return best;
+  }
+  function conditionPouvoir(contenu, partie, c) {
+    if (!c) return true;
+    if (c.succes && !(partie.succes || {})[c.succes]) return false;
+    if (c.niveau_global != null && niveauGlobal(contenu, partie) < c.niveau_global) return false;
+    if (c.niveau_stat) {
+      var nv = niveauArbres(contenu, partie, c.niveau_stat.stats);
+      if (nv < 0 ? niveauGlobal(contenu, partie) < (c.niveau_stat.sinon_global || 0) : nv < c.niveau_stat.min) return false;
+    }
+    return true;
+  }
+  function periodePouvoir(p, t) {
+    if (p.charges.periode !== "semaine") return cleJour(t);
+    var d = new Date(debutJour(t)); d.setDate(d.getDate() - (d.getDay() + 6) % 7);
+    return "S" + cleJour(d.getTime());
+  }
+  function chargesMax(contenu, partie, p) {
+    var ch = p.charges, pa = ch.palier;
+    if (pa && ((pa.niveau_global != null && niveauGlobal(contenu, partie) >= pa.niveau_global) ||
+        (pa.niveau_stat != null && niveauArbres(contenu, partie, p.condition.niveau_stat && p.condition.niveau_stat.stats) >= pa.niveau_stat))) return pa.n;
+    return ch.n;
+  }
+  function etatPouvoir(contenu, partie, p, t) {
+    var debloque = conditionPouvoir(contenu, partie, p.condition), max = debloque ? chargesMax(contenu, partie, p) : 0;
+    var e = (partie.pouvoirs || {})[p.id], utilises = e && e.periode === periodePouvoir(p, t) ? e.utilises || 0 : 0;
+    return { pouvoir: p, debloque: debloque, max: max, reste: Math.max(0, max - utilises), annonce: !!(e && e.vu) };
+  }
+  function pouvoirs(contenu, partie, t) {
+    return ((contenu.avatar && contenu.avatar.pouvoirs) || []).map(function (p) { return etatPouvoir(contenu, partie, p, t); });
+  }
+  function pouvoir(contenu, partie, id, t) {
+    var p = ((contenu.avatar && contenu.avatar.pouvoirs) || []).filter(function (x) { return x.id === id; })[0];
+    return p ? etatPouvoir(contenu, partie, p, t) : null;
+  }
+  function utiliserPouvoir(contenu, partie, id, t) {
+    var e = pouvoir(contenu, partie, id, t); if (!e || !e.reste) return false;
+    partie.pouvoirs = partie.pouvoirs || {};
+    var x = partie.pouvoirs[id] || (partie.pouvoirs[id] = { vu: t });
+    var per = periodePouvoir(e.pouvoir, t);
+    if (x.periode !== per) { x.periode = per; x.utilises = 0; }
+    x.utilises++;
+    x.total = (x.total || 0) + 1;
+    return true;
+  }
+  // Les pouvoirs débloqués que le joueur n'a pas encore vus annoncés ; marqués vus.
+  function annoncerPouvoirs(contenu, partie, t) {
+    partie.pouvoirs = partie.pouvoirs || {};
+    return pouvoirs(contenu, partie, t).filter(function (e) {
+      if (!e.debloque || e.annonce) return false;
+      partie.pouvoirs[e.pouvoir.id] = Object.assign(partie.pouvoirs[e.pouvoir.id] || {}, { vu: t });
+      return true;
+    }).map(function (e) { return e.pouvoir; });
+  }
+
   // Dernier masque gagné par l'IA (ou débloqué par les tours du plateau).
   function masqueActuel(contenu, partie) {
     if (!contenu.ia) return null;
@@ -3757,6 +3861,8 @@
     noterVisite: noterVisite,
     avancerHorloge: avancerHorloge,
     rangAvatar: rangAvatar,
+    apparence: apparence, couleursTenue: couleursTenue, choisirApparence: choisirApparence,
+    pouvoirs: pouvoirs, pouvoir: pouvoir, utiliserPouvoir: utiliserPouvoir, annoncerPouvoirs: annoncerPouvoirs,
     replique: replique,
     repliqueDuJour: repliqueDuJour,
     themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,

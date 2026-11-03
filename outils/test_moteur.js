@@ -1975,3 +1975,53 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(M.migrer(JSON.parse(JSON.stringify(PP)), CP).proces.roscius.acquitte, "migration");
   console.log("OK : le Procès, huit salles, verdict, appel");
 }
+
+// Victor (2026-11-03) : création du personnage et pouvoirs débloqués par les succès et les niveaux.
+{
+  const CA = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+    { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json") });
+  const cr = CA.avatar.creation, T0 = new Date(2026, 10, 3, 9, 0).getTime();
+  const PA = M.nouvellePartie(T0);
+  assert.equal(M.apparence(CA, PA), null, "sans création, l'avatar d'avant");
+  for (const e of cr.especes) {
+    assert.equal(e.corps.length, 48, e.id); assert.ok(e.corps.every((l) => l.length === 40), e.id);
+    assert.ok(e.teintes.length >= 1, e.id);
+  }
+  for (const g of ["regards", "coiffures", "barbes", "tenues"]) for (const x of cr[g]) assert.equal(x.pixels.length, 48, g + " " + x.id);
+  assert.ok(M.choisirApparence(CA, PA, { espece: "chat", teinte: "tigre", regard: "louche", coiffure: "crete", cheveux: "rose", barbe: "guidon", tenue: "pyjama", couleur: "fluo" }));
+  let ap = M.apparence(CA, PA);
+  assert.equal(ap.espece.id, "chat"); assert.equal(ap.teinte.id, "tigre"); assert.equal(ap.regard.id, "louche"); assert.equal(ap.tenue.id, "pyjama");
+  assert.equal(ap.couleurs.X, "#9BE22B"); assert.equal(ap.couleurs.Z, "#9BE22B", "pyjama assorti : le bas suit la couleur");
+  M.choisirApparence(CA, PA, { espece: "robot", teinte: "inconnue", regard: "louche", tenue: "inconnue" });
+  ap = M.apparence(CA, PA);
+  assert.equal(ap.teinte.id, "chrome"); assert.equal(ap.regard, null, "le robot a ses propres yeux"); assert.equal(PA.apparence.tenue, ap.tenue ? ap.tenue.id : "blazer");
+  M.choisirApparence(CA, PA, { espece: "humain", tenue: "rang" });
+  assert.equal(M.apparence(CA, PA).tenue, null, "tenue du rang");
+  assert.ok(M.migrer(JSON.parse(JSON.stringify(PA)), CA).apparence.espece === "humain");
+
+  // Pouvoirs : verrouillés au départ, débloqués par succès + niveau, rechargés chaque jour ou chaque semaine.
+  assert.ok(M.pouvoirs(CA, PA, T0).every((e) => !e.debloque));
+  assert.equal(M.utiliserPouvoir(CA, PA, "rasoir", T0), false);
+  PA.succes.eureka = T0; PA.succes.cloche = T0; PA.succes["dix-competences"] = T0;
+  assert.equal(M.pouvoir(CA, PA, "rasoir", T0).debloque, false, "il faut aussi le niveau global 3");
+  const ids = CA.competences.filter((k) => k.stat === "logique").map((k) => k.id);
+  ids.forEach((id) => { PA.competences[id] = { maitrise: true, xp: 400, palier: 1, prochainRappel: T0 + 30 * jour }; });
+  assert.ok(M.niveauGlobal(CA, PA) >= 10);
+  const etat = Object.fromEntries(M.pouvoirs(CA, PA, T0).map((e) => [e.pouvoir.id, e]));
+  assert.ok(etat.rasoir.debloque && etat.pascaline.debloque && etat.demon.debloque && etat.palais.debloque);
+  const nr = etat.rasoir.max, nd = etat.demon.max; assert.ok(nr >= 1 && nd >= 1);
+  assert.equal(M.annoncerPouvoirs(CA, PA, T0).length, 4); assert.equal(M.annoncerPouvoirs(CA, PA, T0).length, 0, "annoncés une seule fois");
+  for (let i = 0; i < nr; i++) assert.ok(M.utiliserPouvoir(CA, PA, "rasoir", T0 + i)); assert.equal(M.utiliserPouvoir(CA, PA, "rasoir", T0 + 1000), false, "charges du jour épuisées");
+  assert.ok(M.utiliserPouvoir(CA, PA, "rasoir", T0 + jour), "rechargé le lendemain");
+  for (let i = 0; i < nd; i++) assert.ok(M.utiliserPouvoir(CA, PA, "demon", T0 + i)); assert.equal(M.utiliserPouvoir(CA, PA, "demon", T0 + jour), false, "charges de la semaine épuisées");
+  assert.ok(M.utiliserPouvoir(CA, PA, "demon", T0 + 7 * jour), "rechargé la semaine suivante");
+  // Le palais de mémoire sauve un rappel raté : la compétence reste, le rappel est dû tout de suite.
+  const id = ids[0]; PA.competences[id].prochainRappel = T0 - jour;
+  const qs = M.tirerQuestions(CA, PA, id, 3).map((q) => ({ id: q.id, correct: false }));
+  const rr = M.terminerRappel(CA, PA, id, qs, T0, { total: 3, palais: true });
+  assert.ok(rr.palais && rr.issue === "echec"); assert.ok(PA.competences[id].maitrise); assert.equal(PA.competences[id].prochainRappel, T0);
+  while (M.utiliserPouvoir(CA, PA, "palais", T0)) {}
+  const rr2 = M.terminerRappel(CA, PA, id, qs, T0 + 1, { total: 3, palais: true });
+  assert.equal(rr2.issue, "perdue", "plus de charge cette semaine : la compétence est perdue");
+  console.log("OK : création du personnage (15 espèces) et 4 pouvoirs (déblocage, recharge, palais de mémoire)");
+}
