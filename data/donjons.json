@@ -1449,7 +1449,7 @@
     "fr": "Le Procès"
    },
    "accroche": {
-    "fr": "Neuf salles, une plaidoirie, une innocente à sauver."
+    "fr": "Dix salles, une plaidoirie, une innocente à sauver."
    },
    "description": {
     "fr": "Lucie est accusée d'avoir empoisonné son père. Tu la défends, avec Cicéron pour mentor ; Alyca préside le tribunal, ce qui n'arrange rien. Chaque salle prépare une pièce de la plaidoirie, puis vient l'audience devant six jurés."
@@ -1899,13 +1899,104 @@
      ]
     },
     {
+     "id": "type-plan",
+     "nom": {
+      "fr": "Le type de plan"
+     },
+     "type": "choix",
+     "consigne": {
+      "fr": "Avant de ranger les parties, choisis la forme de ta plaidoirie. Quel plan ?"
+     },
+     "options": [
+      {
+       "figure": {
+        "fr": "Plan classique"
+       },
+       "texte": {
+        "fr": "Le plan judiciaire en six parties, de l'exorde à la péroraison."
+       },
+       "points": 2,
+       "retour": {
+        "fr": "C'est le mien. Il garde une place pour chaque chose, et surtout pour répondre à Érard."
+       },
+       "plus": {
+        "fr": "Une place pour chaque chose : les faits, les preuves, et une partie entière pour réfuter l'accusation."
+       },
+       "moins": {
+        "fr": "Long. Mal tenu, il ennuie, et le jury attend la fin."
+       }
+      },
+      {
+       "figure": {
+        "fr": "Plan narratif"
+       },
+       "texte": {
+        "fr": "Raconter l'affaire comme une histoire, de la vallée paisible au domaine vendu."
+       },
+       "points": 1,
+       "retour": {
+        "fr": "Le jury vit le drame. Mais où réponds-tu aux attaques ?"
+       },
+       "plus": {
+        "fr": "Le jury vit le drame et retient tout."
+       },
+       "moins": {
+        "fr": "Les objections arrivent en vrac, sans place pour y répondre."
+       }
+      },
+      {
+       "figure": {
+        "fr": "Plan énumératif"
+       },
+       "texte": {
+        "fr": "L'idée directrice, les arguments à la file, puis l'idée de nouveau."
+       },
+       "points": 1,
+       "retour": {
+        "fr": "Court et net. Pour une vie en jeu, un peu sec."
+       },
+       "plus": {
+        "fr": "Court et percutant : il marque les esprits en peu de temps."
+       },
+       "moins": {
+        "fr": "Plus efficace qu'élégant. Quand une vie est en jeu, le jury attend plus de soin."
+       }
+      },
+      {
+       "figure": {
+        "fr": "Plan dialectique"
+       },
+       "texte": {
+        "fr": "La thèse de l'accusation, la tienne, puis une synthèse."
+       },
+       "points": 0,
+       "retour": {
+        "fr": "Tu viens de plaider un tiers du temps pour Érard. Il te remercie."
+       },
+       "plus": {
+        "fr": "Il montre que tu as écouté l'accusation."
+       },
+       "moins": {
+        "fr": "Tu passes un tiers du temps à plaider sa thèse ; et une « synthèse » entre coupable et innocente, ça n'existe pas."
+       }
+      }
+     ],
+     "lecon": {
+      "id": "lecon-type-plan",
+      "texte": {
+       "fr": "Un même dossier se plaide de plusieurs façons. Le plan classique suit les parties du discours judiciaire. Le plan narratif suit le schéma du récit : situation initiale, élément déclencheur, péripéties, dénouement, situation finale. Le plan énumératif aligne les arguments entre deux rappels de l'idée directrice ; le plan dialectique oppose une thèse et une antithèse avant de conclure. Le bon plan dépend de ce qu'on doit prouver, et de ce qu'on doit réfuter."
+      },
+      "source": "Wikipédia (fr), « Schéma narratif » ; Wikipédia (en), « Dispositio »"
+     }
+    },
+    {
      "id": "plan",
      "nom": {
-      "fr": "Le plan"
+      "fr": "Les parties du plan"
      },
      "type": "ordre",
      "consigne": {
-      "fr": "Rangez les six parties de la plaidoirie dans l'ordre classique."
+      "fr": "Range les parties du plan que tu as choisi, dans l'ordre."
      },
      "lecon": {
       "id": "lecon-plan",
@@ -1964,40 +2055,160 @@
        }
       }
      ],
-     "autres": [
-      {
-       "nom": {
-        "fr": "Le plan narratif : raconter l'affaire de bout en bout"
+     "selon": "type-plan",
+     "variantes": [
+      [
+       {
+        "nom": {
+         "fr": "Exorde"
+        },
+        "role": {
+         "fr": "Capter l'attention et la bienveillance du jury."
+        }
        },
-       "plus": {
-        "fr": "Le jury vit le drame et retient tout."
+       {
+        "nom": {
+         "fr": "Narration"
+        },
+        "role": {
+         "fr": "Raconter les faits."
+        }
        },
-       "moins": {
-        "fr": "Les objections arrivent en vrac, sans place pour y répondre."
+       {
+        "nom": {
+         "fr": "Division"
+        },
+        "role": {
+         "fr": "Dire ce qui reste à juger, et dans quel ordre."
+        }
+       },
+       {
+        "nom": {
+         "fr": "Confirmation"
+        },
+        "role": {
+         "fr": "Avancer les arguments et les preuves."
+        }
+       },
+       {
+        "nom": {
+         "fr": "Réfutation"
+        },
+        "role": {
+         "fr": "Répondre aux objections."
+        }
+       },
+       {
+        "nom": {
+         "fr": "Péroraison"
+        },
+        "role": {
+         "fr": "Résumer et conclure, en touchant le jury."
+        }
        }
-      },
-      {
-       "nom": {
-        "fr": "Le plan énumératif : l'idée, les arguments à la file, l'idée de nouveau"
+      ],
+      [
+       {
+        "nom": {
+         "fr": "Situation initiale"
+        },
+        "role": {
+         "fr": "La vallée, Armand, et les lettres de sa fille."
+        }
        },
-       "plus": {
-        "fr": "Court et percutant."
+       {
+        "nom": {
+         "fr": "Élément déclencheur"
+        },
+        "role": {
+         "fr": "Un soir de vendanges, Armand meurt empoisonné."
+        }
        },
-       "moins": {
-        "fr": "Plus efficace qu'élégant. Quand une vie est en jeu, le jury attend plus de soin."
+       {
+        "nom": {
+         "fr": "Péripéties"
+        },
+        "role": {
+         "fr": "Lucie accusée, le domaine vendu à Lerouge."
+        }
+       },
+       {
+        "nom": {
+         "fr": "Dénouement"
+        },
+        "role": {
+         "fr": "Qui a vraiment gagné à ce crime."
+        }
+       },
+       {
+        "nom": {
+         "fr": "Situation finale"
+        },
+        "role": {
+         "fr": "Ce que le jury peut rendre à Lucie."
+        }
        }
-      },
-      {
-       "nom": {
-        "fr": "Le plan dialectique : la thèse de l'accusation, la tienne, puis la synthèse"
+      ],
+      [
+       {
+        "nom": {
+         "fr": "Accroche"
+        },
+        "role": {
+         "fr": "Saisir le jury dès la première phrase."
+        }
        },
-       "plus": {
-        "fr": "Il montre que tu as écouté l'accusation."
+       {
+        "nom": {
+         "fr": "Idée directrice"
+        },
+        "role": {
+         "fr": "Lucie n'avait rien à gagner ; d'autres avaient tout à gagner."
+        }
        },
-       "moins": {
-        "fr": "Tu passes un tiers du temps à plaider sa thèse."
+       {
+        "nom": {
+         "fr": "Arguments"
+        },
+        "role": {
+         "fr": "L'alibi, la vente, les lettres : l'un après l'autre."
+        }
+       },
+       {
+        "nom": {
+         "fr": "Retour à l'idée"
+        },
+        "role": {
+         "fr": "La redire, pour qu'elle reste."
+        }
        }
-      }
+      ],
+      [
+       {
+        "nom": {
+         "fr": "Thèse"
+        },
+        "role": {
+         "fr": "Ce que soutient l'accusation."
+        }
+       },
+       {
+        "nom": {
+         "fr": "Antithèse"
+        },
+        "role": {
+         "fr": "Ce que soutient la défense."
+        }
+       },
+       {
+        "nom": {
+         "fr": "Synthèse"
+        },
+        "role": {
+         "fr": "Ce qu'il faut en conclure."
+        }
+       }
+      ]
      ]
     },
     {
@@ -2742,6 +2953,7 @@
      "salles": [
       "dossier",
       "idee",
+      "type-plan",
       "plan"
      ],
      "mot": {

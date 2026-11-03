@@ -1971,7 +1971,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     : s.type === "ordre" ? s.items.map((_, i) => i) : s.echanges.map((e) => meilleur(M.optionsEchange(pr, e)));
   const pire = (s) => s.type === "choix" ? s.options.findIndex((o) => !o.points)
     : s.type === "multi" ? s.options.map((o, i) => [o.points, i]).sort((a, b) => a[0] - b[0]).slice(0, s.choisir).map((x) => x[1])
-    : s.type === "ordre" ? s.items.map((_, i) => s.items.length - 1 - i) : s.echanges.map((e) => M.optionsEchange(pr, e).findIndex((o) => !o.points));
+    : s.type === "ordre" ? ((it) => it.map((_, i) => it.length - 1 - i))(M.itemsSalle(pr, s, PP.proces.roscius.choix)) : s.echanges.map((e) => M.optionsEchange(pr, e).findIndex((o) => !o.points));
   assert.equal(M.repondreSalle(CP, PP, "roscius", [0, 0, 1], T0).raison, "reponse", "le dossier refuse un fait choisi deux fois");
   assert.equal(M.verdictProces(CP, PP, "roscius", T0).raison, "salles", "pas de verdict avant la dernière salle");
   pr.salles.forEach((s) => { const r = M.repondreSalle(CP, PP, "roscius", pire(s), T0); assert.ok(r.ok && r.lecon, s.id); });
@@ -1986,6 +1986,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Procès v2 : la clôture de l'audience reprend la péroraison et la dernière phrase, avec leurs points d'audience.
   const aud = pr.salles.find((s) => s.type === "audience"), clo = aud.echanges.filter((e) => e.reprend);
   assert.ok(clo.length === 2 && clo.every((e) => M.optionsEchange(pr, e).length >= 2 && e.adversaire), "péroraisons de l'adversaire puis la tienne");
+  { const sp = pr.salles.find((s) => s.selon); assert.equal(M.itemsSalle(pr, sp, { [sp.selon]: 3 }).length, sp.variantes[3].length, "les parties suivent le type de plan"); }
   pr.salles.forEach((s) => { if (s.type === "choix" || s.type === "multi") assert.ok(s.options.every((o) => o.plus && o.moins), s.id + " : avantages et inconvénients de chaque choix"); });
   // Un verdict juste au seuil : 4 voix au moins pour acquitter.
   { const pts = {}; let tot = 0; const sc = M.scoreProces(CP, PP, "roscius");
@@ -1995,5 +1996,5 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   for (let i = 0; i < 40 && !(PP.succes["acquittement"] && PP.succes["en-appel"]); i++) M.verifierRecompenses(CP, PP, T0 + 10 + i);
   assert.ok(PP.succes["acquittement"] && PP.succes["en-appel"], "succès du Procès");
   assert.ok(M.migrer(JSON.parse(JSON.stringify(PP)), CP).proces.roscius.acquitte, "migration");
-  console.log("OK : le Procès, neuf salles, jury, verdict, appel");
+  console.log("OK : le Procès, dix salles, jury, verdict, appel");
 }

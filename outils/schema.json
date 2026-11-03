@@ -3957,6 +3957,33 @@
              }
             }
            }
+          },
+          "selon": {
+           "type": "string",
+           "description": "Salle de choix dont dépend la variante des parties à ranger."
+          },
+          "variantes": {
+           "type": "array",
+           "items": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+             "type": "object",
+             "additionalProperties": false,
+             "required": [
+              "nom",
+              "role"
+             ],
+             "properties": {
+              "nom": {
+               "$ref": "#/$defs/texte"
+              },
+              "role": {
+               "$ref": "#/$defs/texte"
+              }
+             }
+            }
+           }
           }
          }
         }

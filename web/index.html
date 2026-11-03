@@ -4956,9 +4956,9 @@ function demarrerJeu() {
       inn.appendChild(valider);
     } else if (s.type === "ordre") {
       // On touche les parties dans l'ordre voulu ; elles se numérotent.
-      var liste = el('<div class="choix pr-ordre"></div>'), ordreAff = proces.melange || (proces.melange = M.melanger(s.items.map(function (_, i) { return i; }), Math.random));
+      var its = M.itemsSalle(pr, s, e.choix), liste = el('<div class="choix pr-ordre"></div>'), ordreAff = proces.melange || (proces.melange = M.melanger(its.map(function (_, i) { return i; }), Math.random));
       ordreAff.forEach(function (i) {
-        var it = s.items[i], k = sel.indexOf(i);
+        var it = its[i], k = sel.indexOf(i);
         var bt = el('<button type="button"' + (k >= 0 ? ' class="pr-sel"' : "") + '><span class="pr-num">' + (k >= 0 ? k + 1 : "") + "</span><span><b></b><small></small></span></button>");
         bt.querySelector("b").textContent = tx(it.nom); bt.querySelector("small").textContent = tx(it.role);
         bt.onclick = function () { var j = sel.indexOf(i); if (j >= 0) sel.splice(j); else sel.push(i); rendreProces(); };
@@ -4966,7 +4966,7 @@ function demarrerJeu() {
       });
       inn.appendChild(el('<p class="meta">' + __("Touche les parties dans l'ordre. Touche une partie déjà numérotée pour reprendre à partir d'elle.") + "</p>"));
       inn.appendChild(liste);
-      valider.disabled = sel.length !== s.items.length;
+      valider.disabled = sel.length !== its.length;
       valider.onclick = function () { envoyer(sel.slice()); proces.melange = null; };
       inn.appendChild(valider);
     } else {
@@ -5017,7 +5017,7 @@ function demarrerJeu() {
     inn.appendChild(el('<div class="eyebrow">' + __("Salle ") + (pr.salles.indexOf(s) + 1) + " · " + esc(tx(s.nom)) + "</div>"));
     inn.appendChild(el('<div class="pr-score"><b>' + r.points + "</b> / " + r.max + "</div>"));
     if (s.type === "ordre") {
-      inn.appendChild(el('<ol class="pr-plan">' + s.items.map(function (it) { return "<li><b>" + esc(tx(it.nom)) + "</b> : " + esc(tx(it.role)) + "</li>"; }).join("") + "</ol>"));
+      inn.appendChild(el('<ol class="pr-plan">' + (r.items || s.items).map(function (it) { return "<li><b>" + esc(tx(it.nom)) + "</b> : " + esc(tx(it.role)) + "</li>"; }).join("") + "</ol>"));
       if (s.autres && s.autres.length) {
         var pa = el('<div class="bloc pr-portes"><div class="eyebrow">' + __("Les autres plans possibles") + "</div></div>");
         s.autres.forEach(function (a) { var d = el('<div class="pr-porte"><p class="cite"></p>' + plusMoins(a) + "</div>"); d.querySelector(".cite").textContent = tx(a.nom); pa.appendChild(d); });
