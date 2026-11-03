@@ -391,6 +391,8 @@
       avatar: { tete: null, visage: null, main: null, savant: null },
       apparence: null,
       pouvoirs: {},
+      tenues: {},
+      humeurPerso: null,
       compteurs: {
         quizParfaits: 0, quizRates: 0, rappelsReussis: 0, serieRappels: 0, perdues: 0, regagnees: 0,
         quizJoues: 0, quizEclairRates: 0, quizZero: 0, quizNuit: 0, quizAube: 0, chronoParfaits: 0,
@@ -3381,13 +3383,55 @@
     var bas = tenue.bas === tenue.couleur ? principal : tenue.bas, d = tenue.detail;
     return { "!": nuance(principal, 0.68), X: principal, "*": nuance(principal, 1.32), "~": nuance(bas, 0.7), Z: bas, "+": nuance(d, 0.7), Q: d };
   }
+  // Victor (2026-11-03) : au départ, toge ou blouse d'écolier ; les autres tenues se gagnent avec leur succès.
+  function tenueDebloquee(contenu, partie, tn) {
+    if (!tn) return false;
+    if (tn.depart || !tn.condition) return true;
+    return tn.condition.type === "succes" && !!(partie.succes || {})[tn.condition.id];
+  }
+  // Les tenues gagnées pas encore annoncées (seulement une fois le personnage créé) ; marquées vues.
+  function annoncerTenues(contenu, partie, t) {
+    var cr = contenu.avatar && contenu.avatar.creation; if (!cr || !partie.apparence) return [];
+    partie.tenues = partie.tenues || {};
+    return cr.tenues.filter(function (tn) {
+      if (tn.depart || partie.tenues[tn.id] || !tenueDebloquee(contenu, partie, tn)) return false;
+      partie.tenues[tn.id] = t; return true;
+    });
+  }
+  // Selon son humeur du moment, Alyca confisque une tenue gagnée ou un accessoire (boudeuse, furieuse), ou dore ta tenue
+  // (comblée). Décidé une fois par jour et par palier : qu'elle change d'humeur, et elle revoit sa décision.
+  // `partie.humeurPerso` = { jour, palier, type: null | "confisque_tenue" | "confisque_accessoire" | "retouche", cible, ligne }.
+  function humeurPerso(contenu, partie, t, alea) {
+    var cr = contenu.avatar && contenu.avatar.creation; if (!cr || !contenu.ia || !contenu.ia.faveur) return null;
+    var pal = faveurIA(contenu, partie, t).palier.id, jour = cleJour(t), h = partie.humeurPerso;
+    if (h && h.jour === jour && h.palier === pal) return h.type ? h : null;
+    alea = alea || Math.random;
+    var out = { jour: jour, palier: pal, type: null, cible: null, ligne: 0 };
+    var ap = partie.apparence, av = partie.avatar || {};
+    var tn = ap && ap.tenue && ap.tenue !== "rang" ? parId1(cr.tenues, ap.tenue) : null;
+    var tenue = tn && !tn.depart ? { type: "tenue", id: tn.id } : null;
+    var accs = ["tete", "visage", "main"].filter(function (e) { return av[e]; }).map(function (e) { return { type: "accessoire", emplacement: e, id: av[e] }; });
+    var acc = accs.length ? accs[Math.floor(alea() * accs.length)] : null;
+    if (pal === "furieuse" || (pal === "boudeuse" && alea() < 0.5)) {
+      var c = pal === "furieuse" ? tenue || acc : acc || tenue;
+      if (c) { out.type = c.type === "tenue" ? "confisque_tenue" : "confisque_accessoire"; out.cible = c; }
+    } else if (pal === "comblee" && ap && alea() < 0.5) { out.type = "retouche"; out.cible = tn ? { type: "tenue", id: tn.id } : null; }
+    out.ligne = Math.floor(alea() * 3);
+    partie.humeurPerso = out;
+    return out.type ? out : null;
+  }
+  function humeurPersoActive(partie, t) {
+    var h = partie.humeurPerso;
+    return h && h.type && h.jour === cleJour(t) ? h : null;
+  }
   function choisirApparence(contenu, partie, choix) {
     var cr = contenu.avatar && contenu.avatar.creation; if (!cr) return false;
     var a = {}, cles = { espece: cr.especes, regard: cr.regards, coiffure: cr.coiffures, cheveux: cr.couleurs_cheveux, barbe: cr.barbes, couleur: cr.couleurs_tenue };
     Object.keys(cles).forEach(function (k) { if (choix[k] && parId1(cles[k], choix[k]).id === choix[k]) a[k] = choix[k]; });
     var esp = parId1(cr.especes, a.espece, "humain"); a.espece = esp.id;
     a.teinte = parId1(esp.teintes, choix.teinte).id;
-    a.tenue = choix.tenue === "rang" || !choix.tenue ? "rang" : parId1(cr.tenues, choix.tenue).id;
+    var tc = choix.tenue === "rang" ? null : parId1(cr.tenues, choix.tenue);
+    a.tenue = choix.tenue === "rang" ? "rang" : tc && tc.id === choix.tenue && tenueDebloquee(contenu, partie, tc) ? tc.id : "ecolier";
     partie.apparence = a;
     return true;
   }
@@ -3861,7 +3905,7 @@
     noterVisite: noterVisite,
     avancerHorloge: avancerHorloge,
     rangAvatar: rangAvatar,
-    apparence: apparence, couleursTenue: couleursTenue, choisirApparence: choisirApparence,
+    apparence: apparence, couleursTenue: couleursTenue, choisirApparence: choisirApparence, tenueDebloquee: tenueDebloquee, annoncerTenues: annoncerTenues, humeurPerso: humeurPerso, humeurPersoActive: humeurPersoActive,
     pouvoirs: pouvoirs, pouvoir: pouvoir, utiliserPouvoir: utiliserPouvoir, annoncerPouvoirs: annoncerPouvoirs,
     replique: replique,
     repliqueDuJour: repliqueDuJour,

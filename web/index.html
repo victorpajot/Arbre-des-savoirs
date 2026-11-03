@@ -416,6 +416,11 @@ body.plateau-plein { overflow: hidden; }
 .pascaline .touches button[data-k="="] { background: #E08A00; color: #1E1A2B; }
 .pascaline .rangee { justify-content: space-between; }
 .retour.palais { margin-top: 12px; }
+.crea-grille button.verrou { opacity: .55; border-style: dashed; }
+.tenues-gagnees { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 12px 0; }
+.tenue-gagnee { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 120px; text-align: center; }
+.tenue-gagnee b { font-size: 17px; }
+.tenue-gagnee small { font-size: 14px; color: var(--muted); }
 
 /* Cabinet */
 .cabinet { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
@@ -1724,7 +1729,7 @@ function demarrerJeu() {
     return art + " " + nom.charAt(0).toLowerCase() + nom.slice(1);
   }
   function tenueFarce(id) { return (C.avatar.tenues_farce || []).filter(function (v) { return v.id === id; })[0] || null; }
-  function objetTenu() { var id = P.avatar && P.avatar.main; return id && P.objets[id] ? C.objets.filter(function (o) { return o.id === id; })[0] || null : null; }
+  function objetTenu() { var id = P.avatar && P.avatar.main, hm = M.humeurPersoActive(P, maintenant()); if (hm && hm.type === "confisque_accessoire" && hm.cible.emplacement === "main") return null; return id && P.objets[id] ? C.objets.filter(function (o) { return o.id === id; })[0] || null : null; }
   // Avatar : corps, tenue du rang, cheveux (ou accessoire de tête), accessoire de visage, objet tenu à la main.
   // v32 (Victor) : pendant une épreuve et son bilan, l'avatar garde le savant d'avant ; le nouveau n'apparaît
   // qu'avec la carte qui l'annonce (ou au retour à l'accueil, si on n'est pas allé jusque-là).
@@ -1750,11 +1755,20 @@ function demarrerJeu() {
     var A = C.avatar, rang = M.rangAvatar(C, P), eq = P.avatar || {}, pal = A.palette, sv = choix ? null : savantIncarne(), f = choix ? null : farce();
     var ap = choix ? M.apparence(C, { apparence: choix }) : M.apparence(C, P);
     var tete = choix ? null : accessoire(eq.tete), visage = choix ? null : accessoire(eq.visage);
+    // Victor (2026-11-03) : l'humeur d'Alyca. Elle confisque une tenue gagnée (retour à la blouse d'écolier) ou un accessoire,
+    // ou, comblée, elle dore les détails de ta tenue.
+    var hm = choix ? null : M.humeurPersoActive(P, maintenant());
+    if (hm && hm.type === "confisque_accessoire") { if (hm.cible.emplacement === "tete") tete = null; if (hm.cible.emplacement === "visage") visage = null; }
+    if (hm && hm.type === "confisque_tenue" && ap) {
+      var eco = A.creation.tenues.filter(function (x) { return x.id === "ecolier"; })[0];
+      if (eco) ap = Object.assign({}, ap, { tenue: eco, couleurs: M.couleursTenue(eco, eco.couleur) });
+    }
     // Farce de l'IA : l'accessoire imposé remplace celui du même emplacement.
     if (f && f.type === "accessoire") { if (f.emplacement === "tete") tete = accessoire(f.id, true); else visage = accessoire(f.id, true); }
     // v25 : farce de tenue, les vêtements repeints par-dessus les couleurs du rang, du savant ou de la tenue choisie.
     var tf = f && f.type === "tenue" ? tenueFarce(f.id) : null, cs = sv ? sv.couleurs : ap && ap.tenue ? ap.couleurs : rang.couleurs;
     if (tf) cs = Object.assign({}, cs, tf.couleurs);
+    if (hm && hm.type === "retouche") cs = Object.assign({}, cs, { "+": "#B8862B", Q: "#F2C14E" });
     var c;
     if (sv) c = pixels(sv.base, pal, cs, ox, oy, 1);
     else if (ap) {
@@ -1778,7 +1792,7 @@ function demarrerJeu() {
   // Espèce (humain, animal, extraterrestre, inclassable), teinte, regard, coiffure, barbe, tenue et sa couleur.
   // Proposée à la fin de l'assistant de nouvelle partie, une fois aux parties en cours, puis dans Personnage › Avatar.
   // Alyca commente chaque choix. Changer d'apparence plus tard reste gratuit.
-  var CHOIX_DEFAUT = { espece: "humain", teinte: "claire", regard: "normal", coiffure: "court", cheveux: "chatain", barbe: "aucune", tenue: "rang", couleur: null };
+  var CHOIX_DEFAUT = { espece: "humain", teinte: "claire", regard: "normal", coiffure: "court", cheveux: "chatain", barbe: "aucune", tenue: "ecolier", couleur: null };
   function svgPerso(choix, taille, tete) {
     var vb = tete ? "1 0 38 36" : "0 0 40 48", h = tete ? taille : Math.round(taille * 1.2);
     return '<svg class="pix" viewBox="' + vb + '" width="' + taille + '" height="' + h + '" aria-hidden="true">' + pixelsAvatar(0, 0, choix) + "</svg>";
@@ -1799,11 +1813,13 @@ function demarrerJeu() {
     function ligne(titre, items, cle, tete, pastille) {
       var b = el('<section class="crea-ligne"><h3>' + esc(titre) + '</h3><div class="crea-grille' + (pastille ? " pastilles" : "") + '"></div></section>'), g = b.querySelector(".crea-grille");
       items.forEach(function (it) {
+        var verrou = cle === "tenue" && !M.tenueDebloquee(C, P, it);
         var essai = Object.assign({}, ch); essai[cle] = it.id;
         if (cle === "espece") { essai.teinte = it.teintes[0].id; essai.coiffure = it.coiffure; if (!it.yeux) essai.regard = "normal"; }
         var vis = pastille ? '<i style="background:' + pastille(it) + '"></i>' : svgPerso(essai, 56, tete);
-        var bt = el('<button type="button" aria-pressed="' + (ch[cle] === it.id) + '">' + vis + "<span>" + esc(tx(it.nom)) + "</span></button>");
+        var bt = el('<button type="button" aria-pressed="' + (ch[cle] === it.id) + '"' + (verrou ? ' class="verrou"' : "") + ">" + vis + "<span>" + (verrou ? "🔒 " : "") + esc(tx(it.nom)) + "</span></button>");
         bt.onclick = function () {
+          if (verrou) { toast(__("Tenue à gagner : ") + conditionTexte(it.condition) + "."); return; }
           ch[cle] = it.id;
           if (cle === "espece") { ch.teinte = it.teintes[0].id; ch.coiffure = it.coiffure; }
           if (cle === "tenue" && it.id !== "rang") ch.couleur = null;
@@ -1841,9 +1857,12 @@ function demarrerJeu() {
       z.appendChild(ligne(__("Coiffure"), cr.coiffures, "coiffure", true));
       z.appendChild(ligne(__("Couleur des cheveux"), cr.couleurs_cheveux, "cheveux", false, function (c) { return c.couleurs.h; }));
       z.appendChild(ligne(__("Barbe"), cr.barbes, "barbe", true));
-      z.appendChild(ligne(__("Tenue"), [{ id: "rang", nom: { fr: __("Tenue du rang") }, pique: { fr: __("La tenue de ton rang. Elle changera quand tu monteras en grade. Si tu montes en grade.") } }].concat(cr.tenues), "tenue", false));
+      // Victor (2026-11-03) : au départ, toge ou blouse d'écolier ; les autres tenues se gagnent avec des succès.
+      var tns = cr.tenues.slice().sort(function (a, b) { return M.tenueDebloquee(C, P, b) - M.tenueDebloquee(C, P, a); });
+      if (ch.tenue === "rang") tns.unshift({ id: "rang", nom: { fr: __("Tenue du rang") }, pique: { fr: __("La tenue de ton rang. Elle changera quand tu monteras en grade. Si tu montes en grade.") } });
+      z.appendChild(ligne(__("Tenue"), tns, "tenue", false));
+      z.appendChild(el('<p class="note">' + __("Les autres tenues se gagnent avec des succès. Alyca, selon son humeur, peut en confisquer une… ou la dorer.").replace("Alyca", tx(C.narrateur) || "Alyca") + "</p>"));
       if (ch.tenue !== "rang") z.appendChild(ligne(__("Couleur de la tenue"), cr.couleurs_tenue, "couleur", false, function (c) { return c.hexa; }));
-      else z.appendChild(el('<p class="note">' + __("Rang actuel : ") + esc(tx(rang.nom)) + "." + "</p>"));
       var ok = el('<button type="button" class="btn large">' + __("C'est moi !") + "</button>");
       ok.onclick = function () {
         M.choisirApparence(C, P, ch); P.options = P.options || {}; P.options.creationProposee = P.options.creationProposee || maintenant();
@@ -1886,10 +1905,31 @@ function demarrerJeu() {
     });
     return b;
   }
+  // Victor (2026-11-03) : la réplique d'Alyca sur ce qu'elle a fait de ta garde-robe aujourd'hui.
+  function repliqueHumeurPerso(h) {
+    var cr = C.avatar.creation, l = cr.humeurs && cr.humeurs[h.type]; if (!l || !l.length) return null;
+    var nom = "";
+    if (h.cible && h.cible.type === "tenue") { var tn = cr.tenues.filter(function (x) { return x.id === h.cible.id; })[0]; nom = __("ta tenue « {nom} »", { nom: tn ? tx(tn.nom) : "" }); }
+    else if (h.cible) {
+      var a = h.cible.emplacement === "main" ? C.objets.filter(function (o) { return o.id === h.cible.id; })[0] : accessoire(h.cible.id, true);
+      nom = __("« {nom} »", { nom: a ? tx(a.nom) : "?" });
+    } else nom = __("ta tenue");
+    var t = tx(l[h.ligne % l.length]).replace("{objet}", nom);
+    return { id: "humeur-perso-" + h.type + h.ligne, texte: { fr: t.charAt(0).toUpperCase() + t.slice(1) }, aparte: false, expression: h.type === "retouche" ? "impressionnee" : "decue" };
+  }
   // Une fois hors quiz : la création proposée aux parties en cours, puis chaque pouvoir débloqué, annoncé par Alyca.
   function scenesPersonnage() {
     if (titre || feuille || !C.avatar || document.querySelector(".quiz, .liberation, .alyca-scene")) return;
     if (!P.apparence && C.avatar.creation && !(P.options && P.options.creationProposee)) { ouvrirCreation(!P.journal.length); return; }
+    var tns = M.annoncerTenues(C, P, maintenant());
+    if (tns.length) {
+      sauver();
+      var vis = tns.map(function (tn) { var ch = Object.assign({}, P.apparence, { tenue: tn.id, couleur: null }); return '<div class="tenue-gagnee">' + svgPerso(ch, 72) + "<b>" + esc(tx(tn.nom)) + "</b><small>" + esc(conditionTexte(tn.condition)) + "</small></div>"; }).join("");
+      feuilleSimple('<div class="eyebrow">' + (tns.length > 1 ? __("Nouvelles tenues") : __("Nouvelle tenue")) + "</div><h2>" + __("Dans ta garde-robe") + '</h2><div class="bulle-p"></div><div class="tenues-gagnees">' + vis +
+        '</div><p class="note">' + __("À enfiler dans Personnage › Avatar › Changer d'apparence.") + "</p>", __("Nouvelle tenue"), {}, __("Merci du cadeau"));
+      var bt = comite({ id: "tenue-" + tns[0].id, texte: tns[0].pique, aparte: false }); if (bt) feuille.querySelector(".bulle-p").appendChild(bt);
+      return;
+    }
     var nv = M.annoncerPouvoirs(C, P, maintenant()); if (!nv.length) return;
     sauver();
     var p = nv[0], e = M.pouvoir(C, P, p.id, maintenant());
@@ -3856,6 +3896,8 @@ function demarrerJeu() {
     // Victor (2026-11-03) : l'apparence se change ici, gratuitement.
     if (C.avatar.creation) { var mir = el('<button type="button" class="btn sec">🪞 ' + (P.apparence ? __("Changer d'apparence") : __("Créer mon personnage")) + "</button>"); mir.onclick = function () { ouvrirCreation(false); }; eq.appendChild(mir); }
     if (bf) eq.appendChild(bf);
+    var hmA = M.humeurPersoActive(P, maintenant()), rhA = hmA && repliqueHumeurPerso(hmA), cmA = rhA && comite(rhA, true);
+    if (cmA) { eq.appendChild(cmA); eq.appendChild(el('<p class="note">' + (hmA.type === "retouche" ? __("Pour aujourd'hui, tant qu'elle reste de cette humeur.") : __("Rendu quand elle retrouvera le sourire. Ou demain.")) + "</p>")); }
     if (sv) b.querySelector(".rang").insertAdjacentHTML("afterend", __('<div class="note" style="margin-top:2px">en <b>') + esc(tx(sv.nom)) + "</b></div>");
     var slots = [
       { id: "tete", nom: sv ? __("Déguisement") : __("Tête"), choix: C.avatar.accessoires.filter(function (a) { return a.emplacement === "tete" && P.accessoires[a.id]; }) },
@@ -3869,7 +3911,8 @@ function demarrerJeu() {
       var ligne = el('<div><div class="eyebrow">' + sl.nom + '</div><div class="slot"></div></div>'), zone = ligne.querySelector(".slot");
       [{ id: null, nom: { fr: "Aucun" } }].concat(sl.choix).forEach(function (a) {
         var actif = (P.avatar[sl.id] || null) === a.id;
-        var bt = el('<button type="button" aria-pressed="' + actif + '">' + esc(tx(a.nom)) + "</button>");
+        var conf = hmA && hmA.type === "confisque_accessoire" && hmA.cible.emplacement === sl.id && hmA.cible.id === a.id;
+        var bt = el('<button type="button" aria-pressed="' + actif + '">' + esc(tx(a.nom)) + (conf ? __(" 🔒 confisqué") : "") + "</button>");
         bt.onclick = function () { P.avatar[sl.id] = a.id; sauver(); rendre(); };
         zone.appendChild(bt);
       });
@@ -7385,6 +7428,11 @@ function demarrerJeu() {
     document.body.classList.toggle("texte-grand", texteGrandP());
     var app = document.getElementById("app"); app.innerHTML = "";
     if (!document.querySelector(".quiz")) degelerAvatar();
+    // Victor (2026-11-03) : l'humeur d'Alyca sur ta garde-robe, revue quand son palier change.
+    if (C.avatar && C.avatar.creation) {
+      var avH = JSON.stringify(P.humeurPerso || null), hmP = M.humeurPerso(C, P, maintenant());
+      if (JSON.stringify(P.humeurPerso || null) !== avH) { sauver(); if (hmP) { var rh = repliqueHumeurPerso(hmP); if (rh) toast(tx(rh.texte)); } }
+    }
     // v28 : enfermé, on ne quitte pas le mur.
     if (vue !== "honte" && M.jeuFerme(C, P, maintenant())) { if (vue !== "aujourdhui") toast(__("Pas avant la fin de ta peine.")); vue = "honte"; }
     app.appendChild(vue === "arbre" ? vueArbre() : vue === "perso" ? vuePerso() : vue === "collections" ? vueCollections() : vue === "succes" ? vueSucces() : vue === "honte" ? vueHonte() : vueAujourdhui());

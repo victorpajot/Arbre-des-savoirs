@@ -1988,6 +1988,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.ok(e.teintes.length >= 1, e.id);
   }
   for (const g of ["regards", "coiffures", "barbes", "tenues"]) for (const x of cr[g]) assert.equal(x.pixels.length, 48, g + " " + x.id);
+  PA.succes.insomniaque = T0;
   assert.ok(M.choisirApparence(CA, PA, { espece: "chat", teinte: "tigre", regard: "louche", coiffure: "crete", cheveux: "rose", barbe: "guidon", tenue: "pyjama", couleur: "fluo" }));
   let ap = M.apparence(CA, PA);
   assert.equal(ap.espece.id, "chat"); assert.equal(ap.teinte.id, "tigre"); assert.equal(ap.regard.id, "louche"); assert.equal(ap.tenue.id, "pyjama");
@@ -2024,4 +2025,31 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const rr2 = M.terminerRappel(CA, PA, id, qs, T0 + 1, { total: 3, palais: true });
   assert.equal(rr2.issue, "perdue", "plus de charge cette semaine : la compétence est perdue");
   console.log("OK : création du personnage (15 espèces) et 4 pouvoirs (déblocage, recharge, palais de mémoire)");
+}
+
+// Victor (2026-11-03) : toge ou blouse d'écolier au départ, tenues gagnées par succès, humeur d'Alyca sur la garde-robe.
+{
+  const CH = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+    { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json") });
+  const T0 = new Date(2026, 10, 3, 9, 0).getTime(), PH = M.nouvellePartie(T0), cr = CH.avatar.creation;
+  assert.deepEqual(cr.tenues.filter((x) => x.depart).map((x) => x.id).sort(), ["ecolier", "toge"]);
+  M.choisirApparence(CH, PH, { espece: "humain", tenue: "smoking" });
+  assert.equal(PH.apparence.tenue, "ecolier", "tenue verrouillée refusée");
+  assert.deepEqual(M.annoncerTenues(CH, PH, T0), []);
+  PH.succes["deux-nobel"] = T0;
+  assert.deepEqual(M.annoncerTenues(CH, PH, T0).map((x) => x.id), ["smoking"]); assert.deepEqual(M.annoncerTenues(CH, PH, T0), []);
+  M.choisirApparence(CH, PH, { espece: "humain", tenue: "smoking" }); assert.equal(PH.apparence.tenue, "smoking");
+  PH.avatar.visage = "monocle";
+  const fav = (v) => { PH.faveur = { valeur: v, maj: T0 }; };
+  fav(5); let h = M.humeurPerso(CH, PH, T0, () => 0.1);
+  assert.equal(h.type, "confisque_tenue", "furieuse : la tenue gagnée d'abord"); assert.equal(h.cible.id, "smoking");
+  assert.equal(M.humeurPerso(CH, PH, T0 + 1000, () => 0.9).type, "confisque_tenue", "décidé pour la journée et ce palier");
+  fav(60); assert.equal(M.humeurPerso(CH, PH, T0 + 2000, () => 0.1), null, "contente : elle rend tout");
+  assert.equal(M.humeurPersoActive(PH, T0 + 2000), null);
+  fav(95); h = M.humeurPerso(CH, PH, T0 + 3000, () => 0.1); assert.equal(h.type, "retouche");
+  M.choisirApparence(CH, PH, { espece: "humain", tenue: "toge" });
+  fav(5); PH.humeurPerso = null; h = M.humeurPerso(CH, PH, T0 + 4000, () => 0.1);
+  assert.equal(h.type, "confisque_accessoire", "toge de départ : elle prend l'accessoire"); assert.equal(h.cible.id, "monocle");
+  assert.equal(M.humeurPersoActive(PH, T0 + jour), null, "le lendemain, tout revient");
+  console.log("OK : tenues de départ, tenues gagnées, humeur d'Alyca sur la garde-robe");
 }

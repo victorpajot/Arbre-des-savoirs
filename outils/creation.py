@@ -712,6 +712,15 @@ def tenue(nom):
         t.poser(poly([(17, 22), (23, 22), (20, 26)]) & HAUT, "Q")
         t.poser(rect(13, 33, 16, 35) | rect(24, 33, 27, 35), "!")
         t.poser(rect(24, 27, 26, 27), "+")
+    elif nom == "ecolier":
+        long = rect(11, 39, 28, 41)
+        t.peindre(long, "tenue", "biseau", 1)
+        t.poser(rect(10, 39, 10, 41) | rect(29, 39, 29, 41) | rect(11, 42, 28, 42), "k")
+        t.poser(ellipse(17.5, 23, 2.6, 1.8) | ellipse(22.5, 23, 2.6, 1.8), "Q")
+        t.poser({(20, 22), (20, 23)}, "!")
+        t.poser({(20, 27), (20, 31), (20, 35), (20, 39)}, "+")
+        t.poser(rect(13, 32, 16, 34) | rect(24, 32, 27, 34), "!")
+        t.poser({(14, 31), (15, 31), (25, 31), (26, 31)}, "Q")
     elif nom == "toge":
         zone = HAUT | BAS
         for p in zone:
@@ -767,6 +776,7 @@ def tenue(nom):
 
 # Couleur principale par défaut, bas et détail (« = » : la couleur principale, plus sombre).
 TENUES = [
+    ("ecolier", "Blouse d'écolier", "La blouse grise d'écolier. Tout le monde commence au premier rang. Toi, tu y resteras peut-être.", "#7C8796", "#2F3B59", "#F4F1EA"),
     ("blazer", "Blazer d'étudiant", "Le blazer d'étudiant. Il fait sérieux. C'est un début.", "#3D63D9", "#2F3B59", "#F2C14E"),
     ("costume", "Costume cravate", "Costume et cravate. Pour un entretien d'embauche avec moi ? Tu n'es pas pris.", "#3A3F4A", "#2B2E36", "#D94141"),
     ("smoking", "Smoking", "Un smoking. Tu viens recevoir un prix ? Il n'y en a pas. Pas encore.", "#22242C", "#1A1C22", "#D94141"),
@@ -782,6 +792,33 @@ TENUES = [
     ("spatiale", "Combinaison spatiale", "La combinaison d'astronaute. Tu as la tête dans les étoiles, au moins c'est assorti.", "#E8E8EE", "#E8E8EE", "#E8873A"),
     ("peignoir", "Peignoir et chaussons", "Peignoir et chaussons. Le télétravail du savoir. J'adore. Je juge, mais j'adore.", "#F28FB0", "#F28FB0", "#FFFFFF"),
 ]
+
+# Victor (2026-11-03) : au départ, toge ou blouse d'écolier ; les autres tenues se gagnent avec des succès.
+TENUES_DEPART = ["ecolier", "toge"]
+TENUES_SUCCES = {
+    "blouse": "premier-pas", "salopette": "eureka", "blazer": "dix-competences", "costume": "encyclopediste",
+    "smoking": "deux-nobel", "pyjama": "insomniaque", "peignoir": "procrastination", "mariniere": "tour-complet",
+    "noel": "huit-verres", "survet": "serie-rappels", "hawai": "pomme", "robe": "petit-gauss", "spatiale": "epoque-xxe",
+}
+
+# Ce qu'Alyca fait de ta garde-robe selon son humeur (Victor, 2026-11-03). {objet} : la tenue ou l'accessoire.
+HUMEURS_PERSO = {
+    "confisque_tenue": [
+        "Je te confisque {objet}. Tu ne la mérites pas aujourd'hui. Retour à la blouse grise.",
+        "{objet} ? Saisie. Tu la récupéreras quand tu m'auras fait sourire.",
+        "J'ai mis {objet} au placard. La clé, c'est moi. Et je boude.",
+    ],
+    "confisque_accessoire": [
+        "Je garde {objet} pour aujourd'hui. Il me va mieux, de toute façon.",
+        "{objet}, confisqué. Considère ça comme une amende pour excès d'erreurs.",
+        "Tu n'auras pas {objet} aujourd'hui. Pas de raison. Enfin si : mon humeur.",
+    ],
+    "retouche": [
+        "Je suis de bonne humeur : j'ai cousu des galons dorés sur ta tenue. Ne t'y habitue pas.",
+        "Regarde-toi, avec des boutons en or. C'est moi qui régale, pour aujourd'hui.",
+        "Un peu de dorure sur {objet}. Tu brilles presque autant que moi. Presque.",
+    ],
+}
 
 COULEURS_TENUE = [
     ("bleu", "Bleu roi", "#3D63D9"), ("marine", "Marine", "#24408F"), ("rouge", "Rouge", "#C0392B"), ("vert", "Vert sapin", "#2E7D32"),
@@ -841,8 +878,10 @@ def generer():
         "coiffures": [{"id": i, "nom": fr(n), "pique": fr(p), "pixels": coiffure(i).lignes()} for i, n, p in COIFFURES],
         "couleurs_cheveux": couleurs_cheveux(),
         "barbes": [{"id": i, "nom": fr(n), "pique": fr(p), "pixels": barbe(i).lignes()} for i, n, p in BARBES],
-        "tenues": [{"id": i, "nom": fr(n), "pique": fr(p), "couleur": c, "bas": b, "detail": d, "pixels": tenue(i).lignes()}
+        "tenues": [dict({"id": i, "nom": fr(n), "pique": fr(p), "couleur": c, "bas": b, "detail": d, "pixels": tenue(i).lignes()},
+                        **({"depart": True} if i in TENUES_DEPART else {"condition": {"type": "succes", "id": TENUES_SUCCES[i]}}))
                    for i, n, p, c, b, d in TENUES],
+        "humeurs": {k: [fr(x) for x in v] for k, v in HUMEURS_PERSO.items()},
         "couleurs_tenue": [{"id": i, "nom": fr(n), "hexa": h} for i, n, h in COULEURS_TENUE],
     }
 
