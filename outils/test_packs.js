@@ -162,6 +162,10 @@ for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "co
     const sansE = M.filtrerPacks(brut, index, ["eloquence"]);
     const pr = sansE["avatar.json"].portraits.find(x => x.id === "protagoras");
     assert.ok(pr && pr.theme === "lucidite", "Éloquence éteinte : Protagoras passe sous Lucidité");
+    // Victor (2026-11-04) : Ibn al-Haytham (Mécanique) ouvre biais.optique/lumiere ; Mécanique éteinte, il reste pour Lucidité.
+    const sansM = M.filtrerPacks(brut, index, ["mecanique"]);
+    const ih = sansM["avatar.json"].portraits.find(x => x.id === "ibn-al-haytham");
+    assert.ok(ih && ih.theme === "lucidite", "Mécanique éteinte : Ibn al-Haytham passe sous Lucidité");
   }
   const f = path.join(os.tmpdir(), "test-musique.pack.json");
   execFileSync("python3", [path.join(__dirname, "packs.py"), "paquet", "musique", f]);
