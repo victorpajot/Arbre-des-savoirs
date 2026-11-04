@@ -1372,6 +1372,14 @@
         "items": {
          "$ref": "#/$defs/texte"
         }
+       },
+       "domaines": {
+        "type": "array",
+        "description": "Victor (2026-11-04) : les autres domaines où ce portrait apparaît quand son propre domaine est éteint (ids de packs).",
+        "items": {
+         "type": "string",
+         "pattern": "^[a-z][a-z0-9-]*$"
+        }
        }
       }
      }
@@ -1426,6 +1434,14 @@
         "description": "Victor (2026-10-31) : les autres façons dont les textes nomment la personne (« Démosthène », « Luther ») ; sans ce champ, le nom de famille seul suffit s'il a 5 lettres ou plus.",
         "items": {
          "$ref": "#/$defs/texte"
+        }
+       },
+       "domaines": {
+        "type": "array",
+        "description": "Victor (2026-11-04) : les autres domaines où ce portrait apparaît quand son propre domaine est éteint (ids de packs).",
+        "items": {
+         "type": "string",
+         "pattern": "^[a-z][a-z0-9-]*$"
         }
        }
       }

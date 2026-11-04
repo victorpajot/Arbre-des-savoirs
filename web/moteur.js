@@ -165,6 +165,20 @@
       var an = {}; d["plateau.json"].cases.forEach(function (k) { an[k.n] = k.annee; }); d["plateau.json"].annees = an;
     }
     var proprios = (index && index.proprietaires) || {};
+    // Victor (2026-11-04) : un portrait peut appartenir à plusieurs domaines (champ domaines). Son domaine éteint, il reste
+    // tant qu'un des autres est allumé, rangé sous ce domaine. Un savant ainsi gardé devient un simple portrait (pas de
+    // condition de déblocage hors de son domaine).
+    var garder = {}, migrants = [], av0 = d["avatar.json"];
+    ["savants", "portraits"].forEach(function (cle) {
+      var ou = "avatar.json/" + cle, pr = proprios[ou] || {};
+      ((av0 && av0[cle]) || []).forEach(function (x) {
+        var p = pr[String(x.id)]; if (!p || !off[p] || !x.domaines) return;
+        var alt = x.domaines.filter(function (id) { return !off[id] && (index.packs || []).some(function (m) { return m.id === id; }); })[0];
+        if (!alt) return;
+        if (cle === "portraits") { (garder[ou] || (garder[ou] = {}))[String(x.id)] = 1; x.theme = alt; }
+        else migrants.push({ id: x.id, nom: x.nom, annees: x.annees, bio: x.notice || x.bio, source: x.source, couleurs: x.couleurs, base: x.base, cheveux: x.cheveux, noms: x.noms, theme: alt });
+      });
+    });
     (index.packs || []).forEach(function (m) { if (off[m.id]) (m.fichiers || []).forEach(function (f) { d[f] = null; }); });
     function cleDe(x) { return x && (x.id !== undefined ? String(x.id) : x.n !== undefined ? String(x.n) : x.z !== undefined ? String(x.z) : null); }
     Object.keys(proprios).forEach(function (ou) {
@@ -172,8 +186,12 @@
       for (var i = 1; i < parts.length - 1 && o; i++) o = o[parts[i]];
       var dernier = parts[parts.length - 1];
       if (!o || !Array.isArray(o[dernier])) return;
-      o[dernier] = o[dernier].filter(function (x) { var p = proprios[ou][cleDe(x)]; return !(p && off[p]); });
+      o[dernier] = o[dernier].filter(function (x) { var p = proprios[ou][cleDe(x)]; return !(p && off[p]) || (garder[ou] && garder[ou][cleDe(x)]); });
     });
+    if (migrants.length && d["avatar.json"]) {
+      var pts = d["avatar.json"].portraits || (d["avatar.json"].portraits = []);
+      migrants.forEach(function (x) { if (!pts.some(function (y) { return y.id === x.id; })) { if (!x.noms) delete x.noms; pts.push(x); } });
+    }
     // Ce qui pointe encore vers un élément disparu est nettoyé : prérequis, cases, arbres de départ.
     var comps = {}, stats = {};
     if (d["skills.json"]) d["skills.json"].competences.forEach(function (k) { comps[k.id] = true; });

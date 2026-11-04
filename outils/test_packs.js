@@ -147,6 +147,22 @@ for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "co
 // v53 : un pack de domaine chargé par le joueur (outils/packs.py paquet) se pose comme s'il avait été assemblé.
 {
   const os = require("os"), { execFileSync } = require("child_process");
+  // Victor (2026-11-04) : un portrait peut appartenir à plusieurs domaines (champ domaines). Sagesse éteinte, Aristote reste
+  // en portrait pour Lucidité, Empathie et Mécanique ; tous éteints, il disparaît.
+  {
+    const ids = new Set(index.packs.map(m => m.id));
+    for (const x of brut["avatar.json"].savants.concat(brut["avatar.json"].portraits)) for (const d of x.domaines || []) assert.ok(ids.has(d), `${x.id} : domaine inconnu ${d}`);
+    const sansS = M.filtrerPacks(brut, index, ["sagesse"]);
+    const a = sansS["avatar.json"].portraits.find(x => x.id === "aristote");
+    assert.ok(a && !sansS["avatar.json"].savants.some(x => x.id === "aristote"), "Aristote reste en portrait sans Sagesse");
+    assert.ok(a.theme !== "sagesse" && !a.condition, "rangé sous un domaine allumé, sans condition de déblocage");
+    assert.ok(sansS["avatar.json"].portraits.some(x => x.id === "protagoras"), "Protagoras (Éloquence) reste là");
+    const aucun = M.filtrerPacks(brut, index, ["sagesse", "lucidite", "empathie", "mecanique"]);
+    assert.ok(!aucun["avatar.json"].portraits.some(x => x.id === "aristote"), "plus aucun de ses domaines : plus d'Aristote");
+    const sansE = M.filtrerPacks(brut, index, ["eloquence"]);
+    const pr = sansE["avatar.json"].portraits.find(x => x.id === "protagoras");
+    assert.ok(pr && pr.theme === "lucidite", "Éloquence éteinte : Protagoras passe sous Lucidité");
+  }
   const f = path.join(os.tmpdir(), "test-musique.pack.json");
   execFileSync("python3", [path.join(__dirname, "packs.py"), "paquet", "musique", f]);
   const paquet = JSON.parse(fs.readFileSync(f, "utf8")); fs.unlinkSync(f);
