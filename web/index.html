@@ -810,6 +810,9 @@ body.plateau-plein { overflow: hidden; }
 .ep-antiquite { --ep: var(--ep-antiquite); } .ep-moyen-age { --ep: var(--ep-moyen-age); } .ep-renaissance { --ep: var(--ep-renaissance); }
 .ep-classique { --ep: var(--ep-classique); } .ep-xixe { --ep: var(--ep-xixe); } .ep-xxe { --ep: var(--ep-xxe); }
 .mc-cle { background: linear-gradient(transparent 62%, color-mix(in srgb, var(--c, var(--accent)) 38%, transparent) 62%); color: inherit; font-weight: 700; padding: 0 1px; }
+/* Victor (2026-11-04) : une énumération se lit en liste à puces (lignes « • … » du texte d'une étape). */
+.mc-liste { margin: 4px 0 12px; padding-left: 1.3em; }
+.mc-liste li { margin: 4px 0; line-height: 1.45; }
 .mc-puce { display: inline-flex; align-items: center; gap: 3px; padding: 0 6px 0 2px; margin: 0 1px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 8%, transparent); font: inherit; color: inherit; cursor: pointer; vertical-align: baseline; line-height: 1.35; }
 .mc-puce .tete-p { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; overflow: hidden; background: var(--parchemin); }
 .mc-puce .tete-p svg { width: 20px; height: 20px; }
@@ -5922,7 +5925,7 @@ function demarrerJeu() {
     });
     var l = score > 0 ? meilleur.reperes : tous; if (!l.length) return "";
     var h = 0; for (var i = 0; i < q.id.length; i++) h = (h * 31 + q.id.charCodeAt(i)) % 9973;
-    return '<p class="repere-h"><b>' + __("Un peu d'histoire") + "</b> " + esc(tx(l[h % l.length])) + "</p>";
+    return '<p class="repere-h"><b>' + __("Un peu d'histoire") + "</b> " + esc(enLigne(tx(l[h % l.length]))) + "</p>";
   }
   function aMasterclass(k) { return !!(k && k.masterclass && k.masterclass.chapitres && k.masterclass.chapitres.length); }
   // `retour` (facultatif) : le texte du bouton qui ramène d'où on vient (le mur de la honte).
@@ -6072,6 +6075,20 @@ function demarrerJeu() {
     });
     return bouts.join("");
   }
+  // Victor (2026-11-04) : dans le texte d'une étape, les lignes qui commencent par « • » forment une liste à puces ;
+  // les autres lignes restent des paragraphes.
+  function blocsListe(h) {
+    if (h.indexOf("\n") < 0) return "<p>" + h + "</p>";
+    var out = "", ul = "";
+    h.split("\n").forEach(function (l) {
+      if (/^• /.test(l)) { ul += "<li>" + l.slice(2) + "</li>"; return; }
+      if (ul) { out += '<ul class="mc-liste">' + ul + "</ul>"; ul = ""; }
+      if (l.trim()) out += "<p>" + l + "</p>";
+    });
+    return out + (ul ? '<ul class="mc-liste">' + ul + "</ul>" : "");
+  }
+  // Une phrase sur une seule ligne (repère cité sous une correction).
+  function enLigne(t) { return String(t || "").replace(/\n• /g, " · ").replace(/\n/g, " "); }
   function paragraphePersonnes(texte, vus, max, principaux, livres) {
     // Les noms trouvés dans le paragraphe ; un nom pris dans un plus long (« Luther » dans « Martin Luther King ») ne compte pas.
     var tr = personnesDans(texte);
@@ -6102,7 +6119,7 @@ function demarrerJeu() {
       d = x.j;
     });
     corps += escD(texte.slice(d));
-    return (html ? '<div class="mc-persos">' + html + "</div>" : "") + "<p>" + corps + "</p>";
+    return (html ? '<div class="mc-persos">' + html + "</div>" : "") + blocsListe(corps);
   }
   // Une frise du schéma de fiche : au moins 3 points alignés (verticalement ou horizontalement), dont 2 datés.
   // Renvoie null si ce n'en est pas une, sinon une fonction (texte de l'étape) → HTML de la frise, les points
