@@ -474,7 +474,8 @@ def verifier_cases(m, ids, comps, tous_arbres):
     socle = next((d for d in ids.values() if d.get("sorte") == "socle"), None)
     pl = lire(socle["_dossier"] / "donnees" / "plateau.json") if socle and (socle["_dossier"] / "donnees" / "plateau.json").exists() else {}
     epoques = pl.get("epoques", [])
-    objets, icones, dessins, _, _ = sprites(ids)
+    # L'image d'une case vient du pack ou de ce qu'il requiert : un pack voisin peut être éteint (case sans dessin).
+    objets, icones, dessins, _, _ = sprites({p: ids[p] for p in accessibles(m, ids)})
     siens = {s["id"] for s in lire_liste(m, "arbres.json")}
 
     def err(c, msg):
@@ -530,9 +531,10 @@ def formes(m, ids):
         erreurs.append(f"[{m['id']}] {msg}")
     objets, icones, dessins, savants, ennemis = sprites(ids)
     images = objets | icones | dessins
+    o2, i2, d2, _, _ = sprites({p: ids[p] for p in accessibles(m, ids)})
     for c in lire_liste(m, "competences.json"):
-        if c.get("embleme") and c["embleme"] not in images:
-            err(f"competences.json › {c['id']} : emblème « {c['embleme']} » introuvable (un dessin de dessins.json, un objet ou une icône du plateau)")
+        if c.get("embleme") and c["embleme"] not in o2 | i2 | d2:
+            err(f"competences.json › {c['id']} : emblème « {c['embleme']} » introuvable dans ce pack ni ceux qu'il requiert (un dessin de dessins.json, un objet ou une icône du plateau)")
     for l in lire_liste(m, "livres.json"):
         if l.get("embleme") not in images:
             err(f"livres.json › {l.get('id')} : emblème « {l.get('embleme')} » introuvable (un dessin de dessins.json, un objet ou une icône du plateau)")
