@@ -35557,10 +35557,10 @@
    "stat": "cp-calcul",
    "rang": 7,
    "nom": {
-    "fr": "Faire 100 et 1000"
+    "fr": "Grand nombre plus un petit"
    },
    "description": {
-    "fr": "Trouver ce qui manque pour arriver à 100, puis à 1000."
+    "fr": "Un nombre jusqu'à 1000, plus un nombre de 1 à 10."
    },
    "prerequis": [
     "cp.moinsdix"
@@ -35568,22 +35568,22 @@
    "fiche": {
     "essentiel": [
      {
-      "fr": "Pour aller de 65 à 100 : d'abord jusqu'à 70 (5), puis jusqu'à 100 (30). Il manque 35."
+      "fr": "Les centaines et les dizaines ne bougent pas, on ajoute aux unités : 342 + 5 = 347."
      },
      {
-      "fr": "Les paires de dizaines qui font 100 : 10 et 90, 20 et 80, 30 et 70, 40 et 60, 50 et 50."
+      "fr": "Si les unités dépassent 9, on passe par la dizaine : 347 + 5, c'est 347 + 3 = 350, puis 350 + 2 = 352."
      },
      {
-      "fr": "Pareil avec les centaines pour 1000 : 300 et 700, 250 et 750."
+      "fr": "Ajouter 10, c'est une dizaine de plus : 250 + 10 = 260."
      }
     ],
     "piege": {
-     "fr": "Donner le nombre de départ au lieu de ce qui manque."
+     "fr": "Toucher aux centaines : 342 + 5 ne fait pas 842. On n'ajoute que 5 unités."
     },
-    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Une barre de 100 : 65 pleins, il manque 35\"><rect class=\"f2\" x=\"20\" y=\"30\" width=\"360\" height=\"40\" rx=\"6\"/><rect class=\"a\" x=\"20\" y=\"30\" width=\"234\" height=\"40\" rx=\"6\"/><text class=\"t\" x=\"137\" y=\"57\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"700\">65</text><text class=\"t\" x=\"317\" y=\"57\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"700\">35</text><text class=\"t\" x=\"200\" y=\"104\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"700\">65 + 35 = 100</text></svg>",
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 142\" role=\"img\" aria-label=\"347 plus 5 : on passe par 350\"><text class=\"t\" x=\"200\" y=\"40\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">347 + 5 = 352</text><text class=\"tm\" x=\"200\" y=\"78\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"700\">347 + 3 = 350</text><text class=\"t\" x=\"200\" y=\"110\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"700\">350 + 2 = 352</text></svg>",
     "source": "Ministère de l'Éducation nationale, Programme de mathématiques du cycle 2 (CP, CE1, CE2)"
    },
-   "symbole": "100",
+   "symbole": "+10",
    "embleme": "cp-cadeau"
   },
   {
@@ -35591,10 +35591,10 @@
    "stat": "cp-calcul",
    "rang": 8,
    "nom": {
-    "fr": "Calculer jusqu'à 1000"
+    "fr": "Grand nombre moins un petit"
    },
    "description": {
-    "fr": "Additions et soustractions avec des centaines."
+    "fr": "Un nombre jusqu'à 1000, moins un nombre de 1 à 10."
    },
    "prerequis": [
     "cp.doubles",
@@ -35603,22 +35603,22 @@
    "fiche": {
     "essentiel": [
      {
-      "fr": "Un nombre à trois chiffres : centaines, dizaines, unités. 345, c'est 300 + 40 + 5."
+      "fr": "On enlève aux unités : 348 − 5 = 343."
      },
      {
-      "fr": "On calcule colonne par colonne : centaines avec centaines, dizaines avec dizaines, unités avec unités."
+      "fr": "S'il n'y a pas assez d'unités, on passe par la dizaine : 402 − 5, c'est 402 − 2 = 400, puis 400 − 3 = 397."
      },
      {
-      "fr": "Pour 634 − 258 : 634 − 200 = 434, puis 434 − 50 = 384, puis 384 − 8 = 376."
+      "fr": "Enlever 10, c'est une dizaine de moins : 250 − 10 = 240."
      }
     ],
     "piege": {
-     "fr": "Oublier une retenue entre les colonnes : 345 + 278 ne fait pas 513."
+     "fr": "Oublier qu'on change de dizaine : 402 − 5 ne fait pas 407 ni 497, mais 397."
     },
-    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 160\" role=\"img\" aria-label=\"345 plus 278 posé en colonnes : 623\"><text class=\"tm\" x=\"150\" y=\"24\" text-anchor=\"middle\" font-size=\"15\" font-weight=\"700\">C</text><text class=\"tm\" x=\"210\" y=\"24\" text-anchor=\"middle\" font-size=\"15\" font-weight=\"700\">D</text><text class=\"tm\" x=\"270\" y=\"24\" text-anchor=\"middle\" font-size=\"15\" font-weight=\"700\">U</text><text class=\"t\" x=\"150\" y=\"60\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">3</text><text class=\"t\" x=\"210\" y=\"60\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">4</text><text class=\"t\" x=\"270\" y=\"60\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">5</text><text class=\"t\" x=\"150\" y=\"96\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">2</text><text class=\"t\" x=\"210\" y=\"96\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">7</text><text class=\"t\" x=\"270\" y=\"96\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">8</text><text class=\"t\" x=\"150\" y=\"146\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">6</text><text class=\"t\" x=\"210\" y=\"146\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">2</text><text class=\"t\" x=\"270\" y=\"146\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">3</text><text class=\"t\" x=\"95\" y=\"96\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">+</text><line class=\"l\" x1=\"110\" y1=\"112\" x2=\"290\" y2=\"112\"/></svg>",
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 142\" role=\"img\" aria-label=\"402 moins 5 : on passe par 400\"><text class=\"t\" x=\"200\" y=\"40\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">402 − 5 = 397</text><text class=\"tm\" x=\"200\" y=\"78\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"700\">402 − 2 = 400</text><text class=\"t\" x=\"200\" y=\"110\" text-anchor=\"middle\" font-size=\"20\" font-weight=\"700\">400 − 3 = 397</text></svg>",
     "source": "Ministère de l'Éducation nationale, Programme de mathématiques du cycle 2 (CP, CE1, CE2)"
    },
-   "symbole": "999",
+   "symbole": "−10",
    "embleme": "cp-fusee"
   },
   {
@@ -35892,6 +35892,143 @@
    },
    "symbole": "Aa",
    "embleme": "cp-lion"
+  },
+  {
+   "id": "cp.betes",
+   "stat": "cp-mots",
+   "rang": 8,
+   "nom": {
+    "fr": "Animaux en couleur"
+   },
+   "description": {
+    "fr": "Une vache verte, un chien rose : lire l'animal et sa couleur."
+   },
+   "prerequis": [
+    "cp.sauvages"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "On lit d'abord l'animal, puis la couleur : vache… verte."
+     },
+     {
+      "fr": "Avec une vache ou une poule, la couleur prend souvent un e : verte, bleue, violette. On entend le t de verte."
+     },
+     {
+      "fr": "Rouge, jaune et rose ne changent pas : une vache rose, un chien rose."
+     }
+    ],
+    "piege": {
+     "fr": "Ne lire que le premier mot : vache verte et vache rose commencent pareil. On lit jusqu'au bout."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Les mots « vache » et « verte » : l'animal, puis sa couleur\"><rect class=\"f\" x=\"30\" y=\"16\" width=\"160\" height=\"60\" rx=\"10\"/><rect class=\"f\" x=\"210\" y=\"16\" width=\"160\" height=\"60\" rx=\"10\"/><text class=\"t\" x=\"110\" y=\"58\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">vache</text><text class=\"t\" x=\"290\" y=\"58\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">verte</text><text class=\"tm\" x=\"110\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">l'animal</text><text class=\"tm\" x=\"290\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">sa couleur</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-vache-vert"
+  },
+  {
+   "id": "cp.choses",
+   "stat": "cp-mots",
+   "rang": 8,
+   "nom": {
+    "fr": "Objets en couleur"
+   },
+   "description": {
+    "fr": "Un ballon rouge, une tasse bleue : lire l'objet et sa couleur."
+   },
+   "prerequis": [
+    "cp.betes"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "On lit l'objet, puis la couleur : tasse… bleue."
+     },
+     {
+      "fr": "Une tasse bleue, un bol bleu : on entend pareil, mais on écrit un e de plus avec une tasse."
+     },
+     {
+      "fr": "Violet devient violette avec une lampe : on entend le t."
+     }
+    ],
+    "piege": {
+     "fr": "Confondre deux objets qui se ressemblent : une tasse et un bol."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Les mots « tasse » et « bleue » : l'objet, puis sa couleur\"><rect class=\"f\" x=\"30\" y=\"16\" width=\"160\" height=\"60\" rx=\"10\"/><rect class=\"f\" x=\"210\" y=\"16\" width=\"160\" height=\"60\" rx=\"10\"/><text class=\"t\" x=\"110\" y=\"58\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">tasse</text><text class=\"t\" x=\"290\" y=\"58\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">bleue</text><text class=\"tm\" x=\"110\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">l'objet</text><text class=\"tm\" x=\"290\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">sa couleur</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-tasse-bleu"
+  },
+  {
+   "id": "cp.pluriel",
+   "stat": "cp-mots",
+   "rang": 8,
+   "nom": {
+    "fr": "Un ou plusieurs"
+   },
+   "description": {
+    "fr": "Trois chats, deux pommes : lire combien il y en a."
+   },
+   "prerequis": [
+    "cp.betes"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "On compte les dessins, puis on lit le nombre : un, deux, trois, quatre, cinq."
+     },
+     {
+      "fr": "Quand il y en a plusieurs, on ajoute un s à la fin du mot : un chat, deux chats."
+     },
+     {
+      "fr": "Ce s ne s'entend pas : chat et chats se disent pareil. On le voit seulement."
+     }
+    ],
+    "piege": {
+     "fr": "Oublier de compter : deux chats et trois chats se ressemblent. On compte avant de lire."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Les mots « trois » et « chats » : combien, puis le s de plusieurs\"><rect class=\"f\" x=\"30\" y=\"16\" width=\"160\" height=\"60\" rx=\"10\"/><rect class=\"f\" x=\"210\" y=\"16\" width=\"160\" height=\"60\" rx=\"10\"/><text class=\"t\" x=\"110\" y=\"58\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">trois</text><text class=\"t\" x=\"290\" y=\"58\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">chats</text><text class=\"tm\" x=\"110\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">combien</text><text class=\"tm\" x=\"290\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">le s de plusieurs</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-poule"
+  },
+  {
+   "id": "cp.accord",
+   "stat": "cp-mots",
+   "rang": 8,
+   "nom": {
+    "fr": "Plusieurs en couleur"
+   },
+   "description": {
+    "fr": "Deux vaches vertes : le nombre, l'animal et la couleur."
+   },
+   "prerequis": [
+    "cp.choses",
+    "cp.pluriel"
+   ],
+   "fiche": {
+    "essentiel": [
+     {
+      "fr": "On compte, on lit l'animal, puis la couleur : deux… vaches… vertes."
+     },
+     {
+      "fr": "Quand il y en a plusieurs, la couleur prend un s elle aussi : des chats bleus, des vaches vertes."
+     },
+     {
+      "fr": "On vérifie les trois : le nombre, l'animal, la couleur."
+     }
+    ],
+    "piege": {
+     "fr": "Vérifier seulement l'animal : deux vaches vertes et deux vaches roses, c'est la couleur qui change."
+    },
+    "schema": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 120\" role=\"img\" aria-label=\"Les mots « vaches » et « vertes » : deux, l'animal, puis la couleur\"><rect class=\"f\" x=\"30\" y=\"16\" width=\"160\" height=\"60\" rx=\"10\"/><rect class=\"f\" x=\"210\" y=\"16\" width=\"160\" height=\"60\" rx=\"10\"/><text class=\"t\" x=\"110\" y=\"58\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">vaches</text><text class=\"t\" x=\"290\" y=\"58\" text-anchor=\"middle\" font-size=\"30\" font-weight=\"700\">vertes</text><text class=\"tm\" x=\"110\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">deux, l'animal</text><text class=\"tm\" x=\"290\" y=\"100\" text-anchor=\"middle\" font-size=\"14\" font-weight=\"700\">la couleur</text></svg>",
+    "source": "Ministère de l'Éducation nationale (DGESCO), Pour enseigner la lecture et l'écriture au CP"
+   },
+   "symbole": "Aa",
+   "embleme": "cp-canard-rouge"
   },
   {
    "id": "inf.pascaline",
