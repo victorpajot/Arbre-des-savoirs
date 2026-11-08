@@ -1051,8 +1051,9 @@
     var arr = arriveeN(contenu), pl = partie.plateau || {}, d = pl.departTour;
     var pool = contenu.plateau.cases.filter(function (k) { return k.n !== arr; }).sort(parDate);
     var i = 0;
-    if (d && !toutesCases(partie)) { while (i < pool.length && parDate(pool[i], d) <= 0) i++; if (i >= pool.length) i = 0; }
-    var pris = toutesCases(partie) ? pool : pool.slice(i, i + Math.max(1, longueur));
+    if (d) { while (i < pool.length && parDate(pool[i], d) <= 0) i++; if (i >= pool.length) i = 0; }
+    // Victor (2026-11-08) : « Voir toutes les cases » dévoile les cases à venir mais garde la longueur du tour.
+    var pris = pool.slice(i, i + Math.max(1, longueur));
     var dernier = pris[pris.length - 1];
     return { cases: pris.map(function (c) { return c.n; }).concat([arr]), fin: !dernier || pool.indexOf(dernier) === pool.length - 1,
       dernier: dernier ? { n: dernier.n, annee: dernier.annee } : null, debut: i, total: pool.length };
@@ -1780,7 +1781,7 @@
         // Victor (2026-10-31) : le tour suivant reprend après la dernière case de celui-ci. Toutes les cases vues : victoire,
         // et l'histoire recommence au début (avec, peut-être, d'autres arbres allumés).
         var pcF = pl.parcours || {};
-        if (pcF.fin && !toutesCases(partie)) { fin.victoire = true; c.victoires = (c.victoires || 0) + 1; pl.departTour = null; pl.victoire = { t: t, tour: pl.tours + 1 }; }
+        if (pcF.fin) { fin.victoire = true; c.victoires = (c.victoires || 0) + 1; pl.departTour = null; pl.victoire = { t: t, tour: pl.tours + 1 }; }
         else if (pcF.dernier) pl.departTour = pcF.dernier;
         etapes.push(fin);
         if (record) mf[forme] = coups;

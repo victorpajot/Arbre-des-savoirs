@@ -3901,9 +3901,9 @@ function demarrerJeu() {
     cba.onchange = function () { P.options = P.options || {}; P.options.tousArbres = cba.checked; sauver(); toast(cba.checked ? __("Tous les arbres sont ouverts") : __("Seuls les arbres gagnés restent ouverts")); };
     test.appendChild(ta);
     if (C.plateau) {
-      var tc = el(__('<label class="interrupteur" for="opt-cases" style="margin-top:12px"><span><b>Voir toutes les cases</b><br><span class="note">Réglage temporaire : le tour en cours passe par toutes les cases des arbres allumés, dans l\'ordre des dates, et toutes sont dévoilées.</span></span><input type="checkbox" id="opt-cases"></label>'));
+      var tc = el(__('<label class="interrupteur" for="opt-cases" style="margin-top:12px"><span><b>Voir toutes les cases</b><br><span class="note">Réglage temporaire : toutes les cases sont dévoilées, celles du tour comme celles des tours à venir. Le tour garde sa longueur (Cases par tour).</span></span><input type="checkbox" id="opt-cases"></label>'));
       var cbc = tc.querySelector("input"); cbc.checked = !!(P.options && P.options.toutesCases);
-      cbc.onchange = function () { M.voirToutesCases(C, P, cbc.checked); sauver(); rendre(); toast(cbc.checked ? __("Toutes les cases sont sur la route") : __("Le tour reprend un tirage de cases")); };
+      cbc.onchange = function () { M.voirToutesCases(C, P, cbc.checked); sauver(); rendre(); toast(cbc.checked ? __("Toutes les cases sont dévoilées") : __("Les cases à venir sont de nouveau cachées")); };
       test.appendChild(tc);
       var tp = el(__('<div class="rangee"><button type="button" class="btn sec" data-c="6">Pion +6 cases</button><button type="button" class="btn sec" data-c="20">Pion +20 cases</button></div>'));
       tp.querySelectorAll("[data-c]").forEach(function (b) {

@@ -111,7 +111,7 @@ for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "co
   coherence(off, t, C, P);
 }
 // v36 : chaque arbre apporte ses cases ; une partie Philosophes + Biais seuls part de Thalès, ne passe que par leurs
-// cases, dans l'ordre des dates, et le réglage « Voir toutes les cases » met toutes leurs cases sur la route.
+// cases, dans l'ordre des dates, et le réglage « Voir toutes les cases » les dévoile sans allonger le tour.
 {
   const off = packs.filter(p => !["sagesse", "lucidite"].includes(p)), C = S.contenu(brut, off);
   const P = M.nouvellePartie(new Date(2026, 9, 30, 9).getTime());
@@ -120,13 +120,18 @@ for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "co
   assert.equal(ks[0].id, "thales-eau", "premier tour : Thalès en premier");
   assert.ok(ks.every(k => ["sagesse", "lucidite"].includes(k.stat)), "seulement les cases des arbres allumés");
   assert.ok(ks.every((k, i) => !i || ks[i - 1].annee <= k.annee), "cases dans l'ordre des dates");
-  assert.ok(M.caseN(C, arr).arrivee && ks.length >= 24 && new Set(rt).size === rt.length);
+  assert.ok(M.caseN(C, arr).arrivee && new Set(rt).size === rt.length);
+  // Victor (2026-11-08) : « Cases par tour » compte les cases de tous les arbres cochés ensemble, pas par arbre.
+  assert.ok(C.plateau.cases.length > 30, "deux arbres : plus de cases qu'un tour");
+  assert.equal(ks.length, M.casesParTour(C, P), "le tour fait « Cases par tour » cases, tous arbres confondus");
   M.voirToutesCases(C, P, true);
   const tout = M.routeTour(C, P);
-  assert.equal(tout.length, C.plateau.cases.length, "toutes les cases sur la route");
-  assert.ok(tout.every(n => M.caseDecouverte(P, n)), "toutes dévoilées");
+  // Victor (2026-11-08) : le réglage dévoile les cases, la longueur du tour reste celle de « Cases par tour ».
+  assert.equal(tout.length, M.casesParTour(C, P) + 1, "réglage coché : le tour garde sa longueur");
+  assert.ok(C.plateau.cases.every(k => M.caseDecouverte(P, k.n)), "toutes dévoilées, même celles des tours à venir");
   M.voirToutesCases(C, P, false);
   assert.ok(!M.caseDecouverte(P, arr), "réglage coupé : l'arrivée redevient cachée");
+  assert.equal(M.routeTour(C, P).length, M.casesParTour(C, P) + 1, "réglage coupé : le tour revient à « Cases par tour »");
   S.jouer(C, P, 60, P.cree, S.graine(7));
   console.log("OK : cases par arbre, Thalès en premier, réglage « Voir toutes les cases »");
 }
