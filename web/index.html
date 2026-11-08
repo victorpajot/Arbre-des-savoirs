@@ -3080,7 +3080,7 @@ function demarrerJeu() {
       __('<button type="button" class="btn large" data-a="go">C\'est parti</button>') +
       (c.raison === "serie" ? __('<button type="button" class="btn sec large" data-a="stop-serie">Arrêter la série (sans prime)</button>') : "") +
       // Victor (2026-11-08) : avant l'épreuve, toujours de quoi ouvrir la masterclass de la compétence.
-      (aMasterclass(k) ? __('<button type="button" class="btn sec large" data-a="mc">Ouvrir la masterclass</button>') : "") +
+      (aMasterclass(k) ? __('<button type="button" class="btn large sc-mc" data-a="mc">Ouvrir la masterclass</button>') : "") +
       '<div id="ia-jouer"></div>' +
       (enI || atI ? "" : galerieTheme(c.type === "rappel" ? k.stat : ici.stat)) + "</div>", !enI && !atI && c.type === "rappel" ? __("Rappel") : __("Ta case"), {
       go: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true }); },
