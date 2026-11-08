@@ -1909,6 +1909,18 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(!M.donjonOuvert(CD, PD, "ordinateur"), "la Logique seule ne suffit pas");
   maitriser(CD.parStat.etincelle.map((k) => k.id));
   assert.ok(M.donjonOuvert(CD, PD, "ordinateur"), "Logique + Étincelle réussies");
+  // Victor (2026-11-08) : avec le plateau, il suffit de réussir la dernière case de chaque arbre du donjon.
+  {
+    const CDp = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+      { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), donjons: d("donjons.json"), plateau: d("plateau.json") });
+    const Q = M.nouvellePartie(T0), dern = s => CDp.plateau.competences_cases[M.derniereCase(CDp, s).n];
+    assert.ok(!M.donjonOuvert(CDp, Q, "ordinateur"), "fermé au départ");
+    dern("logique").forEach(id => { Q.competences[id] = { maitrise: true, maitriseDepuis: T0 }; });
+    assert.ok(!M.donjonOuvert(CDp, Q, "ordinateur"), "la dernière case de la Logique seule ne suffit pas");
+    dern("etincelle").forEach(id => { Q.competences[id] = { maitrise: true, maitriseDepuis: T0 }; });
+    assert.ok(M.donjonOuvert(CDp, Q, "ordinateur"), "dernières cases de la Logique et de l'Étincelle réussies");
+    assert.ok(Object.keys(Q.competences).length < CDp.parStat.logique.length, "sans réussir tout l'arbre");
+  }
   assert.ok(M.entrerDonjon(CD, PD, "ordinateur", T0).premiere);
   const dj = M.donjonDe(CD, "ordinateur");
   let tt = T0, bugs = 0, sansBug = () => 0.99;

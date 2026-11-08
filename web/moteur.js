@@ -1336,13 +1336,25 @@
     var ks = contenu.parStat[stat] || [];
     return ks.length > 0 && ks.every(function (k) { return estMaitrisee(partie, k.id); });
   }
+  // Victor (2026-11-08) : un donjon s'ouvre dès qu'on a réussi la dernière case de chacun de ses arbres (la plus récente de
+  // l'arbre sur le plateau, sa compétence acquise, même hors ordre). Sans plateau, l'arbre entier réussi.
+  function derniereCase(contenu, stat) {
+    var P = contenu.plateau; if (!P || !P.cases) return null;
+    var cs = P.cases.filter(function (k) { return k.stat === stat && (P.competences_cases[k.n] || []).length; });
+    return cs.length ? cs.sort(parDate)[cs.length - 1] : null;
+  }
+  function arbreFini(contenu, partie, stat) {
+    var k = derniereCase(contenu, stat);
+    if (!k) return arbreReussi(contenu, partie, stat);
+    return contenu.plateau.competences_cases[k.n].every(function (id) { return estMaitrisee(partie, id); });
+  }
   // Ouvert quand ses arbres d'origine sont réussis, ou d'office si la nouvelle partie l'a choisi (réglage de test).
   function donjonOuvert(contenu, partie, id) {
     var dj = donjonDe(contenu, id); if (!dj) return false;
     var choisis = (partie.options && partie.options.donjons) || [];
     if (choisis.indexOf(id) >= 0) return true;
     var arbres = dj.arbres.filter(function (s) { return contenu.parStat[s]; });
-    return arbres.length > 0 && arbres.every(function (s) { return arbreReussi(contenu, partie, s); });
+    return arbres.length > 0 && arbres.every(function (s) { return arbreFini(contenu, partie, s); });
   }
   function donjonsOuverts(contenu, partie) { return listeDonjons(contenu).filter(function (d) { return donjonOuvert(contenu, partie, d.id); }); }
   function etatDonjon(partie, id) {
@@ -1489,7 +1501,7 @@
     var pr = procesDe(contenu, id); if (!pr) return false;
     if (((partie.options && partie.options.donjons) || []).indexOf(id) >= 0) return true;
     var arbres = pr.arbres.filter(function (s) { return contenu.parStat[s]; });
-    return arbres.length > 0 && arbres.every(function (s) { return arbreReussi(contenu, partie, s); });
+    return arbres.length > 0 && arbres.every(function (s) { return arbreFini(contenu, partie, s); });
   }
   function etatProces(partie, id) {
     partie.proces = partie.proces || {};
@@ -3996,7 +4008,7 @@
     repliqueDuJour: repliqueDuJour,
     themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,

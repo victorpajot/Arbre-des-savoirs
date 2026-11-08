@@ -7970,7 +7970,7 @@ function demarrerJeu() {
   function blocChoixDonjons(A) {
     var bd = BRUT["donjons.json"] || {}, tous = (bd.donjons || []).concat(bd.proces || []); if (!tous.length) return null;
     var off = M.packsEteints(INDEX, A.off), pp = INDEX.proprietaires || {}, prop = Object.assign({}, pp["donjons.json/donjons"] || {}, pp["donjons.json/proces"] || {});
-    var b = el('<div class="bloc"><h2>' + __("Donjons") + '</h2><p class="note">' + __("Un donjon s'ouvre quand tu as réussi les arbres dont il découle. Coche-le pour l'ouvrir dès le départ et l'essayer.") + "</p></div>");
+    var b = el('<div class="bloc"><h2>' + __("Donjons") + '</h2><p class="note">' + __("Un donjon s'ouvre quand tu as réussi la dernière case des arbres dont il découle. Coche-le pour l'ouvrir dès le départ et l'essayer.") + "</p></div>");
     A.donjons = A.donjons || [];
     tous.forEach(function (d) {
       var eteint = !!off[prop[d.id]];
