@@ -2990,11 +2990,12 @@ function demarrerJeu() {
     return true;
   }
   function dureePeine(ms) { var s = Math.ceil(ms / 1000), m = Math.floor(s / 60); s %= 60; return m + ":" + (s < 10 ? "0" : "") + s; }
-  // Le temps ne s'écoule que mur affiché, page visible, sans quiz par-dessus.
+  // Le temps ne s'écoule que mur affiché, page visible, sans quiz par-dessus. Victor (2026-11-08) : une masterclass
+  // ouverte depuis le mur laisse tourner le décompte.
   setInterval(function () {
     if (!P || !P.punition) return;
     var b = document.querySelector(".peine");
-    if (!b || document.hidden || document.querySelector(".quiz:not(.honte-dessus)") || feuille) return;
+    if (!b || document.hidden || document.querySelector(".quiz:not(.honte-dessus)") || (feuille && !feuille.querySelector(".masterclass"))) return;
     var reste = M.purger(P, 1000);
     if (reste % 10000 < 1000) sauver();
     if (!reste) { sauver(); liberation(); return; }
