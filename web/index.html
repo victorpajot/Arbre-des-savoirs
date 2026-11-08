@@ -3465,8 +3465,9 @@ function demarrerJeu() {
   function nomCase(k) { var c = compDeCase(k); return c ? tx(c.nom) : tx(k.titre); }
   function titreCase(k) { var c = compDeCase(k); return "<h2>" + esc(nomCase(k)) + "</h2>" + (c ? '<p class="sous-case">' + esc(tx(k.titre)) + "</p>" : ""); }
   function ouvrirCase(n) {
+    // Victor (2026-11-08) : la case cachée montre son logo en couleur, comme sur le parcours (sauf recouverte).
     var k = M.caseN(C, n), connue = caseConnue(n), ici = P.plateau.position === n;
-    var html = '<div class="vitrine" style="padding:16px">' + svgSprite(k.icone, 120, tx(k.titre), !connue) + "</div>";
+    var html = '<div class="vitrine" style="padding:16px">' + svgSprite(k.icone, 120, tx(k.titre), !connue && (atomeSur(n) || ennemiSur(n) || chronoSur(n))) + "</div>";
     if (connue) {
       var spN = M.specialDe(C, P, n);
       html += __('<div class="eyebrow">Case ') + n + " · " + esc(formatAnnee(k.annee)) + " · " + esc(nomEpoque(k.epoque)) + "</div>" + titreCase(k) +
