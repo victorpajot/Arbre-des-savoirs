@@ -3722,6 +3722,8 @@
     var graine = hacher(cleJour(t) + "|" + partie.journal.length + "|" + (partie.cree || 0));
     // v15 : la case où se tient le pion dicte l'arbre. Les rappels dus passent toujours d'abord (ceux de cet arbre
     // en tête, l'oubli n'attend pas), puis un quiz de cet arbre ; sinon l'ancien choix, annoncé comme hors case.
+    // Une partie neuve (pion posé sur 1) ou une case retirée du plateau : la route place d'abord le pion sur une vraie case.
+    if (contenu.plateau && partie.plateau && contenu.plateau.cases.length && !caseN(contenu, partie.plateau.position)) route(contenu, partie);
     var k = contenu.plateau && partie.plateau && caseN(contenu, partie.plateau.position);
     var ach = arbreAchete(partie);
     if (ach && !contenu.parStat[ach.stat]) ach = null;

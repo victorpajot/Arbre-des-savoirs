@@ -255,10 +255,11 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(P.compteurs.quizJoues, 3); assert.equal(P.compteurs.eurekas, 0);
     assert.equal(P.plateau.position, 1); assert.deepEqual(P.repliques, {});
     assert.equal(M.xpParStat(C3, P).empathie, 80);
+    M.accorderPartie(C3, P);  // la case 1 (le feu) a quitté le plateau : la partie se recale sur la première case
     const rec = M.verifierRecompenses(C3, P, t0);
-    assert.ok(!rec.evenements.some(e => e.id === "ebbinghaus") && rec.evenements.some(e => e.id === "feu"), "1885 attend que le pion atteigne le XIXe siècle");
-    const xixe = C3.plateau.cases.find(k => k.epoque === "xixe").n;
-    P.plateau.atteinte = xixe;
+    assert.ok(!rec.evenements.some(e => e.id === "ebbinghaus"), "1885 attend que le pion atteigne le XIXe siècle");
+    const kx = C3.plateau.cases.find(k => k.epoque === "xixe"), xixe = kx.n;
+    P.plateau.atteinte = xixe; P.plateau.anneeMax = kx.annee;
     assert.ok(M.verifierRecompenses(C3, P, t0).evenements.some(e => e.id === "ebbinghaus"), "date débloquée une fois l'époque atteinte");
     P.plateau.atteinte = 1; P.plateau.tours = 1;
     assert.ok(M.dateAtteinte(C3, P, { annee: 1990 }), "après un tour, plus de limite");
@@ -445,6 +446,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // L'IA choisit : un quiz ouvert au départ, un rappel dû avant tout
   {
     const P = M.nouvellePartie(t0);
+    // La case 1 (le feu) a quitté le plateau (Victor, 2026-11-08) : le pion part de la plus ancienne case.
+    P.plateau.position = C5.plateau.cases.slice().sort((a, b) => a.annee - b.annee)[0].n; P.plateau.route = null;
     const c = M.choixIA(C5, P, t0);
     assert.equal(c.type, "quiz"); assert.ok(["case", "hors_case"].includes(c.raison));
     assert.equal(M.choixIA(C5, P, t0).comp.id, c.comp.id, "même choix tant qu'on n'a pas joué");
@@ -1423,8 +1426,11 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   P.faveur = { valeur: 10, maj: T + 2000 }; M.faveurIA(C, P, T + 2000);    // furieuse, 2e chute : 10 min, plafonné
   P.faveur = { valeur: 0, maj: T + 3000 }; M.faveurIA(C, P, T + 3000);     // 0, 3e chute : rien au-delà du plafond
   assert.equal(P.punition.restant, F.mur_max * 60000, "plafond de la peine");
+  assert.equal(M.questionRattrapage(C, P, T + 3500, () => 0), null, "rien de croisé : pas de rattrapage");
+  P.competences[C.competences[0].id] = { maitrise: false };  // une compétence jouée
   const q = M.questionRattrapage(C, P, T + 4000, () => 0);
   assert.ok(q, "une question de rattrapage");
+  assert.equal(q.competence, C.competences[0].id, "tirée dans ce qu'on a croisé");
   assert.equal(M.questionRattrapage(C, P, T + 4000, () => 0.99).id, q.id, "gardée jusqu'à la réponse");
   let r = M.repondreRattrapage(C, P, false, T + 5000);
   assert.equal(r.gagne, 0); assert.equal(P.punition.restant, F.mur_max * 60000, "ratée : rien de retiré");
@@ -1678,7 +1684,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
 
   // Alyca : une offre par jour au plus ; partie bonus, le pion ne bouge pas.
   // Victor (2026-11-01) : Chrono revient d'abord sur les cases déjà passées.
-  { const V = prep(); V.plateau.idx = 6; const ev = C.evenements.slice(0, 12).filter(e => e.case && e.case !== V.plateau.position).slice(0, 2);
+  { const V = prep(); V.plateau.idx = 6; const ev = C.evenements.slice(0, 12).filter(e => e.case && e.case !== V.plateau.position && e.id !== "feu").slice(0, 2);  // le feu et Ishango se disputent l'unique place de la Préhistoire
     V.plateau.visites = {}; ev.forEach(e => { V.plateau.visites[e.case] = 1; });
     V.siecles = undefined; M.etatChrono(V).offre = M.cleJour(T);
     const jv = M.lancerChrono(C, V, "alyca", T, () => 0.5);

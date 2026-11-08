@@ -125,6 +125,8 @@ def main():
     conditions += [(f"bibliotheque.json {l['id']}", l["condition"]) for l in contenu["bibliotheque"]["livres"]]
     conditions += [(f"ia.json {m['id']}", m["condition"]) for m in contenu["ia"]["masques"] if m.get("condition")]
     nb_cases = len(contenu["plateau"]["cases"])
+    # Le numéro d'une case est son identité (registre), pas sa place : un numéro du plateau existe toujours.
+    nums_cases = {k["n"] for k in contenu["plateau"]["cases"]}
     # « toutes » : chaque sous-condition est vérifiée comme les autres.
     conditions += [(ou, x) for ou, cond in list(conditions) if cond["type"] == "toutes" for x in cond.get("conditions", [])]
     for ou, cond in conditions:
@@ -134,7 +136,7 @@ def main():
             erreurs.append(f"{ou} : compétence inconnue {cond.get('id')}")
         if cond["type"] == "succes" and cond.get("id") not in succes:
             erreurs.append(f"{ou} : succès inconnu {cond.get('id')}")
-        if cond["type"] in ("case_atteinte", "case_visitee", "epoque_atteinte") and not 1 <= cond.get("n", 0) <= nb_cases:
+        if cond["type"] in ("case_atteinte", "case_visitee", "epoque_atteinte") and cond.get("n") not in nums_cases and not 1 <= cond.get("n", 0) <= nb_cases:
             erreurs.append(f"{ou} : case hors du plateau {cond.get('n')}")
         if cond["type"] == "donjon_fini" and cond.get("id") not in {d["id"] for d in (contenu.get("donjons") or {}).get("donjons", [])}:
             erreurs.append(f"{ou} : donjon inconnu {cond.get('id')}")
