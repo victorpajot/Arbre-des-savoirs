@@ -351,6 +351,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.deepEqual(M.verifierRecompenses(C4, P, t0).savants, []);
   // Hypatie arrive avec le ciel de Ptolémée (elle a édité l'Almageste)
   P.competences["astro.ptolemee"] = { maitrise: true, maitriseDepuis: t0, palier: 0, prochainRappel: t0 + 86400000, xp: 70 };
+  // Victor (2026-11-08) : liée à la case. Ailleurs, elle attend ; après l'épreuve de Ptolémée, elle arrive.
+  assert.deepEqual(M.verifierRecompenses(C4, P, t0).savants, [], "pas loin de sa case");
+  P.lot = { t: t0, n: 0, r: 0, theme: "cosmos", comp: "astro.ptolemee" };
   const rec = M.verifierRecompenses(C4, P, t0);
   assert.deepEqual(rec.savants.map(s => s.id), ["hypatie"]);
   assert.ok(P.savants.hypatie);
@@ -1050,7 +1053,12 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   M.verifierRecompenses(CS, P, T);
   P.competences["astro.ptolemee"] = { maitrise: true, maitriseDepuis: T, xp: 10 };
   P.competences["phys.optique"] = { maitrise: true, maitriseDepuis: T, xp: 10 };
-  const a = M.verifierRecompenses(CS, P, T + 1), b = M.verifierRecompenses(CS, P, T + 2);
+  // Victor (2026-11-08) : chacun sur l'épreuve de sa compétence (une case, deux épreuves de suite ici).
+  const lot = (t, comp) => { P.lot = { t, n: 0, r: 0, theme: null, comp }; };
+  lot(T + 1, "astro.ptolemee");
+  const la = M.verifierRecompenses(CS, P, T + 1);
+  lot(T + 2, "phys.optique");
+  const a = la, b = M.verifierRecompenses(CS, P, T + 2);
   assert.equal(a.savants.length + a.objets.length + a.livres.length, 1, "un seul déblocage d'un coup");
   assert.ok(b.savants.length + b.objets.length + b.livres.length <= 1);
   assert.ok(P.savants.hypatie && P.savants["ibn-al-haytham"], "le second savant vient ensuite");
@@ -1133,17 +1141,24 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.ok(CT.commentairesPar["theme_reussi@" + s.id] && CT.commentairesPar["theme_rate@" + s.id] && CT.commentairesPar["theme_jouer@" + s.id], "répliques " + s.id);
   });
   assert.ok(CT.competences.every(k => CT.succes.some(s => s.condition.type === "competence_maitrisee" && s.condition.id === k.id)), "un succès par compétence");
-  // Butin : sur une épreuve Cosmos, trois tirages sur quatre environ viennent du thème quand il y en a en attente.
-  let duTheme = 0, essais = 0;
-  for (let i = 0; i < 80; i++) {
-    const P = M.nouvellePartie(T);
-    P.journal = new Array(i).fill({ t: T, type: "quiz", xp: 1 });
-    CT.objets.filter(o => o.lot === 1).forEach(o => { P.gagnables["objets:" + o.id] = { famille: "objets", id: o.id, depuis: T }; });
-    const b = M.tirerButin(CT, P, { type: "quiz", comp: "astro.systeme" }, T + i, () => 0.01);
-    if (!b) continue;
-    essais++; if (M.themeDe(b.chose) === "cosmos") duTheme++;
+  // Victor (2026-11-08) : un objet ne tombe que sur l'épreuve ou la case qui le désigne, jamais ailleurs.
+  {
+    const o = CT.objets.find(x => x.condition && x.condition.type === "competence_maitrisee" && x.lot === 1), autre = CT.competences.find(k => k.id !== o.condition.id && !CT.objets.some(x => x.condition && x.condition.id === k.id));
+    let lies = 0, ailleurs = 0;
+    for (let i = 0; i < 40; i++) {
+      const P = M.nouvellePartie(T);
+      P.journal = new Array(i).fill({ t: T, type: "quiz", xp: 1 });
+      P.gagnables["objets:" + o.id] = { famille: "objets", id: o.id, depuis: T };
+      const b = M.tirerButin(CT, P, { type: "quiz", comp: o.condition.id }, T + i, () => 0.01);
+      if (b && b.chose.id === o.id) lies++;
+      const P2 = M.nouvellePartie(T);
+      P2.gagnables["objets:" + o.id] = { famille: "objets", id: o.id, depuis: T };
+      const b2 = M.tirerButin(CT, P2, { type: "quiz", comp: autre.id }, T + i, () => 0.01);
+      if (b2 && b2.chose.id === o.id) ailleurs++;
+    }
+    assert.ok(lies > 30, "l'objet tombe sur l'épreuve de sa compétence : " + lies);
+    assert.equal(ailleurs, 0, "jamais sur une autre épreuve");
   }
-  assert.ok(essais > 40 && duTheme / essais > 0.6 && duTheme / essais < 0.95, "butin du thème : " + duTheme + "/" + essais);
   // Aparté : avec un objet Cosmos et un objet Logique, l'IA sort surtout celui du thème.
   {
     const P = M.nouvellePartie(T); P.objets = { "lunette-galilee": T, "boulier": T };

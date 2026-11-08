@@ -809,7 +809,7 @@
   }
   function terminerQuiz(contenu, partie, id, resultats, t, infos) {
     var r = contenu.regles, c = partie.compteurs, k = contenu.parId[id];
-    ouvrirLot(partie, t, k && k.stat);
+    ouvrirLot(partie, t, k && k.stat); partie.lot.comp = id;
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
     var total = Math.max(resultats.length, (infos && infos.total) || 0);
     var reussi = bonnes / total >= r.quiz.seuil_maitrise - 1e-9;
@@ -882,7 +882,7 @@
   function terminerRappel(contenu, partie, id, resultats, t, infos) {
     var r = contenu.regles;
     var e = partie.competences[id];
-    ouvrirLot(partie, t, contenu.parId[id] && contenu.parId[id].stat);
+    ouvrirLot(partie, t, contenu.parId[id] && contenu.parId[id].stat); partie.lot.comp = id;
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
     var total = Math.max(resultats.length, (infos && infos.total) || 0);
     var reussi = bonnes >= r.rappels.bonnes_reponses_min;
@@ -3217,6 +3217,42 @@
   function themeActif(contenu, th) { return th && contenu.parStat[th] ? th : null; }
   function ouvrirLot(partie, t, theme) { partie.lot = { t: t, n: 0, r: 0, theme: theme || null }; }
   function lotDe(partie, t) { return partie.lot && partie.lot.t === t ? partie.lot : { t: t, n: 0, r: 0, theme: null }; }
+  // Victor (2026-11-08) : succès, personnages, objets et livres sont toujours liés à la case. Ce qu'un contenu
+  // désigne (une compétence, une case, une époque) doit être celui de la case du pion ou de l'épreuve qu'on vient de
+  // jouer ; sinon il attend d'y être. Les succès de comportement (séries, ratés, duels…) ne visent rien : ils tombent
+  // quand on les mérite.
+  function ici(contenu, partie, lot) {
+    var P = contenu.plateau, pl = partie.plateau, n = pl ? pl.position : null, k = P && n != null ? caseN(contenu, n) : null;
+    var comps = {}; ((P && P.competences_cases && P.competences_cases[n]) || []).forEach(function (id) { comps[id] = true; });
+    if (lot && lot.comp) comps[lot.comp] = true;
+    return { n: n, epoque: k ? k.epoque : null, comps: comps, gagnes: {} };
+  }
+  // null : la condition ne vise aucun contenu ; true/false : elle en vise un, celui d'ici ou un autre.
+  function condLiee(contenu, cond, la) {
+    if (!cond) return null;
+    switch (cond.type) {
+      case "competence_maitrisee": return !!la.comps[cond.id];
+      case "case_atteinte": case "case_visitee": return cond.n === la.n;
+      case "epoque_atteinte": var ke = caseN(contenu, cond.n); return cond.n === la.n || !!(ke && ke.epoque === la.epoque);
+      case "succes":
+        if (la.gagnes[cond.id]) return true;
+        var s2 = contenu.parSucces && contenu.parSucces[cond.id], prof = la.prof || 0;
+        if (!s2 || prof > 4) return null;
+        la.prof = prof + 1; var v2 = condLiee(contenu, s2.condition, la); la.prof = prof;
+        return v2;
+      case "toutes":
+        var r = (cond.conditions || []).map(function (c) { return condLiee(contenu, c, la); }).filter(function (v) { return v !== null; });
+        return r.length ? r.some(Boolean) : null;
+      default: return null;
+    }
+  }
+  function lieIci(contenu, x, la) {
+    if (!contenu.plateau || la.n == null) return true;
+    if (x.competence && la.comps[x.competence]) return true;
+    var v = condLiee(contenu, x.condition, la);
+    if (v === null) return !x.competence;
+    return v;
+  }
   function horsLot(lot, liste) { return lot.n ? liste.filter(function (b) { return !FAMILLES_LOT[b.famille]; }) : liste; }
   function compterLot(lot, famille) { if (FAMILLES_LOT[famille]) lot.n++; if (famille !== "evenements") lot.r = (lot.r || 0) + 1; }
   // v19 : tout ce qu'une épreuve montre à la fin (succès, savants, masques, objets, livres, accessoires, cadeaux) compte.
@@ -3257,6 +3293,7 @@
     partie.cadeauxCase = [];
     var lot = lotDe(partie, t);
     lot.r = (lot.r || 0) + nCadeaux;
+    var la = ici(contenu, partie, lot);
     var directes = [
       ["savants", contenu.avatar && contenu.avatar.savants ? contenu.avatar.savants : [], partie.savants || (partie.savants = {})],
       ["succes", contenu.succes, partie.succes],
@@ -3269,7 +3306,7 @@
         var liste = f[1];
         if (f[0] === "succes") {
           var place = (lot.cap || RECOMPENSES_PAR_EPREUVE) - (lot.r || 0);
-          liste = place <= 0 ? [] : liste.filter(function (x) { return !f[2][x.id] && conditionRemplie(contenu, partie, x.condition, t); });
+          liste = place <= 0 ? [] : liste.filter(function (x) { return !f[2][x.id] && lieIci(contenu, x, la) && conditionRemplie(contenu, partie, x.condition, t); });
           if (lot.theme) liste = liste.filter(function (x) { return themeDe(x) === lot.theme; }).concat(liste.filter(function (x) { return themeDe(x) !== lot.theme; }));
           // Les pionniers ouvrent un arbre : ils ne font jamais la queue.
           liste = liste.filter(function (x) { return x.ouvre; }).concat(liste.filter(function (x) { return !x.ouvre; }));
@@ -3278,9 +3315,11 @@
         liste.forEach(function (x) {
           if (f[2][x.id] || (FAMILLES_LOT[f[0]] && lot.n) || (f[0] !== "evenements" && lotPlein(lot)) || !conditionRemplie(contenu, partie, x.condition, t)) return;
           if (f[0] === "evenements" && !dateAtteinte(contenu, partie, x)) return;
+          if (f[0] === "savants" && !lieIci(contenu, x, la)) return;
           // Victor (2026-11-01) : une date d'un arbre éteint ne se débloque pas (la case qui la porte n'est pas sur la route).
           if (f[0] === "evenements" && x.stat && contenu.parStat && !contenu.parStat[x.stat]) return;
           f[2][x.id] = t; out[f[0]].push(x); change = true; compterLot(lot, f[0]);
+          if (f[0] === "succes") la.gagnes[x.id] = true;
           if (f[0] === "succes") { var cr = crediterSucces(contenu, partie, x); if (cr) out.credits.push(cr); }
         });
       });
@@ -3401,7 +3440,8 @@
       partie.maj = t;
       return livre;
     }
-    var ouvert = horsLot(lot, butinOuvert(contenu, partie)).filter(function (b) { return b.famille !== "livres"; });
+    var laB = ici(contenu, partie, lot); if (epreuve.comp) laB.comps[epreuve.comp] = true;
+    var ouvert = horsLot(lot, butinOuvert(contenu, partie)).filter(function (b) { return b.famille !== "livres" && (b.famille !== "objets" || lieIci(contenu, b.chose, laB)); });
     var fav = epreuve.type === "duel" ? null : faveurIA(contenu, partie, t);
     var assure = partie.butinAssure && epreuve.type !== "duel" && ouvert.length;
     if (assure) partie.butinAssure = false;
