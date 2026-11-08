@@ -2698,7 +2698,9 @@
     (p.vues || []).forEach(function (id) { vues[id] = true; });
     var dans = contenu.questions.filter(function (q) { return themes.indexOf(q.competence) >= 0; });
     var neuves = dans.filter(function (q) { return !vues[q.id]; });
-    var choix = neuves.length ? neuves : dans.length ? dans : contenu.questions;
+    var vu = croisees(contenu, partie), connues = contenu.questions.filter(function (q) { return vu[q.competence]; });
+    var choix = neuves.length ? neuves : dans.length ? dans : connues;
+    if (!choix.length) return null;
     p.q = choix[Math.floor((alea || Math.random)() * choix.length)].id;
     return contenu.questionParId[p.q];
   }
@@ -3059,11 +3061,21 @@
 
   // v28 : au mur sans grand-chose à relire, l'IA impose les fiches des compétences les plus fragiles :
   // les plus ratées ces 30 derniers jours, puis les maîtrisées au rappel le plus proche, puis les arbres ouverts.
+  // Victor (2026-11-08) : le mur ne parle que de ce que le joueur a croisé : une compétence jouée, ratée, ou dont il
+  // s'est arrêté sur la case. Jamais d'une case à venir.
+  function croisees(contenu, partie) {
+    var vu = {}, pl = partie.plateau || {}, cc = (contenu.plateau && contenu.plateau.competences_cases) || {};
+    Object.keys(partie.competences || {}).forEach(function (id) { vu[id] = true; });
+    (partie.oublis || []).forEach(function (e) { var q = contenu.questionParId && contenu.questionParId[e.q]; if (q) vu[q.competence] = true; });
+    Object.keys(pl.arrets || pl.visites || {}).forEach(function (n) { (cc[n] || []).forEach(function (id) { vu[id] = true; }); });
+    if (pl.position != null) (cc[pl.position] || []).forEach(function (id) { vu[id] = true; });
+    return vu;
+  }
   function fichesImposees(contenu, partie, t, n) {
-    var rates = {};
+    var rates = {}, vu = croisees(contenu, partie);
     (partie.oublis || []).forEach(function (e) { var q = contenu.questionParId && contenu.questionParId[e.q]; if (q && joursEntre(e.t, t) <= 30) rates[q.competence] = (rates[q.competence] || 0) + 1; });
     function poids(k) { var e = partie.competences[k.id]; return (rates[k.id] || 0) * 1e15 + (estMaitrisee(partie, k.id) ? 1e14 - Math.max(0, e.prochainRappel - t) / 1000 : 0); }
-    return contenu.competences.filter(function (k) { return k.fiche && arbreOuvert(contenu, partie, k.stat); })
+    return contenu.competences.filter(function (k) { return k.fiche && vu[k.id] && arbreOuvert(contenu, partie, k.stat); })
       .sort(function (a, b) { return poids(b) - poids(a) || (a.id < b.id ? -1 : 1); }).slice(0, n || 3);
   }
 

@@ -1388,7 +1388,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   P.faveur = { valeur: 80, maj: T + 4000 }; M.faveurIA(C, P, T + 4000);
   assert.equal(P.punition, null);
   assert.ok(M.migrer(JSON.parse(JSON.stringify(P)), C));
-  assert.equal(M.fichesImposees(C, P, T, 3).length, 3, "trois fiches imposées");
+  // Victor (2026-11-08) : seulement des compétences croisées (jouées, ratées ou dont on a vu la case), jamais à venir.
+  const avantJeu = M.fichesImposees(C, P, T, 3), cc = C.plateau.competences_cases, ici = cc[P.plateau.position] || [];
+  assert.ok(avantJeu.every(k => ici.includes(k.id)), "partie neuve : rien que la case de départ");
+  const jouees = C.competences.filter(k => k.fiche && !ici.includes(k.id)).slice(0, 3);
+  jouees.forEach(k => { P.competences[k.id] = { maitrise: false }; });
+  const fi = M.fichesImposees(C, P, T, 3);
+  assert.equal(fi.length, 3, "trois fiches imposées");
+  assert.ok(fi.every(k => P.competences[k.id] || ici.includes(k.id)), "fiches des compétences croisées seulement");
   console.log("OK : v28 chutes de faveur, peines au mur qui doublent");
 }
 
