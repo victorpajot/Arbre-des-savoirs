@@ -2102,8 +2102,8 @@ function demarrerJeu() {
       '<button type="button" class="btn sec large" data-a="fermer">' + (fermerLib || (document.querySelector(".quiz.atome .combat-q") ? __("← Retour au combat") : surQuiz ? __("← Retour au bilan") : __("Fermer"))) + "</button></div></div>");
     f.onclick = function (ev) {
       var a = ev.target.closest && ev.target.closest("[data-a]"), nom = a && a.getAttribute("data-a");
-      if (ev.target === f || nom === "fermer") fermerFeuille();
-      else if (nom && actions && actions[nom]) actions[nom]();
+      if (ev.target === f || nom === "fermer") { fermerFeuille(); if (actions && actions.apres) actions.apres(); }
+      else if (nom && nom !== "apres" && actions && actions[nom]) actions[nom]();
     };
     fermerFeuille(); feuille = f; document.getElementById("couche").appendChild(f);
     var fe = f.querySelector(".feuille"); if (fe.offsetHeight >= f.clientHeight - 2) fe.classList.add("pleine");
@@ -3055,8 +3055,8 @@ function demarrerJeu() {
     if (!atI && !enI && ici.replique && c.evoque && c.type !== "rappel" && c.raison === "case") rep = { texte: ici.replique, contexte: "jouer_case", theme: ici.stat, id: "case-" + ici.n };
     // Victor (2026-11-02) : un rappel ne parle pas de la case du pion : bandeau « Rappel » et, en tuiles, les cases d'où
     // viennent le ou les rappels (série : un rappel par tuile, celui-ci en avant).
-    var bandeau = !enI && !atI && c.type === "rappel" ? bandeauRappel(c, k) : enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Ennemi</div><h2>') + esc(tx(enI.nom)) + __(' garde la case</h2><p class="titre-en">') + esc(tx(enI.titre)) + "</p>" + (enI.qui ? "<p>" + esc(tx(enI.qui)) + "</p>" : "") + __('<p>Bats-le pour voir ce qu\'il y a dessous.</p></div>') : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + __('</div><div class="eyebrow">Ton pion est case ') + ici.n + __(' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>') : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
-      __('<div class="eyebrow">Ton pion est case ') + ici.n + " · " + pastilleDate(ici.annee) + "</div>" + titreCase(ici) + "<p>" + escD(tx(ici.histoire)) + "</p>" + rangeePersonnes(tx(ici.histoire)) + "</div>";
+    var bandeau = !enI && !atI && c.type === "rappel" ? bandeauRappel(c, k) : enI ? '<div class="case-jouer" style="--c:#D94141"><div class="vitrine grande">' + svgEnnemi(enI, 100) + __('</div><div class="eyebrow">Ton pion est case ') + cn(ici.n) + __(' · Ennemi</div><h2>') + esc(tx(enI.nom)) + __(' garde la case</h2><p class="titre-en">') + esc(tx(enI.titre)) + "</p>" + (enI.qui ? "<p>" + esc(tx(enI.qui)) + "</p>" : "") + __('<p>Bats-le pour voir ce qu\'il y a dessous.</p></div>') : atI ? '<div class="case-jouer" style="--c:#1565C0"><div class="vitrine grande">' + tuileAtome(C.atomes.elements[atI.z - 1], true, 120) + __('</div><div class="eyebrow">Ton pion est case ') + cn(ici.n) + __(' · Mendeleïev</div><h2>Un atome sauvage t\'attend</h2><p>Il bloque la case. Attrape-le ou laisse-le partir pour voir ce qu\'il y a dessous.</p><button type="button" class="btn large" data-a="atome" style="background:#1565C0">L\'affronter d\'abord</button></div>') : '<div class="case-jouer"' + (ici.stat ? ' style="--c:' + couleur(ici.stat) + '"' : "") + '><div class="vitrine grande">' + svgSprite(ici.icone, 120, tx(ici.titre)) + "</div>" +
+      __('<div class="eyebrow">Ton pion est case ') + cn(ici.n) + " · " + pastilleDate(ici.annee) + "</div>" + titreCase(ici) + "<p>" + escD(tx(ici.histoire)) + "</p>" + rangeePersonnes(tx(ici.histoire)) + "</div>";
     // v29 (Victor) : après la case, la phrase de l'IA, puis l'arbre choisi (icône, description, ton niveau) et l'épreuve.
     // Les savants et objets du thème passent à la fin.
     var nvA = M.niveau(C, M.xpParStat(C, P)[s.id] || 0), ferme = !M.arbreOuvert(C, P, s.id);
@@ -3079,11 +3079,14 @@ function demarrerJeu() {
     feuilleSimple('<div class="choix-ia">' + bandeau + blocArbre + blocEpreuve +
       __('<button type="button" class="btn large" data-a="go">C\'est parti</button>') +
       (c.raison === "serie" ? __('<button type="button" class="btn sec large" data-a="stop-serie">Arrêter la série (sans prime)</button>') : "") +
+      // Victor (2026-11-08) : avant l'épreuve, toujours de quoi ouvrir la masterclass de la compétence.
+      (aMasterclass(k) ? __('<button type="button" class="btn sec large" data-a="mc">Ouvrir la masterclass</button>') : "") +
       '<div id="ia-jouer"></div>' +
       (enI || atI ? "" : galerieTheme(c.type === "rappel" ? k.stat : ici.stat)) + "</div>", !enI && !atI && c.type === "rappel" ? __("Rappel") : __("Ta case"), {
       go: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true }); },
       atome: function () { fermerFeuille(); if (atI) combattreAtome(atI.z); },
       "stop-serie": function () { M.abandonnerSerie(P); sauver(); fermerFeuille(); ouvrirJouer(); },
+      mc: function () { fermerFeuille(); ouvrirMasterclass(k.id, null, __("← Retour à l'épreuve"), ouvrirJouer); },
     });
     feuille.querySelector("#ia-jouer").appendChild(comite(rep, true));
     brancherGalerie(feuille);
@@ -3104,7 +3107,7 @@ function demarrerJeu() {
       (i === 0 ? cs : kc ? [kc] : []).forEach(function (x) {
         if (i === 0) titres.push(gu(tx(x.titre)));
         tuiles += '<figure class="tuile-r' + (i === 0 ? " ici" : "") + '" style="--c:' + couleur(x.stat || comp.stat) + '"><div class="v">' + svgSprite(x.icone, 64, tx(x.titre)) +
-          "</div><figcaption><b>" + __("Case ") + x.n + "</b>" + esc(tx(x.titre)) + "</figcaption></figure>";
+          "</div><figcaption><b>" + __("Case ") + cn(x.n) + "</b>" + esc(tx(x.titre)) + "</figcaption></figure>";
       });
       if (!cs.length) tuiles += '<figure class="tuile-r' + (i === 0 ? " ici" : "") + '" style="--c:' + couleur(comp.stat) + '"><div class="v">' + badgeComp(comp, 64) + "</div><figcaption>" + esc(tx(comp.nom)) + "</figcaption></figure>";
     });
@@ -4583,7 +4586,7 @@ function demarrerJeu() {
       : quoi === "atome"
       ? '<svg viewBox="-12 -12 24 24" width="120" height="120" aria-hidden="true"><circle r="10.5" fill="' + COULEUR_SPECIAL.mendeleiev + '" stroke="#fff" stroke-width="2"/><g transform="scale(1.55)">' + PICTO_SPECIAL.mendeleiev + "</g></svg>"
       : '<svg viewBox="-12 -12 24 24" width="120" height="120" aria-hidden="true"><circle r="10.5" fill="#D94141" stroke="#fff" stroke-width="2"/><path d="M-4.6,-4.6 L4.6,4.6 M4.6,-4.6 L-4.6,4.6" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/></svg>';
-    var b = el('<div class="liberee"' + (k.stat ? ' style="--c:' + couleur(k.stat) + '"' : "") + __('><div class="eyebrow">Case ') + k.n + " · " + esc(formatAnnee(k.annee)) + '</div>' +
+    var b = el('<div class="liberee"' + (k.stat ? ' style="--c:' + couleur(k.stat) + '"' : "") + __('><div class="eyebrow">Case ') + cn(k.n) + " · " + esc(formatAnnee(k.annee)) + '</div>' +
       '<div class="scene-lib"><div class="sous">' + svgSprite(k.icone, 120, tx(k.titre)) + '</div><div class="couvercle">' + couv + "</div></div>" +
       __('<div class="grand">La case est libre !</div><div class="suite-lib"><h3>') + esc(nomCase(k)) + "</h3>" + (compDeCase(k) ? '<p class="sous-case">' + esc(tx(k.titre)) + "</p>" : "") + (k.stat ? pastilleTheme(k.stat) : "") + "<p>" + esc(tx(k.histoire)) + "</p></div></div>");
     return b;
@@ -6160,7 +6163,7 @@ function demarrerJeu() {
       return '<div class="illus mc-frise' + (aucun ? "" : " guidee") + '">' + c.outerHTML + "</div>";
     };
   }
-  function ouvrirMasterclass(id, rates, retour) {
+  function ouvrirMasterclass(id, rates, retour, apres) {
     var k = C.parId[id]; if (!aMasterclass(k)) return;
     // Imposée par l'IA (deux épreuves ratées de suite) : sa réplique en tête, et la consigne tombe au dernier chapitre.
     var imp = M.masterclassImposee(C, P); imp = imp && imp.id === id ? imp : null;
@@ -6214,7 +6217,8 @@ function demarrerJeu() {
       __('<p class="meta">Elles t\'attendent au mur de la honte : retente-les dès demain.</p>') });
     var n = 0, titre = __("Masterclass : ") + tx(k.nom);
     feuilleSimple('<div class="guide-z masterclass" style="--c:' + couleur(k.stat) + '"></div>', titre, {
-      prec: function () { if (n > 0) { n--; montrer(); } }, suiv: function () { if (n < etapes.length - 1) { n++; montrer(); } }
+      prec: function () { if (n > 0) { n--; montrer(); } }, suiv: function () { if (n < etapes.length - 1) { n++; montrer(); } },
+      apres: apres
     }, retour);
     // Victor (2026-11-01) : pendant la lecture, plus rien du jeu derrière : la feuille prend tout l'écran, quelle que soit l'étape.
     feuille.classList.add("opaque"); feuille.querySelector(".feuille").classList.add("pleine");
