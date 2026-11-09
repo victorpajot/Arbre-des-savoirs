@@ -801,6 +801,11 @@ body.plateau-plein { overflow: hidden; }
 .masterclass .mc-faux { color: var(--bad); margin: 4px 0; }
 .masterclass .mc-retenir { border-left: 4px solid #E0A800; padding: 6px 10px; background: color-mix(in srgb, #E0A800 12%, var(--surface)); border-radius: 6px; }
 .masterclass .mc-intro { margin: 4px 0 12px; }
+.masterclass .mc-plan { border: 1px solid var(--line); border-left: 4px solid var(--c, var(--accent)); border-radius: 6px; padding: 8px 12px; margin: 4px 0 12px; }
+.masterclass .mc-plan ol { margin: 4px 0 0; padding-left: 22px; }
+.masterclass .mc-bref { padding-left: 22px; margin: 8px 0; }
+.masterclass .mc-bref li { margin-bottom: 12px; padding: 6px 10px; border-left: 4px solid #E0A800; background: color-mix(in srgb, #E0A800 12%, var(--surface)); border-radius: 6px; }
+.masterclass .mc-bref li b { display: block; }
 /* Victor (2026-10-31) : une couleur par époque sur chaque date citée (moyen mnémotechnique). */
 :root { --ep-antiquite: #B5562B; --ep-moyen-age: #2556B8; --ep-renaissance: #2E8040; --ep-classique: #9A6E00; --ep-xixe: #56636F; --ep-xxe: #7B3FC4; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ep-antiquite: #E8946A; --ep-moyen-age: #7EA4FF; --ep-renaissance: #66CC78; --ep-classique: #EDBB45; --ep-xixe: #AEBBC8; --ep-xxe: #BC97FF; } }
@@ -6208,12 +6213,17 @@ function demarrerJeu() {
       var cles = (ch.cles || []).map(tx).sort(function (a, b) { return b.length - a.length; }), etatCles = { vus: {}, n: 0, max: 99 };
       var livres = livresEtape(ch.texte.map(tx).join(" "));
       // Victor (2026-11-03) : comme les questions, chaque étape porte son identifiant, pour les retours.
-      return { titre: tx(ch.titre), html: (ch.id ? '<p class="code-q">' + esc(k.id + "/" + ch.id) + "</p>" : "") + (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux, livres), cles, etatCles); }).join("") +
+      // Victor (2026-11-09) : pour mémoriser, l'étape 1 annonce le fil de la leçon (une idée par étape).
+      var plan = i === 0 && k.masterclass.chapitres.length > 1 ? '<div class="mc-plan"><b>' + __("Le fil de la leçon") + "</b><ol>" + k.masterclass.chapitres.map(function (c2) { return "<li>" + esc(tx(c2.titre)) + "</li>"; }).join("") + "</ol></div>" : "";
+      return { titre: tx(ch.titre), html: (ch.id ? '<p class="code-q">' + esc(k.id + "/" + ch.id) + "</p>" : "") + plan + (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux, livres), cles, etatCles); }).join("") +
         // Victor (2026-11-01) : un dessin en pixel art de l'instrument ou de l'objet dont parle l'étape (champ dessin).
         (ch.dessin ? htmlDessinQ({ id: ch.dessin }) : "") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
         __('<p class="mc-retenir"><b>À retenir</b>') + escD(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });
+    // Victor (2026-11-09) : la leçon se termine par tous ses « À retenir » réunis, à relire d'un coup d'œil.
+    if (k.masterclass.chapitres.length > 1) etapes.push({ titre: __("L'essentiel, en bref"), html: '<ol class="mc-bref">' + k.masterclass.chapitres.map(function (c2) {
+      return "<li><b>" + esc(tx(c2.titre)) + "</b>" + escD(tx(c2.retenir)) + "</li>"; }).join("") + "</ol>" });
     if (rates.length) etapes.push({ titre: rates.length > 1 ? __("Tes erreurs, corrigées") : __("Ton erreur, corrigée"), html: (frise ? frise(rates.map(function (x) {
       var q = C.questionParId[x.id]; return tx(q.enonce) + " " + (q.explication ? tx(q.explication) : ""); }).join(" ")) : "") + rates.map(function (x) { return blocQ(C.questionParId[x.id], x.rep); }).join("") +
       __('<p class="meta">Elles t\'attendent au mur de la honte : retente-les dès demain.</p>') });
