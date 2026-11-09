@@ -1937,7 +1937,7 @@ function demarrerJeu() {
   function libPeriode(p) { return p.charges.periode === "semaine" ? __("cette semaine") : __("aujourd'hui"); }
   function conditionPouvoirTexte(p) {
     var c = p.condition || {}, out = [];
-    if (c.succes) out.push(conditionTexte({ type: "succes", id: c.succes }));
+    if (c.succes && !M.succesAbsent(C, c.succes)) out.push(conditionTexte({ type: "succes", id: c.succes }));
     if (c.niveau_global != null) out.push(__("niveau global ") + c.niveau_global);
     if (c.niveau_stat) {
       var noms = c.niveau_stat.stats.map(function (id) { var s = C.regles.stats.filter(function (x) { return x.id === id; })[0]; return s ? tx(s.nom) : null; }).filter(Boolean);
@@ -2071,7 +2071,7 @@ function demarrerJeu() {
     var m = (rep.masque && C.ia.masques.filter(function (x) { return x.id === rep.masque; })[0]) || M.masquePourTon(C, P, expr, graine, theme);
     var tenuIA = P.objetIA && C.objets.filter(function (o) { return o.id === P.objetIA; })[0];
     var b = el('<div class="comite' + (petit ? " petit" : "") + '"><span class="masque">' + (m ? svgMasque(m, expr, petit ? 34 : 44) : "") + (tenuIA ? '<span class="tenu-ia">' + svgObjet(tenuIA, false, petit ? 16 : 20) + "</span>" : "") + '</span><div><div class="qui"></div><p></p></div></div>');
-    b.querySelector(".qui").innerHTML = esc(tx(C.narrateur) || __("L'IA")) + (m ? " <i>· " + esc(tx(m.nom)) + "</i>" : "");
+    b.querySelector(".qui").innerHTML = esc(tx(C.narrateur) || __("L'IA")) + (m && M.dramaturgie(C) ? " <i>· " + esc(tx(m.nom)) + "</i>" : "");
     // v20 : son humeur se lit au fond de chaque intervention, avec son nom en pastille.
     var fh = C.ia && C.ia.faveur ? M.faveurIA(C, P, maintenant()) : null;
     if (fh) {
@@ -3599,7 +3599,7 @@ function demarrerJeu() {
     var rdj = M.repliqueDuJour(C, P, t), mot = comite(rdj);
     if (mot && rdj) mot.setAttribute("data-contexte", rdj.contexte);
     // v10 : la bulle de l'IA ouvre sa fiche, dans l'onglet IA du personnage ; sa faveur s'affiche dessous.
-    function versIA() { if (mot && mot.getAttribute("data-contexte") === "mur_honte") { ouvrirHonte(); return; } vue = "perso"; ongletPerso = "ia"; rendre(); window.scrollTo(0, 0); }
+    function versIA() { if (mot && /(^|\.)(mur_)?honte$/.test(mot.getAttribute("data-contexte") || "")) { ouvrirHonte(); return; } if (!M.dramaturgie(C)) return; vue = "perso"; ongletPerso = "ia"; rendre(); window.scrollTo(0, 0); }
     // Victor (2026-11-01) : l'accueil commence par ce qu'on joue : ce qui retient le pion (ultimatum, duel, atome, piège,
     // masterclass, Chrono), puis le plateau et Jouer ; ensuite Alyca, le mur de la honte, et le personnage en dernier.
     if (P.ultimatum) v.appendChild(blocUltimatum());
@@ -3618,7 +3618,7 @@ function demarrerJeu() {
       v.appendChild(bp);
     }
     if (mot) {
-      mot.classList.add("cliquable"); mot.setAttribute("role", "button"); mot.setAttribute("tabindex", "0"); mot.setAttribute("aria-label", __("Ouvrir la fiche de l'IA"));
+      if (M.dramaturgie(C) || /(^|\.)(mur_)?honte$/.test(mot.getAttribute("data-contexte") || "")) { mot.classList.add("cliquable"); mot.setAttribute("role", "button"); mot.setAttribute("tabindex", "0"); mot.setAttribute("aria-label", __("Ouvrir la fiche de l'IA")); }
       var fm = faveurMini(t); if (fm) mot.querySelector("div").appendChild(fm);
       mot.onclick = versIA;
       mot.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); versIA(); } };
@@ -3827,7 +3827,7 @@ function demarrerJeu() {
       vb.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); vb.onclick(); } };
     }
     // v10 : le personnage se range en onglets ; l'IA et les ennemis y ont leur place.
-    var onglets = [["avatar", __("Avatar")]].concat(C.ia ? [["ia", M.nomIA(C, P) || __("IA")]] : []).concat(C.ennemis.length ? [["ennemis", __("Ennemis")]] : []).concat([["reglages", __("Réglages")]]);
+    var onglets = [["avatar", __("Avatar")]].concat(M.dramaturgie(C) ? [["ia", M.nomIA(C, P) || __("IA")]] : []).concat(C.ennemis.length ? [["ennemis", __("Ennemis")]] : []).concat([["reglages", __("Réglages")]]);
     if (!onglets.some(function (o) { return o[0] === ongletPerso; })) ongletPerso = "avatar";
     var seg = el('<div class="segments' + (onglets.length > 5 ? " deux-rangs" : "") + __('" role="group" aria-label="Rubrique du personnage"></div>'));
     onglets.forEach(function (o) {
@@ -7649,6 +7649,9 @@ function demarrerJeu() {
         var ecart = cr.n - cr.base, pl = function (n) { return n + __(" crédit") + (Math.abs(n) > 1 ? "s" : ""); };
         var calcul = ecart ? "+" + pl(cr.base) + ' <span class="' + (ecart > 0 ? "plus" : "moins") + '">' + (ecart > 0 ? "+" : "−") + Math.abs(ecart) + __("</span> (décision de l'IA) = <b>") + pl(cr.n) + "</b>" : "<b>+" + pl(cr.n) + __("</b> (l'IA s'en tient au tarif)");
         carte.appendChild(el('<div class="gain-credits"><div class="ligne-bourse">' + svgBourse(44) + '<div class="calcul">' + calcul + "</div></div><p>" + gu(esc(tx(cr.mot))) + "</p></div>"));
+      } else if (cr && cr.n) {
+        // Sans dramaturgie : le tarif du succès, sans commentaire.
+        carte.appendChild(el('<div class="gain-credits"><div class="ligne-bourse">' + svgBourse(44) + '<div class="calcul"><b>+' + cr.n + __(" crédit") + (cr.n > 1 ? "s" : "") + "</b></div></div></div>"));
       }
       out.push(marquerTheme(carte, sc, te));
     });
@@ -8047,17 +8050,20 @@ function demarrerJeu() {
       var requis = (m.requiert || []).filter(function (r) { return r !== "socle"; }).map(function (r) {
         var x = INDEX.packs.filter(function (y) { return y.id === r; })[0]; return x ? tx(x.nom) : r;
       });
-      var aAllumer = !M.allumeParDefaut(m), par = eteints[m.id] && off.indexOf(m.id) < 0 && !(aAllumer && off.indexOf("+" + m.id) < 0);
+      var aAllumer = !M.allumeParDefaut(m), force = off.indexOf("+" + m.id) >= 0;
+      var ecarte = !force && off.indexOf(m.id) < 0 && M.packsEcartes(INDEX, eteints).indexOf(m.id) >= 0;
+      var par = eteints[m.id] && off.indexOf(m.id) < 0 && !(aAllumer && !force) && !ecarte;
       var l = el('<label class="interrupteur" style="margin-top:10px"><span><b>' + esc(tx(m.nom)) + "</b> " + (m.ajoute ? '<span class="badge-ext">' + __("ajouté") + "</span> " : "") +
         '<span class="note">' + (m.sorte === "jeu" ? __("jeu") : __("domaine")) + " · " + esc(m.version) + "</span><br>" +
         '<span class="note">' + esc(tx(m.description)) + (requis.length ? __(" Demande : ") + esc(requis.join(", ")) + "." : "") + (par ? __(" <b>Éteint avec un pack dont il dépend : le cocher le rallume.</b>") : "") +
+        (ecarte ? __(" <b>Les domaines allumés s'en passent : le cocher l'ajoute quand même.</b>") : "") +
         '</span></span><input type="checkbox"></label>');
       var cb = l.querySelector("input"); cb.checked = !eteints[m.id];
       cb.onchange = function () {
         var o = off.filter(function (x) { return x !== m.id && x !== "+" + m.id; });
         // Victor (2026-11-03) : cocher un pack (un donjon, par exemple) coche aussi les domaines qu'il demande.
         if (cb.checked) o = M.allumerPack(INDEX, o, m.id);
-        else if (aAllumer) { /* déjà retiré */ } else o.push(m.id);
+        else if (!M.packsEteints(INDEX, o)[m.id]) o.push(m.id);
         // La liste suit chaque clic : sans cela, le clic suivant repartait de la liste d'origine et n'éteignait qu'un pack.
         off = o; changer(o);
       };

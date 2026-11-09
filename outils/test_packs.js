@@ -73,6 +73,70 @@ for (const id of packs) {
   console.log("OK : réglages des packs (éteint par défaut, réglages communs), quel que soit le pack");
 }
 
+// Victor (2026-11-09) : le jeu est modulable. La dramaturgie d'Alyca et les succès généraux sont des packs de jeu ; un
+// domaine dit de quels jeux il se passe (« sans »), et le noyau se joue sans eux.
+{
+  const domaines = index.packs.filter(m => m.sorte === "domaine").map(m => m.id);
+  const cpSeul = domaines.filter(id => id !== "cp").concat(["+cp"]);
+  const off = M.packsEteints(index, cpSeul);
+  for (const id of ["dramaturgie", "succes"]) assert.ok(off[id], `CP seul : ${id} écarté`);
+  assert.ok(!M.packsEteints(index, cpSeul.concat(["+dramaturgie"])).dramaturgie, "le joueur la rallume (« +dramaturgie »)");
+  assert.ok(!M.packsEteints(index, ["+cp"]).dramaturgie, "avec un domaine qui ne l'écarte pas, elle reste");
+  assert.ok(!M.packsEteints(index, []).dramaturgie && !M.packsEteints(index, []).succes, "partie d'adulte : rien ne change");
+  assert.deepEqual(M.allumerPack(index, cpSeul, "dramaturgie").filter(x => /dramaturgie/.test(x)), ["+dramaturgie"], "allumerPack note « +id » pour un pack écarté");
+  // La règle tient au manifeste : n'importe quel domaine peut écarter n'importe quel pack de jeu.
+  const fictif = { packs: index.packs.concat([{ id: "ce1", sorte: "domaine", reglages: { allume: false, sans: ["atomes"] }, requiert: ["socle"] }]) };
+  const ce1Seul = domaines.concat(["+ce1"]);
+  assert.ok(M.packsEteints(fictif, ce1Seul).atomes && !M.packsEteints(fictif, ce1Seul).dramaturgie);
+  assert.ok(M.packsEteints(fictif, ce1Seul.filter(x => x !== "cp").concat(["+cp"])).atomes, "CE1 et CP d'accord sur les atomes : écartés");
+  assert.ok(!M.packsEteints(fictif, ["+ce1"]).atomes, "un domaine qui garde les atomes suffit à les garder");
+
+  // Dramaturgie éteinte : ses clés quittent ia.json, ses listes aussi ; le noyau garde un masque et un narrateur sobre.
+  const C = S.contenu(brut, ["dramaturgie"]);
+  assert.ok(complet.ia.faveur && complet.ia.alyca && complet.ia.masques_jour && complet.ia.credits.pots && M.dramaturgie(complet));
+  for (const k of ["faveur", "alyca", "masques_jour"]) assert.ok(!(k in C.ia), `dramaturgie éteinte : ia.${k} encore là`);
+  for (const k of ["humeurs", "pots", "agacement", "ultimatum", "emplettes", "verdicts"]) assert.ok(!(k in C.ia.credits), `ia.credits.${k} encore là`);
+  assert.ok(C.ia.credits.bareme && C.ia.credits.boutique.articles.length, "les crédits et la boutique restent au noyau");
+  assert.ok(!C.ia.credits.boutique.articles.some(a => a.id === "masque"), "plus de masque en boutique");
+  assert.ok(!M.dramaturgie(C) && C.ia.masques.length >= 1 && C.ia.masques.every(m => !m.condition), "il ne reste que les masques de base");
+  assert.ok(!C.apartes.length && !C.surnoms && !(C.avatar.tenues_farce || []).length);
+  assert.ok(!C.commentairesPar.faveur_comblee && !C.commentairesPar.pot_radin && C.commentairesPar.accueil.length);
+  const t0 = new Date(2026, 9, 1, 9).getTime(), P = M.nouvellePartie(t0);
+  P.options = { tousArbres: true, packsOff: ["dramaturgie"] };
+  assert.equal(M.tonDe(C, P), "sobre"); assert.equal(M.tonDe(complet, P), null);
+  assert.ok(/^sobre-/.test(M.replique(C, P, ["quiz_reussi"], () => 0).id), "le narrateur parle sobrement");
+  P.options.reglages = { ton: "enfant" }; assert.equal(M.tonDe(C, P), "enfant", "un ton choisi passe avant"); delete P.options.reglages;
+  let t = S.jouer(C, P, 60, t0, S.graine(3));
+  assert.ok(!P.faveur && !P.alyca && !P.punition && !P.ultimatum && !P.farce, "aucune trace de la dramaturgie dans la partie");
+  assert.deepEqual(Object.keys(P.masques || {}).filter(id => id !== C.ia.masques[0].id), [], "aucun masque gagné");
+  assert.equal(M.faveurIA(C, P, t), null); assert.equal(M.jeuFerme(C, P, t), false);
+  assert.equal(M.potPossible(C, P, 5, t).ok, false); assert.equal(M.tenterUltimatum(C, P, t, () => 0), null);
+  assert.deepEqual(M.masquesDuJour(C, P, t), []);
+  // Un ultimatum ou une peine en suspens dorment pendant que la dramaturgie est éteinte, et reviennent avec elle.
+  const P2 = M.nouvellePartie(t0); P2.ultimatum = { demande: 50, niveaux: 2, depuis: t0 }; P2.punition = { restant: 60000, total: 60000, palier: "boudeuse", rang: 2, depuis: t0, n: 1 };
+  M.accorderPartie(C, P2); assert.ok(!P2.ultimatum && !P2.punition && P2.veille.ultimatum && P2.veille.punition);
+  M.accorderPartie(complet, P2); assert.ok(P2.ultimatum && P2.punition);
+
+  // Succès généraux éteints : chaque domaine garde les siens, les crédits tombent toujours.
+  const CS = S.contenu(brut, ["succes"]), generaux = Object.keys(index.proprietaires["succes.json/succes"]).filter(k => index.proprietaires["succes.json/succes"][k] === "succes");
+  assert.ok(generaux.length >= 80 && generaux.every(id => !CS.parSucces[id]) && CS.succes.length > 100);
+  assert.ok(M.succesAbsent(CS, "premier-pas") && !M.succesAbsent(complet, "premier-pas"));
+  const tn = complet.avatar.creation.tenues.filter(x => x.condition && x.condition.type === "succes" && generaux.indexOf(x.condition.id) >= 0)[0];
+  if (tn) { const P3 = M.nouvellePartie(t0); assert.ok(M.tenueDebloquee(CS, P3, tn) && !M.tenueDebloquee(complet, P3, tn), "tenue gardée par un succès absent : libre"); }
+
+  // CP seul : le jeu le plus simple. Ni faveur, ni succès généraux, ni ennemis, ni atomes ; les succès du CP restent.
+  const CP = S.contenu(brut, cpSeul);
+  assert.ok(!M.dramaturgie(CP) && !CP.ennemis.length && !CP.atomes && CP.succes.length && CP.succes.every(s => index.proprietaires["succes.json/succes"][s.id] === "cp"));
+  const P4 = M.nouvellePartie(t0); P4.options = { packsOff: cpSeul, reglages: M.reglagesDesPacks(index, off) };
+  assert.equal(M.tonDe(CP, P4), "enfant");
+  S.jouer(CP, P4, 80, t0, S.graine(7));
+  assert.ok(!P4.faveur && !P4.duel && Object.keys(P4.succes).every(id => CP.parSucces[id]));
+  // Sans dramaturgie, un succès verse son tarif tel quel.
+  const verses = Object.keys(P4.credits.parSucces).map(id => P4.credits.parSucces[id]);
+  assert.ok(verses.length && verses.every(cr => cr.mot === null && cr.n === cr.base), "tarif versé sans humeur ni commentaire");
+  console.log("OK : jeu modulable (dramaturgie, succès généraux, réglage « sans », narrateur sobre, CP seul)");
+}
+
 // Boutique : un pack éteint retire ses articles.
 assert.ok(!M.articleDe(S.contenu(brut, ["atomes"]), "relance") && M.articleDe(complet, "relance"));
 assert.ok(!M.articleDe(S.contenu(brut, ["ennemis"]), "chasser"));

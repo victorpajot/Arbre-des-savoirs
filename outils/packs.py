@@ -154,16 +154,22 @@ def numeroter(cases):
 
 # --- Fusion --------------------------------------------------------------------------------------------------------
 
-def fusionner(cible, frag, pack, chemin, proprietaires, fichier):
+def fusionner(cible, frag, pack, chemin, proprietaires, fichier, cles=None):
+    """`cles` (liste) : un pack de jeu qui écrit dans un fichier partagé avec le socle y note les clés qu'il crée ;
+    éteint en jeu, ces clés disparaissent (ia.json › faveur pour la dramaturgie)."""
     for k, v in frag.items():
         ch = chemin + (k,)
         if k not in cible:
+            if cles is not None:
+                cles.append("/".join(ch))
+                cible[k] = v
+                continue
             cible[k] = [] if isinstance(v, list) else {} if isinstance(v, dict) else v
             if not isinstance(v, (list, dict)):
                 continue
         a = cible[k]
         if isinstance(a, dict) and isinstance(v, dict):
-            fusionner(a, v, pack, ch, proprietaires, fichier)
+            fusionner(a, v, pack, ch, proprietaires, fichier, cles)
         elif isinstance(a, list) and isinstance(v, list):
             if pack != "socle":
                 p = proprietaires.setdefault(fichier + "/" + "/".join(ch), {})
@@ -241,13 +247,19 @@ def assembler(packs=None, ecrire_data=True):
     if not packs or packs[0].get("sorte") != "socle":
         raise ErreurPack("le pack socle est introuvable")
     donnees, proprietaires, fondamentaux = {f: {} for f in FICHIERS_DATA}, {}, []
+    # Les fichiers de data/ où le socle écrit : un pack de jeu n'y possède que les clés qu'il ajoute (index « cles »).
+    partages = {fichier for fichier, _, _ in fragments(packs[0])}
+    cles_packs = {}
     for m in packs:
-        for fichier, frag, _ in fragments(m):
+        for fichier, frag, nom in fragments(m):
+            cles = None
+            if m.get("sorte") == "jeu" and nom.startswith("donnees/") and fichier in partages:
+                cles = cles_packs.setdefault(m["id"], {}).setdefault(fichier, [])
             if fichier == "regles.json" and "stats" in frag:
                 # Un arbre ouvert dès le départ le dit lui-même ; regles.arbres_fondamentaux en est la liste.
                 frag = {**frag, "stats": [{k: v for k, v in s.items() if k != "fondamental"} for s in frag["stats"]]}
                 fondamentaux += [s["id"] for s in lire_liste(m, "arbres.json") if s.get("fondamental")]
-            fusionner(donnees[fichier], frag, m["id"], (), proprietaires, fichier)
+            fusionner(donnees[fichier], frag, m["id"], (), proprietaires, fichier, cles)
     donnees["regles.json"]["arbres_fondamentaux"] = fondamentaux
     # L'ordre historique des listes (socle/ordre.json) : le jeu prend parfois le premier élément qui convient, il ne doit
     # donc pas changer d'un assemblage à l'autre. Ce qui n'y figure pas suit, dans l'ordre des packs.
@@ -280,7 +292,9 @@ def assembler(packs=None, ecrire_data=True):
     # Un pack de jeu possède ses fichiers de data/ en entier (atomes.json…) : éteint en jeu, le fichier disparaît.
     index = {"format": 1,
              "packs": [{k: v for k, v in m.items() if not k.startswith("_")}
-                       | ({"fichiers": [n.split("/")[1] for _, _, n in fragments(m) if n.startswith("donnees/")]} if m.get("sorte") == "jeu" else {})
+                       | ({"fichiers": [n.split("/")[1] for _, _, n in fragments(m) if n.startswith("donnees/") and n.split("/")[1] not in partages]}
+                          if m.get("sorte") == "jeu" else {})
+                       | ({"cles": cles_packs[m["id"]]} if m["id"] in cles_packs else {})
                        for m in packs],
              "proprietaires": proprietaires}
     if ecrire_data:
@@ -328,7 +342,7 @@ CHAMPS_MANIFESTE = {"format": int, "id": str, "sorte": str, "version": str, "nom
                     "auteurs": list, "licence": str, "langue_source": str}
 
 
-REGLAGES = {"allume", "ton", "voix", "texte", "ultimatum", "vol", "mur"}
+REGLAGES = {"allume", "ton", "voix", "texte", "ultimatum", "vol", "mur", "sans"}
 
 
 def verifier(packs=None, cibles=None):
@@ -365,6 +379,10 @@ def verifier(packs=None, cibles=None):
         rg = m.get("reglages", {})
         for k in set(rg) - set(REGLAGES):
             err(m, f"pack.json : réglage « {k} » inconnu (connus : {', '.join(sorted(REGLAGES))})")
+        # « sans » : les packs de jeu dont ce pack se passe (éteints tant que tous les domaines allumés s'en passent).
+        for x in rg.get("sans", []) if isinstance(rg.get("sans", []), list) else [None]:
+            if x not in ids or ids[x].get("sorte") != "jeu" or x in accessibles(m, ids):
+                err(m, f"pack.json : réglage « sans » : « {x} » doit être un pack de jeu présent, que ce pack ne requiert pas")
         if rg.get("ton"):
             # Un ton demande ses répliques, au socle ou dans un pack : au moins l'accueil et la passe-partout.
             ctxs = {r.get("contexte") for x in packs for r in lire_liste(x, "repliques.json")}
@@ -634,7 +652,9 @@ def liens_condition(m, nom, ident, cond, comps, arbres, succes):
         out.append(f"[{m['id']}] {nom} › {ident} : la condition vise la compétence « {cond.get('id')} », introuvable")
     if t == "succes" and cond.get("id") not in succes:
         out.append(f"[{m['id']}] {nom} › {ident} : la condition vise le succès « {cond.get('id')} », introuvable")
-    if t in ("branche_complete", "quiz_parfaits_stat", "niveau_stat") and cond.get("stat", cond.get("id")) not in arbres:
+    # « niveau_stat » sans arbre : n'importe lequel (succès généraux).
+    if t in ("branche_complete", "quiz_parfaits_stat", "niveau_stat") and cond.get("stat", cond.get("id")) not in arbres \
+            and not (t == "niveau_stat" and "stat" not in cond and "id" not in cond):
         out.append(f"[{m['id']}] {nom} › {ident} : la condition vise l'arbre « {cond.get('stat', cond.get('id'))} », inconnu")
     return out
 

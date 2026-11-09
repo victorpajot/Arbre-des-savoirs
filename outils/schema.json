@@ -3446,6 +3446,16 @@
          "type": "string"
         }
        },
+       "cles": {
+        "type": "object",
+        "description": "Pack de jeu : les clés qu'il ajoute dans un fichier de data/ partagé avec le socle (fichier → chemins). Éteint, elles disparaissent.",
+        "additionalProperties": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       },
        "reglages": {
         "type": "object",
         "description": "Réglages que le pack propose à la partie (M.REGLAGES) : une nouvelle partie prend ceux sur lesquels tous ses domaines allumés s'accordent.",
@@ -3458,6 +3468,13 @@
           "type": "string",
           "pattern": "^[a-z]+$",
           "description": "Ton d'Alyca : ses répliques « ton.<ton>.<moment> »."
+         },
+         "sans": {
+          "type": "array",
+          "description": "Les packs de jeu dont ce pack se passe : ils restent éteints tant que tous les domaines allumés s'en passent (le joueur peut les rallumer).",
+          "items": {
+           "type": "string"
+          }
          },
          "voix": {
           "type": "boolean"

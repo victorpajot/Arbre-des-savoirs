@@ -173,7 +173,7 @@ def main():
     if narr["masques"][0].get("condition"):
         erreurs.append("ia.json : le premier masque doit être porté dès le début, sans condition")
     seuils = [m["condition"]["n"] for m in narr["masques"] if m.get("condition", {}).get("type") == "succes_obtenus"]
-    precis = [m for m in narr["masques"] if m.get("condition", {}).get("type") in ("succes", "tours_plateau")]
+    precis = [m for m in narr["masques"] if m.get("condition", {}).get("type") in ("succes", "tours_plateau", "rang_maitrise")]
     if len(seuils) + 1 < 12 or len(precis) < 12:
         erreurs.append(f"ia.json : {len(seuils) + 1} masques par paliers et {len(precis)} par succès précis, 12 de chaque attendus")
     if seuils != sorted(seuils):

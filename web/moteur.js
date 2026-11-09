@@ -146,13 +146,30 @@
     liste.forEach(function (m) { if (!allumeParDefaut(m) && (demandes || []).indexOf("+" + m.id) < 0) off[m.id] = true; });
     (demandes || []).forEach(function (id) { if (id.charAt(0) !== "+") off[id] = true; });
     delete off.socle;
-    while (change) {
-      change = false;
-      liste.forEach(function (m) {
-        if (!off[m.id] && m.sorte !== "socle" && (m.requiert || []).some(function (r) { return off[r]; })) { off[m.id] = true; change = true; }
-      });
+    function propager() {
+      change = true;
+      while (change) {
+        change = false;
+        liste.forEach(function (m) {
+          if (!off[m.id] && m.sorte !== "socle" && (m.requiert || []).some(function (r) { return off[r]; })) { off[m.id] = true; change = true; }
+        });
+      }
     }
+    propager();
+    // Victor (2026-11-09) : un domaine dit de quels jeux il se passe (« reglages »: { « sans »: [« dramaturgie »] }). Tant que
+    // tous les domaines allumés s'en passent, ce jeu reste éteint ; le joueur le rallume comme un pack éteint par défaut (« +id »).
+    packsEcartes(index, off).forEach(function (id) { if ((demandes || []).indexOf("+" + id) < 0) off[id] = true; });
+    propager();
     return off;
+  }
+  // Les packs de jeu dont tous les domaines allumés se passent (`off` : les packs déjà éteints).
+  function packsEcartes(index, off) {
+    var liste = (index && index.packs) || [];
+    var doms = liste.filter(function (m) { return m.sorte === "domaine" && !off[m.id]; });
+    if (!doms.length) return [];
+    return liste.filter(function (m) {
+      return m.sorte === "jeu" && doms.every(function (d) { return ((d.reglages && d.reglages.sans) || []).indexOf(m.id) >= 0; });
+    }).map(function (m) { return m.id; });
   }
 
   // `donnees` : { "regles.json": …, "skills.json": … } tels que chargés. Renvoie une copie sans les packs éteints.
@@ -180,6 +197,16 @@
       });
     });
     (index.packs || []).forEach(function (m) { if (off[m.id]) (m.fichiers || []).forEach(function (f) { d[f] = null; }); });
+    // Un pack de jeu qui écrit dans un fichier du socle n'y possède que ses clés (« cles » de l'index) : éteint, elles partent.
+    (index.packs || []).forEach(function (m) {
+      if (off[m.id] && m.cles) Object.keys(m.cles).forEach(function (f) {
+        m.cles[f].forEach(function (ch) {
+          var parts = ch.split("/"), o = d[f];
+          for (var i = 0; i < parts.length - 1 && o; i++) o = o[parts[i]];
+          if (o) delete o[parts[parts.length - 1]];
+        });
+      });
+    });
     function cleDe(x) { return x && (x.id !== undefined ? String(x.id) : x.n !== undefined ? String(x.n) : x.z !== undefined ? String(x.z) : null); }
     Object.keys(proprios).forEach(function (ou) {
       var parts = ou.split("/"), o = d[parts[0]];
@@ -213,6 +240,9 @@
       pl.competences_cases[n] = pl.competences_cases[n].filter(function (c) { return comps[c]; });
     });
     if (d["succes.json"]) d["succes.json"].succes = d["succes.json"].succes.filter(function (s) { return !s.ouvre || stats[s.ouvre]; });
+    // Sans masques du jour (dramaturgie éteinte), le narrateur ne porte que ses masques de base, ceux qui ne se gagnent pas.
+    var ia = d["ia.json"];
+    if (ia && ia.masques && !ia.masques_jour) ia.masques = ia.masques.filter(function (m) { return !m.condition; });
     return d;
   }
 
@@ -299,6 +329,13 @@
       else if (actif && v[cle] !== undefined) { if (!plein) partie[cle] = v[cle]; delete v[cle]; }
     }
     garer("duel", contenu.ennemis.length > 0, null);
+    // La dramaturgie éteinte, ce qu'Alyca tenait en suspens dort aussi : son ultimatum et la peine au mur ne bloquent pas le jeu.
+    garer("ultimatum", dramaturgie(contenu), null);
+    garer("punition", dramaturgie(contenu), null);
+    garer("farce", dramaturgie(contenu), null);
+    garer("humeurPerso", dramaturgie(contenu), null);
+    garer("objetIA", dramaturgie(contenu), null);
+    garer("emplettes", dramaturgie(contenu), []);
     garer("sauvages", !!contenu.atomes, []);
     // Une révision forcée sur une compétence d'un pack éteint dort aussi : elle bloquerait le pion.
     var rv = partie.revision;
@@ -345,6 +382,15 @@
   //   mur       : le nom du mur de la honte (« revisions »)
   var REGLAGES = ["ton", "voix", "texte", "ultimatum", "vol", "mur"];
   function reglage(partie, cle) { var r = partie && partie.options && partie.options.reglages; return r ? r[cle] : undefined; }
+  // Le ton du narrateur : celui que la partie a choisi ; sinon, sans dramaturgie (pas de faveur), un ton sobre, qui dit
+  // les choses sans se moquer. Avec la dramaturgie, null : c'est Alyca qui parle, sur son ton à elle.
+  var TON_SOBRE = "sobre";
+  function dramaturgie(contenu) { return !!(contenu && contenu.ia && contenu.ia.faveur); }
+  function tonDe(contenu, partie) {
+    var ton = reglage(partie, "ton");
+    if (ton) return ton;
+    return contenu.ia && !dramaturgie(contenu) && (contenu.commentairesPar["ton." + TON_SOBRE + ".defaut"] || []).length ? TON_SOBRE : null;
+  }
   // Victor (2026-11-03) : allumer un pack allume aussi ce qu'il demande (récursivement) ; un donjon coché coche ses domaines.
   function allumerPack(index, demandes, id) {
     var liste = (index && index.packs) || [], out = (demandes || []).slice(), vus = {};
@@ -352,8 +398,9 @@
       if (vus[x] || x === "socle") return; vus[x] = true;
       var m = liste.filter(function (y) { return y.id === x; })[0]; if (!m) return;
       out = out.filter(function (d) { return d !== x && d !== "+" + x; });
-      if (!allumeParDefaut(m)) out.push("+" + x);
       (m.requiert || []).forEach(allumer);
+      // Encore éteint une fois ce qu'il demande allumé : il l'est par défaut (« allume »: false) ou les domaines s'en passent (« sans »).
+      if (packsEteints(index, out)[x]) out.push("+" + x);
     })(id);
     return out;
   }
@@ -2443,7 +2490,7 @@
 
   function cadeauPossible(contenu, partie, id, t) {
     var o = (contenu.objets || []).filter(function (x) { return x.id === id; })[0];
-    if (!o || !o.cadeau || !partie.objets[id]) return { ok: false, raison: "inconnu" };
+    if (!o || !o.cadeau || !partie.objets[id] || !dramaturgie(contenu)) return { ok: false, raison: "inconnu" };
     // v10 : un objet déjà offert peut l'être de nouveau après quelques jours ; l'IA s'en lasse et n'en donne que la moitié.
     var F = contenu.ia && contenu.ia.faveur, dernier = partie.cadeaux.donnes[id];
     if (dernier && (!F || joursEntre(dernier, t) < F.lassitude_jours)) return { ok: false, raison: "recent", jours: F ? F.lassitude_jours - joursEntre(dernier, t) : null };
@@ -2519,7 +2566,13 @@
     var base = tarifSucces(contenu, sc), g = K.genres[sc.condition && sc.condition.type] || "jalon";
     var h = hacher(sc.id + "|" + (partie.cree || 0) + "|" + (partie.journal ? partie.journal.length : 0)), r = (h % 1000) / 1000;
     var humeur, mots, facteur;
-    if (g === "honte" && r < K.honte.chance) { humeur = "honte"; facteur = K.honte.facteur; mots = K.honte.mots; }
+    // Sans dramaturgie (pas d'humeurs), le tarif est versé tel quel, sans commentaire.
+    if (!K.humeurs || !K.humeurs.length) {
+      partie.credits.solde += base; partie.credits.gagnes += base;
+      partie.credits.parSucces[sc.id] = { n: base, base: base, humeur: null, mot: null };
+      return { succes: sc.id, n: base, base: base, humeur: null, mot: null };
+    }
+    if (g === "honte" && K.honte && r < K.honte.chance) { humeur = "honte"; facteur = K.honte.facteur; mots = K.honte.mots; }
     else {
       var fav = partie.faveur ? partie.faveur.valeur : 60, col = fav >= 75 ? 3 : fav >= 45 ? 2 : fav >= 20 ? 1 : 0;
       var total = 0; K.humeurs.forEach(function (x) { total += x.poids[col]; });
@@ -2561,7 +2614,7 @@
     return { perte: perte, avant: avant, apres: faveurIA(contenu, partie, t) };
   }
   function potPossible(contenu, partie, montant, t) {
-    if (!contenu.ia || !contenu.ia.credits) return { ok: false, raison: "inconnu" };
+    if (!contenu.ia || !contenu.ia.credits || !contenu.ia.credits.pots) return { ok: false, raison: "inconnu" };
     if (partie.credits.jour === cleJour(t)) return { ok: false, raison: "jour" };
     montant = Math.floor(Number(montant));
     if (!(montant > 0)) return { ok: false, raison: "montant" };
@@ -3522,15 +3575,20 @@
   function tenueDebloquee(contenu, partie, tn) {
     if (!tn) return false;
     if (tn.depart || !tn.condition) return true;
+    // Une tenue ou un pouvoir gardé par un succès que le jeu n'a pas (son pack est éteint) n'attend pas ce succès.
+    if (tn.condition.type === "succes" && succesAbsent(contenu, tn.condition.id)) return true;
     return tn.condition.type === "succes" && !!(partie.succes || {})[tn.condition.id];
   }
+  function succesAbsent(contenu, id) { return !!(contenu && contenu.parSucces && !contenu.parSucces[id]); }
   // Les tenues gagnées pas encore annoncées (seulement une fois le personnage créé) ; marquées vues.
   function annoncerTenues(contenu, partie, t) {
     var cr = contenu.avatar && contenu.avatar.creation; if (!cr || !partie.apparence) return [];
     partie.tenues = partie.tenues || {};
     return cr.tenues.filter(function (tn) {
       if (tn.depart || partie.tenues[tn.id] || !tenueDebloquee(contenu, partie, tn)) return false;
-      partie.tenues[tn.id] = t; return true;
+      partie.tenues[tn.id] = t;
+      // Libre faute de succès : elle est simplement là, sans annonce.
+      return !(tn.condition && tn.condition.type === "succes" && succesAbsent(contenu, tn.condition.id));
     });
   }
   // Selon son humeur du moment, Alyca confisque une tenue gagnée ou un accessoire (boudeuse, furieuse), ou dore ta tenue
@@ -3580,7 +3638,7 @@
   }
   function conditionPouvoir(contenu, partie, c) {
     if (!c) return true;
-    if (c.succes && !(partie.succes || {})[c.succes]) return false;
+    if (c.succes && !succesAbsent(contenu, c.succes) && !(partie.succes || {})[c.succes]) return false;
     if (c.niveau_global != null && niveauGlobal(contenu, partie) < c.niveau_global) return false;
     if (c.niveau_stat) {
       var nv = niveauArbres(contenu, partie, c.niveau_stat.stats);
@@ -3850,7 +3908,8 @@
   // v25 : elle ne remplace plus le personnage par un savant ; elle impose un accessoire ou repeint ses vêtements
   // (`avatar.tenues_farce`). `theme` (facultatif) : une tenue du thème de l'épreuve ratée a la priorité, une fois sur deux.
   function tenterFarce(contenu, partie, t, alea, theme) {
-    if (!contenu.avatar) return null;
+    // Les farces sont un tour d'Alyca : sans dramaturgie, personne ne touche au personnage.
+    if (!contenu.avatar || !dramaturgie(contenu)) return null;
     alea = alea || Math.random;
     if (alea() >= CHANCE_FARCE) return null;
     var pool = [];
@@ -3931,7 +3990,7 @@
   function replique(contenu, partie, contextes, alea, vars, theme) {
     alea = alea || Math.random;
     // v27 : furieuse, elle ne plaisante plus. Chaque moment prend sa version sèche, sans ligne d'arbre.
-    var fav = faveurIA(contenu, partie, maintenant(partie)), ton = reglage(partie, "ton"), furieuse = !ton && !!(fav && fav.palier.id === "furieuse");
+    var fav = faveurIA(contenu, partie, maintenant(partie)), ton = tonDe(contenu, partie), furieuse = !ton && !!(fav && fav.palier.id === "furieuse");
     for (var i = 0; i < contextes.length; i++) {
       var ctx = contextes[i], lignes = contenu.commentairesPar[ctx];
       if (ton) {
@@ -3994,7 +4053,7 @@
     else if (fv && fv.fermee && contenu.commentairesPar.faveur_nulle) ctx = "faveur_nulle";
     else if (fv && partie.faveur.remontee === cleJour(t) && contenu.commentairesPar.faveur_remontee) ctx = "faveur_remontee";
     else if (fv && fv.palier.id === "furieuse" && ctx !== "faveur_furieuse") ctx = FURIEUSE[ctx] === null ? ctx : "furieuse_" + (FURIEUSE[ctx] || "defaut");
-    var ton = reglage(partie, "ton"), cp = contenu.commentairesPar, pre = "ton." + ton + ".";
+    var ton = tonDe(contenu, partie), cp = contenu.commentairesPar, pre = "ton." + ton + ".";
     if (ton && cp[pre + "accueil"]) ctx = partie.punition && cp[pre + "mur_force"] ? pre + "mur_force" :
       ctx === "mur_honte" && cp[pre + "honte"] ? pre + "honte" : cp[pre + ctx] ? pre + ctx : pre + "accueil";
     var lignes = contenu.commentairesPar[ctx] || contenu.commentairesPar.accueil;
@@ -4006,7 +4065,7 @@
     choisirLangue: choisirLangue, langue: langue, TX: TX, __: __, ordinalSiecle: ordinalSiecle, traduireChaines: traduireChaines,
     FORMAT_PARTIE: FORMAT_PARTIE,
     indexerContenu: indexerContenu,
-    reglage: reglage, REGLAGES: REGLAGES, allumeParDefaut: allumeParDefaut, allumerPack: allumerPack, reglagesDesPacks: reglagesDesPacks,
+    reglage: reglage, tonDe: tonDe, dramaturgie: dramaturgie, packsEcartes: packsEcartes, succesAbsent: succesAbsent, REGLAGES: REGLAGES, allumeParDefaut: allumeParDefaut, allumerPack: allumerPack, reglagesDesPacks: reglagesDesPacks,
     packsEteints: packsEteints, filtrerPacks: filtrerPacks, verifierPaquet: verifierPaquet, ajouterPaquet: ajouterPaquet, ajouterTextes: ajouterTextes, packDe: packDe, accorderPartie: accorderPartie,
     maintenant: maintenant,
     debutJour: debutJour,

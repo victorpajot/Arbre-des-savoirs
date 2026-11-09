@@ -16,11 +16,18 @@ Il existe trois sortes de packs (`"sorte"` dans `pack.json`) :
 
 | Sorte | Rôle | Exemples |
 | --- | --- | --- |
-| `socle` | Le tronc commun : règles, plateau, Alyca et ses masques, avatar, interface. Un seul, toujours actif. | `socle` |
+| `socle` | Le noyau : règles, plateau, quiz, rappels, avatar, boutique, un narrateur sobre. Un seul, toujours actif, le plus petit possible. | `socle` |
 | `domaine` | Un ou plusieurs arbres de compétences, avec tout ce qui les accompagne. **C'est ce que ce guide apprend à écrire.** | `logique`, `cosmos`, `musique`… |
-| `jeu` | Un jeu du plateau (contenu dans `donnees/`). Leur code est encore dans `web/moteur.js` : un nouveau pack de jeu demande donc aussi du code. | `atomes`, `ennemis` |
+| `jeu` | Une couche de jeu qu'on peut retirer : un jeu du plateau, la dramaturgie d'Alyca, les succès généraux (contenu dans les fichiers du pack et `donnees/`). Leur code est encore dans `web/moteur.js` : un nouveau pack de jeu demande donc aussi du code. | `atomes`, `ennemis`, `dramaturgie`, `succes` |
 
 Le joueur peut éteindre chaque pack (sauf le socle) dans **Personnage › Réglages › Packs**. Un pack éteint disparaît du jeu ; ceux qui le requièrent s'éteignent avec lui ; la progression est conservée et revient quand on le rallume.
+
+**Le jeu est modulable** (Victor, 2026-11-09) : tout ce qui n'est pas indispensable pour apprendre vit dans un pack de jeu, que la partie garde ou non.
+
+- `dramaturgie` : l'arc d'Alyca. Sa faveur et ses humeurs, les masques du jour, les farces, les cadeaux, les pots-de-vin, l'ultimatum, ses emplettes, la peine au mur, le nom qu'elle révèle, ses apartés et surnoms. Éteint, le narrateur parle sur le ton `sobre` (répliques `ton.sobre.<moment>` du socle), sans humeur ni masque à gagner.
+- `succes` : les succès qui ne dépendent d'aucun domaine, avec les savants et accessoires qu'ils débloquent. Éteint, il reste les succès de chaque domaine ; une tenue ou un pouvoir gardé par un succès absent n'attend plus ce succès.
+- Un pack de jeu qui écrit dans un fichier du socle (`donnees/ia.json` de `dramaturgie`) n'y possède que **les clés qu'il ajoute** (`cles` dans `data/packs.json`) : éteint, elles disparaissent, et le moteur lit leur absence (`M.dramaturgie(contenu)`). Les éléments de liste (masques, répliques, succès…) suivent leur pack comme toujours.
+- Un nouveau morceau de jeu qu'on veut pouvoir retirer suit la même voie : ses données dans un pack de jeu, et dans le moteur un seul test sur leur présence, jamais sur l'id d'un pack.
 
 ## 2. Démarrage rapide
 
@@ -71,7 +78,8 @@ Pour voir le pack dans le jeu : `node mobile/construire.js`, puis servir `mobile
   - `texte` : `"grand"` = gros caractères, « Oui » et « Non » au lieu de « Vrai » et « Faux ».
   - `ultimatum`, `vol` : `false` = pas d'ultimatum d'Alyca, pas de vol de crédits par un ennemi vainqueur.
   - `mur` : `"revisions"` = le mur de la honte s'appelle « Révisions » (chrono et rattrapage gardés).
-  Exemple, le pack CP : `"reglages": {"allume": false, "ton": "enfant", "voix": true, "texte": "grand", "ultimatum": false, "vol": false, "mur": "revisions"}`. Rien à toucher dans le moteur ni dans l'interface pour un autre pack qui veut les mêmes réglages ; un réglage vraiment nouveau s'ajoute une fois pour toutes dans `M.REGLAGES` (moteur.js), `REGLAGES` (outils/packs.py) et le schéma.
+  - `sans` : la liste des packs de jeu dont ce pack se passe, par exemple `["dramaturgie", "succes"]`. Tant que **tous** les domaines allumés s'en passent, ces packs restent éteints ; le joueur peut les rallumer (le jeu note `+id`), et ils reviennent d'eux-mêmes dès qu'un domaine allumé ne les écarte pas. C'est ainsi qu'un pack obtient un jeu plus simple, sans rien toucher au moteur.
+  Exemple, le pack CP : `"reglages": {"allume": false, "ton": "enfant", "voix": true, "texte": "grand", "ultimatum": false, "vol": false, "mur": "revisions", "sans": ["dramaturgie", "succes", "ennemis", "atomes"]}`. Rien à toucher dans le moteur ni dans l'interface pour un autre pack qui veut les mêmes réglages ; un réglage vraiment nouveau s'ajoute une fois pour toutes dans `M.REGLAGES` (moteur.js), `REGLAGES` (outils/packs.py) et le schéma (`sans` n'est lu que par `M.packsEteints`).
 - **Textes** : partout, un texte est un objet `{"fr": "…"}` dans la langue source du pack (`langue_source`). Les traductions ne vont pas à côté mais dans `langues/` (section 8).
 
 ## 4. Les fichiers d'un pack domaine
