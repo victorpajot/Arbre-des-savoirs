@@ -3660,15 +3660,18 @@ function demarrerJeu() {
   ].join("|"), "g");
   function dater(html) {
     if (!C.plateau || !C.plateau.epoques || !html) return html;
-    return html.replace(RE_DATES, function (m, sR, sN, av, an, mR, mN) {
+    return html.replace(RE_DATES, function (m, sR, sN, av, an, mR, mN, pos, tout) {
       var a, avJC = /av\.|BC/.test(m);
+      // Victor (2026-11-10, chim.metaux/fer) : « entre le IXe siècle et 550 av. J.-C. », « du VIe au IVe siècle av. J.-C. ».
+      // Le « av. J.-C. » de la fin vaut pour les deux bornes : la première est aussi avant notre ère.
+      if (!avJC && typeof tout === "string" && /^\s*(?:siècle\s*|century\s*)?(?:et|au|à|ou|and|to|or|[-–])\s+(?:le\s+|la\s+|the\s+)?[^.;:()<]{0,24}?(?:av\.\s*J|BC)/.test(tout.slice(pos + m.length))) avJC = true;
       if (sR) { var n = romain(sR); if (!n || n > 21) return m; a = avJC ? -(n - 1) * 100 - 50 : (n - 1) * 100 + 50; }
       else if (sN) { a = avJC ? -(+sN - 1) * 100 - 50 : (+sN - 1) * 100 + 50; }
       // « 3500-3350 av. J.-C. » : toute la fourchette est colorée, à la couleur de sa première année.
       else if (av) a = -parseInt(av.split(/[-–]/)[0].replace(/\D/g, ""), 10);
       // Sans « av. J.-C. », un millénaire à partir du IIIe ne peut être qu'avant notre ère.
       else if (mR || mN) { var k = mR ? romain(mR) : +mN; if (!k || k > 12) return m; a = (avJC || k >= 3) ? -(k - 1) * 1000 - 500 : (k - 1) * 1000 + 500; }
-      else if (an) { a = +an; if (a > new Date().getFullYear() + 1) return m; }
+      else if (an) { a = avJC ? -an : +an; if (a > new Date().getFullYear() + 1) return m; }
       else return m;
       var e = epoqueDe(a); if (!e) return m;
       var nombre = sR || sN || av || an || mR || mN, i = m.indexOf(nombre), avant = m.slice(0, i), reste = m.slice(i);
