@@ -2127,7 +2127,11 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.ile(CI, PI, ti).quartiers.reduce((s, q) => s + q.installations.length, 0), CI.competences.length);
   assert.ok(new Set(M.ile(CI, PI, ti).quartiers.find(q => q.id === "ville").installations.map(x => x.stat)).size > 1, "un quartier reçoit plusieurs arbres");
   // Sans installation écrite, une compétence va dans le quartier de son arbre : l'électricité à la centrale.
-  assert.ok(M.ile(CI, PI, ti).quartiers.find(q => q.id === "centrale").installations.some(x => x.comp === "elec.torpille"));
+  { const sans = JSON.parse(JSON.stringify(d("ile.json"))); sans.installations = sans.installations.filter(x => x.comp !== "elec.torpille");
+    const CS = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ile: sans });
+    assert.ok(M.ile(CS, PI, ti).quartiers.find(q => q.id === "centrale").installations.some(x => x.comp === "elec.torpille" && !x.propre)); }
+  // Chaque compétence a son installation écrite (nom et usage), dans un quartier choisi pour elle.
+  assert.ok(M.ile(CI, PI, ti).quartiers.every(q => q.installations.every(x => x.propre && x.usage)), "toutes les installations sont écrites");
   assert.equal(M.ile(CI, PI, ti).quartiers.filter(q => q.centre).length, 1);
   assert.equal(M.ile(CI, PI, ti).habitants, 0);
   assert.equal(inst("phys.machines").etat, "friche"); assert.ok(inst("phys.machines").usage && inst("phys.machines").dessin);

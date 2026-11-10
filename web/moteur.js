@@ -208,7 +208,7 @@
         });
       });
     });
-    function cleDe(x) { return x && (x.id !== undefined ? String(x.id) : x.n !== undefined ? String(x.n) : x.z !== undefined ? String(x.z) : null); }
+    function cleDe(x) { return x && (x.id !== undefined ? String(x.id) : x.n !== undefined ? String(x.n) : x.z !== undefined ? String(x.z) : x.comp !== undefined ? String(x.comp) : null); }
     Object.keys(proprios).forEach(function (ou) {
       var parts = ou.split("/"), o = d[parts[0]];
       for (var i = 1; i < parts.length - 1 && o; i++) o = o[parts[i]];
@@ -250,9 +250,9 @@
   var EMPLACEMENTS_PAQUET = ["regles.json/stats", "skills.json/competences", "skills.json/figures", "questions.json/questions", "succes.json/succes",
     "succes.json/dessins", "objets.json/objets", "avatar.json/savants", "avatar.json/portraits", "avatar.json/accessoires", "avatar.json/tenues_farce", "ia.json/masques",
     "bibliotheque.json/livres", "frise.json/evenements", "commentaires.json/commentaires", "commentaires.json/apartes", "ia.json/credits/piques",
-    "plateau.json/cases", "plateau.json/competences_cases", "ennemis.json/mythes", "ia.json/credits/boutique/articles"];
+    "plateau.json/cases", "plateau.json/competences_cases", "ennemis.json/mythes", "ia.json/credits/boutique/articles", "ile.json/installations"];
   function ajouterTextes(dico) { Object.keys(dico || {}).forEach(function (k) { if (DICO[k] == null) DICO[k] = dico[k]; }); }
-  function cleElement(x) { return x && typeof x === "object" && (x.id !== undefined ? String(x.id) : x.n !== undefined ? String(x.n) : x.z !== undefined ? String(x.z) : null); }
+  function cleElement(x) { return x && typeof x === "object" && (x.id !== undefined ? String(x.id) : x.n !== undefined ? String(x.n) : x.z !== undefined ? String(x.z) : x.comp !== undefined ? String(x.comp) : null); }
   function lieu(donnees, fichier, chemin, creer) {
     var o = donnees[fichier];
     if (!o) return null;

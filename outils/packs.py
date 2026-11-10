@@ -89,7 +89,7 @@ def ecrire(p, d):
 def cle(x):
     """L'identifiant d'un élément de liste : son id, le numéro d'une case, le numéro atomique, ou le texte lui-même."""
     if isinstance(x, dict):
-        for k in ("id", "n", "z"):
+        for k in ("id", "n", "z", "comp"):
             if k in x:
                 return str(x[k])
         return None
