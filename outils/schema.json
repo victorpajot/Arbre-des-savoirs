@@ -4262,6 +4262,19 @@
          "minimum": 1
         }
        }
+      },
+      "monument": {
+       "type": "object",
+       "additionalProperties": false,
+       "description": "Un monument se bâtit quand assez de dates de son époque ont été retrouvées au Chrono.",
+       "properties": {
+        "dates": {
+         "type": "integer"
+        },
+        "habitants": {
+         "type": "integer"
+        }
+       }
       }
      }
     },
@@ -4317,6 +4330,25 @@
           "usage": {
            "$ref": "#/$defs/texte",
            "description": "Fiction du jeu, pas un fait sourcé."
+          },
+          "materiaux": {
+           "type": "array",
+           "description": "Atomes à capturer (jeu de Mendeleïev) pour ouvrir ce chantier, en plus des installations.",
+           "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+             "z"
+            ],
+            "properties": {
+             "z": {
+              "type": "integer"
+             },
+             "raison": {
+              "$ref": "#/$defs/texte"
+             }
+            }
+           }
           }
          }
         }
@@ -4396,6 +4428,34 @@
      "additionalProperties": {
       "type": "string",
       "pattern": "^data:image/"
+     }
+    },
+    "monuments": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "epoque",
+       "quartier",
+       "nom",
+       "usage"
+      ],
+      "properties": {
+       "epoque": {
+        "type": "string"
+       },
+       "quartier": {
+        "type": "string"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "usage": {
+        "$ref": "#/$defs/texte",
+        "description": "Fiction du jeu, pas un fait sourcé."
+       }
+      }
      }
     }
    }

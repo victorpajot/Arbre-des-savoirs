@@ -1412,10 +1412,56 @@
     contenu._planIle = plan;
     return plan;
   }
+  // L'année d'une chose datée du Chrono, d'après sa clé (« frise:id », « livre:id », « savant:id », « objet:id »).
+  function anneeChrono(contenu, cle) {
+    if (!contenu._anneesChrono) {
+      var A = contenu._anneesChrono = {};
+      (contenu.evenements || []).forEach(function (e) { if (e.annee != null) A["frise:" + e.id] = { annee: e.annee, titre: e.titre }; });
+      (contenu.livres || []).forEach(function (l) { if (l.annee != null) A["livre:" + l.id] = { annee: l.annee, titre: l.titre }; });
+      (contenu.objets || []).forEach(function (o) { if (o.annee != null) A["objet:" + o.id] = { annee: o.annee, titre: o.nom }; });
+      (contenu.avatar && contenu.avatar.savants || []).forEach(function (v) { var a = lireAnnees(v.annees); if (a) A["savant:" + v.id] = { annee: a.debut, titre: v.nom }; });
+    }
+    return contenu._anneesChrono[cle] || null;
+  }
+  // Victor (2026-11-10) : le Chrono bâtit les monuments de l'île. Un par époque du plateau : il se dresse quand
+  // `regles.monument.dates` choses de cette époque ont été datées juste au moins une fois, et porte leurs noms.
+  function monumentsIle(contenu, partie) {
+    var L = contenu.ile.monuments || [], ep = contenu.plateau && contenu.plateau.epoques;
+    if (!L.length || !ep || !reglesChrono(contenu)) return [];
+    var R = contenu.ile.regles.monument || {}, seuil = R.dates || 3, fiches = (partie.siecles && partie.siecles.fiches) || {};
+    var par = {};
+    Object.keys(fiches).forEach(function (cle) {
+      if (!fiches[cle].justes) return;
+      var a = anneeChrono(contenu, cle); if (!a) return;
+      var e = ep.filter(function (x) { return (x.debut == null || a.annee >= x.debut) && (x.fin == null || a.annee <= x.fin); })[0];
+      if (e) (par[e.id] || (par[e.id] = [])).push({ cle: cle, titre: a.titre, annee: a.annee });
+    });
+    return L.map(function (m) {
+      var e = ep.filter(function (x) { return x.id === m.epoque; })[0]; if (!e) return null;
+      var dates = (par[m.epoque] || []).sort(function (a, b) { return a.annee - b.annee; });
+      return { epoque: m.epoque, nomEpoque: e.nom, quartier: m.quartier, nom: m.nom, usage: m.usage, dates: dates, seuil: seuil, bati: dates.length >= seuil, habitants: R.habitants || 30 };
+    }).filter(Boolean);
+  }
+  // Ce qu'un atome capturé apporte à l'île : les chantiers dont il est un matériau.
+  function chantiersDe(contenu, partie, z, t) {
+    if (!ilePresente(contenu)) return [];
+    var out = [];
+    ile(contenu, partie, t).quartiers.forEach(function (q) {
+      q.options.forEach(function (o) { var m = o.materiaux.filter(function (x) { return x.z === z; })[0]; if (m) out.push({ quartier: q.id, nomQuartier: q.nom, couleur: q.couleur, nom: o.nom, raison: m.raison, ouverte: o.ouverte, pret: o.pret, installations: o.installations, marche: q.marche }); });
+    });
+    return out;
+  }
+  // Les atomes que les chantiers attendent encore.
+  function materiauxAttendus(contenu, partie) {
+    var z = {};
+    if (ilePresente(contenu) && contenu.atomes) (contenu.ile.quartiers || []).forEach(function (q) { (q.options || []).forEach(function (o) { (o.materiaux || []).forEach(function (m) { if (!estCapture(partie, m.z)) z[m.z] = true; }); }); });
+    return z;
+  }
   function ile(contenu, partie, t) {
     if (!ilePresente(contenu)) return null;
     var H = contenu.ile.regles.habitants, total = 0, capacite = 0, plan = planIle(contenu), ouverts = {};
     var oj = partie.ile && partie.ile.jour === cleJour(t) ? partie.ile : null;
+    var mons = monumentsIle(contenu, partie);
     var quartiers = (contenu.ile.quartiers || []).map(function (q) {
       var hab = 0, cap = 0, marche = 0, posees = 0, ouvert = false;
       var inst = plan.parQuartier[q.id].map(function (x) {
@@ -1431,11 +1477,23 @@
         return { comp: x.comp, stat: x.stat, rang: x.rang, nom: x.nom, usage: x.usage, dessin: x.dessin, propre: x.propre, etat: etat, habitants: h };
       });
       // Les options du quartier s'ouvrent par paliers d'installations qui tournent ; chacune attire du monde.
+      // Victor (2026-11-10) : certains chantiers demandent aussi des matériaux, des atomes précis à capturer au jeu
+      // de Mendeleïev. Les chantiers s'ouvrent dans l'ordre : pas de bibliothèque avant l'école.
+      var precedente = true;
       var options = (q.options || []).map(function (o) {
-        var ok = marche >= o.installations;
+        var pret = marche >= o.installations;
+        var mats = contenu.atomes ? (o.materiaux || []).map(function (m) {
+          var e = contenu.atomes.elements.filter(function (x) { return x.z === m.z; })[0];
+          return e ? { z: m.z, nom: e.nom, symbole: e.symbole, raison: m.raison || null, capture: estCapture(partie, m.z) } : null;
+        }).filter(Boolean) : [];
+        var ok = precedente && pret && mats.every(function (m) { return m.capture; });
+        precedente = ok;
         if (ok) hab += H.option; cap += H.option;
-        return { nom: o.nom, usage: o.usage, installations: o.installations, ouverte: ok };
+        return { nom: o.nom, usage: o.usage, installations: o.installations, ouverte: ok, pret: pret, materiaux: mats };
       });
+      // Les monuments du quartier : bâtis quand assez de dates de leur époque ont été retrouvées au Chrono.
+      var monuments = mons.filter(function (m) { return m.quartier === q.id; });
+      monuments.forEach(function (m) { cap += m.habitants; if (m.bati) hab += m.habitants; });
       // Les habitants ne viennent pas sur un chantier (Victor, 2026-11-10 : « il faut créer un lieu propice pour eux ») :
       // un quartier n'est habitable qu'une fois son premier palier ouvert. Avant, ses installations tournent à vide.
       var habitable = !options.length || options[0].ouverte;
@@ -1444,7 +1502,7 @@
       // Le lieu grandit par stades (Victor, 2026-11-10 : « d'abord la place du marché du village », pas la ville d'emblée) :
       // son nom est celui du stade atteint, un par option ouverte.
       var stade = options.filter(function (o) { return o.ouverte; }).length, noms = q.stades || [];
-      return { habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, stade: stade, nomFinal: q.nom, nom: noms[stade] || q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: posees > 0, ouvert: ouvert || posees > 0, installations: inst,
+      return { monuments: monuments, habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, stade: stade, nomFinal: q.nom, nom: noms[stade] || q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: posees > 0, ouvert: ouvert || posees > 0, installations: inst,
         options: options, posees: posees, marche: marche, habitants: hab, capacite: cap };
     });
     // Un piège déclenché a fait fuir des habitants (Victor, 2026-11-10) : ils manquent partout, à proportion, jusqu'à leur retour.
@@ -1456,7 +1514,7 @@
         q.habitants = Math.round(q.habitants * part); total += q.habitants;
       });
     }
-    return { quartiers: quartiers, habitants: total, capacite: capacite, exil: exil };
+    return { quartiers: quartiers, habitants: total, capacite: capacite, exil: exil, monuments: mons };
   }
   // Piège déclenché : une part des habitants quitte l'île. Renvoie combien sont partis (0 si l'île est vide).
   function exodeIle(contenu, partie, t) {
@@ -2231,7 +2289,9 @@
     // v19 : en début de parcours, les éléments du début du tableau (les plus faciles) sortent surtout.
     // L'échelle s'élargit avec la progression : au premier tour, case 7 → surtout z ≤ 12 ; à partir du 2e tour, presque tout.
     var pl = partie.plateau, prog = pl ? (pl.tours || 0) + (pl.route && pl.route.length > 1 ? (pl.idx || 0) / (pl.route.length - 1) : 0) : 2, echelle = 6 + 45 * prog;
-    var poids = libres.map(function (e) { return A.raretes[e.rarete].poids * Math.exp(-(e.z - 1) / echelle) * 1000; }), total = poids.reduce(function (a, b) { return a + b; }, 0);
+    // Les matériaux qu'un chantier de l'île attend passent devant : au moins le poids d'un élément facile, et six fois le leur.
+    var attendus = materiauxAttendus(contenu, partie);
+    var poids = libres.map(function (e) { var p = A.raretes[e.rarete].poids * Math.exp(-(e.z - 1) / echelle) * 1000; return attendus[e.z] ? Math.max(p * 6, A.raretes[e.rarete].poids * 400) : p; }), total = poids.reduce(function (a, b) { return a + b; }, 0);
     var x = tirage(String(t) + "|" + n + "|" + partie.journal.length + "|" + attente.length, 1000000) / 1000000 * total;
     for (var i = 0; i < libres.length; i++) { x -= poids[i]; if (x < 0) return libres[i]; }
     return libres[libres.length - 1];
@@ -2428,7 +2488,7 @@
     var dep = suiteTrajet(contenu, partie, s, t);
     var apres = verifierRecompenses(contenu, partie, t), rec = fusionRec(avant, apres);
     partie.maj = t;
-    return { avantPlateau: avant, apresPlateau: apres, plateau: dep, capture: capture, element: s.element, bonnes: bonnes, total: R.questions, premiere: premiere, fiche: f, recompenses: rec, agacement: ag, indice: !!indice,
+    return { chantiers: capture ? chantiersDe(contenu, partie, s.element.z, t) : [], avantPlateau: avant, apresPlateau: apres, plateau: dep, capture: capture, element: s.element, bonnes: bonnes, total: R.questions, premiere: premiere, fiche: f, recompenses: rec, agacement: ag, indice: !!indice,
       captures: Object.keys(partie.atomes).filter(function (z) { return partie.atomes[z].capture; }).length };
   }
 
@@ -3201,6 +3261,12 @@
       out.recompenses = out.avantPlateau = verifierRecompenses(contenu, partie, t);
       out.apresPlateau = { succes: [], objets: [], accessoires: [], savants: [], evenements: [], livres: [], masque: null, gagnables: [], credits: [] };
     }
+    // L'île : les monuments auxquels cette partie a ajouté une date (une chose datée juste pour la première fois).
+    var nouvelles = {}; j.questions.forEach(function (q, i) { var f = s.fiches[q.cle]; if (j.reponses[i].verdict === "juste" && f && f.justes === 1) nouvelles[q.cle] = true; });
+    out.monuments = (ilePresente(contenu) ? monumentsIle(contenu, partie) : []).map(function (m) {
+      var n = m.dates.filter(function (x) { return nouvelles[x.cle]; }).length;
+      return n ? { epoque: m.epoque, nomEpoque: m.nomEpoque, nom: m.nom, usage: m.usage, quartier: m.quartier, dates: m.dates.length, seuil: m.seuil, ajoutees: n, bati: m.bati, inaugure: m.bati && m.dates.length - n < m.seuil, habitants: m.habitants } : null;
+    }).filter(Boolean);
     partie.maj = t;
     return out;
   }

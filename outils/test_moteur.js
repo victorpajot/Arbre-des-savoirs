@@ -2227,5 +2227,25 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const rr = M.terminerRappel(CI, PX, id, M.tirerQuestions(CI, PX, id, 3).map(q => ({ id: q.id, correct: true })), ti);
     assert.equal(PX.exil, exilAvant - RP.retour); assert.equal(rr.ile.revenus, RP.retour);
     PX.exil = 1e9; assert.equal(M.ile(CI, PX, ti).habitants, 0, "jamais moins de zéro"); }
+  // Chantiers à matériaux et monuments (Victor, 2026-11-10) : contenu complet, avec atomes et plateau.
+  { const CT = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+      { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ile: d("ile.json"), atomes: d("atomes.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ia: d("ia.json") });
+    const PT = M.nouvellePartie(ti);
+    CT.competences.forEach(k => { PT.competences[k.id] = { maitrise: true, prochainRappel: ti + 30 * 86400000, palier: 1, xp: 1 }; });
+    const port = () => M.ile(CT, PT, ti).quartiers.find(q => q.id === "port");
+    assert.ok(port().options[0].ouverte && !port().options[1].ouverte && port().options[1].pret, "sans son matériau, le chantier reste fermé");
+    assert.ok(!port().options[2].ouverte, "les chantiers s'ouvrent dans l'ordre");
+    const zs = d("ile.json").quartiers.flatMap(q => q.options.flatMap(o => (o.materiaux || []).map(m => m.z)));
+    assert.ok(zs.every(z => CT.atomes.elements.some(e => e.z === z)), "chaque matériau est un élément du tableau");
+    PT.atomes = {}; zs.forEach(z => { PT.atomes[z] = { capture: ti, rencontres: 1, fuites: 0 }; });
+    assert.ok(M.ile(CT, PT, ti).quartiers.every(q => q.options.every(o => o.ouverte)), "tous les matériaux livrés, tout ouvre");
+    // Monuments : trois choses d'une époque datées juste au Chrono, et le monument se dresse avec ses habitants.
+    const I0 = M.ile(CT, PT, ti); assert.equal(I0.monuments.length, 6); assert.ok(I0.monuments.every(m => !m.bati));
+    const anciens = CT.evenements.filter(e => e.annee != null && e.annee < 476).slice(0, 3);
+    PT.siecles = { fiches: {} }; anciens.forEach(e => { PT.siecles.fiches["frise:" + e.id] = { niveau: 1, serie: 1, vus: 1, justes: 1 }; });
+    const I1 = M.ile(CT, PT, ti), mo = I1.monuments.find(m => m.epoque === "antiquite");
+    assert.ok(mo.bati && mo.dates.length === 3 && I1.monuments.filter(m => m.bati).length === 1);
+    assert.equal(I1.habitants - I0.habitants, mo.habitants);
+    assert.equal(I1.habitants + 5 * mo.habitants, I1.capacite, "il reste cinq monuments à bâtir"); }
   console.log("île : quartiers par fonction, installations, alerte, panne, abandon, habitants, options, objectif du jour");
 }

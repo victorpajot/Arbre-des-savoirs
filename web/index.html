@@ -1449,6 +1449,15 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-rec .eyebrow { margin-top: 4px; }
 .ile-rec .desc { font-size: 17px; line-height: 1.5; }
 .ile-delta { font-family: var(--f-mono); font-size: 22px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 0; }
+.ile-materiau { display: flex; align-items: center; gap: 8px; font-size: 15px; margin: 6px 0 0; color: var(--muted); }
+.ile-materiau.ok { color: var(--good); }
+.ile-symbole { flex: none; min-width: 30px; height: 30px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; border: 2px solid currentColor; border-radius: 6px; font-family: var(--f-mono); font-weight: 700; font-size: 14px; }
+.ile-monument { border: 2px dashed var(--line, #8884); border-radius: 12px; padding: 12px 14px; margin-top: 10px; opacity: .8; }
+.ile-monument.bati { border-style: solid; opacity: 1; }
+.ile-monument b { font-size: 18px; display: block; margin: 2px 0 4px; }
+.ile-monument p { margin: 0; font-size: 15px; }
+.ile-dates { list-style: none; padding: 0; margin: 8px 0 0; font-size: 15px; display: flex; flex-direction: column; gap: 3px; }
+.ile-dates span { font-family: var(--f-mono); font-weight: 700; margin-right: 6px; }
 .ile-exil { font-size: 17px; color: var(--bad); text-align: center; margin: 10px 0 0; }
 .ile-delta.plus { color: var(--good); } .ile-delta.moins { color: var(--bad); }
 .ile-delta small { font-family: var(--f-body); font-size: 15px; font-weight: 400; color: var(--muted); }
@@ -3942,6 +3951,32 @@ function demarrerJeu() {
       out += '<rect x="' + x + '" y="' + (y + 5 + r * 14) + '" width="14" height="2" fill="#8FD8F2" opacity=".7"/><rect x="' + (x + 14) + '" y="' + (y + 7 + r * 14) + '" width="6" height="2" fill="#D8F4FC" opacity=".6"/>';
     return out;
   }
+  // Un monument de l'île (Victor, 2026-11-10) : bâti par les dates retrouvées au Chrono, il les porte gravées.
+  function carteMonument(m) {
+    var ep = "ep-" + m.epoque, reste = m.seuil - m.dates.length;
+    var c = el('<div class="ile-monument' + (m.bati ? " bati" : "") + '"><div class="eyebrow">' + esc(tx(m.nomEpoque)) + "</div><b>" + esc(tx(m.nom)) + "</b><p>" +
+      (m.bati ? esc(tx(m.usage)) : __("Pas encore bâti : encore ") + reste + (reste > 1 ? __(" dates de cette époque à retrouver au Chrono.") : __(" date de cette époque à retrouver au Chrono."))) + "</p>" +
+      (m.dates.length ? '<ul class="ile-dates">' + m.dates.map(function (d) { return "<li><span>" + esc(anneeLisible(d.annee)) + "</span> " + esc(tx(d.titre)) + "</li>"; }).join("") + "</ul>" : "") + "</div>");
+    c.classList.add(ep);
+    return c;
+  }
+  function anneeLisible(a) { return a > 0 ? String(a) : __("{a} av. J.-C.", { a: -a }); }
+  // Ce qu'un atome capturé apporte aux chantiers de l'île.
+  function cartesChantiers(chs) {
+    return (chs || []).map(function (ch) {
+      var reste = ch.installations - ch.marche;
+      return el('<div class="recompense ile-rec' + (ch.ouverte ? " anim" : "") + '" style="--c:' + ch.couleur + '"><div class="genre">' + __("Sur l'île") + " · " + esc(tx(ch.nomQuartier)) + '</div><div class="eyebrow">' + (ch.ouverte ? __("Chantier ouvert") : __("Matériau livré")) + "</div><h3>" + esc(tx(ch.nom)) + "</h3>" +
+        '<p class="desc">' + (ch.raison ? __("Il fallait ") + esc(tx(ch.raison)) + ". " : "") + (ch.ouverte ? "" : reste > 0 ? __("Il manque encore ") + reste + (reste > 1 ? __(" installations en marche.") : __(" installation en marche.")) : __("Le chantier précédent doit ouvrir d'abord.")) + "</p></div>");
+    });
+  }
+  function cartesMonuments(ms) {
+    return (ms || []).map(function (m) {
+      var reste = m.seuil - m.dates;
+      return el('<div class="recompense ile-rec' + (m.inaugure ? " anim" : "") + '"><div class="genre">' + __("Sur l'île") + " · " + esc(tx(m.nomEpoque)) + '</div><div class="eyebrow">' + (m.inaugure ? __("Monument bâti") : m.bati ? __("Une date de plus sur le monument") : __("Une pierre de plus")) + "</div><h3>" + esc(tx(m.nom)) + "</h3>" +
+        '<p class="desc">' + (m.inaugure ? esc(tx(m.usage)) : m.bati ? m.dates + __(" dates y sont gravées.") : __("Encore ") + reste + (reste > 1 ? __(" dates de cette époque à retrouver pour le bâtir.") : __(" date de cette époque à retrouver pour le bâtir."))) + "</p>" +
+        (m.inaugure ? '<p class="ile-delta plus">+' + esc(texteHabitants(m.habitants)) + "</p>" : "") + "</div>");
+    });
+  }
   function texteHabitants(n) { return nb(n) + (n > 1 ? __(" habitants") : __(" habitant")); }
   function ouvrirInstallation(q, inst) {
     var k = C.parId[inst.comp], g = grilleIle(inst.dessin), friche = inst.etat === "friche";
@@ -4243,9 +4278,12 @@ function demarrerJeu() {
       q.options.forEach(function (o) {
         var reste = o.installations - q.marche;
         opts += '<div class="ile-option' + (o.ouverte ? " ouverte" : "") + '" style="--c:' + q.couleur + '"><span class="ile-pastille">' + (o.ouverte ? "✓" : o.installations) + "</span><div><b>" + esc(tx(o.nom)) + "</b>" +
-          "<p>" + (o.ouverte ? esc(tx(o.usage)) : reste + (reste > 1 ? __(" installations en marche de plus pour l'ouvrir.") : __(" installation en marche de plus pour l'ouvrir."))) + "</p></div></div>";
+          "<p>" + (o.ouverte ? esc(tx(o.usage)) : reste > 0 ? reste + (reste > 1 ? __(" installations en marche de plus pour l'ouvrir.") : __(" installation en marche de plus pour l'ouvrir.")) : __("Les installations sont là.")) + "</p>" +
+          o.materiaux.map(function (m) { return '<p class="ile-materiau' + (m.capture ? " ok" : "") + '"><span class="ile-symbole">' + esc(m.symbole) + "</span><span>" + (m.capture ? __("Matériau livré : ") : __("Matériau à capturer : ")) + "<b>" + esc(tx(m.nom)) + "</b>" + (m.raison ? ". " + __("Il faut ") + esc(tx(m.raison)) + "." : "") + "</span></p>"; }).join("") +
+          "</div></div>";
       });
       v.appendChild(el("<div>" + opts + "</div></div>"));
+      if (q.monuments.length) { var bm = el('<div><h2 class="ile-h2">' + __("Le monument du quartier") + "</h2></div>"); q.monuments.forEach(function (m) { bm.appendChild(carteMonument(m)); }); v.appendChild(bm); }
       // Les arbres qui font vivre le quartier.
       var parArbre = {}; q.installations.forEach(function (x) { var a = parArbre[x.stat] = parArbre[x.stat] || [0, 0]; a[1]++; if (x.etat !== "friche") a[0]++; });
       var puces = Object.keys(parArbre).filter(function (s) { return parArbre[s][0] > 0; }).sort(function (x, y) { return parArbre[y][0] - parArbre[x][0] || parArbre[y][1] - parArbre[x][1]; }).map(function (s) {
@@ -4262,6 +4300,10 @@ function demarrerJeu() {
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
     carte.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
     v.appendChild(carte);
+    if (I.monuments.length) {
+      var zm = el('<div><h2 class="ile-h2">' + __("Les monuments") + '</h2><p class="note">' + __("Un par époque. Chacun se bâtit avec les dates que tu retrouves au Chrono.") + "</p></div>");
+      I.monuments.forEach(function (m) { zm.appendChild(carteMonument(m)); }); v.appendChild(zm);
+    }
     if (I.exil) v.appendChild(el('<p class="ile-exil">' + esc(texteHabitants(I.exil)) + (I.exil > 1 ? __(" ont fui l'île après un piège.") : __(" a fui l'île après un piège.")) + " " + __("Chaque épreuve réussie en fait revenir ") + ((C.ile.regles.piege || {}).retour || 8) + ".</p>"));
     return v;
   }
@@ -6206,6 +6248,7 @@ function demarrerJeu() {
       z.appendChild(liste);
       var m = comite(r.replique); if (m) z.appendChild(m);
       ligneAgacement(z, r.agacement);
+      cartesMonuments(r.monuments).forEach(function (x) { z.appendChild(x); });
     } else if (nom === "libre") {
       var cl = carteLiberee(r.caseLibre, "chrono"); if (cl) z.appendChild(cl);
     } else if (nom === "plateau") {
@@ -6893,6 +6936,7 @@ function demarrerJeu() {
       z.appendChild(el('<div class="verdict-atome ' + (r.capture ? "capture" : "fuite") + '">' + tuileAtome(e, false, 150, r.capture ? "pop" : "fuite") + '<div class="grand">' + (r.capture ? __("Capturé !") : __("Il s'est enfui")) + '</div><div class="score">' + r.bonnes + " / " + r.total + "</div>" +
         '<p class="meta" style="margin:0">' + (r.capture ? (r.premiere ? __("Nouveau : ") : __("Déjà dans ton tableau : ")) + r.captures + (r.captures > 1 ? __(" atomes") : __(" atome")) + __(" sur ") + C.atomes.elements.length + "." : __("Il reviendra sur une case Mendeleïev. Il a désormais une fiche à ton nom.")) + "</p>" + ficheAtomeHtml(e) + "</div>"));
       var m = comite(r.replique); if (m) z.appendChild(m);
+      cartesChantiers(r.chantiers).forEach(function (x) { z.appendChild(x); });
       if (combat.aides && !r.laisse) {
         var ast = M.astuceNumero(C.atomes, e), ai = el(__('<div class="retour ko"><b>Pour retrouver sa place</b><div class="illus">') + ast.illustration + "</div></div>");
         var bg = boutonGuide(e); bg.style.marginTop = "10px"; ai.appendChild(bg); z.appendChild(ai);
