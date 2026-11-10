@@ -4180,7 +4180,11 @@ function demarrerJeu() {
       '<text x="' + cx + '" y="' + (sol - 17.6) + '" text-anchor="middle" font-size="7" font-weight="800" fill="#8A6240">?</text></g>';
   }
   function svgQuartier(q) {
-    var W = 360, PAS = 78, PAR = 4, rangees = [], tri = q.installations.slice().sort(function (a, b) { return b.rang - a.rang; });
+    // Le village grandit avec ce qu'on y construit (Victor, 2026-11-10 : « pas besoin de voir tous les emplacements
+    // vides ») : on ne montre que les installations posées, et deux terrains à bâtir, ceux qu'on peut gagner d'abord.
+    var tm = maintenant(), libres = q.installations.filter(function (x) { return x.etat === "friche"; }).sort(function (a, b) {
+      return (M.statut(C, P, a.comp, tm).etat === "disponible" ? 0 : 1) - (M.statut(C, P, b.comp, tm).etat === "disponible" ? 0 : 1) || a.rang - b.rang; }).slice(0, 2);
+    var W = 360, PAS = 78, PAR = 4, rangees = [], tri = q.installations.filter(function (x) { return x.etat !== "friche" || libres.indexOf(x) >= 0; }).sort(function (a, b) { return b.rang - a.rang; });
     for (var c = 0; c < tri.length; c += PAR) rangees.push(tri.slice(c, c + PAR));
     var haut = 44, bas = q.decor === "quai" ? 86 : 50, H = haut + rangees.length * PAS + bas, gq = graine(q.id), sol = "", plan = [];
     var roche = q.decor === "roche";
@@ -4239,7 +4243,7 @@ function demarrerJeu() {
       sc.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-comp]"); if (!g) return; var id = g.getAttribute("data-comp"); ouvrirInstallation(q, q.installations.filter(function (x) { return x.comp === id; })[0]); };
       v.appendChild(sc);
       var soucis = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne" || x.etat === "abandon"; });
-      v.appendChild(el('<div class="ile-bilan"><span><b>' + q.posees + " / " + q.installations.length + "</b>" + __(" installations construites") + "</span>" +
+      v.appendChild(el('<div class="ile-bilan"><span><b>' + q.posees + "</b>" + (q.posees > 1 ? __(" installations construites") : __(" installation construite")) + "</span>" +
         (soucis.length ? '<span class="souci">' + soucis.length + (soucis.length > 1 ? __(" installations demandent ton attention.") : __(" installation demande ton attention.")) + "</span>" : "") +
         (q.habitable ? "" : "<span>" + __("Un chantier, pas encore un lieu de vie : encore ") + q.manque + (q.manque > 1 ? __(" installations en marche") : __(" installation en marche")) + __(" pour que des habitants s'y installent.") + "</span>") + "</div>"));
       // Ce que le quartier débloque, palier par palier.
@@ -4252,8 +4256,8 @@ function demarrerJeu() {
       v.appendChild(el("<div>" + opts + "</div></div>"));
       // Les arbres qui font vivre le quartier.
       var parArbre = {}; q.installations.forEach(function (x) { var a = parArbre[x.stat] = parArbre[x.stat] || [0, 0]; a[1]++; if (x.etat !== "friche") a[0]++; });
-      var puces = Object.keys(parArbre).sort(function (x, y) { return parArbre[y][0] - parArbre[x][0] || parArbre[y][1] - parArbre[x][1]; }).map(function (s) {
-        return '<span class="ile-arbre' + (parArbre[s][0] ? "" : " vide") + '" style="--c:' + couleur(s) + '">' + esc(tx(stat(s).nom)) + " <b>" + parArbre[s][0] + " / " + parArbre[s][1] + "</b></span>"; }).join("");
+      var puces = Object.keys(parArbre).filter(function (s) { return parArbre[s][0] > 0; }).sort(function (x, y) { return parArbre[y][0] - parArbre[x][0] || parArbre[y][1] - parArbre[x][1]; }).map(function (s) {
+        return '<span class="ile-arbre' + (parArbre[s][0] ? "" : " vide") + '" style="--c:' + couleur(s) + '">' + esc(tx(stat(s).nom)) + " <b>" + parArbre[s][0] + "</b></span>"; }).join("");
       v.appendChild(el('<div><h2 class="ile-h2">' + __("Les savoirs qui le font vivre") + '</h2><div class="ile-arbres">' + puces + "</div></div>"));
       return v;
     }
