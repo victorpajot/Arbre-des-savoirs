@@ -1460,6 +1460,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-obj-veille { color: #5B7FD9; font-weight: 700; }
 .ile-obj-jauge { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden; margin: 0 0 8px; }
 .ile-obj-jauge span { display: block; height: 100%; background: var(--c); border-radius: 999px; }
+.ile-intro { margin: 12px 0 16px; }
 .ile-objectif.tenu { border-left-color: #2E9E5B; } .ile-objectif.tenu .ile-obj-jauge span { background: #2E9E5B; }
 .ile-h2 { font-size: 17px; margin: 22px 0 10px; }
 .ile-options { display: grid; gap: 8px; }
@@ -4068,19 +4069,23 @@ function demarrerJeu() {
     I.quartiers.forEach(function (q, i) { if (q.centre) centre = i; else tour.push(i); });
     tour.sort(function (a, b) { return Math.atan2(lieux[a][1] - ILE_CY, lieux[a][0] - ILE_CX) - Math.atan2(lieux[b][1] - ILE_CY, lieux[b][0] - ILE_CX); });
     var boucle = [];
+    // L'île est vierge au départ (Victor, 2026-11-10) : un quartier n'apparaît, avec ses chemins, qu'une fois fondé.
+    tour = tour.filter(function (i) { return I.quartiers[i].fonde; });
+    if (centre >= 0 && !I.quartiers[centre].fonde) centre = -1;
     tour.forEach(function (i, k) { var a = lieux[i], b = lieux[tour[(k + 1) % tour.length]], g = graine("ch" + i);
       boucle.push([a[0], a[1] + 6]);
       // Entre deux hameaux, le chemin fait un écart, et s'éloigne du lac et du marais.
       var mx = (a[0] + b[0]) / 2 + (g % 17) - 8, my = (a[1] + b[1]) / 2 + ((g >>> 5) % 17) - 8;
       [LAC, MARAIS].forEach(function (z) { if (dansOvale(mx, my, [z[0], z[1], z[2] + 14, z[3] + 14])) { mx += (mx < z[0] ? -1 : 1) * 0 + (ILE_CX - z[0]) * 0.45; my += (ILE_CY - z[1]) * 0.3; } });
       boucle.push([mx, my]); });
-    var routes = boucle.length > 2 ? [courbe(boucle, true)] : [];
+    var routes = tour.length > 2 ? [courbe(boucle, true)] : tour.length === 2 ? [courbe(boucle.slice(0, 3))] : [];
     if (centre >= 0 && tour.length) { var c = lieux[centre], pres = tour.slice().sort(function (a, b) { return Math.hypot(lieux[a][0] - c[0], lieux[a][1] - c[1]) - Math.hypot(lieux[b][0] - c[0], lieux[b][1] - c[1]); })[0];
       routes.push(courbe([[c[0], c[1] + 6], [(c[0] + lieux[pres][0]) / 2 + 8, (c[1] + lieux[pres][1]) / 2 - 10], [lieux[pres][0], lieux[pres][1] + 6]])); }
     routes.forEach(function (d) { sol += '<path d="' + d + '" stroke="#D9C590" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/><path d="' + d + '" stroke="#F1E3B8" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'; });
     // Les hameaux : une clairière, des maisons qui se multiplient avec les installations en marche, et les plus belles
     // installations du quartier. Le plan garde tout ce qui est debout, pour le dessiner du fond vers l'avant.
     I.quartiers.forEach(function (q, i) {
+      if (!q.fonde) return;
       var x = lieux[i][0], y = lieux[i][1], gr = graine(q.id), g = "";
       // Une image de hameau fournie : elle remplace les maisons dessinées (sur une carte fournie elle aussi, ou non).
       sol += '<path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + (q.posees ? "#C4E8A6" : "#B2DE98") + '"/>';
@@ -4099,7 +4104,8 @@ function demarrerJeu() {
           [0, 1, 2, 3].map(function (l) { return '<rect x="' + fx(x + c[0] - 9) + '" y="' + fx(y + c[1] - 5.6 + l * 3.3) + '" width="18" height="1.3" fill="' + (faits ? "#7DB85A" : "#A39265") + '"/>'; }).join("") + "</g>"; });
       if (imageIle("hameau-" + q.id) && q.ouvert) plan.push([y, svgImageIle("hameau-" + q.id, x - 30, y - 30, 60, 60)]);
       else if (q.posees) {
-        var maisons = Math.min(6, 1 + Math.floor(q.marche / 2));
+        // Un chantier n'a pas de maisons : elles viennent avec les habitants, une fois le quartier habitable.
+        var maisons = q.habitable ? Math.min(6, 1 + Math.floor(q.marche / 2)) : 0;
         var coins = [[-22, -6], [21, -8], [-12, 12], [15, 13], [-27, 8], [28, 5]];
         for (var m = 0; m < maisons; m++) plan.push([y + coins[m][1], svgMaison(x + coins[m][0], y + coins[m][1], 9 + (gr >>> m) % 3, q.couleur, gr + m)]);
         var montre = q.installations.filter(function (z) { return z.etat !== "friche"; }).sort(function (u, v) { return v.rang - u.rang; }).slice(0, 3);
@@ -4132,7 +4138,7 @@ function demarrerJeu() {
     // Les arbres : serrés dans le bois (avec des sapins), épars ailleurs ; aucun sur l'eau, le volcan ou un hameau.
     function libre(x, y, m) {
       if (!surTerre(x, y, 0.9) || dansOvale(x, y, [LAC[0], LAC[1], LAC[2] + 6, LAC[3] + 6]) || dansOvale(x, y, [ILE_CX, ILE_CY + 2, 62, 66])) return false;
-      return !lieux.some(function (l) { return dansOvale(x, y, [l[0], l[1] + 6, 38 + m, 28 + m]); });
+      return !lieux.some(function (l, i) { return I.quartiers[i].fonde && dansOvale(x, y, [l[0], l[1] + 6, 38 + m, 28 + m]); });
     }
     for (var t = 0; t < 70; t++) { var gb = graine("bois" + t), tx0 = BOIS[0] - BOIS[2] + gb % (BOIS[2] * 2), ty0 = BOIS[1] - BOIS[3] + (gb >>> 9) % (BOIS[3] * 2);
       if (dansOvale(tx0, ty0, BOIS) && libre(tx0, ty0, -6)) plan.push([ty0, gb % 5 < 2 ? svgSapin(tx0, ty0, 11 + gb % 4, gb) : svgFeuillu(tx0, ty0 - 4, 4.6 + (gb >>> 4) % 2, gb)]); }
@@ -4192,7 +4198,7 @@ function demarrerJeu() {
         if (inst.etat === "friche") { plan.push([y, svgTerrain(inst, cx, y)]); return; }
         plan.push([y, '<g shape-rendering="crispEdges">' + svgInstallation(inst, cx, y, 50) + "</g>"]);
         // Autour d'une installation qui tourne : une maison, et ses habitants.
-        if (inst.habitants && g % 2) plan.push([y - 20, svgMaison(cx + 33, y - 20, 15, q.couleur, g)]);
+        if (inst.habitants > 0 && g % 2) plan.push([y - 20, svgMaison(cx + 33, y - 20, 15, q.couleur, g)]);
         var k = Math.min(3, Math.round(inst.habitants / 14));
         for (var h = 0; h < k; h++) plan.push([y + 9 + h, '<g shape-rendering="crispEdges">' + svgHabitant(Math.round(cx - 30 + ((g >>> (h * 5)) % 18) + h * 20), y - 3 + (g >>> (h * 2 + 9)) % 7, g + h * 97) + "</g>"]);
       });
@@ -4221,7 +4227,8 @@ function demarrerJeu() {
       v.appendChild(sc);
       var soucis = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne" || x.etat === "abandon"; });
       v.appendChild(el('<div class="ile-bilan"><span><b>' + q.posees + " / " + q.installations.length + "</b>" + __(" installations construites") + "</span>" +
-        (soucis.length ? '<span class="souci">' + soucis.length + (soucis.length > 1 ? __(" installations demandent ton attention.") : __(" installation demande ton attention.")) + "</span>" : "") + "</div>"));
+        (soucis.length ? '<span class="souci">' + soucis.length + (soucis.length > 1 ? __(" installations demandent ton attention.") : __(" installation demande ton attention.")) + "</span>" : "") +
+        (q.habitable ? "" : "<span>" + __("Un chantier, pas encore un lieu de vie : encore ") + q.manque + (q.manque > 1 ? __(" installations en marche") : __(" installation en marche")) + __(" pour que des habitants s'y installent.") + "</span>") + "</div>"));
       // Ce que le quartier débloque, palier par palier.
       var opts = '<h2 class="ile-h2">' + __("Ce que le quartier débloque") + '</h2><div class="ile-options">';
       q.options.forEach(function (o) {
@@ -4238,16 +4245,43 @@ function demarrerJeu() {
       return v;
     }
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + __("Ce que tu sais encore") + "</div><h1>" + __("L'île") + "</h1></div>" + compteur + "</div>"));
-    v.appendChild(el('<p class="note">' + __("Chaque compétence maîtrisée construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Chaque quartier reçoit les savoirs de plusieurs arbres. Touche-le pour le visiter.") + "</p>"));
-    var boi = blocObjectifIle(); if (boi) { v.appendChild(boi); I = M.ile(C, P, maintenant()); }
+    var vierge = !I.quartiers.some(function (x) { return x.fonde; });
+    v.appendChild(el('<p class="note">' + (vierge ? __("L'île est vierge. Réussis l'épreuve de ta case sur le parcours : elle y posera la première installation et fondera ton premier quartier.") :
+      __("Chaque épreuve réussie sur le parcours construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter.")) + "</p>"));
+    if (!P.ileIntro) setTimeout(presenterIle, 250);
+    var boi = P.ileIntro ? blocObjectifIle() : null; if (boi) { v.appendChild(boi); I = M.ile(C, P, maintenant()); }
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
     carte.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
     v.appendChild(carte);
     return v;
   }
+  // La présentation de l'île par l'IA (Victor, 2026-11-10), la première fois qu'on y vient.
+  function presenterIle() {
+    if (P.ileIntro || document.querySelector("#couche .voile")) return;
+    P.ileIntro = maintenant(); sauver();
+    var pas = [
+      M.ile(C, P, maintenant()).quartiers.some(function (x) { return x.fonde; }) ? __("Voici mon île. Tout ce que tu y vois, c'est ce que tu sais encore. Ne t'emballe pas : il reste de la place.") :
+        __("Voici mon île. Oui, elle est vide. Elle contient ce que tu sais, et pour l'instant, soyons honnêtes, ça tient sur un galet."),
+      __("Chaque épreuve réussie sur le parcours y construit quelque chose : une grue, un phare, un atelier. La première installation fonde un quartier. Ce n'est encore qu'un chantier : les habitants ne viennent que lorsqu'il y a de quoi vivre."),
+      __("Laisse traîner un rappel et l'installation tombe en panne. Une collègue à moi, très économe, coupe le courant de tout ce qui n'est plus entretenu. Elle n'est pas méchante : elle compte. Donne-lui tort.")];
+    var i = 0;
+    function montrer() {
+      var dernier = i === pas.length - 1, bulle = comite({ id: "ile_intro_" + i, texte: pas[i], contexte: "accueil" });
+      feuilleSimple('<div class="eyebrow">' + __("L'île") + " · " + (i + 1) + " / " + pas.length + '</div><div class="ile-intro"></div>' +
+        '<button type="button" class="btn large" data-a="suite">' + (dernier ? __("Découvrir l'île") : __("Continuer")) + "</button>", __("L'île"),
+        { suite: function () { fermerFeuille(); i++; if (i < pas.length) montrer(); else rendre(); } }, __("Passer"));
+      var z = document.querySelector("#couche .voile:last-child .ile-intro"); if (z && bulle) z.appendChild(bulle);
+    }
+    montrer();
+  }
   // L'objectif du jour : l'IA économe annonce son délestage du soir ; un bouton mène à l'épreuve qui l'évite.
   function blocObjectifIle() {
     if (!M.ilePresente(C)) return null;
+    if (!P.ileIntro) {
+      var inv = el('<div class="carte ile-objectif" style="--c:var(--accent)"><div class="eyebrow">' + __("L'île") + "</div><h3>" + __("L'IA a quelque chose à te montrer") + '</h3><p class="ile-obj-texte">' + __("Une île, la sienne. Ce que tu apprends sur le parcours s'y construit.") + '</p><button type="button" class="btn large">' + __("Voir l'île") + "</button></div>");
+      inv.querySelector("button").onclick = function () { vue = "ile"; quartierVu = null; rendre(); window.scrollTo(0, 0); };
+      return inv;
+    }
     var ob = M.objectifIle(C, P, maintenant());
     if (!ob || (!ob.type && !ob.veille)) return null;
     var veille = ob.veille && C.parId[ob.veille] ? '<p class="ile-obj-veille">' + __("Hier, l'objectif n'a pas été tenu : une installation est en veille") + (ob.type && !ob.reussi ? __(" jusqu'à ce que tu tiennes celui d'aujourd'hui.") : __(" jusqu'à ce soir.")) + "</p>" : "";
@@ -4258,9 +4292,9 @@ function demarrerJeu() {
       // L'épreuve du plateau, et ce qu'elle fait sur l'île : construire, réparer ou entretenir une installation.
       var inst = k && I.quartiers.reduce(function (r, q) { return r || q.installations.filter(function (x) { return x.comp === k.id; })[0]; }, null);
       var qi = inst && I.quartiers.filter(function (q) { return q.installations.indexOf(inst) >= 0; })[0];
-      var effet = !inst ? "" : (inst.etat === "friche" || inst.etat === "abandon" ? __("Elle construit : ") : inst.etat === "marche" ? __("Elle entretient : ") : __("Elle remet en marche : ")) + "<b>" + esc(tx(inst.nom)) + "</b> (" + esc(tx(qi.nom)) + ").";
-      corps = "<h3>" + (ob.reussi ? __("Objectif tenu : ") + nom + __(" garde son courant") : __("Délestage prévu ce soir : ") + nom) + "</h3>" +
-        '<p class="ile-obj-texte">' + (ob.reussi ? __("« Soit. Cette île sert encore à quelqu'un. Je reviendrai demain. »") :
+      var effet = !inst || !qi.fonde ? "" : (inst.etat === "friche" || inst.etat === "abandon" ? __("Elle construit : ") : inst.etat === "marche" ? __("Elle entretient : ") : __("Elle remet en marche : ")) + "<b>" + esc(tx(inst.nom)) + "</b> (" + esc(tx(qi.nom)) + ").";
+      corps = "<h3>" + (ob.reussi ? (ob.fonde ? __("Objectif tenu : ") + nom + __(" garde son courant") : __("Objectif tenu")) : ob.fonde ? __("Délestage prévu ce soir : ") + nom : __("Un quartier à fonder")) + "</h3>" +
+        '<p class="ile-obj-texte">' + (!ob.fonde && !ob.reussi ? __("Réussis ton épreuve aujourd'hui : elle pose la première installation d'un nouveau quartier de l'île.") : ob.reussi ? __("« Soit. Cette île sert encore à quelqu'un. Je reviendrai demain. »") :
           __("« Un savoir que personne n'entretient est un serveur qui tourne pour rien. Ce soir, je coupe. » Réussis une épreuve avant minuit pour l'en dissuader.")) + "</p>" +
         (k && !ob.reussi ? '<p class="ile-obj-texte">' + __("Ta prochaine épreuve : ") + "<b>" + esc(tx(k.nom)) + "</b>. " + effet + "</p>" : "") +
         '<p class="ile-obj-compte">' + (ob.reussi ? "+" + ob.credits + __(" crédits") : ob.credits + __(" crédits à gagner")) + "</p>" + veille +
@@ -4283,6 +4317,8 @@ function demarrerJeu() {
       "<div class=\"eyebrow\">" + esc(titre) + "</div><h3>" + esc(tx(inst.nom)) + "</h3>" +
       (inst.usage && ch.apres === "marche" ? '<p class="desc">' + esc(tx(inst.usage)) + "</p>" : ch.apres !== "marche" ? '<p class="desc">' + esc(TEXTE_ETAT[ch.apres]()) + "</p>" : "") +
       (d ? '<p class="ile-delta ' + (d > 0 ? "plus" : "moins") + '">' + (d > 0 ? "+" : "−") + esc(texteHabitants(Math.abs(d))) + '<small>' + esc(texteHabitants(ch.habitants)) + __(" sur l'île") + "</small></p>" : "") +
+      (monte && !q.habitable ? '<p class="desc">' + __("Personne n'y vit encore : il manque ") + q.manque + (q.manque > 1 ? __(" installations") : __(" installation")) + __(" pour rendre le quartier habitable.") + "</p>" : "") +
+      (ch.fondation ? '<p class="ile-service">' + __("Nouveau quartier fondé : ") + esc(tx(q.nom)) + '</p><p class="desc">' + esc(tx(q.description)) + "</p>" : "") +
       (ch.objectif ? '<p class="ile-service">' + __("Objectif du jour tenu : pas de délestage ce soir.") + " +" + ch.objectif.credits + __(" crédits") + "</p>" : "") +
       (ch.option ? '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(q.nom)) + (ch.optionOuverte ? __(" débloque : ") : __(" perd : ")) + esc(tx(ch.option.nom)) + "</p>" + (ch.optionOuverte ? '<p class="desc">' + esc(tx(ch.option.usage)) + "</p>" : "") : "") + "</div>");
     return b;

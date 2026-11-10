@@ -1436,8 +1436,12 @@
         if (ok) hab += H.option; cap += H.option;
         return { nom: o.nom, usage: o.usage, installations: o.installations, ouverte: ok };
       });
+      // Les habitants ne viennent pas sur un chantier (Victor, 2026-11-10 : « il faut créer un lieu propice pour eux ») :
+      // un quartier n'est habitable qu'une fois son premier palier ouvert. Avant, ses installations tournent à vide.
+      var habitable = !options.length || options[0].ouverte;
+      if (!habitable) { hab = 0; inst.forEach(function (x) { x.habitants = 0; }); }
       total += hab; capacite += cap;
-      return { id: q.id, nom: q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, ouvert: ouvert || posees > 0, installations: inst,
+      return { habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, nom: q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: posees > 0, ouvert: ouvert || posees > 0, installations: inst,
         options: options, posees: posees, marche: marche, habitants: hab, capacite: cap };
     });
     return { quartiers: quartiers, habitants: total, capacite: capacite };
@@ -1471,7 +1475,8 @@
     }
     var q = (contenu.ile.quartiers || []).filter(function (x) { return x.id === o.cible; })[0];
     if (!o.type || !q) return { jour: jour, type: null, veille: o.veille, reussi: false };
-    return { jour: jour, type: o.type, quartier: q.id, nom: q.nom, couleur: q.couleur, besoin: 1, fait: o.fait ? 1 : 0, reussi: o.fait, credits: R.credits, veille: o.veille,
+    var fonde = ile(contenu, partie, t).quartiers.some(function (x) { return x.id === q.id && x.fonde; });
+    return { jour: jour, type: o.type, quartier: q.id, nom: q.nom, couleur: q.couleur, fonde: fonde, besoin: 1, fait: o.fait ? 1 : 0, reussi: o.fait, credits: R.credits, veille: o.veille,
       prochain: o.fait ? null : epreuveDuJour(contenu, partie, t) };
   }
   // Une épreuve réussie aujourd'hui tient l'objectif : la prime tombe une fois, la veille est levée.
@@ -1489,7 +1494,7 @@
     var q = quartierIle(contenu, partie, id, t);
     if (!q) return null;
     objectifIle(contenu, partie, t);
-    return { etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, options: q.options.filter(function (o) { return o.ouverte; }).length };
+    return { posees: q.posees, etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, options: q.options.filter(function (o) { return o.ouverte; }).length };
   }
   function changementIle(contenu, partie, id, t, avant, reussi) {
     if (!avant) return null;
@@ -1500,7 +1505,7 @@
     var inst = q.installations.filter(function (x) { return x.comp === id; })[0];
     // L'option que l'épreuve vient d'ouvrir (ou de fermer) dans le quartier.
     var option = apres.options > avant.options ? q.options[apres.options - 1] : apres.options < avant.options ? q.options[avant.options - 1] : null;
-    return { comp: id, quartier: q.id, objectif: tenu ? objectifIle(contenu, partie, t) : null, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
+    return { comp: id, quartier: q.id, objectif: tenu ? objectifIle(contenu, partie, t) : null, fondation: avant.posees === 0 && q.posees > 0, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
   }
   function listeDonjons(contenu) { return (contenu.donjons && contenu.donjons.donjons) || []; }
   function donjonDe(contenu, id) { return listeDonjons(contenu).filter(function (d) { return d.id === id; })[0] || null; }

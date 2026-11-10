@@ -2142,8 +2142,15 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(ri.ile, null);
   ri = M.terminerQuiz(CI, PI, "phys.machines", bon("phys.machines", 5), ti);
   assert.equal(ri.ile.avant, "friche"); assert.equal(ri.ile.apres, "marche");
-  assert.equal(ri.ile.habitants - ri.ile.habitantsAvant, H.installation + H.par_rang);
+  // L'île est vierge au départ : la première installation d'un quartier le fonde.
+  assert.ok(M.ile(CI, M.nouvellePartie(ti), ti).quartiers.every(q => !q.fonde));
+  assert.ok(ri.ile.fondation && quartier().fonde); assert.equal(M.ile(CI, PI, ti).quartiers.filter(q => q.fonde).length, 1);
   assert.equal(inst("phys.machines").etat, "marche"); assert.equal(quartier().posees, 1);
+  // Un quartier fondé est un chantier : personne n'y vit avant que son premier palier soit ouvert.
+  assert.equal(ri.ile.habitants, 0); assert.ok(!quartier().habitable); assert.equal(quartier().manque, quartier().options[0].installations - 1);
+  const voisines = quartier().installations.filter(x => x.comp !== "phys.machines").slice(0, quartier().options[0].installations);
+  voisines.forEach(x => { PI.competences[x.comp] = { maitrise: true, prochainRappel: ti + 400 * 86400000, palier: 1, xp: 1 }; });
+  assert.ok(quartier().habitable); assert.equal(inst("phys.machines").habitants, H.installation + H.par_rang);
   // Le rappel devient dû : alerte, les habitants restent ; trop de retard : panne, la moitié s'en va.
   const du = PI.competences["phys.machines"].prochainRappel;
   ti = du + 3600e3; assert.equal(inst("phys.machines").etat, "alerte"); assert.equal(inst("phys.machines").habitants, H.installation + H.par_rang);
@@ -2154,7 +2161,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(ri.ile.avant, "panne"); assert.equal(ri.ile.apres, "marche");
   ti = PI.competences["phys.machines"].prochainRappel + 3600e3;
   ri = M.terminerRappel(CI, PI, "phys.machines", bon("phys.machines", 3).map(x => ({ id: x.id, correct: false })), ti);
-  assert.equal(ri.ile.apres, "abandon"); assert.equal(ri.ile.habitants, 0); assert.equal(inst("phys.machines").etat, "abandon");
+  assert.equal(ri.ile.apres, "abandon"); assert.equal(inst("phys.machines").habitants, 0); assert.equal(inst("phys.machines").etat, "abandon");
+  assert.ok(ri.ile.habitants < ri.ile.habitantsAvant);
+  quartier().installations.forEach(x => { delete PI.competences[x.comp]; });
   // Les options du quartier s'ouvrent par paliers d'installations en marche, chacune avec sa prime d'habitants ;
   // l'épreuve qui franchit le palier l'annonce. Une compétence sans installation écrite pose son emblème.
   assert.ok(quartier().options.length && quartier().options.every(o => !o.ouverte));
@@ -2164,7 +2173,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const dern = aPoser[seuil - 1], hAvant = M.ile(CI, PI, ti).habitants;
   PI.competences[dern.comp] = { maitrise: true, prochainRappel: ti + 86400000, palier: 1, xp: 1 };
   assert.ok(quartier().options[0].ouverte && !quartier().options[1].ouverte);
-  assert.equal(M.ile(CI, PI, ti).habitants - hAvant, H.installation + H.par_rang * dern.rang + H.option);
+  assert.equal(hAvant, 0, "sous le palier, le quartier reste vide");
+  assert.equal(M.ile(CI, PI, ti).habitants, aPoser.reduce((s, x) => s + H.installation + H.par_rang * x.rang, 0) + H.option, "au palier, tout le monde arrive");
   CI.competences.forEach(k => { PI.competences[k.id] = { maitrise: true, prochainRappel: ti + 86400000, palier: 1, xp: 1 }; });
   const tout = M.ile(CI, PI, ti); assert.equal(tout.habitants, tout.capacite);
   assert.ok(tout.quartiers.every(q => q.options.every(o => o.ouverte)), "tout maîtriser ouvre toutes les options");
@@ -2189,7 +2199,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     tj += 86400000; ob = M.objectifIle(CP, PJ, tj);
     assert.equal(ob.veille, deja.comp, "objectif manqué : une installation en veille");
     const vue = M.ile(CP, PJ, tj).quartiers.find(q => q.id === cible).installations.find(x => x.comp === deja.comp);
-    assert.equal(vue.etat, "veille"); assert.equal(vue.habitants, Math.round((H.installation + H.par_rang * vue.rang) * H.panne));
+    assert.equal(vue.etat, "veille");
     assert.ok(M.estMaitrisee(PJ, deja.comp), "la veille ne fait rien perdre");
     // Une épreuve ratée ne tient pas l'objectif ; réussie, il est tenu : crédits, veille levée, annonce dans le bilan.
     const jeu = ob.prochain.comp;
