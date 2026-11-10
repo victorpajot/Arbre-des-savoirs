@@ -2151,18 +2151,19 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(ri.ile.habitants, 0); assert.ok(!quartier().habitable); assert.equal(quartier().manque, quartier().options[0].installations - 1);
   const voisines = quartier().installations.filter(x => x.comp !== "phys.machines").slice(0, quartier().options[0].installations);
   voisines.forEach(x => { PI.competences[x.comp] = { maitrise: true, prochainRappel: ti + 400 * 86400000, palier: 1, xp: 1 }; });
-  assert.ok(quartier().habitable); assert.equal(inst("phys.machines").habitants, H.installation + H.par_rang);
+  assert.ok(quartier().habitable); assert.equal(inst("phys.machines").places, H.installation + H.par_rang);
   // Le rappel devient dû : alerte, les habitants restent ; trop de retard : panne, la moitié s'en va.
   const du = PI.competences["phys.machines"].prochainRappel;
-  ti = du + 3600e3; assert.equal(inst("phys.machines").etat, "alerte"); assert.equal(inst("phys.machines").habitants, H.installation + H.par_rang);
+  ti = du + 3600e3; assert.equal(inst("phys.machines").etat, "alerte"); assert.equal(inst("phys.machines").places, H.installation + H.par_rang);
   ti = du + CI.ile.regles.panne_jours * 86400000 + 3600e3; assert.equal(inst("phys.machines").etat, "panne");
-  assert.equal(inst("phys.machines").habitants, Math.round((H.installation + H.par_rang) * H.panne));
+  assert.equal(inst("phys.machines").places, Math.round((H.installation + H.par_rang) * H.panne));
   // Rappel réussi : réparée. Rappel raté : à l'abandon, plus personne.
   ri = M.terminerRappel(CI, PI, "phys.machines", bon("phys.machines", 3), ti);
   assert.equal(ri.ile.avant, "panne"); assert.equal(ri.ile.apres, "marche");
   ti = PI.competences["phys.machines"].prochainRappel + 3600e3;
+  delete PI.population; assert.ok(M.ile(CI, PI, ti).habitants > 0, "une partie d'avant la démographie retrouve ses habitants");
   ri = M.terminerRappel(CI, PI, "phys.machines", bon("phys.machines", 3).map(x => ({ id: x.id, correct: false })), ti);
-  assert.equal(ri.ile.apres, "abandon"); assert.equal(inst("phys.machines").habitants, 0); assert.equal(inst("phys.machines").etat, "abandon");
+  assert.equal(ri.ile.apres, "abandon"); assert.equal(inst("phys.machines").places, 0); assert.equal(inst("phys.machines").etat, "abandon");
   assert.ok(ri.ile.habitants < ri.ile.habitantsAvant);
   quartier().installations.forEach(x => { delete PI.competences[x.comp]; });
   // Les options du quartier s'ouvrent par paliers d'installations en marche, chacune avec sa prime d'habitants ;
@@ -2171,13 +2172,13 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const seuil = quartier().options[0].installations, aPoser = quartier().installations.slice(0, seuil);
   aPoser.slice(0, seuil - 1).forEach(x => { PI.competences[x.comp] = { maitrise: true, prochainRappel: ti + 86400000, palier: 1, xp: 1 }; });
   assert.ok(!quartier().options[0].ouverte);
-  const dern = aPoser[seuil - 1], hAvant = M.ile(CI, PI, ti).habitants;
+  const dern = aPoser[seuil - 1], hAvant = M.ile(CI, PI, ti).places;
   PI.competences[dern.comp] = { maitrise: true, prochainRappel: ti + 86400000, palier: 1, xp: 1 };
   assert.ok(quartier().options[0].ouverte && !quartier().options[1].ouverte);
   assert.equal(hAvant, 0, "sous le palier, le quartier reste vide");
-  assert.equal(M.ile(CI, PI, ti).habitants, aPoser.reduce((s, x) => s + H.installation + H.par_rang * x.rang, 0) + H.option, "au palier, tout le monde arrive");
+  assert.equal(M.ile(CI, PI, ti).places, aPoser.reduce((s, x) => s + H.installation + H.par_rang * x.rang, 0) + H.option, "au palier, toutes les places s'ouvrent");
   CI.competences.forEach(k => { PI.competences[k.id] = { maitrise: true, prochainRappel: ti + 86400000, palier: 1, xp: 1 }; });
-  const tout = M.ile(CI, PI, ti); assert.equal(tout.habitants, tout.capacite);
+  const tout = M.ile(CI, PI, ti); assert.equal(tout.places, tout.capacite);
   assert.ok(tout.quartiers.every(q => q.options.every(o => o.ouverte)), "tout maîtriser ouvre toutes les options");
   assert.ok(tout.quartiers.every(q => JSON.stringify(q.nom) === JSON.stringify(q.nomFinal)), "au dernier stade, le lieu porte son nom complet");
   const sans = tout.quartiers.flatMap(q => q.installations).find(x => !x.propre);
@@ -2219,14 +2220,53 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   { const PX = M.nouvellePartie(ti);
     CI.competences.forEach(k => { PX.competences[k.id] = { maitrise: true, prochainRappel: ti + 30 * 86400000, palier: 1, xp: 1 }; });
     const plein = M.ile(CI, PX, ti).habitants, RP = CI.ile.regles.piege;
-    PX.exil = Math.round(plein * RP.part);
+    assert.equal(plein, M.ile(CI, PX, ti).places, "une île découverte toute bâtie est pleine");
+    const ex = M.exodeIle(CI, PX, ti);
+    assert.equal(ex.partis, Math.round(plein * RP.part)); assert.equal(PX.exil, ex.partis);
     const I1 = M.ile(CI, PX, ti);
-    assert.equal(I1.exil, PX.exil); assert.ok(Math.abs(plein - PX.exil - I1.habitants) <= I1.quartiers.length, "les partis manquent sur l'île");
-    assert.equal(I1.habitants, I1.quartiers.reduce((s, q) => s + q.habitants, 0));
+    assert.equal(I1.exil, PX.exil); assert.equal(I1.habitants, plein - ex.partis, "les partis manquent sur l'île");
+    assert.equal(I1.habitants, I1.population.enfants + I1.population.adultes + I1.population.anciens);
     const id = CI.competences[0].id, exilAvant = PX.exil;
     const rr = M.terminerRappel(CI, PX, id, M.tirerQuestions(CI, PX, id, 3).map(q => ({ id: q.id, correct: true })), ti);
-    assert.equal(PX.exil, exilAvant - RP.retour); assert.equal(rr.ile.revenus, RP.retour);
-    PX.exil = 1e9; assert.equal(M.ile(CI, PX, ti).habitants, 0, "jamais moins de zéro"); }
+    assert.equal(PX.exil, exilAvant - RP.retour); assert.equal(rr.ile.revenus, RP.retour); assert.equal(M.ile(CI, PX, ti).habitants, plein - ex.partis + RP.retour); }
+  // Démographie (Victor, 2026-11-10) : Leslie, Verhulst, Lotka-Volterra, liés aux aménagements.
+  { const JOUR = 86400000, DM = CI.ile.regles.demographie;
+    const bati = (f) => { const p = M.nouvellePartie(ti); CI.competences.filter(f || (() => true)).forEach(k => { p.competences[k.id] = { maitrise: true, prochainRappel: ti + 900 * JOUR, palier: 1, xp: 1 }; }); return p; };
+    const vide = p => { p.population = { jour: "", t: ti, e: 0, a: 0, v: 0, p: 0, journal: null }; return p; };
+    const quartierDe = {}; M.ile(CI, bati(), ti).quartiers.forEach(q => q.installations.forEach(x => { quartierDe[x.comp] = q.id; }));
+    // Une île bâtie mais vide : les pionniers débarquent, puis la population grandit sans dépasser les places (Verhulst).
+    const PD = vide(bati()); let Id = M.ile(CI, PD, ti + JOUR);
+    assert.equal(Id.habitants, DM.pionniers); assert.equal(Id.population.journal.arrivees, DM.pionniers);
+    let prec = Id.habitants, pic = 0;
+    for (let j = 2; j <= 120; j++) { Id = M.ile(CI, PD, ti + j * JOUR); assert.ok(Id.habitants <= Id.places, "jamais plus d'habitants que de places"); pic = Math.max(pic, Id.habitants);
+      assert.equal(Id.habitants, Id.population.enfants + Id.population.adultes + Id.population.anciens); if (j < 10) { assert.ok(Id.habitants > prec, "l'île se peuple"); prec = Id.habitants; } }
+    assert.ok(Id.habitants > 0.8 * Id.places && Id.population.enfants > 0 && Id.population.anciens > 0, "bien équipée, l'île approche de sa capacité, avec ses trois âges");
+    assert.ok(Id.population.journal.naissances > 0 && Id.population.journal.anciens > 0, "le journal du jour compte naissances et décès");
+    // Le même jour, rien ne bouge ; la même histoire redonne la même île (aucun hasard à sauvegarder).
+    const fige = JSON.stringify(PD.population); M.ile(CI, PD, ti + 120 * JOUR + 3600e3); assert.equal(JSON.stringify(PD.population), fige);
+    const PD2 = vide(bati()); for (let j = 1; j <= 120; j++) M.ile(CI, PD2, ti + j * JOUR); assert.equal(JSON.stringify(PD2.population), fige);
+    // Plus on ajoute d'aménagements, moins on meurt : sans la centrale, les anciens meurent davantage.
+    const sansCentrale = M.ile(CI, vide(bati(k => quartierDe[k.id] !== "centrale")), ti + JOUR).population;
+    assert.equal(sansCentrale.niveaux.anciens, 0); assert.ok(sansCentrale.mortalite.anciens > 3 * Id.population.mortalite.anciens);
+    assert.ok(Object.values(Id.population.niveaux).every(n => n > 0.5 && n < 1));
+    // Une longue absence n'est rattrapée que sur quelques jours.
+    const PA = vide(bati()); assert.equal(M.ile(CI, PA, ti + 300 * JOUR).population.journal.jours, DM.rattrapage);
+    // Lotka-Volterra : sans agora ni campus, les faux savoirs prolifèrent dès que l'île dépasse ce qu'elle sait protéger,
+    // et la ramènent vers ce seuil ; un duel gagné les fait reculer.
+    const PL = vide(bati(k => quartierDe[k.id] !== "agora" && quartierDe[k.id] !== "campus")); let Il, maxP = 0;
+    for (let j = 1; j <= 200; j++) { Il = M.ile(CI, PL, ti + j * JOUR); maxP = Math.max(maxP, Il.population.parasites); }
+    assert.equal(Il.population.niveaux.defense, 0); assert.ok(Il.places > 3 * Il.population.seuilParasites);
+    assert.ok(maxP > 0 && Il.population.parasites > 0, "les faux savoirs s'installent"); assert.ok(Il.habitants / Il.places < Id.habitants / Id.places - 0.05, "ils retiennent la population sous ce qu'une île défendue atteint");
+    const avantDuel = PL.population.p; assert.ok(M.chasserParasites(CI, PL) > 0 && PL.population.p < avantDuel);
+    assert.ok(Id.population.parasites === 0 || Id.habitants <= Id.population.seuilParasites * 1.2, "défendue, l'île tient les faux savoirs à distance");
+    // Des installations perdues : les places manquent, des habitants partent jour après jour.
+    const PP = bati(); const pleine = M.ile(CI, PP, ti).habitants;
+    CI.competences.filter(k => quartierDe[k.id] === "ville").forEach(k => { delete PP.competences[k.id]; });
+    const Ip = M.ile(CI, PP, ti + JOUR); assert.ok(Ip.places < pleine && Ip.population.journal.departs > 0 && Ip.habitants < pleine && Ip.habitants > Ip.places, "le départ est progressif");
+    // Une épreuve réussie qui ajoute des places en remplit une partie tout de suite.
+    const PN = vide(bati(k => quartierDe[k.id] === "port" && k.id !== "phys.machines")); M.ile(CI, PN, ti);
+    const rn = M.terminerQuiz(CI, PN, "phys.machines", M.tirerQuestions(CI, PN, "phys.machines", 5).map(q => ({ id: q.id, correct: true })), ti);
+    assert.ok(rn.ile.attires > 0 && rn.ile.habitants === rn.ile.habitantsAvant + rn.ile.attires); }
   // Chantiers à matériaux et monuments (Victor, 2026-11-10) : contenu complet, avec atomes et plateau.
   { const CT = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
       { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ile: d("ile.json"), atomes: d("atomes.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ia: d("ia.json") });
@@ -2245,7 +2285,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     PT.siecles = { fiches: {} }; anciens.forEach(e => { PT.siecles.fiches["frise:" + e.id] = { niveau: 1, serie: 1, vus: 1, justes: 1 }; });
     const I1 = M.ile(CT, PT, ti), mo = I1.monuments.find(m => m.epoque === "antiquite");
     assert.ok(mo.bati && mo.dates.length === 3 && I1.monuments.filter(m => m.bati).length === 1);
-    assert.equal(I1.habitants - I0.habitants, mo.habitants);
-    assert.equal(I1.habitants + 5 * mo.habitants, I1.capacite, "il reste cinq monuments à bâtir"); }
-  console.log("île : quartiers par fonction, installations, alerte, panne, abandon, habitants, options, objectif du jour");
+    assert.equal(I1.places - I0.places, mo.habitants);
+    assert.equal(I1.places + 5 * mo.habitants, I1.capacite, "il reste cinq monuments à bâtir"); }
+  console.log("île : quartiers par fonction, installations, alerte, panne, abandon, habitants, options, objectif du jour, démographie");
 }

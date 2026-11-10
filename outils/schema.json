@@ -4275,6 +4275,123 @@
          "type": "integer"
         }
        }
+      },
+      "demographie": {
+       "type": "object",
+       "additionalProperties": false,
+       "description": "La démographie (Victor, 2026-11-10) : Leslie (trois classes d'âge), Verhulst (les places sont la capacité de charge), Lotka-Volterra (les faux savoirs en prédateur). Taux par jour.",
+       "required": [
+        "mortalite",
+        "protection",
+        "grandir",
+        "vieillir",
+        "fecondite",
+        "arrivees",
+        "pionniers",
+        "departs",
+        "attrait",
+        "parasites"
+       ],
+       "properties": {
+        "mortalite": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "enfants",
+          "adultes",
+          "anciens"
+         ],
+         "properties": {
+          "enfants": {
+           "type": "number"
+          },
+          "adultes": {
+           "type": "number"
+          },
+          "anciens": {
+           "type": "number"
+          }
+         }
+        },
+        "protection": {
+         "type": "number",
+         "description": "Part de la mortalité qu'un niveau plein d'aménagements efface."
+        },
+        "grandir": {
+         "type": "number"
+        },
+        "vieillir": {
+         "type": "number"
+        },
+        "fecondite": {
+         "type": "number"
+        },
+        "arrivees": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "base",
+          "port"
+         ],
+         "properties": {
+          "base": {
+           "type": "number"
+          },
+          "port": {
+           "type": "number"
+          }
+         }
+        },
+        "arrivants_enfants": {
+         "type": "number"
+        },
+        "pionniers": {
+         "type": "integer"
+        },
+        "departs": {
+         "type": "number"
+        },
+        "attrait": {
+         "type": "number",
+         "description": "Part des places d'une installation neuve remplie aussitôt."
+        },
+        "rattrapage": {
+         "type": "integer",
+         "description": "Jours d'absence rattrapés au plus."
+        },
+        "parasites": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "prise",
+          "gain",
+          "declin",
+          "defense",
+          "plafond",
+          "duel"
+         ],
+         "properties": {
+          "prise": {
+           "type": "number"
+          },
+          "gain": {
+           "type": "number"
+          },
+          "declin": {
+           "type": "number"
+          },
+          "defense": {
+           "type": "number"
+          },
+          "plafond": {
+           "type": "number"
+          },
+          "duel": {
+           "type": "number"
+          }
+         }
+        }
+       }
       }
      }
     },
@@ -4385,6 +4502,29 @@
          "$ref": "#/$defs/texte"
         },
         "description": "Les noms successifs du lieu, du plus rudimentaire (quartier tout juste fondé) au plus abouti : un de plus que d'options. Le dernier vaut `nom`."
+       },
+       "demographie": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "role"
+        ],
+        "description": "Le coefficient de la démographie que ce quartier améliore ; niveau = x / (1 + x), x = installations en marche / demi.",
+        "properties": {
+         "role": {
+          "enum": [
+           "naissances",
+           "arrivees",
+           "enfants",
+           "adultes",
+           "anciens",
+           "defense"
+          ]
+         },
+         "demi": {
+          "type": "number"
+         }
+        }
        }
       }
      }

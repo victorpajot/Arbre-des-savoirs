@@ -21,6 +21,34 @@
   "monument": {
    "dates": 3,
    "habitants": 30
+  },
+  "demographie": {
+   "mortalite": {
+    "enfants": 0.04,
+    "adultes": 0.02,
+    "anciens": 0.1
+   },
+   "protection": 0.85,
+   "grandir": 0.15,
+   "vieillir": 0.03,
+   "fecondite": 0.08,
+   "arrivees": {
+    "base": 0.02,
+    "port": 0.1
+   },
+   "arrivants_enfants": 0.25,
+   "pionniers": 6,
+   "departs": 0.25,
+   "attrait": 0.5,
+   "rattrapage": 7,
+   "parasites": {
+    "prise": 0.001,
+    "gain": 0.05,
+    "declin": 0.03,
+    "defense": 0.45,
+    "plafond": 0.04,
+    "duel": 0.5
+   }
   }
  },
  "quartiers": [
@@ -99,7 +127,11 @@
     {
      "fr": "Le port"
     }
-   ]
+   ],
+   "demographie": {
+    "role": "arrivees",
+    "demi": 4
+   }
   },
   {
    "id": "ville",
@@ -178,7 +210,11 @@
     {
      "fr": "La ville"
     }
-   ]
+   ],
+   "demographie": {
+    "role": "enfants",
+    "demi": 6
+   }
   },
   {
    "id": "artisans",
@@ -255,7 +291,11 @@
     {
      "fr": "La zone artisanale"
     }
-   ]
+   ],
+   "demographie": {
+    "role": "adultes",
+    "demi": 4
+   }
   },
   {
    "id": "industrie",
@@ -332,7 +372,11 @@
     {
      "fr": "La zone industrielle"
     }
-   ]
+   ],
+   "demographie": {
+    "role": "adultes",
+    "demi": 3
+   }
   },
   {
    "id": "champs",
@@ -409,7 +453,11 @@
     {
      "fr": "Les champs et jardins"
     }
-   ]
+   ],
+   "demographie": {
+    "role": "naissances",
+    "demi": 4
+   }
   },
   {
    "id": "agora",
@@ -487,7 +535,11 @@
     {
      "fr": "L'agora"
     }
-   ]
+   ],
+   "demographie": {
+    "role": "defense",
+    "demi": 5
+   }
   },
   {
    "id": "campus",
@@ -565,7 +617,11 @@
     {
      "fr": "Le campus"
     }
-   ]
+   ],
+   "demographie": {
+    "role": "defense",
+    "demi": 6
+   }
   },
   {
    "id": "centrale",
@@ -643,7 +699,11 @@
     {
      "fr": "La centrale"
     }
-   ]
+   ],
+   "demographie": {
+    "role": "anciens",
+    "demi": 2
+   }
   }
  ],
  "installations": [],

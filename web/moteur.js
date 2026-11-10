@@ -1457,7 +1457,8 @@
     if (ilePresente(contenu) && contenu.atomes) (contenu.ile.quartiers || []).forEach(function (q) { (q.options || []).forEach(function (o) { (o.materiaux || []).forEach(function (m) { if (!estCapture(partie, m.z)) z[m.z] = true; }); }); });
     return z;
   }
-  function ile(contenu, partie, t) {
+  // Les places : ce que les installations en marche peuvent accueillir. C'est la capacité de charge de l'île.
+  function placesIle(contenu, partie, t) {
     if (!ilePresente(contenu)) return null;
     var H = contenu.ile.regles.habitants, total = 0, capacite = 0, plan = planIle(contenu), ouverts = {};
     var oj = partie.ile && partie.ile.jour === cleJour(t) ? partie.ile : null;
@@ -1474,7 +1475,7 @@
         if (etat !== "friche") posees++;
         if (!(x.stat in ouverts)) ouverts[x.stat] = arbreOuvert(contenu, partie, x.stat);
         if (ouverts[x.stat]) ouvert = true;
-        return { comp: x.comp, stat: x.stat, rang: x.rang, nom: x.nom, usage: x.usage, dessin: x.dessin, propre: x.propre, etat: etat, habitants: h };
+        return { comp: x.comp, stat: x.stat, rang: x.rang, nom: x.nom, usage: x.usage, dessin: x.dessin, propre: x.propre, etat: etat, places: h, habitants: h };
       });
       // Les options du quartier s'ouvrent par paliers d'installations qui tournent ; chacune attire du monde.
       // Victor (2026-11-10) : certains chantiers demandent aussi des matériaux, des atomes précis à capturer au jeu
@@ -1497,24 +1498,123 @@
       // Les habitants ne viennent pas sur un chantier (Victor, 2026-11-10 : « il faut créer un lieu propice pour eux ») :
       // un quartier n'est habitable qu'une fois son premier palier ouvert. Avant, ses installations tournent à vide.
       var habitable = !options.length || options[0].ouverte;
-      if (!habitable) { hab = 0; inst.forEach(function (x) { x.habitants = 0; }); }
+      if (!habitable) { hab = 0; inst.forEach(function (x) { x.places = x.habitants = 0; }); }
       total += hab; capacite += cap;
       // Le lieu grandit par stades (Victor, 2026-11-10 : « d'abord la place du marché du village », pas la ville d'emblée) :
       // son nom est celui du stade atteint, un par option ouverte.
       var stade = options.filter(function (o) { return o.ouverte; }).length, noms = q.stades || [];
       return { monuments: monuments, habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, stade: stade, nomFinal: q.nom, nom: noms[stade] || q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: posees > 0, ouvert: ouvert || posees > 0, installations: inst,
-        options: options, posees: posees, marche: marche, habitants: hab, capacite: cap };
+        options: options, posees: posees, marche: marche, role: (q.demographie || {}).role || null, places: hab, habitants: hab, capacite: cap };
     });
-    // Un piège déclenché a fait fuir des habitants (Victor, 2026-11-10) : ils manquent partout, à proportion, jusqu'à leur retour.
-    var exil = Math.min(partie.exil || 0, total);
-    if (exil > 0) {
-      var part = (total - exil) / total; total = 0;
-      quartiers.forEach(function (q) {
-        q.installations.forEach(function (x) { x.habitants = Math.round(x.habitants * part); });
-        q.habitants = Math.round(q.habitants * part); total += q.habitants;
-      });
+    return { quartiers: quartiers, places: total, habitants: total, capacite: capacite, exil: 0, monuments: mons };
+  }
+  // --- La démographie de l'île (Victor, 2026-11-10) -------------------------------
+  // « Une matrice de Leslie couplée à une limite de capacité de charge (Verhulst) avec des limites de Lotka-Volterra, le
+  // tout lié aux aménagements » ; « un côté fourmilière que l'on regarde vivre » ; « plus on ajoute d'aménagement, moins
+  // il y a de risques de décès ». La population est donc un état qui vit, un pas par jour :
+  // - Leslie : trois classes d'âge (enfants e, adultes a, anciens v), chacune avec sa survie ; les adultes font les
+  //   naissances, les enfants grandissent, les adultes vieillissent ;
+  // - Verhulst : les naissances s'éteignent à mesure que l'île approche de ses places (la capacité de charge), et ce
+  //   qui dépasse s'en va ;
+  // - Lotka-Volterra : les faux savoirs (p) sont le prédateur. Ils égarent des habitants et s'en nourrissent ; l'agora
+  //   et le campus les font dépérir, un duel gagné les fait reculer.
+  // Chaque quartier règle un coefficient (regles.demographie, quartiers[].demographie {role, demi}) : son niveau vaut
+  // x / (1 + x), où x = installations en marche / demi. Tout est entier et tiré du jour : pas de hasard à sauvegarder.
+  var ROLES_ILE = ["naissances", "arrivees", "enfants", "adultes", "anciens", "defense"];
+  function niveauxIle(contenu, brut) {
+    var x = {}; ROLES_ILE.forEach(function (r) { x[r] = 0; });
+    brut.quartiers.forEach(function (q) {
+      var d = (contenu.ile.quartiers.filter(function (c) { return c.id === q.id; })[0] || {}).demographie;
+      if (d && d.role in x && q.habitable) x[d.role] += q.marche / (d.demi || 4);
+    });
+    var n = {}; ROLES_ILE.forEach(function (r) { n[r] = x[r] / (1 + x[r]); });
+    return n;
+  }
+  // Arrondi entier sans hasard : la partie décimale décide, d'après le jour et l'étiquette, si l'on arrondit au-dessus.
+  function arrondiJour(x, graine) {
+    if (!(x > 0)) return 0;
+    var bas = Math.floor(x); return bas + (hacher(graine) % 1000 < (x - bas) * 1000 ? 1 : 0);
+  }
+  function retirer(pop, n, graine) {
+    // Retire n habitants, à proportion des classes d'âge.
+    var N = pop.e + pop.a + pop.v; n = Math.min(n, N); if (n <= 0) return 0;
+    var de = Math.min(pop.e, arrondiJour(n * pop.e / N, graine + "e")), dv = Math.min(pop.v, arrondiJour(n * pop.v / N, graine + "v")), da = Math.min(pop.a, n - de - dv);
+    pop.e -= de; pop.v -= dv; pop.a -= da;
+    var reste = n - de - dv - da; ["a", "v", "e"].forEach(function (c) { var k = Math.min(pop[c], reste); pop[c] -= k; reste -= k; });
+    return n;
+  }
+  function accueillir(pop, n, D) {
+    // Ceux qui arrivent : des familles, donc des adultes et quelques enfants.
+    var e = Math.floor(n * (D.arrivants_enfants == null ? 0.25 : D.arrivants_enfants)); pop.e += e; pop.a += n - e;
+  }
+  // Au-delà de ce seuil d'habitants, les faux savoirs trouvent de quoi proliférer : c'est ce que les défenses protègent.
+  function seuilParasites(D, niv) { return Math.round((D.parasites.declin + D.parasites.defense * niv.defense) / (D.parasites.gain * D.parasites.prise)); }
+  function pasDemographie(D, pop, K, niv, graine) {
+    var J = { naissances: 0, arrivees: 0, enfants: 0, adultes: 0, anciens: 0, egares: 0, departs: 0 };
+    function mort(c) { return D.mortalite[c] * (1 - D.protection * niv[c]); }
+    // Leslie : les décès de chaque classe, puis les passages d'une classe à la suivante.
+    var de = Math.min(pop.e, arrondiJour(pop.e * mort("enfants"), graine + "de")), da = Math.min(pop.a, arrondiJour(pop.a * mort("adultes"), graine + "da")), dv = Math.min(pop.v, arrondiJour(pop.v * mort("anciens"), graine + "dv"));
+    pop.e -= de; pop.a -= da; pop.v -= dv; J.enfants = de; J.adultes = da; J.anciens = dv;
+    var N = pop.e + pop.a + pop.v;
+    // Lotka-Volterra : chaque faux savoir égare des habitants à proportion de leur nombre, et s'en nourrit.
+    var P = D.parasites, prises = Math.min(Math.floor(N * P.plafond), arrondiJour(P.prise * pop.p * N, graine + "p"));
+    J.egares = retirer(pop, prises, graine + "pr");
+    pop.p = Math.max(0, pop.p + P.gain * J.egares - (P.declin + P.defense * niv.defense) * pop.p);
+    N = pop.e + pop.a + pop.v;
+    if (pop.p < 1) pop.p = N > seuilParasites(D, niv) ? 1 : 0;
+    var grandis = Math.min(pop.e, arrondiJour(pop.e * D.grandir, graine + "g")), vieillis = Math.min(pop.a, arrondiJour(pop.a * D.vieillir, graine + "h"));
+    pop.e -= grandis; pop.a += grandis - vieillis; pop.v += vieillis;
+    // Verhulst : les naissances ralentissent à mesure que les places manquent.
+    if (K > 0 && N < K) {
+      J.naissances = arrondiJour(D.fecondite * (1 + niv.naissances) * pop.a * (1 - N / K), graine + "n"); pop.e += J.naissances;
+      N = pop.e + pop.a + pop.v;
+      J.arrivees = N === 0 ? Math.min(K, D.pionniers) : Math.min(K - N, arrondiJour((D.arrivees.base + D.arrivees.port * niv.arrivees) * (K - N), graine + "ar"));
+      if (J.arrivees > 0) accueillir(pop, J.arrivees, D);
+    } else if (N > K) J.departs = retirer(pop, K <= 0 ? N : Math.max(1, arrondiJour(D.departs * (N - K), graine + "dp")), graine + "dpr");
+    return J;
+  }
+  // Fait vivre l'île jusqu'à aujourd'hui : un pas par jour écoulé, plafonné pour ne pas punir une longue absence.
+  function vivreIle(contenu, partie, t, brut) {
+    var D = contenu.ile.regles.demographie, K = brut.places, pop = partie.population, jour = cleJour(t);
+    if (!pop) {
+      // Première visite (ou partie d'avant la démographie) : l'île est peuplée comme elle l'était, moins les exilés.
+      var n0 = Math.max(0, K - (partie.exil || 0)), e0 = Math.round(n0 * 0.22), v0 = Math.round(n0 * 0.2);
+      pop = partie.population = { jour: jour, t: t, e: e0, a: n0 - e0 - v0, v: v0, p: 0, journal: null };
     }
-    return { quartiers: quartiers, habitants: total, capacite: capacite, exil: exil, monuments: mons };
+    if (pop.jour !== jour) {
+      var niv = niveauxIle(contenu, brut), pas = Math.max(1, Math.min(D.rattrapage || 7, joursEntre(pop.t, t)));
+      var J = { jours: pas, naissances: 0, arrivees: 0, enfants: 0, adultes: 0, anciens: 0, egares: 0, departs: 0 };
+      for (var i = 0; i < pas; i++) { var j = pasDemographie(D, pop, K, niv, jour + "|" + i + "|"); for (var c in j) J[c] += j[c]; }
+      pop.jour = jour; pop.t = t; pop.journal = J;
+    }
+    return pop;
+  }
+  function ile(contenu, partie, t) {
+    var I = placesIle(contenu, partie, t);
+    if (!I) return null;
+    if (!contenu.ile.regles.demographie) {
+      // Sans règles de démographie (pack d'avant) : les habitants sont les places, moins ceux qu'un piège a fait fuir.
+      var ex = Math.min(partie.exil || 0, I.places), part0 = I.places ? (I.places - ex) / I.places : 0, tot = 0;
+      I.quartiers.forEach(function (q) { q.installations.forEach(function (x) { x.habitants = Math.round(x.places * part0); }); q.habitants = Math.round(q.places * part0); tot += q.habitants; });
+      I.habitants = tot; I.exil = ex; return I;
+    }
+    var D = contenu.ile.regles.demographie, pop = vivreIle(contenu, partie, t, I), N = pop.e + pop.a + pop.v, part = I.places > 0 ? N / I.places : 0;
+    I.quartiers.forEach(function (q) {
+      q.installations.forEach(function (x) { x.habitants = Math.round(x.places * part); });
+      q.habitants = Math.round(q.places * part);
+    });
+    var niv = niveauxIle(contenu, I);
+    I.habitants = N; I.exil = Math.min(partie.exil || 0, Math.max(0, I.places - N));
+    I.population = { enfants: pop.e, adultes: pop.a, anciens: pop.v, parasites: Math.round(pop.p), journal: pop.journal, niveaux: niv, seuilParasites: seuilParasites(D, niv),
+      mortalite: { enfants: D.mortalite.enfants * (1 - D.protection * niv.enfants), adultes: D.mortalite.adultes * (1 - D.protection * niv.adultes), anciens: D.mortalite.anciens * (1 - D.protection * niv.anciens) } };
+    return I;
+  }
+  // Un duel gagné contre un faux savoir : ceux de l'île reculent.
+  function chasserParasites(contenu, partie) {
+    var D = ilePresente(contenu) && contenu.ile.regles.demographie, pop = partie.population;
+    if (!D || !pop || pop.p < 1) return 0;
+    var avant = Math.round(pop.p); pop.p = Math.max(0, pop.p * D.parasites.duel - 1);
+    return avant - Math.round(pop.p);
   }
   // Piège déclenché : une part des habitants quitte l'île. Renvoie combien sont partis (0 si l'île est vide).
   function exodeIle(contenu, partie, t) {
@@ -1522,7 +1622,8 @@
     var R = contenu.ile.regles.piege || {}, I = ile(contenu, partie, t);
     if (I.habitants <= 0) return null;
     var n = Math.min(I.habitants, Math.max(R.min || 5, Math.round(I.habitants * (R.part || 0.2))));
-    partie.exil = (I.exil || 0) + n;
+    if (partie.population && contenu.ile.regles.demographie) retirer(partie.population, n, cleJour(t) + "|exode|" + (partie.exil || 0));
+    partie.exil = (partie.exil || 0) + n;
     return { partis: n, habitants: ile(contenu, partie, t).habitants, retour: R.retour || 8 };
   }
   function quartierIle(contenu, partie, id, t) {
@@ -1574,21 +1675,35 @@
     var q = quartierIle(contenu, partie, id, t);
     if (!q) return null;
     objectifIle(contenu, partie, t);
-    return { posees: q.posees, nom: q.nom, etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, options: q.options.filter(function (o) { return o.ouverte; }).length };
+    return { posees: q.posees, nom: q.nom, etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, places: ile(contenu, partie, t).places, options: q.options.filter(function (o) { return o.ouverte; }).length };
   }
   function changementIle(contenu, partie, id, t, avant, reussi) {
     if (!avant) return null;
     // Une épreuve réussie fait revenir une partie de ceux qu'un piège avait fait fuir.
     var revenus = 0;
-    if (reussi && partie.exil > 0) { revenus = Math.min(partie.exil, (contenu.ile.regles.piege || {}).retour || 8); partie.exil -= revenus; }
+    var D = contenu.ile.regles.demographie, pop = partie.population;
+    if (reussi && partie.exil > 0) { revenus = Math.min(partie.exil, (contenu.ile.regles.piege || {}).retour || 8); partie.exil -= revenus; if (D && pop) accueillir(pop, revenus, D); }
     var tenu = reussi ? tenirObjectif(contenu, partie, t) : false;
+    // Une installation de plus, ce sont des places : une partie se remplit tout de suite, attirée par la nouveauté ; le
+    // reste viendra par les naissances et les bateaux, jour après jour.
+    var attires = 0;
+    if (D && pop && reussi) {
+      var libres = placesIle(contenu, partie, t).places - (pop.e + pop.a + pop.v);
+      attires = Math.max(0, Math.min(libres, Math.round((placesIle(contenu, partie, t).places - avant.places) * D.attrait)));
+      if (attires > 0) accueillir(pop, attires, D);
+    }
+    // Une installation perdue, ce sont des places en moins : une partie de ceux qui y vivaient s'en va aussitôt.
+    if (D && pop && !reussi) {
+      var trop = (pop.e + pop.a + pop.v) - placesIle(contenu, partie, t).places;
+      if (trop > 0 && placesIle(contenu, partie, t).places < avant.places) retirer(pop, Math.max(1, Math.round(trop * D.attrait)), cleJour(t) + "|perte|" + id);
+    }
     var apres = photoIle(contenu, partie, id, t);
     if (!tenu && apres.etat === avant.etat && apres.habitants === avant.habitants) return null;
     var q = quartierIle(contenu, partie, id, t);
     var inst = q.installations.filter(function (x) { return x.comp === id; })[0];
     // L'option que l'épreuve vient d'ouvrir (ou de fermer) dans le quartier.
     var option = apres.options > avant.options ? q.options[apres.options - 1] : apres.options < avant.options ? q.options[avant.options - 1] : null;
-    return { comp: id, quartier: q.id, objectif: tenu ? objectifIle(contenu, partie, t) : null, fondation: avant.posees === 0 && q.posees > 0, stadeAvant: avant.nom, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, revenus: revenus, exil: partie.exil || 0, habitants: apres.habitants };
+    return { comp: id, quartier: q.id, objectif: tenu ? objectifIle(contenu, partie, t) : null, fondation: avant.posees === 0 && q.posees > 0, stadeAvant: avant.nom, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, revenus: revenus, attires: attires, exil: partie.exil || 0, habitants: apres.habitants };
   }
   function listeDonjons(contenu) { return (contenu.donjons && contenu.donjons.donjons) || []; }
   function donjonDe(contenu, id) { return listeDonjons(contenu).filter(function (d) { return d.id === id; })[0] || null; }
@@ -2223,6 +2338,7 @@
     f.dernier = t;
     var out = { gagne: gagne, ennemi: e, bonnes: bonnes, total: Math.max(resultats.length, total || 0), plateau: null, recompenses: null, butin: null, premiere: false, fiche: f };
     out.agacement = agacerIA(contenu, partie, resultats.length - bonnes, !gagne, t, "duel_gagne");
+    if (gagne) { var chasses = chasserParasites(contenu, partie); if (chasses) out.parasitesChasses = chasses; }
     if (gagne) {
       f.victoires++; f.serie++; f.meilleure = Math.max(f.meilleure, f.serie);
       c.duelsGagnes = (c.duelsGagnes || 0) + 1;
@@ -4333,7 +4449,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, exodeIle: exodeIle, placesIle: placesIle, niveauxIle: niveauxIle, chasserParasites: chasserParasites, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,

@@ -1468,6 +1468,21 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-objectif h3 { font-size: 19px; margin: 4px 0 6px; }
 .ile-obj-texte, .ile-obj-compte, .ile-obj-veille { font-size: 17px; margin: 0 0 10px; }
 .ile-obj-veille { color: #5B7FD9; font-weight: 700; }
+.ile-vie { padding: 14px 16px; }
+.ile-vie-tete { font-size: 17px; margin: 0 0 6px; }
+.ile-jauge { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; margin-bottom: 12px; } .ile-jauge b { display: block; height: 100%; background: #2E9E5B; }
+.ile-age, .ile-role { display: flex; align-items: center; gap: 10px; font-size: 16px; margin: 6px 0; }
+.ile-age span { flex: none; width: 70px; } .ile-age i, .ile-role i { flex: 1; height: 12px; border-radius: 6px; background: var(--line); overflow: hidden; } .ile-age i b, .ile-role i b { display: block; height: 100%; border-radius: 6px; }
+.ile-age em, .ile-role em { flex: none; width: 54px; text-align: right; font-style: normal; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ile-role > div { flex: none; width: 46%; line-height: 1.25; } .ile-role small { display: block; font-size: 14px; color: var(--muted); } .ile-role i { height: 8px; }
+.ile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin-bottom: 10px; }
+.ile-stat b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; line-height: 1.1; } .ile-stat small { font-size: 15px; color: var(--muted); font-weight: 600; } .ile-stat span { font-size: 15px; color: var(--muted); }
+.ile-stat.ok b { color: #2E9E5B; } .ile-stat.alerte b { color: #D9912B; } .ile-stat.souci b { color: #C8553D; }
+.ile-role[data-q] { cursor: pointer; }
+.ile-ligne { display: flex; width: 100%; align-items: center; gap: 6px; margin-top: 10px; padding: 12px 0 2px; border: 0; border-top: 1px solid var(--line); background: none; font: inherit; font-size: 17px; color: inherit; text-align: left; cursor: pointer; } .ile-ligne span { margin-left: auto; font-size: 22px; color: var(--muted); }
+.ile-vie-h { font-size: 17px; margin: 16px 0 6px; }
+.ile-journal { list-style: none; padding: 0; margin: 0; font-size: 17px; } .ile-journal li { margin: 3px 0; } .ile-journal .plus b { color: #2E9E5B; } .ile-journal .moins b { color: #C8553D; }
+.ile-vie-note { font-size: 16px; margin: 6px 0 0; color: var(--muted); } .ile-vie-note.alerte { color: inherit; } .ile-vie-note.alerte b { color: #C8553D; }
 .ile-obj-tete { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
 .ile-econome { flex: none; width: 52px; height: 60px; border-radius: 10px; background: var(--parchemin); display: grid; place-items: center; overflow: hidden; }
 .ile-econome:empty { display: none; }
@@ -3894,18 +3909,29 @@ function demarrerJeu() {
   function graine(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
   // Les habitants vont et viennent (Victor, 2026-11-10) : chacun fait l'aller-retour vers un point tiré de son rang,
   // à son rythme, avec un petit pas sautillant. Deux groupes : le trajet, puis le pas.
+  // Les habitants ont un âge (Victor, 2026-11-10 : la démographie) : la part d'enfants et d'anciens parmi ceux qu'on voit
+  // suit celle de l'île. Un enfant est petit et vif, un ancien a les cheveux blancs et marche lentement.
+  var AGES_ILE = null;
+  function ageHabitant(g) {
+    if (!AGES_ILE) return "adulte";
+    var r = ((g >>> 2) * 37 % 100) / 100;
+    return r < AGES_ILE.enfants ? "enfant" : r > 1 - AGES_ILE.anciens ? "ancien" : "adulte";
+  }
   function marcheur(g, portee, haut) {
-    var dx = (g % 2 ? 1 : -1) * (portee * 0.5 + (g >>> 3) % Math.max(1, Math.round(portee * 0.5))), dy = ((g >>> 7) % (haut * 2 + 1)) - haut, d = 7 + (g >>> 5) % 9;
+    var age = ageHabitant(g);
+    var dx = (g % 2 ? 1 : -1) * (portee * 0.5 + (g >>> 3) % Math.max(1, Math.round(portee * 0.5))), dy = ((g >>> 7) % (haut * 2 + 1)) - haut, d = Math.round((7 + (g >>> 5) % 9) * (age === "enfant" ? 0.6 : age === "ancien" ? 1.8 : 1));
     return '<g class="ile-marcheur" style="--dx:' + dx + "px;--dy:" + dy + "px;animation-duration:" + d + "s;animation-delay:-" + ((g >>> 9) % (d * 10)) / 10 + 's"><g class="ile-pas" shape-rendering="crispEdges" style="animation-delay:-' + ((g >>> 4) % 5) / 10 + 's">';
   }
   function svgHabitant(x, y, g, e) {
-    var pal = { h: CHEVEUX[g % CHEVEUX.length], s: PEAUX[(g >>> 3) % PEAUX.length], v: HABITS[(g >>> 6) % HABITS.length], j: "#2B2B33" };
-    return pixels(HABITANT, pal, null, x, y, e || 1.5);
+    var age = ageHabitant(g), pal = { h: age === "ancien" ? "#E8E8EE" : CHEVEUX[g % CHEVEUX.length], s: PEAUX[(g >>> 3) % PEAUX.length], v: HABITS[(g >>> 6) % HABITS.length], j: "#2B2B33" };
+    e = e || 1.5;
+    if (age === "enfant") return pixels(HABITANT, pal, null, x + e, y + e * 8 * 0.35, e * 0.65);
+    return pixels(HABITANT, pal, null, x, y, e);
   }
   var TEXTE_ETAT = {
     marche: function () { return __("En marche."); },
     alerte: function () { return __("En alerte : son rappel est dû. Fais-le avant qu'elle tombe en panne."); },
-    panne: function () { return __("En panne : son rappel attend depuis trop longtemps. La moitié de ses habitants est partie."); },
+    panne: function () { return __("En panne : son rappel attend depuis trop longtemps. Elle n'offre plus que la moitié de ses places."); },
     veille: function () { return __("En veille : l'objectif d'hier n'a pas été tenu, l'IA économe a baissé son courant. Tiens celui d'aujourd'hui pour la rallumer."); },
     abandon: function () { return __("À l'abandon : la compétence est perdue. Regagne-la pour la remettre en service."); },
     friche: function () { return __("Pas encore construite."); },
@@ -4261,6 +4287,7 @@ function demarrerJeu() {
   }
   function vueIle() {
     var I = M.ile(C, P, maintenant()), v = el('<div class="vue vue-ile"></div>');
+    AGES_ILE = I.population && I.habitants ? { enfants: I.population.enfants / I.habitants, anciens: I.population.anciens / I.habitants } : null;
     var q = quartierVu && I.quartiers.filter(function (x) { return x.id === quartierVu; })[0];
     if (!q) quartierVu = null;
     var compteur = '<div class="ile-compteur"><svg class="pix" viewBox="0 0 5 8" width="15" height="24" aria-hidden="true" shape-rendering="crispEdges">' + svgHabitant(0, 0, 77, 1) + "</svg><span><b>" + nb(q ? q.habitants : I.habitants) + "</b><small>" + ((q ? q.habitants : I.habitants) > 1 ? __("habitants") : __("habitant")) + "</small></span></div>";
@@ -4270,6 +4297,7 @@ function demarrerJeu() {
       v.appendChild(retour);
       v.appendChild(el('<div class="entete"><div><div class="eyebrow" style="color:' + q.couleur + '">' + (q.stade < q.options.length ? __("Un jour : ") + esc(tx(q.nomFinal)) : __("Quartier de l'île")) + "</div><h1>" + esc(tx(q.nom)) + "</h1></div>" + compteur + "</div>"));
       if (q.description) v.appendChild(el('<p class="note">' + esc(tx(q.description)) + "</p>"));
+      if (q.role && I.population && ROLES_ILE[q.role]) v.appendChild(el('<p class="ile-vie-note" style="margin:0 0 10px">' + __("Ce quartier règle : ") + "<b>" + ROLES_ILE[q.role]().toLowerCase() + "</b> (" + Math.round(100 * I.population.niveaux[q.role]) + " %). " + __("Chaque installation en marche l'améliore.") + "</p>"));
       var sc = el('<div class="ile-cadre">' + svgQuartier(q) + "</div>");
       sc.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-comp]"); if (!g) return; var id = g.getAttribute("data-comp"); ouvrirInstallation(q, q.installations.filter(function (x) { return x.comp === id; })[0]); };
       v.appendChild(sc);
@@ -4287,7 +4315,8 @@ function demarrerJeu() {
           "</div></div>";
       });
       v.appendChild(el("<div>" + opts + "</div></div>"));
-      if (q.monuments.length) { var bm = el('<div><h2 class="ile-h2">' + __("Le monument du quartier") + "</h2></div>"); q.monuments.forEach(function (m) { bm.appendChild(carteMonument(m)); }); v.appendChild(bm); }
+      // Victor (2026-11-10) : les monuments encombraient la page. Dans un quartier, seul un monument bâti se montre.
+      if (q.monuments.some(function (m) { return m.bati; })) { var bm = el('<div><h2 class="ile-h2">' + __("Le monument du quartier") + "</h2></div>"); q.monuments.filter(function (m) { return m.bati; }).forEach(function (m) { bm.appendChild(carteMonument(m)); }); v.appendChild(bm); }
       // Les arbres qui font vivre le quartier.
       var parArbre = {}; q.installations.forEach(function (x) { var a = parArbre[x.stat] = parArbre[x.stat] || [0, 0]; a[1]++; if (x.etat !== "friche") a[0]++; });
       var puces = Object.keys(parArbre).filter(function (s) { return parArbre[s][0] > 0; }).sort(function (x, y) { return parArbre[y][0] - parArbre[x][0] || parArbre[y][1] - parArbre[x][1]; }).map(function (s) {
@@ -4304,12 +4333,73 @@ function demarrerJeu() {
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
     carte.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
     v.appendChild(carte);
-    if (I.monuments.length) {
-      var zm = el('<div><h2 class="ile-h2">' + __("Les monuments") + '</h2><p class="note">' + __("Un par époque. Chacun se bâtit avec les dates que tu retrouves au Chrono.") + "</p></div>");
-      I.monuments.forEach(function (m) { zm.appendChild(carteMonument(m)); }); v.appendChild(zm);
-    }
+    var vie = blocVieIle(I); if (vie) v.appendChild(vie);
+    v.appendChild(blocAmenagementsIle(I));
     if (I.exil) v.appendChild(el('<p class="ile-exil">' + esc(texteHabitants(I.exil)) + (I.exil > 1 ? __(" ont fui l'île après un piège.") : __(" a fui l'île après un piège.")) + " " + __("Chaque épreuve réussie en fait revenir ") + ((C.ile.regles.piege || {}).retour || 8) + ".</p>"));
     return v;
+  }
+  // La vie de l'île (Victor, 2026-11-10 : « un côté fourmilière que l'on regarde vivre ») : la pyramide des âges, le journal
+  // de ce qui s'est passé depuis la dernière visite, les faux savoirs qui rôdent, et ce que chaque quartier protège.
+  var ROLES_ILE = {
+    naissances: function () { return __("Naissances"); }, arrivees: function () { return __("Arrivées par bateau"); },
+    enfants: function () { return __("Survie des enfants"); }, adultes: function () { return __("Survie des adultes"); },
+    anciens: function () { return __("Survie des anciens"); }, defense: function () { return __("Défense contre les faux savoirs"); } };
+  function blocVieIle(I) {
+    var p = I.population; if (!p || (!I.habitants && !I.places)) return null;
+    var max = Math.max(1, p.enfants, p.adultes, p.anciens), j = p.journal;
+    function barre(nom, n, c) { return '<div class="ile-age"><span>' + nom + '</span><i><b style="width:' + Math.round(100 * n / max) + "%;background:" + c + '"></b></i><em>' + nb(n) + "</em></div>"; }
+    function ligne(signe, n, texte) { return n ? '<li class="' + (signe === "+" ? "plus" : "moins") + '"><b>' + (signe === "+" ? "+" : "−") + nb(n) + "</b> " + texte + "</li>" : ""; }
+    var h = '<h2 class="ile-h2">' + __("La population") + '</h2><div class="carte ile-vie">' +
+      '<p class="ile-vie-tete"><b>' + esc(texteHabitants(I.habitants)) + "</b> " + __("pour") + " " + nb(I.places) + (I.places > 1 ? __(" places") : __(" place")) + "</p>" +
+      '<div class="ile-jauge"><b style="width:' + Math.min(100, Math.round(100 * I.habitants / Math.max(1, I.places))) + '%"></b></div>' +
+      barre(__("Enfants"), p.enfants, "#F2A541") + barre(__("Adultes"), p.adultes, "#3D7DD9") + barre(__("Anciens"), p.anciens, "#8E7CC3");
+    if (j) {
+      var deces = j.enfants + j.adultes + j.anciens, detail = [j.enfants ? j.enfants + (j.enfants > 1 ? __(" enfants") : __(" enfant")) : "", j.adultes ? j.adultes + (j.adultes > 1 ? __(" adultes") : __(" adulte")) : "", j.anciens ? j.anciens + (j.anciens > 1 ? __(" anciens") : __(" ancien")) : ""].filter(Boolean).join(", ");
+      // Le coefficient le plus faible parmi ceux qui ont coûté des vies dit où construire.
+      var pire = ["enfants", "adultes", "anciens"].filter(function (c) { return j[c] > 0; }).sort(function (a, b) { return p.niveaux[a] - p.niveaux[b]; })[0];
+      var qp = pire && I.quartiers.filter(function (q) { return q.role === pire; }).sort(function (a, b) { return a.marche - b.marche; })[0];
+      var lignes = ligne("+", j.naissances, j.naissances > 1 ? __("naissances") : __("naissance")) + ligne("+", j.arrivees, j.arrivees > 1 ? __("arrivées") : __("arrivée")) +
+        ligne("-", deces, (deces > 1 ? __("décès") : __("décès")) + (detail ? " (" + detail + ")" : "")) +
+        ligne("-", j.egares, (j.egares > 1 ? __("égarés par les faux savoirs") : __("égaré par les faux savoirs"))) +
+        ligne("-", j.departs, (j.departs > 1 ? __("partis faute de place") : __("parti faute de place")));
+      h += '<h3 class="ile-vie-h">' + (j.jours > 1 ? __("En ") + j.jours + __(" jours") : __("Depuis hier")) + '</h3><ul class="ile-journal">' + (lignes || "<li>" + __("Une journée calme : rien à signaler.") + "</li>") + "</ul>" +
+        (qp && deces ? '<p class="ile-vie-note">' + __("Pour moins de décès : fais grandir ") + "<b>" + esc(tx(qp.nom)) + "</b> (" + ROLES_ILE[pire]().toLowerCase() + ").</p>" : "");
+    }
+    h += '<h3 class="ile-vie-h">' + __("Les faux savoirs") + '</h3><p class="ile-vie-note' + (p.parasites ? " alerte" : "") + '">' +
+      (p.parasites ? "<b>" + nb(p.parasites) + (p.parasites > 1 ? __(" faux savoirs rôdent") : __(" faux savoir rôde")) + "</b>" + __(" et égarent des habitants. ") + (I.habitants > p.seuilParasites ? __("Ils prolifèrent parce que l'île dépasse ") + nb(p.seuilParasites) + __(" habitants, ce que ses défenses savent protéger. Gagne un duel pour les faire reculer, ou fais grandir l'agora et le campus.") :
+        __("Ils dépérissent : les défenses de l'île protègent jusqu'à ") + nb(p.seuilParasites) + __(" habitants. Un duel gagné les chasse plus vite.")) :
+        __("Aucun ne rôde. Les défenses de l'île protègent jusqu'à ") + nb(p.seuilParasites) + __(" habitants ; au-delà, ils reviendront.")) + "</p>" +
+      '<h3 class="ile-vie-h">' + __("Ce que les quartiers protègent") + "</h3>";
+    Object.keys(ROLES_ILE).forEach(function (r) {
+      var qs = I.quartiers.filter(function (q) { return q.role === r; }), noms = qs.map(function (q) { return esc(tx(q.fonde ? q.nom : q.nomFinal)); }).join(", "), c = (qs[0] || {}).couleur || "var(--accent)";
+      h += '<div class="ile-role"><div><b>' + ROLES_ILE[r]() + "</b><small>" + noms + '</small></div><i><b style="width:' + Math.round(100 * p.niveaux[r]) + "%;background:" + c + '"></b></i><em>' + Math.round(100 * p.niveaux[r]) + " %</em></div>";
+    });
+    h += '<p class="ile-vie-note">' + __("Chaque jour : ") + (100 * p.mortalite.enfants).toFixed(1).replace(".", ",") + __(" % des enfants, ") + (100 * p.mortalite.adultes).toFixed(1).replace(".", ",") + __(" % des adultes et ") + (100 * p.mortalite.anciens).toFixed(1).replace(".", ",") + __(" % des anciens meurent. Plus un quartier compte d'installations en marche, plus son chiffre baisse.") + "</p></div>";
+    return el("<div>" + h + "</div>");
+  }
+  // Les aménagements en chiffres (Victor, 2026-11-10 : « des statistiques sur la population et les aménagements »). Les
+  // monuments ne s'étalent plus sur la page : une ligne les compte, et les ouvre dans une feuille.
+  function blocAmenagementsIle(I) {
+    var n = { marche: 0, alerte: 0, panne: 0, veille: 0, abandon: 0 }, total = 0, chantiers = 0, ouverts = 0;
+    I.quartiers.forEach(function (q) { q.installations.forEach(function (x) { total++; if (x.etat in n) n[x.etat]++; }); q.options.forEach(function (o) { chantiers++; if (o.ouverte) ouverts++; }); });
+    var poses = n.marche + n.alerte + n.panne + n.veille + n.abandon, fondes = I.quartiers.filter(function (q) { return q.fonde; }).length, batis = I.monuments.filter(function (m) { return m.bati; }).length;
+    function stat(v, lib, classe) { return '<div class="ile-stat' + (classe ? " " + classe : "") + '"><b>' + v + "</b><span>" + lib + "</span></div>"; }
+    var h = '<h2 class="ile-h2">' + __("Les aménagements") + '</h2><div class="carte ile-vie"><div class="ile-stats">' +
+      stat(nb(poses) + '<small> / ' + nb(total) + "</small>", __("installations construites")) + stat(nb(n.marche), __("en marche"), "ok") +
+      stat(nb(n.alerte), __("en alerte"), n.alerte ? "alerte" : "") + stat(nb(n.panne + n.veille), __("en panne ou en veille"), n.panne + n.veille ? "souci" : "") + stat(nb(n.abandon), __("à l'abandon"), n.abandon ? "souci" : "") +
+      stat(fondes + '<small> / ' + I.quartiers.length + "</small>", __("quartiers fondés")) + stat(ouverts + '<small> / ' + chantiers + "</small>", __("chantiers ouverts")) + stat(nb(I.places), __("places offertes")) + "</div>";
+    I.quartiers.filter(function (q) { return q.fonde; }).sort(function (a, b) { return b.habitants - a.habitants; }).forEach(function (q) {
+      h += '<div class="ile-role" data-q="' + esc(q.id) + '"><div><b>' + esc(tx(q.nom)) + "</b><small>" + q.marche + (q.marche > 1 ? __(" installations en marche") : __(" installation en marche")) + '</small></div><i><b style="width:' + Math.round(100 * q.habitants / Math.max(1, I.habitants)) + "%;background:" + q.couleur + '"></b></i><em>' + nb(q.habitants) + "</em></div>";
+    });
+    if (I.monuments.length) h += '<button type="button" class="ile-ligne" data-a="monuments">' + __("Monuments") + " : <b>" + batis + " / " + I.monuments.length + "</b><span>›</span></button>";
+    var b = el("<div>" + h + "</div></div>");
+    [].forEach.call(b.querySelectorAll("[data-q]"), function (r) { r.onclick = function () { quartierVu = r.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); }; });
+    var bm = b.querySelector('[data-a="monuments"]');
+    if (bm) bm.onclick = function () {
+      feuilleSimple('<div class="eyebrow">' + __("L'île") + "</div><h2>" + __("Les monuments") + '</h2><p class="note">' + __("Un par époque. Chacun se bâtit avec les dates que tu retrouves au Chrono.") + '</p><div class="ile-monuments"></div>', __("Les monuments"), {}, __("Fermer"));
+      var z = document.querySelector("#couche .voile:last-child .ile-monuments"); if (z) I.monuments.forEach(function (m) { z.appendChild(carteMonument(m)); });
+    };
+    return b;
   }
   // La présentation de l'île par l'IA (Victor, 2026-11-10), la première fois qu'on y vient.
   function presenterIle() {
