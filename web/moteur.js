@@ -1399,8 +1399,12 @@
     var Q = contenu.ile.quartiers || [], connus = {}, ecrites = {}, plan = { parQuartier: {}, quartierDe: {} };
     Q.forEach(function (q) { connus[q.id] = true; plan.parQuartier[q.id] = []; });
     (contenu.ile.installations || []).forEach(function (x) { if (connus[x.quartier]) ecrites[x.comp] = x; });
+    // Sans installation écrite, une compétence se pose dans le quartier de son arbre (quartiers[].arbres) : l'électricité
+    // à la centrale, la chimie aux fours… Un arbre qu'aucun quartier ne réclame est réparti par hachage.
+    var parArbre = {};
+    Q.forEach(function (q) { (q.arbres || []).forEach(function (st) { if (!parArbre[st]) parArbre[st] = q.id; }); });
     if (Q.length) contenu.competences.forEach(function (k) {
-      var x = ecrites[k.id], q = x ? x.quartier : Q[hacher(k.id) % Q.length].id;
+      var x = ecrites[k.id], q = x ? x.quartier : parArbre[k.stat] || Q[hacher(k.id) % Q.length].id;
       plan.quartierDe[k.id] = q;
       plan.parQuartier[q].push({ comp: k.id, stat: k.stat, rang: k.rang, nom: x ? x.nom : k.nom, usage: x ? x.usage : null, dessin: (x && x.dessin) || k.embleme || null, propre: !!x });
     });

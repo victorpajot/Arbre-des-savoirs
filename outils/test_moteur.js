@@ -2125,7 +2125,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const quartier = () => M.ile(CI, PI, ti).quartiers.find(q => q.id === "port");
   const inst = id => quartier().installations.find(x => x.comp === id);
   assert.equal(M.ile(CI, PI, ti).quartiers.reduce((s, q) => s + q.installations.length, 0), CI.competences.length);
-  assert.ok(new Set(quartier().installations.map(x => x.stat)).size > 1, "un quartier reçoit plusieurs arbres");
+  assert.ok(new Set(M.ile(CI, PI, ti).quartiers.find(q => q.id === "ville").installations.map(x => x.stat)).size > 1, "un quartier reçoit plusieurs arbres");
+  // Sans installation écrite, une compétence va dans le quartier de son arbre : l'électricité à la centrale.
+  assert.ok(M.ile(CI, PI, ti).quartiers.find(q => q.id === "centrale").installations.some(x => x.comp === "elec.torpille"));
   assert.equal(M.ile(CI, PI, ti).quartiers.filter(q => q.centre).length, 1);
   assert.equal(M.ile(CI, PI, ti).habitants, 0);
   assert.equal(inst("phys.machines").etat, "friche"); assert.ok(inst("phys.machines").usage && inst("phys.machines").dessin);
