@@ -1508,6 +1508,12 @@ svg.grille .interro { transition: opacity .3s; }
 @media (prefers-reduced-motion: reduce) { .ile-marcheur, .ile-pas { animation: none; } }
 .ile-objectif.tenu { border-left-color: #2E9E5B; } .ile-objectif.tenu .ile-obj-jauge span { background: #2E9E5B; }
 .ile-h2 { font-size: 17px; margin: 22px 0 10px; }
+.ile-lieux { display: flex; flex-direction: column; gap: 8px; }
+.ile-lieu { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.ile-lieu.ferme { opacity: .6; cursor: default; border-style: dashed; }
+.ile-lieu-img { flex: none; width: 56px; display: grid; place-items: center; }
+.ile-lieu-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.35; }
+.ile-lieu-txt b { font-size: 17px; } .ile-lieu-txt small { font-size: 15px; color: var(--muted); } .ile-lieu-txt em { font-style: normal; font-size: 15px; font-weight: 700; color: var(--accent); }
 .ile-options { display: grid; gap: 8px; }
 .ile-option { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
 .ile-option b { font-size: 17px; } .ile-option p { margin: 2px 0 0; font-size: 15px; color: var(--muted); }
@@ -4348,6 +4354,7 @@ function demarrerJeu() {
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
     carte.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
     v.appendChild(carte);
+    var lx = blocLieuxIle(); if (lx) v.appendChild(lx);
     var vie = blocVieIle(I); if (vie) v.appendChild(vie);
     v.appendChild(blocAmenagementsIle(I));
     if (I.exil) v.appendChild(el('<p class="ile-exil">' + esc(texteHabitants(I.exil)) + (I.exil > 1 ? __(" ont fui l'île après un piège.") : __(" a fui l'île après un piège.")) + " " + __("Chaque épreuve réussie en fait revenir ") + ((C.ile.regles.piege || {}).retour || 8) + ".</p>"));
@@ -4359,6 +4366,35 @@ function demarrerJeu() {
     naissances: function () { return __("Naissances"); }, arrivees: function () { return __("Arrivées par bateau"); },
     enfants: function () { return __("Survie des enfants"); }, adultes: function () { return __("Survie des adultes"); },
     anciens: function () { return __("Survie des anciens"); }, defense: function () { return __("Défense contre les faux savoirs"); } };
+  // Victor (2026-11-10) : les collections trouvent leur lieu sur l'île (mémorial, tour des livres, étal du marché…),
+  // ouverts par les premiers succès. Le lieu ouvre l'écran de la collection ; l'onglet Collections reste le temps du test.
+  function svgTourIle(etages, taille) {
+    var n = Math.max(1, etages), H = 14 + n * 9, s = '<svg class="pix" viewBox="0 0 28 ' + H + '" height="' + taille + '" shape-rendering="crispEdges" aria-hidden="true"><path d="M5 9 L14 1 L23 9Z" fill="#B5503C"/><rect x="13" y="0" width="2" height="3" fill="#7A3324"/>';
+    for (var i = 0; i < n; i++) { var y = 9 + i * 9; s += '<rect x="7" y="' + y + '" width="14" height="9" fill="' + (i % 2 ? "#E9D9B5" : "#F4E8CC") + '"/><rect x="7" y="' + (y + 8) + '" width="14" height="1" fill="#B79E6E"/><rect x="12" y="' + (y + 2) + '" width="4" height="4" fill="#5B7FD9"/>'; }
+    return s + '<rect x="5" y="' + (H - 5) + '" width="18" height="5" fill="#9A8660"/><rect x="12" y="' + (H - 6) + '" width="4" height="6" fill="#6B4A2B"/></svg>';
+  }
+  function comptesLieux() {
+    var ev = C.evenements.filter(function (e) { return !e.stat || statActif(e.stat); }), gens = personnesConnues();
+    return { boutique: null, livres: [Object.keys(P.livres).length, C.livres.length, __("livres")], frise: [ev.filter(function (e) { return P.evenements[e.id] != null; }).length, ev.length, __("dates")],
+      personnages: [gens.filter(function (e) { return M.rencontre(P, e.p.id); }).length, gens.length, __("personnages")], objets: [Object.keys(P.objets).length, C.objets.length, __("objets")],
+      atomes: C.atomes ? [C.atomes.elements.filter(function (e) { return M.estCapture(P, e.z); }).length, C.atomes.elements.length, __("atomes")] : null };
+  }
+  function blocLieuxIle() {
+    var lieux = (C.ile.lieux || []).filter(function (l) { return l.ouvre === "boutique" ? M.boutique(C) : l.ouvre === "atomes" ? !!C.atomes : true; });
+    if (!lieux.length || !P.ileIntro) return null;
+    var ns = Object.keys(P.succes).length, cp = comptesLieux(), rt = C.ile.regles.tour || {}, b = el('<div><h2 class="ile-h2">' + __("Les lieux de l'île") + '</h2><div class="ile-lieux"></div></div>'), z = b.querySelector(".ile-lieux");
+    lieux.forEach(function (l) {
+      var ouvert = ns >= l.succes, c = cp[l.ouvre], manque = l.succes - ns;
+      var etages = Math.min(rt.etages_max || 12, 1 + Math.floor(Object.keys(P.livres).length / (rt.livres_par_etage || 4)));
+      var img = l.image === "tour" ? svgTourIle(ouvert ? etages : 1, 52) : svgSprite(l.image, 44, null, !ouvert);
+      var etat = !ouvert ? (manque > 1 ? __("S'ouvre dans ") + manque + __(" succès") : __("S'ouvre à ton prochain succès")) :
+        l.ouvre === "boutique" ? nb(P.credits.solde) + __(" crédits") : c ? nb(c[0]) + " / " + nb(c[1]) + " " + c[2] + (l.image === "tour" ? " · " + etages + (etages > 1 ? __(" étages") : __(" étage")) : "") : "";
+      var bt = el('<button type="button" class="ile-lieu' + (ouvert ? "" : " ferme") + '"' + (ouvert ? "" : " disabled") + '><span class="ile-lieu-img">' + img + '</span><span class="ile-lieu-txt"><b>' + esc(tx(l.nom)) + "</b><small>" + esc(tx(l.usage)) + '</small><em>' + esc(etat) + "</em></span></button>");
+      if (ouvert) bt.onclick = function () { vue = "collections"; collection = l.ouvre; rendre(); window.scrollTo(0, 0); };
+      z.appendChild(bt);
+    });
+    return b;
+  }
   function blocVieIle(I) {
     var p = I.population; if (!p || (!I.habitants && !I.places)) return null;
     var max = Math.max(1, p.enfants, p.adultes, p.anciens), j = p.journal;

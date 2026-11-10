@@ -4396,6 +4396,20 @@
          }
         }
        }
+      },
+      "tour": {
+       "type": "object",
+       "additionalProperties": false,
+       "properties": {
+        "livres_par_etage": {
+         "type": "integer",
+         "minimum": 1
+        },
+        "etages_max": {
+         "type": "integer",
+         "minimum": 1
+        }
+       }
       }
      }
     },
@@ -4633,6 +4647,56 @@
         "items": {
          "type": "string"
         }
+       }
+      }
+     }
+    },
+    "lieux": {
+     "type": "array",
+     "description": "Les lieux de l'île qui ouvrent une collection (boutique, livres, frise, personnages, objets, atomes).",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "quartier",
+       "ouvre",
+       "succes",
+       "nom",
+       "usage"
+      ],
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "quartier": {
+        "type": "string"
+       },
+       "ouvre": {
+        "enum": [
+         "boutique",
+         "livres",
+         "frise",
+         "personnages",
+         "objets",
+         "atomes"
+        ]
+       },
+       "succes": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Nombre de succès obtenus qui ouvre le lieu."
+       },
+       "image": {
+        "type": "string",
+        "description": "Un sprite existant, ou « tour » pour la tour qui grandit."
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "usage": {
+        "$ref": "#/$defs/texte",
+        "description": "Fiction du jeu, pas un fait sourcé."
        }
       }
      }
