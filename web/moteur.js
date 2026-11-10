@@ -104,6 +104,7 @@
       livres: extras.bibliotheque ? extras.bibliotheque.livres : [],
       atomes: extras.atomes || null,
       donjons: extras.donjons || null,
+      ile: extras.ile || null,
       parId: {},
       parStat: {},
       questionsPar: {},
@@ -856,6 +857,7 @@
   }
   function terminerQuiz(contenu, partie, id, resultats, t, infos) {
     var r = contenu.regles, c = partie.compteurs, k = contenu.parId[id];
+    var photo = photoIle(contenu, partie, id, t);
     ouvrirLot(partie, t, k && k.stat); partie.lot.comp = id;
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
     var total = Math.max(resultats.length, (infos && infos.total) || 0);
@@ -914,7 +916,7 @@
     return { issue: reussi ? "maitrisee" : "echec", bonnes: bonnes, total: total, xp: xp, prochainRappel: e.prochainRappel,
       nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
-      avantPlateau: avant, apresPlateau: apres, theme: contenu.parId[id] ? contenu.parId[id].stat : null };
+      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
   }
 
   // XP d'un rappel réussi qui mène à l'étape `palier` (1 = premier rappel).
@@ -930,6 +932,7 @@
     var r = contenu.regles;
     var e = partie.competences[id];
     ouvrirLot(partie, t, contenu.parId[id] && contenu.parId[id].stat); partie.lot.comp = id;
+    var photo = photoIle(contenu, partie, id, t);
     var bonnes = resultats.filter(function (x) { return x.correct; }).length;
     var total = Math.max(resultats.length, (infos && infos.total) || 0);
     var reussi = bonnes >= r.rappels.bonnes_reponses_min;
@@ -1005,7 +1008,7 @@
     return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : anticipe || palais ? "echec" : "perdue", anticipe: anticipe, palais: palais, horsCase: horsCase, serie: serie, bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
-      avantPlateau: avant, apresPlateau: apres, theme: contenu.parId[id] ? contenu.parId[id].stat : null };
+      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
   }
 
   // À appeler à chaque ouverture de l'app : repère un retour après une longue absence.
@@ -1372,6 +1375,65 @@
   // maîtrisée, sinon un contrôle de quelques questions qui ne change rien à la progression. Réussi, il pose ses pièces.
   // État : partie.donjons[id] = { poses: { piece: t }, manips: { atelier: t }, bug, bugsChasses, allume, entre }.
   // Un rappel raté met en panne les pièces de sa compétence (déduit, rien à stocker) jusqu'au rappel réussi.
+  // --- L'île (Victor, 2026-11-10) -----------------------------------------------
+  // L'île est la somme de ce que le joueur sait encore : chaque arbre y a son quartier, chaque compétence maîtrisée y pose
+  // une installation précise et utile, et des habitants viennent s'y installer. Rien n'est enregistré : l'état de l'île
+  // se déduit des compétences de la partie. Un rappel dû met l'installation en alerte, un rappel très en retard en panne,
+  // une compétence perdue la laisse à l'abandon. Sans le pack de jeu « ile » (contenu.ile.regles), il n'y a pas d'île.
+  function ilePresente(contenu) { return !!(contenu && contenu.ile && contenu.ile.regles); }
+  function quartierDe(contenu, stat) {
+    return ((contenu.ile && contenu.ile.quartiers) || []).filter(function (q) { return q.id === stat; })[0] || null;
+  }
+  // « friche » : jamais apprise ; « marche » ; « alerte » : rappel dû ; « panne » : rappel en retard ; « abandon » : perdue.
+  function etatInstallation(contenu, partie, id, t) {
+    var e = partie.competences[id], R = contenu.ile.regles;
+    if (e && e.maitrise) {
+      if (e.prochainRappel == null || t < e.prochainRappel) return "marche";
+      return joursEntre(e.prochainRappel, t) >= (R.panne_jours || 2) ? "panne" : "alerte";
+    }
+    return e && e.perdue ? "abandon" : "friche";
+  }
+  function habitantsDe(contenu, rang, etat) {
+    var H = contenu.ile.regles.habitants, plein = H.installation + H.par_rang * rang;
+    return etat === "marche" ? plein : etat === "alerte" ? Math.round(plein * H.alerte) : etat === "panne" ? Math.round(plein * H.panne) : 0;
+  }
+  function ile(contenu, partie, t) {
+    if (!ilePresente(contenu)) return null;
+    var H = contenu.ile.regles.habitants, total = 0, capacite = 0;
+    var quartiers = contenu.stats.map(function (st) {
+      var q = quartierDe(contenu, st.id), par = {};
+      ((q && q.installations) || []).forEach(function (x) { par[x.comp] = x; });
+      var hab = 0, cap = 0, marche = 0, posees = 0;
+      var inst = (contenu.parStat[st.id] || []).map(function (k) {
+        var x = par[k.id] || {}, etat = etatInstallation(contenu, partie, k.id, t), h = habitantsDe(contenu, k.rang, etat);
+        hab += h; cap += H.installation + H.par_rang * k.rang;
+        if (etat === "marche" || etat === "alerte") marche++;
+        if (etat !== "friche") posees++;
+        return { comp: k.id, rang: k.rang, nom: x.nom || k.nom, usage: x.usage || null, dessin: x.dessin || k.embleme || null, propre: !!x.nom, etat: etat, habitants: h };
+      });
+      // Le quartier entre en service quand toutes ses installations tournent : son grand bâtiment attire du monde.
+      var service = inst.length > 0 && marche === inst.length;
+      if (service) hab += H.quartier;
+      cap += H.quartier; total += hab; capacite += cap;
+      return { id: st.id, nom: (q && q.nom) || st.nom, batiment: (q && q.batiment) || null, description: (q && q.description) || null, propre: !!q,
+        ouvert: arbreOuvert(contenu, partie, st.id), service: service, installations: inst, posees: posees, marche: marche, habitants: hab, capacite: cap };
+    });
+    return { quartiers: quartiers, habitants: total, capacite: capacite };
+  }
+  // Ce qu'une épreuve a changé sur l'île : l'installation de la compétence jouée et le nombre d'habitants, avant et après.
+  function photoIle(contenu, partie, id, t) {
+    if (!ilePresente(contenu) || !contenu.parId[id]) return null;
+    return { etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants };
+  }
+  function changementIle(contenu, partie, id, t, avant) {
+    if (!avant) return null;
+    var apres = photoIle(contenu, partie, id, t), k = contenu.parId[id];
+    if (apres.etat === avant.etat && apres.habitants === avant.habitants) return null;
+    var q = ile(contenu, partie, t).quartiers.filter(function (x) { return x.id === k.stat; })[0];
+    var inst = q.installations.filter(function (x) { return x.comp === id; })[0];
+    return { comp: id, quartier: q.id, service: q.service, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
+  }
+
   function listeDonjons(contenu) { return (contenu.donjons && contenu.donjons.donjons) || []; }
   function donjonDe(contenu, id) { return listeDonjons(contenu).filter(function (d) { return d.id === id; })[0] || null; }
   function compterDonjons(partie, f) {
@@ -4109,7 +4171,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,

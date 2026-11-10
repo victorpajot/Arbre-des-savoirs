@@ -1424,6 +1424,34 @@ svg.grille .interro { transition: opacity .3s; }
 .dj-jauge i { display: block; height: 100%; background: #4F6273; }
 /* v53 : écran titre, assistant de nouvelle partie, parties et packs additionnels. */
 .sans-onglets nav.onglets { display: none; }
+
+/* L'île (Victor, 2026-11-10) */
+.ile-cadre { border-radius: 18px; overflow: hidden; border: 1px solid var(--line); line-height: 0; background: #3F93BD; }
+.ile-scene { width: 100%; height: auto; display: block; }
+.ile-scene text { font-family: var(--f-body); }
+.ile-inst, .ile-parcelle { cursor: pointer; }
+.ile-inst:focus-visible, .ile-parcelle:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.ile-compteur { display: flex; align-items: center; gap: 8px; }
+.ile-compteur span { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1; }
+.ile-compteur b { font-family: var(--f-mono); font-size: 22px; font-weight: 700; }
+.ile-compteur small { font-size: 13px; color: var(--muted); }
+.ile-retour { align-self: flex-start; border: 0; background: transparent; color: var(--accent); font: inherit; font-size: 17px; font-weight: 700; padding: 6px 0; min-height: 44px; }
+.ile-bilan { display: flex; flex-direction: column; gap: 6px; font-size: 17px; line-height: 1.45; }
+.ile-bilan .ok { color: var(--good); font-weight: 700; } .ile-bilan .souci { color: var(--warn); font-weight: 700; }
+.ile-vitrine { padding: 14px; width: 164px; margin: 0 auto; background: #8CC27A; }
+.ile-vitrine.etat-friche { background: var(--parchemin); } .ile-vitrine.etat-panne .pix { filter: saturate(.2); } .ile-vitrine.etat-abandon .pix { filter: grayscale(1) sepia(.5) brightness(.75); }
+.ile-usage, .ile-etat { font-size: 17px; line-height: 1.55; }
+.ile-etat.etat-alerte b { color: #B5621B; } .ile-etat.etat-panne b, .ile-etat.etat-abandon b { color: var(--bad); }
+.ile-rec .ile-badge { display: grid; place-items: center; margin: 4px 0; }
+.ile-rec.anim .ile-socle { animation: monte 0.35s ease-out; }
+.ile-rec .ile-socle { background: #8CC27A; border-radius: 18px; padding: 10px; display: grid; place-items: center; }
+.ile-rec.perte .ile-socle { background: #B9BFB4; }
+.ile-rec .eyebrow { margin-top: 4px; }
+.ile-rec .desc { font-size: 17px; line-height: 1.5; }
+.ile-delta { font-family: var(--f-mono); font-size: 22px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 0; }
+.ile-delta.plus { color: var(--good); } .ile-delta.moins { color: var(--bad); }
+.ile-delta small { font-family: var(--f-body); font-size: 15px; font-weight: 400; color: var(--muted); }
+.ile-service { font-size: 17px; font-weight: 800; color: var(--accent); margin: 0; }
 .sans-onglets .app { padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
 .lance .hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 18px 0 4px; }
 .lance .hero .logo { width: 92px; height: 92px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.15); }
@@ -1525,6 +1553,7 @@ function demarrerJeu() {
 
   var ONGLETS = [
     { id: "aujourdhui", nom: __("Aujourd'hui"), icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>' },
+    { id: "ile", nom: __("Île"), icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18.5c2-1.6 4-1.6 6 0s4 1.600 6 0 4-1.600 6 0"/><path d="M6 15c1.500-3 3.600-4.500 6-4.500s4.500 1.500 6 4.500"/><path d="M12 10.500V4.500M12 4.500c-1.800-1.600-3.600-1.600-5 0M12 4.500c1.800-1.600 3.600-1.600 5 0M12 6.500c-1.500-.6-3 0-4 1.500M12 6.500c1.500-.6 3 0 4 1.500"/></svg>' },
     { id: "arbre", nom: __("Arbre"), icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="4.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><circle cx="12" cy="19.5" r="2.5"/><path d="M10.5 6.5 7.5 10M13.5 6.5l3 3.5M7.5 14l3 3.5M16.5 14l-3 3.5"/></svg>' },
     { id: "perso", nom: __("Personnage"), icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z"/><path d="M12 7l4.5 2.6v4.8L12 17l-4.5-2.6V9.6z"/></svg>' },
     { id: "collections", nom: __("Collections"), icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 3.5h3.5v17H4zM9.5 3.5H13v17H9.5z"/><path d="m15 5.2 3.3-.9 3.2 15.6-3.3.8z"/><path d="M4 7.5h3.5M9.5 16.5H13"/></svg>' },
@@ -2249,10 +2278,13 @@ function demarrerJeu() {
   function rendreOnglets() {
     var dus = M.rappelsDus(C, P, maintenant()).length;
     var nav = document.getElementById("onglets"); nav.innerHTML = "";
-    ONGLETS.forEach(function (o) {
+    // L'onglet de l'île n'existe qu'avec son pack de jeu.
+    var liste = ONGLETS.filter(function (o) { return o.id !== "ile" || M.ilePresente(C); });
+    nav.style.gridTemplateColumns = "repeat(" + liste.length + ", 1fr)";
+    liste.forEach(function (o) {
       var b = el('<button type="button">' + o.icone + "<span>" + o.nom + "</span>" + (o.id === "aujourdhui" && dus ? '<span class="badge">' + dus + "</span>" : "") + "</button>");
       if (o.id === vue) b.setAttribute("aria-current", "page");
-      b.onclick = function () { vue = o.id; rendre(); window.scrollTo(0, 0); };
+      b.onclick = function () { if (o.id === "ile" && vue === "ile") quartierVu = null; vue = o.id; rendre(); window.scrollTo(0, 0); };
       nav.appendChild(b);
     });
   }
@@ -3817,6 +3849,176 @@ function demarrerJeu() {
   }
   // v35 : une feuille fermée peut laisser passer la révélation d'Alyca qui attendait.
   function fermerFeuille() { if (feuille) { feuille.remove(); feuille = null; setTimeout(function () { revelerNom(); if (C && P) scenesPersonnage(); }, 0); } }
+
+  // --- L'île (Victor, 2026-11-10) ---------------------------------------------
+  // L'île est la somme de ce que le joueur sait encore. Chaque arbre y a son quartier ; chaque compétence maîtrisée y pose
+  // une installation précise et utile, et des habitants viennent. Tout se déduit de la partie (M.ile) : rien à sauvegarder.
+  var quartierVu = null;
+  function nb(n) { return Number(n).toLocaleString(locale()); }
+  // Un habitant : 5 × 8 pixels, trois couleurs (cheveux, peau, habit) tirées de son rang dans la foule.
+  var HABITANT = [".hhh.", ".sss.", ".sss.", "vvvvv", "svvvs", ".vvv.", ".j.j.", ".j.j."];
+  var PEAUX = ["#F2C9A0", "#D9A07A", "#94603C", "#6E4429", "#FBE3C8"], CHEVEUX = ["#2A1A0E", "#6B4226", "#9C6B43", "#C9CED6", "#F2C14E", "#8E2424"],
+    HABITS = ["#D94141", "#3D63D9", "#4CAF50", "#F2C14E", "#9B59D0", "#E8873A", "#8FD8F2", "#F28FB0", "#E8E8EE"];
+  function graine(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function svgHabitant(x, y, g, e) {
+    var pal = { h: CHEVEUX[g % CHEVEUX.length], s: PEAUX[(g >>> 3) % PEAUX.length], v: HABITS[(g >>> 6) % HABITS.length], j: "#2B2B33" };
+    return pixels(HABITANT, pal, null, x, y, e || 1.5);
+  }
+  var TEXTE_ETAT = {
+    marche: function () { return __("En marche."); },
+    alerte: function () { return __("En alerte : son rappel est dû. Fais-le avant qu'elle tombe en panne."); },
+    panne: function () { return __("En panne : son rappel attend depuis trop longtemps. La moitié de ses habitants est partie."); },
+    abandon: function () { return __("À l'abandon : la compétence est perdue. Regagne-la pour la remettre en service."); },
+    friche: function () { return __("Pas encore construite."); },
+  };
+  // Une installation posée en (cx, sol) : son dessin, son ombre, et ce que son état lui fait.
+  function svgInstallation(inst, cx, sol, taille) {
+    var g = grilleSprite(inst.dessin), e = taille / 32, x = cx - taille / 2, y = sol - taille + e * 2, out = "";
+    if (!g) return "";
+    if (inst.etat === "friche") {
+      out += '<ellipse cx="' + cx + '" cy="' + (sol - 1) + '" rx="' + (taille * 0.42) + '" ry="' + (taille * 0.11) + '" fill="none" stroke="rgba(30,40,25,.35)" stroke-width="1.5" stroke-dasharray="4 4"/>';
+      out += '<g style="color:rgba(30,45,25,.2)">' + pixels(g, C.cabinet.palette, null, x, y, e, true) + "</g>";
+    } else {
+      out += '<ellipse cx="' + cx + '" cy="' + (sol - 1) + '" rx="' + (taille * 0.42) + '" ry="' + (taille * 0.1) + '" fill="rgba(20,30,20,.28)"/>';
+      var filtre = inst.etat === "panne" ? ' filter="url(#ile-terne)"' : inst.etat === "abandon" ? ' filter="url(#ile-ruine)" opacity=".75"' : "";
+      out += "<g" + filtre + ">" + pixels(g, C.cabinet.palette, null, x, y, e) + "</g>";
+      if (inst.etat === "abandon") {
+        // Les herbes folles gagnent le pied de l'installation.
+        var gr = graine(inst.comp);
+        for (var i = 0; i < 6; i++) { var hx = cx - taille * 0.4 + ((gr >>> (i * 4)) % 16) / 16 * taille * 0.8, hh = 3 + ((gr >>> (i * 3)) % 3) * 2;
+          out += '<rect x="' + hx.toFixed(1) + '" y="' + (sol - hh) + '" width="2" height="' + hh + '" fill="#2E7D32"/><rect x="' + (hx + 2).toFixed(1) + '" y="' + (sol - hh + 2) + '" width="2" height="' + (hh - 2) + '" fill="#4CAF50"/>'; }
+      }
+      if (inst.etat === "alerte" || inst.etat === "panne") {
+        var c = inst.etat === "panne" ? "#D94141" : "#E8873A", bx = cx + taille * 0.3, by = y + 2;
+        out += '<g class="ile-voyant"><circle cx="' + bx + '" cy="' + by + '" r="8.5" fill="' + c + '" stroke="#fff" stroke-width="2"/><rect x="' + (bx - 1.5) + '" y="' + (by - 5) + '" width="3" height="6" fill="#fff"/><rect x="' + (bx - 1.5) + '" y="' + (by + 2.5) + '" width="3" height="3" fill="#fff"/></g>';
+      }
+    }
+    return '<g class="ile-inst" data-comp="' + esc(inst.comp) + '" role="button" tabindex="0" aria-label="' + esc(tx(inst.nom)) + " : " + esc(TEXTE_ETAT[inst.etat]()) + '">' +
+      '<rect x="' + (cx - taille / 2 - 2) + '" y="' + (sol - taille) + '" width="' + (taille + 4) + '" height="' + (taille + 6) + '" fill="transparent"/>' + out + "</g>";
+  }
+  var DEFS_ILE = '<defs><filter id="ile-terne"><feColorMatrix type="saturate" values="0.2"/></filter>' +
+    '<filter id="ile-ruine"><feColorMatrix type="matrix" values="0.30 0.45 0.12 0 0.05  0.28 0.44 0.12 0 0.06  0.22 0.36 0.10 0 0.04  0 0 0 1 0"/></filter></defs>';
+  function vagues(y, w, h) {
+    var out = '<rect x="0" y="' + y + '" width="' + w + '" height="' + h + '" fill="#3F93BD"/>';
+    for (var r = 0; r * 14 < h; r++) for (var x = (r % 2) * 18 - 6; x < w; x += 36)
+      out += '<rect x="' + x + '" y="' + (y + 5 + r * 14) + '" width="14" height="2" fill="#8FD8F2" opacity=".7"/><rect x="' + (x + 14) + '" y="' + (y + 7 + r * 14) + '" width="6" height="2" fill="#D8F4FC" opacity=".6"/>';
+    return out;
+  }
+  // Le quartier d'un arbre : un coteau en terrasses, du rivage (rang 1) au grand bâtiment (rang 8).
+  function svgQuartier(q) {
+    var W = 360, PAS = 70, rangs = [];
+    q.installations.forEach(function (x) { (rangs[x.rang] = rangs[x.rang] || []).push(x); });
+    var lignes = []; for (var r = rangs.length - 1; r >= 1; r--) if (rangs[r]) lignes.push(rangs[r]);
+    var haut = 40, H = haut + lignes.length * PAS + 54, out = DEFS_ILE;
+    out += '<rect width="' + W + '" height="' + H + '" fill="#BFE3F2"/><rect width="' + W + '" height="26" fill="#D8F0F8"/>';
+    // Le coteau : une terrasse par rang, de plus en plus étroite vers le sommet.
+    lignes.forEach(function (_, i) {
+      var y = haut + i * PAS, retrait = Math.max(0, (lignes.length - 1 - i)) * 4, clair = i % 2 ? "#8CC27A" : "#7FB86E";
+      out += '<rect x="' + (retrait) + '" y="' + y + '" width="' + (W - 2 * retrait) + '" height="' + (H - y - 30) + '" rx="14" fill="' + clair + '"/>' +
+        '<rect x="' + retrait + '" y="' + (y + PAS - 6) + '" width="' + (W - 2 * retrait) + '" height="4" fill="rgba(30,60,30,.16)"/>';
+    });
+    // Le chemin qui monte, en lacets.
+    var ch = "M180 " + (H - 40);
+    lignes.forEach(function (_, i) { var j = lignes.length - 1 - i, y = haut + j * PAS + PAS - 8; ch += " L" + (i % 2 ? 250 : 110) + " " + y; });
+    out += '<path d="' + ch + '" fill="none" stroke="#E3CF96" stroke-width="8" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/>';
+    out += '<rect x="0" y="' + (H - 44) + '" width="' + W + '" height="16" fill="#EAD9A4"/>' + vagues(H - 30, W, 30);
+    var gens = "";
+    lignes.forEach(function (ligne, i) {
+      var sol = haut + i * PAS + PAS - 10, n = ligne.length;
+      ligne.forEach(function (inst, j) {
+        var t = inst.rang === 8 && n === 1 ? 62 : 52, cx = W * (j + 0.5) / n + (n === 1 ? 0 : (i % 2 ? 8 : -8));
+        out += svgInstallation(inst, cx, sol, t);
+        // Ses habitants, au pied de l'installation : un petit personnage par dizaine, trois au plus.
+        var k = Math.min(3, Math.round(inst.habitants / 14)), gr = graine(inst.comp);
+        for (var h = 0; h < k; h++) gens += svgHabitant(Math.round(cx - t / 2 - 6 + ((gr >>> (h * 5)) % 20) + h * (t / 3)), sol - 6 + (gr >>> (h * 2 + 9)) % 7, gr + h * 97);
+      });
+    });
+    return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(tx(q.nom)) + '" shape-rendering="crispEdges">' + out + gens + "</svg>";
+  }
+  function texteHabitants(n) { return nb(n) + (n > 1 ? __(" habitants") : __(" habitant")); }
+  function ouvrirInstallation(q, inst) {
+    var k = C.parId[inst.comp], g = grilleSprite(inst.dessin), friche = inst.etat === "friche";
+    var dessin = g ? '<svg class="pix" viewBox="0 0 32 32" width="128" height="128" aria-hidden="true"' + (friche ? ' style="color:var(--muted);opacity:.45"' : "") + ">" + pixels(g, C.cabinet.palette, null, 0, 0, 1, friche) + "</svg>" : "";
+    var plein = M.ile(C, P, maintenant()), st = M.statut(C, P, inst.comp, maintenant()).etat;
+    feuilleSimple('<div class="vitrine ile-vitrine etat-' + inst.etat + '">' + dessin + "</div>" +
+      '<div class="eyebrow" style="color:' + couleur(q.id) + '">' + esc(tx(q.nom)) + "</div><h2>" + esc(tx(inst.nom)) + "</h2>" +
+      (inst.usage && !friche ? '<p class="ile-usage">' + esc(tx(inst.usage)) + "</p>" : "") +
+      '<p class="ile-etat etat-' + inst.etat + '"><b>' + esc(TEXTE_ETAT[inst.etat]()) + "</b>" + (inst.habitants ? " " + esc(texteHabitants(inst.habitants)) + __(" vivent autour.") : "") + "</p>" +
+      '<p class="meta">' + (friche ? __("Elle se construit quand tu maîtrises : ") : __("Elle tient grâce à ta compétence : ")) + "<b>" + esc(tx(k.nom)) + "</b>.</p>" +
+      (st === "fermee" || st === "verrouillee" ? "" : '<button type="button" class="btn large" data-a="comp">' + (st === "disponible" ? __("Passer le quiz") : st === "a_reviser" ? __("Faire le rappel") : __("Voir la compétence")) + "</button>"),
+      tx(inst.nom), { comp: function () { fermerFeuille(); ouvrirFeuille(inst.comp); } });
+  }
+  // La carte de l'île : une parcelle par quartier, celles des arbres fermés dans la brume.
+  function svgCarteIle(I) {
+    var W = 360, LW = 164, LH = 104, PASY = 116, n = I.quartiers.length, rangees = Math.ceil(n / 2), H = 30 + rangees * PASY + 46, sable = "", terre = "", dessus = "";
+    I.quartiers.forEach(function (q, i) {
+      var col = i % 2, x = col ? 186 : 10, y = 22 + Math.floor(i / 2) * PASY + (col ? 26 : 0);
+      sable += '<rect x="' + (x - 7) + '" y="' + (y - 7) + '" width="' + (LW + 14) + '" height="' + (LH + 14) + '" rx="26" fill="#EAD9A4"/>';
+      var sol = q.ouvert ? (i % 3 === 0 ? "#86BE74" : i % 3 === 1 ? "#7FB86E" : "#8CC27A") : "#9DB6B3";
+      terre += '<rect x="' + x + '" y="' + y + '" width="' + LW + '" height="' + LH + '" rx="20" fill="' + sol + '"/>';
+      var g = '<g class="ile-parcelle' + (q.ouvert ? "" : " brume") + '" data-q="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + esc(tx(q.nom)) + '">' +
+        '<rect x="' + x + '" y="' + y + '" width="' + LW + '" height="' + LH + '" rx="20" fill="transparent"/>';
+      // Quatre installations en vitrine : les plus hautes en service, sinon les prochaines à construire.
+      var montre = q.installations.filter(function (x) { return x.etat !== "friche"; }).sort(function (a, b) { return b.rang - a.rang; }).slice(0, 4);
+      if (montre.length < 4) montre = montre.concat(q.installations.filter(function (x) { return x.etat === "friche"; }).slice(0, 4 - montre.length));
+      montre.sort(function (a, b) { return a.rang - b.rang; });
+      if (q.ouvert) montre.forEach(function (inst, j) { g += svgInstallation(inst, x + 24 + j * 38.5, y + 56, 34).replace(' class="ile-inst" data-comp="' + esc(inst.comp) + '" role="button" tabindex="0"', ""); });
+      else g += '<text x="' + (x + LW / 2) + '" y="' + (y + 44) + '" text-anchor="middle" font-size="30" font-weight="800" fill="rgba(255,255,255,.75)">?</text>';
+      var hab = Math.min(5, Math.round(q.habitants / 110)), gr = graine(q.id);
+      for (var h = 0; h < hab; h++) g += svgHabitant(x + 14 + ((gr >>> (h * 4)) % 132), y + 56 + ((gr >>> (h * 3 + 2)) % 8), gr + h * 31, 1.25);
+      g += '<rect x="' + (x + 8) + '" y="' + (y + 68) + '" width="' + (LW - 16) + '" height="29" rx="10" fill="rgba(255,255,255,.9)"/>' +
+        '<rect x="' + (x + 8) + '" y="' + (y + 68) + '" width="6" height="29" rx="3" fill="' + couleur(q.id) + '"/>' +
+        '<text x="' + (x + 20) + '" y="' + (y + 81) + '" font-size="12.5" font-weight="800" fill="#1E1A2B">' + esc(tx(q.nom)) + "</text>" +
+        '<text x="' + (x + 20) + '" y="' + (y + 93) + '" font-size="10.5" fill="#4A4658">' + (q.ouvert ? q.posees + " / " + q.installations.length + " · " + esc(texteHabitants(q.habitants)) : esc(__("Arbre fermé"))) + "</text>";
+      if (q.service) g += '<g><rect x="' + (x + LW - 30) + '" y="' + (y + 6) + '" width="2" height="18" fill="#5E3B1C"/><rect x="' + (x + LW - 28) + '" y="' + (y + 6) + '" width="14" height="9" fill="#F2C14E"/><rect x="' + (x + LW - 28) + '" y="' + (y + 12) + '" width="14" height="3" fill="#B8862B"/></g>';
+      dessus += g + "</g>";
+    });
+    return '<svg class="ile-scene ile-carte" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(__("Carte de l'île")) + '">' + DEFS_ILE + vagues(0, W, H) + sable + terre + '<g shape-rendering="crispEdges">' + dessus + "</g></svg>";
+  }
+  function vueIle() {
+    var I = M.ile(C, P, maintenant()), v = el('<div class="vue vue-ile"></div>');
+    var q = quartierVu && I.quartiers.filter(function (x) { return x.id === quartierVu; })[0];
+    if (!q) quartierVu = null;
+    var compteur = '<div class="ile-compteur"><svg class="pix" viewBox="0 0 5 8" width="15" height="24" aria-hidden="true" shape-rendering="crispEdges">' + svgHabitant(0, 0, 77, 1) + "</svg><span><b>" + nb(q ? q.habitants : I.habitants) + "</b><small>" + ((q ? q.habitants : I.habitants) > 1 ? __("habitants") : __("habitant")) + "</small></span></div>";
+    if (q) {
+      var retour = el('<button type="button" class="ile-retour">' + __("← L'île") + "</button>");
+      retour.onclick = function () { quartierVu = null; rendre(); window.scrollTo(0, 0); };
+      v.appendChild(retour);
+      v.appendChild(el('<div class="entete"><div><div class="eyebrow" style="color:' + couleur(q.id) + '">' + esc(tx(stat(q.id).nom)) + "</div><h1>" + esc(tx(q.nom)) + "</h1></div>" + compteur + "</div>"));
+      if (q.description) v.appendChild(el('<p class="note">' + esc(tx(q.description)) + "</p>"));
+      var sc = el('<div class="ile-cadre">' + svgQuartier(q) + "</div>");
+      sc.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-comp]"); if (!g) return; var id = g.getAttribute("data-comp"); ouvrirInstallation(q, q.installations.filter(function (x) { return x.comp === id; })[0]); };
+      v.appendChild(sc);
+      var soucis = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne" || x.etat === "abandon"; });
+      v.appendChild(el('<div class="ile-bilan"><span><b>' + q.posees + " / " + q.installations.length + "</b>" + __(" installations construites") + "</span>" +
+        (q.service ? "<span class=\"ok\">" + (q.batiment ? esc(tx(q.batiment)) + __(" tourne : quartier en service.") : __("Quartier en service.")) + "</span>" :
+          soucis.length ? '<span class="souci">' + soucis.length + (soucis.length > 1 ? __(" installations demandent ton attention.") : __(" installation demande ton attention.")) + "</span>" :
+          q.batiment ? "<span>" + __("Le quartier entre en service quand tout tourne, jusqu'à : ") + esc(tx(q.batiment)) + ".</span>" : "") + "</div>"));
+      return v;
+    }
+    v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + __("Ce que tu sais encore") + "</div><h1>" + __("L'île") + "</h1></div>" + compteur + "</div>"));
+    v.appendChild(el('<p class="note">' + __("Chaque compétence maîtrisée construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter.") + "</p>"));
+    var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
+    carte.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
+    v.appendChild(carte);
+    return v;
+  }
+  // Dans le bilan d'une épreuve : ce qu'elle vient de changer sur l'île.
+  function blocIleBilan(ch) {
+    var inst = ch.installation, q = M.ile(C, P, maintenant()).quartiers.filter(function (x) { return x.id === ch.quartier; })[0];
+    var monte = ch.apres === "marche" && ch.avant !== "marche", g = grilleSprite(inst.dessin);
+    var titre = ch.apres === "marche" ? (ch.avant === "friche" ? __("Nouvelle installation") : ch.avant === "abandon" ? __("Remise en service") : __("Réparée")) :
+      ch.apres === "abandon" ? __("Laissée à l'abandon") : ch.apres === "panne" ? __("En panne") : ch.apres === "alerte" ? __("En alerte") : __("Sur l'île");
+    var d = ch.habitants - ch.habitantsAvant;
+    var b = el('<div class="recompense ile-rec' + (monte ? " anim" : " perte") + '" style="--c:' + couleur(ch.quartier) + '"><div class="genre">' + __("Sur l'île") + " · " + esc(tx(q.nom)) + "</div>" +
+      '<div class="ile-badge"><div class="ile-socle">' + (g ? '<svg class="pix" viewBox="0 0 32 32" width="128" height="128" aria-hidden="true"' + (ch.apres === "abandon" ? ' filter="url(#ile-ruine)"' : ch.apres === "panne" ? ' filter="url(#ile-terne)"' : "") + ">" + pixels(g, C.cabinet.palette, null, 0, 0, 1) + "</svg>" : "") + "</div></div>" +
+      '<svg width="0" height="0" style="position:absolute">' + DEFS_ILE + "</svg>" +
+      "<div class=\"eyebrow\">" + esc(titre) + "</div><h3>" + esc(tx(inst.nom)) + "</h3>" +
+      (inst.usage && ch.apres === "marche" ? '<p class="desc">' + esc(tx(inst.usage)) + "</p>" : ch.apres !== "marche" ? '<p class="desc">' + esc(TEXTE_ETAT[ch.apres]()) + "</p>" : "") +
+      (d ? '<p class="ile-delta ' + (d > 0 ? "plus" : "moins") + '">' + (d > 0 ? "+" : "−") + esc(texteHabitants(Math.abs(d))) + '<small>' + esc(texteHabitants(ch.habitants)) + __(" sur l'île") + "</small></p>" : "") +
+      (monte && ch.service ? '<p class="ile-service">' + (q.batiment ? esc(tx(q.batiment)) + __(" tourne : ") : "") + esc(tx(q.nom)) + __(" est en service !") + "</p>" : "") + "</div>");
+    return b;
+  }
 
   // --- Vue Personnage -------------------------------------------------------
   function vuePerso() {
@@ -7532,6 +7734,8 @@ function demarrerJeu() {
     // v6 : trois temps, une chose à la fois. 1. le verdict et l'IA, 2. les récompenses une par une, 3. le pion qui avance.
     var cd = quiz.cartes || (quiz.cartes = r.apresPlateau ? cartesEnDeux(r, null, r.theme) : { recs: recompensesBilan(r), nAvant: null }), recs = cd.recs;
     var etapes = ["verdict"];
+    // L'île (Victor, 2026-11-10) : ce que l'épreuve vient d'y changer, tout de suite après le verdict.
+    if (r.ile) etapes.push("ile");
     etapesRecompenses(etapes, recs, r.plateau, cd.nAvant, quiz);
     var arret = atomeArret(r.plateau);
     if (P.duel && P.duel.pret && r.plateau && r.plateau.etapes.some(function (x) { return x.type === "ennemi" || x.type === "duel_attente"; })) etapes.push("duel");
@@ -7549,6 +7753,8 @@ function demarrerJeu() {
       if (quiz.arbreFerme && M.arbreOuvert(C, P, k.stat)) z.appendChild(el('<div class="case-dicte" style="--c:' + couleur(k.stat) + __('"><span><b>Arbre ') + esc(tx(stat(k.stat).nom)) + __(" ouvert !</b><br>Ses compétences sont jouables, et ses cases du plateau lanceront ses quiz.</span></div>")));
     } else if (nom.indexOf("recompense:") === 0) {
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c); if (c.classList.contains("carte-savant")) degelerAvatar();
+    } else if (nom === "ile") {
+      z.appendChild(blocIleBilan(r.ile));
     } else if (nom === "duel") {
       z.appendChild(blocDefi());
     } else if (nom === "suite") {
@@ -7559,7 +7765,7 @@ function demarrerJeu() {
     wrap.appendChild(z);
     if (nom === "duel") return wrap;
     function groupe(d) { var n = 0; while (etapes[d + n] && etapes[d + n].indexOf("recompense:") === 0) n++; return n; }
-    var suite = etapes[e + 1], libelle = !suite ? __("Continuer") : suite === "plateau" ? __("Voir le plateau") : suite === "duel" ? __("Un ennemi !") : suite === "suite" ? "Et maintenant ?" : suite.indexOf("recompense:") === 0 ? (nom.indexOf("recompense:") !== 0 ? (groupe(e + 1) > 1 ? __("Voir les ") + groupe(e + 1) + __(" récompenses") : __("Voir la récompense")) : __("Récompense suivante")) : __("Suite");
+    var suite = etapes[e + 1], libelle = !suite ? __("Continuer") : suite === "ile" ? __("Voir l'île") : suite === "plateau" ? __("Voir le plateau") : suite === "duel" ? __("Un ennemi !") : suite === "suite" ? "Et maintenant ?" : suite.indexOf("recompense:") === 0 ? (nom.indexOf("recompense:") !== 0 ? (groupe(e + 1) > 1 ? __("Voir les ") + groupe(e + 1) + __(" récompenses") : __("Voir la récompense")) : __("Récompense suivante")) : __("Suite");
     if (!suite && arret) boutonAtome(wrap, arret, fermerQuiz);
     else if (!suite && M.masterclassImposee(C, P)) {
       var mi = el('<button type="button" class="btn large sc-mc">' + __("Masterclass imposée : ") + esc(tx(C.parId[M.masterclassImposee(C, P).id].nom)) + "</button>");
@@ -7704,7 +7910,8 @@ function demarrerJeu() {
     }
     // v28 : enfermé, on ne quitte pas le mur.
     if (vue !== "honte" && M.jeuFerme(C, P, maintenant())) { if (vue !== "aujourdhui") toast(__("Pas avant la fin de ta peine.")); vue = "honte"; }
-    app.appendChild(vue === "arbre" ? vueArbre() : vue === "perso" ? vuePerso() : vue === "collections" ? vueCollections() : vue === "succes" ? vueSucces() : vue === "honte" ? vueHonte() : vueAujourdhui());
+    if (vue === "ile" && !M.ilePresente(C)) vue = "aujourdhui";
+    app.appendChild(vue === "ile" ? vueIle() : vue === "arbre" ? vueArbre() : vue === "perso" ? vuePerso() : vue === "collections" ? vueCollections() : vue === "succes" ? vueSucces() : vue === "honte" ? vueHonte() : vueAujourdhui());
     rendreOnglets();
     revelerNom();
     scenesPersonnage();
@@ -8238,7 +8445,7 @@ function demarrerJeu() {
   function construireContenu(off) {
     var d = M.filtrerPacks(BRUT, INDEX, off);
     C = M.indexerContenu(d["regles.json"], d["skills.json"], d["questions.json"], d["succes.json"], { commentaires: d["commentaires.json"], objets: d["objets.json"],
-      avatar: d["avatar.json"], ia: d["ia.json"], plateau: d["plateau.json"], frise: d["frise.json"], bibliotheque: d["bibliotheque.json"], ennemis: d["ennemis.json"], atomes: d["atomes.json"], donjons: d["donjons.json"] });
+      avatar: d["avatar.json"], ia: d["ia.json"], plateau: d["plateau.json"], frise: d["frise.json"], bibliotheque: d["bibliotheque.json"], ennemis: d["ennemis.json"], atomes: d["atomes.json"], donjons: d["donjons.json"], ile: d["ile.json"] });
     C.packsEteints = M.packsEteints(INDEX, off);
     // Le ton de chaque arbre (pack.json « reglages »: { « ton » }) : un ton choisi ne garde que les lignes d'arbre sur ce ton.
     C.tonArbres = {};
@@ -8259,7 +8466,7 @@ function demarrerJeu() {
   }
 
   var FICHIERS = ["regles.json", "skills.json", "questions.json", "succes.json", "commentaires.json", "objets.json", "avatar.json",
-    "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json", "donjons.json", "packs.json"];
+    "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json", "donjons.json", "ile.json", "packs.json"];
   Promise.all(FICHIERS.map(charger)).then(function (d) {
     BRUT = {}; FICHIERS.forEach(function (f, i) { BRUT[f] = M.traduireChaines(d[i]); });
     INDEX = BRUT["packs.json"];

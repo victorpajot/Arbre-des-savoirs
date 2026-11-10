@@ -4170,6 +4170,129 @@
      }
     }
    }
+  },
+  "ile": {
+   "type": "object",
+   "description": "L'île (Victor, 2026-11-10) : chaque arbre y a son quartier, chaque compétence maîtrisée y pose une installation. L'état de l'île se déduit des compétences de la partie.",
+   "additionalProperties": false,
+   "required": [
+    "quartiers"
+   ],
+   "properties": {
+    "format": {
+     "const": 1
+    },
+    "regles": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "habitants",
+      "panne_jours"
+     ],
+     "properties": {
+      "habitants": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "installation",
+        "par_rang",
+        "alerte",
+        "panne",
+        "quartier"
+       ],
+       "description": "Habitants attirés par une installation en marche (installation + par_rang × rang), part gardée en alerte et en panne, prime d'un quartier en service.",
+       "properties": {
+        "installation": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "par_rang": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "alerte": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "panne": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "quartier": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
+      },
+      "panne_jours": {
+       "type": "integer",
+       "minimum": 1,
+       "description": "Jours de retard d'un rappel avant que l'installation tombe en panne."
+      }
+     }
+    },
+    "quartiers": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "nom",
+       "batiment",
+       "description",
+       "installations"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "description": "L'arbre (stat) dont c'est le quartier."
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "batiment": {
+        "$ref": "#/$defs/texte",
+        "description": "Le grand bâtiment qui entre en service quand tout le quartier tourne."
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       },
+       "installations": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "comp",
+          "nom",
+          "usage",
+          "dessin"
+         ],
+         "properties": {
+          "comp": {
+           "type": "string"
+          },
+          "nom": {
+           "$ref": "#/$defs/texte"
+          },
+          "usage": {
+           "$ref": "#/$defs/texte",
+           "description": "À quoi l'installation sert sur l'île (fiction du jeu, pas un fait sourcé)."
+          },
+          "dessin": {
+           "type": "string",
+           "description": "Pixel art 32 × 32 (dessins.json du pack, objet ou icône)."
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
   }
  }
 }

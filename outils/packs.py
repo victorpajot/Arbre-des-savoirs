@@ -26,7 +26,7 @@ DATA = RACINE / "data"
 # Les fichiers que lit le jeu, dans l'ordre où index.html les charge.
 FICHIERS_DATA = ["regles.json", "skills.json", "questions.json", "succes.json", "commentaires.json", "objets.json",
                  "avatar.json", "ia.json", "plateau.json", "frise.json", "bibliotheque.json", "ennemis.json", "atomes.json",
-                 "donjons.json"]
+                 "donjons.json", "ile.json"]
 
 # Fichier d'un pack → (fichier de data, chemin dans ce fichier). Une liste s'ajoute à la liste, un dictionnaire au dictionnaire.
 EMPLACEMENTS = {
@@ -55,6 +55,8 @@ EMPLACEMENTS = {
     "boutique.json": ("ia.json", ("credits", "boutique", "articles")),
     "donjons.json": ("donjons.json", ("donjons",)),
     "proces.json": ("donjons.json", ("proces",)),
+    # L'île : chaque arbre y a son quartier, chaque compétence son installation (pack de jeu « ile »).
+    "quartiers.json": ("ile.json", ("quartiers",)),
 }
 PAR_CHEMIN = {(f, c): nom for nom, (f, c) in EMPLACEMENTS.items()}
 AUTRES = {"pack.json", "verifications.json", "ordre.json", "portraits.json", "numeros_cases.json", "LISEZMOI.md"}

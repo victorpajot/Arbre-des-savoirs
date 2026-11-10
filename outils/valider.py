@@ -15,7 +15,7 @@ FICHIERS = [("regles.json", "regles"), ("skills.json", "skills"), ("questions.js
             ("succes.json", "succes"), ("commentaires.json", "commentaires"), ("objets.json", "objets"),
             ("avatar.json", "avatar"), ("ia.json", "ia"), ("plateau.json", "plateau"), ("frise.json", "frise"),
             ("bibliotheque.json", "bibliotheque"), ("ennemis.json", "ennemis"), ("atomes.json", "atomes"),
-            ("donjons.json", "donjons"), ("packs.json", "packs")]
+            ("donjons.json", "donjons"), ("ile.json", "ile"), ("packs.json", "packs")]
 
 
 # Les manipulations des ateliers de donjon que l'interface sait afficher.
