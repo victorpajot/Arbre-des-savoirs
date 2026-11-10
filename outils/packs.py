@@ -55,8 +55,8 @@ EMPLACEMENTS = {
     "boutique.json": ("ia.json", ("credits", "boutique", "articles")),
     "donjons.json": ("donjons.json", ("donjons",)),
     "proces.json": ("donjons.json", ("proces",)),
-    # L'île : chaque arbre y a son quartier, chaque compétence son installation (pack de jeu « ile »).
-    "quartiers.json": ("ile.json", ("quartiers",)),
+    # L'île : chaque compétence pose son installation dans un quartier (pack de jeu « ile »).
+    "installations.json": ("ile.json", ("installations",)),
 }
 PAR_CHEMIN = {(f, c): nom for nom, (f, c) in EMPLACEMENTS.items()}
 AUTRES = {"pack.json", "verifications.json", "ordre.json", "portraits.json", "numeros_cases.json", "LISEZMOI.md"}

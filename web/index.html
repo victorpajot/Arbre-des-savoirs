@@ -1452,6 +1452,18 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-delta.plus { color: var(--good); } .ile-delta.moins { color: var(--bad); }
 .ile-delta small { font-family: var(--f-body); font-size: 15px; font-weight: 400; color: var(--muted); }
 .ile-service { font-size: 17px; font-weight: 800; color: var(--accent); margin: 0; }
+.ile-service.perdue { color: var(--muted); }
+.ile-h2 { font-size: 17px; margin: 22px 0 10px; }
+.ile-options { display: grid; gap: 8px; }
+.ile-option { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+.ile-option b { font-size: 17px; } .ile-option p { margin: 2px 0 0; font-size: 15px; color: var(--muted); }
+.ile-option.ouverte p { color: inherit; }
+.ile-pastille { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 15px; color: var(--c); border: 2px solid var(--c); }
+.ile-option.ouverte .ile-pastille { background: var(--c); color: #fff; }
+.ile-arbres { display: flex; flex-wrap: wrap; gap: 6px; }
+.ile-arbre { display: inline-flex; gap: 5px; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 14px; border: 1.5px solid var(--c); color: var(--ink); }
+.ile-arbre::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.ile-arbre.vide { opacity: .55; }
 .sans-onglets .app { padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
 .lance .hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 18px 0 4px; }
 .lance .hero .logo { width: 92px; height: 92px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.15); }
@@ -3904,11 +3916,11 @@ function demarrerJeu() {
       out += '<rect x="' + x + '" y="' + (y + 5 + r * 14) + '" width="14" height="2" fill="#8FD8F2" opacity=".7"/><rect x="' + (x + 14) + '" y="' + (y + 7 + r * 14) + '" width="6" height="2" fill="#D8F4FC" opacity=".6"/>';
     return out;
   }
-  // Le quartier d'un arbre : un coteau en terrasses, du rivage (rang 1) au grand bâtiment (rang 8).
+  // Un quartier vu de près : un coteau en terrasses, des installations les plus simples (en bas) aux plus savantes.
   function svgQuartier(q) {
     var W = 360, PAS = 70, rangs = [];
     q.installations.forEach(function (x) { (rangs[x.rang] = rangs[x.rang] || []).push(x); });
-    var lignes = []; for (var r = rangs.length - 1; r >= 1; r--) if (rangs[r]) lignes.push(rangs[r]);
+    var lignes = []; for (var r = rangs.length - 1; r >= 1; r--) if (rangs[r]) for (var c = 0; c < rangs[r].length; c += 5) lignes.push(rangs[r].slice(c, c + 5));
     var haut = 40, H = haut + lignes.length * PAS + 54, out = DEFS_ILE;
     out += '<rect width="' + W + '" height="' + H + '" fill="#BFE3F2"/><rect width="' + W + '" height="26" fill="#D8F0F8"/>';
     // Le coteau : une terrasse par rang, de plus en plus étroite vers le sommet.
@@ -3941,10 +3953,10 @@ function demarrerJeu() {
     var dessin = g ? '<svg class="pix" viewBox="0 0 32 32" width="128" height="128" aria-hidden="true"' + (friche ? ' style="color:var(--muted);opacity:.45"' : "") + ">" + pixels(g, C.cabinet.palette, null, 0, 0, 1, friche) + "</svg>" : "";
     var plein = M.ile(C, P, maintenant()), st = M.statut(C, P, inst.comp, maintenant()).etat;
     feuilleSimple('<div class="vitrine ile-vitrine etat-' + inst.etat + '">' + dessin + "</div>" +
-      '<div class="eyebrow" style="color:' + couleur(q.id) + '">' + esc(tx(q.nom)) + "</div><h2>" + esc(tx(inst.nom)) + "</h2>" +
+      '<div class="eyebrow" style="color:' + q.couleur + '">' + esc(tx(q.nom)) + "</div><h2>" + esc(tx(inst.nom)) + "</h2>" +
       (inst.usage && !friche ? '<p class="ile-usage">' + esc(tx(inst.usage)) + "</p>" : "") +
       '<p class="ile-etat etat-' + inst.etat + '"><b>' + esc(TEXTE_ETAT[inst.etat]()) + "</b>" + (inst.habitants ? " " + esc(texteHabitants(inst.habitants)) + __(" vivent autour.") : "") + "</p>" +
-      '<p class="meta">' + (friche ? __("Elle se construit quand tu maîtrises : ") : __("Elle tient grâce à ta compétence : ")) + "<b>" + esc(tx(k.nom)) + "</b>.</p>" +
+      '<p class="meta">' + (friche ? __("Elle se construit quand tu maîtrises : ") : __("Elle tient grâce à ta compétence : ")) + "<b>" + esc(tx(k.nom)) + '</b> <span class="ile-arbre" style="--c:' + couleur(k.stat) + '">' + esc(tx(stat(k.stat).nom)) + "</span></p>" +
       (st === "fermee" || st === "verrouillee" ? "" : '<button type="button" class="btn large" data-a="comp">' + (st === "disponible" ? __("Passer le quiz") : st === "a_reviser" ? __("Faire le rappel") : __("Voir la compétence")) + "</button>"),
       tx(inst.nom), { comp: function () { fermerFeuille(); ouvrirFeuille(inst.comp); } });
   }
@@ -4000,7 +4012,9 @@ function demarrerJeu() {
     return o;
   }
   function svgCarteIle(I) {
-    var W = ILE_W, H = ILE_H, n = I.quartiers.length, B = secteursIle(n), o = "", dessus = "", zones = "", brume = "", occupe = [];
+    // Les quartiers du tour de l'île se partagent la côte ; celui du centre entoure le pied du volcan.
+    var W = ILE_W, H = ILE_H, tour = I.quartiers.filter(function (q) { return !q.centre; }), centre = I.quartiers.filter(function (q) { return q.centre; })[0];
+    var n = tour.length, B = secteursIle(n), S0 = centre ? 0.53 : 0.34, o = "", dessus = "", zones = "", brume = "", occupe = [];
     // La mer, les hauts-fonds, la plage, puis la terre de plus en plus haute vers le volcan.
     o += '<defs><radialGradient id="ile-mer" cx="50%" cy="51%" r="62%"><stop offset="0" stop-color="#4FA9D1"/><stop offset=".62" stop-color="#3C8FBC"/><stop offset="1" stop-color="#2F759F"/></radialGradient></defs>' + DEFS_ILE;
     o += '<rect width="' + W + '" height="' + H + '" fill="url(#ile-mer)"/>';
@@ -4008,55 +4022,63 @@ function demarrerJeu() {
     o += '<path d="' + contourIle(1.1) + '" fill="#62B5D8" opacity=".55"/><path d="' + contourIle(1.055) + '" fill="#8DD0E6" opacity=".7"/>';
     o += '<path d="' + contourIle(1.012) + '" fill="#F6ECC4"/><path d="' + contourIle(0.985) + '" fill="#E9D7A0"/>';
     o += '<path d="' + contourIle(0.945) + '" fill="#8FC77C"/><path d="' + contourIle(0.78) + '" fill="#84BE72"/><path d="' + contourIle(0.58) + '" fill="#79B36A"/><path d="' + contourIle(0.42) + '" fill="#8FAE72"/>';
-    // Chaque territoire ouvert prend un voile de la couleur de son arbre ; un ruisseau descend du volcan entre deux voisins.
-    I.quartiers.forEach(function (q, i) {
-      if (q.ouvert) o += '<path d="' + secteurIle(B[i], B[i + 1], 0.34, 0.945) + '" fill="' + couleur(q.id) + '" opacity="' + (q.posees ? ".2" : ".1") + '"/>';
-      o += '<path d="M' + frontiereIle(B[i], 0.34, 1.0, 1).slice(1) + '" stroke="#6FBFE0" stroke-width="' + (i % 2 ? "1.6" : "2.4") + '" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>';
+    // Chaque quartier habité prend un voile de sa couleur ; un ruisseau descend du volcan entre deux voisins.
+    tour.forEach(function (q, i) {
+      if (q.posees) o += '<path d="' + secteurIle(B[i], B[i + 1], S0, 0.945) + '" fill="' + q.couleur + '" opacity=".2"/>';
+      o += '<path d="M' + frontiereIle(B[i], S0, 1.0, 1).slice(1) + '" stroke="#6FBFE0" stroke-width="' + (i % 2 ? "1.8" : "2.6") + '" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>';
     });
-    // Les chemins : du pied du volcan vers chaque quartier, en serpentant.
-    I.quartiers.forEach(function (q, i) {
+    if (centre) o += '<path d="' + contourIle(S0) + '" fill="' + (centre.posees ? centre.couleur : "#8FAE72") + '" opacity="' + (centre.posees ? ".28" : ".5") + '"/><path d="' + contourIle(S0) + '" fill="none" stroke="#E3CF96" stroke-width="2.4" stroke-dasharray="1 5" stroke-linecap="round" opacity=".9"/>';
+    // Les chemins : de la route du volcan vers chaque quartier, en serpentant.
+    tour.forEach(function (q, i) {
       var m = (B[i] + B[i + 1]) / 2, d = "";
-      for (var k = 0; k <= 8; k++) { var p = pointIle(m + Math.sin(k * 1.3 + i) * 0.035, 0.3 + k / 8 * 0.42); d += (k ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }
-      if (q.ouvert && q.posees) o += '<path d="' + d + '" stroke="#E3CF96" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/>';
+      for (var k = 0; k <= 8; k++) { var p = pointIle(m + Math.sin(k * 1.3 + i) * 0.035, S0 + k / 8 * (0.74 - S0)); d += (k ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }
+      if (q.posees) o += '<path d="' + d + '" stroke="#E3CF96" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/>';
     });
-    I.quartiers.forEach(function (q, i) {
-      var a = B[i], b = B[i + 1], m = (a + b) / 2, da = b - a;
-      var L = pointIle(m, 0.855), g = "";
-      occupe.push([L[0], L[1], 30]);
-      if (q.ouvert) {
-        // Jusqu'à trois installations en vue : les plus hautes du quartier.
-        var montre = q.installations.filter(function (x) { return x.etat !== "friche"; }).sort(function (x, y) { return y.rang - x.rang; }).slice(0, 3);
-        var places = [[m, 0.63, 28], [m - da * 0.22, 0.47, 22], [m + da * 0.24, 0.49, 22]];
-        montre.forEach(function (inst, j) {
-          var p = pointIle(places[j][0], places[j][1]), t = places[j][2];
-          occupe.push([p[0], p[1] - t / 2, t * 0.75]);
-          g += svgInstallation(inst, Math.round(p[0]), Math.round(p[1]), t).replace(' class="ile-inst" data-comp="' + esc(inst.comp) + '" role="button" tabindex="0"', "");
-        });
-        var hab = Math.min(4, Math.round(q.habitants / 90)), gr = graine(q.id);
-        for (var h = 0; h < hab; h++) { var ph = pointIle(m + (((gr >>> (h * 4)) % 16) / 16 - 0.5) * da * 0.6, 0.6 + ((gr >>> (h * 3 + 2)) % 8) / 50); g += svgHabitant(Math.round(ph[0]), Math.round(ph[1]), gr + h * 31, 1.2); }
-      } else {
-        // La brume : des bancs de nuages posés sur le territoire, pas un aplat.
-        for (var u = 0; u < 9; u++) { var gu = graine(q.id + "b" + u), pu = pointIle(a + da * (0.15 + ((gu % 100) / 100) * 0.7), 0.42 + (u / 8) * 0.5);
+    function poser(q, L, places, a, da, zone, sBrume) {
+      var g = "", demi = tx(q.nom).length * 3.4 + 6;
+      // L'étiquette reste entière dans le cadre.
+      L = [Math.max(demi, Math.min(ILE_W - demi, L[0])), L[1]];
+      occupe.push([L[0], L[1], 32]);
+      // Les installations en vue : les plus hautes du quartier. Le reste se visite sur place.
+      var montre = q.installations.filter(function (x) { return x.etat !== "friche"; }).sort(function (x, y) { return y.rang - x.rang; }).slice(0, places.length);
+      montre.forEach(function (inst, j) {
+        var p = pointIle(places[j][0], places[j][1]), t = places[j][2];
+        occupe.push([p[0], p[1] - t / 2, t * 0.75]);
+        g += svgInstallation(inst, Math.round(p[0]), Math.round(p[1]), t).replace(' class="ile-inst" data-comp="' + esc(inst.comp) + '" role="button" tabindex="0"', "");
+      });
+      var hab = Math.min(6, Math.round(q.habitants / 60)), gr = graine(q.id);
+      for (var h = 0; h < hab; h++) { var ph = pointIle(a + da * (0.2 + ((gr >>> (h * 4)) % 16) / 16 * 0.6), sBrume[0] + (sBrume[1] - sBrume[0]) * (0.25 + ((gr >>> (h * 3 + 2)) % 8) / 16)); g += svgHabitant(Math.round(ph[0]), Math.round(ph[1]), gr + h * 31, 1.2); }
+      if (!q.ouvert) {
+        // La brume : des bancs de nuages posés sur le quartier tant qu'aucun de ses savoirs n'est à ta portée.
+        for (var u = 0; u < 9; u++) { var gu = graine(q.id + "b" + u), pu = pointIle(a + da * (0.15 + ((gu % 100) / 100) * 0.7), sBrume[0] + (u / 8) * (sBrume[1] - sBrume[0]));
           brume += '<ellipse cx="' + pu[0].toFixed(1) + '" cy="' + pu[1].toFixed(1) + '" rx="' + (15 + (gu >>> 8) % 9) + '" ry="' + (8 + (gu >>> 12) % 5) + '" fill="#EEF3F4" opacity=".8"/>'; }
-        var pb = pointIle(m, 0.6); g += '<text x="' + pb[0].toFixed(1) + '" y="' + (pb[1] + 8).toFixed(1) + '" text-anchor="middle" font-size="24" font-weight="800" fill="#7C8C92">?</text>';
       }
       var soucis = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne" || x.etat === "abandon"; }).length;
-      var nom = esc(tx(q.nom)), sous = q.ouvert ? q.posees + " / " + q.installations.length : esc(__("fermé"));
+      var faites = q.options.filter(function (x) { return x.ouverte; }).length;
+      var nom = esc(tx(q.nom)), sous = q.ouvert ? q.posees + " / " + q.installations.length : esc(__("dans la brume"));
       g += '<g class="ile-etiquette" font-family="var(--f-body)" text-anchor="middle" style="paint-order:stroke" stroke="rgba(255,255,255,.92)" stroke-width="3.2" stroke-linejoin="round">' +
-        '<text x="' + L[0].toFixed(1) + '" y="' + L[1].toFixed(1) + '" font-size="11.5" font-weight="800" fill="' + (q.ouvert ? "#1E1A2B" : "#5D6470") + '">' + nom + "</text>" +
+        '<text x="' + L[0].toFixed(1) + '" y="' + L[1].toFixed(1) + '" font-size="12" font-weight="800" fill="' + (q.ouvert ? "#1E1A2B" : "#5D6470") + '">' + nom + "</text>" +
         '<text x="' + L[0].toFixed(1) + '" y="' + (L[1] + 11.5).toFixed(1) + '" font-size="9.5" font-weight="700" fill="' + (soucis ? "#B5621B" : "#4A4658") + '">' + sous + (soucis ? " · " + soucis + " !" : "") + "</text></g>";
-      g += '<circle cx="' + L[0].toFixed(1) + '" cy="' + (L[1] - 15).toFixed(1) + '" r="3.6" fill="' + couleur(q.id) + '" stroke="#fff" stroke-width="1.4"/>';
-      if (q.service) g += '<g><rect x="' + (L[0] + 7).toFixed(1) + '" y="' + (L[1] - 27).toFixed(1) + '" width="1.6" height="13" fill="#5E3B1C"/><rect x="' + (L[0] + 8.6).toFixed(1) + '" y="' + (L[1] - 27).toFixed(1) + '" width="10" height="6.5" fill="#F2C14E"/></g>';
+      // Une étoile par option du quartier, pleine quand elle est ouverte.
+      q.options.forEach(function (_, k) { var ex = L[0] + (k - (q.options.length - 1) / 2) * 9;
+        g += '<circle cx="' + ex.toFixed(1) + '" cy="' + (L[1] - 15).toFixed(1) + '" r="3.2" fill="' + (k < faites ? q.couleur : "#fff") + '" stroke="' + (k < faites ? "#fff" : q.couleur) + '" stroke-width="1.3"/>'; });
       dessus += '<g pointer-events="none">' + g + "</g>";
-      zones += '<path class="ile-parcelle" data-q="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + nom + '" d="' + secteurIle(a, b, 0.3, 1.06) + '" fill="transparent"/>';
+      zones += '<path class="ile-parcelle" data-q="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + nom + '" d="' + zone + '" fill="transparent"/>';
+    }
+    tour.forEach(function (q, i) {
+      var a = B[i], b = B[i + 1], m = (a + b) / 2, da = b - a;
+      poser(q, pointIle(m, 0.86), [[m - da * 0.27, 0.77, 26], [m + da * 0.27, 0.77, 24], [m - da * 0.3, 0.63, 22], [m + da * 0.3, 0.63, 22]], a, da, secteurIle(a, b, S0, 1.06), [S0 + 0.05, 0.8]);
     });
     // Les bosquets : semés partout où rien n'est construit, plus serrés sur les hauteurs.
     var arbres = "";
     for (var t = 0; t < 150; t++) {
       var ga = graine("a" + t), at = (ga % 6283) / 1000, st = 0.36 + ((ga >>> 13) % 560) / 1000, pa = pointIle(at, st);
+      if (centre && st < S0 + 0.03) continue;
       if (occupe.some(function (z) { return Math.hypot(pa[0] - z[0], pa[1] - z[1]) < z[2]; })) continue;
       arbres += '<ellipse cx="' + (pa[0] + 1).toFixed(1) + '" cy="' + (pa[1] + 3).toFixed(1) + '" rx="4" ry="1.6" fill="rgba(20,40,20,.22)"/><circle cx="' + pa[0].toFixed(1) + '" cy="' + pa[1].toFixed(1) + '" r="3.6" fill="#3F8A46"/><circle cx="' + (pa[0] - 1).toFixed(1) + '" cy="' + (pa[1] - 1.2).toFixed(1) + '" r="2.1" fill="#5FAE5C"/>';
     }
+    // Le quartier du centre : au pied du volcan, côté sud, par-dessus ses pentes.
+    if (centre) poser(centre, pointIle(Math.PI / 2, 0.47), [[Math.PI / 2 - 0.75, 0.42, 22], [Math.PI / 2 + 0.75, 0.42, 22], [Math.PI / 2 - 1.5, 0.43, 20], [Math.PI / 2 + 1.5, 0.43, 20]], Math.PI / 2 - 1.2, 2.4, contourIle(S0), [0.36, 0.48]);
     return '<svg class="ile-scene ile-carte" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(__("Carte de l'île")) + '">' +
       '<defs><filter id="ile-brume" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3.5"/></filter></defs>' +
       o + arbres + svgVolcan() + '<g filter="url(#ile-brume)">' + brume + "</g>" + '<g shape-rendering="crispEdges">' + dessus.replace(/<g class="ile-etiquette"/g, '<g shape-rendering="auto" class="ile-etiquette"') + "</g>" + zones + "</svg>";
@@ -4070,20 +4092,31 @@ function demarrerJeu() {
       var retour = el('<button type="button" class="ile-retour">' + __("← L'île") + "</button>");
       retour.onclick = function () { quartierVu = null; rendre(); window.scrollTo(0, 0); };
       v.appendChild(retour);
-      v.appendChild(el('<div class="entete"><div><div class="eyebrow" style="color:' + couleur(q.id) + '">' + esc(tx(stat(q.id).nom)) + "</div><h1>" + esc(tx(q.nom)) + "</h1></div>" + compteur + "</div>"));
+      v.appendChild(el('<div class="entete"><div><div class="eyebrow" style="color:' + q.couleur + '">' + __("Quartier de l'île") + "</div><h1>" + esc(tx(q.nom)) + "</h1></div>" + compteur + "</div>"));
       if (q.description) v.appendChild(el('<p class="note">' + esc(tx(q.description)) + "</p>"));
       var sc = el('<div class="ile-cadre">' + svgQuartier(q) + "</div>");
       sc.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-comp]"); if (!g) return; var id = g.getAttribute("data-comp"); ouvrirInstallation(q, q.installations.filter(function (x) { return x.comp === id; })[0]); };
       v.appendChild(sc);
       var soucis = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne" || x.etat === "abandon"; });
       v.appendChild(el('<div class="ile-bilan"><span><b>' + q.posees + " / " + q.installations.length + "</b>" + __(" installations construites") + "</span>" +
-        (q.service ? "<span class=\"ok\">" + (q.batiment ? esc(tx(q.batiment)) + __(" tourne : quartier en service.") : __("Quartier en service.")) + "</span>" :
-          soucis.length ? '<span class="souci">' + soucis.length + (soucis.length > 1 ? __(" installations demandent ton attention.") : __(" installation demande ton attention.")) + "</span>" :
-          q.batiment ? "<span>" + __("Le quartier entre en service quand tout tourne, jusqu'à : ") + esc(tx(q.batiment)) + ".</span>" : "") + "</div>"));
+        (soucis.length ? '<span class="souci">' + soucis.length + (soucis.length > 1 ? __(" installations demandent ton attention.") : __(" installation demande ton attention.")) + "</span>" : "") + "</div>"));
+      // Ce que le quartier débloque, palier par palier.
+      var opts = '<h2 class="ile-h2">' + __("Ce que le quartier débloque") + '</h2><div class="ile-options">';
+      q.options.forEach(function (o) {
+        var reste = o.installations - q.marche;
+        opts += '<div class="ile-option' + (o.ouverte ? " ouverte" : "") + '" style="--c:' + q.couleur + '"><span class="ile-pastille">' + (o.ouverte ? "✓" : o.installations) + "</span><div><b>" + esc(tx(o.nom)) + "</b>" +
+          "<p>" + (o.ouverte ? esc(tx(o.usage)) : reste + (reste > 1 ? __(" installations en marche de plus pour l'ouvrir.") : __(" installation en marche de plus pour l'ouvrir."))) + "</p></div></div>";
+      });
+      v.appendChild(el("<div>" + opts + "</div></div>"));
+      // Les arbres qui font vivre le quartier.
+      var parArbre = {}; q.installations.forEach(function (x) { var a = parArbre[x.stat] = parArbre[x.stat] || [0, 0]; a[1]++; if (x.etat !== "friche") a[0]++; });
+      var puces = Object.keys(parArbre).sort(function (x, y) { return parArbre[y][0] - parArbre[x][0] || parArbre[y][1] - parArbre[x][1]; }).map(function (s) {
+        return '<span class="ile-arbre' + (parArbre[s][0] ? "" : " vide") + '" style="--c:' + couleur(s) + '">' + esc(tx(stat(s).nom)) + " <b>" + parArbre[s][0] + " / " + parArbre[s][1] + "</b></span>"; }).join("");
+      v.appendChild(el('<div><h2 class="ile-h2">' + __("Les savoirs qui le font vivre") + '</h2><div class="ile-arbres">' + puces + "</div></div>"));
       return v;
     }
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + __("Ce que tu sais encore") + "</div><h1>" + __("L'île") + "</h1></div>" + compteur + "</div>"));
-    v.appendChild(el('<p class="note">' + __("Chaque compétence maîtrisée construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter.") + "</p>"));
+    v.appendChild(el('<p class="note">' + __("Chaque compétence maîtrisée construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Chaque quartier reçoit les savoirs de plusieurs arbres. Touche-le pour le visiter.") + "</p>"));
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
     carte.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
     v.appendChild(carte);
@@ -4096,13 +4129,13 @@ function demarrerJeu() {
     var titre = ch.apres === "marche" ? (ch.avant === "friche" ? __("Nouvelle installation") : ch.avant === "abandon" ? __("Remise en service") : __("Réparée")) :
       ch.apres === "abandon" ? __("Laissée à l'abandon") : ch.apres === "panne" ? __("En panne") : ch.apres === "alerte" ? __("En alerte") : __("Sur l'île");
     var d = ch.habitants - ch.habitantsAvant;
-    var b = el('<div class="recompense ile-rec' + (monte ? " anim" : " perte") + '" style="--c:' + couleur(ch.quartier) + '"><div class="genre">' + __("Sur l'île") + " · " + esc(tx(q.nom)) + "</div>" +
+    var b = el('<div class="recompense ile-rec' + (monte ? " anim" : " perte") + '" style="--c:' + q.couleur + '"><div class="genre">' + __("Sur l'île") + " · " + esc(tx(q.nom)) + "</div>" +
       '<div class="ile-badge"><div class="ile-socle">' + (g ? '<svg class="pix" viewBox="0 0 32 32" width="128" height="128" aria-hidden="true"' + (ch.apres === "abandon" ? ' filter="url(#ile-ruine)"' : ch.apres === "panne" ? ' filter="url(#ile-terne)"' : "") + ">" + pixels(g, C.cabinet.palette, null, 0, 0, 1) + "</svg>" : "") + "</div></div>" +
       '<svg width="0" height="0" style="position:absolute">' + DEFS_ILE + "</svg>" +
       "<div class=\"eyebrow\">" + esc(titre) + "</div><h3>" + esc(tx(inst.nom)) + "</h3>" +
       (inst.usage && ch.apres === "marche" ? '<p class="desc">' + esc(tx(inst.usage)) + "</p>" : ch.apres !== "marche" ? '<p class="desc">' + esc(TEXTE_ETAT[ch.apres]()) + "</p>" : "") +
       (d ? '<p class="ile-delta ' + (d > 0 ? "plus" : "moins") + '">' + (d > 0 ? "+" : "−") + esc(texteHabitants(Math.abs(d))) + '<small>' + esc(texteHabitants(ch.habitants)) + __(" sur l'île") + "</small></p>" : "") +
-      (monte && ch.service ? '<p class="ile-service">' + (q.batiment ? esc(tx(q.batiment)) + __(" tourne : ") : "") + esc(tx(q.nom)) + __(" est en service !") + "</p>" : "") + "</div>");
+      (ch.option ? '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(q.nom)) + (ch.optionOuverte ? __(" débloque : ") : __(" perd : ")) + esc(tx(ch.option.nom)) + "</p>" + (ch.optionOuverte ? '<p class="desc">' + esc(tx(ch.option.usage)) + "</p>" : "") : "") + "</div>");
     return b;
   }
 

@@ -1381,9 +1381,6 @@
   // se déduit des compétences de la partie. Un rappel dû met l'installation en alerte, un rappel très en retard en panne,
   // une compétence perdue la laisse à l'abandon. Sans le pack de jeu « ile » (contenu.ile.regles), il n'y a pas d'île.
   function ilePresente(contenu) { return !!(contenu && contenu.ile && contenu.ile.regles); }
-  function quartierDe(contenu, stat) {
-    return ((contenu.ile && contenu.ile.quartiers) || []).filter(function (q) { return q.id === stat; })[0] || null;
-  }
   // « friche » : jamais apprise ; « marche » ; « alerte » : rappel dû ; « panne » : rappel en retard ; « abandon » : perdue.
   function etatInstallation(contenu, partie, id, t) {
     var e = partie.competences[id], R = contenu.ile.regles;
@@ -1397,43 +1394,72 @@
     var H = contenu.ile.regles.habitants, plein = H.installation + H.par_rang * rang;
     return etat === "marche" ? plein : etat === "alerte" ? Math.round(plein * H.alerte) : etat === "panne" ? Math.round(plein * H.panne) : 0;
   }
+  // Les quartiers sont des lieux (port, ville, zones…), pas des matières : chaque compétence pose son installation dans
+  // le quartier où elle sert, quel que soit son arbre. Une compétence sans installation écrite pose son emblème dans un
+  // quartier tiré de son nom (toujours le même).
+  function hacher(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function planIle(contenu) {
+    if (contenu._planIle) return contenu._planIle;
+    var Q = contenu.ile.quartiers || [], connus = {}, ecrites = {}, plan = { parQuartier: {}, quartierDe: {} };
+    Q.forEach(function (q) { connus[q.id] = true; plan.parQuartier[q.id] = []; });
+    (contenu.ile.installations || []).forEach(function (x) { if (connus[x.quartier]) ecrites[x.comp] = x; });
+    if (Q.length) contenu.competences.forEach(function (k) {
+      var x = ecrites[k.id], q = x ? x.quartier : Q[hacher(k.id) % Q.length].id;
+      plan.quartierDe[k.id] = q;
+      plan.parQuartier[q].push({ comp: k.id, stat: k.stat, rang: k.rang, nom: x ? x.nom : k.nom, usage: x ? x.usage : null, dessin: x ? x.dessin : (k.embleme || null), propre: !!x });
+    });
+    Q.forEach(function (q) { plan.parQuartier[q.id].sort(function (u, v) { return u.rang - v.rang; }); });
+    contenu._planIle = plan;
+    return plan;
+  }
   function ile(contenu, partie, t) {
     if (!ilePresente(contenu)) return null;
-    var H = contenu.ile.regles.habitants, total = 0, capacite = 0;
-    var quartiers = contenu.stats.map(function (st) {
-      var q = quartierDe(contenu, st.id), par = {};
-      ((q && q.installations) || []).forEach(function (x) { par[x.comp] = x; });
-      var hab = 0, cap = 0, marche = 0, posees = 0;
-      var inst = (contenu.parStat[st.id] || []).map(function (k) {
-        var x = par[k.id] || {}, etat = etatInstallation(contenu, partie, k.id, t), h = habitantsDe(contenu, k.rang, etat);
-        hab += h; cap += H.installation + H.par_rang * k.rang;
+    var H = contenu.ile.regles.habitants, total = 0, capacite = 0, plan = planIle(contenu), ouverts = {};
+    var quartiers = (contenu.ile.quartiers || []).map(function (q) {
+      var hab = 0, cap = 0, marche = 0, posees = 0, ouvert = false;
+      var inst = plan.parQuartier[q.id].map(function (x) {
+        var etat = etatInstallation(contenu, partie, x.comp, t), h = habitantsDe(contenu, x.rang, etat);
+        hab += h; cap += H.installation + H.par_rang * x.rang;
         if (etat === "marche" || etat === "alerte") marche++;
         if (etat !== "friche") posees++;
-        return { comp: k.id, rang: k.rang, nom: x.nom || k.nom, usage: x.usage || null, dessin: x.dessin || k.embleme || null, propre: !!x.nom, etat: etat, habitants: h };
+        if (!(x.stat in ouverts)) ouverts[x.stat] = arbreOuvert(contenu, partie, x.stat);
+        if (ouverts[x.stat]) ouvert = true;
+        return { comp: x.comp, stat: x.stat, rang: x.rang, nom: x.nom, usage: x.usage, dessin: x.dessin, propre: x.propre, etat: etat, habitants: h };
       });
-      // Le quartier entre en service quand toutes ses installations tournent : son grand bâtiment attire du monde.
-      var service = inst.length > 0 && marche === inst.length;
-      if (service) hab += H.quartier;
-      cap += H.quartier; total += hab; capacite += cap;
-      return { id: st.id, nom: (q && q.nom) || st.nom, batiment: (q && q.batiment) || null, description: (q && q.description) || null, propre: !!q,
-        ouvert: arbreOuvert(contenu, partie, st.id), service: service, installations: inst, posees: posees, marche: marche, habitants: hab, capacite: cap };
+      // Les options du quartier s'ouvrent par paliers d'installations qui tournent ; chacune attire du monde.
+      var options = (q.options || []).map(function (o) {
+        var ok = marche >= o.installations;
+        if (ok) hab += H.option; cap += H.option;
+        return { nom: o.nom, usage: o.usage, installations: o.installations, ouverte: ok };
+      });
+      total += hab; capacite += cap;
+      return { id: q.id, nom: q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, ouvert: ouvert || posees > 0, installations: inst,
+        options: options, posees: posees, marche: marche, habitants: hab, capacite: cap };
     });
     return { quartiers: quartiers, habitants: total, capacite: capacite };
   }
-  // Ce qu'une épreuve a changé sur l'île : l'installation de la compétence jouée et le nombre d'habitants, avant et après.
+  function quartierIle(contenu, partie, id, t) {
+    var qid = planIle(contenu).quartierDe[id];
+    return ile(contenu, partie, t).quartiers.filter(function (x) { return x.id === qid; })[0] || null;
+  }
+  // Ce qu'une épreuve a changé sur l'île : l'installation de la compétence jouée, les options de son quartier et le
+  // nombre d'habitants, avant et après.
   function photoIle(contenu, partie, id, t) {
     if (!ilePresente(contenu) || !contenu.parId[id]) return null;
-    return { etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants };
+    var q = quartierIle(contenu, partie, id, t);
+    if (!q) return null;
+    return { etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, options: q.options.filter(function (o) { return o.ouverte; }).length };
   }
   function changementIle(contenu, partie, id, t, avant) {
     if (!avant) return null;
-    var apres = photoIle(contenu, partie, id, t), k = contenu.parId[id];
+    var apres = photoIle(contenu, partie, id, t);
     if (apres.etat === avant.etat && apres.habitants === avant.habitants) return null;
-    var q = ile(contenu, partie, t).quartiers.filter(function (x) { return x.id === k.stat; })[0];
+    var q = quartierIle(contenu, partie, id, t);
     var inst = q.installations.filter(function (x) { return x.comp === id; })[0];
-    return { comp: id, quartier: q.id, service: q.service, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
+    // L'option que l'épreuve vient d'ouvrir (ou de fermer) dans le quartier.
+    var option = apres.options > avant.options ? q.options[apres.options - 1] : apres.options < avant.options ? q.options[avant.options - 1] : null;
+    return { comp: id, quartier: q.id, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
   }
-
   function listeDonjons(contenu) { return (contenu.donjons && contenu.donjons.donjons) || []; }
   function donjonDe(contenu, id) { return listeDonjons(contenu).filter(function (d) { return d.id === id; })[0] || null; }
   function compterDonjons(partie, f) {

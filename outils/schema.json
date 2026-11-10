@@ -4173,10 +4173,11 @@
   },
   "ile": {
    "type": "object",
-   "description": "L'île (Victor, 2026-11-10) : chaque arbre y a son quartier, chaque compétence maîtrisée y pose une installation. L'état de l'île se déduit des compétences de la partie.",
+   "description": "L'île (Victor, 2026-11-10) : des quartiers par fonction (port, ville, zones…) ; chaque compétence maîtrisée pose une installation dans le quartier où elle sert, et les quartiers débloquent des options par paliers. L'état de l'île se déduit des compétences de la partie.",
    "additionalProperties": false,
    "required": [
-    "quartiers"
+    "quartiers",
+    "installations"
    ],
    "properties": {
     "format": {
@@ -4198,9 +4199,9 @@
         "par_rang",
         "alerte",
         "panne",
-        "quartier"
+        "option"
        ],
-       "description": "Habitants attirés par une installation en marche (installation + par_rang × rang), part gardée en alerte et en panne, prime d'un quartier en service.",
+       "description": "Habitants attirés par une installation en marche (installation + par_rang × rang), part gardée en alerte et en panne, prime de chaque option de quartier ouverte.",
        "properties": {
         "installation": {
          "type": "integer",
@@ -4220,7 +4221,7 @@
          "minimum": 0,
          "maximum": 1
         },
-        "quartier": {
+        "option": {
          "type": "integer",
          "minimum": 0
         }
@@ -4241,53 +4242,87 @@
       "required": [
        "id",
        "nom",
-       "batiment",
+       "couleur",
        "description",
-       "installations"
+       "options"
       ],
       "properties": {
        "id": {
-        "type": "string",
-        "description": "L'arbre (stat) dont c'est le quartier."
+        "type": "string"
        },
        "nom": {
         "$ref": "#/$defs/texte"
        },
-       "batiment": {
-        "$ref": "#/$defs/texte",
-        "description": "Le grand bâtiment qui entre en service quand tout le quartier tourne."
+       "couleur": {
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$"
        },
        "description": {
         "$ref": "#/$defs/texte"
        },
-       "installations": {
+       "centre": {
+        "type": "boolean",
+        "description": "Le quartier au pied du volcan, au milieu de la carte (un seul)."
+       },
+       "options": {
         "type": "array",
+        "description": "Ce que le quartier débloque, par paliers d'installations en marche.",
         "items": {
          "type": "object",
          "additionalProperties": false,
          "required": [
-          "comp",
+          "installations",
           "nom",
-          "usage",
-          "dessin"
+          "usage"
          ],
          "properties": {
-          "comp": {
-           "type": "string"
+          "installations": {
+           "type": "integer",
+           "minimum": 1
           },
           "nom": {
            "$ref": "#/$defs/texte"
           },
           "usage": {
            "$ref": "#/$defs/texte",
-           "description": "À quoi l'installation sert sur l'île (fiction du jeu, pas un fait sourcé)."
-          },
-          "dessin": {
-           "type": "string",
-           "description": "Pixel art 32 × 32 (dessins.json du pack, objet ou icône)."
+           "description": "Fiction du jeu, pas un fait sourcé."
           }
          }
         }
+       }
+      }
+     }
+    },
+    "installations": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "comp",
+       "quartier",
+       "nom",
+       "usage",
+       "dessin"
+      ],
+      "properties": {
+       "comp": {
+        "type": "string"
+       },
+       "quartier": {
+        "type": "string",
+        "description": "Le quartier de l'île où elle se pose (ile.json › quartiers)."
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "usage": {
+        "$ref": "#/$defs/texte",
+        "description": "À quoi l'installation sert sur l'île (fiction du jeu, pas un fait sourcé)."
+       },
+       "dessin": {
+        "type": "string",
+        "description": "Pixel art 32 × 32 (dessins.json du pack, objet ou icône)."
        }
       }
      }

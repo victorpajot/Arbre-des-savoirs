@@ -2129,10 +2129,13 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   let ti = new Date(2026, 10, 10, 9, 0).getTime();
   const PI = M.nouvellePartie(ti), H = CI.ile.regles.habitants;
   const bon = (id, n) => M.tirerQuestions(CI, PI, id, n).map(q => ({ id: q.id, correct: true }));
-  const quartier = () => M.ile(CI, PI, ti).quartiers.find(q => q.id === "mecanique");
+  // Les quartiers sont des lieux : la grue de la Mécanique se pose au port, et chaque compétence a un seul quartier.
+  const quartier = () => M.ile(CI, PI, ti).quartiers.find(q => q.id === "port");
   const inst = id => quartier().installations.find(x => x.comp === id);
+  assert.equal(M.ile(CI, PI, ti).quartiers.reduce((s, q) => s + q.installations.length, 0), CI.competences.length);
+  assert.ok(new Set(quartier().installations.map(x => x.stat)).size > 1, "un quartier reçoit plusieurs arbres");
+  assert.equal(M.ile(CI, PI, ti).quartiers.filter(q => q.centre).length, 1);
   assert.equal(M.ile(CI, PI, ti).habitants, 0);
-  assert.equal(quartier().installations.length, CI.parStat.mecanique.length);
   assert.equal(inst("phys.machines").etat, "friche"); assert.ok(inst("phys.machines").usage && inst("phys.machines").dessin);
   // Un quiz raté ne change rien sur l'île ; réussi, l'installation se pose et ses habitants arrivent.
   let ri = M.terminerQuiz(CI, PI, "phys.machines", bon("phys.machines", 5).map(x => ({ id: x.id, correct: false })), ti);
@@ -2152,10 +2155,20 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   ti = PI.competences["phys.machines"].prochainRappel + 3600e3;
   ri = M.terminerRappel(CI, PI, "phys.machines", bon("phys.machines", 3).map(x => ({ id: x.id, correct: false })), ti);
   assert.equal(ri.ile.apres, "abandon"); assert.equal(ri.ile.habitants, 0); assert.equal(inst("phys.machines").etat, "abandon");
-  // Un quartier en service : toutes ses installations tournent, la prime s'ajoute. Un arbre sans quartier écrit prend ses emblèmes.
-  CI.parStat.mecanique.forEach(k => { PI.competences[k.id] = { maitrise: true, prochainRappel: ti + 86400000, palier: 1, xp: 1 }; });
-  assert.ok(quartier().service); assert.equal(quartier().habitants, quartier().capacite);
-  const autre = M.ile(CI, PI, ti).quartiers.find(q => !q.propre);
-  if (autre) assert.ok(autre.installations.every(x => x.nom && !x.usage));
-  console.log("île : installations, alerte, panne, abandon, habitants, quartier en service");
+  // Les options du quartier s'ouvrent par paliers d'installations en marche, chacune avec sa prime d'habitants ;
+  // l'épreuve qui franchit le palier l'annonce. Une compétence sans installation écrite pose son emblème.
+  assert.ok(quartier().options.length && quartier().options.every(o => !o.ouverte));
+  const seuil = quartier().options[0].installations, aPoser = quartier().installations.slice(0, seuil);
+  aPoser.slice(0, seuil - 1).forEach(x => { PI.competences[x.comp] = { maitrise: true, prochainRappel: ti + 86400000, palier: 1, xp: 1 }; });
+  assert.ok(!quartier().options[0].ouverte);
+  const dern = aPoser[seuil - 1], hAvant = M.ile(CI, PI, ti).habitants;
+  PI.competences[dern.comp] = { maitrise: true, prochainRappel: ti + 86400000, palier: 1, xp: 1 };
+  assert.ok(quartier().options[0].ouverte && !quartier().options[1].ouverte);
+  assert.equal(M.ile(CI, PI, ti).habitants - hAvant, H.installation + H.par_rang * dern.rang + H.option);
+  CI.competences.forEach(k => { PI.competences[k.id] = { maitrise: true, prochainRappel: ti + 86400000, palier: 1, xp: 1 }; });
+  const tout = M.ile(CI, PI, ti); assert.equal(tout.habitants, tout.capacite);
+  assert.ok(tout.quartiers.every(q => q.options.every(o => o.ouverte)), "tout maîtriser ouvre toutes les options");
+  const sans = tout.quartiers.flatMap(q => q.installations).find(x => !x.propre);
+  if (sans) assert.ok(sans.nom && !sans.usage);
+  console.log("île : quartiers par fonction, installations, alerte, panne, abandon, habitants, options");
 }
