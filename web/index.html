@@ -3897,6 +3897,8 @@ function demarrerJeu() {
   // Une installation posée en (cx, sol) : son dessin, son ombre, et ce que son état lui fait.
   // Les images de l'île sont remplaçables (Victor, 2026-11-10) : un fichier déposé dans packs/<pack>/images/ (carte,
   // quartier-<id>, hameau-<id>, installation-<compétence>) prend la place du dessin du jeu, sans toucher au code.
+  // Certains emblèmes tiennent deux images l'une sous l'autre (32 × 64) : une installation n'en montre que la première.
+  function grilleIle(id) { var g = grilleSprite(id); return g && g.length > g[0].length ? g.slice(0, g[0].length) : g; }
   function imageIle(cle) { return (C.ile && C.ile.images && C.ile.images[cle]) || null; }
   function svgImageIle(cle, x, y, w, h, plus) { var u = imageIle(cle); return u ? '<image href="' + esc(u) + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" preserveAspectRatio="xMidYMid ' + (plus || "meet") + '"/>' : ""; }
   function svgInstallation(inst, cx, sol, taille) {
@@ -3906,7 +3908,7 @@ function demarrerJeu() {
       return '<g class="ile-inst" data-comp="' + esc(inst.comp) + '" role="button" tabindex="0" aria-label="' + esc(tx(inst.nom)) + " : " + esc(TEXTE_ETAT[inst.etat]()) + '">' +
         '<rect x="' + (cx - taille / 2 - 2) + '" y="' + (sol - taille) + '" width="' + (taille + 4) + '" height="' + (taille + 6) + '" fill="transparent"/><g' + fi + ">" + svgImageIle("installation-" + inst.comp, cx - taille / 2, sol - taille, taille, taille) + "</g></g>";
     }
-    var g = grilleSprite(inst.dessin), e = taille / 32, x = cx - taille / 2, y = sol - taille + e * 2, out = "";
+    var g = grilleIle(inst.dessin), e = taille / 32, x = cx - taille / 2, y = sol - taille + e * 2, out = "";
     if (!g) return "";
     if (inst.etat === "friche") {
       out += '<ellipse cx="' + cx + '" cy="' + (sol - 1) + '" rx="' + (taille * 0.42) + '" ry="' + (taille * 0.11) + '" fill="none" stroke="rgba(30,40,25,.35)" stroke-width="1.5" stroke-dasharray="4 4"/>';
@@ -3939,7 +3941,7 @@ function demarrerJeu() {
   }
   function texteHabitants(n) { return nb(n) + (n > 1 ? __(" habitants") : __(" habitant")); }
   function ouvrirInstallation(q, inst) {
-    var k = C.parId[inst.comp], g = grilleSprite(inst.dessin), friche = inst.etat === "friche";
+    var k = C.parId[inst.comp], g = grilleIle(inst.dessin), friche = inst.etat === "friche";
     var dessin = g ? '<svg class="pix" viewBox="0 0 32 32" width="128" height="128" aria-hidden="true"' + (friche ? ' style="color:var(--muted);opacity:.45"' : "") + ">" + pixels(g, C.cabinet.palette, null, 0, 0, 1, friche) + "</svg>" : "";
     var plein = M.ile(C, P, maintenant()), st = M.statut(C, P, inst.comp, maintenant()).etat;
     feuilleSimple('<div class="vitrine ile-vitrine etat-' + inst.etat + '">' + dessin + "</div>" +
@@ -4307,7 +4309,7 @@ function demarrerJeu() {
   // Dans le bilan d'une épreuve : ce qu'elle vient de changer sur l'île.
   function blocIleBilan(ch) {
     var inst = ch.installation, q = M.ile(C, P, maintenant()).quartiers.filter(function (x) { return x.id === ch.quartier; })[0];
-    var monte = ch.apres === "marche" && ch.avant !== "marche", g = grilleSprite(inst.dessin);
+    var monte = ch.apres === "marche" && ch.avant !== "marche", g = grilleIle(inst.dessin);
     var titre = ch.apres === "marche" ? (ch.avant === "friche" ? __("Nouvelle installation") : ch.avant === "abandon" ? __("Remise en service") : ch.avant === "marche" ? __("Entretenue") : __("Réparée")) :
       ch.apres === "abandon" ? __("Laissée à l'abandon") : ch.apres === "panne" ? __("En panne") : ch.apres === "alerte" ? __("En alerte") : __("Sur l'île");
     var d = ch.habitants - ch.habitantsAvant;
