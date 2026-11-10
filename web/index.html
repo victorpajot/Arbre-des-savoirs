@@ -1508,12 +1508,6 @@ svg.grille .interro { transition: opacity .3s; }
 @media (prefers-reduced-motion: reduce) { .ile-marcheur, .ile-pas { animation: none; } }
 .ile-objectif.tenu { border-left-color: #2E9E5B; } .ile-objectif.tenu .ile-obj-jauge span { background: #2E9E5B; }
 .ile-h2 { font-size: 17px; margin: 22px 0 10px; }
-.ile-lieux { display: flex; flex-direction: column; gap: 8px; }
-.ile-lieu { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.ile-lieu.ferme { opacity: .6; cursor: default; border-style: dashed; }
-.ile-lieu-img { flex: none; width: 56px; display: grid; place-items: center; }
-.ile-lieu-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.35; }
-.ile-lieu-txt b { font-size: 17px; } .ile-lieu-txt small { font-size: 15px; color: var(--muted); } .ile-lieu-txt em { font-style: normal; font-size: 15px; font-weight: 700; color: var(--accent); }
 .ile-options { display: grid; gap: 8px; }
 .ile-option { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
 .ile-option b { font-size: 17px; } .ile-option p { margin: 2px 0 0; font-size: 15px; color: var(--muted); }
@@ -4224,6 +4218,18 @@ function demarrerJeu() {
       dessus += '<g pointer-events="none">' + g + "</g>";
       zones += '<ellipse class="ile-parcelle" data-q="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + nom + '" cx="' + fx(x) + '" cy="' + fx(y + 6) + '" rx="44" ry="38" fill="transparent"/>';
     });
+    // Les lieux des collections (Victor, 2026-11-10 : « sur la carte et non en liste ») : un petit bâtiment, son nom, et
+    // un cadenas tant que les succès manquent. La tour des livres monte d'un étage tous les quelques livres.
+    lieuxIle().forEach(function (l) {
+      if (!l.position) return;
+      var x = l.position[0] * W, y = l.position[1] * H, t = l.image === "tour" ? 16 + l.etages * 3 : 24;
+      var img = l.image === "tour" ? svgTourIle(l.ouvert ? l.etages : 1, t) : svgSprite(l.image, t, null, !l.ouvert);
+      var larg = l.image === "tour" ? t * 28 / (14 + (l.ouvert ? l.etages : 1) * 9) : t;
+      plan.push([y + 1, '<ellipse cx="' + fx(x) + '" cy="' + fx(y) + '" rx="13" ry="3.4" fill="rgba(30,45,30,.2)"/><g transform="translate(' + fx(x - larg / 2) + " " + fx(y - t + 1) + ')"' + (l.ouvert ? "" : ' opacity=".75"') + ">" + img + "</g>"]);
+      var nom = l.ouvert ? tx(l.nom) : "?", demi = nom.length * 2.7 + 5, lx = Math.max(demi, Math.min(W - demi, x));
+      dessus += '<g pointer-events="none" text-anchor="middle" style="paint-order:stroke" stroke="rgba(255,253,244,.94)" stroke-width="3" stroke-linejoin="round"><text x="' + fx(lx) + '" y="' + fx(y + 13) + '" font-size="10" font-weight="800" fill="' + (l.ouvert ? "#3A2E22" : "#6A7075") + '">' + esc(nom) + "</text></g>";
+      zones += '<ellipse class="ile-parcelle" data-lieu="' + esc(l.id) + '" role="button" tabindex="0" aria-label="' + esc(tx(l.nom)) + '" cx="' + fx(x) + '" cy="' + fx(y - 6) + '" rx="20" ry="20" fill="transparent"/>';
+    });
     // Ce qui vit (maisons, installations, habitants) se pose aussi sur une carte fournie ; le décor dessiné, non.
     vivant = plan.slice().sort(function (a, b) { return a[0] - b[0]; });
     // Les arbres : serrés dans le bois (avec des sapins), épars ailleurs ; aucun sur l'eau, le volcan ou un hameau.
@@ -4352,9 +4358,9 @@ function demarrerJeu() {
     if (!P.ileIntro) setTimeout(presenterIle, 250);
     var boi = P.ileIntro ? blocObjectifIle() : null; if (boi) { v.appendChild(boi); I = M.ile(C, P, maintenant()); }
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
-    carte.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
+    carte.onclick = function (ev) { var gl = ev.target.closest && ev.target.closest("[data-lieu]"); if (gl) { ouvrirLieu(gl.getAttribute("data-lieu")); return; }
+      var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
     v.appendChild(carte);
-    var lx = blocLieuxIle(); if (lx) v.appendChild(lx);
     var vie = blocVieIle(I); if (vie) v.appendChild(vie);
     v.appendChild(blocAmenagementsIle(I));
     if (I.exil) v.appendChild(el('<p class="ile-exil">' + esc(texteHabitants(I.exil)) + (I.exil > 1 ? __(" ont fui l'île après un piège.") : __(" a fui l'île après un piège.")) + " " + __("Chaque épreuve réussie en fait revenir ") + ((C.ile.regles.piege || {}).retour || 8) + ".</p>"));
@@ -4369,7 +4375,7 @@ function demarrerJeu() {
   // Victor (2026-11-10) : les collections trouvent leur lieu sur l'île (mémorial, tour des livres, étal du marché…),
   // ouverts par les premiers succès. Le lieu ouvre l'écran de la collection ; l'onglet Collections reste le temps du test.
   function svgTourIle(etages, taille) {
-    var n = Math.max(1, etages), H = 14 + n * 9, s = '<svg class="pix" viewBox="0 0 28 ' + H + '" height="' + taille + '" shape-rendering="crispEdges" aria-hidden="true"><path d="M5 9 L14 1 L23 9Z" fill="#B5503C"/><rect x="13" y="0" width="2" height="3" fill="#7A3324"/>';
+    var n = Math.max(1, etages), H = 14 + n * 9, s = '<svg class="pix" viewBox="0 0 28 ' + H + '" width="' + (taille * 28 / H).toFixed(1) + '" height="' + taille + '" shape-rendering="crispEdges" aria-hidden="true"><path d="M5 9 L14 1 L23 9Z" fill="#B5503C"/><rect x="13" y="0" width="2" height="3" fill="#7A3324"/>';
     for (var i = 0; i < n; i++) { var y = 9 + i * 9; s += '<rect x="7" y="' + y + '" width="14" height="9" fill="' + (i % 2 ? "#E9D9B5" : "#F4E8CC") + '"/><rect x="7" y="' + (y + 8) + '" width="14" height="1" fill="#B79E6E"/><rect x="12" y="' + (y + 2) + '" width="4" height="4" fill="#5B7FD9"/>'; }
     return s + '<rect x="5" y="' + (H - 5) + '" width="18" height="5" fill="#9A8660"/><rect x="12" y="' + (H - 6) + '" width="4" height="6" fill="#6B4A2B"/></svg>';
   }
@@ -4379,21 +4385,20 @@ function demarrerJeu() {
       personnages: [gens.filter(function (e) { return M.rencontre(P, e.p.id); }).length, gens.length, __("personnages")], objets: [Object.keys(P.objets).length, C.objets.length, __("objets")],
       atomes: C.atomes ? [C.atomes.elements.filter(function (e) { return M.estCapture(P, e.z); }).length, C.atomes.elements.length, __("atomes")] : null };
   }
-  function blocLieuxIle() {
-    var lieux = (C.ile.lieux || []).filter(function (l) { return l.ouvre === "boutique" ? M.boutique(C) : l.ouvre === "atomes" ? !!C.atomes : true; });
-    if (!lieux.length || !P.ileIntro) return null;
-    var ns = Object.keys(P.succes).length, cp = comptesLieux(), rt = C.ile.regles.tour || {}, b = el('<div><h2 class="ile-h2">' + __("Les lieux de l'île") + '</h2><div class="ile-lieux"></div></div>'), z = b.querySelector(".ile-lieux");
-    lieux.forEach(function (l) {
-      var ouvert = ns >= l.succes, c = cp[l.ouvre], manque = l.succes - ns;
-      var etages = Math.min(rt.etages_max || 12, 1 + Math.floor(Object.keys(P.livres).length / (rt.livres_par_etage || 4)));
-      var img = l.image === "tour" ? svgTourIle(ouvert ? etages : 1, 52) : svgSprite(l.image, 44, null, !ouvert);
-      var etat = !ouvert ? (manque > 1 ? __("S'ouvre dans ") + manque + __(" succès") : __("S'ouvre à ton prochain succès")) :
-        l.ouvre === "boutique" ? nb(P.credits.solde) + __(" crédits") : c ? nb(c[0]) + " / " + nb(c[1]) + " " + c[2] + (l.image === "tour" ? " · " + etages + (etages > 1 ? __(" étages") : __(" étage")) : "") : "";
-      var bt = el('<button type="button" class="ile-lieu' + (ouvert ? "" : " ferme") + '"' + (ouvert ? "" : " disabled") + '><span class="ile-lieu-img">' + img + '</span><span class="ile-lieu-txt"><b>' + esc(tx(l.nom)) + "</b><small>" + esc(tx(l.usage)) + '</small><em>' + esc(etat) + "</em></span></button>");
-      if (ouvert) bt.onclick = function () { vue = "collections"; collection = l.ouvre; rendre(); window.scrollTo(0, 0); };
-      z.appendChild(bt);
+  function lieuxIle() {
+    if (!C.ile.lieux || !P.ileIntro) return [];
+    var ns = Object.keys(P.succes).length, cp = comptesLieux(), rt = C.ile.regles.tour || {};
+    var etages = Math.min(rt.etages_max || 12, 1 + Math.floor(Object.keys(P.livres).length / (rt.livres_par_etage || 4)));
+    return C.ile.lieux.filter(function (l) { return l.ouvre === "boutique" ? M.boutique(C) : l.ouvre === "atomes" ? !!C.atomes : true; }).map(function (l) {
+      return { id: l.id, nom: l.nom, usage: l.usage, image: l.image, position: l.position, ouvre: l.ouvre, ouvert: ns >= l.succes, manque: l.succes - ns, compte: cp[l.ouvre], etages: etages };
     });
-    return b;
+  }
+  // Un lieu ouvert mène droit à sa collection ; fermé, il dit ce qu'il sera et ce qui l'ouvre.
+  function ouvrirLieu(id) {
+    var l = lieuxIle().filter(function (x) { return x.id === id; })[0]; if (!l) return;
+    if (l.ouvert) { vue = "collections"; collection = l.ouvre; rendre(); window.scrollTo(0, 0); return; }
+    feuilleSimple('<div class="vitrine" style="padding:14px">' + (l.image === "tour" ? svgTourIle(1, 80) : svgSprite(l.image, 96, null, true)) + '</div><div class="eyebrow">' + __("Lieu de l'île · fermé") + "</div><h2>" + esc(tx(l.nom)) + "</h2><p>" + esc(tx(l.usage)) + '</p><p class="ile-service">' +
+      (l.manque > 1 ? __("S'ouvre dans ") + l.manque + __(" succès.") : __("S'ouvre à ton prochain succès.")) + "</p>", tx(l.nom));
   }
   function blocVieIle(I) {
     var p = I.population; if (!p || (!I.habitants && !I.places)) return null;
