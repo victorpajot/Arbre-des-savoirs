@@ -3743,9 +3743,8 @@ function demarrerJeu() {
       phrase = __("Niveau ") + (nv.niveau + 1) + __(" : encore ") + (faites < comps.length ? nq + (nq > 1 ? __(" compétences") : __(" compétence")) + __(" à maîtriser, ou ") : "") + nr + (nr > 1 ? __(" rappels") : __(" rappel")) + (nr > 1 ? __(" réussis") : __(" réussi")) + ".";
     }
     if (!M.arbreOuvert(C, P, s.id)) {
-      var cp = conditionPionnier(s);
       return el('<div class="fiche-branche fermee" style="--c:' + couleur(s.id) + '"><div class="haut-f"><div><b>' + esc(tx(s.nom)) + '</b><span>' + esc(tx(s.branche)) + '</span></div><div class="niv-f">' + ICONE_CADENAS + __("<small>Fermée</small></div></div>") +
-        '<p class="note">' + (cp ? __("S'ouvre avec le succès « ") + esc(tx(cp.succes.nom)) + gf() + deuxPoints() + cp.faites + " / " + cp.n + __(" compétences maîtrisées.") : "") + "</p></div>");
+        '<p class="note">' + __("S'ouvre sur le parcours, par une case de cet arbre.") + "</p></div>");
     }
     var pips = comps.map(function (k) { var st = M.statut(C, P, k.id, maintenant()).etat; return '<i class="' + (M.estMaitrisee(P, k.id) ? "ok" : st === "disponible" ? "ouvert" : "") + '" title="' + esc(tx(k.nom)) + '"></i>'; }).join("");
     return el('<div class="fiche-branche" style="--c:' + couleur(s.id) + '"><div class="haut-f"><div><b>' + esc(tx(s.nom)) + '</b><span>' + esc(tx(s.branche)) + '</span></div><div class="niv-f"><span class="num">' + nv.niveau + "</span><small>" + titreNiveau(nv.niveau) + '</small></div></div>' +
@@ -3811,25 +3810,18 @@ function demarrerJeu() {
       }
       v.appendChild(b);
     });
-    // v7 : les arbres encore fermés, avec le succès pionnier qui les ouvre.
-    var fermes = C.stats.filter(function (s) { return !M.arbreOuvert(C, P, s.id); })
-      .sort(function (a, b) { var pa = M.pionnierDe(C, a.id), pb = M.pionnierDe(C, b.id); return (pa ? pa.condition.n : 99) - (pb ? pb.condition.n : 99); });
+    // Les arbres encore fermés : chacun s'ouvre sur le parcours, par une case à ses couleurs.
+    var fermes = C.stats.filter(function (s) { return !M.arbreOuvert(C, P, s.id); });
     if (fermes.length) {
-      var bf = el(__('<section class="bloc"><h2>Branches à découvrir</h2><p class="note">Chaque succès pionnier ouvre un nouvel arbre. Il suffit de maîtriser assez de compétences, n\'importe où.</p><div class="fermes"></div></section>'));
+      var bf = el(__('<section class="bloc"><h2>Branches à découvrir</h2><p class="note">Chaque arbre s\'ouvre sur le parcours : réussis l\'épreuve d\'une case à ses couleurs.</p><div class="fermes"></div></section>'));
       fermes.forEach(function (s) { bf.querySelector(".fermes").appendChild(carteFermee(s)); });
       v.appendChild(bf);
     }
     return v;
   }
-  function conditionPionnier(s) {
-    var pi = M.pionnierDe(C, s.id); if (!pi) return null;
-    var n = pi.condition.n, faites = C.competences.filter(function (k) { return M.estMaitrisee(P, k.id); }).length;
-    return { succes: pi, n: n, faites: Math.min(faites, n) };
-  }
   function carteFermee(s) {
-    var c = conditionPionnier(s);
     var b = el('<button type="button" class="arbre-ferme" style="--c:' + couleur(s.id) + '"><span class="cadenas" aria-hidden="true">' + ICONE_CADENAS + '</span><span class="txt"><b>' + esc(tx(s.nom)) + "</b><span>" + esc(tx(s.branche)) + "</span>" +
-      (c ? __('<span class="meta">Succès « ') + esc(tx(c.succes.nom)) + __(" » : maîtriser ") + c.n + __(" compétences (") + c.faites + " / " + c.n + ")</span>" : "") + "</span></button>");
+      __('<span class="meta">S\'ouvre sur le parcours, par une case de cet arbre.</span>') + "</span></button>");
     b.onclick = function () { ouvrirFeuille(C.parStat[s.id][0].id); };
     return b;
   }
@@ -3841,8 +3833,7 @@ function demarrerJeu() {
     var lignes = [];
     var iv = C.regles.rappels.intervalles_jours;
     if (st.etat === "fermee") {
-      var cp = conditionPionnier(s);
-      lignes.push(__("L'arbre ") + tx(s.nom) + __(" est encore fermé.") + (cp ? __(" Il s'ouvre avec le succès « ") + tx(cp.succes.nom) + __(" » : maîtriser ") + cp.n + __(" compétences, dans n'importe quel arbre. Où tu en es : ") + cp.faites + " / " + cp.n + "." : ""));
+      lignes.push(__("L'arbre ") + tx(s.nom) + __(" est encore fermé.") + __(" Il s'ouvre sur le parcours : réussis l'épreuve d'une case de cet arbre."));
     }
     if (st.etat === "verrouillee") lignes.push(__("Il faut d'abord maîtriser : ") + k.prerequis.filter(function (p) { return !M.debloque(C, P, p); }).map(function (p) { return tx(C.parId[p].nom); }).join(", ") + ".");
     if (st.etat === "disponible") lignes.push(__("Quiz de ") + nbQuiz() + __(" questions. Il en faut ") + Math.ceil(nbQuiz() * C.regles.quiz.seuil_maitrise) + __(" justes pour la maîtriser."));
@@ -4438,7 +4429,7 @@ function demarrerJeu() {
           (mot ? " " + gu(tx(mot.texte)) : "") + (rec.succes.length ? __(" Succès : ") + rec.succes.map(function (x) { return tx(x.nom); }).join(", ") + "." : ""));
       };
     });
-    var ta = el(__('<label class="interrupteur" for="opt-arbres" style="margin-top:12px"><span><b>Ouvrir tous les arbres</b><br><span class="note">Pour la démo : toutes les branches sont jouables sans succès pionnier.</span></span><input type="checkbox" id="opt-arbres"></label>'));
+    var ta = el(__('<label class="interrupteur" for="opt-arbres" style="margin-top:12px"><span><b>Ouvrir tous les arbres</b><br><span class="note">Pour la démo : toutes les branches sont jouables sans attendre leur case du parcours.</span></span><input type="checkbox" id="opt-arbres"></label>'));
     var cba = ta.querySelector("input"); cba.checked = !!(P.options && P.options.tousArbres);
     cba.onchange = function () { P.options = P.options || {}; P.options.tousArbres = cba.checked; sauver(); toast(cba.checked ? __("Tous les arbres sont ouverts") : __("Seuls les arbres gagnés restent ouverts")); };
     test.appendChild(ta);

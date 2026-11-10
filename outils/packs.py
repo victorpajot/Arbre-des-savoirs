@@ -656,8 +656,6 @@ def completude(m):
                 err(f"{c['id']} : aucune date de la frise ne se débloque en la maîtrisant (frise.json)")
             if not any(maitrise(x, c["id"]) for x in succes):
                 err(f"{c['id']} : aucun succès ne se gagne en la maîtrisant (succes.json)")
-        if not a.get("fondamental") and not any(x.get("ouvre") == st for x in succes):
-            err(f"l'arbre « {st} » s'ouvre par un succès de pionnier (succes.json, champ « ouvre »), sauf s'il est « fondamental »")
         if not any(x.get("theme") == st for x in savants):
             err(f"l'arbre « {st} » a au moins un savant jouable (savants.json, « theme »: « {st} »)")
         for ctx, n in REPLIQUES_MIN.items():

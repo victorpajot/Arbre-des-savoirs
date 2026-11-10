@@ -354,14 +354,14 @@ def main():
     if at["theme"] not in stats:
         erreurs.append(f"atomes.json : thème inconnu {at['theme']}")
 
-    # v7 : chaque arbre hors fondamentaux s'ouvre par un succès de pionnier.
+    # Les arbres hors fondamentaux s'ouvrent sur le parcours : chacun a au moins une case à lui.
     fond = set(contenu["regles"].get("arbres_fondamentaux", []))
-    ouverts = {x["ouvre"] for x in contenu["succes"]["succes"] if "ouvre" in x}
     ids_stats = {s["id"] for s in contenu["regles"]["stats"]}
-    if fond and (ids_stats - fond - ouverts):
-        erreurs.append(f"succes.json : aucun pionnier n'ouvre {sorted(ids_stats - fond - ouverts)}")
-    if (fond | ouverts) - ids_stats:
-        erreurs.append(f"arbres inconnus : {sorted((fond | ouverts) - ids_stats)}")
+    sur_plateau = {k["stat"] for k in contenu["plateau"]["cases"]}
+    if fond and (ids_stats - fond - sur_plateau):
+        erreurs.append(f"plateau.json : aucune case n'ouvre {sorted(ids_stats - fond - sur_plateau)}")
+    if fond - ids_stats:
+        erreurs.append(f"arbres inconnus : {sorted(fond - ids_stats)}")
     if erreurs:
         print("\n".join(erreurs))
         sys.exit(1)

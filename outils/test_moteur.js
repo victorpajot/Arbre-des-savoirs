@@ -651,7 +651,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   console.log("OK : v6 butin par lots, avance au rang, savant automatique");
 }
 
-// v7 : trois arbres fondamentaux, les autres s'ouvrent par un succès pionnier ; surnom de l'IA
+// v7 : trois arbres fondamentaux, les autres s'ouvrent sur le parcours ; surnom de l'IA
 {
   const X = { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"),
     plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json") };
@@ -662,12 +662,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.deepEqual(C7.stats.filter(s => M.arbreOuvert(C7, P, s.id) && !s.id.startsWith("cp-")).map(s => s.id).sort(), ["logique", "mecanique", "savoir"]);
   assert.equal(M.statut(C7, P, "rhet.argument", t0).etat, "fermee");
   assert.ok(!M.disponibles(C7, P, t0).some(c => c.stat === "eloquence"), "pas de quiz dans un arbre fermé");
-  assert.equal(M.pionnierDe(C7, "eloquence").id, "pionnier-ciceron");
+  assert.ok(!C7.succes.some(s => s.ouvre), "plus aucun succès n'ouvre un arbre");
   P.options.tousArbres = true;
   assert.equal(M.statut(C7, P, "rhet.argument", t0).etat !== "fermee", true, "mode test : tout est ouvert");
   P.options.tousArbres = false;
   P.succes["pionnier-ciceron"] = t0;
-  assert.ok(M.arbreOuvert(C7, P, "eloquence"));
+  assert.ok(M.arbreOuvert(C7, P, "eloquence"), "une partie qui avait l'ancien succès pionnier garde son arbre");
+  // Chaque arbre fermé a sa porte : une case du parcours à lui, dont l'épreuve réussie l'ouvre.
+  C7.stats.filter(s => !M.arbreOuvert(C7, M.nouvellePartie(t0), s.id)).forEach(s => assert.ok(C7.plateau.cases.some(k => k.stat === s.id), s.id + " a une case sur le parcours"));
+  const O = M.nouvellePartie(t0);
+  O.competences[C7.parStat.alchimie[0].id] = { maitrise: true, maitriseDepuis: t0 };
+  assert.ok(M.arbreOuvert(C7, O, "alchimie") && !M.arbreOuvert(C7, O, "cosmos"), "une compétence maîtrisée ouvre son arbre, pas les autres");
   const Q = M.nouvellePartie(t0);
   Q.competences["rhet.argument"] = { xp: 10 };
   assert.ok(M.arbreOuvert(C7, Q, "eloquence"), "une partie existante garde ses arbres");
@@ -680,11 +685,11 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.surnom(C7, R, t0).ton, "moqueuse", "la dernière entrée compte");
   R.journal.push({ type: "rappel", bonnes: 0, total: 3, xp: -10, t: t0 });
   assert.equal(M.surnom(C7, R, t0).ton, "decue");
-  R.succes["pionnier-ciceron"] = t0;
+  R.succes[C7.succes[0].id] = t0;
   const s = M.surnom(C7, R, t0);
   assert.ok(s.succes && s.texte.indexOf(s.succes.nom.fr) >= 0, "surnom tiré du succès");
   assert.ok(M.surnom(C7, R, t0 + 3 * 86400000).succes == null, "le succès s'efface après un jour");
-  console.log("OK : v7 arbres fondamentaux, pionniers, surnom de l'IA");
+  console.log("OK : v7 arbres fondamentaux, arbres ouverts sur le parcours, surnom de l'IA");
 }
 
 // v7 lot 2 : ennemis sur la route, duels, bestiaire, cadeaux à l'IA
@@ -1894,19 +1899,6 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     (ch.reperes || []).forEach((h) => assert.ok(corps.includes(h.fr), k.id + "/" + ch.id));
   }); });
   console.log("OK : masterclass imposée après deux échecs, repères d'histoire");
-}
-
-// Donjons (2026-11-02) : l'arbre du Code s'ouvre quand la Logique ET l'Étincelle sont réussies (condition « toutes »).
-{
-  const T0 = new Date(2026, 10, 2, 9, 0).getTime();
-  const PI = M.nouvellePartie(T0);
-  const tout = (ids) => ids.forEach((id) => { PI.competences[id] = Object.assign(PI.competences[id] || {}, { maitrise: true, maitriseDepuis: T0 }); });
-  const gagne = () => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].flatMap((i) => M.verifierSucces(C, PI, T0 + i)).some((s) => s.id === "pionnier-informatique") || !!PI.succes["pionnier-informatique"];
-  tout(C.parStat.logique.map((k) => k.id));
-  assert.ok(!gagne(), "la Logique seule n'ouvre pas le Code");
-  tout(C.parStat.etincelle.map((k) => k.id));
-  assert.ok(gagne(), "Logique + Étincelle ouvrent le Code");
-  console.log("OK : donjon de l'ordinateur, pionnier à deux arbres");
 }
 
 // Donjons (Victor, 2026-11-02) : ateliers dans l'ordre, manipulation puis questions, pièces posées, bugs à chasser,

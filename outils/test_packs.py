@@ -74,7 +74,7 @@ def requis(f):
 assert avec(requis) == [], avec(requis)
 # Un arbre incomplet est signalé, avec ce qui manque.
 incomplet = avec(lambda f: None, completude=True)
-for morceau in ("une par rang de 1 à 8", "au moins 10", "aucun livre", "aucune date", "aucun succès", "pionnier", "savant jouable", "theme_rate@essai", "case du plateau"):
+for morceau in ("une par rang de 1 à 8", "au moins 10", "aucun livre", "aucune date", "aucun succès", "savant jouable", "theme_rate@essai", "case du plateau"):
     assert any(morceau in e for e in incomplet), f"complétude : attendu « {morceau} », reçu : {incomplet}"
 
 # Le modèle packs/_modele, copié sous son id, n'a d'autre défaut que d'être incomplet (un seul exemplaire de chaque chose).

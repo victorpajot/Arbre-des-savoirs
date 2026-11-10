@@ -93,7 +93,7 @@ Un fichier par type de contenu. Chacun est une liste (ou un dictionnaire) qui s'
 | `questions.json` | Au moins 10 questions par compétence. | `questions.json` |
 | `livres.json` | Un livre par compétence au moins, pour la bibliothèque. | `bibliotheque.json` |
 | `frise.json` | Une date par compétence au moins, pour la frise. | `frise.json` |
-| `succes.json` | Le pionnier qui ouvre l'arbre, un succès par compétence, et d'autres (branche, sans-faute…). | `succes.json` |
+| `succes.json` | Un succès par compétence, et d'autres (branche, sans-faute…). | `succes.json` |
 | `piques.json` | `{id du succès: texte}` : la pique d'Alyca quand elle paie les crédits du succès. | `ia.json` |
 | `savants.json` | Les savants jouables du domaine (un par compétence idéalement), avec leur portrait. | `avatar.json` |
 | `portraits.json` | La recette de chaque portrait, lue par `outils/portrait.py` (pas assemblée). | — |
@@ -152,7 +152,7 @@ Voir `packs/musique/livres.json`, `frise.json` et `succes.json`. Points à respe
 - **Livre** : résumé de 80 à 170 mots, `importance`, `anecdote`, `reaction` (le mot d'Alyca), `competence` rattachée, `condition` (en général `competence_maitrisee`), `embleme` et `couleur` de couverture.
 - **Date** : `epoque` parmi `antiquite` (jusqu'à 475), `moyen-age` (476-1449), `renaissance` (1450-1599), `classique` (1600-1799), `xixe` (1800-1899), `xxe` (depuis 1900, XXIe siècle compris) ; `phrase` choc, `detail` en deux phrases, `condition` `competence_maitrisee`.
 - **Succès** : `nom` moqueur, `description` qui dit comment l'obtenir puis ajoute une pique, `cache` (vrai s'il est une surprise), `recompense` `{"type": "anecdote", "texte", "source"}`, `illustration` (`objet`, `icone`, `dessin`, `savant` ou `ennemi` + id), `theme` (l'id de l'arbre).
-- **Pionnier** : un succès avec `"ouvre": "<arbre>"` ouvre l'arbre. Condition habituelle `{"type": "competences_maitrisees", "n": N}`, où N compte les compétences maîtrisées dans n'importe quel arbre : plus N est grand, plus l'arbre arrive tard. Les arbres officiels utilisent N = 2 à 9 (Musique : 8). Plusieurs arbres peuvent avoir le même N. Son illustration est en général le savant pionnier.
+- **Ouverture de l'arbre** : un arbre qui n'est pas `fondamental` s'ouvre sur le parcours. Le joueur réussit l'épreuve d'une case de l'arbre (`cases.json`, champ `stat`) et l'arbre est ouvert. Aucun succès n'est nécessaire pour cela.
 - **Champ `source`** : obligatoire pour la fiche d'une compétence, chaque livre, chaque date, chaque récompense de succès, chaque savant, et chaque question qui attribue une formule ou une découverte. Les autres questions s'en passent : leur explication est vérifiée avec la fiche.
 - Les conditions possibles sont listées dans `outils/schema.json` (`$defs.condition`).
 
@@ -210,7 +210,6 @@ Chaque arbre a au moins **3** répliques `theme_jouer@<arbre>` (au lancement d'u
 - 8 compétences, une par rang de 1 à 8 ;
 - au moins 10 questions par compétence ;
 - pour chaque compétence : un livre, une date de la frise, un succès qui se gagne en la maîtrisant ;
-- un succès de pionnier qui ouvre l'arbre (sauf arbre `fondamental`) ;
 - au moins un savant jouable (`theme` = l'arbre) ;
 - les répliques 3 / 4 / 4 ;
 - au moins une case du plateau qui évoque l'arbre.
@@ -233,7 +232,7 @@ Règle absolue du projet : **chaque fait doit être vérifié en ligne avant d'e
 2. `python3 outils/verifier_sources.py` liste ce qui n'est pas encore vérifié.
 3. Pour chaque élément : ouvrir une source en ligne fiable, contrôler chaque date, nom, chiffre et citation, **corriger le texte** si la source dit autre chose (ou retirer le fait), puis inscrire la vérification :
    ```bash
-   python3 outils/verifier_sources.py --inscrire "succes:pionnier-mersenne:recompense" https://… "ce qui a été contrôlé"
+   python3 outils/verifier_sources.py --inscrire "succes:branche-musique:recompense" https://… "ce qui a été contrôlé"
    ```
    L'inscription va dans le `verifications.json` du pack. Elle porte une empreinte du texte : modifier le texte plus tard le fait redevenir « non vérifié ».
 4. Le champ `source` dit d'où vient l'information (l'ouvrage, l'article ou la page vraiment consultée). Une anecdote douteuse se dit comme telle (« selon la seule lettre de son père… ») ou disparaît.

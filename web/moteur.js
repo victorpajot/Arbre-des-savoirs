@@ -227,20 +227,14 @@
       d["regles.json"].stats.forEach(function (s) { stats[s.id] = true; });
       var R = d["regles.json"];
       R.arbres_fondamentaux = (R.arbres_fondamentaux || []).filter(function (s) { return stats[s]; });
-      // Plus aucun arbre de départ : les arbres dont le pionnier vient le plus tôt (le plus petit n) ouvrent la partie.
-      if (!R.arbres_fondamentaux.length && R.stats.length && d["succes.json"]) {
-        var n = {};
-        d["succes.json"].succes.forEach(function (s) { if (s.ouvre && stats[s.ouvre]) n[s.ouvre] = (s.condition && s.condition.n) || 1; });
-        var min = Math.min.apply(null, R.stats.map(function (s) { return n[s.id] || 0; }));
-        R.arbres_fondamentaux = R.stats.filter(function (s) { return (n[s.id] || 0) === min; }).map(function (s) { return s.id; });
-      }
+      // Plus aucun arbre de départ : le premier arbre restant ouvre la partie, les autres s'ouvrent sur le parcours.
+      if (!R.arbres_fondamentaux.length && R.stats.length) R.arbres_fondamentaux = [R.stats[0].id];
     }
     if (d["skills.json"]) d["skills.json"].competences.forEach(function (k) { k.prerequis = k.prerequis.filter(function (p) { return comps[p]; }); });
     var pl = d["plateau.json"];
     if (pl && pl.competences_cases) Object.keys(pl.competences_cases).forEach(function (n) {
       pl.competences_cases[n] = pl.competences_cases[n].filter(function (c) { return comps[c]; });
     });
-    if (d["succes.json"]) d["succes.json"].succes = d["succes.json"].succes.filter(function (s) { return !s.ouvre || stats[s.ouvre]; });
     // Sans masques du jour (dramaturgie éteinte), le narrateur ne porte que ses masques de base, ceux qui ne se gagnent pas.
     var ia = d["ia.json"];
     if (ia && ia.masques && !ia.masques_jour) ia.masques = ia.masques.filter(function (m) { return !m.condition; });
@@ -611,13 +605,17 @@
     return !!(e && e.maitrise);
   }
 
-  // v7 : un arbre est ouvert s'il est fondamental, si son succès de pionnier est obtenu, si le joueur
-  // y a déjà joué (anciennes parties) ou si l'option de démo ouvre tout.
+  // Un arbre est ouvert s'il est fondamental, si le joueur y a déjà maîtrisé quelque chose (la première case
+  // de l'arbre sur le parcours l'ouvre) ou si l'option de démo ouvre tout. Les succès « pionniers » qui
+  // ouvraient les arbres ont été retirés (Victor, 2026-11-10) : les parties qui en ont gardent leurs arbres.
+  var ANCIENS_PIONNIERS = { "pionnier-ciceron": "eloquence", "pionnier-lavoisier": "alchimie", "pionnier-galilee": "cosmos", "pionnier-bacon": "lucidite",
+    "pionnier-faraday": "etincelle", "pionnier-william-james": "empathie", "pionnier-socrate": "sagesse", "pionnier-mersenne": "musique",
+    "pionnier-informatique": "informatique", "pionnier-essaim": "essaim", "pionnier-mnemosyne": "mnemosyne" };
   function arbreOuvert(contenu, partie, stat) {
     var fond = contenu.regles.arbres_fondamentaux;
     if (!fond || fond.indexOf(stat) >= 0) return true;
     if (partie.options && partie.options.tousArbres) return true;
-    if (contenu.succes.some(function (s) { return s.ouvre === stat && partie.succes[s.id]; })) return true;
+    for (var anc in ANCIENS_PIONNIERS) if (ANCIENS_PIONNIERS[anc] === stat && partie.succes[anc]) return true;
     // v15 : il faut l'avoir maîtrisée au moins une fois (un quiz raté sur une case d'arbre fermé n'ouvre rien).
     return (contenu.parStat[stat] || []).some(function (k) { var e = partie.competences[k.id]; return !!(e && (e.maitrise || e.maitriseDepuis || e.xp)); });
   }
@@ -628,8 +626,6 @@
       return k.rang === 1 && k.prerequis.every(function (p) { return contenu.parId[p] && contenu.parId[p].stat !== stat ? debloque(contenu, partie, p) : true; });
     })[0] || null;
   }
-  function pionnierDe(contenu, stat) { return contenu.succes.filter(function (s) { return s.ouvre === stat; })[0] || null; }
-
   // Statut affiché d'une compétence.
   // verrouillee : prérequis manquants ; disponible : quiz jouable ;
   // maitrisee / a_reviser : acquise, rappel à venir ou dû ;
@@ -3500,8 +3496,6 @@
           var place = (lot.cap || RECOMPENSES_PAR_EPREUVE) - (lot.r || 0);
           liste = place <= 0 ? [] : liste.filter(function (x) { return !f[2][x.id] && lieIci(contenu, x, la) && conditionRemplie(contenu, partie, x.condition, t); });
           if (lot.theme) liste = liste.filter(function (x) { return themeDe(x) === lot.theme; }).concat(liste.filter(function (x) { return themeDe(x) !== lot.theme; }));
-          // Les pionniers ouvrent un arbre : ils ne font jamais la queue.
-          liste = liste.filter(function (x) { return x.ouvre; }).concat(liste.filter(function (x) { return !x.ouvre; }));
           liste = liste.slice(0, Math.max(0, place));
         }
         liste.forEach(function (x) {
@@ -4249,7 +4243,7 @@
     choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
-    ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
+    ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,
     valeurEpreuve: valeurEpreuve,
