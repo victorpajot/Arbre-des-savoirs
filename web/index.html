@@ -4218,17 +4218,14 @@ function demarrerJeu() {
       dessus += '<g pointer-events="none">' + g + "</g>";
       zones += '<ellipse class="ile-parcelle" data-q="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + nom + '" cx="' + fx(x) + '" cy="' + fx(y + 6) + '" rx="44" ry="38" fill="transparent"/>';
     });
-    // Les lieux des collections (Victor, 2026-11-10 : « sur la carte et non en liste ») : un petit bâtiment, son nom, et
-    // un cadenas tant que les succès manquent. La tour des livres monte d'un étage tous les quelques livres.
+    // Les lieux des collections (Victor, 2026-11-10 : « dans les quartiers existants, pour donner plus de vie ») : sur la
+    // carte, le bâtiment se pose au bord du hameau de son quartier, une fois celui-ci fondé ; on y entre par le quartier.
+    var parQ = {};
     lieuxIle().forEach(function (l) {
-      if (!l.position) return;
-      var x = l.position[0] * W, y = l.position[1] * H, t = l.image === "tour" ? 16 + l.etages * 3 : 24;
-      var img = l.image === "tour" ? svgTourIle(l.ouvert ? l.etages : 1, t) : svgSprite(l.image, t, null, !l.ouvert);
+      var qi = I.quartiers.map(function (q) { return q.id; }).indexOf(l.quartier); if (qi < 0 || !I.quartiers[qi].fonde) return;
+      var k = parQ[l.quartier] = (parQ[l.quartier] || 0) + 1, x = lieux[qi][0] + (k % 2 ? -34 : 34), y = lieux[qi][1] + (k > 2 ? 20 : -4), t = l.image === "tour" ? 14 + l.etages * 2.5 : 17;
       var larg = l.image === "tour" ? t * 28 / (14 + (l.ouvert ? l.etages : 1) * 9) : t;
-      plan.push([y + 1, '<ellipse cx="' + fx(x) + '" cy="' + fx(y) + '" rx="13" ry="3.4" fill="rgba(30,45,30,.2)"/><g transform="translate(' + fx(x - larg / 2) + " " + fx(y - t + 1) + ')"' + (l.ouvert ? "" : ' opacity=".75"') + ">" + img + "</g>"]);
-      var nom = l.ouvert ? tx(l.nom) : "?", demi = nom.length * 2.7 + 5, lx = Math.max(demi, Math.min(W - demi, x));
-      dessus += '<g pointer-events="none" text-anchor="middle" style="paint-order:stroke" stroke="rgba(255,253,244,.94)" stroke-width="3" stroke-linejoin="round"><text x="' + fx(lx) + '" y="' + fx(y + 13) + '" font-size="10" font-weight="800" fill="' + (l.ouvert ? "#3A2E22" : "#6A7075") + '">' + esc(nom) + "</text></g>";
-      zones += '<ellipse class="ile-parcelle" data-lieu="' + esc(l.id) + '" role="button" tabindex="0" aria-label="' + esc(tx(l.nom)) + '" cx="' + fx(x) + '" cy="' + fx(y - 6) + '" rx="20" ry="20" fill="transparent"/>';
+      plan.push([y + 1, '<ellipse cx="' + fx(x) + '" cy="' + fx(y) + '" rx="9" ry="2.4" fill="rgba(30,45,30,.2)"/><g transform="translate(' + fx(x - larg / 2) + " " + fx(y - t + 1) + ')"' + (l.ouvert ? "" : ' opacity=".7"') + ">" + (l.image === "tour" ? svgTourIle(l.ouvert ? l.etages : 1, t) : svgSprite(l.image, t, null, !l.ouvert)) + "</g>"]);
     });
     // Ce qui vit (maisons, installations, habitants) se pose aussi sur une carte fournie ; le décor dessiné, non.
     vivant = plan.slice().sort(function (a, b) { return a[0] - b[0]; });
@@ -4270,7 +4267,8 @@ function demarrerJeu() {
       return (M.statut(C, P, a.comp, tm).etat === "disponible" ? 0 : 1) - (M.statut(C, P, b.comp, tm).etat === "disponible" ? 0 : 1) || a.rang - b.rang; }).slice(0, 2);
     var W = 360, PAS = 78, PAR = 4, rangees = [], tri = q.installations.filter(function (x) { return x.etat !== "friche" || libres.indexOf(x) >= 0; }).sort(function (a, b) { return b.rang - a.rang; });
     for (var c = 0; c < tri.length; c += PAR) rangees.push(tri.slice(c, c + PAR));
-    var haut = 44, bas = q.decor === "quai" ? 86 : 50, H = haut + rangees.length * PAS + bas, gq = graine(q.id), sol = "", plan = [];
+    var lq = q.fonde ? lieuxIle().filter(function (l) { return l.quartier === q.id; }) : [], etiq = "";
+    var haut = 44 + (lq.length ? 74 : 0), bas = q.decor === "quai" ? 86 : 50, H = haut + rangees.length * PAS + bas, gq = graine(q.id), sol = "", plan = [];
     var roche = q.decor === "roche";
     sol += '<rect width="' + W + '" height="' + H + '" fill="' + (roche ? "#B9C99A" : "#A3D98A") + '"/>';
     for (var p = 0; p < 6 + rangees.length * 2; p++) { var gp = graine(q.id + "pre" + p); sol += '<path d="' + tache(gp % W, (gp >>> 9) % H, 40 + (gp >>> 4) % 40, 22 + (gp >>> 6) % 22, q.id + "t" + p) + '" fill="' + (p % 2 ? (roche ? "#C8D4AC" : "#B4E39A") : (roche ? "#A9B98C" : "#96CF80")) + '" opacity=".6"/>'; }
@@ -4304,13 +4302,20 @@ function demarrerJeu() {
         for (var h = 0; h < k; h++) plan.push([y + 9 + h, marcheur(g + h * 97, 26, 6) + svgHabitant(Math.round(cx - 30 + ((g >>> (h * 5)) % 18) + h * 20), y - 3 + (g >>> (h * 2 + 9)) % 7, g + h * 97) + "</g></g>"]);
       });
     });
+    // Les lieux des collections que le quartier accueille : un bâtiment en haut du village, son nom dessous.
+    lq.forEach(function (l, i) {
+      var x = Math.round(W * (i + 1) / (lq.length + 1) + (lq.length === 1 ? 70 : 0)), y = 66, t = l.image === "tour" ? Math.min(60, 30 + l.etages * 4) : 44;
+      var larg = l.image === "tour" ? t * 28 / (14 + (l.ouvert ? l.etages : 1) * 9) : t, nom = l.ouvert ? tx(l.nom) : "?";
+      plan.push([y, '<g class="ile-inst" data-lieu="' + esc(l.id) + '" role="button" tabindex="0" aria-label="' + esc(tx(l.nom)) + '"><ellipse cx="' + x + '" cy="' + y + '" rx="26" ry="6" fill="rgba(30,45,30,.18)"/><rect x="' + (x - 34) + '" y="' + (y - 62) + '" width="68" height="84" fill="transparent"/><g transform="translate(' + (x - larg / 2).toFixed(1) + " " + (y - t + 2) + ')"' + (l.ouvert ? "" : ' opacity=".7"') + ">" + (l.image === "tour" ? svgTourIle(l.ouvert ? l.etages : 1, t) : svgSprite(l.image, t, null, !l.ouvert)) + "</g></g>"]);
+      etiq += '<text x="' + x + '" y="' + (y + 16) + '" text-anchor="middle" font-size="11" font-weight="800" fill="' + (l.ouvert ? "#3A2E22" : "#6A7075") + '" style="paint-order:stroke" stroke="rgba(255,253,244,.94)" stroke-width="3" stroke-linejoin="round" pointer-events="none">' + esc(nom) + "</text>";
+    });
     // La lisière : des arbres sur les bords, des fleurs dans l'herbe.
     for (var t = 0; !imageIle("quartier-" + q.id) && t < 10 + rangees.length * 5; t++) { var gt = graine(q.id + "arb" + t), bord = t % 2, ax = bord ? 6 + gt % 16 : W - 6 - gt % 16, ay = 20 + (gt >>> 7) % (H - bas - 10);
       if (t % 5 === 4) { ax = 30 + gt % 300; sol += svgFleurs(ax, ay, gt) + svgFleurs(ax + 9, ay + 4, gt >>> 3); continue; }
       if (q.decor === "champs" && ((bord && ax < 44) || (!bord && ax > 316)) && t % 3) continue;
       plan.push([ay, '<g transform="translate(' + ax + " " + ay + ') scale(2)">' + (gt % 4 === 0 ? svgSapin(0, 0, 11, gt) : svgFeuillu(0, -4, 4.6, gt)) + "</g>"]); }
     plan.sort(function (a, b) { return a[0] - b[0]; });
-    return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(tx(q.nom)) + '">' + DEFS_ILE + (imageIle("quartier-" + q.id) ? svgImageIle("quartier-" + q.id, 0, 0, W, H, "slice") : sol) + plan.map(function (x) { return x[1]; }).join("") + "</svg>";
+    return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(tx(q.nom)) + '">' + DEFS_ILE + (imageIle("quartier-" + q.id) ? svgImageIle("quartier-" + q.id, 0, 0, W, H, "slice") : sol) + plan.map(function (x) { return x[1]; }).join("") + etiq + "</svg>";
   }
   function vueIle() {
     var I = M.ile(C, P, maintenant()), v = el('<div class="vue vue-ile"></div>');
@@ -4326,7 +4331,8 @@ function demarrerJeu() {
       if (q.description) v.appendChild(el('<p class="note">' + esc(tx(q.description)) + "</p>"));
       if (q.role && I.population && ROLES_ILE[q.role]) v.appendChild(el('<p class="ile-vie-note" style="margin:0 0 10px">' + __("Ce quartier règle : ") + "<b>" + ROLES_ILE[q.role]().toLowerCase() + "</b> (" + Math.round(100 * I.population.niveaux[q.role]) + " %). " + __("Chaque installation en marche l'améliore.") + "</p>"));
       var sc = el('<div class="ile-cadre">' + svgQuartier(q) + "</div>");
-      sc.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-comp]"); if (!g) return; var id = g.getAttribute("data-comp"); ouvrirInstallation(q, q.installations.filter(function (x) { return x.comp === id; })[0]); };
+      sc.onclick = function (ev) { var gl = ev.target.closest && ev.target.closest("[data-lieu]"); if (gl) { ouvrirLieu(gl.getAttribute("data-lieu")); return; }
+        var g = ev.target.closest && ev.target.closest("[data-comp]"); if (!g) return; var id = g.getAttribute("data-comp"); ouvrirInstallation(q, q.installations.filter(function (x) { return x.comp === id; })[0]); };
       v.appendChild(sc);
       var soucis = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne" || x.etat === "abandon"; });
       v.appendChild(el('<div class="ile-bilan"><span><b>' + q.posees + "</b>" + (q.posees > 1 ? __(" installations construites") : __(" installation construite")) + "</span>" +
@@ -4358,8 +4364,7 @@ function demarrerJeu() {
     if (!P.ileIntro) setTimeout(presenterIle, 250);
     var boi = P.ileIntro ? blocObjectifIle() : null; if (boi) { v.appendChild(boi); I = M.ile(C, P, maintenant()); }
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
-    carte.onclick = function (ev) { var gl = ev.target.closest && ev.target.closest("[data-lieu]"); if (gl) { ouvrirLieu(gl.getAttribute("data-lieu")); return; }
-      var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
+    carte.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
     v.appendChild(carte);
     var vie = blocVieIle(I); if (vie) v.appendChild(vie);
     v.appendChild(blocAmenagementsIle(I));
@@ -4390,7 +4395,7 @@ function demarrerJeu() {
     var ns = Object.keys(P.succes).length, cp = comptesLieux(), rt = C.ile.regles.tour || {};
     var etages = Math.min(rt.etages_max || 12, 1 + Math.floor(Object.keys(P.livres).length / (rt.livres_par_etage || 4)));
     return C.ile.lieux.filter(function (l) { return l.ouvre === "boutique" ? M.boutique(C) : l.ouvre === "atomes" ? !!C.atomes : true; }).map(function (l) {
-      return { id: l.id, nom: l.nom, usage: l.usage, image: l.image, position: l.position, ouvre: l.ouvre, ouvert: ns >= l.succes, manque: l.succes - ns, compte: cp[l.ouvre], etages: etages };
+      return { id: l.id, quartier: l.quartier, nom: l.nom, usage: l.usage, image: l.image, ouvre: l.ouvre, ouvert: ns >= l.succes, manque: l.succes - ns, compte: cp[l.ouvre], etages: etages };
     });
   }
   // Un lieu ouvert mène droit à sa collection ; fermé, il dit ce qu'il sera et ce qui l'ouvre.
