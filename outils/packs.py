@@ -206,6 +206,30 @@ def doublons(donnees):
     return erreurs
 
 
+# Les images de l'île (Victor, 2026-11-10 : « qu'on puisse facilement modifier les images plus tard »). Un pack dépose
+# ses fichiers dans images/ ; ils partent dans data/ile.json › images, et le jeu les affiche à la place de ses dessins.
+#   carte.png              le fond de la carte (rapport 360 × 610)
+#   quartier-<id>.png      le fond d'un quartier vu de près (360 de large, hauteur libre)
+#   hameau-<id>.png        le quartier sur la carte (carré, fond transparent)
+#   installation-<comp>.png  une installation (carré, fond transparent)
+TYPES_IMAGES = {".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".svg": "image/svg+xml"}
+
+
+def poser_images(donnees, packs):
+    import base64
+    ile = donnees.get("ile.json") or {}
+    if "regles" not in ile:
+        return
+    for m in packs:
+        d = m["_dossier"] / "images"
+        for f in sorted(d.iterdir()) if d.exists() else []:
+            if f.suffix.lower() not in TYPES_IMAGES:
+                continue
+            if not re.match(r"^(carte|(quartier|hameau|installation)-.+)$", f.stem):
+                raise ErreurPack(f"{m['id']} : images/{f.name} : nom inconnu (carte, quartier-<id>, hameau-<id>, installation-<compétence>)")
+            ile.setdefault("images", {})[f.stem] = "data:" + TYPES_IMAGES[f.suffix.lower()] + ";base64," + base64.b64encode(f.read_bytes()).decode()
+
+
 def poser_lots(donnees):
     """Range dans un lot chaque objet, livre, accessoire et masque qui n'en a pas encore, selon la difficulté de sa
     condition. Les éléments déjà rangés gardent le leur : ajouter un pack ne déplace pas le butin existant."""
@@ -287,6 +311,7 @@ def assembler(packs=None, ecrire_data=True):
         if ev:
             cc = pl.setdefault("competences_cases", {}).setdefault(str(k["n"]), [])
             cc += [c for c in ev if c not in cc]
+    poser_images(donnees, packs)
     poser_lots(donnees)
     erreurs = doublons(donnees)
     if erreurs:

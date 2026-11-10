@@ -1453,6 +1453,14 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-delta small { font-family: var(--f-body); font-size: 15px; font-weight: 400; color: var(--muted); }
 .ile-service { font-size: 17px; font-weight: 800; color: var(--accent); margin: 0; }
 .ile-service.perdue { color: var(--muted); }
+.ile-objectif { border-left: 6px solid var(--c); margin: 14px 0; padding: 14px 16px 16px; border-radius: 14px; background: var(--surface); border-top: 1px solid var(--line); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.ile-objectif .btn { width: 100%; }
+.ile-objectif h3 { font-size: 19px; margin: 4px 0 6px; }
+.ile-obj-texte, .ile-obj-compte, .ile-obj-veille { font-size: 17px; margin: 0 0 10px; }
+.ile-obj-veille { color: #5B7FD9; font-weight: 700; }
+.ile-obj-jauge { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden; margin: 0 0 8px; }
+.ile-obj-jauge span { display: block; height: 100%; background: var(--c); border-radius: 999px; }
+.ile-objectif.tenu { border-left-color: #2E9E5B; } .ile-objectif.tenu .ile-obj-jauge span { background: #2E9E5B; }
 .ile-h2 { font-size: 17px; margin: 22px 0 10px; }
 .ile-options { display: grid; gap: 8px; }
 .ile-option { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
@@ -3662,6 +3670,7 @@ function demarrerJeu() {
     else if (M.offreChrono(P, maintenant())) v.appendChild(blocChronoAccueil("alyca"));
     if (C.plateau && P.plateau.parcoursSuivant) v.appendChild(blocSuiteTour());
     var bdj = blocDonjons(); if (bdj) v.appendChild(bdj);
+    var boi = blocObjectifIle(); if (boi) v.appendChild(boi);
     // Victor (2026-11-01) : le bouton Jouer passe juste sous le plateau, avant sa description.
     if (C.plateau) {
       var bp = blocPlateau(), gc = bp.querySelector(".grille-cadre"), bj = boutonJouer();
@@ -3880,11 +3889,22 @@ function demarrerJeu() {
     marche: function () { return __("En marche."); },
     alerte: function () { return __("En alerte : son rappel est dû. Fais-le avant qu'elle tombe en panne."); },
     panne: function () { return __("En panne : son rappel attend depuis trop longtemps. La moitié de ses habitants est partie."); },
+    veille: function () { return __("En veille : l'objectif d'hier n'a pas été tenu, l'IA économe a baissé son courant. Tiens celui d'aujourd'hui pour la rallumer."); },
     abandon: function () { return __("À l'abandon : la compétence est perdue. Regagne-la pour la remettre en service."); },
     friche: function () { return __("Pas encore construite."); },
   };
   // Une installation posée en (cx, sol) : son dessin, son ombre, et ce que son état lui fait.
+  // Les images de l'île sont remplaçables (Victor, 2026-11-10) : un fichier déposé dans packs/<pack>/images/ (carte,
+  // quartier-<id>, hameau-<id>, installation-<compétence>) prend la place du dessin du jeu, sans toucher au code.
+  function imageIle(cle) { return (C.ile && C.ile.images && C.ile.images[cle]) || null; }
+  function svgImageIle(cle, x, y, w, h, plus) { var u = imageIle(cle); return u ? '<image href="' + esc(u) + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" preserveAspectRatio="xMidYMid ' + (plus || "meet") + '"/>' : ""; }
   function svgInstallation(inst, cx, sol, taille) {
+    var photo = imageIle("installation-" + inst.comp);
+    if (photo && inst.etat !== "friche") {
+      var fi = inst.etat === "panne" || inst.etat === "veille" ? ' filter="url(#ile-terne)"' : inst.etat === "abandon" ? ' filter="url(#ile-ruine)" opacity=".75"' : "";
+      return '<g class="ile-inst" data-comp="' + esc(inst.comp) + '" role="button" tabindex="0" aria-label="' + esc(tx(inst.nom)) + " : " + esc(TEXTE_ETAT[inst.etat]()) + '">' +
+        '<rect x="' + (cx - taille / 2 - 2) + '" y="' + (sol - taille) + '" width="' + (taille + 4) + '" height="' + (taille + 6) + '" fill="transparent"/><g' + fi + ">" + svgImageIle("installation-" + inst.comp, cx - taille / 2, sol - taille, taille, taille) + "</g></g>";
+    }
     var g = grilleSprite(inst.dessin), e = taille / 32, x = cx - taille / 2, y = sol - taille + e * 2, out = "";
     if (!g) return "";
     if (inst.etat === "friche") {
@@ -3892,7 +3912,7 @@ function demarrerJeu() {
       out += '<g style="color:rgba(30,45,25,.2)">' + pixels(g, C.cabinet.palette, null, x, y, e, true) + "</g>";
     } else {
       out += '<ellipse cx="' + cx + '" cy="' + (sol - 1) + '" rx="' + (taille * 0.42) + '" ry="' + (taille * 0.1) + '" fill="rgba(20,30,20,.28)"/>';
-      var filtre = inst.etat === "panne" ? ' filter="url(#ile-terne)"' : inst.etat === "abandon" ? ' filter="url(#ile-ruine)" opacity=".75"' : "";
+      var filtre = inst.etat === "panne" || inst.etat === "veille" ? ' filter="url(#ile-terne)"' : inst.etat === "abandon" ? ' filter="url(#ile-ruine)" opacity=".75"' : "";
       out += "<g" + filtre + ">" + pixels(g, C.cabinet.palette, null, x, y, e) + "</g>";
       if (inst.etat === "abandon") {
         // Les herbes folles gagnent le pied de l'installation.
@@ -3900,8 +3920,8 @@ function demarrerJeu() {
         for (var i = 0; i < 6; i++) { var hx = cx - taille * 0.4 + ((gr >>> (i * 4)) % 16) / 16 * taille * 0.8, hh = 3 + ((gr >>> (i * 3)) % 3) * 2;
           out += '<rect x="' + hx.toFixed(1) + '" y="' + (sol - hh) + '" width="2" height="' + hh + '" fill="#2E7D32"/><rect x="' + (hx + 2).toFixed(1) + '" y="' + (sol - hh + 2) + '" width="2" height="' + (hh - 2) + '" fill="#4CAF50"/>'; }
       }
-      if (inst.etat === "alerte" || inst.etat === "panne") {
-        var c = inst.etat === "panne" ? "#D94141" : "#E8873A", bx = cx + taille * 0.3, by = y + 2;
+      if (inst.etat === "alerte" || inst.etat === "panne" || inst.etat === "veille") {
+        var c = inst.etat === "panne" ? "#D94141" : inst.etat === "veille" ? "#5B7FD9" : "#E8873A", bx = cx + taille * 0.3, by = y + 2;
         out += '<g class="ile-voyant"><circle cx="' + bx + '" cy="' + by + '" r="8.5" fill="' + c + '" stroke="#fff" stroke-width="2"/><rect x="' + (bx - 1.5) + '" y="' + (by - 5) + '" width="3" height="6" fill="#fff"/><rect x="' + (bx - 1.5) + '" y="' + (by + 2.5) + '" width="3" height="3" fill="#fff"/></g>';
       }
     }
@@ -4018,7 +4038,7 @@ function demarrerJeu() {
   // Le relief qui ne change pas : un bois à l'ouest, un lac au sud-ouest, un marais au sud-est.
   var BOIS = [78, 250, 38, 50], LAC = [98, 446, 30, 19], MARAIS = [226, 508, 38, 25];
   function svgCarteIle(I) {
-    var W = ILE_W, H = ILE_H, n = I.quartiers.length, o = "", sol = "", plan = [], dessus = "", zones = "", brume = "";
+    var W = ILE_W, H = ILE_H, n = I.quartiers.length, o = "", sol = "", plan = [], dessus = "", zones = "", brume = "", vivant;
     var lieux = I.quartiers.map(function (q, i) {
       var p = q.position || [0.5 + 0.36 * Math.cos(i / n * 6.283 - 1.57), 0.5 + 0.36 * Math.sin(i / n * 6.283 - 1.57)];
       return [p[0] * W, p[1] * H];
@@ -4062,6 +4082,7 @@ function demarrerJeu() {
     // installations du quartier. Le plan garde tout ce qui est debout, pour le dessiner du fond vers l'avant.
     I.quartiers.forEach(function (q, i) {
       var x = lieux[i][0], y = lieux[i][1], gr = graine(q.id), g = "";
+      // Une image de hameau fournie : elle remplace les maisons dessinées (sur une carte fournie elle aussi, ou non).
       sol += '<path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + (q.posees ? "#C4E8A6" : "#B2DE98") + '"/>';
       if (q.posees) sol += '<path d="' + tache(x, y + 6, 17, 8, "pl" + q.id) + '" fill="#EFE0B4" opacity=".9"/><path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + q.couleur + '" opacity=".1"/>';
       if (q.decor === "quai") {
@@ -4076,7 +4097,8 @@ function demarrerJeu() {
         var faits = q.marche > k * 2;
         sol += '<g transform="rotate(' + (k * 23 - 14) + " " + fx(x + c[0]) + " " + fx(y + c[1]) + ')"><rect x="' + fx(x + c[0] - 10) + '" y="' + fx(y + c[1] - 7) + '" width="20" height="14" rx="2" fill="' + (faits ? "#E8CF7A" : "#B9A77A") + '"/>' +
           [0, 1, 2, 3].map(function (l) { return '<rect x="' + fx(x + c[0] - 9) + '" y="' + fx(y + c[1] - 5.6 + l * 3.3) + '" width="18" height="1.3" fill="' + (faits ? "#7DB85A" : "#A39265") + '"/>'; }).join("") + "</g>"; });
-      if (q.posees) {
+      if (imageIle("hameau-" + q.id) && q.ouvert) plan.push([y, svgImageIle("hameau-" + q.id, x - 30, y - 30, 60, 60)]);
+      else if (q.posees) {
         var maisons = Math.min(6, 1 + Math.floor(q.marche / 2));
         var coins = [[-22, -6], [21, -8], [-12, 12], [15, 13], [-27, 8], [28, 5]];
         for (var m = 0; m < maisons; m++) plan.push([y + coins[m][1], svgMaison(x + coins[m][0], y + coins[m][1], 9 + (gr >>> m) % 3, q.couleur, gr + m)]);
@@ -4105,6 +4127,8 @@ function demarrerJeu() {
       dessus += '<g pointer-events="none">' + g + "</g>";
       zones += '<ellipse class="ile-parcelle" data-q="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + nom + '" cx="' + fx(x) + '" cy="' + fx(y + 6) + '" rx="44" ry="38" fill="transparent"/>';
     });
+    // Ce qui vit (maisons, installations, habitants) se pose aussi sur une carte fournie ; le décor dessiné, non.
+    vivant = plan.slice().sort(function (a, b) { return a[0] - b[0]; });
     // Les arbres : serrés dans le bois (avec des sapins), épars ailleurs ; aucun sur l'eau, le volcan ou un hameau.
     function libre(x, y, m) {
       if (!surTerre(x, y, 0.9) || dansOvale(x, y, [LAC[0], LAC[1], LAC[2] + 6, LAC[3] + 6]) || dansOvale(x, y, [ILE_CX, ILE_CY + 2, 62, 66])) return false;
@@ -4123,7 +4147,7 @@ function demarrerJeu() {
     plan.sort(function (a, b) { return a[0] - b[0]; });
     return '<svg class="ile-scene ile-carte" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(__("Carte de l'île")) + '">' +
       '<defs><filter id="ile-brume" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3.5"/></filter></defs>' +
-      o + '<clipPath id="ile-terre"><path d="' + contourIle(0.945) + '"/></clipPath><g clip-path="url(#ile-terre)">' + sol + "</g>" + svgVolcan() + plan.map(function (p) { return p[1]; }).join("") + '<g filter="url(#ile-brume)">' + brume + "</g>" + dessus + zones + "</svg>";
+      (imageIle("carte") ? svgImageIle("carte", 0, 0, W, H, "slice") + vivant.map(function (p) { return p[1]; }).join("") : o + '<clipPath id="ile-terre"><path d="' + contourIle(0.945) + '"/></clipPath><g clip-path="url(#ile-terre)">' + sol + "</g>" + svgVolcan() + plan.map(function (p) { return p[1]; }).join("")) + '<g filter="url(#ile-brume)">' + brume + "</g>" + dessus + zones + "</svg>";
   }
   // Un quartier vu de près : un village dans son pré. Un chemin de terre le traverse, les installations se posent de
   // part et d'autre (les plus savantes au fond), des maisons poussent entre elles à mesure que les habitants arrivent.
@@ -4174,12 +4198,12 @@ function demarrerJeu() {
       });
     });
     // La lisière : des arbres sur les bords, des fleurs dans l'herbe.
-    for (var t = 0; t < 10 + rangees.length * 5; t++) { var gt = graine(q.id + "arb" + t), bord = t % 2, ax = bord ? 6 + gt % 16 : W - 6 - gt % 16, ay = 20 + (gt >>> 7) % (H - bas - 10);
+    for (var t = 0; !imageIle("quartier-" + q.id) && t < 10 + rangees.length * 5; t++) { var gt = graine(q.id + "arb" + t), bord = t % 2, ax = bord ? 6 + gt % 16 : W - 6 - gt % 16, ay = 20 + (gt >>> 7) % (H - bas - 10);
       if (t % 5 === 4) { ax = 30 + gt % 300; sol += svgFleurs(ax, ay, gt) + svgFleurs(ax + 9, ay + 4, gt >>> 3); continue; }
       if (q.decor === "champs" && ((bord && ax < 44) || (!bord && ax > 316)) && t % 3) continue;
       plan.push([ay, '<g transform="translate(' + ax + " " + ay + ') scale(2)">' + (gt % 4 === 0 ? svgSapin(0, 0, 11, gt) : svgFeuillu(0, -4, 4.6, gt)) + "</g>"]); }
     plan.sort(function (a, b) { return a[0] - b[0]; });
-    return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(tx(q.nom)) + '">' + DEFS_ILE + sol + plan.map(function (x) { return x[1]; }).join("") + "</svg>";
+    return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(tx(q.nom)) + '">' + DEFS_ILE + (imageIle("quartier-" + q.id) ? svgImageIle("quartier-" + q.id, 0, 0, W, H, "slice") : sol) + plan.map(function (x) { return x[1]; }).join("") + "</svg>";
   }
   function vueIle() {
     var I = M.ile(C, P, maintenant()), v = el('<div class="vue vue-ile"></div>');
@@ -4215,10 +4239,34 @@ function demarrerJeu() {
     }
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + __("Ce que tu sais encore") + "</div><h1>" + __("L'île") + "</h1></div>" + compteur + "</div>"));
     v.appendChild(el('<p class="note">' + __("Chaque compétence maîtrisée construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Chaque quartier reçoit les savoirs de plusieurs arbres. Touche-le pour le visiter.") + "</p>"));
+    var boi = blocObjectifIle(); if (boi) { v.appendChild(boi); I = M.ile(C, P, maintenant()); }
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
     carte.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
     v.appendChild(carte);
     return v;
+  }
+  // L'objectif du jour : l'IA économe annonce son délestage du soir ; un bouton mène à l'épreuve qui l'évite.
+  function blocObjectifIle() {
+    if (!M.ilePresente(C)) return null;
+    var ob = M.objectifIle(C, P, maintenant());
+    if (!ob || (!ob.type && !ob.veille)) return null;
+    var veille = ob.veille && C.parId[ob.veille] ? '<p class="ile-obj-veille">' + __("Hier, l'objectif n'a pas été tenu : une installation est en veille") + (ob.type && !ob.reussi ? __(" jusqu'à ce que tu tiennes celui d'aujourd'hui.") : __(" jusqu'à ce soir.")) + "</p>" : "";
+    var corps;
+    if (!ob.type) corps = "<h3>" + __("Rien à défendre aujourd'hui") + "</h3>" + veille;
+    else {
+      var nom = esc(tx(ob.nom));
+      corps = "<h3>" + (ob.reussi ? __("Objectif tenu : ") + nom + __(" garde son courant") : __("Délestage prévu ce soir : ") + nom) + "</h3>" +
+        '<p class="ile-obj-texte">' + (ob.reussi ? __("« Soit. Ce quartier sert encore à quelqu'un. Je reviendrai demain. »") :
+          ob.type === "repare" ? __("« Ces installations ne sont plus entretenues. Elles consomment pour rien : ce soir, je coupe. » Fais leurs rappels avant minuit.") :
+          __("« Ce quartier ne justifie pas encore son courant. » Construis-y une installation de plus avant minuit.")) + "</p>" +
+        '<div class="ile-obj-jauge"><span style="width:' + Math.round(ob.fait / ob.besoin * 100) + '%"></span></div>' +
+        '<p class="ile-obj-compte"><b>' + ob.fait + " / " + ob.besoin + "</b> " + (ob.type === "repare" ? __("remises en marche") : __("installation construite")) + " · " + (ob.reussi ? "+" + ob.credits + __(" crédits") : ob.credits + __(" crédits à gagner")) + "</p>" + veille +
+        (ob.prochain ? '<button type="button" class="btn large" data-a="obj">' + (ob.type === "repare" ? __("Faire le rappel") : __("Passer le quiz")) + " : " + esc(tx(C.parId[ob.prochain].nom)) + "</button>" :
+          ob.reussi ? "" : '<p class="meta">' + __("Rien n'est à ta portée dans ce quartier pour l'instant.") + "</p>");
+    }
+    var b = el('<div class="carte ile-objectif' + (ob.reussi ? " tenu" : "") + '" style="--c:' + (ob.couleur || "var(--accent)") + '"><div class="eyebrow">' + __("Objectif du jour · l'IA économe") + "</div>" + corps + "</div>");
+    var bt = b.querySelector('[data-a="obj"]'); if (bt) bt.onclick = function () { ouvrirFeuille(ob.prochain); };
+    return b;
   }
   // Dans le bilan d'une épreuve : ce qu'elle vient de changer sur l'île.
   function blocIleBilan(ch) {
@@ -4233,6 +4281,7 @@ function demarrerJeu() {
       "<div class=\"eyebrow\">" + esc(titre) + "</div><h3>" + esc(tx(inst.nom)) + "</h3>" +
       (inst.usage && ch.apres === "marche" ? '<p class="desc">' + esc(tx(inst.usage)) + "</p>" : ch.apres !== "marche" ? '<p class="desc">' + esc(TEXTE_ETAT[ch.apres]()) + "</p>" : "") +
       (d ? '<p class="ile-delta ' + (d > 0 ? "plus" : "moins") + '">' + (d > 0 ? "+" : "−") + esc(texteHabitants(Math.abs(d))) + '<small>' + esc(texteHabitants(ch.habitants)) + __(" sur l'île") + "</small></p>" : "") +
+      (ch.objectif ? '<p class="ile-service">' + __("Objectif du jour tenu : pas de délestage ce soir.") + " +" + ch.objectif.credits + __(" crédits") + "</p>" : "") +
       (ch.option ? '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(q.nom)) + (ch.optionOuverte ? __(" débloque : ") : __(" perd : ")) + esc(tx(ch.option.nom)) + "</p>" + (ch.optionOuverte ? '<p class="desc">' + esc(tx(ch.option.usage)) + "</p>" : "") : "") + "</div>");
     return b;
   }

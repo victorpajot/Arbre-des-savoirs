@@ -4231,6 +4231,25 @@
        "type": "integer",
        "minimum": 1,
        "description": "Jours de retard d'un rappel avant que l'installation tombe en panne."
+      },
+      "objectif": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "credits",
+        "rappels_max"
+       ],
+       "description": "L'objectif du jour : l'IA économe annonce un délestage sur un quartier ; le tenir rapporte des crédits, le manquer met une installation en veille le lendemain.",
+       "properties": {
+        "credits": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "rappels_max": {
+         "type": "integer",
+         "minimum": 1
+        }
+       }
       }
      }
     },
@@ -4344,6 +4363,14 @@
         "description": "Pixel art 32 × 32 (dessins.json du pack, objet ou icône)."
        }
       }
+     }
+    },
+    "images": {
+     "type": "object",
+     "description": "Images déposées dans packs/<pack>/images/ (carte, quartier-<id>, hameau-<id>, installation-<comp>) : le jeu les affiche à la place de ses dessins.",
+     "additionalProperties": {
+      "type": "string",
+      "pattern": "^data:image/"
      }
     }
    }

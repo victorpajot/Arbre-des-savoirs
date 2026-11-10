@@ -1392,7 +1392,7 @@
   }
   function habitantsDe(contenu, rang, etat) {
     var H = contenu.ile.regles.habitants, plein = H.installation + H.par_rang * rang;
-    return etat === "marche" ? plein : etat === "alerte" ? Math.round(plein * H.alerte) : etat === "panne" ? Math.round(plein * H.panne) : 0;
+    return etat === "marche" ? plein : etat === "alerte" ? Math.round(plein * H.alerte) : etat === "panne" || etat === "veille" ? Math.round(plein * H.panne) : 0;
   }
   // Les quartiers sont des lieux (port, ville, zones…), pas des matières : chaque compétence pose son installation dans
   // le quartier où elle sert, quel que soit son arbre. Une compétence sans installation écrite pose son emblème dans un
@@ -1415,10 +1415,14 @@
   function ile(contenu, partie, t) {
     if (!ilePresente(contenu)) return null;
     var H = contenu.ile.regles.habitants, total = 0, capacite = 0, plan = planIle(contenu), ouverts = {};
+    var oj = partie.ile && partie.ile.jour === cleJour(t) ? partie.ile : null;
     var quartiers = (contenu.ile.quartiers || []).map(function (q) {
       var hab = 0, cap = 0, marche = 0, posees = 0, ouvert = false;
       var inst = plan.parQuartier[q.id].map(function (x) {
-        var etat = etatInstallation(contenu, partie, x.comp, t), h = habitantsDe(contenu, x.rang, etat);
+        var etat = etatInstallation(contenu, partie, x.comp, t);
+        // En veille : l'objectif de la veille n'a pas été tenu, l'IA économe a baissé son courant pour la journée.
+        if (oj && oj.veille === x.comp && etat === "marche") etat = "veille";
+        var h = habitantsDe(contenu, x.rang, etat);
         hab += h; cap += H.installation + H.par_rang * x.rang;
         if (etat === "marche" || etat === "alerte") marche++;
         if (etat !== "friche") posees++;
@@ -1442,13 +1446,70 @@
     var qid = planIle(contenu).quartierDe[id];
     return ile(contenu, partie, t).quartiers.filter(function (x) { return x.id === qid; })[0] || null;
   }
+  // L'objectif du jour (Victor, 2026-11-10 : « il faudrait un objectif par jour »). Chaque matin, l'IA économe annonce
+  // un délestage pour le soir sur un quartier. Deux formes : « repare » (des installations du quartier attendent leur
+  // rappel : les remettre en marche) ou « construis » (rien ne cloche : poser une installation de plus). Tenu : des
+  // crédits, et la veille de la veille est levée. Manqué : le lendemain, la plus belle installation du quartier passe
+  // en veille pour la journée (la moitié de ses habitants s'en va), sans rien faire perdre à la compétence.
+  function tirerObjectif(contenu, partie, t, jour) {
+    var R = contenu.ile.regles.objectif, I = ile(contenu, partie, t), o = { jour: jour, type: null, cible: null, cibles: [], depart: 0, fait: false, veille: null };
+    var pire = null, nb = 0;
+    I.quartiers.forEach(function (q) {
+      var s = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne"; });
+      if (s.length > nb) { nb = s.length; pire = { q: q, s: s }; }
+    });
+    if (pire) {
+      pire.s.sort(function (a, b) { return (a.etat === "panne" ? 0 : 1) - (b.etat === "panne" ? 0 : 1) || a.rang - b.rang; });
+      o.type = "repare"; o.cible = pire.q.id; o.cibles = pire.s.slice(0, R.rappels_max).map(function (x) { return x.comp; });
+      return o;
+    }
+    var chantiers = I.quartiers.filter(function (q) { return q.installations.some(function (x) { return (x.etat === "friche" || x.etat === "abandon") && statut(contenu, partie, x.comp, t).etat === "disponible"; }); });
+    if (chantiers.length) {
+      var q = chantiers[hacher(jour) % chantiers.length];
+      o.type = "construis"; o.cible = q.id; o.depart = q.installations.filter(function (x) { return x.etat !== "friche" && x.etat !== "abandon"; }).length;
+    }
+    return o;
+  }
+  function objectifIle(contenu, partie, t) {
+    if (!ilePresente(contenu) || !contenu.ile.regles.objectif) return null;
+    var jour = cleJour(t), o = partie.ile, R = contenu.ile.regles.objectif;
+    if (!o || o.jour !== jour) {
+      var veille = null;
+      if (o && o.type && !o.fait) {
+        var qv = ile(contenu, partie, t).quartiers.filter(function (x) { return x.id === o.cible; })[0];
+        var debout = qv ? qv.installations.filter(function (x) { return x.etat === "marche"; }).sort(function (a, b) { return b.rang - a.rang; }) : [];
+        if (debout.length) veille = debout[0].comp;
+      }
+      partie.ile = o = tirerObjectif(contenu, partie, t, jour);
+      o.veille = veille;
+    }
+    var q = ile(contenu, partie, t).quartiers.filter(function (x) { return x.id === o.cible; })[0];
+    if (!o.type || !q) return { jour: jour, type: null, veille: o.veille, reussi: false };
+    var besoin, n, prochain = null;
+    if (o.type === "repare") {
+      besoin = o.cibles.length;
+      n = o.cibles.filter(function (id) { return etatInstallation(contenu, partie, id, t) === "marche"; }).length;
+      prochain = o.cibles.filter(function (id) { var e = etatInstallation(contenu, partie, id, t); return e === "alerte" || e === "panne"; })[0] || null;
+    } else {
+      besoin = 1;
+      n = Math.min(1, Math.max(0, q.installations.filter(function (x) { return x.etat !== "friche" && x.etat !== "abandon"; }).length - o.depart));
+      var libres = q.installations.filter(function (x) { return (x.etat === "friche" || x.etat === "abandon") && statut(contenu, partie, x.comp, t).etat === "disponible"; });
+      prochain = libres.length ? libres[0].comp : null;
+    }
+    if (!o.fait && n >= besoin) {
+      o.fait = true; o.veille = null;
+      partie.credits.solde += R.credits; partie.credits.gagnes += R.credits;
+    }
+    return { jour: jour, type: o.type, quartier: q.id, nom: q.nom, couleur: q.couleur, besoin: besoin, fait: n, reussi: o.fait, credits: R.credits, veille: o.veille, cibles: o.cibles, prochain: o.fait ? null : prochain };
+  }
   // Ce qu'une épreuve a changé sur l'île : l'installation de la compétence jouée, les options de son quartier et le
   // nombre d'habitants, avant et après.
   function photoIle(contenu, partie, id, t) {
     if (!ilePresente(contenu) || !contenu.parId[id]) return null;
     var q = quartierIle(contenu, partie, id, t);
     if (!q) return null;
-    return { etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, options: q.options.filter(function (o) { return o.ouverte; }).length };
+    var ob = objectifIle(contenu, partie, t);
+    return { objectif: !!(ob && ob.reussi), etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, options: q.options.filter(function (o) { return o.ouverte; }).length };
   }
   function changementIle(contenu, partie, id, t, avant) {
     if (!avant) return null;
@@ -1458,7 +1519,8 @@
     var inst = q.installations.filter(function (x) { return x.comp === id; })[0];
     // L'option que l'épreuve vient d'ouvrir (ou de fermer) dans le quartier.
     var option = apres.options > avant.options ? q.options[apres.options - 1] : apres.options < avant.options ? q.options[avant.options - 1] : null;
-    return { comp: id, quartier: q.id, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
+    var ob = objectifIle(contenu, partie, t);
+    return { comp: id, quartier: q.id, objectif: ob && ob.reussi && !avant.objectif ? ob : null, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
   }
   function listeDonjons(contenu) { return (contenu.donjons && contenu.donjons.donjons) || []; }
   function donjonDe(contenu, id) { return listeDonjons(contenu).filter(function (d) { return d.id === id; })[0] || null; }
@@ -4197,7 +4259,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, pionnierDe: pionnierDe, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,
