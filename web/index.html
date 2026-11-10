@@ -3559,20 +3559,26 @@ function demarrerJeu() {
   var RE_DATES = new RegExp([
     "\\b([IVX]+)(?:e|er|ème)(?:\\s|&nbsp;|\u00a0)+(?:siècle|s\\.)(?:(?:\\s|\u00a0)+av\\.(?:(?:\\s|\u00a0)+J\\.-C\\.)?)?",
     "\\b(\\d{1,2})(?:st|nd|rd|th) century(?: BC)?",
-    "\\b(\\d{1,3}(?:[\\s\u00a0\u202f]\\d{3})?|\\d{1,4})(?:\\s|\u00a0)+(?:av\\.(?:\\s|\u00a0)+J\\.-C\\.|BC|BCE)",
-    "(?:\\b(?:[Ee]n|[Vv]ers|[Dd]ès|[Dd]epuis|jusqu&#39;en|jusqu’en|l&#39;an|[Ii]n|[Aa]round|[Bb]y|[Ss]ince|[Uu]ntil|[Ff]rom|c\\.)(?:\\s|\u00a0)+|\\b(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre|January|February|March|April|May|June|July|August|September|October|November|December)(?:\\s|\u00a0)+|\\(|^)(\\d{2,4})(?!\\d)(?![,.]\\d)(?!(?:\\s|\u00a0)\\d{3})(?!(?:\\s|\u00a0)+(?:av\\.|BC))(?!(?:\\s|\u00a0)*(?:%|km|kg|°|volts?|V\\b|ans|années|mètres|m\\b|hommes|personnes|exemplaires|pages|étoiles|secondes|minutes|heures|jours|mois|fois|cas|cm|mm|g\\b|litres|degrés|years|people|times))"
+    "\\b((?:\\d{1,5}[-–])?(?:\\d{1,3}(?:[\\s\u00a0\u202f]\\d{3})?|\\d{1,4}))(?:\\s|\u00a0)+(?:av\\.(?:\\s|\u00a0)+J\\.-C\\.|BC|BCE)",
+    "(?:\\b(?:[Ee]n|[Vv]ers|[Dd]ès|[Dd]epuis|jusqu&#39;en|jusqu’en|l&#39;an|[Ii]n|[Aa]round|[Bb]y|[Ss]ince|[Uu]ntil|[Ff]rom|c\\.)(?:\\s|\u00a0)+|\\b(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre|January|February|March|April|May|June|July|August|September|October|November|December)(?:\\s|\u00a0)+|\\(|^)(\\d{2,4})(?!\\d)(?![,.]\\d)(?![-–]\\d{1,5}(?:\\s|\u00a0)+(?:av\\.|BC))(?!(?:\\s|\u00a0)\\d{3})(?!(?:\\s|\u00a0)+(?:av\\.|BC))(?!(?:\\s|\u00a0)*(?:%|km|kg|°|volts?|V\\b|ans|années|mètres|m\\b|hommes|personnes|exemplaires|pages|étoiles|secondes|minutes|heures|jours|mois|fois|cas|cm|mm|g\\b|litres|degrés|years|people|times))",
+    // Victor (2026-11-10) : les millénaires (« IIe millénaire av. J.-C. », « 4th millennium BC ») se colorent aussi.
+    "\\b([IVX]+)(?:e|er)(?:\\s|\u00a0)+millénaire(?:(?:\\s|\u00a0)+av\\.(?:\\s|\u00a0)+J\\.-C\\.)?",
+    "\\b(\\d{1,2})(?:st|nd|rd|th) millennium(?: BC)?"
   ].join("|"), "g");
   function dater(html) {
     if (!C.plateau || !C.plateau.epoques || !html) return html;
-    return html.replace(RE_DATES, function (m, sR, sN, av, an, off, all) {
+    return html.replace(RE_DATES, function (m, sR, sN, av, an, mR, mN) {
       var a, avJC = /av\.|BC/.test(m);
       if (sR) { var n = romain(sR); if (!n || n > 21) return m; a = avJC ? -(n - 1) * 100 - 50 : (n - 1) * 100 + 50; }
       else if (sN) { a = avJC ? -(+sN - 1) * 100 - 50 : (+sN - 1) * 100 + 50; }
-      else if (av) a = -parseInt(av.replace(/\D/g, ""), 10);
+      // « 3500-3350 av. J.-C. » : toute la fourchette est colorée, à la couleur de sa première année.
+      else if (av) a = -parseInt(av.split(/[-–]/)[0].replace(/\D/g, ""), 10);
+      // Sans « av. J.-C. », un millénaire à partir du IIIe ne peut être qu'avant notre ère.
+      else if (mR || mN) { var k = mR ? romain(mR) : +mN; if (!k || k > 12) return m; a = (avJC || k >= 3) ? -(k - 1) * 1000 - 500 : (k - 1) * 1000 + 500; }
       else if (an) { a = +an; if (a > new Date().getFullYear() + 1) return m; }
       else return m;
       var e = epoqueDe(a); if (!e) return m;
-      var nombre = sR || sN || av || an, i = m.indexOf(nombre), avant = m.slice(0, i), reste = m.slice(i);
+      var nombre = sR || sN || av || an || mR || mN, i = m.indexOf(nombre), avant = m.slice(0, i), reste = m.slice(i);
       // Le mot qui précède (« en », « vers ») reste hors de la pastille.
       return avant + '<span class="date-ep ep-' + e.id + '">' + reste + "</span>";
     });
