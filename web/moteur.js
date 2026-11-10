@@ -1433,7 +1433,7 @@
         return { nom: o.nom, usage: o.usage, installations: o.installations, ouverte: ok };
       });
       total += hab; capacite += cap;
-      return { id: q.id, nom: q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, ouvert: ouvert || posees > 0, installations: inst,
+      return { id: q.id, nom: q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, ouvert: ouvert || posees > 0, installations: inst,
         options: options, posees: posees, marche: marche, habitants: hab, capacite: cap };
     });
     return { quartiers: quartiers, habitants: total, capacite: capacite };

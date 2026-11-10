@@ -4289,6 +4289,25 @@
           }
          }
         }
+       },
+       "position": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "description": "Où le hameau se pose sur la carte de l'île : [x, y], de 0 à 1."
+       },
+       "decor": {
+        "enum": [
+         "quai",
+         "champs",
+         "roche"
+        ],
+        "description": "Le paysage propre au quartier : un ponton sur la mer, des champs cultivés, un sol de roche."
        }
       }
      }

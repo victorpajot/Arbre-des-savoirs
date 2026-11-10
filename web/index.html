@@ -3916,37 +3916,6 @@ function demarrerJeu() {
       out += '<rect x="' + x + '" y="' + (y + 5 + r * 14) + '" width="14" height="2" fill="#8FD8F2" opacity=".7"/><rect x="' + (x + 14) + '" y="' + (y + 7 + r * 14) + '" width="6" height="2" fill="#D8F4FC" opacity=".6"/>';
     return out;
   }
-  // Un quartier vu de près : un coteau en terrasses, des installations les plus simples (en bas) aux plus savantes.
-  function svgQuartier(q) {
-    var W = 360, PAS = 70, rangs = [];
-    q.installations.forEach(function (x) { (rangs[x.rang] = rangs[x.rang] || []).push(x); });
-    var lignes = []; for (var r = rangs.length - 1; r >= 1; r--) if (rangs[r]) for (var c = 0; c < rangs[r].length; c += 5) lignes.push(rangs[r].slice(c, c + 5));
-    var haut = 40, H = haut + lignes.length * PAS + 54, out = DEFS_ILE;
-    out += '<rect width="' + W + '" height="' + H + '" fill="#BFE3F2"/><rect width="' + W + '" height="26" fill="#D8F0F8"/>';
-    // Le coteau : une terrasse par rang, de plus en plus étroite vers le sommet.
-    lignes.forEach(function (_, i) {
-      var y = haut + i * PAS, retrait = Math.max(0, (lignes.length - 1 - i)) * 4, clair = i % 2 ? "#8CC27A" : "#7FB86E";
-      out += '<rect x="' + (retrait) + '" y="' + y + '" width="' + (W - 2 * retrait) + '" height="' + (H - y - 30) + '" rx="14" fill="' + clair + '"/>' +
-        '<rect x="' + retrait + '" y="' + (y + PAS - 6) + '" width="' + (W - 2 * retrait) + '" height="4" fill="rgba(30,60,30,.16)"/>';
-    });
-    // Le chemin qui monte, en lacets.
-    var ch = "M180 " + (H - 40);
-    lignes.forEach(function (_, i) { var j = lignes.length - 1 - i, y = haut + j * PAS + PAS - 8; ch += " L" + (i % 2 ? 250 : 110) + " " + y; });
-    out += '<path d="' + ch + '" fill="none" stroke="#E3CF96" stroke-width="8" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/>';
-    out += '<rect x="0" y="' + (H - 44) + '" width="' + W + '" height="16" fill="#EAD9A4"/>' + vagues(H - 30, W, 30);
-    var gens = "";
-    lignes.forEach(function (ligne, i) {
-      var sol = haut + i * PAS + PAS - 10, n = ligne.length;
-      ligne.forEach(function (inst, j) {
-        var t = inst.rang === 8 && n === 1 ? 62 : 52, cx = W * (j + 0.5) / n + (n === 1 ? 0 : (i % 2 ? 8 : -8));
-        out += svgInstallation(inst, cx, sol, t);
-        // Ses habitants, au pied de l'installation : un petit personnage par dizaine, trois au plus.
-        var k = Math.min(3, Math.round(inst.habitants / 14)), gr = graine(inst.comp);
-        for (var h = 0; h < k; h++) gens += svgHabitant(Math.round(cx - t / 2 - 6 + ((gr >>> (h * 5)) % 20) + h * (t / 3)), sol - 6 + (gr >>> (h * 2 + 9)) % 7, gr + h * 97);
-      });
-    });
-    return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(tx(q.nom)) + '" shape-rendering="crispEdges">' + out + gens + "</svg>";
-  }
   function texteHabitants(n) { return nb(n) + (n > 1 ? __(" habitants") : __(" habitant")); }
   function ouvrirInstallation(q, inst) {
     var k = C.parId[inst.comp], g = grilleSprite(inst.dessin), friche = inst.etat === "friche";
@@ -3971,30 +3940,6 @@ function demarrerJeu() {
     for (var i = 0; i < 180; i++) { var p = pointIle(i / 180 * 2 * Math.PI, s); d += (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }
     return d + "Z";
   }
-  // Les frontières des quartiers : n territoires qui se partagent la côte à parts égales, le premier au nord, dans le
-  // sens des aiguilles. Une frontière n'est pas un rayon droit : elle descend du volcan en serpentant, comme un ruisseau.
-  function secteursIle(n) {
-    var N = 720, cumul = [0], a0 = -Math.PI / 2;
-    for (var i = 0; i < N; i++) { var a = a0 + (i + 0.5) / N * 2 * Math.PI;
-      cumul.push(cumul[i] + coteIle(a) * Math.hypot(ILE_RX * Math.sin(a), ILE_RY * Math.cos(a))); }
-    var bornes = [a0], j = 0;
-    for (var q = 1; q < n; q++) { var cible = cumul[N] * q / n; while (cumul[j + 1] < cible) j++; bornes.push(a0 + (j + (cible - cumul[j]) / (cumul[j + 1] - cumul[j])) / N * 2 * Math.PI); }
-    bornes.push(a0 + 2 * Math.PI);
-    return bornes;
-  }
-  function bordIle(a, s) { return a + 0.055 * Math.sin(s * 11 + a * 5) * Math.min(1, (s - 0.3) * 4); }
-  function frontiereIle(a, s0, s1, sens) {
-    var d = "";
-    for (var i = 0; i <= 14; i++) { var s = sens > 0 ? s0 + (s1 - s0) * i / 14 : s1 - (s1 - s0) * i / 14, p = pointIle(bordIle(a, s), s); d += "L" + p[0].toFixed(1) + " " + p[1].toFixed(1); }
-    return d;
-  }
-  function secteurIle(a, b, s0, s1) {
-    var d = "", n = Math.max(4, Math.ceil((b - a) / 0.06)), a1 = bordIle(a, s1), b1 = bordIle(b, s1), a2 = bordIle(a, s0), b2 = bordIle(b, s0);
-    for (var i = 0; i <= n; i++) { var p = pointIle(a1 + (b1 - a1) * i / n, s1); d += (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }
-    d += frontiereIle(b, s0, s1, -1);
-    for (var k = n; k >= 0; k--) { var r = pointIle(a2 + (b2 - a2) * k / n, s0); d += "L" + r[0].toFixed(1) + " " + r[1].toFixed(1); }
-    return d + frontiereIle(a, s0, s1, 1) + "Z";
-  }
   function svgVolcan() {
     var x = ILE_CX, y = ILE_CY, o = "";
     o += '<path d="' + contourIle(0.33) + '" fill="#A3A47A"/><path d="' + contourIle(0.26) + '" fill="#9A8468"/>';
@@ -4011,77 +3956,230 @@ function demarrerJeu() {
       o += '<circle cx="' + (x + f[0]) + '" cy="' + (y + f[1]) + '" r="' + f[2] + '" fill="#F4F1EA" opacity="' + f[3] + '"/>'; });
     return o;
   }
+  // --- Le paysage (Victor, 2026-11-10 : « pousser le réalisme : une forêt, un marais, un lac ; un petit monde
+  // chaleureux qu'on a envie de faire grandir, rien d'artificiel »). Tout est dessiné à la main, en formes rondes.
+  function fx(n) { return (Math.round(n * 10) / 10).toString(); }
+  // Une tache aux bords irréguliers (clairière, étang, bois).
+  function tache(cx, cy, rx, ry, cle) {
+    var n = 12, pts = [], g = graine(cle);
+    for (var i = 0; i < n; i++) { var a = i / n * 2 * Math.PI, k = 0.84 + ((g >>> (i * 2)) % 8) / 22; pts.push([cx + rx * k * Math.cos(a), cy + ry * k * Math.sin(a)]); }
+    return courbe(pts, true);
+  }
+  // Une ligne souple qui passe près de ses points (chemin, rivière).
+  function courbe(pts, ferme) {
+    var n = pts.length, d = "", m = function (a, b) { return fx((a[0] + b[0]) / 2) + " " + fx((a[1] + b[1]) / 2); };
+    if (ferme) { d = "M" + m(pts[n - 1], pts[0]); for (var i = 0; i < n; i++) d += "Q" + fx(pts[i][0]) + " " + fx(pts[i][1]) + " " + m(pts[i], pts[(i + 1) % n]); return d + "Z"; }
+    d = "M" + fx(pts[0][0]) + " " + fx(pts[0][1]);
+    for (var j = 1; j < n - 1; j++) d += "Q" + fx(pts[j][0]) + " " + fx(pts[j][1]) + " " + m(pts[j], pts[j + 1]);
+    return d + "L" + fx(pts[n - 1][0]) + " " + fx(pts[n - 1][1]);
+  }
+  function svgFeuillu(x, y, r, g) {
+    var v = ["#4E9E4A", "#5BAA50", "#479447", "#68B257"][g % 4], c = ["#7CC766", "#86CF6E", "#72BE62", "#93D478"][g % 4];
+    return '<ellipse cx="' + fx(x + 1) + '" cy="' + fx(y + r * 0.9) + '" rx="' + fx(r) + '" ry="' + fx(r * 0.36) + '" fill="rgba(30,55,30,.2)"/>' +
+      '<rect x="' + fx(x - 0.9) + '" y="' + fx(y) + '" width="1.8" height="' + fx(r) + '" fill="#8A6240"/>' +
+      '<circle cx="' + fx(x) + '" cy="' + fx(y - r * 0.2) + '" r="' + fx(r) + '" fill="' + v + '"/><circle cx="' + fx(x - r * 0.28) + '" cy="' + fx(y - r * 0.5) + '" r="' + fx(r * 0.55) + '" fill="' + c + '"/>';
+  }
+  function svgSapin(x, y, h, g) {
+    var v = ["#2F7A52", "#377F4C", "#2B7058"][g % 3], w = h * 0.42;
+    return '<ellipse cx="' + fx(x + 1) + '" cy="' + fx(y + 1) + '" rx="' + fx(w) + '" ry="' + fx(w * 0.36) + '" fill="rgba(30,55,30,.22)"/>' +
+      '<rect x="' + fx(x - 0.8) + '" y="' + fx(y - 3) + '" width="1.6" height="4" fill="#7A5638"/>' +
+      '<path d="M' + fx(x) + " " + fx(y - h) + "L" + fx(x + w) + " " + fx(y - h * 0.38) + "H" + fx(x + w * 0.5) + "L" + fx(x + w * 1.1) + " " + fx(y - 2) + "H" + fx(x - w * 1.1) + "L" + fx(x - w * 0.5) + " " + fx(y - h * 0.38) + "H" + fx(x - w) + 'Z" fill="' + v + '"/>' +
+      '<path d="M' + fx(x) + " " + fx(y - h) + "L" + fx(x - w) + " " + fx(y - h * 0.38) + "H" + fx(x - w * 0.5) + "L" + fx(x - w * 1.1) + " " + fx(y - 2) + "H" + fx(x - w * 0.3) + 'Z" fill="#fff" opacity=".12"/>';
+  }
+  // Une maisonnette : murs clairs, toit de la couleur du quartier, une porte, une fenêtre éclairée, parfois une cheminée.
+  function svgMaison(x, sol, s, toit, g) {
+    var h = s * 0.55, y = sol - h, o = "";
+    o += '<ellipse cx="' + fx(x + 1) + '" cy="' + fx(sol) + '" rx="' + fx(s * 0.62) + '" ry="' + fx(s * 0.16) + '" fill="rgba(30,45,30,.22)"/>';
+    if (g % 3 === 0) o += '<rect x="' + fx(x + s * 0.18) + '" y="' + fx(y - s * 0.5) + '" width="' + fx(s * 0.14) + '" height="' + fx(s * 0.3) + '" fill="#9A6F52"/>';
+    o += '<rect x="' + fx(x - s / 2) + '" y="' + fx(y) + '" width="' + fx(s) + '" height="' + fx(h) + '" rx="1" fill="' + (g % 2 ? "#FBF1DC" : "#F5E6CB") + '"/>';
+    o += '<path d="M' + fx(x - s * 0.62) + " " + fx(y + 0.6) + "L" + fx(x) + " " + fx(y - s * 0.46) + "L" + fx(x + s * 0.62) + " " + fx(y + 0.6) + 'Z" fill="' + toit + '"/><path d="M' + fx(x - s * 0.62) + " " + fx(y + 0.6) + "L" + fx(x) + " " + fx(y - s * 0.46) + "L" + fx(x) + " " + fx(y + 0.6) + 'Z" fill="#fff" opacity=".18"/>';
+    o += '<rect x="' + fx(x - s * 0.1) + '" y="' + fx(sol - h * 0.6) + '" width="' + fx(s * 0.2) + '" height="' + fx(h * 0.6) + '" rx=".6" fill="#8A5A3A"/>';
+    o += '<rect x="' + fx(x + s * 0.2) + '" y="' + fx(y + h * 0.22) + '" width="' + fx(s * 0.18) + '" height="' + fx(s * 0.18) + '" fill="#FFD98A"/>';
+    return o;
+  }
+  function svgFleurs(x, y, g) {
+    var c = ["#FFE08A", "#FFB3C7", "#FFFFFF", "#C9B6FF"], o = "";
+    for (var i = 0; i < 3; i++) o += '<circle cx="' + fx(x + ((g >>> (i * 3)) % 9) - 4) + '" cy="' + fx(y + ((g >>> (i * 4 + 1)) % 5) - 2) + '" r="1.1" fill="' + c[(g + i) % 4] + '"/>';
+    return o;
+  }
+  function svgRoseaux(x, y, g) {
+    var o = "";
+    for (var i = 0; i < 3; i++) { var dx = i * 2.4 - 2.4, h = 6 + ((g >>> (i * 3)) % 4); o += '<path d="M' + fx(x + dx) + " " + fx(y) + "v-" + h + '" stroke="#5E8F4A" stroke-width="1"/><rect x="' + fx(x + dx - 0.9) + '" y="' + fx(y - h - 3) + '" width="1.8" height="3.4" rx=".9" fill="#8A5A3A"/>'; }
+    return o;
+  }
+  function svgBarque(x, y, coque) {
+    return '<path d="M' + fx(x - 7) + " " + fx(y) + "q7 5 14 0l-2 3.4h-10z" + '" fill="' + (coque || "#B5744A") + '"/><path d="M' + fx(x) + " " + fx(y - 10) + "v10M" + fx(x) + " " + fx(y - 10) + "l6 8h-6z" + '" stroke="#6B4A32" stroke-width=".8" fill="#FFF7E6"/>';
+  }
+  function surTerre(x, y, marge) {
+    var dx = (x - ILE_CX) / ILE_RX, dy = (y - ILE_CY) / ILE_RY, a = Math.atan2(dy, dx);
+    return Math.hypot(dx, dy) / coteIle(a) < (marge || 0.93);
+  }
+  function dansOvale(x, y, z) { return Math.pow((x - z[0]) / z[2], 2) + Math.pow((y - z[1]) / z[3], 2) < 1; }
+  // Le relief qui ne change pas : un bois à l'ouest, un lac au sud-ouest, un marais au sud-est.
+  var BOIS = [78, 250, 38, 50], LAC = [98, 446, 30, 19], MARAIS = [226, 508, 38, 25];
   function svgCarteIle(I) {
-    // Les quartiers du tour de l'île se partagent la côte ; celui du centre entoure le pied du volcan.
-    var W = ILE_W, H = ILE_H, tour = I.quartiers.filter(function (q) { return !q.centre; }), centre = I.quartiers.filter(function (q) { return q.centre; })[0];
-    var n = tour.length, B = secteursIle(n), S0 = centre ? 0.53 : 0.34, o = "", dessus = "", zones = "", brume = "", occupe = [];
-    // La mer, les hauts-fonds, la plage, puis la terre de plus en plus haute vers le volcan.
-    o += '<defs><radialGradient id="ile-mer" cx="50%" cy="51%" r="62%"><stop offset="0" stop-color="#4FA9D1"/><stop offset=".62" stop-color="#3C8FBC"/><stop offset="1" stop-color="#2F759F"/></radialGradient></defs>' + DEFS_ILE;
+    var W = ILE_W, H = ILE_H, n = I.quartiers.length, o = "", sol = "", plan = [], dessus = "", zones = "", brume = "";
+    var lieux = I.quartiers.map(function (q, i) {
+      var p = q.position || [0.5 + 0.36 * Math.cos(i / n * 6.283 - 1.57), 0.5 + 0.36 * Math.sin(i / n * 6.283 - 1.57)];
+      return [p[0] * W, p[1] * H];
+    });
+    // La mer, les hauts-fonds, la plage, la terre.
+    o += '<defs><radialGradient id="ile-mer" cx="50%" cy="51%" r="62%"><stop offset="0" stop-color="#63B8D6"/><stop offset=".62" stop-color="#4A9EC4"/><stop offset="1" stop-color="#3B86AE"/></radialGradient></defs>' + DEFS_ILE;
     o += '<rect width="' + W + '" height="' + H + '" fill="url(#ile-mer)"/>';
-    for (var r = 0; r < 22; r++) { var gx = (graine("v" + r) % 340) + 6, gy = (graine("w" + r) % (H - 20)) + 8; o += '<path d="M' + gx + " " + gy + 'q4 -3 8 0t8 0" stroke="#BFE6F5" stroke-width="1.3" fill="none" opacity=".45" stroke-linecap="round"/>'; }
-    o += '<path d="' + contourIle(1.1) + '" fill="#62B5D8" opacity=".55"/><path d="' + contourIle(1.055) + '" fill="#8DD0E6" opacity=".7"/>';
-    o += '<path d="' + contourIle(1.012) + '" fill="#F6ECC4"/><path d="' + contourIle(0.985) + '" fill="#E9D7A0"/>';
-    o += '<path d="' + contourIle(0.945) + '" fill="#8FC77C"/><path d="' + contourIle(0.78) + '" fill="#84BE72"/><path d="' + contourIle(0.58) + '" fill="#79B36A"/><path d="' + contourIle(0.42) + '" fill="#8FAE72"/>';
-    // Chaque quartier habité prend un voile de sa couleur ; un ruisseau descend du volcan entre deux voisins.
-    tour.forEach(function (q, i) {
-      if (q.posees) o += '<path d="' + secteurIle(B[i], B[i + 1], S0, 0.945) + '" fill="' + q.couleur + '" opacity=".2"/>';
-      o += '<path d="M' + frontiereIle(B[i], S0, 1.0, 1).slice(1) + '" stroke="#6FBFE0" stroke-width="' + (i % 2 ? "1.8" : "2.6") + '" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>';
-    });
-    if (centre) o += '<path d="' + contourIle(S0) + '" fill="' + (centre.posees ? centre.couleur : "#8FAE72") + '" opacity="' + (centre.posees ? ".28" : ".5") + '"/><path d="' + contourIle(S0) + '" fill="none" stroke="#E3CF96" stroke-width="2.4" stroke-dasharray="1 5" stroke-linecap="round" opacity=".9"/>';
-    // Les chemins : de la route du volcan vers chaque quartier, en serpentant.
-    tour.forEach(function (q, i) {
-      var m = (B[i] + B[i + 1]) / 2, d = "";
-      for (var k = 0; k <= 8; k++) { var p = pointIle(m + Math.sin(k * 1.3 + i) * 0.035, S0 + k / 8 * (0.74 - S0)); d += (k ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }
-      if (q.posees) o += '<path d="' + d + '" stroke="#E3CF96" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/>';
-    });
-    function poser(q, L, places, a, da, zone, sBrume) {
-      var g = "", demi = tx(q.nom).length * 3.4 + 6;
-      // L'étiquette reste entière dans le cadre.
-      L = [Math.max(demi, Math.min(ILE_W - demi, L[0])), L[1]];
-      occupe.push([L[0], L[1], 32]);
-      // Les installations en vue : les plus hautes du quartier. Le reste se visite sur place.
-      var montre = q.installations.filter(function (x) { return x.etat !== "friche"; }).sort(function (x, y) { return y.rang - x.rang; }).slice(0, places.length);
-      montre.forEach(function (inst, j) {
-        var p = pointIle(places[j][0], places[j][1]), t = places[j][2];
-        occupe.push([p[0], p[1] - t / 2, t * 0.75]);
-        g += svgInstallation(inst, Math.round(p[0]), Math.round(p[1]), t).replace(' class="ile-inst" data-comp="' + esc(inst.comp) + '" role="button" tabindex="0"', "");
-      });
-      var hab = Math.min(6, Math.round(q.habitants / 60)), gr = graine(q.id);
-      for (var h = 0; h < hab; h++) { var ph = pointIle(a + da * (0.2 + ((gr >>> (h * 4)) % 16) / 16 * 0.6), sBrume[0] + (sBrume[1] - sBrume[0]) * (0.25 + ((gr >>> (h * 3 + 2)) % 8) / 16)); g += svgHabitant(Math.round(ph[0]), Math.round(ph[1]), gr + h * 31, 1.2); }
-      if (!q.ouvert) {
-        // La brume : des bancs de nuages posés sur le quartier tant qu'aucun de ses savoirs n'est à ta portée.
-        for (var u = 0; u < 9; u++) { var gu = graine(q.id + "b" + u), pu = pointIle(a + da * (0.15 + ((gu % 100) / 100) * 0.7), sBrume[0] + (u / 8) * (sBrume[1] - sBrume[0]));
-          brume += '<ellipse cx="' + pu[0].toFixed(1) + '" cy="' + pu[1].toFixed(1) + '" rx="' + (15 + (gu >>> 8) % 9) + '" ry="' + (8 + (gu >>> 12) % 5) + '" fill="#EEF3F4" opacity=".8"/>'; }
+    for (var r = 0; r < 22; r++) { var gx = (graine("v" + r) % 340) + 6, gy = (graine("w" + r) % (H - 20)) + 8; if (!surTerre(gx + 8, gy, 1.14)) o += '<path d="M' + gx + " " + gy + 'q4 -3 8 0t8 0" stroke="#D5F0F8" stroke-width="1.3" fill="none" opacity=".5" stroke-linecap="round"/>'; }
+    o += '<path d="' + contourIle(1.1) + '" fill="#7CC8E0" opacity=".55"/><path d="' + contourIle(1.055) + '" fill="#A5DDEB" opacity=".75"/>';
+    o += '<path d="' + contourIle(1.012) + '" fill="#FBF0CC"/><path d="' + contourIle(0.985) + '" fill="#F0DFAE"/>';
+    o += '<path d="' + contourIle(0.945) + '" fill="#A3D98A"/>';
+    // Des prés plus clairs ou plus sombres, sans aucune régularité.
+    for (var pr = 0; pr < 14; pr++) { var gp = graine("pre" + pr), px = 40 + gp % 280, py = 70 + (gp >>> 9) % 470; if (surTerre(px, py, 0.78)) sol += '<path d="' + tache(px, py, 26 + (gp >>> 4) % 22, 16 + (gp >>> 6) % 14, "p" + pr) + '" fill="' + (pr % 2 ? "#B4E39A" : "#96CF80") + '" opacity=".6"/>'; }
+    // Le bois, le marais, le lac.
+    sol += '<path d="' + tache(BOIS[0], BOIS[1], BOIS[2] + 6, BOIS[3] + 6, "bois") + '" fill="#7FBF72"/><path d="' + tache(BOIS[0], BOIS[1], BOIS[2] - 6, BOIS[3] - 6, "bois2") + '" fill="#6FB067" opacity=".8"/>';
+    sol += '<path d="' + tache(MARAIS[0], MARAIS[1], MARAIS[2] + 5, MARAIS[3] + 5, "marais") + '" fill="#9BBF78"/><path d="' + tache(MARAIS[0], MARAIS[1], MARAIS[2] - 4, MARAIS[3] - 4, "marais2") + '" fill="#8CB06E"/>';
+    [[-16, -6, 10, 5], [10, 4, 13, 6], [-4, 12, 8, 4], [20, -10, 7, 3.5]].forEach(function (e, i) {
+      sol += '<path d="' + tache(MARAIS[0] + e[0], MARAIS[1] + e[1], e[2], e[3], "mare" + i) + '" fill="#6FAFA8"/><ellipse cx="' + (MARAIS[0] + e[0] - 2) + '" cy="' + (MARAIS[1] + e[1] - 1) + '" rx="' + (e[2] * 0.4) + '" ry="' + (e[3] * 0.3) + '" fill="#A9D9CF" opacity=".7"/>'; });
+    // Les rivières : du volcan au lac puis à la mer, et du volcan au marais.
+    var mer1 = pointIle(2.5, 1.02), mer2 = pointIle(1.02, 1.02);
+    [[[150, 345], [128, 372], [134, 405], [108, 428], [LAC[0], LAC[1]]], [[LAC[0] - 14, LAC[1] + 8], [70, 470], [64, 492], mer1],
+     [[214, 352], [226, 392], [208, 430], [228, 462], [MARAIS[0], MARAIS[1] - 8]], [[MARAIS[0] + 16, MARAIS[1] + 10], [258, 528], mer2]].forEach(function (riv) {
+      sol += '<path d="' + courbe(riv) + '" stroke="#8FCFE3" stroke-width="5" fill="none" stroke-linecap="round" opacity=".55"/><path d="' + courbe(riv) + '" stroke="#5DB3D6" stroke-width="2.6" fill="none" stroke-linecap="round"/>'; });
+    sol += '<path d="' + tache(LAC[0], LAC[1], LAC[2] + 3, LAC[3] + 3, "lac") + '" fill="#F0DFAE"/><path d="' + tache(LAC[0], LAC[1], LAC[2], LAC[3], "lac") + '" fill="#5DB3D6"/><path d="' + tache(LAC[0] - 5, LAC[1] - 3, LAC[2] * 0.55, LAC[3] * 0.45, "lac3") + '" fill="#8FD3E8" opacity=".7"/>';
+    // Les chemins de terre : une boucle qui passe par tous les hameaux, et la route qui descend au quartier du centre.
+    var tour = [], centre = -1;
+    I.quartiers.forEach(function (q, i) { if (q.centre) centre = i; else tour.push(i); });
+    tour.sort(function (a, b) { return Math.atan2(lieux[a][1] - ILE_CY, lieux[a][0] - ILE_CX) - Math.atan2(lieux[b][1] - ILE_CY, lieux[b][0] - ILE_CX); });
+    var boucle = [];
+    tour.forEach(function (i, k) { var a = lieux[i], b = lieux[tour[(k + 1) % tour.length]], g = graine("ch" + i);
+      boucle.push([a[0], a[1] + 6]);
+      // Entre deux hameaux, le chemin fait un écart, et s'éloigne du lac et du marais.
+      var mx = (a[0] + b[0]) / 2 + (g % 17) - 8, my = (a[1] + b[1]) / 2 + ((g >>> 5) % 17) - 8;
+      [LAC, MARAIS].forEach(function (z) { if (dansOvale(mx, my, [z[0], z[1], z[2] + 14, z[3] + 14])) { mx += (mx < z[0] ? -1 : 1) * 0 + (ILE_CX - z[0]) * 0.45; my += (ILE_CY - z[1]) * 0.3; } });
+      boucle.push([mx, my]); });
+    var routes = boucle.length > 2 ? [courbe(boucle, true)] : [];
+    if (centre >= 0 && tour.length) { var c = lieux[centre], pres = tour.slice().sort(function (a, b) { return Math.hypot(lieux[a][0] - c[0], lieux[a][1] - c[1]) - Math.hypot(lieux[b][0] - c[0], lieux[b][1] - c[1]); })[0];
+      routes.push(courbe([[c[0], c[1] + 6], [(c[0] + lieux[pres][0]) / 2 + 8, (c[1] + lieux[pres][1]) / 2 - 10], [lieux[pres][0], lieux[pres][1] + 6]])); }
+    routes.forEach(function (d) { sol += '<path d="' + d + '" stroke="#D9C590" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/><path d="' + d + '" stroke="#F1E3B8" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'; });
+    // Les hameaux : une clairière, des maisons qui se multiplient avec les installations en marche, et les plus belles
+    // installations du quartier. Le plan garde tout ce qui est debout, pour le dessiner du fond vers l'avant.
+    I.quartiers.forEach(function (q, i) {
+      var x = lieux[i][0], y = lieux[i][1], gr = graine(q.id), g = "";
+      sol += '<path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + (q.posees ? "#C4E8A6" : "#B2DE98") + '"/>';
+      if (q.posees) sol += '<path d="' + tache(x, y + 6, 17, 8, "pl" + q.id) + '" fill="#EFE0B4" opacity=".9"/><path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + q.couleur + '" opacity=".1"/>';
+      if (q.decor === "quai") {
+        // Le ponton part vers le large, avec ses barques : une de plus à chaque option du quartier.
+        var dx = x - ILE_CX, dy = y - ILE_CY, dl = Math.hypot(dx, dy), ux = dx / dl, uy = dy / dl, bx = x, by = y;
+        while (surTerre(bx, by, 1.0)) { bx += ux * 3; by += uy * 3; }
+        plan.push([0, '<path d="M' + fx(bx - ux * 10) + " " + fx(by - uy * 10) + "L" + fx(bx + ux * 22) + " " + fx(by + uy * 22) + '" stroke="#8A6240" stroke-width="5" stroke-linecap="round"/><path d="M' + fx(bx - ux * 10) + " " + fx(by - uy * 10) + "L" + fx(bx + ux * 22) + " " + fx(by + uy * 22) + '" stroke="#C99A6B" stroke-width="3" stroke-dasharray="2.4 1.2"/>']);
+        var nbq = (q.posees ? 1 : 0) + q.options.filter(function (x) { return x.ouverte; }).length;
+        for (var bq = 0; bq < nbq; bq++) plan.push([by + uy * 14, svgBarque(bx + ux * (12 + bq * 9) - uy * (bq % 2 ? -12 : 12), by + uy * (12 + bq * 9) + ux * (bq % 2 ? -12 : 12), ["#B5744A", "#D9644A", "#4A7FB5", "#E8B84A"][bq % 4])]);
       }
-      var soucis = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne" || x.etat === "abandon"; }).length;
-      var faites = q.options.filter(function (x) { return x.ouverte; }).length;
-      var nom = esc(tx(q.nom)), sous = q.ouvert ? q.posees + " / " + q.installations.length : esc(__("dans la brume"));
-      g += '<g class="ile-etiquette" font-family="var(--f-body)" text-anchor="middle" style="paint-order:stroke" stroke="rgba(255,255,255,.92)" stroke-width="3.2" stroke-linejoin="round">' +
-        '<text x="' + L[0].toFixed(1) + '" y="' + L[1].toFixed(1) + '" font-size="12" font-weight="800" fill="' + (q.ouvert ? "#1E1A2B" : "#5D6470") + '">' + nom + "</text>" +
-        '<text x="' + L[0].toFixed(1) + '" y="' + (L[1] + 11.5).toFixed(1) + '" font-size="9.5" font-weight="700" fill="' + (soucis ? "#B5621B" : "#4A4658") + '">' + sous + (soucis ? " · " + soucis + " !" : "") + "</text></g>";
-      // Une étoile par option du quartier, pleine quand elle est ouverte.
-      q.options.forEach(function (_, k) { var ex = L[0] + (k - (q.options.length - 1) / 2) * 9;
-        g += '<circle cx="' + ex.toFixed(1) + '" cy="' + (L[1] - 15).toFixed(1) + '" r="3.2" fill="' + (k < faites ? q.couleur : "#fff") + '" stroke="' + (k < faites ? "#fff" : q.couleur) + '" stroke-width="1.3"/>'; });
+      if (q.decor === "champs") [[-30, -16], [22, -20], [28, 12]].forEach(function (c, k) {
+        var faits = q.marche > k * 2;
+        sol += '<g transform="rotate(' + (k * 23 - 14) + " " + fx(x + c[0]) + " " + fx(y + c[1]) + ')"><rect x="' + fx(x + c[0] - 10) + '" y="' + fx(y + c[1] - 7) + '" width="20" height="14" rx="2" fill="' + (faits ? "#E8CF7A" : "#B9A77A") + '"/>' +
+          [0, 1, 2, 3].map(function (l) { return '<rect x="' + fx(x + c[0] - 9) + '" y="' + fx(y + c[1] - 5.6 + l * 3.3) + '" width="18" height="1.3" fill="' + (faits ? "#7DB85A" : "#A39265") + '"/>'; }).join("") + "</g>"; });
+      if (q.posees) {
+        var maisons = Math.min(6, 1 + Math.floor(q.marche / 2));
+        var coins = [[-22, -6], [21, -8], [-12, 12], [15, 13], [-27, 8], [28, 5]];
+        for (var m = 0; m < maisons; m++) plan.push([y + coins[m][1], svgMaison(x + coins[m][0], y + coins[m][1], 9 + (gr >>> m) % 3, q.couleur, gr + m)]);
+        var montre = q.installations.filter(function (z) { return z.etat !== "friche"; }).sort(function (u, v) { return v.rang - u.rang; }).slice(0, 3);
+        [[0, -2, 24], [-11, 9, 20], [11, 10, 20]].slice(0, montre.length).forEach(function (pl, j) {
+          plan.push([y + pl[1] + 0.5, '<g shape-rendering="crispEdges">' + svgInstallation(montre[j], Math.round(x + pl[0]), Math.round(y + pl[1]), pl[2]).replace(' class="ile-inst" data-comp="' + esc(montre[j].comp) + '" role="button" tabindex="0"', "").replace(/<g class="ile-voyant">.*?<\/g>/, "") + "</g>"]); });
+        var hab = Math.min(6, Math.round(q.habitants / 55));
+        for (var h = 0; h < hab; h++) { var hx = x - 24 + ((gr >>> (h * 4)) % 48), hy = y + 14 + ((gr >>> (h * 3 + 2)) % 8); plan.push([hy + 9, '<g shape-rendering="crispEdges">' + svgHabitant(Math.round(hx), Math.round(hy), gr + h * 31, 1.1) + "</g>"]); }
+      } else if (q.ouvert) {
+        // Rien encore : un campement, sa tente et son feu, en attendant le premier savoir.
+        plan.push([y + 6, '<ellipse cx="' + fx(x) + '" cy="' + fx(y + 6) + '" rx="9" ry="2.6" fill="rgba(30,45,30,.2)"/><path d="M' + fx(x - 8) + " " + fx(y + 6) + "L" + fx(x) + " " + fx(y - 7) + "L" + fx(x + 8) + " " + fx(y + 6) + 'Z" fill="#F3E3C0"/><path d="M' + fx(x - 2.4) + " " + fx(y + 6) + "L" + fx(x) + " " + fx(y - 2) + "L" + fx(x + 2.4) + " " + fx(y + 6) + 'Z" fill="#8A6240"/>' +
+          '<circle cx="' + fx(x + 13) + '" cy="' + fx(y + 6) + '" r="2" fill="#F2793A"/><circle cx="' + fx(x + 13) + '" cy="' + fx(y + 5.4) + '" r="1" fill="#FFD27A"/>']);
+      } else {
+        for (var u = 0; u < 8; u++) { var gu = graine(q.id + "b" + u); brume += '<ellipse cx="' + fx(x - 30 + gu % 60) + '" cy="' + fx(y - 16 + (gu >>> 7) % 34) + '" rx="' + (15 + (gu >>> 8) % 9) + '" ry="' + (8 + (gu >>> 12) % 5) + '" fill="#F3F7F7" opacity=".85"/>'; }
+      }
+      var soucis = q.installations.filter(function (z) { return z.etat === "alerte" || z.etat === "panne" || z.etat === "abandon"; }).length;
+      var faites = q.options.filter(function (z) { return z.ouverte; }).length, nom = esc(tx(q.nom));
+      var demi = tx(q.nom).length * 3.3 + 6, lx = Math.max(demi, Math.min(W - demi, x)), ly = y + 39;
+      g += '<g class="ile-etiquette" text-anchor="middle" style="paint-order:stroke" stroke="rgba(255,253,244,.94)" stroke-width="3.4" stroke-linejoin="round">' +
+        '<text x="' + fx(lx) + '" y="' + fx(ly) + '" font-size="12" font-weight="800" fill="' + (q.ouvert ? "#3A2E22" : "#6A7075") + '">' + nom + "</text>" +
+        (q.ouvert ? "" : '<text x="' + fx(lx) + '" y="' + fx(ly + 11) + '" font-size="9.5" font-weight="700" fill="#6A7075">' + esc(__("dans la brume")) + "</text>") + "</g>";
+      // Une pastille par option du quartier, pleine quand elle est ouverte ; un voyant s'il faut s'en occuper.
+      if (q.ouvert) q.options.forEach(function (_, k) { var ex = lx + (k - (q.options.length - 1) / 2) * 9;
+        g += '<circle cx="' + fx(ex) + '" cy="' + fx(ly + 8) + '" r="3" fill="' + (k < faites ? q.couleur : "#FFFDF4") + '" stroke="' + (k < faites ? "#FFFDF4" : q.couleur) + '" stroke-width="1.3"/>'; });
+      if (soucis) g += '<g><circle cx="' + fx(x + 27) + '" cy="' + fx(y - 22) + '" r="8" fill="#E8873A" stroke="#FFFDF4" stroke-width="2"/><text x="' + fx(x + 27) + '" y="' + fx(y - 18.4) + '" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">' + soucis + "</text></g>";
       dessus += '<g pointer-events="none">' + g + "</g>";
-      zones += '<path class="ile-parcelle" data-q="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + nom + '" d="' + zone + '" fill="transparent"/>';
-    }
-    tour.forEach(function (q, i) {
-      var a = B[i], b = B[i + 1], m = (a + b) / 2, da = b - a;
-      poser(q, pointIle(m, 0.86), [[m - da * 0.27, 0.77, 26], [m + da * 0.27, 0.77, 24], [m - da * 0.3, 0.63, 22], [m + da * 0.3, 0.63, 22]], a, da, secteurIle(a, b, S0, 1.06), [S0 + 0.05, 0.8]);
+      zones += '<ellipse class="ile-parcelle" data-q="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + nom + '" cx="' + fx(x) + '" cy="' + fx(y + 6) + '" rx="44" ry="38" fill="transparent"/>';
     });
-    // Les bosquets : semés partout où rien n'est construit, plus serrés sur les hauteurs.
-    var arbres = "";
-    for (var t = 0; t < 150; t++) {
-      var ga = graine("a" + t), at = (ga % 6283) / 1000, st = 0.36 + ((ga >>> 13) % 560) / 1000, pa = pointIle(at, st);
-      if (centre && st < S0 + 0.03) continue;
-      if (occupe.some(function (z) { return Math.hypot(pa[0] - z[0], pa[1] - z[1]) < z[2]; })) continue;
-      arbres += '<ellipse cx="' + (pa[0] + 1).toFixed(1) + '" cy="' + (pa[1] + 3).toFixed(1) + '" rx="4" ry="1.6" fill="rgba(20,40,20,.22)"/><circle cx="' + pa[0].toFixed(1) + '" cy="' + pa[1].toFixed(1) + '" r="3.6" fill="#3F8A46"/><circle cx="' + (pa[0] - 1).toFixed(1) + '" cy="' + (pa[1] - 1.2).toFixed(1) + '" r="2.1" fill="#5FAE5C"/>';
+    // Les arbres : serrés dans le bois (avec des sapins), épars ailleurs ; aucun sur l'eau, le volcan ou un hameau.
+    function libre(x, y, m) {
+      if (!surTerre(x, y, 0.9) || dansOvale(x, y, [LAC[0], LAC[1], LAC[2] + 6, LAC[3] + 6]) || dansOvale(x, y, [ILE_CX, ILE_CY + 2, 62, 66])) return false;
+      return !lieux.some(function (l) { return dansOvale(x, y, [l[0], l[1] + 6, 38 + m, 28 + m]); });
     }
-    // Le quartier du centre : au pied du volcan, côté sud, par-dessus ses pentes.
-    if (centre) poser(centre, pointIle(Math.PI / 2, 0.47), [[Math.PI / 2 - 0.75, 0.42, 22], [Math.PI / 2 + 0.75, 0.42, 22], [Math.PI / 2 - 1.5, 0.43, 20], [Math.PI / 2 + 1.5, 0.43, 20]], Math.PI / 2 - 1.2, 2.4, contourIle(S0), [0.36, 0.48]);
+    for (var t = 0; t < 70; t++) { var gb = graine("bois" + t), tx0 = BOIS[0] - BOIS[2] + gb % (BOIS[2] * 2), ty0 = BOIS[1] - BOIS[3] + (gb >>> 9) % (BOIS[3] * 2);
+      if (dansOvale(tx0, ty0, BOIS) && libre(tx0, ty0, -6)) plan.push([ty0, gb % 5 < 2 ? svgSapin(tx0, ty0, 11 + gb % 4, gb) : svgFeuillu(tx0, ty0 - 4, 4.6 + (gb >>> 4) % 2, gb)]); }
+    for (var s = 0; s < 120; s++) { var gs = graine("arb" + s), sx = 24 + gs % 312, sy = 50 + (gs >>> 9) % 510;
+      if (!libre(sx, sy, 2) || dansOvale(sx, sy, MARAIS)) continue;
+      if (s % 4 === 0) { sol += svgFleurs(sx, sy, gs); continue; }
+      plan.push([sy, gs % 7 === 0 ? svgSapin(sx, sy, 10 + gs % 3, gs) : svgFeuillu(sx, sy - 4, 4 + (gs >>> 4) % 2.4, gs)]); }
+    for (var z = 0; z < 16; z++) { var gz = graine("ros" + z), zx = MARAIS[0] - MARAIS[2] + gz % (MARAIS[2] * 2), zy = MARAIS[1] - MARAIS[3] + (gz >>> 9) % (MARAIS[3] * 2);
+      if (dansOvale(zx, zy, MARAIS) && surTerre(zx, zy, 0.93)) plan.push([zy, z % 5 === 4 ? svgFeuillu(zx, zy - 4, 4, 2) : svgRoseaux(zx, zy, gz)]); }
+    // Sur le lac : un ponton et une barque ; quelques roseaux sur la rive.
+    plan.push([LAC[1] + 2, '<path d="M' + (LAC[0] + 24) + " " + (LAC[1] - 9) + 'l-12 5" stroke="#8A6240" stroke-width="3.2" stroke-linecap="round"/>' + svgBarque(LAC[0] - 6, LAC[1] + 4, "#D9644A") + svgRoseaux(LAC[0] - 26, LAC[1] + 9, 5) + svgRoseaux(LAC[0] + 20, LAC[1] + 13, 9)]);
+    plan.sort(function (a, b) { return a[0] - b[0]; });
     return '<svg class="ile-scene ile-carte" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(__("Carte de l'île")) + '">' +
       '<defs><filter id="ile-brume" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3.5"/></filter></defs>' +
-      o + arbres + svgVolcan() + '<g filter="url(#ile-brume)">' + brume + "</g>" + '<g shape-rendering="crispEdges">' + dessus.replace(/<g class="ile-etiquette"/g, '<g shape-rendering="auto" class="ile-etiquette"') + "</g>" + zones + "</svg>";
+      o + '<clipPath id="ile-terre"><path d="' + contourIle(0.945) + '"/></clipPath><g clip-path="url(#ile-terre)">' + sol + "</g>" + svgVolcan() + plan.map(function (p) { return p[1]; }).join("") + '<g filter="url(#ile-brume)">' + brume + "</g>" + dessus + zones + "</svg>";
+  }
+  // Un quartier vu de près : un village dans son pré. Un chemin de terre le traverse, les installations se posent de
+  // part et d'autre (les plus savantes au fond), des maisons poussent entre elles à mesure que les habitants arrivent.
+  // Ce qui n'est pas encore construit est un terrain piqueté avec sa pancarte.
+  function svgTerrain(inst, cx, sol) {
+    return '<g class="ile-inst" data-comp="' + esc(inst.comp) + '" role="button" tabindex="0" aria-label="' + esc(tx(inst.nom)) + " : " + esc(TEXTE_ETAT.friche()) + '">' +
+      '<rect x="' + (cx - 26) + '" y="' + (sol - 44) + '" width="52" height="50" fill="transparent"/>' +
+      '<ellipse cx="' + cx + '" cy="' + (sol - 5) + '" rx="19" ry="8" fill="#D9C590" opacity=".75"/><ellipse cx="' + cx + '" cy="' + (sol - 5) + '" rx="19" ry="8" fill="none" stroke="#B59A63" stroke-width="1.2" stroke-dasharray="3 3"/>' +
+      [-17, 17].map(function (d) { return '<rect x="' + (cx + d - 1) + '" y="' + (sol - 12) + '" width="2" height="8" fill="#9A7650"/>'; }).join("") +
+      '<rect x="' + (cx - 1) + '" y="' + (sol - 19) + '" width="2" height="13" fill="#8A6240"/><rect x="' + (cx - 7) + '" y="' + (sol - 24) + '" width="14" height="8" rx="1.5" fill="#F3E3C0" stroke="#8A6240" stroke-width="1"/>' +
+      '<text x="' + cx + '" y="' + (sol - 17.6) + '" text-anchor="middle" font-size="7" font-weight="800" fill="#8A6240">?</text></g>';
+  }
+  function svgQuartier(q) {
+    var W = 360, PAS = 78, PAR = 4, rangees = [], tri = q.installations.slice().sort(function (a, b) { return b.rang - a.rang; });
+    for (var c = 0; c < tri.length; c += PAR) rangees.push(tri.slice(c, c + PAR));
+    var haut = 44, bas = q.decor === "quai" ? 86 : 50, H = haut + rangees.length * PAS + bas, gq = graine(q.id), sol = "", plan = [];
+    var roche = q.decor === "roche";
+    sol += '<rect width="' + W + '" height="' + H + '" fill="' + (roche ? "#B9C99A" : "#A3D98A") + '"/>';
+    for (var p = 0; p < 6 + rangees.length * 2; p++) { var gp = graine(q.id + "pre" + p); sol += '<path d="' + tache(gp % W, (gp >>> 9) % H, 40 + (gp >>> 4) % 40, 22 + (gp >>> 6) % 22, q.id + "t" + p) + '" fill="' + (p % 2 ? (roche ? "#C8D4AC" : "#B4E39A") : (roche ? "#A9B98C" : "#96CF80")) + '" opacity=".6"/>'; }
+    if (q.decor === "quai") {
+      // Le rivage : la plage, la mer, le ponton et ses barques.
+      var ym = H - 62;
+      sol += '<path d="M0 ' + (ym - 8) + "Q90 " + (ym - 20) + " 180 " + (ym - 8) + "T360 " + (ym - 10) + "V" + H + 'H0Z" fill="#FBF0CC"/><path d="M0 ' + (ym + 6) + "Q90 " + (ym - 6) + " 180 " + (ym + 6) + "T360 " + (ym + 4) + "V" + H + 'H0Z" fill="#A5DDEB"/><path d="M0 ' + (ym + 16) + "Q90 " + (ym + 4) + " 180 " + (ym + 16) + "T360 " + (ym + 14) + "V" + H + 'H0Z" fill="#63B8D6"/>';
+      sol += '<rect x="170" y="' + (ym - 12) + '" width="20" height="58" rx="2" fill="#8A6240"/>' + [0, 1, 2, 3, 4, 5, 6, 7].map(function (k) { return '<rect x="171.5" y="' + (ym - 10 + k * 7) + '" width="17" height="5" rx="1" fill="#C99A6B"/>'; }).join("");
+      var nbq = (q.posees ? 1 : 0) + q.options.filter(function (x) { return x.ouverte; }).length;
+      for (var b = 0; b < nbq; b++) sol += '<g transform="translate(' + (b % 2 ? 212 + b * 16 : 148 - b * 16) + " " + (ym + 28 + (b % 3) * 8) + ') scale(1.8)">' + svgBarque(0, 0, ["#B5744A", "#D9644A", "#4A7FB5", "#E8B84A"][b % 4]) + "</g>";
+    }
+    // Le chemin : il monte en flânant d'un bord à l'autre.
+    var pts = [[180, H - bas + 14]];
+    rangees.forEach(function (_, i) { var j = rangees.length - 1 - i; pts.push([180 + (i % 2 ? 46 : -46) + ((gq >>> i) % 13) - 6, haut + j * PAS + PAS - 2]); });
+    pts.push([180, haut - 6]);
+    var ch = courbe(pts);
+    sol += '<path d="' + ch + '" stroke="#D9C590" stroke-width="15" fill="none" stroke-linecap="round" opacity=".7"/><path d="' + ch + '" stroke="#F1E3B8" stroke-width="10.5" fill="none" stroke-linecap="round"/>';
+    if (q.decor === "champs") for (var f = 0; f < rangees.length; f++) { var fx0 = f % 2 ? 6 : 318, fy = haut + f * PAS + 24;
+      sol += '<rect x="' + fx0 + '" y="' + fy + '" width="36" height="30" rx="3" fill="#E8CF7A"/>' + [0, 1, 2, 3, 4].map(function (l) { return '<rect x="' + (fx0 + 2) + '" y="' + (fy + 3 + l * 5.4) + '" width="32" height="2.4" rx="1" fill="#7DB85A"/>'; }).join(""); }
+    rangees.forEach(function (ligne, i) {
+      var n = ligne.length;
+      ligne.forEach(function (inst, j) {
+        var g = graine(inst.comp), cx = Math.round(W * (j + 0.5) / PAR + (i % 2 ? 14 : -14) + (g % 11) - 5 + (n < PAR ? (PAR - n) * W / PAR / 2 : 0));
+        cx = Math.max(32, Math.min(W - 32, cx));
+        var y = Math.round(haut + i * PAS + PAS - 12 + ((g >>> 5) % 13) - 6);
+        if (inst.etat === "friche") { plan.push([y, svgTerrain(inst, cx, y)]); return; }
+        plan.push([y, '<g shape-rendering="crispEdges">' + svgInstallation(inst, cx, y, 50) + "</g>"]);
+        // Autour d'une installation qui tourne : une maison, et ses habitants.
+        if (inst.habitants && g % 2) plan.push([y - 20, svgMaison(cx + 33, y - 20, 15, q.couleur, g)]);
+        var k = Math.min(3, Math.round(inst.habitants / 14));
+        for (var h = 0; h < k; h++) plan.push([y + 9 + h, '<g shape-rendering="crispEdges">' + svgHabitant(Math.round(cx - 30 + ((g >>> (h * 5)) % 18) + h * 20), y - 3 + (g >>> (h * 2 + 9)) % 7, g + h * 97) + "</g>"]);
+      });
+    });
+    // La lisière : des arbres sur les bords, des fleurs dans l'herbe.
+    for (var t = 0; t < 10 + rangees.length * 5; t++) { var gt = graine(q.id + "arb" + t), bord = t % 2, ax = bord ? 6 + gt % 16 : W - 6 - gt % 16, ay = 20 + (gt >>> 7) % (H - bas - 10);
+      if (t % 5 === 4) { ax = 30 + gt % 300; sol += svgFleurs(ax, ay, gt) + svgFleurs(ax + 9, ay + 4, gt >>> 3); continue; }
+      if (q.decor === "champs" && ((bord && ax < 44) || (!bord && ax > 316)) && t % 3) continue;
+      plan.push([ay, '<g transform="translate(' + ax + " " + ay + ') scale(2)">' + (gt % 4 === 0 ? svgSapin(0, 0, 11, gt) : svgFeuillu(0, -4, 4.6, gt)) + "</g>"]); }
+    plan.sort(function (a, b) { return a[0] - b[0]; });
+    return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(tx(q.nom)) + '">' + DEFS_ILE + sol + plan.map(function (x) { return x[1]; }).join("") + "</svg>";
   }
   function vueIle() {
     var I = M.ile(C, P, maintenant()), v = el('<div class="vue vue-ile"></div>');
