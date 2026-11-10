@@ -5329,6 +5329,169 @@
   }
  },
  {
+  "id": "sci.ecologie.q13",
+  "competence": "sci.ecologie",
+  "type": "qcm",
+  "enonce": {
+   "fr": "Selon la loi de Verhulst (1838), que fait une population qui grandit dans un milieu limité ?"
+  },
+  "choix": [
+   {
+    "fr": "Elle ralentit et plafonne à une valeur maximale"
+   },
+   {
+    "fr": "Elle double sans fin à intervalles réguliers"
+   },
+   {
+    "fr": "Elle s'effondre dès qu'elle dépasse mille individus"
+   },
+   {
+    "fr": "Elle reste la même d'une année à l'autre"
+   }
+  ],
+  "reponse": 0,
+  "explication": {
+   "fr": "Plus la population approche du plafond, moins elle grandit. Ce plafond s'appelle aujourd'hui la capacité de charge du milieu. Verhulst travaillait à Bruxelles sous la direction d'Adolphe Quetelet."
+  },
+  "source": "Pierre-François Verhulst, « Notice sur la loi que la population suit dans son accroissement », Correspondance mathématique et physique, vol. 10, 1838"
+ },
+ {
+  "id": "sci.ecologie.q14",
+  "competence": "sci.ecologie",
+  "type": "qcm",
+  "enonce": {
+   "fr": "Quel nom Verhulst donne-t-il en 1845 à sa courbe en S ?"
+  },
+  "choix": [
+   {
+    "fr": "La logistique"
+   },
+   {
+    "fr": "L'exponentielle"
+   },
+   {
+    "fr": "La parabole"
+   },
+   {
+    "fr": "La spirale"
+   }
+  ],
+  "reponse": 0,
+  "explication": {
+   "fr": "Le nom apparaît dans son mémoire de 1845 à l'Académie de Bruxelles. Oubliée, la courbe est redécouverte dans les années 1920 et popularisée par Raymond Pearl et Lowell Reed."
+  },
+  "source": "Pierre-François Verhulst, « Recherches mathématiques sur la loi d'accroissement de la population », Nouveaux Mémoires de l'Académie royale de Bruxelles, vol. 18, 1845"
+ },
+ {
+  "id": "sci.ecologie.q15",
+  "competence": "sci.ecologie",
+  "type": "numerique",
+  "enonce": {
+   "fr": "Une île peut nourrir 1 000 habitants. Elle en compte 500 et, sans limite, elle grandirait de 10 % par an. Selon la loi de Verhulst, de combien d'habitants grandit-elle cette année ?"
+  },
+  "reponse": 25,
+  "tolerance": 0.5,
+  "unite": "habitants",
+  "explication": {
+   "fr": "Accroissement = taux × population × (1 − population ÷ capacité). Ici : 0,10 × 500 × (1 − 500 ÷ 1 000) = 50 × 0,5 = 25 habitants. Sans limite, l'île en aurait gagné 50 : à mi-chemin du plafond, la croissance est déjà divisée par deux. Cette loi est celle du Belge Pierre-François Verhulst, publiée en 1838."
+  },
+  "source": "Pierre-François Verhulst, « Notice sur la loi que la population suit dans son accroissement », Correspondance mathématique et physique, vol. 10, 1838"
+ },
+ {
+  "id": "sci.ecologie.q16",
+  "competence": "sci.ecologie",
+  "type": "qcm",
+  "enonce": {
+   "fr": "Pendant la Première Guerre mondiale, on pêche moins en mer Adriatique. Que remarque le biologiste Umberto D'Ancona sur les marchés aux poissons ?"
+  },
+  "choix": [
+   {
+    "fr": "La part des poissons prédateurs, requins et raies, a augmenté"
+   },
+   {
+    "fr": "Les requins ont complètement disparu des étals"
+   },
+   {
+    "fr": "Toutes les espèces ont doublé dans la même proportion"
+   },
+   {
+    "fr": "Les poissons vendus sont devenus deux fois plus gros"
+   }
+  ],
+  "reponse": 0,
+  "explication": {
+   "fr": "D'Ancona étudie les ventes de Trieste, Fiume et Venise de 1910 à 1923. Il pose la question au mathématicien Vito Volterra, qui l'explique en 1926 par deux équations : la pêche avantage les proies, son arrêt avantage les prédateurs."
+  },
+  "source": "Nicolas Bacaër, A Short History of Mathematical Population Dynamics, Springer, 2011, chapitre 13"
+ },
+ {
+  "id": "sci.ecologie.q17",
+  "competence": "sci.ecologie",
+  "type": "vrai_faux",
+  "enonce": {
+   "fr": "Alfred Lotka et Vito Volterra ont mis au point ensemble leur modèle des proies et des prédateurs."
+  },
+  "reponse": false,
+  "explication": {
+   "fr": "Chacun l'a trouvé de son côté. Lotka l'étudie dès 1920 et le reprend dans un livre en 1925 ; Volterra le publie dans Nature en 1926. Quand Lotka le lui signale, Volterra répond : « Je reconnais sa priorité. »"
+  },
+  "source": "Nicolas Bacaër, A Short History of Mathematical Population Dynamics, Springer, 2011, chapitre 13"
+ },
+ {
+  "id": "sci.ecologie.q18",
+  "competence": "sci.ecologie",
+  "type": "qcm",
+  "enonce": {
+   "fr": "Dans une matrice de Leslie, comment la population est-elle découpée ?"
+  },
+  "choix": [
+   {
+    "fr": "En classes d'âge"
+   },
+   {
+    "fr": "En espèces"
+   },
+   {
+    "fr": "En régions"
+   },
+   {
+    "fr": "En familles"
+   }
+  ],
+  "reponse": 0,
+  "explication": {
+   "fr": "Chaque classe d'âge a sa fécondité et sa part de survivants. Multiplier la population par la matrice donne la population de l'étape suivante, classe par classe."
+  },
+  "source": "P. H. Leslie, « On the Use of Matrices in Certain Population Mathematics », Biometrika, vol. 33, 1945"
+ },
+ {
+  "id": "sci.ecologie.q19",
+  "competence": "sci.ecologie",
+  "type": "qcm",
+  "enonce": {
+   "fr": "Sur quels animaux Patrick Leslie applique-t-il d'abord sa méthode, à Oxford ?"
+  },
+  "choix": [
+   {
+    "fr": "Des campagnols"
+   },
+   {
+    "fr": "Des lynx"
+   },
+   {
+    "fr": "Des baleines"
+   },
+   {
+    "fr": "Des abeilles"
+   }
+  ],
+  "reponse": 0,
+  "explication": {
+   "fr": "Leslie entre en 1935 au Bureau of Animal Population, fondé à Oxford par Charles Elton. Il calcule d'abord le taux d'accroissement des campagnols, puis celui des rats. Il n'avait aucune formation poussée en mathématiques."
+  },
+  "source": "P. H. Leslie, « On the Use of Matrices in Certain Population Mathematics », Biometrika, vol. 33, 1945"
+ },
+ {
   "id": "sci.biotech.q01",
   "competence": "sci.biotech",
   "type": "qcm",

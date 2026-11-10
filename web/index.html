@@ -4374,8 +4374,13 @@ function demarrerJeu() {
       var qs = I.quartiers.filter(function (q) { return q.role === r; }), noms = qs.map(function (q) { return esc(tx(q.fonde ? q.nom : q.nomFinal)); }).join(", "), c = (qs[0] || {}).couleur || "var(--accent)";
       h += '<div class="ile-role"><div><b>' + ROLES_ILE[r]() + "</b><small>" + noms + '</small></div><i><b style="width:' + Math.round(100 * p.niveaux[r]) + "%;background:" + c + '"></b></i><em>' + Math.round(100 * p.niveaux[r]) + " %</em></div>";
     });
-    h += '<p class="ile-vie-note">' + __("Chaque jour : ") + (100 * p.mortalite.enfants).toFixed(1).replace(".", ",") + __(" % des enfants, ") + (100 * p.mortalite.adultes).toFixed(1).replace(".", ",") + __(" % des adultes et ") + (100 * p.mortalite.anciens).toFixed(1).replace(".", ",") + __(" % des anciens meurent. Plus un quartier compte d'installations en marche, plus son chiffre baisse.") + "</p></div>";
-    return el("<div>" + h + "</div>");
+    h += '<p class="ile-vie-note">' + __("Chaque jour : ") + (100 * p.mortalite.enfants).toFixed(1).replace(".", ",") + __(" % des enfants, ") + (100 * p.mortalite.adultes).toFixed(1).replace(".", ",") + __(" % des adultes et ") + (100 * p.mortalite.anciens).toFixed(1).replace(".", ",") + __(" % des anciens meurent. Plus un quartier compte d'installations en marche, plus son chiffre baisse.") + "</p>";
+    // D'où viennent ces règles : la leçon de l'écologie les raconte (Verhulst, Lotka et Volterra, Leslie).
+    var lecon = C.parId["sci.ecologie"] && aMasterclass(C.parId["sci.ecologie"]);
+    if (lecon) h += '<button type="button" class="ile-ligne" data-a="lecon">' + __("D'où viennent ces règles : la leçon") + "<span>›</span></button>";
+    var b = el("<div>" + h + "</div></div>"), bl = b.querySelector('[data-a="lecon"]');
+    if (bl) bl.onclick = function () { ouvrirMasterclass("sci.ecologie"); };
+    return b;
   }
   // Les aménagements en chiffres (Victor, 2026-11-10 : « des statistiques sur la population et les aménagements »). Les
   // monuments ne s'étalent plus sur la page : une ligne les compte, et les ouvre dans une feuille.
