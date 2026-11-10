@@ -2170,37 +2170,38 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(tout.quartiers.every(q => q.options.every(o => o.ouverte)), "tout maîtriser ouvre toutes les options");
   const sans = tout.quartiers.flatMap(q => q.installations).find(x => !x.propre);
   if (sans) assert.ok(sans.nom && !sans.usage);
-  // L'objectif du jour : un quartier à tenir avant le soir. Tenu, il rapporte des crédits ; manqué, la plus belle
-  // installation du quartier passe en veille le lendemain, sans rien faire perdre à la compétence.
+  // L'objectif du jour suit le plateau : le quartier visé est celui de l'épreuve que le jeu propose, et la réussir
+  // tient l'objectif. Manqué, la plus belle installation du quartier passe en veille le lendemain, sans rien perdre.
   {
+    const CP = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+      { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ile: d("ile.json"), plateau: d("plateau.json") });
     let tj = new Date(2026, 10, 12, 9, 0).getTime();
-    const PJ = M.nouvellePartie(tj), bonJ = (id, n) => M.tirerQuestions(CI, PJ, id, n).map(q => ({ id: q.id, correct: true }));
-    let ob = M.objectifIle(CI, PJ, tj);
-    assert.equal(ob.type, "construis"); assert.ok(ob.prochain && !ob.reussi && ob.besoin === 1);
-    const cible = ob.quartier, solde = PJ.credits.solde;
-    assert.equal(M.objectifIle(CI, PJ, tj + 3600e3).quartier, cible, "le même objectif toute la journée");
-    // Jour 1 manqué, mais une installation tourne déjà dans le quartier visé : elle sera mise en veille.
-    const deja = M.ile(CI, PJ, tj).quartiers.find(q => q.id === cible).installations.find(x => x.comp !== ob.prochain);
+    const PJ = M.nouvellePartie(tj), bonJ = (id, n) => M.tirerQuestions(CP, PJ, id, n).map(q => ({ id: q.id, correct: true }));
+    let ob = M.objectifIle(CP, PJ, tj), choix = M.choixIA(CP, PJ, tj);
+    assert.equal(ob.type, "epreuve"); assert.ok(!ob.reussi);
+    assert.equal(ob.prochain.comp, choix.comp.id, "l'objectif propose l'épreuve de la case, jamais une autre");
+    const cible = ob.quartier;
+    assert.ok(M.ile(CP, PJ, tj).quartiers.find(q => q.id === cible).installations.some(x => x.comp === choix.comp.id), "le quartier visé est celui de cette épreuve");
+    assert.equal(M.objectifIle(CP, PJ, tj + 3600e3).quartier, cible, "le même quartier toute la journée");
+    // Jour 1 manqué, avec une installation qui tourne déjà dans le quartier visé : elle passe en veille le lendemain.
+    const deja = M.ile(CP, PJ, tj).quartiers.find(q => q.id === cible).installations.find(x => x.comp !== choix.comp.id);
     PJ.competences[deja.comp] = { maitrise: true, prochainRappel: tj + 30 * 86400000, palier: 1, xp: 1 };
-    PJ.ile = null; ob = M.objectifIle(CI, PJ, tj);
-    const cible1 = ob.quartier; assert.equal(ob.type, "construis");
-    tj += 86400000; ob = M.objectifIle(CI, PJ, tj);
-    const enVeille = ob.veille; assert.ok(enVeille, "objectif manqué : une installation en veille");
-    const vue = M.ile(CI, PJ, tj).quartiers.find(q => q.id === cible1).installations.find(x => x.comp === enVeille);
+    tj += 86400000; ob = M.objectifIle(CP, PJ, tj);
+    assert.equal(ob.veille, deja.comp, "objectif manqué : une installation en veille");
+    const vue = M.ile(CP, PJ, tj).quartiers.find(q => q.id === cible).installations.find(x => x.comp === deja.comp);
     assert.equal(vue.etat, "veille"); assert.equal(vue.habitants, Math.round((H.installation + H.par_rang * vue.rang) * H.panne));
-    assert.ok(M.estMaitrisee(PJ, enVeille), "la veille ne fait rien perdre");
-    // Jour 2 tenu : le quiz proposé pose l'installation, l'objectif est réussi, les crédits tombent, la veille est levée.
-    assert.equal(ob.type, "construis");
-    const avantC = PJ.credits.gagnes, rj = M.terminerQuiz(CI, PJ, ob.prochain, bonJ(ob.prochain, 5), tj);
+    assert.ok(M.estMaitrisee(PJ, deja.comp), "la veille ne fait rien perdre");
+    // Une épreuve ratée ne tient pas l'objectif ; réussie, il est tenu : crédits, veille levée, annonce dans le bilan.
+    const jeu = ob.prochain.comp;
+    let rj = M.terminerQuiz(CP, PJ, jeu, bonJ(jeu, 5).map(x => ({ id: x.id, correct: false })), tj);
+    assert.ok(!rj.ile && !M.objectifIle(CP, PJ, tj).reussi);
+    const avantC = PJ.credits.gagnes; rj = M.terminerQuiz(CP, PJ, jeu, bonJ(jeu, 5), tj);
     assert.ok(rj.ile && rj.ile.objectif && rj.ile.objectif.reussi, "le bilan annonce l'objectif tenu");
-    assert.ok(PJ.credits.gagnes - avantC >= CI.ile.regles.objectif.credits);
-    assert.equal(M.objectifIle(CI, PJ, tj).veille, null);
-    assert.equal(M.ile(CI, PJ, tj).quartiers.flatMap(q => q.installations).find(x => x.comp === enVeille).etat, "marche");
-    const g2 = PJ.credits.gagnes; M.objectifIle(CI, PJ, tj); assert.equal(PJ.credits.gagnes, g2, "la prime ne tombe qu'une fois");
-    // Un rappel dû quelque part : l'objectif du lendemain est de réparer ce quartier.
-    tj = PJ.competences[ob.prochain || deja.comp].prochainRappel + 3600e3;
-    const dues = CI.competences.filter(k => M.etatInstallation(CI, PJ, k.id, tj) === "alerte" || M.etatInstallation(CI, PJ, k.id, tj) === "panne");
-    if (dues.length) { ob = M.objectifIle(CI, PJ, tj); assert.equal(ob.type, "repare"); assert.ok(ob.cibles.length >= 1 && ob.cibles.length <= CI.ile.regles.objectif.rappels_max && ob.prochain); }
+    assert.ok(PJ.credits.gagnes - avantC >= CP.ile.regles.objectif.credits);
+    assert.equal(M.objectifIle(CP, PJ, tj).veille, null);
+    assert.equal(M.ile(CP, PJ, tj).quartiers.flatMap(q => q.installations).find(x => x.comp === deja.comp).etat, "marche");
+    const g2 = PJ.credits.gagnes, nx = M.choixIA(CP, PJ, tj);
+    if (nx && nx.type === "quiz") { const r3 = M.terminerQuiz(CP, PJ, nx.comp.id, bonJ(nx.comp.id, 5), tj); assert.ok(!r3.ile || !r3.ile.objectif, "la prime ne tombe qu'une fois par jour"); }
   }
   console.log("île : quartiers par fonction, installations, alerte, panne, abandon, habitants, options, objectif du jour");
 }

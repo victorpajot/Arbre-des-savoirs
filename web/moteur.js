@@ -916,7 +916,7 @@
     return { issue: reussi ? "maitrisee" : "echec", bonnes: bonnes, total: total, xp: xp, prochainRappel: e.prochainRappel,
       nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
-      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
+      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo, reussi), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
   }
 
   // XP d'un rappel réussi qui mène à l'étape `palier` (1 = premier rappel).
@@ -1008,7 +1008,7 @@
     return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : anticipe || palais ? "echec" : "perdue", anticipe: anticipe, palais: palais, horsCase: horsCase, serie: serie, bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
-      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
+      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo, reussi), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
   }
 
   // À appeler à chaque ouverture de l'app : repère un retour après une longue absence.
@@ -1447,28 +1447,14 @@
     return ile(contenu, partie, t).quartiers.filter(function (x) { return x.id === qid; })[0] || null;
   }
   // L'objectif du jour (Victor, 2026-11-10 : « il faudrait un objectif par jour »). Chaque matin, l'IA économe annonce
-  // un délestage pour le soir sur un quartier. Deux formes : « repare » (des installations du quartier attendent leur
-  // rappel : les remettre en marche) ou « construis » (rien ne cloche : poser une installation de plus). Tenu : des
-  // crédits, et la veille de la veille est levée. Manqué : le lendemain, la plus belle installation du quartier passe
-  // en veille pour la journée (la moitié de ses habitants s'en va), sans rien faire perdre à la compétence.
-  function tirerObjectif(contenu, partie, t, jour) {
-    var R = contenu.ile.regles.objectif, I = ile(contenu, partie, t), o = { jour: jour, type: null, cible: null, cibles: [], depart: 0, fait: false, veille: null };
-    var pire = null, nb = 0;
-    I.quartiers.forEach(function (q) {
-      var s = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne"; });
-      if (s.length > nb) { nb = s.length; pire = { q: q, s: s }; }
-    });
-    if (pire) {
-      pire.s.sort(function (a, b) { return (a.etat === "panne" ? 0 : 1) - (b.etat === "panne" ? 0 : 1) || a.rang - b.rang; });
-      o.type = "repare"; o.cible = pire.q.id; o.cibles = pire.s.slice(0, R.rappels_max).map(function (x) { return x.comp; });
-      return o;
-    }
-    var chantiers = I.quartiers.filter(function (q) { return q.installations.some(function (x) { return (x.etat === "friche" || x.etat === "abandon") && statut(contenu, partie, x.comp, t).etat === "disponible"; }); });
-    if (chantiers.length) {
-      var q = chantiers[hacher(jour) % chantiers.length];
-      o.type = "construis"; o.cible = q.id; o.depart = q.installations.filter(function (x) { return x.etat !== "friche" && x.etat !== "abandon"; }).length;
-    }
-    return o;
+  // un délestage pour le soir sur un quartier. L'île ne demande jamais autre chose que le plateau (Victor, 2026-11-10 :
+  // une nouvelle partie proposait « machines simples » alors que le pion était sur l'os d'Ishango) : le quartier visé est
+  // celui de l'épreuve que le jeu propose, et l'objectif est de la réussir aujourd'hui. Tenu : des crédits, et la veille
+  // de la veille est levée. Manqué : le lendemain, la plus belle installation du quartier passe en veille pour la
+  // journée (la moitié de ses habitants s'en va), sans rien faire perdre à la compétence.
+  function epreuveDuJour(contenu, partie, t) {
+    var c = choixIA(contenu, partie, t);
+    return c && c.comp && planIle(contenu).quartierDe[c.comp.id] ? { comp: c.comp.id, type: c.type, quartier: planIle(contenu).quartierDe[c.comp.id] } : null;
   }
   function objectifIle(contenu, partie, t) {
     if (!ilePresente(contenu) || !contenu.ile.regles.objectif) return null;
@@ -1480,27 +1466,21 @@
         var debout = qv ? qv.installations.filter(function (x) { return x.etat === "marche"; }).sort(function (a, b) { return b.rang - a.rang; }) : [];
         if (debout.length) veille = debout[0].comp;
       }
-      partie.ile = o = tirerObjectif(contenu, partie, t, jour);
-      o.veille = veille;
+      var ep = epreuveDuJour(contenu, partie, t);
+      partie.ile = o = { jour: jour, type: ep ? "epreuve" : null, cible: ep ? ep.quartier : null, fait: false, veille: veille };
     }
-    var q = ile(contenu, partie, t).quartiers.filter(function (x) { return x.id === o.cible; })[0];
+    var q = (contenu.ile.quartiers || []).filter(function (x) { return x.id === o.cible; })[0];
     if (!o.type || !q) return { jour: jour, type: null, veille: o.veille, reussi: false };
-    var besoin, n, prochain = null;
-    if (o.type === "repare") {
-      besoin = o.cibles.length;
-      n = o.cibles.filter(function (id) { return etatInstallation(contenu, partie, id, t) === "marche"; }).length;
-      prochain = o.cibles.filter(function (id) { var e = etatInstallation(contenu, partie, id, t); return e === "alerte" || e === "panne"; })[0] || null;
-    } else {
-      besoin = 1;
-      n = Math.min(1, Math.max(0, q.installations.filter(function (x) { return x.etat !== "friche" && x.etat !== "abandon"; }).length - o.depart));
-      var libres = q.installations.filter(function (x) { return (x.etat === "friche" || x.etat === "abandon") && statut(contenu, partie, x.comp, t).etat === "disponible"; });
-      prochain = libres.length ? libres[0].comp : null;
-    }
-    if (!o.fait && n >= besoin) {
-      o.fait = true; o.veille = null;
-      partie.credits.solde += R.credits; partie.credits.gagnes += R.credits;
-    }
-    return { jour: jour, type: o.type, quartier: q.id, nom: q.nom, couleur: q.couleur, besoin: besoin, fait: n, reussi: o.fait, credits: R.credits, veille: o.veille, cibles: o.cibles, prochain: o.fait ? null : prochain };
+    return { jour: jour, type: o.type, quartier: q.id, nom: q.nom, couleur: q.couleur, besoin: 1, fait: o.fait ? 1 : 0, reussi: o.fait, credits: R.credits, veille: o.veille,
+      prochain: o.fait ? null : epreuveDuJour(contenu, partie, t) };
+  }
+  // Une épreuve réussie aujourd'hui tient l'objectif : la prime tombe une fois, la veille est levée.
+  function tenirObjectif(contenu, partie, t) {
+    var ob = objectifIle(contenu, partie, t), o = partie.ile;
+    if (!ob || !ob.type || o.fait) return false;
+    o.fait = true; o.veille = null;
+    partie.credits.solde += contenu.ile.regles.objectif.credits; partie.credits.gagnes += contenu.ile.regles.objectif.credits;
+    return true;
   }
   // Ce qu'une épreuve a changé sur l'île : l'installation de la compétence jouée, les options de son quartier et le
   // nombre d'habitants, avant et après.
@@ -1508,19 +1488,19 @@
     if (!ilePresente(contenu) || !contenu.parId[id]) return null;
     var q = quartierIle(contenu, partie, id, t);
     if (!q) return null;
-    var ob = objectifIle(contenu, partie, t);
-    return { objectif: !!(ob && ob.reussi), etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, options: q.options.filter(function (o) { return o.ouverte; }).length };
+    objectifIle(contenu, partie, t);
+    return { etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, options: q.options.filter(function (o) { return o.ouverte; }).length };
   }
-  function changementIle(contenu, partie, id, t, avant) {
+  function changementIle(contenu, partie, id, t, avant, reussi) {
     if (!avant) return null;
+    var tenu = reussi ? tenirObjectif(contenu, partie, t) : false;
     var apres = photoIle(contenu, partie, id, t);
-    if (apres.etat === avant.etat && apres.habitants === avant.habitants) return null;
+    if (!tenu && apres.etat === avant.etat && apres.habitants === avant.habitants) return null;
     var q = quartierIle(contenu, partie, id, t);
     var inst = q.installations.filter(function (x) { return x.comp === id; })[0];
     // L'option que l'épreuve vient d'ouvrir (ou de fermer) dans le quartier.
     var option = apres.options > avant.options ? q.options[apres.options - 1] : apres.options < avant.options ? q.options[avant.options - 1] : null;
-    var ob = objectifIle(contenu, partie, t);
-    return { comp: id, quartier: q.id, objectif: ob && ob.reussi && !avant.objectif ? ob : null, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
+    return { comp: id, quartier: q.id, objectif: tenu ? objectifIle(contenu, partie, t) : null, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
   }
   function listeDonjons(contenu) { return (contenu.donjons && contenu.donjons.donjons) || []; }
   function donjonDe(contenu, id) { return listeDonjons(contenu).filter(function (d) { return d.id === id; })[0] || null; }

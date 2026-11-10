@@ -4254,28 +4254,30 @@ function demarrerJeu() {
     var corps;
     if (!ob.type) corps = "<h3>" + __("Rien à défendre aujourd'hui") + "</h3>" + veille;
     else {
-      var nom = esc(tx(ob.nom));
+      var nom = esc(tx(ob.nom)), k = ob.prochain && C.parId[ob.prochain.comp], I = M.ile(C, P, maintenant());
+      // L'épreuve du plateau, et ce qu'elle fait sur l'île : construire, réparer ou entretenir une installation.
+      var inst = k && I.quartiers.reduce(function (r, q) { return r || q.installations.filter(function (x) { return x.comp === k.id; })[0]; }, null);
+      var qi = inst && I.quartiers.filter(function (q) { return q.installations.indexOf(inst) >= 0; })[0];
+      var effet = !inst ? "" : (inst.etat === "friche" || inst.etat === "abandon" ? __("Elle construit : ") : inst.etat === "marche" ? __("Elle entretient : ") : __("Elle remet en marche : ")) + "<b>" + esc(tx(inst.nom)) + "</b> (" + esc(tx(qi.nom)) + ").";
       corps = "<h3>" + (ob.reussi ? __("Objectif tenu : ") + nom + __(" garde son courant") : __("Délestage prévu ce soir : ") + nom) + "</h3>" +
-        '<p class="ile-obj-texte">' + (ob.reussi ? __("« Soit. Ce quartier sert encore à quelqu'un. Je reviendrai demain. »") :
-          ob.type === "repare" ? __("« Ces installations ne sont plus entretenues. Elles consomment pour rien : ce soir, je coupe. » Fais leurs rappels avant minuit.") :
-          __("« Ce quartier ne justifie pas encore son courant. » Construis-y une installation de plus avant minuit.")) + "</p>" +
-        '<div class="ile-obj-jauge"><span style="width:' + Math.round(ob.fait / ob.besoin * 100) + '%"></span></div>' +
-        '<p class="ile-obj-compte"><b>' + ob.fait + " / " + ob.besoin + "</b> " + (ob.type === "repare" ? __("remises en marche") : __("installation construite")) + " · " + (ob.reussi ? "+" + ob.credits + __(" crédits") : ob.credits + __(" crédits à gagner")) + "</p>" + veille +
-        (ob.prochain ? '<button type="button" class="btn large" data-a="obj">' + (ob.type === "repare" ? __("Faire le rappel") : __("Passer le quiz")) + " : " + esc(tx(C.parId[ob.prochain].nom)) + "</button>" :
-          ob.reussi ? "" : '<p class="meta">' + __("Rien n'est à ta portée dans ce quartier pour l'instant.") + "</p>");
+        '<p class="ile-obj-texte">' + (ob.reussi ? __("« Soit. Cette île sert encore à quelqu'un. Je reviendrai demain. »") :
+          __("« Un savoir que personne n'entretient est un serveur qui tourne pour rien. Ce soir, je coupe. » Réussis une épreuve avant minuit pour l'en dissuader.")) + "</p>" +
+        (k && !ob.reussi ? '<p class="ile-obj-texte">' + __("Ta prochaine épreuve : ") + "<b>" + esc(tx(k.nom)) + "</b>. " + effet + "</p>" : "") +
+        '<p class="ile-obj-compte">' + (ob.reussi ? "+" + ob.credits + __(" crédits") : ob.credits + __(" crédits à gagner")) + "</p>" + veille +
+        (k ? '<button type="button" class="btn large" data-a="obj">' + __("Jouer") + "</button>" : "");
     }
     var b = el('<div class="carte ile-objectif' + (ob.reussi ? " tenu" : "") + '" style="--c:' + (ob.couleur || "var(--accent)") + '"><div class="eyebrow">' + __("Objectif du jour · l'IA économe") + "</div>" + corps + "</div>");
-    var bt = b.querySelector('[data-a="obj"]'); if (bt) bt.onclick = function () { ouvrirFeuille(ob.prochain); };
+    var bt = b.querySelector('[data-a="obj"]'); if (bt) bt.onclick = function () { ouvrirJouer(); };
     return b;
   }
   // Dans le bilan d'une épreuve : ce qu'elle vient de changer sur l'île.
   function blocIleBilan(ch) {
     var inst = ch.installation, q = M.ile(C, P, maintenant()).quartiers.filter(function (x) { return x.id === ch.quartier; })[0];
     var monte = ch.apres === "marche" && ch.avant !== "marche", g = grilleSprite(inst.dessin);
-    var titre = ch.apres === "marche" ? (ch.avant === "friche" ? __("Nouvelle installation") : ch.avant === "abandon" ? __("Remise en service") : __("Réparée")) :
+    var titre = ch.apres === "marche" ? (ch.avant === "friche" ? __("Nouvelle installation") : ch.avant === "abandon" ? __("Remise en service") : ch.avant === "marche" ? __("Entretenue") : __("Réparée")) :
       ch.apres === "abandon" ? __("Laissée à l'abandon") : ch.apres === "panne" ? __("En panne") : ch.apres === "alerte" ? __("En alerte") : __("Sur l'île");
     var d = ch.habitants - ch.habitantsAvant;
-    var b = el('<div class="recompense ile-rec' + (monte ? " anim" : " perte") + '" style="--c:' + q.couleur + '"><div class="genre">' + __("Sur l'île") + " · " + esc(tx(q.nom)) + "</div>" +
+    var b = el('<div class="recompense ile-rec' + (monte || (ch.apres === "marche" && ch.objectif) ? " anim" : " perte") + '" style="--c:' + q.couleur + '"><div class="genre">' + __("Sur l'île") + " · " + esc(tx(q.nom)) + "</div>" +
       '<div class="ile-badge"><div class="ile-socle">' + (g ? '<svg class="pix" viewBox="0 0 32 32" width="128" height="128" aria-hidden="true"' + (ch.apres === "abandon" ? ' filter="url(#ile-ruine)"' : ch.apres === "panne" ? ' filter="url(#ile-terne)"' : "") + ">" + pixels(g, C.cabinet.palette, null, 0, 0, 1) + "</svg>" : "") + "</div></div>" +
       '<svg width="0" height="0" style="position:absolute">' + DEFS_ILE + "</svg>" +
       "<div class=\"eyebrow\">" + esc(titre) + "</div><h3>" + esc(tx(inst.nom)) + "</h3>" +
