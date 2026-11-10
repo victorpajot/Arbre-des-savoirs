@@ -1461,6 +1461,11 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-obj-jauge { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden; margin: 0 0 8px; }
 .ile-obj-jauge span { display: block; height: 100%; background: var(--c); border-radius: 999px; }
 .ile-intro { margin: 12px 0 16px; }
+@keyframes ile-trajet { 0%, 8% { transform: translate(0, 0); } 46%, 58% { transform: translate(var(--dx), var(--dy)); } 96%, 100% { transform: translate(0, 0); } }
+@keyframes ile-pas { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1px); } }
+.ile-marcheur { animation: ile-trajet 10s ease-in-out infinite; }
+.ile-pas { animation: ile-pas .5s steps(2, jump-none) infinite; }
+@media (prefers-reduced-motion: reduce) { .ile-marcheur, .ile-pas { animation: none; } }
 .ile-objectif.tenu { border-left-color: #2E9E5B; } .ile-objectif.tenu .ile-obj-jauge span { background: #2E9E5B; }
 .ile-h2 { font-size: 17px; margin: 22px 0 10px; }
 .ile-options { display: grid; gap: 8px; }
@@ -3882,6 +3887,12 @@ function demarrerJeu() {
   var PEAUX = ["#F2C9A0", "#D9A07A", "#94603C", "#6E4429", "#FBE3C8"], CHEVEUX = ["#2A1A0E", "#6B4226", "#9C6B43", "#C9CED6", "#F2C14E", "#8E2424"],
     HABITS = ["#D94141", "#3D63D9", "#4CAF50", "#F2C14E", "#9B59D0", "#E8873A", "#8FD8F2", "#F28FB0", "#E8E8EE"];
   function graine(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  // Les habitants vont et viennent (Victor, 2026-11-10) : chacun fait l'aller-retour vers un point tiré de son rang,
+  // à son rythme, avec un petit pas sautillant. Deux groupes : le trajet, puis le pas.
+  function marcheur(g, portee, haut) {
+    var dx = (g % 2 ? 1 : -1) * (portee * 0.5 + (g >>> 3) % Math.max(1, Math.round(portee * 0.5))), dy = ((g >>> 7) % (haut * 2 + 1)) - haut, d = 7 + (g >>> 5) % 9;
+    return '<g class="ile-marcheur" style="--dx:' + dx + "px;--dy:" + dy + "px;animation-duration:" + d + "s;animation-delay:-" + ((g >>> 9) % (d * 10)) / 10 + 's"><g class="ile-pas" shape-rendering="crispEdges" style="animation-delay:-' + ((g >>> 4) % 5) / 10 + 's">';
+  }
   function svgHabitant(x, y, g, e) {
     var pal = { h: CHEVEUX[g % CHEVEUX.length], s: PEAUX[(g >>> 3) % PEAUX.length], v: HABITS[(g >>> 6) % HABITS.length], j: "#2B2B33" };
     return pixels(HABITANT, pal, null, x, y, e || 1.5);
@@ -4114,7 +4125,7 @@ function demarrerJeu() {
         [[0, -2, 24], [-11, 9, 20], [11, 10, 20]].slice(0, montre.length).forEach(function (pl, j) {
           plan.push([y + pl[1] + 0.5, '<g shape-rendering="crispEdges">' + svgInstallation(montre[j], Math.round(x + pl[0]), Math.round(y + pl[1]), pl[2]).replace(' class="ile-inst" data-comp="' + esc(montre[j].comp) + '" role="button" tabindex="0"', "").replace(/<g class="ile-voyant">.*?<\/g>/, "") + "</g>"]); });
         var hab = Math.min(6, Math.round(q.habitants / 55));
-        for (var h = 0; h < hab; h++) { var hx = x - 24 + ((gr >>> (h * 4)) % 48), hy = y + 14 + ((gr >>> (h * 3 + 2)) % 8); plan.push([hy + 9, '<g shape-rendering="crispEdges">' + svgHabitant(Math.round(hx), Math.round(hy), gr + h * 31, 1.1) + "</g>"]); }
+        for (var h = 0; h < hab; h++) { var hx = x - 24 + ((gr >>> (h * 4)) % 48), hy = y + 14 + ((gr >>> (h * 3 + 2)) % 8); plan.push([hy + 9, marcheur(gr + h * 31, 9, 3) + svgHabitant(Math.round(hx), Math.round(hy), gr + h * 31, 1.1) + "</g></g>"]); }
       } else if (q.ouvert) {
         // Rien encore : un campement, sa tente et son feu, en attendant le premier savoir.
         plan.push([y + 6, '<ellipse cx="' + fx(x) + '" cy="' + fx(y + 6) + '" rx="9" ry="2.6" fill="rgba(30,45,30,.2)"/><path d="M' + fx(x - 8) + " " + fx(y + 6) + "L" + fx(x) + " " + fx(y - 7) + "L" + fx(x + 8) + " " + fx(y + 6) + 'Z" fill="#F3E3C0"/><path d="M' + fx(x - 2.4) + " " + fx(y + 6) + "L" + fx(x) + " " + fx(y - 2) + "L" + fx(x + 2.4) + " " + fx(y + 6) + 'Z" fill="#8A6240"/>' +
@@ -4202,7 +4213,7 @@ function demarrerJeu() {
         // Autour d'une installation qui tourne : une maison, et ses habitants.
         if (inst.habitants > 0 && g % 2) plan.push([y - 20, svgMaison(cx + 33, y - 20, 15, q.couleur, g)]);
         var k = Math.min(3, Math.round(inst.habitants / 14));
-        for (var h = 0; h < k; h++) plan.push([y + 9 + h, '<g shape-rendering="crispEdges">' + svgHabitant(Math.round(cx - 30 + ((g >>> (h * 5)) % 18) + h * 20), y - 3 + (g >>> (h * 2 + 9)) % 7, g + h * 97) + "</g>"]);
+        for (var h = 0; h < k; h++) plan.push([y + 9 + h, marcheur(g + h * 97, 26, 6) + svgHabitant(Math.round(cx - 30 + ((g >>> (h * 5)) % 18) + h * 20), y - 3 + (g >>> (h * 2 + 9)) % 7, g + h * 97) + "</g></g>"]);
       });
     });
     // La lisière : des arbres sur les bords, des fleurs dans l'herbe.
