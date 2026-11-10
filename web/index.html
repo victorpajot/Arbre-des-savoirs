@@ -4559,7 +4559,8 @@ function demarrerJeu() {
       (ch.fondation ? '<p class="ile-service">' + __("Nouveau lieu sur l'île : ") + esc(tx(q.nom)) + "</p>" :
         ch.option && ch.stadeAvant && tx(ch.stadeAvant) !== tx(q.nom) ? '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(ch.stadeAvant)) + (ch.optionOuverte ? __(" devient : ") : __(" redevient : ")) + esc(tx(q.nom)) + "</p>" : "") +
       (ch.objectif ? '<p class="ile-service">' + __("Objectif du jour tenu : pas de délestage ce soir.") + " +" + ch.objectif.credits + __(" crédits") + "</p>" : "") +
-      (ch.option ? '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(q.nom)) + (ch.optionOuverte ? __(" débloque : ") : __(" perd : ")) + esc(tx(ch.option.nom)) + "</p>" + (ch.optionOuverte ? '<p class="desc">' + esc(tx(ch.option.usage)) + "</p>" : "") : "") + "</div>");
+      // Quand le lieu prend le nom de ce qu'il débloque (le cercle de pierres devient la tribune), on ne le redit pas.
+      (ch.option ? (ch.optionOuverte && tx(ch.option.nom) === tx(q.nom) ? "" : '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(q.nom)) + (ch.optionOuverte ? __(" débloque : ") : __(" perd : ")) + esc(tx(ch.option.nom)) + "</p>") + (ch.optionOuverte ? '<p class="desc">' + esc(tx(ch.option.usage)) + "</p>" : "") : "") + "</div>");
     return b;
   }
 
