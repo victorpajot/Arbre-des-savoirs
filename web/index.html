@@ -1483,6 +1483,11 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-vie-h { font-size: 17px; margin: 16px 0 6px; }
 .ile-journal { list-style: none; padding: 0; margin: 0; font-size: 17px; } .ile-journal li { margin: 3px 0; } .ile-journal .plus b { color: #2E9E5B; } .ile-journal .moins b { color: #C8553D; }
 .ile-vie-note { font-size: 16px; margin: 6px 0 0; color: var(--muted); } .ile-vie-note.alerte { color: inherit; } .ile-vie-note.alerte b { color: #C8553D; }
+.ile-scene-bilan { margin-bottom: 14px; } .ile-scene-bilan .ile-cadre { pointer-events: none; }
+.ile-scene-titre { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 17px; margin-bottom: 6px; } .ile-scene-titre span { color: var(--muted); font-size: 15px; }
+.ile-neuve { animation: ile-neuve 1.6s ease-in-out 3; }
+@keyframes ile-neuve { 0%, 100% { filter: none; } 50% { filter: drop-shadow(0 0 5px #FFE79A) drop-shadow(0 0 2px #fff); } }
+@media (prefers-reduced-motion: reduce) { .ile-neuve { animation: none; filter: drop-shadow(0 0 4px #FFE79A); } }
 .ile-obj-tete { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
 .ile-econome { flex: none; width: 52px; height: 60px; border-radius: 10px; background: var(--parchemin); display: grid; place-items: center; overflow: hidden; }
 .ile-econome:empty { display: none; }
@@ -8243,6 +8248,15 @@ function demarrerJeu() {
     } else if (nom.indexOf("recompense:") === 0) {
       var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c); if (c.classList.contains("carte-savant")) degelerAvatar();
     } else if (nom === "ile") {
+      // Victor (2026-11-10) : « Voir l'île » n'ouvrait qu'une carte, sans l'île. On montre d'abord le lieu lui-même, tel
+      // qu'il est maintenant, avec l'installation de l'épreuve mise en lumière ; la carte vient dessous.
+      var Ib = M.ile(C, P, maintenant()), qb = Ib.quartiers.filter(function (x) { return x.id === r.ile.quartier; })[0];
+      if (qb && qb.fonde) {
+        AGES_ILE = Ib.population && Ib.habitants ? { enfants: Ib.population.enfants / Ib.habitants, anciens: Ib.population.anciens / Ib.habitants } : null;
+        var scene = el('<div class="ile-scene-bilan"><div class="ile-scene-titre"><b>' + esc(tx(qb.nom)) + "</b><span>" + esc(texteHabitants(Ib.habitants)) + __(" sur l'île") + '</span></div><div class="ile-cadre">' + svgQuartier(qb) + "</div></div>");
+        var neuve = scene.querySelector('[data-comp="' + r.ile.comp + '"]'); if (neuve) neuve.classList.add("ile-neuve");
+        z.appendChild(scene);
+      }
       z.appendChild(blocIleBilan(r.ile));
     } else if (nom === "duel") {
       z.appendChild(blocDefi());
