@@ -4187,6 +4187,22 @@
       "panne_jours"
      ],
      "properties": {
+      "piege": {
+       "type": "object",
+       "additionalProperties": false,
+       "description": "Un piège déclenché fait fuir une part des habitants ; chaque épreuve réussie en ramène.",
+       "properties": {
+        "part": {
+         "type": "number"
+        },
+        "min": {
+         "type": "integer"
+        },
+        "retour": {
+         "type": "integer"
+        }
+       }
+      },
       "habitants": {
        "type": "object",
        "additionalProperties": false,

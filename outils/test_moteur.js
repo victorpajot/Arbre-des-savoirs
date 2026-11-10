@@ -2215,5 +2215,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const g2 = PJ.credits.gagnes, nx = M.choixIA(CP, PJ, tj);
     if (nx && nx.type === "quiz") { const r3 = M.terminerQuiz(CP, PJ, nx.comp.id, bonJ(nx.comp.id, 5), tj); assert.ok(!r3.ile || !r3.ile.objectif, "la prime ne tombe qu'une fois par jour"); }
   }
+  // Piège déclenché : une part des habitants fuit ; chaque épreuve réussie en ramène, jusqu'au retour de tous.
+  { const PX = M.nouvellePartie(ti);
+    CI.competences.forEach(k => { PX.competences[k.id] = { maitrise: true, prochainRappel: ti + 30 * 86400000, palier: 1, xp: 1 }; });
+    const plein = M.ile(CI, PX, ti).habitants, RP = CI.ile.regles.piege;
+    PX.exil = Math.round(plein * RP.part);
+    const I1 = M.ile(CI, PX, ti);
+    assert.equal(I1.exil, PX.exil); assert.ok(Math.abs(plein - PX.exil - I1.habitants) <= I1.quartiers.length, "les partis manquent sur l'île");
+    assert.equal(I1.habitants, I1.quartiers.reduce((s, q) => s + q.habitants, 0));
+    const id = CI.competences[0].id, exilAvant = PX.exil;
+    const rr = M.terminerRappel(CI, PX, id, M.tirerQuestions(CI, PX, id, 3).map(q => ({ id: q.id, correct: true })), ti);
+    assert.equal(PX.exil, exilAvant - RP.retour); assert.equal(rr.ile.revenus, RP.retour);
+    PX.exil = 1e9; assert.equal(M.ile(CI, PX, ti).habitants, 0, "jamais moins de zéro"); }
   console.log("île : quartiers par fonction, installations, alerte, panne, abandon, habitants, options, objectif du jour");
 }

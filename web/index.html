@@ -1449,6 +1449,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-rec .eyebrow { margin-top: 4px; }
 .ile-rec .desc { font-size: 17px; line-height: 1.5; }
 .ile-delta { font-family: var(--f-mono); font-size: 22px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 0; }
+.ile-exil { font-size: 17px; color: var(--bad); text-align: center; margin: 10px 0 0; }
 .ile-delta.plus { color: var(--good); } .ile-delta.moins { color: var(--bad); }
 .ile-delta small { font-family: var(--f-body); font-size: 15px; font-weight: 400; color: var(--muted); }
 .ile-service { font-size: 17px; font-weight: 800; color: var(--accent); margin: 0; }
@@ -4261,6 +4262,7 @@ function demarrerJeu() {
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
     carte.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
     v.appendChild(carte);
+    if (I.exil) v.appendChild(el('<p class="ile-exil">' + esc(texteHabitants(I.exil)) + (I.exil > 1 ? __(" ont fui l'île après un piège.") : __(" a fui l'île après un piège.")) + " " + __("Chaque épreuve réussie en fait revenir ") + ((C.ile.regles.piege || {}).retour || 8) + ".</p>"));
     return v;
   }
   // La présentation de l'île par l'IA (Victor, 2026-11-10), la première fois qu'on y vient.
@@ -4325,6 +4327,7 @@ function demarrerJeu() {
       "<div class=\"eyebrow\">" + esc(titre) + "</div><h3>" + esc(tx(inst.nom)) + "</h3>" +
       (inst.usage && ch.apres === "marche" ? '<p class="desc">' + esc(tx(inst.usage)) + "</p>" : ch.apres !== "marche" ? '<p class="desc">' + esc(TEXTE_ETAT[ch.apres]()) + "</p>" : "") +
       (d ? '<p class="ile-delta ' + (d > 0 ? "plus" : "moins") + '">' + (d > 0 ? "+" : "−") + esc(texteHabitants(Math.abs(d))) + '<small>' + esc(texteHabitants(ch.habitants)) + __(" sur l'île") + "</small></p>" : "") +
+      (ch.revenus ? '<p class="desc">' + esc(texteHabitants(ch.revenus)) + (ch.revenus > 1 ? __(" reviennent sur l'île après le piège.") : __(" revient sur l'île après le piège.")) + (ch.exil ? " " + __("Encore partis : ") + nb(ch.exil) + "." : "") + "</p>" : "") +
       (monte && !q.habitable ? '<p class="desc">' + __("Personne n'y vit encore : il manque ") + q.manque + (q.manque > 1 ? __(" installations") : __(" installation")) + __(" pour rendre le quartier habitable.") + "</p>" : "") +
       (ch.fondation ? '<p class="ile-service">' + __("Nouveau lieu sur l'île : ") + esc(tx(q.nom)) + "</p>" :
         ch.option && ch.stadeAvant && tx(ch.stadeAvant) !== tx(q.nom) ? '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(ch.stadeAvant)) + (ch.optionOuverte ? __(" devient : ") : __(" redevient : ")) + esc(tx(q.nom)) + "</p>" : "") +
@@ -5167,6 +5170,8 @@ function demarrerJeu() {
       if (!r) return;
       c.appendChild(el('<div class="piege-verdict ' + (r.dejoue ? "ok" : "ko") + '">' + (r.dejoue ? __("Piège déjoué !") : __("Le piège se déclenche")) + "</div>"));
       var mr = comite(r.replique, true); if (mr) c.appendChild(mr);
+      if (!r.dejoue && r.ile) c.appendChild(el('<div class="recompense ile-rec perte"><div class="genre">' + __("Sur l'île") + '</div><p class="ile-delta moins">−' + esc(texteHabitants(r.ile.partis)) + "<small>" + esc(texteHabitants(r.ile.habitants)) + __(" sur l'île") + '</small></p><p class="desc">' +
+        __("Le piège leur a fait peur : ils ont pris la barque du passeur. Chaque épreuve réussie en fait revenir ") + r.ile.retour + ".</p></div>"));
       if (!r.dejoue && r.plateau) {
         var zd = el("<div></div>"); c.appendChild(zd);
         animPion = r.plateau; zd.appendChild(blocDeplacement(r.plateau, null, true)); setTimeout(function () { animerPion(zd); }, 60);

@@ -1447,7 +1447,25 @@
       return { habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, stade: stade, nomFinal: q.nom, nom: noms[stade] || q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: posees > 0, ouvert: ouvert || posees > 0, installations: inst,
         options: options, posees: posees, marche: marche, habitants: hab, capacite: cap };
     });
-    return { quartiers: quartiers, habitants: total, capacite: capacite };
+    // Un piège déclenché a fait fuir des habitants (Victor, 2026-11-10) : ils manquent partout, à proportion, jusqu'à leur retour.
+    var exil = Math.min(partie.exil || 0, total);
+    if (exil > 0) {
+      var part = (total - exil) / total; total = 0;
+      quartiers.forEach(function (q) {
+        q.installations.forEach(function (x) { x.habitants = Math.round(x.habitants * part); });
+        q.habitants = Math.round(q.habitants * part); total += q.habitants;
+      });
+    }
+    return { quartiers: quartiers, habitants: total, capacite: capacite, exil: exil };
+  }
+  // Piège déclenché : une part des habitants quitte l'île. Renvoie combien sont partis (0 si l'île est vide).
+  function exodeIle(contenu, partie, t) {
+    if (!ilePresente(contenu)) return null;
+    var R = contenu.ile.regles.piege || {}, I = ile(contenu, partie, t);
+    if (I.habitants <= 0) return null;
+    var n = Math.min(I.habitants, Math.max(R.min || 5, Math.round(I.habitants * (R.part || 0.2))));
+    partie.exil = (I.exil || 0) + n;
+    return { partis: n, habitants: ile(contenu, partie, t).habitants, retour: R.retour || 8 };
   }
   function quartierIle(contenu, partie, id, t) {
     var qid = planIle(contenu).quartierDe[id];
@@ -1502,6 +1520,9 @@
   }
   function changementIle(contenu, partie, id, t, avant, reussi) {
     if (!avant) return null;
+    // Une épreuve réussie fait revenir une partie de ceux qu'un piège avait fait fuir.
+    var revenus = 0;
+    if (reussi && partie.exil > 0) { revenus = Math.min(partie.exil, (contenu.ile.regles.piege || {}).retour || 8); partie.exil -= revenus; }
     var tenu = reussi ? tenirObjectif(contenu, partie, t) : false;
     var apres = photoIle(contenu, partie, id, t);
     if (!tenu && apres.etat === avant.etat && apres.habitants === avant.habitants) return null;
@@ -1509,7 +1530,7 @@
     var inst = q.installations.filter(function (x) { return x.comp === id; })[0];
     // L'option que l'épreuve vient d'ouvrir (ou de fermer) dans le quartier.
     var option = apres.options > avant.options ? q.options[apres.options - 1] : apres.options < avant.options ? q.options[avant.options - 1] : null;
-    return { comp: id, quartier: q.id, objectif: tenu ? objectifIle(contenu, partie, t) : null, fondation: avant.posees === 0 && q.posees > 0, stadeAvant: avant.nom, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
+    return { comp: id, quartier: q.id, objectif: tenu ? objectifIle(contenu, partie, t) : null, fondation: avant.posees === 0 && q.posees > 0, stadeAvant: avant.nom, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, revenus: revenus, exil: partie.exil || 0, habitants: apres.habitants };
   }
   function listeDonjons(contenu) { return (contenu.donjons && contenu.donjons.donjons) || []; }
   function donjonDe(contenu, id) { return listeDonjons(contenu).filter(function (d) { return d.id === id; })[0] || null; }
@@ -2941,7 +2962,7 @@
     }
     var dep = deplacer(contenu, partie, 0, t, "piege");
     dep.contextes = contextesPlateau(dep);
-    return { dejoue: false, case: p.case, regle: p.regle.type, plateau: dep, replique: replique(contenu, partie, ["piege_declenche"]), recompenses: verifierRecompenses(contenu, partie, t) };
+    return { dejoue: false, case: p.case, regle: p.regle.type, plateau: dep, ile: exodeIle(contenu, partie, t), replique: replique(contenu, partie, ["piege_declenche"]), recompenses: verifierRecompenses(contenu, partie, t) };
   }
   // --- Chrono, le jeu des siècles (v34) ----------------------------------------
   // Alyca présente un événement déjà débloqué (frise, livre, savant, objet) ; le joueur dit quand il s'est produit.
