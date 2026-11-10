@@ -4457,6 +4457,41 @@
        }
       }
      }
+    },
+    "econome": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "base",
+      "expressions"
+     ],
+     "description": "Le visage de l'IA économe (Victor, 2026-11-10) : une grille de 40 × 48 dans la palette de l'IA, et ses expressions (neutre, coupe, soit) posées par-dessus.",
+     "properties": {
+      "nom": {
+       "type": "object"
+      },
+      "description": {
+       "type": "object"
+      },
+      "base": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "expressions": {
+       "type": "object",
+       "required": [
+        "neutre"
+       ],
+       "additionalProperties": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       }
+      }
+     }
     }
    }
   }

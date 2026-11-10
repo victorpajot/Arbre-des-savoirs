@@ -11,6 +11,7 @@ Retire le fichier, le dessin d'origine revient.
 | `hameau-<quartier>.png` | Un quartier sur la carte (maisons et installations dessinées). | carré, 240 × 240, fond transparent |
 | `quartier-<quartier>.png` | Le fond d'un quartier vu de près. | 1080 de large, hauteur libre (recadré) |
 | `installation-<compétence>.png` | Une installation, sur la carte et dans son quartier. | carré, 256 × 256, fond transparent |
+| `econome.png` | Le visage de l'IA économe (objectif du jour, présentation de l'île). | 200 × 240, fond transparent |
 
 - `<quartier>` : `port`, `ville`, `artisans`, `industrie`, `champs`, `agora`, `campus`, `centrale`
   (liste et positions sur la carte dans `../donnees/ile.json`, champ `position` : [x, y] de 0 à 1).

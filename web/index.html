@@ -1468,6 +1468,10 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-objectif h3 { font-size: 19px; margin: 4px 0 6px; }
 .ile-obj-texte, .ile-obj-compte, .ile-obj-veille { font-size: 17px; margin: 0 0 10px; }
 .ile-obj-veille { color: #5B7FD9; font-weight: 700; }
+.ile-obj-tete { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.ile-econome { flex: none; width: 52px; height: 60px; border-radius: 10px; background: var(--parchemin); display: grid; place-items: center; overflow: hidden; }
+.ile-econome:empty { display: none; }
+.ile-intro .ile-econome { float: right; margin: 0 0 6px 10px; }
 .ile-obj-jauge { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden; margin: 0 0 8px; }
 .ile-obj-jauge span { display: block; height: 100%; background: var(--c); border-radius: 999px; }
 .ile-intro { margin: 12px 0 16px; }
@@ -4323,8 +4327,18 @@ function demarrerJeu() {
         '<button type="button" class="btn large" data-a="suite">' + (dernier ? __("Découvrir l'île") : __("Continuer")) + "</button>", __("L'île"),
         { suite: function () { fermerFeuille(); i++; if (i < pas.length) montrer(); else rendre(); } }, __("Passer"));
       var z = document.querySelector("#couche .voile:last-child .ile-intro"); if (z && bulle) z.appendChild(bulle);
+      if (z && dernier && svgEconome("neutre", 46)) z.appendChild(el('<div class="ile-obj-tete" style="margin-top:12px"><span class="ile-econome">' + svgEconome("neutre", 46) + '</span><p class="ile-obj-texte" style="margin:0"><b>' + __("L'IA économe") + "</b><br>" + __("« Je ne détruis rien. Je compte. »") + "</p></div>"));
     }
     montrer();
+  }
+  // Le visage de l'IA économe (Victor, 2026-11-10) : une ampoule presque éteinte. « neutre » quand elle annonce, « coupe » quand
+  // elle a mis une installation en veille, « soit » quand l'objectif est tenu.
+  function svgEconome(expr, largeur) {
+    var e = C.ile && C.ile.econome; if (!e || !C.ia) return "";
+    var img = imageIle("econome");
+    if (img) return '<img class="ile-econome-img" src="' + img + '" width="' + largeur + '" alt="' + esc(__("L'IA économe")) + '">';
+    return '<svg class="pix" viewBox="0 0 40 48" width="' + largeur + '" height="' + Math.round(largeur * 1.2) + '" role="img" aria-label="' + esc(__("L'IA économe")) + '">' +
+      pixels(e.base, C.ia.palette, null, 0, 0, 1) + pixels(e.expressions[expr] || e.expressions.neutre, C.ia.palette, null, 0, 0, 1) + "</svg>";
   }
   // L'objectif du jour : l'IA économe annonce son délestage du soir ; un bouton mène à l'épreuve qui l'évite.
   function blocObjectifIle() {
@@ -4352,7 +4366,7 @@ function demarrerJeu() {
         '<p class="ile-obj-compte">' + (ob.reussi ? "+" + ob.credits + __(" crédits") : ob.credits + __(" crédits à gagner")) + "</p>" + veille +
         (k ? '<button type="button" class="btn large" data-a="obj">' + __("Jouer") + "</button>" : "");
     }
-    var b = el('<div class="carte ile-objectif' + (ob.reussi ? " tenu" : "") + '" style="--c:' + (ob.couleur || "var(--accent)") + '"><div class="eyebrow">' + __("Objectif du jour · l'IA économe") + "</div>" + corps + "</div>");
+    var b = el('<div class="carte ile-objectif' + (ob.reussi ? " tenu" : "") + '" style="--c:' + (ob.couleur || "var(--accent)") + '"><div class="ile-obj-tete"><span class="ile-econome">' + svgEconome(ob.reussi ? "soit" : ob.veille ? "coupe" : "neutre", 46) + '</span><div class="eyebrow">' + __("Objectif du jour · l'IA économe") + "</div></div>" + corps + "</div>");
     var bt = b.querySelector('[data-a="obj"]'); if (bt) bt.onclick = function () { ouvrirJouer(); };
     return b;
   }

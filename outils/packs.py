@@ -225,8 +225,8 @@ def poser_images(donnees, packs):
         for f in sorted(d.iterdir()) if d.exists() else []:
             if f.suffix.lower() not in TYPES_IMAGES:
                 continue
-            if not re.match(r"^(carte|(quartier|hameau|installation)-.+)$", f.stem):
-                raise ErreurPack(f"{m['id']} : images/{f.name} : nom inconnu (carte, quartier-<id>, hameau-<id>, installation-<compétence>)")
+            if not re.match(r"^(carte|econome|(quartier|hameau|installation)-.+)$", f.stem):
+                raise ErreurPack(f"{m['id']} : images/{f.name} : nom inconnu (carte, econome, quartier-<id>, hameau-<id>, installation-<compétence>)")
             ile.setdefault("images", {})[f.stem] = "data:" + TYPES_IMAGES[f.suffix.lower()] + ";base64," + base64.b64encode(f.read_bytes()).decode()
 
 
