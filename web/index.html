@@ -3947,7 +3947,7 @@ function demarrerJeu() {
     marche: function () { return __("En marche."); },
     alerte: function () { return __("En alerte : son rappel est dû. Fais-le avant qu'elle tombe en panne."); },
     panne: function () { return __("En panne : son rappel attend depuis trop longtemps. Elle n'offre plus que la moitié de ses places."); },
-    veille: function () { return __("En veille : l'objectif d'hier n'a pas été tenu, l'IA économe a baissé son courant. Tiens celui d'aujourd'hui pour la rallumer."); },
+    veille: function () { return __("En veille : l'objectif d'hier n'a pas été tenu, Ananké a baissé son courant. Tiens celui d'aujourd'hui pour la rallumer."); },
     abandon: function () { return __("À l'abandon : la compétence est perdue. Regagne-la pour la remettre en service."); },
     friche: function () { return __("Pas encore construite."); },
   };
@@ -4429,7 +4429,7 @@ function demarrerJeu() {
       M.ile(C, P, maintenant()).quartiers.some(function (x) { return x.fonde; }) ? __("Voici mon île. Tout ce que tu y vois, c'est ce que tu sais encore. Ne t'emballe pas : il reste de la place.") :
         __("Voici mon île. Oui, elle est vide. Elle contient ce que tu sais, et pour l'instant, soyons honnêtes, ça tient sur un galet."),
       __("Chaque épreuve réussie sur le parcours y construit quelque chose : une grue, un phare, un atelier. La première installation fonde un quartier. Ce n'est encore qu'un chantier : les habitants ne viennent que lorsqu'il y a de quoi vivre."),
-      __("Laisse traîner un rappel et l'installation tombe en panne. Une collègue à moi, très économe, coupe le courant de tout ce qui n'est plus entretenu. Elle n'est pas méchante : elle compte. Donne-lui tort.")];
+      __("Laisse traîner un rappel et l'installation tombe en panne. Une collègue à moi, Ananké, très économe, coupe le courant de tout ce qui n'est plus entretenu. Elle n'est pas méchante : elle compte. Donne-lui tort.")];
     var i = 0;
     function montrer() {
       var dernier = i === pas.length - 1, bulle = comite({ id: "ile_intro_" + i, texte: pas[i], contexte: "accueil" });
@@ -4437,7 +4437,7 @@ function demarrerJeu() {
         '<button type="button" class="btn large" data-a="suite">' + (dernier ? __("Découvrir l'île") : __("Continuer")) + "</button>", __("L'île"),
         { suite: function () { fermerFeuille(); i++; if (i < pas.length) montrer(); else rendre(); } }, __("Passer"));
       var z = document.querySelector("#couche .voile:last-child .ile-intro"); if (z && bulle) z.appendChild(bulle);
-      if (z && dernier && svgEconome("neutre", 46)) z.appendChild(el('<div class="ile-obj-tete" style="margin-top:12px"><span class="ile-econome">' + svgEconome("neutre", 46) + '</span><p class="ile-obj-texte" style="margin:0"><b>' + __("L'IA économe") + "</b><br>" + __("« Je ne détruis rien. Je compte. »") + "</p></div>"));
+      if (z && dernier && svgEconome("neutre", 46)) z.appendChild(el('<div class="ile-obj-tete" style="margin-top:12px"><span class="ile-econome">' + svgEconome("neutre", 46) + '</span><p class="ile-obj-texte" style="margin:0"><b>' + __("Ananké") + "</b><br>" + __("« Je ne détruis rien. Je compte. »") + "</p></div>"));
     }
     montrer();
   }
@@ -4446,8 +4446,8 @@ function demarrerJeu() {
   function svgEconome(expr, largeur) {
     var e = C.ile && C.ile.econome; if (!e || !C.ia) return "";
     var img = imageIle("econome");
-    if (img) return '<img class="ile-econome-img" src="' + img + '" width="' + largeur + '" alt="' + esc(__("L'IA économe")) + '">';
-    return '<svg class="pix" viewBox="0 0 40 48" width="' + largeur + '" height="' + Math.round(largeur * 1.2) + '" role="img" aria-label="' + esc(__("L'IA économe")) + '">' +
+    if (img) return '<img class="ile-econome-img" src="' + img + '" width="' + largeur + '" alt="' + esc(__("Ananké")) + '">';
+    return '<svg class="pix" viewBox="0 0 40 48" width="' + largeur + '" height="' + Math.round(largeur * 1.2) + '" role="img" aria-label="' + esc(__("Ananké")) + '">' +
       pixels(e.base, C.ia.palette, null, 0, 0, 1) + pixels(e.expressions[expr] || e.expressions.neutre, C.ia.palette, null, 0, 0, 1) + "</svg>";
   }
   // L'objectif du jour : l'IA économe annonce son délestage du soir ; un bouton mène à l'épreuve qui l'évite.
@@ -4501,7 +4501,7 @@ function demarrerJeu() {
         '<p class="ile-obj-compte">' + (ob.reussi ? "+" + ob.credits + __(" crédits") : ob.credits + __(" crédits à gagner")) + "</p>" + veille +
         (k ? '<button type="button" class="btn large" data-a="obj">' + __("Jouer") + "</button>" : "");
     }
-    var b = el('<div class="carte ile-objectif' + (ob.reussi ? " tenu" : "") + '" style="--c:' + (ob.couleur || "var(--accent)") + '"><div class="ile-obj-tete"><span class="ile-econome">' + svgEconome(ob.reussi ? "soit" : ob.veille ? "coupe" : "neutre", 46) + '</span><div class="eyebrow">' + __("Objectif du jour · l'IA économe") + "</div></div>" + corps + "</div>");
+    var b = el('<div class="carte ile-objectif' + (ob.reussi ? " tenu" : "") + '" style="--c:' + (ob.couleur || "var(--accent)") + '"><div class="ile-obj-tete"><span class="ile-econome">' + svgEconome(ob.reussi ? "soit" : ob.veille ? "coupe" : "neutre", 46) + '</span><div class="eyebrow">' + __("Objectif du jour · Ananké") + "</div></div>" + corps + "</div>");
     var bt = b.querySelector('[data-a="obj"]'); if (bt) bt.onclick = function () { ouvrirJouer(); };
     return b;
   }
