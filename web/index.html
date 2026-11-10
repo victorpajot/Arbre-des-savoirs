@@ -6513,6 +6513,10 @@ function demarrerJeu() {
   // Victor (2026-10-31) : « voir des personnages à chaque fois qu'on introduit un personnage important ».
   // Chaque personne qui a un portrait (savants jouables, portraits des packs) est reconnue par son nom dans le texte :
   // à sa première apparition dans la leçon, son portrait se pose à côté du paragraphe.
+  // Un nom de famille seul ne désigne la personne que s'il n'est pas précédé d'un autre prénom : « Edwin Smith » n'est pas
+  // Adam Smith, même en début de phrase (Victor, 2026-11-10). Seuls ces petits mots à majuscule peuvent le précéder.
+  var MOTS_DEBUT = "Le|La|Les|Et|Mais|Pour|Selon|Chez|Avec|Puis|Quand|Car|Or|Donc|Comme|Si|Que|Dans|Sur|Sans|Sous|Après|Avant|Depuis|Contre|Entre|Vers|Ainsi|Alors|Pourtant|Aussi|Même|Ni|Ou|Où|De|Du|Des|En|Par|Ce|Cet|Mon|Son|Notre|Un|Une|Quant|Dès|Lorsque|Ensuite|Enfin|Seul|" +
+    "The|And|But|For|With|When|As|In|On|By|After|Before|Then|So|If|Yet|Both|Like|To|Of|From|At|Since|While|Only|Even|Later|Here";
   var indexPersonnes = null;
   function personnesConnues() {
     if (indexPersonnes) return indexPersonnes;
@@ -6530,7 +6534,7 @@ function demarrerJeu() {
       var re = "(?<![\\p{L}'’-])(?:" + alt(e.noms) + ")(?![\\p{L}])";
       // Le nom seul, pas précédé d'un autre prénom en milieu de phrase (« Michael Clark » n'est pas Mamie Clark).
       // Ni suivi d'un nom (« James Joule » n'est pas William James), ni dans « prix Nobel » ou « le Nobel ».
-      if (e.fam && parNom[e.fam] === 1) re += "|(?<![\\p{L}'’-])(?<!(?<![.!?»:] |^)\\p{Lu}\\p{Ll}+ )(?<![Pp]rix |le |du |au |un )" + alt([e.fam]) + "(?![\\p{L}])(?! \\p{Lu}\\p{Ll})";
+      if (e.fam && parNom[e.fam] === 1) re += "|(?<![\\p{L}'’-])(?:(?<=(?:^|[^\\p{L}])(?:" + MOTS_DEBUT + ") )|(?<!\\p{Lu}\\p{Ll}+ ))(?<![Pp]rix |le |du |au |un )" + alt([e.fam]) + "(?![\\p{L}])(?! \\p{Lu}\\p{Ll})";
       e.re = new RegExp(re, "u");
     });
     return (indexPersonnes = L);
@@ -6724,6 +6728,10 @@ function demarrerJeu() {
       p.siecles = (p.txt.match(/\b[IVX]+e\b/g) || []);
       p.mots = (norm(p.txt).match(/[a-z]{5,}/g) || []).filter(function (w) { return !VIDES[w]; });
     });
+    // Victor (2026-11-10) : un point ne s'allume que si l'étape parle vraiment de lui. Un mot partagé par plusieurs points
+    // (« papyrus ») ne désigne aucun d'eux : seuls comptent les mots propres à un seul point, et les dates.
+    var nMots = {}; pts.forEach(function (p) { var vu = {}; p.mots.forEach(function (w) { if (!vu[w]) { vu[w] = 1; nMots[w] = (nMots[w] || 0) + 1; } }); });
+    pts.forEach(function (p) { p.mots = p.mots.filter(function (w) { return nMots[w] === 1; }); });
     return function (texte) {
       var n = norm(texte);
       var on = pts.map(function (p) {
