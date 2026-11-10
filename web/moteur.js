@@ -1406,7 +1406,7 @@
     if (Q.length) contenu.competences.forEach(function (k) {
       var x = ecrites[k.id], q = x ? x.quartier : Q[hacher(k.id) % Q.length].id;
       plan.quartierDe[k.id] = q;
-      plan.parQuartier[q].push({ comp: k.id, stat: k.stat, rang: k.rang, nom: x ? x.nom : k.nom, usage: x ? x.usage : null, dessin: x ? x.dessin : (k.embleme || null), propre: !!x });
+      plan.parQuartier[q].push({ comp: k.id, stat: k.stat, rang: k.rang, nom: x ? x.nom : k.nom, usage: x ? x.usage : null, dessin: (x && x.dessin) || k.embleme || null, propre: !!x });
     });
     Q.forEach(function (q) { plan.parQuartier[q.id].sort(function (u, v) { return u.rang - v.rang; }); });
     contenu._planIle = plan;
@@ -1441,7 +1441,10 @@
       var habitable = !options.length || options[0].ouverte;
       if (!habitable) { hab = 0; inst.forEach(function (x) { x.habitants = 0; }); }
       total += hab; capacite += cap;
-      return { habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, nom: q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: posees > 0, ouvert: ouvert || posees > 0, installations: inst,
+      // Le lieu grandit par stades (Victor, 2026-11-10 : « d'abord la place du marché du village », pas la ville d'emblée) :
+      // son nom est celui du stade atteint, un par option ouverte.
+      var stade = options.filter(function (o) { return o.ouverte; }).length, noms = q.stades || [];
+      return { habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, stade: stade, nomFinal: q.nom, nom: noms[stade] || q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: posees > 0, ouvert: ouvert || posees > 0, installations: inst,
         options: options, posees: posees, marche: marche, habitants: hab, capacite: cap };
     });
     return { quartiers: quartiers, habitants: total, capacite: capacite };
@@ -1476,7 +1479,8 @@
     var q = (contenu.ile.quartiers || []).filter(function (x) { return x.id === o.cible; })[0];
     if (!o.type || !q) return { jour: jour, type: null, veille: o.veille, reussi: false };
     var fonde = ile(contenu, partie, t).quartiers.some(function (x) { return x.id === q.id && x.fonde; });
-    return { jour: jour, type: o.type, quartier: q.id, nom: q.nom, couleur: q.couleur, fonde: fonde, besoin: 1, fait: o.fait ? 1 : 0, reussi: o.fait, credits: R.credits, veille: o.veille,
+    var vu = ile(contenu, partie, t).quartiers.filter(function (x) { return x.id === q.id; })[0];
+    return { jour: jour, type: o.type, quartier: q.id, nom: vu.nom, couleur: q.couleur, fonde: fonde, besoin: 1, fait: o.fait ? 1 : 0, reussi: o.fait, credits: R.credits, veille: o.veille,
       prochain: o.fait ? null : epreuveDuJour(contenu, partie, t) };
   }
   // Une épreuve réussie aujourd'hui tient l'objectif : la prime tombe une fois, la veille est levée.
@@ -1494,7 +1498,7 @@
     var q = quartierIle(contenu, partie, id, t);
     if (!q) return null;
     objectifIle(contenu, partie, t);
-    return { posees: q.posees, etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, options: q.options.filter(function (o) { return o.ouverte; }).length };
+    return { posees: q.posees, nom: q.nom, etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, options: q.options.filter(function (o) { return o.ouverte; }).length };
   }
   function changementIle(contenu, partie, id, t, avant, reussi) {
     if (!avant) return null;
@@ -1505,7 +1509,7 @@
     var inst = q.installations.filter(function (x) { return x.comp === id; })[0];
     // L'option que l'épreuve vient d'ouvrir (ou de fermer) dans le quartier.
     var option = apres.options > avant.options ? q.options[apres.options - 1] : apres.options < avant.options ? q.options[avant.options - 1] : null;
-    return { comp: id, quartier: q.id, objectif: tenu ? objectifIle(contenu, partie, t) : null, fondation: avant.posees === 0 && q.posees > 0, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
+    return { comp: id, quartier: q.id, objectif: tenu ? objectifIle(contenu, partie, t) : null, fondation: avant.posees === 0 && q.posees > 0, stadeAvant: avant.nom, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, habitants: apres.habitants };
   }
   function listeDonjons(contenu) { return (contenu.donjons && contenu.donjons.donjons) || []; }
   function donjonDe(contenu, id) { return listeDonjons(contenu).filter(function (d) { return d.id === id; })[0] || null; }

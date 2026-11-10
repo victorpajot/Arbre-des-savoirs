@@ -4327,6 +4327,13 @@
          "roche"
         ],
         "description": "Le paysage propre au quartier : un ponton sur la mer, des champs cultivés, un sol de roche."
+       },
+       "stades": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/texte"
+        },
+        "description": "Les noms successifs du lieu, du plus rudimentaire (quartier tout juste fondé) au plus abouti : un de plus que d'options. Le dernier vaut `nom`."
        }
       }
      }
@@ -4340,8 +4347,7 @@
        "comp",
        "quartier",
        "nom",
-       "usage",
-       "dessin"
+       "usage"
       ],
       "properties": {
        "comp": {
@@ -4360,7 +4366,7 @@
        },
        "dessin": {
         "type": "string",
-        "description": "Pixel art 32 × 32 (dessins.json du pack, objet ou icône)."
+        "description": "Pixel art 32 × 32 (dessins.json du pack, objet ou icône). Sans dessin, l'emblème de la compétence."
        }
       }
      }

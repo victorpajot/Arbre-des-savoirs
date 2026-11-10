@@ -2144,7 +2144,10 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(ri.ile.avant, "friche"); assert.equal(ri.ile.apres, "marche");
   // L'île est vierge au départ : la première installation d'un quartier le fonde.
   assert.ok(M.ile(CI, M.nouvellePartie(ti), ti).quartiers.every(q => !q.fonde));
-  assert.ok(ri.ile.fondation && quartier().fonde); assert.equal(M.ile(CI, PI, ti).quartiers.filter(q => q.fonde).length, 1);
+  assert.ok(ri.ile.fondation && quartier().fonde);
+  // Le lieu porte le nom de son stade : rudimentaire à la fondation, son nom complet quand toutes ses options sont ouvertes.
+  const stades = CI.ile.quartiers.find(q => q.id === "port").stades;
+  assert.equal(stades.length, quartier().options.length + 1); assert.equal(quartier().nom, stades[0]); assert.notDeepEqual(quartier().nom, quartier().nomFinal); assert.equal(M.ile(CI, PI, ti).quartiers.filter(q => q.fonde).length, 1);
   assert.equal(inst("phys.machines").etat, "marche"); assert.equal(quartier().posees, 1);
   // Un quartier fondé est un chantier : personne n'y vit avant que son premier palier soit ouvert.
   assert.equal(ri.ile.habitants, 0); assert.ok(!quartier().habitable); assert.equal(quartier().manque, quartier().options[0].installations - 1);
@@ -2178,6 +2181,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   CI.competences.forEach(k => { PI.competences[k.id] = { maitrise: true, prochainRappel: ti + 86400000, palier: 1, xp: 1 }; });
   const tout = M.ile(CI, PI, ti); assert.equal(tout.habitants, tout.capacite);
   assert.ok(tout.quartiers.every(q => q.options.every(o => o.ouverte)), "tout maîtriser ouvre toutes les options");
+  assert.ok(tout.quartiers.every(q => JSON.stringify(q.nom) === JSON.stringify(q.nomFinal)), "au dernier stade, le lieu porte son nom complet");
   const sans = tout.quartiers.flatMap(q => q.installations).find(x => !x.propre);
   if (sans) assert.ok(sans.nom && !sans.usage);
   // L'objectif du jour suit le plateau : le quartier visé est celui de l'épreuve que le jeu propose, et la réussir

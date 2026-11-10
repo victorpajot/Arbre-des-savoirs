@@ -4220,7 +4220,7 @@ function demarrerJeu() {
       var retour = el('<button type="button" class="ile-retour">' + __("← L'île") + "</button>");
       retour.onclick = function () { quartierVu = null; rendre(); window.scrollTo(0, 0); };
       v.appendChild(retour);
-      v.appendChild(el('<div class="entete"><div><div class="eyebrow" style="color:' + q.couleur + '">' + __("Quartier de l'île") + "</div><h1>" + esc(tx(q.nom)) + "</h1></div>" + compteur + "</div>"));
+      v.appendChild(el('<div class="entete"><div><div class="eyebrow" style="color:' + q.couleur + '">' + (q.stade < q.options.length ? __("Un jour : ") + esc(tx(q.nomFinal)) : __("Quartier de l'île")) + "</div><h1>" + esc(tx(q.nom)) + "</h1></div>" + compteur + "</div>"));
       if (q.description) v.appendChild(el('<p class="note">' + esc(tx(q.description)) + "</p>"));
       var sc = el('<div class="ile-cadre">' + svgQuartier(q) + "</div>");
       sc.onclick = function (ev) { var g = ev.target.closest && ev.target.closest("[data-comp]"); if (!g) return; var id = g.getAttribute("data-comp"); ouvrirInstallation(q, q.installations.filter(function (x) { return x.comp === id; })[0]); };
@@ -4318,7 +4318,8 @@ function demarrerJeu() {
       (inst.usage && ch.apres === "marche" ? '<p class="desc">' + esc(tx(inst.usage)) + "</p>" : ch.apres !== "marche" ? '<p class="desc">' + esc(TEXTE_ETAT[ch.apres]()) + "</p>" : "") +
       (d ? '<p class="ile-delta ' + (d > 0 ? "plus" : "moins") + '">' + (d > 0 ? "+" : "−") + esc(texteHabitants(Math.abs(d))) + '<small>' + esc(texteHabitants(ch.habitants)) + __(" sur l'île") + "</small></p>" : "") +
       (monte && !q.habitable ? '<p class="desc">' + __("Personne n'y vit encore : il manque ") + q.manque + (q.manque > 1 ? __(" installations") : __(" installation")) + __(" pour rendre le quartier habitable.") + "</p>" : "") +
-      (ch.fondation ? '<p class="ile-service">' + __("Nouveau quartier fondé : ") + esc(tx(q.nom)) + '</p><p class="desc">' + esc(tx(q.description)) + "</p>" : "") +
+      (ch.fondation ? '<p class="ile-service">' + __("Nouveau lieu sur l'île : ") + esc(tx(q.nom)) + "</p>" :
+        ch.option && ch.stadeAvant && tx(ch.stadeAvant) !== tx(q.nom) ? '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(ch.stadeAvant)) + (ch.optionOuverte ? __(" devient : ") : __(" redevient : ")) + esc(tx(q.nom)) + "</p>" : "") +
       (ch.objectif ? '<p class="ile-service">' + __("Objectif du jour tenu : pas de délestage ce soir.") + " +" + ch.objectif.credits + __(" crédits") + "</p>" : "") +
       (ch.option ? '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(q.nom)) + (ch.optionOuverte ? __(" débloque : ") : __(" perd : ")) + esc(tx(ch.option.nom)) + "</p>" + (ch.optionOuverte ? '<p class="desc">' + esc(tx(ch.option.usage)) + "</p>" : "") : "") + "</div>");
     return b;

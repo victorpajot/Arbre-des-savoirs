@@ -2,6 +2,46 @@
  "format": 1,
  "installations": [
   {
+   "comp": "math.origines",
+   "quartier": "ville",
+   "nom": {
+    "fr": "L'étal aux encoches"
+   },
+   "usage": {
+    "fr": "Au marché, on compte les sacs échangés par des entailles sur un bâton. Personne n'écrit encore, mais plus personne ne se fait rouler."
+   }
+  },
+  {
+   "comp": "math.babylone",
+   "quartier": "ville",
+   "nom": {
+    "fr": "Le bureau des comptes"
+   },
+   "usage": {
+    "fr": "On y tient les réserves de l'île sur des tablettes d'argile. On sait enfin ce qu'il reste dans les greniers."
+   }
+  },
+  {
+   "comp": "math.egypte",
+   "quartier": "champs",
+   "nom": {
+    "fr": "Le cordeau de l'arpenteur"
+   },
+   "usage": {
+    "fr": "Il retrace les parcelles quand le ruisseau a débordé. Chacun retrouve son champ, au pas près."
+   }
+  },
+  {
+   "comp": "math.geometrie",
+   "quartier": "artisans",
+   "nom": {
+    "fr": "L'atelier du géomètre"
+   },
+   "usage": {
+    "fr": "Règle et compas : on y trace les plans des bâtiments de l'île avant de poser la première pierre."
+   }
+  },
+  {
    "comp": "phys.machines",
    "quartier": "port",
    "nom": {
@@ -220,6 +260,36 @@
     "fr": "Le grand instrument du campus, où des centaines de chercheurs travaillent ensemble. Quand il tourne, toute l'île retient son souffle."
    },
    "dessin": "ile-ph-anneau"
+  },
+  {
+   "comp": "sci.soigner",
+   "quartier": "ville",
+   "nom": {
+    "fr": "La hutte du soigneur"
+   },
+   "usage": {
+    "fr": "On y panse les plaies et on y veille les malades. Sur l'île, personne n'est laissé seul avec sa fièvre."
+   }
+  },
+  {
+   "comp": "sci.egypte",
+   "quartier": "champs",
+   "nom": {
+    "fr": "Le jardin des remèdes"
+   },
+   "usage": {
+    "fr": "Des plantes rangées par usage, et un carnet où l'on note ce qui a marché."
+   }
+  },
+  {
+   "comp": "sci.hippocrate",
+   "quartier": "ville",
+   "nom": {
+    "fr": "Le dispensaire"
+   },
+   "usage": {
+    "fr": "On y regarde le malade avant de chercher un coupable. Les habitants y passent même quand ils vont bien."
+   }
   }
  ],
  "regles": {
@@ -279,7 +349,21 @@
     0.75,
     0.27
    ],
-   "decor": "quai"
+   "decor": "quai",
+   "stades": [
+    {
+     "fr": "La crique"
+    },
+    {
+     "fr": "Le ponton de pêche"
+    },
+    {
+     "fr": "Le comptoir"
+    },
+    {
+     "fr": "Le port"
+    }
+   ]
   },
   {
    "id": "ville",
@@ -294,10 +378,10 @@
     {
      "installations": 2,
      "nom": {
-      "fr": "Le marché du matin"
+      "fr": "Les premières maisons"
      },
      "usage": {
-      "fr": "Une place où l'on se retrouve tous les jours. Les nouvelles circulent."
+      "fr": "Des familles s'installent autour de la place. On se retrouve tous les matins, les nouvelles circulent."
      }
     },
     {
@@ -322,6 +406,20 @@
    "position": [
     0.77,
     0.5
+   ],
+   "stades": [
+    {
+     "fr": "La place du marché"
+    },
+    {
+     "fr": "Le village"
+    },
+    {
+     "fr": "Le bourg"
+    },
+    {
+     "fr": "La ville"
+    }
    ]
   },
   {
@@ -365,6 +463,20 @@
    "position": [
     0.76,
     0.69
+   ],
+   "stades": [
+    {
+     "fr": "L'établi"
+    },
+    {
+     "fr": "Les échoppes"
+    },
+    {
+     "fr": "La halle des métiers"
+    },
+    {
+     "fr": "La zone artisanale"
+    }
    ]
   },
   {
@@ -409,7 +521,21 @@
     0.39,
     0.865
    ],
-   "decor": "roche"
+   "decor": "roche",
+   "stades": [
+    {
+     "fr": "Le four"
+    },
+    {
+     "fr": "La forge"
+    },
+    {
+     "fr": "La manufacture"
+    },
+    {
+     "fr": "La zone industrielle"
+    }
+   ]
   },
   {
    "id": "champs",
@@ -453,7 +579,21 @@
     0.25,
     0.565
    ],
-   "decor": "champs"
+   "decor": "champs",
+   "stades": [
+    {
+     "fr": "Le lopin"
+    },
+    {
+     "fr": "Le potager"
+    },
+    {
+     "fr": "Les serres"
+    },
+    {
+     "fr": "Les champs et jardins"
+    }
+   ]
   },
   {
    "id": "agora",
@@ -496,6 +636,20 @@
    "position": [
     0.27,
     0.25
+   ],
+   "stades": [
+    {
+     "fr": "Le cercle de pierres"
+    },
+    {
+     "fr": "La tribune"
+    },
+    {
+     "fr": "Le théâtre"
+    },
+    {
+     "fr": "L'agora"
+    }
    ]
   },
   {
@@ -539,6 +693,20 @@
    "position": [
     0.5,
     0.165
+   ],
+   "stades": [
+    {
+     "fr": "La cabane d'observation"
+    },
+    {
+     "fr": "Les laboratoires"
+    },
+    {
+     "fr": "Le musée"
+    },
+    {
+     "fr": "Le campus"
+    }
    ]
   },
   {
@@ -584,7 +752,21 @@
     0.5,
     0.655
    ],
-   "decor": "roche"
+   "decor": "roche",
+   "stades": [
+    {
+     "fr": "La source chaude"
+    },
+    {
+     "fr": "Le premier courant"
+    },
+    {
+     "fr": "Le réseau"
+    },
+    {
+     "fr": "La centrale"
+    }
+   ]
   }
  ]
 }
