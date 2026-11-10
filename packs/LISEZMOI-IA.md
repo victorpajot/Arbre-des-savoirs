@@ -100,7 +100,7 @@ Un fichier par type de contenu. Chacun est une liste (ou un dictionnaire) qui s'
 | `repliques.json` | Les répliques d'Alyca propres à l'arbre. | `commentaires.json` |
 | `cases.json` | Les cases du plateau apportées par l'arbre (liste, voir plus bas). | `plateau.json › cases` |
 | `evocations.json` | `{numéro de case: [compétences]}` : les cases d'autres packs dont l'histoire évoque le domaine. | `plateau.json › competences_cases` |
-| `dessins.json` | `{id: 32 lignes de 32 caractères}` : pixel art pour les emblèmes et succès. | `succes.json › dessins` |
+| `dessins.json` | `{id: 32 lignes de 32 caractères}` : pixel art pour les emblèmes et succès. Un dessin de leçon (champ `dessin` d'un chapitre de masterclass, placé par `dessin_apres`) peut faire 48 × 48. | `succes.json › dessins` |
 | `objets.json`, `masques.json`, `accessoires.json`, `tenues.json`, `apartes.json`, `figures.json`, `boutique.json` | Facultatifs : objets du cabinet, masques d'Alyca, accessoires, farces, apartés, figures interactives, articles de boutique. Copier la forme d'un pack existant (`grep -l` dans `packs/`). | voir `EMPLACEMENTS` dans `outils/packs.py` |
 | `donjons.json`, `proces.json` | Packs de jeu seulement : un donjon de construction (ateliers, épreuves, pièces : `packs/donjon-ordinateur/`) ou un procès (salles notées, verdict : `packs/donjon-proces/`). Chaque `source` (récit d'atelier, leçon, vrai procès) se vérifie comme les autres. | `donjons.json` › `donjons` / `proces` |
 

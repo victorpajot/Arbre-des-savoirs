@@ -1715,7 +1715,8 @@ function demarrerJeu() {
   }
   function svgSprite(id, taille, label, verrou) {
     var g = grilleSprite(id); if (!g) return "";
-    return '<svg class="pix" viewBox="0 0 32 32" width="' + taille + '" height="' + taille + '"' + (label ? ' role="img" aria-label="' + esc(label) + '"' : ' aria-hidden="true"') + ">" +
+    // Les dessins de leçon peuvent faire 48 × 48 : le cadre suit la grille.
+    return '<svg class="pix" viewBox="0 0 ' + g[0].length + " " + g.length + '" width="' + taille + '" height="' + taille + '"' + (label ? ' role="img" aria-label="' + esc(label) + '"' : ' aria-hidden="true"') + ">" +
       pixels(g, C.cabinet.palette, null, 0, 0, 1, verrou) + "</svg>";
   }
   // Fil « Basile » : le dessin d'une question (pixel art d'un pack). { id } seul : une grande image ; { id, groupes: [3, 2] } :
@@ -6221,9 +6222,11 @@ function demarrerJeu() {
       // Victor (2026-11-03) : comme les questions, chaque étape porte son identifiant, pour les retours.
       // Victor (2026-11-09) : pour mémoriser, l'étape 1 annonce le fil de la leçon (une idée par étape).
       var plan = i === 0 && k.masterclass.chapitres.length > 1 ? '<div class="mc-plan"><b>' + __("Le fil de la leçon") + "</b><ol>" + k.masterclass.chapitres.map(function (c2) { return "<li>" + esc(tx(c2.titre)) + "</li>"; }).join("") + "</ol></div>" : "";
-      return { titre: tx(ch.titre), html: (ch.id ? '<p class="code-q">' + esc(k.id + "/" + ch.id) + "</p>" : "") + plan + (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux, livres), cles, etatCles); }).join("") +
+      return { titre: tx(ch.titre), html: (ch.id ? '<p class="code-q">' + esc(k.id + "/" + ch.id) + "</p>" : "") + plan + (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x, ip) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux, livres), cles, etatCles) +
+          // Victor (2026-11-10) : le dessin se place juste après le paragraphe qui en parle (champ dessin_apres).
+          (ch.dessin && ch.dessin_apres === ip ? htmlDessinQ({ id: ch.dessin }) : ""); }).join("") +
         // Victor (2026-11-01) : un dessin en pixel art de l'instrument ou de l'objet dont parle l'étape (champ dessin).
-        (ch.dessin ? htmlDessinQ({ id: ch.dessin }) : "") +
+        (ch.dessin && !(ch.dessin_apres >= 0 && ch.dessin_apres < ch.texte.length) ? htmlDessinQ({ id: ch.dessin }) : "") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +
         __('<p class="mc-retenir"><b>À retenir</b>') + escD(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });

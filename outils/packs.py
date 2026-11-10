@@ -569,8 +569,9 @@ def formes(m, ids):
             err(f"questions.json › {q.get('id')} : dessin « {q['dessin'].get('id')} » introuvable (un dessin de dessins.json)")
     if (m["_dossier"] / "dessins.json").exists():
         for k, g in lire(m["_dossier"] / "dessins.json").items():
-            if len(g) != 32 or any(len(l) != 32 for l in g):
-                err(f"dessins.json › {k} : 32 lignes de 32 caractères")
+            # Victor (2026-11-10) : un dessin de leçon peut monter à 48 × 48 pour gagner en détail.
+            if len(g) not in (32, 48) or any(len(l) != len(g) for l in g):
+                err(f"dessins.json › {k} : 32 lignes de 32 caractères (ou 48 de 48 pour un dessin de leçon)")
             elif set("".join(g)) - set(PALETTE) - {"."}:
                 err(f"dessins.json › {k} : caractères hors palette {sorted(set(''.join(g)) - set(PALETTE) - {'.'})} (voir FAMILLES dans outils/dessin.py)")
     for sv in lire_liste(m, "savants.json"):
