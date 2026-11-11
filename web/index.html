@@ -3944,8 +3944,24 @@ function demarrerJeu() {
     var dx = (g % 2 ? 1 : -1) * (portee * 0.5 + (g >>> 3) % Math.max(1, Math.round(portee * 0.5))), dy = ((g >>> 7) % (haut * 2 + 1)) - haut, d = Math.round((7 + (g >>> 5) % 9) * (age === "enfant" ? 0.6 : age === "ancien" ? 1.8 : 1));
     return '<g class="ile-marcheur" style="--dx:' + dx + "px;--dy:" + dy + "px;animation-duration:" + d + "s;animation-delay:-" + ((g >>> 9) % (d * 10)) / 10 + 's"><g class="ile-pas" shape-rendering="crispEdges" style="animation-delay:-' + ((g >>> 4) % 5) / 10 + 's">';
   }
+  // Victor (2026-11-11) : les habitants évoluent avec les savoirs. Toges grises au départ ; « Les premiers ateliers »
+  // (pigments, pourpre) en teint une partie en bleu et de rares en pourpre ; « La chimie du carbone » (mauvéine) met le
+  // violet puis toutes les couleurs à la portée de tous. Sans le pack Alchimie, les couleurs d'avant restent.
+  var TOGES_GRISES = ["#9A9AA2", "#B4B4BA", "#85858E", "#A8A49C"], TOGES_BLEUES = ["#3D63D9", "#5B8DEF", "#2F4FA8"], TOGES_VIOLETTES = ["#9B59D0", "#B37BE0", "#7E45B8"], POURPRE = "#7A1F5C";
+  function teinturesIle() {
+    if (!C.parId["chim.feu"]) return null;
+    function su(id) { var e = P.competences[id]; return !!(e && e.maitrise); }
+    return { bleu: su("chim.feu"), violet: su("chim.organique") };
+  }
+  function togeHabitant(g) {
+    var T = teinturesIle(), k = (g >>> 6), r = k % 12;
+    if (!T) return HABITS[k % HABITS.length];
+    if (T.violet) return r < 4 ? TOGES_VIOLETTES[k % 3] : r < 7 ? TOGES_BLEUES[k % 3] : r === 7 ? POURPRE : HABITS[k % HABITS.length];
+    if (T.bleu) return r === 0 ? POURPRE : r < 6 ? TOGES_BLEUES[k % 3] : TOGES_GRISES[k % 4];
+    return TOGES_GRISES[k % 4];
+  }
   function svgHabitant(x, y, g, e) {
-    var age = ageHabitant(g), pal = { h: age === "ancien" ? "#E8E8EE" : CHEVEUX[g % CHEVEUX.length], s: PEAUX[(g >>> 3) % PEAUX.length], v: HABITS[(g >>> 6) % HABITS.length], j: "#2B2B33" };
+    var age = ageHabitant(g), pal = { h: age === "ancien" ? "#E8E8EE" : CHEVEUX[g % CHEVEUX.length], s: PEAUX[(g >>> 3) % PEAUX.length], v: togeHabitant(g), j: "#2B2B33" };
     e = e || 1.5;
     if (age === "enfant") return pixels(HABITANT, pal, null, x + e, y + e * 8 * 0.35, e * 0.65);
     return pixels(HABITANT, pal, null, x, y, e);
