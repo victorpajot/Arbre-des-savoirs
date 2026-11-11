@@ -3172,13 +3172,14 @@ function demarrerJeu() {
     var motif = c.achat ? __("Faveur achetée : encore ") + M.arbreAchete(P).restant + __(" épreuve") + (M.arbreAchete(P).restant > 1 ? "s" : "") + __(" dans cet arbre.")
       : c.raison === "hors_case" && kc && statActif(kc.stat) ? __("Rien à jouer pour toi dans l'arbre ") + tx(stat(kc.stat).nom) + __(" de la case : l'IA improvise ailleurs.")
       : c.raison === "rappel_force" ? __("Une épreuve sur ") + (C.regles.rappels.force_tous || 3) + __(", Alyca impose un rappel en attente : l'oubli n'attend pas.")
-      : c.raison === "serie" ? __("Série de révisions : rappel ") + c.serie.n + __(" sur ") + c.serie.total + __(". Tout réussi, la prime est à toi ; un raté et la série s'arrête.")
+      : c.raison === "serie" ? __("Série de révisions : rappel ") + c.serie.n + __(" sur ") + c.serie.total + __(". Tout réussi, la prime est à toi ; un raté et elle saute, mais tu pourras reprendre la série.")
       : c.raison === "ouvre_arbre" ? __("Arbre encore fermé : réussis ce quiz pour l'ouvrir.")
       : c.raison === "revision" ? __("Révision forcée par la case.")
       : "";
     var blocArbre = '<div class="arbre-choisi" style="--c:' + couleur(s.id) + '">' + iconeArbre(s.id, 56) + __('<div class="txt"><div class="eyebrow">Arbre</div><b>') + esc(tx(s.nom)) + "</b><span>" + esc(tx(s.branche)) + "</span></div>" +
       '<div class="niv-a">' + (ferme ? ICONE_CADENAS + __("<small>Fermé</small>") : '<span class="num">' + nvA.niveau + "</span><small>" + titreNiveau(nvA.niveau) + "</small>") + "</div>" +
       '<p class="desc-a">' + esc(tx(s.description)) + (motif ? " " + esc(motif) : "") + "</p></div>";
+    var repJ = M.serieReprenable(C, P, t);
     var nature = c.raison === "revision" ? __("Révision forcée") : c.type === "rappel" ? __("Rappel") : __("Quiz");
     var blocEpreuve = '<div class="epreuve-choisie" style="--c:' + couleur(k.stat) + '">' + badgeComp(k, 76) + '<div class="txt"><div class="eyebrow">' + nature + __(" · niveau ") + k.rang + "</div><b>" + esc(tx(k.nom)) + "</b>" +
       (k.description ? "<span>" + esc(tx(k.description)) + "</span>" : "") + "</div>" +
@@ -3188,12 +3189,14 @@ function demarrerJeu() {
     feuilleSimple('<div class="choix-ia">' + bandeau + blocArbre + blocEpreuve +
       __('<button type="button" class="btn large" data-a="go">C\'est parti</button>') +
       (c.raison === "serie" ? __('<button type="button" class="btn sec large" data-a="stop-serie">Arrêter la série (sans prime)</button>') : "") +
+      (repJ ? '<button type="button" class="btn large sc-serie" data-a="reprise">' + __("Reprendre la série de rappels") + "<small>" + repJ.n + (repJ.n > 1 ? __(" rappels, ") : __(" rappel, ")) + repJ.prime + __(" crédits") + "</small></button>" : "") +
       // Victor (2026-11-08) : avant l'épreuve, toujours de quoi ouvrir la masterclass de la compétence.
       (aMasterclass(k) ? __('<button type="button" class="btn large sc-mc" data-a="mc">Ouvrir la masterclass</button>') : "") +
       '<div id="ia-jouer"></div>' +
       (enI || atI ? "" : galerieTheme(c.type === "rappel" ? k.stat : ici.stat)) + "</div>", !enI && !atI && c.type === "rappel" ? __("Rappel") : __("Ta case"), {
       go: function () { fermerFeuille(); lancerQuiz(k.id, c.type, { jouer: true }); },
       atome: function () { fermerFeuille(); if (atI) combattreAtome(atI.z); },
+      reprise: function () { M.reprendreSerie(C, P, maintenant()); sauver(); fermerFeuille(); ouvrirJouer(); },
       "stop-serie": function () { M.abandonnerSerie(P); sauver(); fermerFeuille(); ouvrirJouer(); },
       mc: function () { fermerFeuille(); ouvrirMasterclass(k.id, null, __("← Retour à l'épreuve"), ouvrirJouer); },
     });
@@ -8341,13 +8344,17 @@ function demarrerJeu() {
     // Victor (2026-10-31) : rappels imposés et séries de révisions.
     if (quiz.mode === "rappel" && r.horsCase && r.issue === "reussi" && quiz.jouer) texte += __(" Ton pion reste sur sa case : elle garde son quiz.");
     if (r.serie) texte += " " + (r.serie.credits ? __("Série terminée : ") + r.serie.total + __(" rappels réussis, prime de ") + r.serie.credits + __(" crédits !") :
-      r.serie.rate ? __("Série interrompue : pas de prime cette fois.") : __("Série : ") + r.serie.faits + __(" sur ") + r.serie.total + __(". Encore ") + r.serie.reste + __(" pour la prime de ") + r.serie.prime + __(" crédits."));
+      r.serie.rate ? (r.serie.reste ? __("Série interrompue : la prime saute, mais tu peux reprendre avec ") + (r.serie.reste > 1 ? r.serie.reste + __(" rappels restants.") : __("le rappel restant.")) : __("Série interrompue : pas de prime cette fois.")) : __("Série : ") + r.serie.faits + __(" sur ") + r.serie.total + __(". Encore ") + r.serie.reste + __(" pour la prime de ") + r.serie.prime + __(" crédits."));
     // v6 : trois temps, une chose à la fois. 1. le verdict et l'IA, 2. les récompenses une par une, 3. le pion qui avance.
     var cd = quiz.cartes || (quiz.cartes = r.apresPlateau ? cartesEnDeux(r, null, r.theme) : { recs: recompensesBilan(r), nAvant: null }), recs = cd.recs;
     var etapes = ["verdict"];
     // L'île (Victor, 2026-11-10) : ce que l'épreuve vient d'y changer, tout de suite après le verdict.
     if (r.ile) etapes.push("ile");
-    etapesRecompenses(etapes, recs, r.plateau, cd.nAvant, quiz);
+    // Victor (2026-11-11) : tant que la série de rappels n'est pas finie (ou qu'elle peut être reprise), pas de retour au parcours.
+    var tS = maintenant(), ferme = M.jeuFerme(C, P, tS);
+    var suivS = r.serie && !r.serie.fini && !ferme ? M.choixIA(C, P, tS) : null; if (suivS && suivS.raison !== "serie") suivS = null;
+    var repS = r.serie && r.serie.rate && !ferme && !M.masterclassImposee(C, P) ? M.serieReprenable(C, P, tS) : null;
+    etapesRecompenses(etapes, recs, suivS || repS ? null : r.plateau, cd.nAvant, quiz);
     var arret = atomeArret(r.plateau);
     if (P.duel && P.duel.pret && r.plateau && r.plateau.etapes.some(function (x) { return x.type === "ennemi" || x.type === "duel_attente"; })) etapes.push("duel");
     var e = quiz.etape = Math.min(quiz.etape || 0, etapes.length - 1), nom = etapes[e], dernier = e === etapes.length - 1;
@@ -8393,6 +8400,14 @@ function demarrerJeu() {
       wrap.appendChild(mi);
       wrap.appendChild(el(__('<p class="note" style="margin:0;text-align:center">Deux épreuves ratées de suite : l\'IA t\'impose la leçon avant toute autre épreuve.</p>')));
     }
+    else if (!suite && suivS) {
+      var bn = el('<button type="button" class="btn large sc-serie">' + __("Rappel suivant : ") + esc(tx(suivS.comp.nom)) + "<small>" + __("Série, ") + suivS.serie.n + __(" sur ") + suivS.serie.total + "</small></button>");
+      bn.onclick = function () { fermerQuiz(); lancerQuiz(suivS.comp.id, "rappel", { jouer: true }); };
+      wrap.appendChild(bn);
+      var ba = el('<button type="button" class="btn sec large">' + __("Arrêter la série (sans prime)") + "</button>");
+      ba.onclick = function () { M.abandonnerSerie(P); sauver(); fermerQuiz(); };
+      wrap.appendChild(ba);
+    }
     else if (!suite && M.piegeEnAttente(P)) boutonPiege(wrap, fermerQuiz);
     else if (!suite && M.chronoEnAttente(P)) boutonChrono(wrap, fermerQuiz);
     else if (!suite) {
@@ -8401,6 +8416,15 @@ function demarrerJeu() {
         var bs = el('<button type="button" class="btn large sc-serie">' + __("Enchaîner les ") + sp.n + __(" rappels en attente") + "<small>" + __("Tous réussis : ") + sp.prime + __(" crédits") + "</small></button>");
         bs.onclick = function () { M.lancerSerie(C, P, maintenant()); sauver(); fermerQuiz(); ouvrirJouer(); };
         wrap.appendChild(bs);
+      }
+      if (repS) {
+        var br = el('<button type="button" class="btn large sc-serie">' + (repS.n > 1 ? __("Reprendre la série : ") + repS.n + __(" rappels") : __("Reprendre la série : 1 rappel")) + "<small>" + __("Tous réussis : ") + repS.prime + __(" crédits") + "</small></button>");
+        br.onclick = function () {
+          M.reprendreSerie(C, P, maintenant()); sauver();
+          var nx = M.choixIA(C, P, maintenant()); fermerQuiz();
+          if (nx && nx.raison === "serie") lancerQuiz(nx.comp.id, "rappel", { jouer: true }); else ouvrirJouer();
+        };
+        wrap.appendChild(br);
       }
       finEpreuve(wrap, fermerQuiz);
     }

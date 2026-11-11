@@ -1565,6 +1565,22 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     if (i === 1) { assert.ok(ry.serie.fini && ry.serie.credits === sp.prime); }
   }
   assert.equal(P.credits.solde - solde >= sp.prime, true, "prime versée"); assert.equal(P.serie, null);
+  // Victor (2026-11-11) : en série le pion ne bouge pas, et un raté laisse reprendre la série avec les rappels restants.
+  {
+    const Q = JSON.parse(JSON.stringify(P)), T2 = T + 400 * 86400000;
+    const dus = M.rappelsDus(C, Q, T2); assert.ok(dus.length >= 3, "au moins 3 rappels dus");
+    assert.equal(M.serieReprenable(C, Q, T2), null, "rien à reprendre sans série rompue");
+    M.lancerSerie(C, Q, T2);
+    const pos2 = Q.plateau.position, a = M.choixIA(C, Q, T2);
+    const ra = M.terminerRappel(C, Q, a.comp.id, [0, 1, 2].map(j => ({ id: "t" + j, correct: false })), T2, { total: 3, jouer: true });
+    assert.ok(ra.serie.rate && ra.horsCase); assert.equal(Q.serie, null); assert.equal(Q.plateau.position, pos2);
+    const rp = M.serieReprenable(C, Q, T2); assert.ok(rp && rp.n === ra.serie.reste && rp.n >= 2);
+    assert.equal(M.serieReprenable(C, Q, T2 + 2 * 86400000), null, "la reprise ne vaut que le jour même");
+    M.reprendreSerie(C, Q, T2); assert.equal(Q.serie.total, rp.n); assert.equal(Q.serieRompue, null);
+    const b = M.choixIA(C, Q, T2 + 1); assert.equal(b.raison, "serie"); assert.equal(b.serie.n, 1);
+    const rb = M.terminerRappel(C, Q, b.comp.id, [0, 1, 2].map(j => ({ id: "u" + j, correct: true })), T2 + 1, { total: 3, jouer: true });
+    assert.ok(!rb.serie.fini && rb.horsCase); assert.equal(Q.plateau.position, pos2, "le pion ne bouge pas pendant la série");
+  }
   console.log("OK : rappel imposé une épreuve sur " + N + ", série de révisions et sa prime (" + sp.prime + ")");
 }
 

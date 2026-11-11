@@ -942,6 +942,9 @@
     var anticipe = !revision && t < e.prochainRappel;
     var CCr = contenu.plateau && contenu.plateau.competences_cases, posR = partie.plateau && partie.plateau.position;
     var horsCase = !!(CCr && posR != null && (CCr[String(posR)] || []).indexOf(id) < 0);
+    // Victor (2026-11-11) : pendant une série, on ne retourne pas sur le parcours : le pion ne bouge pas, même pour le rappel de sa case.
+    if (partie.serie && partie.serie.ids[0] === id) horsCase = true;
+    else if (partie.serieRompue) partie.serieRompue = null;
     retenirQuestions(e, resultats.map(function (x) { return x.id; }));
     marquerJour(partie, t);
     var nuit = compterSession(partie, resultats, t);
@@ -990,7 +993,13 @@
     var serie = null, se = partie.serie;
     if (se && se.ids[0] === id) {
       (se.faitsIds || (se.faitsIds = [])).push(se.ids.shift());
-      if (!reussi) { serie = { fini: true, rate: true, total: se.total, faits: se.total - se.ids.length }; partie.serie = null; }
+      if (!reussi) {
+        // Victor (2026-11-11) : un raté coûte la prime, mais la série peut être reprise avec les rappels qui restent.
+        partie.serie = null; partie.serieRompue = { t: t };
+        var rp = serieReprenable(contenu, partie, t);
+        serie = { fini: true, rate: true, total: se.total, faits: se.total - se.ids.length, reste: rp ? rp.n : 0, prime: rp ? rp.prime : 0 };
+        if (!rp) partie.serieRompue = null;
+      }
       else if (!se.ids.length) {
         partie.credits.solde += se.prime; partie.credits.gagnes += se.prime;
         serie = { fini: true, total: se.total, faits: se.total, credits: se.prime, ids: se.faitsIds.slice(), solde: partie.credits.solde }; partie.serie = null;
@@ -4159,9 +4168,22 @@
   function lancerSerie(contenu, partie, t) {
     var p = serieProposable(contenu, partie, t); if (!p) return null;
     partie.serie = { ids: rappelsDus(contenu, partie, t).map(function (c) { return c.id; }), total: p.n, prime: p.prime, debut: t };
+    partie.serieRompue = null;
     return partie.serie;
   }
-  function abandonnerSerie(partie) { partie.serie = null; }
+  function abandonnerSerie(partie) { partie.serie = null; partie.serieRompue = null; }
+  // Série rompue par un rappel raté (le jour même) : reprise proposée dès qu'il reste un rappel dû, prime recalculée sur ce reste.
+  function serieReprenable(contenu, partie, t) {
+    var ro = partie.serieRompue; if (partie.serie || !ro || cleJour(ro.t) !== cleJour(t)) return null;
+    var dus = rappelsDus(contenu, partie, t);
+    return dus.length ? { n: dus.length, prime: primeSerie(contenu, partie, dus.length, t) } : null;
+  }
+  function reprendreSerie(contenu, partie, t) {
+    var p = serieReprenable(contenu, partie, t); if (!p) return null;
+    partie.serie = { ids: rappelsDus(contenu, partie, t).map(function (c) { return c.id; }), total: p.n, prime: p.prime, debut: t, reprise: true };
+    partie.serieRompue = null;
+    return partie.serie;
+  }
   // Victor (2026-10-31) : « une case = un quiz ». La case du pion donne toujours l'épreuve de sa compétence :
   // un quiz si elle n'est pas acquise (même verrouillée, hors ordre), un rappel si elle l'est, même pas encore dû.
   function choixIA(contenu, partie, t) {
@@ -4447,7 +4469,7 @@
     repliqueDuJour: repliqueDuJour,
     themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieReprenable: serieReprenable, reprendreSerie: reprendreSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, exodeIle: exodeIle, placesIle: placesIle, niveauxIle: niveauxIle, chasserParasites: chasserParasites, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
