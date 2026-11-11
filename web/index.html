@@ -1509,7 +1509,11 @@ svg.grille .interro { transition: opacity .3s; }
 @keyframes ile-pas { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1px); } }
 .ile-marcheur { animation: ile-trajet 10s ease-in-out infinite; }
 .ile-pas { animation: ile-pas .5s steps(2, jump-none) infinite; }
-@media (prefers-reduced-motion: reduce) { .ile-marcheur, .ile-pas { animation: none; } }
+@keyframes ile-note { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-9px); opacity: 0; } }
+@keyframes ile-bulle { 0%, 55% { opacity: 1; } 65%, 100% { opacity: 0; } }
+.ile-note { animation: ile-note 2s linear infinite; font-weight: 800; }
+.ile-bulle { animation: ile-bulle 3s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) { .ile-marcheur, .ile-pas, .ile-note, .ile-bulle { animation: none; } }
 .ile-objectif.tenu { border-left-color: #2E9E5B; } .ile-objectif.tenu .ile-obj-jauge span { background: #2E9E5B; }
 .ile-h2 { font-size: 17px; margin: 22px 0 10px; }
 .ile-options { display: grid; gap: 8px; }
@@ -3926,7 +3930,7 @@ function demarrerJeu() {
   function nb(n) { return Number(n).toLocaleString(locale()); }
   // Un habitant : 5 × 8 pixels, trois couleurs (cheveux, peau, habit) tirées de son rang dans la foule.
   var HABITANT = [".hhh.", ".sss.", ".sss.", "vvvvv", "svvvs", ".vvv.", ".j.j.", ".j.j."];
-  var PEAUX = ["#F2C9A0", "#D9A07A", "#94603C", "#6E4429", "#FBE3C8"], CHEVEUX = ["#2A1A0E", "#6B4226", "#9C6B43", "#C9CED6", "#F2C14E", "#8E2424"],
+  var PEAUX = ["#F6D3B0", "#E3B083", "#C98F62", "#A9703F", "#8A5530", "#6B3F22", "#4E2D18", "#D9A56B"], CHEVEUX = ["#2A1A0E", "#6B4226", "#9C6B43", "#C9CED6", "#F2C14E", "#8E2424"],
     HABITS = ["#D94141", "#3D63D9", "#4CAF50", "#F2C14E", "#9B59D0", "#E8873A", "#8FD8F2", "#F28FB0", "#E8E8EE"];
   function graine(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
   // Les habitants vont et viennent (Victor, 2026-11-10) : chacun fait l'aller-retour vers un point tiré de son rang,
@@ -3941,7 +3945,7 @@ function demarrerJeu() {
   }
   function marcheur(g, portee, haut) {
     var age = ageHabitant(g);
-    var dx = (g % 2 ? 1 : -1) * (portee * 0.5 + (g >>> 3) % Math.max(1, Math.round(portee * 0.5))), dy = ((g >>> 7) % (haut * 2 + 1)) - haut, d = Math.round((7 + (g >>> 5) % 9) * (age === "enfant" ? 0.6 : age === "ancien" ? 1.8 : 1));
+    var dx = (g % 2 ? 1 : -1) * (portee * 0.5 + (g >>> 3) % Math.max(1, Math.round(portee * 0.5))), dy = ((g >>> 7) % (haut * 2 + 1)) - haut, d = Math.round((7 + (g >>> 5) % 9) * (age === "enfant" ? 0.6 : age === "ancien" ? [1.8, 1.5, 1.2][savoirsHabitants().soins] : 1));
     return '<g class="ile-marcheur" style="--dx:' + dx + "px;--dy:" + dy + "px;animation-duration:" + d + "s;animation-delay:-" + ((g >>> 9) % (d * 10)) / 10 + 's"><g class="ile-pas" shape-rendering="crispEdges" style="animation-delay:-' + ((g >>> 4) % 5) / 10 + 's">';
   }
   // Victor (2026-11-11) : les habitants évoluent avec les savoirs. Toges grises au départ ; « Les premiers ateliers »
@@ -3960,11 +3964,48 @@ function demarrerJeu() {
     if (T.bleu) return r === 0 ? POURPRE : r < 6 ? TOGES_BLEUES[k % 3] : TOGES_GRISES[k % 4];
     return TOGES_GRISES[k % 4];
   }
-  function svgHabitant(x, y, g, e) {
-    var age = ageHabitant(g), pal = { h: age === "ancien" ? "#E8E8EE" : CHEVEUX[g % CHEVEUX.length], s: PEAUX[(g >>> 3) % PEAUX.length], v: togeHabitant(g), j: "#2B2B33" };
-    e = e || 1.5;
-    if (age === "enfant") return pixels(HABITANT, pal, null, x + e, y + e * 8 * 0.35, e * 0.65);
-    return pixels(HABITANT, pal, null, x, y, e);
+  // Victor (2026-11-11, « Tout d'un coup ») : le bonhomme est redessiné deux fois plus fin (10 × 16 au lieu de 5 × 8) pour
+  // porter ce que les savoirs lui apportent. Chaque évolution tient à une compétence maîtrisée et pas en panne.
+  var HABITANT2 = ["...hhhh...", "..hhhhhh..", "..hssssh..", "..skssks..", "..ssssss..", "...ssss...", "..vvvvvv..", ".vvvvvvvv.", ".vvvvvvvv.", "svvvvvvvvs", "svvwvvvvvs", "..vvwvvv..", "..vvwvvv..", "..vvvvvv..", "..jj..jj..", "..jj..jj.."];
+  var LIEU_HAB = null;
+  function savoirsHabitants() {
+    var t = maintenant(), h = new Date(t).getHours();
+    function su(id) { var e = P.competences[id]; return !!(e && e.maitrise && !(e.prochainRappel && M.joursEntre(e.prochainRappel, t) >= 2)); }
+    return { machines: su("phys.machines"), lunettes: su("phys.lunettes"), pendule: su("phys.huygens"), musique: su("mus.instruments"), orateurs: su("rhet.orateurs"),
+      tablette: su("math.origines"), livre: su("rhet.imprimerie"), lampes: su("elec.puissance"), ciel: su("astro.observer"),
+      soins: su("sci.hippocrate") ? (su("sci.vaccins") || su("sci.immunite") ? 2 : 1) : 0, soir: h >= 19 || h < 7, nuit: h >= 22 || h < 6 };
+  }
+  function ombre(c) { var n = parseInt(c.slice(1), 16); return "#" + [n >> 16, (n >> 8) & 255, n & 255].map(function (v) { return ("0" + Math.round(v * 0.78).toString(16)).slice(-2); }).join(""); }
+  function svgHabitant(x, y, g, e, nu) {
+    var age = ageHabitant(g), toge = togeHabitant(g), pal = { h: age === "ancien" ? "#E8E8EE" : CHEVEUX[g % CHEVEUX.length], s: PEAUX[(Math.imul(g ^ (g >>> 7), 2654435761) >>> 16) % PEAUX.length], v: toge, w: ombre(toge), k: "#2B2B33", j: "#2B2B33" };
+    e = e || 2;
+    var u = e / 2, S = nu ? null : savoirsHabitants();
+    if (age === "enfant") return pixels(HABITANT2, pal, null, x + e, y + e * 8 * 0.35, u * 0.65);
+    // Le pendule de Huygens : la nuit, deux habitants sur trois sont rentrés à l'heure.
+    if (S && S.pendule && S.nuit && (g >>> 12) % 3) return "";
+    var out = pixels(HABITANT2, pal, null, x, y, u), role = (g >>> 11) % 8, soir = (g >>> 14) % 4;
+    function px(cx, cy, w, h, c, plus) { return '<rect x="' + (x + cx * u) + '" y="' + (y + cy * u) + '" width="' + w * u + '" height="' + h * u + '" fill="' + c + '"' + (plus || "") + "/>"; }
+    if (!S) return out;
+    if (age === "ancien") {
+      // Verres et lunettes : des bésicles pour les anciens. La médecine leur rend la marche, puis leur retire la canne.
+      if (S.lunettes) out += px(2, 3, 6, 1, "#2B2B33") + px(3, 3, 1, 1, "#BFE6F5") + px(6, 3, 1, 1, "#BFE6F5");
+      if (S.soins < 2) out += px(10, 8, 1, 8, "#7A5230") + px(9, 8, 1, 1, "#7A5230");
+    }
+    if (role === 0) {
+      // Machines simples : la brouette remplace le ballot porté à dos.
+      if (S.machines) out += px(10, 11, 2, 1, "#7A5230") + px(12, 9, 6, 3, "#A8703C") + px(12, 9, 6, 1, "#C99A5B") + px(16, 12, 2, 2, "#2B2B33") + px(13, 12, 1, 2, "#7A5230");
+      else out += px(-1, 6, 3, 4, "#C9B48A") + px(-1, 6, 3, 1, "#A8946C");
+    } else if (role === 1 && S.musique) {
+      out += px(7, 5, 5, 1, "#7A5230") + '<text class="ile-note" x="' + (x + 11 * u) + '" y="' + (y + 3 * u) + '" font-size="' + 6 * u + '" fill="#3D63D9" style="animation-delay:-' + ((g >>> 4) % 20) / 10 + 's">♪</text>';
+    } else if (role === 2 && (S.livre || S.tablette)) {
+      out += S.livre ? px(7, 9, 3, 4, "#B23A3A") + px(9, 9, 1, 4, "#F4EEDC") : px(7, 9, 3, 3, "#C98B5A") + px(8, 10, 1, 1, "#8A5A34");
+    }
+    // Dynamos et ampoules : des lanternes le soir. Observer le ciel : une lunette levée la nuit.
+    if (S.lampes && S.soir && soir === 0) out += '<circle class="ile-lueur" cx="' + (x - 0.5 * u) + '" cy="' + (y + 11 * u) + '" r="' + 4 * u + '" fill="#FFE27A" opacity=".35"/>' + px(-1, 8, 1, 2, "#2B2B33") + px(-1, 10, 2, 2, "#FFD23F");
+    if (S.ciel && S.nuit && soir === 1) out += px(9, 8, 1, 1, "#C9A227") + px(10, 7, 1, 1, "#C9A227") + px(11, 6, 1, 1, "#C9A227") + px(12, 5, 2, 1, "#E8C95A");
+    // Les orateurs d'Athènes : sur l'agora, on s'arrête pour discuter.
+    if (S.orateurs && LIEU_HAB === "agora" && (g >>> 9) % 3 === 0) out += '<g class="ile-bulle" style="animation-delay:-' + ((g >>> 5) % 30) / 10 + 's">' + px(8, -5, 8, 4, "#FFFFFF") + px(9, -1, 1, 1, "#FFFFFF") + px(9, -3, 1, 1, "#2B2B33") + px(11, -3, 1, 1, "#2B2B33") + px(13, -3, 1, 1, "#2B2B33") + "</g>";
+    return out;
   }
   var TEXTE_ETAT = {
     marche: function () { return __("En marche."); },
@@ -4147,6 +4188,7 @@ function demarrerJeu() {
   // Le relief qui ne change pas : un bois à l'ouest, un lac au sud-ouest, un marais au sud-est.
   var BOIS = [78, 250, 38, 50], LAC = [98, 446, 30, 19], MARAIS = [226, 508, 38, 25];
   function svgCarteIle(I) {
+    LIEU_HAB = null;
     var W = ILE_W, H = ILE_H, n = I.quartiers.length, o = "", sol = "", plan = [], dessus = "", zones = "", brume = "", vivant;
     var lieux = I.quartiers.map(function (q, i) {
       var p = q.position || [0.5 + 0.36 * Math.cos(i / n * 6.283 - 1.57), 0.5 + 0.36 * Math.sin(i / n * 6.283 - 1.57)];
@@ -4286,6 +4328,7 @@ function demarrerJeu() {
   function svgQuartier(q) {
     // Le village grandit avec ce qu'on y construit (Victor, 2026-11-10 : « pas besoin de voir tous les emplacements
     // vides ») : on ne montre que les installations posées, et deux terrains à bâtir, ceux qu'on peut gagner d'abord.
+    LIEU_HAB = q.id;
     var tm = maintenant(), libres = q.installations.filter(function (x) { return x.etat === "friche"; }).sort(function (a, b) {
       return (M.statut(C, P, a.comp, tm).etat === "disponible" ? 0 : 1) - (M.statut(C, P, b.comp, tm).etat === "disponible" ? 0 : 1) || a.rang - b.rang; }).slice(0, 2);
     var W = 360, PAS = 78, PAR = 4, rangees = [], tri = q.installations.filter(function (x) { return x.etat !== "friche" || libres.indexOf(x) >= 0; }).sort(function (a, b) { return b.rang - a.rang; });
@@ -4345,7 +4388,7 @@ function demarrerJeu() {
     AGES_ILE = I.population && I.habitants ? { enfants: I.population.enfants / I.habitants, anciens: I.population.anciens / I.habitants } : null;
     var q = quartierVu && I.quartiers.filter(function (x) { return x.id === quartierVu; })[0];
     if (!q) quartierVu = null;
-    var compteur = '<div class="ile-compteur"><svg class="pix" viewBox="0 0 5 8" width="15" height="24" aria-hidden="true" shape-rendering="crispEdges">' + svgHabitant(0, 0, 77, 1) + "</svg><span><b>" + nb(q ? q.habitants : I.habitants) + "</b><small>" + ((q ? q.habitants : I.habitants) > 1 ? __("habitants") : __("habitant")) + "</small></span></div>";
+    var compteur = '<div class="ile-compteur"><svg class="pix" viewBox="0 0 5 8" width="15" height="24" aria-hidden="true" shape-rendering="crispEdges">' + svgHabitant(0, 0, 77, 1, true) + "</svg><span><b>" + nb(q ? q.habitants : I.habitants) + "</b><small>" + ((q ? q.habitants : I.habitants) > 1 ? __("habitants") : __("habitant")) + "</small></span></div>";
     if (q) {
       var retour = el('<button type="button" class="ile-retour">' + __("← L'île") + "</button>");
       retour.onclick = function () { quartierVu = null; rendre(); window.scrollTo(0, 0); };
