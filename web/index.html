@@ -1522,7 +1522,18 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-face { transform: scaleX(var(--s)); animation: ile-face 10s step-end infinite; }
 .ile-j1 { animation: ile-j1 .5s linear infinite; }
 .ile-j2 { opacity: 0; animation: ile-j2 .5s linear infinite; }
-@media (prefers-reduced-motion: reduce) { .ile-marcheur, .ile-pas, .ile-note, .ile-bulle, .ile-face, .ile-j1, .ile-j2 { animation: none; } }
+/* Les habitants au travail : l'aller (ph1), l'ouvrage sur place (ph2), le retour (ph3), calés sur le même trajet. */
+@keyframes ile-trajet2 { 0%, 4% { transform: translate(0, 0); } 30%, 64% { transform: translate(var(--dx), var(--dy)); } 92%, 100% { transform: translate(0, 0); } }
+@keyframes ile-face2 { 0% { transform: scaleX(var(--s)); } 64%, 100% { transform: scaleX(calc(var(--s) * -1)); } }
+@keyframes ile-ph1 { 0% { opacity: 1; } 30%, 100% { opacity: 0; } }
+@keyframes ile-ph2 { 0% { opacity: 0; } 30% { opacity: 1; } 64%, 100% { opacity: 0; } }
+@keyframes ile-ph3 { 0% { opacity: 0; } 64%, 100% { opacity: 1; } }
+.ile-marcheur.trav { animation-name: ile-trajet2; animation-timing-function: linear; }
+.ile-face.trav { animation-name: ile-face2; }
+.ile-ph1 { animation: ile-ph1 10s step-end infinite; }
+.ile-ph2 { opacity: 0; animation: ile-ph2 10s step-end infinite; }
+.ile-ph3 { opacity: 0; animation: ile-ph3 10s step-end infinite; }
+@media (prefers-reduced-motion: reduce) { .ile-marcheur, .ile-pas, .ile-note, .ile-bulle, .ile-face, .ile-j1, .ile-j2, .ile-ph1, .ile-ph2, .ile-ph3 { animation: none; } }
 .ile-objectif.tenu { border-left-color: #2E9E5B; } .ile-objectif.tenu .ile-obj-jauge span { background: #2E9E5B; }
 .ile-h2 { font-size: 17px; margin: 22px 0 10px; }
 .ile-options { display: grid; gap: 8px; }
@@ -3989,7 +4000,7 @@ function demarrerJeu() {
   // que l'aller-retour du marcheur, et ses jambes alternent. De face seulement pour le compteur (nu).
   var HABITANT_PROFIL = ["...hhhh...", "..hhhhhh..", "..hhhsss..", "..hhssks..", "..hsssss..", "...ssss...", "...vvvv...", "..vvvvvv..", "..vvvvvv..", "..vvvsvv..", "..vwvsvv..", "..vvwvvv..", "..vvwvvv..", "..vvvvvv.."];
   function dureeMarche(g) { var age = ageHabitant(g); return Math.round((7 + (g >>> 5) % 9) * (age === "enfant" ? 0.6 : age === "ancien" ? [1.8, 1.5, 1.2][savoirsHabitants().soins] : 1)); }
-  function svgHabitant(x, y, g, e, nu) {
+  function svgHabitant(x, y, g, e, nu, job) {
     var age = ageHabitant(g), toge = togeHabitant(g), pal = { h: age === "ancien" ? "#E8E8EE" : CHEVEUX[g % CHEVEUX.length], s: PEAUX[(Math.imul(g ^ (g >>> 7), 2654435761) >>> 16) % PEAUX.length], v: toge, w: ombre(toge), k: "#2B2B33", j: "#2B2B33" };
     e = e || 2;
     var u = e / 2;
@@ -3998,7 +4009,9 @@ function demarrerJeu() {
     if (age === "enfant") { x += e; y += e * 8 * 0.35; u *= 0.65; }
     // Le pendule de Huygens : la nuit, deux habitants sur trois sont rentrés à l'heure.
     else if (S.pendule && S.nuit && (g >>> 12) % 3) return "";
-    var role = (g >>> 11) % 8, soir = (g >>> 14) % 4, d = dureeMarche(g);
+    var role = ((g >>> 11) % 8) % 3, soir = (g >>> 14) % 4, d = job ? job.d : dureeMarche(g), delai = job ? job.delai : ((g >>> 9) % (d * 10)) / 10;
+    function ph(n, c) { return '<g class="ile-ph' + n + '" style="animation-duration:' + d + "s;animation-delay:-" + delai + 's">' + c + "</g>"; }
+    function alt(a, b) { return '<g class="ile-j1">' + a + '</g><g class="ile-j2">' + b + "</g>"; }
     function px(cx, cy, w, h, c) { return '<rect x="' + (x + cx * u) + '" y="' + (y + cy * u) + '" width="' + w * u + '" height="' + h * u + '" fill="' + c + '"/>'; }
     var pas = ((g >>> 4) % 5) / 10;
     var out = pixels(HABITANT_PROFIL, pal, null, x, y, u) +
@@ -4009,7 +4022,27 @@ function demarrerJeu() {
       if (S.lunettes) out += px(4, 3, 4, 1, "#2B2B33") + px(6, 3, 1, 1, "#BFE6F5");
       if (S.soins < 2) out += px(9, 8, 1, 8, "#7A5230") + px(8, 8, 1, 1, "#7A5230");
     }
-    if (age !== "enfant") {
+    if (job) {
+      // Victor (2026-11-11) : la plupart des habitants vont faire quelque chose d'utile, puis reviennent.
+      var BOIS = "#7A5230", FER = "#9AA0A8";
+      if (job.genre === "peche") {
+        var canne = px(8, 8, 1, 2, BOIS) + px(9, 5, 1, 3, BOIS) + px(10, 3, 1, 2, BOIS);
+        out += ph(1, canne) + ph(2, px(8, 9, 2, 1, BOIS) + px(10, 8, 2, 1, BOIS) + px(12, 7, 2, 1, BOIS) + px(14, 6, 2, 1, BOIS) + px(15.5, 7, 0.5, 9, "#F4F4F4") + alt(px(15, 16, 1.5, 1.5, "#E0483A"), px(15, 17, 1.5, 1.5, "#E0483A") + px(13.5, 18, 4.5, 0.5, "#FFFFFF")))
+          + ph(3, canne + px(5, 10, 4, 2, "#8FC3E0") + px(4, 9.5, 1, 3, "#6FA6C8") + px(8, 10, 1, 1, "#2B2B33"));
+      } else if (job.genre === "champ") {
+        out += ph(1, px(8, 3, 1, 8, BOIS) + px(8, 3, 3, 1, FER))
+          + ph(2, alt(px(8, 4, 1, 7, BOIS) + px(8, 3, 3, 1, FER), px(8, 10, 5, 1, BOIS) + px(12, 10, 1, 4, FER) + px(11, 14, 3, 1, "#8A6A3C")))
+          + ph(3, px(5, 7, 4, 6, "#E8C24A") + px(5, 9, 4, 1, "#B5892E") + px(5, 6, 1, 1, "#E8C24A") + px(7, 6, 1, 1, "#E8C24A"));
+      } else if (job.genre === "porte") {
+        var caisse = function (cx, cy) { return px(cx, cy, 5, 4, job.charge) + px(cx, cy, 5, 1, ombre(job.charge)) + px(cx + 2, cy, 1, 4, ombre(job.charge)); };
+        // Machines simples : la brouette remplace la charge portée à bout de bras.
+        var brouette = S.machines ? px(8, 11, 4, 1, BOIS) + px(12, 10, 6, 2, "#A8703C") + px(16, 12, 2, 2, "#2B2B33") + px(13, 12, 1, 2, BOIS) : "";
+        out += brouette + ph(1, S.machines ? caisse(12.5, 6) : caisse(7, 8)) + ph(2, caisse(S.machines ? 19 : 11, 12));
+      } else if (job.genre === "cause") {
+        out += ph(2, '<g class="ile-bulle" style="animation-delay:-' + (job.tour ? 1.5 : 0) + 's">' + px(1, -6, 9, 4, "#FFFFFF") + px(4, -2, 1, 1, "#FFFFFF") + px(3, -4, 1, 1, "#2B2B33") + px(5, -4, 1, 1, "#2B2B33") + px(7, -4, 1, 1, "#2B2B33") + "</g>");
+        if (S.livre && job.tour) out += px(6, 9, 3, 4, "#B23A3A") + px(8, 9, 1, 4, "#F4EEDC");
+      }
+    } else if (age !== "enfant") {
       if (role === 0) {
         // Machines simples : la brouette remplace le ballot porté à dos.
         if (S.machines) out += px(8, 11, 4, 1, "#7A5230") + px(12, 9, 6, 3, "#A8703C") + px(12, 9, 6, 1, "#C99A5B") + px(16, 12, 2, 2, "#2B2B33") + px(13, 12, 1, 2, "#7A5230");
@@ -4025,7 +4058,7 @@ function demarrerJeu() {
       // Les orateurs d'Athènes : sur l'agora, on s'arrête pour discuter.
       if (S.orateurs && LIEU_HAB === "agora" && (g >>> 9) % 3 === 0) out += '<g class="ile-bulle" style="animation-delay:-' + ((g >>> 5) % 30) / 10 + 's">' + px(8, -5, 8, 4, "#FFFFFF") + px(9, -1, 1, 1, "#FFFFFF") + px(9, -3, 1, 1, "#2B2B33") + px(11, -3, 1, 1, "#2B2B33") + px(13, -3, 1, 1, "#2B2B33") + "</g>";
     }
-    return '<g class="ile-face" style="--s:' + (g % 2 ? 1 : -1) + ";transform-origin:" + (x + 5 * u) + "px " + y + "px;animation-duration:" + d + "s;animation-delay:-" + ((g >>> 9) % (d * 10)) / 10 + 's">' + out + "</g>";
+    return '<g class="ile-face' + (job ? " trav" : "") + '" style="--s:' + (job ? job.sens : g % 2 ? 1 : -1) + ";transform-origin:" + (x + 5 * u) + "px " + y + "px;animation-duration:" + d + "s;animation-delay:-" + delai + 's">' + out + "</g>";
   }
   var TEXTE_ETAT = {
     marche: function () { return __("En marche."); },
@@ -4430,6 +4463,7 @@ function demarrerJeu() {
     sol += '<path d="' + ch + '" stroke="#D9C590" stroke-width="15" fill="none" stroke-linecap="round" opacity=".7"/><path d="' + ch + '" stroke="#F1E3B8" stroke-width="10.5" fill="none" stroke-linecap="round"/>';
     if (q.decor === "champs") for (var f = 0; f < rangees.length; f++) { var fx0 = f % 2 ? 6 : 318, fy = haut + f * PAS + 24;
       sol += '<rect x="' + fx0 + '" y="' + fy + '" width="36" height="30" rx="3" fill="#E8CF7A"/>' + [0, 1, 2, 3, 4].map(function (l) { return '<rect x="' + (fx0 + 2) + '" y="' + (fy + 3 + l * 5.4) + '" width="32" height="2.4" rx="1" fill="#7DB85A"/>'; }).join(""); }
+    var postes = [], gens = [];
     rangees.forEach(function (ligne, i) {
       var n = ligne.length;
       ligne.forEach(function (inst, j) {
@@ -4441,8 +4475,51 @@ function demarrerJeu() {
         // Autour d'une installation qui tourne : une maison, et ses habitants.
         if (inst.habitants > 0 && g % 2) plan.push([y - 20, svgMaison(cx + 33, y - 20, 15, q.couleur, g)]);
         var k = Math.min(3, Math.round(inst.habitants / 14));
-        for (var h = 0; h < k; h++) plan.push([y + 9 + h, marcheur(g + h * 97, 26, 6) + svgHabitant(Math.round(cx - 30 + ((g >>> (h * 5)) % 18) + h * 20), y - 3 + (g >>> (h * 2 + 9)) % 7, g + h * 97) + "</g></g>"]);
+        var po = postes.length; postes.push({ x: cx, y: y, rang: i });
+        for (var h = 0; h < k; h++) gens.push({ g: g + h * 97, x: Math.round(cx - 30 + ((g >>> (h * 5)) % 18) + h * 20), y: y - 3 + (g >>> (h * 2 + 9)) % 7, z: y + 9 + h, rang: i, poste: po });
       });
+    });
+    // Victor (2026-11-11) : la majorité des habitants se déplacent pour faire quelque chose d'utile. Au port, on pêche ;
+    // aux champs, on cultive ; partout on porte des marchandises d'une installation à l'autre et on s'arrête pour
+    // discuter à deux. Les enfants jouent, les anciens discutent ou flânent, un adulte sur quatre flâne.
+    var ymer = H - 62, charge = q.decor === "quai" ? "#8FC3E0" : q.decor === "champs" ? "#E8C24A" : "#B5814A";
+    gens.forEach(function (p) {
+      var age = ageHabitant(p.g), r = (p.g >>> 11) % 8, a = (p.g >>> 13);
+      if (age === "enfant") return;
+      if (age === "ancien") { if (r < 4) p.job = { genre: "cause" }; return; }
+      if (r >= 6) return;
+      if (q.decor === "quai" && r < 4) {
+        var ponton = a % 3 === 0, bx = (a >>> 2) % 280;
+        var fx = ponton ? (p.x <= 176 ? 181 : 169) : bx < 140 ? 10 + bx : 205 + (bx - 140), fy2 = ponton ? ymer + 4 + (a >>> 4) % 24 : ymer - 6;
+        if (Math.abs(fy2 - p.y) <= 260) { p.job = { genre: "peche", x: fx, y: fy2 }; if (ponton) p.job.sens = p.x <= 176 ? 1 : -1; return; }
+      }
+      if (q.decor === "champs" && r < 4) { p.job = { genre: "champ", x: (p.rang % 2 ? 6 : 318) + 4 + a % 20, y: haut + p.rang * PAS + 24 + 8 + (a >>> 5) % 18 - 16 }; return; }
+      p.job = { genre: r >= (q.decor === "quai" || q.decor === "champs" ? 5 : 3) ? "cause" : "porte" };
+    });
+    // Les causeurs vont par deux : même pas, même rendez-vous, à mi-chemin. Celui qui reste seul porte.
+    var seuls = gens.filter(function (p) { return p.job && p.job.genre === "cause"; }).sort(function (u, v) { return u.rang - v.rang || u.x - v.x; });
+    for (var ci = 0; ci < seuls.length; ci++) {
+      var A = seuls[ci], B = seuls[ci + 1];
+      if (B && Math.abs(B.rang - A.rang) <= 1 && A.g !== B.g) {
+        var G1 = A.x <= B.x ? A : B, G2 = G1 === A ? B : A, mx = Math.round((A.x + B.x) / 2), my = Math.round((A.y + B.y) / 2);
+        var dd = Math.max(10, Math.min(40, Math.round(Math.hypot(B.x - A.x, B.y - A.y) / 7.2) + 8)), dl = ((A.g >>> 9) % (dd * 10)) / 10;
+        G1.job = { genre: "cause", x: mx - 10, y: my, sens: 1, d: dd, delai: dl, tour: 0 }; G2.job = { genre: "cause", x: mx + 2, y: my, sens: -1, d: dd, delai: dl, tour: 1 };
+        ci++;
+      } else A.job = ageHabitant(A.g) === "ancien" ? null : { genre: "porte" };
+    }
+    gens.forEach(function (p) {
+      var j = p.job;
+      if (j && j.genre === "porte") {
+        // Vers l'installation voisine, ou vers le bas du chemin si le village n'en a qu'une.
+        var cible = postes.length > 1 ? postes[(p.poste + ((p.g >>> 13) % 2 && p.poste > 0 ? postes.length - 1 : 1)) % postes.length] : { x: 180, y: H - bas };
+        j.x = cible.x - 14 + (p.g >>> 15) % 12; j.y = cible.y - 6; j.charge = charge;
+      }
+      if (!j) { plan.push([p.z, marcheur(p.g, 26, 6) + svgHabitant(p.x, p.y, p.g) + "</g></g>"]); return; }
+      var dx = j.x - p.x, dy = j.y - p.y;
+      j.d = j.d || Math.max(10, Math.min(45, Math.round(Math.hypot(dx, dy) / 3.6)));
+      if (j.delai == null) j.delai = ((p.g >>> 9) % (j.d * 10)) / 10;
+      j.sens = j.sens || (dx >= 0 ? 1 : -1);
+      plan.push([Math.max(p.z, j.y + 17), '<g class="ile-marcheur trav" style="--dx:' + dx + "px;--dy:" + dy + "px;animation-duration:" + j.d + "s;animation-delay:-" + j.delai + 's"><g class="ile-pas" shape-rendering="crispEdges" style="animation-delay:-' + ((p.g >>> 4) % 5) / 10 + 's">' + svgHabitant(p.x, p.y, p.g, 0, false, j) + "</g></g>"]);
     });
     // Les lieux des collections que le quartier accueille : un bâtiment en haut du village, son nom dessous.
     lq.forEach(function (l, i) {
