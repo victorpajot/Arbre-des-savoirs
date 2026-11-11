@@ -912,7 +912,7 @@
     return { issue: reussi ? "maitrisee" : "echec", bonnes: bonnes, total: total, xp: xp, prochainRappel: e.prochainRappel,
       nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
-      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo, reussi), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
+      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo, reussi), gloire: suivreGloire(contenu, partie, id, t, reussi ? "acquis" : "rate", bonnes, total), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
   }
 
   // XP d'un rappel réussi qui mène à l'étape `palier` (1 = premier rappel).
@@ -1013,7 +1013,7 @@
     return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : anticipe || palais ? "echec" : "perdue", anticipe: anticipe, palais: palais, horsCase: horsCase, serie: serie, bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
-      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo, reussi), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
+      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo, reussi), gloire: suivreGloire(contenu, partie, id, t, reussi || revision || anticipe || palais ? null : "perdue", bonnes, total), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
   }
 
   // À appeler à chaque ouverture de l'app : repère un retour après une longue absence.
@@ -1451,6 +1451,40 @@
       return { epoque: m.epoque, nomEpoque: e.nom, quartier: m.quartier, nom: m.nom, usage: m.usage, dates: dates, seuil: seuil, bati: dates.length >= seuil, habitants: R.habitants || 30 };
     }).filter(Boolean);
   }
+  // Victor (2026-11-11) : des monuments « à la gloire des sciences ». Quand on joue `regles.gloire.jours` jours d'affilée,
+  // les habitants en dressent un pour le dernier fait marquant de la période : la dernière compétence acquise (une stèle
+  // à sa gloire) ou le dernier échec (une colonne brisée, qu'ils relèvent si le savoir est regagné). Plus la série de
+  // jours est longue, plus le monument est grand. partie.gloire = { dernier, serie, serieBati, fait, liste }.
+  function reglesGloire(contenu) { return (ilePresente(contenu) && contenu.ile.regles.gloire) || null; }
+  function suivreGloire(contenu, partie, id, t, genre, bonnes, total) {
+    var R = reglesGloire(contenu); if (!R) return null;
+    var G = partie.gloire || (partie.gloire = { dernier: null, serie: 0, serieBati: 0, fait: null, liste: [] });
+    var ecart = G.dernier == null ? null : joursEntre(G.dernier, t);
+    if (ecart == null || ecart > 1 || ecart < 0) { G.serie = 1; G.serieBati = 0; }
+    else if (ecart === 1) G.serie++;
+    G.dernier = t;
+    if (genre) G.fait = { genre: genre, comp: id, t: t, bonnes: bonnes, total: total };
+    if (!G.fait || G.serie - (G.serieBati || 0) < R.jours) return null;
+    var f = G.fait, type = f.genre === "acquis" ? "gloire" : "lecon";
+    var m = { id: type + ":" + f.comp, type: type, comp: f.comp, t: t, serie: G.serie, genre: f.genre, fait: f.t, bonnes: f.bonnes, total: f.total };
+    G.liste = (G.liste || []).filter(function (x) { return x.id !== m.id; });
+    G.liste.push(m);
+    if (G.liste.length > (R.max || 40)) G.liste.splice(0, G.liste.length - (R.max || 40));
+    G.serieBati = G.serie; G.fait = null;
+    return gloiresIle(contenu, partie).filter(function (x) { return x.id === m.id; })[0] || null;
+  }
+  function gloiresIle(contenu, partie) {
+    var R = reglesGloire(contenu); if (!R || !partie.gloire) return [];
+    var plan = planIle(contenu), P2 = R.paliers || [];
+    return (partie.gloire.liste || []).map(function (m) {
+      var c = contenu.parId[m.comp], q = plan.quartierDe[m.comp]; if (!c || !q) return null;
+      var su = estMaitrisee(partie, m.comp), e = partie.competences[m.comp];
+      var releve = m.type === "lecon" && su && e && e.maitriseDepuis > m.fait;
+      var forme = "stele"; P2.forEach(function (p) { if (m.serie >= p.jours) forme = p.forme; });
+      return { id: m.id, type: m.type, comp: m.comp, nomComp: c.nom, stat: c.stat, quartier: q, t: m.t, serie: m.serie, genre: m.genre, fait: m.fait, bonnes: m.bonnes, total: m.total,
+        forme: forme, releve: releve, actif: m.type === "gloire" ? su : releve, habitants: R.habitants || 10 };
+    }).filter(Boolean);
+  }
   // Ce qu'un atome capturé apporte à l'île : les chantiers dont il est un matériau.
   function chantiersDe(contenu, partie, z, t) {
     if (!ilePresente(contenu)) return [];
@@ -1471,7 +1505,7 @@
     if (!ilePresente(contenu)) return null;
     var H = contenu.ile.regles.habitants, total = 0, capacite = 0, plan = planIle(contenu), ouverts = {};
     var oj = partie.ile && partie.ile.jour === cleJour(t) ? partie.ile : null;
-    var mons = monumentsIle(contenu, partie);
+    var mons = monumentsIle(contenu, partie), gloires = gloiresIle(contenu, partie);
     var quartiers = (contenu.ile.quartiers || []).map(function (q) {
       var hab = 0, cap = 0, marche = 0, posees = 0, ouvert = false;
       var inst = plan.parQuartier[q.id].map(function (x) {
@@ -1504,6 +1538,8 @@
       // Les monuments du quartier : bâtis quand assez de dates de leur époque ont été retrouvées au Chrono.
       var monuments = mons.filter(function (m) { return m.quartier === q.id; });
       monuments.forEach(function (m) { cap += m.habitants; if (m.bati) hab += m.habitants; });
+      var gq = gloires.filter(function (m) { return m.quartier === q.id; });
+      gq.forEach(function (m) { cap += m.habitants; if (m.actif) hab += m.habitants; });
       // Les habitants ne viennent pas sur un chantier (Victor, 2026-11-10 : « il faut créer un lieu propice pour eux ») :
       // un quartier n'est habitable qu'une fois son premier palier ouvert. Avant, ses installations tournent à vide.
       var habitable = !options.length || options[0].ouverte;
@@ -1512,10 +1548,10 @@
       // Le lieu grandit par stades (Victor, 2026-11-10 : « d'abord la place du marché du village », pas la ville d'emblée) :
       // son nom est celui du stade atteint, un par option ouverte.
       var stade = options.filter(function (o) { return o.ouverte; }).length, noms = q.stades || [];
-      return { monuments: monuments, habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, stade: stade, nomFinal: q.nom, nom: noms[stade] || q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: posees > 0, ouvert: ouvert || posees > 0, installations: inst,
+      return { gloires: gq, monuments: monuments, habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, stade: stade, nomFinal: q.nom, nom: noms[stade] || q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: posees > 0, ouvert: ouvert || posees > 0, installations: inst,
         options: options, posees: posees, marche: marche, role: (q.demographie || {}).role || null, places: hab, habitants: hab, capacite: cap };
     });
-    return { quartiers: quartiers, places: total, habitants: total, capacite: capacite, exil: 0, monuments: mons };
+    return { quartiers: quartiers, places: total, habitants: total, capacite: capacite, exil: 0, monuments: mons, gloires: gloires };
   }
   // --- La démographie de l'île (Victor, 2026-11-10) -------------------------------
   // « Une matrice de Leslie couplée à une limite de capacité de charge (Verhulst) avec des limites de Lotka-Volterra, le
@@ -4469,7 +4505,7 @@
     repliqueDuJour: repliqueDuJour,
     themeDe: themeDe, themeCase: themeCase, themeEpreuve: themeEpreuve,
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
-    choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieReprenable: serieReprenable, reprendreSerie: reprendreSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
+    gloiresIle: gloiresIle, suivreGloire: suivreGloire, choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieReprenable: serieReprenable, reprendreSerie: reprendreSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
     atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, exodeIle: exodeIle, placesIle: placesIle, niveauxIle: niveauxIle, chasserParasites: chasserParasites, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,

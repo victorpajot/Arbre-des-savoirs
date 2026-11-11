@@ -2305,3 +2305,30 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(I1.places + 5 * mo.habitants, I1.capacite, "il reste cinq monuments à bâtir"); }
   console.log("île : quartiers par fonction, installations, alerte, panne, abandon, habitants, options, objectif du jour, démographie");
 }
+
+// Victor (2026-11-11) : monuments à la gloire des sciences, bâtis après trois jours joués d'affilée.
+{
+  const CG = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+    { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ile: d("ile.json") });
+  const J = 86400000, t0 = new Date(2026, 10, 11, 9, 0).getTime(), PG = M.nouvellePartie(t0), R = CG.ile.regles.gloire;
+  assert.equal(R.jours, 3);
+  assert.equal(M.suivreGloire(CG, PG, "phys.machines", t0, "acquis", 5, 5), null, "un seul jour : rien");
+  assert.equal(M.suivreGloire(CG, PG, "phys.machines", t0 + J, null), null);
+  PG.competences["phys.machines"] = { maitrise: true, maitriseDepuis: t0, prochainRappel: t0 + 30 * J, palier: 1, xp: 10 };
+  const avant = M.ile(CG, PG, t0 + 2 * J).capacite;
+  const g1 = M.suivreGloire(CG, PG, "phys.machines", t0 + 2 * J, null);
+  assert.ok(g1 && g1.type === "gloire" && g1.comp === "phys.machines" && g1.serie === 3 && g1.forme === "stele" && g1.actif);
+  assert.equal(M.ile(CG, PG, t0 + 2 * J).capacite - avant, R.habitants, "le monument apporte ses places");
+  assert.ok(M.ile(CG, PG, t0 + 2 * J).quartiers.find(q => q.id === g1.quartier).gloires.length === 1);
+  // Trois jours de plus, et le dernier fait est un échec : une colonne brisée, relevée quand le savoir est regagné.
+  assert.equal(M.suivreGloire(CG, PG, "phys.aristote", t0 + 3 * J, "perdue", 1, 3), null);
+  assert.equal(M.suivreGloire(CG, PG, "phys.aristote", t0 + 4 * J, null), null);
+  const g2 = M.suivreGloire(CG, PG, "phys.aristote", t0 + 5 * J, null);
+  assert.ok(g2 && g2.type === "lecon" && g2.forme === "obelisque" && !g2.releve && !g2.actif && g2.serie === 6);
+  PG.competences["phys.aristote"] = { maitrise: true, maitriseDepuis: t0 + 6 * J, prochainRappel: t0 + 30 * J, palier: 1, xp: 10 };
+  assert.ok(M.gloiresIle(CG, PG).find(x => x.id === g2.id).releve, "colonne relevée");
+  // Un jour sauté : la série repart de un.
+  M.suivreGloire(CG, PG, "phys.archimede", t0 + 8 * J, "acquis", 5, 5);
+  assert.equal(PG.gloire.serie, 1); assert.equal(M.gloiresIle(CG, PG).length, 2);
+  console.log("OK : monuments à la gloire des sciences (série de jours, gloire, leçon relevée)");
+}

@@ -1456,6 +1456,9 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-monument.bati { border-style: solid; opacity: 1; }
 .ile-monument b { font-size: 18px; display: block; margin: 2px 0 4px; }
 .ile-monument p { margin: 0; font-size: 15px; }
+.ile-gloire { display: flex; gap: 12px; align-items: center; cursor: pointer; }
+.ile-gloire-img { flex: none; }
+.ile-gloire p { font-size: 17px; }
 .ile-dates { list-style: none; padding: 0; margin: 8px 0 0; font-size: 15px; display: flex; flex-direction: column; gap: 3px; }
 .ile-dates span { font-family: var(--f-mono); font-weight: 700; margin-right: 6px; }
 .ile-exil { font-size: 17px; color: var(--bad); text-align: center; margin: 10px 0 0; }
@@ -1513,7 +1516,13 @@ svg.grille .interro { transition: opacity .3s; }
 @keyframes ile-bulle { 0%, 55% { opacity: 1; } 65%, 100% { opacity: 0; } }
 .ile-note { animation: ile-note 2s linear infinite; font-weight: 800; }
 .ile-bulle { animation: ile-bulle 3s steps(1) infinite; }
-@media (prefers-reduced-motion: reduce) { .ile-marcheur, .ile-pas, .ile-note, .ile-bulle { animation: none; } }
+@keyframes ile-face { 0% { transform: scaleX(var(--s)); } 52%, 100% { transform: scaleX(calc(var(--s) * -1)); } }
+@keyframes ile-j1 { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes ile-j2 { 0%, 49% { opacity: 0; } 50%, 100% { opacity: 1; } }
+.ile-face { transform: scaleX(var(--s)); animation: ile-face 10s step-end infinite; }
+.ile-j1 { animation: ile-j1 .5s linear infinite; }
+.ile-j2 { opacity: 0; animation: ile-j2 .5s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .ile-marcheur, .ile-pas, .ile-note, .ile-bulle, .ile-face, .ile-j1, .ile-j2 { animation: none; } }
 .ile-objectif.tenu { border-left-color: #2E9E5B; } .ile-objectif.tenu .ile-obj-jauge span { background: #2E9E5B; }
 .ile-h2 { font-size: 17px; margin: 22px 0 10px; }
 .ile-options { display: grid; gap: 8px; }
@@ -3945,7 +3954,7 @@ function demarrerJeu() {
   }
   function marcheur(g, portee, haut) {
     var age = ageHabitant(g);
-    var dx = (g % 2 ? 1 : -1) * (portee * 0.5 + (g >>> 3) % Math.max(1, Math.round(portee * 0.5))), dy = ((g >>> 7) % (haut * 2 + 1)) - haut, d = Math.round((7 + (g >>> 5) % 9) * (age === "enfant" ? 0.6 : age === "ancien" ? [1.8, 1.5, 1.2][savoirsHabitants().soins] : 1));
+    var dx = (g % 2 ? 1 : -1) * (portee * 0.5 + (g >>> 3) % Math.max(1, Math.round(portee * 0.5))), dy = ((g >>> 7) % (haut * 2 + 1)) - haut, d = dureeMarche(g);
     return '<g class="ile-marcheur" style="--dx:' + dx + "px;--dy:" + dy + "px;animation-duration:" + d + "s;animation-delay:-" + ((g >>> 9) % (d * 10)) / 10 + 's"><g class="ile-pas" shape-rendering="crispEdges" style="animation-delay:-' + ((g >>> 4) % 5) / 10 + 's">';
   }
   // Victor (2026-11-11) : les habitants évoluent avec les savoirs. Toges grises au départ ; « Les premiers ateliers »
@@ -3976,36 +3985,47 @@ function demarrerJeu() {
       soins: su("sci.hippocrate") ? (su("sci.vaccins") || su("sci.immunite") ? 2 : 1) : 0, soir: h >= 19 || h < 7, nuit: h >= 22 || h < 6 };
   }
   function ombre(c) { var n = parseInt(c.slice(1), 16); return "#" + [n >> 16, (n >> 8) & 255, n & 255].map(function (v) { return ("0" + Math.round(v * 0.78).toString(16)).slice(-2); }).join(""); }
+  // Victor (2026-11-11) : ils marchent de profil. Le dessin regarde à droite ; il se retourne à mi-trajet, au même rythme
+  // que l'aller-retour du marcheur, et ses jambes alternent. De face seulement pour le compteur (nu).
+  var HABITANT_PROFIL = ["...hhhh...", "..hhhhhh..", "..hhhsss..", "..hhssks..", "..hsssss..", "...ssss...", "...vvvv...", "..vvvvvv..", "..vvvvvv..", "..vvvsvv..", "..vwvsvv..", "..vvwvvv..", "..vvwvvv..", "..vvvvvv.."];
+  function dureeMarche(g) { var age = ageHabitant(g); return Math.round((7 + (g >>> 5) % 9) * (age === "enfant" ? 0.6 : age === "ancien" ? [1.8, 1.5, 1.2][savoirsHabitants().soins] : 1)); }
   function svgHabitant(x, y, g, e, nu) {
     var age = ageHabitant(g), toge = togeHabitant(g), pal = { h: age === "ancien" ? "#E8E8EE" : CHEVEUX[g % CHEVEUX.length], s: PEAUX[(Math.imul(g ^ (g >>> 7), 2654435761) >>> 16) % PEAUX.length], v: toge, w: ombre(toge), k: "#2B2B33", j: "#2B2B33" };
     e = e || 2;
-    var u = e / 2, S = nu ? null : savoirsHabitants();
-    if (age === "enfant") return pixels(HABITANT2, pal, null, x + e, y + e * 8 * 0.35, u * 0.65);
+    var u = e / 2;
+    if (nu) return pixels(HABITANT2, pal, null, x, y, u);
+    var S = savoirsHabitants();
+    if (age === "enfant") { x += e; y += e * 8 * 0.35; u *= 0.65; }
     // Le pendule de Huygens : la nuit, deux habitants sur trois sont rentrés à l'heure.
-    if (S && S.pendule && S.nuit && (g >>> 12) % 3) return "";
-    var out = pixels(HABITANT2, pal, null, x, y, u), role = (g >>> 11) % 8, soir = (g >>> 14) % 4;
-    function px(cx, cy, w, h, c, plus) { return '<rect x="' + (x + cx * u) + '" y="' + (y + cy * u) + '" width="' + w * u + '" height="' + h * u + '" fill="' + c + '"' + (plus || "") + "/>"; }
-    if (!S) return out;
+    else if (S.pendule && S.nuit && (g >>> 12) % 3) return "";
+    var role = (g >>> 11) % 8, soir = (g >>> 14) % 4, d = dureeMarche(g);
+    function px(cx, cy, w, h, c) { return '<rect x="' + (x + cx * u) + '" y="' + (y + cy * u) + '" width="' + w * u + '" height="' + h * u + '" fill="' + c + '"/>'; }
+    var pas = ((g >>> 4) % 5) / 10;
+    var out = pixels(HABITANT_PROFIL, pal, null, x, y, u) +
+      '<g class="ile-j1" style="animation-delay:-' + pas + 's">' + px(3, 14, 2, 2, pal.j) + px(6, 14, 2, 1, pal.j) + px(7, 15, 2, 1, pal.j) + "</g>" +
+      '<g class="ile-j2" style="animation-delay:-' + pas + 's">' + px(4, 14, 3, 2, pal.j) + px(7, 15, 1, 1, pal.j) + "</g>";
     if (age === "ancien") {
       // Verres et lunettes : des bésicles pour les anciens. La médecine leur rend la marche, puis leur retire la canne.
-      if (S.lunettes) out += px(2, 3, 6, 1, "#2B2B33") + px(3, 3, 1, 1, "#BFE6F5") + px(6, 3, 1, 1, "#BFE6F5");
-      if (S.soins < 2) out += px(10, 8, 1, 8, "#7A5230") + px(9, 8, 1, 1, "#7A5230");
+      if (S.lunettes) out += px(4, 3, 4, 1, "#2B2B33") + px(6, 3, 1, 1, "#BFE6F5");
+      if (S.soins < 2) out += px(9, 8, 1, 8, "#7A5230") + px(8, 8, 1, 1, "#7A5230");
     }
-    if (role === 0) {
-      // Machines simples : la brouette remplace le ballot porté à dos.
-      if (S.machines) out += px(10, 11, 2, 1, "#7A5230") + px(12, 9, 6, 3, "#A8703C") + px(12, 9, 6, 1, "#C99A5B") + px(16, 12, 2, 2, "#2B2B33") + px(13, 12, 1, 2, "#7A5230");
-      else out += px(-1, 6, 3, 4, "#C9B48A") + px(-1, 6, 3, 1, "#A8946C");
-    } else if (role === 1 && S.musique) {
-      out += px(7, 5, 5, 1, "#7A5230") + '<text class="ile-note" x="' + (x + 11 * u) + '" y="' + (y + 3 * u) + '" font-size="' + 6 * u + '" fill="#3D63D9" style="animation-delay:-' + ((g >>> 4) % 20) / 10 + 's">♪</text>';
-    } else if (role === 2 && (S.livre || S.tablette)) {
-      out += S.livre ? px(7, 9, 3, 4, "#B23A3A") + px(9, 9, 1, 4, "#F4EEDC") : px(7, 9, 3, 3, "#C98B5A") + px(8, 10, 1, 1, "#8A5A34");
+    if (age !== "enfant") {
+      if (role === 0) {
+        // Machines simples : la brouette remplace le ballot porté à dos.
+        if (S.machines) out += px(8, 11, 4, 1, "#7A5230") + px(12, 9, 6, 3, "#A8703C") + px(12, 9, 6, 1, "#C99A5B") + px(16, 12, 2, 2, "#2B2B33") + px(13, 12, 1, 2, "#7A5230");
+        else out += px(-1, 6, 3, 4, "#C9B48A") + px(-1, 6, 3, 1, "#A8946C");
+      } else if (role === 1 && S.musique) {
+        out += px(8, 5, 5, 1, "#7A5230") + '<text class="ile-note" x="' + (x + 12 * u) + '" y="' + (y + 3 * u) + '" font-size="' + 6 * u + '" fill="#3D63D9" style="animation-delay:-' + ((g >>> 4) % 20) / 10 + 's">♪</text>';
+      } else if (role === 2 && (S.livre || S.tablette)) {
+        out += S.livre ? px(6, 9, 3, 4, "#B23A3A") + px(8, 9, 1, 4, "#F4EEDC") : px(6, 9, 3, 3, "#C98B5A") + px(7, 10, 1, 1, "#8A5A34");
+      }
+      // Dynamos et ampoules : des lanternes le soir. Observer le ciel : une lunette levée la nuit.
+      if (S.lampes && S.soir && soir === 0) out += '<circle cx="' + (x + 10 * u) + '" cy="' + (y + 11 * u) + '" r="' + 4 * u + '" fill="#FFE27A" opacity=".35"/>' + px(9, 8, 1, 2, "#2B2B33") + px(9, 10, 2, 2, "#FFD23F");
+      if (S.ciel && S.nuit && soir === 1) out += px(7, 8, 1, 1, "#C9A227") + px(8, 7, 1, 1, "#C9A227") + px(9, 6, 1, 1, "#C9A227") + px(10, 5, 2, 1, "#E8C95A");
+      // Les orateurs d'Athènes : sur l'agora, on s'arrête pour discuter.
+      if (S.orateurs && LIEU_HAB === "agora" && (g >>> 9) % 3 === 0) out += '<g class="ile-bulle" style="animation-delay:-' + ((g >>> 5) % 30) / 10 + 's">' + px(8, -5, 8, 4, "#FFFFFF") + px(9, -1, 1, 1, "#FFFFFF") + px(9, -3, 1, 1, "#2B2B33") + px(11, -3, 1, 1, "#2B2B33") + px(13, -3, 1, 1, "#2B2B33") + "</g>";
     }
-    // Dynamos et ampoules : des lanternes le soir. Observer le ciel : une lunette levée la nuit.
-    if (S.lampes && S.soir && soir === 0) out += '<circle class="ile-lueur" cx="' + (x - 0.5 * u) + '" cy="' + (y + 11 * u) + '" r="' + 4 * u + '" fill="#FFE27A" opacity=".35"/>' + px(-1, 8, 1, 2, "#2B2B33") + px(-1, 10, 2, 2, "#FFD23F");
-    if (S.ciel && S.nuit && soir === 1) out += px(9, 8, 1, 1, "#C9A227") + px(10, 7, 1, 1, "#C9A227") + px(11, 6, 1, 1, "#C9A227") + px(12, 5, 2, 1, "#E8C95A");
-    // Les orateurs d'Athènes : sur l'agora, on s'arrête pour discuter.
-    if (S.orateurs && LIEU_HAB === "agora" && (g >>> 9) % 3 === 0) out += '<g class="ile-bulle" style="animation-delay:-' + ((g >>> 5) % 30) / 10 + 's">' + px(8, -5, 8, 4, "#FFFFFF") + px(9, -1, 1, 1, "#FFFFFF") + px(9, -3, 1, 1, "#2B2B33") + px(11, -3, 1, 1, "#2B2B33") + px(13, -3, 1, 1, "#2B2B33") + "</g>";
-    return out;
+    return '<g class="ile-face" style="--s:' + (g % 2 ? 1 : -1) + ";transform-origin:" + (x + 5 * u) + "px " + y + "px;animation-duration:" + d + "s;animation-delay:-" + ((g >>> 9) % (d * 10)) / 10 + 's">' + out + "</g>";
   }
   var TEXTE_ETAT = {
     marche: function () { return __("En marche."); },
@@ -4061,6 +4081,46 @@ function demarrerJeu() {
     return out;
   }
   // Un monument de l'île (Victor, 2026-11-10) : bâti par les dates retrouvées au Chrono, il les porte gravées.
+  // Victor (2026-11-11) : les monuments à la gloire des sciences. Chacun a son dessin : une forme selon la série de jours
+  // (stèle, obélisque, arc) qui porte l'emblème du savoir ; une colonne brisée pour un échec, relevée et dorée s'il est regagné.
+  function dessinDeComp(id) { var x = ((C.ile && C.ile.installations) || []).filter(function (i) { return i.comp === id; })[0], c = C.parId[id]; return (x && x.dessin) || (c && c.embleme) || null; }
+  function svgGloire(m, taille) {
+    var brise = m.type === "lecon" && !m.releve, P1 = brise ? "#8A8A90" : "#B9B9C2", P2 = brise ? "#6E6E75" : "#8E8E96", P3 = brise ? "#A2A2A8" : "#DCDCE3", o = "", ex = 10, ey = 17, et = 12;
+    function r(x, y, w, h, c) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="' + c + '"/>'; }
+    if (brise) { o = r(7, 34, 18, 4, P2) + r(11, 18, 10, 16, P1) + r(11, 16, 3, 2, P1) + r(17, 15, 4, 3, P1) + r(11, 18, 2, 16, P3) + r(3, 36, 4, 2, P1) + r(25, 35, 3, 3, P1) + r(27, 37, 2, 1, P2); ex = 10.5; ey = 21; et = 11; }
+    else if (m.forme === "arc") { o = r(2, 36, 28, 3, P2) + r(4, 14, 7, 22, P1) + r(21, 14, 7, 22, P1) + r(2, 8, 28, 6, P1) + r(4, 5, 24, 3, P3) + r(4, 14, 2, 22, P3) + r(21, 14, 2, 22, P3) + r(11, 14, 10, 1, P2); ex = 11; ey = 20; et = 10; }
+    else if (m.forme === "obelisque") { o = r(8, 35, 16, 4, P2) + r(10, 32, 12, 3, P1) + r(12, 8, 8, 24, P1) + r(13, 5, 6, 3, P1) + r(15, 2, 2, 3, P3) + r(12, 8, 2, 24, P3); ex = 11.5; ey = 14; et = 9; }
+    else o = r(6, 34, 20, 4, P2) + r(9, 12, 14, 22, P1) + r(10, 10, 12, 2, P1) + r(9, 12, 2, 22, P3) + r(10, 10, 12, 1, P3);
+    if (m.type === "lecon" && m.releve) o += r(m.forme === "arc" ? 2 : m.forme === "obelisque" ? 12 : 9, m.forme === "arc" ? 11 : 28, m.forme === "arc" ? 28 : m.forme === "obelisque" ? 8 : 14, 2, "#E0A800");
+    var g = grilleIle(dessinDeComp(m.comp));
+    if (g) o += '<g transform="translate(' + ex + " " + ey + ") scale(" + (et / 32) + ')"' + (brise ? ' opacity=".55"' : "") + ">" + pixels(g, C.cabinet.palette, null, 0, 0, 1) + "</g>";
+    return '<svg class="pix" viewBox="0 0 32 40" width="' + taille + '" height="' + Math.round(taille * 1.25) + '" shape-rendering="crispEdges" role="img" aria-label="' + esc(nomGloire(m)) + '"' + (!brise && !m.actif ? ' style="filter:grayscale(.8)"' : "") + ">" + o + "</svg>";
+  }
+  function nomGloire(m) {
+    var f = m.type === "lecon" ? (m.releve ? __("Colonne relevée") : __("Colonne brisée")) : m.forme === "arc" ? __("Arc") : m.forme === "obelisque" ? __("Obélisque") : __("Stèle");
+    return f + " : " + tx(m.nomComp);
+  }
+  function textesGloire(m) {
+    var nc = gu(tx(m.nomComp)), sc = m.bonnes != null && m.total ? m.bonnes + __(" sur ") + m.total : "";
+    var quand = (m.type === "lecon" ? __("Bâtie le ") : __("Bâti le ")) + dateCourte(m.t) + __(", au ") + m.serie + __("e jour joué d'affilée.");
+    var pour = m.type === "gloire" ? __("Les habitants l'ont dressé à la gloire de ") + nc + __(", acquis le ") + dateCourte(m.fait) + (sc ? __(" avec ") + sc : "") + "."
+      : m.genre === "perdue" ? __("Les habitants l'ont dressée pour ne pas oublier ") + nc + __(", perdu au rappel du ") + dateCourte(m.fait) + "."
+      : __("Les habitants l'ont dressée après le quiz raté de ") + nc + __(", le ") + dateCourte(m.fait) + (sc ? " (" + sc + ")" : "") + ".";
+    var effet = m.type === "gloire" ? (m.actif ? __("Il loge ") + m.habitants + __(" habitants de plus tant que ce savoir est maîtrisé.") : __("Ce savoir est perdu : le monument ne loge plus personne. Regagne-le pour le rouvrir."))
+      : m.releve ? __("Savoir regagné : la colonne est relevée, cerclée d'or, et loge ") + m.habitants + __(" habitants.") : __("Maîtrise ce savoir : les habitants relèveront la colonne, et elle logera ") + m.habitants + __(" habitants.");
+    return { quand: quand, pour: pour, effet: effet, forme: __("Trois jours d'affilée donnent une stèle, six un obélisque, neuf un arc.") };
+  }
+  function carteGloire(m, neuf) {
+    var T = textesGloire(m);
+    var c = el('<div class="ile-monument bati ile-gloire" role="button" tabindex="0"><div class="ile-gloire-img">' + svgGloire(m, 56) + '</div><div><div class="eyebrow">' + (neuf ? __("Nouveau monument") : __("À la gloire des sciences")) + "</div><b>" + esc(nomGloire(m)) + "</b><p>" + esc(T.quand) + " " + esc(T.pour) + "</p></div></div>");
+    c.onclick = function () { ouvrirGloire(m.id); };
+    return c;
+  }
+  function ouvrirGloire(id) {
+    var I = M.ile(C, P, maintenant()), m = I && (I.gloires || []).filter(function (x) { return x.id === id; })[0]; if (!m) return;
+    var T = textesGloire(m), q = I.quartiers.filter(function (x) { return x.id === m.quartier; })[0];
+    feuilleSimple('<div class="vitrine" style="padding:14px">' + svgGloire(m, 112) + '</div><div class="eyebrow">' + __("Monument à la gloire des sciences") + (q ? " · " + esc(tx(q.nom)) : "") + "</div><h2>" + esc(nomGloire(m)) + "</h2><p>" + esc(T.quand) + "</p><p>" + esc(T.pour) + "</p><p>" + esc(T.effet) + '</p><p class="note">' + esc(T.forme) + "</p>", nomGloire(m));
+  }
   function carteMonument(m) {
     var ep = "ep-" + m.epoque, reste = m.seuil - m.dates.length;
     var c = el('<div class="ile-monument' + (m.bati ? " bati" : "") + '"><div class="eyebrow">' + esc(tx(m.nomEpoque)) + "</div><b>" + esc(tx(m.nom)) + "</b><p>" +
@@ -4334,7 +4394,8 @@ function demarrerJeu() {
     var W = 360, PAS = 78, PAR = 4, rangees = [], tri = q.installations.filter(function (x) { return x.etat !== "friche" || libres.indexOf(x) >= 0; }).sort(function (a, b) { return b.rang - a.rang; });
     for (var c = 0; c < tri.length; c += PAR) rangees.push(tri.slice(c, c + PAR));
     var lq = q.fonde ? lieuxIle().filter(function (l) { return l.quartier === q.id; }) : [], etiq = "";
-    var haut = 44 + (lq.length ? 74 : 0), bas = q.decor === "quai" ? 86 : 50, H = haut + rangees.length * PAS + bas, gq = graine(q.id), sol = "", plan = [];
+    var gl = q.fonde ? (q.gloires || []).slice(-5) : [];
+    var haut = 44 + (lq.length ? 74 : 0) + (gl.length ? 58 : 0), bas = q.decor === "quai" ? 86 : 50, H = haut + rangees.length * PAS + bas, gq = graine(q.id), sol = "", plan = [];
     var roche = q.decor === "roche";
     sol += '<rect width="' + W + '" height="' + H + '" fill="' + (roche ? "#B9C99A" : "#A3D98A") + '"/>';
     for (var p = 0; p < 6 + rangees.length * 2; p++) { var gp = graine(q.id + "pre" + p); sol += '<path d="' + tache(gp % W, (gp >>> 9) % H, 40 + (gp >>> 4) % 40, 22 + (gp >>> 6) % 22, q.id + "t" + p) + '" fill="' + (p % 2 ? (roche ? "#C8D4AC" : "#B4E39A") : (roche ? "#A9B98C" : "#96CF80")) + '" opacity=".6"/>'; }
@@ -4375,6 +4436,11 @@ function demarrerJeu() {
       plan.push([y, '<g class="ile-inst" data-lieu="' + esc(l.id) + '" role="button" tabindex="0" aria-label="' + esc(tx(l.nom)) + '"><ellipse cx="' + x + '" cy="' + y + '" rx="26" ry="6" fill="rgba(30,45,30,.18)"/><rect x="' + (x - 34) + '" y="' + (y - 62) + '" width="68" height="84" fill="transparent"/><g transform="translate(' + (x - larg / 2).toFixed(1) + " " + (y - t + 2) + ')"' + (l.ouvert ? "" : ' opacity=".7"') + ">" + (l.image === "tour" ? svgTourIle(l.ouvert ? l.etages : 1, t) : svgSprite(l.image, t, null, !l.ouvert)) + "</g></g>"]);
       etiq += '<text x="' + x + '" y="' + (y + 16) + '" text-anchor="middle" font-size="11" font-weight="800" fill="' + (l.ouvert ? "#3A2E22" : "#6A7075") + '" style="paint-order:stroke" stroke="rgba(255,253,244,.94)" stroke-width="3" stroke-linejoin="round" pointer-events="none">' + esc(nom) + "</text>";
     });
+    // Les monuments à la gloire des sciences : une rangée sous les lieux, les cinq derniers.
+    gl.forEach(function (m, i) {
+      var x = Math.round(W * (i + 1) / (gl.length + 1)), y = 44 + (lq.length ? 74 : 0) + 44;
+      plan.push([y, '<g class="ile-inst" data-gloire="' + esc(m.id) + '" role="button" tabindex="0" aria-label="' + esc(nomGloire(m)) + '"><ellipse cx="' + x + '" cy="' + y + '" rx="17" ry="4.5" fill="rgba(30,45,30,.2)"/><rect x="' + (x - 22) + '" y="' + (y - 46) + '" width="44" height="52" fill="transparent"/><g transform="translate(' + (x - 18) + " " + (y - 43) + ')">' + svgGloire(m, 36) + "</g></g>"]);
+    });
     // La lisière : des arbres sur les bords, des fleurs dans l'herbe.
     for (var t = 0; !imageIle("quartier-" + q.id) && t < 10 + rangees.length * 5; t++) { var gt = graine(q.id + "arb" + t), bord = t % 2, ax = bord ? 6 + gt % 16 : W - 6 - gt % 16, ay = 20 + (gt >>> 7) % (H - bas - 10);
       if (t % 5 === 4) { ax = 30 + gt % 300; sol += svgFleurs(ax, ay, gt) + svgFleurs(ax + 9, ay + 4, gt >>> 3); continue; }
@@ -4397,7 +4463,8 @@ function demarrerJeu() {
       if (q.description) v.appendChild(el('<p class="note">' + esc(tx(q.description)) + "</p>"));
       if (q.role && I.population && ROLES_ILE[q.role]) v.appendChild(el('<p class="ile-vie-note" style="margin:0 0 10px">' + __("Ce quartier règle : ") + "<b>" + ROLES_ILE[q.role]().toLowerCase() + "</b> (" + Math.round(100 * I.population.niveaux[q.role]) + " %). " + __("Chaque installation en marche l'améliore.") + "</p>"));
       var sc = el('<div class="ile-cadre">' + svgQuartier(q) + "</div>");
-      sc.onclick = function (ev) { var gl = ev.target.closest && ev.target.closest("[data-lieu]"); if (gl) { ouvrirLieu(gl.getAttribute("data-lieu")); return; }
+      sc.onclick = function (ev) { var gg = ev.target.closest && ev.target.closest("[data-gloire]"); if (gg) { ouvrirGloire(gg.getAttribute("data-gloire")); return; }
+        var gl = ev.target.closest && ev.target.closest("[data-lieu]"); if (gl) { ouvrirLieu(gl.getAttribute("data-lieu")); return; }
         var g = ev.target.closest && ev.target.closest("[data-comp]"); if (!g) return; var id = g.getAttribute("data-comp"); ouvrirInstallation(q, q.installations.filter(function (x) { return x.comp === id; })[0]); };
       v.appendChild(sc);
       var soucis = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne" || x.etat === "abandon"; });
@@ -4529,7 +4596,16 @@ function demarrerJeu() {
     var bm = b.querySelector('[data-a="monuments"]');
     if (bm) bm.onclick = function () {
       feuilleSimple('<div class="eyebrow">' + __("L'île") + "</div><h2>" + __("Les monuments") + '</h2><p class="note">' + __("Un par époque. Chacun se bâtit avec les dates que tu retrouves au Chrono.") + '</p><div class="ile-monuments"></div>', __("Les monuments"), {}, __("Fermer"));
-      var z = document.querySelector("#couche .voile:last-child .ile-monuments"); if (z) I.monuments.forEach(function (m) { z.appendChild(carteMonument(m)); });
+      var z = document.querySelector("#couche .voile:last-child .ile-monuments"); if (z) {
+        var Rg = C.ile.regles.gloire, Gs = P.gloire;
+        if (Rg) {
+          z.appendChild(el('<h3 class="ile-h2">' + __("À la gloire des sciences") + '</h3>'));
+          z.appendChild(el('<p class="note">' + __("Joue ") + Rg.jours + __(" jours d'affilée : les habitants dressent un monument pour ton dernier savoir acquis, ou pour ton dernier échec.") + (Gs && Gs.serie ? " " + __("Série en cours : ") + Gs.serie + (Gs.serie > 1 ? __(" jours.") : __(" jour.")) : "") + "</p>"));
+          (I.gloires || []).slice().reverse().forEach(function (m) { z.appendChild(carteGloire(m)); });
+          z.appendChild(el('<h3 class="ile-h2">' + __("Les monuments du Chrono") + '</h3>'));
+        }
+        I.monuments.forEach(function (m) { z.appendChild(carteMonument(m)); });
+      }
     };
     return b;
   }
@@ -8408,7 +8484,7 @@ function demarrerJeu() {
     var cd = quiz.cartes || (quiz.cartes = r.apresPlateau ? cartesEnDeux(r, null, r.theme) : { recs: recompensesBilan(r), nAvant: null }), recs = cd.recs;
     var etapes = ["verdict"];
     // L'île (Victor, 2026-11-10) : ce que l'épreuve vient d'y changer, tout de suite après le verdict.
-    if (r.ile) etapes.push("ile");
+    if (r.ile || r.gloire) etapes.push("ile");
     // Victor (2026-11-11) : tant que la série de rappels n'est pas finie (ou qu'elle peut être reprise), pas de retour au parcours.
     var tS = maintenant(), ferme = M.jeuFerme(C, P, tS);
     var suivS = r.serie && !r.serie.fini && !ferme ? M.choixIA(C, P, tS) : null; if (suivS && suivS.raison !== "serie") suivS = null;
@@ -8433,14 +8509,16 @@ function demarrerJeu() {
     } else if (nom === "ile") {
       // Victor (2026-11-10) : « Voir l'île » n'ouvrait qu'une carte, sans l'île. On montre d'abord le lieu lui-même, tel
       // qu'il est maintenant, avec l'installation de l'épreuve mise en lumière ; la carte vient dessous.
-      var Ib = M.ile(C, P, maintenant()), qb = Ib.quartiers.filter(function (x) { return x.id === r.ile.quartier; })[0];
+      var Ib = M.ile(C, P, maintenant()), qb = Ib.quartiers.filter(function (x) { return x.id === (r.ile ? r.ile.quartier : r.gloire.quartier); })[0];
       if (qb && qb.fonde) {
         AGES_ILE = Ib.population && Ib.habitants ? { enfants: Ib.population.enfants / Ib.habitants, anciens: Ib.population.anciens / Ib.habitants } : null;
         var scene = el('<div class="ile-scene-bilan"><div class="ile-scene-titre"><b>' + esc(tx(qb.nom)) + "</b><span>" + esc(texteHabitants(Ib.habitants)) + __(" sur l'île") + '</span></div><div class="ile-cadre">' + svgQuartier(qb) + "</div></div>");
-        var neuve = scene.querySelector('[data-comp="' + r.ile.comp + '"]'); if (neuve) neuve.classList.add("ile-neuve");
+        var neuve = r.ile && scene.querySelector('[data-comp="' + r.ile.comp + '"]'); if (neuve) neuve.classList.add("ile-neuve");
+        var gn = r.gloire && scene.querySelector('[data-gloire="' + r.gloire.id + '"]'); if (gn) gn.classList.add("ile-neuve");
         z.appendChild(scene);
       }
-      z.appendChild(blocIleBilan(r.ile));
+      if (r.ile) z.appendChild(blocIleBilan(r.ile));
+      if (r.gloire) z.appendChild(carteGloire(r.gloire, true));
     } else if (nom === "duel") {
       z.appendChild(blocDefi());
     } else if (nom === "suite") {

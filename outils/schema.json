@@ -4410,6 +4410,28 @@
          "minimum": 1
         }
        }
+      },
+      "gloire": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": ["jours"],
+       "properties": {
+        "jours": { "type": "integer", "minimum": 1 },
+        "habitants": { "type": "integer", "minimum": 0 },
+        "max": { "type": "integer", "minimum": 1 },
+        "paliers": {
+         "type": "array",
+         "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["jours", "forme"],
+          "properties": {
+           "jours": { "type": "integer", "minimum": 1 },
+           "forme": { "enum": ["stele", "obelisque", "arc"] }
+          }
+         }
+        }
+       }
       }
      }
     },
