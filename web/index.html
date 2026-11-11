@@ -4085,6 +4085,12 @@ function demarrerJeu() {
   // (stèle, obélisque, arc) qui porte l'emblème du savoir ; une colonne brisée pour un échec, relevée et dorée s'il est regagné.
   function dessinDeComp(id) { var x = ((C.ile && C.ile.installations) || []).filter(function (i) { return i.comp === id; })[0], c = C.parId[id]; return (x && x.dessin) || (c && c.embleme) || null; }
   function svgGloire(m, taille) {
+    if (m.reel && grilleIle(m.reel.dessin)) {
+      // Un vrai monument : son dessin, en chantier (gris, échafaudage) tant que la leçon n'est pas relevée.
+      var ch = m.type === "lecon" && !m.releve, d = '<g transform="translate(0 7)">' + pixels(grilleIle(m.reel.dessin), C.cabinet.palette, null, 0, 0, 1) + "</g>";
+      if (ch) d = '<g style="filter:grayscale(1)" opacity=".7">' + d + '</g><g fill="#8A6A3C"><rect x="2" y="9" width="1" height="30"/><rect x="29" y="9" width="1" height="30"/><rect x="2" y="16" width="28" height="1"/><rect x="2" y="26" width="28" height="1"/><rect x="2" y="35" width="28" height="1"/></g>';
+      return '<svg class="pix" viewBox="0 0 32 40" width="' + taille + '" height="' + Math.round(taille * 1.25) + '" shape-rendering="crispEdges" role="img" aria-label="' + esc(nomGloire(m)) + '"' + (!ch && !m.actif ? ' style="filter:grayscale(.8)"' : "") + ">" + d + "</svg>";
+    }
     var brise = m.type === "lecon" && !m.releve, P1 = brise ? "#8A8A90" : "#B9B9C2", P2 = brise ? "#6E6E75" : "#8E8E96", P3 = brise ? "#A2A2A8" : "#DCDCE3", o = "", ex = 10, ey = 17, et = 12;
     function r(x, y, w, h, c) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="' + c + '"/>'; }
     if (brise) { o = r(7, 34, 18, 4, P2) + r(11, 18, 10, 16, P1) + r(11, 16, 3, 2, P1) + r(17, 15, 4, 3, P1) + r(11, 18, 2, 16, P3) + r(3, 36, 4, 2, P1) + r(25, 35, 3, 3, P1) + r(27, 37, 2, 1, P2); ex = 10.5; ey = 21; et = 11; }
@@ -4097,11 +4103,20 @@ function demarrerJeu() {
     return '<svg class="pix" viewBox="0 0 32 40" width="' + taille + '" height="' + Math.round(taille * 1.25) + '" shape-rendering="crispEdges" role="img" aria-label="' + esc(nomGloire(m)) + '"' + (!brise && !m.actif ? ' style="filter:grayscale(.8)"' : "") + ">" + o + "</svg>";
   }
   function nomGloire(m) {
+    if (m.reel) return tx(m.reel.nom);
     var f = m.type === "lecon" ? (m.releve ? __("Colonne relevée") : __("Colonne brisée")) : m.forme === "arc" ? __("Arc") : m.forme === "obelisque" ? __("Obélisque") : __("Stèle");
     return f + " : " + tx(m.nomComp);
   }
   function textesGloire(m) {
     var nc = gu(tx(m.nomComp)), sc = m.bonnes != null && m.total ? m.bonnes + __(" sur ") + m.total : "";
+    if (m.reel) return {
+      quand: __("Sur l'île depuis le ") + dateCourte(m.t) + __(", ton ") + m.serie + __("e jour joué d'affilée."),
+      pour: m.type === "gloire" ? __("Les habitants ont choisi ce monument pour célébrer ") + nc + __(", acquis le ") + dateCourte(m.fait) + (sc ? __(" avec ") + sc : "") + "."
+        : m.genre === "perdue" ? __("Les habitants ont ouvert ce chantier pour ne pas oublier ") + nc + __(", perdu au rappel du ") + dateCourte(m.fait) + "."
+        : __("Les habitants ont ouvert ce chantier après le quiz raté de ") + nc + __(", le ") + dateCourte(m.fait) + (sc ? " (" + sc + ")" : "") + ".",
+      effet: m.type === "gloire" ? (m.actif ? __("Ce monument loge ") + m.habitants + __(" habitants de plus tant que ce savoir est maîtrisé.") : __("Ce savoir est perdu : le monument ne loge plus personne. Regagne-le pour le rouvrir."))
+        : m.releve ? __("Savoir regagné : le chantier est achevé, et le monument loge ") + m.habitants + __(" habitants.") : __("Maîtrise ce savoir : les habitants finiront le chantier, et le monument logera ") + m.habitants + __(" habitants."),
+      forme: "" };
     var quand = (m.type === "lecon" ? __("Bâtie le ") : __("Bâti le ")) + dateCourte(m.t) + __(", au ") + m.serie + __("e jour joué d'affilée.");
     var pour = m.type === "gloire" ? __("Les habitants l'ont dressé à la gloire de ") + nc + __(", acquis le ") + dateCourte(m.fait) + (sc ? __(" avec ") + sc : "") + "."
       : m.genre === "perdue" ? __("Les habitants l'ont dressée pour ne pas oublier ") + nc + __(", perdu au rappel du ") + dateCourte(m.fait) + "."
@@ -4112,14 +4127,14 @@ function demarrerJeu() {
   }
   function carteGloire(m, neuf) {
     var T = textesGloire(m);
-    var c = el('<div class="ile-monument bati ile-gloire" role="button" tabindex="0"><div class="ile-gloire-img">' + svgGloire(m, 56) + '</div><div><div class="eyebrow">' + (neuf ? __("Nouveau monument") : __("À la gloire des sciences")) + "</div><b>" + esc(nomGloire(m)) + "</b><p>" + esc(T.quand) + " " + esc(T.pour) + "</p></div></div>");
+    var c = el('<div class="ile-monument bati ile-gloire" role="button" tabindex="0"><div class="ile-gloire-img">' + svgGloire(m, 56) + '</div><div><div class="eyebrow">' + (neuf ? __("Nouveau monument") : __("À la gloire des sciences")) + "</div><b>" + esc(nomGloire(m)) + "</b>" + (m.reel ? '<p class="note" style="margin:0">' + esc(tx(m.reel.lieu)) + (m.reel.annee ? " · " + m.reel.annee : "") + "</p>" : "") + "<p>" + esc(T.quand) + " " + esc(T.pour) + "</p></div></div>");
     c.onclick = function () { ouvrirGloire(m.id); };
     return c;
   }
   function ouvrirGloire(id) {
     var I = M.ile(C, P, maintenant()), m = I && (I.gloires || []).filter(function (x) { return x.id === id; })[0]; if (!m) return;
     var T = textesGloire(m), q = I.quartiers.filter(function (x) { return x.id === m.quartier; })[0];
-    feuilleSimple('<div class="vitrine" style="padding:14px">' + svgGloire(m, 112) + '</div><div class="eyebrow">' + __("Monument à la gloire des sciences") + (q ? " · " + esc(tx(q.nom)) : "") + "</div><h2>" + esc(nomGloire(m)) + "</h2><p>" + esc(T.quand) + "</p><p>" + esc(T.pour) + "</p><p>" + esc(T.effet) + '</p><p class="note">' + esc(T.forme) + "</p>", nomGloire(m));
+    feuilleSimple('<div class="vitrine" style="padding:14px">' + svgGloire(m, 112) + '</div><div class="eyebrow">' + __("Monument à la gloire des sciences") + (q ? " · " + esc(tx(q.nom)) : "") + "</div><h2>" + esc(nomGloire(m)) + "</h2>" + (m.reel ? '<p><b>' + esc(tx(m.reel.lieu)) + (m.reel.annee ? " · " + m.reel.annee : "") + "</b></p><p>" + esc(tx(m.reel.histoire)) + '</p><p class="note">' + __("Source : ") + esc(m.reel.source) + "</p><h3>" + __("Sur ton île") + "</h3>" : "") + "<p>" + esc(T.quand) + "</p><p>" + esc(T.pour) + "</p><p>" + esc(T.effet) + "</p>" + (T.forme ? '<p class="note">' + esc(T.forme) + "</p>" : ""), nomGloire(m));
   }
   function carteMonument(m) {
     var ep = "ep-" + m.epoque, reste = m.seuil - m.dates.length;

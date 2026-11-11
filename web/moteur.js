@@ -1468,6 +1468,11 @@
     var f = G.fait, type = f.genre === "acquis" ? "gloire" : "lecon";
     var m = { id: type + ":" + f.comp, type: type, comp: f.comp, t: t, serie: G.serie, genre: f.genre, fait: f.t, bonnes: f.bonnes, total: f.total };
     G.liste = (G.liste || []).filter(function (x) { return x.id !== m.id; });
+    // Un vrai monument du monde, s'il en reste un : celui de ce savoir d'abord, sinon un autre du même arbre.
+    var pris = {}, cf = contenu.parId[f.comp]; G.liste.forEach(function (x) { if (x.reel) pris[x.reel] = true; });
+    var libres = ((contenu.ile.gloires || [])).filter(function (g) { return !pris[g.id] && contenu.parId[g.comp]; });
+    var reel = libres.filter(function (g) { return g.comp === f.comp; })[0] || (cf && libres.filter(function (g) { return contenu.parId[g.comp].stat === cf.stat; })[0]);
+    if (reel) m.reel = reel.id;
     G.liste.push(m);
     if (G.liste.length > (R.max || 40)) G.liste.splice(0, G.liste.length - (R.max || 40));
     G.serieBati = G.serie; G.fait = null;
@@ -1481,7 +1486,8 @@
       var su = estMaitrisee(partie, m.comp), e = partie.competences[m.comp];
       var releve = m.type === "lecon" && su && e && e.maitriseDepuis > m.fait;
       var forme = "stele"; P2.forEach(function (p) { if (m.serie >= p.jours) forme = p.forme; });
-      return { id: m.id, type: m.type, comp: m.comp, nomComp: c.nom, stat: c.stat, quartier: q, t: m.t, serie: m.serie, genre: m.genre, fait: m.fait, bonnes: m.bonnes, total: m.total,
+      var reel = m.reel ? (contenu.ile.gloires || []).filter(function (g) { return g.id === m.reel; })[0] || null : null;
+      return { reel: reel, id: m.id, type: m.type, comp: m.comp, nomComp: c.nom, stat: c.stat, quartier: q, t: m.t, serie: m.serie, genre: m.genre, fait: m.fait, bonnes: m.bonnes, total: m.total,
         forme: forme, releve: releve, actif: m.type === "gloire" ? su : releve, habitants: R.habitants || 10 };
     }).filter(Boolean);
   }

@@ -2330,5 +2330,13 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Un jour sauté : la série repart de un.
   M.suivreGloire(CG, PG, "phys.archimede", t0 + 8 * J, "acquis", 5, 5);
   assert.equal(PG.gloire.serie, 1); assert.equal(M.gloiresIle(CG, PG).length, 2);
-  console.log("OK : monuments à la gloire des sciences (série de jours, gloire, leçon relevée)");
+  // Victor (2026-11-11) : de vrais monuments du monde. Celui du savoir d'abord, sinon un autre du même arbre, jamais deux fois.
+  CG.ile.gloires.forEach(g => assert.ok(CG.parId[g.comp] && g.histoire.fr.length > 80 && g.source, "monument réel complet : " + g.id));
+  assert.ok(g1.reel && CG.parId[g1.reel.comp].stat === CG.parId["phys.machines"].stat, "à défaut, un monument du même arbre");
+  assert.ok(g2.reel && g2.reel.id !== g1.reel.id, "pas deux fois le même monument");
+  const PR = M.nouvellePartie(t0);
+  M.suivreGloire(CG, PR, "sci.vaccins", t0, "acquis", 5, 5); M.suivreGloire(CG, PR, "sci.vaccins", t0 + J, null);
+  const g3 = M.suivreGloire(CG, PR, "sci.vaccins", t0 + 2 * J, null);
+  assert.equal(g3.reel.id, "mon-jenner", "le monument du savoir lui-même");
+  console.log("OK : monuments à la gloire des sciences (série de jours, gloire, leçon relevée, vrais monuments)");
 }
