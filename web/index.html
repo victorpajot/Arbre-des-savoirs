@@ -1467,8 +1467,8 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-objectif .btn { width: 100%; }
 .ile-vignette { position: relative; margin: 0 0 14px; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--surface); }
 .ile-vig-corps { display: block; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.ile-vig-fleche { position: absolute; top: 56px; width: 40px; height: 40px; border-radius: 20px; border: 0; background: rgba(255,253,244,.92); color: #2B2B33; font-size: 26px; font-weight: 800; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
-.ile-vig-fleche.g { left: 8px; } .ile-vig-fleche.d { right: 8px; }
+.ile-vig-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 12px 12px; }
+.ile-vig-nav .btn { flex: none; min-width: 64px; min-height: 44px; margin: 0; font-size: 20px; } .ile-vig-nav .num { font-size: 15px; font-weight: 700; color: var(--muted); }
 .ile-vig-pied i { font-style: normal; font-size: 14px; font-weight: 700; color: var(--muted); margin-left: 4px; }
 .ile-vignette .ile-cadre { display: block; border: 0; border-radius: 0; pointer-events: none; }
 .ile-vig-pied { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px 12px; }
@@ -4523,21 +4523,28 @@ function demarrerJeu() {
     }
     if (p && p.parasites) faits.push(nb(p.parasites) + (p.parasites > 1 ? __(" faux savoirs rôdent") : __(" faux savoir rôde")));
     var ligne = faits.length ? faits.join(", ") : I.habitants ? __("Journée calme sur l'île.") : __("Personne encore : il faut un lieu où vivre.");
-    var b = el('<div class="ile-vignette"></div>');
+    // Les flèches vivent dans leur propre barre, sous l'image : elles ne recouvrent plus la zone qui ouvre le quartier
+    // et ne sont jamais reconstruites sous le doigt (sur le téléphone de Victor, les toucher ouvrait l'île).
+    var b = el('<div class="ile-vignette"><div class="ile-vig-zone"></div></div>'), zone = b.firstChild, garde = 0, seul = fondes.length < 2;
+    function rang() { return Math.max(0, fondes.map(function (x) { return x.id; }).indexOf(vignetteQ)); }
     function montrer() {
-      var k = Math.max(0, fondes.map(function (x) { return x.id; }).indexOf(vignetteQ)), q = fondes[k], seul = fondes.length < 2;
+      var k = rang(), q = fondes[k];
       // On cadre le bas du lieu : l'entrée du chemin, le rivage au port, et les dernières installations posées.
       var sc = svgQuartier(q).replace(/viewBox="0 0 (\d+) (\d+)"/, function (m, w, h) { var hv = Math.min(+h, 170); return 'viewBox="0 ' + Math.max(0, +h - hv - (q.decor === "quai" ? 0 : 28)) + " " + w + " " + hv + '"'; });
-      b.innerHTML = "";
-      var corps = el('<button type="button" class="ile-vig-corps" aria-label="' + __("Ouvrir ") + esc(tx(q.nom)) + '"><span class="ile-cadre">' + sc + '</span><span class="ile-vig-pied"><span><b>' + esc(tx(q.nom)) + (seul ? "" : ' <i class="num">' + (k + 1) + " / " + fondes.length + "</i>") + "</b><small>" + esc(ligne) + '</small></span><span class="ile-vig-hab"><b>' + nb(I.habitants) + "</b><small>" + (I.habitants > 1 ? __("habitants") : __("habitant")) + "</small></span></span></button>");
-      corps.onclick = function () { vue = "ile"; quartierVu = q.id; rendre(); window.scrollTo(0, 0); };
-      b.appendChild(corps);
-      if (seul) return;
-      [[-1, "g", "‹", __("Quartier précédent")], [1, "d", "›", __("Quartier suivant")]].forEach(function (f) {
-        var bt = el('<button type="button" class="ile-vig-fleche ' + f[1] + '" aria-label="' + f[3] + '">' + f[2] + "</button>");
-        bt.onclick = function (ev) { ev.stopPropagation(); vignetteQ = fondes[(k + f[0] + fondes.length) % fondes.length].id; montrer(); };
-        b.appendChild(bt);
-      });
+      zone.innerHTML = "";
+      var corps = el('<button type="button" class="ile-vig-corps" aria-label="' + __("Ouvrir ") + esc(tx(q.nom)) + '"><span class="ile-cadre">' + sc + '</span><span class="ile-vig-pied"><span><b>' + esc(tx(q.nom)) + "</b><small>" + esc(ligne) + '</small></span><span class="ile-vig-hab"><b>' + nb(I.habitants) + "</b><small>" + (I.habitants > 1 ? __("habitants") : __("habitant")) + "</small></span></span></button>");
+      corps.onclick = function () { if (Date.now() - garde < 500) return; vue = "ile"; quartierVu = q.id; rendre(); window.scrollTo(0, 0); };
+      zone.appendChild(corps);
+      var cpt = b.querySelector(".ile-vig-nav .num"); if (cpt) cpt.textContent = (k + 1) + " / " + fondes.length;
+    }
+    if (!seul) {
+      var nav = el('<div class="ile-vig-nav"><button type="button" class="btn sec" data-d="-1" aria-label="' + __("Quartier précédent") + '">←</button><span class="num"></span><button type="button" class="btn sec" data-d="1" aria-label="' + __("Quartier suivant") + '">→</button></div>');
+      nav.onclick = function (ev) {
+        ev.stopPropagation(); ev.preventDefault();
+        var bt = ev.target.closest && ev.target.closest("[data-d]"); if (!bt) return;
+        garde = Date.now(); vignetteQ = fondes[(rang() + (+bt.getAttribute("data-d")) + fondes.length) % fondes.length].id; montrer();
+      };
+      b.appendChild(nav);
     }
     montrer();
     return b;
