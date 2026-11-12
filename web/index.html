@@ -3971,7 +3971,7 @@ function demarrerJeu() {
       if (!duo) v.appendChild(mot);
     }
     var em = M.empletteAVoir(P); if (em) v.appendChild(blocEmplette(em));
-    var bf = blocFarce(); if (bf) v.appendChild(bf);
+    var bf = blocFarce();
     var bh = blocHonte(); if (bh) v.appendChild(bh);
     var sn = M.surnom(C, P, t);
     var perso = el(__('<div class="bloc perso-v5" role="button" tabindex="0" aria-label="Ouvrir la fiche du personnage"><div class="perso"><div class="avatar-cadre rang-') + M.rangAvatar(C, P).id + '">' + svgAvatar(84) + __('</div><div><div class="niv-ligne"><div class="niv"><small>Niveau</small><span class="num">') + ng + __('</span></div><div class="niv cred"><small>Crédits</small><span class="num">') + P.credits.solde + '</span></div></div><div class="rang">' + esc(tx(M.rangAvatar(C, P).nom)) + "</div>" + (sn ? '<p class="surnom">' + esc(sn.texte) + __('<small>d\'après l\'IA</small></p>') : "") + '<p class="meta">' + nbMait + (nbMait > 1 ? __(" compétences") : __(" compétence")) + (nbMait > 1 ? __(" maîtrisées") : __(" maîtrisée")) + __(" sur ") + C.competences.length + "</p></div></div></div>");
@@ -4007,6 +4007,8 @@ function demarrerJeu() {
         __("<li>Chaque épreuve réussie peut faire tomber un objet, un livre, un accessoire ou un masque. Pas toujours : il faudra plusieurs tours du plateau pour tout réunir.</li></ol></div>"))));
     }
 
+    // Victor (2026-11-12) : l'accessoire imposé par Alyca s'annonce en tout dernier sur l'accueil.
+    if (bf) v.appendChild(bf);
     return v;
   }
 
