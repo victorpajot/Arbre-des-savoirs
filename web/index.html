@@ -1607,7 +1607,8 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-camp-savoirs { display: grid; gap: 8px; margin-bottom: 12px; } .ile-camp-savoir { display: flex; align-items: center; gap: 12px; text-align: left; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: inherit; font: inherit; cursor: pointer; } .ile-camp-savoir b { display: block; font-size: 16px; } .ile-camp-savoir small { color: var(--muted); font-size: 14px; }
 .ile-camp { margin: 12px 0; } .ile-camp p { font-size: 17px; line-height: 1.5; margin: 0 0 10px; } .ile-camp .extrait { margin: 0; } .ile-camp blockquote { font-size: 17px; }
 @keyframes ile-danse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
-.ile-danse { animation: ile-danse .6s ease-in-out infinite; } .ile-flamme { cursor: pointer; }
+.ile-danse { animation: ile-danse .6s ease-in-out infinite; }
+body:has(#couche .voile) .app .ile-scene * { animation-play-state: paused !important; } .ile-flamme { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .ile-danse { animation: none; } }
 .ile-nouveau { margin: 18px 0 8px; padding: 12px; border: 2px dashed var(--accent); border-radius: 16px; display: flex; flex-direction: column; gap: 10px; } .ile-nouveau .btn { align-self: flex-end; }
 .ile-effort { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 16px; flex-wrap: wrap; } .ile-effort > span { flex-basis: 100%; } .ile-effort button { font: inherit; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(127,127,127,.5); background: transparent; color: inherit; font-size: 20px; cursor: pointer; } .ile-effort button:disabled { opacity: .35; }
@@ -2176,10 +2177,11 @@ function demarrerJeu() {
     return { id: "humeur-perso-" + h.type + h.ligne, texte: { fr: t.charAt(0).toUpperCase() + t.slice(1) }, aparte: false, expression: h.type === "retouche" ? "impressionnee" : "decue" };
   }
   // Une fois hors quiz : la création proposée aux parties en cours, puis chaque pouvoir débloqué, annoncé par Alyca.
+  var DEJA_OFFERT = {};
   function scenesPersonnage() {
     if (titre || feuille || !C.avatar || document.querySelector(".quiz, .liberation, .alyca-scene")) return;
     if (!P.apparence && C.avatar.creation && !(P.options && P.options.creationProposee)) { ouvrirCreation(!P.journal.length); return; }
-    var tns = M.annoncerTenues(C, P, maintenant());
+    var tns = M.annoncerTenues(C, P, maintenant()).filter(function (tn) { return !DEJA_OFFERT["t" + tn.id] && (DEJA_OFFERT["t" + tn.id] = 1); });
     if (tns.length) {
       sauver();
       var vis = tns.map(function (tn) { var ch = Object.assign({}, P.apparence, { tenue: tn.id, couleur: null }); return '<div class="tenue-gagnee">' + svgPerso(ch, 72) + "<b>" + esc(tx(tn.nom)) + "</b><small>" + esc(conditionTexte(tn.condition)) + "</small></div>"; }).join("");
@@ -2188,7 +2190,8 @@ function demarrerJeu() {
       var bt = comite({ id: "tenue-" + tns[0].id, texte: tns[0].pique, aparte: false }); if (bt) feuille.querySelector(".bulle-p").appendChild(bt);
       return;
     }
-    var nv = M.annoncerPouvoirs(C, P, maintenant()); if (!nv.length) return;
+    var nv = M.annoncerPouvoirs(C, P, maintenant()).filter(function (pv) { return !DEJA_OFFERT["p" + pv.id]; }); if (!nv.length) return;
+    DEJA_OFFERT["p" + nv[0].id] = 1;
     sauver();
     var p = nv[0], e = M.pouvoir(C, P, p.id, maintenant());
     feuilleSimple('<div class="pouvoir-tete"><span class="pouvoir-ico grand">' + p.icone + '</span><div><div class="eyebrow">' + __("Nouveau pouvoir") + "</div><h2>" + esc(tx(p.nom)) + "</h2></div></div><div class=\"bulle-p\"></div><p><b>" + esc(tx(p.effet)) + '</b></p><p class="meta">' +
@@ -4778,6 +4781,8 @@ function demarrerJeu() {
     v.appendChild(el('<p class="note">' + (vierge ? (M.modeIle(P) ? (I.ages ? __("L'île est vierge, et tout y commence par le feu. Touche « Maîtriser le feu » ci-dessous pour lire sa leçon, puis passe le quiz : c'est lui qui pose le campement.") : __("L'île est vierge. Touche Jouer : Alyca te donne un premier savoir à apprendre, et sa réussite pose la première installation.")) : __("L'île est vierge. Réussis l'épreuve de ta case sur le parcours : elle y posera la première installation et fondera ton premier quartier.")) :
       (M.modeIle(P) && I.ages && I.ages.courant < 2 ? __("Le campement a des besoins. Touche un savoir pour lire sa leçon et passer son quiz : tous les besoins couverts, le campement deviendra un village.") : M.modeIle(P) ? __("Touche un quartier, puis un terrain « ? » : réussis son quiz et l'installation se bâtit. Un rappel en retard la met en panne. Le bouton Jouer laisse Alyca choisir pour toi.") : __("Chaque épreuve réussie sur le parcours construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter."))) + "</p>"));
     if (!P.ileIntro) setTimeout(presenterIle, 250);
+    // Victor (2026-11-12) : dans l'onglet, l'île d'abord ; l'âge, l'objectif et les alertes viennent dessous.
+    var ancreCarte = v.lastChild;
     var bal = blocAleaIle(I), nouveau = false;
     if (bal) { P.ileVus = P.ileVus || {};
       if (!P.ileVus.aleas) { var pa = el('<div class="ile-nouveau"><div class="eyebrow">' + __("Nouveau sur l'île") + '</div><div class="ile-nouveau-b"></div><button type="button" class="btn sec">' + __("Compris") + "</button></div>");
@@ -4789,7 +4794,7 @@ function demarrerJeu() {
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
     carte.onclick = function (ev) { var gv = ev.target.closest && ev.target.closest("[data-savant]"); if (gv) { ouvrirVisiteur(gv.getAttribute("data-savant")); return; }
       var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
-    v.appendChild(carte);
+    ancreCarte.after(carte);
     // Victor (2026-11-12) : « comment acheter des aménagements ? » Le chantier s'ouvre dès la carte, avec les stocks.
     // Victor (2026-11-12) : l'île n'affiche un bloc que lorsqu'il sert, et l'IA le présente la première fois.
     var epure = !!I.ages, feu = !epure || I.ages.courant >= 1 || M.estMaitrisee(P, "ile.feu");
@@ -4987,7 +4992,7 @@ function demarrerJeu() {
       var amen = b.amenagements.map(function (id) { var x = C.ile.amenagements.filter(function (y) { return y.id === id; })[0]; return x ? esc(tx(x.nom)).toLowerCase() : ""; }).filter(Boolean);
       h += '<div class="ile-besoin' + (b.couvert ? " ok" : "") + '"><h4>' + (b.couvert ? "✓ " : "○ ") + esc(tx(b.nom)) + "</h4>" + (b.texte ? "<p>" + esc(tx(b.texte)) + (amen.length ? " " + __("Débloque : ") + amen.join(", ") + "." : "") + "</p>" : "") + '<div class="ile-savoirs">' +
         b.savoirs.map(function (id) { var k = C.parId[id], st = M.statut(C, P, id, t).etat, ok = st === "maitrisee" || st === "a_reviser";
-          return '<button type="button" class="ile-savoir' + (ok ? " ok" : "") + '" style="--c:' + couleur(k.stat) + '" data-savoir="' + esc(id) + '">' + badgeComp(k, 44) + "<span>" + (ok ? "✓ " : "") + esc(tx(k.nom)) + "<small>" + esc(tx(stat(k.stat).nom)) + " · " + (st === "a_reviser" ? __("rappel à faire") : ok ? __("acquis") : st === "disponible" ? __("à apprendre") : __("verrouillé")) + "</small></span></button>"; }).join("") + "</div></div>";
+          return '<button type="button" class="ile-savoir' + (ok ? " ok" : "") + '" style="--c:' + couleur(k.stat) + '" data-savoir="' + esc(id) + '">' + badgeComp(k, 64) + "<span>" + (ok ? "✓ " : "") + esc(tx(k.nom)) + "<small>" + esc(tx(stat(k.stat).nom)) + " · " + (st === "a_reviser" ? __("rappel à faire") : ok ? __("acquis") : st === "disponible" ? __("à apprendre") : __("verrouillé")) + "</small></span></button>"; }).join("") + "</div></div>";
     });
     if (G.suivant && !a.avenir) h += '<p class="ile-vie-note" style="margin-top:10px">' + __("Tous les besoins couverts, s'ouvrira : ") + "<b>" + esc(tx(G.suivant.nom)) + "</b>.</p>";
     var bloc = el("<div>" + h + "</div></div>");
@@ -5343,19 +5348,22 @@ function demarrerJeu() {
   }
   // Dans le bilan d'une épreuve : ce qu'elle vient de changer sur l'île.
   function blocIleBilan(ch) {
-    var inst = ch.installation, q = M.ile(C, P, maintenant()).quartiers.filter(function (x) { return x.id === ch.quartier; })[0];
+    var Ib = M.ile(C, P, maintenant()), inst = ch.installation, q = Ib.quartiers.filter(function (x) { return x.id === ch.quartier; })[0];
+    // Avant le village, tout se passe au campement : ni quartier, ni stade, ni option à annoncer.
+    var camp = campIle(Ib).quartiers[0].camp;
+    if (camp) ch = Object.assign({}, ch, { fondation: false, option: null });
     var monte = ch.apres === "marche" && ch.avant !== "marche", g = grilleIle(inst.dessin);
     var titre = ch.apres === "marche" ? (ch.avant === "friche" ? __("Nouvelle installation") : ch.avant === "abandon" ? __("Remise en service") : ch.avant === "marche" ? __("Entretenue") : __("Réparée")) :
       ch.apres === "abandon" ? __("Laissée à l'abandon") : ch.apres === "panne" ? __("En panne") : ch.apres === "alerte" ? __("En alerte") : __("Sur l'île");
     var d = ch.habitants - ch.habitantsAvant;
-    var b = el('<div class="recompense ile-rec' + (monte || (ch.apres === "marche" && ch.objectif) ? " anim" : " perte") + '" style="--c:' + q.couleur + '"><div class="genre">' + __("Sur l'île") + " · " + esc(tx(q.nom)) + "</div>" +
+    var b = el('<div class="recompense ile-rec' + (monte || (ch.apres === "marche" && ch.objectif) ? " anim" : " perte") + '" style="--c:' + q.couleur + '"><div class="genre">' + __("Sur l'île") + " · " + (camp ? __("Le campement") : esc(tx(q.nom))) + "</div>" +
       '<div class="ile-badge"><div class="ile-socle">' + (g ? '<svg class="pix" viewBox="0 0 32 32" width="128" height="128" aria-hidden="true"' + (ch.apres === "abandon" ? ' filter="url(#ile-ruine)"' : ch.apres === "panne" ? ' filter="url(#ile-terne)"' : "") + ">" + pixels(g, C.cabinet.palette, null, 0, 0, 1) + "</svg>" : "") + "</div></div>" +
       '<svg width="0" height="0" style="position:absolute">' + DEFS_ILE + "</svg>" +
       "<div class=\"eyebrow\">" + esc(titre) + "</div><h3>" + esc(tx(inst.nom)) + "</h3>" +
       (inst.usage && ch.apres === "marche" ? '<p class="desc">' + esc(tx(inst.usage)) + "</p>" : ch.apres !== "marche" ? '<p class="desc">' + esc(TEXTE_ETAT[ch.apres]()) + "</p>" : "") +
       (d ? '<p class="ile-delta ' + (d > 0 ? "plus" : "moins") + '">' + (d > 0 ? "+" : "−") + esc(texteHabitants(Math.abs(d))) + '<small>' + esc(texteHabitants(ch.habitants)) + __(" sur l'île") + "</small></p>" : "") +
       (ch.revenus ? '<p class="desc">' + esc(texteHabitants(ch.revenus)) + (ch.revenus > 1 ? __(" reviennent sur l'île après le piège.") : __(" revient sur l'île après le piège.")) + (ch.exil ? " " + __("Encore partis : ") + nb(ch.exil) + "." : "") + "</p>" : "") +
-      (monte && !q.habitable ? '<p class="desc">' + __("Personne n'y vit encore : il manque ") + q.manque + (q.manque > 1 ? __(" installations") : __(" installation")) + __(" pour rendre le quartier habitable.") + "</p>" : "") +
+      (monte && !q.habitable && !camp ? '<p class="desc">' + __("Personne n'y vit encore : il manque ") + q.manque + (q.manque > 1 ? __(" installations") : __(" installation")) + __(" pour rendre le quartier habitable.") + "</p>" : "") +
       (ch.fondation ? '<p class="ile-service">' + __("Nouveau lieu sur l'île : ") + esc(tx(q.nom)) + "</p>" :
         ch.option && ch.stadeAvant && tx(ch.stadeAvant) !== tx(q.nom) ? '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(ch.stadeAvant)) + (ch.optionOuverte ? __(" devient : ") : __(" redevient : ")) + esc(tx(q.nom)) + "</p>" : "") +
       (ch.objectif ? '<p class="ile-service">' + (M.modeIle(P) && (M.agesIle(C, P) || {}).courant < 2 ? __("Objectif du jour tenu : le feu brûle encore.") : __("Objectif du jour tenu : pas de délestage ce soir.")) + " +" + ch.objectif.credits + __(" crédits") + "</p>" : "") +
