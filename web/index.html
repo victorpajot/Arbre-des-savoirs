@@ -4540,14 +4540,19 @@ function demarrerJeu() {
     var W = 360, H = 240, s = '<rect width="' + W + '" height="' + H + '" fill="#A3D98A"/>';
     for (var p = 0; p < 8; p++) { var gp = graine(q.id + "camp" + p); s += '<path d="' + tache(gp % W, (gp >>> 9) % H, 40 + (gp >>> 4) % 40, 22 + (gp >>> 6) % 22, q.id + "c" + p) + '" fill="' + (p % 2 ? "#B4E39A" : "#96CF80") + '" opacity=".6"/>'; }
     s += '<ellipse cx="180" cy="150" rx="74" ry="30" fill="#D9C590" opacity=".75"/><ellipse cx="180" cy="150" rx="40" ry="15" fill="#B79E6E" opacity=".6"/>';
-    var foyer = C.ile.amenagements.filter(function (a) { return a.id === "foyer"; })[0], PEAU_BETE = ["#8A5A2B", "#A67444", "#6E4A26", "#9C7A52"];
+    var PEAU_BETE = ["#8A5A2B", "#A67444", "#6E4A26", "#9C7A52"];
     function danseur(i, n) {
       var a = Math.PI * 2 * i / n + 0.3, x = 180 + Math.cos(a) * 92, y = 150 + Math.sin(a) * 40, g = graine(q.id + "danse" + i), peau = PEAUX[(g >>> 3) % PEAUX.length], bete = PEAU_BETE[g % PEAU_BETE.length];
       return [y, '<g class="ile-danse" style="animation-delay:-' + ((g % 9) / 10).toFixed(1) + 's" shape-rendering="crispEdges">' +
         pixels(HABITANT2, { h: CHEVEUX[g % 3], s: peau, v: bete, w: ombre(bete), k: "#2B2B33", j: peau }, null, Math.round(x - 10), Math.round(y - 32), 2) + "</g>"];
     }
     var plan = []; for (var i = 0; i < 6; i++) plan.push(danseur(i, 6));
-    plan.push([150, '<g data-comp="ile.feu" class="ile-flamme" shape-rendering="crispEdges">' + (foyer ? svgAmenagement(foyer, 180, 158, 70) : "") + "</g>"]);
+    // Ce que le campement a bâti se voit derrière le feu : abris, hutte, poste de guet.
+    var faits = [], pq = (AMEN_ILE && AMEN_ILE.parQuartier[q.id]) || {};
+    C.ile.amenagements.forEach(function (a) { for (var n = 0; n < Math.min(3, pq[a.id] || 0); n++) faits.push(a); });
+    faits.slice(0, 7).forEach(function (a, i, L) { var x = 180 + (i - (L.length - 1) / 2) * 46, y = 78 + Math.abs(i - (L.length - 1) / 2) * 7;
+      plan.push([y - 40, '<g data-amen="' + esc(a.id) + '" shape-rendering="crispEdges">' + svgAmenagement(a, Math.round(x), Math.round(y), 40) + "</g>"]); });
+    plan.push([150, '<g data-comp="ile.feu" class="ile-flamme" shape-rendering="crispEdges">' + svgAmenagement({ id: "feu", dessin: "foyer" }, 180, 158, 70) + "</g>"]);
     plan.sort(function (u, v) { return u[0] - v[0]; });
     return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(__("Un feu, et quelques habitants vêtus de peaux qui dansent autour")) + '">' + s + plan.map(function (x) { return x[1]; }).join("") + "</svg>";
   }
@@ -4782,10 +4787,10 @@ function demarrerJeu() {
       v.appendChild(bloc);
     }
     if (I.ressources && feu) {
-      var Rs = I.ressources, raccourci = el('<button type="button" class="ile-construire"><span>🏗️ <b>' + __("Construire") + "</b><small>" + (I.ages && I.ages.courant < 2 ? __("foyer, hutte, veillée…") : __("ferme, mine, maisons…")) + "</small></span><span class=\"ile-construire-st\">" +
+      var Rs = I.ressources, raccourci = el('<button type="button" class="ile-construire"><span>🏗️ <b>' + __("Construire") + "</b><small>" + (I.ages && I.ages.courant < 2 ? __("abri, hutte, veillée…") : __("ferme, mine, maisons…")) + "</small></span><span class=\"ile-construire-st\">" +
         (C.ile.ressources || []).map(function (r) { return r.icone + " " + nb(Rs.stocks[r.id] || 0); }).join(" · ") + " · " + P.credits.solde + __(" crédits") + "</span></button>");
       raccourci.onclick = ouvrirChantierIle;
-      poser("construire", raccourci, __("Tu as du feu, donc des gens qui restent. Voici le chantier et les réserves. Un campement ne bâtit rien de durable : un foyer, une hutte, un poste de guet. Les fermes et les maisons attendront le village."));
+      poser("construire", raccourci, __("Tu as du feu, donc des gens qui restent. Voici le chantier et les réserves. Un campement ne bâtit rien de durable : un abri de branches, une hutte, un poste de guet. Les fermes et les maisons attendront le village."));
     }
     var carteV = blocVisiteursIle(VIS_ILE); if (carteV) v.appendChild(carteV);
     var res = feu ? blocRessourcesIle(I) : null;
@@ -4895,6 +4900,7 @@ function demarrerJeu() {
     else if (d === "forge") { r(3, 10, 16, 14, "#8C8C94"); toit(2, 20, 10, 5, "#3A3A42"); r(15, 2, 3, 8, "#5A5A62"); r(8, 16, 6, 8, "#2B2B33"); r(9, 18, 4, 4, "#F2793A"); r(10, 19, 2, 2, "#FFD27A"); }
     else if (d === "foyer") { [4, 8, 12, 16].forEach(function (k) { r(k, 21, 3.4, 3, "#9A9AA2"); }); r(6, 19, 12, 2, "#6B4A2B"); toit(7, 17, 19, 10, "#F2793A"); toit(9.5, 14.5, 19, 6, "#FFD27A"); }
     else if (d === "four") { o += '<path d="M' + (x - 9 * u).toFixed(1) + " " + y.toFixed(1) + "Q" + (x - 9 * u).toFixed(1) + " " + (y - 16 * u).toFixed(1) + " " + x.toFixed(1) + " " + (y - 16 * u).toFixed(1) + "Q" + (x + 9 * u).toFixed(1) + " " + (y - 16 * u).toFixed(1) + " " + (x + 9 * u).toFixed(1) + " " + y.toFixed(1) + 'Z" fill="#B5714A"/>'; r(9, 17, 6, 7, "#2B2B33"); r(10, 19, 4, 4, "#F2793A"); r(18, 19, 3, 5, "#C99A6B"); r(21.5, 20, 2.5, 4, "#C99A6B"); }
+    else if (d === "abri") { toit(2, 22, 22, 13, "#6E8F45"); toit(6, 18, 22, 8, "#8DAA5C"); r(10, 18, 4, 4, "#3F2E1E"); r(1, 22, 22, 1.4, "#7A5230"); }
     else if (d === "hutte") { toit(3, 21, 24, 15, "#C9A45A"); r(10, 17, 4, 7, "#5A3E28"); r(1, 12, 1, 12, "#7A5230"); [13, 16, 19].forEach(function (k) { r(0, k, 3, 1.4, "#5E9A4E"); }); }
     else if (d === "veillee") { [[2, 20], [6, 16], [12, 14.5], [18, 16], [21, 20]].forEach(function (p) { r(p[0], p[1], 3, 4, "#9A9AA2"); }); toit(9.5, 14.5, 23, 6, "#F2793A"); r(9, 22.5, 6, 1.5, "#6B4A2B"); }
     else if (d === "place") { r(1, 20, 22, 4, "#D9C9A0"); r(11.3, 4, 1.4, 16, "#7A5230"); toit(12.5, 21, 9, 4, "#B5503C"); r(12.7, 5, 6, 4, "#B5503C"); r(3, 17, 5, 3, "#8A6240"); r(16, 17, 5, 3, "#8A6240"); }
