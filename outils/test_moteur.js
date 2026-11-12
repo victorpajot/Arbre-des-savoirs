@@ -2419,7 +2419,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const P = M.nouvellePartie(t0); P.mode = "ile"; P.credits.solde = 2000;
   // Le campement : seul le feu est proposé.
   let G = M.agesIle(CA, P);
-  assert.equal(G.age.id, "campement"); assert.equal(G.age.besoins[0].savoirs[0], "ile.feu");
+  assert.equal(G.age.id, "survivants"); assert.equal(G.age.besoins[0].savoirs[0], "ile.feu");
   assert.equal(M.statut(CA, P, "ile.feu", t0).etat, "disponible", "le feu est le premier savoir");
   assert.equal(M.statut(CA, P, "math.origines", t0).etat, "verrouillee", "rien d'autre avant le feu");
   assert.deepEqual(M.disponibles(CA, P, t0).map(k => k.id), ["ile.feu"]);
@@ -2428,26 +2428,39 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.ok(CA.questions.filter(q => q.competence === k.id).length >= 10, k.id + " a ses questions");
   const rf = M.terminerQuiz(CA, P, "ile.feu", M.tirerQuestions(CA, P, "ile.feu", 5).map(q => ({ id: q.id, correct: true })), t0, { jouer: true });
   assert.equal(rf.issue, "maitrisee");
+  // Le campement (Victor, 2026-11-12 : une transition plus douce) : six besoins, rien de durable à bâtir.
+  G = M.agesIle(CA, P);
+  assert.equal(G.age.id, "campement"); assert.equal(G.age.besoins.length, 6);
+  assert.equal(M.statut(CA, P, "astro.nebra", t0).etat, "disponible");
+  assert.equal(M.statut(CA, P, "math.origines", t0).etat, "verrouillee", "compter attend le village");
+  assert.equal(M.choixIA(CA, P, t0).besoin, "ciel");
+  M.ile(CA, P, t0); sait(P, "astro.nebra");
+  assert.equal(M.etatAmenagement(CA, P, "ferme", t0).age, 2, "pas de ferme au campement, même avec son savoir");
+  assert.ok(!M.etatAmenagement(CA, P, "ferme", t0).possible);
+  assert.equal(M.etatAmenagement(CA, P, "hutte", t0).age, null);
+  ["sci.soigner", "res.cueillir", "meteo.ciel", "mnemo.sansecrire", "mus.instruments"].forEach(id => sait(P, id));
+  M.ile(CA, P, t0);
   // Le village : les savoirs de ses besoins s'ouvrent, pas le rang 2, ni un rang 1 sans besoin.
   G = M.agesIle(CA, P);
-  assert.equal(G.age.id, "village"); assert.equal(G.age.besoins.length, 9);
+  assert.equal(G.age.id, "village"); assert.equal(G.age.besoins.length, 6);
   assert.equal(M.statut(CA, P, "math.origines", t0).etat, "disponible");
   assert.equal(M.statut(CA, P, "math.babylone", t0).etat, "verrouillee", "le rang 2 attend la cité");
   assert.equal(M.statut(CA, P, "inf.pascaline", t0).etat, "verrouillee", "un savoir sans besoin attend son âge");
-  const ch = M.choixIA(CA, P, t0); assert.equal(ch.raison, "besoin"); assert.equal(ch.besoin, "nourrir");
-  // Un aménagement demande son savoir : pas de ferme sans le ciel des premiers peuples.
+  const ch = M.choixIA(CA, P, t0); assert.equal(ch.raison, "besoin"); assert.equal(ch.besoin, "compter", "se nourrir est déjà couvert par le ciel des premiers peuples");
+  // Un aménagement demande son savoir : pas de pêcherie sans les poissons électriques.
   M.ile(CA, P, t0);
-  assert.equal(M.etatAmenagement(CA, P, "ferme", t0).savoir, "astro.nebra");
+  assert.equal(M.etatAmenagement(CA, P, "pecherie", t0).savoir, "elec.torpille");
   assert.ok(M.construireIle(CA, P, "foyer", t0).ok, "le feu permet le foyer");
   sait(P, "astro.nebra"); sait(P, "elec.torpille"); sait(P, "phys.machines");
   assert.equal(M.etatAmenagement(CA, P, "ferme", t0).savoir, null);
   G = M.agesIle(CA, P); assert.ok(G.age.besoins.filter(b => b.id === "nourrir")[0].couvert); assert.equal(G.age.couverts, 2);
+  assert.equal(M.etatAmenagement(CA, P, "ferme", t0).age, null, "au village, la ferme se bâtit");
   assert.deepEqual(G.age.besoins.filter(b => b.id === "batir")[0].amenagements, ["bucheron", "carriere", "maisons"]);
   // Tous les besoins couverts : la cité s'ouvre (et reste ouverte si un savoir se perd).
-  ["math.origines", "chim.feu", "sci.soigner", "mnemo.sansecrire", "coll.ruche", "res.cueillir", "meteo.ciel"].forEach(id => sait(P, id));
-  G = M.ile(CA, P, t0).ages; assert.equal(G.age.id, "cite"); assert.equal(P.ageIle, 2);
+  ["math.origines", "chim.feu", "rhet.origines", "coll.ruche"].forEach(id => sait(P, id));
+  G = M.ile(CA, P, t0).ages; assert.equal(G.age.id, "cite"); assert.equal(P.ageIle, 3);
   delete P.competences["coll.ruche"]; assert.equal(M.agesIle(CA, P).age.id, "cite", "un âge atteint le reste");
-  assert.ok(!M.agesIle(CA, P).ages[1].complet, "mais le besoin est à rétablir");
+  assert.ok(!M.agesIle(CA, P).ages[2].complet, "mais le besoin est à rétablir");
   sait(P, "coll.ruche");
   // Un monde fini : la pêche puise dans les bancs, qui repoussent ; trop de pêcheries les vident, l'effort les ménage.
   const peche = () => { const Q = M.nouvellePartie(t0); Q.mode = "ile"; Q.credits.solde = 5000;

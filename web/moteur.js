@@ -1831,7 +1831,9 @@
     var savoir = requis.length && !requis.some(function (x) { return estMaitrisee(partie, x); }) ? requis[0] : null;
     var habitables = I.quartiers.filter(function (q) { return q.habitable && q.posees > 0; });
     var ici = habitables.filter(function (q) { return q.id === a.quartier; })[0] || habitables.sort(function (x, y) { return y.habitants - x.habitants; })[0] || null;
-    return { id: id, possible: !manque.length && !savoir && !!ici, manque: manque, savoir: savoir, savoirs: savoir ? requis : [], quartier: ici ? ici.id : null, chezSoi: !!(ici && ici.id === a.quartier) };
+    // Victor (2026-11-12) : le campement ne bâtit rien de durable ; fermes, maisons et ateliers attendent le village.
+    var G = partie.mode === "ile" ? agesIle(contenu, partie) : null, age = G && a.age && G.courant < a.age ? a.age : null;
+    return { id: id, possible: !manque.length && !savoir && !!ici && age == null, age: age, manque: manque, savoir: savoir, savoirs: savoir ? requis : [], quartier: ici ? ici.id : null, chezSoi: !!(ici && ici.id === a.quartier) };
   }
   function construireIle(contenu, partie, id, t) {
     if (!reglesRessources(contenu)) return null;
@@ -1880,7 +1882,7 @@
         var savoirs = (b.savoirs || []).filter(function (id) { return contenu.parId[id]; });
         var acquis = savoirs.filter(function (id) { return estMaitrisee(partie, id); });
         // Ce que le besoin débloque : les aménagements qui demandent l'un de ses savoirs.
-        var ouvre = amen.filter(function (x) { return (x.savoirs || (x.savoir ? [x.savoir] : [])).some(function (s) { return savoirs.indexOf(s) >= 0; }); }).map(function (x) { return x.id; });
+        var ouvre = amen.filter(function (x) { return (x.age || 0) <= a.rang && (x.savoirs || (x.savoir ? [x.savoir] : [])).some(function (s) { return savoirs.indexOf(s) >= 0; }); }).map(function (x) { return x.id; });
         return { id: b.id, nom: b.nom, texte: b.texte || null, savoirs: savoirs, acquis: acquis, couvert: acquis.length > 0 || !savoirs.length, amenagements: ouvre };
       });
       var avenir = !besoins.length, complet = !avenir && besoins.every(function (b) { return b.couvert; });

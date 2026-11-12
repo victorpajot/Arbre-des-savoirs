@@ -2983,7 +2983,7 @@
   "aleas": {
    "chance": 0.07,
    "fiabilite": 0.5,
-   "age_min": 1
+   "age_min": 2
   }
  },
  "quartiers": [
@@ -4241,7 +4241,8 @@
    },
    "savoirs": [
     "astro.nebra"
-   ]
+   ],
+   "age": 2
   },
   {
    "id": "pecherie",
@@ -4264,7 +4265,8 @@
    "savoirs": [
     "elec.torpille"
    ],
-   "preleve": "poisson"
+   "preleve": "poisson",
+   "age": 2
   },
   {
    "id": "moulin",
@@ -4292,7 +4294,8 @@
    "savoirs": [
     "phys.archimede",
     "phys.alexandrie"
-   ]
+   ],
+   "age": 2
   },
   {
    "id": "grenier",
@@ -4312,7 +4315,8 @@
    },
    "savoirs": [
     "math.origines"
-   ]
+   ],
+   "age": 2
   },
   {
    "id": "bucheron",
@@ -4334,7 +4338,8 @@
    "savoirs": [
     "phys.machines"
    ],
-   "preleve": "foret"
+   "preleve": "foret",
+   "age": 2
   },
   {
    "id": "carriere",
@@ -4356,7 +4361,8 @@
    },
    "savoirs": [
     "phys.machines"
-   ]
+   ],
+   "age": 2
   },
   {
    "id": "mine",
@@ -4379,7 +4385,8 @@
    },
    "savoirs": [
     "chim.metaux"
-   ]
+   ],
+   "age": 2
   },
   {
    "id": "forge",
@@ -4409,7 +4416,8 @@
    },
    "savoirs": [
     "chim.metaux"
-   ]
+   ],
+   "age": 2
   },
   {
    "id": "maisons",
@@ -4429,7 +4437,8 @@
    },
    "savoirs": [
     "phys.machines"
-   ]
+   ],
+   "age": 2
   },
   {
    "id": "four",
@@ -4449,7 +4458,8 @@
    },
    "usage": {
     "fr": "Des jarres cuites qui ferment bien : 150 rations de plus à l'abri des rats et de l'humidité."
-   }
+   },
+   "age": 2
   },
   {
    "id": "hutte",
@@ -4459,8 +4469,8 @@
     "sci.soigner"
    ],
    "cout": {
-    "credits": 40,
-    "bois": 20
+    "credits": 30,
+    "bois": 5
    },
    "ouvriers": 1,
    "sante": 0.2,
@@ -4477,13 +4487,12 @@
    "dessin": "veillee",
    "savoirs": [
     "mnemo.sansecrire",
-    "rhet.origines",
-    "biais.historiens",
-    "philo.presocratiques"
+    "mus.instruments",
+    "psy.emotions"
    ],
    "cout": {
-    "credits": 30,
-    "pierre": 10
+    "credits": 20,
+    "bois": 5
    },
    "attrait": 0.1,
    "visiteurs": 1,
@@ -4499,9 +4508,7 @@
    "quartier": "ville",
    "dessin": "place",
    "savoirs": [
-    "coll.ruche",
-    "mus.instruments",
-    "psy.emotions"
+    "coll.ruche"
    ],
    "cout": {
     "credits": 40,
@@ -4514,7 +4521,8 @@
    },
    "usage": {
     "fr": "On s'y retrouve pour décider et pour fêter. Les naissances et les arrivées augmentent d'un cinquième."
-   }
+   },
+   "age": 2
   },
   {
    "id": "reserve",
@@ -4524,8 +4532,7 @@
     "res.cueillir"
    ],
    "cout": {
-    "credits": 30,
-    "pierre": 15
+    "credits": 25
    },
    "repousse": {
     "poisson": 0.5
@@ -4545,8 +4552,8 @@
     "meteo.ciel"
    ],
    "cout": {
-    "credits": 30,
-    "bois": 20
+    "credits": 25,
+    "bois": 5
    },
    "ouvriers": 1,
    "guet": 0.25,
@@ -4560,13 +4567,24 @@
  ],
  "ages": [
   {
-   "id": "campement",
+   "id": "survivants",
    "rang": 0,
    "nom": {
-    "fr": "Le campement"
+    "fr": "Les survivants"
    },
    "description": {
     "fr": "Quelques survivants éparpillés sur l'île. Ils n'ont pas encore allumé de feu."
+   },
+   "citation": {
+    "texte": "Therefore it was the discovery of fire that originally gave rise to the coming together of men",
+    "langue": "anglais",
+    "traduction": {
+     "fr": "C'est donc la découverte du feu qui, à l'origine, a fait se rassembler les hommes."
+    },
+    "reference": {
+     "fr": "Vitruve, De l'architecture, livre II, chapitre 1 (d'après la traduction anglaise de M. H. Morgan)"
+    },
+    "source": "Vitruve, De l'architecture, II, 1, 2, trad. Morris Hicky Morgan"
    },
    "besoins": [
     {
@@ -4581,27 +4599,101 @@
       "ile.feu"
      ]
     }
-   ],
-   "citation": {
-    "texte": "Therefore it was the discovery of fire that originally gave rise to the coming together of men",
-    "langue": "anglais",
-    "traduction": {
-     "fr": "C'est donc la découverte du feu qui, à l'origine, a fait se rassembler les hommes."
+   ]
+  },
+  {
+   "id": "campement",
+   "rang": 1,
+   "nom": {
+    "fr": "Le campement"
+   },
+   "description": {
+    "fr": "Le feu a rassemblé les survivants. On vit de cueillette, de chasse et de pêche, sans rien bâtir de durable."
+   },
+   "besoins": [
+    {
+     "id": "ciel",
+     "nom": {
+      "fr": "Lire le ciel"
+     },
+     "texte": {
+      "fr": "Les saisons reviennent : qui suit le ciel sait quand cueillir, chasser ou partir."
+     },
+     "savoirs": [
+      "astro.nebra"
+     ]
     },
-    "reference": {
-     "fr": "Vitruve, De l'architecture, livre II, chapitre 1 (d'après la traduction anglaise de M. H. Morgan)"
+    {
+     "id": "soigner",
+     "nom": {
+      "fr": "Soigner"
+     },
+     "texte": {
+      "fr": "Les plantes, les gestes et ceux qui les connaissent."
+     },
+     "savoirs": [
+      "sci.soigner"
+     ]
     },
-    "source": "Vitruve, De l'architecture, II, 1, 2, trad. Morris Hicky Morgan"
-   }
+    {
+     "id": "menager",
+     "nom": {
+      "fr": "Vivre de l'île"
+     },
+     "texte": {
+      "fr": "La forêt et les poissons ne sont pas sans fin."
+     },
+     "savoirs": [
+      "res.cueillir"
+     ]
+    },
+    {
+     "id": "temps",
+     "nom": {
+      "fr": "Voir venir le temps"
+     },
+     "texte": {
+      "fr": "Un abri de branches ne tient pas sous l'orage : mieux vaut le voir venir."
+     },
+     "savoirs": [
+      "meteo.ciel"
+     ]
+    },
+    {
+     "id": "souvenir",
+     "nom": {
+      "fr": "Se souvenir"
+     },
+     "texte": {
+      "fr": "Sans écriture, tout ce que le groupe sait tient dans les têtes."
+     },
+     "savoirs": [
+      "mnemo.sansecrire"
+     ]
+    },
+    {
+     "id": "ensemble",
+     "nom": {
+      "fr": "Veiller ensemble"
+     },
+     "texte": {
+      "fr": "Autour du feu, on chante, on rit, on apprend à se comprendre."
+     },
+     "savoirs": [
+      "mus.instruments",
+      "psy.emotions"
+     ]
+    }
+   ]
   },
   {
    "id": "village",
-   "rang": 1,
+   "rang": 2,
    "nom": {
     "fr": "Le village"
    },
    "description": {
-    "fr": "Le campement devient un village : il faut le nourrir, le loger, le soigner et le faire durer."
+    "fr": "Le campement se fixe : il faut nourrir, loger et organiser tout ce monde."
    },
    "besoins": [
     {
@@ -4654,18 +4746,6 @@
      ]
     },
     {
-     "id": "soigner",
-     "nom": {
-      "fr": "Soigner"
-     },
-     "texte": {
-      "fr": "Les plantes, les gestes et ceux qui les connaissent."
-     },
-     "savoirs": [
-      "sci.soigner"
-     ]
-    },
-    {
      "id": "transmettre",
      "nom": {
       "fr": "Transmettre"
@@ -4674,55 +4754,28 @@
       "fr": "Ce que le village sait doit passer aux suivants."
      },
      "savoirs": [
-      "mnemo.sansecrire",
       "rhet.origines",
       "biais.historiens",
       "philo.presocratiques"
      ]
     },
     {
-     "id": "ensemble",
+     "id": "decider",
      "nom": {
-      "fr": "Vivre ensemble"
+      "fr": "Décider ensemble"
      },
      "texte": {
-      "fr": "Décider, fêter et s'entendre à plusieurs."
+      "fr": "Plus on est nombreux, plus il faut s'entendre."
      },
      "savoirs": [
-      "coll.ruche",
-      "mus.instruments",
-      "psy.emotions"
-     ]
-    },
-    {
-     "id": "menager",
-     "nom": {
-      "fr": "Ménager l'île"
-     },
-     "texte": {
-      "fr": "La forêt et les poissons ne sont pas sans fin."
-     },
-     "savoirs": [
-      "res.cueillir"
-     ]
-    },
-    {
-     "id": "temps",
-     "nom": {
-      "fr": "Voir venir le temps"
-     },
-     "texte": {
-      "fr": "Tempêtes et sécheresses emportent ce qu'on a bâti, sauf si on les voit venir."
-     },
-     "savoirs": [
-      "meteo.ciel"
+      "coll.ruche"
      ]
     }
    ]
   },
   {
    "id": "cite",
-   "rang": 2,
+   "rang": 3,
    "nom": {
     "fr": "La cité"
    },

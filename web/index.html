@@ -4751,7 +4751,7 @@ function demarrerJeu() {
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + __("Ce que tu sais encore") + "</div><h1>" + __("L'île") + "</h1></div>" + compteur + "</div>"));
     var vierge = !I.quartiers.some(function (x) { return x.fonde; });
     v.appendChild(el('<p class="note">' + (vierge ? (M.modeIle(P) ? (I.ages ? __("L'île est vierge, et tout y commence par le feu. Touche « Maîtriser le feu » ci-dessous pour lire sa leçon, puis passe le quiz : c'est lui qui pose le campement.") : __("L'île est vierge. Touche Jouer : Alyca te donne un premier savoir à apprendre, et sa réussite pose la première installation.")) : __("L'île est vierge. Réussis l'épreuve de ta case sur le parcours : elle y posera la première installation et fondera ton premier quartier.")) :
-      (M.modeIle(P) ? __("Touche un quartier, puis un terrain « ? » : réussis son quiz et l'installation se bâtit. Un rappel en retard la met en panne. Le bouton Jouer laisse Alyca choisir pour toi.") : __("Chaque épreuve réussie sur le parcours construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter."))) + "</p>"));
+      (M.modeIle(P) && I.ages && I.ages.courant < 2 ? __("Le campement a des besoins. Touche un savoir pour lire sa leçon et passer son quiz : tous les besoins couverts, le campement deviendra un village.") : M.modeIle(P) ? __("Touche un quartier, puis un terrain « ? » : réussis son quiz et l'installation se bâtit. Un rappel en retard la met en panne. Le bouton Jouer laisse Alyca choisir pour toi.") : __("Chaque épreuve réussie sur le parcours construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter."))) + "</p>"));
     if (!P.ileIntro) setTimeout(presenterIle, 250);
     var bal = blocAleaIle(I), nouveau = false;
     if (bal) { P.ileVus = P.ileVus || {};
@@ -4782,10 +4782,10 @@ function demarrerJeu() {
       v.appendChild(bloc);
     }
     if (I.ressources && feu) {
-      var Rs = I.ressources, raccourci = el('<button type="button" class="ile-construire"><span>🏗️ <b>' + __("Construire") + "</b><small>" + __("ferme, mine, maisons…") + "</small></span><span class=\"ile-construire-st\">" +
+      var Rs = I.ressources, raccourci = el('<button type="button" class="ile-construire"><span>🏗️ <b>' + __("Construire") + "</b><small>" + (I.ages && I.ages.courant < 2 ? __("foyer, hutte, veillée…") : __("ferme, mine, maisons…")) + "</small></span><span class=\"ile-construire-st\">" +
         (C.ile.ressources || []).map(function (r) { return r.icone + " " + nb(Rs.stocks[r.id] || 0); }).join(" · ") + " · " + P.credits.solde + __(" crédits") + "</span></button>");
       raccourci.onclick = ouvrirChantierIle;
-      poser("construire", raccourci, __("Tu as du feu, donc des gens qui restent. Voici le chantier et les réserves : nourriture, bois, pierre, métal. Les crédits paient les bâtisseurs. Commence par un foyer, ce serait cohérent."));
+      poser("construire", raccourci, __("Tu as du feu, donc des gens qui restent. Voici le chantier et les réserves. Un campement ne bâtit rien de durable : un foyer, une hutte, un poste de guet. Les fermes et les maisons attendront le village."));
     }
     var carteV = blocVisiteursIle(VIS_ILE); if (carteV) v.appendChild(carteV);
     var res = feu ? blocRessourcesIle(I) : null;
@@ -4929,10 +4929,12 @@ function demarrerJeu() {
   function ouvrirChantierIle() {
     var t = maintenant(), I = M.ile(C, P, t), R = I.ressources; if (!R) return;
     var stock = '<p class="ile-chantier-stock"><span class="ile-cout"><b>' + P.credits.solde + "</b> " + __("crédits") + "</span>" + (C.ile.ressources || []).filter(function (r) { return r.id !== "nourriture"; }).map(function (r) { return '<span class="ile-cout">' + r.icone + " <b>" + nb(R.stocks[r.id] || 0) + "</b> " + esc(tx(r.nom)).toLowerCase() + "</span>"; }).join("") + "</p>";
-    var cartes = C.ile.amenagements.map(function (a) {
+    // Ce qui attend un âge prochain ne se montre pas encore (île épurée).
+    var rangAge = I.ages ? I.ages.courant : 99;
+    var cartes = C.ile.amenagements.filter(function (a) { return (a.age || 0) <= rangAge; }).map(function (a) {
       var e = M.etatAmenagement(C, P, a.id, t), q = I.quartiers.filter(function (x) { return x.id === a.quartier; })[0];
       var raison = !e.quartier ? __("Il faut d'abord un quartier habitable.") : e.savoir ? __("Il faut maîtriser « ") + e.savoirs.map(function (x) { return esc(tx(C.parId[x].nom)); }).join(__(" » ou « ")) + " »." : e.manque.length ? __("Il manque des ressources.") : "";
-      var ou = e.quartier ? __("Emplacement : ") + esc(tx(I.quartiers.filter(function (x) { return x.id === e.quartier; })[0].nom)) + (e.chezSoi || !q ? "" : " (" + esc(tx(q.nomFinal)) + __(" n'est pas encore habitable)")) + "." : "";
+      var ou = rangAge < 2 ? "" : e.quartier ? __("Emplacement : ") + esc(tx(I.quartiers.filter(function (x) { return x.id === e.quartier; })[0].nom)) + (e.chezSoi || !q ? "" : " (" + esc(tx(q.nomFinal)) + __(" n'est pas encore habitable)")) + "." : "";
       return '<div class="ile-amen' + (e.possible ? "" : " ferme") + '"><svg class="ile-amen-img" viewBox="-14 -26 28 28" width="56" height="56" aria-hidden="true">' + svgAmenagement(a, 0, 0, 24) + '</svg><div><b>' + esc(tx(a.nom)) + (R.batis[a.id] ? ' <span class="ile-amen-n">×' + R.batis[a.id] + "</span>" : "") + "</b><p>" + esc(tx(a.usage)) + '</p><p class="ile-amen-effet">' + effetAmenagement(a) + "</p>" +
         '<p class="ile-couts">' + htmlCout(a.cout, e.manque) + "</p>" + (raison ? '<p class="ile-amen-raison">' + raison + "</p>" : '<p class="ile-amen-ou">' + ou + "</p>") +
         '<button type="button" class="btn" data-a="b-' + esc(a.id) + '"' + (e.possible ? "" : " disabled") + ">" + __("Construire") + "</button></div></div>";
