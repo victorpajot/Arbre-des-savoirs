@@ -8652,7 +8652,7 @@ function demarrerJeu() {
   function carteSucces(s, obtenu) {
     if (!obtenu && s.cache) return el('<div class="succes verrou"><div class="tete-s"><span class="illus-s verrou">' + medaille(40, true) + "</span>" + __('<div><h3>Succès caché</h3><p class="desc">Il se débloquera en jouant.</p></div></div></div>'));
     var r = s.recompense;
-    var html = '<div class="succes' + (obtenu ? "" : " verrou") + '"><div class="tete-s">' + illustrationSucces(s, 44, !obtenu) + "<div><h3>" + esc(tx(s.nom)) + "</h3>" + pastilleTheme(s.theme) + '<p class="desc">' + esc(tx(s.description)) + (obtenu ? __(" · obtenu le ") + dateCourte(P.succes[s.id]) : "") + "</p></div></div>";
+    var html = '<div class="succes' + (obtenu ? "" : " verrou") + '"><div class="tete-s">' + illustrationSucces(s, 44, !obtenu) + "<div><h3>" + esc(tx(s.nom)) + "</h3>" + pastilleTheme(themeSucces(s)) + '<p class="desc">' + esc(tx(s.description)) + (obtenu ? __(" · obtenu le ") + dateCourte(P.succes[s.id]) : "") + "</p></div></div>";
     if (obtenu) html += "<details><summary>" + (r.type === "citation" ? __("Lire la citation") : __("Lire l'anecdote")) + "</summary>" + citationSucces(r) + "</details>";
     return el(html + "</div>");
   }
@@ -9238,7 +9238,11 @@ function demarrerJeu() {
     if (!th || !statActif(th)) return "";
     return '<span class="pastille-theme" style="--c:' + couleur(th) + '"><i></i>' + esc(tx(stat(th).nom)) + (themeEpreuve && th === themeEpreuve ? __(" · comme ton épreuve") : "") + "</span>";
   }
+  // Victor (2026-11-12) : « Eurêka » (deux quiz sans faute) affichait « Mécanique ». Un succès dont la condition ne vise
+  // ni un arbre ni un savoir précis ne montre pas sa pastille de thème (le thème sert toujours à assortir les récompenses).
+  function themeSucces(s) { var c = s && s.condition; return c && (c.stat || c.id) ? s.theme : null; }
   function marquerTheme(carte, x, themeEpreuve) {
+    if (x && x.condition && !themeSucces(x)) return carte;
     var p = pastilleTheme(M.themeDe(x), themeEpreuve); if (!p) return carte;
     var g = carte.querySelector(".recompense h3") || carte.querySelector("h3") || carte.querySelector(".genre"); if (g) g.insertAdjacentHTML("afterend", p);
     return carte;
