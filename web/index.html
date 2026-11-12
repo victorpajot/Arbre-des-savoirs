@@ -1604,6 +1604,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-savoir.ok { background: color-mix(in srgb, var(--c, #888) 18%, transparent); } .ile-savoir small { display: block; font-size: 14px; color: var(--muted); }
 .ile-nat { margin: 10px 0 0; font-size: 16px; } .ile-nat-tete { display: flex; justify-content: space-between; gap: 8px; } .ile-nat i { display: block; height: 10px; border-radius: 5px; background: rgba(127,127,127,.25); overflow: hidden; margin: 4px 0; } .ile-nat i b { display: block; height: 100%; }
 .ile-nat.orange .ile-nat-etat { color: #C98A1E; } .ile-nat.rouge .ile-nat-etat, .ile-nat.epuise .ile-nat-etat { color: #C8553D; } .ile-nat small { color: var(--muted); font-size: 15px; }
+.ile-nouveau { margin: 18px 0 8px; padding: 12px; border: 2px dashed var(--accent); border-radius: 16px; display: flex; flex-direction: column; gap: 10px; } .ile-nouveau .btn { align-self: flex-end; }
 .ile-effort { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 16px; flex-wrap: wrap; } .ile-effort > span { flex-basis: 100%; } .ile-effort button { font: inherit; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(127,127,127,.5); background: transparent; color: inherit; font-size: 20px; cursor: pointer; } .ile-effort button:disabled { opacity: .35; }
 .ile-alea { border: 2px solid #C98A1E; border-radius: 12px; padding: 12px; margin: 12px 0; font-size: 17px; } .ile-alea.degat { border-color: #C8553D; } .ile-alea.evite { border-color: #3F8F5A; } .ile-alea p { margin: 4px 0; } .ile-alea .btn { margin-top: 8px; }
 .ile-options { display: grid; gap: 8px; }
@@ -3246,6 +3247,8 @@ function demarrerJeu() {
     // Mode Île : Alyca choisit l'épreuve (rappel dû d'abord, sinon un savoir à apprendre) et elle se lance aussitôt.
     if (M.modeIle(P)) {
       var ci = M.choixIA(C, P, maintenant()); if (!ci) { toast(__("Rien à jouer pour l'instant.")); return; }
+      // Victor (2026-11-12) : un savoir neuf s'ouvre sur sa feuille, pour choisir entre la masterclass et le quiz.
+      if (ci.type === "quiz" && aMasterclass(ci.comp)) { ouvrirFeuille(ci.comp.id); return; }
       lancerQuiz(ci.comp.id, ci.type, { jouer: true }); return;
     }
     // Victor (2026-11-02) : le pion attend sur l'arrivée ; relancer une épreuve vaut « Refaire un tour ».
@@ -4015,7 +4018,7 @@ function demarrerJeu() {
     f.onclick = function (ev) {
       var a = ev.target.getAttribute && ev.target.getAttribute("data-a");
       if (ev.target === f || a === "fermer") fermerFeuille();
-      if (a === "quiz" || a === "rappel") { fermerFeuille(); lancerQuiz(id, a); }
+      if (a === "quiz" || a === "rappel") { fermerFeuille(); lancerQuiz(id, a, M.modeIle(P) ? { jouer: true } : undefined); }
       if (a === "masterclass") { fermerFeuille(); ouvrirMasterclass(id); }
     };
     feuille = f; document.getElementById("couche").appendChild(f);
@@ -4285,10 +4288,10 @@ function demarrerJeu() {
       (inst.usage && !friche ? '<p class="ile-usage">' + esc(tx(inst.usage)) + "</p>" : "") +
       '<p class="ile-etat etat-' + inst.etat + '"><b>' + esc(TEXTE_ETAT[inst.etat]()) + "</b>" + (inst.habitants ? " " + esc(texteHabitants(inst.habitants)) + __(" vivent autour.") : "") + "</p>" +
       '<p class="meta">' + (friche ? __("Elle se construit quand tu maîtrises : ") : __("Elle tient grâce à ta compétence : ")) + "<b>" + esc(tx(k.nom)) + '</b> <span class="ile-arbre" style="--c:' + couleur(k.stat) + '">' + esc(tx(stat(k.stat).nom)) + "</span></p>" +
-      (st === "fermee" || st === "verrouillee" ? "" : '<button type="button" class="btn large" data-a="comp">' + (st === "disponible" ? (M.modeIle(P) ? __("Bâtir : passer le quiz") : __("Passer le quiz")) : st === "a_reviser" ? (M.modeIle(P) ? __("Réparer : faire le rappel") : __("Faire le rappel")) : __("Voir la compétence")) + "</button>"),
+      (st === "fermee" || st === "verrouillee" ? "" : '<button type="button" class="btn large" data-a="comp">' + (st === "disponible" ? (M.modeIle(P) ? (aMasterclass(k) ? __("Bâtir : leçon ou quiz") : __("Bâtir : passer le quiz")) : __("Passer le quiz")) : st === "a_reviser" ? (M.modeIle(P) ? __("Réparer : faire le rappel") : __("Faire le rappel")) : __("Voir la compétence")) + "</button>"),
       tx(inst.nom), { comp: function () { fermerFeuille();
         // Mode Île : bâtir ou réparer, c'est passer l'épreuve tout de suite.
-        if (M.modeIle(P) && (st === "disponible" || st === "a_reviser")) lancerQuiz(inst.comp, st === "disponible" ? "quiz" : "rappel", { jouer: true }); else ouvrirFeuille(inst.comp); } });
+        if (M.modeIle(P) && (st === "a_reviser" || (st === "disponible" && !aMasterclass(k)))) lancerQuiz(inst.comp, st === "disponible" ? "quiz" : "rappel", { jouer: true }); else ouvrirFeuille(inst.comp); } });
   }
   // La carte de l'île (Victor, 2026-11-10 : « une île réaliste, un volcan au centre, pas de cases carrées »).
   // Une côte découpée, des plages, un volcan au milieu ; les quartiers sont des territoires qui rayonnent du volcan
@@ -4716,7 +4719,12 @@ function demarrerJeu() {
     v.appendChild(el('<p class="note">' + (vierge ? (M.modeIle(P) ? (I.ages ? __("L'île est vierge, et tout y commence par le feu. Touche « Maîtriser le feu » ci-dessous pour lire sa leçon, puis passe le quiz : c'est lui qui pose le campement.") : __("L'île est vierge. Touche Jouer : Alyca te donne un premier savoir à apprendre, et sa réussite pose la première installation.")) : __("L'île est vierge. Réussis l'épreuve de ta case sur le parcours : elle y posera la première installation et fondera ton premier quartier.")) :
       (M.modeIle(P) ? __("Touche un quartier, puis un terrain « ? » : réussis son quiz et l'installation se bâtit. Un rappel en retard la met en panne. Le bouton Jouer laisse Alyca choisir pour toi.") : __("Chaque épreuve réussie sur le parcours construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter."))) + "</p>"));
     if (!P.ileIntro) setTimeout(presenterIle, 250);
-    var bal = blocAleaIle(I); if (bal) v.appendChild(bal);
+    var bal = blocAleaIle(I), nouveau = false;
+    if (bal) { P.ileVus = P.ileVus || {};
+      if (!P.ileVus.aleas) { var pa = el('<div class="ile-nouveau"><div class="eyebrow">' + __("Nouveau sur l'île") + '</div><div class="ile-nouveau-b"></div><button type="button" class="btn sec">' + __("Compris") + "</button></div>");
+        var ba = comite({ id: "ile_menu_aleas", texte: __("Le ciel se mêle de tes affaires. Tempêtes et sécheresses emportent des aménagements. Si tu sais lire le ciel, je te préviens la veille, et une bonne réponse met l'île à l'abri. Sinon, tu compteras les dégâts."), contexte: "accueil", aparte: false }); if (ba) pa.querySelector(".ile-nouveau-b").appendChild(ba);
+        pa.querySelector("button").onclick = function () { P.ileVus.aleas = maintenant(); sauver(); rendre(); }; v.appendChild(pa); nouveau = true; }
+      v.appendChild(bal); }
     var bag = blocAgeIle(I); if (bag) v.appendChild(bag);
     var boi = P.ileIntro ? blocObjectifIle() : null; if (boi) { v.appendChild(boi); I = M.ile(C, P, maintenant()); }
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
@@ -4724,15 +4732,33 @@ function demarrerJeu() {
       var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
     v.appendChild(carte);
     // Victor (2026-11-12) : « comment acheter des aménagements ? » Le chantier s'ouvre dès la carte, avec les stocks.
-    if (I.ressources) {
+    // Victor (2026-11-12) : l'île n'affiche un bloc que lorsqu'il sert, et l'IA le présente la première fois.
+    var epure = !!I.ages, feu = !epure || I.ages.courant >= 1 || M.estMaitrisee(P, "ile.feu");
+    var poses = I.quartiers.reduce(function (n, q) { return n + q.installations.filter(function (x) { return x.etat !== "friche"; }).length; }, 0);
+    function poser(cle, bloc, texte) {
+      if (!bloc) return;
+      P.ileVus = P.ileVus || {};
+      if (epure && texte && !P.ileVus[cle] && !nouveau) {
+        nouveau = true;
+        var pr = el('<div class="ile-nouveau"><div class="eyebrow">' + __("Nouveau sur l'île") + '</div><div class="ile-nouveau-b"></div><button type="button" class="btn sec">' + __("Compris") + "</button></div>");
+        var bu = comite({ id: "ile_menu_" + cle, texte: texte, contexte: "accueil", aparte: false }); if (bu) pr.querySelector(".ile-nouveau-b").appendChild(bu);
+        pr.querySelector("button").onclick = function () { P.ileVus[cle] = maintenant(); sauver(); rendre(); };
+        v.appendChild(pr);
+      }
+      v.appendChild(bloc);
+    }
+    if (I.ressources && feu) {
       var Rs = I.ressources, raccourci = el('<button type="button" class="ile-construire"><span>🏗️ <b>' + __("Construire") + "</b><small>" + __("ferme, mine, maisons…") + "</small></span><span class=\"ile-construire-st\">" +
         (C.ile.ressources || []).map(function (r) { return r.icone + " " + nb(Rs.stocks[r.id] || 0); }).join(" · ") + " · " + P.credits.solde + __(" crédits") + "</span></button>");
-      raccourci.onclick = ouvrirChantierIle; v.appendChild(raccourci);
+      raccourci.onclick = ouvrirChantierIle;
+      poser("construire", raccourci, __("Tu as du feu, donc des gens qui restent. Voici le chantier et les réserves : nourriture, bois, pierre, métal. Les crédits paient les bâtisseurs. Commence par un foyer, ce serait cohérent."));
     }
     var carteV = blocVisiteursIle(VIS_ILE); if (carteV) v.appendChild(carteV);
-    var res = blocRessourcesIle(I); if (res) v.appendChild(res);
-    var vie = blocVieIle(I); if (vie) v.appendChild(vie);
-    v.appendChild(blocAmenagementsIle(I));
+    var res = feu ? blocRessourcesIle(I) : null;
+    poser("nature", res, epure && C.parId[SAVOIR_ILE] && M.estMaitrisee(P, SAVOIR_ILE) ? __("Tu sais maintenant compter ce que l'île donne. La forêt et les poissons repoussent, mais à leur rythme. Règle l'effort de tes bûcherons et de tes pêcheurs avant qu'il ne reste rien : je ne replanterai pas à ta place.") : null);
+    var vie = !epure || I.habitants > 0 ? blocVieIle(I) : null;
+    poser("population", vie, __("Des habitants. Ils naissent, vieillissent, mangent, et meurent de faim si tu les oublies. Voici leurs comptes, que je tiens mieux que toi."));
+    if (!epure || poses > 0) poser("amenagements", blocAmenagementsIle(I), __("Première installation debout. Ce tableau compte ce qui marche, ce qui tombe en panne et ce que tu laisses à l'abandon. Je le lis tous les jours. Toi aussi, idéalement."));
     if (I.exil) v.appendChild(el('<p class="ile-exil">' + esc(texteHabitants(I.exil)) + (I.exil > 1 ? __(" ont fui l'île après un piège.") : __(" a fui l'île après un piège.")) + " " + __("Chaque épreuve réussie en fait revenir ") + ((C.ile.regles.piege || {}).retour || 8) + ".</p>"));
     return v;
   }
@@ -4914,6 +4940,7 @@ function demarrerJeu() {
   function htmlNatureIle(R) {
     if (!R.nature || !R.nature.length) return "";
     var sait = !C.parId[SAVOIR_ILE] || M.estMaitrisee(P, SAVOIR_ILE);
+    if (!sait) return "";
     var h = '<h3 class="ile-h2" style="margin:14px 0 0">' + __("Ce que l'île peut donner") + "</h3>";
     if (!sait) h += '<p class="ile-vie-note">' + __("La forêt et les poissons ne sont pas sans fin, mais personne ici ne sait encore les compter. Apprends « ") + esc(tx(C.parId[SAVOIR_ILE].nom)) + __(" » pour voir ce qu'il en reste et régler ce qu'on y prend.") + "</p>";
     R.nature.forEach(function (n) {
