@@ -1250,6 +1250,14 @@ svg.grille .interro { transition: opacity .3s; }
 @media (prefers-reduced-motion: reduce) { .fete .trophee { animation: none; } }
 .fete .mot { width: 100%; text-align: left; }
 .fete .btn { width: 100%; }
+.fete-age .age-cadre { position: relative; width: 100%; max-width: 360px; aspect-ratio: 360 / 200; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+.fete-age .age-cadre svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.fete-age .age-avant { opacity: 0; animation: age-part 2.4s ease-in-out both; } .fete-age .age-apres { animation: age-vient 2.4s ease-in-out both; }
+.fete-age .age-de { font-size: 17px; color: var(--muted); margin: 0; animation: age-part 2.4s ease-in-out both; opacity: .0; height: 0; }
+.fete-age h2 { font-size: 30px; animation: age-nom .7s cubic-bezier(.2,1.5,.4,1) 1.9s both; } .fete-age .age-texte { font-size: 17px; line-height: 1.5; margin: 0; animation: age-suite .6s ease-out 2.5s both; } .fete-age .btn { animation: age-suite .6s ease-out 2.9s both; }
+@keyframes age-part { 0%, 35% { opacity: 1; } 75%, 100% { opacity: 0; } } @keyframes age-vient { 0%, 35% { opacity: 0; transform: scale(1.06); } 80%, 100% { opacity: 1; transform: none; } }
+@keyframes age-nom { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } } @keyframes age-suite { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fete-age .age-avant, .fete-age .age-apres, .fete-age .age-de, .fete-age h2, .fete-age .age-texte, .fete-age .btn { animation: none; } }
 .fete .feux { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
 .fete .feu { position: absolute; width: 0; height: 0; opacity: 0; }
 .fete .feu i { position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
@@ -2179,9 +2187,48 @@ function demarrerJeu() {
     return { id: "humeur-perso-" + h.type + h.ligne, texte: { fr: t.charAt(0).toUpperCase() + t.slice(1) }, aparte: false, expression: h.type === "retouche" ? "impressionnee" : "decue" };
   }
   // Une fois hors quiz : la création proposée aux parties en cours, puis chaque pouvoir débloqué, annoncé par Alyca.
+  // Victor (2026-11-12) : chaque passage d'âge (survivants, campement, village…) se fête par une petite scène : l'ancien
+  // décor s'efface, le nouveau paraît, puis son nom.
+  function svgAgeIle(rang, cls) {
+    var W = 360, H = 200, s = '<rect width="' + W + '" height="' + H + '" fill="#A3D98A"/>', plan = [];
+    for (var p = 0; p < 7; p++) { var gp = graine("age" + rang + "p" + p); s += '<path d="' + tache(gp % W, (gp >>> 9) % H, 40 + (gp >>> 4) % 40, 20 + (gp >>> 6) % 20, "ag" + rang + p) + '" fill="' + (p % 2 ? "#B4E39A" : "#96CF80") + '" opacity=".6"/>'; }
+    function gens(n, pres) { for (var i = 0; i < n; i++) { var g = graine("ageh" + rang + i), a = Math.PI * 2 * i / n + 0.4, x = pres ? 180 + Math.cos(a) * 78 : 30 + (g % 300), y = pres ? 128 + Math.sin(a) * 30 : 70 + (g >>> 9) % 110, peau = PEAUX[(g >>> 3) % PEAUX.length], bete = rang < 2 ? ["#8A5A2B", "#A67444", "#6E4A26"][g % 3] : null;
+      plan.push([y, '<g' + (pres && rang === 1 ? ' class="ile-danse" style="animation-delay:-' + ((g % 9) / 10).toFixed(1) + 's"' : "") + ' shape-rendering="crispEdges">' + (bete ? pixels(HABITANT2, { h: CHEVEUX[g % 3], s: peau, v: bete, w: ombre(bete), k: "#2B2B33", j: peau }, null, Math.round(x - 10), Math.round(y - 32), 2) : '<g transform="translate(' + Math.round(x - 6) + " " + Math.round(y - 20) + ') scale(2.4)">' + svgHabitant(0, 0, g) + "</g>") + "</g>"]); } }
+    if (rang === 0) gens(5, false);
+    else {
+      s += '<ellipse cx="180" cy="128" rx="62" ry="24" fill="#D9C590" opacity=".75"/>';
+      if (rang === 1) [[112, 78], [248, 80]].forEach(function (c) { plan.push([c[1] - 30, '<g shape-rendering="crispEdges">' + svgAmenagement({ id: "foyer", dessin: "abri" }, c[0], c[1], 44) + "</g>"]); });
+      var nm = rang === 1 ? 0 : rang === 2 ? 5 : 9;
+      for (var m = 0; m < nm; m++) { var rg = m < 5 ? 0 : 1, k = rg ? m - 5 : m, n = rg ? 4 : 5, mx = 180 + (k - (n - 1) / 2) * (rg ? 78 : 68), my = rg ? 58 : 92 - Math.abs(k - 2) * 6; plan.push([my - 40, svgMaison(Math.round(mx), Math.round(my), rg ? 15 : 19, ["#C2603A", "#B8862B", "#4E9A45", "#2F7FB8", "#8E5BC0"][m % 5], graine("agem" + m))]); }
+      plan.push([128, '<g shape-rendering="crispEdges">' + svgAmenagement({ id: "feu", dessin: "foyer" }, 180, 136, rang === 1 ? 60 : 40) + "</g>"]);
+      gens(rang === 1 ? 6 : 7, true);
+    }
+    plan.sort(function (u, v) { return u[0] - v[0]; });
+    return '<svg class="' + cls + '" viewBox="0 0 ' + W + " " + H + '" aria-hidden="true">' + s + plan.map(function (x) { return x[1]; }).join("") + "</svg>";
+  }
+  function feteAgeIle() {
+    if (!M.modeIle(P) || !C.ile || !C.ile.ages || document.querySelector(".fete")) return false;
+    var A = M.agesIle(C, P); if (!A || A.courant <= (P.ageFete || 0)) return false;
+    var a = A.age, avant = A.ages[A.courant - 1], couleurs = ["#F2B632", "#D94141", "#2E9D5B", "#5B8DEF", "#C36BE0", "#FFFFFF"], feux = "";
+    for (var f = 0; f < 6; f++) { var rayons = "";
+      for (var r = 0; r < 12; r++) { var ang = r * 30 * Math.PI / 180; rayons += '<i style="--dx:' + (Math.cos(ang) * 70).toFixed(0) + "px;--dy:" + (Math.sin(ang) * 70).toFixed(0) + 'px"></i>'; }
+      feux += '<span class="feu" style="left:' + (12 + (f * 37) % 76) + "%;top:" + (8 + (f * 23) % 30) + "%;color:" + couleurs[f] + ";animation-delay:" + (1.9 + f * 0.45).toFixed(2) + 's">' + rayons + "</span>"; }
+    var nb = a.besoins.length;
+    var z = el('<div class="fete fete-age" role="dialog" aria-modal="true" aria-label="' + esc(tx(a.nom)) + '"><div class="feux" aria-hidden="true">' + feux + '</div><div class="in">' +
+      '<div class="eyebrow">' + __("Un nouvel âge pour l'île") + "</div>" +
+      '<div class="age-cadre">' + svgAgeIle(a.rang, "age-apres") + svgAgeIle(avant.rang, "age-avant") + "</div>" +
+      "<h2>" + esc(tx(a.nom)) + "</h2>" +
+      '<p class="age-texte">' + __("Avant : ") + esc(tx(avant.nom)).toLowerCase() + ". " + __("Désormais : ") + "<b>" + esc(tx(a.nom)).toLowerCase() + "</b>. " + (a.description ? esc(tx(a.description)) : "") + "</p>" +
+      (nb ? '<p class="age-texte">' + (nb > 1 ? __("{n} nouveaux besoins à couvrir.", { n: nb }) : __("Un nouveau besoin à couvrir.")) + "</p>" : "") +
+      '<button type="button" class="btn large">' + __("Continuer") + "</button></div></div>");
+    z.querySelector(".btn").onclick = function () { P.ageFete = A.courant; sauver(); z.remove(); vue = "ile"; quartierVu = lieuVu = null; rendre(); window.scrollTo(0, 0); };
+    document.body.appendChild(z); z.querySelector(".btn").focus({ preventScroll: true });
+    return true;
+  }
   var DEJA_OFFERT = {};
   function scenesPersonnage() {
-    if (titre || feuille || !C.avatar || document.querySelector(".quiz, .liberation, .alyca-scene")) return;
+    if (titre || feuille || !C.avatar || document.querySelector(".quiz, .liberation, .alyca-scene, .fete")) return;
+    if (P.ileIntro && feteAgeIle()) return;
     if (!P.apparence && C.avatar.creation && !(P.options && P.options.creationProposee)) { ouvrirCreation(!P.journal.length); return; }
     var tns = M.annoncerTenues(C, P, maintenant()).filter(function (tn) { return !DEJA_OFFERT["t" + tn.id] && (DEJA_OFFERT["t" + tn.id] = 1); });
     if (tns.length) {
