@@ -1604,6 +1604,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-savoir.ok { background: color-mix(in srgb, var(--c, #888) 18%, transparent); } .ile-savoir small { display: block; font-size: 14px; color: var(--muted); }
 .ile-nat { margin: 10px 0 0; font-size: 16px; } .ile-nat-tete { display: flex; justify-content: space-between; gap: 8px; } .ile-nat i { display: block; height: 10px; border-radius: 5px; background: rgba(127,127,127,.25); overflow: hidden; margin: 4px 0; } .ile-nat i b { display: block; height: 100%; }
 .ile-nat.orange .ile-nat-etat { color: #C98A1E; } .ile-nat.rouge .ile-nat-etat, .ile-nat.epuise .ile-nat-etat { color: #C8553D; } .ile-nat small { color: var(--muted); font-size: 15px; }
+.ile-camp-savoirs { display: grid; gap: 8px; margin-bottom: 12px; } .ile-camp-savoir { display: flex; align-items: center; gap: 12px; text-align: left; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: inherit; font: inherit; cursor: pointer; } .ile-camp-savoir b { display: block; font-size: 16px; } .ile-camp-savoir small { color: var(--muted); font-size: 14px; }
 .ile-camp { margin: 12px 0; } .ile-camp p { font-size: 17px; line-height: 1.5; margin: 0 0 10px; } .ile-camp .extrait { margin: 0; } .ile-camp blockquote { font-size: 17px; }
 @keyframes ile-danse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 .ile-danse { animation: ile-danse .6s ease-in-out infinite; } .ile-flamme { cursor: pointer; }
@@ -4451,7 +4452,7 @@ function demarrerJeu() {
         sol += '<g transform="rotate(' + (k * 23 - 14) + " " + fx(x + c[0]) + " " + fx(y + c[1]) + ')"><rect x="' + fx(x + c[0] - 10) + '" y="' + fx(y + c[1] - 7) + '" width="20" height="14" rx="2" fill="' + (faits ? "#E8CF7A" : "#B9A77A") + '"/>' +
           [0, 1, 2, 3].map(function (l) { return '<rect x="' + fx(x + c[0] - 9) + '" y="' + fx(y + c[1] - 5.6 + l * 3.3) + '" width="18" height="1.3" fill="' + (faits ? "#7DB85A" : "#A39265") + '"/>'; }).join("") + "</g>"; });
       if (imageIle("hameau-" + q.id) && q.ouvert) plan.push([y, svgImageIle("hameau-" + q.id, x - 30, y - 30, 60, 60)]);
-      else if (q.posees) {
+      else if (q.posees && !q.camp) {
         // Un chantier n'a pas de maisons : elles viennent avec les habitants, une fois le quartier habitable.
         var maisons = q.habitable ? Math.min(6, 1 + Math.floor(q.marche / 2)) : 0;
         var coins = [[-22, -6], [21, -8], [-12, 12], [15, 13], [-27, 8], [28, 5]];
@@ -4461,7 +4462,7 @@ function demarrerJeu() {
           plan.push([y + pl[1] + 0.5, '<g shape-rendering="crispEdges">' + svgInstallation(montre[j], Math.round(x + pl[0]), Math.round(y + pl[1]), pl[2]).replace(' class="ile-inst" data-comp="' + esc(montre[j].comp) + '" role="button" tabindex="0"', "").replace(/<g class="ile-voyant">.*?<\/g>/, "") + "</g>"]); });
         var hab = Math.min(6, Math.round(q.habitants / 55));
         for (var h = 0; h < hab; h++) { var hx = x - 24 + ((gr >>> (h * 4)) % 48), hy = y + 14 + ((gr >>> (h * 3 + 2)) % 8); plan.push([hy + 9, marcheur(gr + h * 31, 9, 3) + svgHabitant(Math.round(hx), Math.round(hy), gr + h * 31, 1.1) + "</g></g>"]); }
-      } else if (q.ouvert) {
+      } else if (q.ouvert || q.camp) {
         // Rien encore : un campement, sa tente et son feu, en attendant le premier savoir.
         plan.push([y + 6, '<ellipse cx="' + fx(x) + '" cy="' + fx(y + 6) + '" rx="9" ry="2.6" fill="rgba(30,45,30,.2)"/><path d="M' + fx(x - 8) + " " + fx(y + 6) + "L" + fx(x) + " " + fx(y - 7) + "L" + fx(x + 8) + " " + fx(y + 6) + 'Z" fill="#F3E3C0"/><path d="M' + fx(x - 2.4) + " " + fx(y + 6) + "L" + fx(x) + " " + fx(y - 2) + "L" + fx(x + 2.4) + " " + fx(y + 6) + 'Z" fill="#8A6240"/>' +
           '<circle cx="' + fx(x + 13) + '" cy="' + fx(y + 6) + '" r="2" fill="#F2793A"/><circle cx="' + fx(x + 13) + '" cy="' + fx(y + 5.4) + '" r="1" fill="#FFD27A"/>']);
@@ -4485,7 +4486,7 @@ function demarrerJeu() {
     // carte, le bâtiment se pose au bord du hameau de son quartier, une fois celui-ci fondé ; on y entre par le quartier.
     var parQ = {};
     lieuxIle().forEach(function (l) {
-      var qi = I.quartiers.map(function (q) { return q.id; }).indexOf(l.quartier); if (qi < 0 || !I.quartiers[qi].fonde) return;
+      var qi = I.quartiers.map(function (q) { return q.id; }).indexOf(l.quartier); if (qi < 0 || !I.quartiers[qi].fonde || I.quartiers[qi].camp) return;
       var k = parQ[l.quartier] = (parQ[l.quartier] || 0) + 1, x = lieux[qi][0] + (k % 2 ? -34 : 34), y = lieux[qi][1] + (k > 2 ? 20 : -4), t = l.image === "tour" ? 14 + l.etages * 2.5 : 17;
       var larg = l.image === "tour" ? t * 28 / (14 + (l.ouvert ? l.etages : 1) * 9) : t;
       plan.push([y + 1, '<ellipse cx="' + fx(x) + '" cy="' + fx(y) + '" rx="9" ry="2.4" fill="rgba(30,45,30,.2)"/><g transform="translate(' + fx(x - larg / 2) + " " + fx(y - t + 1) + ')"' + (l.ouvert ? "" : ' opacity=".7"') + ">" + (l.image === "tour" ? svgTourIle(l.ouvert ? l.etages : 1, t) : svgSprite(l.image, t, null, !l.ouvert)) + "</g>"]);
@@ -4532,8 +4533,21 @@ function demarrerJeu() {
   }
   // Victor (2026-11-12) : juste après le feu, pas de marché, de maison ni de terrains « ? » : un feu, et quelques
   // habitants vêtus de peaux qui sautillent autour. Le quartier reprend son dessin habituel à la deuxième installation.
-  function campFeu(q) {
-    return !!(M.modeIle(P) && C.ile.ages && q.posees === 1 && q.installations.some(function (x) { return x.comp === "ile.feu" && x.etat !== "friche"; }));
+  function campFeu(q) { return !!q.camp; }
+  // Victor (2026-11-12) : avant le village, pas de quartiers. Tout ce que les survivants savent tient dans un seul
+  // lieu, le campement : la vue d'ensemble, la vignette de l'accueil et le bilan ne montrent que lui.
+  function campIle(I) {
+    if (!M.modeIle(P) || !I.ages || I.ages.courant >= 2) return I;
+    var feu = I.quartiers.filter(function (q) { return q.fonde && q.installations.some(function (x) { return x.comp === "ile.feu"; }); })[0];
+    if (!feu) return I;
+    var c = {}, J = {}, k; for (k in feu) c[k] = feu[k]; for (k in I) J[k] = I[k];
+    var fondes = I.quartiers.filter(function (q) { return q.fonde; });
+    c.camp = true; c.nom = { fr: __("Le campement") }; c.nomFinal = c.nom; c.decor = null; c.role = null; c.options = []; c.monuments = []; c.gloires = [];
+    c.installations = [].concat.apply([], fondes.map(function (q) { return q.installations.filter(function (x) { return x.etat !== "friche"; }); }));
+    ["posees", "marche"].forEach(function (n) { c[n] = fondes.reduce(function (t, q) { return t + (q[n] || 0); }, 0); });
+    c.habitants = I.habitants; c.fondus = fondes.map(function (q) { return q.id; });
+    J.quartiers = [c];
+    return J;
   }
   function svgCampFeu(q) {
     LIEU_HAB = q.id;
@@ -4546,9 +4560,10 @@ function demarrerJeu() {
       return [y, '<g class="ile-danse" style="animation-delay:-' + ((g % 9) / 10).toFixed(1) + 's" shape-rendering="crispEdges">' +
         pixels(HABITANT2, { h: CHEVEUX[g % 3], s: peau, v: bete, w: ombre(bete), k: "#2B2B33", j: peau }, null, Math.round(x - 10), Math.round(y - 32), 2) + "</g>"];
     }
-    var plan = []; for (var i = 0; i < 6; i++) plan.push(danseur(i, 6));
+    var nd = Math.min(10, 5 + q.posees), plan = []; for (var i = 0; i < nd; i++) plan.push(danseur(i, nd));
     // Ce que le campement a bâti se voit derrière le feu : abris, hutte, poste de guet.
-    var faits = [], pq = (AMEN_ILE && AMEN_ILE.parQuartier[q.id]) || {};
+    var faits = [], pq = {};
+    (q.fondus || [q.id]).forEach(function (id) { var o = (AMEN_ILE && AMEN_ILE.parQuartier[id]) || {}; Object.keys(o).forEach(function (a) { pq[a] = (pq[a] || 0) + o[a]; }); });
     C.ile.amenagements.forEach(function (a) { for (var n = 0; n < Math.min(3, pq[a.id] || 0); n++) faits.push(a); });
     faits.slice(0, 7).forEach(function (a, i, L) { var x = 180 + (i - (L.length - 1) / 2) * 46, y = 78 + Math.abs(i - (L.length - 1) / 2) * 7;
       plan.push([y - 40, '<g data-amen="' + esc(a.id) + '" shape-rendering="crispEdges">' + svgAmenagement(a, Math.round(x), Math.round(y), 40) + "</g>"]); });
@@ -4685,7 +4700,8 @@ function demarrerJeu() {
     return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(tx(q.nom)) + '">' + DEFS_ILE + (imageIle("quartier-" + q.id) ? svgImageIle("quartier-" + q.id, 0, 0, W, H, "slice") : sol) + plan.map(function (x) { return x[1]; }).join("") + etiq + "</svg>";
   }
   function vueIle() {
-    var I = M.ile(C, P, maintenant()), v = el('<div class="vue vue-ile"></div>');
+    var I = campIle(M.ile(C, P, maintenant())), v = el('<div class="vue vue-ile"></div>');
+    if (quartierVu && I.quartiers.length === 1 && I.quartiers[0].camp) quartierVu = I.quartiers[0].id;
     AGES_ILE = I.population && I.habitants ? { enfants: I.population.enfants / I.habitants, anciens: I.population.anciens / I.habitants } : null;
     var q = quartierVu && I.quartiers.filter(function (x) { return x.id === quartierVu; })[0];
     if (!q) quartierVu = null;
@@ -4710,9 +4726,13 @@ function demarrerJeu() {
       v.appendChild(sc);
       if (campFeu(q)) {
         var cit = ((C.ile.ages || []).filter(function (a) { return a.citation; })[0] || {}).citation;
-        v.appendChild(el('<div class="carte ile-camp"><p>' + __("Le feu a rassemblé les survivants. Autour de lui on se réchauffe, on cuit, on veille : le campement est né.") + "</p>" +
+        v.appendChild(el('<div class="carte ile-camp"><p>' + (q.posees > 1 ? __("Le campement grandit autour du feu. Chaque savoir appris y amène du monde ; quand tous ses besoins seront couverts, il deviendra un village.") : __("Le feu a rassemblé les survivants. Autour de lui on se réchauffe, on cuit, on veille : le campement est né.")) + "</p>" +
           (cit ? '<figure class="extrait"><blockquote>' + gu(esc(tx(cit.traduction))) + "</blockquote><figcaption>" + esc(tx(cit.reference)) + "</figcaption></figure>" : "") + "</div>"));
-        // Rien d'autre tant que le campement n'a que son feu : le chantier, et c'est tout.
+        var su = q.installations.filter(function (x) { return x.comp !== "ile.feu"; });
+        if (su.length) { var bs = el('<div><h2 class="ile-h2">' + __("Ce que le campement sait") + '</h2><div class="ile-camp-savoirs"></div></div>');
+          q.installations.forEach(function (x) { var pb = el('<button type="button" class="ile-camp-savoir">' + badgeComp(C.parId[x.comp], 44) + "<span><b>" + esc(tx(C.parId[x.comp].nom)) + "</b><small>" + esc(tx(x.nom)) + " · " + esc((TEXTE_ETAT[x.etat] ? TEXTE_ETAT[x.etat]() : x.etat).split(/[:.]/)[0]) + "</small></span></button>");
+            pb.onclick = function () { ouvrirInstallation(q, x); }; bs.lastChild.appendChild(pb); });
+          v.appendChild(bs); }
         if (I.ressources) { var bc = el('<button type="button" class="btn large" style="margin-top:6px">🏗️ ' + __("Construire") + "</button>"); bc.onclick = ouvrirChantierIle; v.appendChild(bc); }
         return v;
       }
@@ -4765,7 +4785,7 @@ function demarrerJeu() {
         pa.querySelector("button").onclick = function () { P.ileVus.aleas = maintenant(); sauver(); rendre(); }; v.appendChild(pa); nouveau = true; }
       v.appendChild(bal); }
     var bag = blocAgeIle(I); if (bag) v.appendChild(bag);
-    var boi = P.ileIntro ? blocObjectifIle() : null; if (boi) { v.appendChild(boi); I = M.ile(C, P, maintenant()); }
+    var boi = P.ileIntro ? blocObjectifIle() : null; if (boi) { v.appendChild(boi); I = campIle(M.ile(C, P, maintenant())); }
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
     carte.onclick = function (ev) { var gv = ev.target.closest && ev.target.closest("[data-savant]"); if (gv) { ouvrirVisiteur(gv.getAttribute("data-savant")); return; }
       var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
@@ -5246,7 +5266,7 @@ function demarrerJeu() {
   var vignetteQ = null;
   function blocVignetteIle() {
     if (!M.ilePresente(C) || !P.ileIntro) return null;
-    var I = M.ile(C, P, maintenant()), fondes = I.quartiers.filter(function (q) { return q.fonde; });
+    var I = campIle(M.ile(C, P, maintenant())), fondes = I.quartiers.filter(function (q) { return q.fonde; });
     if (!fondes.length) return null;
     // Le plus peuplé d'abord ; les flèches passent les autres lieux fondés en revue (Victor, 2026-11-10).
     fondes.sort(function (a, b) { return b.habitants - a.habitants || b.marche - a.marche; });
@@ -5309,7 +5329,7 @@ function demarrerJeu() {
       // L'épreuve du plateau, et ce qu'elle fait sur l'île : construire, réparer ou entretenir une installation.
       var inst = k && I.quartiers.reduce(function (r, q) { return r || q.installations.filter(function (x) { return x.comp === k.id; })[0]; }, null);
       var qi = inst && I.quartiers.filter(function (q) { return q.installations.indexOf(inst) >= 0; })[0];
-      var effet = !inst || !qi.fonde ? "" : (inst.etat === "friche" || inst.etat === "abandon" ? __("Elle construit : ") : inst.etat === "marche" ? __("Elle entretient : ") : __("Elle remet en marche : ")) + "<b>" + esc(tx(inst.nom)) + "</b> (" + esc(tx(qi.nom)) + ").";
+      var effet = !inst || !qi.fonde ? "" : (inst.etat === "friche" || inst.etat === "abandon" ? __("Elle construit : ") : inst.etat === "marche" ? __("Elle entretient : ") : __("Elle remet en marche : ")) + "<b>" + esc(tx(inst.nom)) + "</b>" + (tot ? "" : " (" + esc(tx(qi.nom)) + ")") + ".";
       corps = "<h3>" + (ob.reussi ? (tot ? __("Objectif tenu : le feu brûle encore") : ob.fonde ? __("Objectif tenu : ") + nom + __(" garde son courant") : __("Objectif tenu")) : ob.fonde && tot ? __("Un feu à entretenir") : ob.fonde ? __("Délestage prévu ce soir : ") + nom : (camp ? __("Un feu à allumer") : tot ? __("Un besoin à couvrir") : __("Un quartier à fonder"))) + "</h3>" +
         '<p class="ile-obj-texte">' + (camp && !ob.reussi ? __("Rien ne tient sur cette île sans feu. Apprends à le maîtriser : le campement pourra s'installer.") : tot && !ob.fonde && !ob.reussi ? __("Le campement manque de tout. Réussis ton épreuve aujourd'hui : c'est un besoin de moins.") : !ob.fonde && !ob.reussi ? __("Réussis ton épreuve aujourd'hui : elle pose la première installation d'un nouveau quartier de l'île.") : ob.reussi ? (tot ? __("« Tiens. Il semble y avoir de l'activité ici. Je repasserai demain voir si ça dure. »") : __("« Soit. Cette île sert encore à quelqu'un. Je reviendrai demain. »")) :
           tot ? __("« Un feu qu'on n'entretient pas s'éteint. Je repasse ce soir, et je compte. » Réussis une épreuve avant minuit pour lui donner tort.") : __("« Un savoir que personne n'entretient est un serveur qui tourne pour rien. Ce soir, je coupe. » Réussis une épreuve avant minuit pour l'en dissuader.")) + "</p>" +
@@ -9139,7 +9159,7 @@ function demarrerJeu() {
     } else if (nom === "ile") {
       // Victor (2026-11-10) : « Voir l'île » n'ouvrait qu'une carte, sans l'île. On montre d'abord le lieu lui-même, tel
       // qu'il est maintenant, avec l'installation de l'épreuve mise en lumière ; la carte vient dessous.
-      var Ib = M.ile(C, P, maintenant()), qb = Ib.quartiers.filter(function (x) { return x.id === (r.ile ? r.ile.quartier : r.gloire.quartier); })[0];
+      var Ib = campIle(M.ile(C, P, maintenant())), qb = Ib.quartiers.filter(function (x) { return x.camp || x.id === (r.ile ? r.ile.quartier : r.gloire.quartier); })[0];
       if (qb && qb.fonde) {
         AGES_ILE = Ib.population && Ib.habitants ? { enfants: Ib.population.enfants / Ib.habitants, anciens: Ib.population.anciens / Ib.habitants } : null;
         var scene = el('<div class="ile-scene-bilan"><div class="ile-scene-titre"><b>' + esc(tx(qb.nom)) + "</b><span>" + esc(texteHabitants(Ib.habitants)) + __(" sur l'île") + '</span></div><div class="ile-cadre">' + svgQuartier(qb) + "</div></div>");
