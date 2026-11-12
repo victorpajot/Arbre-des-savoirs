@@ -5112,6 +5112,8 @@ function demarrerJeu() {
       '<p class="ile-vie-note">' + __("L'île mange à sa faim. Remplis les greniers pour que les familles s'agrandissent plus vite.") + "</p>";
     var h = '<h2 class="ile-h2">' + __("Les ressources") + '</h2><div class="carte ile-vie"><div class="ile-ress">' + tuiles + "</div>" + ventre +
       '<p class="ile-vie-note">' + __("Chaque jour, l'île mange ") + "<b>" + chiffre(R.conso.nourriture) + "</b>" + __(" rations (une pour vingt habitants). La cueillette en rapporte une part, les aménagements le reste. Greniers : ") + nb(R.grenier) + __(" rations au plus.") + "</p>";
+    var partC = (R.effets && R.effets.cueillette) || 0;
+    if (partC > 0.05) h += '<p class="ile-vie-note alerte"><b>' + __("La cueillette est risquée.") + "</b> " + __("Elle fournit ") + Math.round(100 * partC) + __("\u00a0% des repas, et chaque jour des cueilleurs n'en reviennent pas. Plus tu cultives et pêches, moins elle tue.") + "</p>";
     h += htmlNatureIle(R);
     if (R.total) h += '<div class="ile-role"><div><b>' + __("Ouvriers") + "</b><small>" + nb(R.pourvus) + __(" postes pourvus sur ") + nb(R.total) + " · " + nb(R.actifs) + __(" adultes disponibles") + '</small></div><i><b style="width:' + Math.round(100 * R.pourvus / Math.max(1, R.total)) + '%;background:#3D7DD9"></b></i><em>' + Math.round(100 * R.pourvus / Math.max(1, R.total)) + " %</em></div>";
     var batis = C.ile.amenagements.filter(function (a) { return R.batis[a.id]; });
@@ -5187,6 +5189,7 @@ function demarrerJeu() {
     else if (plein && L.frein === "toits") a = { texte: village ? __("Plus de place pour dormir : l'île loge {n} personnes, les autres repartent. Bâtissez une rangée de maisons.", { n: L.toits }) : __("Plus de place pour dormir : l'île loge {n} personnes, les autres repartent. Bâtissez un abri de branches.", { n: L.toits }), bouton: __("Construire"), action: chantier };
     else if (plein && L.frein === "plafond") a = { texte: __("Votre {age} ne portera jamais plus de {n} personnes. Pour grandir encore, couvrez ses besoins et changez d'âge.", { age: nomAge.replace(/^(le|la|les) /, ""), n: L.plafond }), bouton: __("Jouer"), action: jouer };
     else if (plein) a = { texte: __("Tout le monde est logé et nourri, mais plus rien n'attire de nouveaux venus. Un savoir de plus, et le bateau reviendra chargé."), bouton: __("Jouer"), action: jouer };
+    else if (village && cultive && ((R.effets || {}).cueillette || 0) > 0.4) a = { texte: __("Près de la moitié de vos repas vient encore de la cueillette, et elle tue des adultes chaque jour. Une ferme nourrit sans que personne tombe d'un arbre."), bouton: __("Construire"), action: chantier };
     else if (R.total && R.pourvus < R.total) a = { texte: __("Des postes restent vides : {n} sur {t}. Il vous faut des adultes, donc des toits et de quoi manger. Laissez-les arriver.", { n: R.total - R.pourvus, t: R.total }), bouton: null };
     else a = { texte: __("L'île grandit toute seule pour l'instant. Profitez-en pour remplir les greniers : l'abondance fait naître plus d'enfants."), bouton: village ? __("Construire") : null, action: chantier };
     if (deficit) { var tenable = Math.max(0, Math.floor((R.prod.nourriture || 0) / (regles.mange || 0.05))); k = { texte: __("Trop de bouches. L'île en nourrit {n}, vous en avez {N}. Ne bâtissez rien : laissez repartir les derniers arrivés et le compte sera bon.", { n: tenable, N: N }) }; }
@@ -5476,6 +5479,7 @@ function demarrerJeu() {
       var qp = pire && I.quartiers.filter(function (q) { return q.role === pire; }).sort(function (a, b) { return a.marche - b.marche; })[0];
       var lignes = ligne("+", j.naissances, j.naissances > 1 ? __("naissances") : __("naissance")) + ligne("+", j.arrivees, j.arrivees > 1 ? __("arrivées") : __("arrivée")) +
         ligne("-", deces, (deces > 1 ? __("décès") : __("décès")) + (detail ? " (" + detail + ")" : "")) +
+        ligne("-", j.cueillette, (j.cueillette > 1 ? __("morts à la cueillette (chutes, bêtes, baies)") : __("mort à la cueillette (chute, bête, baies)"))) +
         ligne("-", j.egares, (j.egares > 1 ? __("égarés par les faux savoirs") : __("égaré par les faux savoirs"))) +
         ligne("-", j.departs, (j.departs > 1 ? __("partis faute de place") : __("parti faute de place")));
       h += '<h3 class="ile-vie-h">' + (j.jours > 1 ? __("En ") + j.jours + __(" jours") : __("Depuis hier")) + '</h3><ul class="ile-journal">' + (lignes || "<li>" + __("Une journée calme : rien à signaler.") + "</li>") + "</ul>" +
@@ -5583,6 +5587,7 @@ function demarrerJeu() {
       if (j.naissances) faits.push("+" + nb(j.naissances) + (j.naissances > 1 ? __(" naissances") : __(" naissance")));
       if (j.arrivees) faits.push("+" + nb(j.arrivees) + (j.arrivees > 1 ? __(" arrivées") : __(" arrivée")));
       if (deces) faits.push(nb(deces) + __(" décès"));
+      if (j.cueillette) faits.push(nb(j.cueillette) + (j.cueillette > 1 ? __(" morts à la cueillette") : __(" mort à la cueillette")));
       if (j.egares) faits.push(nb(j.egares) + (j.egares > 1 ? __(" égarés") : __(" égaré")));
       if (j.departs) faits.push(nb(j.departs) + (j.departs > 1 ? __(" départs") : __(" départ")));
     }

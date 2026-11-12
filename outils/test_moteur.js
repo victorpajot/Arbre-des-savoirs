@@ -2507,6 +2507,11 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     CA.competences.filter(k => k.rang === 1).forEach(k => sait(Ql, k.id));
     Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.plafond, null, "la cité n'a pas de plafond"); assert.equal(Il.limites.frein, "toits"); assert.equal(Il.places, 55, "sans maisons, les savoirs n'attirent personne de plus");
   }
+  // La cueillette est risquée : un campement qui ne vit que d'elle y perd des adultes, jour après jour.
+  { const Qc = M.nouvellePartie(t0); Qc.mode = "ile"; sait(Qc, "ile.feu"); M.ile(CA, Qc, t0);
+    assert.equal(M.ile(CA, Qc, t0).ressources.effets.cueillette, 1, "tout vient de la cueillette");
+    let mc = 0; for (let d = 1; d <= 40; d++) mc += M.ile(CA, Qc, t0 + d * J).population.journal.cueillette || 0;
+    assert.ok(mc > 0, "des cueilleurs n'en reviennent pas"); }
   delete CA.ile.regles.limites;
   // Un monde fini : la pêche puise dans les bancs, qui repoussent ; trop de pêcheries les vident, l'effort les ménage.
   const peche = () => { const Q = M.nouvellePartie(t0); Q.mode = "ile"; Q.credits.solde = 5000;

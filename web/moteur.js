@@ -1652,11 +1652,12 @@
     // plus : effets des aménagements (santé, attrait) et mortalité de famine (Victor, 2026-11-12 : effondrement possible).
     if (vivres == null) vivres = 1;
     plus = plus || {};
-    var J = { naissances: 0, arrivees: 0, enfants: 0, adultes: 0, anciens: 0, egares: 0, departs: 0, famine: 0 };
+    var J = { naissances: 0, arrivees: 0, enfants: 0, adultes: 0, anciens: 0, egares: 0, departs: 0, famine: 0, cueillette: 0 };
     function mort(c) { return D.mortalite[c] * (1 - D.protection * niv[c]) * (1 - (plus.sante || 0)); }
     if (vivres < 1 && plus.famine) J.famine = retirer(pop, arrondiJour((pop.e + pop.a + pop.v) * plus.famine * (1 - vivres), graine + "fam"), graine + "famr");
     // La faim a emporté les derniers : l'île est vide, personne n'arrive aujourd'hui.
     if (J.famine > 0 && pop.e + pop.a + pop.v === 0) { J.effondre = 1; return J; }
+    if (plus.cueillette) { J.cueillette = Math.min(pop.a, arrondiJour(pop.a * plus.cueillette * (1 - (plus.sante || 0)), graine + "cu")); pop.a -= J.cueillette; }
     // Leslie : les décès de chaque classe, puis les passages d'une classe à la suivante.
     var de = Math.min(pop.e, arrondiJour(pop.e * mort("enfants"), graine + "de")), da = Math.min(pop.a, arrondiJour(pop.a * mort("adultes"), graine + "da")), dv = Math.min(pop.v, arrondiJour(pop.v * mort("anciens"), graine + "dv"));
     pop.e -= de; pop.a -= da; pop.v -= dv; J.enfants = de; J.adultes = da; J.anciens = dv;
@@ -1689,7 +1690,7 @@
     initRessources(contenu, partie, pop);
     if (pop.jour !== jour) {
       var niv = niveauxIle(contenu, brut), pas = Math.max(1, Math.min(D.rattrapage || 7, joursEntre(pop.t, t)));
-      var J = { jours: pas, naissances: 0, arrivees: 0, enfants: 0, adultes: 0, anciens: 0, egares: 0, departs: 0, famine: 0, effondre: 0 };
+      var J = { jours: pas, naissances: 0, arrivees: 0, enfants: 0, adultes: 0, anciens: 0, egares: 0, departs: 0, famine: 0, cueillette: 0, effondre: 0 };
       var S = initRessources(contenu, partie, pop), avant = pop.e + pop.a + pop.v;
       // Les aléas ne frappent que d'un jour sur l'autre : jamais pendant une absence.
       if (S && joursEntre(pop.t, t) === 1) frapperAlea(contenu, partie, t);
@@ -1700,7 +1701,7 @@
         var f = S ? pasRessources(contenu, partie, pop, jour + "|" + i + "|", K) : 1;
         if (S && f < 1) S.journalJour.famine++;
         var ef = (S && S.effets) || {};
-        var j = pasDemographie(D, pop, K, niv, jour + "|" + i + "|", f, { sante: ef.sante, attrait: ef.attrait, famine: S ? RR.famine_mort : 0 }); for (var c in j) J[c] += j[c];
+        var j = pasDemographie(D, pop, K, niv, jour + "|" + i + "|", f, { sante: ef.sante, attrait: ef.attrait, famine: S ? RR.famine_mort : 0, cueillette: (RR.cueillette_risque || 0) * (ef.cueillette || 0) }); for (var c in j) J[c] += j[c];
       }
       // Effondrement : l'île s'est vidée par la faim. Les aménagements tombent en ruine, sauf le foyer ; les savoirs restent.
       if (S && avant > 0 && J.effondre) {
@@ -1772,7 +1773,8 @@
     }
     // La cueillette, la chasse et la pêche à pied nourrissent une part des places de l'île, sans aménagement.
     // Victor (2026-11-12, « durcir ») : en mode Île, la cueillette nourrit un nombre fixe de bouches, pas une part de l'île.
-    prod.nourriture = (prod.nourriture || 0) + (R.cueillette_bouches != null && partie.mode === "ile" ? R.cueillette_bouches : (R.cueillette || 0) * (K || 0)) * (R.mange || 0.1) * vit;
+    var cueilli = (R.cueillette_bouches != null && partie.mode === "ile" ? R.cueillette_bouches : (R.cueillette || 0) * (K || 0)) * (R.mange || 0.1) * vit;
+    prod.nourriture = (prod.nourriture || 0) + cueilli;
     // Les bonus (moulin, forge) : chacun sert un nombre d'aménagements, pourvu que ses propres postes le soient.
     var bonus = {};
     A.forEach(function (a) {
@@ -1797,6 +1799,9 @@
     var conso = { nourriture: N * (R.mange || 0.1) };
     // Santé (hutte du soigneur), attrait (place, veillée), repousse (réserve de pêche), guet : effets des aménagements bâtis.
     var eff = { sante: 0, attrait: 0, guet: 0, visiteurs: 0, repousse: {} };
+    // Victor (2026-11-12) : la cueillette est risquée (chutes, bêtes, baies). Plus l'île en dépend pour manger, plus
+    // elle y perd d'adultes ; les fermes et les pêcheries font baisser cette part.
+    eff.cueillette = partie.mode === "ile" && R.cueillette_risque && prod.nourriture > 0 ? Math.min(1, cueilli / Math.max(prod.nourriture, conso.nourriture)) : 0;
     A.forEach(function (a) {
       if (!n[a.id]) return;
       var marche = a.ouvriers ? postes[a.id].pourvus / a.ouvriers : n[a.id];
