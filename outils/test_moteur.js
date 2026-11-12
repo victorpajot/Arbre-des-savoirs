@@ -2462,6 +2462,24 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   delete P.competences["coll.ruche"]; assert.equal(M.agesIle(CA, P).age.id, "cite", "un âge atteint le reste");
   assert.ok(!M.agesIle(CA, P).ages[2].complet, "mais le besoin est à rétablir");
   sait(P, "coll.ruche");
+  // Victor (2026-11-12) : à partir du village, un nouveau quartier s'ouvre par une question ou des crédits.
+  {
+    const Iq = M.ile(CA, P, t0), feu = Iq.quartiers.find(q => q.installations.some(x => x.comp === "ile.feu"));
+    assert.ok(feu.fonde && !feu.aOuvrir, "le quartier du feu est là depuis le campement");
+    const ferme = Iq.quartiers.find(q => q.aOuvrir); assert.ok(ferme && !ferme.fonde && ferme.habitants === 0, "un quartier attend d'être ouvert, sans habitants");
+    const eq = M.questionQuartier(CA, P, ferme.id, t0); assert.ok(eq.question && eq.credits === 60 && eq.payable);
+    assert.equal(M.ouvrirQuartier(CA, P, ferme.id, "question", false, t0).juste, false);
+    const e2 = M.questionQuartier(CA, P, ferme.id, t0 + J); assert.ok(!e2.question && e2.credits === 60, "ratée : pas de seconde question, prix entier");
+    assert.equal(M.ouvrirQuartier(CA, P, ferme.id, "question", true, t0).refus, "deja");
+    let solde = P.credits.solde; assert.ok(M.ouvrirQuartier(CA, P, ferme.id, "credits", null, t0).ouvert); assert.equal(P.credits.solde, solde - 60);
+    assert.ok(M.ile(CA, P, t0).quartiers.find(q => q.id === ferme.id).fonde, "payé : le quartier est fondé");
+    // Une bonne réponse divise le prix par deux.
+    M.ile(CA, P, t0).quartiers.filter(q => q.aOuvrir).forEach(q => {
+      assert.equal(M.ouvrirQuartier(CA, P, q.id, "question", true, t0).credits, 30);
+      solde = P.credits.solde; assert.ok(M.ouvrirQuartier(CA, P, q.id, "credits", null, t0).ouvert); assert.equal(P.credits.solde, solde - 30); });
+    P.credits.solde = 0; delete P.quartiers[ferme.id]; assert.equal(M.ouvrirQuartier(CA, P, ferme.id, "credits", null, t0).refus, "credits"); P.quartiers[ferme.id] = t0; P.credits.solde = 2000;
+    assert.ok(!M.ile(CA, P, t0).quartiers.some(q => q.aOuvrir));
+  }
   // Un monde fini : la pêche puise dans les bancs, qui repoussent ; trop de pêcheries les vident, l'effort les ménage.
   const peche = () => { const Q = M.nouvellePartie(t0); Q.mode = "ile"; Q.credits.solde = 5000;
     CA.competences.filter(k => k.rang === 1).forEach(k => sait(Q, k.id)); M.ile(CA, Q, t0);

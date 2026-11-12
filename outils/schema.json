@@ -4514,6 +4514,26 @@
         }
        }
       },
+      "quartier": {
+       "type": "object",
+       "additionalProperties": false,
+       "description": "Ouvrir un nouveau quartier (à partir du village) : ce prix en crédits, multiplié par le rabais après une bonne réponse.",
+       "properties": {
+        "credits": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "rabais": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "age_min": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
+      },
       "visiteurs": {
        "type": "object",
        "additionalProperties": false,
