@@ -5053,6 +5053,19 @@
        "description": {
         "$ref": "#/$defs/texte"
        },
+       "citation": {
+        "type": "object",
+        "description": "Une citation vérifiée en ligne, montrée quand l'âge est franchi (le feu rassemble le campement).",
+        "additionalProperties": false,
+        "required": ["texte", "traduction", "reference", "source"],
+        "properties": {
+         "texte": { "type": "string" },
+         "langue": { "type": "string" },
+         "traduction": { "$ref": "#/$defs/texte" },
+         "reference": { "$ref": "#/$defs/texte" },
+         "source": { "type": "string" }
+        }
+       },
        "besoins": {
         "type": "array",
         "items": {

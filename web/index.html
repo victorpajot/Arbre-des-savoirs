@@ -1604,6 +1604,10 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-savoir.ok { background: color-mix(in srgb, var(--c, #888) 18%, transparent); } .ile-savoir small { display: block; font-size: 14px; color: var(--muted); }
 .ile-nat { margin: 10px 0 0; font-size: 16px; } .ile-nat-tete { display: flex; justify-content: space-between; gap: 8px; } .ile-nat i { display: block; height: 10px; border-radius: 5px; background: rgba(127,127,127,.25); overflow: hidden; margin: 4px 0; } .ile-nat i b { display: block; height: 100%; }
 .ile-nat.orange .ile-nat-etat { color: #C98A1E; } .ile-nat.rouge .ile-nat-etat, .ile-nat.epuise .ile-nat-etat { color: #C8553D; } .ile-nat small { color: var(--muted); font-size: 15px; }
+.ile-camp { margin: 12px 0; } .ile-camp p { font-size: 17px; line-height: 1.5; margin: 0 0 10px; } .ile-camp .extrait { margin: 0; } .ile-camp blockquote { font-size: 17px; }
+@keyframes ile-danse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.ile-danse { animation: ile-danse .6s ease-in-out infinite; } .ile-flamme { cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .ile-danse { animation: none; } }
 .ile-nouveau { margin: 18px 0 8px; padding: 12px; border: 2px dashed var(--accent); border-radius: 16px; display: flex; flex-direction: column; gap: 10px; } .ile-nouveau .btn { align-self: flex-end; }
 .ile-effort { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 16px; flex-wrap: wrap; } .ile-effort > span { flex-basis: 100%; } .ile-effort button { font: inherit; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(127,127,127,.5); background: transparent; color: inherit; font-size: 20px; cursor: pointer; } .ile-effort button:disabled { opacity: .35; }
 .ile-alea { border: 2px solid #C98A1E; border-radius: 12px; padding: 12px; margin: 12px 0; font-size: 17px; } .ile-alea.degat { border-color: #C8553D; } .ile-alea.evite { border-color: #3F8F5A; } .ile-alea p { margin: 4px 0; } .ile-alea .btn { margin-top: 8px; }
@@ -4526,7 +4530,29 @@ function demarrerJeu() {
       '<rect x="' + (cx - 1) + '" y="' + (sol - 19) + '" width="2" height="13" fill="#8A6240"/><rect x="' + (cx - 7) + '" y="' + (sol - 24) + '" width="14" height="8" rx="1.5" fill="#F3E3C0" stroke="#8A6240" stroke-width="1"/>' +
       '<text x="' + cx + '" y="' + (sol - 17.6) + '" text-anchor="middle" font-size="7" font-weight="800" fill="#8A6240">?</text></g>';
   }
+  // Victor (2026-11-12) : juste après le feu, pas de marché, de maison ni de terrains « ? » : un feu, et quelques
+  // habitants vêtus de peaux qui sautillent autour. Le quartier reprend son dessin habituel à la deuxième installation.
+  function campFeu(q) {
+    return !!(M.modeIle(P) && C.ile.ages && q.posees === 1 && q.installations.some(function (x) { return x.comp === "ile.feu" && x.etat !== "friche"; }));
+  }
+  function svgCampFeu(q) {
+    LIEU_HAB = q.id;
+    var W = 360, H = 240, s = '<rect width="' + W + '" height="' + H + '" fill="#A3D98A"/>';
+    for (var p = 0; p < 8; p++) { var gp = graine(q.id + "camp" + p); s += '<path d="' + tache(gp % W, (gp >>> 9) % H, 40 + (gp >>> 4) % 40, 22 + (gp >>> 6) % 22, q.id + "c" + p) + '" fill="' + (p % 2 ? "#B4E39A" : "#96CF80") + '" opacity=".6"/>'; }
+    s += '<ellipse cx="180" cy="150" rx="74" ry="30" fill="#D9C590" opacity=".75"/><ellipse cx="180" cy="150" rx="40" ry="15" fill="#B79E6E" opacity=".6"/>';
+    var foyer = C.ile.amenagements.filter(function (a) { return a.id === "foyer"; })[0], PEAU_BETE = ["#8A5A2B", "#A67444", "#6E4A26", "#9C7A52"];
+    function danseur(i, n) {
+      var a = Math.PI * 2 * i / n + 0.3, x = 180 + Math.cos(a) * 92, y = 150 + Math.sin(a) * 40, g = graine(q.id + "danse" + i), peau = PEAUX[(g >>> 3) % PEAUX.length], bete = PEAU_BETE[g % PEAU_BETE.length];
+      return [y, '<g class="ile-danse" style="animation-delay:-' + ((g % 9) / 10).toFixed(1) + 's" shape-rendering="crispEdges">' +
+        pixels(HABITANT2, { h: CHEVEUX[g % 3], s: peau, v: bete, w: ombre(bete), k: "#2B2B33", j: peau }, null, Math.round(x - 10), Math.round(y - 32), 2) + "</g>"];
+    }
+    var plan = []; for (var i = 0; i < 6; i++) plan.push(danseur(i, 6));
+    plan.push([150, '<g data-comp="ile.feu" class="ile-flamme" shape-rendering="crispEdges">' + (foyer ? svgAmenagement(foyer, 180, 158, 70) : "") + "</g>"]);
+    plan.sort(function (u, v) { return u[0] - v[0]; });
+    return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(__("Un feu, et quelques habitants vêtus de peaux qui dansent autour")) + '">' + s + plan.map(function (x) { return x[1]; }).join("") + "</svg>";
+  }
   function svgQuartier(q) {
+    if (campFeu(q)) return svgCampFeu(q);
     // Le village grandit avec ce qu'on y construit (Victor, 2026-11-10 : « pas besoin de voir tous les emplacements
     // vides ») : on ne montre que les installations posées, et deux terrains à bâtir, ceux qu'on peut gagner d'abord.
     LIEU_HAB = q.id;
@@ -4667,9 +4693,9 @@ function demarrerJeu() {
       var retour = el('<button type="button" class="ile-retour">' + __("← L'île") + "</button>");
       retour.onclick = function () { quartierVu = null; rendre(); window.scrollTo(0, 0); };
       v.appendChild(retour);
-      v.appendChild(el('<div class="entete"><div><div class="eyebrow" style="color:' + q.couleur + '">' + (q.stade < q.options.length ? __("Un jour : ") + esc(tx(q.nomFinal)) : __("Quartier de l'île")) + "</div><h1>" + esc(tx(q.nom)) + "</h1></div>" + compteur + "</div>"));
-      if (q.description) v.appendChild(el('<p class="note">' + esc(tx(q.description)) + "</p>"));
-      if (q.role && I.population && ROLES_ILE[q.role]) v.appendChild(el('<p class="ile-vie-note" style="margin:0 0 10px">' + __("Ce quartier règle : ") + "<b>" + ROLES_ILE[q.role]().toLowerCase() + "</b> (" + Math.round(100 * I.population.niveaux[q.role]) + " %). " + __("Chaque installation en marche l'améliore.") + "</p>"));
+      v.appendChild(el('<div class="entete"><div><div class="eyebrow" style="color:' + q.couleur + '">' + (campFeu(q) ? __("Autour du feu") : q.stade < q.options.length ? __("Un jour : ") + esc(tx(q.nomFinal)) : __("Quartier de l'île")) + "</div><h1>" + (campFeu(q) ? __("Le campement") : esc(tx(q.nom))) + "</h1></div>" + compteur + "</div>"));
+      if (q.description && !campFeu(q)) v.appendChild(el('<p class="note">' + esc(tx(q.description)) + "</p>"));
+      if (q.role && I.population && ROLES_ILE[q.role] && !campFeu(q)) v.appendChild(el('<p class="ile-vie-note" style="margin:0 0 10px">' + __("Ce quartier règle : ") + "<b>" + ROLES_ILE[q.role]().toLowerCase() + "</b> (" + Math.round(100 * I.population.niveaux[q.role]) + " %). " + __("Chaque installation en marche l'améliore.") + "</p>"));
       var sc = el('<div class="ile-cadre">' + svgQuartier(q) + "</div>");
       sc.onclick = function (ev) { var gv = ev.target.closest && ev.target.closest("[data-savant]"); if (gv) { ouvrirVisiteur(gv.getAttribute("data-savant")); return; }
         var ga = ev.target.closest && ev.target.closest("[data-amen]"); if (ga) { ouvrirChantierIle(); return; }
@@ -4677,6 +4703,14 @@ function demarrerJeu() {
         var gl = ev.target.closest && ev.target.closest("[data-lieu]"); if (gl) { ouvrirLieu(gl.getAttribute("data-lieu")); return; }
         var g = ev.target.closest && ev.target.closest("[data-comp]"); if (!g) return; var id = g.getAttribute("data-comp"); ouvrirInstallation(q, q.installations.filter(function (x) { return x.comp === id; })[0]); };
       v.appendChild(sc);
+      if (campFeu(q)) {
+        var cit = ((C.ile.ages || []).filter(function (a) { return a.citation; })[0] || {}).citation;
+        v.appendChild(el('<div class="carte ile-camp"><p>' + __("Le feu a rassemblé les survivants. Autour de lui on se réchauffe, on cuit, on veille : le campement est né.") + "</p>" +
+          (cit ? '<figure class="extrait"><blockquote>' + gu(esc(tx(cit.traduction))) + "</blockquote><figcaption>" + esc(tx(cit.reference)) + "</figcaption></figure>" : "") + "</div>"));
+        // Rien d'autre tant que le campement n'a que son feu : le chantier, et c'est tout.
+        if (I.ressources) { var bc = el('<button type="button" class="btn large" style="margin-top:6px">🏗️ ' + __("Construire") + "</button>"); bc.onclick = ouvrirChantierIle; v.appendChild(bc); }
+        return v;
+      }
       var soucis = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne" || x.etat === "abandon"; });
       v.appendChild(el('<div class="ile-bilan"><span><b>' + q.posees + "</b>" + (q.posees > 1 ? __(" installations construites") : __(" installation construite")) + "</span>" +
         (soucis.length ? '<span class="souci">' + soucis.length + (soucis.length > 1 ? __(" installations demandent ton attention.") : __(" installation demande ton attention.")) + "</span>" : "") +

@@ -2473,6 +2473,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   CA.ile.nature.forEach((x, i) => { x.retour = natif[i]; });
   assert.ok(j3 < 400 && Q3.ressources.effondrement && Q3.ressources.effondrement.perdus === 3, "l'île affamée se vide et perd ses aménagements");
   assert.deepEqual(Q3.ressources.batis.map(b => b.id), ["foyer"], "il reste le foyer"); assert.ok(M.estMaitrisee(Q3, "phys.machines"), "et les savoirs");
+  // Un arbre en chantier (un seul savoir) ne compte pas comme une branche complète.
+  { const Qs = M.nouvellePartie(t0); Qs.mode = "ile"; Qs.competences["ile.feu"] = { maitrise: true, maitriseDepuis: t0, prochainRappel: t0 + 400 * J, palier: 1, xp: 5 };
+    assert.ok(!M.conditionRemplie(CA, Qs, { type: "branches_completes", n: 1 }, t0), "le feu seul ne complète pas une branche"); }
   // Les aléas : annoncés la veille à qui sait lire le ciel ; préparé, rien n'est perdu ; sinon un aménagement tombe.
   const alea = (prepare, sansSavoir) => { const Q = peche(); if (sansSavoir) delete Q.competences["meteo.ciel"];
     M.construireIle(CA, Q, "pecherie", t0); M.construireIle(CA, Q, "ferme", t0); M.forcerAlea(CA, Q, "tempete", t0);
