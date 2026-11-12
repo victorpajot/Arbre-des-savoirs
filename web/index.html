@@ -3637,7 +3637,7 @@ function demarrerJeu() {
     var parRang = function (a, b) { return rangDe(a) - rangDe(b); };
     return [
       { g: "s", nom: __("Savants"), l: C.avatar.savants.filter(function (x) { return x.theme === th; }).sort(parRang), ok: function (x) { return !!(P.savants && P.savants[x.id]); } },
-      { g: "p", nom: __("Personnages"), l: (C.avatar.portraits || []).filter(function (x) { return (x.theme || ((INDEX && INDEX.proprietaires && INDEX.proprietaires["avatar.json/portraits"]) || {})[x.id]) === th; }).sort(function (a, b) { return (anneePersonne(a) || 0) - (anneePersonne(b) || 0); }), ok: function (x) { return M.rencontre(P, x.id); } },
+      { g: "p", nom: __("Personnages"), l: (C.avatar.portraits || []).filter(function (x) { return (x.theme || ((INDEX && INDEX.proprietaires && INDEX.proprietaires["avatar.json/portraits"]) || {})[x.id]) === th; }).sort(function (a, b) { return (anneePersonne(a) || 0) - (anneePersonne(b) || 0); }), ok: function (x) { return croise(x.id); } },
       { g: "o", nom: __("Objets"), l: C.objets.filter(function (x) { return x.theme === th; }).sort(parRang), ok: function (x) { return !!P.objets[x.id]; } },
       { g: "l", nom: __("Livres"), l: (C.livres || []).filter(function (x) { return x.stat === th; }).sort(function (a, b) { return (a.annee || 0) - (b.annee || 0); }), ok: function (x) { return !!(P.livres && P.livres[x.id]); } }
     ].filter(function (r) { return r.l.length; });
@@ -3670,8 +3670,8 @@ function demarrerJeu() {
           x = C.avatar.savants.filter(function (y) { return y.id === v[1]; })[0]; ok = P.savants && P.savants[x.id];
           h = ok ? "<b>" + esc(tx(x.nom)) + "</b> · " + esc(x.annees) + "<p>" + esc(tx(x.notice)) + "</p>" : __("<b>Savant à découvrir</b><p>") + esc(conditionTexte(x.condition)) + ".</p>";
         } else if (v[0] === "p") {
-          x = C.avatar.portraits.filter(function (y) { return y.id === v[1]; })[0]; ok = M.rencontre(P, x.id);
-          h = ok ? "<b>" + esc(tx(x.nom)) + "</b> · " + esc(formatVie(x.annees).txt) + "<p>" + esc(tx(x.bio)) + "</p>" : __("<b>Personnage à rencontrer</b><p>Il apparaît dans une question ou une masterclass de ce thème.</p>");
+          x = C.avatar.portraits.filter(function (y) { return y.id === v[1]; })[0]; ok = croise(x.id);
+          h = ok ? "<b>" + esc(tx(x.nom)) + "</b> · " + esc(formatVie(x.annees).txt) + "<p>" + esc(tx(x.bio)) + "</p>" : __("<b>Personnage à rencontrer</b><p>Maîtrise une compétence de ce thème dont le quiz ou la masterclass parle de lui.</p>");
         } else if (v[0] === "l") {
           x = C.livres.filter(function (y) { return y.id === v[1]; })[0]; ok = P.livres && P.livres[x.id];
           h = ok ? "<b>" + esc(tx(x.titre)) + "</b> · " + esc(x.auteur) + ", " + esc(x.date ? tx(x.date) : String(x.annee)) + "<p>" + esc(tx(x.resume)) + "</p>" : __("<b>Livre à découvrir</b><p>") + esc(conditionTexte(x.condition)) + ".</p>";
@@ -4859,7 +4859,7 @@ function demarrerJeu() {
   function comptesLieux() {
     var ev = C.evenements.filter(function (e) { return !e.stat || statActif(e.stat); }), gens = personnesConnues();
     return { boutique: null, livres: [Object.keys(P.livres).length, C.livres.length, __("livres")], frise: [ev.filter(function (e) { return P.evenements[e.id] != null; }).length, ev.length, __("dates")],
-      personnages: [gens.filter(function (e) { return M.rencontre(P, e.p.id); }).length, gens.length, __("personnages")], objets: [Object.keys(P.objets).length, C.objets.length, __("objets")],
+      personnages: [gens.filter(function (e) { return croise(e.p.id); }).length, gens.length, __("personnages")], objets: [Object.keys(P.objets).length, C.objets.length, __("objets")],
       atomes: C.atomes ? [C.atomes.elements.filter(function (e) { return M.estCapture(P, e.z); }).length, C.atomes.elements.length, __("atomes")] : null };
   }
   function lieuxIle() {
@@ -5112,7 +5112,7 @@ function demarrerJeu() {
     var fondes = I.quartiers.filter(function (q) { return q.fonde; }); if (!fondes.length) return [];
     var jour = M.cleJour(maintenant()), V = M.visitesIle(P, maintenant()), parComp = {};
     I.quartiers.forEach(function (q) { q.installations.forEach(function (x) { parComp[x.comp] = q; }); });
-    var gens = personnesConnues().filter(function (e) { return M.rencontre(P, e.p.id); }).map(function (e) { return { e: e, h: graine(jour + "|" + e.p.id) }; }).sort(function (a, b) { return a.h - b.h; });
+    var gens = personnesConnues().filter(function (e) { return croise(e.p.id); }).map(function (e) { return { e: e, h: graine(jour + "|" + e.p.id) }; }).sort(function (a, b) { return a.h - b.h; });
     var out = [];
     var maxV = (R.max || 3) + ((I.ressources && I.ressources.effets && I.ressources.effets.visiteurs) || 0);
     for (var i = 0; i < gens.length && out.length < maxV; i++) {
@@ -5696,7 +5696,7 @@ function demarrerJeu() {
     var v = el('<div class="vue"></div>');
     var comptes = { objets: [Object.keys(P.objets).length, C.objets.length], frise: (function () { var a = C.evenements.filter(function (e) { return !e.stat || statActif(e.stat); }); return [a.filter(function (e) { return P.evenements[e.id] != null; }).length, a.length]; })(), livres: [Object.keys(P.livres).length, C.livres.length],
       bestiaire: [Object.keys(P.bestiaire || {}).length, C.ennemis.length],
-      personnages: [personnesConnues().filter(function (e) { return M.rencontre(P, e.p.id); }).length, personnesConnues().length],
+      personnages: [personnesConnues().filter(function (e) { return croise(e.p.id); }).length, personnesConnues().length],
       atomes: [C.atomes ? C.atomes.elements.filter(function (e) { return M.estCapture(P, e.z); }).length : 0, C.atomes ? C.atomes.elements.length : 0] };
     if (collection === "boutique" && !M.boutique(C)) collection = "objets";
     var cpt = comptes[collection];
@@ -5726,11 +5726,11 @@ function demarrerJeu() {
       var ici = L.filter(function (e) { var a = anneePersonne(e.p); var x = a == null ? null : epoqueDe(a); return x && x.id === ep.id; })
         .sort(function (a, c) { return anneePersonne(a.p) - anneePersonne(c.p); });
       if (!ici.length) return;
-      var nv = ici.filter(function (e) { return M.rencontre(P, e.p.id); }).length;
+      var nv = ici.filter(function (e) { return croise(e.p.id); }).length;
       b.appendChild(el('<div class="titre-arbre-sv"><span class="date-ep ep-' + ep.id + '">' + svgSprite(ep.icone, 14, "") + esc(tx(ep.nom)) + '</span><span class="meta">' + nv + __(" sur ") + ici.length + "</span></div>"));
       var g = el('<div class="savants"></div>'); b.appendChild(g);
       ici.forEach(function (e) {
-        var ok = M.rencontre(P, e.p.id);
+        var ok = croise(e.p.id);
         var bt = el('<button type="button" class="' + (ok ? "" : "verrou") + '" aria-label="' + esc(ok ? tx(e.p.nom) : __("Personnage à rencontrer")) + '">' + svgSavant(e.p, 44, !ok) + "<span>" + esc(ok ? tx(e.p.nom) : "?") + "</span></button>");
         bt.onclick = function () { ouvrirPersonne(e); };
         g.appendChild(bt);
@@ -5739,11 +5739,11 @@ function demarrerJeu() {
     return b;
   }
   function ouvrirPersonne(e) {
-    var s = e.p, ok = M.rencontre(P, s.id), v = formatVie(s.annees), bio = tx(e.famille === "savant" ? s.notice : s.bio);
+    var s = e.p, ok = croise(s.id), v = formatVie(s.annees), bio = tx(e.famille === "savant" ? s.notice : s.bio);
     feuilleSimple('<div class="vitrine" style="padding:12px;width:132px;margin:0 auto">' + svgSavant(s, 108, !ok) + "</div>" +
       (ok ? '<div class="eyebrow">' + (v.a != null ? pastilleDate(v.a, v.txt) : esc(v.txt)) + "</div><h2>" + esc(tx(s.nom)) + "</h2>" + (s.theme ? pastilleTheme(s.theme) : "") + '<p class="bio-p">' + escD(bio) + __('</p><p class="meta">Source : ') + esc(s.source) + "</p>"
         : __("<h2>Personnage à rencontrer</h2><p class=\"meta\">") + (v.a != null ? __("Son époque : ") + esc(tx((epoqueDe(v.a) || { nom: { fr: "" } }).nom)) + ". " : "") +
-          (e.famille === "savant" && s.condition ? esc(conditionTexte(s.condition)) + __(", ou le croiser en jouant.") : __("Tu le croiseras sur une case, dans un quiz ou une masterclass.")) + "</p>"),
+          __("Tu le croiseras en maîtrisant une compétence dont le quiz ou la masterclass parle de lui.") + "</p>"),
       ok ? tx(s.nom) : __("Personnage à rencontrer"));
   }
   function blocCabinet() {
@@ -7614,6 +7614,27 @@ function demarrerJeu() {
     ouvrirPersonne(e);
   });
   // Les personnes nommées dans un texte, dans l'ordre ; un nom pris dans un plus long (« Luther » dans « Martin Luther King ») ne compte pas.
+  // Victor (2026-11-12) : on ne croise un personnage que par une compétence maîtrisée dont le quiz ou la leçon parle de
+  // lui. Une citation dans un succès, une case ou une épreuve ratée ne suffit plus ; une compétence perdue l'emporte.
+  var persComp = {}, croisesCle = null, croisesSet = {};
+  function personnesDeComp(id) {
+    if (persComp[id]) return persComp[id];
+    var o = {}, k = C.parId[id];
+    function lire(t) { if (t) personnesDans(t).forEach(function (x) { o[x.e.p.id] = 1; }); }
+    (C.questionsPar[id] || []).forEach(function (q) { lire(tx(q.enonce) + " " + tx(q.explication || "")); if (q.portrait && q.portrait.id) o[q.portrait.id] = 1; });
+    if (aMasterclass(k)) k.masterclass.chapitres.forEach(function (ch) { lire(tx(ch.titre)); ch.texte.forEach(function (t) { lire(tx(t)); }); });
+    if (C.avatar) C.avatar.savants.forEach(function (sv) { if (sv.condition && sv.condition.type === "competence_maitrisee" && sv.condition.id === id) o[sv.id] = 1; });
+    return (persComp[id] = o);
+  }
+  function croises() {
+    var ids = Object.keys(P.competences || {}).filter(function (k) { return P.competences[k] && P.competences[k].maitrise && C.parId[k]; }).sort(), cle = ids.join(",");
+    if (cle === croisesCle) return croisesSet;
+    croisesSet = {}; ids.forEach(function (k) { var o = personnesDeComp(k); for (var x in o) croisesSet[x] = 1; });
+    croisesCle = cle; return croisesSet;
+  }
+  function croise(id) { return !!croises()[id]; }
+  // Les personnages déjà annoncés : une partie d'avant cette règle part de ceux qu'elle croise aujourd'hui.
+  function initCroises() { if (!P.croisesVus) { P.croisesVus = {}; for (var x in croises()) P.croisesVus[x] = 1; } }
   function personnesDans(texte) {
     var tr = [];
     personnesConnues().forEach(function (e) { var m = e.re.exec(texte); if (m) tr.push({ e: e, i: m.index, j: m.index + m[0].length }); });
@@ -8712,6 +8733,7 @@ function demarrerJeu() {
   // `opts.jouer` : lancé par le bouton « Jouer », l'IA a choisi l'épreuve (bonus de cases si réussie).
   function lancerQuiz(id, mode, opts) {
     if (bloqueParUltimatum() || bloqueParMasterclass() || bloqueParDuel()) return;
+    initCroises();
     if (M.piegeEnAttente(P)) { ouvrirPiege(); return; }
     // v34 : la case Chrono du pion se joue avant toute autre épreuve.
     if (M.chronoEnAttente(P)) { ouvrirChrono("case"); return; }
@@ -9119,8 +9141,10 @@ function demarrerJeu() {
   }
   function carteRencontres(savants) {
     var ids = {}, liste = [];
-    (savants || []).forEach(function (sv) { ids[sv.id] = 1; });
-    rencontresAMontrer.forEach(function (id) { ids[id] = 1; }); rencontresAMontrer = [];
+    // Seuls ceux que la compétence tout juste maîtrisée fait croiser s'annoncent.
+    initCroises(); rencontresAMontrer = []; savants = (savants || []).filter(function (sv) { return croise(sv.id); });
+    for (var cx in croises()) if (!P.croisesVus[cx]) { ids[cx] = 1; P.croisesVus[cx] = maintenant(); }
+    if (Object.keys(ids).length) sauver();
     personnesConnues().forEach(function (e) { if (ids[e.p.id]) { liste.push(e); delete ids[e.p.id]; } });
     (savants || []).forEach(function (sv) { if (ids[sv.id]) liste.push({ p: sv, famille: "savant" }); });
     if (!liste.length) return null;
