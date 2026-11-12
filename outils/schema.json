@@ -4514,6 +4514,17 @@
         }
        }
       },
+      "troubles": {
+       "type": "object",
+       "additionalProperties": false,
+       "description": "Besoins optionnels négligés : chance par jour d'un oubli (un rappel avancé) ou d'une émeute (part des habitants tués, minimum).",
+       "properties": {
+        "oubli": { "type": "number", "minimum": 0, "maximum": 1 },
+        "emeute": { "type": "number", "minimum": 0, "maximum": 1 },
+        "part": { "type": "number", "minimum": 0, "maximum": 1 },
+        "min": { "type": "integer", "minimum": 0 }
+       }
+      },
       "quartier": {
        "type": "object",
        "additionalProperties": false,
@@ -5109,6 +5120,17 @@
            "$ref": "#/$defs/texte"
           },
           "texte": {
+           "$ref": "#/$defs/texte"
+          },
+          "optionnel": {
+           "type": "boolean",
+           "description": "Un besoin optionnel ne bloque pas le passage à l'âge suivant, mais le négliger a un prix (voir risque)."
+          },
+          "risque": {
+           "enum": ["oubli", "troubles"],
+           "description": "Ce qui arrive, âge après âge, tant que le besoin optionnel n'est pas couvert : des savoirs qui s'oublient, ou des émeutes."
+          },
+          "alerte": {
            "$ref": "#/$defs/texte"
           },
           "savoirs": {

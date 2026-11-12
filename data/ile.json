@@ -2986,6 +2986,12 @@
    "cueillette_foret": 0.6,
    "cueillette_poisson": 0.4
   },
+  "troubles": {
+   "oubli": 0.3,
+   "emeute": 0.15,
+   "part": 0.1,
+   "min": 3
+  },
   "quartier": {
    "credits": 60,
    "rabais": 0.5,
@@ -4762,6 +4768,11 @@
     },
     {
      "id": "transmettre",
+     "optionnel": true,
+     "risque": "oubli",
+     "alerte": {
+      "fr": "Sans personne pour transmettre, chaque génération oublie un peu de ce que savait la précédente."
+     },
      "nom": {
       "fr": "Transmettre"
      },
@@ -4776,6 +4787,11 @@
     },
     {
      "id": "decider",
+     "optionnel": true,
+     "risque": "troubles",
+     "alerte": {
+      "fr": "Sans règle pour décider ensemble, les querelles finissent en émeutes, et parfois en coup de force."
+     },
      "nom": {
       "fr": "Décider ensemble"
      },

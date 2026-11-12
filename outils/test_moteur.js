@@ -2459,6 +2459,20 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   G = M.agesIle(CA, P); assert.ok(G.age.besoins.filter(b => b.id === "nourrir")[0].couvert); assert.equal(G.age.couverts, 2);
   assert.equal(M.etatAmenagement(CA, P, "ferme", t0).age, null, "au village, la ferme se bâtit");
   assert.deepEqual(G.age.besoins.filter(b => b.id === "batir")[0].amenagements, ["bucheron", "carriere", "maisons"]);
+  // Victor (2026-11-12) : Transmettre et Décider ensemble sont optionnels. On les propose avant de passer ; négligés,
+  // ils coûtent des savoirs oubliés et des émeutes.
+  {
+    const P2 = JSON.parse(JSON.stringify(P)); ["math.origines", "chim.feu"].forEach(id => sait(P2, id));
+    let g = M.agesIle(CA, P2); assert.equal(g.age.id, "village"); assert.equal(g.age.requis, 4); assert.equal(g.age.couverts, 4);
+    assert.ok(g.age.pret, "les besoins requis sont couverts : le passage attend la décision"); assert.deepEqual(g.age.negliges.map(b => b.id), ["transmettre", "decider"]);
+    M.ile(CA, P2, t0); for (let d = 1; d <= 20; d++) assert.equal(M.ile(CA, P2, t0 + d * J).troubles.length, 0, "au village, pas encore de troubles");
+    assert.equal(M.passerAge(CA, P2, t0 + 20 * J).age.id, "cite"); assert.equal(M.passerAge(CA, P2, t0 + 20 * J), null);
+    let oublis = 0, emeutes = 0, morts = 0;
+    for (let d = 21; d <= 80; d++) M.ile(CA, P2, t0 + d * J).troubles.forEach(f => { if (f.type === "oubli") { oublis++; assert.ok(P2.competences[f.comp].prochainRappel <= t0 + d * J, "le rappel du savoir oublié est dû"); } else { emeutes++; morts += f.morts; } });
+    assert.ok(oublis > 0, "des savoirs s'oublient"); assert.ok(emeutes > 0 && morts > 0, "des émeutes tuent");
+    const P3 = JSON.parse(JSON.stringify(P2)); ["rhet.origines", "coll.ruche"].forEach(id => sait(P3, id, t0 + 80 * J));
+    M.ile(CA, P3, t0 + 80 * J); for (let d = 81; d <= 110; d++) assert.equal(M.ile(CA, P3, t0 + d * J).troubles.length, 0, "besoins couverts : plus de troubles");
+  }
   // Tous les besoins couverts : la cité s'ouvre (et reste ouverte si un savoir se perd).
   ["math.origines", "chim.feu", "rhet.origines", "coll.ruche"].forEach(id => sait(P, id));
   G = M.ile(CA, P, t0).ages; assert.equal(G.age.id, "cite"); assert.equal(P.ageIle, 3);

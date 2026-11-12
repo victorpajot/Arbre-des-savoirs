@@ -1614,6 +1614,9 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-savoir .ile-coche { flex: none; width: 30px; height: 30px; border-radius: 50%; background: #fff; color: #2E8B57; font-size: 19px; font-weight: 800; display: grid; place-items: center; }
 .ile-nat { margin: 10px 0 0; font-size: 16px; } .ile-nat-tete { display: flex; justify-content: space-between; gap: 8px; } .ile-nat i { display: block; height: 10px; border-radius: 5px; background: rgba(127,127,127,.25); overflow: hidden; margin: 4px 0; } .ile-nat i b { display: block; height: 100%; }
 .ile-nat.orange .ile-nat-etat { color: #C98A1E; } .ile-nat.rouge .ile-nat-etat, .ile-nat.epuise .ile-nat-etat { color: #C8553D; } .ile-nat small { color: var(--muted); font-size: 15px; }
+.ile-opt { font-size: 13px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: rgba(127,127,127,.2); color: var(--muted); vertical-align: middle; }
+.ile-besoin p.ile-risque { color: #B5531F; font-weight: 600; } .ile-passage { border: 2px solid var(--accent); border-radius: 12px; padding: 10px 12px; margin: 10px 0; } .ile-passage p { font-size: 17px; margin: 0 0 8px; }
+.ile-trouble { border-left: 5px solid #C0392B; margin: 10px 0; } .ile-trouble p { font-size: 17px; margin: 0 0 6px; }
 .ile-verrou { display: flex; align-items: center; gap: 12px; border-left: 5px solid var(--c, #888); margin: 10px 0; } .ile-verrou > div { flex: 1; } .ile-verrou b { font-size: 18px; } .ile-verrou p { font-size: 16px; margin: 4px 0 0; color: var(--muted); }
 .ile-camp-savoirs { display: grid; gap: 8px; margin-bottom: 12px; } .ile-camp-savoir { display: flex; align-items: center; gap: 12px; text-align: left; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: inherit; font: inherit; cursor: pointer; } .ile-camp-savoir b { display: block; font-size: 16px; } .ile-camp-savoir small { color: var(--muted); font-size: 14px; }
 .ile-camp { margin: 12px 0; } .ile-camp p { font-size: 17px; line-height: 1.5; margin: 0 0 10px; } .ile-camp .extrait { margin: 0; } .ile-camp blockquote { font-size: 17px; }
@@ -4851,6 +4854,12 @@ function demarrerJeu() {
     if (!P.ileIntro) setTimeout(presenterIle, 250);
     // Victor (2026-11-12) : dans l'onglet, l'île d'abord ; l'âge, l'objectif et les alertes viennent dessous.
     var ancreCarte = v.lastChild;
+    (I.troubles || []).forEach(function (f) {
+      var bt = el('<div class="carte ile-trouble">' + (f.type === "oubli" ?
+        "<p><b>📜 " + __("Un savoir s'efface") + "</b></p><p>" + __("Personne n'a transmis « ") + esc(tx((C.parId[f.comp] || { nom: { fr: f.comp } }).nom)) + __(" » à la nouvelle génération : son rappel est dû dès maintenant. Tant que personne n'apprend à transmettre, cela recommencera.") + '</p><button type="button" class="btn sec">' + __("Faire le rappel") + "</button>" :
+        "<p><b>🔥 " + (f.type === "putsch" ? __("Coup de force au village") : __("Émeute au village")) + "</b></p><p>" + (f.type === "putsch" ? __("Un groupe a pris le pouvoir par la force : ") : __("Une querelle a tourné à l'émeute : ")) + "<b>" + nb(f.morts) + (f.morts > 1 ? __(" morts") : __(" mort")) + "</b>. " + __("Tant que personne n'apprend à décider ensemble, cela recommencera.") + "</p>") + "</div>");
+      var br = bt.querySelector("button"); if (br) br.onclick = function () { ouvrirFeuille(f.comp); };
+      v.appendChild(bt); });
     var bal = blocAleaIle(I), nouveau = false;
     if (bal) { P.ileVus = P.ileVus || {};
       if (!P.ileVus.aleas) { var pa = el('<div class="ile-nouveau"><div class="eyebrow">' + __("Nouveau sur l'île") + '</div><div class="ile-nouveau-b"></div><button type="button" class="btn sec">' + __("Compris") + "</button></div>");
@@ -5064,18 +5073,32 @@ function demarrerJeu() {
   function blocAgeIle(I) {
     var G = I.ages; if (!G || !M.modeIle(P)) return null;
     var a = G.age, t = maintenant(), montre = a.avenir ? G.ages[G.courant - 1] : a;
-    var h = '<h2 class="ile-h2">' + __("L'âge de l'île") + '</h2><div class="carte ile-vie"><div class="ile-age-tete"><h3>' + esc(tx(a.nom)) + "</h3>" + (a.avenir ? "" : "<span>" + a.couverts + " / " + a.besoins.length + (a.besoins.length > 1 ? __(" besoins couverts") : __(" besoin couvert")) + "</span>") + "</div>";
+    var h = '<h2 class="ile-h2">' + __("L'âge de l'île") + '</h2><div class="carte ile-vie"><div class="ile-age-tete"><h3>' + esc(tx(a.nom)) + "</h3>" + (a.avenir ? "" : "<span>" + a.couverts + " / " + a.requis + (a.requis > 1 ? __(" besoins couverts") : __(" besoin couvert")) + "</span>") + "</div>";
     if (a.description) h += '<p class="ile-vie-note">' + esc(tx(a.description)) + "</p>";
-    if (a.avenir) h += '<p class="ile-vie-note">' + __("Tous les besoins du village sont couverts. En attendant cet âge, fais durer l'île : ménage la forêt et les poissons, et tiens tes rappels.") + "</p>";
-    else h += '<div class="ile-age-barre"><b style="width:' + Math.round(100 * a.couverts / Math.max(1, a.besoins.length)) + '%"></b></div>';
-    (montre ? montre.besoins : []).forEach(function (b) {
+    if (a.avenir) h += '<p class="ile-vie-note">' + __("Les besoins du village sont couverts. En attendant cet âge, fais durer l'île : ménage la forêt et les poissons, et tiens tes rappels.") + "</p>";
+    else h += '<div class="ile-age-barre"><b style="width:' + Math.round(100 * a.couverts / Math.max(1, a.requis)) + '%"></b></div>';
+    // Victor (2026-11-12) : les besoins optionnels se proposent avant de changer d'âge ; le joueur décide de passer sans eux.
+    if (a.pret && G.suivant) h += '<div class="ile-passage"><p><b>' + esc(tx(a.nom)) + __(" peut devenir : ") + esc(tx(G.suivant.nom)).toLowerCase() + ".</b> " + __("Il reste de côté : ") + a.negliges.map(function (b) { return "<b>" + esc(tx(b.nom)).toLowerCase() + "</b>"; }).join(__(" et ")) + ". " + __("Tu peux les travailler d'abord, ou passer sans eux et en payer le prix.") + '</p><button type="button" class="btn sec" data-a="passer">' + __("Passer sans eux") + "</button></div>";
+    // Les besoins laissés de côté dans les âges d'avant restent à l'affiche : on peut toujours les rattraper.
+    var liste = (montre ? montre.besoins : []).slice();
+    G.ages.forEach(function (x, i) { if (i < G.courant && x !== montre) x.negliges.forEach(function (b) { liste.push(b); }); });
+    var passe = function (b) { return G.ages.some(function (x, i) { return i < G.courant && x.negliges.indexOf(b) >= 0; }); };
+    liste.forEach(function (b) {
       var amen = b.amenagements.map(function (id) { var x = C.ile.amenagements.filter(function (y) { return y.id === id; })[0]; return x ? esc(tx(x.nom)).toLowerCase() : ""; }).filter(Boolean);
-      h += '<div class="ile-besoin' + (b.couvert ? " ok" : "") + '"><h4>' + (b.couvert ? "✓ " : "○ ") + esc(tx(b.nom)) + "</h4>" + (b.texte ? "<p>" + esc(tx(b.texte)) + (amen.length ? " " + __("Débloque : ") + amen.join(", ") + "." : "") + "</p>" : "") + '<div class="ile-savoirs">' +
+      h += '<div class="ile-besoin' + (b.couvert ? " ok" : "") + '"><h4>' + (b.couvert ? "✓ " : "○ ") + esc(tx(b.nom)) + (b.optionnel ? ' <span class="ile-opt">' + __("optionnel") + "</span>" : "") + "</h4>" + (b.texte ? "<p>" + esc(tx(b.texte)) + (amen.length ? " " + __("Débloque : ") + amen.join(", ") + "." : "") + "</p>" : "") +
+        (b.optionnel && !b.couvert && b.alerte ? '<p class="ile-risque">' + (passe(b) ? "⚠ " + __("Négligé : ") : __("Si tu passes sans lui : ")) + esc(tx(b.alerte)) + "</p>" : "") + '<div class="ile-savoirs">' +
         b.savoirs.map(function (id) { var k = C.parId[id], st = M.statut(C, P, id, t).etat, ok = st === "maitrisee" || st === "a_reviser";
           return '<button type="button" class="ile-savoir' + (ok ? " ok" : "") + '" style="--c:' + couleur(k.stat) + '" data-savoir="' + esc(id) + '">' + badgeComp(k, 64) + "<span>" + esc(tx(k.nom)) + "<small>" + esc(tx(stat(k.stat).nom)) + " · " + (st === "a_reviser" ? __("rappel à faire") : ok ? __("maîtrisé") : st === "disponible" ? __("à apprendre") : __("verrouillé")) + "</small></span>" + (ok ? '<span class="ile-coche" aria-hidden="true">✓</span>' : "") + "</button>"; }).join("") + "</div></div>";
     });
-    if (G.suivant && !a.avenir) h += '<p class="ile-vie-note" style="margin-top:10px">' + __("Tous les besoins couverts, s'ouvrira : ") + "<b>" + esc(tx(G.suivant.nom)) + "</b>.</p>";
+    if (G.suivant && !a.avenir && !a.pret) h += '<p class="ile-vie-note" style="margin-top:10px">' + __("Tous les besoins couverts, s'ouvrira : ") + "<b>" + esc(tx(G.suivant.nom)) + "</b>.</p>";
     var bloc = el("<div>" + h + "</div></div>");
+    var bpa = bloc.querySelector('[data-a="passer"]');
+    if (bpa) bpa.onclick = function () {
+      feuilleSimple('<div class="eyebrow">' + __("Changer d'âge") + "</div><h2>" + __("Passer sans eux ?") + '</h2><div class="bulle-p"></div>' + a.negliges.map(function (b) { return '<p style="font-size:17px"><b>' + esc(tx(b.nom)) + ".</b> " + esc(tx(b.alerte || b.texte || { fr: "" })) + "</p>"; }).join("") +
+        '<p style="font-size:17px">' + __("Ces savoirs resteront à apprendre : les maîtriser plus tard arrête les dégâts.") + '</p><button type="button" class="btn large" data-a="oui">' + __("Passer à : ") + esc(tx(G.suivant.nom)) + "</button>", __("Changer d'âge"),
+        { oui: function () { if (M.passerAge(C, P, maintenant())) { sauver(); fermerFeuille(); rendre(); } } }, __("Les travailler d'abord"));
+      var bu = comite({ id: "ile_passage", texte: __("Vous pouvez grandir sans apprendre à transmettre ni à décider. D'autres l'ont fait. Je tiens la liste de ce que ça leur a coûté."), contexte: "accueil", aparte: false }); if (bu) feuille.querySelector(".bulle-p").appendChild(bu);
+    };
     bloc.querySelectorAll("[data-savoir]").forEach(function (bt) { bt.onclick = function () {
       // Victor (2026-11-12) : toucher un savoir ouvre sa feuille (leçon, fiche, quiz), pas le quiz d'office.
       ouvrirFeuille(bt.getAttribute("data-savoir"));
