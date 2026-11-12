@@ -1205,7 +1205,11 @@
     var fav = faveurIA(contenu, partie, t), furieuse = !!(fav && fav.palier.id === "furieuse");
     return { min: bMin, max: furieuse ? bMin : bMax, furieuse: furieuse };
   }
+  // Victor (2026-11-12, « Deux modes au choix ») : en mode Île, il n'y a pas de parcours. Le pion ne bouge plus et les
+  // épreuves ne rapportent rien sur le plateau : elles construisent l'île.
+  function modeIle(partie) { return !!(partie && partie.mode === "ile"); }
   function jouerPlateau(contenu, partie, epreuve, issue, t) {
+    if (modeIle(partie)) return null;
     if (!contenu.plateau) return null;
     var v = valeurEpreuve(contenu, partie, epreuve, t), pl = partie.plateau, c = partie.compteurs;
     // v15 : « avancer d'une seule case » : un pas, sans bonus, pour s'arrêter sur la case suivante et la dévoiler.
@@ -1808,6 +1812,24 @@
     partie.maj = t;
     return { credits: n, juste: !!correct };
   }
+  // --- Mode Île (Victor, 2026-11-12) : ce que le plateau faisait surgir, l'île le propose ---------------------
+  // Un chantier attend un atome : on part le chercher. L'atome se présente comme un atome sauvage, sans case à rendre.
+  function chercherMateriau(contenu, partie, z, t) {
+    if (!modeIle(partie) || !contenu.atomes || estCapture(partie, z) || !elementZ(contenu, z)) return null;
+    partie.sauvages = (partie.sauvages || []).filter(function (x) { return x.z !== z; });
+    partie.sauvages.unshift({ z: z, case: partie.plateau.position, reste: 0, ile: true, t: t });
+    partie.maj = t;
+    return atomeSauvage(contenu, partie);
+  }
+  // Des faux savoirs rôdent : un de leurs champions vient se battre, une fois par jour.
+  function defiIle(contenu, partie, t) {
+    if (!modeIle(partie) || !contenu.ennemis || !contenu.ennemis.length || partie.duel) return null;
+    if (partie.defiIle === cleJour(t)) return null;
+    var e = contenu.ennemis[hacher(cleJour(t) + "|defi") % contenu.ennemis.length];
+    partie.duel = { ennemi: e.id, case: partie.plateau.position, reste: 0, pret: true, depuis: t, ile: true };
+    partie.defiIle = cleJour(t); partie.maj = t;
+    return partie.duel;
+  }
   // Piège déclenché : une part des habitants quitte l'île. Renvoie combien sont partis (0 si l'île est vide).
   function exodeIle(contenu, partie, t) {
     if (!ilePresente(contenu)) return null;
@@ -2276,6 +2298,7 @@
   // Mode test : on peut l'appeler directement pour parcourir le plateau.
   function deplacer(contenu, partie, valeur, t, cause) {
     var pl = partie.plateau, R = contenu.plateau.regles, c = partie.compteurs;
+    if (modeIle(partie)) return { de: pl.position, a: pl.position, valeur: 0, cause: cause, tour: pl.tours, etapes: [], chemin: [pl.position], places: [pl.idx + 1], t: t, contextes: [] };
     // v21 : un parcours dessiné mais pas encore choisi s'impose dès que le pion repart.
     if (pl.parcoursSuivant) appliquerParcours(contenu, partie);
     var dur = pl.tours > 0, mult = dur ? R.tour_suivant.multiplicateur_recul : 1;
@@ -2832,7 +2855,8 @@
     if (f) return listeFamille(contenu, f).filter(function (x) { return (estButin(x) || f === "masques") && !possede(partie, f, x.id); });
     // v34 (Victor) : le kit du chasseur, un équipement acheté une fois pour toutes.
     if (article === "kit") return contenu.atomes && !partie.kit ? [1] : [];
-    if (!contenu.plateau || !contenu.placement) return [];
+    // Mode Île : rien à acheter qui concerne le pion.
+    if (!contenu.plateau || !contenu.placement || modeIle(partie)) return [];
     var pl = partie.plateau, en = ennemisPlateau(contenu, partie), rt = route(contenu, partie);
     if (article === "chasser") return rt.slice(pl.idx).filter(function (n) { return en[n]; });
     if (article === "convoquer") {
@@ -3465,7 +3489,8 @@
     var R = reglesChrono(contenu); if (!R) return null;
     var s = etatChrono(partie);
     if (s.jeu && s.jeu.mode === mode && s.jeu.reponses.length < s.jeu.questions.length) return s.jeu;
-    if (mode === "case" ? !chronoEnAttente(partie) : !offreChrono(partie, t)) return null;
+    // Mode Île : une partie de Chrono par jour, lancée depuis l'île pour bâtir les monuments.
+    if (mode === "case" ? !chronoEnAttente(partie) : mode === "ile" ? !(modeIle(partie) && s.ileJour !== cleJour(t)) : !offreChrono(partie, t)) return null;
     var pool = reservoirChrono(contenu, partie);
     // Trop peu d'éléments datés : la case ne retient pas le pion.
     if (pool.length < R.min_reservoir) { if (mode === "case") s.case = null; return null; }
@@ -3564,6 +3589,7 @@
     } else {
       // Partie offerte par Alyca : des crédits, rien d'autre, sauf un sans-faute qui la ravit.
       if (j.mode === "alyca") { s.offre = null; s.joueJour = cleJour(t); }
+      if (j.mode === "ile") s.ileJour = cleJour(t);
       ouvrirLot(partie, t, null);
       if (parfait) out.agacement = agacerIA(contenu, partie, 0, false, t);
       out.recompenses = out.avantPlateau = verifierRecompenses(contenu, partie, t);
@@ -4654,7 +4680,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     gloiresIle: gloiresIle, suivreGloire: suivreGloire, choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieReprenable: serieReprenable, reprendreSerie: reprendreSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, exodeIle: exodeIle, placesIle: placesIle, construireIle: construireIle, etatAmenagement: etatAmenagement, ressourcesIle: ressourcesIle, visitesIle: visitesIle, repondreVisiteur: repondreVisiteur, niveauxIle: niveauxIle, chasserParasites: chasserParasites, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, exodeIle: exodeIle, placesIle: placesIle, modeIle: modeIle, chercherMateriau: chercherMateriau, defiIle: defiIle, construireIle: construireIle, etatAmenagement: etatAmenagement, ressourcesIle: ressourcesIle, visitesIle: visitesIle, repondreVisiteur: repondreVisiteur, niveauxIle: niveauxIle, chasserParasites: chasserParasites, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,

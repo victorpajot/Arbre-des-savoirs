@@ -2375,3 +2375,22 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.repondreVisiteur(CR, P, "archimede", false, t0 + J).credits, 0, "le lendemain, une autre ; ratée, rien");
   console.log("OK : ressources de l'île (aménagements, maisons, famine) et savants en visite");
 }
+
+// Victor (2026-11-12, « Deux modes au choix ») : en mode Île, le pion ne bouge plus ; l'île propose duels, atomes, Chrono.
+{
+  const CM = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+    { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ennemis: d("ennemis.json"), atomes: d("atomes.json"), ile: d("ile.json") });
+  const tm = new Date(2026, 10, 12, 9, 0).getTime(), PM = M.nouvellePartie(tm); PM.mode = "ile";
+  const rs = (id, n, ok) => M.tirerQuestions(CM, PM, id, n).map((q, i) => ({ id: q.id, correct: i < ok }));
+  const pos = PM.plateau.position, rq = M.terminerQuiz(CM, PM, "math.origines", rs("math.origines", 5, 5), tm, { jouer: true });
+  assert.equal(rq.plateau, null, "pas de plateau en mode Île");
+  assert.equal(PM.plateau.position, pos, "le pion ne bouge pas");
+  assert.ok(rq.ile && rq.ile.installation, "l'épreuve bâtit sur l'île");
+  assert.equal(M.enRayon(CM, PM, "avance", tm).length, 0, "rien à acheter pour le pion");
+  assert.ok(M.defiIle(CM, PM, tm) && PM.duel.pret, "un faux savoir à défier");
+  assert.equal(M.defiIle(CM, PM, tm), null, "un défi à la fois, un par jour");
+  PM.duel = null; assert.equal(M.defiIle(CM, PM, tm), null);
+  const s = M.chercherMateriau(CM, PM, 14, tm); assert.ok(s && s.z === 14 && s.reste === 0, "le matériau se cherche en combat d'atome");
+  PM.mode = "parcours"; assert.equal(M.chercherMateriau(CM, PM, 6, tm), null, "pas en mode Parcours");
+  console.log("OK : mode Île (pion immobile, défis, matériaux)");
+}
