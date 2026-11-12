@@ -68,6 +68,22 @@
      "forme": "arc"
     }
    ]
+  },
+  "ressources": {
+   "actifs": 0.6,
+   "mange": 0.05,
+   "cueillette": 0.5,
+   "reserve_jours": 10,
+   "grenier": 150,
+   "abondance": 0.25,
+   "abondance_jours": 7,
+   "depart": {
+    "bois": 20
+   }
+  },
+  "visiteurs": {
+   "credits": 10,
+   "max": 3
   }
  },
  "quartiers": [
@@ -1252,6 +1268,224 @@
    },
    "source": "William Calder Marshall, statue d'Edward Jenner, 1858",
    "dessin": "mon-jenner"
+  }
+ ],
+ "ressources": [
+  {
+   "id": "nourriture",
+   "icone": "🌾",
+   "couleur": "#D9A93A",
+   "nom": {
+    "fr": "Nourriture"
+   }
+  },
+  {
+   "id": "bois",
+   "icone": "🪵",
+   "couleur": "#8A6240",
+   "nom": {
+    "fr": "Bois"
+   }
+  },
+  {
+   "id": "pierre",
+   "icone": "🪨",
+   "couleur": "#8C8C94",
+   "nom": {
+    "fr": "Pierre"
+   }
+  },
+  {
+   "id": "metal",
+   "icone": "⚙️",
+   "couleur": "#5C7A99",
+   "nom": {
+    "fr": "Métal"
+   }
+  }
+ ],
+ "amenagements": [
+  {
+   "id": "ferme",
+   "quartier": "champs",
+   "dessin": "ferme",
+   "cout": {
+    "credits": 40
+   },
+   "ouvriers": 6,
+   "produit": {
+    "nourriture": 1
+   },
+   "nom": {
+    "fr": "Ferme"
+   },
+   "usage": {
+    "fr": "Des champs de blé et une grange. Chaque fermier nourrit vingt habitants."
+   }
+  },
+  {
+   "id": "pecherie",
+   "quartier": "port",
+   "dessin": "pecherie",
+   "cout": {
+    "credits": 30,
+    "bois": 15
+   },
+   "ouvriers": 4,
+   "produit": {
+    "nourriture": 1.25
+   },
+   "nom": {
+    "fr": "Pêcherie"
+   },
+   "usage": {
+    "fr": "Des barques, des filets et un séchoir à poissons. Moins de postes qu'une ferme, mais chaque pêcheur rapporte un peu plus."
+   }
+  },
+  {
+   "id": "moulin",
+   "quartier": "champs",
+   "dessin": "moulin",
+   "savoir": "phys.machines",
+   "cout": {
+    "credits": 50,
+    "bois": 30,
+    "pierre": 20
+   },
+   "ouvriers": 2,
+   "bonus": {
+    "cibles": [
+     "ferme"
+    ],
+    "part": 0.5,
+    "sert": 3
+   },
+   "nom": {
+    "fr": "Moulin"
+   },
+   "usage": {
+    "fr": "Une meule que l'eau fait tourner à la place des bras. Chaque moulin rend trois fermes plus productives de moitié."
+   }
+  },
+  {
+   "id": "grenier",
+   "quartier": "champs",
+   "dessin": "grenier",
+   "cout": {
+    "credits": 30,
+    "bois": 25,
+    "pierre": 10
+   },
+   "stock": 300,
+   "nom": {
+    "fr": "Grenier"
+   },
+   "usage": {
+    "fr": "Un grenier sur pilotis, à l'abri des rats. Il garde 300 rations de plus ; sans lui, ce qui dépasse pourrit."
+   }
+  },
+  {
+   "id": "bucheron",
+   "quartier": "artisans",
+   "dessin": "bucheron",
+   "cout": {
+    "credits": 25
+   },
+   "ouvriers": 4,
+   "produit": {
+    "bois": 1
+   },
+   "nom": {
+    "fr": "Camp de bûcherons"
+   },
+   "usage": {
+    "fr": "Des haches, une scie de long et une pile de rondins qui sèchent. Le bois sert à presque tout bâtir."
+   }
+  },
+  {
+   "id": "carriere",
+   "quartier": "industrie",
+   "dessin": "carriere",
+   "cout": {
+    "credits": 35,
+    "bois": 15
+   },
+   "ouvriers": 5,
+   "produit": {
+    "pierre": 0.8
+   },
+   "nom": {
+    "fr": "Carrière"
+   },
+   "usage": {
+    "fr": "On taille la roche du volcan en blocs. Plus lent que le bois, mais il faut de la pierre pour durer."
+   }
+  },
+  {
+   "id": "mine",
+   "quartier": "industrie",
+   "dessin": "mine",
+   "savoir": "chim.metaux",
+   "cout": {
+    "credits": 60,
+    "bois": 30,
+    "pierre": 20
+   },
+   "ouvriers": 6,
+   "produit": {
+    "metal": 0.4
+   },
+   "nom": {
+    "fr": "Mine et fonderie"
+   },
+   "usage": {
+    "fr": "Une galerie dans le flanc du volcan et un four pour fondre le minerai. Il faut savoir travailler les métaux."
+   }
+  },
+  {
+   "id": "forge",
+   "quartier": "artisans",
+   "dessin": "forge",
+   "savoir": "chim.feu",
+   "cout": {
+    "credits": 60,
+    "pierre": 20,
+    "metal": 10
+   },
+   "ouvriers": 3,
+   "bonus": {
+    "cibles": [
+     "ferme",
+     "bucheron",
+     "carriere",
+     "mine"
+    ],
+    "part": 0.25,
+    "sert": 4
+   },
+   "nom": {
+    "fr": "Forge"
+   },
+   "usage": {
+    "fr": "Des outils de métal pour tout le monde : socs, haches, pics. Chaque forge rend quatre aménagements plus productifs d'un quart."
+   }
+  },
+  {
+   "id": "maisons",
+   "quartier": "ville",
+   "dessin": "maisons",
+   "cout": {
+    "credits": 15,
+    "bois": 20,
+    "pierre": 15
+   },
+   "places": 25,
+   "nom": {
+    "fr": "Rangée de maisons"
+   },
+   "usage": {
+    "fr": "Quatre maisons de pierre au toit de bois. Vingt-cinq places de plus : l'île peut grandir au-delà de ce que ses savoirs offrent."
+   }
   }
  ]
 }

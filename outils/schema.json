@@ -4455,6 +4455,63 @@
          }
         }
        }
+      },
+      "ressources": {
+       "type": "object",
+       "additionalProperties": false,
+       "description": "Ressources de l'île (Victor, 2026-11-12) : part des adultes qui travaillent, rations par habitant et par jour, cueillette (part des places nourrie sans aménagement), réserve de départ en jours, grenier de base, bonus d'abondance.",
+       "properties": {
+        "actifs": {
+         "type": "number",
+         "minimum": 0
+        },
+        "mange": {
+         "type": "number",
+         "minimum": 0
+        },
+        "cueillette": {
+         "type": "number",
+         "minimum": 0
+        },
+        "reserve_jours": {
+         "type": "number",
+         "minimum": 0
+        },
+        "grenier": {
+         "type": "number",
+         "minimum": 0
+        },
+        "abondance": {
+         "type": "number",
+         "minimum": 0
+        },
+        "abondance_jours": {
+         "type": "number",
+         "minimum": 0
+        },
+        "depart": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "number",
+          "minimum": 0
+         }
+        }
+       }
+      },
+      "visiteurs": {
+       "type": "object",
+       "additionalProperties": false,
+       "description": "Les personnages rencontrés en visite sur l'île : crédits par réponse juste, nombre par jour.",
+       "properties": {
+        "credits": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "max": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
       }
      }
     },
@@ -4785,6 +4842,116 @@
        },
        "dessin": {
         "type": "string"
+       }
+      }
+     }
+    },
+    "ressources": {
+     "type": "array",
+     "description": "Les ressources de l'île (nourriture d'abord).",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "nom"
+      ],
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "icone": {
+        "type": "string"
+       },
+       "couleur": {
+        "type": "string"
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       }
+      }
+     }
+    },
+    "amenagements": {
+     "type": "array",
+     "description": "Aménagements construits avec crédits et ressources ; leurs postes sont pourvus dans l'ordre de la liste.",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "quartier",
+       "cout",
+       "nom",
+       "usage"
+      ],
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "quartier": {
+        "type": "string"
+       },
+       "dessin": {
+        "type": "string"
+       },
+       "savoir": {
+        "type": "string",
+        "description": "Compétence à maîtriser pour bâtir."
+       },
+       "cout": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "number",
+         "minimum": 0
+        }
+       },
+       "ouvriers": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "produit": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "number",
+         "minimum": 0
+        }
+       },
+       "places": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "stock": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "bonus": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "cibles",
+         "part"
+        ],
+        "properties": {
+         "cibles": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         },
+         "part": {
+          "type": "number"
+         },
+         "sert": {
+          "type": "number"
+         }
+        }
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "usage": {
+        "$ref": "#/$defs/texte"
        }
       }
      }

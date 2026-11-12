@@ -2340,3 +2340,38 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(g3.reel.id, "mon-jenner", "le monument du savoir lui-même");
   console.log("OK : monuments à la gloire des sciences (série de jours, gloire, leçon relevée, vrais monuments)");
 }
+
+// Victor (2026-11-12) : ressources de l'île, aménagements bâtis avec les crédits, savants en visite.
+{
+  const CR = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
+    { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ile: d("ile.json"), atomes: d("atomes.json") });
+  const J = 86400000, t0 = new Date(2026, 10, 12, 9, 0).getTime();
+  function partie() {
+    const P = M.nouvellePartie(t0); P.credits.solde = 1000;
+    CR.competences.filter(k => ["mecanique", "savoir", "logique"].includes(k.stat) && k.rang <= 4).forEach(k => { P.competences[k.id] = { maitrise: true, maitriseDepuis: t0, prochainRappel: t0 + 400 * J, palier: 1, xp: 5 }; });
+    M.ile(CR, P, t0); return P;
+  }
+  const P = partie(), I0 = M.ile(CR, P, t0);
+  assert.ok(I0.ressources && I0.ressources.stocks.nourriture > 0, "des réserves au départ");
+  assert.equal(M.etatAmenagement(CR, P, "mine", t0).savoir, "chim.metaux", "la mine demande de savoir travailler les métaux");
+  assert.ok(!M.etatAmenagement(CR, P, "carriere", t0).possible || P.ressources.stocks.bois >= 15);
+  const avant = P.credits.solde, r = M.construireIle(CR, P, "ferme", t0);
+  assert.ok(r.ok && P.credits.solde === avant - 40 && M.ile(CR, P, t0).ressources.batis.ferme === 1, "la ferme se paie en crédits");
+  assert.equal(M.ile(CR, P, t0).ressources.total, 6, "six postes");
+  P.ressources.stocks.bois = 100; P.ressources.stocks.pierre = 100;
+  const pl = M.ile(CR, P, t0).places; M.construireIle(CR, P, "maisons", t0);
+  assert.equal(M.ile(CR, P, t0).places - pl, 25, "les maisons ajoutent leurs places");
+  // Sans nourriture, l'île ne grandit pas comme une île nourrie.
+  const affame = partie(), nourri = partie();
+  for (let i = 0; i < 6; i++) M.construireIle(CR, nourri, "ferme", t0);
+  affame.ressources.stocks.nourriture = 0; nourri.ressources.stocks.nourriture = 0;
+  for (let j = 1; j <= 40; j++) { M.ile(CR, affame, t0 + j * J); M.ile(CR, nourri, t0 + j * J); }
+  assert.ok(M.ile(CR, nourri, t0 + 40 * J).habitants > M.ile(CR, affame, t0 + 40 * J).habitants, "la famine freine la population");
+  assert.ok(affame.ressources.journal.famine > 0 && nourri.ressources.stocks.nourriture > 0);
+  // Les visiteurs : une réponse par jour, des crédits si elle est juste.
+  const c0 = P.credits.solde, v1 = M.repondreVisiteur(CR, P, "archimede", true, t0);
+  assert.equal(v1.credits, CR.ile.regles.visiteurs.credits); assert.equal(P.credits.solde, c0 + v1.credits);
+  assert.ok(M.repondreVisiteur(CR, P, "archimede", true, t0).deja, "une seule question par jour");
+  assert.equal(M.repondreVisiteur(CR, P, "archimede", false, t0 + J).credits, 0, "le lendemain, une autre ; ratée, rien");
+  console.log("OK : ressources de l'île (aménagements, maisons, famine) et savants en visite");
+}
