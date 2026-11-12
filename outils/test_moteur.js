@@ -2497,6 +2497,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     P.credits.solde = 0; delete P.quartiers[ferme.id]; assert.equal(M.ouvrirQuartier(CA, P, ferme.id, "credits", null, t0).refus, "credits"); P.quartiers[ferme.id] = t0; P.credits.solde = 2000;
     assert.ok(!M.ile(CA, P, t0).quartiers.some(q => q.aOuvrir));
   }
+  // Victor (2026-11-12) : trois freins à la population, le plus bas l'emporte (savoirs, toits, plafond de l'âge).
+  {
+    const Ql = M.nouvellePartie(t0); Ql.mode = "ile"; sait(Ql, "ile.feu"); Ql.credits.solde = 1000;
+    let Il = M.ile(CA, Ql, t0); assert.ok(Il.limites && Il.limites.toits === 15 && Il.limites.plafond === 40, "campement : 15 dormeurs sans toit, 40 au plus");
+    assert.equal(Il.places, Math.min(Il.limites.savoirs, 15)); 
+    Ql.ressources.stocks.bois = 100; for (let i = 0; i < 4; i++) assert.ok(M.construireIle(CA, Ql, "foyer", t0).ok);
+    Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.toits, 55); assert.ok(Il.places <= 40, "le campement plafonne à 40");
+    CA.competences.filter(k => k.rang === 1).forEach(k => sait(Ql, k.id));
+    Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.plafond, null, "la cité n'a pas de plafond"); assert.equal(Il.limites.frein, "toits"); assert.equal(Il.places, 55, "sans maisons, les savoirs n'attirent personne de plus");
+  }
+  delete CA.ile.regles.limites;
   // Un monde fini : la pêche puise dans les bancs, qui repoussent ; trop de pêcheries les vident, l'effort les ménage.
   const peche = () => { const Q = M.nouvellePartie(t0); Q.mode = "ile"; Q.credits.solde = 5000;
     CA.competences.filter(k => k.rang === 1).forEach(k => sait(Q, k.id)); M.ile(CA, Q, t0);

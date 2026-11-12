@@ -1634,6 +1634,9 @@ svg.grille .interro { transition: opacity .3s; }
 .ch-ouvrier { transform-box: fill-box; animation: ch-tape .34s ease-in-out 7, ch-part 2.6s ease-out both; }
 .ch-poussiere { transform-box: fill-box; transform-origin: center; animation: ch-pouf 2.8s ease-out both; } .ch-fait { animation: ch-vient 2.8s both; }
 @media (prefers-reduced-motion: reduce) { .ch-bati, .ch-echaf, .ch-ouvrier, .ch-poussiere, .ch-fait { animation: none; } .ch-echaf, .ch-ouvrier, .ch-poussiere { opacity: 0; } }
+.ile-freins { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; } .ile-frein { font-size: 15px; padding: 4px 10px; border-radius: 999px; border: 2px solid var(--line); } .ile-frein.actif { border-color: #D94141; font-weight: 700; }
+.conseils { display: grid; gap: 10px; } .conseil { border-radius: 12px; padding: 10px 14px 12px; background: var(--surface); border: 1px solid var(--line); border-left: 5px solid #2E9E5B; margin-top: 10px; } .conseils .conseil { margin-top: 0; }
+.conseil.ananke { border-left-color: #5B7FD9; } .conseil p { font-size: 17px; line-height: 1.5; margin: 4px 0 0; } .conseil .btn { margin-top: 10px; } .conseil-qui { display: block; font-size: 17px; }
 .ile-plus { width: 100%; margin-top: 10px; font-size: 17px; }
 .duo-panneau { margin-top: 10px; } .duo-panneau .ile-objectif { margin: 0; }
 .ile-besoin p { margin: 2px 0 6px; font-size: 16px; color: var(--muted); }
@@ -3944,6 +3947,7 @@ function demarrerJeu() {
         rang.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-expanded", x.getAttribute("data-qui") === duoIA ? "true" : "false"); });
         panneau.innerHTML = ""; panneau.hidden = !duoIA;
         if (duoIA) panneau.appendChild(duoIA === "alyca" ? mot : boi);
+        var csD = duoIA ? conseilsIle(M.ile(C, P, maintenant())) : null; if (csD) panneau.appendChild(carteConseil(duoIA, csD[duoIA]));
       };
       rang.querySelectorAll("button").forEach(function (x) { x.onclick = function () { var q = x.getAttribute("data-qui"); duoIA = duoIA === q ? null : q; montrerDuo(); }; });
       v.appendChild(rang); v.appendChild(panneau); montrerDuo();
@@ -4931,6 +4935,7 @@ function demarrerJeu() {
         var ba = comite({ id: "ile_menu_aleas", texte: __("Le ciel se mêle de tes affaires. Tempêtes et sécheresses emportent des aménagements. Si tu sais lire le ciel, je te préviens la veille, et une bonne réponse met l'île à l'abri. Sinon, tu compteras les dégâts."), contexte: "accueil", aparte: false }); if (ba) pa.querySelector(".ile-nouveau-b").appendChild(ba);
         pa.querySelector("button").onclick = function () { P.ileVus.aleas = maintenant(); sauver(); rendre(); }; v.appendChild(pa); nouveau = true; }
       v.appendChild(bal); }
+    var bcs = P.ileIntro ? blocConseilsIle(I) : null; if (bcs) v.appendChild(bcs);
     var bag = blocAgeIle(I); if (bag) v.appendChild(bag);
     var boi = P.ileIntro ? blocObjectifIle() : null; if (boi) { v.appendChild(boi); I = campIle(M.ile(C, P, maintenant())); }
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
@@ -5151,6 +5156,50 @@ function demarrerJeu() {
   // --- L'île par âges, le monde fini, les aléas (Victor, 2026-11-12) ---------------------
   // L'âge en cours et ses besoins : pour chacun, les savoirs qui y répondent. Toucher un savoir lance son quiz.
   var SAVOIR_ILE = "res.cueillir";
+  // Victor (2026-11-12, « durcir ») : trois freins à la population (savoirs, toits, âge) ; on montre lequel retient l'île.
+  function htmlLimitesIle(I) {
+    var L = I.limites; if (!L) return "";
+    var puce = function (id, ico, nom, n) { return '<span class="ile-frein' + (L.frein === id ? " actif" : "") + '">' + ico + " " + nom + " <b>" + n + "</b></span>"; };
+    return '<p class="ile-freins">' + puce("savoirs", "📚", __("Les savoirs attirent"), nb(L.savoirs)) + puce("toits", "🏠", __("Toits pour"), nb(L.toits)) + (L.plafond != null ? puce("plafond", "⛰️", esc(tx(I.ages.ages[I.ages.courant].nom)) + __(" : au plus"), nb(L.plafond)) : "") + "</p>" +
+      '<p class="ile-vie-note">' + __("L'île ne dépasse pas le plus petit de ces nombres, encadré en rouge.") + "</p>";
+  }
+  // Victor (2026-11-12) : Alyca conseille pour faire grandir l'île ; Ananké, pour la freiner, voire la réduire.
+  // Chacune regarde le même état et en tire l'avis contraire. Renvoie { alyca: {texte, bouton, action}, ananke: {texte} }.
+  function conseilsIle(I) {
+    if (!M.modeIle(P) || !I || !I.ages || !I.ressources) return null;
+    var L = I.limites, R = I.ressources, N = I.habitants, G = I.ages, age = G.ages[G.courant], nomAge = tx(age.nom).toLowerCase(), plein = L && N >= L.places - 2;
+    var regles = C.ile.regles.ressources || {}, bouches = regles.cueillette_bouches || 0, deficit = R.net < -0.05, village = G.courant >= 2;
+    var chantier = function () { ouvrirChantierIle(); }, jouer = function () { ouvrirJouer(); }, cultive = M.estMaitrisee(P, "res.cultiver");
+    var surex = (R.nature || []).filter(function (n) { return !n.soutenable; })[0];
+    var a, k;
+    if (G.courant === 0 && !M.estMaitrisee(P, "ile.feu")) a = { texte: __("Sans feu, personne ne reste. Apprenez à le maîtriser : tout le reste en découle."), bouton: __("Jouer"), action: jouer };
+    else if (deficit && !village) a = { texte: __("La cueillette nourrit {n} personnes, pas une de plus. Pour en nourrir davantage il faut cultiver, et on ne cultive pas dans un campement : couvrez ses besoins pour en faire un village.", { n: bouches }), bouton: __("Jouer"), action: jouer };
+    else if (deficit && !cultive) a = { texte: __("Ils mangent plus qu'ils ne ramassent. Apprenez « Les premières récoltes » : sans ce savoir, ni ferme ni pêcherie."), bouton: __("Voir ce savoir"), action: function () { ouvrirFeuille("res.cultiver"); } };
+    else if (deficit) a = { texte: __("Ils mangent plus qu'ils ne produisent. Une ferme ou une pêcherie de plus, et vérifiez que les postes sont pourvus."), bouton: __("Construire"), action: chantier };
+    else if (plein && L.frein === "toits") a = { texte: village ? __("Plus de place pour dormir : l'île loge {n} personnes, les autres repartent. Bâtissez une rangée de maisons.", { n: L.toits }) : __("Plus de place pour dormir : l'île loge {n} personnes, les autres repartent. Bâtissez un abri de branches.", { n: L.toits }), bouton: __("Construire"), action: chantier };
+    else if (plein && L.frein === "plafond") a = { texte: __("Votre {age} ne portera jamais plus de {n} personnes. Pour grandir encore, couvrez ses besoins et changez d'âge.", { age: nomAge.replace(/^(le|la|les) /, ""), n: L.plafond }), bouton: __("Jouer"), action: jouer };
+    else if (plein) a = { texte: __("Tout le monde est logé et nourri, mais plus rien n'attire de nouveaux venus. Un savoir de plus, et le bateau reviendra chargé."), bouton: __("Jouer"), action: jouer };
+    else if (R.total && R.pourvus < R.total) a = { texte: __("Des postes restent vides : {n} sur {t}. Il vous faut des adultes, donc des toits et de quoi manger. Laissez-les arriver.", { n: R.total - R.pourvus, t: R.total }), bouton: null };
+    else a = { texte: __("L'île grandit toute seule pour l'instant. Profitez-en pour remplir les greniers : l'abondance fait naître plus d'enfants."), bouton: village ? __("Construire") : null, action: chantier };
+    if (deficit) { var tenable = Math.max(0, Math.floor((R.prod.nourriture || 0) / (regles.mange || 0.05))); k = { texte: __("Trop de bouches. L'île en nourrit {n}, vous en avez {N}. Ne bâtissez rien : laissez repartir les derniers arrivés et le compte sera bon.", { n: tenable, N: N }) }; }
+    else if (surex) k = { texte: __("Vous prenez plus que ce qui repousse ({r}). Baissez l'effort dans les ressources : moins de bras au travail, moins de bouches demain.", { r: tx(surex.nom).toLowerCase() }) };
+    else if (plein) k = { texte: __("L'île est pleine. C'est très bien ainsi : pas un toit de plus, et ses besoins cessent de grandir avec elle.") };
+    else if (L && L.frein === "toits") k = { texte: __("Chaque abri de plus, ce sont dix bouches de plus. Tant que vous n'en bâtissez pas, l'île reste à {n} et se suffit.", { n: L.places }) };
+    else k = { texte: __("Rien ne vous oblige à grandir. Chaque habitant de plus mange une ration, réclame un toit et un savoir à entretenir.") };
+    return { alyca: a, ananke: k };
+  }
+  function carteConseil(qui, c) {
+    var b = el('<div class="conseil ' + qui + '"><div class="eyebrow">' + (qui === "alyca" ? __("Son conseil pour grandir") : __("Son conseil pour freiner")) + '</div><p></p></div>');
+    b.querySelector("p").textContent = (qui === "alyca" ? "« " : "« ") + nommerIA(c.texte) + " »";
+    if (c.bouton && c.action) { var bt = el('<button type="button" class="btn sec"></button>'); bt.textContent = c.bouton; bt.onclick = function (ev) { ev.stopPropagation(); c.action(); }; b.appendChild(bt); }
+    return b;
+  }
+  function blocConseilsIle(I) {
+    var cs = conseilsIle(I); if (!cs) return null;
+    var b = el('<div><h2 class="ile-h2">' + __("Deux avis sur ton île") + '</h2><div class="conseils"></div></div>'), z = b.lastChild;
+    [["alyca", tx(C.narrateur) || __("L'IA")], ["ananke", __("Ananké")]].forEach(function (x) { var c = carteConseil(x[0], cs[x[0]]); c.insertBefore(el("<b class=\"conseil-qui\">" + esc(x[1]) + "</b>"), c.firstChild); z.appendChild(c); });
+    return b;
+  }
   // Victor (2026-11-12) : avant la cité, l'île n'a pas d'électricité ; Ananké n'en parle donc pas.
   function sansCourant() { var G = M.modeIle(P) && M.agesIle(C, P); return !!G && G.courant < 2; }
   function blocAgeIle(I, replie) {
@@ -5409,7 +5458,7 @@ function demarrerJeu() {
     function barre(nom, n, c) { return '<div class="ile-age"><span>' + nom + '</span><i><b style="width:' + Math.round(100 * n / max) + "%;background:" + c + '"></b></i><em>' + nb(n) + "</em></div>"; }
     function ligne(signe, n, texte) { return n ? '<li class="' + (signe === "+" ? "plus" : "moins") + '"><b>' + (signe === "+" ? "+" : "−") + nb(n) + "</b> " + texte + "</li>" : ""; }
     var h = '<h2 class="ile-h2">' + __("La population") + '</h2><div class="carte ile-vie">' +
-      '<p class="ile-vie-tete"><b>' + esc(texteHabitants(I.habitants)) + "</b> " + __("pour") + " " + nb(I.places) + (I.places > 1 ? __(" places") : __(" place")) + "</p>" +
+      '<p class="ile-vie-tete"><b>' + esc(texteHabitants(I.habitants)) + "</b> " + __("pour") + " " + nb(I.places) + (I.places > 1 ? __(" places") : __(" place")) + "</p>" + htmlLimitesIle(I) +
       '<div class="ile-jauge"><b style="width:' + Math.min(100, Math.round(100 * I.habitants / Math.max(1, I.places))) + '%"></b></div>' +
       barre(__("Enfants"), p.enfants, "#F2A541") + barre(__("Adultes"), p.adultes, "#3D7DD9") + barre(__("Anciens"), p.anciens, "#8E7CC3");
     if (j) {

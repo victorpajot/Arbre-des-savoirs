@@ -4504,6 +4504,7 @@
          "type": "number",
          "minimum": 0
         },
+        "cueillette_bouches": { "type": "integer", "minimum": 0, "description": "Mode Île : nombre d'habitants que la cueillette nourrit, quelle que soit la taille de l'île." },
         "cueillette_foret": {
          "type": "number",
          "minimum": 0
@@ -4513,6 +4514,12 @@
          "minimum": 0
         }
        }
+      },
+      "limites": {
+       "type": "object",
+       "additionalProperties": false,
+       "description": "Freins à la population en mode Île : les toits (abris, maisons) s'ajoutent à quelques dormeurs à la belle étoile.",
+       "properties": { "toits_base": { "type": "integer", "minimum": 0 } }
       },
       "troubles": {
        "type": "object",
@@ -5086,6 +5093,7 @@
        "nom": {
         "$ref": "#/$defs/texte"
        },
+       "plafond": { "type": "integer", "minimum": 1, "description": "Le plus d'habitants que cet âge peut porter ; au-delà, il faut passer à l'âge suivant." },
        "description": {
         "$ref": "#/$defs/texte"
        },

@@ -82,7 +82,8 @@
    },
    "famine_mort": 0.06,
    "cueillette_foret": 0.6,
-   "cueillette_poisson": 0.4
+   "cueillette_poisson": 0.4,
+   "cueillette_bouches": 30
   },
   "troubles": {
    "oubli": 0.3,
@@ -103,6 +104,9 @@
    "chance": 0.07,
    "fiabilite": 0.5,
    "age_min": 2
+  },
+  "limites": {
+   "toits_base": 15
   }
  },
  "quartiers": [
@@ -1360,7 +1364,9 @@
    "usage": {
     "fr": "Des champs de blé et une grange. Chaque fermier nourrit vingt habitants."
    },
-   "savoirs": ["res.cultiver"],
+   "savoirs": [
+    "res.cultiver"
+   ],
    "age": 2
   },
   {
@@ -1381,7 +1387,9 @@
    "usage": {
     "fr": "Des barques, des filets et un séchoir à poissons. Moins de postes qu'une ferme, mais chaque pêcheur rapporte un peu plus."
    },
-   "savoirs": ["res.cultiver"],
+   "savoirs": [
+    "res.cultiver"
+   ],
    "preleve": "poisson",
    "age": 2
   },
@@ -1716,7 +1724,8 @@
       "ile.feu"
      ]
     }
-   ]
+   ],
+   "plafond": 15
   },
   {
    "id": "campement",
@@ -1801,7 +1810,8 @@
       "psy.emotions"
      ]
     }
-   ]
+   ],
+   "plafond": 40
   },
   {
    "id": "village",
@@ -1821,7 +1831,9 @@
      "texte": {
       "fr": "La cueillette ne suffit plus : il faut cultiver ou pêcher."
      },
-     "savoirs": ["res.cultiver"]
+     "savoirs": [
+      "res.cultiver"
+     ]
     },
     {
      "id": "compter",
@@ -1895,7 +1907,8 @@
       "coll.ruche"
      ]
     }
-   ]
+   ],
+   "plafond": 160
   },
   {
    "id": "cite",

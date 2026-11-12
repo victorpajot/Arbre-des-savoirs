@@ -1531,6 +1531,7 @@
     });
     if (verrouQ) pam = placesAmenagements(contenu, partie);
     var rangAge = parAges ? agesIle(contenu, partie).courant : 99;
+    var pamHab = 0;
     var quartiers = (contenu.ile.quartiers || []).map(function (q) {
       var hab = 0, cap = 0, marche = 0, posees = 0, ouvert = false;
       // Un quartier vide peut s'ouvrir pour y bâtir : il suffit qu'un aménagement à lui soit à la portée du joueur.
@@ -1582,7 +1583,7 @@
       if (aOuvrir) habitable = false;
       if (!habitable) { hab = 0; inst.forEach(function (x) { x.places = x.habitants = 0; }); }
       // Les maisons bâties avec les ressources (Victor, 2026-11-12) ajoutent leurs places au quartier qui les accueille.
-      var pa = pam.parQuartier[q.id] || 0; if (pa) { cap += pa; if (habitable) hab += pa; }
+      var pa = pam.parQuartier[q.id] || 0; if (pa) { cap += pa; if (habitable) { hab += pa; pamHab += pa; } }
       total += hab; capacite += cap;
       // Le lieu grandit par stades (Victor, 2026-11-10 : « d'abord la place du marché du village », pas la ville d'emblée) :
       // son nom est celui du stade atteint, un par option ouverte.
@@ -1590,7 +1591,20 @@
       return { gloires: gq, monuments: monuments, habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, stade: stade, nomFinal: q.nom, nom: noms[stade] || q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: (posees > 0 || choisi) && !aOuvrir, aOuvrir: aOuvrir, ouvert: ouvert || posees > 0, installations: inst,
         options: options, posees: posees, marche: marche, role: (q.demographie || {}).role || null, places: hab, habitants: hab, capacite: cap };
     });
-    return { quartiers: quartiers, places: total, habitants: total, capacite: capacite, exil: 0, monuments: mons, gloires: gloires };
+    // Victor (2026-11-12) : « le jeu n'est pas assez dur, rendre nécessaires les évolutions et les aménagements ».
+    // Trois freins à la population, le plus bas l'emporte : ce que les savoirs attirent, les toits (abris, maisons,
+    // plus quelques dormeurs à la belle étoile) et ce que l'âge de l'île peut porter (un campement n'est pas une ville).
+    var L = parAges && contenu.ile.regles.limites, limites = null;
+    if (L) {
+      var Gl = agesIle(contenu, partie), ag = Gl.ages[Math.min(Gl.courant, Gl.ages.length - 1)], plafond = ag && ag.plafond != null ? ag.plafond : null;
+      // Les parties d'avant cette règle gardent un toit de fortune pour ceux qui étaient déjà là.
+      var pp = partie.population;
+      if (partie.toitsAcquis == null && pp) partie.toitsAcquis = Math.max(0, pp.e + pp.a + pp.v - (L.toits_base || 0) - pam.total);
+      var attire = total - pamHab, toits = (L.toits_base || 0) + pam.total + (partie.toitsAcquis || 0), places = Math.max(0, Math.min(attire, toits, plafond == null ? Infinity : plafond));
+      limites = { savoirs: attire, toits: toits, plafond: plafond, places: places, frein: places === attire && attire <= toits ? "savoirs" : places === toits ? "toits" : "plafond" };
+      return { quartiers: quartiers, places: places, placesQuartiers: total, limites: limites, habitants: places, capacite: capacite, exil: 0, monuments: mons, gloires: gloires };
+    }
+    return { quartiers: quartiers, places: total, placesQuartiers: total, limites: null, habitants: total, capacite: capacite, exil: 0, monuments: mons, gloires: gloires };
   }
   // --- La démographie de l'île (Victor, 2026-11-10) -------------------------------
   // « Une matrice de Leslie couplée à une limite de capacité de charge (Verhulst) avec des limites de Lotka-Volterra, le
@@ -1708,7 +1722,7 @@
       I.quartiers.forEach(function (q) { q.installations.forEach(function (x) { x.habitants = Math.round(x.places * part0); }); q.habitants = Math.round(q.places * part0); tot += q.habitants; });
       I.habitants = tot; I.exil = ex; return I;
     }
-    var D = contenu.ile.regles.demographie, pop = vivreIle(contenu, partie, t, I), N = pop.e + pop.a + pop.v, part = I.places > 0 ? N / I.places : 0;
+    var D = contenu.ile.regles.demographie, pop = vivreIle(contenu, partie, t, I), N = pop.e + pop.a + pop.v, part = I.placesQuartiers > 0 ? N / I.placesQuartiers : 0;
     I.quartiers.forEach(function (q) {
       q.installations.forEach(function (x) { x.habitants = Math.round(x.places * part); });
       q.habitants = Math.round(q.places * part);
@@ -1757,7 +1771,8 @@
       vit = pf * partNature(contenu, nat, "foret") + pp * partNature(contenu, nat, "poisson");
     }
     // La cueillette, la chasse et la pêche à pied nourrissent une part des places de l'île, sans aménagement.
-    prod.nourriture = (prod.nourriture || 0) + (R.cueillette || 0) * (K || 0) * (R.mange || 0.1) * vit;
+    // Victor (2026-11-12, « durcir ») : en mode Île, la cueillette nourrit un nombre fixe de bouches, pas une part de l'île.
+    prod.nourriture = (prod.nourriture || 0) + (R.cueillette_bouches != null && partie.mode === "ile" ? R.cueillette_bouches : (R.cueillette || 0) * (K || 0)) * (R.mange || 0.1) * vit;
     // Les bonus (moulin, forge) : chacun sert un nombre d'aménagements, pourvu que ses propres postes le soient.
     var bonus = {};
     A.forEach(function (a) {
@@ -1916,7 +1931,7 @@
       var avenir = !besoins.length, tenu = !avenir && requis.every(function (b) { return b.couvert; });
       var complet = tenu && (!negliges.length || !!(partie.agesPasses || {})[a.id]);
       if (ouvert) courant = i;
-      var o = { id: a.id, rang: a.rang, nom: a.nom, description: a.description || null, besoins: besoins, requis: requis.length, couverts: requis.filter(function (b) { return b.couvert; }).length, complet: complet, pret: tenu && !complet, negliges: negliges, avenir: avenir, ouvert: ouvert };
+      var o = { id: a.id, rang: a.rang, plafond: a.plafond == null ? null : a.plafond, nom: a.nom, description: a.description || null, besoins: besoins, requis: requis.length, couverts: requis.filter(function (b) { return b.couvert; }).length, complet: complet, pret: tenu && !complet, negliges: negliges, avenir: avenir, ouvert: ouvert };
       ouvert = ouvert && complet;
       return o;
     });
