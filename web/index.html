@@ -1637,6 +1637,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-freins { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; } .ile-frein { font-size: 15px; padding: 4px 10px; border-radius: 999px; border: 2px solid var(--line); } .ile-frein.actif { border-color: #D94141; font-weight: 700; }
 .conseils { display: grid; gap: 10px; } .conseil { border-radius: 12px; padding: 10px 14px 12px; background: var(--surface); border: 1px solid var(--line); border-left: 5px solid #2E9E5B; margin-top: 10px; } .conseils .conseil { margin-top: 0; }
 .conseil.ananke { border-left-color: #5B7FD9; } .conseil p { font-size: 17px; line-height: 1.5; margin: 4px 0 0; } .conseil .btn { margin-top: 10px; } .conseil-qui { display: block; font-size: 17px; }
+.conseil-etapes { margin: 8px 0 0; padding-left: 26px; font-size: 17px; line-height: 1.45; } .conseil-etapes li { margin: 4px 0; color: var(--muted); } .conseil-etapes li.premier { color: inherit; font-weight: 700; }
 .ile-plus { width: 100%; margin-top: 10px; font-size: 17px; }
 .duo-panneau { margin-top: 10px; } .duo-panneau .ile-objectif { margin: 0; }
 .ile-besoin p { margin: 2px 0 6px; font-size: 16px; color: var(--muted); }
@@ -5185,13 +5186,15 @@ function demarrerJeu() {
     if (G.courant === 0 && !M.estMaitrisee(P, "ile.feu")) a = { texte: __("Sans feu, personne ne reste. Apprenez à le maîtriser : tout le reste en découle."), bouton: __("Jouer"), action: jouer };
     else if (deficit && !village) a = { texte: __("La cueillette nourrit {n} personnes, pas une de plus. Pour en nourrir davantage il faut cultiver, et on ne cultive pas dans un campement : couvrez ses besoins pour en faire un village.", { n: bouches }), bouton: __("Jouer"), action: jouer };
     else if (deficit && !cultive) a = { texte: __("Ils mangent plus qu'ils ne ramassent. Apprenez « Les premières récoltes » : sans ce savoir, ni ferme ni pêcherie."), bouton: __("Voir ce savoir"), action: function () { ouvrirFeuille("res.cultiver"); } };
-    else if (deficit) a = { texte: __("Ils mangent plus qu'ils ne produisent. Une ferme ou une pêcherie de plus, et vérifiez que les postes sont pourvus."), bouton: __("Construire"), action: chantier };
-    else if (plein && L.frein === "toits") a = { texte: village ? __("Plus de place pour dormir : l'île loge {n} personnes, les autres repartent. Bâtissez une rangée de maisons.", { n: L.toits }) : __("Plus de place pour dormir : l'île loge {n} personnes, les autres repartent. Bâtissez un abri de branches.", { n: L.toits }), bouton: __("Construire"), action: chantier };
+    else if (deficit) a = { texte: __("Ils mangent plus qu'ils ne produisent. Une ferme ou une pêcherie de plus, et vérifiez que les postes sont pourvus."), bouton: __("Construire"), action: chantier, cible: "ferme" };
+    else if (plein && L.frein === "toits") a = { texte: village ? __("Plus de place pour dormir : l'île loge {n} personnes, les autres repartent. Il vous faut une rangée de maisons.", { n: L.toits }) : __("Plus de place pour dormir : l'île loge {n} personnes, les autres repartent. Il vous faut un abri de branches.", { n: L.toits }), bouton: __("Construire"), action: chantier, cible: village ? "maisons" : "foyer" };
     else if (plein && L.frein === "plafond") a = { texte: __("Votre {age} ne portera jamais plus de {n} personnes. Pour grandir encore, couvrez ses besoins et changez d'âge.", { age: nomAge.replace(/^(le|la|les) /, ""), n: L.plafond }), bouton: __("Jouer"), action: jouer };
     else if (plein) a = { texte: __("Tout le monde est logé et nourri, mais plus rien n'attire de nouveaux venus. Un savoir de plus, et le bateau reviendra chargé."), bouton: __("Jouer"), action: jouer };
-    else if (village && cultive && ((R.effets || {}).cueillette || 0) > 0.4) a = { texte: __("Près de la moitié de vos repas vient encore de la cueillette, et elle tue des adultes chaque jour. Une ferme nourrit sans que personne tombe d'un arbre."), bouton: __("Construire"), action: chantier };
+    else if (village && cultive && ((R.effets || {}).cueillette || 0) > 0.4) a = { texte: __("Près de la moitié de vos repas vient encore de la cueillette, et elle tue des adultes chaque jour. Une ferme nourrit sans que personne tombe d'un arbre."), bouton: __("Construire"), action: chantier, cible: "ferme" };
     else if (R.total && R.pourvus < R.total) a = { texte: __("Des postes restent vides : {n} sur {t}. Il vous faut des adultes, donc des toits et de quoi manger. Laissez-les arriver.", { n: R.total - R.pourvus, t: R.total }), bouton: null };
     else a = { texte: __("L'île grandit toute seule pour l'instant. Profitez-en pour remplir les greniers : l'abondance fait naître plus d'enfants."), bouton: village ? __("Construire") : null, action: chantier };
+    // Un conseil de construction déroule ses étapes : ce qu'il faut faire avant, dans l'ordre.
+    if (a.cible) { a.etapes = etapesAmenagement(a.cible, I); if (a.etapes.length > 1) a.texte += " " + __("Dans l'ordre :"); }
     if (deficit) { var tenable = Math.max(0, Math.floor((R.prod.nourriture || 0) / (regles.mange || 0.05))); k = { texte: __("Trop de bouches. L'île en nourrit {n}, vous en avez {N}. Ne bâtissez rien : laissez repartir les derniers arrivés et le compte sera bon.", { n: tenable, N: N }) }; }
     else if (surex) k = { texte: __("Vous prenez plus que ce qui repousse ({r}). Baissez l'effort dans les ressources : moins de bras au travail, moins de bouches demain.", { r: tx(surex.nom).toLowerCase() }) };
     else if (plein) k = { texte: __("L'île est pleine. C'est très bien ainsi : pas un toit de plus, et ses besoins cessent de grandir avec elle.") };
@@ -5199,9 +5202,41 @@ function demarrerJeu() {
     else k = { texte: __("Rien ne vous oblige à grandir. Chaque habitant de plus mange une ration, réclame un toit et un savoir à entretenir.") };
     return { alyca: a, ananke: k };
   }
+  // Victor (2026-11-12) : conseiller une rangée de maisons sans dire qu'il faut d'abord du bois ne sert à rien. Les
+  // étapes qui manquent avant de pouvoir bâtir `id`, dans l'ordre où les faire ; la dernière est la construction.
+  function etapesAmenagement(id, I, vus) {
+    vus = vus || {}; if (vus[id]) return []; vus[id] = 1;
+    var a = C.ile.amenagements.filter(function (x) { return x.id === id; })[0], e = a && M.etatAmenagement(C, P, id, maintenant()), out = [];
+    if (!a || !e) return out;
+    var nomA = tx(a.nom), R = I.ressources, q = I.quartiers.filter(function (x) { return x.id === a.quartier; })[0];
+    if (e.age != null) out.push({ texte: __("Faire du campement un village : couvrez ses besoins. « {a} » ne se bâtit pas avant.", { a: nomA }), bouton: __("Jouer"), action: function () { ouvrirJouer(); } });
+    if (e.savoir) out.push({ texte: __("Apprendre « {s} » : sans ce savoir, pas de « {a} ».", { s: e.savoirs.map(function (x) { return tx(C.parId[x].nom); }).join(__(" » ou « ")), a: nomA }), bouton: __("Voir ce savoir"), action: function () { ouvrirFeuille(e.savoirs[0]); } });
+    if (e.ferme && q) out.push(e.ferme.aOuvrir ? { texte: __("Ouvrir le quartier « {q} » ({c} crédits, moitié prix après une bonne réponse) : c'est là que se bâtit « {a} ».", { q: tx(q.nomFinal), a: nomA, c: (M.questionQuartier(C, P, q.id, maintenant()) || {}).plein || 0 }), bouton: __("Ouvrir ce quartier"), action: function () { ouvrirVerrouQuartier(q.id); } } :
+      { texte: __("Le quartier « {q} » n'existe pas encore : il s'ouvrira avec le savoir.", { q: tx(q.nomFinal) }) });
+    e.manque.forEach(function (m) {
+      var faut = Math.ceil(m.il_faut - m.a);
+      if (m.r === "credits") { out.push({ texte: __("Gagner {n} crédits de plus : une épreuve réussie, l'objectif du jour ou un savant en visite en rapportent.", { n: faut }), bouton: __("Jouer"), action: function () { ouvrirJouer(); } }); return; }
+      var res = (C.ile.ressources || []).filter(function (x) { return x.id === m.r; })[0], nomR = res ? tx(res.nom).toLowerCase() : m.r;
+      var source = C.ile.amenagements.filter(function (x) { return x.produit && x.produit[m.r]; })[0], par = (R.prod && R.prod[m.r]) || 0;
+      if (source && !R.batis[source.id]) {
+        // Rien ne produit cette ressource : il faut d'abord bâtir ce qui la produit, avec ses propres étapes.
+        var avant = etapesAmenagement(source.id, I, vus);
+        if (avant.length) avant[avant.length - 1].texte = __("Bâtir « {s} » : c'est ce qui donne {r}, et il en manque {n}.", { s: tx(source.nom), r: nomR, n: faut });
+        out = out.concat(avant);
+      } else if (par > 0.05) out.push({ texte: __("Attendre {r} : il en manque {n}, l'île en sort {p} par jour, soit {j} jours.", { r: nomR, n: faut, p: chiffre(par), j: Math.ceil(faut / par) }).replace(/soit 1 jours/, "soit 1 jour") });
+      else out.push({ texte: source ? __("Faire tourner « {s} » : il manque {n} de {r} et personne n'y travaille. Il faut des adultes libres.", { s: tx(source.nom), n: faut, r: nomR }) : __("Trouver {n} de {r}.", { n: faut, r: nomR }) });
+    });
+    out.push({ texte: __("Bâtir « {a} ».", { a: nomA }), bouton: e.possible ? __("Construire") : null, action: function () { ouvrirChantierIle(); } });
+    return out;
+  }
   function carteConseil(qui, c) {
     var b = el('<div class="conseil ' + qui + '"><div class="eyebrow">' + (qui === "alyca" ? __("Son conseil pour grandir") : __("Son conseil pour freiner")) + '</div><p></p></div>');
     b.querySelector("p").textContent = (qui === "alyca" ? "« " : "« ") + nommerIA(c.texte) + " »";
+    if (c.etapes && c.etapes.length > 1) {
+      var ol = el('<ol class="conseil-etapes"></ol>');
+      c.etapes.forEach(function (x, i) { var li = el("<li" + (i ? "" : ' class="premier"') + "></li>"); li.textContent = nommerIA(x.texte); ol.appendChild(li); });
+      b.appendChild(ol); c = Object.assign({}, c, { bouton: c.etapes[0].bouton, action: c.etapes[0].action });
+    }
     if (c.bouton && c.action) { var bt = el('<button type="button" class="btn sec"></button>'); bt.textContent = c.bouton; bt.onclick = function (ev) { ev.stopPropagation(); c.action(); }; b.appendChild(bt); }
     return b;
   }
