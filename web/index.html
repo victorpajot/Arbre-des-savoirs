@@ -166,6 +166,10 @@ body:has(.voile, .quiz, .zoom-fig, .liberation, .alyca-scene, .fete) { overflow:
 .quiz .fermer { border: 0; background: var(--surface); border-radius: 999px; width: 44px; height: 44px; font-size: 22px; line-height: 1; }
 .points { display: flex; gap: 6px; }
 /* Code de la question (son id), tout en haut : Victor le cite pour signaler une question. */
+.ile-construire { display: flex; flex-direction: column; gap: 4px; width: 100%; margin: 10px 0 4px; padding: 12px 14px; border: 2px solid var(--accent); border-radius: 14px; background: var(--card, #fff); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.ile-construire b { font-size: 18px; } .ile-construire small { margin-left: 8px; font-size: 15px; opacity: .75; }
+.ile-construire-st { font-size: 15px; opacity: .85; }
+.code-q.tag-q { margin: 6px 0 4px; text-align: left; font-size: 13px; opacity: .8; }
 .code-q { margin: 0 0 -10px; text-align: right; font-family: var(--f-mono); font-size: 10px; line-height: 1; color: var(--muted); opacity: 0.5; user-select: all; -webkit-user-select: all; }
 .points i { flex: 1; height: 6px; border-radius: 3px; background: var(--line); }
 .points i.ok { background: var(--good); }
@@ -4456,7 +4460,7 @@ function demarrerJeu() {
     VIS_ILE.forEach(function (vv, k) {
       var qi = I.quartiers.map(function (q) { return q.id; }).indexOf(vv.quartier); if (qi < 0 || !I.quartiers[qi].fonde) return;
       var n = VIS_ILE.slice(0, k).filter(function (w) { return w.quartier === vv.quartier; }).length;
-      visites += svgVisiteur(vv, Math.round(lieux[qi][0] - 6 + (n % 2 ? 16 : -16)), Math.round(lieux[qi][1] + 8 + n * 8), 2.4);
+      visites += svgVisiteur(vv, Math.round(lieux[qi][0] - 10 + (n % 2 ? 18 : -18)), Math.round(lieux[qi][1] + 2 + n * 8), 2.6);
     });
     // Ce qui vit (maisons, installations, habitants) se pose aussi sur une carte fournie ; le décor dessiné, non.
     vivant = plan.slice().sort(function (a, b) { return a[0] - b[0]; });
@@ -4608,7 +4612,7 @@ function demarrerJeu() {
     // Les visiteurs du jour qui flânent dans ce quartier.
     VIS_ILE.filter(function (vv) { return vv.quartier === q.id; }).forEach(function (vv, i) {
       var vx = 70 + ((vv.g >>> 3) % 220), vy = haut + 30 + ((vv.g >>> 11) % Math.max(1, rangees.length * PAS - 30));
-      plan.push([vy + 30 + i, svgVisiteur(vv, vx, vy, 2)]);
+      plan.push([vy + 30 + i, svgVisiteur(vv, vx, vy - 14, 3.2)]);
     });
     // La lisière : des arbres sur les bords, des fleurs dans l'herbe.
     for (var t = 0; !imageIle("quartier-" + q.id) && t < 10 + rangees.length * 5; t++) { var gt = graine(q.id + "arb" + t), bord = t % 2, ax = bord ? 6 + gt % 16 : W - 6 - gt % 16, ay = 20 + (gt >>> 7) % (H - bas - 10);
@@ -4656,9 +4660,11 @@ function demarrerJeu() {
           "</div></div>";
       });
       v.appendChild(el("<div>" + opts + "</div></div>"));
-      var aq = AMEN_ILE && AMEN_ILE.parQuartier[q.id];
+      var aq = AMEN_ILE && (AMEN_ILE.parQuartier[q.id] || {});
       if (aq) {
-        var ba = el('<div><h2 class="ile-h2">' + __("Les aménagements du quartier") + '</h2><div class="ile-batis"></div></div>'), zb = ba.querySelector(".ile-batis");
+        var propres = C.ile.amenagements.filter(function (a) { return a.quartier === q.id; }).map(function (a) { return esc(tx(a.nom)).toLowerCase(); });
+        var ba = el('<div><h2 class="ile-h2">' + __("Les aménagements du quartier") + '</h2>' + (Object.keys(aq).length ? "" : '<p class="note">' + __("Rien de bâti ici pour l'instant.") + (propres.length ? " " + __("Ici se bâtissent : ") + propres.join(", ") + "." : "") + "</p>") + '<div class="ile-batis"></div><button type="button" class="btn sec">' + __("Construire") + "</button></div>"), zb = ba.querySelector(".ile-batis");
+        ba.querySelector(".btn").onclick = ouvrirChantierIle;
         C.ile.amenagements.filter(function (a) { return aq[a.id]; }).forEach(function (a) { var po = AMEN_ILE.postes[a.id];
           zb.appendChild(el('<span class="ile-bati"><svg viewBox="-14 -26 28 28" width="30" height="30" aria-hidden="true">' + svgAmenagement(a, 0, 0, 24) + "</svg>" + esc(tx(a.nom)) + (aq[a.id] > 1 ? " <b>×" + aq[a.id] + "</b>" : "") + (po && po.postes ? " <small>" + po.pourvus + " / " + po.postes + __(" ouvriers") + "</small>" : "") + "</span>")); });
         v.appendChild(ba);
@@ -4683,6 +4689,12 @@ function demarrerJeu() {
     carte.onclick = function (ev) { var gv = ev.target.closest && ev.target.closest("[data-savant]"); if (gv) { ouvrirVisiteur(gv.getAttribute("data-savant")); return; }
       var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return; quartierVu = g.getAttribute("data-q"); rendre(); window.scrollTo(0, 0); };
     v.appendChild(carte);
+    // Victor (2026-11-12) : « comment acheter des aménagements ? » Le chantier s'ouvre dès la carte, avec les stocks.
+    if (I.ressources) {
+      var Rs = I.ressources, raccourci = el('<button type="button" class="ile-construire"><span>🏗️ <b>' + __("Construire") + "</b><small>" + __("ferme, mine, maisons…") + "</small></span><span class=\"ile-construire-st\">" +
+        (C.ile.ressources || []).map(function (r) { return r.icone + " " + nb(Rs.stocks[r.id] || 0); }).join(" · ") + " · " + P.credits.solde + __(" crédits") + "</span></button>");
+      raccourci.onclick = ouvrirChantierIle; v.appendChild(raccourci);
+    }
     var carteV = blocVisiteursIle(VIS_ILE); if (carteV) v.appendChild(carteV);
     var res = blocRessourcesIle(I); if (res) v.appendChild(res);
     var vie = blocVieIle(I); if (vie) v.appendChild(vie);
@@ -4825,6 +4837,9 @@ function demarrerJeu() {
   // biographie et à une question qu'ils nous posent sur leur thème. Juste : des crédits. » Chaque jour, quelques-uns des
   // personnages rencontrés viennent (ceux dont une question parle) ; chacun pose une question qui le cite.
   var questionsDePersonne = {};
+  // Victor (2026-11-12) : « rajoute un tag sur les questions pour que je puisse te faire des remarques dessus ». Le code
+  // de la question, discret mais lisible et facile à sélectionner, en bas de chaque énoncé.
+  function codeQ(q) { return q && q.id ? '<p class="code-q tag-q">' + esc(q.id) + "</p>" : ""; }
   function questionsPersonne(e) {
     if (questionsDePersonne[e.p.id]) return questionsDePersonne[e.p.id];
     // Une question qui le cite, mais dont la réponse n'est pas son propre nom ; celles qui le nomment dans l'énoncé d'abord.
@@ -4848,20 +4863,19 @@ function demarrerJeu() {
     }
     return out;
   }
-  // Un visiteur : un habitant en toge dorée, une bulle « ? » tant qu'il n'a pas posé sa question.
+  // Un visiteur (Victor, 2026-11-12 : « qu'ils ressemblent au personnage débloqué et à leur portrait ») : son portrait
+  // en pied, qui flâne au bord du hameau, une bulle « ? » tant qu'il n'a pas posé sa question.
   function svgVisiteur(v, x, y, e) {
-    var g = v.g, u = e / 2, bulle = v.fait ? "" : '<g class="ile-bulle-v"><rect x="' + (x + 1 * u) + '" y="' + (y - 9 * u) + '" width="' + 9 * u + '" height="' + 7 * u + '" rx="' + 1.5 * u + '" fill="#FFFDF4" stroke="#C9A227" stroke-width="' + 0.8 * u + '"/><text x="' + (x + 5.5 * u) + '" y="' + (y - 3.6 * u) + '" text-anchor="middle" font-size="' + 6 * u + '" font-weight="800" fill="#B5892E">?</text></g>';
-    return '<g class="ile-visiteur" data-savant="' + esc(v.e.p.id) + '" role="button" tabindex="0" aria-label="' + esc(tx(v.e.p.nom)) + '"><rect x="' + (x - 6 * u) + '" y="' + (y - 12 * u) + '" width="' + 22 * u + '" height="' + 30 * u + '" fill="transparent"/>' +
-      marcheur(g, 14 * u, 2 * u) + svgHabitantVisiteur(x, y, g, e) + "</g></g>" + bulle + "</g>";
-  }
-  function svgHabitantVisiteur(x, y, g, e) {
-    var pal = { h: CHEVEUX[g % CHEVEUX.length], s: PEAUX[(g >>> 5) % PEAUX.length], v: "#E8B84A", w: "#B5892E", k: "#2B2B33", j: "#2B2B33" };
-    return pixels(HABITANT2, pal, null, x, y, e / 2) + '<rect x="' + x + '" y="' + (y + 6 * e / 2) + '" width="' + 10 * e / 2 + '" height="' + e / 2 + '" fill="#7A1F5C"/>';
+    var k = e * 0.2, w = 40 * k, h = 48 * k, s = v.e.p, pal = C.avatar.palette;
+    var bulle = v.fait ? "" : '<g class="ile-bulle-v"><rect x="' + (x + w * 0.62).toFixed(1) + '" y="' + (y - 7 * k * 2).toFixed(1) + '" width="' + (10 * k * 2).toFixed(1) + '" height="' + (8 * k * 2).toFixed(1) + '" rx="' + (2 * k * 2).toFixed(1) + '" fill="#FFFDF4" stroke="#C9A227" stroke-width="' + (k * 2).toFixed(1) + '"/><text x="' + (x + w * 0.62 + 5 * k * 2).toFixed(1) + '" y="' + (y - 1 * k * 2).toFixed(1) + '" text-anchor="middle" font-size="' + (7 * k * 2).toFixed(1) + '" font-weight="800" fill="#B5892E">?</text></g>';
+    return '<g class="ile-visiteur" data-savant="' + esc(s.id) + '" role="button" tabindex="0" aria-label="' + esc(tx(s.nom)) + '"><rect x="' + (x - 4).toFixed(1) + '" y="' + (y - 6).toFixed(1) + '" width="' + (w + 8).toFixed(1) + '" height="' + (h + 10).toFixed(1) + '" fill="transparent"/>' +
+      '<ellipse cx="' + (x + w / 2).toFixed(1) + '" cy="' + (y + h - 1).toFixed(1) + '" rx="' + (w * 0.35).toFixed(1) + '" ry="' + (w * 0.09).toFixed(1) + '" fill="rgba(30,45,30,.25)"/>' +
+      marcheur(v.g, 10 * e, 2 * e) + '<g transform="translate(' + x.toFixed(1) + " " + y.toFixed(1) + ") scale(" + k.toFixed(3) + ')">' + pixels(s.base, pal, s.couleurs, 0, 0, 1) + pixels(s.cheveux, pal, null, 0, 0, 1) + "</g></g></g>" + bulle + "</g>";
   }
   function blocVisiteursIle(vis) {
     if (!vis.length) return null;
     var cr = (C.ile.regles.visiteurs || {}).credits || 10;
-    var b = el('<div><h2 class="ile-h2">' + __("Les visiteurs du jour") + '</h2><p class="note">' + __("Des personnages que tu as rencontrés se promènent sur l'île, en toge dorée. Chacun a une question pour toi : ") + cr + __(" crédits si tu réponds juste. Une par jour, d'autres viendront demain.") + '</p><div class="savants ile-visiteurs"></div></div>');
+    var b = el('<div><h2 class="ile-h2">' + __("Les visiteurs du jour") + '</h2><p class="note">' + __("Des personnages que tu as rencontrés se promènent sur l'île, une bulle « ? » au-dessus de la tête. Chacun a une question pour toi : ") + cr + __(" crédits si tu réponds juste. Une par jour, d'autres viendront demain.") + '</p><div class="savants ile-visiteurs"></div></div>');
     var g = b.querySelector(".ile-visiteurs");
     vis.forEach(function (v) {
       var bt = el('<button type="button" class="' + (v.fait ? "fait" : "") + '">' + svgSavant(v.e.p, 44) + "<span>" + esc(tx(v.e.p.nom)) + "</span><small>" + (v.fait ? (v.juste ? "✓ " + __("répondu") : __("à demain")) : "? " + __("une question")) + "</small></button>");
@@ -4876,7 +4890,7 @@ function demarrerJeu() {
     feuilleSimple('<div class="vitrine" style="padding:12px;width:132px;margin:0 auto">' + svgSavant(s, 108) + '</div><div class="eyebrow">' + __("En visite sur l'île") + " · " + (vie.a != null ? pastilleDate(vie.a, vie.txt) : esc(vie.txt)) + "</div><h2>" + esc(tx(s.nom)) + "</h2>" + (s.theme ? pastilleTheme(s.theme) : "") +
       '<p class="bio-p">' + escD(bio) + '</p><p class="meta">' + __("Source : ") + esc(s.source) + '</p><div id="visiteur-q"></div>', tx(s.nom));
     var z = feuille.querySelector("#visiteur-q");
-    var c = el('<div class="oubli" style="--c:' + couleur(kq.stat) + '"><div class="eyebrow" style="color:' + couleur(kq.stat) + '">' + __("Sa question") + " · " + esc(tx(kq.nom)) + '</div><p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
+    var c = el('<div class="oubli" style="--c:' + couleur(kq.stat) + '"><div class="eyebrow" style="color:' + couleur(kq.stat) + '">' + __("Sa question") + " · " + esc(tx(kq.nom)) + '</div><p class="enonce-h">' + esc(tx(q.enonce)) + "</p>" + codeQ(q) + "</div>");
     z.appendChild(c);
     if (v.fait) { c.appendChild(el('<p class="ile-vie-note">' + (v.juste ? __("Tu lui as déjà répondu juste aujourd'hui. Il repassera demain avec une autre question.") : __("Tu lui as déjà répondu aujourd'hui. Il repassera demain avec une autre question.")) + "</p>")); c.querySelector(".enonce-h").remove(); return; }
     if (q.illustration || q.dessin) c.appendChild(el(htmlIllusQ(q)));
@@ -5930,7 +5944,7 @@ function demarrerJeu() {
     feuilleSimple(__('<div class="piege-scene"><div class="piege-titre">Piège !</div><span class="vitrine">') + svgSprite(k.icone, 96, tx(k.titre)) + '</span>' +
       __('<div class="eyebrow">Case ') + pg.case + " · " + esc(nomCase(k)) + '</div><p class="etat-pion">' + esc(texteRegle(pg.regle)) + '</p></div><div id="piege-ia"></div><div id="piege-q"></div>', __("Piège"));
     var zia = feuille.querySelector("#piege-ia"), m = comite(M.replique(C, P, ["piege_question"]), true); if (m) zia.appendChild(m);
-    var c = el('<div class="oubli" style="--c:' + couleur(kq.stat) + '"><div class="eyebrow" style="color:' + couleur(kq.stat) + '">' + esc(tx(kq.nom)) + __(" · niveau ") + kq.rang + '</div><p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
+    var c = el('<div class="oubli" style="--c:' + couleur(kq.stat) + '"><div class="eyebrow" style="color:' + couleur(kq.stat) + '">' + esc(tx(kq.nom)) + __(" · niveau ") + kq.rang + '</div><p class="enonce-h">' + esc(tx(q.enonce)) + "</p>" + codeQ(q) + "</div>");
     if (q.illustration || q.dessin) c.appendChild(el(htmlIllusQ(q)));
     var zone = el('<div class="choix"></div>'), fait = false;
     function repondre(v, bt) {
@@ -6384,7 +6398,7 @@ function demarrerJeu() {
   }
   // Une question posée dans le donjon (contrôle d'atelier ou bug) : `fini(correct)` après la réponse.
   function questionDonjon(inn, q, rep, repondre, suite, libelleSuite) {
-    var e = el('<p class="enonce"></p>'); e.textContent = tx(q.enonce); inn.appendChild(e);
+    var e = el('<p class="enonce"></p>'); e.textContent = tx(q.enonce); inn.appendChild(e); if (q.id) inn.appendChild(el(codeQ(q)));
     var zone = el('<div class="choix"></div>');
     if (q.type === "numerique") {
       var s = el('<div class="saisie"><input type="text" inputmode="decimal" autocomplete="off"><button type="button" class="btn">' + __("Valider") + "</button></div>");
@@ -7966,7 +7980,7 @@ function demarrerJeu() {
     sauver();
     var k = C.parId[q.competence];
     var b = el('<div class="bloc rattrapage" style="--c:' + couleur(k.stat) + '"><div class="eyebrow" style="color:' + couleur(k.stat) + __('">Rattrapage · ') + esc(tx(k.nom)) + __('</div><p class="note" style="margin:0 0 6px">Réussie, une minute de moins. La réponse se trouve dans les fiches de ce mur.</p></div>'));
-    var c = el('<div class="oubli"><p class="enonce-h">' + esc(tx(q.enonce)) + "</p></div>");
+    var c = el('<div class="oubli"><p class="enonce-h">' + esc(tx(q.enonce)) + "</p>" + codeQ(q) + "</div>");
     if (q.illustration || q.dessin) c.appendChild(el(htmlIllusQ(q)));
     var zone = el('<div class="choix"></div>'), fait = false;
     function repondre(v, bt) {
@@ -8548,7 +8562,7 @@ function demarrerJeu() {
       pts.appendChild(el("<i class=\"" + (r ? (r.correct ? "ok" : "ko") : (i === quiz.i ? "cur" : "")) + '"></i>'));
     });
     inn.appendChild(pts);
-    inn.appendChild(el('<p class="enonce">' + esc(tx(q.enonce)) + "</p>"));
+    inn.appendChild(el('<p class="enonce">' + esc(tx(q.enonce)) + "</p>")); if (q.id) inn.appendChild(el(codeQ(q)));
     // Les schémas viennent du contenu du jeu (data/questions.json), pas de l'utilisateur.
     if (q.illustration || q.dessin) inn.appendChild(el(htmlIllusQ(q)));
     // Réglage « voix » : la question est lue à voix haute, et peut se réécouter.
