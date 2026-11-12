@@ -5296,13 +5296,15 @@ function demarrerJeu() {
     else {
       var nom = esc(tx(ob.nom)), k = ob.prochain && C.parId[ob.prochain.comp], I = M.ile(C, P, maintenant());
       var camp = I.ages && I.ages.age && I.ages.age.rang === 0;
+      // Victor (2026-11-12) : tant qu'il n'y a qu'un campement, Ananké ne parle ni de courant ni de place du marché.
+      var tot = I.ages && I.ages.courant < 2;
       // L'épreuve du plateau, et ce qu'elle fait sur l'île : construire, réparer ou entretenir une installation.
       var inst = k && I.quartiers.reduce(function (r, q) { return r || q.installations.filter(function (x) { return x.comp === k.id; })[0]; }, null);
       var qi = inst && I.quartiers.filter(function (q) { return q.installations.indexOf(inst) >= 0; })[0];
       var effet = !inst || !qi.fonde ? "" : (inst.etat === "friche" || inst.etat === "abandon" ? __("Elle construit : ") : inst.etat === "marche" ? __("Elle entretient : ") : __("Elle remet en marche : ")) + "<b>" + esc(tx(inst.nom)) + "</b> (" + esc(tx(qi.nom)) + ").";
-      corps = "<h3>" + (ob.reussi ? (ob.fonde ? __("Objectif tenu : ") + nom + __(" garde son courant") : __("Objectif tenu")) : ob.fonde ? __("Délestage prévu ce soir : ") + nom : (camp ? __("Un feu à allumer") : __("Un quartier à fonder"))) + "</h3>" +
-        '<p class="ile-obj-texte">' + (camp && !ob.reussi ? __("Rien ne tient sur cette île sans feu. Apprends à le maîtriser : le campement pourra s'installer.") : !ob.fonde && !ob.reussi ? __("Réussis ton épreuve aujourd'hui : elle pose la première installation d'un nouveau quartier de l'île.") : ob.reussi ? __("« Soit. Cette île sert encore à quelqu'un. Je reviendrai demain. »") :
-          __("« Un savoir que personne n'entretient est un serveur qui tourne pour rien. Ce soir, je coupe. » Réussis une épreuve avant minuit pour l'en dissuader.")) + "</p>" +
+      corps = "<h3>" + (ob.reussi ? (tot ? __("Objectif tenu : le feu brûle encore") : ob.fonde ? __("Objectif tenu : ") + nom + __(" garde son courant") : __("Objectif tenu")) : ob.fonde && tot ? __("Un feu à entretenir") : ob.fonde ? __("Délestage prévu ce soir : ") + nom : (camp ? __("Un feu à allumer") : tot ? __("Un besoin à couvrir") : __("Un quartier à fonder"))) + "</h3>" +
+        '<p class="ile-obj-texte">' + (camp && !ob.reussi ? __("Rien ne tient sur cette île sans feu. Apprends à le maîtriser : le campement pourra s'installer.") : tot && !ob.fonde && !ob.reussi ? __("Le campement manque de tout. Réussis ton épreuve aujourd'hui : c'est un besoin de moins.") : !ob.fonde && !ob.reussi ? __("Réussis ton épreuve aujourd'hui : elle pose la première installation d'un nouveau quartier de l'île.") : ob.reussi ? (tot ? __("« Tiens. Il semble y avoir de l'activité ici. Je repasserai demain voir si ça dure. »") : __("« Soit. Cette île sert encore à quelqu'un. Je reviendrai demain. »")) :
+          tot ? __("« Un feu qu'on n'entretient pas s'éteint. Je repasse ce soir, et je compte. » Réussis une épreuve avant minuit pour lui donner tort.") : __("« Un savoir que personne n'entretient est un serveur qui tourne pour rien. Ce soir, je coupe. » Réussis une épreuve avant minuit pour l'en dissuader.")) + "</p>" +
         (k && !ob.reussi ? '<p class="ile-obj-texte">' + __("Ta prochaine épreuve : ") + "<b>" + esc(tx(k.nom)) + "</b>. " + effet + "</p>" : "") +
         '<p class="ile-obj-compte">' + (ob.reussi ? "+" + ob.credits + __(" crédits") : ob.credits + __(" crédits à gagner")) + "</p>" + veille +
         (k ? '<button type="button" class="btn large" data-a="obj">' + __("Jouer") + "</button>" : "");
@@ -5328,7 +5330,7 @@ function demarrerJeu() {
       (monte && !q.habitable ? '<p class="desc">' + __("Personne n'y vit encore : il manque ") + q.manque + (q.manque > 1 ? __(" installations") : __(" installation")) + __(" pour rendre le quartier habitable.") + "</p>" : "") +
       (ch.fondation ? '<p class="ile-service">' + __("Nouveau lieu sur l'île : ") + esc(tx(q.nom)) + "</p>" :
         ch.option && ch.stadeAvant && tx(ch.stadeAvant) !== tx(q.nom) ? '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(ch.stadeAvant)) + (ch.optionOuverte ? __(" devient : ") : __(" redevient : ")) + esc(tx(q.nom)) + "</p>" : "") +
-      (ch.objectif ? '<p class="ile-service">' + __("Objectif du jour tenu : pas de délestage ce soir.") + " +" + ch.objectif.credits + __(" crédits") + "</p>" : "") +
+      (ch.objectif ? '<p class="ile-service">' + (M.modeIle(P) && (M.agesIle(C, P) || {}).courant < 2 ? __("Objectif du jour tenu : le feu brûle encore.") : __("Objectif du jour tenu : pas de délestage ce soir.")) + " +" + ch.objectif.credits + __(" crédits") + "</p>" : "") +
       // Quand le lieu prend le nom de ce qu'il débloque (le cercle de pierres devient la tribune), on ne le redit pas.
       (ch.option ? (ch.optionOuverte && tx(ch.option.nom) === tx(q.nom) ? "" : '<p class="ile-service' + (ch.optionOuverte ? "" : " perdue") + '">' + esc(tx(q.nom)) + (ch.optionOuverte ? __(" débloque : ") : __(" perd : ")) + esc(tx(ch.option.nom)) + "</p>") + (ch.optionOuverte ? '<p class="desc">' + esc(tx(ch.option.usage)) + "</p>" : "") : "") + "</div>");
     return b;
