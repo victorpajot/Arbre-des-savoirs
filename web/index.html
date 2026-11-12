@@ -4926,7 +4926,10 @@ function demarrerJeu() {
     var ns = Object.keys(P.succes).length, cp = comptesLieux(), rt = C.ile.regles.tour || {};
     var etages = Math.min(rt.etages_max || 12, 1 + Math.floor(Object.keys(P.livres).length / (rt.livres_par_etage || 4)));
     return C.ile.lieux.filter(function (l) { return l.ouvre === "boutique" ? M.boutique(C) : l.ouvre === "atomes" ? !!C.atomes : true; }).map(function (l) {
-      return { id: l.id, quartier: l.quartier, nom: l.nom, usage: l.usage, image: l.image, ouvre: l.ouvre, ouvert: ns >= l.succes, manque: l.succes - ns, compte: cp[l.ouvre], etages: etages };
+      // Victor (2026-11-12) : sur l'île par âges, un lieu peut s'ouvrir par un savoir (l'étal du marchand, par
+      // « Compter avant d'écrire ») plutôt que par le nombre de succès.
+      var sv = M.modeIle(P) && C.ile.ages && l.savoir && C.parId[l.savoir] ? l.savoir : null;
+      return { id: l.id, quartier: l.quartier, nom: l.nom, usage: l.usage, image: l.image, ouvre: l.ouvre, savoir: sv, ouvert: sv ? M.estMaitrisee(P, sv) : ns >= l.succes, manque: l.succes - ns, compte: cp[l.ouvre], etages: etages };
     });
   }
   // Un lieu ouvert mène droit à sa collection ; fermé, il dit ce qu'il sera et ce qui l'ouvre.
@@ -4935,7 +4938,8 @@ function demarrerJeu() {
     // Victor (2026-11-12) : un lieu ouvert a sa propre page, la collection dedans et un chemin de retour vers l'île.
     if (l.ouvert) { vue = "ile"; quartierVu = l.quartier; lieuVu = l.id; rendre(); window.scrollTo(0, 0); return; }
     feuilleSimple('<div class="vitrine" style="padding:14px">' + (l.image === "tour" ? svgTourIle(1, 80) : svgSprite(l.image, 96, null, true)) + '</div><div class="eyebrow">' + __("Lieu de l'île · fermé") + "</div><h2>" + esc(tx(l.nom)) + "</h2><p>" + esc(tx(l.usage)) + '</p><p class="ile-service">' +
-      (l.manque > 1 ? __("S'ouvre dans ") + l.manque + __(" succès.") : __("S'ouvre à ton prochain succès.")) + "</p>", tx(l.nom));
+      (l.savoir ? __("S'ouvre en maîtrisant « ") + esc(tx(C.parId[l.savoir].nom)) + " »." : l.manque > 1 ? __("S'ouvre dans ") + l.manque + __(" succès.") : __("S'ouvre à ton prochain succès.")) + "</p>" +
+      (l.savoir ? '<button type="button" class="btn large" data-a="savoir">' + __("Voir ce savoir") + "</button>" : ""), tx(l.nom), { savoir: function () { ouvrirFeuille(l.savoir); } });
   }
   // La page d'un lieu (Victor, 2026-11-12 : « une page sur laquelle on pourrait voir la collection mais aussi revenir
   // sur l'île ») : le bâtiment, son usage, son compte, la collection elle-même, et deux chemins de retour.
