@@ -1622,7 +1622,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-camp { margin: 12px 0; } .ile-camp p { font-size: 17px; line-height: 1.5; margin: 0 0 10px; } .ile-camp .extrait { margin: 0; } .ile-camp blockquote { font-size: 17px; }
 @keyframes ile-danse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 .ile-danse { animation: ile-danse .6s ease-in-out infinite; }
-body:has(#couche .voile) .app .ile-scene * { animation-play-state: paused !important; } .ile-flamme { cursor: pointer; }
+body:has(#couche .voile) .app .ile-scene * { animation-play-state: paused !important; } .android .ile-danse { animation: none; } .ile-flamme { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .ile-danse { animation: none; } }
 .ile-nouveau { margin: 18px 0 8px; padding: 12px; border: 2px dashed var(--accent); border-radius: 16px; display: flex; flex-direction: column; gap: 10px; } .ile-nouveau .btn { align-self: flex-end; }
 .ile-effort { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 16px; flex-wrap: wrap; } .ile-effort > span { flex-basis: 100%; } .ile-effort button { font: inherit; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(127,127,127,.5); background: transparent; color: inherit; font-size: 20px; cursor: pointer; } .ile-effort button:disabled { opacity: .35; }
@@ -2361,11 +2361,23 @@ function demarrerJeu() {
     var surQuiz = !!document.querySelector(".quiz");
     var f = el('<div class="voile' + (surQuiz ? " dessus" : "") + '"><div class="feuille" role="dialog" aria-modal="true" aria-label="' + esc(label) + '">' + html +
       '<button type="button" class="btn sec large" data-a="fermer">' + (fermerLib || (document.querySelector(".quiz.atome .combat-q") ? __("← Retour au combat") : surQuiz ? __("← Retour au bilan") : __("Fermer"))) + "</button></div></div>");
+    // Victor (2026-11-12) : sur Android, les cadeaux d'Alyca restaient à l'écran, bouton sans effet. La feuille se retire
+    // donc elle-même (même si une autre a pris sa place dans `feuille`), le bouton répond aussi au doigt levé si le clic
+    // n'arrive pas, et la page est repeinte après coup.
+    var clos = false;
+    function clore() {
+      if (clos) return; clos = true;
+      if (feuille === f) fermerFeuille(); else { f.remove(); setTimeout(function () { if (C && P) scenesPersonnage(); }, 0); }
+      repeindrePage();
+      if (actions && actions.apres) actions.apres();
+    }
     f.onclick = function (ev) {
       var a = ev.target.closest && ev.target.closest("[data-a]"), nom = a && a.getAttribute("data-a");
-      if (ev.target === f || nom === "fermer") { fermerFeuille(); if (actions && actions.apres) actions.apres(); }
+      if (ev.target === f || nom === "fermer") clore();
       else if (nom && nom !== "apres" && actions && actions[nom]) actions[nom]();
     };
+    var bf = f.querySelector('[data-a="fermer"]');
+    bf.addEventListener("pointerup", function (ev) { if (ev.pointerType === "touch" || ev.pointerType === "pen") setTimeout(function () { if (!clos && f.parentNode) clore(); }, 350); });
     fermerFeuille(); feuille = f; document.getElementById("couche").appendChild(f);
     var fe = f.querySelector(".feuille"); if (fe.offsetHeight >= f.clientHeight - 2) fe.classList.add("pleine");
     f.querySelector("button").focus({ preventScroll: true });
@@ -3895,6 +3907,8 @@ function demarrerJeu() {
     if (M.modeIle(P)) {
       // Mode Île : pas de plateau. L'objectif du jour porte déjà son bouton Jouer ; sinon, un Jouer seul.
       if (!boi || !boi.querySelector('[data-a="obj"]')) v.appendChild(boutonJouer());
+      // Victor (2026-11-12) : les besoins couverts de l'île, comme sous la carte, juste sous le bouton Jouer.
+      var bagA = P.ileIntro ? blocAgeIle(campIle(M.ile(C, P, maintenant()))) : null; if (bagA) v.appendChild(bagA);
     } else if (C.plateau) {
       var bp = blocPlateau(), gc = bp.querySelector(".grille-cadre"), bj = boutonJouer();
       if (gc && gc.parentNode) gc.parentNode.insertBefore(bj, gc.nextSibling); else v.appendChild(bj);
@@ -4082,10 +4096,15 @@ function demarrerJeu() {
       if (a === "quiz" || a === "rappel") { fermerFeuille(); lancerQuiz(id, a, M.modeIle(P) ? { jouer: true } : undefined); }
       if (a === "masterclass") { fermerFeuille(); ouvrirMasterclass(id); }
     };
-    feuille = f; document.getElementById("couche").appendChild(f);
+    fermerFeuille(); feuille = f; document.getElementById("couche").appendChild(f);
     f.querySelector("button").focus();
   }
   // v35 : une feuille fermée peut laisser passer la révélation d'Alyca qui attendait.
+  // La WebView d'Android garde parfois l'ancienne image après le retrait d'un voile : on l'oblige à repeindre.
+  function repeindrePage() {
+    var c = document.getElementById("couche"); c.style.display = "none"; void c.offsetHeight; c.style.display = "";
+    var a = document.getElementById("app"); a.style.transform = "translateZ(0)"; void a.offsetHeight; setTimeout(function () { a.style.transform = ""; }, 60);
+  }
   function fermerFeuille() { if (feuille) { feuille.remove(); feuille = null; setTimeout(function () { revelerNom(); if (C && P) scenesPersonnage(); }, 0); } }
 
   // --- L'île (Victor, 2026-11-10) ---------------------------------------------
