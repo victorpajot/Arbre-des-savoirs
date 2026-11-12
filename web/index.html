@@ -1495,7 +1495,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-nav { display: flex; gap: 18px; flex-wrap: wrap; }
 .ile-lieu-tete { display: flex; gap: 14px; align-items: center; margin: 0 0 14px; }
 .ile-lieu-tete .vitrine { flex: none; padding: 10px; display: grid; place-items: center; min-width: 92px; min-height: 92px; }
-.ile-retour { align-self: flex-start; border: 0; background: transparent; color: var(--accent); font: inherit; font-size: 17px; font-weight: 700; padding: 6px 0; min-height: 44px; }
+.ile-retour { align-self: stretch; width: 100%; border: 2px solid var(--accent); border-radius: 14px; background: color-mix(in srgb, var(--accent) 14%, var(--surface)); color: var(--accent); font: inherit; font-size: 18px; font-weight: 800; padding: 12px 16px; min-height: 54px; text-align: left; cursor: pointer; margin-bottom: 10px; }
 .ile-bilan { display: flex; flex-direction: column; gap: 6px; font-size: 17px; line-height: 1.45; }
 .ile-bilan .ok { color: var(--good); font-weight: 700; } .ile-bilan .souci { color: var(--warn); font-weight: 700; }
 .ile-vitrine { padding: 14px; width: 164px; margin: 0 auto; background: #8CC27A; }
@@ -4731,7 +4731,7 @@ function demarrerJeu() {
     lieuVu = null;
     var compteur = '<div class="ile-compteur"><svg class="pix" viewBox="0 0 5 8" width="15" height="24" aria-hidden="true" shape-rendering="crispEdges">' + svgHabitant(0, 0, 77, 1, true) + "</svg><span><b>" + nb(q ? q.habitants : I.habitants) + "</b><small>" + ((q ? q.habitants : I.habitants) > 1 ? __("habitants") : __("habitant")) + "</small></span></div>";
     if (q) {
-      var retour = el('<button type="button" class="ile-retour">' + __("← L'île") + "</button>");
+      var retour = el('<button type="button" class="ile-retour">' + __("← Retour à l'île, vue d'ensemble") + "</button>");
       retour.onclick = function () { quartierVu = null; rendre(); window.scrollTo(0, 0); };
       v.appendChild(retour);
       v.appendChild(el('<div class="entete"><div><div class="eyebrow" style="color:' + q.couleur + '">' + (campFeu(q) ? __("Autour du feu") : q.stade < q.options.length ? __("Un jour : ") + esc(tx(q.nomFinal)) : __("Quartier de l'île")) + "</div><h1>" + (campFeu(q) ? __("Le campement") : esc(tx(q.nom))) + "</h1></div>" + compteur + "</div>"));
