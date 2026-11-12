@@ -1600,7 +1600,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-age-barre { height: 8px; border-radius: 4px; background: rgba(127,127,127,.25); margin: 8px 0 4px; overflow: hidden; } .ile-age-barre b { display: block; height: 100%; background: #3F8F5A; }
 .ile-besoin { border-top: 1px solid rgba(127,127,127,.25); padding: 10px 0 4px; } .ile-besoin:first-of-type { border-top: 0; }
 .ile-besoin h4 { margin: 0; font-size: 17px; } .ile-besoin.ok h4 { color: #3F8F5A; } .ile-besoin p { margin: 2px 0 6px; font-size: 16px; color: var(--muted); }
-.ile-savoirs { display: flex; flex-wrap: wrap; gap: 6px; } .ile-savoir { font: inherit; font-size: 16px; text-align: left; border: 2px solid var(--c, #888); border-radius: 10px; padding: 6px 10px; background: transparent; color: inherit; cursor: pointer; }
+.ile-savoirs { display: flex; flex-direction: column; gap: 8px; } .ile-savoir { display: flex; align-items: center; gap: 10px; width: 100%; font: inherit; font-size: 16px; text-align: left; border: 2px solid var(--c, #888); border-radius: 10px; padding: 6px 10px; background: transparent; color: inherit; cursor: pointer; }
 .ile-savoir.ok { background: color-mix(in srgb, var(--c, #888) 18%, transparent); } .ile-savoir small { display: block; font-size: 14px; color: var(--muted); }
 .ile-nat { margin: 10px 0 0; font-size: 16px; } .ile-nat-tete { display: flex; justify-content: space-between; gap: 8px; } .ile-nat i { display: block; height: 10px; border-radius: 5px; background: rgba(127,127,127,.25); overflow: hidden; margin: 4px 0; } .ile-nat i b { display: block; height: 100%; }
 .ile-nat.orange .ile-nat-etat { color: #C98A1E; } .ile-nat.rouge .ile-nat-etat, .ile-nat.epuise .ile-nat-etat { color: #C8553D; } .ile-nat small { color: var(--muted); font-size: 15px; }
@@ -4961,7 +4961,7 @@ function demarrerJeu() {
       var amen = b.amenagements.map(function (id) { var x = C.ile.amenagements.filter(function (y) { return y.id === id; })[0]; return x ? esc(tx(x.nom)).toLowerCase() : ""; }).filter(Boolean);
       h += '<div class="ile-besoin' + (b.couvert ? " ok" : "") + '"><h4>' + (b.couvert ? "✓ " : "○ ") + esc(tx(b.nom)) + "</h4>" + (b.texte ? "<p>" + esc(tx(b.texte)) + (amen.length ? " " + __("Débloque : ") + amen.join(", ") + "." : "") + "</p>" : "") + '<div class="ile-savoirs">' +
         b.savoirs.map(function (id) { var k = C.parId[id], st = M.statut(C, P, id, t).etat, ok = st === "maitrisee" || st === "a_reviser";
-          return '<button type="button" class="ile-savoir' + (ok ? " ok" : "") + '" style="--c:' + couleur(k.stat) + '" data-savoir="' + esc(id) + '">' + (ok ? "✓ " : "") + esc(tx(k.nom)) + "<small>" + esc(tx(stat(k.stat).nom)) + " · " + (st === "a_reviser" ? __("rappel à faire") : ok ? __("acquis") : st === "disponible" ? __("à apprendre") : __("verrouillé")) + "</small></button>"; }).join("") + "</div></div>";
+          return '<button type="button" class="ile-savoir' + (ok ? " ok" : "") + '" style="--c:' + couleur(k.stat) + '" data-savoir="' + esc(id) + '">' + badgeComp(k, 44) + "<span>" + (ok ? "✓ " : "") + esc(tx(k.nom)) + "<small>" + esc(tx(stat(k.stat).nom)) + " · " + (st === "a_reviser" ? __("rappel à faire") : ok ? __("acquis") : st === "disponible" ? __("à apprendre") : __("verrouillé")) + "</small></span></button>"; }).join("") + "</div></div>";
     });
     if (G.suivant && !a.avenir) h += '<p class="ile-vie-note" style="margin-top:10px">' + __("Tous les besoins couverts, s'ouvrira : ") + "<b>" + esc(tx(G.suivant.nom)) + "</b>.</p>";
     var bloc = el("<div>" + h + "</div></div>");
