@@ -4744,6 +4744,8 @@ function demarrerJeu() {
         var gl = ev.target.closest && ev.target.closest("[data-lieu]"); if (gl) { ouvrirLieu(gl.getAttribute("data-lieu")); return; }
         var g = ev.target.closest && ev.target.closest("[data-comp]"); if (!g) return; var id = g.getAttribute("data-comp"); ouvrirInstallation(q, q.installations.filter(function (x) { return x.comp === id; })[0]); };
       v.appendChild(sc);
+      // Victor (2026-11-12) : on joue aussi depuis un quartier, sans repasser par la vue d'ensemble.
+      if (M.modeIle(P)) { var bj = el('<button type="button" class="btn large" style="margin:10px 0 4px">' + __("Jouer") + "</button>"); bj.onclick = function () { ouvrirJouer(); }; v.appendChild(bj); }
       if (campFeu(q)) {
         var cit = ((C.ile.ages || []).filter(function (a) { return a.citation; })[0] || {}).citation;
         v.appendChild(el('<div class="carte ile-camp"><p>' + (q.posees > 1 ? __("Le campement grandit autour du feu. Chaque savoir appris y amène du monde ; quand tous ses besoins seront couverts, il deviendra un village.") : __("Le feu a rassemblé les survivants. Autour de lui on se réchauffe, on cuit, on veille : le campement est né.")) + "</p>" +
@@ -4753,7 +4755,7 @@ function demarrerJeu() {
           q.installations.forEach(function (x) { var pb = el('<button type="button" class="ile-camp-savoir">' + badgeComp(C.parId[x.comp], 44) + "<span><b>" + esc(tx(C.parId[x.comp].nom)) + "</b><small>" + esc(tx(x.nom)) + " · " + esc((TEXTE_ETAT[x.etat] ? TEXTE_ETAT[x.etat]() : x.etat).split(/[:.]/)[0]) + "</small></span></button>");
             pb.onclick = function () { ouvrirInstallation(q, x); }; bs.lastChild.appendChild(pb); });
           v.appendChild(bs); }
-        if (I.ressources) { var bc = el('<button type="button" class="btn large" style="margin-top:6px">🏗️ ' + __("Construire") + "</button>"); bc.onclick = ouvrirChantierIle; v.appendChild(bc); }
+        if (I.ressources) { var bc = el('<button type="button" class="btn sec large" style="margin-top:6px">🏗️ ' + __("Construire") + "</button>"); bc.onclick = ouvrirChantierIle; v.appendChild(bc); }
         return v;
       }
       var soucis = q.installations.filter(function (x) { return x.etat === "alerte" || x.etat === "panne" || x.etat === "abandon"; });
