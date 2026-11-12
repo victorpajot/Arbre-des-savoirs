@@ -801,8 +801,30 @@ body.plateau-plein { overflow: hidden; }
 .masterclass .mc-faux { color: var(--bad); margin: 4px 0; }
 .masterclass .mc-retenir { border-left: 4px solid #E0A800; padding: 6px 10px; background: color-mix(in srgb, #E0A800 12%, var(--surface)); border-radius: 6px; }
 .masterclass .mc-intro { margin: 4px 0 12px; }
-.masterclass .mc-plan { border: 1px solid var(--line); border-left: 4px solid var(--c, var(--accent)); border-radius: 6px; padding: 8px 12px; margin: 4px 0 12px; }
-.masterclass .mc-plan ol { margin: 4px 0 0; padding-left: 22px; }
+.masterclass .mc-plan { margin: 4px 0 14px; }
+.masterclass .mc-plan-t { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
+/* Victor (2026-11-12) : le fil de la leçon en frise (étape 1) : pastilles reliées, date de l'étape à la couleur de son époque. */
+.mc-frise { list-style: none; margin: 0; padding: 0; display: grid; }
+.mc-frise li { display: grid; grid-template-columns: 30px 1fr auto; gap: 0 12px; align-items: start; position: relative; padding-bottom: 10px; }
+.mc-frise li:not(:last-child)::before { content: ""; position: absolute; left: 14px; top: 28px; bottom: 0; width: 2px; background: color-mix(in srgb, var(--c, var(--accent)) 35%, var(--line)); }
+.mc-frise button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+.mc-frise button:disabled { cursor: default; }
+.mc-frise .mc-pas { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 700 15px var(--f-display); border: 2px solid var(--c, var(--accent)); color: var(--c, var(--accent)); background: var(--surface); position: relative; z-index: 1; text-align: center; }
+.mc-frise .mc-pas.special { border-style: dashed; }
+.mc-frise li.ici .mc-pas { background: var(--c, var(--accent)); color: var(--surface); }
+.mc-frise li.ici .mc-pt { font-weight: 700; }
+.mc-frise .mc-pt { padding-top: 4px; min-width: 0; }
+.mc-frise .mc-pd { padding-top: 5px; font-size: 14px; white-space: nowrap; }
+/* Étapes suivantes : une barre d'étapes, et le fil complet à déplier. */
+.mc-barre { display: grid; gap: 6px; margin: 6px 0 10px; }
+.mc-segs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; }
+.mc-segs button { height: 10px; border: 0; padding: 0; border-radius: 5px; cursor: pointer; background: color-mix(in srgb, var(--c, var(--accent)) 18%, var(--surface-2)); }
+.mc-segs button.lu { background: color-mix(in srgb, var(--c, var(--accent)) 55%, var(--surface)); }
+.mc-segs button.ici { background: var(--c, var(--accent)); }
+.mc-segs button:disabled { cursor: default; }
+.mc-barre details { font-size: 15px; }
+.mc-barre summary { cursor: pointer; color: var(--c, var(--accent)); font-weight: 700; }
+.mc-barre details .mc-frise { margin-top: 8px; }
 .masterclass .mc-bref { padding-left: 22px; margin: 8px 0; }
 .masterclass .mc-bref li { margin-bottom: 12px; padding: 6px 10px; border-left: 4px solid #E0A800; background: color-mix(in srgb, #E0A800 12%, var(--surface)); border-radius: 6px; }
 .masterclass .mc-bref li b { display: block; }
@@ -7263,8 +7285,9 @@ function demarrerJeu() {
       var livres = livresEtape(ch.texte.map(tx).join(" "));
       // Victor (2026-11-03) : comme les questions, chaque étape porte son identifiant, pour les retours.
       // Victor (2026-11-09) : pour mémoriser, l'étape 1 annonce le fil de la leçon (une idée par étape).
-      var plan = i === 0 && k.masterclass.chapitres.length > 1 ? '<div class="mc-plan"><b>' + __("Le fil de la leçon") + "</b><ol>" + k.masterclass.chapitres.map(function (c2) { return "<li>" + esc(tx(c2.titre)) + "</li>"; }).join("") + "</ol></div>" : "";
-      return { titre: tx(ch.titre), html: (ch.id ? '<p class="code-q">' + esc(k.id + "/" + ch.id) + "</p>" : "") + plan + (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x, ip) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux, livres), cles, etatCles) +
+      // Victor (2026-11-12) : le fil de la leçon (frise à l'étape 1, barre ensuite) est dessiné par montrer() ; chaque étape y porte sa première date.
+      var dateEt = (dater(esc(ch.texte.map(tx).join(" "))).match(/<span class="date-ep[^>]*>[^<]*<\/span>/) || [""])[0];
+      return { titre: tx(ch.titre), date: dateEt, html: (ch.id ? '<p class="code-q">' + esc(k.id + "/" + ch.id) + "</p>" : "") + (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x, ip) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux, livres), cles, etatCles) +
           // Victor (2026-11-10) : le dessin se place juste après le paragraphe qui en parle (champ dessin_apres).
           (ch.dessin && ch.dessin_apres === ip ? htmlDessinQ({ id: ch.dessin }) : ""); }).join("") +
         // Victor (2026-11-01) : un dessin en pixel art de l'instrument ou de l'objet dont parle l'étape (champ dessin).
@@ -7273,9 +7296,9 @@ function demarrerJeu() {
         __('<p class="mc-retenir"><b>À retenir</b>') + escD(tx(ch.retenir)) + __('</p><p class="meta" style="margin:0">Source : ') + esc(ch.source) + "</p>" };
     });
     // Victor (2026-11-09) : la leçon se termine par tous ses « À retenir » réunis, à relire d'un coup d'œil.
-    if (k.masterclass.chapitres.length > 1) etapes.push({ titre: __("L'essentiel, en bref"), html: '<ol class="mc-bref">' + k.masterclass.chapitres.map(function (c2) {
+    if (k.masterclass.chapitres.length > 1) etapes.push({ titre: __("L'essentiel, en bref"), signe: "★", html: '<ol class="mc-bref">' + k.masterclass.chapitres.map(function (c2) {
       return "<li><b>" + esc(tx(c2.titre)) + "</b>" + escD(tx(c2.retenir)) + "</li>"; }).join("") + "</ol>" });
-    if (rates.length) etapes.push({ titre: rates.length > 1 ? __("Tes erreurs, corrigées") : __("Ton erreur, corrigée"), html: (frise ? frise(rates.map(function (x) {
+    if (rates.length) etapes.push({ titre: rates.length > 1 ? __("Tes erreurs, corrigées") : __("Ton erreur, corrigée"), signe: "!", html: (frise ? frise(rates.map(function (x) {
       var q = C.questionParId[x.id]; return tx(q.enonce) + " " + (q.explication ? tx(q.explication) : ""); }).join(" ")) : "") + rates.map(function (x) { return blocQ(C.questionParId[x.id], x.rep); }).join("") +
       __('<p class="meta">Elles t\'attendent au mur de la honte : retente-les dès demain.</p>') });
     var n = 0, titre = __("Masterclass : ") + tx(k.nom);
@@ -7285,9 +7308,30 @@ function demarrerJeu() {
     }, retour);
     // Victor (2026-11-01) : pendant la lecture, plus rien du jeu derrière : la feuille prend tout l'écran, quelle que soit l'étape.
     feuille.classList.add("opaque"); feuille.querySelector(".feuille").classList.add("pleine");
+    // Victor (2026-11-12) : toucher une étape du fil y mène. Masterclass imposée : pas de saut au-delà de l'étape la plus loin déjà lue.
+    var vuMax = 0;
+    function fil() {
+      return '<ol class="mc-frise">' + etapes.map(function (e, j) {
+        var ok = !imp || j <= vuMax;
+        return '<li' + (j === n ? ' class="ici"' : "") + '><button type="button" class="mc-pas' + (e.signe ? " special" : "") + '" data-etape="' + j + '"' + (ok ? "" : " disabled") + ' aria-label="' + esc(__("Étape ") + (j + 1)) + '">' + (e.signe || j + 1) +
+          '</button><button type="button" class="mc-pt" data-etape="' + j + '"' + (ok ? "" : " disabled") + ">" + esc(e.titre) + '</button><span class="mc-pd">' + (e.date || "") + "</span></li>";
+      }).join("") + "</ol>";
+    }
+    function barre() {
+      return '<div class="mc-barre"><div class="mc-segs">' + etapes.map(function (e, j) {
+        return '<button type="button" data-etape="' + j + '" class="' + (j === n ? "ici" : j < n ? "lu" : "") + '"' + (!imp || j <= vuMax ? "" : " disabled") + ' aria-label="' + esc(__("Étape ") + (j + 1) + " : " + e.titre) + '"></button>';
+      }).join("") + "</div><details><summary>" + __("Voir tout le fil de la leçon") + "</summary>" + fil() + "</details></div>";
+    }
+    feuille.querySelector(".masterclass").addEventListener("click", function (ev) {
+      var b = ev.target.closest("[data-etape]"); if (!b || b.disabled) return;
+      var j = +b.dataset.etape; if (j === n || j < 0 || j >= etapes.length) return;
+      n = j; montrer();
+    });
     function montrer() {
       var z = feuille.querySelector(".masterclass"), x = etapes[n];
-      z.innerHTML = '<div class="eyebrow">' + esc(titre) + __(" · étape ") + (n + 1) + __(" sur ") + etapes.length + "</div><h2>" + esc(x.titre) + "</h2>" + x.html +
+      if (n > vuMax) vuMax = n;
+      var plan = etapes.length > 1 ? (n === 0 ? '<div class="mc-plan"><span class="mc-plan-t">' + __("Le fil de la leçon") + "</span>" + fil() + "</div>" : barre()) : "";
+      z.innerHTML = '<div class="eyebrow">' + esc(titre) + __(" · étape ") + (n + 1) + __(" sur ") + etapes.length + "</div>" + (n > 0 ? plan : "") + "<h2>" + esc(x.titre) + "</h2>" + (n === 0 ? plan : "") + x.html +
         '<div class="nav-guide"><button type="button" class="btn sec" data-a="prec"' + (n ? "" : " disabled") + __('>← Précédent</button><button type="button" class="btn" data-a="suiv"') + (n < etapes.length - 1 ? "" : " disabled") + __(">Suivant →</button></div>");
       rencontrerDans(z);
       if (imp && n === 0 && imp.mot) { var mi = comite(imp.mot, true); if (mi) z.insertBefore(mi, z.querySelector("h2")); }
