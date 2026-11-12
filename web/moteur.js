@@ -1523,8 +1523,22 @@
     var mons = monumentsIle(contenu, partie), gloires = gloiresIle(contenu, partie), pam = placesAmenagements(contenu, partie);
     var parAges = modeIle(partie) && !!agesPresents(contenu);
     var RQ = contenu.ile.regles.quartier, verrouQ = !!(parAges && RQ && agesIle(contenu, partie).courant >= (RQ.age_min == null ? 2 : RQ.age_min));
+    // Victor (2026-11-12) : à partir du village, un aménagement ne se bâtit que dans son quartier (plus de pêcherie au
+    // village). Ceux bâtis ailleurs avant cette règle rejoignent le leur, qui s'ouvre sans frais.
+    if (verrouQ && partie.ressources && partie.ressources.batis) partie.ressources.batis.forEach(function (b) {
+      var am = amenagementDe(contenu, b.id); if (!am || !am.quartier || b.q === am.quartier) return;
+      b.q = am.quartier; partie.quartiers = partie.quartiers || {}; if (!partie.quartiers[am.quartier]) partie.quartiers[am.quartier] = t;
+    });
+    if (verrouQ) pam = placesAmenagements(contenu, partie);
+    var rangAge = parAges ? agesIle(contenu, partie).courant : 99;
     var quartiers = (contenu.ile.quartiers || []).map(function (q) {
       var hab = 0, cap = 0, marche = 0, posees = 0, ouvert = false;
+      // Un quartier vide peut s'ouvrir pour y bâtir : il suffit qu'un aménagement à lui soit à la portée du joueur.
+      var voulu = verrouQ && (contenu.ile.amenagements || []).some(function (am) {
+        if (am.quartier !== q.id || (am.age || 0) > rangAge) return false;
+        var rq = (am.savoirs || []).filter(function (x) { return contenu.parId[x]; });
+        return !rq.length || rq.some(function (x) { return estMaitrisee(partie, x); }); });
+      var choisi = verrouQ && !!(partie.quartiers || {})[q.id];
       var inst = plan.parQuartier[q.id].map(function (x) {
         var etat = etatInstallation(contenu, partie, x.comp, t);
         // En veille : l'objectif de la veille n'a pas été tenu, l'IA économe a baissé son courant pour la journée.
@@ -1564,7 +1578,7 @@
       // Victor (2026-11-12) : à partir du village, un nouveau quartier ne s'ouvre pas tout seul. Le premier savoir qui
       // s'y pose le laisse « à ouvrir » : une question, ou des crédits (questionQuartier, ouvrirQuartier). Le quartier
       // du feu, lui, est là depuis le campement.
-      var aOuvrir = verrouQ && posees > 0 && !(partie.quartiers || {})[q.id] && !inst.some(function (x) { return x.comp === "ile.feu"; });
+      var aOuvrir = verrouQ && (posees > 0 || voulu) && !(partie.quartiers || {})[q.id] && !inst.some(function (x) { return x.comp === "ile.feu"; });
       if (aOuvrir) habitable = false;
       if (!habitable) { hab = 0; inst.forEach(function (x) { x.places = x.habitants = 0; }); }
       // Les maisons bâties avec les ressources (Victor, 2026-11-12) ajoutent leurs places au quartier qui les accueille.
@@ -1573,7 +1587,7 @@
       // Le lieu grandit par stades (Victor, 2026-11-10 : « d'abord la place du marché du village », pas la ville d'emblée) :
       // son nom est celui du stade atteint, un par option ouverte.
       var stade = options.filter(function (o) { return o.ouverte; }).length, noms = q.stades || [];
-      return { gloires: gq, monuments: monuments, habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, stade: stade, nomFinal: q.nom, nom: noms[stade] || q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: posees > 0 && !aOuvrir, aOuvrir: aOuvrir, ouvert: ouvert || posees > 0, installations: inst,
+      return { gloires: gq, monuments: monuments, habitable: habitable, manque: habitable ? 0 : options[0].installations - marche, id: q.id, stade: stade, nomFinal: q.nom, nom: noms[stade] || q.nom, couleur: q.couleur, description: q.description, centre: !!q.centre, position: q.position || null, decor: q.decor || null, fonde: (posees > 0 || choisi) && !aOuvrir, aOuvrir: aOuvrir, ouvert: ouvert || posees > 0, installations: inst,
         options: options, posees: posees, marche: marche, role: (q.demographie || {}).role || null, places: hab, habitants: hab, capacite: cap };
     });
     return { quartiers: quartiers, places: total, habitants: total, capacite: capacite, exil: 0, monuments: mons, gloires: gloires };
@@ -1839,9 +1853,12 @@
     var savoir = requis.length && !requis.some(function (x) { return estMaitrisee(partie, x); }) ? requis[0] : null;
     var habitables = I.quartiers.filter(function (q) { return q.habitable && q.posees > 0; });
     var ici = habitables.filter(function (q) { return q.id === a.quartier; })[0] || habitables.sort(function (x, y) { return y.habitants - x.habitants; })[0] || null;
+    // À partir du village, chaque aménagement a son quartier : il faut l'avoir ouvert (Victor, 2026-11-12).
+    var RQ = contenu.ile.regles.quartier, strict = partie.mode === "ile" && RQ && agesPresents(contenu) && agesIle(contenu, partie).courant >= (RQ.age_min == null ? 2 : RQ.age_min), ferme = null;
+    if (strict && a.quartier) { var qa = I.quartiers.filter(function (q) { return q.id === a.quartier; })[0]; ici = qa && qa.fonde ? qa : null; if (!ici && qa) ferme = { id: qa.id, aOuvrir: !!qa.aOuvrir }; }
     // Victor (2026-11-12) : le campement ne bâtit rien de durable ; fermes, maisons et ateliers attendent le village.
     var G = partie.mode === "ile" ? agesIle(contenu, partie) : null, age = G && a.age && G.courant < a.age ? a.age : null;
-    return { id: id, possible: !manque.length && !savoir && !!ici && age == null, age: age, manque: manque, savoir: savoir, savoirs: savoir ? requis : [], quartier: ici ? ici.id : null, chezSoi: !!(ici && ici.id === a.quartier) };
+    return { id: id, possible: !manque.length && !savoir && !!ici && age == null, age: age, manque: manque, savoir: savoir, savoirs: savoir ? requis : [], quartier: ici ? ici.id : null, ferme: ferme, chezSoi: !!(ici && ici.id === a.quartier) };
   }
   function construireIle(contenu, partie, id, t) {
     if (!reglesRessources(contenu)) return null;
@@ -2065,6 +2082,8 @@
     var R = contenu.ile.regles.quartier || {}, plein = R.credits || 0, essai = (partie.quartiersEssais || {})[id] || null, qs = [];
     var prix = essai === "juste" ? Math.round(plein * (R.rabais == null ? 0.5 : R.rabais)) : plein;
     q.installations.forEach(function (x) { if (x.etat !== "friche") qs = qs.concat(contenu.questionsPar[x.comp] || []); });
+    // Quartier encore vide, ouvert pour y bâtir : la question vient des savoirs qui permettent ses aménagements.
+    if (!qs.length) (contenu.ile.amenagements || []).forEach(function (am) { if (am.quartier === id) (am.savoirs || []).forEach(function (x) { if (estMaitrisee(partie, x)) qs = qs.concat(contenu.questionsPar[x] || []); }); });
     return { quartier: id, nom: q.nomFinal, couleur: q.couleur, question: !essai && qs.length ? qs[hacher("quartier|" + id) % qs.length] : null, essai: essai, plein: plein, credits: prix, payable: partie.credits.solde >= prix };
   }
   function ouvrirQuartier(contenu, partie, id, moyen, correct, t) {

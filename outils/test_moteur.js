@@ -2500,8 +2500,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Un monde fini : la pêche puise dans les bancs, qui repoussent ; trop de pêcheries les vident, l'effort les ménage.
   const peche = () => { const Q = M.nouvellePartie(t0); Q.mode = "ile"; Q.credits.solde = 5000;
     CA.competences.filter(k => k.rang === 1).forEach(k => sait(Q, k.id)); M.ile(CA, Q, t0);
-    Q.population.a = 300; Q.ressources.stocks.bois = 1000; Q.ressources.stocks.nourriture = 5000; return Q; };
+    Q.population.a = 300; Q.ressources.stocks.bois = 1000; Q.ressources.stocks.nourriture = 5000; Q.quartiers = {}; CA.ile.quartiers.forEach(q => { Q.quartiers[q.id] = t0; }); return Q; };
   CA.ile.regles.aleas.chance = 0;
+  // Victor (2026-11-12) : un aménagement ne se bâtit que dans son quartier, qu'il faut d'abord ouvrir.
+  { const Q0 = peche(); delete Q0.quartiers.port;
+    const e0 = M.etatAmenagement(CA, Q0, "pecherie", t0); assert.ok(!e0.possible && e0.ferme && e0.ferme.id === "port" && e0.ferme.aOuvrir, "port fermé : pas de pêcherie");
+    assert.ok(!M.construireIle(CA, Q0, "pecherie", t0).ok);
+    assert.ok(M.ouvrirQuartier(CA, Q0, "port", "credits", null, t0).ouvert);
+    const r0 = M.construireIle(CA, Q0, "pecherie", t0); assert.ok(r0.ok && r0.quartier === "port", "port ouvert : la pêcherie s'y bâtit");
+    // Une pêcherie bâtie au village avant la règle rejoint le port, qui s'ouvre sans frais.
+    const Q9 = peche(); delete Q9.quartiers.port; Q9.ressources.batis.push({ id: "pecherie", q: "ville", t: t0 });
+    const I9 = M.ile(CA, Q9, t0); assert.equal(Q9.ressources.batis.filter(b => b.id === "pecherie")[0].q, "port"); assert.ok(I9.quartiers.find(q => q.id === "port").fonde); }
   const Q1 = peche(), Q2 = peche();
   for (let i = 0; i < 4; i++) { assert.ok(M.construireIle(CA, Q1, "pecherie", t0).ok); M.construireIle(CA, Q2, "pecherie", t0); }
   const n0 = M.ile(CA, Q1, t0).ressources.nature.filter(x => x.id === "poisson")[0];

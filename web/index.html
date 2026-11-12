@@ -1624,6 +1624,16 @@ svg.grille .interro { transition: opacity .3s; }
 .duo-ia .tete { flex: none; width: 46px; height: 55px; border-radius: 10px; background: var(--parchemin); display: grid; place-items: center; overflow: hidden; }
 .duo-ia .txt { min-width: 0; } .duo-ia b { display: block; font-size: 16px; } .duo-ia small { display: block; font-size: 14px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .duo-ia .pastille { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #D94141; margin-left: 6px; vertical-align: 2px; }
+.ile-chantier-anim { width: 100%; max-width: 360px; height: auto; display: block; margin: 0 auto; }
+@keyframes ch-monte { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes ch-tape { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes ch-part { 0%, 80% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes ch-pouf { 0% { opacity: 0; transform: scale(.4); } 75% { opacity: 0; transform: scale(.4); } 85% { opacity: .95; transform: scale(1.15); } 100% { opacity: 0; transform: scale(1.7); } }
+@keyframes ch-vient { 0%, 85% { opacity: 0; } 100% { opacity: 1; } }
+.ch-bati { animation: ch-monte 2.2s steps(11) both; } .ch-echaf { animation: ch-part 2.6s ease-out both; }
+.ch-ouvrier { transform-box: fill-box; animation: ch-tape .34s ease-in-out 7, ch-part 2.6s ease-out both; }
+.ch-poussiere { transform-box: fill-box; transform-origin: center; animation: ch-pouf 2.8s ease-out both; } .ch-fait { animation: ch-vient 2.8s both; }
+@media (prefers-reduced-motion: reduce) { .ch-bati, .ch-echaf, .ch-ouvrier, .ch-poussiere, .ch-fait { animation: none; } .ch-echaf, .ch-ouvrier, .ch-poussiere { opacity: 0; } }
 .ile-plus { width: 100%; margin-top: 10px; font-size: 17px; }
 .duo-panneau { margin-top: 10px; } .duo-panneau .ile-objectif { margin: 0; }
 .ile-besoin p { margin: 2px 0 6px; font-size: 16px; color: var(--muted); }
@@ -4548,14 +4558,14 @@ function demarrerJeu() {
       if (!q.fonde) return;
       var x = lieux[i][0], y = lieux[i][1], gr = graine(q.id), g = "";
       // Une image de hameau fournie : elle remplace les maisons dessinées (sur une carte fournie elle aussi, ou non).
-      sol += '<path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + (q.posees ? "#C4E8A6" : "#B2DE98") + '"/>';
-      if (q.posees) sol += '<path d="' + tache(x, y + 6, 17, 8, "pl" + q.id) + '" fill="#EFE0B4" opacity=".9"/><path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + q.couleur + '" opacity=".1"/>';
+      sol += '<path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + (q.posees || q.fonde ? "#C4E8A6" : "#B2DE98") + '"/>';
+      if (q.posees || q.fonde) sol += '<path d="' + tache(x, y + 6, 17, 8, "pl" + q.id) + '" fill="#EFE0B4" opacity=".9"/><path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + q.couleur + '" opacity=".1"/>';
       if (q.decor === "quai") {
         // Le ponton part vers le large, avec ses barques : une de plus à chaque option du quartier.
         var dx = x - ILE_CX, dy = y - ILE_CY, dl = Math.hypot(dx, dy), ux = dx / dl, uy = dy / dl, bx = x, by = y;
         while (surTerre(bx, by, 1.0)) { bx += ux * 3; by += uy * 3; }
         plan.push([0, '<path d="M' + fx(bx - ux * 10) + " " + fx(by - uy * 10) + "L" + fx(bx + ux * 22) + " " + fx(by + uy * 22) + '" stroke="#8A6240" stroke-width="5" stroke-linecap="round"/><path d="M' + fx(bx - ux * 10) + " " + fx(by - uy * 10) + "L" + fx(bx + ux * 22) + " " + fx(by + uy * 22) + '" stroke="#C99A6B" stroke-width="3" stroke-dasharray="2.4 1.2"/>']);
-        var nbq = (q.posees ? 1 : 0) + q.options.filter(function (x) { return x.ouverte; }).length;
+        var nbq = (q.posees || q.fonde ? 1 : 0) + q.options.filter(function (x) { return x.ouverte; }).length;
         for (var bq = 0; bq < nbq; bq++) plan.push([by + uy * 14, svgBarque(bx + ux * (12 + bq * 9) - uy * (bq % 2 ? -12 : 12), by + uy * (12 + bq * 9) + ux * (bq % 2 ? -12 : 12), ["#B5744A", "#D9644A", "#4A7FB5", "#E8B84A"][bq % 4])]);
       }
       if (q.decor === "champs") [[-30, -16], [22, -20], [28, 12]].forEach(function (c, k) {
@@ -4563,7 +4573,7 @@ function demarrerJeu() {
         sol += '<g transform="rotate(' + (k * 23 - 14) + " " + fx(x + c[0]) + " " + fx(y + c[1]) + ')"><rect x="' + fx(x + c[0] - 10) + '" y="' + fx(y + c[1] - 7) + '" width="20" height="14" rx="2" fill="' + (faits ? "#E8CF7A" : "#B9A77A") + '"/>' +
           [0, 1, 2, 3].map(function (l) { return '<rect x="' + fx(x + c[0] - 9) + '" y="' + fx(y + c[1] - 5.6 + l * 3.3) + '" width="18" height="1.3" fill="' + (faits ? "#7DB85A" : "#A39265") + '"/>'; }).join("") + "</g>"; });
       if (imageIle("hameau-" + q.id) && q.ouvert) plan.push([y, svgImageIle("hameau-" + q.id, x - 30, y - 30, 60, 60)]);
-      else if (q.posees && !q.camp && !q.aOuvrir) {
+      else if ((q.posees || q.fonde) && !q.camp && !q.aOuvrir) {
         // Un chantier n'a pas de maisons : elles viennent avec les habitants, une fois le quartier habitable.
         var maisons = q.habitable ? Math.min(6, 1 + Math.floor(q.marche / 2)) : 0;
         var coins = [[-22, -6], [21, -8], [-12, 12], [15, 13], [-27, 8], [28, 5]];
@@ -4719,7 +4729,7 @@ function demarrerJeu() {
       var ym = H - 62;
       sol += '<path d="M0 ' + (ym - 8) + "Q90 " + (ym - 20) + " 180 " + (ym - 8) + "T360 " + (ym - 10) + "V" + H + 'H0Z" fill="#FBF0CC"/><path d="M0 ' + (ym + 6) + "Q90 " + (ym - 6) + " 180 " + (ym + 6) + "T360 " + (ym + 4) + "V" + H + 'H0Z" fill="#A5DDEB"/><path d="M0 ' + (ym + 16) + "Q90 " + (ym + 4) + " 180 " + (ym + 16) + "T360 " + (ym + 14) + "V" + H + 'H0Z" fill="#63B8D6"/>';
       sol += '<rect x="170" y="' + (ym - 12) + '" width="20" height="58" rx="2" fill="#8A6240"/>' + [0, 1, 2, 3, 4, 5, 6, 7].map(function (k) { return '<rect x="171.5" y="' + (ym - 10 + k * 7) + '" width="17" height="5" rx="1" fill="#C99A6B"/>'; }).join("");
-      var nbq = (q.posees ? 1 : 0) + q.options.filter(function (x) { return x.ouverte; }).length;
+      var nbq = (q.posees || q.fonde ? 1 : 0) + q.options.filter(function (x) { return x.ouverte; }).length;
       for (var b = 0; b < nbq; b++) sol += '<g transform="translate(' + (b % 2 ? 212 + b * 16 : 148 - b * 16) + " " + (ym + 28 + (b % 3) * 8) + ') scale(1.8)">' + svgBarque(0, 0, ["#B5744A", "#D9644A", "#4A7FB5", "#E8B84A"][b % 4]) + "</g>";
     }
     // Le chemin : il monte en flânant d'un bord à l'autre.
@@ -5101,6 +5111,20 @@ function demarrerJeu() {
       M.reglerEffort(C, P, id, cur + (bt.getAttribute("data-d") === "+" ? 0.25 : -0.25), maintenant()); sauver(); rendre(); }; });
     return b;
   }
+  // Victor (2026-11-12) : un aménagement acheté se voit bâtir. Les bâtisseurs tapent, le bâtiment sort de terre par
+  // le bas derrière son échafaudage, puis la poussière retombe et on peut aller le voir dans son quartier.
+  function animerChantier(a, idq) {
+    var I = M.ile(C, P, maintenant()), q = I.quartiers.filter(function (x) { return x.id === idq; })[0], camp = I.ages && I.ages.courant < 2;
+    var ouv = [0, 1].map(function (i) { return '<g transform="translate(' + (i ? 142 : 20) + ',64)"><g class="ch-ouvrier" style="animation-delay:-' + (i * 0.17).toFixed(2) + 's">' + svgHabitant(0, 0, graine(a.id + "ouvrier" + i), 5) + "</g></g>"; }).join("");
+    feuilleSimple('<div class="eyebrow">' + __("Chantier") + "</div><h2>" + esc(tx(a.nom)) + '</h2><svg class="ile-chantier-anim" viewBox="0 0 180 120" role="img" aria-label="' + esc(tx(a.nom)) + '"><rect width="180" height="120" rx="12" fill="#B9E29C"/><ellipse cx="90" cy="100" rx="62" ry="12" fill="#A5D488"/>' +
+      '<g class="ch-bati"><svg x="42" y="6" width="96" height="96" viewBox="-14 -26 28 28">' + svgAmenagement(a, 0, 0, 24) + '</svg></g>' +
+      '<g class="ch-echaf" stroke="#8A5A2B" stroke-width="3" stroke-linecap="round" fill="none"><path d="M48 100V30M132 100V30M48 78H132M48 54H132M48 100L132 78M132 54L48 78"/></g>' + ouv +
+      '<g class="ch-poussiere" fill="#F3E7C4"><circle cx="58" cy="100" r="7"/><circle cx="90" cy="104" r="9"/><circle cx="122" cy="100" r="7"/></g></svg>' +
+      '<p class="ch-fait" style="font-size:17px"><b>' + __("C'est bâti !") + "</b> " + (q && !camp ? __("Dans : ") + esc(tx(q.nom)) + ". " : "") + __("Il travaille dès demain.") + '</p><button type="button" class="btn large" data-a="voir">' + (q && !camp ? __("Voir : ") + esc(tx(q.nom)) : __("Voir le campement")) + "</button>", tx(a.nom),
+      { voir: function () { fermerFeuille(); vue = "ile"; lieuVu = null; quartierVu = camp ? null : idq; rendre(); window.scrollTo(0, 0); } }, __("Construire autre chose"));
+    // « Construire autre chose » rouvre le chantier.
+    feuille.querySelector('[data-a="fermer"]').addEventListener("click", function () { setTimeout(ouvrirChantierIle, 0); });
+  }
   function ouvrirChantierIle() {
     var t = maintenant(), I = M.ile(C, P, t), R = I.ressources; if (!R) return;
     var stock = '<p class="ile-chantier-stock"><span class="ile-cout"><b>' + P.credits.solde + "</b> " + __("crédits") + "</span>" + (C.ile.ressources || []).filter(function (r) { return r.id !== "nourriture"; }).map(function (r) { return '<span class="ile-cout">' + r.icone + " <b>" + nb(R.stocks[r.id] || 0) + "</b> " + esc(tx(r.nom)).toLowerCase() + "</span>"; }).join("") + "</p>";
@@ -5108,17 +5132,19 @@ function demarrerJeu() {
     var rangAge = I.ages ? I.ages.courant : 99;
     var cartes = C.ile.amenagements.filter(function (a) { return (a.age || 0) <= rangAge; }).map(function (a) {
       var e = M.etatAmenagement(C, P, a.id, t), q = I.quartiers.filter(function (x) { return x.id === a.quartier; })[0];
-      var raison = !e.quartier ? __("Il faut d'abord un quartier habitable.") : e.savoir ? __("Il faut maîtriser « ") + e.savoirs.map(function (x) { return esc(tx(C.parId[x].nom)); }).join(__(" » ou « ")) + " »." : e.manque.length ? __("Il manque des ressources.") : "";
+      var raison = e.ferme && q ? __("Se bâtit dans : ") + esc(tx(q.nomFinal)) + ". " + (e.ferme.aOuvrir ? __("Ouvre d'abord ce quartier.") : __("Ce quartier n'existe pas encore.")) : !e.quartier ? __("Il faut d'abord un quartier habitable.") : e.savoir ? __("Il faut maîtriser « ") + e.savoirs.map(function (x) { return esc(tx(C.parId[x].nom)); }).join(__(" » ou « ")) + " »." : e.manque.length ? __("Il manque des ressources.") : "";
       var ou = rangAge < 2 ? "" : e.quartier ? __("Emplacement : ") + esc(tx(I.quartiers.filter(function (x) { return x.id === e.quartier; })[0].nom)) + (e.chezSoi || !q ? "" : " (" + esc(tx(q.nomFinal)) + __(" n'est pas encore habitable)")) + "." : "";
       return '<div class="ile-amen' + (e.possible ? "" : " ferme") + '"><svg class="ile-amen-img" viewBox="-14 -26 28 28" width="56" height="56" aria-hidden="true">' + svgAmenagement(a, 0, 0, 24) + '</svg><div><b>' + esc(tx(a.nom)) + (R.batis[a.id] ? ' <span class="ile-amen-n">×' + R.batis[a.id] + "</span>" : "") + "</b><p>" + esc(tx(a.usage)) + '</p><p class="ile-amen-effet">' + effetAmenagement(a) + "</p>" +
         '<p class="ile-couts">' + htmlCout(a.cout, e.manque) + "</p>" + (raison ? '<p class="ile-amen-raison">' + raison + "</p>" : '<p class="ile-amen-ou">' + ou + "</p>") +
-        '<button type="button" class="btn" data-a="b-' + esc(a.id) + '"' + (e.possible ? "" : " disabled") + ">" + __("Construire") + "</button></div></div>";
+        (e.ferme && e.ferme.aOuvrir && !e.savoir && e.age == null ? '<button type="button" class="btn" data-a="q-' + esc(e.ferme.id) + '">🔒 ' + __("Ouvrir : ") + esc(tx(q.nomFinal)) + "</button>" :
+        '<button type="button" class="btn" data-a="b-' + esc(a.id) + '"' + (e.possible ? "" : " disabled") + ">" + __("Construire") + "</button>") + "</div></div>";
     }).join("");
     var actions = {};
     C.ile.amenagements.forEach(function (a) { actions["b-" + a.id] = function () {
       var r = M.construireIle(C, P, a.id, maintenant()); if (!r || !r.ok) return;
-      sauver(); toast(tx(a.nom) + __(" : c'est bâti !")); ouvrirChantierIle(); rendre();
+      sauver(); rendre(); animerChantier(a, r.quartier);
     }; });
+    I.quartiers.forEach(function (x) { actions["q-" + x.id] = function () { ouvrirVerrouQuartier(x.id); }; });
     feuilleSimple('<div class="eyebrow">' + __("L'île") + "</div><h2>" + __("Construire") + '</h2><p class="note">' + __("Les crédits paient les bâtisseurs ; le bois, la pierre et le métal viennent des aménagements eux-mêmes. Ce qui se bâtit aujourd'hui travaille dès demain.") + "</p>" + stock + '<div class="ile-amens">' + cartes + "</div>", __("Construire"), actions);
   }
 
