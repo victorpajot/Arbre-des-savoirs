@@ -4976,7 +4976,14 @@ function demarrerJeu() {
       poser("construire", raccourci, __("Tu as du feu, donc des gens qui restent. Voici le chantier et les réserves. Un campement ne bâtit rien de durable : un abri de branches, une hutte, un poste de guet. Les fermes et les maisons attendront le village."));
     }
     var carteV = blocVisiteursIle(VIS_ILE); if (carteV) v.appendChild(carteV);
+    // Victor (2026-11-12) : en mode Île, le détail des ressources est dans Statistiques › Ressources ; ici, un résumé.
     var res = feu ? blocRessourcesIle(I) : null;
+    if (res && M.modeIle(P)) {
+      var Rr = I.ressources, netR = Rr.net;
+      res = el('<div><h2 class="ile-h2">' + __("Les ressources") + '</h2><div class="carte ile-vie"><p class="ile-vie-tete">' + (C.ile.ressources || []).map(function (r) { return r.icone + " <b>" + nb(Rr.stocks[r.id] || 0) + "</b>"; }).join(" · ") + '</p><p class="ile-vie-note' + (netR < -0.05 ? " alerte" : "") + '">' +
+        (netR < -0.05 ? "<b>" + __("L'île mange plus qu'elle ne produit.") + "</b>" + (Rr.jours != null ? " " + __("Réserves pour ") + Rr.jours + (Rr.jours > 1 ? __(" jours") : __(" jour")) + "." : "") : __("L'île mange à sa faim.")) + '</p><button type="button" class="btn sec ile-plus">' + __("Voir les ressources en détail") + "</button></div></div>");
+      res.querySelector("button").onclick = function () { vue = "succes"; ongletSucces = "ressources"; rendre(); window.scrollTo(0, 0); };
+    }
     poser("nature", res, epure && C.parId[SAVOIR_ILE] && M.estMaitrisee(P, SAVOIR_ILE) ? __("Tu sais maintenant compter ce que l'île donne. La forêt et les poissons repoussent, mais à leur rythme. Règle l'effort de tes bûcherons et de tes pêcheurs avant qu'il ne reste rien : je ne replanterai pas à ta place.") : null);
     // Victor (2026-11-12) : les statistiques de l'île vivent dans l'onglet Statistiques ; ici, un résumé et le lien.
     var vie = !epure || I.habitants > 0 ? blocVieIle(I) : null;
@@ -8973,10 +8980,12 @@ function demarrerJeu() {
     var n = Object.keys(P.succes).length;
     // Victor (2026-11-12) : l'onglet devient « Statistiques » : celles de l'île d'abord, puis celles du jeu, puis les succès.
     var Is = M.modeIle(P) && P.ileIntro ? campIle(M.ile(C, P, maintenant())) : null, rub = [["jeu", __("Le jeu")], ["succes", __("Succès")]];
+    if (Is && Is.ressources) rub.unshift(["ressources", __("Ressources")]);
     if (Is) rub.unshift(["ile", __("L'île")]);
     if (ongletSucces === "stats") ongletSucces = Is ? "ile" : "jeu";
     if (ongletSucces === "ile" && !Is) ongletSucces = "jeu";
-    v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + (ongletSucces === "succes" ? __("Citations et anecdotes") : ongletSucces === "ile" ? __("Ce que tu sais encore") : __("Tes épreuves")) + "</div><h1>" + __("Statistiques") + '</h1></div><div class="num" style="font-size:20px;font-weight:700">' + (ongletSucces === "succes" ? n + " / " + C.succes.length : "") + "</div></div>"));
+    if (ongletSucces === "ressources" && !(Is && Is.ressources)) ongletSucces = Is ? "ile" : "jeu";
+    v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + (ongletSucces === "succes" ? __("Citations et anecdotes") : ongletSucces === "ile" ? __("Ce que tu sais encore") : ongletSucces === "ressources" ? __("Ce que l'île produit et mange") : __("Tes épreuves")) + "</div><h1>" + __("Statistiques") + '</h1></div><div class="num" style="font-size:20px;font-weight:700">' + (ongletSucces === "succes" ? n + " / " + C.succes.length : "") + "</div></div>"));
     var seg = el('<div class="segments" role="group" aria-label="' + esc(__("Rubrique des statistiques")) + '"></div>');
     rub.forEach(function (o) {
       var bt = el('<button type="button" aria-pressed="' + (ongletSucces === o[0]) + '">' + o[1] + "</button>");
@@ -8990,6 +8999,7 @@ function demarrerJeu() {
       if (!bv && !ba) v.appendChild(el('<div class="bloc"><p class="vide">' + __("Rien à compter encore : l'île attend son premier feu.") + "</p></div>"));
       return v;
     }
+    if (ongletSucces === "ressources") { v.appendChild(blocRessourcesIle(Is)); return v; }
     if (ongletSucces === "jeu") { v.appendChild(blocCombats()); if (C.plateau && C.plateau.regles.chrono) v.appendChild(blocChronoStats()); v.appendChild(blocStats()); return v; }
     var obtenus = C.succes.filter(function (s) { return P.succes[s.id]; }).sort(function (a, b) { return P.succes[b.id] - P.succes[a.id]; });
     var autres = C.succes.filter(function (s) { return !P.succes[s.id]; });
