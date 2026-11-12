@@ -5059,6 +5059,8 @@ function demarrerJeu() {
   }
   function visiteursIle(I) {
     var R = C.ile.regles.visiteurs; if (!R || !I) return [];
+    // Victor (2026-11-12) : pas de savants en visite tant que l'île n'est qu'un campement ; ils viennent avec le village.
+    if (I.ages && I.ages.courant < 2) return [];
     var fondes = I.quartiers.filter(function (q) { return q.fonde; }); if (!fondes.length) return [];
     var jour = M.cleJour(maintenant()), V = M.visitesIle(P, maintenant()), parComp = {};
     I.quartiers.forEach(function (q) { q.installations.forEach(function (x) { parComp[x.comp] = q; }); });
