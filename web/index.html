@@ -1774,7 +1774,7 @@ function demarrerJeu() {
     { id: "arbre", nom: __("Arbre"), icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="4.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><circle cx="12" cy="19.5" r="2.5"/><path d="M10.5 6.5 7.5 10M13.5 6.5l3 3.5M7.5 14l3 3.5M16.5 14l-3 3.5"/></svg>' },
     { id: "perso", nom: __("Personnage"), icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.5 20.5 7.5v9L12 21.5 3.5 16.5v-9z"/><path d="M12 7l4.5 2.6v4.8L12 17l-4.5-2.6V9.6z"/></svg>' },
     { id: "collections", nom: __("Collections"), icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 3.5h3.5v17H4zM9.5 3.5H13v17H9.5z"/><path d="m15 5.2 3.3-.9 3.2 15.6-3.3.8z"/><path d="M4 7.5h3.5M9.5 16.5H13"/></svg>' },
-    { id: "succes", nom: __("Succès"), icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7 3h10v5a5 5 0 0 1-10 0z"/><path d="M7 5H4a3 3 0 0 0 3 4M17 5h3a3 3 0 0 1-3 4M12 13v4M8 21h8l-1-4H9z"/></svg>' },
+    { id: "succes", nom: __("Stats"), icone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.500h16"/><path d="M6.500 17v-5M12 17V5M17.500 17V9"/></svg>' },
   ];
 
   // --- Utilitaires ----------------------------------------------------------
@@ -3981,7 +3981,7 @@ function demarrerJeu() {
     var nivB = perso.querySelector(".niv:not(.cred)");
     if (nivB) {
       nivB.setAttribute("role", "button"); nivB.setAttribute("tabindex", "0"); nivB.setAttribute("aria-label", __("Voir les stats")); nivB.classList.add("cliquable");
-      var versStats = function (ev) { ev.stopPropagation(); vue = "succes"; ongletSucces = "stats"; rendre(); window.scrollTo(0, 0); };
+      var versStats = function (ev) { ev.stopPropagation(); vue = "succes"; ongletSucces = "jeu"; rendre(); window.scrollTo(0, 0); };
       nivB.onclick = versStats;
       nivB.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); versStats(ev); } };
     }
@@ -4975,9 +4975,15 @@ function demarrerJeu() {
     var carteV = blocVisiteursIle(VIS_ILE); if (carteV) v.appendChild(carteV);
     var res = feu ? blocRessourcesIle(I) : null;
     poser("nature", res, epure && C.parId[SAVOIR_ILE] && M.estMaitrisee(P, SAVOIR_ILE) ? __("Tu sais maintenant compter ce que l'île donne. La forêt et les poissons repoussent, mais à leur rythme. Règle l'effort de tes bûcherons et de tes pêcheurs avant qu'il ne reste rien : je ne replanterai pas à ta place.") : null);
+    // Victor (2026-11-12) : les statistiques de l'île vivent dans l'onglet Statistiques ; ici, un résumé et le lien.
     var vie = !epure || I.habitants > 0 ? blocVieIle(I) : null;
+    if (vie && M.modeIle(P)) {
+      vie = el('<div><h2 class="ile-h2">' + __("La population") + '</h2><div class="carte ile-vie"><p class="ile-vie-tete"><b>' + esc(texteHabitants(I.habitants)) + "</b> " + __("pour") + " " + nb(I.places) + (I.places > 1 ? __(" places") : __(" place")) + "</p>" + htmlLimitesIle(I) +
+        '<button type="button" class="btn sec ile-plus">' + __("Voir les statistiques de l'île") + "</button></div></div>");
+      vie.querySelector("button").onclick = function () { vue = "succes"; ongletSucces = "ile"; rendre(); window.scrollTo(0, 0); };
+    }
     poser("population", vie, __("Des habitants. Ils naissent, vieillissent, mangent, et meurent de faim si tu les oublies. Voici leurs comptes, que je tiens mieux que toi."));
-    if (!epure || poses > 0) poser("amenagements", blocAmenagementsIle(I), __("Première installation debout. Ce tableau compte ce qui marche, ce qui tombe en panne et ce que tu laisses à l'abandon. Je le lis tous les jours. Toi aussi, idéalement."));
+    if (!M.modeIle(P) && (!epure || poses > 0)) poser("amenagements", blocAmenagementsIle(I), __("Première installation debout. Ce tableau compte ce qui marche, ce qui tombe en panne et ce que tu laisses à l'abandon. Je le lis tous les jours. Toi aussi, idéalement."));
     if (I.exil) v.appendChild(el('<p class="ile-exil">' + esc(texteHabitants(I.exil)) + (I.exil > 1 ? __(" ont fui l'île après un piège.") : __(" a fui l'île après un piège.")) + " " + __("Chaque épreuve réussie en fait revenir ") + ((C.ile.regles.piege || {}).retour || 8) + ".</p>"));
     return v;
   }
@@ -8923,15 +8929,26 @@ function demarrerJeu() {
   function vueSucces() {
     var v = el('<div class="vue"></div>');
     var n = Object.keys(P.succes).length;
-    v.appendChild(el(__('<div class="entete"><div><div class="eyebrow">Citations et anecdotes</div><h1>Succès</h1></div><div class="num" style="font-size:20px;font-weight:700">') + n + " / " + C.succes.length + "</div></div>"));
-    var seg = el(__('<div class="segments" role="group" aria-label="Rubrique des succès"></div>'));
-    [["stats", __("Stats")], ["succes", __("Succès")]].forEach(function (o) {
+    // Victor (2026-11-12) : l'onglet devient « Statistiques » : celles de l'île d'abord, puis celles du jeu, puis les succès.
+    var Is = M.modeIle(P) && P.ileIntro ? campIle(M.ile(C, P, maintenant())) : null, rub = [["jeu", __("Le jeu")], ["succes", __("Succès")]];
+    if (Is) rub.unshift(["ile", __("L'île")]);
+    if (ongletSucces === "stats") ongletSucces = Is ? "ile" : "jeu";
+    if (ongletSucces === "ile" && !Is) ongletSucces = "jeu";
+    v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + (ongletSucces === "succes" ? __("Citations et anecdotes") : ongletSucces === "ile" ? __("Ce que tu sais encore") : __("Tes épreuves")) + "</div><h1>" + __("Statistiques") + '</h1></div><div class="num" style="font-size:20px;font-weight:700">' + (ongletSucces === "succes" ? n + " / " + C.succes.length : "") + "</div></div>"));
+    var seg = el('<div class="segments" role="group" aria-label="' + esc(__("Rubrique des statistiques")) + '"></div>');
+    rub.forEach(function (o) {
       var bt = el('<button type="button" aria-pressed="' + (ongletSucces === o[0]) + '">' + o[1] + "</button>");
       bt.onclick = function () { ongletSucces = o[0]; rendre(); };
       seg.appendChild(bt);
     });
     v.appendChild(seg);
-    if (ongletSucces === "stats") { v.appendChild(blocCombats()); if (C.plateau && C.plateau.regles.chrono) v.appendChild(blocChronoStats()); v.appendChild(blocStats()); return v; }
+    if (ongletSucces === "ile") {
+      var bv = Is.habitants > 0 ? blocVieIle(Is) : null; if (bv) v.appendChild(bv);
+      var ba = blocAmenagementsIle(Is); if (ba) v.appendChild(ba);
+      if (!bv && !ba) v.appendChild(el('<div class="bloc"><p class="vide">' + __("Rien à compter encore : l'île attend son premier feu.") + "</p></div>"));
+      return v;
+    }
+    if (ongletSucces === "jeu") { v.appendChild(blocCombats()); if (C.plateau && C.plateau.regles.chrono) v.appendChild(blocChronoStats()); v.appendChild(blocStats()); return v; }
     var obtenus = C.succes.filter(function (s) { return P.succes[s.id]; }).sort(function (a, b) { return P.succes[b.id] - P.succes[a.id]; });
     var autres = C.succes.filter(function (s) { return !P.succes[s.id]; });
     var bloc = el('<div class="bloc"></div>');
