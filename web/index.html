@@ -170,7 +170,7 @@ body:has(.voile, .quiz, .zoom-fig, .liberation, .alyca-scene, .fete) { overflow:
 .ile-construire b { font-size: 18px; } .ile-construire small { margin-left: 8px; font-size: 15px; opacity: .75; }
 .ile-construire-st { font-size: 15px; opacity: .85; }
 .code-q.tag-q { margin: 6px 0 4px; text-align: left; font-size: 13px; opacity: .8; }
-.code-q { margin: 0 0 -10px; text-align: right; font-family: var(--f-mono); font-size: 10px; line-height: 1; color: var(--muted); opacity: 0.5; user-select: all; -webkit-user-select: all; }
+.code-q { margin: 0 0 -6px; text-align: right; font-family: var(--f-mono); font-size: 12px; line-height: 1.2; color: var(--muted); opacity: 0.8; user-select: all; -webkit-user-select: all; }
 .points i { flex: 1; height: 6px; border-radius: 3px; background: var(--line); }
 .points i.ok { background: var(--good); }
 .points i.ko { background: var(--bad); }
@@ -8562,7 +8562,7 @@ function demarrerJeu() {
       pts.appendChild(el("<i class=\"" + (r ? (r.correct ? "ok" : "ko") : (i === quiz.i ? "cur" : "")) + '"></i>'));
     });
     inn.appendChild(pts);
-    inn.appendChild(el('<p class="enonce">' + esc(tx(q.enonce)) + "</p>")); if (q.id) inn.appendChild(el(codeQ(q)));
+    inn.appendChild(el('<p class="enonce">' + esc(tx(q.enonce)) + "</p>"));
     // Les schémas viennent du contenu du jeu (data/questions.json), pas de l'utilisateur.
     if (q.illustration || q.dessin) inn.appendChild(el(htmlIllusQ(q)));
     // Réglage « voix » : la question est lue à voix haute, et peut se réécouter.
