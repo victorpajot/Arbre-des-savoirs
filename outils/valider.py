@@ -80,6 +80,8 @@ def main():
             erreurs.append(f"questions.json {q['id']} : figure inconnue {q['figure']}")
 
     for st in stats:
+        if any(x["id"] == st and x.get("chantier") for x in contenu["regles"]["stats"]):
+            continue  # arbre en chantier : ses premiers savoirs seulement
         rangs = [c["rang"] for c in comps.values() if c["stat"] == st]
         if sorted(rangs) != list(range(1, 9)) and not (len(rangs) % 4 == 0 and rangs == sorted(rangs) and rangs.count(1) == 1
                                                       and set(rangs) == set(range(1, 9))):
@@ -149,7 +151,13 @@ def main():
     contextes = {c["contexte"] for c in repliques}
     attendus = set(schema["$defs"]["contexte"]["anyOf"][0]["enum"])
     # Packs : chaque arbre a ses propres répliques d'annonce, de réussite et d'échec.
+    # Un arbre « en chantier » (premiers savoirs d'un arbre à venir, pack de l'île) n'a pas encore ses répliques, ses
+    # dates, ses livres ni sa case : le jeu s'en passe.
+    chantier = {x["id"] for x in contenu["regles"]["stats"] if x.get("chantier")}
+    en_chantier = {c for c in comps if comps[c]["stat"] in chantier} if isinstance(comps, dict) else set()
     for st in stats:
+        if st in chantier:
+            continue
         for moment, mini in (("jouer", 3), ("reussi", 4), ("rate", 4)):
             nb = sum(1 for r in repliques if r["contexte"] == f"theme_{moment}@{st}")
             if nb < mini:
@@ -306,14 +314,14 @@ def main():
     if len({e["id"] for e in ev}) != len(ev):
         erreurs.append("frise.json : id en double")
     datees = {e["condition"].get("id") for e in ev if e["condition"]["type"] == "competence_maitrisee"}
-    if set(comps) - datees:
-        erreurs.append(f"frise.json : compétences sans date {sorted(set(comps) - datees)}")
+    if set(comps) - datees - en_chantier:
+        erreurs.append(f"frise.json : compétences sans date {sorted(set(comps) - datees - en_chantier)}")
     for e in ev:
         if "case" not in e and "detail" not in e:
             erreurs.append(f"frise.json {e['id']} : ni case ni détail")
 
     rattachees = [l["competence"] for l in contenu["bibliotheque"]["livres"]]
-    if set(rattachees) != set(comps):
+    if set(rattachees) | en_chantier != set(comps):
         erreurs.append(f"bibliotheque.json : il faut au moins un livre par compétence ({len(set(rattachees))} sur {len(comps)})")
     for l in contenu["bibliotheque"]["livres"]:
         if l["embleme"] not in sprites and l["embleme"] not in contenu["succes"].get("dessins", {}):
@@ -358,8 +366,8 @@ def main():
     fond = set(contenu["regles"].get("arbres_fondamentaux", []))
     ids_stats = {s["id"] for s in contenu["regles"]["stats"]}
     sur_plateau = {k["stat"] for k in contenu["plateau"]["cases"]}
-    if fond and (ids_stats - fond - sur_plateau):
-        erreurs.append(f"plateau.json : aucune case n'ouvre {sorted(ids_stats - fond - sur_plateau)}")
+    if fond and (ids_stats - fond - sur_plateau - chantier):
+        erreurs.append(f"plateau.json : aucune case n'ouvre {sorted(ids_stats - fond - sur_plateau - chantier)}")
     if fond - ids_stats:
         erreurs.append(f"arbres inconnus : {sorted(fond - ids_stats)}")
     if erreurs:

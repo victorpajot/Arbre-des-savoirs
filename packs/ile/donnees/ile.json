@@ -79,11 +79,19 @@
    "abondance_jours": 7,
    "depart": {
     "bois": 20
-   }
+   },
+   "famine_mort": 0.06,
+   "cueillette_foret": 0.6,
+   "cueillette_poisson": 0.4
   },
   "visiteurs": {
    "credits": 10,
    "max": 3
+  },
+  "aleas": {
+   "chance": 0.07,
+   "fiabilite": 0.5,
+   "age_min": 1
   }
  },
  "quartiers": [
@@ -1306,6 +1314,24 @@
  ],
  "amenagements": [
   {
+   "id": "foyer",
+   "quartier": "ville",
+   "dessin": "foyer",
+   "savoirs": [
+    "ile.feu"
+   ],
+   "cout": {
+    "bois": 5
+   },
+   "places": 10,
+   "nom": {
+    "fr": "Foyer"
+   },
+   "usage": {
+    "fr": "Un feu entretenu jour et nuit, entouré de pierres. Dix habitants s'installent autour : on y cuit, on s'y chauffe, on y veille."
+   }
+  },
+  {
    "id": "ferme",
    "quartier": "champs",
    "dessin": "ferme",
@@ -1321,7 +1347,10 @@
    },
    "usage": {
     "fr": "Des champs de blé et une grange. Chaque fermier nourrit vingt habitants."
-   }
+   },
+   "savoirs": [
+    "astro.nebra"
+   ]
   },
   {
    "id": "pecherie",
@@ -1340,13 +1369,16 @@
    },
    "usage": {
     "fr": "Des barques, des filets et un séchoir à poissons. Moins de postes qu'une ferme, mais chaque pêcheur rapporte un peu plus."
-   }
+   },
+   "savoirs": [
+    "elec.torpille"
+   ],
+   "preleve": "poisson"
   },
   {
    "id": "moulin",
    "quartier": "champs",
    "dessin": "moulin",
-   "savoir": "phys.machines",
    "cout": {
     "credits": 50,
     "bois": 30,
@@ -1365,7 +1397,11 @@
    },
    "usage": {
     "fr": "Une meule que l'eau fait tourner à la place des bras. Chaque moulin rend trois fermes plus productives de moitié."
-   }
+   },
+   "savoirs": [
+    "phys.archimede",
+    "phys.alexandrie"
+   ]
   },
   {
    "id": "grenier",
@@ -1382,7 +1418,10 @@
    },
    "usage": {
     "fr": "Un grenier sur pilotis, à l'abri des rats. Il garde 300 rations de plus ; sans lui, ce qui dépasse pourrit."
-   }
+   },
+   "savoirs": [
+    "math.origines"
+   ]
   },
   {
    "id": "bucheron",
@@ -1400,7 +1439,11 @@
    },
    "usage": {
     "fr": "Des haches, une scie de long et une pile de rondins qui sèchent. Le bois sert à presque tout bâtir."
-   }
+   },
+   "savoirs": [
+    "phys.machines"
+   ],
+   "preleve": "foret"
   },
   {
    "id": "carriere",
@@ -1419,13 +1462,15 @@
    },
    "usage": {
     "fr": "On taille la roche du volcan en blocs. Plus lent que le bois, mais il faut de la pierre pour durer."
-   }
+   },
+   "savoirs": [
+    "phys.machines"
+   ]
   },
   {
    "id": "mine",
    "quartier": "industrie",
    "dessin": "mine",
-   "savoir": "chim.metaux",
    "cout": {
     "credits": 60,
     "bois": 30,
@@ -1440,13 +1485,15 @@
    },
    "usage": {
     "fr": "Une galerie dans le flanc du volcan et un four pour fondre le minerai. Il faut savoir travailler les métaux."
-   }
+   },
+   "savoirs": [
+    "chim.metaux"
+   ]
   },
   {
    "id": "forge",
    "quartier": "artisans",
    "dessin": "forge",
-   "savoir": "chim.feu",
    "cout": {
     "credits": 60,
     "pierre": 20,
@@ -1468,7 +1515,10 @@
    },
    "usage": {
     "fr": "Des outils de métal pour tout le monde : socs, haches, pics. Chaque forge rend quatre aménagements plus productifs d'un quart."
-   }
+   },
+   "savoirs": [
+    "chim.metaux"
+   ]
   },
   {
    "id": "maisons",
@@ -1485,6 +1535,374 @@
    },
    "usage": {
     "fr": "Quatre maisons de pierre au toit de bois. Vingt-cinq places de plus : l'île peut grandir au-delà de ce que ses savoirs offrent."
+   },
+   "savoirs": [
+    "phys.machines"
+   ]
+  },
+  {
+   "id": "four",
+   "quartier": "industrie",
+   "dessin": "four",
+   "savoirs": [
+    "chim.feu"
+   ],
+   "cout": {
+    "credits": 30,
+    "bois": 15
+   },
+   "ouvriers": 2,
+   "stock": 150,
+   "nom": {
+    "fr": "Four du potier"
+   },
+   "usage": {
+    "fr": "Des jarres cuites qui ferment bien : 150 rations de plus à l'abri des rats et de l'humidité."
+   }
+  },
+  {
+   "id": "hutte",
+   "quartier": "champs",
+   "dessin": "hutte",
+   "savoirs": [
+    "sci.soigner"
+   ],
+   "cout": {
+    "credits": 40,
+    "bois": 20
+   },
+   "ouvriers": 1,
+   "sante": 0.2,
+   "nom": {
+    "fr": "Hutte du soigneur"
+   },
+   "usage": {
+    "fr": "Des plantes qui sèchent et quelqu'un qui sait s'en servir. Chaque hutte fait reculer les décès d'un cinquième."
+   }
+  },
+  {
+   "id": "veillee",
+   "quartier": "agora",
+   "dessin": "veillee",
+   "savoirs": [
+    "mnemo.sansecrire",
+    "rhet.origines",
+    "biais.historiens",
+    "philo.presocratiques"
+   ],
+   "cout": {
+    "credits": 30,
+    "pierre": 10
+   },
+   "attrait": 0.1,
+   "visiteurs": 1,
+   "nom": {
+    "fr": "Cercle de la veillée"
+   },
+   "usage": {
+    "fr": "Des pierres en rond où les anciens racontent. Un savant de plus passe chaque jour, et l'île attire un peu plus de monde."
+   }
+  },
+  {
+   "id": "place",
+   "quartier": "ville",
+   "dessin": "place",
+   "savoirs": [
+    "coll.ruche",
+    "mus.instruments",
+    "psy.emotions"
+   ],
+   "cout": {
+    "credits": 40,
+    "bois": 10,
+    "pierre": 10
+   },
+   "attrait": 0.2,
+   "nom": {
+    "fr": "Place du village"
+   },
+   "usage": {
+    "fr": "On s'y retrouve pour décider et pour fêter. Les naissances et les arrivées augmentent d'un cinquième."
+   }
+  },
+  {
+   "id": "reserve",
+   "quartier": "port",
+   "dessin": "reserve",
+   "savoirs": [
+    "res.cueillir"
+   ],
+   "cout": {
+    "credits": 30,
+    "pierre": 15
+   },
+   "repousse": {
+    "poisson": 0.5
+   },
+   "nom": {
+    "fr": "Réserve de pêche"
+   },
+   "usage": {
+    "fr": "Une anse où personne ne pêche, marquée d'un poteau. Les bancs de poissons se refont moitié plus vite."
+   }
+  },
+  {
+   "id": "guet",
+   "quartier": "port",
+   "dessin": "guet",
+   "savoirs": [
+    "meteo.ciel"
+   ],
+   "cout": {
+    "credits": 30,
+    "bois": 20
+   },
+   "ouvriers": 1,
+   "guet": 0.25,
+   "nom": {
+    "fr": "Poste de guet"
+   },
+   "usage": {
+    "fr": "Une plate-forme d'où quelqu'un lit le ciel matin et soir. Les aléas sont annoncés plus souvent."
+   }
+  }
+ ],
+ "ages": [
+  {
+   "id": "campement",
+   "rang": 0,
+   "nom": {
+    "fr": "Le campement"
+   },
+   "description": {
+    "fr": "Quelques abris autour d'un feu. Tant que le feu n'est pas maîtrisé, rien d'autre ne tient."
+   },
+   "besoins": [
+    {
+     "id": "survivre",
+     "nom": {
+      "fr": "Survivre"
+     },
+     "texte": {
+      "fr": "Se chauffer, cuire, veiller ensemble : tout commence par le feu."
+     },
+     "savoirs": [
+      "ile.feu"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "village",
+   "rang": 1,
+   "nom": {
+    "fr": "Le village"
+   },
+   "description": {
+    "fr": "Le campement devient un village : il faut le nourrir, le loger, le soigner et le faire durer."
+   },
+   "besoins": [
+    {
+     "id": "nourrir",
+     "nom": {
+      "fr": "Se nourrir"
+     },
+     "texte": {
+      "fr": "La cueillette ne suffit plus : il faut cultiver ou pêcher."
+     },
+     "savoirs": [
+      "astro.nebra",
+      "elec.torpille"
+     ]
+    },
+    {
+     "id": "compter",
+     "nom": {
+      "fr": "Compter et stocker"
+     },
+     "texte": {
+      "fr": "Garder des réserves, et savoir combien il en reste."
+     },
+     "savoirs": [
+      "math.origines"
+     ]
+    },
+    {
+     "id": "batir",
+     "nom": {
+      "fr": "Bâtir"
+     },
+     "texte": {
+      "fr": "Du bois, de la pierre et des maisons."
+     },
+     "savoirs": [
+      "phys.machines"
+     ]
+    },
+    {
+     "id": "fabriquer",
+     "nom": {
+      "fr": "Fabriquer"
+     },
+     "texte": {
+      "fr": "Des pots et des jarres qui passent au feu."
+     },
+     "savoirs": [
+      "chim.feu"
+     ]
+    },
+    {
+     "id": "soigner",
+     "nom": {
+      "fr": "Soigner"
+     },
+     "texte": {
+      "fr": "Les plantes, les gestes et ceux qui les connaissent."
+     },
+     "savoirs": [
+      "sci.soigner"
+     ]
+    },
+    {
+     "id": "transmettre",
+     "nom": {
+      "fr": "Transmettre"
+     },
+     "texte": {
+      "fr": "Ce que le village sait doit passer aux suivants."
+     },
+     "savoirs": [
+      "mnemo.sansecrire",
+      "rhet.origines",
+      "biais.historiens",
+      "philo.presocratiques"
+     ]
+    },
+    {
+     "id": "ensemble",
+     "nom": {
+      "fr": "Vivre ensemble"
+     },
+     "texte": {
+      "fr": "Décider, fêter et s'entendre à plusieurs."
+     },
+     "savoirs": [
+      "coll.ruche",
+      "mus.instruments",
+      "psy.emotions"
+     ]
+    },
+    {
+     "id": "menager",
+     "nom": {
+      "fr": "Ménager l'île"
+     },
+     "texte": {
+      "fr": "La forêt et les poissons ne sont pas sans fin."
+     },
+     "savoirs": [
+      "res.cueillir"
+     ]
+    },
+    {
+     "id": "temps",
+     "nom": {
+      "fr": "Voir venir le temps"
+     },
+     "texte": {
+      "fr": "Tempêtes et sécheresses emportent ce qu'on a bâti, sauf si on les voit venir."
+     },
+     "savoirs": [
+      "meteo.ciel"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cite",
+   "rang": 2,
+   "nom": {
+    "fr": "La cité"
+   },
+   "description": {
+    "fr": "Les métaux, l'écriture, la mesure et les lois : cet âge arrive bientôt."
+   },
+   "besoins": []
+  }
+ ],
+ "nature": [
+  {
+   "id": "foret",
+   "icone": "🌲",
+   "couleur": "#3F7A45",
+   "max": 600,
+   "depart": 600,
+   "repousse": 0.04,
+   "retour": 0.3,
+   "nom": {
+    "fr": "La forêt"
+   },
+   "usage": {
+    "fr": "Elle donne le bois et une part de la cueillette. Elle repousse d'autant mieux qu'il en reste la moitié ; rasée, elle met très longtemps à revenir."
+   }
+  },
+  {
+   "id": "poisson",
+   "icone": "🐟",
+   "couleur": "#3F7FA6",
+   "max": 500,
+   "depart": 500,
+   "repousse": 0.06,
+   "retour": 0.3,
+   "nom": {
+    "fr": "Les bancs de poissons"
+   },
+   "usage": {
+    "fr": "Ils nourrissent les pêcheurs et la pêche à pied. Trop pêchés, ils s'effondrent."
+   }
+  }
+ ],
+ "aleas": [
+  {
+   "id": "tempete",
+   "icone": "🌬️",
+   "savoirs": [
+    "meteo.ciel"
+   ],
+   "cibles": [
+    "pecherie",
+    "maisons",
+    "bucheron",
+    "reserve"
+   ],
+   "nom": {
+    "fr": "Tempête"
+   },
+   "annonce": {
+    "fr": "Ciel rouge ce matin et halo hier soir autour de la Lune : une tempête arrive demain."
+   },
+   "degat": {
+    "fr": "La tempête a emporté"
+   }
+  },
+  {
+   "id": "secheresse",
+   "icone": "☀️",
+   "savoirs": [
+    "meteo.ciel"
+   ],
+   "cibles": [
+    "ferme",
+    "moulin"
+   ],
+   "nom": {
+    "fr": "Sécheresse"
+   },
+   "annonce": {
+    "fr": "Pas un nuage depuis des jours, les grenouilles se taisent : la sécheresse s'installe demain."
+   },
+   "degat": {
+    "fr": "La sécheresse a ruiné"
    }
   }
  ]

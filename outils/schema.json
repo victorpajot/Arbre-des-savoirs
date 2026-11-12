@@ -65,6 +65,10 @@
        "description": {
         "$ref": "#/$defs/texte"
        },
+       "chantier": {
+        "type": "boolean",
+        "description": "Arbre en chantier : ses premiers savoirs existent (pack de l'île), le reste viendra. Pas encore de répliques, de dates, de livres ni de case."
+       },
        "couleurs": {
         "type": "object",
         "description": "Packs : la couleur de l'arbre à l'écran, en thème clair et en thème sombre (variables CSS --s-<id>).",
@@ -4495,6 +4499,18 @@
           "type": "number",
           "minimum": 0
          }
+        },
+        "famine_mort": {
+         "type": "number",
+         "minimum": 0
+        },
+        "cueillette_foret": {
+         "type": "number",
+         "minimum": 0
+        },
+        "cueillette_poisson": {
+         "type": "number",
+         "minimum": 0
         }
        }
       },
@@ -4508,6 +4524,27 @@
          "minimum": 0
         },
         "max": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
+      },
+      "aleas": {
+       "type": "object",
+       "additionalProperties": false,
+       "description": "Chance d'un aléa par jour, part des aléas annoncés la veille quand le savoir est maîtrisé, âge à partir duquel ils frappent.",
+       "properties": {
+        "chance": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "fiabilite": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "age_min": {
          "type": "integer",
          "minimum": 0
         }
@@ -4951,6 +4988,188 @@
         "$ref": "#/$defs/texte"
        },
        "usage": {
+        "$ref": "#/$defs/texte"
+       },
+       "savoirs": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "description": "Il faut maîtriser l'un de ces savoirs pour bâtir."
+       },
+       "preleve": {
+        "type": "string",
+        "description": "Ressource naturelle (nature[].id) dans laquelle l'aménagement puise ce qu'il produit."
+       },
+       "sante": {
+        "type": "number",
+        "minimum": 0
+       },
+       "attrait": {
+        "type": "number",
+        "minimum": 0
+       },
+       "guet": {
+        "type": "number",
+        "minimum": 0
+       },
+       "visiteurs": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "repousse": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "number",
+         "minimum": 0
+        }
+       }
+      }
+     }
+    },
+    "ages": {
+     "type": "array",
+     "description": "Les âges de l'île (Victor, 2026-11-12) : chaque âge pose des besoins ; un besoin est couvert quand un de ses savoirs est maîtrisé ; tous couverts, l'âge suivant s'ouvre. Un savoir n'est proposé en mode Île que s'il figure dans un besoin d'un âge ouvert.",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "rang",
+       "nom",
+       "besoins"
+      ],
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "rang": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "description": {
+        "$ref": "#/$defs/texte"
+       },
+       "besoins": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "id",
+          "nom",
+          "savoirs"
+         ],
+         "properties": {
+          "id": {
+           "type": "string"
+          },
+          "nom": {
+           "$ref": "#/$defs/texte"
+          },
+          "texte": {
+           "$ref": "#/$defs/texte"
+          },
+          "savoirs": {
+           "type": "array",
+           "items": {
+            "type": "string"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "nature": {
+     "type": "array",
+     "description": "Les ressources naturelles de l'île, finies : stock de départ, plafond, taux de repousse (courbe de Verhulst), retour minimal par jour quand le stock est à zéro.",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "max",
+       "depart",
+       "repousse",
+       "nom"
+      ],
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "icone": {
+        "type": "string"
+       },
+       "couleur": {
+        "type": "string"
+       },
+       "max": {
+        "type": "number",
+        "minimum": 1
+       },
+       "depart": {
+        "type": "number",
+        "minimum": 0
+       },
+       "repousse": {
+        "type": "number",
+        "minimum": 0
+       },
+       "retour": {
+        "type": "number",
+        "minimum": 0
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "usage": {
+        "$ref": "#/$defs/texte"
+       }
+      }
+     }
+    },
+    "aleas": {
+     "type": "array",
+     "description": "Les aléas du climat : chacun détruit un aménagement parmi ses cibles, sauf si l'île s'y est préparée ; un des savoirs permet de l'annoncer la veille.",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "cibles",
+       "nom"
+      ],
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "icone": {
+        "type": "string"
+       },
+       "savoirs": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "cibles": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "nom": {
+        "$ref": "#/$defs/texte"
+       },
+       "annonce": {
+        "$ref": "#/$defs/texte"
+       },
+       "degat": {
         "$ref": "#/$defs/texte"
        }
       }

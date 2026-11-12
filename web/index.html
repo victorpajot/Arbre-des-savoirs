@@ -1596,6 +1596,16 @@ svg.grille .interro { transition: opacity .3s; }
 @media (prefers-reduced-motion: reduce) { .ile-marcheur, .ile-pas, .ile-note, .ile-bulle, .ile-face, .ile-j1, .ile-j2, .ile-ph1, .ile-ph2, .ile-ph3 { animation: none; } }
 .ile-objectif.tenu { border-left-color: #2E9E5B; } .ile-objectif.tenu .ile-obj-jauge span { background: #2E9E5B; }
 .ile-h2 { font-size: 17px; margin: 22px 0 10px; }
+.ile-age-tete { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; } .ile-age-tete h3 { margin: 0; font-size: 20px; } .ile-age-tete span { font-size: 16px; color: var(--muted); }
+.ile-age-barre { height: 8px; border-radius: 4px; background: rgba(127,127,127,.25); margin: 8px 0 4px; overflow: hidden; } .ile-age-barre b { display: block; height: 100%; background: #3F8F5A; }
+.ile-besoin { border-top: 1px solid rgba(127,127,127,.25); padding: 10px 0 4px; } .ile-besoin:first-of-type { border-top: 0; }
+.ile-besoin h4 { margin: 0; font-size: 17px; } .ile-besoin.ok h4 { color: #3F8F5A; } .ile-besoin p { margin: 2px 0 6px; font-size: 16px; color: var(--muted); }
+.ile-savoirs { display: flex; flex-wrap: wrap; gap: 6px; } .ile-savoir { font: inherit; font-size: 16px; text-align: left; border: 2px solid var(--c, #888); border-radius: 10px; padding: 6px 10px; background: transparent; color: inherit; cursor: pointer; }
+.ile-savoir.ok { background: color-mix(in srgb, var(--c, #888) 18%, transparent); } .ile-savoir small { display: block; font-size: 14px; color: var(--muted); }
+.ile-nat { margin: 10px 0 0; font-size: 16px; } .ile-nat-tete { display: flex; justify-content: space-between; gap: 8px; } .ile-nat i { display: block; height: 10px; border-radius: 5px; background: rgba(127,127,127,.25); overflow: hidden; margin: 4px 0; } .ile-nat i b { display: block; height: 100%; }
+.ile-nat.orange .ile-nat-etat { color: #C98A1E; } .ile-nat.rouge .ile-nat-etat, .ile-nat.epuise .ile-nat-etat { color: #C8553D; } .ile-nat small { color: var(--muted); font-size: 15px; }
+.ile-effort { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 16px; flex-wrap: wrap; } .ile-effort > span { flex-basis: 100%; } .ile-effort button { font: inherit; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(127,127,127,.5); background: transparent; color: inherit; font-size: 20px; cursor: pointer; } .ile-effort button:disabled { opacity: .35; }
+.ile-alea { border: 2px solid #C98A1E; border-radius: 12px; padding: 12px; margin: 12px 0; font-size: 17px; } .ile-alea.degat { border-color: #C8553D; } .ile-alea.evite { border-color: #3F8F5A; } .ile-alea p { margin: 4px 0; } .ile-alea .btn { margin-top: 8px; }
 .ile-options { display: grid; gap: 8px; }
 .ile-option { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
 .ile-option b { font-size: 17px; } .ile-option p { margin: 2px 0 0; font-size: 15px; color: var(--muted); }
@@ -3980,7 +3990,8 @@ function demarrerJeu() {
     if (st.etat === "fermee") {
       lignes.push(__("L'arbre ") + tx(s.nom) + __(" est encore fermé.") + __(" Il s'ouvre sur le parcours : réussis l'épreuve d'une case de cet arbre."));
     }
-    if (st.etat === "verrouillee") lignes.push(__("Il faut d'abord maîtriser : ") + k.prerequis.filter(function (p) { return !M.debloque(C, P, p); }).map(function (p) { return tx(C.parId[p].nom); }).join(", ") + ".");
+    if (st.etat === "verrouillee" && st.age !== undefined) lignes.push(st.age == null ? __("Ce savoir n'a pas encore sa place sur l'île : il viendra avec un âge prochain.") : __("Ce savoir s'ouvre à l'âge : ") + tx(C.ile.ages[st.age].nom) + ".");
+    else if (st.etat === "verrouillee") lignes.push(__("Il faut d'abord maîtriser : ") + k.prerequis.filter(function (p) { return !M.debloque(C, P, p); }).map(function (p) { return tx(C.parId[p].nom); }).join(", ") + ".");
     if (st.etat === "disponible") lignes.push(__("Quiz de ") + nbQuiz() + __(" questions. Il en faut ") + Math.ceil(nbQuiz() * C.regles.quiz.seuil_maitrise) + __(" justes pour la maîtriser."));
     if (st.etat === "maitrisee" || st.etat === "a_reviser") {
       lignes.push(__("Rappel ") + ((e.palier || 0) + 1) + __(" sur ") + iv.length + (iv.length ? "+" : "") + " · " + (st.etat === "a_reviser" ? retard(e.prochainRappel) : __("prévu le ") + dateCourte(e.prochainRappel) + ", " + dansJours(e.prochainRappel)) + ".");
@@ -4702,9 +4713,11 @@ function demarrerJeu() {
     }
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + __("Ce que tu sais encore") + "</div><h1>" + __("L'île") + "</h1></div>" + compteur + "</div>"));
     var vierge = !I.quartiers.some(function (x) { return x.fonde; });
-    v.appendChild(el('<p class="note">' + (vierge ? (M.modeIle(P) ? __("L'île est vierge. Touche Jouer : Alyca te donne un premier savoir à apprendre, et sa réussite pose la première installation.") : __("L'île est vierge. Réussis l'épreuve de ta case sur le parcours : elle y posera la première installation et fondera ton premier quartier.")) :
+    v.appendChild(el('<p class="note">' + (vierge ? (M.modeIle(P) ? (I.ages ? __("L'île est vierge, et tout y commence par le feu. Touche Jouer pour apprendre à le maîtriser : c'est lui qui pose le campement.") : __("L'île est vierge. Touche Jouer : Alyca te donne un premier savoir à apprendre, et sa réussite pose la première installation.")) : __("L'île est vierge. Réussis l'épreuve de ta case sur le parcours : elle y posera la première installation et fondera ton premier quartier.")) :
       (M.modeIle(P) ? __("Touche un quartier, puis un terrain « ? » : réussis son quiz et l'installation se bâtit. Un rappel en retard la met en panne. Le bouton Jouer laisse Alyca choisir pour toi.") : __("Chaque épreuve réussie sur le parcours construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter."))) + "</p>"));
     if (!P.ileIntro) setTimeout(presenterIle, 250);
+    var bal = blocAleaIle(I); if (bal) v.appendChild(bal);
+    var bag = blocAgeIle(I); if (bag) v.appendChild(bag);
     var boi = P.ileIntro ? blocObjectifIle() : null; if (boi) { v.appendChild(boi); I = M.ile(C, P, maintenant()); }
     var carte = el('<div class="ile-cadre">' + svgCarteIle(I) + "</div>");
     carte.onclick = function (ev) { var gv = ev.target.closest && ev.target.closest("[data-savant]"); if (gv) { ouvrirVisiteur(gv.getAttribute("data-savant")); return; }
@@ -4782,6 +4795,7 @@ function demarrerJeu() {
   // chantier : chaque aménagement dit ce qu'il coûte, ce qu'il apporte et ce qui manque encore.
   var AMEN_ILE = null, VIS_ILE = [];
   function ressourceDe(id) { return (C.ile.ressources || []).filter(function (r) { return r.id === id; })[0] || { id: id, icone: "", nom: { fr: id } }; }
+  function natureDe(id) { return (C.ile.nature || []).filter(function (n) { return n.id === id; })[0] || { id: id, icone: "", nom: { fr: id } }; }
   function chiffre(v) { return v >= 10 || Math.round(v) === v ? nb(Math.round(v)) : v.toFixed(1).replace(".", ","); }
   function htmlCout(cout, manque) {
     var m = {}; (manque || []).forEach(function (x) { m[x.r] = true; });
@@ -4795,6 +4809,12 @@ function demarrerJeu() {
     Object.keys(a.produit || {}).forEach(function (r) { out.push(ressourceDe(r).icone + " +" + chiffre(a.produit[r] * a.ouvriers) + " " + esc(tx(ressourceDe(r).nom)).toLowerCase() + __(" par jour à plein")); });
     if (a.places) out.push("+" + a.places + __(" places"));
     if (a.stock) out.push("+" + a.stock + __(" rations en réserve"));
+    if (a.sante) out.push("−" + Math.round(a.sante * 100) + " % " + __("de décès"));
+    if (a.attrait) out.push("+" + Math.round(a.attrait * 100) + " % " + __("de naissances et d'arrivées"));
+    if (a.visiteurs) out.push("+" + a.visiteurs + __(" savant en visite par jour"));
+    if (a.guet) out.push("+" + Math.round(a.guet * 100) + " % " + __("d'aléas annoncés"));
+    Object.keys(a.repousse || {}).forEach(function (x) { var n = natureDe(x); out.push((n.icone || "") + " +" + Math.round(a.repousse[x] * 100) + " % " + __("de repousse")); });
+    if (a.preleve) out.push(__("puise dans : ") + (natureDe(a.preleve).icone || "") + " " + esc(tx(natureDe(a.preleve).nom)).toLowerCase());
     if (a.bonus) out.push("+" + Math.round(a.bonus.part * 100) + " % " + __("pour ") + a.bonus.sert + " " + a.bonus.cibles.map(function (c) { var x = C.ile.amenagements.filter(function (y) { return y.id === c; })[0]; return esc(tx(x.nom)).toLowerCase(); }).join(", "));
     return out.join(" · ");
   }
@@ -4813,6 +4833,13 @@ function demarrerJeu() {
     else if (d === "carriere") { o += '<path d="M' + (x - 12 * u).toFixed(1) + " " + y.toFixed(1) + "L" + (x - 8 * u).toFixed(1) + " " + (y - 16 * u).toFixed(1) + "L" + (x + 4 * u).toFixed(1) + " " + (y - 20 * u).toFixed(1) + "L" + (x + 12 * u).toFixed(1) + " " + (y - 10 * u).toFixed(1) + "L" + (x + 12 * u).toFixed(1) + " " + y.toFixed(1) + 'Z" fill="#9A9AA2"/>'; r(2, 18, 6, 4, "#C8C8CE"); r(9, 19, 5, 3, "#B4B4BA"); r(15, 17, 6, 5, "#C8C8CE"); r(12, 8, 1.5, 6, "#7A5230"); }
     else if (d === "mine") { o += '<path d="M' + (x - 12 * u).toFixed(1) + " " + y.toFixed(1) + "Q" + x.toFixed(1) + " " + (y - 30 * u).toFixed(1) + " " + (x + 12 * u).toFixed(1) + " " + y.toFixed(1) + 'Z" fill="#7C6A5A"/>'; r(7, 14, 10, 10, "#2B2B33"); r(6, 13, 12, 2, "#7A5230"); r(6, 13, 2, 11, "#7A5230"); r(16, 13, 2, 11, "#7A5230"); r(19, 18, 4, 4, "#B5814A"); r(20, 17, 2, 1, "#5C7A99"); }
     else if (d === "forge") { r(3, 10, 16, 14, "#8C8C94"); toit(2, 20, 10, 5, "#3A3A42"); r(15, 2, 3, 8, "#5A5A62"); r(8, 16, 6, 8, "#2B2B33"); r(9, 18, 4, 4, "#F2793A"); r(10, 19, 2, 2, "#FFD27A"); }
+    else if (d === "foyer") { [4, 8, 12, 16].forEach(function (k) { r(k, 21, 3.4, 3, "#9A9AA2"); }); r(6, 19, 12, 2, "#6B4A2B"); toit(7, 17, 19, 10, "#F2793A"); toit(9.5, 14.5, 19, 6, "#FFD27A"); }
+    else if (d === "four") { o += '<path d="M' + (x - 9 * u).toFixed(1) + " " + y.toFixed(1) + "Q" + (x - 9 * u).toFixed(1) + " " + (y - 16 * u).toFixed(1) + " " + x.toFixed(1) + " " + (y - 16 * u).toFixed(1) + "Q" + (x + 9 * u).toFixed(1) + " " + (y - 16 * u).toFixed(1) + " " + (x + 9 * u).toFixed(1) + " " + y.toFixed(1) + 'Z" fill="#B5714A"/>'; r(9, 17, 6, 7, "#2B2B33"); r(10, 19, 4, 4, "#F2793A"); r(18, 19, 3, 5, "#C99A6B"); r(21.5, 20, 2.5, 4, "#C99A6B"); }
+    else if (d === "hutte") { toit(3, 21, 24, 15, "#C9A45A"); r(10, 17, 4, 7, "#5A3E28"); r(1, 12, 1, 12, "#7A5230"); [13, 16, 19].forEach(function (k) { r(0, k, 3, 1.4, "#5E9A4E"); }); }
+    else if (d === "veillee") { [[2, 20], [6, 16], [12, 14.5], [18, 16], [21, 20]].forEach(function (p) { r(p[0], p[1], 3, 4, "#9A9AA2"); }); toit(9.5, 14.5, 23, 6, "#F2793A"); r(9, 22.5, 6, 1.5, "#6B4A2B"); }
+    else if (d === "place") { r(1, 20, 22, 4, "#D9C9A0"); r(11.3, 4, 1.4, 16, "#7A5230"); toit(12.5, 21, 9, 4, "#B5503C"); r(12.7, 5, 6, 4, "#B5503C"); r(3, 17, 5, 3, "#8A6240"); r(16, 17, 5, 3, "#8A6240"); }
+    else if (d === "reserve") { r(0, 19, 24, 5, "#4A7FB5"); r(11.3, 6, 1.4, 14, "#7A5230"); r(12.7, 7, 6, 5, "#E8E0D0"); r(3, 20.5, 4, 1.4, "#DCE8EC"); r(16, 21.5, 5, 1.4, "#DCE8EC"); }
+    else if (d === "guet") { r(4, 8, 1.6, 16, "#7A5230"); r(18.4, 8, 1.6, 16, "#7A5230"); r(3, 12, 18, 1.6, "#8A6240"); r(3, 7, 18, 1.6, "#8A6240"); toit(2, 22, 5, 5, "#B5503C"); r(10.5, 8.6, 3, 3.4, "#E9C9A0"); r(5, 17, 14, 1.2, "#8A6240"); }
     else { [[0, 12], [12, 12]].forEach(function (p, k) { r(p[0] + 1, p[1], 10, 12, k ? "#E9D9B5" : "#F4E8CC"); toit(p[0], p[0] + 12, p[1], 6, "#B5503C"); r(p[0] + 4, p[1] + 6, 3, 6, "#6B4A2B"); }); }
     return '<g shape-rendering="crispEdges"><ellipse cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="' + (12 * u).toFixed(1) + '" ry="' + (2.6 * u).toFixed(1) + '" fill="rgba(30,45,30,.18)"/>' + o + "</g>";
   }
@@ -4827,12 +4854,16 @@ function demarrerJeu() {
       '<p class="ile-vie-note">' + __("L'île mange à sa faim. Remplis les greniers pour que les familles s'agrandissent plus vite.") + "</p>";
     var h = '<h2 class="ile-h2">' + __("Les ressources") + '</h2><div class="carte ile-vie"><div class="ile-ress">' + tuiles + "</div>" + ventre +
       '<p class="ile-vie-note">' + __("Chaque jour, l'île mange ") + "<b>" + chiffre(R.conso.nourriture) + "</b>" + __(" rations (une pour vingt habitants). La cueillette en rapporte une part, les aménagements le reste. Greniers : ") + nb(R.grenier) + __(" rations au plus.") + "</p>";
+    h += htmlNatureIle(R);
     if (R.total) h += '<div class="ile-role"><div><b>' + __("Ouvriers") + "</b><small>" + nb(R.pourvus) + __(" postes pourvus sur ") + nb(R.total) + " · " + nb(R.actifs) + __(" adultes disponibles") + '</small></div><i><b style="width:' + Math.round(100 * R.pourvus / Math.max(1, R.total)) + '%;background:#3D7DD9"></b></i><em>' + Math.round(100 * R.pourvus / Math.max(1, R.total)) + " %</em></div>";
     var batis = C.ile.amenagements.filter(function (a) { return R.batis[a.id]; });
     if (batis.length) h += '<div class="ile-batis">' + batis.map(function (a) { return '<span class="ile-bati"><svg viewBox="-14 -26 28 28" width="30" height="30" aria-hidden="true">' + svgAmenagement(a, 0, 0, 24) + "</svg>" + esc(tx(a.nom)) + (R.batis[a.id] > 1 ? " <b>×" + R.batis[a.id] + "</b>" : "") + "</span>"; }).join("") + "</div>";
     h += '<button type="button" class="btn large" data-a="construire" style="margin-top:10px">' + __("Construire un aménagement") + "</button>";
     var b = el("<div>" + h + "</div></div>");
     b.querySelector('[data-a="construire"]').onclick = ouvrirChantierIle;
+    b.querySelectorAll("[data-effort]").forEach(function (bt) { bt.onclick = function () {
+      var id = bt.getAttribute("data-effort"), cur = R.effort[id] == null ? 1 : R.effort[id];
+      M.reglerEffort(C, P, id, cur + (bt.getAttribute("data-d") === "+" ? 0.25 : -0.25), maintenant()); sauver(); rendre(); }; });
     return b;
   }
   function ouvrirChantierIle() {
@@ -4840,7 +4871,7 @@ function demarrerJeu() {
     var stock = '<p class="ile-chantier-stock"><span class="ile-cout"><b>' + P.credits.solde + "</b> " + __("crédits") + "</span>" + (C.ile.ressources || []).filter(function (r) { return r.id !== "nourriture"; }).map(function (r) { return '<span class="ile-cout">' + r.icone + " <b>" + nb(R.stocks[r.id] || 0) + "</b> " + esc(tx(r.nom)).toLowerCase() + "</span>"; }).join("") + "</p>";
     var cartes = C.ile.amenagements.map(function (a) {
       var e = M.etatAmenagement(C, P, a.id, t), q = I.quartiers.filter(function (x) { return x.id === a.quartier; })[0];
-      var raison = !e.quartier ? __("Il faut d'abord un quartier habitable.") : e.savoir ? __("Il faut maîtriser « ") + esc(tx(C.parId[e.savoir].nom)) + " »." : e.manque.length ? __("Il manque des ressources.") : "";
+      var raison = !e.quartier ? __("Il faut d'abord un quartier habitable.") : e.savoir ? __("Il faut maîtriser « ") + e.savoirs.map(function (x) { return esc(tx(C.parId[x].nom)); }).join(__(" » ou « ")) + " »." : e.manque.length ? __("Il manque des ressources.") : "";
       var ou = e.quartier ? __("Emplacement : ") + esc(tx(I.quartiers.filter(function (x) { return x.id === e.quartier; })[0].nom)) + (e.chezSoi || !q ? "" : " (" + esc(tx(q.nomFinal)) + __(" n'est pas encore habitable)")) + "." : "";
       return '<div class="ile-amen' + (e.possible ? "" : " ferme") + '"><svg class="ile-amen-img" viewBox="-14 -26 28 28" width="56" height="56" aria-hidden="true">' + svgAmenagement(a, 0, 0, 24) + '</svg><div><b>' + esc(tx(a.nom)) + (R.batis[a.id] ? ' <span class="ile-amen-n">×' + R.batis[a.id] + "</span>" : "") + "</b><p>" + esc(tx(a.usage)) + '</p><p class="ile-amen-effet">' + effetAmenagement(a) + "</p>" +
         '<p class="ile-couts">' + htmlCout(a.cout, e.manque) + "</p>" + (raison ? '<p class="ile-amen-raison">' + raison + "</p>" : '<p class="ile-amen-ou">' + ou + "</p>") +
@@ -4852,6 +4883,100 @@ function demarrerJeu() {
       sauver(); toast(tx(a.nom) + __(" : c'est bâti !")); ouvrirChantierIle(); rendre();
     }; });
     feuilleSimple('<div class="eyebrow">' + __("L'île") + "</div><h2>" + __("Construire") + '</h2><p class="note">' + __("Les crédits paient les bâtisseurs ; le bois, la pierre et le métal viennent des aménagements eux-mêmes. Ce qui se bâtit aujourd'hui travaille dès demain.") + "</p>" + stock + '<div class="ile-amens">' + cartes + "</div>", __("Construire"), actions);
+  }
+
+  // --- L'île par âges, le monde fini, les aléas (Victor, 2026-11-12) ---------------------
+  // L'âge en cours et ses besoins : pour chacun, les savoirs qui y répondent. Toucher un savoir lance son quiz.
+  var SAVOIR_ILE = "res.cueillir";
+  function blocAgeIle(I) {
+    var G = I.ages; if (!G || !M.modeIle(P)) return null;
+    var a = G.age, t = maintenant(), montre = a.avenir ? G.ages[G.courant - 1] : a;
+    var h = '<h2 class="ile-h2">' + __("L'âge de l'île") + '</h2><div class="carte ile-vie"><div class="ile-age-tete"><h3>' + esc(tx(a.nom)) + "</h3>" + (a.avenir ? "" : "<span>" + a.couverts + " / " + a.besoins.length + (a.besoins.length > 1 ? __(" besoins couverts") : __(" besoin couvert")) + "</span>") + "</div>";
+    if (a.description) h += '<p class="ile-vie-note">' + esc(tx(a.description)) + "</p>";
+    if (a.avenir) h += '<p class="ile-vie-note">' + __("Tous les besoins du village sont couverts. En attendant cet âge, fais durer l'île : ménage la forêt et les poissons, et tiens tes rappels.") + "</p>";
+    else h += '<div class="ile-age-barre"><b style="width:' + Math.round(100 * a.couverts / Math.max(1, a.besoins.length)) + '%"></b></div>';
+    (montre ? montre.besoins : []).forEach(function (b) {
+      var amen = b.amenagements.map(function (id) { var x = C.ile.amenagements.filter(function (y) { return y.id === id; })[0]; return x ? esc(tx(x.nom)).toLowerCase() : ""; }).filter(Boolean);
+      h += '<div class="ile-besoin' + (b.couvert ? " ok" : "") + '"><h4>' + (b.couvert ? "✓ " : "○ ") + esc(tx(b.nom)) + "</h4>" + (b.texte ? "<p>" + esc(tx(b.texte)) + (amen.length ? " " + __("Débloque : ") + amen.join(", ") + "." : "") + "</p>" : "") + '<div class="ile-savoirs">' +
+        b.savoirs.map(function (id) { var k = C.parId[id], st = M.statut(C, P, id, t).etat, ok = st === "maitrisee" || st === "a_reviser";
+          return '<button type="button" class="ile-savoir' + (ok ? " ok" : "") + '" style="--c:' + couleur(k.stat) + '" data-savoir="' + esc(id) + '">' + (ok ? "✓ " : "") + esc(tx(k.nom)) + "<small>" + esc(tx(stat(k.stat).nom)) + " · " + (st === "a_reviser" ? __("rappel à faire") : ok ? __("acquis") : st === "disponible" ? __("à apprendre") : __("verrouillé")) + "</small></button>"; }).join("") + "</div></div>";
+    });
+    if (G.suivant && !a.avenir) h += '<p class="ile-vie-note" style="margin-top:10px">' + __("Tous les besoins couverts, s'ouvrira : ") + "<b>" + esc(tx(G.suivant.nom)) + "</b>.</p>";
+    var bloc = el("<div>" + h + "</div></div>");
+    bloc.querySelectorAll("[data-savoir]").forEach(function (bt) { bt.onclick = function () {
+      var id = bt.getAttribute("data-savoir"), st = M.statut(C, P, id, maintenant()).etat;
+      if (st === "disponible") lancerQuiz(id, "quiz", { jouer: true }); else if (st === "a_reviser") lancerQuiz(id, "rappel", { jouer: true }); else ouvrirFeuille(id);
+    }; });
+    return bloc;
+  }
+  // La forêt et les poissons : ce qu'il en reste, ce qu'on y prend, ce qu'ils peuvent rendre. Les chiffres et le réglage
+  // de l'effort ne viennent qu'avec le savoir « Vivre de ce que l'île donne ».
+  function htmlNatureIle(R) {
+    if (!R.nature || !R.nature.length) return "";
+    var sait = !C.parId[SAVOIR_ILE] || M.estMaitrisee(P, SAVOIR_ILE);
+    var h = '<h3 class="ile-h2" style="margin:14px 0 0">' + __("Ce que l'île peut donner") + "</h3>";
+    if (!sait) h += '<p class="ile-vie-note">' + __("La forêt et les poissons ne sont pas sans fin, mais personne ici ne sait encore les compter. Apprends « ") + esc(tx(C.parId[SAVOIR_ILE].nom)) + __(" » pour voir ce qu'il en reste et régler ce qu'on y prend.") + "</p>";
+    R.nature.forEach(function (n) {
+      var pc = Math.round(100 * n.part), mot = n.etat === "epuise" ? __("Épuisé") : n.etat === "rouge" ? __("Au plus bas") : n.etat === "orange" ? __("On prend trop") : __("Se renouvelle");
+      h += '<div class="ile-nat ' + n.etat + '"><div class="ile-nat-tete"><b>' + n.icone + " " + esc(tx(n.nom)) + '</b><span class="ile-nat-etat">' + (sait ? pc + " % · " + mot : "?") + "</span></div>";
+      if (sait) {
+        h += '<i><b style="width:' + pc + "%;background:" + (n.etat === "vert" ? (n.couleur || "#3F8F5A") : n.etat === "orange" ? "#C98A1E" : "#C8553D") + '"></b></i><small>' +
+          __("On y prend ") + "<b>" + chiffre(n.pris) + "</b>" + __(" par jour ; au mieux, l'île peut en rendre ") + "<b>" + chiffre(n.durable) + "</b>." +
+          (n.jours != null && n.stock > 0 ? " " + __("À ce rythme, il n'en restera plus dans ") + "<b>" + n.jours + (n.jours > 1 ? __(" jours") : __(" jour")) + "</b>." : "") + "</small>";
+        C.ile.amenagements.filter(function (a) { return a.preleve === n.id && R.batis[a.id]; }).forEach(function (a) {
+          var e = R.effort[a.id] == null ? 1 : R.effort[a.id], po = R.postes[a.id];
+          h += '<div class="ile-effort"><span>' + esc(tx(a.nom)) + (R.batis[a.id] > 1 ? " ×" + R.batis[a.id] : "") + " : " + __("effort") + '</span><button type="button" data-effort="' + esc(a.id) + '" data-d="-"' + (e <= 0 ? " disabled" : "") + ' aria-label="' + __("Moins d'effort") + '">−</button><b>' + Math.round(e * 100) + ' %</b><button type="button" data-effort="' + esc(a.id) + '" data-d="+"' + (e >= 1 ? " disabled" : "") + ' aria-label="' + __("Plus d'effort") + '">+</button><small>' + po.pourvus + " / " + po.postes + __(" ouvriers") + "</small></div>";
+        });
+      }
+      h += "</div>";
+    });
+    if (R.effondrement) h += '<p class="ile-vie-note alerte" style="margin-top:10px"><b>' + __("L'île s'est vidée.") + "</b> " + __("La faim a emporté ses derniers habitants ; ") + R.effondrement.perdus + __(" aménagements sont tombés en ruine. Tes savoirs restent : rebâtis en ménageant ce que l'île donne.") + "</p>";
+    return h;
+  }
+  // L'aléa annoncé pour demain (à qui sait lire le ciel) et ce que le dernier a fait.
+  function blocAleaIle(I) {
+    var A = I.alea; if (!A || !M.modeIle(P)) return null;
+    var jour = M.cleJour(maintenant()), h = "", an = A.annonce, d = A.dernier && A.dernier.jour === jour ? A.dernier : null;
+    function alea(id) { return (C.ile.aleas || []).filter(function (x) { return x.id === id; })[0] || { nom: { fr: id }, icone: "" }; }
+    function amen(id) { var x = C.ile.amenagements.filter(function (y) { return y.id === id; })[0]; return x ? tx(x.nom) : id; }
+    if (d) { var al = alea(d.id);
+      h += '<div class="ile-alea ' + (d.perdu ? "degat" : "evite") + '"><p><b>' + (al.icone || "") + " " + esc(tx(al.nom)) + "</b></p><p>" +
+        (d.perdu ? esc(tx(al.degat || { fr: "L'aléa a détruit" })) + " : <b>" + esc(amen(d.perdu)) + "</b>. " + __("Il faudra rebâtir.") : d.evite ? __("L'île était prête : rien n'a été emporté.") : __("Elle est passée sans rien trouver à emporter.")) + "</p></div>"; }
+    if (an) {
+      h += '<div class="ile-alea"><p><b>' + an.icone + " " + esc(tx(an.nom)) + " " + __("demain") + "</b></p><p>" + esc(an.texte ? tx(an.texte) : "") + "</p><p>" +
+        (an.cibles.length ? __("Menacés : ") + an.cibles.map(function (c) { return esc(amen(c)).toLowerCase(); }).join(", ") + "." : __("Rien de ce qui est bâti n'est menacé.")) + "</p>" +
+        (an.pret ? "<p><b>✓ " + __("L'île est à l'abri.") + "</b></p>" : an.essaye ? "<p><b>" + __("La préparation a échoué : l'aléa frappera demain.") + "</b></p>" :
+          an.cibles.length ? '<button type="button" class="btn" data-a="preparer">' + __("Se préparer : répondre à une question") + "</button>" : "") + "</div>";
+    }
+    if (P.options && P.options.tousArbres && C.ile.aleas && !an) h += '<p class="ile-vie-note">' + __("Mode test : ") + C.ile.aleas.map(function (x) { return '<button type="button" class="btn sec" data-forcer="' + esc(x.id) + '">' + (x.icone || "") + " " + esc(tx(x.nom)) + " " + __("demain") + "</button>"; }).join(" ") + "</p>";
+    if (!h) return null;
+    var b = el("<div>" + h + "</div>"), bp = b.querySelector('[data-a="preparer"]');
+    if (bp) bp.onclick = ouvrirPreparationAlea;
+    b.querySelectorAll("[data-forcer]").forEach(function (bt) { bt.onclick = function () { M.forcerAlea(C, P, bt.getAttribute("data-forcer"), maintenant()); sauver(); rendre(); }; });
+    return b;
+  }
+  function ouvrirPreparationAlea() {
+    var t = maintenant(), an = M.annonceAlea(C, P, t); if (!an || an.pret || an.essaye) return;
+    var k = C.parId[an.savoir], qs = C.questions.filter(function (q) { return q.competence === an.savoir && q.type === "qcm"; }); if (!qs.length) return;
+    var q = qs[graine(an.jour + "|" + an.id) % qs.length];
+    feuilleSimple('<div class="eyebrow">' + an.icone + " " + esc(tx(an.nom)) + " " + __("demain") + "</div><h2>" + __("Mettre l'île à l'abri") + '</h2><p class="note">' + __("Une question de « ") + esc(tx(k.nom)) + __(" ». Juste : l'île se prépare et ne perd rien. Fausse : l'aléa frappera. Une seule tentative.") + '</p><div id="alea-q"></div>', tx(an.nom));
+    var c = el('<div class="oubli" style="--c:' + couleur(k.stat) + '"><p class="enonce-h">' + esc(tx(q.enonce)) + "</p>" + codeQ(q) + "</div>"), zone = el('<div class="choix"></div>'), fait = false;
+    feuille.querySelector("#alea-q").appendChild(c);
+    M.melanger(q.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
+      var bt = el('<button type="button" data-v="' + i + '">' + esc(tx(q.choix[i])) + "</button>");
+      bt.onclick = function () {
+        if (fait) return; fait = true;
+        var ok = M.corriger(q, i); M.preparerAlea(C, P, ok, maintenant()); sauver();
+        zone.querySelectorAll("button").forEach(function (x) { x.disabled = true; if (x.getAttribute("data-v") === String(q.reponse)) x.classList.add("bon"); });
+        if (!ok) bt.classList.add("faux");
+        c.appendChild(el('<p class="rep-h">' + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
+        c.appendChild(el('<p class="expl-h">' + escD(tx(q.explication)) + "</p>"));
+        c.appendChild(el('<div class="piege-verdict ' + (ok ? "ok" : "ko") + '">' + (ok ? __("L'île est à l'abri") : __("Raté : l'aléa frappera demain")) + "</div>"));
+        rendre();
+      };
+      zone.appendChild(bt);
+    });
+    c.appendChild(zone);
   }
   // --- Les savants promeneurs (Victor, 2026-11-12) ------------------------------------
   // « Que les personnages que l'on débloque puissent se balader sur l'île ; si on clique dessus, on accède à leur
@@ -4876,7 +5001,8 @@ function demarrerJeu() {
     I.quartiers.forEach(function (q) { q.installations.forEach(function (x) { parComp[x.comp] = q; }); });
     var gens = personnesConnues().filter(function (e) { return M.rencontre(P, e.p.id); }).map(function (e) { return { e: e, h: graine(jour + "|" + e.p.id) }; }).sort(function (a, b) { return a.h - b.h; });
     var out = [];
-    for (var i = 0; i < gens.length && out.length < (R.max || 3); i++) {
+    var maxV = (R.max || 3) + ((I.ressources && I.ressources.effets && I.ressources.effets.visiteurs) || 0);
+    for (var i = 0; i < gens.length && out.length < maxV; i++) {
       var qs = questionsPersonne(gens[i].e); if (!qs.length) continue;
       var q = qs[gens[i].h % qs.length], qu = parComp[q.competence];
       if (!qu || !qu.fonde) qu = fondes.slice().sort(function (a, b) { return b.habitants - a.habitants; })[0];
@@ -5106,12 +5232,13 @@ function demarrerJeu() {
     if (!ob.type) corps = "<h3>" + __("Rien à défendre aujourd'hui") + "</h3>" + veille;
     else {
       var nom = esc(tx(ob.nom)), k = ob.prochain && C.parId[ob.prochain.comp], I = M.ile(C, P, maintenant());
+      var camp = I.ages && I.ages.age && I.ages.age.rang === 0;
       // L'épreuve du plateau, et ce qu'elle fait sur l'île : construire, réparer ou entretenir une installation.
       var inst = k && I.quartiers.reduce(function (r, q) { return r || q.installations.filter(function (x) { return x.comp === k.id; })[0]; }, null);
       var qi = inst && I.quartiers.filter(function (q) { return q.installations.indexOf(inst) >= 0; })[0];
       var effet = !inst || !qi.fonde ? "" : (inst.etat === "friche" || inst.etat === "abandon" ? __("Elle construit : ") : inst.etat === "marche" ? __("Elle entretient : ") : __("Elle remet en marche : ")) + "<b>" + esc(tx(inst.nom)) + "</b> (" + esc(tx(qi.nom)) + ").";
-      corps = "<h3>" + (ob.reussi ? (ob.fonde ? __("Objectif tenu : ") + nom + __(" garde son courant") : __("Objectif tenu")) : ob.fonde ? __("Délestage prévu ce soir : ") + nom : __("Un quartier à fonder")) + "</h3>" +
-        '<p class="ile-obj-texte">' + (!ob.fonde && !ob.reussi ? __("Réussis ton épreuve aujourd'hui : elle pose la première installation d'un nouveau quartier de l'île.") : ob.reussi ? __("« Soit. Cette île sert encore à quelqu'un. Je reviendrai demain. »") :
+      corps = "<h3>" + (ob.reussi ? (ob.fonde ? __("Objectif tenu : ") + nom + __(" garde son courant") : __("Objectif tenu")) : ob.fonde ? __("Délestage prévu ce soir : ") + nom : (camp ? __("Un feu à allumer") : __("Un quartier à fonder"))) + "</h3>" +
+        '<p class="ile-obj-texte">' + (camp && !ob.reussi ? __("Rien ne tient sur cette île sans feu. Apprends à le maîtriser : le campement pourra s'installer.") : !ob.fonde && !ob.reussi ? __("Réussis ton épreuve aujourd'hui : elle pose la première installation d'un nouveau quartier de l'île.") : ob.reussi ? __("« Soit. Cette île sert encore à quelqu'un. Je reviendrai demain. »") :
           __("« Un savoir que personne n'entretient est un serveur qui tourne pour rien. Ce soir, je coupe. » Réussis une épreuve avant minuit pour l'en dissuader.")) + "</p>" +
         (k && !ob.reussi ? '<p class="ile-obj-texte">' + __("Ta prochaine épreuve : ") + "<b>" + esc(tx(k.nom)) + "</b>. " + effet + "</p>" : "") +
         '<p class="ile-obj-compte">' + (ob.reussi ? "+" + ob.credits + __(" crédits") : ob.credits + __(" crédits à gagner")) + "</p>" + veille +

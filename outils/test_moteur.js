@@ -8,7 +8,18 @@ M.nouvellePartie = function (t) { const P = nouvellePartieTiree(t); P.plateau.ro
 // v19 : 4 succès au plus par épreuve ; les suivants tombent aux vérifications d'après.
 const vider = (C, P, t) => { for (let i = 1; i <= 12; i++) M.verifierRecompenses(C, P, t + i); };
 const succesPuis = (r, C, P, t) => r.nouveauxSucces.map(s => s.id).concat(...[1, 2, 3, 4, 5].map(i => M.verifierRecompenses(C, P, t + i).succes.map(s => s.id)));
-const d = n => JSON.parse(fs.readFileSync(path.join(__dirname, "../data", n), "utf8"));
+const dBrut = n => JSON.parse(fs.readFileSync(path.join(__dirname, "../data", n), "utf8"));
+// Les savoirs propres à l'île (arbres « en chantier » du pack ile : le feu, Ressources, Météo) n'existent qu'en mode Île.
+// Les tests historiques jouent sans eux, comme le mode Parcours ; les tests des âges les chargent avec dBrut.
+const CHANTIER = dBrut("regles.json").stats.filter(x => x.chantier).map(x => x.id);
+const COMPS_CHANTIER = dBrut("skills.json").competences.filter(k => CHANTIER.includes(k.stat)).map(k => k.id);
+const d = n => {
+  const x = dBrut(n);
+  if (n === "regles.json") x.stats = x.stats.filter(s => !CHANTIER.includes(s.id));
+  if (n === "skills.json") x.competences = x.competences.filter(k => !CHANTIER.includes(k.stat));
+  if (n === "questions.json") x.questions = x.questions.filter(q => !COMPS_CHANTIER.includes(q.competence));
+  return x;
+};
 const C = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"),
   { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json") });
 let t = new Date(2026, 9, 24, 9, 0).getTime();
@@ -2246,6 +2257,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const rr = M.terminerRappel(CI, PX, id, M.tirerQuestions(CI, PX, id, 3).map(q => ({ id: q.id, correct: true })), ti);
     assert.equal(PX.exil, exilAvant - RP.retour); assert.equal(rr.ile.revenus, RP.retour); assert.equal(M.ile(CI, PX, ti).habitants, plein - ex.partis + RP.retour); }
   // Démographie (Victor, 2026-11-10) : Leslie, Verhulst, Lotka-Volterra, liés aux aménagements.
+  // La famine mortelle et les aléas (2026-11-12) ont leur propre test, plus bas : ici, la démographie seule.
+  const FAMINE = CI.ile.regles.ressources.famine_mort, ALEAS = CI.ile.regles.aleas.chance; CI.ile.regles.ressources.famine_mort = 0; CI.ile.regles.aleas.chance = 0;
   { const JOUR = 86400000, DM = CI.ile.regles.demographie;
     const bati = (f) => { const p = M.nouvellePartie(ti); CI.competences.filter(f || (() => true)).forEach(k => { p.competences[k.id] = { maitrise: true, prochainRappel: ti + 900 * JOUR, palier: 1, xp: 1 }; }); return p; };
     const vide = p => { p.population = { jour: "", t: ti, e: 0, a: 0, v: 0, p: 0, journal: null }; return p; };
@@ -2303,6 +2316,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.ok(mo.bati && mo.dates.length === 3 && I1.monuments.filter(m => m.bati).length === 1);
     assert.equal(I1.places - I0.places, mo.habitants);
     assert.equal(I1.places + 5 * mo.habitants, I1.capacite, "il reste cinq monuments à bâtir"); }
+  CI.ile.regles.ressources.famine_mort = FAMINE; CI.ile.regles.aleas.chance = ALEAS;
   console.log("île : quartiers par fonction, installations, alerte, panne, abandon, habitants, options, objectif du jour, démographie");
 }
 
@@ -2348,7 +2362,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const J = 86400000, t0 = new Date(2026, 10, 12, 9, 0).getTime();
   function partie() {
     const P = M.nouvellePartie(t0); P.credits.solde = 1000;
-    CR.competences.filter(k => ["mecanique", "savoir", "logique"].includes(k.stat) && k.rang <= 4).forEach(k => { P.competences[k.id] = { maitrise: true, maitriseDepuis: t0, prochainRappel: t0 + 400 * J, palier: 1, xp: 5 }; });
+    CR.competences.filter(k => ["mecanique", "savoir", "logique", "cosmos"].includes(k.stat) && k.rang <= 4).forEach(k => { P.competences[k.id] = { maitrise: true, maitriseDepuis: t0, prochainRappel: t0 + 400 * J, palier: 1, xp: 5 }; });
     M.ile(CR, P, t0); return P;
   }
   const P = partie(), I0 = M.ile(CR, P, t0);
@@ -2393,4 +2407,92 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const s = M.chercherMateriau(CM, PM, 14, tm); assert.ok(s && s.z === 14 && s.reste === 0, "le matériau se cherche en combat d'atome");
   PM.mode = "parcours"; assert.equal(M.chercherMateriau(CM, PM, 6, tm), null, "pas en mode Parcours");
   console.log("OK : mode Île (pion immobile, défis, matériaux)");
+}
+
+// Victor (2026-11-12) : l'île par âges. Le feu d'abord, puis les besoins du village ; un monde fini (forêt, poissons),
+// l'effondrement possible, et des aléas que les savoirs météo annoncent.
+{
+  const CA = M.indexerContenu(dBrut("regles.json"), dBrut("skills.json"), dBrut("questions.json"), d("succes.json"),
+    { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ile: d("ile.json") });
+  const J = 86400000, t0 = new Date(2026, 10, 12, 9, 0).getTime();
+  const sait = (P, id, t) => { P.competences[id] = { maitrise: true, maitriseDepuis: t || t0, prochainRappel: (t || t0) + 400 * J, palier: 1, xp: 5 }; };
+  const P = M.nouvellePartie(t0); P.mode = "ile"; P.credits.solde = 2000;
+  // Le campement : seul le feu est proposé.
+  let G = M.agesIle(CA, P);
+  assert.equal(G.age.id, "campement"); assert.equal(G.age.besoins[0].savoirs[0], "ile.feu");
+  assert.equal(M.statut(CA, P, "ile.feu", t0).etat, "disponible", "le feu est le premier savoir");
+  assert.equal(M.statut(CA, P, "math.origines", t0).etat, "verrouillee", "rien d'autre avant le feu");
+  assert.deepEqual(M.disponibles(CA, P, t0).map(k => k.id), ["ile.feu"]);
+  assert.equal(M.choixIA(CA, P, t0).comp.id, "ile.feu", "l'île propose le feu");
+  for (const k of CA.competences.filter(k => ["ile.feu", "res.cueillir", "meteo.ciel"].includes(k.id)))
+    assert.ok(CA.questions.filter(q => q.competence === k.id).length >= 10, k.id + " a ses questions");
+  const rf = M.terminerQuiz(CA, P, "ile.feu", M.tirerQuestions(CA, P, "ile.feu", 5).map(q => ({ id: q.id, correct: true })), t0, { jouer: true });
+  assert.equal(rf.issue, "maitrisee");
+  // Le village : les savoirs de ses besoins s'ouvrent, pas le rang 2, ni un rang 1 sans besoin.
+  G = M.agesIle(CA, P);
+  assert.equal(G.age.id, "village"); assert.equal(G.age.besoins.length, 9);
+  assert.equal(M.statut(CA, P, "math.origines", t0).etat, "disponible");
+  assert.equal(M.statut(CA, P, "math.babylone", t0).etat, "verrouillee", "le rang 2 attend la cité");
+  assert.equal(M.statut(CA, P, "inf.pascaline", t0).etat, "verrouillee", "un savoir sans besoin attend son âge");
+  const ch = M.choixIA(CA, P, t0); assert.equal(ch.raison, "besoin"); assert.equal(ch.besoin, "nourrir");
+  // Un aménagement demande son savoir : pas de ferme sans le ciel des premiers peuples.
+  M.ile(CA, P, t0);
+  assert.equal(M.etatAmenagement(CA, P, "ferme", t0).savoir, "astro.nebra");
+  assert.ok(M.construireIle(CA, P, "foyer", t0).ok, "le feu permet le foyer");
+  sait(P, "astro.nebra"); sait(P, "elec.torpille"); sait(P, "phys.machines");
+  assert.equal(M.etatAmenagement(CA, P, "ferme", t0).savoir, null);
+  G = M.agesIle(CA, P); assert.ok(G.age.besoins.filter(b => b.id === "nourrir")[0].couvert); assert.equal(G.age.couverts, 2);
+  assert.deepEqual(G.age.besoins.filter(b => b.id === "batir")[0].amenagements, ["bucheron", "carriere", "maisons"]);
+  // Tous les besoins couverts : la cité s'ouvre (et reste ouverte si un savoir se perd).
+  ["math.origines", "chim.feu", "sci.soigner", "mnemo.sansecrire", "coll.ruche", "res.cueillir", "meteo.ciel"].forEach(id => sait(P, id));
+  G = M.ile(CA, P, t0).ages; assert.equal(G.age.id, "cite"); assert.equal(P.ageIle, 2);
+  delete P.competences["coll.ruche"]; assert.equal(M.agesIle(CA, P).age.id, "cite", "un âge atteint le reste");
+  assert.ok(!M.agesIle(CA, P).ages[1].complet, "mais le besoin est à rétablir");
+  sait(P, "coll.ruche");
+  // Un monde fini : la pêche puise dans les bancs, qui repoussent ; trop de pêcheries les vident, l'effort les ménage.
+  const peche = () => { const Q = M.nouvellePartie(t0); Q.mode = "ile"; Q.credits.solde = 5000;
+    CA.competences.filter(k => k.rang === 1).forEach(k => sait(Q, k.id)); M.ile(CA, Q, t0);
+    Q.population.a = 300; Q.ressources.stocks.bois = 1000; Q.ressources.stocks.nourriture = 5000; return Q; };
+  CA.ile.regles.aleas.chance = 0;
+  const Q1 = peche(), Q2 = peche();
+  for (let i = 0; i < 4; i++) { assert.ok(M.construireIle(CA, Q1, "pecherie", t0).ok); M.construireIle(CA, Q2, "pecherie", t0); }
+  const n0 = M.ile(CA, Q1, t0).ressources.nature.filter(x => x.id === "poisson")[0];
+  assert.equal(n0.stock, 500); assert.ok(n0.pris > n0.durable && !n0.soutenable && n0.jours > 0, "quatre pêcheries prennent plus que la repousse");
+  assert.equal(M.reglerEffort(CA, Q2, "pecherie", 0.25, t0), 0.25);
+  assert.ok(M.ile(CA, Q2, t0).ressources.nature.filter(x => x.id === "poisson")[0].soutenable, "au quart de l'effort, la pêche est durable");
+  for (let j = 1; j <= 60; j++) { Q1.ressources.stocks.nourriture = 5000; Q2.ressources.stocks.nourriture = 5000; M.ile(CA, Q1, t0 + j * J); M.ile(CA, Q2, t0 + j * J); }
+  const f1 = M.ile(CA, Q1, t0 + 60 * J).ressources.nature.filter(x => x.id === "poisson")[0], f2 = M.ile(CA, Q2, t0 + 60 * J).ressources.nature.filter(x => x.id === "poisson")[0];
+  assert.ok(f1.part < 0.25 && (f1.etat === "rouge" || f1.etat === "epuise"), "les bancs trop pêchés s'effondrent");
+  assert.ok(f2.part > 0.45 && f2.etat === "vert", "les bancs ménagés tiennent");
+  assert.ok(M.ile(CA, Q1, t0 + 60 * J).ressources.prod.nourriture < M.ile(CA, Q2, t0 + 60 * J).ressources.prod.nourriture, "et à la fin, on pêche moins qu'en ménageant");
+  // Effondrement : forêt rasée, bancs vidés, pas de ferme. La faim vide l'île ; les aménagements tombent, les savoirs restent.
+  const Q3 = peche(); for (let i = 0; i < 3; i++) M.construireIle(CA, Q3, "bucheron", t0); M.construireIle(CA, Q3, "foyer", t0);
+  Q3.ressources.nature.foret = 0; Q3.ressources.nature.poisson = 0; Q3.ressources.stocks.nourriture = 0;
+  const natif = CA.ile.nature.map(x => x.retour); CA.ile.nature.forEach(x => { x.retour = 0; });
+  let j3 = 0; while (M.ile(CA, Q3, t0 + (++j3) * J).habitants > 0 && j3 < 400) { /* la faim fait son œuvre */ }
+  CA.ile.nature.forEach((x, i) => { x.retour = natif[i]; });
+  assert.ok(j3 < 400 && Q3.ressources.effondrement && Q3.ressources.effondrement.perdus === 3, "l'île affamée se vide et perd ses aménagements");
+  assert.deepEqual(Q3.ressources.batis.map(b => b.id), ["foyer"], "il reste le foyer"); assert.ok(M.estMaitrisee(Q3, "phys.machines"), "et les savoirs");
+  // Les aléas : annoncés la veille à qui sait lire le ciel ; préparé, rien n'est perdu ; sinon un aménagement tombe.
+  const alea = (prepare, sansSavoir) => { const Q = peche(); if (sansSavoir) delete Q.competences["meteo.ciel"];
+    M.construireIle(CA, Q, "pecherie", t0); M.construireIle(CA, Q, "ferme", t0); M.forcerAlea(CA, Q, "tempete", t0);
+    const an = M.ile(CA, Q, t0).alea.annonce;
+    if (prepare) assert.ok(M.preparerAlea(CA, Q, true, t0).pret);
+    return { Q, an, apres: M.ile(CA, Q, t0 + J) }; };
+  const a1 = alea(false);
+  assert.ok(a1.an && a1.an.id === "tempete" && a1.an.savoir === "meteo.ciel" && a1.an.cibles.includes("pecherie"), "la tempête est annoncée la veille");
+  assert.equal(a1.apres.alea.dernier.perdu, "pecherie", "sans préparation, la tempête emporte la pêcherie"); assert.equal(a1.apres.ressources.batis.pecherie, 0); assert.equal(a1.apres.ressources.batis.ferme, 1);
+  const a2 = alea(true);
+  assert.ok(a2.apres.alea.dernier.evite && a2.apres.ressources.batis.pecherie === 1, "préparée, l'île ne perd rien");
+  const a3 = alea(false, true);
+  assert.equal(a3.an, null, "sans savoir météo, pas d'annonce"); assert.equal(a3.apres.alea.dernier.perdu, "pecherie");
+  const Q4 = peche(); M.construireIle(CA, Q4, "pecherie", t0); M.forcerAlea(CA, Q4, "tempete", t0);
+  assert.equal(M.preparerAlea(CA, Q4, false, t0).pret, false); assert.equal(M.preparerAlea(CA, Q4, true, t0), null, "une seule tentative");
+  assert.ok(M.ile(CA, Q4, t0).alea.annonce.essaye);
+  // Pendant une absence, aucun aléa ne frappe.
+  const Q5 = peche(); M.construireIle(CA, Q5, "pecherie", t0); Q5.aleas = { force: { jour: "2026-11-15", id: "tempete" } };
+  M.ile(CA, Q5, t0 + 5 * J); assert.equal(Q5.ressources.batis.filter(b => b.id === "pecherie").length, 1, "pas d'aléa pendant une absence");
+  // Le mode Parcours ne connaît pas les âges.
+  const PP = M.nouvellePartie(t0); assert.notEqual(M.statut(CA, PP, "math.babylone", t0).age, 2);
+  console.log("OK : île par âges (feu, besoins, savoirs requis), monde fini (bancs, effort, effondrement), aléas annoncés");
 }
