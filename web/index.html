@@ -1606,8 +1606,27 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-h2 { font-size: 17px; margin: 22px 0 10px; }
 .ile-age-tete { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; } .ile-age-tete h3 { margin: 0; font-size: 20px; } .ile-age-tete span { font-size: 16px; color: var(--muted); }
 .ile-age-barre { height: 8px; border-radius: 4px; background: rgba(127,127,127,.25); margin: 8px 0 4px; overflow: hidden; } .ile-age-barre b { display: block; height: 100%; background: #3F8F5A; }
-.ile-besoin { border-top: 1px solid rgba(127,127,127,.25); padding: 10px 0 4px; } .ile-besoin:first-of-type { border-top: 0; }
-.ile-besoin h4 { margin: 0; font-size: 17px; } .ile-besoin.ok h4 { color: #3F8F5A; } .ile-besoin p { margin: 2px 0 6px; font-size: 16px; color: var(--muted); }
+.ile-besoin { border: 1px solid var(--line); border-radius: 12px; margin: 8px 0 0; padding: 0 12px; } .ile-besoin[open] { padding-bottom: 12px; }
+.ile-besoin summary { display: flex; align-items: center; gap: 12px; padding: 10px 0; cursor: pointer; list-style: none; } .ile-besoin summary::-webkit-details-marker { display: none; }
+.ile-b-etat { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 2px dashed rgba(127,127,127,.6); display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 18px; }
+.ile-besoin.ok .ile-b-etat { border: 0; background: #2E8B57; color: #fff; }
+.ile-b-nom { flex: 1; min-width: 0; font-size: 17px; } .ile-b-nom small { display: block; font-size: 15px; color: var(--muted); }
+.ile-b-fleche { flex: none; font-size: 24px; color: var(--muted); transition: transform .15s; } .ile-besoin[open] .ile-b-fleche { transform: rotate(90deg); }
+.ile-frise { list-style: none; display: flex; gap: 4px; margin: 0 0 14px; padding: 0; } .ile-frise li { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-size: 15px; color: var(--muted); position: relative; }
+.ile-frise li i { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 16px; background: var(--line); color: var(--muted); position: relative; z-index: 1; }
+.ile-frise li + li::before { content: ""; position: absolute; top: 16px; right: 50%; width: 100%; height: 3px; background: var(--line); } .ile-frise li.fait + li::before { background: #2E8B57; }
+.ile-frise li.fait i { background: #2E8B57; color: #fff; } .ile-frise li.ici i { background: var(--accent); color: #fff; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 30%, transparent); }
+.ile-frise li.ici { color: inherit; font-weight: 800; } .ile-frise small { display: block; font-size: 13px; font-weight: 400; color: var(--muted); }
+.ile-passage h3 { margin: 2px 0 6px; font-size: 19px; } .ile-passage .btn { width: 100%; } .ile-passage.attend { border-style: dashed; border-color: rgba(127,127,127,.5); } .ile-passage.attend p { margin: 0; color: var(--muted); }
+.duo-ia { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 0; }
+.duo-ia button { display: flex; align-items: center; gap: 10px; min-width: 0; font: inherit; text-align: left; color: inherit; background: var(--surface); border: 1px solid var(--line); border-bottom: 4px solid var(--c, var(--accent)); border-radius: 14px; padding: 8px 10px; cursor: pointer; }
+.duo-ia button[aria-expanded="true"] { background: color-mix(in srgb, var(--c, var(--accent)) 14%, var(--surface)); border-color: var(--c, var(--accent)); }
+.duo-ia .tete { flex: none; width: 46px; height: 55px; border-radius: 10px; background: var(--parchemin); display: grid; place-items: center; overflow: hidden; }
+.duo-ia .txt { min-width: 0; } .duo-ia b { display: block; font-size: 16px; } .duo-ia small { display: block; font-size: 14px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.duo-ia .pastille { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #D94141; margin-left: 6px; vertical-align: 2px; }
+.ile-plus { width: 100%; margin-top: 10px; font-size: 17px; }
+.duo-panneau { margin-top: 10px; } .duo-panneau .ile-objectif { margin: 0; }
+.ile-besoin p { margin: 2px 0 6px; font-size: 16px; color: var(--muted); }
 .ile-savoirs { display: flex; flex-direction: column; gap: 8px; } .ile-savoir { display: flex; align-items: center; gap: 10px; width: 100%; font: inherit; font-size: 16px; text-align: left; border: 2px solid var(--c, #888); border-radius: 10px; padding: 6px 10px; background: transparent; color: inherit; cursor: pointer; }
 .ile-savoir { border-style: dashed; } .ile-savoir > span:first-of-type { flex: 1; min-width: 0; } .ile-savoir:not(.ok) .badge-comp { filter: grayscale(.85); opacity: .6; }
 .ile-savoir.ok { border-style: solid; background: var(--c, #888); color: #fff; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,.18); } .ile-savoir small { display: block; font-size: 14px; color: var(--muted); font-weight: 400; } .ile-savoir.ok small { color: rgba(255,255,255,.9); }
@@ -3902,13 +3921,29 @@ function demarrerJeu() {
     else if (M.offreChrono(P, maintenant())) v.appendChild(blocChronoAccueil("alyca"));
     if (C.plateau && P.plateau.parcoursSuivant) v.appendChild(blocSuiteTour());
     var bdj = blocDonjons(); if (bdj) v.appendChild(bdj);
-    var boi = blocObjectifIle(); if (boi) v.appendChild(boi);
+    // Victor (2026-11-12) : en mode Île, les deux voix se rangent côte à côte, Alyca à gauche, Ananké à droite ;
+    // toucher l'une ou l'autre déplie ce qu'elle a à dire. Le bouton Jouer vient ensuite, seul.
+    var boi = blocObjectifIle(), duo = !!(boi && mot && M.modeIle(P) && boi.querySelector(".ile-obj-tete"));
+    if (duo) {
+      var bjO = boi.querySelector('[data-a="obj"]'); if (bjO) bjO.remove();
+      var fhD = C.ia && C.ia.faveur ? M.faveurIA(C, P, t) : null, obT = boi.querySelector("h3");
+      var rang = el('<div class="duo-ia"><button type="button" data-qui="alyca" style="--c:' + (fhD ? COULEUR_PALIER[fhD.palier.id] : "var(--accent)") + '"><span class="tete">' + mot.querySelector(".masque").innerHTML + '</span><span class="txt"><b>' + esc(tx(C.narrateur) || __("L'IA")) + "</b><small>" + (fhD ? esc(tx(fhD.palier.nom)) : __("Son mot du jour")) + '</small></span></button>' +
+        '<button type="button" data-qui="ananke" style="--c:' + (boi.classList.contains("tenu") ? "#2E9E5B" : "#5B7FD9") + '"><span class="tete">' + boi.querySelector(".ile-econome").innerHTML + '</span><span class="txt"><b>' + __("Ananké") + (boi.classList.contains("tenu") ? "" : '<i class="pastille" aria-hidden="true"></i>') + "</b><small>" + (boi.classList.contains("tenu") ? __("Objectif tenu") : __("Son objectif")) + "</small></span></button></div>");
+      var panneau = el('<div class="duo-panneau" hidden></div>');
+      var montrerDuo = function () {
+        rang.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-expanded", x.getAttribute("data-qui") === duoIA ? "true" : "false"); });
+        panneau.innerHTML = ""; panneau.hidden = !duoIA;
+        if (duoIA) panneau.appendChild(duoIA === "alyca" ? mot : boi);
+      };
+      rang.querySelectorAll("button").forEach(function (x) { x.onclick = function () { var q = x.getAttribute("data-qui"); duoIA = duoIA === q ? null : q; montrerDuo(); }; });
+      v.appendChild(rang); v.appendChild(panneau); montrerDuo();
+    } else if (boi) v.appendChild(boi);
     // Victor (2026-11-01) : le bouton Jouer passe juste sous le plateau, avant sa description.
     if (M.modeIle(P)) {
       // Mode Île : pas de plateau. L'objectif du jour porte déjà son bouton Jouer ; sinon, un Jouer seul.
-      if (!boi || !boi.querySelector('[data-a="obj"]')) v.appendChild(boutonJouer());
+      if (duo || !boi || !boi.querySelector('[data-a="obj"]')) v.appendChild(boutonJouer());
       // Victor (2026-11-12) : les besoins couverts de l'île, comme sous la carte, juste sous le bouton Jouer.
-      var bagA = P.ileIntro ? blocAgeIle(campIle(M.ile(C, P, maintenant()))) : null; if (bagA) v.appendChild(bagA);
+      var bagA = P.ileIntro ? blocAgeIle(campIle(M.ile(C, P, maintenant())), true) : null; if (bagA) v.appendChild(bagA);
     } else if (C.plateau) {
       var bp = blocPlateau(), gc = bp.querySelector(".grille-cadre"), bj = boutonJouer();
       if (gc && gc.parentNode) gc.parentNode.insertBefore(bj, gc.nextSibling); else v.appendChild(bj);
@@ -3919,7 +3954,7 @@ function demarrerJeu() {
       var fm = faveurMini(t); if (fm) mot.querySelector("div").appendChild(fm);
       mot.onclick = versIA;
       mot.onkeydown = function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); versIA(); } };
-      v.appendChild(mot);
+      if (!duo) v.appendChild(mot);
     }
     var em = M.empletteAVoir(P); if (em) v.appendChild(blocEmplette(em));
     var bf = blocFarce(); if (bf) v.appendChild(bf);
@@ -4111,6 +4146,7 @@ function demarrerJeu() {
   // L'île est la somme de ce que le joueur sait encore. Chaque arbre y a son quartier ; chaque compétence maîtrisée y pose
   // une installation précise et utile, et des habitants viennent. Tout se déduit de la partie (M.ile) : rien à sauvegarder.
   var quartierVu = null, lieuVu = null;
+  var duoIA = null;
   function nb(n) { return Number(n).toLocaleString(locale()); }
   // Un habitant : 5 × 8 pixels, trois couleurs (cheveux, peau, habit) tirées de son rang dans la foule.
   var HABITANT = [".hhh.", ".sss.", ".sss.", "vvvvv", "svvvs", ".vvv.", ".j.j.", ".j.j."];
@@ -4228,7 +4264,7 @@ function demarrerJeu() {
     marche: function () { return __("En marche."); },
     alerte: function () { return __("En alerte : son rappel est dû. Fais-le avant qu'elle tombe en panne."); },
     panne: function () { return __("En panne : son rappel attend depuis trop longtemps. Elle n'offre plus que la moitié de ses places."); },
-    veille: function () { return __("En veille : l'objectif d'hier n'a pas été tenu, Ananké a baissé son courant. Tiens celui d'aujourd'hui pour la rallumer."); },
+    veille: function () { return sansCourant() ? __("En veille : l'objectif d'hier n'a pas été tenu, Ananké l'a mise de côté. Tiens celui d'aujourd'hui pour la relancer.") : __("En veille : l'objectif d'hier n'a pas été tenu, Ananké a baissé son courant. Tiens celui d'aujourd'hui pour la rallumer."); },
     abandon: function () { return __("À l'abandon : la compétence est perdue. Regagne-la pour la remettre en service."); },
     friche: function () { return __("Pas encore construite."); },
   };
@@ -5089,28 +5125,44 @@ function demarrerJeu() {
   // --- L'île par âges, le monde fini, les aléas (Victor, 2026-11-12) ---------------------
   // L'âge en cours et ses besoins : pour chacun, les savoirs qui y répondent. Toucher un savoir lance son quiz.
   var SAVOIR_ILE = "res.cueillir";
-  function blocAgeIle(I) {
+  // Victor (2026-11-12) : avant la cité, l'île n'a pas d'électricité ; Ananké n'en parle donc pas.
+  function sansCourant() { var G = M.modeIle(P) && M.agesIle(C, P); return !!G && G.courant < 2; }
+  function blocAgeIle(I, replie) {
     var G = I.ages; if (!G || !M.modeIle(P)) return null;
     var a = G.age, t = maintenant(), montre = a.avenir ? G.ages[G.courant - 1] : a;
-    var h = '<h2 class="ile-h2">' + __("L'âge de l'île") + '</h2><div class="carte ile-vie"><div class="ile-age-tete"><h3>' + esc(tx(a.nom)) + "</h3>" + (a.avenir ? "" : "<span>" + a.couverts + " / " + a.requis + (a.requis > 1 ? __(" besoins couverts") : __(" besoin couvert")) + "</span>") + "</div>";
-    if (a.description) h += '<p class="ile-vie-note">' + esc(tx(a.description)) + "</p>";
-    if (a.avenir) h += '<p class="ile-vie-note">' + __("Les besoins du village sont couverts. En attendant cet âge, fais durer l'île : ménage la forêt et les poissons, et tiens tes rappels.") + "</p>";
-    else h += '<div class="ile-age-barre"><b style="width:' + Math.round(100 * a.couverts / Math.max(1, a.requis)) + '%"></b></div>';
-    // Victor (2026-11-12) : les besoins optionnels se proposent avant de changer d'âge ; le joueur décide de passer sans eux.
-    if (a.pret && G.suivant) h += '<div class="ile-passage"><p><b>' + esc(tx(a.nom)) + __(" peut devenir : ") + esc(tx(G.suivant.nom)).toLowerCase() + ".</b> " + __("Il reste de côté : ") + a.negliges.map(function (b) { return "<b>" + esc(tx(b.nom)).toLowerCase() + "</b>"; }).join(__(" et ")) + ". " + __("Tu peux les travailler d'abord, ou passer sans eux et en payer le prix.") + '</p><button type="button" class="btn sec" data-a="passer">' + __("Passer sans eux") + "</button></div>";
+    // Victor (2026-11-12) : « L'âge de l'île » puis « Le village » ne se lisait pas. Une frise dit où en est l'île
+    // (campement, village, cité), puis une seule question : de quoi a-t-elle besoin, et qu'est-ce qui est fait.
+    var h = '<h2 class="ile-h2">' + __("Où en est l'île") + '</h2><div class="carte ile-vie"><ol class="ile-frise">' + G.ages.map(function (x, i) {
+      var ici = i === G.courant, fait = i < G.courant;
+      return '<li class="' + (ici ? "ici" : fait ? "fait" : "apres") + '"><i>' + (fait ? "✓" : i + 1) + "</i><span>" + esc(tx(x.nom)) + (ici ? "<small>" + __("tu es ici") + "</small>" : "") + "</span></li>"; }).join("") + "</ol>";
+    if (a.avenir) h += '<p class="ile-vie-note">' + __("Cet âge reste à écrire. En attendant, fais durer l'île : ménage la forêt et les poissons, et tiens tes rappels.") + "</p>";
     // Les besoins laissés de côté dans les âges d'avant restent à l'affiche : on peut toujours les rattraper.
     var liste = (montre ? montre.besoins : []).slice();
     G.ages.forEach(function (x, i) { if (i < G.courant && x !== montre) x.negliges.forEach(function (b) { liste.push(b); }); });
     var passe = function (b) { return G.ages.some(function (x, i) { return i < G.courant && x.negliges.indexOf(b) >= 0; }); };
-    liste.forEach(function (b) {
+    var faits = liste.filter(function (b) { return b.couvert; }).length;
+    if (liste.length) h += '<div class="ile-age-tete"><h3>' + esc(tx((montre || a).nom)) + __(" a besoin de") + "</h3><span>" + faits + " / " + liste.length + (faits > 1 ? __(" couverts") : __(" couvert")) + '</span></div><div class="ile-age-barre"><b style="width:' + Math.round(100 * faits / liste.length) + '%"></b></div>' +
+      '<p class="ile-vie-note">' + __("Un savoir maîtrisé couvre un besoin. Touche un besoin pour voir les savoirs qui y répondent.") + "</p>";
+    // Victor (2026-11-12) : trois besoins à l'écran (ceux qui restent à couvrir d'abord), les autres derrière un bouton.
+    liste = liste.filter(function (b) { return !b.couvert && !b.optionnel; }).concat(liste.filter(function (b) { return !b.couvert && b.optionnel; }), liste.filter(function (b) { return b.couvert; }));
+    liste.forEach(function (b, n) {
+      if (n === 3) h += '<button type="button" class="btn sec ile-plus" data-a="plus">' + __("Voir les {n} autres besoins", { n: liste.length - 3 }).replace("les 1 autres besoins", "l'autre besoin") + '</button><div class="ile-reste" hidden>';
       var amen = b.amenagements.map(function (id) { var x = C.ile.amenagements.filter(function (y) { return y.id === id; })[0]; return x ? esc(tx(x.nom)).toLowerCase() : ""; }).filter(Boolean);
-      h += '<div class="ile-besoin' + (b.couvert ? " ok" : "") + '"><h4>' + (b.couvert ? "✓ " : "○ ") + esc(tx(b.nom)) + (b.optionnel ? ' <span class="ile-opt">' + __("optionnel") + "</span>" : "") + "</h4>" + (b.texte ? "<p>" + esc(tx(b.texte)) + (amen.length ? " " + __("Débloque : ") + amen.join(", ") + "." : "") + "</p>" : "") +
+      var acquis = b.savoirs.filter(function (id) { var st = M.statut(C, P, id, t).etat; return st === "maitrisee" || st === "a_reviser"; });
+      var resume = b.couvert && acquis.length ? esc(tx(C.parId[acquis[0]].nom)) : b.savoirs.length > 1 ? b.savoirs.length + __(" savoirs au choix") : b.savoirs.length ? esc(tx(C.parId[b.savoirs[0]].nom)) : "";
+      h += '<details class="ile-besoin' + (b.couvert ? " ok" : "") + '"' + (!replie && !b.couvert ? " open" : "") + '><summary><i class="ile-b-etat" aria-hidden="true">' + (b.couvert ? "✓" : "") + '</i><span class="ile-b-nom"><b>' + esc(tx(b.nom)) + "</b>" + (b.optionnel ? ' <span class="ile-opt">' + __("optionnel") + "</span>" : "") + "<small>" + (b.couvert ? __("Couvert par : ") : __("À couvrir : ")) + resume + '</small></span><span class="ile-b-fleche" aria-hidden="true">›</span></summary>' +
+        (b.texte ? "<p>" + esc(tx(b.texte)) + (amen.length ? " " + __("Débloque : ") + amen.join(", ") + "." : "") + "</p>" : "") +
         (b.optionnel && !b.couvert && b.alerte ? '<p class="ile-risque">' + (passe(b) ? "⚠ " + __("Négligé : ") : __("Si tu passes sans lui : ")) + esc(tx(b.alerte)) + "</p>" : "") + '<div class="ile-savoirs">' +
         b.savoirs.map(function (id) { var k = C.parId[id], st = M.statut(C, P, id, t).etat, ok = st === "maitrisee" || st === "a_reviser";
-          return '<button type="button" class="ile-savoir' + (ok ? " ok" : "") + '" style="--c:' + couleur(k.stat) + '" data-savoir="' + esc(id) + '">' + badgeComp(k, 64) + "<span>" + esc(tx(k.nom)) + "<small>" + esc(tx(stat(k.stat).nom)) + " · " + (st === "a_reviser" ? __("rappel à faire") : ok ? __("maîtrisé") : st === "disponible" ? __("à apprendre") : __("verrouillé")) + "</small></span>" + (ok ? '<span class="ile-coche" aria-hidden="true">✓</span>' : "") + "</button>"; }).join("") + "</div></div>";
+          return '<button type="button" class="ile-savoir' + (ok ? " ok" : "") + '" style="--c:' + couleur(k.stat) + '" data-savoir="' + esc(id) + '">' + badgeComp(k, 64) + "<span>" + esc(tx(k.nom)) + "<small>" + esc(tx(stat(k.stat).nom)) + " · " + (st === "a_reviser" ? __("rappel à faire") : ok ? __("maîtrisé") : st === "disponible" ? __("à apprendre") : __("verrouillé")) + "</small></span>" + (ok ? '<span class="ile-coche" aria-hidden="true">✓</span>' : "") + "</button>"; }).join("") + "</div></details>";
     });
-    if (G.suivant && !a.avenir && !a.pret) h += '<p class="ile-vie-note" style="margin-top:10px">' + __("Tous les besoins couverts, s'ouvrira : ") + "<b>" + esc(tx(G.suivant.nom)) + "</b>.</p>";
+    if (liste.length > 3) h += "</div>";
+    // La suite, en conclusion de la liste : ce qui ouvre l'âge suivant, ou le choix de passer sans les besoins optionnels.
+    if (a.pret && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("Tout l'indispensable est couvert. Il reste en option : ") + a.negliges.map(function (b) { return "<b>" + esc(tx(b.nom)).toLowerCase() + "</b>"; }).join(__(" et ")) + ". " + __("Tu peux les apprendre d'abord, ou passer tout de suite et en payer le prix.") + '</p><button type="button" class="btn large" data-a="passer">' + __("Passer à : ") + esc(tx(G.suivant.nom)) + "</button></div>";
+    else if (G.suivant && !a.avenir) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("S'ouvre quand tous les besoins sans la mention « optionnel » sont couverts.") + "</p></div>";
     var bloc = el("<div>" + h + "</div></div>");
+    var bpl = bloc.querySelector('[data-a="plus"]');
+    if (bpl) bpl.onclick = function () { bloc.querySelector(".ile-reste").hidden = false; bpl.remove(); };
     var bpa = bloc.querySelector('[data-a="passer"]');
     if (bpa) bpa.onclick = function () {
       feuilleSimple('<div class="eyebrow">' + __("Changer d'âge") + "</div><h2>" + __("Passer sans eux ?") + '</h2><div class="bulle-p"></div>' + a.negliges.map(function (b) { return '<p style="font-size:17px"><b>' + esc(tx(b.nom)) + ".</b> " + esc(tx(b.alerte || b.texte || { fr: "" })) + "</p>"; }).join("") +
@@ -5409,7 +5461,7 @@ function demarrerJeu() {
       M.ile(C, P, maintenant()).quartiers.some(function (x) { return x.fonde; }) ? __("Voici mon île. Tout ce que tu y vois, c'est ce que tu sais encore. Ne t'emballe pas : il reste de la place.") :
         __("Voici mon île. Oui, elle est vide. Elle contient ce que tu sais, et pour l'instant, soyons honnêtes, ça tient sur un galet."),
       (M.modeIle(P) ? __("Chaque épreuve réussie y construit quelque chose : une grue, un phare, un atelier.") : __("Chaque épreuve réussie sur le parcours y construit quelque chose : une grue, un phare, un atelier.")) + __(" La première installation fonde un quartier. Ce n'est encore qu'un chantier : les habitants ne viennent que lorsqu'il y a de quoi vivre."),
-      __("Laisse traîner un rappel et l'installation tombe en panne. Une collègue à moi, Ananké, très économe, coupe le courant de tout ce qui n'est plus entretenu. Elle n'est pas méchante : elle compte. Donne-lui tort.")];
+      (sansCourant() ? __("Laisse traîner un rappel et ce que tu as bâti se défait. Une collègue à moi, Ananké, très économe, laisse s'éteindre tout ce qui n'est plus entretenu. Elle n'est pas méchante : elle compte. Donne-lui tort.") : __("Laisse traîner un rappel et l'installation tombe en panne. Une collègue à moi, Ananké, très économe, coupe le courant de tout ce qui n'est plus entretenu. Elle n'est pas méchante : elle compte. Donne-lui tort."))];
     var i = 0;
     function montrer() {
       var dernier = i === pas.length - 1, bulle = comite({ id: "ile_intro_" + i, texte: pas[i], contexte: "accueil" });
