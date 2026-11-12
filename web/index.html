@@ -166,7 +166,7 @@ body:has(.voile, .quiz, .zoom-fig, .liberation, .alyca-scene, .fete) { overflow:
 .quiz .fermer { border: 0; background: var(--surface); border-radius: 999px; width: 44px; height: 44px; font-size: 22px; line-height: 1; }
 .points { display: flex; gap: 6px; }
 /* Code de la question (son id), tout en haut : Victor le cite pour signaler une question. */
-.ile-construire { display: flex; flex-direction: column; gap: 4px; width: 100%; margin: 10px 0 4px; padding: 12px 14px; border: 2px solid var(--accent); border-radius: 14px; background: var(--card, #fff); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.ile-construire { display: flex; flex-direction: column; gap: 4px; width: 100%; margin: 10px 0 4px; padding: 12px 14px; border: 2px solid var(--accent); border-radius: 14px; background: var(--surface); color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .ile-construire b { font-size: 18px; } .ile-construire small { margin-left: 8px; font-size: 15px; opacity: .75; }
 .ile-construire-st { font-size: 15px; opacity: .85; }
 .code-q.tag-q { margin: 6px 0 4px; text-align: left; font-size: 13px; opacity: .8; }
@@ -1488,7 +1488,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-visiteurs button.fait { opacity: .6; }
 .ile-visiteur { cursor: pointer; }
 .modes { display: flex; flex-direction: column; gap: 10px; }
-.mode { display: flex; gap: 12px; align-items: flex-start; text-align: left; padding: 14px; border: 2px solid var(--line); border-radius: 14px; background: var(--card, #fff); color: inherit; font: inherit; cursor: pointer; }
+.mode { display: flex; gap: 12px; align-items: flex-start; text-align: left; padding: 14px; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); color: inherit; font: inherit; cursor: pointer; }
 .mode.pris { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent) inset; }
 .mode-i { font-size: 30px; line-height: 1; }
 .mode b { display: block; font-size: 18px; margin-bottom: 4px; } .mode small { font-size: 15px; line-height: 1.4; opacity: .85; }
@@ -4001,7 +4001,7 @@ function demarrerJeu() {
     }
     if (C.plateau && (st.etat === "disponible" || st.etat === "a_reviser")) {
       var v = M.valeurEpreuve(C, P, { type: st.etat === "disponible" ? "quiz" : "rappel", comp: id }, t);
-      lignes.push(__("Plateau : ton pion avance d'une case si tu réussis."));
+      if (!M.modeIle(P)) lignes.push(__("Plateau : ton pion avance d'une case si tu réussis."));
     }
     var bouton = "";
     if (st.etat === "disponible") bouton = __('<button type="button" class="btn large" data-a="quiz">Passer le quiz</button>');
@@ -4713,7 +4713,7 @@ function demarrerJeu() {
     }
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + __("Ce que tu sais encore") + "</div><h1>" + __("L'île") + "</h1></div>" + compteur + "</div>"));
     var vierge = !I.quartiers.some(function (x) { return x.fonde; });
-    v.appendChild(el('<p class="note">' + (vierge ? (M.modeIle(P) ? (I.ages ? __("L'île est vierge, et tout y commence par le feu. Touche Jouer pour apprendre à le maîtriser : c'est lui qui pose le campement.") : __("L'île est vierge. Touche Jouer : Alyca te donne un premier savoir à apprendre, et sa réussite pose la première installation.")) : __("L'île est vierge. Réussis l'épreuve de ta case sur le parcours : elle y posera la première installation et fondera ton premier quartier.")) :
+    v.appendChild(el('<p class="note">' + (vierge ? (M.modeIle(P) ? (I.ages ? __("L'île est vierge, et tout y commence par le feu. Touche « Maîtriser le feu » ci-dessous pour lire sa leçon, puis passe le quiz : c'est lui qui pose le campement.") : __("L'île est vierge. Touche Jouer : Alyca te donne un premier savoir à apprendre, et sa réussite pose la première installation.")) : __("L'île est vierge. Réussis l'épreuve de ta case sur le parcours : elle y posera la première installation et fondera ton premier quartier.")) :
       (M.modeIle(P) ? __("Touche un quartier, puis un terrain « ? » : réussis son quiz et l'installation se bâtit. Un rappel en retard la met en panne. Le bouton Jouer laisse Alyca choisir pour toi.") : __("Chaque épreuve réussie sur le parcours construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter."))) + "</p>"));
     if (!P.ileIntro) setTimeout(presenterIle, 250);
     var bal = blocAleaIle(I); if (bal) v.appendChild(bal);
@@ -4904,8 +4904,8 @@ function demarrerJeu() {
     if (G.suivant && !a.avenir) h += '<p class="ile-vie-note" style="margin-top:10px">' + __("Tous les besoins couverts, s'ouvrira : ") + "<b>" + esc(tx(G.suivant.nom)) + "</b>.</p>";
     var bloc = el("<div>" + h + "</div></div>");
     bloc.querySelectorAll("[data-savoir]").forEach(function (bt) { bt.onclick = function () {
-      var id = bt.getAttribute("data-savoir"), st = M.statut(C, P, id, maintenant()).etat;
-      if (st === "disponible") lancerQuiz(id, "quiz", { jouer: true }); else if (st === "a_reviser") lancerQuiz(id, "rappel", { jouer: true }); else ouvrirFeuille(id);
+      // Victor (2026-11-12) : toucher un savoir ouvre sa feuille (leçon, fiche, quiz), pas le quiz d'office.
+      ouvrirFeuille(bt.getAttribute("data-savoir"));
     }; });
     return bloc;
   }
@@ -5221,7 +5221,7 @@ function demarrerJeu() {
   function blocObjectifIle() {
     if (!M.ilePresente(C)) return null;
     if (!P.ileIntro) {
-      var inv = el('<div class="carte ile-objectif" style="--c:var(--accent)"><div class="eyebrow">' + __("L'île") + "</div><h3>" + __("L'IA a quelque chose à te montrer") + '</h3><p class="ile-obj-texte">' + __("Une île, la sienne. Ce que tu apprends sur le parcours s'y construit.") + '</p><button type="button" class="btn large">' + __("Voir l'île") + "</button></div>");
+      var inv = el('<div class="carte ile-objectif" style="--c:var(--accent)"><div class="eyebrow">' + __("L'île") + "</div><h3>" + __("L'IA a quelque chose à te montrer") + '</h3><p class="ile-obj-texte">' + (M.modeIle(P) ? __("Une île, la sienne, et vierge. Tout y commence par le feu ; ce que tu apprends ensuite s'y construit.") : __("Une île, la sienne. Ce que tu apprends sur le parcours s'y construit.")) + '</p><button type="button" class="btn large">' + __("Voir l'île") + "</button></div>");
       inv.querySelector("button").onclick = function () { vue = "ile"; quartierVu = null; rendre(); window.scrollTo(0, 0); };
       return inv;
     }
@@ -5390,10 +5390,11 @@ function demarrerJeu() {
       test.appendChild(tp);
     }
     v.appendChild(blocLangue());
-    if (C.plateau) v.appendChild(blocCasesTour(M.casesParTour(C, P), function (n) { P.options = P.options || {}; P.options.casesTour = n; sauver(); rendre(); toast(__("{n} cases par tour, dès le prochain tour", { n: n })); },
+    if (C.plateau && !M.modeIle(P)) v.appendChild(blocCasesTour(M.casesParTour(C, P), function (n) { P.options = P.options || {}; P.options.casesTour = n; sauver(); rendre(); toast(__("{n} cases par tour, dès le prochain tour", { n: n })); },
       __("Les cases de tes arbres allumés, rangées par date, sont coupées en tours de cette longueur. Le changement compte dès le prochain tour.")));
     if (BRUT && BRUT["ile.json"]) v.appendChild(choixMode(modeDe(P), changerMode, __("Change quand tu veux : rien n'est perdu. Le parcours garde la place de ton pion, l'île ses installations et ses habitants.")));
-    if (INDEX) v.appendChild(blocPacks());
+    if (INDEX && !M.modeIle(P)) v.appendChild(blocPacks());
+    else if (INDEX) v.appendChild(el('<div class="bloc"><h2>' + __("Packs") + '</h2><p class="note">' + __("En mode Île, tous les domaines sont allumés : les besoins de l'île piochent dans tous les arbres. Les packs et la longueur des tours se règlent en mode Parcours.") + "</p></div>"));
     v.appendChild(test);
 
     var raz = el(__('<div class="bloc"><h2>Recommencer</h2><p class="note">Efface toute la progression de cette partie, sur ce navigateur et sur ton compte. Les autres parties ne bougent pas.</p><div class="rangee" id="raz"><button type="button" class="btn sec">Recommencer à zéro</button></div></div>'));
@@ -9456,13 +9457,16 @@ function demarrerJeu() {
   }
 
   // --- Nouvelle partie : nom et langue, packs, rappels du matin ---
+  // Victor (2026-11-12) : en mode Île, ni packs ni cases par tour à choisir : l'île a besoin de tous les savoirs, et n'a pas de plateau.
+  function pasAssistant() { return assistant && assistant.mode === "ile" ? [1, 3] : [1, 2, 3]; }
   function enteteEtape(n, titreEtape) {
+    var pas = pasAssistant(), vu = pas.indexOf(n) + 1, total = pas.length;
     var h = el('<div><div class="entete-r"><button type="button" class="retour" aria-label="' + __("Retour") + '">←</button><h1>' + titreEtape + '</h1></div><div class="pas-l"><span class="eyebrow">' +
-      __("Nouvelle partie · étape ") + n + __(" sur 3") + '</span><span class="pts" aria-hidden="true">' + [1, 2, 3].map(function (i) { return '<i class="' + (i <= n ? "on" : "") + '"></i>'; }).join("") + "</span></div></div>");
-    h.querySelector(".retour").onclick = function () { if (n === 1) allerTitre(); else { assistant.etape = n - 1; rendre(); window.scrollTo(0, 0); } };
+      __("Nouvelle partie · étape ") + vu + __(" sur ") + total + '</span><span class="pts" aria-hidden="true">' + pas.map(function (x, i) { return '<i class="' + (i < vu ? "on" : "") + '"></i>'; }).join("") + "</span></div></div>");
+    h.querySelector(".retour").onclick = function () { if (n === 1) allerTitre(); else { assistant.etape = pas[vu - 2]; rendre(); window.scrollTo(0, 0); } };
     return h;
   }
-  function etapeSuivante() { assistant.etape++; ecrireSession(CLE_ASSISTANT, assistant); rendre(); window.scrollTo(0, 0); }
+  function etapeSuivante() { var pas = pasAssistant(); assistant.etape = pas[Math.min(pas.length - 1, pas.indexOf(assistant.etape) + 1)] || 3; ecrireSession(CLE_ASSISTANT, assistant); rendre(); window.scrollTo(0, 0); }
   // Les deux modes de jeu, en deux grandes cartes.
   function changerMode(m) {
     P.mode = m;
@@ -9495,10 +9499,10 @@ function demarrerJeu() {
       v.appendChild(lg);
       // Victor (2026-11-12) : deux façons de jouer, qui ne se marchent plus dessus.
       if (BRUT && BRUT["ile.json"]) v.appendChild(choixMode(A.mode || "parcours", function (m) { A.mode = m; ecrireSession(CLE_ASSISTANT, A); rendre(); }));
-      var s1 = el('<button type="button" class="btn large">' + __("Suivant : les domaines →") + "</button>");
+      var s1 = el('<button type="button" class="btn large">' + (A.mode === "ile" ? __("Suivant →") : __("Suivant : les domaines →")) + "</button>");
       s1.onclick = function () { A.nom = A.nom.trim() || nomLibre(__("Ma partie")); etapeSuivante(); };
       v.appendChild(s1);
-    } else if (A.etape === 2) {
+    } else if (A.etape === 2 && A.mode !== "ile") {
       v.appendChild(enteteEtape(2, __("Tes domaines")));
       v.appendChild(el('<p class="note">' + __("Le jeu est fait de packs : un par domaine de savoir, un par jeu du plateau. Tous sont allumés ; éteins ceux qui ne te tentent pas. Rien n'est perdu : ils se rallument dans les réglages.") + "</p>"));
       var liste = el('<div class="bloc"></div>');
@@ -9538,13 +9542,13 @@ function demarrerJeu() {
         hr.onchange = function () { if (hr.value) A.routine.heure = hr.value; ecrireSession(CLE_ASSISTANT, A); rendre(); };
         v.appendChild(ro);
       }
-      if (C && C.plateau) v.appendChild(blocCasesTour(A.casesTour || C.plateau.regles.cases_par_tour || 24, function (n) { A.casesTour = n; ecrireSession(CLE_ASSISTANT, A); rendre(); },
+      if (C && C.plateau && A.mode !== "ile") v.appendChild(blocCasesTour(A.casesTour || C.plateau.regles.cases_par_tour || 24, function (n) { A.casesTour = n; ecrireSession(CLE_ASSISTANT, A); rendre(); },
         __("Ton parcours suit l'histoire, de la plus ancienne case à la plus récente. Un tour en prend ce nombre, le suivant reprend où il s'est arrêté. Plus c'est court, plus tu boucles de tours.")));
-      var bdc = blocChoixDonjons(A); if (bdc) v.appendChild(bdc);
+      var bdc = A.mode === "ile" ? null : blocChoixDonjons(A); if (bdc) v.appendChild(bdc);
       var off = M.packsEteints(INDEX, A.off), tous = INDEX.packs.filter(function (m) { return m.sorte !== "socle"; });
       var allumes = tous.filter(function (m) { return !off[m.id]; }).length;
       var rc = el('<div class="bloc"><h2>' + __("Récapitulatif") + '</h2><ul class="recap"><li>' + __("Partie") + "<span>" + esc(A.nom) + "</span></li><li>" + __("Langue") + "<span>" +
-        esc(nomLangue(M.langue(), M.langue())) + "</span></li><li>" + __("Domaines") + "<span>" + allumes + __(" packs sur ") + tous.length + "</span></li>" +
+        esc(nomLangue(M.langue(), M.langue())) + "</span></li><li>" + __("Façon de jouer") + "<span>" + (A.mode === "ile" ? __("L'île") : __("Le parcours")) + "</span></li><li>" + __("Domaines") + "<span>" + (A.mode === "ile" ? __("tous, l'île en a besoin") : allumes + __(" packs sur ") + tous.length) + "</span></li>" +
         (NATIF ? "<li>" + __("Rappels du matin") + "<span>" + (A.routine.active ? A.routine.heure.replace(":", " h ") : __("non")) + "</span></li>" : "") + "</ul></div>");
       v.appendChild(rc);
       var bulle = bulleTitre(LIGNES_PRET, "impatiente"); if (bulle) v.appendChild(bulle);
@@ -9592,11 +9596,11 @@ function demarrerJeu() {
     var toutes = !!(P && P.options && P.options.toutesCases);
     var p = M.nouvellePartie(Date.now());
     p.id = nouvelId(); p.nom = A.nom.trim() || nomLibre(__("Ma partie"));
-    p.options = { langue: M.langue(), packsOff: A.off.slice() };
-    if (A.casesTour) p.options.casesTour = A.casesTour;
+    p.options = { langue: M.langue(), packsOff: A.mode === "ile" ? [] : A.off.slice() };
+    if (A.casesTour && A.mode !== "ile") p.options.casesTour = A.casesTour;
     // Donjons ouverts d'office (pour les essayer sans réussir leurs arbres), si leur pack reste allumé.
     var offD = M.packsEteints(INDEX, A.off), ppD = INDEX.proprietaires || {}, propD = Object.assign({}, ppD["donjons.json/donjons"] || {}, ppD["donjons.json/proces"] || {});
-    var dOk = (A.donjons || []).filter(function (id) { return !offD[propD[id]]; });
+    var dOk = (A.mode === "ile" ? [] : A.donjons || []).filter(function (id) { return !offD[propD[id]]; });
     if (dOk.length) p.options.donjons = dOk;
     var direct = A.direct && dOk.indexOf(A.direct) >= 0 ? A.direct : null, sorteDirect = direct && ((BRUT["donjons.json"] || {}).proces || []).some(function (d) { return d.id === direct; }) ? "proces" : "construction";
     if (NATIF) p.options.routine = { active: false, heure: A.routine.heure };
@@ -9804,8 +9808,9 @@ function demarrerJeu() {
   // l'île est éteint (rien n'est perdu) ; en mode Île, il est allumé et le pion ne bouge plus.
   function modeDe(p) { return p && p.mode === "ile" ? "ile" : "parcours"; }
   function packsJeu(p, off) {
+    if (modeDe(p) === "ile") return [];
     off = (off || packsDemandes(p)).filter(function (x) { return x !== "ile"; });
-    if (modeDe(p) !== "ile") off.push("ile");
+    off.push("ile");
     return off;
   }
   function construireContenu(off) {
