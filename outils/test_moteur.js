@@ -2446,12 +2446,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.statut(CA, P, "math.origines", t0).etat, "disponible");
   assert.equal(M.statut(CA, P, "math.babylone", t0).etat, "verrouillee", "le rang 2 attend la cité");
   assert.equal(M.statut(CA, P, "inf.pascaline", t0).etat, "verrouillee", "un savoir sans besoin attend son âge");
-  const ch = M.choixIA(CA, P, t0); assert.equal(ch.raison, "besoin"); assert.equal(ch.besoin, "compter", "se nourrir est déjà couvert par le ciel des premiers peuples");
-  // Un aménagement demande son savoir : pas de pêcherie sans les poissons électriques.
+  const ch = M.choixIA(CA, P, t0); assert.equal(ch.raison, "besoin"); assert.equal(ch.besoin, "compter", "se nourrir est déjà couvert par ce que l'île donne");
+  // Victor (2026-11-12) : ni le ciel des premiers peuples ni les poissons électriques ne nourrissent le village.
+  assert.equal(M.statut(CA, P, "elec.torpille", t0).etat, "verrouillee", "les poissons électriques attendent leur âge");
+  // Un aménagement demande son savoir : pas de rangée de maisons sans les machines simples.
   M.ile(CA, P, t0);
-  assert.equal(M.etatAmenagement(CA, P, "pecherie", t0).savoir, "elec.torpille");
+  assert.equal(M.etatAmenagement(CA, P, "maisons", t0).savoir, "phys.machines");
   assert.ok(M.construireIle(CA, P, "foyer", t0).ok, "le feu permet le foyer");
-  sait(P, "astro.nebra"); sait(P, "elec.torpille"); sait(P, "phys.machines");
+  sait(P, "phys.machines");
   assert.equal(M.etatAmenagement(CA, P, "ferme", t0).savoir, null);
   G = M.agesIle(CA, P); assert.ok(G.age.besoins.filter(b => b.id === "nourrir")[0].couvert); assert.equal(G.age.couverts, 2);
   assert.equal(M.etatAmenagement(CA, P, "ferme", t0).age, null, "au village, la ferme se bâtit");
