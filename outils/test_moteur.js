@@ -2424,7 +2424,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.statut(CA, P, "math.origines", t0).etat, "verrouillee", "rien d'autre avant le feu");
   assert.deepEqual(M.disponibles(CA, P, t0).map(k => k.id), ["ile.feu"]);
   assert.equal(M.choixIA(CA, P, t0).comp.id, "ile.feu", "l'île propose le feu");
-  for (const k of CA.competences.filter(k => ["ile.feu", "res.cueillir", "meteo.ciel"].includes(k.id)))
+  for (const k of CA.competences.filter(k => ["ile.feu", "res.cueillir", "res.cultiver", "meteo.ciel"].includes(k.id)))
     assert.ok(CA.questions.filter(q => q.competence === k.id).length >= 10, k.id + " a ses questions");
   const rf = M.terminerQuiz(CA, P, "ile.feu", M.tirerQuestions(CA, P, "ile.feu", 5).map(q => ({ id: q.id, correct: true })), t0, { jouer: true });
   assert.equal(rf.issue, "maitrisee");
@@ -2446,14 +2446,15 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.statut(CA, P, "math.origines", t0).etat, "disponible");
   assert.equal(M.statut(CA, P, "math.babylone", t0).etat, "verrouillee", "le rang 2 attend la cité");
   assert.equal(M.statut(CA, P, "inf.pascaline", t0).etat, "verrouillee", "un savoir sans besoin attend son âge");
-  const ch = M.choixIA(CA, P, t0); assert.equal(ch.raison, "besoin"); assert.equal(ch.besoin, "compter", "se nourrir est déjà couvert par ce que l'île donne");
+  const ch = M.choixIA(CA, P, t0); assert.equal(ch.raison, "besoin"); assert.equal(ch.besoin, "nourrir", "se nourrir demande les premières récoltes"); assert.equal(ch.comp.id, "res.cultiver");
+  assert.equal(M.etatAmenagement(CA, P, "ferme", t0).savoir, "res.cultiver", "pas de ferme sans les premières récoltes");
   // Victor (2026-11-12) : ni le ciel des premiers peuples ni les poissons électriques ne nourrissent le village.
   assert.equal(M.statut(CA, P, "elec.torpille", t0).etat, "verrouillee", "les poissons électriques attendent leur âge");
   // Un aménagement demande son savoir : pas de rangée de maisons sans les machines simples.
   M.ile(CA, P, t0);
   assert.equal(M.etatAmenagement(CA, P, "maisons", t0).savoir, "phys.machines");
   assert.ok(M.construireIle(CA, P, "foyer", t0).ok, "le feu permet le foyer");
-  sait(P, "phys.machines");
+  sait(P, "res.cultiver"); sait(P, "phys.machines");
   assert.equal(M.etatAmenagement(CA, P, "ferme", t0).savoir, null);
   G = M.agesIle(CA, P); assert.ok(G.age.besoins.filter(b => b.id === "nourrir")[0].couvert); assert.equal(G.age.couverts, 2);
   assert.equal(M.etatAmenagement(CA, P, "ferme", t0).age, null, "au village, la ferme se bâtit");
