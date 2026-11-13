@@ -1252,6 +1252,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ex-details { opacity: 0; transition: opacity .3s; } .explorer.pres .ex-details { opacity: 1; }
 .ex-objets .ile-quete, .ex-objets .ex-brille { display: none; } .explorer.pres:not(.tout-pres) .ex-brille { display: inline; } .explorer.tout-pres .ex-objets .ile-quete { display: inline; }
 .explorer.expe .ex-objets .ile-quete { display: inline; } .explorer.expe .ex-objets .ex-brille { display: none; } .ex-cible { fill: none; stroke: #fff; stroke-width: 1; opacity: .85; }
+.ex-sites { display: grid; gap: 6px; margin-top: 8px; } .ex-site { font-size: 15px; padding: 8px 10px; border: 2px dashed var(--line); border-radius: 10px; } .ex-site.ok { border-style: solid; border-color: #E0A800; }
 .ex-alerte { display: none; } .ex-bete.chasse .ex-alerte { display: inline; } .ex-liste li.sac { border-style: solid; border-color: #E0A800; } .ex-liste li.sac svg { filter: none !important; opacity: 1 !important; }
 .explorer.mordu .ex-vue::after { content: ""; position: absolute; inset: 0; background: rgba(200, 30, 30, .4); pointer-events: none; }
 .ex-scene { opacity: 0; transition: opacity .4s; pointer-events: none; } .explorer.dedans .ex-scene { opacity: 1; }
@@ -2394,7 +2395,7 @@ function demarrerJeu() {
         '<g class="ex-scene" data-scene="' + esc(q.id) + '" mask="url(#exm' + i + ')">' + sq.replace(/^<svg /, '<svg x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w + '" height="' + h.toFixed(1) + '" ') + "</g>"; }).join("").replace(/class="ile-scene"/g, 'class="ex-sc"');
     svg.insertAdjacentHTML("beforeend", detailsIle() + scenes + '<g class="ex-objets"></g><g class="ex-acteurs"></g>');
     // Le brouillard passe par-dessus tout : objets et prédateurs ne se voient que dans le cercle de l'explorateur.
-    var voile = svg.querySelector(".ile-brouillard"), trou = svg.querySelector(".ex-fog-ex"); if (voile) svg.appendChild(voile);
+    var voile = svg.querySelector(".ile-brouillard"), trous = svg.querySelectorAll(".ex-fog-ex"); if (voile) svg.appendChild(voile);
     var S = { x: ILE_W / 2, y: ILE_H / 2, k: 1 }, KMAX = 12, message = "";
     function base() { var r = vueE.getBoundingClientRect(), ar = r.width / Math.max(1, r.height), bw = Math.max(ILE_W, ILE_H * ar); return { w: bw, h: bw / ar, r: r }; }
     function borne(v, lo, hi) { return lo > hi ? (lo + hi) / 2 : Math.max(lo, Math.min(hi, v)); }
@@ -2412,21 +2413,31 @@ function demarrerJeu() {
     }
     function objets() {
       var q = queteActive();
-      svg.querySelector(".ex-objets").innerHTML = q ? q.objets.filter(function (o) { return !o.pris && !(X && X.sac.indexOf(o.id) >= 0); }).map(function (o) {
+      svg.querySelector(".ex-objets").innerHTML = (X ? X.vus.map(function (v) { return '<g transform="translate(' + v.x.toFixed(1) + "," + v.y.toFixed(1) + ')"><path d="M0 1 V-9" stroke="#5A3B1E" stroke-width="1.3" stroke-linecap="round"/><path d="M0 -9 L7 -7 L0 -4.6 Z" fill="#D94141"/></g>'; }).join("") : "") + (q ? q.objets.filter(function (o) { return !o.pris && !(X && X.sac.indexOf(o.id) >= 0); }).map(function (o) {
         var x = Math.round(o.position[0] * ILE_W), y = Math.round(o.position[1] * ILE_H);
-        return '<path class="ex-brille" transform="translate(' + x + "," + y + ')" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z" fill="#FFF3B0" stroke="#E0A800" stroke-width=".5" pointer-events="none"/>' + svgObjetQuete(o, x, y, 0.42); }).join("") : "";
+        return '<path class="ex-brille" transform="translate(' + x + "," + y + ')" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z" fill="#FFF3B0" stroke="#E0A800" stroke-width=".5" pointer-events="none"/>' + svgObjetQuete(o, x, y, 0.42); }).join("") : "");
     }
     function panneau(fini) {
       var q = queteActive(), h = "";
       if (fini) h = '<div class="ex-msg">' + esc(message) + "</div>" + blocQuete(fini, false).replace('class="ile-passage"', 'class="ile-passage ex-quete"') + '<button type="button" class="btn large" data-a="go">' + __("Épreuve unique : ") + esc(tx(M.epreuveIle(C, fini.id).nom)) + "</button>";
-      else if (q) h = '<div class="ex-msg">' + esc(message || (foyer ? __("Le brouillard cache l'île. Envoie un explorateur : il ne voit qu'autour de lui, et il n'est pas seul là-dedans.") : __("Zoome : ce que tu cherches ne se voit que de près."))) + "</div>" +
-        (foyer && !X ? '<button type="button" class="btn large" data-a="partir">' + __("Envoyer un explorateur") + "</button>" : "") + '<ul class="ex-liste">' + q.objets.map(function (o) {
-        if (X && X.sac.indexOf(o.id) >= 0) return '<li class="sac"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + "</b><small>" + __("dans le sac : à ramener") + "</small></span></li>";
-        return '<li class="' + (o.pris ? "ok" : "") + '"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + (o.pris ? " ✓" : "") + "</b>" + (o.pris || !o.zone ? "" : "<small>" + esc(tx(o.zone)) + "</small>") + "</span></li>"; }).join("") + "</ul>";
-      else h = '<div class="ex-msg">' + __("Rien à chercher pour l'instant. Zoome pour voir ton île de près.") + "</div>";
+      else {
+        var sites = foyer ? sitesAFaire() : [], prets = sitesPrets();
+        h = '<div class="ex-msg">' + esc(message || (!foyer ? (q ? __("Zoome : ce que tu cherches ne se voit que de près.") : __("Rien à chercher pour l'instant. Zoome pour voir ton île de près.")) : q ? __("Le brouillard cache l'île. Envoie un explorateur : il ne voit qu'autour de lui, et il n'est pas seul là-dedans.") :
+          sites.length ? __("Un quartier attend son emplacement. Envoie un explorateur, choisis l'endroit, puis reviens le dire au village.") : __("Rien à chercher pour l'instant. Le brouillard garde le reste de l'île."))) + "</div>" +
+          (foyer && !X && (q || sites.length) ? '<button type="button" class="btn large" data-a="partir">' + __("Envoyer un explorateur") + "</button>" : "");
+        if (q) h += '<ul class="ex-liste">' + q.objets.map(function (o) {
+          if (X && X.sac.indexOf(o.id) >= 0) return '<li class="sac"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + "</b><small>" + __("dans le sac : à ramener") + "</small></span></li>";
+          return '<li class="' + (o.pris ? "ok" : "") + '"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + (o.pris ? " ✓" : "") + "</b>" + (o.pris || !o.zone ? "" : "<small>" + esc(tx(o.zone)) + "</small>") + "</span></li>"; }).join("") + "</ul>";
+        if (sites.length || prets.length) h += '<div class="ex-sites">' + sites.map(function (x) {
+          var vu = X && X.vus.some(function (v) { return v.id === x.id; });
+          return vu ? '<div class="ex-site ok">📍 ' + esc(tx(x.nomFinal)) + __(" : repère planté, à rapporter au village") + "</div>" : X ? '<button type="button" class="btn sec" data-site="' + esc(x.id) + '">📍 ' + __("Fonder ici : ") + esc(tx(x.nomFinal)) + "</button>" : '<div class="ex-site">🔒 ' + esc(tx(x.nomFinal)) + __(" : emplacement à choisir") + "</div>"; }).join("") +
+          prets.map(function (x) { return '<button type="button" class="btn" data-ouvrir="' + esc(x.id) + '">🔒 ' + __("Ouvrir : ") + esc(tx(x.nomFinal)) + "</button>"; }).join("") + "</div>";
+      }
       bas.innerHTML = h;
       var go = bas.querySelector('[data-a="go"]'); if (go) go.onclick = function () { fermer(); ouvrirEpreuveIle(fini.id); };
       var bp = bas.querySelector('[data-a="partir"]'); if (bp) bp.onclick = partir;
+      bas.querySelectorAll("[data-site]").forEach(function (b2) { b2.onclick = function () { planter(b2.getAttribute("data-site")); }; });
+      bas.querySelectorAll("[data-ouvrir]").forEach(function (b2) { b2.onclick = function () { var idq = b2.getAttribute("data-ouvrir"); fermer(); ouvrirVerrouQuartier(idq); }; });
     }
     // Victor (2026-11-13) : l'expédition. Un habitant part du village ; on touche la carte, il y va. Il ne voit qu'autour
     // de lui, le brouillard se referme derrière. Ce qu'il ramasse ne compte qu'une fois rapporté au village. Des
@@ -2446,11 +2457,31 @@ function demarrerJeu() {
       for (var e = 0; e < ecarts.length; e++) { nx = o.x + Math.cos(cap + ecarts[e]) * l; ny = o.y + Math.sin(cap + ecarts[e]) * l; if (praticable(nx, ny)) { o.x = nx; o.y = ny; return true; } }
       return false;
     }
+    // Victor (2026-11-13) : l'emplacement d'un quartier se choisit, là où se tient l'explorateur, si la place suffit.
+    function sitesAFaire() { return M.ile(C, P, maintenant()).quartiers.filter(function (q) { return q.aExplorer; }); }
+    function sitesPrets() { return M.ile(C, P, maintenant()).quartiers.filter(function (q) { return q.aOuvrir && !q.aExplorer; }); }
+    function lieuRefuse(q, x, y) {
+      var r = M.siteRefuse(C, P, q.id, [x / ILE_W, y / ILE_H], maintenant());
+      if (r === "proche" || X.vus.some(function (v) { return v.id !== q.id && Math.hypot(v.x - x, v.y - y) < 70; })) return __("Trop près d'un autre quartier : il faut de la place autour.");
+      if (r) return __("Trop près du bord de la carte.");
+      var port = q.decor === "quai", ray = port ? 16 : 30, ok = true;
+      for (var a = 0; a < 8; a++) { var ax = x + Math.cos(a * 0.785) * ray, ay = y + Math.sin(a * 0.785) * ray; if (!praticable(ax, ay) || dansOvale(ax, ay, MARAIS) || dansOvale(ax, ay, [ILE_CX, ILE_CY + 2, 50, 56])) ok = false; }
+      if (!ok) return __("Pas assez de place ici : la mer, l'eau ou le volcan sont trop près.");
+      if (port) { var dx = x - ILE_CX, dy = y - ILE_CY, L = Math.hypot(dx, dy) || 1; if (surTerre(x + dx / L * 60, y + dy / L * 60, 0.98)) return __("Un port se fonde près de la mer : approche-toi de la côte."); }
+      return null;
+    }
+    function planter(idq) {
+      if (!X) return; var q = sitesAFaire().filter(function (x) { return x.id === idq; })[0]; if (!q) return;
+      var refus = lieuRefuse(q, X.x, X.y);
+      if (refus) message = refus;
+      else { X.vus = X.vus.filter(function (v) { return v.id !== idq; }); X.vus.push({ id: idq, x: X.x, y: X.y }); message = __("Repère planté pour : {q}. Reste à revenir le dire au village.", { q: tx(q.nomFinal) }); }
+      objets(); panneau();
+    }
     function versCarte(cx, cy) { var b = base(); return [S.x + (cx - b.r.left - b.r.width / 2) / b.r.width * b.w / S.k, S.y + (cy - b.r.top - b.r.height / 2) / b.r.height * b.h / S.k]; }
     var LOUP = '<ellipse cy="4.6" rx="5.5" ry="1.4" fill="rgba(0,0,0,.25)"/><path d="M-5 1 L-4 -2 L3 -2.5 L4.6 -5 L5.6 -2.6 L7.4 -.4 L5 1 L4 4.4 L2.8 4.4 L2.4 1.6 L-2 1.6 L-2.8 4.4 L-4 4.4 Z" fill="#2E313B"/><path d="M-4.6 0 L-7.6 -1.6" stroke="#2E313B" stroke-width="1.3" stroke-linecap="round"/><circle cx="5" cy="-1.8" r=".7" fill="#FF4D3D"/>';
     function partir() {
       if (!foyer || X) return;
-      X = { x: FX, y: FY, tx: FX, ty: FY, sac: [], t: performance.now(), sens: 1, betes: [] };
+      X = { x: FX, y: FY, tx: FX, ty: FY, sac: [], vus: [], t: performance.now(), sens: 1, betes: [] };
       for (var n = 0; n < EXP.betes; n++) { var p = pointLibre(); X.betes.push({ x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1 }); }
       acteurs.innerHTML = '<circle class="ex-cible" r="2.4"/>' + X.betes.map(function () { return '<g class="ex-bete"><g class="ex-corps">' + LOUP + '</g><text class="ex-alerte" y="-7" text-anchor="middle" font-size="7" font-weight="800" fill="#D92B2B">!</text></g>'; }).join("") +
         '<g class="ex-explo"><ellipse cy="1" rx="6.5" ry="2.6" fill="none" stroke="#fff" stroke-width="1" opacity=".9"/><g class="ex-corps">' + svgHabitant(0, 0, 977, 1.15) + '</g><g class="ex-sac"></g></g>';
@@ -2460,15 +2491,15 @@ function demarrerJeu() {
       objets(); panneau(); dessiner(); appliquer(); raf = requestAnimationFrame(tour);
     }
     function dessiner() {
-      if (!X) { if (trou) trou.setAttribute("r", 0); return; }
+      if (!X) { trous.forEach(function (c) { c.setAttribute("r", 0); }); return; }
       X.ee.setAttribute("transform", "translate(" + X.x.toFixed(1) + "," + X.y.toFixed(1) + ")"); X.ee.querySelector(".ex-corps").setAttribute("transform", "scale(" + X.sens + ",1)");
       X.ec.setAttribute("cx", X.tx.toFixed(1)); X.ec.setAttribute("cy", X.ty.toFixed(1)); X.ec.style.display = Math.hypot(X.tx - X.x, X.ty - X.y) > 2 ? "" : "none";
       X.betes.forEach(function (b, i) { var e = X.eb[i]; e.setAttribute("transform", "translate(" + b.x.toFixed(1) + "," + b.y.toFixed(1) + ")"); e.querySelector(".ex-corps").setAttribute("transform", "scale(" + b.sens + ",1)"); e.setAttribute("class", "ex-bete" + (b.chasse ? " chasse" : "")); });
-      if (trou) { trou.setAttribute("cx", X.x.toFixed(1)); trou.setAttribute("cy", (X.y - 4).toFixed(1)); trou.setAttribute("r", (EXP.vue * 1.3).toFixed(0)); }
+      trous.forEach(function (c) { c.setAttribute("cx", X.x.toFixed(1)); c.setAttribute("cy", (X.y - 4).toFixed(1)); c.setAttribute("r", (EXP.vue * 1.9).toFixed(0)); });
     }
     function attrape() {
-      var r = M.perdreExplorateur(C, P, maintenant()), avait = X.sac.length; sauver();
-      message = (r && r.perdu ? __("Un prédateur a surpris ton explorateur : il ne reviendra pas. Un habitant de moins.") : __("Un prédateur a surpris ton explorateur. Il s'en tire de justesse.")) + (avait ? " " + __("Ce qu'il portait est resté dans le brouillard.") : "") + " " + __("Un autre repart du village.");
+      var r = M.perdreExplorateur(C, P, maintenant()), avait = X.sac.length + X.vus.length; X.vus = []; sauver();
+      message = (r && r.perdu ? __("Un prédateur a surpris ton explorateur : il ne reviendra pas. Un habitant de moins.") : __("Un prédateur a surpris ton explorateur. Il s'en tire de justesse.")) + (avait ? " " + __("Ce qu'il portait et ce qu'il avait repéré sont perdus.") : "") + " " + __("Un autre repart du village.");
       X.x = X.tx = FX; X.y = X.ty = FY; X.sac = [];
       X.betes.forEach(function (b) { b.chasse = false; if (Math.hypot(b.x - FX, b.y - FY) < 110) { var p = pointLibre(); b.x = b.wx = p[0]; b.y = b.wy = p[1]; } });
       z.classList.add("mordu"); setTimeout(function () { z.classList.remove("mordu"); }, 700);
@@ -2493,9 +2524,11 @@ function demarrerJeu() {
           if (o.pris || X.sac.indexOf(o.id) >= 0 || Math.hypot(o.position[0] * ILE_W - X.x, o.position[1] * ILE_H - X.y) > 7) return;
           X.sac.push(o.id); message = tx(o.trouve || o.nom) + " " + __("Reste à le rapporter au village."); objets(); panneau();
         });
-        if (q && X.sac.length && Math.hypot(X.x - FX, X.y - FY) < 24) {
-          var der = null; X.sac.forEach(function (id) { der = M.ramasserIle(C, P, q.id, id, maintenant()) || der; }); var n = X.sac.length; X.sac = []; sauver();
-          message = n > 1 ? __("{n} trouvailles rapportées au village.", { n: n }) : __("Rapporté au village.");
+        if ((X.sac.length || X.vus.length) && Math.hypot(X.x - FX, X.y - FY) < 24) {
+          var der = null, n = X.sac.length, noms = [];
+          if (q) X.sac.forEach(function (id) { der = M.ramasserIle(C, P, q.id, id, maintenant()) || der; }); X.sac = [];
+          X.vus.forEach(function (v) { var rs = M.repererSite(C, P, v.id, [v.x / ILE_W, v.y / ILE_H], maintenant()); if (rs && rs.ok) noms.push(tx(rs.nom)); }); X.vus = []; sauver();
+          message = (n > 1 ? __("{n} trouvailles rapportées au village.", { n: n }) : n ? __("Rapporté au village.") : "") + (noms.length ? " " + __("Emplacement retenu : {q}. Il reste à l'ouvrir.", { q: noms.join(", ") }) : "");
           if (der && der.quete.complete) { message += " " + __("Tout y est."); cancelAnimationFrame(raf); X = null; z.classList.remove("expe"); acteurs.innerHTML = ""; dessiner(); objets(); panneau(der.quete); return; }
           objets(); panneau();
         }
@@ -5019,10 +5052,13 @@ function demarrerJeu() {
   // partout, troué d'un disque aux bords fondus sur chaque quartier ; le dernier disque suit l'explorateur (Explorer).
   function brouillardIle(I, lieux) {
     if (!M.modeIle(P)) return "";
-    var trous = I.quartiers.map(function (q, i) { return q.fonde || q.camp ? '<circle cx="' + fx(lieux[i][0]) + '" cy="' + fx(lieux[i][1] + 4) + '" r="62" fill="url(#ile-fog-t)"/>' : ""; }).join("");
-    return '<defs><radialGradient id="ile-fog-t"><stop offset="0" stop-color="#000"/><stop offset=".7" stop-color="#000"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>' +
-      '<mask id="ile-fog" maskUnits="userSpaceOnUse" x="0" y="0" width="' + ILE_W + '" height="' + ILE_H + '"><rect width="' + ILE_W + '" height="' + ILE_H + '" fill="#fff"/>' + trous + '<circle class="ile-fog-ex" r="0" fill="url(#ile-fog-t)"/></mask></defs>' +
-      '<rect class="ile-brouillard" width="' + ILE_W + '" height="' + ILE_H + '" fill="#DDE7EA" opacity=".94" mask="url(#ile-fog)" pointer-events="none"/>';
+    // Victor (2026-11-13) : brouillard plus sombre, et en dégradé : autour de ce qu'on voit, une première couronne de
+    // brume claire qui estompe, puis le brouillard épais. Deux voiles, deux masques, les mêmes disques.
+    function disques(grad) { return I.quartiers.map(function (q, i) { return q.fonde || q.camp ? '<circle cx="' + fx(lieux[i][0]) + '" cy="' + fx(lieux[i][1] + 4) + '" r="84" fill="url(#' + grad + ')"/>' : ""; }).join("") + '<circle class="ile-fog-ex" r="0" fill="url(#' + grad + ')"/>'; }
+    function masque(id, grad) { return '<mask id="' + id + '" maskUnits="userSpaceOnUse" x="0" y="0" width="' + ILE_W + '" height="' + ILE_H + '"><rect width="' + ILE_W + '" height="' + ILE_H + '" fill="#fff"/>' + disques(grad) + "</mask>"; }
+    return '<defs><radialGradient id="ile-fog-t"><stop offset="0" stop-color="#000"/><stop offset=".52" stop-color="#000"/><stop offset=".8" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="ile-fog-u"><stop offset="0" stop-color="#000"/><stop offset=".34" stop-color="#000"/><stop offset=".62" stop-color="#000" stop-opacity="0"/></radialGradient>' + masque("ile-fog", "ile-fog-t") + masque("ile-fog-v", "ile-fog-u") + "</defs>" +
+      '<g class="ile-brouillard" pointer-events="none"><rect width="' + ILE_W + '" height="' + ILE_H + '" fill="#E3EAEC" opacity=".55" mask="url(#ile-fog-v)"/><rect width="' + ILE_W + '" height="' + ILE_H + '" fill="#7C8A96" mask="url(#ile-fog)"/></g>';
   }
   function svgCarteIle(I) {
     LIEU_HAB = null;
@@ -6011,6 +6047,10 @@ function demarrerJeu() {
   // Ouvrir un quartier : la question du jour, tirée des savoirs qui s'y sont posés, ou le prix en crédits.
   function ouvrirVerrouQuartier(id) {
     var e = M.questionQuartier(C, P, id, maintenant()); if (!e) return;
+    if (e.aExplorer) {
+      feuilleSimple('<div class="eyebrow" style="color:' + e.couleur + '">' + __("Nouveau quartier") + "</div><h2>📍 " + esc(tx(e.nom)) + '</h2><p style="font-size:17px">' + __("Personne ne sait encore où le bâtir. Envoie un explorateur dans le brouillard : il choisit l'emplacement, s'il y a assez de place, puis revient le dire au village. Ensuite seulement, le quartier s'ouvre.") + '</p><button type="button" class="btn large" data-a="explorer">' + __("Explorer l'île") + "</button>", tx(e.nom), { explorer: function () { fermerFeuille(); ouvrirExplorer(); } });
+      return;
+    }
     var q = e.question, kq = q && C.parId[q.competence];
     feuilleSimple('<div class="eyebrow" style="color:' + e.couleur + '">' + __("Nouveau quartier à ouvrir") + "</div><h2>🔒 " + esc(tx(e.nom)) + '</h2><p style="font-size:17px">' + __("Un quartier ne s'ouvre pas tout seul : les crédits paient les bâtisseurs. Une bonne réponse à sa question, posée une seule fois, divise le prix par deux.") + '</p><div id="verrou-q"></div><div id="verrou-c"></div>', tx(e.nom));
     var z = feuille.querySelector("#verrou-q"), zc = feuille.querySelector("#verrou-c"), fait = false;

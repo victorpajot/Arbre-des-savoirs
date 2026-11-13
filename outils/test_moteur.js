@@ -2509,6 +2509,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const Iq = M.ile(CA, P, t0), feu = Iq.quartiers.find(q => q.installations.some(x => x.comp === "ile.feu"));
     assert.ok(feu.fonde && !feu.aOuvrir, "le quartier du feu est là depuis le campement");
     const ferme = Iq.quartiers.find(q => q.aOuvrir); assert.ok(ferme && !ferme.fonde && ferme.habitants === 0, "un quartier attend d'être ouvert, sans habitants");
+    // Victor (2026-11-13) : avant le verrou, un explorateur repère le site, à l'emplacement qu'on choisit.
+    assert.ok(ferme.aExplorer && M.ouvrirQuartier(CA, P, ferme.id, "credits", null, t0).refus === "site", "pas d'ouverture sans repérage");
+    assert.equal(M.repererSite(CA, P, ferme.id, feu.position, t0).refus, "proche", "pas sur un autre quartier");
+    assert.equal(M.repererSite(CA, P, ferme.id, [0.99, 0.5], t0).refus, "hors");
+    const libre = [[0.5, 0.2], [0.3, 0.4], [0.3, 0.75], [0.7, 0.8]].find(c => !M.siteRefuse(CA, P, ferme.id, c, t0));
+    assert.ok(M.repererSite(CA, P, ferme.id, libre, t0).ok); assert.deepEqual(M.ile(CA, P, t0).quartiers.find(q => q.id === ferme.id).position, libre, "le quartier se pose où on l'a choisi");
+    assert.ok(!M.ile(CA, P, t0).quartiers.find(q => q.id === ferme.id).aExplorer);
+    CA.ile.quartiers.forEach(q => { if (q.id !== ferme.id) { P.sites[q.id] = { t: t0, position: q.position }; } });
     const eq = M.questionQuartier(CA, P, ferme.id, t0); assert.ok(eq.question && eq.credits === 60 && eq.payable);
     assert.equal(M.ouvrirQuartier(CA, P, ferme.id, "question", false, t0).juste, false);
     const e2 = M.questionQuartier(CA, P, ferme.id, t0 + J); assert.ok(!e2.question && e2.credits === 60, "ratée : pas de seconde question, prix entier");
@@ -2561,6 +2569,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   { const Q0 = peche(); delete Q0.quartiers.port;
     const e0 = M.etatAmenagement(CA, Q0, "pecherie", t0); assert.ok(!e0.possible && e0.ferme && e0.ferme.id === "port" && e0.ferme.aOuvrir, "port fermé : pas de pêcherie");
     assert.ok(!M.construireIle(CA, Q0, "pecherie", t0).ok);
+    Q0.sites = { port: { t: t0, position: CA.ile.quartiers.find(q => q.id === "port").position } };
     assert.ok(M.ouvrirQuartier(CA, Q0, "port", "credits", null, t0).ouvert);
     const r0 = M.construireIle(CA, Q0, "pecherie", t0); assert.ok(r0.ok && r0.quartier === "port", "port ouvert : la pêcherie s'y bâtit");
     // Une pêcherie bâtie au village avant la règle rejoint le port, qui s'ouvre sans frais.
