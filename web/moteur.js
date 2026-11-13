@@ -1961,7 +1961,7 @@
   function queteIle(contenu, partie, id) {
     var e = epreuveIle(contenu, id), q = e && e.quete; if (!q) return null;
     var pris = (partie.quetes || {})[id] || {};
-    var objets = q.objets.map(function (o) { return { id: o.id, nom: o.nom, trouve: o.trouve || null, position: o.position, pris: !!pris[o.id] }; });
+    var objets = q.objets.map(function (o) { return { id: o.id, nom: o.nom, trouve: o.trouve || null, zone: o.zone || null, position: o.position, pris: !!pris[o.id] }; });
     var reste = objets.filter(function (o) { return !o.pris; }).length;
     return { id: id, nom: q.nom, texte: q.texte, objets: objets, reste: reste, complete: reste === 0 };
   }

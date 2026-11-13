@@ -1239,6 +1239,18 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-quete { cursor: pointer; } .ile-quete > * { filter: drop-shadow(0 1px 0 rgba(255,255,255,.7)); } .ile-quete.pris { transition: transform .4s ease-in, opacity .4s; opacity: 0; }
 .ile-quete-sac { display: flex; justify-content: space-between; gap: 6px; margin: 4px 0 10px; } .ile-quete-sac span { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 6px 2px; border-radius: 10px; border: 2px dashed var(--line); } .ile-quete-sac span svg { opacity: .28; filter: grayscale(1); }
 .ile-quete-sac span.ok { border-style: solid; border-color: var(--good); } .ile-quete-sac span.ok svg { opacity: 1; filter: none; } .ile-quete-sac small { font-size: 12px; line-height: 1.2; }
+.explorer { position: fixed; inset: 0; z-index: 57; background: #2F7FB0; display: flex; flex-direction: column; }
+.ex-vue { position: relative; flex: 1; min-height: 0; overflow: hidden; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; } .ex-vue svg { display: block; width: 100%; height: 100%; }
+.ex-haut { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; padding: calc(8px + env(safe-area-inset-top, 0px)) 8px 8px 16px; color: #fff; font-size: 17px; text-shadow: 0 1px 3px rgba(0,0,0,.5); pointer-events: none; }
+.ex-x, .ex-zoom button { pointer-events: auto; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--surface); color: var(--text); font-size: 26px; font-weight: 700; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.3); cursor: pointer; }
+.explorer .ex-x { color: #20222E; background: #fff; text-shadow: none; font-family: system-ui, sans-serif; } .ex-zoom { position: absolute; right: 8px; top: calc(70px + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: 8px; }
+.ex-bas { flex: none; background: var(--bg); padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px)); max-height: 46vh; overflow-y: auto; box-shadow: 0 -4px 14px rgba(0,0,0,.25); }
+.ex-msg { font-size: 17px; line-height: 1.4; margin-bottom: 8px; } .ex-liste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.ex-liste li { display: flex; align-items: center; gap: 6px; padding: 5px 6px; border-radius: 10px; border: 2px dashed var(--line); } .ex-liste li svg { flex: none; } .ex-liste li.ok { border-style: solid; border-color: var(--good); } .ex-liste li:not(.ok) svg { filter: grayscale(1); opacity: .45; }
+.ex-liste b { display: block; font-size: 15px; } .ex-liste small { display: block; font-size: 13px; color: var(--muted); line-height: 1.25; } .ex-quete { margin: 0 0 8px; } .ex-bas .btn { width: 100%; }
+.ex-details { opacity: 0; transition: opacity .3s; } .explorer.pres .ex-details { opacity: 1; }
+.ex-objets .ile-quete, .ex-objets .ex-brille { display: none; } .explorer.pres:not(.tout-pres) .ex-brille { display: inline; } .explorer.tout-pres .ex-objets .ile-quete { display: inline; }
+.ile-explorer { width: 100%; margin: 8px 0 4px; }
 .ile-flamme.froid { filter: grayscale(1) brightness(.55); }
 .ile-flamme.ep-allume { transform-box: fill-box; transform-origin: 50% 100%; animation: ep-allume 1.6s cubic-bezier(.2,1.4,.4,1) both; }
 @keyframes ep-allume { 0% { transform: scale(.35); filter: grayscale(1) brightness(.55); } 45% { transform: scale(1.25); filter: drop-shadow(0 0 8px #FFB347) brightness(1.3); } 100% { transform: scale(1); filter: none; } }
@@ -2303,12 +2315,7 @@ function demarrerJeu() {
     var G = M.modeIle(P) && M.agesIle(C, P), ep = G && G.age.epreuve, q = ep && M.queteIle(C, P, ep);
     return q && !q.complete ? q : null;
   }
-  function allerQuete() {
-    var q = queteActive(); if (!q) return;
-    fermerFeuille(); vue = "ile"; quartierVu = lieuVu = null; rendre();
-    var c = document.querySelector(".ile-cadre"); if (c && c.scrollIntoView) c.scrollIntoView({ block: "center" });
-    toast(__("Cherche sur la carte : encore {n} à trouver.", { n: q.reste }));
-  }
+  function allerQuete() { if (queteActive()) ouvrirExplorer(); }
   var DESSINS_QUETE = {
     silex: '<path d="M-8 4 L-5 -6 L4 -8 L9 -1 L5 7 L-3 8 Z" fill="#6B6257"/><path d="M-5 -6 L4 -8 L2 -1 L-4 1 Z" fill="#9A9085"/><path d="M-8 4 L-3 8 L-5 5 Z" fill="#D9D2C5"/>',
     pyrite: '<path d="M-8 5 L-9 -3 L-2 -8 L7 -6 L9 3 L3 8 Z" fill="#B8962E"/><path d="M-9 -3 L-2 -8 L7 -6 L1 -1 Z" fill="#F0D560"/><path d="M-4 1 h4 v3 h-4 z" fill="#FFF0A0"/>',
@@ -2319,7 +2326,102 @@ function demarrerJeu() {
   function blocQuete(q, bouton) {
     return '<div class="ile-passage"><div class="eyebrow">' + __("Quête") + "</div><h3>" + esc(tx(q.nom)) + "</h3><p>" + esc(tx(q.texte)) + '</p><div class="ile-quete-sac">' + q.objets.map(function (o) {
       return '<span class="' + (o.pris ? "ok" : "") + '"><svg viewBox="-14 -14 28 28" width="40" height="40" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><small>" + esc(tx(o.nom)) + (o.pris ? " ✓" : "") + "</small></span>"; }).join("") + "</div>" +
-      (bouton ? '<button type="button" class="btn large" data-a="quete">' + __("Chercher sur l'île") + "</button>" : "") + "</div>";
+      (bouton ? '<button type="button" class="btn large" data-a="quete">' + __("Explorer l'île") + "</button>" : "") + "</div>";
+  }
+  // Les petites choses qu'on ne voit qu'en zoomant : cailloux, souches, fleurs, champignons, touffes. Tirées une fois.
+  var DETAILS_ILE = null;
+  function terreIle(x, y) {
+    var dx = (x - ILE_CX) / ILE_RX, dy = (y - ILE_CY) / ILE_RY, r = Math.sqrt(dx * dx + dy * dy);
+    if (r > 0.8 * coteIle(Math.atan2(dy, dx))) return false;
+    if (Math.pow((x - LAC[0]) / (LAC[2] + 4), 2) + Math.pow((y - LAC[1]) / (LAC[3] + 4), 2) < 1) return false;
+    if (Math.pow((x - 181) / 46, 2) + Math.pow((y - 296) / 60, 2) < 1) return false;
+    return true;
+  }
+  function detailsIle() {
+    if (DETAILS_ILE) return DETAILS_ILE;
+    var h = "";
+    for (var i = 0; i < 520; i++) {
+      var g = graine("detail" + i), x = 14 + g % 332, y = 30 + (g >>> 9) % 550, t = (g >>> 20) % 7, a = (g >>> 5) % 360;
+      if (!terreIle(x, y)) continue;
+      h += '<g transform="translate(' + x + "," + y + ")" + (t < 2 ? " rotate(" + a + ")" : "") + '">' + (
+        t === 0 ? '<path d="M-2 1 L-1.4 -1.4 L1 -1.8 L2.2 .4 L.6 1.8 Z" fill="#8E8A82"/><path d="M-1.4 -1.4 L1 -1.8 L.2 -.2 Z" fill="#B9B4AA"/>' :
+        t === 1 ? '<path d="M-1.4 .8 L-.8 -1 L.9 -1.1 L1.5 .5 Z" fill="#A49C8E"/>' :
+        t === 2 ? '<ellipse rx="2" ry="1.3" fill="#7A5230"/><ellipse rx="1.2" ry=".7" fill="#C9A26B"/>' :
+        t === 3 ? '<circle cx="-1.2" cy="0" r=".7" fill="#F6E27A"/><circle cx=".9" cy="-.8" r=".7" fill="#F2A3C0"/><circle cx=".6" cy="1" r=".7" fill="#fff"/>' :
+        t === 4 ? '<path d="M-.3 0 h.6 v1.6 h-.6 z" fill="#EFE6D2"/><path d="M-1.4 0 a1.4 1.2 0 0 1 2.8 0 z" fill="#C2452D"/>' :
+        t === 5 ? '<path d="M-1.6 1 L-1.2 -1.4 M0 1 L0 -1.8 M1.6 1 L1.1 -1.3" stroke="#4E8A3C" stroke-width=".6" stroke-linecap="round"/>' :
+        '<path d="M-2 .6 L2 -.6 M-.6 -.9 L.2 1" stroke="#8A6240" stroke-width=".55" stroke-linecap="round"/>') + "</g>";
+    }
+    return (DETAILS_ILE = '<g class="ex-details" pointer-events="none">' + h + "</g>");
+  }
+  // Victor (2026-11-13) : « Explorer en plein écran ». Un doigt déplace, deux doigts zooment, + et − aussi. Les détails
+  // n'apparaissent qu'à mi-chemin, les objets de quête que de tout près ; avant, un éclat signale qu'il y a quelque chose.
+  function ouvrirExplorer() {
+    if (document.querySelector(".explorer")) return;
+    fermerFeuille();
+    var I = campIle(M.ile(C, P, maintenant()));
+    var z = el('<div class="explorer" role="dialog" aria-modal="true" aria-label="' + __("Explorer l'île") + '"><div class="ex-vue">' + svgCarteIle(I) + '</div><div class="ex-haut"><b>' + __("Explorer l'île") + '</b><button type="button" class="ex-x" aria-label="' + __("Fermer") + '">✕</button></div>' +
+      '<div class="ex-zoom"><button type="button" data-z="1" aria-label="' + __("Zoomer") + '">+</button><button type="button" data-z="-1" aria-label="' + __("Dézoomer") + '">−</button></div><div class="ex-bas"></div></div>');
+    var vueE = z.querySelector(".ex-vue"), svg = vueE.querySelector("svg"), bas = z.querySelector(".ex-bas");
+    svg.removeAttribute("width"); svg.removeAttribute("height"); svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
+    svg.insertAdjacentHTML("beforeend", detailsIle() + '<g class="ex-objets"></g>');
+    var S = { x: ILE_W / 2, y: ILE_H / 2, k: 1 }, KMAX = 7, message = "";
+    function base() { var r = vueE.getBoundingClientRect(), ar = r.width / Math.max(1, r.height), bw = Math.max(ILE_W, ILE_H * ar); return { w: bw, h: bw / ar, r: r }; }
+    function borne(v, lo, hi) { return lo > hi ? (lo + hi) / 2 : Math.max(lo, Math.min(hi, v)); }
+    function appliquer() {
+      var b = base(), w = b.w / S.k, h = b.h / S.k;
+      S.x = borne(S.x, w / 2, ILE_W - w / 2); S.y = borne(S.y, h / 2, ILE_H - h / 2);
+      svg.setAttribute("viewBox", (S.x - w / 2).toFixed(2) + " " + (S.y - h / 2).toFixed(2) + " " + w.toFixed(2) + " " + h.toFixed(2));
+      z.classList.toggle("pres", S.k >= 2); z.classList.toggle("tout-pres", S.k >= 3.2);
+    }
+    function zoomer(f, cx, cy) {
+      var b = base(), k2 = Math.max(1, Math.min(KMAX, S.k * f)); if (cx == null) { cx = b.r.left + b.r.width / 2; cy = b.r.top + b.r.height / 2; }
+      var ox = (cx - b.r.left - b.r.width / 2) / b.r.width, oy = (cy - b.r.top - b.r.height / 2) / b.r.height;
+      var mx = S.x + ox * b.w / S.k, my = S.y + oy * b.h / S.k;
+      S.k = k2; S.x = mx - ox * b.w / S.k; S.y = my - oy * b.h / S.k; appliquer();
+    }
+    function objets() {
+      var q = queteActive();
+      svg.querySelector(".ex-objets").innerHTML = q ? q.objets.filter(function (o) { return !o.pris; }).map(function (o) {
+        var x = Math.round(o.position[0] * ILE_W), y = Math.round(o.position[1] * ILE_H);
+        return '<path class="ex-brille" transform="translate(' + x + "," + y + ')" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z" fill="#FFF3B0" stroke="#E0A800" stroke-width=".5" pointer-events="none"/>' + svgObjetQuete(o, x, y, 0.42); }).join("") : "";
+    }
+    function panneau(fini) {
+      var q = queteActive(), h = "";
+      if (fini) h = '<div class="ex-msg">' + esc(message) + "</div>" + blocQuete(fini, false).replace('class="ile-passage"', 'class="ile-passage ex-quete"') + '<button type="button" class="btn large" data-a="go">' + __("Épreuve unique : ") + esc(tx(M.epreuveIle(C, fini.id).nom)) + "</button>";
+      else if (q) h = '<div class="ex-msg">' + esc(message || __("Zoome : ce que tu cherches ne se voit que de près.")) + '</div><ul class="ex-liste">' + q.objets.map(function (o) {
+        return '<li class="' + (o.pris ? "ok" : "") + '"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + (o.pris ? " ✓" : "") + "</b>" + (o.pris || !o.zone ? "" : "<small>" + esc(tx(o.zone)) + "</small>") + "</span></li>"; }).join("") + "</ul>";
+      else h = '<div class="ex-msg">' + __("Rien à chercher pour l'instant. Zoome pour voir ton île de près.") + "</div>";
+      bas.innerHTML = h;
+      var go = bas.querySelector('[data-a="go"]'); if (go) go.onclick = function () { fermer(); ouvrirEpreuveIle(fini.id); };
+    }
+    function fermer() { window.removeEventListener("resize", appliquer); z.remove(); rendre(); }
+    z.querySelector(".ex-x").onclick = fermer;
+    z.querySelectorAll("[data-z]").forEach(function (b) { b.onclick = function () { zoomer(b.getAttribute("data-z") === "1" ? 1.6 : 1 / 1.6); }; });
+    // Les gestes : un pointeur glisse, deux pincent. Un toucher sans glissement ramasse.
+    var doigts = {}, bouge = 0, ecart = 0;
+    function liste() { return Object.keys(doigts).map(function (k) { return doigts[k]; }); }
+    vueE.addEventListener("pointerdown", function (ev) { doigts[ev.pointerId] = { x: ev.clientX, y: ev.clientY }; if (liste().length === 1) bouge = 0; ecart = 0; });
+    vueE.addEventListener("pointermove", function (ev) {
+      var d = doigts[ev.pointerId]; if (!d) return;
+      var L = liste(), b = base();
+      if (L.length === 1) { var dx = ev.clientX - d.x, dy = ev.clientY - d.y; bouge += Math.abs(dx) + Math.abs(dy); S.x -= dx * b.w / S.k / b.r.width; S.y -= dy * b.h / S.k / b.r.height; d.x = ev.clientX; d.y = ev.clientY; appliquer(); }
+      else if (L.length === 2) {
+        d.x = ev.clientX; d.y = ev.clientY; L = liste(); bouge += 20;
+        var e2 = Math.hypot(L[0].x - L[1].x, L[0].y - L[1].y); if (ecart > 0 && e2 > 0) zoomer(e2 / ecart, (L[0].x + L[1].x) / 2, (L[0].y + L[1].y) / 2); ecart = e2;
+      }
+    });
+    ["pointerup", "pointercancel", "pointerleave"].forEach(function (n) { vueE.addEventListener(n, function (ev) { delete doigts[ev.pointerId]; ecart = 0; }); });
+    vueE.addEventListener("wheel", function (ev) { ev.preventDefault(); zoomer(ev.deltaY < 0 ? 1.25 : 0.8, ev.clientX, ev.clientY); }, { passive: false });
+    vueE.addEventListener("dblclick", function (ev) { zoomer(1.8, ev.clientX, ev.clientY); });
+    vueE.addEventListener("click", function (ev) {
+      if (bouge > 10) return;
+      var gq = ev.target.closest && ev.target.closest("[data-quete]"), q = queteActive(); if (!gq || !q) return;
+      var rq = M.ramasserIle(C, P, q.id, gq.getAttribute("data-quete"), maintenant()); if (!rq) return;
+      sauver(); message = tx(rq.objet.trouve || rq.objet.nom); objets(); panneau(rq.quete.complete ? rq.quete : null);
+    }, true);
+    window.addEventListener("resize", appliquer);
+    document.body.appendChild(z); objets(); panneau(); appliquer();
   }
   function svgPierres() {
     return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="150" rx="86" ry="10" fill="rgba(0,0,0,.14)"/>' +
@@ -5175,24 +5277,9 @@ function demarrerJeu() {
       var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return;
       var idq = g.getAttribute("data-q"); if (I.quartiers.some(function (x) { return x.id === idq && x.aOuvrir; })) { ouvrirVerrouQuartier(idq); return; }
       quartierVu = idq; rendre(); window.scrollTo(0, 0); };
-    var qa = queteActive();
-    if (qa && !quartierVu) {
-      var svgC = carte.querySelector("svg");
-      if (svgC) svgC.insertAdjacentHTML("beforeend", qa.objets.filter(function (o) { return !o.pris; }).map(function (o) { return svgObjetQuete(o, Math.round(o.position[0] * ILE_W), Math.round(o.position[1] * ILE_H), 1); }).join(""));
-      carte.addEventListener("click", function (ev) {
-        var gq = ev.target.closest && ev.target.closest("[data-quete]"); if (!gq) return;
-        ev.stopPropagation();
-        var rq = M.ramasserIle(C, P, qa.id, gq.getAttribute("data-quete"), maintenant()); if (!rq) return;
-        sauver(); gq.classList.add("pris");
-        var E2 = M.epreuveIle(C, qa.id);
-        setTimeout(function () {
-          rendre();
-          if (rq.quete.complete) feuilleSimple('<div class="eyebrow">' + __("Quête accomplie") + "</div><h2>" + esc(tx(rq.quete.nom)) + '</h2><div class="bulle-p"></div><p style="font-size:17px">' + esc(tx(rq.objet.trouve || rq.objet.nom)) + "</p>" + blocQuete(rq.quete, false) + '<button type="button" class="btn large" data-a="go">' + __("Épreuve unique : ") + esc(tx(E2.nom)) + "</button>", tx(rq.quete.nom), { go: function () { fermerFeuille(); ouvrirEpreuveIle(qa.id); } }, __("Plus tard"));
-          else toast(tx(rq.objet.trouve || rq.objet.nom) + " " + __("Encore {n}.", { n: rq.quete.reste }));
-        }, 450);
-      }, true);
-    }
     ancreCarte.after(carte);
+    // Victor (2026-11-13) : la carte s'explore en plein écran ; de près, on y trouve ce que la vue d'ensemble ne montre pas.
+    if (M.modeIle(P)) { var bex = el('<button type="button" class="btn sec large ile-explorer">🔍 ' + (queteActive() ? __("Explorer l'île : {n} à trouver", { n: queteActive().reste }) : __("Explorer l'île de près")) + "</button>"); bex.onclick = ouvrirExplorer; carte.after(bex); }
     // Victor (2026-11-12) : un nouveau quartier se mérite. Tant qu'il n'est pas ouvert, sa carte attend sous l'île.
     var ancreV = carte;
     I.quartiers.filter(function (x) { return x.aOuvrir; }).forEach(function (x) {
