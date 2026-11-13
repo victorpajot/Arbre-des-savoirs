@@ -2505,7 +2505,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     Ql.ressources.stocks.bois = 100; for (let i = 0; i < 4; i++) assert.ok(M.construireIle(CA, Ql, "foyer", t0).ok);
     Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.toits, 55); assert.ok(Il.places <= 40, "le campement plafonne à 40");
     CA.competences.filter(k => k.rang === 1).forEach(k => sait(Ql, k.id));
-    Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.plafond, null, "la cité n'a pas de plafond"); assert.equal(Il.limites.frein, "toits"); assert.equal(Il.places, 55, "sans maisons, les savoirs n'attirent personne de plus");
+    Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.plafond, 400, "la cité plafonne à 400"); assert.equal(Il.limites.frein, "toits"); assert.equal(Il.places, 55, "sans maisons, les savoirs n'attirent personne de plus");
   }
   // La cueillette est risquée : un campement qui ne vit que d'elle y perd des adultes, jour après jour.
   { const Qc = M.nouvellePartie(t0); Qc.mode = "ile"; sait(Qc, "ile.feu"); M.ile(CA, Qc, t0);

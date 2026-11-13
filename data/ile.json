@@ -4320,9 +4320,9 @@
    },
    "savoirs": [
     "phys.archimede",
-    "phys.alexandrie"
+    "phys.aristote"
    ],
-   "age": 2
+   "age": 3
   },
   {
    "id": "grenier",
@@ -4413,7 +4413,7 @@
    "savoirs": [
     "chim.metaux"
    ],
-   "age": 2
+   "age": 3
   },
   {
    "id": "forge",
@@ -4444,7 +4444,7 @@
    "savoirs": [
     "chim.metaux"
    ],
-   "age": 2
+   "age": 3
   },
   {
    "id": "maisons",
@@ -4589,6 +4589,126 @@
    },
    "usage": {
     "fr": "Une plate-forme d'où quelqu'un lit le ciel matin et soir. Les aléas sont annoncés plus souvent."
+   }
+  },
+  {
+   "id": "entrepot",
+   "quartier": "port",
+   "dessin": "grenier",
+   "savoirs": [
+    "math.babylone",
+    "math.egypte"
+   ],
+   "cout": {
+    "credits": 60,
+    "bois": 40,
+    "pierre": 30
+   },
+   "stock": 400,
+   "age": 3,
+   "nom": {
+    "fr": "Grand entrepôt"
+   },
+   "usage": {
+    "fr": "Des jarres comptées, des tablettes de compte et un gardien qui sait lire les deux. Quatre cents rations de plus à l'abri."
+   }
+  },
+  {
+   "id": "dispensaire",
+   "quartier": "ville",
+   "dessin": "dispensaire",
+   "savoirs": [
+    "sci.egypte",
+    "sci.hippocrate"
+   ],
+   "cout": {
+    "credits": 60,
+    "bois": 20,
+    "pierre": 20
+   },
+   "ouvriers": 2,
+   "sante": 0.3,
+   "age": 3,
+   "nom": {
+    "fr": "Dispensaire"
+   },
+   "usage": {
+    "fr": "Des lits, des remèdes rangés et des soignants dont c'est le métier. Chaque dispensaire fait reculer les décès de près d'un tiers."
+   }
+  },
+  {
+   "id": "cadran",
+   "quartier": "campus",
+   "dessin": "cadran",
+   "savoirs": [
+    "astro.babylone",
+    "astro.mesurer"
+   ],
+   "cout": {
+    "credits": 50,
+    "pierre": 30
+   },
+   "ouvriers": 1,
+   "bonus": {
+    "cibles": [
+     "ferme"
+    ],
+    "part": 0.25,
+    "sert": 4
+   },
+   "age": 3,
+   "nom": {
+    "fr": "Cadran et calendrier"
+   },
+   "usage": {
+    "fr": "Une ombre qui tourne et quelqu'un qui tient le compte des jours. On sème au bon moment : quatre fermes donnent un quart de plus."
+   }
+  },
+  {
+   "id": "archives",
+   "quartier": "campus",
+   "dessin": "archives",
+   "savoirs": [
+    "mus.ecriture",
+    "mnemo.simonide",
+    "mnemo.platon"
+   ],
+   "cout": {
+    "credits": 60,
+    "bois": 30,
+    "pierre": 20
+   },
+   "attrait": 0.15,
+   "visiteurs": 1,
+   "age": 3,
+   "nom": {
+    "fr": "Maison des écrits"
+   },
+   "usage": {
+    "fr": "Des rouleaux, des tablettes et des gens qui récitent. On vient de loin pour y lire, et un savant de plus passe chaque jour."
+   }
+  },
+  {
+   "id": "tribune",
+   "quartier": "agora",
+   "dessin": "tribune",
+   "savoirs": [
+    "coll.tirage",
+    "coll.ostracisme",
+    "rhet.sophistes",
+    "rhet.orateurs"
+   ],
+   "cout": {
+    "credits": 50,
+    "pierre": 30
+   },
+   "attrait": 0.2,
+   "age": 3,
+   "nom": {
+    "fr": "Tribune"
+   },
+   "usage": {
+    "fr": "Une estrade de pierre où chacun peut parler à son tour. Une cité où l'on s'écoute attire du monde."
    }
   }
  ],
@@ -4819,7 +4939,140 @@
     "fr": "La cité"
    },
    "description": {
-    "fr": "Les métaux, l'écriture, la mesure et les lois : cet âge arrive bientôt."
+    "fr": "Le village est devenu trop grand pour tenir dans une seule tête : il faut des métaux, des mesures, des écrits et des règles."
+   },
+   "besoins": [
+    {
+     "id": "forger",
+     "nom": {
+      "fr": "Travailler les métaux"
+     },
+     "texte": {
+      "fr": "La pierre et le bois ne suffisent plus : le métal change les outils, donc tout le reste."
+     },
+     "savoirs": [
+      "chim.metaux"
+     ]
+    },
+    {
+     "id": "mesurer",
+     "nom": {
+      "fr": "Mesurer et répartir"
+     },
+     "texte": {
+      "fr": "Des champs à partager, des réserves à compter, des parts à rendre justes."
+     },
+     "savoirs": [
+      "math.babylone",
+      "math.egypte"
+     ]
+    },
+    {
+     "id": "lever",
+     "nom": {
+      "fr": "Lever et moudre"
+     },
+     "texte": {
+      "fr": "Faire travailler le levier, la roue et l'eau à la place des bras."
+     },
+     "savoirs": [
+      "phys.archimede",
+      "phys.aristote"
+     ]
+    },
+    {
+     "id": "guerir",
+     "nom": {
+      "fr": "Guérir"
+     },
+     "texte": {
+      "fr": "Plus on vit serrés, plus les maladies circulent : il faut des gens dont c'est le métier."
+     },
+     "savoirs": [
+      "sci.egypte",
+      "sci.hippocrate"
+     ]
+    },
+    {
+     "id": "calendrier",
+     "nom": {
+      "fr": "Tenir le calendrier"
+     },
+     "texte": {
+      "fr": "Semer, récolter et se réunir au bon moment, d'une année sur l'autre."
+     },
+     "savoirs": [
+      "astro.babylone",
+      "astro.mesurer"
+     ]
+    },
+    {
+     "id": "ecrire",
+     "nom": {
+      "fr": "Garder trace"
+     },
+     "texte": {
+      "fr": "Ce que la cité sait ne tient plus dans les mémoires : il faut l'écrire, ou s'entraîner à retenir."
+     },
+     "savoirs": [
+      "mus.ecriture",
+      "mnemo.simonide",
+      "mnemo.platon"
+     ]
+    },
+    {
+     "id": "debattre",
+     "nom": {
+      "fr": "Débattre et voter"
+     },
+     "texte": {
+      "fr": "Une cité se dispute. Autant qu'elle le fasse avec des règles."
+     },
+     "savoirs": [
+      "coll.tirage",
+      "coll.ostracisme",
+      "rhet.sophistes",
+      "rhet.orateurs"
+     ],
+     "optionnel": true,
+     "risque": "troubles",
+     "alerte": {
+      "fr": "Sans lieu pour débattre, les désaccords d'une cité se règlent dans la rue, et quelques-uns n'en reviennent pas."
+     }
+    },
+    {
+     "id": "douter",
+     "nom": {
+      "fr": "Douter et comprendre"
+     },
+     "texte": {
+      "fr": "Savoir se tromper, écouter l'autre, se connaître un peu."
+     },
+     "savoirs": [
+      "biais.doute",
+      "biais.elephant",
+      "philo.socrate",
+      "philo.asie",
+      "psy.bouddha",
+      "psy.theophraste"
+     ],
+     "optionnel": true,
+     "risque": "oubli",
+     "alerte": {
+      "fr": "Une cité qui ne doute de rien cesse de vérifier ce qu'elle sait, et le perd par morceaux."
+     }
+    }
+   ],
+   "plafond": 400
+  },
+  {
+   "id": "royaume",
+   "rang": 4,
+   "nom": {
+    "fr": "Le royaume"
+   },
+   "description": {
+    "fr": "Des routes, des écoles, des machines et des cartes : cet âge arrive bientôt."
    },
    "besoins": []
   }
