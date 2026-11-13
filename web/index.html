@@ -3457,7 +3457,7 @@ function demarrerJeu() {
     var epJ = M.modeIle(P) && M.epreuveIle(C, ((M.agesIle(C, P) || { age: {} }).age || {}).epreuve);
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + __('</span><span><b>Jouer</b><span class="s">') +
       (ferme ? __("Enfermé au mur de la honte : encore ") + dureePeine(P.punition.restant) + "." : enDuel ? esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + __(" te barre la route : revanche obligatoire.") : c ? (c.raison === "revision" ? __("Révision forcée. ") : c.type === "rappel" ? __("Un rappel t'attend. ") : "") + (c.raison === "case" ? __("Case ") + esc(tx(stat(c.stat).nom)) + "." : c.raison === "ouvre_arbre" ? __("Case ") + esc(tx(stat(c.stat).nom)) + __(" : un arbre fermé à ouvrir.") : __("Une épreuve t'attend.")) : epJ ? __("Épreuve unique : ") + esc(tx(epJ.nom)) + "." : __("Rien à jouer pour l'instant.")) + "</span></span>" + (c && bonus && !ferme ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
-    if (!c && !enDuel) b.disabled = true;
+    if (!c && !enDuel && !epJ) b.disabled = true;
     b.onclick = ouvrirJouer;
     return b;
   }
@@ -9751,7 +9751,9 @@ function demarrerJeu() {
     var cd = quiz.cartes || (quiz.cartes = r.apresPlateau ? cartesEnDeux(r, null, r.theme) : { recs: recompensesBilan(r), nAvant: null }), recs = cd.recs;
     var etapes = ["verdict"];
     // L'île (Victor, 2026-11-10) : ce que l'épreuve vient d'y changer, tout de suite après le verdict.
-    if (r.ile || r.gloire) etapes.push("ile");
+    // Victor (2026-11-13) : tant que l'épreuve unique n'est pas faite, le bilan ne montre pas le feu allumé ; il y mène.
+    var epB = M.modeIle(P) && ((M.agesIle(C, P) || { age: {} }).age || {}).epreuve, epBd = epB && M.epreuveIle(C, epB);
+    if ((r.ile || r.gloire) && !epBd) etapes.push("ile");
     // Victor (2026-11-11) : tant que la série de rappels n'est pas finie (ou qu'elle peut être reprise), pas de retour au parcours.
     var tS = maintenant(), ferme = M.jeuFerme(C, P, tS);
     var suivS = r.serie && !r.serie.fini && !ferme ? M.choixIA(C, P, tS) : null; if (suivS && suivS.raison !== "serie") suivS = null;
@@ -9811,6 +9813,12 @@ function demarrerJeu() {
       var ba = el('<button type="button" class="btn sec large">' + __("Arrêter la série (sans prime)") + "</button>");
       ba.onclick = function () { M.abandonnerSerie(P); sauver(); fermerQuiz(); };
       wrap.appendChild(ba);
+    }
+    else if (!suite && epBd) {
+      wrap.appendChild(el('<p class="etat-pion" style="font-size:17px">' + esc(tx(epBd.accroche || { fr: "" })) + "</p>"));
+      var bep2 = el('<button type="button" class="btn large">' + __("Épreuve unique : ") + esc(tx(epBd.nom)) + "</button>");
+      bep2.onclick = function () { fermerQuiz(); ouvrirEpreuveIle(epB); };
+      wrap.appendChild(bep2);
     }
     else if (!suite && M.piegeEnAttente(P)) boutonPiege(wrap, fermerQuiz);
     else if (!suite && M.chronoEnAttente(P)) boutonChrono(wrap, fermerQuiz);
