@@ -1251,6 +1251,9 @@ svg.grille .interro { transition: opacity .3s; }
 .ex-liste b { display: block; font-size: 15px; } .ex-liste small { display: block; font-size: 13px; color: var(--muted); line-height: 1.25; } .ex-quete { margin: 0 0 8px; } .ex-bas .btn { width: 100%; }
 .ex-details { opacity: 0; transition: opacity .3s; } .explorer.pres .ex-details { opacity: 1; }
 .ex-objets .ile-quete, .ex-objets .ex-brille { display: none; } .explorer.pres:not(.tout-pres) .ex-brille { display: inline; } .explorer.tout-pres .ex-objets .ile-quete { display: inline; }
+.explorer.expe .ex-objets .ile-quete { display: inline; } .explorer.expe .ex-objets .ex-brille { display: none; } .ex-cible { fill: none; stroke: #fff; stroke-width: 1; opacity: .85; }
+.ex-alerte { display: none; } .ex-bete.chasse .ex-alerte { display: inline; } .ex-liste li.sac { border-style: solid; border-color: #E0A800; } .ex-liste li.sac svg { filter: none !important; opacity: 1 !important; }
+.explorer.mordu .ex-vue::after { content: ""; position: absolute; inset: 0; background: rgba(200, 30, 30, .4); pointer-events: none; }
 .ex-scene { opacity: 0; transition: opacity .4s; pointer-events: none; } .explorer.dedans .ex-scene { opacity: 1; }
 .ile-explorer { width: 100%; margin: 8px 0 4px; }
 .ile-flamme.froid { filter: grayscale(1) brightness(.55); }
@@ -2377,7 +2380,7 @@ function demarrerJeu() {
     if (document.querySelector(".explorer")) return;
     fermerFeuille();
     var I = campIle(M.ile(C, P, maintenant()));
-    var z = el('<div class="explorer" role="dialog" aria-modal="true" aria-label="' + __("Explorer l'île") + '"><div class="ex-vue">' + svgCarteIle(I) + '</div><div class="ex-haut"><b>' + __("Explorer l'île") + '</b><button type="button" class="ex-x" aria-label="' + __("Fermer") + '">✕</button></div>' +
+    var z = el('<div class="explorer" role="dialog" aria-modal="true" aria-label="' + __("Explorer l'île") + '"><div class="ex-vue">' + svgCarteIle(I).replace(/ile-fog/g, "ex-fog") + '</div><div class="ex-haut"><b>' + __("Explorer l'île") + '</b><button type="button" class="ex-x" aria-label="' + __("Fermer") + '">✕</button></div>' +
       '<div class="ex-zoom"><button type="button" data-z="1" aria-label="' + __("Zoomer") + '">+</button><button type="button" data-z="-1" aria-label="' + __("Dézoomer") + '">−</button></div><div class="ex-bas"></div></div>');
     var vueE = z.querySelector(".ex-vue"), svg = vueE.querySelector("svg"), bas = z.querySelector(".ex-bas");
     svg.removeAttribute("width"); svg.removeAttribute("height"); svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
@@ -2389,7 +2392,9 @@ function demarrerJeu() {
       var w = 48, h = w * m[2] / m[1], x = q.position[0] * ILE_W - w / 2, y = q.position[1] * ILE_H - h / 2;
       return '<mask id="exm' + i + '"><rect x="' + (x + 2).toFixed(1) + '" y="' + (y + 2).toFixed(1) + '" width="' + (w - 4) + '" height="' + (h - 4).toFixed(1) + '" rx="5" fill="#fff" filter="url(#ex-flou)"/></mask>' +
         '<g class="ex-scene" data-scene="' + esc(q.id) + '" mask="url(#exm' + i + ')">' + sq.replace(/^<svg /, '<svg x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w + '" height="' + h.toFixed(1) + '" ') + "</g>"; }).join("").replace(/class="ile-scene"/g, 'class="ex-sc"');
-    svg.insertAdjacentHTML("beforeend", detailsIle() + scenes + '<g class="ex-objets"></g>');
+    svg.insertAdjacentHTML("beforeend", detailsIle() + scenes + '<g class="ex-objets"></g><g class="ex-acteurs"></g>');
+    // Le brouillard passe par-dessus tout : objets et prédateurs ne se voient que dans le cercle de l'explorateur.
+    var voile = svg.querySelector(".ile-brouillard"), trou = svg.querySelector(".ex-fog-ex"); if (voile) svg.appendChild(voile);
     var S = { x: ILE_W / 2, y: ILE_H / 2, k: 1 }, KMAX = 12, message = "";
     function base() { var r = vueE.getBoundingClientRect(), ar = r.width / Math.max(1, r.height), bw = Math.max(ILE_W, ILE_H * ar); return { w: bw, h: bw / ar, r: r }; }
     function borne(v, lo, hi) { return lo > hi ? (lo + hi) / 2 : Math.max(lo, Math.min(hi, v)); }
@@ -2407,20 +2412,99 @@ function demarrerJeu() {
     }
     function objets() {
       var q = queteActive();
-      svg.querySelector(".ex-objets").innerHTML = q ? q.objets.filter(function (o) { return !o.pris; }).map(function (o) {
+      svg.querySelector(".ex-objets").innerHTML = q ? q.objets.filter(function (o) { return !o.pris && !(X && X.sac.indexOf(o.id) >= 0); }).map(function (o) {
         var x = Math.round(o.position[0] * ILE_W), y = Math.round(o.position[1] * ILE_H);
         return '<path class="ex-brille" transform="translate(' + x + "," + y + ')" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z" fill="#FFF3B0" stroke="#E0A800" stroke-width=".5" pointer-events="none"/>' + svgObjetQuete(o, x, y, 0.42); }).join("") : "";
     }
     function panneau(fini) {
       var q = queteActive(), h = "";
       if (fini) h = '<div class="ex-msg">' + esc(message) + "</div>" + blocQuete(fini, false).replace('class="ile-passage"', 'class="ile-passage ex-quete"') + '<button type="button" class="btn large" data-a="go">' + __("Épreuve unique : ") + esc(tx(M.epreuveIle(C, fini.id).nom)) + "</button>";
-      else if (q) h = '<div class="ex-msg">' + esc(message || __("Zoome : ce que tu cherches ne se voit que de près.")) + '</div><ul class="ex-liste">' + q.objets.map(function (o) {
+      else if (q) h = '<div class="ex-msg">' + esc(message || (foyer ? __("Le brouillard cache l'île. Envoie un explorateur : il ne voit qu'autour de lui, et il n'est pas seul là-dedans.") : __("Zoome : ce que tu cherches ne se voit que de près."))) + "</div>" +
+        (foyer && !X ? '<button type="button" class="btn large" data-a="partir">' + __("Envoyer un explorateur") + "</button>" : "") + '<ul class="ex-liste">' + q.objets.map(function (o) {
+        if (X && X.sac.indexOf(o.id) >= 0) return '<li class="sac"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + "</b><small>" + __("dans le sac : à ramener") + "</small></span></li>";
         return '<li class="' + (o.pris ? "ok" : "") + '"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + (o.pris ? " ✓" : "") + "</b>" + (o.pris || !o.zone ? "" : "<small>" + esc(tx(o.zone)) + "</small>") + "</span></li>"; }).join("") + "</ul>";
       else h = '<div class="ex-msg">' + __("Rien à chercher pour l'instant. Zoome pour voir ton île de près.") + "</div>";
       bas.innerHTML = h;
       var go = bas.querySelector('[data-a="go"]'); if (go) go.onclick = function () { fermer(); ouvrirEpreuveIle(fini.id); };
+      var bp = bas.querySelector('[data-a="partir"]'); if (bp) bp.onclick = partir;
     }
-    function fermer() { window.removeEventListener("resize", appliquer); z.remove(); rendre(); }
+    // Victor (2026-11-13) : l'expédition. Un habitant part du village ; on touche la carte, il y va. Il ne voit qu'autour
+    // de lui, le brouillard se referme derrière. Ce qu'il ramasse ne compte qu'une fois rapporté au village. Des
+    // prédateurs rôdent dans le brouillard : s'ils le rattrapent, il est perdu (un habitant de moins), son sac aussi.
+    var X = null, raf = 0, acteurs = svg.querySelector(".ex-acteurs"), EXP = { vue: 34, vite: 21, rode: 8, chasse: 15, flair: 22, lache: 40, betes: 3 };
+    var fondes = I.quartiers.filter(function (q) { return (q.fonde || q.camp) && q.position; });
+    var foyer = fondes.slice().sort(function (a, b) { return (b.habitants || 0) - (a.habitants || 0); })[0] || null;
+    var FX = foyer ? foyer.position[0] * ILE_W : 0, FY = foyer ? foyer.position[1] * ILE_H + 8 : 0;
+    function abri(x, y, m) { return fondes.some(function (q) { return Math.hypot(x - q.position[0] * ILE_W, y - q.position[1] * ILE_H) < m; }); }
+    function praticable(x, y) { return surTerre(x, y, 0.95) && !dansOvale(x, y, LAC); }
+    function pointLibre() { for (var n = 0; n < 300; n++) { var x = 30 + Math.random() * (ILE_W - 60), y = 40 + Math.random() * (ILE_H - 80); if (praticable(x, y) && !abri(x, y, 75)) return [x, y]; } return [ILE_CX, 70]; }
+    function pas(o, tx, ty, d) {
+      var dx = tx - o.x, dy = ty - o.y, L = Math.hypot(dx, dy); if (L < 0.6) return false;
+      var k = Math.min(1, d / L), nx = o.x + dx * k, ny = o.y + dy * k; o.sens = dx < 0 ? -1 : 1;
+      // Un obstacle (la mer, le lac) : on le longe, en essayant des caps de plus en plus écartés.
+      var cap = Math.atan2(dy, dx), l = Math.min(L, d), ecarts = [0, 0.6, -0.6, 1.2, -1.2, 1.7, -1.7];
+      for (var e = 0; e < ecarts.length; e++) { nx = o.x + Math.cos(cap + ecarts[e]) * l; ny = o.y + Math.sin(cap + ecarts[e]) * l; if (praticable(nx, ny)) { o.x = nx; o.y = ny; return true; } }
+      return false;
+    }
+    function versCarte(cx, cy) { var b = base(); return [S.x + (cx - b.r.left - b.r.width / 2) / b.r.width * b.w / S.k, S.y + (cy - b.r.top - b.r.height / 2) / b.r.height * b.h / S.k]; }
+    var LOUP = '<ellipse cy="4.6" rx="5.5" ry="1.4" fill="rgba(0,0,0,.25)"/><path d="M-5 1 L-4 -2 L3 -2.5 L4.6 -5 L5.6 -2.6 L7.4 -.4 L5 1 L4 4.4 L2.8 4.4 L2.4 1.6 L-2 1.6 L-2.8 4.4 L-4 4.4 Z" fill="#2E313B"/><path d="M-4.6 0 L-7.6 -1.6" stroke="#2E313B" stroke-width="1.3" stroke-linecap="round"/><circle cx="5" cy="-1.8" r=".7" fill="#FF4D3D"/>';
+    function partir() {
+      if (!foyer || X) return;
+      X = { x: FX, y: FY, tx: FX, ty: FY, sac: [], t: performance.now(), sens: 1, betes: [] };
+      for (var n = 0; n < EXP.betes; n++) { var p = pointLibre(); X.betes.push({ x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1 }); }
+      acteurs.innerHTML = '<circle class="ex-cible" r="2.4"/>' + X.betes.map(function () { return '<g class="ex-bete"><g class="ex-corps">' + LOUP + '</g><text class="ex-alerte" y="-7" text-anchor="middle" font-size="7" font-weight="800" fill="#D92B2B">!</text></g>'; }).join("") +
+        '<g class="ex-explo"><ellipse cy="1" rx="6.5" ry="2.6" fill="none" stroke="#fff" stroke-width="1" opacity=".9"/><g class="ex-corps">' + svgHabitant(0, 0, 977, 1.15) + '</g><g class="ex-sac"></g></g>';
+      X.eb = acteurs.querySelectorAll(".ex-bete"); X.ee = acteurs.querySelector(".ex-explo"); X.ec = acteurs.querySelector(".ex-cible");
+      z.classList.add("expe"); S.k = Math.max(S.k, 3.4); S.x = FX; S.y = FY;
+      message = __("Touche la carte : l'explorateur y va. Rapporte au village ce qu'il trouve, et fuis ce qui a les yeux rouges.");
+      objets(); panneau(); dessiner(); appliquer(); raf = requestAnimationFrame(tour);
+    }
+    function dessiner() {
+      if (!X) { if (trou) trou.setAttribute("r", 0); return; }
+      X.ee.setAttribute("transform", "translate(" + X.x.toFixed(1) + "," + X.y.toFixed(1) + ")"); X.ee.querySelector(".ex-corps").setAttribute("transform", "scale(" + X.sens + ",1)");
+      X.ec.setAttribute("cx", X.tx.toFixed(1)); X.ec.setAttribute("cy", X.ty.toFixed(1)); X.ec.style.display = Math.hypot(X.tx - X.x, X.ty - X.y) > 2 ? "" : "none";
+      X.betes.forEach(function (b, i) { var e = X.eb[i]; e.setAttribute("transform", "translate(" + b.x.toFixed(1) + "," + b.y.toFixed(1) + ")"); e.querySelector(".ex-corps").setAttribute("transform", "scale(" + b.sens + ",1)"); e.setAttribute("class", "ex-bete" + (b.chasse ? " chasse" : "")); });
+      if (trou) { trou.setAttribute("cx", X.x.toFixed(1)); trou.setAttribute("cy", (X.y - 4).toFixed(1)); trou.setAttribute("r", (EXP.vue * 1.3).toFixed(0)); }
+    }
+    function attrape() {
+      var r = M.perdreExplorateur(C, P, maintenant()), avait = X.sac.length; sauver();
+      message = (r && r.perdu ? __("Un prédateur a surpris ton explorateur : il ne reviendra pas. Un habitant de moins.") : __("Un prédateur a surpris ton explorateur. Il s'en tire de justesse.")) + (avait ? " " + __("Ce qu'il portait est resté dans le brouillard.") : "") + " " + __("Un autre repart du village.");
+      X.x = X.tx = FX; X.y = X.ty = FY; X.sac = [];
+      X.betes.forEach(function (b) { b.chasse = false; if (Math.hypot(b.x - FX, b.y - FY) < 110) { var p = pointLibre(); b.x = b.wx = p[0]; b.y = b.wy = p[1]; } });
+      z.classList.add("mordu"); setTimeout(function () { z.classList.remove("mordu"); }, 700);
+      S.x = FX; S.y = FY; objets(); panneau();
+    }
+    function tour(t) {
+      if (!X) return;
+      var dt = Math.min(0.1, Math.max(0, (t - X.t) / 1000)); X.t = t;
+      if (!pas(X, X.tx, X.ty, EXP.vite * dt)) { X.tx = X.x; X.ty = X.y; }
+      var sauf = abri(X.x, X.y, 40), pris = false;
+      X.betes.forEach(function (b) {
+        var d = Math.hypot(b.x - X.x, b.y - X.y), ax = b.x, ay = b.y;
+        b.chasse = !sauf && d < (b.chasse ? EXP.lache : EXP.flair);
+        if (b.chasse) pas(b, X.x, X.y, EXP.chasse * dt); else if (!pas(b, b.wx, b.wy, EXP.rode * dt)) { var p = pointLibre(); b.wx = p[0]; b.wy = p[1]; }
+        if (abri(b.x, b.y, 46)) { b.x = ax; b.y = ay; b.chasse = false; var p2 = pointLibre(); b.wx = p2[0]; b.wy = p2[1]; }
+        if (!sauf && Math.hypot(b.x - X.x, b.y - X.y) < 5) pris = true;
+      });
+      if (pris) attrape();
+      else {
+        var q = queteActive();
+        if (q) q.objets.forEach(function (o) {
+          if (o.pris || X.sac.indexOf(o.id) >= 0 || Math.hypot(o.position[0] * ILE_W - X.x, o.position[1] * ILE_H - X.y) > 7) return;
+          X.sac.push(o.id); message = tx(o.trouve || o.nom) + " " + __("Reste à le rapporter au village."); objets(); panneau();
+        });
+        if (q && X.sac.length && Math.hypot(X.x - FX, X.y - FY) < 24) {
+          var der = null; X.sac.forEach(function (id) { der = M.ramasserIle(C, P, q.id, id, maintenant()) || der; }); var n = X.sac.length; X.sac = []; sauver();
+          message = n > 1 ? __("{n} trouvailles rapportées au village.", { n: n }) : __("Rapporté au village.");
+          if (der && der.quete.complete) { message += " " + __("Tout y est."); cancelAnimationFrame(raf); X = null; z.classList.remove("expe"); acteurs.innerHTML = ""; dessiner(); objets(); panneau(der.quete); return; }
+          objets(); panneau();
+        }
+      }
+      dessiner();
+      if (!liste().length && Math.hypot(X.tx - X.x, X.ty - X.y) > 1) { S.x += (X.x - S.x) * Math.min(1, dt * 3); S.y += (X.y - S.y) * Math.min(1, dt * 3); }
+      appliquer(); raf = requestAnimationFrame(tour);
+    }
+    function fermer() { cancelAnimationFrame(raf); X = null; window.removeEventListener("resize", appliquer); z.remove(); rendre(); }
     z.querySelector(".ex-x").onclick = fermer;
     z.querySelectorAll("[data-z]").forEach(function (b) { b.onclick = function () { zoomer(b.getAttribute("data-z") === "1" ? 1.6 : 1 / 1.6); }; });
     // Les gestes : un pointeur glisse, deux pincent. Un toucher sans glissement ramasse.
@@ -2438,9 +2522,11 @@ function demarrerJeu() {
     });
     ["pointerup", "pointercancel", "pointerleave"].forEach(function (n) { vueE.addEventListener(n, function (ev) { delete doigts[ev.pointerId]; ecart = 0; }); });
     vueE.addEventListener("wheel", function (ev) { ev.preventDefault(); zoomer(ev.deltaY < 0 ? 1.25 : 0.8, ev.clientX, ev.clientY); }, { passive: false });
-    vueE.addEventListener("dblclick", function (ev) { zoomer(1.8, ev.clientX, ev.clientY); });
+    vueE.addEventListener("dblclick", function (ev) { if (!X) zoomer(1.8, ev.clientX, ev.clientY); });
     vueE.addEventListener("click", function (ev) {
       if (bouge > 10) return;
+      if (X) { var pt = versCarte(ev.clientX, ev.clientY); X.tx = pt[0]; X.ty = pt[1]; return; }
+      if (foyer) return;
       var gq = ev.target.closest && ev.target.closest("[data-quete]"), q = queteActive(); if (!gq || !q) return;
       var rq = M.ramasserIle(C, P, q.id, gq.getAttribute("data-quete"), maintenant()); if (!rq) return;
       sauver(); message = tx(rq.objet.trouve || rq.objet.nom); objets(); panneau(rq.quete.complete ? rq.quete : null);
@@ -4929,6 +5015,15 @@ function demarrerJeu() {
   function dansOvale(x, y, z) { return Math.pow((x - z[0]) / z[2], 2) + Math.pow((y - z[1]) / z[3], 2) < 1; }
   // Le relief qui ne change pas : un bois à l'ouest, un lac au sud-ouest, un marais au sud-est.
   var BOIS = [78, 250, 38, 50], LAC = [98, 446, 30, 19], MARAIS = [226, 508, 38, 25];
+  // Victor (2026-11-13) : le brouillard couvre l'île partout où il n'y a ni quartier ni habitants. Un masque : blanc
+  // partout, troué d'un disque aux bords fondus sur chaque quartier ; le dernier disque suit l'explorateur (Explorer).
+  function brouillardIle(I, lieux) {
+    if (!M.modeIle(P)) return "";
+    var trous = I.quartiers.map(function (q, i) { return q.fonde || q.camp ? '<circle cx="' + fx(lieux[i][0]) + '" cy="' + fx(lieux[i][1] + 4) + '" r="62" fill="url(#ile-fog-t)"/>' : ""; }).join("");
+    return '<defs><radialGradient id="ile-fog-t"><stop offset="0" stop-color="#000"/><stop offset=".7" stop-color="#000"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>' +
+      '<mask id="ile-fog" maskUnits="userSpaceOnUse" x="0" y="0" width="' + ILE_W + '" height="' + ILE_H + '"><rect width="' + ILE_W + '" height="' + ILE_H + '" fill="#fff"/>' + trous + '<circle class="ile-fog-ex" r="0" fill="url(#ile-fog-t)"/></mask></defs>' +
+      '<rect class="ile-brouillard" width="' + ILE_W + '" height="' + ILE_H + '" fill="#DDE7EA" opacity=".94" mask="url(#ile-fog)" pointer-events="none"/>';
+  }
   function svgCarteIle(I) {
     LIEU_HAB = null;
     var W = ILE_W, H = ILE_H, n = I.quartiers.length, o = "", sol = "", plan = [], dessus = "", zones = "", brume = "", vivant;
@@ -5064,7 +5159,7 @@ function demarrerJeu() {
     plan.sort(function (a, b) { return a[0] - b[0]; });
     return '<svg class="ile-scene ile-carte" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(__("Carte de l'île")) + '">' +
       '<defs><filter id="ile-brume" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3.5"/></filter></defs>' +
-      (imageIle("carte") ? svgImageIle("carte", 0, 0, W, H, "slice") + vivant.map(function (p) { return p[1]; }).join("") : o + '<clipPath id="ile-terre"><path d="' + contourIle(0.945) + '"/></clipPath><g clip-path="url(#ile-terre)">' + sol + "</g>" + svgVolcan() + plan.map(function (p) { return p[1]; }).join("")) + '<g filter="url(#ile-brume)">' + brume + "</g>" + dessus + zones + visites + "</svg>";
+      (imageIle("carte") ? svgImageIle("carte", 0, 0, W, H, "slice") + vivant.map(function (p) { return p[1]; }).join("") : o + '<clipPath id="ile-terre"><path d="' + contourIle(0.945) + '"/></clipPath><g clip-path="url(#ile-terre)">' + sol + "</g>" + svgVolcan() + plan.map(function (p) { return p[1]; }).join("")) + '<g filter="url(#ile-brume)">' + brume + "</g>" + brouillardIle(I, lieux) + dessus + zones + visites + "</svg>";
   }
   // Un quartier vu de près : un village dans son pré. Un chemin de terre le traverse, les installations se posent de
   // part et d'autre (les plus savantes au fond), des maisons poussent entre elles à mesure que les habitants arrivent.

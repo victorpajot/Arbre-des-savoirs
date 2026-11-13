@@ -2552,6 +2552,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.ok(M.queteIle(CA, Qh, "hache").complete, "quête de la hache bouclée");
     assert.ok(M.reussirEpreuve(CA, Qh, "hache", t0).premiere); assert.deepEqual(M.epreuvesEnAttente(CA, Qh), []);
     const eh2 = M.etatAmenagement(CA, Qh, "bucheron", t0); assert.ok(eh2.possible && !eh2.epreuve, "la hache faite, le camp se bâtit");
+    const hab0 = M.ile(CA, Qh, t0).habitants, px = M.perdreExplorateur(CA, Qh, t0);
+    assert.ok(px.perdu === 1 && px.habitants === hab0 - 1 && Qh.explorateurs === 1, "un explorateur pris : un habitant de moins");
+    { const Qv = M.nouvellePartie(t0); Qv.mode = "ile"; M.ile(CA, Qv, t0); Qv.population.e = 0; Qv.population.a = 2; Qv.population.v = 0; assert.equal(M.perdreExplorateur(CA, Qv, t0).perdu, 0, "jamais les deux derniers"); }
     const EH = M.epreuveIle(CA, "hache"); assert.deepEqual(EH.etapes.map(e => e.type), ["frappes", "frotter", "assemblage"]);
     const as = EH.etapes[2]; assert.deepEqual(as.ordre.slice().sort(), as.pieces.map(x => x.id).sort(), "l'ordre d'assemblage nomme toutes les pièces"); }
   // Victor (2026-11-12) : un aménagement ne se bâtit que dans son quartier, qu'il faut d'abord ouvrir.
