@@ -2563,6 +2563,10 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const hab0 = M.ile(CA, Qh, t0).habitants, px = M.perdreExplorateur(CA, Qh, t0);
     assert.ok(px.perdu === 1 && px.habitants === hab0 - 1 && Qh.explorateurs === 1, "un explorateur pris : un habitant de moins");
     { const Qv = M.nouvellePartie(t0); Qv.mode = "ile"; M.ile(CA, Qv, t0); Qv.population.e = 0; Qv.population.a = 2; Qv.population.v = 0; assert.equal(M.perdreExplorateur(CA, Qv, t0).perdu, 0, "jamais les deux derniers"); }
+    { const b0 = M.baiesIle(CA, Qh, t0), n0 = Qh.ressources.stocks.nourriture; assert.equal(b0.reste, 6);
+      const cb = M.cueillirBaies(CA, Qh, [0, 3], t0); assert.ok(cb.n === 2 && cb.nourriture === 10 && Qh.ressources.stocks.nourriture === n0 + 10, "deux buissons rapportés : dix vivres");
+      assert.equal(M.cueillirBaies(CA, Qh, [0], t0).n, 0, "un buisson ne se cueille qu'une fois par jour"); assert.equal(M.baiesIle(CA, Qh, t0).reste, 4);
+      assert.equal(M.baiesIle(CA, Qh, t0 + 2 * J).reste, 6, "les baies repoussent"); }
     const EH = M.epreuveIle(CA, "hache"); assert.deepEqual(EH.etapes.map(e => e.type), ["frappes", "frotter", "assemblage"]);
     const as = EH.etapes[2]; assert.deepEqual(as.ordre.slice().sort(), as.pieces.map(x => x.id).sort(), "l'ordre d'assemblage nomme toutes les pièces"); }
   // Victor (2026-11-12) : un aménagement ne se bâtit que dans son quartier, qu'il faut d'abord ouvrir.
