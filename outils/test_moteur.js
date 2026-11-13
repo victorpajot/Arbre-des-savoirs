@@ -2439,7 +2439,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   { // L'équation des données est équilibrée, et chaque pas mène au bon coefficient.
     const e = ef.etapes[2], coef = e.depart.slice(); e.pas.forEach(x => { assert.ok(x.choix.includes(x.bon)); coef[x.cible] = x.bon; });
     const compte = c => { const o = {}; e.molecules.forEach((m, j) => { if (m.cote === c) for (const a in m.atomes) o[a] = (o[a] || 0) + coef[j] * m.atomes[a]; }); return o; };
-    assert.deepEqual(compte("g"), compte("d")); assert.deepEqual(compte("g"), { Fe: 4, S: 8, O: 22 });
+    assert.deepEqual(compte("g"), compte("d")); e.molecules.forEach(m => { const o = {}; m.dessin.forEach(a => { o[a] = (o[a] || 0) + 1; }); assert.deepEqual(o, m.atomes, m.formule + " : le dessin compte les mêmes atomes"); }); assert.deepEqual(compte("g"), { Fe: 4, S: 8, O: 22 });
   }
   assert.equal(M.epreuveFaite(P, "feu"), false);
   assert.equal(M.reussirEpreuve(CA, P, "feu", t0).premiere, true); assert.equal(M.reussirEpreuve(CA, P, "feu", t0 + 5).premiere, false);

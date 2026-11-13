@@ -1256,19 +1256,24 @@ svg.grille .interro { transition: opacity .3s; }
 .ep-eclat { animation: ep-vol .7s ease-out forwards; } @keyframes ep-vol { 0% { transform: translate(0,0); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)); opacity: .0; } }
 .ep-compte { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 15px; } .ep-pips { display: flex; gap: 5px; } .ep-pips i { width: 16px; height: 16px; border-radius: 3px; background: var(--line); transform: rotate(45deg) scale(.8); } .ep-pips i.ok { background: #E3B92E; }
 .ep-msg.ok { color: var(--good); } .ep-msg { min-height: 24px; margin: 0; font-size: 17px; font-weight: 600; color: #B5531F; text-align: center; }
-.ep-jauge { display: flex; align-items: stretch; justify-content: center; gap: 26px; padding: 8px 0; }
+.ep-jauge { display: flex; align-items: stretch; justify-content: center; gap: 26px; padding: 8px 0 8px 26px; }
 .ep-tube { position: relative; width: 54px; height: 230px; border-radius: 12px; background: linear-gradient(to top, #5B8DEF 0%, #F2B632 60%, #D94141 100%); box-shadow: inset 0 0 0 2px rgba(0,0,0,.25); }
 .ep-zone-ok { position: absolute; left: 0; right: 0; top: 0; border-radius: 12px 12px 0 0; box-shadow: inset 0 0 0 3px #fff; opacity: .8; }
-.ep-seuil { position: absolute; left: -8px; right: -8px; height: 0; border-top: 3px solid var(--text); } .ep-seuil span { position: absolute; left: 100%; top: -11px; margin-left: 6px; white-space: nowrap; font-size: 14px; font-weight: 700; }
+.ep-seuil { position: absolute; left: -8px; right: -8px; height: 0; border-top: 3px solid var(--text); } .ep-seuil span { position: absolute; left: 100%; top: -11px; line-height: 1.2; margin-left: 6px; white-space: nowrap; font-size: 14px; font-weight: 700; }
 .ep-curseur { position: absolute; left: -10px; right: -10px; height: 8px; margin-bottom: -4px; background: var(--text); border-radius: 4px; box-shadow: 0 0 0 2px var(--bg); }
 .ep-jauge.rate .ep-curseur { background: var(--bad); } .ep-jauge.gagne .ep-curseur { background: var(--good); }
 .ep-grain { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 120px; font-size: 14px; color: var(--muted); padding-top: 60px; } .ep-grain svg { width: 96px; height: 96px; }
 .ep-g { fill: #B8962E; transition: fill .4s; } .ep-halo { fill: #FF8A1F; opacity: 0; transition: opacity .5s; } .ep-jauge.gagne .ep-g { fill: #FFD23F; } .ep-jauge.gagne .ep-halo { opacity: .55; }
 .ep-eq { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 6px; padding: 12px 6px; border-radius: 14px; background: var(--surface); border: 2px solid var(--line); font-size: 20px; font-weight: 700; }
+.ep-mol { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; } .ep-modele { display: block; }
+.ep-at-nom { display: flex; flex-direction: column; align-items: center; line-height: 1.1; } .ep-at-nom i { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.35); } .ep-at-nom small { font-size: 11px; color: var(--muted); }
+.ep-billes { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 3px; padding: 0 4px; } .ep-billes i { width: 10px; height: 10px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.3); } .ep-billes u { text-decoration: none; width: 16px; height: 16px; border-radius: 50%; border: 2px dashed var(--muted); font-size: 11px; line-height: 12px; color: var(--muted); } .ep-billes b { flex-basis: 100%; font-size: 14px; }
+.ep-grad { position: absolute; right: 100%; margin: 0 8px -8px 0; font-style: normal; font-size: 12px; color: var(--muted); line-height: 16px; } .ep-seuil span small { display: block; font-size: 13px; font-weight: 800; color: var(--accent); }
+.ep-lu { font-size: 20px; color: var(--text); margin-top: 6px; font-variant-numeric: tabular-nums; } .ep-grain small { font-size: 12px; }
 .ep-eq i { font-style: normal; color: var(--muted); } .ep-mol { white-space: nowrap; padding: 2px 4px; border-radius: 8px; } .ep-mol b { display: inline-block; min-width: 30px; margin-right: 3px; padding: 1px 5px; border-radius: 6px; background: color-mix(in srgb, var(--good) 22%, var(--surface)); text-align: center; }
 .ep-mol b.vide { background: var(--surface-2); border: 2px dashed var(--muted); color: var(--muted); } .ep-mol.vise { background: color-mix(in srgb, var(--accent) 16%, transparent); } .ep-mol.vise b.vide { border-color: var(--accent); color: var(--accent); }
 .ep-eq.gagne { border-color: var(--good); } .ep-chaleur { color: #D9541E; }
-.ep-atomes { display: grid; gap: 4px; } .ep-at { position: relative; display: grid; grid-template-columns: 54px 1fr 1fr; align-items: center; text-align: center; font-size: 17px; padding: 5px 30px 5px 8px; border-radius: 8px; background: var(--surface); }
+.ep-atomes { display: grid; gap: 4px; } .ep-at { position: relative; display: grid; grid-template-columns: 58px 1fr 1fr; align-items: center; text-align: center; font-size: 17px; padding: 5px 30px 5px 8px; border-radius: 8px; background: var(--surface); }
 .ep-at.tete { background: none; font-size: 13px; color: var(--muted); padding-top: 0; padding-bottom: 0; } .ep-at.vise { box-shadow: inset 0 0 0 2px var(--accent); } .ep-at.ok { background: color-mix(in srgb, var(--good) 18%, var(--surface)); } .ep-at em { position: absolute; right: 9px; color: var(--good); font-style: normal; font-weight: 800; }
 .ep-bulle .comite p { font-size: 17px; } .ep-choix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .ep-c { font-size: 17px; font-weight: 700; padding: 12px 4px; } .ep-c.faux { opacity: .45; text-decoration: line-through; }
 .ep-savoir { border-left: 4px solid #E0A800; background: color-mix(in srgb, #E0A800 12%, var(--surface)); border-radius: 8px; padding: 10px 12px; } .ep-savoir p { font-size: 17px; line-height: 1.5; margin: 6px 0 10px; } .ep-savoir cite { display: block; font-size: 12px; font-style: normal; color: var(--muted); margin-top: 3px; } .ep-savoir .btn { width: 100%; } .ep-savoir.nu p { margin: 0; }
@@ -2346,12 +2351,13 @@ function demarrerJeu() {
       },
       // 2. La jauge : s'arrêter au-dessus de la barrière.
       jauge: function (e, i) {
-        var seuil = e.seuil || 0.7, per = e.periode || 1500, t0 = performance.now(), gele = false, fini = false, raf = 0, p = 0;
-        var bloc = plus('<div class="ep-jauge"><div class="ep-tube"><div class="ep-zone-ok" style="height:' + ((1 - seuil) * 100).toFixed(0) + '%"></div><div class="ep-seuil" style="bottom:' + (seuil * 100).toFixed(0) + '%"><span>' + __("énergie d'activation") + '</span></div><div class="ep-curseur"></div></div>' +
-          '<div class="ep-grain"><svg viewBox="0 0 80 80" aria-hidden="true"><circle class="ep-halo" cx="40" cy="40" r="30"/><path d="M28 46 L32 30 L46 26 L54 38 L48 52 L34 54 Z" class="ep-g"/></svg><span>' + __("le grain de pyrite") + "</span></div></div>");
+        var seuil = e.seuil || 0.7, ech = e.echelle || null, per = e.periode || 1500, t0 = performance.now(), gele = false, fini = false, raf = 0, p = 0;
+        var bloc = plus('<div class="ep-jauge"><div class="ep-tube"><div class="ep-zone-ok" style="height:' + ((1 - seuil) * 100).toFixed(0) + '%"></div><div class="ep-seuil" style="bottom:' + (seuil * 100).toFixed(0) + '%"><span>' + __("énergie d'activation") + (ech ? "<small>" + chiffre(Math.round(seuil * ech.max)) + " " + esc(ech.unite) + "</small>" : "") + '</span></div>' +
+          (ech ? [0, 0.25, 0.5, 0.75, 1].map(function (g) { return '<i class="ep-grad" style="bottom:' + g * 100 + '%">' + chiffre(Math.round(g * ech.max)) + "</i>"; }).join("") : "") + '<div class="ep-curseur"></div></div>' +
+          '<div class="ep-grain"><svg viewBox="0 0 80 80" aria-hidden="true"><circle class="ep-halo" cx="40" cy="40" r="30"/><path d="M28 46 L32 30 L46 26 L54 38 L48 52 L34 54 Z" class="ep-g"/></svg><span>' + __("le grain de pyrite") + "</span>" + (ech ? '<b class="ep-lu"></b><small>' + __("énergie du coup") + "</small>" : "") + "</div></div>");
         var bt = plus('<button type="button" class="btn large ep-frappe">' + __("Frapper !") + "</button>"), msg = plus('<p class="ep-msg" aria-live="polite"></p>');
-        var cur = bloc.querySelector(".ep-curseur");
-        function tour(t) { if (!gele) { var x = ((t - t0) / per) % 2; p = x < 1 ? x : 2 - x; cur.style.bottom = (p * 100).toFixed(1) + "%"; } raf = requestAnimationFrame(tour); }
+        var cur = bloc.querySelector(".ep-curseur"); var lu = bloc.querySelector(".ep-lu");
+        function tour(t) { if (!gele) { var x = ((t - t0) / per) % 2; p = x < 1 ? x : 2 - x; cur.style.bottom = (p * 100).toFixed(1) + "%"; if (lu) lu.textContent = Math.round(p * ech.max) + " " + ech.unite; } raf = requestAnimationFrame(tour); }
         raf = requestAnimationFrame(tour); arrets.push(function () { cancelAnimationFrame(raf); });
         bt.onclick = function () {
           if (fini || gele) return; gele = true;
@@ -2364,12 +2370,17 @@ function demarrerJeu() {
         var coef = (e.depart || []).slice(), mol = e.molecules, atomes = [], k = 0;
         mol.forEach(function (m) { Object.keys(m.atomes).forEach(function (a) { if (atomes.indexOf(a) < 0) atomes.push(a); }); });
         var eq = plus('<div class="ep-eq"></div>'), tab = plus('<div class="ep-atomes"></div>'), bulle = plus('<div class="ep-bulle"></div>'), choix = plus('<div class="ep-choix"></div>'), msg = plus('<p class="ep-msg" aria-live="polite"></p>');
-        function cote(c) { return mol.map(function (m, j) { return m.cote === c ? '<span class="ep-mol' + (e.pas[k] && e.pas[k].cible === j ? " vise" : "") + '"><b class="' + (coef[j] == null ? "vide" : "") + '">' + (coef[j] == null ? "?" : coef[j]) + "</b>" + esc(m.formule) + "</span>" : null; }).filter(Boolean).join('<i>+</i>'); }
+        var teinte = {}, nomAt = {}; (e.atomes || []).forEach(function (x) { teinte[x.id] = x.couleur; nomAt[x.id] = tx(x.nom); });
+        function bille(a, r) { return '<circle r="' + r + '" fill="' + (teinte[a] || "#888") + '" stroke="rgba(0,0,0,.35)" stroke-width="1"/>'; }
+        function modele(m) { var d = m.dessin || [], pas = 13, w = pas * (d.length - 1) + 20; if (!d.length) return "";
+          return '<svg class="ep-modele" viewBox="0 0 ' + w + ' 22" width="' + w + '" height="22" aria-hidden="true">' + d.map(function (a, n) { return '<g transform="translate(' + (10 + n * pas) + ',11)">' + bille(a, a === "Fe" ? 9 : 7.5) + "</g>"; }).join("") + "</svg>"; }
+        function cote(c) { return mol.map(function (m, j) { return m.cote === c ? '<span class="ep-mol' + (e.pas[k] && e.pas[k].cible === j ? " vise" : "") + '">' + modele(m) + '<span><b class="' + (coef[j] == null ? "vide" : "") + '">' + (coef[j] == null ? "?" : coef[j]) + "</b>" + esc(m.formule) + "</span></span>" : null; }).filter(Boolean).join('<i>+</i>'); }
+        function billes(a, x) { var h = ""; for (var n = 0; n < x.n; n++) h += '<i style="background:' + (teinte[a] || "#888") + '"></i>'; return '<span class="ep-billes">' + h + (x.flou ? "<u>?</u>" : "") + "<b>" + (x.flou ? (x.n ? x.n + " + ?" : "?") : x.n) + "</b></span>"; }
         function compte(a, c) { var n = 0, flou = false; mol.forEach(function (m, j) { if (m.cote !== c || !m.atomes[a]) return; if (coef[j] == null) flou = true; else n += coef[j] * m.atomes[a]; }); return { n: n, flou: flou }; }
         function peindre() {
           eq.innerHTML = cote("g") + '<i class="ep-fleche">→</i>' + cote("d") + (k >= e.pas.length ? '<i>+</i><span class="ep-chaleur">' + __("chaleur") + "</span>" : "");
           tab.innerHTML = '<div class="ep-at tete"><span></span><span>' + __("à gauche") + "</span><span>" + __("à droite") + "</span></div>" + atomes.map(function (a) { var g = compte(a, "g"), d = compte(a, "d"), ok = !g.flou && !d.flou && g.n === d.n;
-            return '<div class="ep-at' + (ok ? " ok" : "") + (e.pas[k] && e.pas[k].atome === a ? " vise" : "") + '"><span><b>' + esc(a) + "</b></span><span>" + (g.flou ? (g.n ? g.n + " + ?" : "?") : g.n) + "</span><span>" + (d.flou ? (d.n ? d.n + " + ?" : "?") : d.n) + "</span>" + (ok ? '<em aria-hidden="true">✓</em>' : "") + "</div>"; }).join("");
+            return '<div class="ep-at' + (ok ? " ok" : "") + (e.pas[k] && e.pas[k].atome === a ? " vise" : "") + '"><span class="ep-at-nom"><i style="background:' + (teinte[a] || "#888") + '"></i><b>' + esc(a) + "</b><small>" + esc(nomAt[a] || "") + "</small></span>" + billes(a, g) + billes(a, d) + (ok ? '<em aria-hidden="true">✓</em>' : "") + "</div>"; }).join("");
         }
         function poser() {
           peindre(); bulle.innerHTML = ""; choix.innerHTML = ""; msg.textContent = "";

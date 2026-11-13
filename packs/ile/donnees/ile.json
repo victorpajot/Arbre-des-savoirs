@@ -2330,9 +2330,9 @@
       "fr": "L'énergie d'activation"
      },
      "consigne": {
-      "fr": "Arrête la jauge au-dessus du trait : il faut assez d'énergie pour que la réaction démarre."
+      "fr": "Arrête la jauge au-dessus du trait : sous 70 kJ par mole, la réaction ne démarre pas."
      },
-     "seuil": 0.68,
+     "seuil": 0.7,
      "periode": 1500,
      "rate": {
       "fr": "Pas assez d'énergie : le grain reste sous la barrière, rien ne démarre."
@@ -2351,8 +2351,19 @@
         "fr": "Une réaction ne démarre pas toute seule. En 1889, Svante Arrhenius formule l'idée d'énergie d'activation : une barrière d'énergie à franchir avant que deux molécules réagissent."
        },
        "source": "Wikipedia, « Svante Arrhenius »"
+      },
+      {
+       "id": "feu-70",
+       "texte": {
+        "fr": "La jauge n'est pas inventée : en 2021, deux chercheurs ont mesuré pour la pyrite une énergie d'activation de 70,1 kJ par mole, sur la première étape de sa transformation à chaud dans un mélange d'oxygène et d'azote."
+       },
+       "source": "Aracena et Jerez, « Mechanism and kinetics of pyrite transformation at elevated temperatures », Physicochemical Problems of Mineral Processing, 2021"
       }
-     ]
+     ],
+     "echelle": {
+      "max": 100,
+      "unite": "kJ/mol"
+     }
     },
     {
      "id": "feu-bruler",
@@ -2361,7 +2372,7 @@
       "fr": "L'oxydation"
      },
      "consigne": {
-      "fr": "Le grain chaud rencontre le dioxygène de l'air. Équilibre la réaction : autant d'atomes de chaque sorte à gauche et à droite."
+      "fr": "Le grain chaud rencontre le dioxygène de l'air. Rien ne se perd : il faut autant de billes de chaque couleur à gauche et à droite."
      },
      "molecules": [
       {
@@ -2373,7 +2384,12 @@
         "Fe": 1,
         "S": 2
        },
-       "cote": "g"
+       "cote": "g",
+       "dessin": [
+        "S",
+        "Fe",
+        "S"
+       ]
       },
       {
        "formule": "O₂",
@@ -2383,7 +2399,11 @@
        "atomes": {
         "O": 2
        },
-       "cote": "g"
+       "cote": "g",
+       "dessin": [
+        "O",
+        "O"
+       ]
       },
       {
        "formule": "Fe₂O₃",
@@ -2394,7 +2414,14 @@
         "Fe": 2,
         "O": 3
        },
-       "cote": "d"
+       "cote": "d",
+       "dessin": [
+        "O",
+        "Fe",
+        "O",
+        "Fe",
+        "O"
+       ]
       },
       {
        "formule": "SO₂",
@@ -2405,7 +2432,12 @@
         "S": 1,
         "O": 2
        },
-       "cote": "d"
+       "cote": "d",
+       "dessin": [
+        "O",
+        "S",
+        "O"
+       ]
       }
      ],
      "depart": [
@@ -2415,7 +2447,7 @@
       null
      ],
      "intro": {
-      "fr": "Je te donne le premier : 2 Fe₂O₃. Le reste se compte sur les doigts."
+      "fr": "Je te donne le premier : 2 Fe₂O₃. Regarde les billes, pas les lettres."
      },
      "pas": [
       {
@@ -2428,10 +2460,10 @@
        ],
        "bon": 4,
        "question": {
-        "fr": "Le fer d'abord. À droite, 2 Fe₂O₃ : 2 × 2 = 4 atomes de fer. Chaque FeS₂ en apporte un seul. Combien de FeS₂ ?"
+        "fr": "Le fer d'abord : 4 billes à droite. Chaque FeS₂ en apporte une seule. Combien de FeS₂ pour en avoir 4 à gauche ?"
        },
        "aide": {
-        "fr": "Compte le fer à droite : 2 molécules, 2 atomes chacune. Il en faut autant à gauche."
+        "fr": "Compte les billes de fer à droite : il en faut autant à gauche, une par FeS₂."
        }
       },
       {
@@ -2444,10 +2476,10 @@
        ],
        "bon": 8,
        "question": {
-        "fr": "Le soufre maintenant. À gauche, 4 FeS₂ : 4 × 2 = 8 atomes de soufre. Chaque SO₂ en emporte un seul. Combien de SO₂ ?"
+        "fr": "Le soufre : 8 billes à gauche. Chaque SO₂ en emporte une seule. Combien de SO₂ ?"
        },
        "aide": {
-        "fr": "4 FeS₂, 2 soufres chacun : 8 soufres à caser, un par SO₂."
+        "fr": "8 billes de soufre à gauche : une par SO₂ à droite."
        }
       },
       {
@@ -2460,10 +2492,10 @@
        ],
        "bon": 11,
        "question": {
-        "fr": "Reste l'oxygène. À droite : 2 × 3 = 6 dans les Fe₂O₃, plus 8 × 2 = 16 dans les SO₂, soit 22 atomes. Chaque O₂ en apporte deux. Combien de O₂ ?"
+        "fr": "L'oxygène : 22 billes à droite. Chaque O₂ en apporte deux. Combien de O₂ ?"
        },
        "aide": {
-        "fr": "22 atomes d'oxygène à fournir, et ils arrivent par paires."
+        "fr": "22 billes d'oxygène à fournir, et elles arrivent par paires."
        }
       }
      ],
@@ -2481,6 +2513,29 @@
         "fr": "Dans les années 1770, Antoine Lavoisier comprend que ce qui brûle se combine chimiquement avec un gaz de l'air. Il le nomme oxygène et appelle le phénomène oxydation."
        },
        "source": "Encyclopædia Britannica, « Chemistry : The chemical revolution »"
+      }
+     ],
+     "atomes": [
+      {
+       "id": "Fe",
+       "nom": {
+        "fr": "fer"
+       },
+       "couleur": "#B5651D"
+      },
+      {
+       "id": "S",
+       "nom": {
+        "fr": "soufre"
+       },
+       "couleur": "#E3B92E"
+      },
+      {
+       "id": "O",
+       "nom": {
+        "fr": "oxygène"
+       },
+       "couleur": "#D94141"
       }
      ]
     }
