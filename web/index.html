@@ -1294,6 +1294,12 @@ svg.grille .interro { transition: opacity .3s; }
 .ep-at.tete { background: none; font-size: 13px; color: var(--muted); padding-top: 0; padding-bottom: 0; } .ep-at.vise { box-shadow: inset 0 0 0 2px var(--accent); } .ep-at.ok { background: color-mix(in srgb, var(--good) 18%, var(--surface)); } .ep-at em { position: absolute; right: 9px; color: var(--good); font-style: normal; font-weight: 800; }
 .ep-bulle .comite p { font-size: 17px; } .ep-choix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .ep-c { font-size: 17px; font-weight: 700; padding: 12px 4px; } .ep-c.faux { opacity: .45; text-decoration: line-through; }
 .ep-savoir { border-left: 4px solid #E0A800; background: color-mix(in srgb, #E0A800 12%, var(--surface)); border-radius: 8px; padding: 10px 12px; } .ep-savoir p { font-size: 17px; line-height: 1.5; margin: 6px 0 10px; } .ep-savoir cite { display: block; font-size: 12px; font-style: normal; color: var(--muted); margin-top: 3px; } .ep-savoir .btn { width: 100%; } .ep-savoir.nu p { margin: 0; }
+.ep-frotte { touch-action: none; cursor: grab; } .ep-lame { transition: transform .08s linear; } .ep-poli { opacity: 0; }
+.ep-barre { flex: 1; height: 14px; border-radius: 7px; background: var(--line); overflow: hidden; } .ep-barre i { display: block; height: 100%; width: 0; background: #E3B92E; border-radius: 7px; } .ep-compte b { white-space: nowrap; }
+.ep-pc.absente { opacity: .13; } .ep-pieces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ep-piece { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; font-size: 15px; font-weight: 700; line-height: 1.2; } .ep-piece.faux { border-color: var(--bad); } .ep-piece.posee { opacity: .55; border-color: var(--good); }
+.ep-hache { transform-origin: 88px 164px; transform: rotate(-30deg); } .ep-abattre.pris .ep-hache { animation: ep-hacher .55s ease-in 3; } @keyframes ep-hacher { 0%, 100% { transform: rotate(-30deg); } 55%, 70% { transform: rotate(0deg); } }
+.ep-entaille, .ep-copeaux { opacity: 0; } .ep-abattre.pris .ep-entaille { opacity: 1; transition: opacity .2s .3s; } .ep-abattre.pris .ep-copeaux { opacity: 1; } .ep-abattre.pris .ep-copeaux rect { animation: ep-vol .7s ease-out .3s 3 both; }
 .ep-foyer svg { display: block; width: 100%; max-width: 300px; margin: 0 auto; } .ep-braise { fill: #E2551D; } .ep-flamme { opacity: 0; transition: opacity .9s; } .ep-foyer.pris .ep-flamme { opacity: 1; } .ep-foyer.pris .ep-braise { opacity: 0; }
 .fete { position: fixed; inset: 0; z-index: 60; background: color-mix(in srgb, var(--bg) 97%, transparent); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
 .fete .in { position: relative; z-index: 1; max-width: 460px; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
@@ -2313,16 +2319,25 @@ function demarrerJeu() {
   // suivi de ce qu'il enseigne ; puis l'étincelle tombe sur l'amadou. Rien n'y est punitif : on recommence le geste raté.
   // Victor (2026-11-13) : avant l'épreuve, une quête. Les objets sont cachés sur la carte de l'île : on les touche pour
   // les ramasser. Tous trouvés, l'épreuve s'ouvre.
+  // Les épreuves en attente : celle de l'âge, puis celles qui gardent un aménagement (la hache des bûcherons).
+  function epreuvesAttente() { return M.modeIle(P) && C.ile && C.ile.ages ? M.epreuvesEnAttente(C, P) : []; }
   function queteActive() {
-    var G = M.modeIle(P) && M.agesIle(C, P), ep = G && G.age.epreuve, q = ep && M.queteIle(C, P, ep);
-    return q && !q.complete ? q : null;
+    var L = epreuvesAttente();
+    for (var i = 0; i < L.length; i++) { var q = M.queteIle(C, P, L[i]); if (q && !q.complete) return q; }
+    return null;
   }
   function allerQuete() { if (queteActive()) ouvrirExplorer(); }
   var DESSINS_QUETE = {
     silex: '<path d="M-8 4 L-5 -6 L4 -8 L9 -1 L5 7 L-3 8 Z" fill="#6B6257"/><path d="M-5 -6 L4 -8 L2 -1 L-4 1 Z" fill="#9A9085"/><path d="M-8 4 L-3 8 L-5 5 Z" fill="#D9D2C5"/>',
     pyrite: '<path d="M-8 5 L-9 -3 L-2 -8 L7 -6 L9 3 L3 8 Z" fill="#B8962E"/><path d="M-9 -3 L-2 -8 L7 -6 L1 -1 Z" fill="#F0D560"/><path d="M-4 1 h4 v3 h-4 z" fill="#FFF0A0"/>',
     amadou: '<path d="M-3 -10 h6 v20 h-6 z" fill="#6A4A2E"/><path d="M3 -4 a8 7 0 0 1 9 6 l-9 0 z" fill="#A9764A"/><path d="M3 2 l9 0 l-1 2 l-8 0 z" fill="#E6D2B0"/><path d="M-3 2 a6 5 0 0 0 -7 5 l7 0 z" fill="#8F6238"/>',
-    branchages: '<path d="M-10 6 L8 -5 M-8 -2 L10 5 M-3 8 L4 -8 M2 -3 L8 -8" stroke="#7A5230" stroke-width="2.4" stroke-linecap="round" fill="none"/>'
+    branchages: '<path d="M-10 6 L8 -5 M-8 -2 L10 5 M-3 8 L4 -8 M2 -3 L8 -8" stroke="#7A5230" stroke-width="2.4" stroke-linecap="round" fill="none"/>',
+    galet: '<ellipse rx="9.5" ry="6.5" fill="#46594F"/><ellipse cy="-.8" rx="8.6" ry="5.4" fill="#5E7468"/><ellipse cx="-2.5" cy="-2.6" rx="4.6" ry="1.9" fill="#9DB3A6"/>',
+    polissoir: '<path d="M-10 7 L-9 -3 L5 -7 L10 1 L8 7 Z" fill="#B58B52"/><path d="M-9 -3 L5 -7 L10 1 L-5 3 Z" fill="#E3C594"/><path d="M-5 -1.5 L5 -4 M-3 1 L7 -1.5" stroke="#9A7848" stroke-width="1.3" stroke-linecap="round" fill="none"/>',
+    ramure: '<path d="M-7 10 C-6 2 -2 -3 3 -10 M-4 2 L-10 -3 M-1 -3 L-7 -9 M1 -6 L9 -7" stroke="#5E4E30" stroke-width="4.4" stroke-linecap="round" fill="none"/><path d="M-7 10 C-6 2 -2 -3 3 -10 M-4 2 L-10 -3 M-1 -3 L-7 -9 M1 -6 L9 -7" stroke="#EDE2C6" stroke-width="2.4" stroke-linecap="round" fill="none"/>',
+    manche: '<path d="M-10 8 L9 -8" stroke="#4A2F16" stroke-width="5" stroke-linecap="round"/><path d="M-10 8 L9 -8 M1 -1 L7 1" stroke="#8A5E34" stroke-width="2.8" stroke-linecap="round" fill="none"/>',
+    lame: '<path d="M-10 0 C-6 -6 4 -8 9 -5 C12 -2 12 2 9 5 C4 8 -6 6 -10 0 Z" fill="#7F988A"/><path d="M9 -5 C12 -2 12 2 9 5 L6 0 Z" fill="#C9D8CF"/><path d="M-5 -2 C0 -5 4 -5 6 -4" stroke="#fff" stroke-opacity=".5" stroke-width="1.2" fill="none"/>',
+    gaine: '<path d="M-9 -3 C-9 -6 -6 -7 -3 -6.5 L7 -4 C10 -3 11 1 9 4 C8 6 6 7 3 6.5 L-6 4 C-9 3 -9 0 -9 -3 Z" fill="#E6D9BC" stroke="#8E7C52" stroke-width="1.4"/><ellipse cx="-5.5" cy="-1" rx="2.2" ry="3" fill="#8E7C52"/>'
   };
   function svgObjetQuete(o, x, y, t) { return '<g class="ile-quete" data-quete="' + esc(o.id) + '" transform="translate(' + x + "," + y + ') scale(' + (t || 1) + ')"><circle r="17" fill="transparent"/>' + (DESSINS_QUETE[o.id] || '<circle r="6" fill="#E3B92E"/>') + "</g>"; }
   function blocQuete(q, bouton) {
@@ -2433,7 +2448,23 @@ function demarrerJeu() {
     window.addEventListener("resize", appliquer);
     document.body.appendChild(z); objets(); panneau(); appliquer();
   }
-  function svgPierres() {
+  // La hache en trois pièces : la lame de pierre, la gaine en bois de cerf, le manche. `poses` dit lesquelles sont en place.
+  function piecesHache(poses) {
+    function p(id, d) { return '<g class="ep-pc' + (!poses || poses[id] ? "" : " absente") + '">' + d + "</g>"; }
+    return p("manche", '<path d="M118 28 C124 25 132 27 134 34 L150 154 C151 162 138 165 136 157 L115 40 C114 34 114 30 118 28 Z" fill="#7A5230"/><path d="M123 36 L141 152" stroke="#A37446" stroke-width="3" stroke-linecap="round"/>') +
+      p("gaine", '<path d="M84 38 C84 32 90 30 96 31 L138 36 C144 37 146 44 144 50 C142 56 138 58 132 57 L92 54 C86 53 84 46 84 38 Z" fill="#E6D9BC" stroke="#8E7C52" stroke-width="1.6"/><path d="M98 37 L134 42" stroke="#fff" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/>') +
+      p("lame", '<path d="M95 33 C74 27 52 29 40 40 C35 46 37 55 44 59 C58 61 78 59 95 53 Z" fill="#7F988A"/><path d="M40 40 C35 46 37 55 44 59 L52 49 Z" fill="#C9D8CF"/><path d="M52 36 C64 32 78 32 90 35" stroke="#fff" stroke-opacity=".45" stroke-width="2" fill="none" stroke-linecap="round"/>');
+  }
+  function svgHache(poses) { return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="158" rx="80" ry="8" fill="rgba(0,0,0,.14)"/>' + piecesHache(poses) + "</svg>"; }
+  function svgPolissage() {
+    var forme = "M70 82 C86 70 138 60 166 64 C178 74 178 92 166 102 C138 104 86 96 70 82 Z";
+    return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="152" rx="96" ry="10" fill="rgba(0,0,0,.14)"/>' +
+      '<path d="M26 150 L18 118 L46 96 L198 92 L224 112 L214 150 Z" fill="#B58B52"/><path d="M46 96 L198 92 L212 108 L34 114 Z" fill="#E3C594"/><path d="M60 104 L186 100" stroke="#9A7848" stroke-width="5" stroke-linecap="round" opacity=".7"/><path d="M40 128 h8 M70 136 h10 M150 132 h9 M188 124 h8" stroke="#9A7848" stroke-width="3"/>' +
+      '<g class="ep-lame"><path d="' + forme + '" fill="#5E7468"/><path d="M84 78 L104 70 L112 84 L92 90 Z M120 68 L146 64 L150 80 L126 84 Z M150 84 L168 80 L164 98 L146 98 Z" fill="#46594F"/><path d="M104 70 L120 68 L126 84 L112 84 Z" fill="#74897D"/>' +
+      '<g class="ep-poli"><path d="' + forme + '" fill="#7F988A"/><path d="M166 64 C178 74 178 92 166 102 L158 83 Z" fill="#C9D8CF"/><path d="M90 76 C110 68 136 66 156 68" stroke="#fff" stroke-opacity=".55" stroke-width="3" fill="none" stroke-linecap="round"/></g></g></svg>';
+  }
+  function svgPierres(v) {
+    if (v === "taille") return svgPierres().replace(/#B8962E/g, "#5E7468").replace(/#E3C356/g, "#74897D").replace(/#9A7A1F/g, "#46594F").replace(/#F4E08A/g, "#9DB3A6").replace(/#6B6257/g, "#8C7A63").replace(/#8D8377/g, "#AD9A80").replace(/#4E473F/g, "#6B5C49").replace(/#D9D2C5/g, "#C9B79B");
     return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="150" rx="86" ry="10" fill="rgba(0,0,0,.14)"/>' +
       '<g class="ep-pyrite"><path d="M70 146 L58 122 L72 98 L104 88 L140 94 L160 116 L152 142 L118 152 Z" fill="#B8962E"/><path d="M72 98 L104 88 L140 94 L122 108 L92 110 Z" fill="#E3C356"/><path d="M92 110 L122 108 L118 152 L70 146 L58 122 Z" fill="#9A7A1F"/><path d="M100 96 h10 v6 h-10 z M126 100 h8 v5 h-8 z M84 124 h9 v7 h-9 z" fill="#F4E08A"/></g>' +
       '<g class="ep-silex"><path d="M150 20 L196 8 L222 30 L206 62 L168 74 L146 52 Z" fill="#6B6257"/><path d="M150 20 L196 8 L186 36 L160 44 Z" fill="#8D8377"/><path d="M146 52 L160 44 L186 36 L206 62 L168 74 Z" fill="#4E473F"/><path d="M146 52 L168 74 L156 70 Z" fill="#D9D2C5"/></g>' +
@@ -2441,9 +2472,9 @@ function demarrerJeu() {
   }
   function ouvrirEpreuveIle(id) {
     var E = M.epreuveIle(C, id); if (!E || document.querySelector(".epreuve-u")) return;
-    if (queteActive()) { allerQuete(); return; }
+    var deja = M.epreuveFaite(P, id) || epreuvesAttente().indexOf(id) < 0, arrets = [], N = E.etapes.length;
+    var q0 = M.queteIle(C, P, id); if (!deja && q0 && !q0.complete) { fermerFeuille(); ouvrirExplorer(); return; }
     fermerFeuille();
-    var deja = M.epreuveFaite(P, id) || !(M.agesIle(C, P) || { age: {} }).age.epreuve, arrets = [], N = E.etapes.length;
     var z = el('<div class="epreuve-u" role="dialog" aria-modal="true" aria-label="' + esc(tx(E.nom)) + '"><div class="in"><div class="ep-tete"><button type="button" class="ep-x" aria-label="' + __("Quitter") + '">×</button><div class="eyebrow">' + __("Épreuve unique") + "</div><h2>" + esc(tx(E.nom)) + '</h2><ol class="ep-fil">' +
       E.etapes.map(function (e, i) { return "<li><b>" + (i + 1) + "</b><span>" + esc(tx(e.titre)) + "</span></li>"; }).join("") + '</ol></div><div class="ep-corps"></div></div></div>');
     var corps = z.querySelector(".ep-corps"), fil = z.querySelectorAll(".ep-fil li");
@@ -2458,7 +2489,7 @@ function demarrerJeu() {
     function savoir(e, i) {
       marquer(i + 1);
       var s = plus('<div class="ep-savoir"><div class="eyebrow">' + __("Ce que tu viens de faire") + "</div>" + e.savoir.map(function (x) { return "<p>" + esc(tx(x.texte)) + "<cite>" + esc(x.source) + "</cite></p>"; }).join("") +
-        '<button type="button" class="btn large">' + (i + 1 < N ? __("Étape suivante : ") + esc(tx(E.etapes[i + 1].titre)) : __("Recueillir l'étincelle")) + "</button></div>");
+        '<button type="button" class="btn large">' + (i + 1 < N ? __("Étape suivante : ") + esc(tx(E.etapes[i + 1].titre)) : E.chute.appel ? esc(tx(E.chute.appel)) : __("Recueillir l'étincelle")) + "</button></div>");
       s.querySelector(".btn").onclick = function () { if (i + 1 < N) etape(i + 1); else chute(); };
       setTimeout(function () { if (s.scrollIntoView) s.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
     }
@@ -2470,7 +2501,7 @@ function demarrerJeu() {
       // 1. Frapper vite : un coup ne compte que s'il suit le précédent d'assez près.
       frappes: function (e, i) {
         var n = 0, dernier = 0, fini = false, total = e.coups || 6, delai = e.delai || 900;
-        var zone = plus('<button type="button" class="ep-zone">' + svgPierres() + '<span class="ep-appel">' + __("Touche ici pour frapper") + "</span></button>");
+        var zone = plus('<button type="button" class="ep-zone">' + svgPierres(E.dessin) + '<span class="ep-appel">' + __("Touche ici pour frapper") + "</span></button>");
         var jauge = plus('<div class="ep-compte"><span class="ep-pips">' + new Array(total + 1).join("<i></i>") + "</span><b></b></div>"); plus('<p class="ep-msg" aria-live="polite"></p>');
         var pips = corps.querySelectorAll(".ep-pips i"), lib = corps.querySelector(".ep-compte b"), msg = corps.querySelector(".ep-msg"), ecl = zone.querySelector(".ep-eclats");
         function peindre() { pips.forEach(function (p, j) { p.className = j < n ? "ok" : ""; }); lib.textContent = __("Éclats arrachés : {n} sur {t}", { n: n, t: total }); }
@@ -2482,12 +2513,48 @@ function demarrerJeu() {
           if (vif) {
             n++; msg.textContent = "";
             var a = -2.4 + (n * 0.83) % 1.6, dx = Math.cos(a) * (46 + (n * 13) % 30), dy = Math.sin(a) * (40 + (n * 7) % 26);
-            ecl.insertAdjacentHTML("beforeend", '<rect class="ep-eclat" x="141" y="84" width="6" height="6" fill="#F4E08A" style="--dx:' + dx.toFixed(0) + "px;--dy:" + dy.toFixed(0) + 'px"/>');
+            ecl.insertAdjacentHTML("beforeend", '<rect class="ep-eclat" x="141" y="84" width="6" height="6" fill="' + (E.dessin === "taille" ? "#9DB3A6" : "#F4E08A") + '" style="--dx:' + dx.toFixed(0) + "px;--dy:" + dy.toFixed(0) + 'px"/>');
           } else msg.textContent = tx(e.rate || { fr: "" });
           peindre();
-          if (n >= total) { fini = true; zone.classList.add("gagne"); zone.querySelector(".ep-appel").textContent = __("La pyrite a cédé."); msg.textContent = ""; setTimeout(function () { savoir(e, i); }, 650); }
+          if (n >= total) { fini = true; zone.classList.add("gagne"); zone.querySelector(".ep-appel").textContent = e.gagne ? tx(e.gagne) : __("La pyrite a cédé."); msg.textContent = ""; setTimeout(function () { savoir(e, i); }, 650); }
         };
         zone.onclick = function (ev) { ev.preventDefault(); };
+      },
+      // Frotter : glisser d'avant en arrière ; c'est la distance parcourue qui polit (un toucher compte un peu aussi).
+      frotter: function (e, i) {
+        var total = e.course || 4000, fait = 0, fini = false, bas = false, px = 0, py = 0;
+        var zone = plus('<div class="ep-zone ep-frotte">' + svgPolissage() + '<span class="ep-appel">' + __("Glisse le doigt d'avant en arrière sur la pierre") + "</span></div>");
+        var barre = plus('<div class="ep-compte"><span class="ep-barre"><i></i></span><b></b></div>'); plus('<p class="ep-msg" aria-live="polite"></p>');
+        var rempl = barre.querySelector("i"), lib = barre.querySelector("b"), lame = zone.querySelector(".ep-lame"), poli = zone.querySelector(".ep-poli");
+        function peindre() { var p = Math.min(1, fait / total); rempl.style.width = (p * 100).toFixed(0) + "%"; lib.textContent = __("Poli : {n} %", { n: Math.round(p * 100) }); poli.style.opacity = p.toFixed(2); }
+        function user(d, ev) {
+          if (fini) return; fait += d;
+          var r = zone.getBoundingClientRect(), rx = r.width ? (ev.clientX - r.left) / r.width : 0.5; lame.style.transform = "translateX(" + (Math.max(0, Math.min(1, rx)) * 90 - 45).toFixed(0) + "px)";
+          peindre();
+          if (fait >= total) { fini = true; zone.classList.add("gagne"); zone.querySelector(".ep-appel").textContent = e.gagne ? tx(e.gagne) : __("C'est poli."); setTimeout(function () { savoir(e, i); }, 750); }
+        }
+        peindre();
+        zone.addEventListener("pointerdown", function (ev) { ev.preventDefault(); bas = true; px = ev.clientX; py = ev.clientY; try { zone.setPointerCapture(ev.pointerId); } catch (x) {} user(total / 30, ev); });
+        zone.addEventListener("pointermove", function (ev) { if (!bas) return; var d = Math.abs(ev.clientX - px) + Math.abs(ev.clientY - py); px = ev.clientX; py = ev.clientY; if (d) user(Math.min(d, 160), ev); });
+        ["pointerup", "pointercancel"].forEach(function (n) { zone.addEventListener(n, function () { bas = false; }); });
+      },
+      // Assembler : toucher les pièces dans l'ordre où elles s'emboîtent.
+      assemblage: function (e, i) {
+        var k = 0, ordre = e.ordre || e.pieces.map(function (x) { return x.id; }), poses = {};
+        var zone = plus('<div class="ep-zone fixe ep-montage"></div>'), choix = plus('<div class="ep-pieces"></div>'), msg = plus('<p class="ep-msg" aria-live="polite"></p>');
+        function peindre() {
+          zone.innerHTML = svgHache(poses); choix.innerHTML = "";
+          e.pieces.forEach(function (p) {
+            var bt = el('<button type="button" class="btn sec ep-piece' + (poses[p.id] ? " posee" : "") + '"' + (poses[p.id] ? " disabled" : "") + '><svg viewBox="-14 -14 28 28" width="46" height="46" aria-hidden="true">' + (DESSINS_QUETE[p.id] || "") + "</svg><span>" + esc(tx(p.nom)) + (poses[p.id] ? " ✓" : "") + "</span></button>");
+            bt.onclick = function () {
+              if (p.id !== ordre[k]) { bt.classList.add("faux"); msg.className = "ep-msg"; msg.textContent = tx(e.rate || { fr: "" }); return; }
+              poses[p.id] = 1; k++; msg.className = "ep-msg ok"; msg.textContent = tx(p.pose || { fr: "" }); peindre();
+              if (k >= ordre.length) { zone.classList.add("gagne"); if (e.gagne) setTimeout(function () { msg.textContent = tx(e.gagne); }, 1100); setTimeout(function () { savoir(e, i); }, 1300); }
+            };
+            choix.appendChild(bt);
+          });
+        }
+        peindre();
       },
       // 2. La jauge : s'arrêter au-dessus de la barrière.
       jauge: function (e, i) {
@@ -2544,17 +2611,24 @@ function demarrerJeu() {
       vider(); marquer(N);
       var c = E.chute;
       plus('<div class="ep-titre"><span>★</span><h3>' + esc(tx(c.titre)) + "</h3></div>");
-      var sc = plus('<div class="ep-foyer"><svg viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="150" rx="86" ry="10" fill="rgba(0,0,0,.14)"/><path d="M78 148 L70 128 L96 112 L140 110 L168 126 L164 148 Z" fill="#8A5A33"/><path d="M96 112 L140 110 L150 122 L104 126 Z" fill="#B07A48"/><circle class="ep-braise" cx="122" cy="118" r="6"/>' +
+      var sc = c.scene === "hache" ? plus('<div class="ep-foyer ep-abattre"><svg viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="130" cy="156" rx="96" ry="9" fill="rgba(0,0,0,.14)"/>' +
+        '<path d="M170 156 L174 40 L196 40 L202 156 Z" fill="#6A4A2E"/><path d="M178 44 L180 152" stroke="#8A6540" stroke-width="4" stroke-linecap="round"/><circle cx="186" cy="26" r="30" fill="#2F7D46"/><circle cx="160" cy="36" r="20" fill="#3C9156"/><circle cx="212" cy="38" r="20" fill="#27693A"/><circle cx="182" cy="14" r="16" fill="#49A565"/>' +
+        '<path class="ep-entaille" d="M171 92 L186 100 L171 110 Z" fill="#E8CFA0"/><g class="ep-copeaux"><rect x="160" y="96" width="5" height="5" fill="#E8CFA0" style="--dx:-34px;--dy:-26px"/><rect x="162" y="102" width="4" height="4" fill="#D9B77C" style="--dx:-44px;--dy:8px"/><rect x="164" y="98" width="4" height="4" fill="#E8CFA0" style="--dx:-20px;--dy:-40px"/></g>' +
+        '<g class="ep-hache"><g transform="translate(205,42) scale(-0.78,0.78)">' + piecesHache(null) + "</g></g></svg></div>") :
+        plus('<div class="ep-foyer"><svg viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="150" rx="86" ry="10" fill="rgba(0,0,0,.14)"/><path d="M78 148 L70 128 L96 112 L140 110 L168 126 L164 148 Z" fill="#8A5A33"/><path d="M96 112 L140 110 L150 122 L104 126 Z" fill="#B07A48"/><circle class="ep-braise" cx="122" cy="118" r="6"/>' +
         '<g class="ep-flamme" shape-rendering="crispEdges">' + svgAmenagement({ id: "feu", dessin: "foyer" }, 120, 128, 96) + "</g></svg></div>");
       plus('<div class="ep-savoir nu"><p>' + esc(tx(c.texte)) + "<cite>" + esc(c.source) + "</cite></p></div>");
       var bt = plus('<button type="button" class="btn large">' + esc(tx(c.bouton || { fr: "Souffler" })) + "</button>");
       bt.onclick = function () {
         sc.classList.add("pris"); bt.remove();
-        dire(deja ? __("Encore une flamme. Tu sais le refaire : c'est tout ce qu'on demande à un savoir.") : __("Voilà. Du feu, fait de tes mains. Ne prends pas la grosse tête : tu avais le mode d'emploi, eux non."), "fin");
-        var fin = plus('<button type="button" class="btn large">' + (deja ? __("Fermer") : __("Allumer le campement")) + "</button>");
+        dire(deja ? (c.alyca_deja ? tx(c.alyca_deja) : __("Encore une flamme. Tu sais le refaire : c'est tout ce qu'on demande à un savoir.")) : c.alyca ? tx(c.alyca) : __("Voilà. Du feu, fait de tes mains. Ne prends pas la grosse tête : tu avais le mode d'emploi, eux non."), "fin");
+        var fin = plus('<button type="button" class="btn large">' + (deja ? __("Fermer") : c.fin ? esc(tx(c.fin)) : __("Allumer le campement")) + "</button>");
         fin.onclick = function () {
           M.reussirEpreuve(C, P, id, maintenant()); sauver();
           if (deja) { quitter(); return; }
+          // Une épreuve qui garde un aménagement rouvre le chantier, sur le quartier où il se bâtit.
+          var am = E.amenagement && C.ile.amenagements.filter(function (x) { return x.id === E.amenagement; })[0];
+          if (am) { quitter(); chantierOuvert = am.quartier; ouvrirChantierIle(); if (c.ouvert) toast(tx(c.ouvert)); return; }
           // Victor (2026-11-13) : « Allumer le campement » montre le foyer du campement qui prend, puis la fête du nouvel âge.
           var Ic = campIle(M.ile(C, P, maintenant())), qc = Ic.quartiers.filter(function (x) { return x.camp; })[0];
           if (!qc) { quitter(); return; }
@@ -2573,7 +2647,7 @@ function demarrerJeu() {
     }
     // L'entrée : les deux pierres, et Alyca qui annonce le programme.
     marquer(-1);
-    plus('<div class="ep-zone fixe">' + svgPierres() + "</div>");
+    plus('<div class="ep-zone fixe">' + svgPierres(E.dessin) + "</div>");
     if (E.accroche) dire(tx(E.accroche), "intro");
     plus('<button type="button" class="btn large">' + __("Commencer") + "</button>").onclick = function () { etape(0); };
     document.body.appendChild(z);
@@ -5519,13 +5593,15 @@ function demarrerJeu() {
     var fiches = C.ile.amenagements.filter(function (a) { return (a.age || 0) <= rangAge; }).map(function (a) {
       var e = M.etatAmenagement(C, P, a.id, t), q = I.quartiers.filter(function (x) { return x.id === a.quartier; })[0];
       if (e.possible) possibles[a.quartier] = (possibles[a.quartier] || 0) + 1;
-      var raison = e.ferme && q && parQ ? "" : e.ferme && q ? __("Se bâtit dans : ") + esc(tx(q.nomFinal)) + ". " + (e.ferme.aOuvrir ? __("Ouvre d'abord ce quartier.") : __("Ce quartier n'existe pas encore.")) : !e.quartier ? __("Il faut d'abord un quartier habitable.") : e.savoir ? __("Il faut maîtriser « ") + e.savoirs.map(function (x) { return esc(tx(C.parId[x].nom)); }).join(__(" » ou « ")) + " »." : e.manque.length ? __("Il manque des ressources.") : "";
+      var raison = e.ferme && q && parQ ? "" : e.ferme && q ? __("Se bâtit dans : ") + esc(tx(q.nomFinal)) + ". " + (e.ferme.aOuvrir ? __("Ouvre d'abord ce quartier.") : __("Ce quartier n'existe pas encore.")) : !e.quartier ? __("Il faut d'abord un quartier habitable.") : e.savoir ? __("Il faut maîtriser « ") + e.savoirs.map(function (x) { return esc(tx(C.parId[x].nom)); }).join(__(" » ou « ")) + " »." : e.epreuve ? __("Il faut d'abord réussir l'épreuve unique « ") + esc(tx(M.epreuveIle(C, e.epreuve).nom)) + " »." : e.manque.length ? __("Il manque des ressources.") : "";
+      var qe = e.epreuve && M.queteIle(C, P, e.epreuve), rej = !e.epreuve && (C.ile.epreuves || []).filter(function (x) { return x.amenagement === a.id && M.epreuveFaite(P, x.id); })[0];
       var ou = rangAge < 2 ? "" : e.quartier ? __("Emplacement : ") + esc(tx(I.quartiers.filter(function (x) { return x.id === e.quartier; })[0].nom)) + (e.chezSoi || !q ? "" : " (" + esc(tx(q.nomFinal)) + __(" n'est pas encore habitable)")) + "." : "";
       if (parQ) ou = "";
       return { q: a.quartier, html: '<div class="ile-amen' + (e.possible ? "" : " ferme") + '"><svg class="ile-amen-img" viewBox="-14 -26 28 28" width="56" height="56" aria-hidden="true">' + svgAmenagement(a, 0, 0, 24) + '</svg><div><b>' + esc(tx(a.nom)) + (R.batis[a.id] ? ' <span class="ile-amen-n">×' + R.batis[a.id] + "</span>" : "") + "</b><p>" + esc(tx(a.usage)) + '</p><p class="ile-amen-effet">' + effetAmenagement(a) + "</p>" +
         '<p class="ile-couts">' + htmlCout(a.cout, e.manque) + "</p>" + (raison ? '<p class="ile-amen-raison">' + raison + "</p>" : '<p class="ile-amen-ou">' + ou + "</p>") +
         (!parQ && e.ferme && e.ferme.aOuvrir && !e.savoir && e.age == null ? '<button type="button" class="btn" data-a="q-' + esc(e.ferme.id) + '">🔒 ' + __("Ouvrir : ") + esc(tx(q.nomFinal)) + "</button>" :
-        '<button type="button" class="btn" data-a="b-' + esc(a.id) + '"' + (e.possible ? "" : " disabled") + ">" + __("Construire") + "</button>") + "</div></div>" };
+        e.epreuve && e.age == null ? '<button type="button" class="btn" data-a="e-' + esc(e.epreuve) + '">🔒 ' + (qe && !qe.complete ? __("Quête : ") + esc(tx(qe.nom)) : __("Épreuve unique : ") + esc(tx(M.epreuveIle(C, e.epreuve).nom))) + "</button>" :
+        '<button type="button" class="btn" data-a="b-' + esc(a.id) + '"' + (e.possible ? "" : " disabled") + ">" + __("Construire") + "</button>" + (rej ? ' <button type="button" class="btn sec" data-a="e-' + esc(rej.id) + '">' + __("Rejouer : ") + esc(tx(rej.nom)) + "</button>" : "")) + "</div></div>" };
     });
     // Victor (2026-11-13) : le menu était trop rempli. À partir du village, une section repliable par quartier : son
     // nom, ce qu'on peut y bâtir tout de suite, et un seul bouton pour l'ouvrir s'il est encore fermé.
@@ -5549,6 +5625,7 @@ function demarrerJeu() {
       sauver(); rendre(); animerChantier(a, r.quartier);
     }; });
     I.quartiers.forEach(function (x) { actions["q-" + x.id] = function () { ouvrirVerrouQuartier(x.id); }; });
+    (C.ile.epreuves || []).forEach(function (x) { actions["e-" + x.id] = function () { fermerFeuille(); ouvrirEpreuveIle(x.id); }; });
     feuilleSimple('<div class="eyebrow">' + __("L'île") + "</div><h2>" + __("Construire") + '</h2><p class="note">' + __("Les crédits paient les bâtisseurs ; le bois, la pierre et le métal viennent des aménagements eux-mêmes. Ce qui se bâtit aujourd'hui travaille dès demain.") + "</p>" + stock + (parQ ? '<div class="ile-amen-qs">' + cartes + "</div>" : '<div class="ile-amens">' + cartes + "</div>"), __("Construire"), actions);
     feuille.querySelectorAll("details.ile-amen-q").forEach(function (d) { d.addEventListener("toggle", function () { if (d.open) { chantierOuvert = d.getAttribute("data-q"); feuille.querySelectorAll("details.ile-amen-q").forEach(function (o) { if (o !== d) o.open = false; }); } }); });
   }
@@ -5602,6 +5679,7 @@ function demarrerJeu() {
     var nomA = tx(a.nom), R = I.ressources, q = I.quartiers.filter(function (x) { return x.id === a.quartier; })[0];
     if (e.age != null) out.push({ texte: __("Faire du campement un village : couvrez ses besoins. « {a} » ne se bâtit pas avant.", { a: nomA }), bouton: __("Jouer"), action: function () { ouvrirJouer(); } });
     if (e.savoir) out.push({ texte: __("Apprendre « {s} » : sans ce savoir, pas de « {a} ».", { s: e.savoirs.map(function (x) { return tx(C.parId[x].nom); }).join(__(" » ou « ")), a: nomA }), bouton: __("Voir ce savoir"), action: function () { ouvrirFeuille(e.savoirs[0]); } });
+    if (e.epreuve) { var epx = M.epreuveIle(C, e.epreuve); out.push({ texte: __("Réussir l'épreuve unique « {e} » : c'est elle qui ouvre « {a} ».", { e: tx(epx.nom), a: nomA }), bouton: tx(epx.nom), action: function () { ouvrirEpreuveIle(epx.id); } }); }
     if (e.ferme && q) out.push(e.ferme.aOuvrir ? { texte: __("Ouvrir le quartier « {q} » ({c} crédits, moitié prix après une bonne réponse) : c'est là que se bâtit « {a} ».", { q: tx(q.nomFinal), a: nomA, c: (M.questionQuartier(C, P, q.id, maintenant()) || {}).plein || 0 }), bouton: __("Ouvrir ce quartier"), action: function () { ouvrirVerrouQuartier(q.id); } } :
       { texte: __("Le quartier « {q} » n'existe pas encore : il s'ouvrira avec le savoir.", { q: tx(q.nomFinal) }) });
     e.manque.forEach(function (m) {
@@ -5675,7 +5753,13 @@ function demarrerJeu() {
     if (resteB.length) h += '<button type="button" class="btn sec ile-plus" data-a="plus">' + (resteB.length > 1 ? __("Voir les {n} autres besoins", { n: resteB.length }) : __("Voir l'autre besoin")) + '</button><div class="ile-reste" hidden>' + resteB.map(ligneBesoin).join("") + "</div>";
     // La suite, en conclusion de la liste : ce qui ouvre l'âge suivant, ou le choix de passer sans les besoins optionnels.
     var epr = a.epreuve && M.epreuveIle(C, a.epreuve);
-    var qAge = queteActive();
+    var qAge = a.epreuve ? queteActive() : null;
+    // Les épreuves qui gardent un aménagement (la hache des bûcherons) : leur quête, puis l'épreuve.
+    epreuvesAttente().filter(function (x) { return x !== a.epreuve; }).forEach(function (x) {
+      var ex = M.epreuveIle(C, x), qx = M.queteIle(C, P, x), amx = C.ile.amenagements.filter(function (y) { return y.id === ex.amenagement; })[0];
+      if (qx && !qx.complete) h += blocQuete(qx, true);
+      else h += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(ex.nom)) + "</h3><p>" + esc(tx(ex.accroche || { fr: "" })) + (amx ? " " + __("Elle ouvre : ") + "<b>" + esc(tx(amx.nom)).toLowerCase() + "</b>." : "") + '</p><button type="button" class="btn large" data-ep="' + esc(x) + '">' + esc(tx(ex.nom)) + "</button></div>";
+    });
     if (qAge) h += blocQuete(qAge, true);
     else if (epr && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(epr.nom)) + "</h3><p>" + esc(tx(epr.accroche || { fr: "" })) + " " + __("Elle ouvre : ") + "<b>" + esc(tx(G.suivant.nom)).toLowerCase() + '</b>.</p><button type="button" class="btn large" data-a="epreuve">' + esc(tx(epr.nom)) + "</button></div>";
     else if (a.pret && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("Tout l'indispensable est couvert. Il reste en option : ") + a.negliges.map(function (b) { return "<b>" + esc(tx(b.nom)).toLowerCase() + "</b>"; }).join(__(" et ")) + ". " + __("Tu peux les apprendre d'abord, ou passer tout de suite et en payer le prix.") + '</p><button type="button" class="btn large" data-a="passer">' + __("Passer à : ") + esc(tx(G.suivant.nom)) + "</button></div>";
@@ -5685,7 +5769,8 @@ function demarrerJeu() {
     if (bpl) bpl.onclick = function () { bloc.querySelector(".ile-reste").hidden = false; bpl.remove(); };
     var bep = bloc.querySelector('[data-a="epreuve"]');
     if (bep) bep.onclick = function () { ouvrirEpreuveIle(a.epreuve); };
-    var bqu = bloc.querySelector('[data-a="quete"]'); if (bqu) bqu.onclick = allerQuete;
+    bloc.querySelectorAll('[data-a="quete"]').forEach(function (bqu) { bqu.onclick = allerQuete; });
+    bloc.querySelectorAll("[data-ep]").forEach(function (b2) { b2.onclick = function () { ouvrirEpreuveIle(b2.getAttribute("data-ep")); }; });
     var bpa = bloc.querySelector('[data-a="passer"]');
     if (bpa) bpa.onclick = function () {
       feuilleSimple('<div class="eyebrow">' + __("Changer d'âge") + "</div><h2>" + __("Passer sans eux ?") + '</h2><div class="bulle-p"></div>' + a.negliges.map(function (b) { return '<p style="font-size:17px"><b>' + esc(tx(b.nom)) + ".</b> " + esc(tx(b.alerte || b.texte || { fr: "" })) + "</p>"; }).join("") +

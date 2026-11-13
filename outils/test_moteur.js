@@ -2415,7 +2415,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const CA = M.indexerContenu(dBrut("regles.json"), dBrut("skills.json"), dBrut("questions.json"), d("succes.json"),
     { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ile: d("ile.json") });
   const J = 86400000, t0 = new Date(2026, 10, 12, 9, 0).getTime();
-  const sait = (P, id, t) => { P.competences[id] = { maitrise: true, maitriseDepuis: t || t0, prochainRappel: (t || t0) + 400 * J, palier: 1, xp: 5 }; if (id === "ile.feu") P.epreuves = { feu: t || t0 }; };
+  const sait = (P, id, t) => { P.competences[id] = { maitrise: true, maitriseDepuis: t || t0, prochainRappel: (t || t0) + 400 * J, palier: 1, xp: 5 }; if (id === "ile.feu") P.epreuves = { feu: t || t0, hache: t || t0 }; };
   const P = M.nouvellePartie(t0); P.mode = "ile"; P.credits.solde = 2000;
   // Le campement : seul le feu est proposé.
   let G = M.agesIle(CA, P);
@@ -2543,6 +2543,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     CA.competences.filter(k => k.rang === 1).forEach(k => sait(Q, k.id)); M.ile(CA, Q, t0);
     Q.population.a = 300; Q.ressources.stocks.bois = 1000; Q.ressources.stocks.nourriture = 5000; Q.quartiers = {}; CA.ile.quartiers.forEach(q => { Q.quartiers[q.id] = t0; }); return Q; };
   CA.ile.regles.aleas.chance = 0;
+  // Victor (2026-11-13) : le camp de bûcherons attend l'épreuve « Former une hache », elle-même précédée d'une quête.
+  { const Qh = peche(); delete Qh.epreuves.hache;
+    assert.deepEqual(M.epreuvesEnAttente(CA, Qh), ["hache"], "la hache attend dès le village");
+    const eh = M.etatAmenagement(CA, Qh, "bucheron", t0); assert.ok(!eh.possible && eh.epreuve === "hache", "pas de bûcherons sans hache");
+    const rh = M.construireIle(CA, Qh, "bucheron", t0); assert.ok(!rh || !rh.ok, "le chantier refuse le camp de bûcherons");
+    const qh = M.queteIle(CA, Qh, "hache"); assert.equal(qh.reste, 4); qh.objets.forEach(o => M.ramasserIle(CA, Qh, "hache", o.id, t0));
+    assert.ok(M.queteIle(CA, Qh, "hache").complete, "quête de la hache bouclée");
+    assert.ok(M.reussirEpreuve(CA, Qh, "hache", t0).premiere); assert.deepEqual(M.epreuvesEnAttente(CA, Qh), []);
+    const eh2 = M.etatAmenagement(CA, Qh, "bucheron", t0); assert.ok(eh2.possible && !eh2.epreuve, "la hache faite, le camp se bâtit");
+    const EH = M.epreuveIle(CA, "hache"); assert.deepEqual(EH.etapes.map(e => e.type), ["frappes", "frotter", "assemblage"]);
+    const as = EH.etapes[2]; assert.deepEqual(as.ordre.slice().sort(), as.pieces.map(x => x.id).sort(), "l'ordre d'assemblage nomme toutes les pièces"); }
   // Victor (2026-11-12) : un aménagement ne se bâtit que dans son quartier, qu'il faut d'abord ouvrir.
   { const Q0 = peche(); delete Q0.quartiers.port;
     const e0 = M.etatAmenagement(CA, Q0, "pecherie", t0); assert.ok(!e0.possible && e0.ferme && e0.ferme.id === "port" && e0.ferme.aOuvrir, "port fermé : pas de pêcherie");

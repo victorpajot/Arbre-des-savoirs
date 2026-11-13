@@ -5528,6 +5528,245 @@
      }
     ]
    }
+  },
+  {
+   "id": "hache",
+   "nom": {
+    "fr": "Former une hache"
+   },
+   "amenagement": "bucheron",
+   "dessin": "taille",
+   "accroche": {
+    "fr": "Pas de bûcherons sans hache. Et une hache, ce n'est pas un caillou au bout d'un bâton : on la taille, on la polit, on l'emmanche. Trois gestes."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi faire une hache"
+    },
+    "texte": {
+     "fr": "Pas de camp de bûcherons sans hache. Il te faut une roche dure, un bloc de grès pour la polir, un bois de cerf et une branche solide pour le manche : explore l'île de près."
+    },
+    "objets": [
+     {
+      "id": "galet",
+      "nom": {
+       "fr": "Une roche dure"
+      },
+      "position": [
+       0.375,
+       0.745
+      ],
+      "trouve": {
+       "fr": "Un galet de roche dure, au bord du lac : il deviendra la lame."
+      },
+      "zone": {
+       "fr": "au bord du lac, au sud-ouest"
+      }
+     },
+     {
+      "id": "polissoir",
+      "nom": {
+       "fr": "Un bloc de grès"
+      },
+      "position": [
+       0.76,
+       0.66
+      ],
+      "trouve": {
+       "fr": "Un bloc de grès : c'est sur lui qu'on usera la lame pour la polir."
+      },
+      "zone": {
+       "fr": "sur la côte est, au sud du village"
+      }
+     },
+     {
+      "id": "ramure",
+      "nom": {
+       "fr": "Un bois de cerf"
+      },
+      "position": [
+       0.255,
+       0.365
+      ],
+      "trouve": {
+       "fr": "Un bois de cerf, tombé dans le bois : de quoi amortir les coups."
+      },
+      "zone": {
+       "fr": "dans le bois, à l'ouest"
+      }
+     },
+     {
+      "id": "manche",
+      "nom": {
+       "fr": "Une branche solide"
+      },
+      "position": [
+       0.45,
+       0.2
+      ],
+      "trouve": {
+       "fr": "Une branche droite et solide : le manche."
+      },
+      "zone": {
+       "fr": "vers le nord de l'île"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "hache-tailler",
+     "type": "frappes",
+     "titre": {
+      "fr": "L'ébauche"
+     },
+     "consigne": {
+      "fr": "Frappe la roche avec un galet, vite et sans t'arrêter : chaque coup franc détache un éclat et rapproche la pierre de sa forme."
+     },
+     "coups": 8,
+     "delai": 900,
+     "rate": {
+      "fr": "Trop lent : garde le rythme."
+     },
+     "gagne": {
+      "fr": "L'ébauche a la forme d'une lame."
+     },
+     "savoir": [
+      {
+       "id": "hache-ebauche",
+       "texte": {
+        "fr": "On ne polit pas un caillou brut. Il faut d'abord tailler la pierre, pour lui donner la forme la plus proche possible de l'objet final."
+       },
+       "source": "Vikidia, « Pierre polie du Néolithique »"
+      },
+      {
+       "id": "hache-roches",
+       "texte": {
+        "fr": "Polir a un autre avantage : la technique permet d'employer d'autres roches que le silex, dans les régions qui en sont dépourvues."
+       },
+       "source": "Hominidés.com, « Outils et techniques du Néolithique »"
+      }
+     ]
+    },
+    {
+     "id": "hache-polir",
+     "type": "frotter",
+     "titre": {
+      "fr": "Le polissage"
+     },
+     "consigne": {
+      "fr": "Frotte la lame sur le bloc de grès, d'avant en arrière, sans t'arrêter, jusqu'à ce qu'elle soit lisse."
+     },
+     "course": 4200,
+     "gagne": {
+      "fr": "La lame est lisse, son tranchant régulier."
+     },
+     "savoir": [
+      {
+       "id": "hache-polissoir",
+       "texte": {
+        "fr": "Au Néolithique, on polit en frottant la pierre sur un polissoir fixe, le plus souvent un bloc de grès ou de granite. La finition se fait sur du sable humide."
+       },
+       "source": "Vikidia, « Pierre polie du Néolithique »"
+      },
+      {
+       "id": "hache-duree",
+       "texte": {
+        "fr": "Toi, tu as mis quelques secondes. Eux, non : pour une grande hache, il faut compter une vingtaine d'heures de frottement."
+       },
+       "source": "Vikidia, « Pierre polie du Néolithique »"
+      }
+     ]
+    },
+    {
+     "id": "hache-emmancher",
+     "type": "assemblage",
+     "titre": {
+      "fr": "L'emmanchement"
+     },
+     "consigne": {
+      "fr": "Assemble la hache : touche les pièces dans l'ordre, en partant de la pierre pour finir par le bois."
+     },
+     "rate": {
+      "fr": "Pas celle-là. Pars de la pierre : qu'est-ce qui la tient, et qu'est-ce qui tient le tout ?"
+     },
+     "gagne": {
+      "fr": "La hache tient d'un bloc."
+     },
+     "pieces": [
+      {
+       "id": "manche",
+       "nom": {
+        "fr": "Le manche en bois"
+       },
+       "pose": {
+        "fr": "Le manche reçoit la gaine. La hache est prête."
+       }
+      },
+      {
+       "id": "lame",
+       "nom": {
+        "fr": "La lame polie"
+       },
+       "pose": {
+        "fr": "La lame d'abord : c'est elle qui coupe."
+       }
+      },
+      {
+       "id": "gaine",
+       "nom": {
+        "fr": "La gaine en bois de cerf"
+       },
+       "pose": {
+        "fr": "La gaine se glisse entre la lame et le manche."
+       }
+      }
+     ],
+     "ordre": [
+      "lame",
+      "gaine",
+      "manche"
+     ],
+     "savoir": [
+      {
+       "id": "hache-gaine",
+       "texte": {
+        "fr": "Entre la lame et le manche, on peut insérer une gaine en bois de cerf. Elle amortit les chocs et garde intacts le manche, très sollicité, et la lame."
+       },
+       "source": "Hominidés.com, « Outils et techniques du Néolithique »"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "hache-defricher",
+    "titre": {
+     "fr": "Le premier arbre"
+    },
+    "scene": "hache",
+    "texte": {
+     "fr": "Avec la hache polie, on défriche la forêt pour créer des surfaces cultivables, on abat des arbres et on taille le bois pour bâtir des maisons."
+    },
+    "source": "Hominidés.com, « Outils et techniques du Néolithique »",
+    "appel": {
+     "fr": "Lever la hache"
+    },
+    "bouton": {
+     "fr": "Donner le premier coup"
+    },
+    "alyca": {
+     "fr": "Une hache. Polie en quelques secondes au lieu de vingt heures : à ta place, je ne m'en vanterais pas trop devant eux."
+    },
+    "alyca_deja": {
+     "fr": "Encore une hache. À ce rythme, tu vas équiper tout le village."
+    },
+    "fin": {
+     "fr": "Ouvrir le camp de bûcherons"
+    },
+    "ouvert": {
+     "fr": "Le camp de bûcherons peut maintenant être bâti."
+    }
+   }
   }
  ]
 }
