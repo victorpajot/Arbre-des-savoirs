@@ -1641,6 +1641,10 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-grand { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; } .ile-grand .btn { align-self: flex-start; font-size: 17px; } .ile-grand small { font-size: 15px; color: var(--muted); }
 .ile-grand-bilan { display: flex; flex-wrap: wrap; gap: 8px; font-size: 19px; margin: 6px 0; } .ile-grand-bilan span { padding: 6px 12px; border-radius: 12px; background: rgba(127,127,127,.14); } p.ile-risque { color: #B5531F; font-weight: 600; }
 .ile-b-titre { margin: 16px 0 0; font-size: 16px; color: var(--muted); }
+.ile-amen-qs { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; } .ile-amen-q { border: 1px solid var(--line); border-left: 6px solid var(--c, #888); border-radius: 12px; padding: 0 12px; } .ile-amen-q[open] { padding-bottom: 12px; }
+.ile-amen-q summary { display: flex; align-items: center; gap: 10px; padding: 12px 0; cursor: pointer; list-style: none; } .ile-amen-q summary::-webkit-details-marker { display: none; }
+.ile-amen-q summary b { font-size: 17px; flex: 1; min-width: 0; } .ile-amen-q summary span { font-size: 15px; color: var(--muted); text-align: right; } .ile-amen-q.pret summary span { color: #2E8B57; font-weight: 700; }
+.ile-amen-q summary i { font-style: normal; font-size: 22px; color: var(--muted); transition: transform .15s; } .ile-amen-q[open] summary i { transform: rotate(90deg); } .ile-amen-q .ile-amens { margin: 8px 0 0; } .ile-amen-q > .btn { margin-bottom: 4px; }
 .ile-plus { width: 100%; margin-top: 10px; font-size: 17px; }
 .duo-panneau { margin-top: 10px; } .duo-panneau .ile-objectif { margin: 0; }
 .ile-besoin p { margin: 2px 0 6px; font-size: 16px; color: var(--muted); }
@@ -4167,6 +4171,7 @@ function demarrerJeu() {
   // une installation précise et utile, et des habitants viennent. Tout se déduit de la partie (M.ile) : rien à sauvegarder.
   var quartierVu = null, lieuVu = null;
   var duoIA = null;
+  var chantierOuvert = null;
   function nb(n) { return Number(n).toLocaleString(locale()); }
   // Un habitant : 5 × 8 pixels, trois couleurs (cheveux, peau, habit) tirées de son rang dans la foule.
   var HABITANT = [".hhh.", ".sss.", ".sss.", "vvvvv", "svvvs", ".vvv.", ".j.j.", ".j.j."];
@@ -5173,22 +5178,42 @@ function demarrerJeu() {
     var stock = '<p class="ile-chantier-stock"><span class="ile-cout"><b>' + P.credits.solde + "</b> " + __("crédits") + "</span>" + (C.ile.ressources || []).filter(function (r) { return r.id !== "nourriture"; }).map(function (r) { return '<span class="ile-cout">' + r.icone + " <b>" + nb(R.stocks[r.id] || 0) + "</b> " + esc(tx(r.nom)).toLowerCase() + "</span>"; }).join("") + "</p>";
     // Ce qui attend un âge prochain ne se montre pas encore (île épurée).
     var rangAge = I.ages ? I.ages.courant : 99;
-    var cartes = C.ile.amenagements.filter(function (a) { return (a.age || 0) <= rangAge; }).map(function (a) {
+    var parQ = rangAge >= 2, possibles = {};
+    var fiches = C.ile.amenagements.filter(function (a) { return (a.age || 0) <= rangAge; }).map(function (a) {
       var e = M.etatAmenagement(C, P, a.id, t), q = I.quartiers.filter(function (x) { return x.id === a.quartier; })[0];
-      var raison = e.ferme && q ? __("Se bâtit dans : ") + esc(tx(q.nomFinal)) + ". " + (e.ferme.aOuvrir ? __("Ouvre d'abord ce quartier.") : __("Ce quartier n'existe pas encore.")) : !e.quartier ? __("Il faut d'abord un quartier habitable.") : e.savoir ? __("Il faut maîtriser « ") + e.savoirs.map(function (x) { return esc(tx(C.parId[x].nom)); }).join(__(" » ou « ")) + " »." : e.manque.length ? __("Il manque des ressources.") : "";
+      if (e.possible) possibles[a.quartier] = (possibles[a.quartier] || 0) + 1;
+      var raison = e.ferme && q && parQ ? "" : e.ferme && q ? __("Se bâtit dans : ") + esc(tx(q.nomFinal)) + ". " + (e.ferme.aOuvrir ? __("Ouvre d'abord ce quartier.") : __("Ce quartier n'existe pas encore.")) : !e.quartier ? __("Il faut d'abord un quartier habitable.") : e.savoir ? __("Il faut maîtriser « ") + e.savoirs.map(function (x) { return esc(tx(C.parId[x].nom)); }).join(__(" » ou « ")) + " »." : e.manque.length ? __("Il manque des ressources.") : "";
       var ou = rangAge < 2 ? "" : e.quartier ? __("Emplacement : ") + esc(tx(I.quartiers.filter(function (x) { return x.id === e.quartier; })[0].nom)) + (e.chezSoi || !q ? "" : " (" + esc(tx(q.nomFinal)) + __(" n'est pas encore habitable)")) + "." : "";
-      return '<div class="ile-amen' + (e.possible ? "" : " ferme") + '"><svg class="ile-amen-img" viewBox="-14 -26 28 28" width="56" height="56" aria-hidden="true">' + svgAmenagement(a, 0, 0, 24) + '</svg><div><b>' + esc(tx(a.nom)) + (R.batis[a.id] ? ' <span class="ile-amen-n">×' + R.batis[a.id] + "</span>" : "") + "</b><p>" + esc(tx(a.usage)) + '</p><p class="ile-amen-effet">' + effetAmenagement(a) + "</p>" +
+      if (parQ) ou = "";
+      return { q: a.quartier, html: '<div class="ile-amen' + (e.possible ? "" : " ferme") + '"><svg class="ile-amen-img" viewBox="-14 -26 28 28" width="56" height="56" aria-hidden="true">' + svgAmenagement(a, 0, 0, 24) + '</svg><div><b>' + esc(tx(a.nom)) + (R.batis[a.id] ? ' <span class="ile-amen-n">×' + R.batis[a.id] + "</span>" : "") + "</b><p>" + esc(tx(a.usage)) + '</p><p class="ile-amen-effet">' + effetAmenagement(a) + "</p>" +
         '<p class="ile-couts">' + htmlCout(a.cout, e.manque) + "</p>" + (raison ? '<p class="ile-amen-raison">' + raison + "</p>" : '<p class="ile-amen-ou">' + ou + "</p>") +
-        (e.ferme && e.ferme.aOuvrir && !e.savoir && e.age == null ? '<button type="button" class="btn" data-a="q-' + esc(e.ferme.id) + '">🔒 ' + __("Ouvrir : ") + esc(tx(q.nomFinal)) + "</button>" :
-        '<button type="button" class="btn" data-a="b-' + esc(a.id) + '"' + (e.possible ? "" : " disabled") + ">" + __("Construire") + "</button>") + "</div></div>";
-    }).join("");
+        (!parQ && e.ferme && e.ferme.aOuvrir && !e.savoir && e.age == null ? '<button type="button" class="btn" data-a="q-' + esc(e.ferme.id) + '">🔒 ' + __("Ouvrir : ") + esc(tx(q.nomFinal)) + "</button>" :
+        '<button type="button" class="btn" data-a="b-' + esc(a.id) + '"' + (e.possible ? "" : " disabled") + ">" + __("Construire") + "</button>") + "</div></div>" };
+    });
+    // Victor (2026-11-13) : le menu était trop rempli. À partir du village, une section repliable par quartier : son
+    // nom, ce qu'on peut y bâtir tout de suite, et un seul bouton pour l'ouvrir s'il est encore fermé.
+    var cartes;
+    if (!parQ) cartes = fiches.map(function (f) { return f.html; }).join("");
+    else {
+      var qs = I.quartiers.filter(function (x) { return fiches.some(function (f) { return f.q === x.id; }); });
+      var defaut = (quartierVu && qs.filter(function (x) { return x.id === quartierVu; })[0]) || qs.filter(function (x) { return possibles[x.id]; })[0] || qs.filter(function (x) { return x.fonde; })[0] || qs[0];
+      if (!chantierOuvert || !qs.some(function (x) { return x.id === chantierOuvert; })) chantierOuvert = defaut ? defaut.id : null;
+      cartes = qs.map(function (x) {
+        var fs = fiches.filter(function (f) { return f.q === x.id; }), np = possibles[x.id] || 0;
+        var etat = x.aOuvrir ? "🔒 " + __("à ouvrir") : !x.fonde ? __("pas encore là") : np ? np + (np > 1 ? __(" à bâtir") : __(" à bâtir")) : __("rien pour l'instant");
+        return '<details class="ile-amen-q' + (np ? " pret" : "") + '" data-q="' + esc(x.id) + '"' + (x.id === chantierOuvert ? " open" : "") + ' style="--c:' + x.couleur + '"><summary><b>' + esc(tx(x.nomFinal)) + "</b><span>" + etat + " · " + fs.length + (fs.length > 1 ? __(" aménagements") : __(" aménagement")) + '</span><i aria-hidden="true">›</i></summary>' +
+          (x.aOuvrir ? '<p class="ile-amen-raison">' + __("Ce quartier est encore fermé : ouvre-le pour y bâtir.") + '</p><button type="button" class="btn" data-a="q-' + esc(x.id) + '">🔒 ' + __("Ouvrir : ") + esc(tx(x.nomFinal)) + "</button>" : !x.fonde ? '<p class="ile-amen-raison">' + __("Ce quartier n'existe pas encore : il viendra avec un savoir.") + "</p>" : "") +
+          '<div class="ile-amens">' + fs.map(function (f) { return f.html; }).join("") + "</div></details>";
+      }).join("");
+    }
     var actions = {};
     C.ile.amenagements.forEach(function (a) { actions["b-" + a.id] = function () {
       var r = M.construireIle(C, P, a.id, maintenant()); if (!r || !r.ok) return;
       sauver(); rendre(); animerChantier(a, r.quartier);
     }; });
     I.quartiers.forEach(function (x) { actions["q-" + x.id] = function () { ouvrirVerrouQuartier(x.id); }; });
-    feuilleSimple('<div class="eyebrow">' + __("L'île") + "</div><h2>" + __("Construire") + '</h2><p class="note">' + __("Les crédits paient les bâtisseurs ; le bois, la pierre et le métal viennent des aménagements eux-mêmes. Ce qui se bâtit aujourd'hui travaille dès demain.") + "</p>" + stock + '<div class="ile-amens">' + cartes + "</div>", __("Construire"), actions);
+    feuilleSimple('<div class="eyebrow">' + __("L'île") + "</div><h2>" + __("Construire") + '</h2><p class="note">' + __("Les crédits paient les bâtisseurs ; le bois, la pierre et le métal viennent des aménagements eux-mêmes. Ce qui se bâtit aujourd'hui travaille dès demain.") + "</p>" + stock + (parQ ? '<div class="ile-amen-qs">' + cartes + "</div>" : '<div class="ile-amens">' + cartes + "</div>"), __("Construire"), actions);
+    feuille.querySelectorAll("details.ile-amen-q").forEach(function (d) { d.addEventListener("toggle", function () { if (d.open) { chantierOuvert = d.getAttribute("data-q"); feuille.querySelectorAll("details.ile-amen-q").forEach(function (o) { if (o !== d) o.open = false; }); } }); });
   }
 
   // --- L'île par âges, le monde fini, les aléas (Victor, 2026-11-12) ---------------------
