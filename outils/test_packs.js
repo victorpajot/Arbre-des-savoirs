@@ -268,4 +268,18 @@ for (const off of [["logique", "mecanique", "savoir"], ["atomes", "ennemis", "co
   refus(q => { q.manifeste.id = "musique2"; q.fragments.push({ fichier: "regles.json", chemin: ["xp"], elements: {} }); }, "emplacement");
   assert.deepEqual(M.verifierPaquet(brut, index, { format: "autre" }).erreurs, ["format"]);
 }
+// filtrerPacks ne copie que ce qu'il change : le reste est partagé avec les données chargées, qui ne doivent jamais
+// bouger (on les refiltre à chaque changement de packs). Gelées ici, toute écriture du moteur lèverait une erreur.
+{
+  const gele = S.charger(); gele["ile.json"] = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/ile.json"), "utf8"));
+  S.contenu(gele, []);
+  const avant = JSON.stringify(gele);
+  (function geler(o) { if (o && typeof o === "object" && !Object.isFrozen(o)) { Object.freeze(o); Object.values(o).forEach(geler); } })(gele);
+  for (const off of [["ile"], ["ile", packs[0]], ["ile", "dramaturgie"], packs]) {
+    const C = S.contenu(gele, off), P = M.nouvellePartie(new Date(2026, 9, 1, 9).getTime());
+    P.options = { tousArbres: true };
+    S.jouer(C, P, 40, P.cree, S.graine(6));
+  }
+  assert.strictEqual(JSON.stringify(gele), avant, "filtrerPacks a modifié les données chargées");
+}
 console.log(`OK : ${packs.length} packs éteints un à un, partie jouée puis reprise sans perte ; parties longues cohérentes avec les packs choisis ; pack additionnel chargé en paquet`);

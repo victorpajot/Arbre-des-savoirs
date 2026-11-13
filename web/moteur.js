@@ -75,7 +75,13 @@
   function indexerContenu(regles, skills, questions, succes, extras) {
     extras = extras || {};
     var TA = (regles.quiz && regles.quiz.tolerance_annees) || 0;
-    if (TA) questions.questions.forEach(function (q) { if (estQuestionAnnee(q)) { q.annee = true; q.tolerance = Math.max(q.tolerance || 0, TA); } });
+    // Le contenu est partagé entre les indexations successives (packs allumés ou éteints) : on n'écrit que ce qui change.
+    if (TA) questions.questions.forEach(function (q) {
+      if (!estQuestionAnnee(q)) return;
+      var tol = Math.max(q.tolerance || 0, TA);
+      if (q.annee !== true) q.annee = true;
+      if (q.tolerance !== tol) q.tolerance = tol;
+    });
     var c = {
       regles: regles,
       stats: regles.stats,
@@ -174,13 +180,31 @@
   }
 
   // `donnees` : { "regles.json": …, "skills.json": … } tels que chargés. Renvoie une copie sans les packs éteints.
+  // La copie ne duplique que ce qu'elle change (le chemin jusqu'à chaque tableau filtré ou clé retirée) : le reste est
+  // partagé avec `donnees`, qui n'est jamais modifié. Copier tout le contenu (10 Mo) coûtait une demi-seconde au
+  // lancement sur un téléphone.
   function filtrerPacks(donnees, index, demandes) {
     var off = packsEteints(index, demandes);
     if (!Object.keys(off).length) return donnees;
-    var d = JSON.parse(JSON.stringify(donnees));
+    var d = Object.assign({}, donnees), copies = [];
+    function copie(o) {
+      if (copies.indexOf(o) >= 0) return o;
+      var c = Array.isArray(o) ? o.slice() : Object.assign({}, o);
+      copies.push(c); return c;
+    }
+    // L'objet au bout de `chemin` ([fichier, clé, …]), copié avec tout ce qui y mène, prêt à être modifié ; null s'il manque.
+    function modifiable(chemin) {
+      if (!d[chemin[0]]) return null;
+      var o = d[chemin[0]] = copie(d[chemin[0]]);
+      for (var i = 1; i < chemin.length; i++) {
+        if (!o[chemin[i]] || typeof o[chemin[i]] !== "object") return null;
+        o = o[chemin[i]] = copie(o[chemin[i]]);
+      }
+      return o;
+    }
     // v36 : l'année de chaque case reste connue quand son pack s'éteint (conditions « case atteinte », téléportations).
     if (d["plateau.json"] && d["plateau.json"].cases) {
-      var an = {}; d["plateau.json"].cases.forEach(function (k) { an[k.n] = k.annee; }); d["plateau.json"].annees = an;
+      var an = {}; d["plateau.json"].cases.forEach(function (k) { an[k.n] = k.annee; }); modifiable(["plateau.json"]).annees = an;
     }
     var proprios = (index && index.proprietaires) || {};
     // Victor (2026-11-04) : un portrait peut appartenir à plusieurs domaines (champ domaines). Son domaine éteint, il reste
@@ -193,7 +217,10 @@
         var p = pr[String(x.id)]; if (!p || !off[p] || !x.domaines) return;
         var alt = x.domaines.filter(function (id) { return !off[id] && (index.packs || []).some(function (m) { return m.id === id; }); })[0];
         if (!alt) return;
-        if (cle === "portraits") { (garder[ou] || (garder[ou] = {}))[String(x.id)] = 1; x.theme = alt; }
+        if (cle === "portraits") {
+          (garder[ou] || (garder[ou] = {}))[String(x.id)] = 1;
+          var pts = modifiable(["avatar.json", "portraits"]); pts[pts.indexOf(x)] = Object.assign({}, x, { theme: alt });
+        }
         else migrants.push({ id: x.id, nom: x.nom, annees: x.annees, bio: x.notice || x.bio, source: x.source, couleurs: x.couleurs, base: x.base, cheveux: x.cheveux, noms: x.noms, theme: alt });
       });
     });
@@ -204,7 +231,7 @@
         m.cles[f].forEach(function (ch) {
           var parts = ch.split("/"), o = d[f];
           for (var i = 0; i < parts.length - 1 && o; i++) o = o[parts[i]];
-          if (o) delete o[parts[parts.length - 1]];
+          if (o && parts[parts.length - 1] in Object(o)) { o = modifiable([f].concat(parts.slice(0, -1))); if (o) delete o[parts[parts.length - 1]]; }
         });
       });
     });
@@ -214,10 +241,11 @@
       for (var i = 1; i < parts.length - 1 && o; i++) o = o[parts[i]];
       var dernier = parts[parts.length - 1];
       if (!o || !Array.isArray(o[dernier])) return;
-      o[dernier] = o[dernier].filter(function (x) { var p = proprios[ou][cleDe(x)]; return !(p && off[p]) || (garder[ou] && garder[ou][cleDe(x)]); });
+      var reste = o[dernier].filter(function (x) { var p = proprios[ou][cleDe(x)]; return !(p && off[p]) || (garder[ou] && garder[ou][cleDe(x)]); });
+      if (reste.length !== o[dernier].length) modifiable(parts.slice(0, -1))[dernier] = reste;
     });
     if (migrants.length && d["avatar.json"]) {
-      var pts = d["avatar.json"].portraits || (d["avatar.json"].portraits = []);
+      var av = modifiable(["avatar.json"]), pts = av.portraits = copie(av.portraits || []);
       migrants.forEach(function (x) { if (!pts.some(function (y) { return y.id === x.id; })) { if (!x.noms) delete x.noms; pts.push(x); } });
     }
     // Ce qui pointe encore vers un élément disparu est nettoyé : prérequis, cases, arbres de départ.
@@ -225,19 +253,23 @@
     if (d["skills.json"]) d["skills.json"].competences.forEach(function (k) { comps[k.id] = true; });
     if (d["regles.json"]) {
       d["regles.json"].stats.forEach(function (s) { stats[s.id] = true; });
-      var R = d["regles.json"];
+      var R = modifiable(["regles.json"]);
       R.arbres_fondamentaux = (R.arbres_fondamentaux || []).filter(function (s) { return stats[s]; });
       // Plus aucun arbre de départ : le premier arbre restant ouvre la partie, les autres s'ouvrent sur le parcours.
       if (!R.arbres_fondamentaux.length && R.stats.length) R.arbres_fondamentaux = [R.stats[0].id];
     }
-    if (d["skills.json"]) d["skills.json"].competences.forEach(function (k) { k.prerequis = k.prerequis.filter(function (p) { return comps[p]; }); });
+    if (d["skills.json"]) {
+      var sk = modifiable(["skills.json"]);
+      sk.competences = sk.competences.map(function (k) { return Object.assign({}, k, { prerequis: k.prerequis.filter(function (p) { return comps[p]; }) }); });
+    }
     var pl = d["plateau.json"];
-    if (pl && pl.competences_cases) Object.keys(pl.competences_cases).forEach(function (n) {
-      pl.competences_cases[n] = pl.competences_cases[n].filter(function (c) { return comps[c]; });
-    });
+    if (pl && pl.competences_cases) {
+      var cc = modifiable(["plateau.json", "competences_cases"]);
+      Object.keys(cc).forEach(function (n) { cc[n] = cc[n].filter(function (c) { return comps[c]; }); });
+    }
     // Sans masques du jour (dramaturgie éteinte), le narrateur ne porte que ses masques de base, ceux qui ne se gagnent pas.
     var ia = d["ia.json"];
-    if (ia && ia.masques && !ia.masques_jour) ia.masques = ia.masques.filter(function (m) { return !m.condition; });
+    if (ia && ia.masques && !ia.masques_jour) modifiable(["ia.json"]).masques = ia.masques.filter(function (m) { return !m.condition; });
     return d;
   }
 
@@ -3194,11 +3226,12 @@
     var k = 0, graine = "mur-atome|" + e.z, alea = function () { return (hacher(graine + "|" + (k++)) % 100000) / 100000; };
     var qs = questionsCombat(atomes, e, alea), ast = astuceNumero(atomes, e);
     var lieux = e.ou.map(function (o) { return TX(o); }).join(", ");
+    // La lecture des couches et son dessin servent à deux questions : calculés une fois par atome.
+    var lc = lectureCouches(atomes, e), dessin = lc ? dessinCouches(atomes, e) : "";
     return qs.map(function (q) {
       var base = { id: "atome." + e.z + "." + q.type, competence: "sci.atomes", atome: e.z, enonce: { fr: q.enonce } };
-      var lc = lectureCouches(atomes, e);
-      if (q.type === "numero") return Object.assign(base, { type: "numerique", reponse: e.z, tolerance: 0, explication: { fr: ast.texte + (lc ? " " + lc.lignes.join(" ") : "") }, illustration_explication: (lc ? dessinCouches(atomes, e) : "") + ast.illustration });
-      if (q.type === "place") return Object.assign(base, { type: "place", reponse: e.z, explication: { fr: (lc ? lc.lignes.join(" ") + " " : "") + ast.texte }, illustration_explication: (lc ? dessinCouches(atomes, e) : "") + ast.illustration });
+      if (q.type === "numero") return Object.assign(base, { type: "numerique", reponse: e.z, tolerance: 0, explication: { fr: ast.texte + (lc ? " " + lc.lignes.join(" ") : "") }, illustration_explication: dessin + ast.illustration });
+      if (q.type === "place") return Object.assign(base, { type: "place", reponse: e.z, explication: { fr: (lc ? lc.lignes.join(" ") + " " : "") + ast.texte }, illustration_explication: dessin + ast.illustration });
       return Object.assign(base, { type: "qcm", choix: q.choix.map(function (c) { return { fr: c }; }), reponse: q.reponse,
         explication: { fr: q.type === "symbole" ? __("Le symbole de « {nom} » est {symbole}, numéro {z}.", { nom: TX(e.nom), symbole: e.symbole, z: e.z }) : __("On le croise surtout dans ") + lieux + ". " + TX(e.anecdote) } });
     });
