@@ -1846,7 +1846,8 @@
      ]
     }
    ],
-   "plafond": 15
+   "plafond": 15,
+   "epreuve": "feu"
   },
   {
    "id": "campement",
@@ -2271,6 +2272,231 @@
    },
    "degat": {
     "fr": "La sécheresse a ruiné"
+   }
+  }
+ ],
+ "epreuves": [
+  {
+   "id": "feu",
+   "nom": {
+    "fr": "Faire du feu"
+   },
+   "accroche": {
+    "fr": "Tu sais comment on fait. Reste à le faire : un silex, un nodule de pyrite, et trois gestes."
+   },
+   "etapes": [
+    {
+     "id": "feu-arracher",
+     "type": "frappes",
+     "titre": {
+      "fr": "L'arrachement"
+     },
+     "consigne": {
+      "fr": "Frappe la pyrite avec le silex, vite et sans t'arrêter : chaque coup franc arrache un éclat."
+     },
+     "coups": 7,
+     "delai": 900,
+     "rate": {
+      "fr": "Trop lent : le geste doit rester vif."
+     },
+     "savoir": [
+      {
+       "id": "feu-mohs",
+       "texte": {
+        "fr": "Le silex est fait de silice (SiO₂), la matière du quartz, qui vaut 7 sur l'échelle de dureté. Friedrich Mohs l'a dressée en 1812 : elle mesure la résistance d'un minéral à la rayure."
+       },
+       "source": "Encyclopædia Britannica, « Mohs hardness »"
+      },
+      {
+       "id": "feu-pyrite",
+       "texte": {
+        "fr": "La pyrite est un disulfure de fer (FeS₂), de dureté 6 à 6,5 seulement. Son nom vient du grec « pierre à feu », à cause des étincelles que ses cristaux produisent sous les chocs."
+       },
+       "source": "Futura, « Pyrite : qu'est-ce que c'est ? »"
+      },
+      {
+       "id": "feu-eclats",
+       "texte": {
+        "fr": "Le silex, plus dur, entame la pyrite : sous le coup, de minuscules particules de pyrite se détachent. Ce sont elles qui vont brûler, pas le silex."
+       },
+       "source": "Université de Bristol, School of Chemistry, « Flint and pyrite », 2001"
+      }
+     ]
+    },
+    {
+     "id": "feu-chauffer",
+     "type": "jauge",
+     "titre": {
+      "fr": "L'énergie d'activation"
+     },
+     "consigne": {
+      "fr": "Arrête la jauge au-dessus du trait : il faut assez d'énergie pour que la réaction démarre."
+     },
+     "seuil": 0.68,
+     "periode": 1500,
+     "rate": {
+      "fr": "Pas assez d'énergie : le grain reste sous la barrière, rien ne démarre."
+     },
+     "savoir": [
+      {
+       "id": "feu-friction",
+       "texte": {
+        "fr": "L'énergie du frottement, au moment du choc, suffit à chauffer les particules de pyrite arrachées, au point qu'elles brûlent dans l'air."
+       },
+       "source": "Université de Bristol, School of Chemistry, « Flint and pyrite », 2001"
+      },
+      {
+       "id": "feu-arrhenius",
+       "texte": {
+        "fr": "Une réaction ne démarre pas toute seule. En 1889, Svante Arrhenius formule l'idée d'énergie d'activation : une barrière d'énergie à franchir avant que deux molécules réagissent."
+       },
+       "source": "Wikipedia, « Svante Arrhenius »"
+      }
+     ]
+    },
+    {
+     "id": "feu-bruler",
+     "type": "equation",
+     "titre": {
+      "fr": "L'oxydation"
+     },
+     "consigne": {
+      "fr": "Le grain chaud rencontre le dioxygène de l'air. Équilibre la réaction : autant d'atomes de chaque sorte à gauche et à droite."
+     },
+     "molecules": [
+      {
+       "formule": "FeS₂",
+       "nom": {
+        "fr": "pyrite"
+       },
+       "atomes": {
+        "Fe": 1,
+        "S": 2
+       },
+       "cote": "g"
+      },
+      {
+       "formule": "O₂",
+       "nom": {
+        "fr": "dioxygène"
+       },
+       "atomes": {
+        "O": 2
+       },
+       "cote": "g"
+      },
+      {
+       "formule": "Fe₂O₃",
+       "nom": {
+        "fr": "oxyde de fer"
+       },
+       "atomes": {
+        "Fe": 2,
+        "O": 3
+       },
+       "cote": "d"
+      },
+      {
+       "formule": "SO₂",
+       "nom": {
+        "fr": "dioxyde de soufre"
+       },
+       "atomes": {
+        "S": 1,
+        "O": 2
+       },
+       "cote": "d"
+      }
+     ],
+     "depart": [
+      null,
+      null,
+      2,
+      null
+     ],
+     "intro": {
+      "fr": "Je te donne le premier : 2 Fe₂O₃. Le reste se compte sur les doigts."
+     },
+     "pas": [
+      {
+       "cible": 0,
+       "atome": "Fe",
+       "choix": [
+        2,
+        4,
+        6
+       ],
+       "bon": 4,
+       "question": {
+        "fr": "Le fer d'abord. À droite, 2 Fe₂O₃ : 2 × 2 = 4 atomes de fer. Chaque FeS₂ en apporte un seul. Combien de FeS₂ ?"
+       },
+       "aide": {
+        "fr": "Compte le fer à droite : 2 molécules, 2 atomes chacune. Il en faut autant à gauche."
+       }
+      },
+      {
+       "cible": 3,
+       "atome": "S",
+       "choix": [
+        4,
+        8,
+        16
+       ],
+       "bon": 8,
+       "question": {
+        "fr": "Le soufre maintenant. À gauche, 4 FeS₂ : 4 × 2 = 8 atomes de soufre. Chaque SO₂ en emporte un seul. Combien de SO₂ ?"
+       },
+       "aide": {
+        "fr": "4 FeS₂, 2 soufres chacun : 8 soufres à caser, un par SO₂."
+       }
+      },
+      {
+       "cible": 1,
+       "atome": "O",
+       "choix": [
+        7,
+        11,
+        22
+       ],
+       "bon": 11,
+       "question": {
+        "fr": "Reste l'oxygène. À droite : 2 × 3 = 6 dans les Fe₂O₃, plus 8 × 2 = 16 dans les SO₂, soit 22 atomes. Chaque O₂ en apporte deux. Combien de O₂ ?"
+       },
+       "aide": {
+        "fr": "22 atomes d'oxygène à fournir, et ils arrivent par paires."
+       }
+      }
+     ],
+     "savoir": [
+      {
+       "id": "feu-equation",
+       "texte": {
+        "fr": "4 FeS₂ + 11 O₂ → 2 Fe₂O₃ + 8 SO₂ : la pyrite s'oxyde en oxyde de fer et en dioxyde de soufre, et la réaction dégage de la chaleur. Selon les conditions, il se forme aussi un autre oxyde de fer, Fe₃O₄."
+       },
+       "source": "Zhang, Li, Liu, Xu, Yang et Jiang, « A Thermodynamic Analysis on the Roasting of Pyrite », Minerals, 2019"
+      },
+      {
+       "id": "feu-lavoisier",
+       "texte": {
+        "fr": "Dans les années 1770, Antoine Lavoisier comprend que ce qui brûle se combine chimiquement avec un gaz de l'air. Il le nomme oxygène et appelle le phénomène oxydation."
+       },
+       "source": "Encyclopædia Britannica, « Chemistry : The chemical revolution »"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "feu-amadou",
+    "titre": {
+     "fr": "L'amadou"
+    },
+    "texte": {
+     "fr": "Une étincelle ne fait pas un feu. On la recueille sur de l'amadou, la matière ouatée d'un champignon, l'amadouvier : il s'embrase facilement au contact des étincelles, mais ne fournit qu'une braise."
+    },
+    "source": "Bertrand Roussel, « La longue histoire de la production du feu », Hominidés.com (exposition du musée de Terra Amata)",
+    "bouton": {
+     "fr": "Souffler sur la braise"
+    }
    }
   }
  ]

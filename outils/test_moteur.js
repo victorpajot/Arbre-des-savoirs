@@ -2415,7 +2415,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const CA = M.indexerContenu(dBrut("regles.json"), dBrut("skills.json"), dBrut("questions.json"), d("succes.json"),
     { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ile: d("ile.json") });
   const J = 86400000, t0 = new Date(2026, 10, 12, 9, 0).getTime();
-  const sait = (P, id, t) => { P.competences[id] = { maitrise: true, maitriseDepuis: t || t0, prochainRappel: (t || t0) + 400 * J, palier: 1, xp: 5 }; };
+  const sait = (P, id, t) => { P.competences[id] = { maitrise: true, maitriseDepuis: t || t0, prochainRappel: (t || t0) + 400 * J, palier: 1, xp: 5 }; if (id === "ile.feu") P.epreuves = { feu: t || t0 }; };
   const P = M.nouvellePartie(t0); P.mode = "ile"; P.credits.solde = 2000;
   // Le campement : seul le feu est proposé.
   let G = M.agesIle(CA, P);
@@ -2429,6 +2429,25 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const rf = M.terminerQuiz(CA, P, "ile.feu", M.tirerQuestions(CA, P, "ile.feu", 5).map(q => ({ id: q.id, correct: true })), t0, { jouer: true });
   assert.equal(rf.issue, "maitrisee");
   // Le campement (Victor, 2026-11-12 : une transition plus douce) : six besoins, rien de durable à bâtir.
+  // Victor (2026-11-13) : le feu appris, il reste à le faire. L'épreuve unique garde la porte du campement.
+  G = M.agesIle(CA, P);
+  assert.equal(G.age.id, "survivants"); assert.equal(G.age.epreuve, "feu"); assert.equal(G.age.pret, false);
+  assert.equal(M.passerAge(CA, P, t0), null, "pas de passage sans l'épreuve");
+  assert.equal(M.choixIA(CA, P, t0), null, "rien d'autre à jouer que l'épreuve");
+  const ef = M.epreuveIle(CA, "feu");
+  assert.deepEqual(ef.etapes.map(e => e.type), ["frappes", "jauge", "equation"]);
+  { // L'équation des données est équilibrée, et chaque pas mène au bon coefficient.
+    const e = ef.etapes[2], coef = e.depart.slice(); e.pas.forEach(x => { assert.ok(x.choix.includes(x.bon)); coef[x.cible] = x.bon; });
+    const compte = c => { const o = {}; e.molecules.forEach((m, j) => { if (m.cote === c) for (const a in m.atomes) o[a] = (o[a] || 0) + coef[j] * m.atomes[a]; }); return o; };
+    assert.deepEqual(compte("g"), compte("d")); assert.deepEqual(compte("g"), { Fe: 4, S: 8, O: 22 });
+  }
+  assert.equal(M.epreuveFaite(P, "feu"), false);
+  assert.equal(M.reussirEpreuve(CA, P, "feu", t0).premiere, true); assert.equal(M.reussirEpreuve(CA, P, "feu", t0 + 5).premiere, false);
+  assert.equal(P.epreuves.feu, t0); assert.equal(M.reussirEpreuve(CA, P, "inconnue", t0), null);
+  { // Une partie déjà au campement ne doit pas l'épreuve.
+    const P2 = JSON.parse(JSON.stringify(P)); delete P2.epreuves; P2.ageIle = 1;
+    assert.equal(M.agesIle(CA, P2).age.id, "campement"); assert.equal(M.agesIle(CA, P2).ages[0].epreuve, null);
+  }
   G = M.agesIle(CA, P);
   assert.equal(G.age.id, "campement"); assert.equal(G.age.besoins.length, 6);
   assert.equal(M.statut(CA, P, "astro.nebra", t0).etat, "disponible");
@@ -2499,7 +2518,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   }
   // Victor (2026-11-12) : trois freins à la population, le plus bas l'emporte (savoirs, toits, plafond de l'âge).
   {
-    const Ql = M.nouvellePartie(t0); Ql.mode = "ile"; sait(Ql, "ile.feu"); Ql.credits.solde = 1000;
+    const Ql = M.nouvellePartie(t0); Ql.mode = "ile"; sait(Ql, "ile.feu"); Ql.epreuves = { feu: t0 }; Ql.credits.solde = 1000;
     let Il = M.ile(CA, Ql, t0); assert.ok(Il.limites && Il.limites.toits === 15 && Il.limites.plafond === 40, "campement : 15 dormeurs sans toit, 40 au plus");
     assert.equal(Il.places, Math.min(Il.limites.savoirs, 15)); 
     Ql.ressources.stocks.bois = 100; for (let i = 0; i < 4; i++) assert.ok(M.construireIle(CA, Ql, "foyer", t0).ok);
@@ -2508,7 +2527,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.plafond, 400, "la cité plafonne à 400"); assert.equal(Il.limites.frein, "toits"); assert.equal(Il.places, 55, "sans maisons, les savoirs n'attirent personne de plus");
   }
   // La cueillette est risquée : un campement qui ne vit que d'elle y perd des adultes, jour après jour.
-  { const Qc = M.nouvellePartie(t0); Qc.mode = "ile"; sait(Qc, "ile.feu"); M.ile(CA, Qc, t0);
+  { const Qc = M.nouvellePartie(t0); Qc.mode = "ile"; sait(Qc, "ile.feu"); Qc.epreuves = { feu: t0 }; M.ile(CA, Qc, t0);
     assert.equal(M.ile(CA, Qc, t0).ressources.effets.cueillette, 1, "tout vient de la cueillette");
     let mc = 0; for (let d = 1; d <= 40; d++) mc += M.ile(CA, Qc, t0 + d * J).population.journal.cueillette || 0;
     assert.ok(mc > 0, "des cueilleurs n'en reviennent pas"); }
@@ -2553,7 +2572,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(j3 < 400 && Q3.ressources.effondrement && Q3.ressources.effondrement.perdus === 3, "l'île affamée se vide et perd ses aménagements");
   assert.deepEqual(Q3.ressources.batis.map(b => b.id), ["foyer"], "il reste le foyer"); assert.ok(M.estMaitrisee(Q3, "phys.machines"), "et les savoirs");
   // Un arbre en chantier (un seul savoir) ne compte pas comme une branche complète.
-  { const Qs = M.nouvellePartie(t0); Qs.mode = "ile"; Qs.competences["ile.feu"] = { maitrise: true, maitriseDepuis: t0, prochainRappel: t0 + 400 * J, palier: 1, xp: 5 };
+  { const Qs = M.nouvellePartie(t0); Qs.mode = "ile"; Qs.epreuves = { feu: t0 }; Qs.competences["ile.feu"] = { maitrise: true, maitriseDepuis: t0, prochainRappel: t0 + 400 * J, palier: 1, xp: 5 };
     assert.ok(!M.conditionRemplie(CA, Qs, { type: "branches_completes", n: 1 }, t0), "le feu seul ne complète pas une branche"); }
   // Les aléas : annoncés la veille à qui sait lire le ciel ; préparé, rien n'est perdu ; sinon un aménagement tombe.
   const alea = (prepare, sansSavoir) => { const Q = peche(); if (sansSavoir) delete Q.competences["meteo.ciel"];
