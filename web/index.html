@@ -1258,6 +1258,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ex-perdu > div { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 14px 22px 16px; border-radius: 16px; background: #F7ECE6; color: #5A1414; border: 3px solid #B5281F; text-align: center; box-shadow: 0 6px 24px rgba(0,0,0,.4); }
 .ex-perdu svg { animation: ex-bond .5s cubic-bezier(.3,1.6,.5,1) both; } .ex-perdu b { font-size: 22px; font-family: var(--f-display); } .ex-perdu span { font-size: 17px; opacity: .9; }
 @keyframes ex-perdu { 0% { opacity: 0; } 10%, 80% { opacity: 1; } 100% { opacity: 0; } } @keyframes ex-bond { 0% { transform: translate(-60px, -30px) scale(.5); } 100% { transform: none; } }
+.ex-fog { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .ex-alerte { display: none; } .ex-bete.chasse .ex-alerte { display: inline; } .ex-liste li.sac { border-style: solid; border-color: #E0A800; } .ex-liste li.sac svg { filter: none !important; opacity: 1 !important; }
 .explorer.mordu .ex-vue::after { content: ""; position: absolute; inset: 0; background: rgba(200, 30, 30, .4); pointer-events: none; }
 .ex-scene { opacity: 0; transition: opacity .4s; pointer-events: none; } .explorer.dedans .ex-scene { opacity: 1; }
@@ -2386,7 +2387,7 @@ function demarrerJeu() {
     if (document.querySelector(".explorer")) return;
     fermerFeuille();
     var I = campIle(M.ile(C, P, maintenant()));
-    var z = el('<div class="explorer" role="dialog" aria-modal="true" aria-label="' + __("Explorer l'île") + '"><div class="ex-vue">' + svgCarteIle(I).replace(/ile-fog/g, "ex-fog") + '</div><div class="ex-haut"><b>' + __("Explorer l'île") + '</b><button type="button" class="ex-x" aria-label="' + __("Fermer") + '">✕</button></div>' +
+    var z = el('<div class="explorer" role="dialog" aria-modal="true" aria-label="' + __("Explorer l'île") + '"><div class="ex-vue">' + svgCarteIle(I) + '<canvas class="ex-fog"></canvas></div><div class="ex-haut"><b>' + __("Explorer l'île") + '</b><button type="button" class="ex-x" aria-label="' + __("Fermer") + '">✕</button></div>' +
       '<div class="ex-zoom"><button type="button" data-z="1" aria-label="' + __("Zoomer") + '">+</button><button type="button" data-z="-1" aria-label="' + __("Dézoomer") + '">−</button></div><div class="ex-bas"></div></div>');
     var vueE = z.querySelector(".ex-vue"), svg = vueE.querySelector("svg"), bas = z.querySelector(".ex-bas");
     svg.removeAttribute("width"); svg.removeAttribute("height"); svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
@@ -2400,7 +2401,16 @@ function demarrerJeu() {
         '<g class="ex-scene" data-scene="' + esc(q.id) + '" mask="url(#exm' + i + ')">' + sq.replace(/^<svg /, '<svg x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w + '" height="' + h.toFixed(1) + '" ') + "</g>"; }).join("").replace(/class="ile-scene"/g, 'class="ex-sc"');
     svg.insertAdjacentHTML("beforeend", detailsIle() + scenes + '<g class="ex-objets"></g><g class="ex-acteurs"></g>');
     // Le brouillard passe par-dessus tout : objets et prédateurs ne se voient que dans le cercle de l'explorateur.
-    var voile = svg.querySelector(".ile-brouillard"), trous = svg.querySelectorAll(".ex-fog-ex"); if (voile) svg.appendChild(voile);
+    // Dans Explorer, l'image fixe laisse la place à un canevas posé sur la vue, repeint à chaque mouvement.
+    var voile = svg.querySelector(".ile-brouillard"), toile = vueE.querySelector(".ex-fog"), brume = !!voile && !!toile.getContext; if (voile) voile.remove();
+    function peindreFog() {
+      if (!brume) return;
+      var b = base(), w = Math.max(1, Math.round(b.r.width)), h = Math.max(1, Math.round(b.r.height)), e = b.r.width / (b.w / S.k), x0 = S.x - b.w / S.k / 2, y0 = S.y - b.h / S.k / 2;
+      if (toile.width !== w || toile.height !== h) { toile.width = w; toile.height = h; }
+      var T = I.quartiers.filter(function (q) { return (q.fonde || q.camp) && q.position; }).map(function (q) { return [(q.position[0] * ILE_W - x0) * e, (q.position[1] * ILE_H + 4 - y0) * e, 84 * e]; });
+      if (X) T.push([(X.x - x0) * e, (X.y - 4 - y0) * e, EXP.vue * 1.9 * e]);
+      peindreBrouillard(toile.getContext("2d"), w, h, T);
+    }
     var S = { x: ILE_W / 2, y: ILE_H / 2, k: 1 }, KMAX = 12, message = "";
     function base() { var r = vueE.getBoundingClientRect(), ar = r.width / Math.max(1, r.height), bw = Math.max(ILE_W, ILE_H * ar); return { w: bw, h: bw / ar, r: r }; }
     function borne(v, lo, hi) { return lo > hi ? (lo + hi) / 2 : Math.max(lo, Math.min(hi, v)); }
@@ -2409,6 +2419,7 @@ function demarrerJeu() {
       S.x = borne(S.x, w / 2, ILE_W - w / 2); S.y = borne(S.y, h / 2, ILE_H - h / 2);
       svg.setAttribute("viewBox", (S.x - w / 2).toFixed(2) + " " + (S.y - h / 2).toFixed(2) + " " + w.toFixed(2) + " " + h.toFixed(2));
       z.classList.toggle("pres", S.k >= 2); z.classList.toggle("tout-pres", S.k >= 3.2); z.classList.toggle("dedans", S.k >= 4.5); svg.style.setProperty("--ek", Math.min(1, 1.3 / S.k).toFixed(3));
+      peindreFog();
     }
     function zoomer(f, cx, cy) {
       var b = base(), k2 = Math.max(1, Math.min(KMAX, S.k * f)); if (cx == null) { cx = b.r.left + b.r.width / 2; cy = b.r.top + b.r.height / 2; }
@@ -2418,7 +2429,7 @@ function demarrerJeu() {
     }
     function objets() {
       var q = queteActive();
-      svg.querySelector(".ex-objets").innerHTML = baiesVues().filter(function (b) { return !(X && X.baies.indexOf(b.id) >= 0); }).map(function (b) { return '<g class="ex-baie" transform="translate(' + b.x + "," + b.y + ')">' + BUISSON + "</g>"; }).join("") + (X ? X.vus.map(function (v) { return '<g transform="translate(' + v.x.toFixed(1) + "," + v.y.toFixed(1) + ')"><path d="M0 1 V-9" stroke="#5A3B1E" stroke-width="1.3" stroke-linecap="round"/><path d="M0 -9 L7 -7 L0 -4.6 Z" fill="#D94141"/></g>'; }).join("") : "") + (q ? q.objets.filter(function (o) { return !o.pris && !(X && X.sac.indexOf(o.id) >= 0); }).map(function (o) {
+      svg.querySelector(".ex-objets").innerHTML = (X ? '<g transform="translate(' + FX.toFixed(1) + "," + FY.toFixed(1) + ')">' + PANIER + "</g>" : "") + baiesVues().filter(function (b) { return !(X && X.baies.indexOf(b.id) >= 0); }).map(function (b) { return '<g class="ex-baie" transform="translate(' + b.x + "," + b.y + ')">' + BUISSON + "</g>"; }).join("") + (X ? X.vus.map(function (v) { return '<g transform="translate(' + v.x.toFixed(1) + "," + v.y.toFixed(1) + ')"><path d="M0 1 V-9" stroke="#5A3B1E" stroke-width="1.3" stroke-linecap="round"/><path d="M0 -9 L7 -7 L0 -4.6 Z" fill="#D94141"/></g>'; }).join("") : "") + (q ? q.objets.filter(function (o) { return !o.pris && !(X && X.sac.indexOf(o.id) >= 0); }).map(function (o) {
         var x = Math.round(o.position[0] * ILE_W), y = Math.round(o.position[1] * ILE_H);
         return '<path class="ex-brille" transform="translate(' + x + "," + y + ')" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z" fill="#FFF3B0" stroke="#E0A800" stroke-width=".5" pointer-events="none"/>' + svgObjetQuete(o, x, y, 0.42); }).join("") : "");
     }
@@ -2472,6 +2483,8 @@ function demarrerJeu() {
           if (praticable(x, y) && surTerre(x, y, 0.86) && !abri(x, y, 100) && !dansOvale(x, y, MARAIS) && !dansOvale(x, y, [ILE_CX, ILE_CY + 2, 34, 40])) return { id: b.id, x: x, y: y }; }
         return null; }).filter(Boolean);
     }
+    // Le dépôt : un panier au centre du village. C'est lui qu'on vise pour rendre ce qu'on rapporte.
+    var PANIER = '<ellipse cy="2.4" rx="5.4" ry="1.5" fill="rgba(0,0,0,.22)"/><path d="M-4.6 -2 L4.6 -2 L3.6 2.6 L-3.6 2.6 Z" fill="#B98545"/><path d="M-4.6 -2 L4.6 -2 M-4 0 L4 0 M-2 -2 L-1.6 2.6 M1 -2 L.8 2.6" stroke="#7A5226" stroke-width=".7" fill="none"/><path d="M-3.4 -2 C-3 -6.4 3 -6.4 3.4 -2" stroke="#7A5226" stroke-width=".9" fill="none"/>';
     var BUISSON = '<ellipse cy="2.6" rx="5.2" ry="1.4" fill="rgba(0,0,0,.2)"/><path d="M-5 2 C-6.5 -2 -3 -5 0 -4.4 C3 -5.4 6.4 -2 5 2 Z" fill="#3E8F4F"/><path d="M-3 0 C-3.6 -2.6 -1 -3.8 .6 -3 C1.6 -1.6 -1 .6 -3 0 Z" fill="#57AD65"/><circle cx="-2.4" cy="-.4" r="1" fill="#C2274B"/><circle cx="1.6" cy="-1.6" r="1" fill="#C2274B"/><circle cx="2.8" cy=".8" r="1" fill="#8E2A8C"/><circle cx="-.2" cy="1" r=".9" fill="#8E2A8C"/>';
     function sitesAFaire() { return M.ile(C, P, maintenant()).quartiers.filter(function (q) { return q.aExplorer; }); }
     function sitesPrets() { return M.ile(C, P, maintenant()).quartiers.filter(function (q) { return q.aOuvrir && !q.aExplorer; }); }
@@ -2525,16 +2538,16 @@ function demarrerJeu() {
         '<g class="ex-explo"><g class="ex-corps"></g></g>';
       X.eb = [].slice.call(acteurs.querySelectorAll(".ex-bete")); X.ee = acteurs.querySelector(".ex-explo"); X.ec = acteurs.querySelector(".ex-cible"); habiller(); preparerDevant();
       z.classList.add("expe"); S.k = Math.max(S.k, 3.4); S.x = FX; S.y = FY;
-      message = __("Touche la carte : l'explorateur y va. Rapporte au village ce qu'il trouve, et fuis ce qui a les yeux rouges.");
+      message = __("Touche la carte : l'explorateur y va. Ce qu'il trouve se rapporte au panier, au centre du village. Fuis ce qui a les yeux rouges.");
       objets(); panneau(); dessiner(); appliquer(); raf = requestAnimationFrame(tour);
     }
     function dessiner() {
-      if (!X) { trous.forEach(function (c) { c.setAttribute("r", 0); }); return; }
+      if (!X) { peindreFog(); return; }
       X.ee.setAttribute("transform", "translate(" + X.x.toFixed(1) + "," + X.y.toFixed(1) + ")"); X.ee.querySelector(".ex-corps").setAttribute("transform", "scale(" + X.sens + ",1)");
       X.ec.setAttribute("cx", X.tx.toFixed(1)); X.ec.setAttribute("cy", X.ty.toFixed(1)); X.ec.style.display = Math.hypot(X.tx - X.x, X.ty - X.y) > 2 ? "" : "none";
       masquer();
       X.betes.forEach(function (b, i) { var e = X.eb[i]; e.setAttribute("transform", "translate(" + b.x.toFixed(1) + "," + b.y.toFixed(1) + ")"); e.querySelector(".ex-corps").setAttribute("transform", "scale(" + b.sens + ",1)"); e.setAttribute("class", "ex-bete" + (b.chasse ? " chasse" : "")); });
-      trous.forEach(function (c) { c.setAttribute("cx", X.x.toFixed(1)); c.setAttribute("cy", (X.y - 4).toFixed(1)); c.setAttribute("r", (EXP.vue * 1.9).toFixed(0)); });
+
     }
     // Pris : une courte scène (le prédateur bondit, l'explorateur tombe, le bandeau le dit), puis un autre habitant,
     // d'une autre allure, repart du village.
@@ -2573,7 +2586,7 @@ function demarrerJeu() {
           X.sac.push(o.id); message = tx(o.trouve || o.nom) + " " + __("Reste à le rapporter au village."); objets(); panneau();
         });
         baiesVues().forEach(function (b) { if (X.baies.indexOf(b.id) >= 0 || Math.hypot(b.x - X.x, b.y - X.y) > 7) return; X.baies.push(b.id); message = __("Des baies mûres. Dans le sac : reste à les rapporter au village."); objets(); panneau(); });
-        if ((X.sac.length || X.vus.length || X.baies.length) && Math.hypot(X.x - FX, X.y - FY) < 34) {
+        if ((X.sac.length || X.vus.length || X.baies.length) && Math.hypot(X.x - FX, X.y - FY) < 9) {
           var der = null, n = X.sac.length, noms = [], cb = X.baies.length ? M.cueillirBaies(C, P, X.baies, maintenant()) : null; X.baies = [];
           if (q) X.sac.forEach(function (id) { der = M.ramasserIle(C, P, q.id, id, maintenant()) || der; }); X.sac = [];
           X.vus.forEach(function (v) { var rs = M.repererSite(C, P, v.id, [v.x / ILE_W, v.y / ILE_H], maintenant()); if (rs && rs.ok) noms.push(tx(rs.nom)); }); X.vus = []; sauver();
@@ -5102,15 +5115,27 @@ function demarrerJeu() {
   // Chaque élément debout garde sa profondeur (le y de son pied) : l'explorateur se glisse entre eux (Explorer).
   // Seuls les éléments immobiles (arbres, maisons) sont enveloppés : ce qui s'anime reste tel quel.
   function enPlan(p) { return p[1].indexOf("class=") < 0 ? '<g class="ile-pl" data-y="' + (+p[0]).toFixed(1) + '">' + p[1] + "</g>" : p[1]; }
+  // Victor (2026-11-13) : sur Android, le brouillard en masque SVG sautait pendant le zoom. Il est désormais peint
+  // sur un canevas : gris sombre partout, percé d'un disque au bord fondu (brume claire puis épaisse) par trou.
+  var FOG = "124,138,150", FOG_CACHE = {};
+  function peindreBrouillard(ctx, w, h, trous) {
+    ctx.globalCompositeOperation = "source-over"; ctx.clearRect(0, 0, w, h); ctx.fillStyle = "rgb(" + FOG + ")"; ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = "destination-out";
+    trous.forEach(function (t) {
+      if (t[2] <= 0 || t[0] + t[2] < 0 || t[1] + t[2] < 0 || t[0] - t[2] > w || t[1] - t[2] > h) return;
+      var g = ctx.createRadialGradient(t[0], t[1], 0, t[0], t[1], t[2]);
+      g.addColorStop(0, "rgba(0,0,0,1)"); g.addColorStop(0.36, "rgba(0,0,0,1)"); g.addColorStop(0.6, "rgba(0,0,0,.62)"); g.addColorStop(0.82, "rgba(0,0,0,.3)"); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(t[0], t[1], t[2], 0, 6.2832); ctx.fill();
+    });
+    ctx.globalCompositeOperation = "source-over";
+  }
+  function trousQuartiers(I, lieux) { var out = []; I.quartiers.forEach(function (q, i) { if (q.fonde || q.camp) out.push([lieux[i][0], lieux[i][1] + 4, 84]); }); return out; }
+  // Sur la carte de l'onglet, rien ne bouge : le brouillard est une image fixe, peinte une fois par disposition.
   function brouillardIle(I, lieux) {
     if (!M.modeIle(P)) return "";
-    // Victor (2026-11-13) : brouillard plus sombre, et en dégradé : autour de ce qu'on voit, une première couronne de
-    // brume claire qui estompe, puis le brouillard épais. Deux voiles, deux masques, les mêmes disques.
-    function disques(grad) { return I.quartiers.map(function (q, i) { return q.fonde || q.camp ? '<circle cx="' + fx(lieux[i][0]) + '" cy="' + fx(lieux[i][1] + 4) + '" r="84" fill="url(#' + grad + ')"/>' : ""; }).join("") + '<circle class="ile-fog-ex" r="0" fill="url(#' + grad + ')"/>'; }
-    function masque(id, grad) { return '<mask id="' + id + '" maskUnits="userSpaceOnUse" x="0" y="0" width="' + ILE_W + '" height="' + ILE_H + '"><rect width="' + ILE_W + '" height="' + ILE_H + '" fill="#fff"/>' + disques(grad) + "</mask>"; }
-    return '<defs><radialGradient id="ile-fog-t"><stop offset="0" stop-color="#000"/><stop offset=".52" stop-color="#000"/><stop offset=".8" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>' +
-      '<radialGradient id="ile-fog-u"><stop offset="0" stop-color="#000"/><stop offset=".34" stop-color="#000"/><stop offset=".62" stop-color="#000" stop-opacity="0"/></radialGradient>' + masque("ile-fog", "ile-fog-t") + masque("ile-fog-v", "ile-fog-u") + "</defs>" +
-      '<g class="ile-brouillard" pointer-events="none"><rect width="' + ILE_W + '" height="' + ILE_H + '" fill="#E3EAEC" opacity=".55" mask="url(#ile-fog-v)"/><rect width="' + ILE_W + '" height="' + ILE_H + '" fill="#7C8A96" mask="url(#ile-fog)"/></g>';
+    var trous = trousQuartiers(I, lieux), cle = trous.map(function (t) { return Math.round(t[0]) + "," + Math.round(t[1]); }).join(";"), url = FOG_CACHE[cle];
+    if (!url) { try { var c = document.createElement("canvas"), k = 1.5; c.width = ILE_W * k; c.height = ILE_H * k; var ctx = c.getContext("2d"); ctx.scale(k, k); peindreBrouillard(ctx, ILE_W, ILE_H, trous); url = FOG_CACHE[cle] = c.toDataURL("image/png"); } catch (x) { return ""; } }
+    return '<image class="ile-brouillard" href="' + url + '" width="' + ILE_W + '" height="' + ILE_H + '" preserveAspectRatio="none" pointer-events="none"/>';
   }
   function svgCarteIle(I) {
     LIEU_HAB = null;
