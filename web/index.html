@@ -1236,6 +1236,9 @@ svg.grille .interro { transition: opacity .3s; }
 .sc-recap .an { font-family: var(--f-mono); font-size: 13px; color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) { .piege-titre { animation: piege-claque 0.6s cubic-bezier(.3,1.8,.5,1) both; } }
 @keyframes piege-claque { 0% { transform: scale(2.4) rotate(-6deg); opacity: 0; } 60% { transform: scale(.92) rotate(2deg); opacity: 1; } 100% { transform: none; } }
+.ile-quete { cursor: pointer; } .ile-quete > * { filter: drop-shadow(0 1px 0 rgba(255,255,255,.7)); } .ile-quete.pris { transition: transform .4s ease-in, opacity .4s; opacity: 0; }
+.ile-quete-sac { display: flex; justify-content: space-between; gap: 6px; margin: 4px 0 10px; } .ile-quete-sac span { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 6px 2px; border-radius: 10px; border: 2px dashed var(--line); } .ile-quete-sac span svg { opacity: .28; filter: grayscale(1); }
+.ile-quete-sac span.ok { border-style: solid; border-color: var(--good); } .ile-quete-sac span.ok svg { opacity: 1; filter: none; } .ile-quete-sac small { font-size: 12px; line-height: 1.2; }
 .ile-flamme.froid { filter: grayscale(1) brightness(.55); }
 .ile-flamme.ep-allume { transform-box: fill-box; transform-origin: 50% 100%; animation: ep-allume 1.6s cubic-bezier(.2,1.4,.4,1) both; }
 @keyframes ep-allume { 0% { transform: scale(.35); filter: grayscale(1) brightness(.55); } 45% { transform: scale(1.25); filter: drop-shadow(0 0 8px #FFB347) brightness(1.3); } 100% { transform: scale(1); filter: none; } }
@@ -2294,6 +2297,30 @@ function demarrerJeu() {
   }
   // Victor (2026-11-13) : les épreuves uniques. « Faire du feu » : trois gestes (frapper, doser, équilibrer), chacun
   // suivi de ce qu'il enseigne ; puis l'étincelle tombe sur l'amadou. Rien n'y est punitif : on recommence le geste raté.
+  // Victor (2026-11-13) : avant l'épreuve, une quête. Les objets sont cachés sur la carte de l'île : on les touche pour
+  // les ramasser. Tous trouvés, l'épreuve s'ouvre.
+  function queteActive() {
+    var G = M.modeIle(P) && M.agesIle(C, P), ep = G && G.age.epreuve, q = ep && M.queteIle(C, P, ep);
+    return q && !q.complete ? q : null;
+  }
+  function allerQuete() {
+    var q = queteActive(); if (!q) return;
+    fermerFeuille(); vue = "ile"; quartierVu = lieuVu = null; rendre();
+    var c = document.querySelector(".ile-cadre"); if (c && c.scrollIntoView) c.scrollIntoView({ block: "center" });
+    toast(__("Cherche sur la carte : encore {n} à trouver.", { n: q.reste }));
+  }
+  var DESSINS_QUETE = {
+    silex: '<path d="M-8 4 L-5 -6 L4 -8 L9 -1 L5 7 L-3 8 Z" fill="#6B6257"/><path d="M-5 -6 L4 -8 L2 -1 L-4 1 Z" fill="#9A9085"/><path d="M-8 4 L-3 8 L-5 5 Z" fill="#D9D2C5"/>',
+    pyrite: '<path d="M-8 5 L-9 -3 L-2 -8 L7 -6 L9 3 L3 8 Z" fill="#B8962E"/><path d="M-9 -3 L-2 -8 L7 -6 L1 -1 Z" fill="#F0D560"/><path d="M-4 1 h4 v3 h-4 z" fill="#FFF0A0"/>',
+    amadou: '<path d="M-3 -10 h6 v20 h-6 z" fill="#6A4A2E"/><path d="M3 -4 a8 7 0 0 1 9 6 l-9 0 z" fill="#A9764A"/><path d="M3 2 l9 0 l-1 2 l-8 0 z" fill="#E6D2B0"/><path d="M-3 2 a6 5 0 0 0 -7 5 l7 0 z" fill="#8F6238"/>',
+    branchages: '<path d="M-10 6 L8 -5 M-8 -2 L10 5 M-3 8 L4 -8 M2 -3 L8 -8" stroke="#7A5230" stroke-width="2.4" stroke-linecap="round" fill="none"/>'
+  };
+  function svgObjetQuete(o, x, y, t) { return '<g class="ile-quete" data-quete="' + esc(o.id) + '" transform="translate(' + x + "," + y + ') scale(' + (t || 1) + ')"><circle r="17" fill="transparent"/>' + (DESSINS_QUETE[o.id] || '<circle r="6" fill="#E3B92E"/>') + "</g>"; }
+  function blocQuete(q, bouton) {
+    return '<div class="ile-passage"><div class="eyebrow">' + __("Quête") + "</div><h3>" + esc(tx(q.nom)) + "</h3><p>" + esc(tx(q.texte)) + '</p><div class="ile-quete-sac">' + q.objets.map(function (o) {
+      return '<span class="' + (o.pris ? "ok" : "") + '"><svg viewBox="-14 -14 28 28" width="40" height="40" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><small>" + esc(tx(o.nom)) + (o.pris ? " ✓" : "") + "</small></span>"; }).join("") + "</div>" +
+      (bouton ? '<button type="button" class="btn large" data-a="quete">' + __("Chercher sur l'île") + "</button>" : "") + "</div>";
+  }
   function svgPierres() {
     return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="150" rx="86" ry="10" fill="rgba(0,0,0,.14)"/>' +
       '<g class="ep-pyrite"><path d="M70 146 L58 122 L72 98 L104 88 L140 94 L160 116 L152 142 L118 152 Z" fill="#B8962E"/><path d="M72 98 L104 88 L140 94 L122 108 L92 110 Z" fill="#E3C356"/><path d="M92 110 L122 108 L118 152 L70 146 L58 122 Z" fill="#9A7A1F"/><path d="M100 96 h10 v6 h-10 z M126 100 h8 v5 h-8 z M84 124 h9 v7 h-9 z" fill="#F4E08A"/></g>' +
@@ -2302,6 +2329,7 @@ function demarrerJeu() {
   }
   function ouvrirEpreuveIle(id) {
     var E = M.epreuveIle(C, id); if (!E || document.querySelector(".epreuve-u")) return;
+    if (queteActive()) { allerQuete(); return; }
     fermerFeuille();
     var deja = M.epreuveFaite(P, id) || !(M.agesIle(C, P) || { age: {} }).age.epreuve, arrets = [], N = E.etapes.length;
     var z = el('<div class="epreuve-u" role="dialog" aria-modal="true" aria-label="' + esc(tx(E.nom)) + '"><div class="in"><div class="ep-tete"><button type="button" class="ep-x" aria-label="' + __("Quitter") + '">×</button><div class="eyebrow">' + __("Épreuve unique") + "</div><h2>" + esc(tx(E.nom)) + '</h2><ol class="ep-fil">' +
@@ -3484,7 +3512,7 @@ function demarrerJeu() {
     var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? bonusJouerMax() : 0, enDuel = M.duelBloquant(P), ferme = M.jeuFerme(C, P, maintenant());
     var epJ = M.modeIle(P) && M.epreuveIle(C, ((M.agesIle(C, P) || { age: {} }).age || {}).epreuve);
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + __('</span><span><b>Jouer</b><span class="s">') +
-      (ferme ? __("Enfermé au mur de la honte : encore ") + dureePeine(P.punition.restant) + "." : enDuel ? esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + __(" te barre la route : revanche obligatoire.") : c ? (c.raison === "revision" ? __("Révision forcée. ") : c.type === "rappel" ? __("Un rappel t'attend. ") : "") + (c.raison === "case" ? __("Case ") + esc(tx(stat(c.stat).nom)) + "." : c.raison === "ouvre_arbre" ? __("Case ") + esc(tx(stat(c.stat).nom)) + __(" : un arbre fermé à ouvrir.") : __("Une épreuve t'attend.")) : epJ ? __("Épreuve unique : ") + esc(tx(epJ.nom)) + "." : __("Rien à jouer pour l'instant.")) + "</span></span>" + (c && bonus && !ferme ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
+      (ferme ? __("Enfermé au mur de la honte : encore ") + dureePeine(P.punition.restant) + "." : enDuel ? esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + __(" te barre la route : revanche obligatoire.") : c ? (c.raison === "revision" ? __("Révision forcée. ") : c.type === "rappel" ? __("Un rappel t'attend. ") : "") + (c.raison === "case" ? __("Case ") + esc(tx(stat(c.stat).nom)) + "." : c.raison === "ouvre_arbre" ? __("Case ") + esc(tx(stat(c.stat).nom)) + __(" : un arbre fermé à ouvrir.") : __("Une épreuve t'attend.")) : epJ ? (queteActive() ? __("Quête : ") + esc(tx(queteActive().nom)).toLowerCase() + "." : __("Épreuve unique : ") + esc(tx(epJ.nom)) + ".") : __("Rien à jouer pour l'instant.")) + "</span></span>" + (c && bonus && !ferme ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
     if (!c && !enDuel && !epJ) b.disabled = true;
     b.onclick = ouvrirJouer;
     return b;
@@ -5123,7 +5151,7 @@ function demarrerJeu() {
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + __("Ce que tu sais encore") + "</div><h1>" + __("L'île") + "</h1></div>" + compteur + "</div>"));
     var vierge = !I.quartiers.some(function (x) { return x.fonde; });
     v.appendChild(el('<p class="note">' + (vierge ? (M.modeIle(P) ? (I.ages ? __("L'île est vierge, et tout y commence par le feu. Touche « Maîtriser le feu » ci-dessous pour lire sa leçon, puis passe le quiz : c'est lui qui pose le campement.") : __("L'île est vierge. Touche Jouer : Alyca te donne un premier savoir à apprendre, et sa réussite pose la première installation.")) : __("L'île est vierge. Réussis l'épreuve de ta case sur le parcours : elle y posera la première installation et fondera ton premier quartier.")) :
-      (M.modeIle(P) && I.ages && I.ages.age.epreuve ? __("Tu sais comment naît le feu. Il reste à l'allumer : l'épreuve t'attend plus bas.") : M.modeIle(P) && I.ages && I.ages.courant < 2 ? __("Le campement a des besoins. Touche un savoir pour lire sa leçon et passer son quiz : tous les besoins couverts, le campement deviendra un village.") : M.modeIle(P) ? __("Touche un quartier, puis un terrain « ? » : réussis son quiz et l'installation se bâtit. Un rappel en retard la met en panne. Le bouton Jouer laisse Alyca choisir pour toi.") : __("Chaque épreuve réussie sur le parcours construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter."))) + "</p>"));
+      (M.modeIle(P) && I.ages && I.ages.age.epreuve ? (queteActive() ? __("Tu sais comment naît le feu. Trouve sur la carte de quoi le faire : un silex, de la pyrite, de l'amadou et des branchages.") : __("Tu sais comment naît le feu. Il reste à l'allumer : l'épreuve t'attend plus bas.")) : M.modeIle(P) && I.ages && I.ages.courant < 2 ? __("Le campement a des besoins. Touche un savoir pour lire sa leçon et passer son quiz : tous les besoins couverts, le campement deviendra un village.") : M.modeIle(P) ? __("Touche un quartier, puis un terrain « ? » : réussis son quiz et l'installation se bâtit. Un rappel en retard la met en panne. Le bouton Jouer laisse Alyca choisir pour toi.") : __("Chaque épreuve réussie sur le parcours construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter."))) + "</p>"));
     if (!P.ileIntro) setTimeout(presenterIle, 250);
     // Victor (2026-11-12) : dans l'onglet, l'île d'abord ; l'âge, l'objectif et les alertes viennent dessous.
     var ancreCarte = v.lastChild;
@@ -5147,6 +5175,23 @@ function demarrerJeu() {
       var g = ev.target.closest && ev.target.closest("[data-q]"); if (!g) return;
       var idq = g.getAttribute("data-q"); if (I.quartiers.some(function (x) { return x.id === idq && x.aOuvrir; })) { ouvrirVerrouQuartier(idq); return; }
       quartierVu = idq; rendre(); window.scrollTo(0, 0); };
+    var qa = queteActive();
+    if (qa && !quartierVu) {
+      var svgC = carte.querySelector("svg");
+      if (svgC) svgC.insertAdjacentHTML("beforeend", qa.objets.filter(function (o) { return !o.pris; }).map(function (o) { return svgObjetQuete(o, Math.round(o.position[0] * ILE_W), Math.round(o.position[1] * ILE_H), 1); }).join(""));
+      carte.addEventListener("click", function (ev) {
+        var gq = ev.target.closest && ev.target.closest("[data-quete]"); if (!gq) return;
+        ev.stopPropagation();
+        var rq = M.ramasserIle(C, P, qa.id, gq.getAttribute("data-quete"), maintenant()); if (!rq) return;
+        sauver(); gq.classList.add("pris");
+        var E2 = M.epreuveIle(C, qa.id);
+        setTimeout(function () {
+          rendre();
+          if (rq.quete.complete) feuilleSimple('<div class="eyebrow">' + __("Quête accomplie") + "</div><h2>" + esc(tx(rq.quete.nom)) + '</h2><div class="bulle-p"></div><p style="font-size:17px">' + esc(tx(rq.objet.trouve || rq.objet.nom)) + "</p>" + blocQuete(rq.quete, false) + '<button type="button" class="btn large" data-a="go">' + __("Épreuve unique : ") + esc(tx(E2.nom)) + "</button>", tx(rq.quete.nom), { go: function () { fermerFeuille(); ouvrirEpreuveIle(qa.id); } }, __("Plus tard"));
+          else toast(tx(rq.objet.trouve || rq.objet.nom) + " " + __("Encore {n}.", { n: rq.quete.reste }));
+        }, 450);
+      }, true);
+    }
     ancreCarte.after(carte);
     // Victor (2026-11-12) : un nouveau quartier se mérite. Tant qu'il n'est pas ouvert, sa carte attend sous l'île.
     var ancreV = carte;
@@ -5429,6 +5474,7 @@ function demarrerJeu() {
     var surex = (R.nature || []).filter(function (n) { return !n.soutenable; })[0];
     var a, k;
     if (G.courant === 0 && !M.estMaitrisee(P, "ile.feu")) a = { texte: __("Sans feu, personne ne reste. Apprenez à le maîtriser : tout le reste en découle."), bouton: __("Jouer"), action: jouer };
+    else if (age.epreuve && queteActive()) a = { texte: __("Vous savez comment naît une étincelle, mais vous n'avez rien pour la faire. Un silex, de la pyrite, de l'amadou, des branchages : tout est sur l'île, il suffit d'ouvrir les yeux."), bouton: __("Chercher sur l'île"), action: allerQuete };
     else if (age.epreuve) a = { texte: __("Vous savez comment naît une étincelle. Reste à la faire jaillir : un silex, une pyrite, et vos deux mains."), bouton: tx((M.epreuveIle(C, age.epreuve) || {}).nom || { fr: "Jouer" }), action: function () { ouvrirEpreuveIle(age.epreuve); } };
     else if (deficit && !village) a = { texte: __("La cueillette nourrit {n} personnes, pas une de plus. Pour en nourrir davantage il faut cultiver, et on ne cultive pas dans un campement : couvrez ses besoins pour en faire un village.", { n: bouches }), bouton: __("Jouer"), action: jouer };
     else if (deficit && !cultive) a = { texte: __("Ils mangent plus qu'ils ne ramassent. Apprenez « Les premières récoltes » : sans ce savoir, ni ferme ni pêcherie."), bouton: __("Voir ce savoir"), action: function () { ouvrirFeuille("res.cultiver"); } };
@@ -5530,7 +5576,9 @@ function demarrerJeu() {
     if (resteB.length) h += '<button type="button" class="btn sec ile-plus" data-a="plus">' + (resteB.length > 1 ? __("Voir les {n} autres besoins", { n: resteB.length }) : __("Voir l'autre besoin")) + '</button><div class="ile-reste" hidden>' + resteB.map(ligneBesoin).join("") + "</div>";
     // La suite, en conclusion de la liste : ce qui ouvre l'âge suivant, ou le choix de passer sans les besoins optionnels.
     var epr = a.epreuve && M.epreuveIle(C, a.epreuve);
-    if (epr && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(epr.nom)) + "</h3><p>" + esc(tx(epr.accroche || { fr: "" })) + " " + __("Elle ouvre : ") + "<b>" + esc(tx(G.suivant.nom)).toLowerCase() + '</b>.</p><button type="button" class="btn large" data-a="epreuve">' + esc(tx(epr.nom)) + "</button></div>";
+    var qAge = queteActive();
+    if (qAge) h += blocQuete(qAge, true);
+    else if (epr && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(epr.nom)) + "</h3><p>" + esc(tx(epr.accroche || { fr: "" })) + " " + __("Elle ouvre : ") + "<b>" + esc(tx(G.suivant.nom)).toLowerCase() + '</b>.</p><button type="button" class="btn large" data-a="epreuve">' + esc(tx(epr.nom)) + "</button></div>";
     else if (a.pret && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("Tout l'indispensable est couvert. Il reste en option : ") + a.negliges.map(function (b) { return "<b>" + esc(tx(b.nom)).toLowerCase() + "</b>"; }).join(__(" et ")) + ". " + __("Tu peux les apprendre d'abord, ou passer tout de suite et en payer le prix.") + '</p><button type="button" class="btn large" data-a="passer">' + __("Passer à : ") + esc(tx(G.suivant.nom)) + "</button></div>";
     else if (G.suivant && !a.avenir) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("S'ouvre quand tous les besoins sans la mention « optionnel » sont couverts.") + "</p></div>";
     var bloc = el("<div>" + h + "</div></div>");
@@ -5538,6 +5586,7 @@ function demarrerJeu() {
     if (bpl) bpl.onclick = function () { bloc.querySelector(".ile-reste").hidden = false; bpl.remove(); };
     var bep = bloc.querySelector('[data-a="epreuve"]');
     if (bep) bep.onclick = function () { ouvrirEpreuveIle(a.epreuve); };
+    var bqu = bloc.querySelector('[data-a="quete"]'); if (bqu) bqu.onclick = allerQuete;
     var bpa = bloc.querySelector('[data-a="passer"]');
     if (bpa) bpa.onclick = function () {
       feuilleSimple('<div class="eyebrow">' + __("Changer d'âge") + "</div><h2>" + __("Passer sans eux ?") + '</h2><div class="bulle-p"></div>' + a.negliges.map(function (b) { return '<p style="font-size:17px"><b>' + esc(tx(b.nom)) + ".</b> " + esc(tx(b.alerte || b.texte || { fr: "" })) + "</p>"; }).join("") +
@@ -9844,7 +9893,9 @@ function demarrerJeu() {
     }
     else if (!suite && epBd) {
       wrap.appendChild(el('<p class="etat-pion" style="font-size:17px">' + esc(tx(epBd.accroche || { fr: "" })) + "</p>"));
-      var bep2 = el('<button type="button" class="btn large">' + __("Épreuve unique : ") + esc(tx(epBd.nom)) + "</button>");
+      var qB = queteActive();
+      if (qB) wrap.lastChild.textContent = tx(qB.texte);
+      var bep2 = el('<button type="button" class="btn large">' + (qB ? __("Quête : ") + esc(tx(qB.nom)) : __("Épreuve unique : ") + esc(tx(epBd.nom))) + "</button>");
       bep2.onclick = function () { fermerQuiz(); ouvrirEpreuveIle(epB); };
       wrap.appendChild(bep2);
     }

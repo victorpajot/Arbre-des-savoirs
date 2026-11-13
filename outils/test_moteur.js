@@ -2441,6 +2441,12 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const compte = c => { const o = {}; e.molecules.forEach((m, j) => { if (m.cote === c) for (const a in m.atomes) o[a] = (o[a] || 0) + coef[j] * m.atomes[a]; }); return o; };
     assert.deepEqual(compte("g"), compte("d")); e.molecules.forEach(m => { const o = {}; m.dessin.forEach(a => { o[a] = (o[a] || 0) + 1; }); assert.deepEqual(o, m.atomes, m.formule + " : le dessin compte les mêmes atomes"); }); assert.deepEqual(compte("g"), { Fe: 4, S: 8, O: 22 });
   }
+  { // La quête : quatre objets à ramasser sur la carte, une fois chacun.
+    let qu = M.queteIle(CA, P, "feu"); assert.deepEqual(qu.objets.map(o => o.id), ["silex", "pyrite", "amadou", "branchages"]); assert.equal(qu.reste, 4);
+    assert.equal(M.ramasserIle(CA, P, "feu", "silex", t0).quete.reste, 3); assert.equal(M.ramasserIle(CA, P, "feu", "silex", t0), null); assert.equal(M.ramasserIle(CA, P, "feu", "caillou", t0), null);
+    ["pyrite", "amadou", "branchages"].forEach(o => M.ramasserIle(CA, P, "feu", o, t0)); assert.ok(M.queteIle(CA, P, "feu").complete);
+    qu.objets.forEach(o => { const dx = (o.position[0] - 0.5) / 0.43, dy = (o.position[1] - 0.51) / 0.44; assert.ok(dx * dx + dy * dy < 0.8, o.id + " est sur la terre ferme"); });
+  }
   assert.equal(M.epreuveFaite(P, "feu"), false);
   assert.equal(M.reussirEpreuve(CA, P, "feu", t0).premiere, true); assert.equal(M.reussirEpreuve(CA, P, "feu", t0 + 5).premiere, false);
   assert.equal(P.epreuves.feu, t0); assert.equal(M.reussirEpreuve(CA, P, "inconnue", t0), null);
