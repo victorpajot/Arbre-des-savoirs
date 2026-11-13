@@ -5031,8 +5031,8 @@ function demarrerJeu() {
     var PEAU_BETE = ["#8A5A2B", "#A67444", "#6E4A26", "#9C7A52"];
     function danseur(i, n) {
       var a = Math.PI * 2 * i / n + 0.3, x = 180 + Math.cos(a) * 92, y = 150 + Math.sin(a) * 40, g = graine(q.id + "danse" + i), peau = PEAUX[(g >>> 3) % PEAUX.length], bete = PEAU_BETE[g % PEAU_BETE.length];
-      return [y, '<g class="ile-danse" style="animation-delay:-' + ((g % 9) / 10).toFixed(1) + 's" shape-rendering="crispEdges">' +
-        pixels(HABITANT2, { h: CHEVEUX[g % 3], s: peau, v: bete, w: ombre(bete), k: "#2B2B33", j: peau }, null, Math.round(x - 10), Math.round(y - 32), 2) + "</g>"];
+      // Victor (2026-11-13) : au campement aussi, les habitants vont et viennent (la danse sur place était figée sur Android).
+      return [y, marcheur(g, 34, 9) + pixels(HABITANT2, { h: CHEVEUX[g % 3], s: peau, v: bete, w: ombre(bete), k: "#2B2B33", j: peau }, null, Math.round(x - 10), Math.round(y - 32), 2) + "</g></g>"];
     }
     // Une installation sans dessin propre : le poteau de la réserve, le rocher du guetteur, sinon un cairn.
     function secours(inst, x, y) {
