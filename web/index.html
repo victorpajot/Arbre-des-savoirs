@@ -1861,6 +1861,7 @@ function demarrerJeu() {
   ];
 
   // --- Utilitaires ----------------------------------------------------------
+  var parId = M.parId;
   function el(html) { var t = document.createElement("template"); t.innerHTML = nommerIA(html.trim()); return t.content.firstChild; }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function tx(o) { return o ? nommerIA(M.TX(o)) : ""; }
@@ -1930,12 +1931,12 @@ function demarrerJeu() {
   function maintenant() { return M.maintenant(P); }
   // v35 : l'arbre d'un pack éteint garde son nom (on le lit dans les fichiers complets) ; inconnu, il reste anonyme.
   function stat(id) {
-    var trouve = function (l) { return l.filter(function (s) { return s.id === id; })[0]; };
+    var trouve = function (l) { return parId(l, id); };
     return trouve(C.stats) || (BRUT && trouve(BRUT["regles.json"].stats)) || { id: id, nom: { fr: "Arbre absent" }, branche: { fr: "Arbre absent" }, description: { fr: "" }, couleur: "#9AA1B6" };
   }
   // L'arbre s'il est joué dans cette partie (son pack est allumé), sinon null : les éléments du socle rattachés à un
   // arbre éteint (cases, dates) restent, mais sans son nom ni sa couleur.
-  function statActif(id) { return C.stats.filter(function (s) { return s.id === id; })[0] || null; }
+  function statActif(id) { return parId(C.stats, id) || null; }
   function avecArbre(id) { var s = statActif(id); return s ? " · " + tx(s.nom) : ""; }
   // v35 : la couleur d'un arbre vient de son pack (couleurs.clair / couleurs.sombre) ; un arbre absent prend le gris.
   function couleur(statId) { return "var(--s-" + statId + ", var(--muted))"; }
@@ -1955,7 +1956,6 @@ function demarrerJeu() {
   function gu(t) { return M.langue() === "fr" ? "« " + t + " »" : "\u201c" + t + "\u201d"; }
   function gf() { return M.langue() === "fr" ? " »" : "\u201d"; }
   function deuxPoints() { return M.langue() === "fr" ? " : " : ": "; }
-  function dateLongue(t) { return new Date(t).toLocaleDateString(locale(), { weekday: "long", day: "numeric", month: "long" }); }
   function dateCourte(t) {
     var d = new Date(t), o = { day: "numeric", month: "long" };
     if (d.getFullYear() !== new Date(maintenant()).getFullYear()) o.year = "numeric";
@@ -2038,7 +2038,7 @@ function demarrerJeu() {
   }
   // Un sprite 32 × 32 : objet du cabinet ou icône du plateau.
   function grilleSprite(id) {
-    var o = C.objets.filter(function (x) { return x.id === id; })[0];
+    var o = parId(C.objets, id);
     return o ? o.pixels : (C.plateau && C.plateau.icones[id]) || C.dessinsSucces[id] || null;
   }
   // v15 : badge d'une compétence : pastille à la couleur de son arbre, son symbole, et son rang (niveau) en pastille.
@@ -2120,9 +2120,8 @@ function demarrerJeu() {
   function teteEnnemi(e, taille) {
     return '<svg class="pix" viewBox="8 1 24 24" width="' + taille + '" height="' + taille + '" aria-hidden="true">' + pixelsEnnemi(e) + "</svg>";
   }
-  function accessoire(id, force) { return id && (force || P.accessoires[id]) ? C.avatar.accessoires.filter(function (a) { return a.id === id; })[0] || null : null; }
+  function accessoire(id, force) { return id && (force || P.accessoires[id]) ? parId(C.avatar.accessoires, id) || null : null; }
   function farce() { return M.farceActive(P, maintenant()); }
-  function savantParId(id) { return C.avatar.savants ? C.avatar.savants.filter(function (s) { return s.id === id; })[0] || null : null; }
   // Nom du déguisement imposé par l'IA, avec son article, pour ses répliques.
   var ARTICLE_ACC = { "lunettes-rondes": "les", monocle: "le", "coiffure-einstein": "la", moustache: "la", "perruque-poudree": "la", "haut-de-forme": "le",
     "lunettes-protection": "les", "besicles-franklin": "les", laurier: "la", "bonnet-de-nuit": "le", "chapeau-alu": "le" };
@@ -2132,25 +2131,16 @@ function demarrerJeu() {
     var a = accessoire(f.id, true), nom = a ? tx(a.nom) : "", art = M.langue() === "fr" ? ARTICLE_ACC[f.id] || "le" : "the";
     return art + " " + nom.charAt(0).toLowerCase() + nom.slice(1);
   }
-  function tenueFarce(id) { return (C.avatar.tenues_farce || []).filter(function (v) { return v.id === id; })[0] || null; }
-  function objetTenu() { var id = P.avatar && P.avatar.main, hm = M.humeurPersoActive(P, maintenant()); if (hm && hm.type === "confisque_accessoire" && hm.cible.emplacement === "main") return null; return id && P.objets[id] ? C.objets.filter(function (o) { return o.id === id; })[0] || null : null; }
+  function tenueFarce(id) { return parId(C.avatar.tenues_farce || [], id) || null; }
+  function objetTenu() { var id = P.avatar && P.avatar.main, hm = M.humeurPersoActive(P, maintenant()); if (hm && hm.type === "confisque_accessoire" && hm.cible.emplacement === "main") return null; return id && P.objets[id] ? parId(C.objets, id) || null : null; }
   // Avatar : corps, tenue du rang, cheveux (ou accessoire de tête), accessoire de visage, objet tenu à la main.
-  // v32 (Victor) : pendant une épreuve et son bilan, l'avatar garde le savant d'avant ; le nouveau n'apparaît
-  // qu'avec la carte qui l'annonce (ou au retour à l'accueil, si on n'est pas allé jusque-là).
-  var avatarGele = null;
   // Victor (2026-11-01) : les personnages croisés pendant une épreuve se montrent ensemble au bilan. Le compte part du lancement.
   // Les personnes vues pour la première fois (case, quiz, masterclass) attendent le prochain bilan.
   var rencontresAMontrer = [];
-  function gelerAvatar() { avatarGele = { sv: M.savantActuel(C, P) }; }
-  function degelerAvatar() { avatarGele = null; }
   function savantIncarne() {
     // Victor (2026-10-31) : l'avatar n'incarne plus de savant ; les savants vont au Pokédex des personnages (Collections).
+    // Avant : le dernier savant débloqué par les succès, gardé pendant une épreuve jusqu'à la carte qui l'annonce (v32).
     return null;
-    // v6 : le dernier savant débloqué par les succès, sans choix du joueur.
-    if (avatarGele) return avatarGele.sv;
-    return M.savantActuel(C, P);
-    var id = P.avatar && P.avatar.savant;
-    return id && P.savants && P.savants[id] && C.avatar.savants ? C.avatar.savants.filter(function (s) { return s.id === id; })[0] || null : null;
   }
   // Un savant incarné remplace corps, tenue et cheveux ; les accessoires de tête deviennent des déguisements.
   // Victor (2026-11-03) : l'apparence choisie à la création (espèce, teinte, regard, coiffure, barbe, tenue) remplace
@@ -2164,7 +2154,7 @@ function demarrerJeu() {
     var hm = choix ? null : M.humeurPersoActive(P, maintenant());
     if (hm && hm.type === "confisque_accessoire") { if (hm.cible.emplacement === "tete") tete = null; if (hm.cible.emplacement === "visage") visage = null; }
     if (hm && hm.type === "confisque_tenue" && ap) {
-      var eco = A.creation.tenues.filter(function (x) { return x.id === "ecolier"; })[0];
+      var eco = parId(A.creation.tenues, "ecolier");
       if (eco) ap = Object.assign({}, ap, { tenue: eco, couleurs: M.couleursTenue(eco, eco.couleur) });
     }
     // Farce de l'IA : l'accessoire imposé remplace celui du même emplacement.
@@ -2206,7 +2196,7 @@ function demarrerJeu() {
     var cr = C.avatar && C.avatar.creation; if (!cr) return;
     var ch = Object.assign({}, CHOIX_DEFAUT, P.apparence || {}), dernier = null, cat = null;
     if (!P.apparence) { P.options = P.options || {}; P.options.creationProposee = maintenant(); sauver(); }
-    var esp = function () { return cr.especes.filter(function (e) { return e.id === ch.espece; })[0] || cr.especes[0]; };
+    var esp = function () { return parId(cr.especes, ch.espece) || cr.especes[0]; };
     cat = esp().categorie;
     feuilleSimple('<div class="crea"></div>', __("Ton personnage"), {}, premiere ? __("Garder l'apparence par défaut") : __("Annuler"));
     feuille.classList.add("opaque"); var fe = feuille.querySelector(".feuille"); fe.classList.add("pleine");
@@ -2286,7 +2276,7 @@ function demarrerJeu() {
     if (c.succes && !M.succesAbsent(C, c.succes)) out.push(conditionTexte({ type: "succes", id: c.succes }));
     if (c.niveau_global != null) out.push(__("niveau global ") + c.niveau_global);
     if (c.niveau_stat) {
-      var noms = c.niveau_stat.stats.map(function (id) { var s = C.regles.stats.filter(function (x) { return x.id === id; })[0]; return s ? tx(s.nom) : null; }).filter(Boolean);
+      var noms = c.niveau_stat.stats.map(function (id) { var s = parId(C.regles.stats, id); return s ? tx(s.nom) : null; }).filter(Boolean);
       out.push(noms.length ? __("niveau ") + c.niveau_stat.min + __(" en ") + noms.join(__(", ou ")) : __("niveau global ") + c.niveau_stat.sinon_global);
     }
     return out.join(__(" et "));
@@ -2313,9 +2303,9 @@ function demarrerJeu() {
   function repliqueHumeurPerso(h) {
     var cr = C.avatar.creation, l = cr.humeurs && cr.humeurs[h.type]; if (!l || !l.length) return null;
     var nom = "";
-    if (h.cible && h.cible.type === "tenue") { var tn = cr.tenues.filter(function (x) { return x.id === h.cible.id; })[0]; nom = __("ta tenue « {nom} »", { nom: tn ? tx(tn.nom) : "" }); }
+    if (h.cible && h.cible.type === "tenue") { var tn = parId(cr.tenues, h.cible.id); nom = __("ta tenue « {nom} »", { nom: tn ? tx(tn.nom) : "" }); }
     else if (h.cible) {
-      var a = h.cible.emplacement === "main" ? C.objets.filter(function (o) { return o.id === h.cible.id; })[0] : accessoire(h.cible.id, true);
+      var a = h.cible.emplacement === "main" ? parId(C.objets, h.cible.id) : accessoire(h.cible.id, true);
       nom = __("« {nom} »", { nom: a ? tx(a.nom) : "?" });
     } else nom = __("ta tenue");
     var t = tx(l[h.ligne % l.length]).replace("{objet}", nom);
@@ -2982,8 +2972,8 @@ function demarrerJeu() {
     var graine = (rep.id || tx(rep.texte).slice(0, 40)) + "|" + M.cleJour(maintenant()) + "|" + P.journal.length;
     // v18 : le thème de la réplique (l'arbre de l'épreuve), sinon celui de la case du pion, guide le masque et l'aparté.
     var theme = rep.theme || M.themeCase(C, P);
-    var m = (rep.masque && C.ia.masques.filter(function (x) { return x.id === rep.masque; })[0]) || M.masquePourTon(C, P, expr, graine, theme);
-    var tenuIA = P.objetIA && C.objets.filter(function (o) { return o.id === P.objetIA; })[0];
+    var m = (rep.masque && parId(C.ia.masques, rep.masque)) || M.masquePourTon(C, P, expr, graine, theme);
+    var tenuIA = P.objetIA && parId(C.objets, P.objetIA);
     var b = el('<div class="comite' + (petit ? " petit" : "") + '"><span class="masque">' + (m ? svgMasque(m, expr, petit ? 34 : 44) : "") + (tenuIA ? '<span class="tenu-ia">' + svgObjet(tenuIA, false, petit ? 16 : 20) + "</span>" : "") + '</span><div><div class="qui"></div><p></p></div></div>');
     b.querySelector(".qui").innerHTML = esc(tx(C.narrateur) || __("L'IA")) + (m && M.dramaturgie(C) ? " <i>· " + esc(tx(m.nom)) + "</i>" : "");
     // v20 : son humeur se lit au fond de chaque intervention, avec son nom en pastille.
@@ -3185,11 +3175,6 @@ function demarrerJeu() {
     });
   }
 
-  function ligneComp(k, sous, bouton) {
-    var row = el('<div class="ligne" style="--c:' + couleur(k.stat) + '"><span class="pastille"></span><div class="txt"><strong>' + esc(tx(k.nom)) + "</strong><span>" + sous + "</span></div></div>");
-    if (bouton) row.appendChild(bouton);
-    return row;
-  }
 
   // --- Plateau ----------------------------------------------------------------
   // v8 : une route sinueuse façon jeu de l'oie illustré. Six allers-retours ondulés reliés par des virages,
@@ -3635,7 +3620,7 @@ function demarrerJeu() {
   function caseConnue(n) { return M.caseDecouverte(P, n) && !atomeSur(n) && !ennemiSur(n) && !chronoSur(n); }
   // Victor (2026-11-01) : une partie de Chrono recouvre sa case, comme un atome, jusqu'à ce qu'elle soit jouée.
   function chronoSur(n) { var sp = C.plateau && M.specialDe(C, P, n); return !!(sp && sp.type === "chrono" && !sp.libre && M.chronoActif(P)); }
-  function nomEpoque(id) { var e = C.plateau.epoques.filter(function (x) { return x.id === id; })[0]; return e ? tx(e.nom) : ""; }
+  function nomEpoque(id) { var e = parId(C.plateau.epoques, id); return e ? tx(e.nom) : ""; }
   function texteRegle(sp) {
     if (!sp) return "";
     var R = C.plateau.regles, dur = P.plateau.tours > 0, n = sp.n;
@@ -3871,18 +3856,13 @@ function demarrerJeu() {
       ((P.sauvages || []).some(function (x) { return x.case === pl.position; }) ? '<g class="interro" transform="translate(0 -60)"><circle r="10" fill="#1565C0" stroke="#fff" stroke-width="2"/><text y="5" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">?</text></g>' : "") + "</g>";
     return '<svg class="grille' + (bilan ? " zoom" : " libre") + '" viewBox="' + vb + __('" role="img" aria-label="Plateau de l\'histoire : une route sinueuse du départ, en haut à gauche, jusqu\'à l\'arrivée, en bas. Décor : ') + (DECORS[ton] || DECORS.neutre).nom + __(", l'IA est ") + (NOM_HUMEUR[ton] || ton) + __(". Ton pion est sur la case ") + cn(pl.position) + __(" sur ") + nb + '">' + '<g class="monde">' + cachePlateau.svg + '</g><g class="scene"></g>' + pion + "</svg>";
   }
-  function valeurTexte(k, type) {
-    var v = M.valeurEpreuve(C, P, { type: type, comp: k.id }, maintenant());
-    if (!v) return "";
-    return '<span class="vaut' + (v.duJour ? " bonus" : "") + '">+' + v.total + (v.total > 1 ? __(" cases") : __(" case")) + "</span>";
-  }
   // Objectif de la case centrale : la relique du tour en cours (le dernier objectif reste au-delà du septième tour).
   function objectifTour() {
     var obs = C.plateau.objectifs || [];
     if (!obs.length) return null;
     // Tour bouclé, suite pas encore choisie : c'est encore la relique du tour qui vient de finir (Victor, 2026-11-03).
     var i = Math.max(0, P.plateau.tours - (P.plateau.parcoursSuivant ? 1 : 0));
-    var o = obs[Math.min(i, obs.length - 1)], r = C.objetParId ? C.objetParId[o.relique] : C.cabinet.objets.filter(function (x) { return x.id === o.relique; })[0];
+    var o = obs[Math.min(i, obs.length - 1)], r = C.objetParId ? C.objetParId[o.relique] : parId(C.cabinet.objets, o.relique);
     return r ? { tour: i + 1, nom: o.nom, relique: r, pixels: r.pixels, atteint: !!P.plateau.parcoursSuivant } : null;
   }
   // Le pion attend sur l'arrivée : on montre la relique gagnée, pas la case de l'IA.
@@ -4114,7 +4094,7 @@ function demarrerJeu() {
     if (document.querySelector(".fete")) return;
     // Victor (2026-11-02) : la fête montre la relique d'arrivée du tour bouclé, pas la case d'Alyca (« Les IA d'aujourd'hui »).
     var obs = C.plateau.objectifs || [], ob = e && obs.length ? obs[Math.min(e.tour - 1, obs.length - 1)] : null;
-    var rq = ob && (C.objetParId ? C.objetParId[ob.relique] : C.cabinet.objets.filter(function (x) { return x.id === ob.relique; })[0]);
+    var rq = ob && (C.objetParId ? C.objetParId[ob.relique] : parId(C.cabinet.objets, ob.relique));
     var k = e && e.case && M.caseN(C, e.case), couleurs = ["#F2B632", "#D94141", "#2E9D5B", "#5B8DEF", "#C36BE0", "#FFFFFF"], feux = "";
     var victoire = !!(e && e.victoire);
     for (var f = 0; f < (victoire ? 14 : 6); f++) {
@@ -4391,16 +4371,16 @@ function demarrerJeu() {
         var v = b.getAttribute("data-g").split(":"), d = g.querySelector(".detail-g"), x, ok, h;
         g.querySelectorAll("[data-g]").forEach(function (o) { o.classList.toggle("choisi", o === b); });
         if (v[0] === "s") {
-          x = C.avatar.savants.filter(function (y) { return y.id === v[1]; })[0]; ok = P.savants && P.savants[x.id];
+          x = parId(C.avatar.savants, v[1]); ok = P.savants && P.savants[x.id];
           h = ok ? "<b>" + esc(tx(x.nom)) + "</b> · " + esc(x.annees) + "<p>" + esc(tx(x.notice)) + "</p>" : __("<b>Savant à découvrir</b><p>") + esc(conditionTexte(x.condition)) + ".</p>";
         } else if (v[0] === "p") {
-          x = C.avatar.portraits.filter(function (y) { return y.id === v[1]; })[0]; ok = croise(x.id);
+          x = parId(C.avatar.portraits, v[1]); ok = croise(x.id);
           h = ok ? "<b>" + esc(tx(x.nom)) + "</b> · " + esc(formatVie(x.annees).txt) + "<p>" + esc(tx(x.bio)) + "</p>" : __("<b>Personnage à rencontrer</b><p>Maîtrise une compétence de ce thème dont le quiz ou la masterclass parle de lui.</p>");
         } else if (v[0] === "l") {
-          x = C.livres.filter(function (y) { return y.id === v[1]; })[0]; ok = P.livres && P.livres[x.id];
+          x = parId(C.livres, v[1]); ok = P.livres && P.livres[x.id];
           h = ok ? "<b>" + esc(tx(x.titre)) + "</b> · " + esc(x.auteur) + ", " + esc(x.date ? tx(x.date) : String(x.annee)) + "<p>" + esc(tx(x.resume)) + "</p>" : __("<b>Livre à découvrir</b><p>") + esc(conditionTexte(x.condition)) + ".</p>";
         } else {
-          x = C.objets.filter(function (y) { return y.id === v[1]; })[0]; ok = P.objets[x.id];
+          x = parId(C.objets, v[1]); ok = P.objets[x.id];
           h = ok ? "<b>" + esc(tx(x.nom)) + "</b><p>" + esc(tx(x.notice)) + "</p>" : __("<b>Objet à découvrir</b><p>") + esc(conditionTexte(x.condition)) + ".</p>";
         }
         d.innerHTML = h; d.hidden = false;
@@ -4644,7 +4624,6 @@ function demarrerJeu() {
   // v6 : stats lisibles. Un niveau par branche, avec un titre, ses compétences maîtrisées et ce qu'il reste à faire.
   var TITRES = [[0, __("Profane")], [1, __("Novice")], [3, __("Apprenti")], [6, __("Adepte")], [10, __("Expert")], [14, __("Maître")], [18, __("Sommité")]];
   function titreNiveau(n) { var t = TITRES[0][1]; TITRES.forEach(function (x) { if (n >= x[0]) t = x[1]; }); return t; }
-  function abrege(nom) { return nom.length <= 4 ? nom : nom.slice(0, 3) + "."; }
   // Personnage : une fiche par branche.
   function ficheBranche(s, xp) {
     var nv = M.niveau(C, xp), comps = C.parStat[s.id], faites = comps.filter(function (k) { return M.estMaitrisee(P, k.id); }).length;
@@ -6647,7 +6626,7 @@ function demarrerJeu() {
   function conditionTexte(c) {
     if (c.type === "competence_maitrisee") return __("Maîtriser « ") + tx(C.parId[c.id].nom) + gf();
     if (c.type === "succes") {
-      var sc = C.succes.filter(function (x) { return x.id === c.id; })[0];
+      var sc = parId(C.succes, c.id);
       return sc ? (P.succes[sc.id] || !sc.cache ? __("Succès « ") + tx(sc.nom) + gf() : __("Un succès caché")) : __("Un succès");
     }
     return __("Plus tard");
@@ -6660,39 +6639,9 @@ function demarrerJeu() {
   function portraitQuestion(q) {
     var ref = q.portrait; if (!ref || !C.avatar) return null;
     var liste = ref.famille === "savant" ? C.avatar.savants : C.avatar.portraits || [];
-    var s = liste.filter(function (x) { return x.id === ref.id; })[0]; if (!s) return null;
+    var s = parId(liste, ref.id); if (!s) return null;
     var bio = tx(ref.famille === "savant" ? s.notice : s.bio);
     return el('<div class="portrait-q"><div class="cadre-p">' + svgSavant(s, 72) + '</div><div><b>' + esc(tx(s.nom)) + '</b><span class="ans">' + esc(s.annees) + "</span><p>" + esc(bio) + "</p><cite>" + esc(s.source) + "</cite></div></div>");
-  }
-  function blocSavants() {
-    var liste = C.avatar.savants, n = liste.filter(function (s) { return P.savants[s.id]; }).length, actuel = savantIncarne();
-    var b = el(__('<div><div class="eyebrow">Savants · ') + n + __(" sur ") + liste.length + __('</div><p class="note">Ton avatar incarne le dernier savant que tes succès ont débloqué. Ton rang reste visible au cadre.</p><div class="savants"></div></div>'));
-    var g = b.querySelector(".savants");
-    var toi = el('<button type="button"' + (actuel ? "" : ' class="actuel"') + ">" + '<svg class="pix" viewBox="0 0 40 48" width="44" height="53" aria-hidden="true">' + pixelsAvatar(0, 0) + __("</svg><span>Toi</span></button>"));
-    toi.disabled = true;
-    g.appendChild(toi);
-    // v18 : les savants rangés par arbre, chacun sous la couleur de son thème.
-    C.regles.stats.forEach(function (st) {
-      var ici = liste.filter(function (s) { return s.theme === st.id; });
-      if (!ici.length) return;
-      var nv = ici.filter(function (s) { return P.savants[s.id]; }).length;
-      b.appendChild(el('<div class="titre-arbre-sv">' + pastilleTheme(st.id) + '<span class="meta">' + nv + __(" sur ") + ici.length + "</span></div>"));
-      var gg = el('<div class="savants"></div>'); b.appendChild(gg);
-      ici.forEach(function (s) {
-        var ok = !!P.savants[s.id];
-        var bt = el('<button type="button" class="' + (ok ? "" : "verrou") + (actuel && actuel.id === s.id ? " actuel" : "") + '">' + svgSavant(s, 44, !ok) + "<span>" + esc(ok ? tx(s.nom) : "?") + "</span></button>");
-        bt.onclick = function () { ouvrirSavant(s); };
-        gg.appendChild(bt);
-      });
-    });
-    return b;
-  }
-  function ouvrirSavant(s) {
-    var ok = !!P.savants[s.id], porte = savantIncarne() && savantIncarne().id === s.id;
-    feuilleSimple('<div class="vitrine" style="padding:12px;width:132px;margin:0 auto">' + svgSavant(s, 108, !ok) + "</div>" +
-      (ok ? '<div class="eyebrow">' + esc(s.annees) + "</div><h2>" + esc(tx(s.nom)) + "</h2>" + pastilleTheme(s.theme) + "<p>" + esc(tx(s.notice)) + __('</p><p class="meta">Source : ') + esc(s.source) + "</p>" +
-          (porte ? __('<p class="note">Ton avatar l\'incarne en ce moment.</p>') : "")
-        : __("<h2>Savant à débloquer</h2><p class=\"meta\">") + esc(conditionTexte(s.condition)) + ".</p>"), ok ? tx(s.nom) : __("Savant à débloquer"));
   }
 
   function exporter(partie) {
@@ -6739,7 +6688,7 @@ function demarrerJeu() {
   // --- Vue Collections : objets, frise, bibliothèque ------------------------------
   // Une date de la frise attend aussi que le pion ait atteint son époque (premier tour).
   function commentDater(e) {
-    var t = commentObtenir(e.condition), ep = (C.plateau.epoques || []).filter(function (x) { return x.id === e.epoque; })[0];
+    var t = commentObtenir(e.condition), ep = parId(C.plateau.epoques || [], e.epoque);
     return M.dateAtteinte(C, P, e) || !ep ? t : t.replace(/\.$/, "") + __(", et que ton pion ait atteint l'époque « ") + tx(ep.nom) + gf() + ".";
   }
   function commentObtenir(cond) {
@@ -6753,7 +6702,7 @@ function demarrerJeu() {
       if (!k) return anC == null ? __("Continuer à jouer.") : __("Avancer jusqu'à l'année ") + formatAnnee(anC) + __(", ou finir un tour.");
       return caseConnue(cond.n) ? __("S'arrêter sur la case « ") + nomCase(k) + gf() + "." : __("S'arrêter sur une case encore cachée, datée de ") + formatAnnee(anC) + __(" : l'IA la met sur ta route tôt ou tard.");
     }
-    if (cond.type === "succes") { var sc = C.succes.filter(function (x) { return x.id === cond.id; })[0]; return __("Obtenir le succès « ") + tx(sc.nom) + gf() + "."; }
+    if (cond.type === "succes") { var sc = parId(C.succes, cond.id); return __("Obtenir le succès « ") + tx(sc.nom) + gf() + "."; }
     return __("Continuer à jouer.");
   }
   function vueCollections() {
@@ -7097,7 +7046,6 @@ function demarrerJeu() {
   function lancerDuel() {
     if (!P.duel || !P.duel.pret) return;
     if (bloqueParUltimatum()) return;
-    gelerAvatar();
     var e = C.ennemiParId[P.duel.ennemi];
     duel = { ennemi: e, phase: "vs", qs: M.tirerDuel(C, P, maintenant()), i: 0, res: [], repondu: false, fin: null, etape: 0,
       replique: M.replique(C, P, ["ennemi"], null, null, e.theme) };
@@ -7199,7 +7147,7 @@ function demarrerJeu() {
     } else if (nom === "suite") {
       z.appendChild(blocSuiteTour());
     } else if (nom.indexOf("recompense:") === 0) {
-      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c); if (c.classList.contains("carte-savant")) degelerAvatar();
+      poserCarte(z, recs[+nom.split(":")[1]]);
     } else {
       z.appendChild(blocDeplacement(r.plateau, r.repliquePlateau, true));
     }
@@ -7237,6 +7185,8 @@ function demarrerJeu() {
   function badgeRarete(e) { return '<span class="rarete ' + e.rarete + '">' + esc(tx(C.atomes.raretes[e.rarete].nom)) + "</span>"; }
   // v19 : sur une case où attend un atome, on ne voit que lui : l'histoire de la case reste cachée.
   function atomeSur(n) { return (P.sauvages || []).filter(function (x) { return x.case === n; })[0] || null; }
+  // Une carte de récompense du bilan, posée dans son étape avec son animation d'entrée (rejouée si on y revient).
+  function poserCarte(z, c) { c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c); }
   // v19 : la case est libre ! Après un duel gagné ou un atome réglé, la case cachée se dévoile, avec son thème.
   function carteLiberee(n, quoi) {
     var k = M.caseN(C, n); if (!k) return null;
@@ -7330,9 +7280,9 @@ function demarrerJeu() {
   }
   // Le visuel d'un événement : l'icône de sa case, l'objet, l'emblème du livre ou le portrait du savant.
   function visuelChrono(q, taille) {
-    if (q.sorte === "objet") { var o = C.objets.filter(function (x) { return x.id === q.id; })[0]; if (o) return svgObjet(o, false, taille); }
-    if (q.sorte === "savant") { var sv = C.avatar.savants.filter(function (x) { return x.id === q.id; })[0]; if (sv) return svgSavant(sv, Math.round(taille * 0.84)); }
-    if (q.sorte === "livre") { var l = (C.livres || []).filter(function (x) { return x.id === q.id; })[0]; if (l) return '<span class="vitrine" style="padding:8px;background:' + l.couleur + ';border-radius:12px">' + svgSprite(l.embleme, Math.round(taille * 0.8)) + "</span>"; }
+    if (q.sorte === "objet") { var o = parId(C.objets, q.id); if (o) return svgObjet(o, false, taille); }
+    if (q.sorte === "savant") { var sv = parId(C.avatar.savants, q.id); if (sv) return svgSavant(sv, Math.round(taille * 0.84)); }
+    if (q.sorte === "livre") { var l = parId(C.livres || [], q.id); if (l) return '<span class="vitrine" style="padding:8px;background:' + l.couleur + ';border-radius:12px">' + svgSprite(l.embleme, Math.round(taille * 0.8)) + "</span>"; }
     var k = q.case && M.caseN(C, q.case);
     if (k) return svgSprite(k.icone, taille, q.titre);
     // Victor (2026-11-02) : sans case, une date de la frise prend l'emblème de sa compétence (le dragon pour la Chine),
@@ -7383,7 +7333,7 @@ function demarrerJeu() {
   }
   function fermerDonjon() { donjon = null; var z = document.querySelector(".quiz.donjon"); if (z) z.remove(); rendre(); }
   function repliqueAlyca(texte, expression) { return texte ? comite({ texte: texte, contexte: "donjon", expression: expression || "moqueuse", aparte: false }, true) : null; }
-  function savantDe(id) { return id && C.avatar ? C.avatar.savants.filter(function (s) { return s.id === id; })[0] || null : null; }
+  function savantDe(id) { return id && C.avatar ? parId(C.avatar.savants, id) || null : null; }
   function rendreDonjon() {
     var ancien = document.querySelector(".quiz.donjon"); if (ancien) ancien.remove();
     if (!donjon) return;
@@ -7854,7 +7804,7 @@ function demarrerJeu() {
       bt.onclick = function () { proces.jure = proces.jure === j.id ? null : j.id; rendreProces(); var f = document.querySelector(".pr-fiche"); if (f) f.scrollIntoView({ block: "nearest" }); };
       g.appendChild(bt);
     });
-    var j = jury.filter(function (x) { return x.id === proces.jure; })[0];
+    var j = parId(jury, proces.jure);
     if (j) {
       var f = el('<div class="pr-fiche"><span class="vitrine">' + svgSavant(j, 72) + '</span><div><b></b><ul></ul><p></p></div></div>');
       f.querySelector("b").textContent = j.nom;
@@ -8104,7 +8054,6 @@ function demarrerJeu() {
     if (bloqueParUltimatum() || bloqueParDuel()) return;
     var t = maintenant(), j = M.lancerChrono(C, P, mode, t);
     if (!j) { sauver(); toast(__("Pas assez d'événements datés débloqués pour jouer à Chrono.")); rendre(); return; }
-    gelerAvatar();
     var commence = j.reponses.length > 0;
     siecles = { mode: mode, phase: commence ? "q" : "intro", sel: null, debutQ: 0, rep: null, fin: null, etape: 0,
       replique: M.replique(C, P, [mode === "case" ? "chrono_case" : "chrono_annonce"]) };
@@ -8137,7 +8086,7 @@ function demarrerJeu() {
   // Victor (2026-11-01) : d'abord l'époque (ses couleurs), puis le curseur ne parcourt que ses siècles.
   function uniteChrono(pas, a) { return pas === 100 ? M.creneau(a, 100, M.reglesChrono(C).prehistoire) : pas === 50 ? M.creneau(a, 100) : Math.floor(M.creneau(a, 10) / 10); }
   function bornesEpoque(q, ep) {
-    var b = bornesChrono(q.pas), e = ((C.plateau && C.plateau.epoques) || []).filter(function (x) { return x.id === ep; })[0];
+    var b = bornesChrono(q.pas), e = parId((C.plateau && C.plateau.epoques) || [], ep);
     if (!e) return b;
     return [e.debut == null ? b[0] : Math.max(b[0], uniteChrono(q.pas, e.debut)), e.fin == null ? b[1] : Math.min(b[1], uniteChrono(q.pas, e.fin))];
   }
@@ -8163,7 +8112,7 @@ function demarrerJeu() {
   }
   function saisieChrono(q, s, maj) {
     var R = M.reglesChrono(C), b = s.ep ? bornesEpoque(q, s.ep) : bornesChrono(q.pas);
-    var ep = s.ep && ((C.plateau && C.plateau.epoques) || []).filter(function (x) { return x.id === s.ep; })[0];
+    var ep = s.ep && parId((C.plateau && C.plateau.epoques) || [], s.ep);
     var z = el(__('<div class="sc-saisie"><div class="sc-choisi" aria-live="polite"></div><div class="sc-curseur"><button type="button" class="sc-pas" data-d="-1" aria-label="Plus tôt">◀</button>') +
       '<input type="range" min="' + b[0] + '" max="' + b[1] + '" step="1" value="' + s.k + '" aria-label="' + (q.pas >= 50 ? __("Siècle") : __("Centaine d'années")) + __('"><button type="button" class="sc-pas" data-d="1" aria-label="Plus tard">▶</button></div>') +
       '<div class="sc-repere"><span>' + esc(q.pas === 100 ? __("Préhistoire") : formatAnnee(R.prehistoire)) + __("</span><span>XXIe s.</span></div><div class=\"sc-fins\"></div></div>"));
@@ -8342,7 +8291,7 @@ function demarrerJeu() {
     } else if (nom === "suite") {
       z.appendChild(blocSuiteTour());
     } else {
-      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c); if (c.classList.contains("carte-savant")) degelerAvatar();
+      poserCarte(z, recs[+nom.split(":")[1]]);
     }
     wrap.appendChild(z);
     var suite = etapes[i + 1], arretA = !suite && atomeArret(r.plateau);
@@ -8391,7 +8340,6 @@ function demarrerJeu() {
   function lancerCombat() {
     var s = M.atomeSauvage(C, P); if (!s) return;
     if (bloqueParUltimatum()) return;
-    gelerAvatar();
     var cb = M.tirerCombat(C, P);
     combat = { s: s, e: s.element, qs: cb.questions, phase: "apparition", i: 0, res: [], repondu: false, fin: null, etape: 0, replique: M.replique(C, P, ["atome_apparait"], null, null, C.atomes.theme) };
     sauver(); rendreCombat();
@@ -8668,7 +8616,7 @@ function demarrerJeu() {
   // La pastille d'un livre déplie sa fiche sous le paragraphe (titre et auteur seulement tant qu'il n'est pas sur l'étagère).
   document.addEventListener("click", function (ev) {
     var f = ev.target.closest && ev.target.closest("[data-livre]"); if (!f) return;
-    var l = (C.livres || []).filter(function (x) { return x.id === f.getAttribute("data-livre"); })[0]; if (!l) return;
+    var l = parId(C.livres || [], f.getAttribute("data-livre")); if (!l) return;
     var p = f.closest("p"), suiv = p && p.nextElementSibling, deja = suiv && suiv.classList.contains("mc-fiche-p") && suiv.getAttribute("data-id") === "livre:" + l.id;
     if (suiv && suiv.classList.contains("mc-fiche-p")) suiv.remove();
     if (deja || !p) return;
@@ -9120,7 +9068,7 @@ function demarrerJeu() {
     } else if (nom === "suite") {
       z.appendChild(blocSuiteTour());
     } else {
-      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c); if (c.classList.contains("carte-savant")) degelerAvatar();
+      poserCarte(z, recs[+nom.split(":")[1]]);
     }
     wrap.appendChild(z);
     var suite = etapes[i + 1], encore = !suite && M.atomeSauvage(C, P), arretA = !suite && atomeArret(r.plateau);
@@ -9537,7 +9485,7 @@ function demarrerJeu() {
   // Ses goûts se révèlent à l'usage : trois cadeaux différents, dont un éblouissant.
   function goutsIA(F) {
     var ids = Object.keys(P.cadeaux.donnes || {}), max = 0;
-    ids.forEach(function (id) { var o = C.objets.filter(function (x) { return x.id === id; })[0]; if (o && o.cadeau) max = Math.max(max, o.cadeau.eclat || 1); });
+    ids.forEach(function (id) { var o = parId(C.objets, id); if (o && o.cadeau) max = Math.max(max, o.cadeau.eclat || 1); });
     if (ids.length >= 3 && max >= 3) return __("Tu l'as compris : elle adore ce qui brille ou en fait trop. Un objet terne rapporte ") + F.gains["1"] + __(" points, un objet brillant ") + F.gains["2"] + __(", un objet éblouissant ") + F.gains["3"] + ".";
     if (ids.length) return __("Ses goûts ? Regarde bien ses réactions : certains cadeaux lui font plus d'effet que d'autres.");
     return __("Ses goûts ? À toi de les découvrir en lui offrant des objets.");
@@ -9633,9 +9581,9 @@ function demarrerJeu() {
   }
   // v20 : les emplettes de l'IA, payées avec l'argent des ultimatums. Elle choisit ce qui l'amuse, et le montre.
   function chosesEmplette(e) {
-    if (e.type === "masque") { var m = C.ia.masques.filter(function (x) { return x.id === e.id; })[0]; return m && { nom: tx(m.nom), vis: svgMasque(m, "impressionnee", 72), titre: __("Elle s'est offert un masque") }; }
-    if (e.type === "objet") { var o = C.objets.filter(function (x) { return x.id === e.id; })[0]; return o && { nom: tx(o.nom), vis: svgObjet(o, false, 72), titre: __("Elle s'est offert un bijou") }; }
-    if (e.type === "farce") { var a = (C.avatar.accessoires || []).filter(function (x) { return x.id === e.id; })[0]; return a && { nom: tx(a.nom).toLowerCase(), vis: svgAvatar(72), titre: __("Elle t'a acheté un couvre-chef") }; }
+    if (e.type === "masque") { var m = parId(C.ia.masques, e.id); return m && { nom: tx(m.nom), vis: svgMasque(m, "impressionnee", 72), titre: __("Elle s'est offert un masque") }; }
+    if (e.type === "objet") { var o = parId(C.objets, e.id); return o && { nom: tx(o.nom), vis: svgObjet(o, false, 72), titre: __("Elle s'est offert un bijou") }; }
+    if (e.type === "farce") { var a = parId(C.avatar.accessoires || [], e.id); return a && { nom: tx(a.nom).toLowerCase(), vis: svgAvatar(72), titre: __("Elle t'a acheté un couvre-chef") }; }
     if (e.type === "convoquer") { var en = C.ennemiParId[e.id]; return en && { nom: tx(en.nom), vis: svgEnnemi(en, 72), titre: __("Elle s'est offert un spectacle") }; }
     return { nom: "", vis: svgBourse(64), titre: __("Elle a léché la vitrine") };
   }
@@ -9660,7 +9608,7 @@ function demarrerJeu() {
       __('<p class="note">Elle fait ses emplettes quand ça lui chante. Elle ne pioche pas : elle prend ce qui brille, ce qui la flatte, ou ce qui te ridiculise.') + (cr.depensesIA ? __(" Déjà dépensé : ") + cr.depensesIA + __(" crédits.") : "") + '</p><div class="cabinet"></div><div class="journal-ia"></div></div>');
     var g = b.querySelector(".cabinet");
     tr.forEach(function (id) {
-      var o = C.objets.filter(function (x) { return x.id === id; })[0]; if (!o) return;
+      var o = parId(C.objets, id); if (!o) return;
       g.appendChild(el('<div class="objet' + (P.objetIA === id ? " porte" : "") + '"><span class="vitrine">' + svgObjet(o, false, 48) + "</span><span>" + esc(tx(o.nom)) + "</span>" + (P.objetIA === id ? __('<span class="meta">elle le porte</span>') : "") + "</div>"));
     });
     var j = b.querySelector(".journal-ia");
@@ -9771,7 +9719,7 @@ function demarrerJeu() {
     if (!c) return __("Dès le début");
     if (c.type === "succes_obtenus") return c.n + __(" succès");
     if (c.type === "succes") {
-      var sc = C.succes.filter(function (x) { return x.id === c.id; })[0];
+      var sc = parId(C.succes, c.id);
       if (sc && sc.condition.type === "tours_plateau") return sc.condition.n > 1 ? sc.condition.n + __(" tours du plateau") : __("1 tour du plateau");
       return sc ? (P.succes[sc.id] || !sc.cache ? __("Succès « ") + tx(sc.nom) + gf() : __("Un succès caché")) : __("Un succès");
     }
@@ -9811,9 +9759,9 @@ function demarrerJeu() {
     var il = s.illustration, g = null, pal = C.cabinet.palette;
     if (!il) return medaille(taille, verrou);
     if (il.type === "ennemi" && C.ennemiParId[il.id]) return '<span class="illus-s' + (verrou ? " verrou" : "") + '">' + svgEnnemi(C.ennemiParId[il.id], taille * 0.84, verrou) + "</span>";
-    if (il.type === "savant") { var sv = C.avatar.savants.filter(function (x) { return x.id === il.id; })[0]; if (sv) return '<span class="illus-s' + (verrou ? " verrou" : "") + '">' + svgSavant(sv, taille * 0.84, verrou) + "</span>"; }
+    if (il.type === "savant") { var sv = parId(C.avatar.savants, il.id); if (sv) return '<span class="illus-s' + (verrou ? " verrou" : "") + '">' + svgSavant(sv, taille * 0.84, verrou) + "</span>"; }
     if (il.type === "dessin") g = C.dessinsSucces[il.id];
-    else if (il.type === "objet") { var o = C.objets.filter(function (x) { return x.id === il.id; })[0]; g = o && o.pixels; }
+    else if (il.type === "objet") { var o = parId(C.objets, il.id); g = o && o.pixels; }
     else if (il.type === "icone") g = C.plateau && C.plateau.icones[il.id];
     if (!g) return medaille(taille, verrou);
     return '<span class="illus-s' + (verrou ? " verrou" : "") + '"><svg class="pix" viewBox="0 0 32 32" width="' + taille + '" height="' + taille + '" aria-hidden="true">' + pixels(g, pal, null, 0, 0, 1, verrou) + "</svg></span>";
@@ -9842,7 +9790,6 @@ function demarrerJeu() {
       var ordre = q.type === "qcm" ? M.melanger(q.choix.map(function (_, i) { return i; }), Math.random) : null;
       return { q: q, ordre: ordre };
     });
-    gelerAvatar();
     quiz = { id: id, mode: mode, donjon: (opts && opts.donjon) || null, jouer: !!(opts && opts.jouer), uneCase: !!(opts && opts.uneCase), qs: qs, i: 0, res: [], repondu: false, fin: null, chrono: !!(P.options && P.options.chrono), minuteur: null, debut: Date.now(), debutQuestion: 0,
       arbreFerme: !M.arbreOuvert(C, P, C.parId[id].stat) };
     rendreQuiz();
@@ -10176,7 +10123,7 @@ function demarrerJeu() {
     bloque_piege: function (e) { return __("Case ") + cn(e.case) + __(" : le piège attend ta réponse. Ton pion ne bouge pas."); },
     piege_desarme: function (e) { return __("Case ") + cn(e.case) + __(" : piège désarmé. Ton achat à la boutique a servi."); },
     piege_evite: function (e) { return __("Case ") + cn(e.case) + __(" : le piège ne fonctionne pas aujourd'hui. Un masque de l'IA l'a désarmé."); },
-    bonus_objet: function (e) { var o = C.objets.filter(function (x) { return x.id === e.objet; })[0], n = o ? tx(o.nom) : __("Ton objet"); return e.bonus === "case" ? n + __(" te pousse : +") + e.n + (e.n > 1 ? __(" cases") : __(" case")) + "." : e.bonus === "butin" ? n + __(" porte chance : la prochaine récompense est assurée.") : n + __(" fait briller les yeux de l'IA : +") + e.n + __(" de faveur."); },
+    bonus_objet: function (e) { var o = parId(C.objets, e.objet), n = o ? tx(o.nom) : __("Ton objet"); return e.bonus === "case" ? n + __(" te pousse : +") + e.n + (e.n > 1 ? __(" cases") : __(" case")) + "." : e.bonus === "butin" ? n + __(" porte chance : la prochaine récompense est assurée.") : n + __(" fait briller les yeux de l'IA : +") + e.n + __(" de faveur."); },
     duel_attente: function (e) { return tx(C.ennemiParId[e.ennemi].nom) + __(" te bloque toujours. Le duel reprend, pour ") + e.reste + (e.reste > 1 ? __(" cases") : __(" case")) + "."; },
   };
   function blocDeplacement(dep, rep, avecPlateau) {
@@ -10306,7 +10253,7 @@ function demarrerJeu() {
       // v15 : quiz lancé sur une case d'arbre fermé, réussi : l'arbre s'ouvre.
       if (quiz.arbreFerme && M.arbreOuvert(C, P, k.stat)) z.appendChild(el('<div class="case-dicte" style="--c:' + couleur(k.stat) + __('"><span><b>Arbre ') + esc(tx(stat(k.stat).nom)) + __(" ouvert !</b><br>Ses compétences sont jouables, et ses cases du plateau lanceront ses quiz.</span></div>")));
     } else if (nom.indexOf("recompense:") === 0) {
-      var c = recs[+nom.split(":")[1]]; c.classList.remove("anim"); void c.offsetWidth; c.classList.add("anim"); z.appendChild(c); if (c.classList.contains("carte-savant")) degelerAvatar();
+      poserCarte(z, recs[+nom.split(":")[1]]);
     } else if (nom === "ile") {
       // Victor (2026-11-10) : « Voir l'île » n'ouvrait qu'une carte, sans l'île. On montre d'abord le lieu lui-même, tel
       // qu'il est maintenant, avec l'installation de l'épreuve mise en lumière ; la carte vient dessous.
@@ -10496,7 +10443,6 @@ function demarrerJeu() {
     document.body.classList.remove("sans-onglets");
     document.body.classList.toggle("texte-grand", texteGrandP());
     var app = document.getElementById("app"); app.innerHTML = "";
-    if (!document.querySelector(".quiz")) degelerAvatar();
     // Victor (2026-11-03) : l'humeur d'Alyca sur ta garde-robe, revue quand son palier change.
     if (C.avatar && C.avatar.creation) {
       var avH = JSON.stringify(P.humeurPerso || null), hmP = M.humeurPerso(C, P, maintenant());
@@ -10883,7 +10829,7 @@ function demarrerJeu() {
     INDEX.packs.forEach(function (m) {
       if (m.sorte === "socle" || m.id === "ile") return;
       var requis = (m.requiert || []).filter(function (r) { return r !== "socle"; }).map(function (r) {
-        var x = INDEX.packs.filter(function (y) { return y.id === r; })[0]; return x ? tx(x.nom) : r;
+        var x = parId(INDEX.packs, r); return x ? tx(x.nom) : r;
       });
       var aAllumer = !M.allumeParDefaut(m), force = off.indexOf("+" + m.id) >= 0;
       var ecarte = !force && off.indexOf(m.id) < 0 && M.packsEcartes(INDEX, eteints).indexOf(m.id) >= 0;
@@ -10934,7 +10880,7 @@ function demarrerJeu() {
       row.querySelector(".plus").onclick = function () { optionsPartie(x); };
       v.appendChild(row);
     });
-    var choisie = l.filter(function (x) { return x.id === titre.sel; })[0];
+    var choisie = parId(l, titre.sel);
     if (choisie) {
       var go = el('<button type="button" class="btn large">' + (choisie.active ? __("Continuer « ") : __("Charger « ")) + esc(choisie.nom) + gf() + "</button>");
       go.onclick = function () { chargerPartie(choisie.id); };
@@ -11017,7 +10963,7 @@ function demarrerJeu() {
     var erreurs = v.erreurs.map(function (e) { var p = e.split(":"); return (ERREURS_PAQUET[p[0]] || e) + (p.length > 1 ? esc(p.slice(-1)[0].split(",").join(", ")) + "." : ""); });
     var contenu = COMPTES_PAQUET.filter(function (c) { return v.compte[c[0]]; }).map(function (c) { return v.compte[c[0]] + " " + (v.compte[c[0]] > 1 ? c[2] : c[1]); }).join(", ");
     var src = q && q.sources, langs = [m.langue_source || "fr"].concat(Object.keys((q && q.langues) || {})).map(function (c) { return nomLangue(c, M.langue()); }).join(", ");
-    var requis = (m.requiert || []).filter(function (r) { return r !== "socle"; }).map(function (r) { var x = INDEX.packs.filter(function (y) { return y.id === r; })[0]; return x ? tx(x.nom) : r; });
+    var requis = (m.requiert || []).filter(function (r) { return r !== "socle"; }).map(function (r) { var x = parId(INDEX.packs, r); return x ? tx(x.nom) : r; });
     var ctl = function (ok, t) { return "<li><b class=\"" + (ok ? "ok" : "at") + '" aria-hidden="true">' + (ok ? "✓" : "!") + "</b><span>" + t + "</span></li>"; };
     var html = v.erreurs[0] === "format" ? '<h2>' + __("Pack illisible") + '</h2><p>' + erreurs[0] + "</p>" :
       '<div class="eyebrow">' + __("Pack de domaine · version ") + esc(m.version) + ' <span class="badge-ext">' + __("non officiel") + "</span></div><h2>" + esc(tx(m.nom)) + "</h2><p>" + esc(tx(m.description)) + "</p>" +
@@ -11078,7 +11024,7 @@ function demarrerJeu() {
     // Le ton de chaque arbre (pack.json « reglages »: { « ton » }) : un ton choisi ne garde que les lignes d'arbre sur ce ton.
     C.tonArbres = {};
     var propStats = (INDEX && INDEX.proprietaires && INDEX.proprietaires["regles.json/stats"]) || {};
-    C.stats.forEach(function (st) { var pk = INDEX && INDEX.packs.filter(function (m) { return m.id === propStats[st.id]; })[0]; if (pk && pk.reglages && pk.reglages.ton) C.tonArbres[st.id] = pk.reglages.ton; });
+    C.stats.forEach(function (st) { var pk = INDEX && parId(INDEX.packs, propStats[st.id]); if (pk && pk.reglages && pk.reglages.ton) C.tonArbres[st.id] = pk.reglages.ton; });
     poserCouleursArbres(C.stats);
   }
   function charger(nom) { return fetch("data/" + nom).then(function (r) { if (!r.ok) throw new Error(nom); return r.json(); }); }

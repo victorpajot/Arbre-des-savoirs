@@ -297,7 +297,7 @@
     if (!paquet || paquet.format !== FORMAT_PAQUET || !m || !Array.isArray(paquet.fragments)) return { erreurs: ["format"], compte: compte };
     if (m.sorte !== "domaine") erreurs.push("sorte");
     if (!/^[a-z][a-z0-9-]*$/.test(String(m.id || "")) || !m.nom || !m.version) erreurs.push("manifeste");
-    var existant = ((index && index.packs) || []).filter(function (x) { return x.id === m.id; })[0];
+    var existant = parId((index && index.packs) || [], m.id);
     if (existant && !existant.ajoute) erreurs.push("officiel");
     var manque = (m.requiert || []).filter(function (r) { return !((index && index.packs) || []).some(function (x) { return x.id === r; }); });
     if (manque.length) erreurs.push("requiert:" + manque.join(","));
@@ -423,7 +423,7 @@
     var liste = (index && index.packs) || [], out = (demandes || []).slice(), vus = {};
     (function allumer(x) {
       if (vus[x] || x === "socle") return; vus[x] = true;
-      var m = liste.filter(function (y) { return y.id === x; })[0]; if (!m) return;
+      var m = parId(liste, x); if (!m) return;
       out = out.filter(function (d) { return d !== x && d !== "+" + x; });
       (m.requiert || []).forEach(allumer);
       // Encore éteint une fois ce qu'il demande allumé : il l'est par défaut (« allume »: false) ou les domaines s'en passent (« sans »).
@@ -626,6 +626,11 @@
     out.options = Object.assign({ chrono: false }, p.options || {});
     out.format = FORMAT_PARTIE;
     return out;
+  }
+
+  // L'élément d'identifiant `id` dans une liste du contenu (le premier, s'il y en avait deux), undefined sinon.
+  function parId(liste, id) {
+    for (var i = 0; i < liste.length; i++) if (liste[i].id === id) return liste[i];
   }
 
   function etatComp(partie, id) {
@@ -1258,7 +1263,7 @@
     var valeur = issue.reussi ? 1 : 0;
     var etapes = [];
     // v11 : l'objet tenu par l'avatar donne parfois un coup de pouce après une épreuve réussie.
-    var tenu = issue.reussi && !unPas && partie.avatar && partie.avatar.main && (contenu.objets || []).filter(function (o) { return o.id === partie.avatar.main; })[0];
+    var tenu = issue.reussi && !unPas && partie.avatar && partie.avatar.main && parId(contenu.objets || [], partie.avatar.main);
     if (tenu && tenu.bonus && tenu.bonus.type !== "case" && hacher(String(t) + "|" + tenu.id + "|" + partie.journal.length) % 100 < 100 * ((contenu.cabinet && contenu.cabinet.chance_bonus) || 0)) {
       var bo = tenu.bonus;
       if (bo.type === "butin") partie.butinAssure = true;
@@ -1378,7 +1383,7 @@
     var formes = PC.formes.filter(function (f) { return f.humeurs.indexOf(palier) >= 0 && f.id !== avant; });
     if (!formes.length) formes = PC.formes.filter(function (f) { return f.id !== avant; });
     // Le premier tour garde le serpentin d'origine.
-    var forme = !pl.parcours && !pl.tours ? PC.formes.filter(function (f) { return f.id === "serpentin"; })[0] || formes[0] : formes[tirage(g + "|forme", formes.length)];
+    var forme = !pl.parcours && !pl.tours ? parId(PC.formes, "serpentin") || formes[0] : formes[tirage(g + "|forme", formes.length)];
     var longueur = casesParTour(contenu, partie);
     var base = function (n) { return (caseN(contenu, n) || {}).special || chronoDeBase(contenu, n); };
     var melange = function (l, cle) { return l.slice().sort(function (a, b) { return hacher(g + cle + a) - hacher(g + cle + b); }); };
@@ -2535,7 +2540,7 @@
   // verdict : acquittée si le total atteint le seuil. Perdu, on fait appel : tout recommence, rien n'est retenu contre vous.
   // État : partie.proces[id] = { salle, points: { salle: n }, essais, perdus, acquitte, entre, dernier }.
   function listeProces(contenu) { return (contenu.donjons && contenu.donjons.proces) || []; }
-  function procesDe(contenu, id) { return listeProces(contenu).filter(function (d) { return d.id === id; })[0] || null; }
+  function procesDe(contenu, id) { return parId(listeProces(contenu), id) || null; }
   function procesOuvert(contenu, partie, id) {
     var pr = procesDe(contenu, id); if (!pr) return false;
     if (((partie.options && partie.options.donjons) || []).indexOf(id) >= 0) return true;
@@ -2550,7 +2555,7 @@
   // (`reprend`), après celles de l'adversaire ; leurs options y valent `points_audience`.
   function optionsEchange(pr, x) {
     if (!x.reprend) return x.options;
-    var s = pr && pr.salles.filter(function (y) { return y.id === x.reprend; })[0];
+    var s = pr && parId(pr.salles, x.reprend);
     return s ? s.options.map(function (o) { return { texte: o.texte, figure: o.figure, points: o.points_audience != null ? o.points_audience : o.points, retour: o.retour_audience || o.retour, plus: o.plus, moins: o.moins }; }) : [];
   }
   // Victor (2026-11-03) : les parties à ranger suivent le type de plan choisi (`selon`, `variantes`).
@@ -2651,7 +2656,7 @@
     listeProces(contenu).forEach(function (d) { if (procesOuvert(contenu, partie, d.id)) out.push({ sorte: "proces", id: d.id, nom: d.nom, fini: !!(partie.proces && partie.proces[d.id] && partie.proces[d.id].acquitte) }); });
     return out;
   }
-  function formeParcours(contenu, id) { return contenu.plateau && contenu.plateau.parcours ? contenu.plateau.parcours.formes.filter(function (f) { return f.id === id; })[0] || null : null; }
+  function formeParcours(contenu, id) { return contenu.plateau && contenu.plateau.parcours ? parId(contenu.plateau.parcours.formes, id) || null : null; }
   function caseDecouverte(partie, n) { return toutesCases(partie) || !!(partie.plateau.visites[n] || partie.plateau.position === n); }
   function toutesCases(partie) { return !!(partie.options && partie.options.toutesCases); }
   // Réglage temporaire « Voir toutes les cases » : redessine le tour en cours (toutes les cases dévoilées, ou de nouveau
@@ -3294,7 +3299,7 @@
   // v35 : chaque article est une fiche de pack ; un pack éteint retire les siens du rayon.
   function articleDe(contenu, id) {
     var B = boutique(contenu);
-    return (B && B.articles.filter(function (a) { return a.id === id; })[0]) || null;
+    return (B && parId(B.articles, id)) || null;
   }
   function enRayon(contenu, partie, article, t) {
     var f = FAMILLE_ARTICLE[article];
@@ -3349,7 +3354,7 @@
       var e = libres[tirage(graine + "|e", libres.length)], c = cases[Math.min(cases.length - 1, tirage(graine + "|c", Math.min(4, cases.length)))];
       en2[c] = e.id; out.ennemi = e; out.case = c;
     } else if (article === "arbre") {
-      var st = rayon.filter(function (x) { return x.id === choix; })[0];
+      var st = parId(rayon, choix);
       if (!st) return { ok: false, raison: "arbre" };
       pl.arbreAchete = { stat: st.id, restant: B.arbre_epreuves || 5 };
       out.stat = st.id;
@@ -3487,7 +3492,7 @@
   // et s'en sert sur le plateau : le pion avance ou recule, une case spéciale change de place, un ennemi arrive, ou rien.
 
   function cadeauPossible(contenu, partie, id, t) {
-    var o = (contenu.objets || []).filter(function (x) { return x.id === id; })[0];
+    var o = parId(contenu.objets || [], id);
     if (!o || !o.cadeau || !partie.objets[id] || !dramaturgie(contenu)) return { ok: false, raison: "inconnu" };
     // v10 : un objet déjà offert peut l'être de nouveau après quelques jours ; l'IA s'en lasse et n'en donne que la moitié.
     var F = contenu.ia && contenu.ia.faveur, dernier = partie.cadeaux.donnes[id];
@@ -4347,7 +4352,7 @@
     var nCadeaux = 0;
     // v8 : les cadeaux des cases, déjà rangés, rejoignent le résultat pour être montrés au joueur.
     (partie.cadeauxCase || []).forEach(function (c) {
-      var x = listeFamille(contenu, c.famille).filter(function (y) { return y.id === c.id; })[0];
+      var x = parId(listeFamille(contenu, c.famille), c.id);
       if (!x) return;
       if (c.famille === "masques") out.masque = x; else out[c.famille].push(x);
       nCadeaux++;
@@ -4435,7 +4440,7 @@
   }
   function epoqueCase(contenu, partie) {
     var P = contenu.plateau, k = P && partie.plateau && caseN(contenu, partie.plateau.position);
-    return k ? (P.epoques || []).filter(function (e) { return e.id === k.epoque; })[0] || null : null;
+    return k ? parId(P.epoques || [], k.epoque) || null : null;
   }
   function finEpoqueCase(contenu, partie) { var e = epoqueCase(contenu, partie); return e ? e.fin : null; }
   // --- v18 : le thème. La case du pion donne le ton : butin, cadeaux, apartés, masques, farces et répliques ---
@@ -4554,7 +4559,7 @@
   // null tant que le joueur n'a pas créé son personnage (l'avatar d'avant : humain, cheveux courts, tenue du rang).
   function parId1(liste, id, defaut) {
     liste = liste || [];
-    return liste.filter(function (x) { return x.id === id; })[0] || liste.filter(function (x) { return x.id === defaut; })[0] || liste[0] || null;
+    return parId(liste, id) || parId(liste, defaut) || liste[0] || null;
   }
   function apparence(contenu, partie) {
     var cr = contenu.avatar && contenu.avatar.creation; if (!cr || !partie.apparence) return null;
@@ -4673,7 +4678,7 @@
     return ((contenu.avatar && contenu.avatar.pouvoirs) || []).map(function (p) { return etatPouvoir(contenu, partie, p, t); });
   }
   function pouvoir(contenu, partie, id, t) {
-    var p = ((contenu.avatar && contenu.avatar.pouvoirs) || []).filter(function (x) { return x.id === id; })[0];
+    var p = parId((contenu.avatar && contenu.avatar.pouvoirs) || [], id);
     return p ? etatPouvoir(contenu, partie, p, t) : null;
   }
   function utiliserPouvoir(contenu, partie, id, t) {
@@ -5084,7 +5089,7 @@
 
   var Moteur = {
     choisirLangue: choisirLangue, langue: langue, TX: TX, __: __, ordinalSiecle: ordinalSiecle, traduireChaines: traduireChaines,
-    FORMAT_PARTIE: FORMAT_PARTIE,
+    FORMAT_PARTIE: FORMAT_PARTIE, parId: parId,
     indexerContenu: indexerContenu,
     reglage: reglage, tonDe: tonDe, dramaturgie: dramaturgie, packsEcartes: packsEcartes, succesAbsent: succesAbsent, REGLAGES: REGLAGES, allumeParDefaut: allumeParDefaut, allumerPack: allumerPack, reglagesDesPacks: reglagesDesPacks,
     packsEteints: packsEteints, filtrerPacks: filtrerPacks, verifierPaquet: verifierPaquet, ajouterPaquet: ajouterPaquet, ajouterTextes: ajouterTextes, packDe: packDe, accorderPartie: accorderPartie,
