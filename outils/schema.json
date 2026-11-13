@@ -5189,6 +5189,13 @@
         "type": "number",
         "minimum": 0
        },
+       "chantier": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Chantier exceptionnel (Victor, 2026-11-13) : une fois par jour, prendre d'un coup une part du plafond de cette ressource naturelle, au risque de l'épuiser.",
+        "required": ["nom", "donne", "part", "rendement"],
+        "properties": { "nom": { "$ref": "#/$defs/texte" }, "texte": { "$ref": "#/$defs/texte" }, "donne": { "type": "string" }, "part": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }, "rendement": { "type": "number", "exclusiveMinimum": 0 } }
+       },
        "retour": {
         "type": "number",
         "minimum": 0

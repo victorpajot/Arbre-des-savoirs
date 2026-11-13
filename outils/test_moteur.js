@@ -2527,6 +2527,12 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     // Une pêcherie bâtie au village avant la règle rejoint le port, qui s'ouvre sans frais.
     const Q9 = peche(); delete Q9.quartiers.port; Q9.ressources.batis.push({ id: "pecherie", q: "ville", t: t0 });
     const I9 = M.ile(CA, Q9, t0); assert.equal(Q9.ressources.batis.filter(b => b.id === "pecherie")[0].q, "port"); assert.ok(I9.quartiers.find(q => q.id === "port").fonde); }
+  // Victor (2026-11-13) : chantier exceptionnel, une fois par jour, au risque d'épuiser la ressource.
+  { const Qx = peche(); const b0 = Qx.ressources.stocks.bois, f0 = Qx.ressources.nature.foret;
+    const rx = M.chantierExceptionnel(CA, Qx, "foret", t0); assert.ok(rx.ok && rx.pris === 120 && rx.gain === 60, "grande coupe : 20 % de la forêt, 60 bois");
+    assert.equal(Qx.ressources.stocks.bois, b0 + 60); assert.equal(Qx.ressources.nature.foret, f0 - 120);
+    assert.ok(!M.chantierExceptionnel(CA, Qx, "foret", t0).ok, "une seule par jour");
+    Qx.ressources.nature.foret = 50; const r2 = M.chantierExceptionnel(CA, Qx, "foret", t0 + J); assert.ok(r2.ok && r2.vide && Qx.ressources.nature.foret === 0, "la coupe de trop rase la forêt"); }
   const Q1 = peche(), Q2 = peche();
   for (let i = 0; i < 4; i++) { assert.ok(M.construireIle(CA, Q1, "pecherie", t0).ok); M.construireIle(CA, Q2, "pecherie", t0); }
   const n0 = M.ile(CA, Q1, t0).ressources.nature.filter(x => x.id === "poisson")[0];

@@ -1638,6 +1638,8 @@ svg.grille .interro { transition: opacity .3s; }
 .conseils { display: grid; gap: 10px; } .conseil { border-radius: 12px; padding: 10px 14px 12px; background: var(--surface); border: 1px solid var(--line); border-left: 5px solid #2E9E5B; margin-top: 10px; } .conseils .conseil { margin-top: 0; }
 .conseil.ananke { border-left-color: #5B7FD9; } .conseil p { font-size: 17px; line-height: 1.5; margin: 4px 0 0; } .conseil .btn { margin-top: 10px; } .conseil-qui { display: block; font-size: 17px; }
 .conseil-etapes { margin: 8px 0 0; padding-left: 26px; font-size: 17px; line-height: 1.45; } .conseil-etapes li { margin: 4px 0; color: var(--muted); } .conseil-etapes li.premier { color: inherit; font-weight: 700; }
+.ile-grand { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; } .ile-grand .btn { align-self: flex-start; font-size: 17px; } .ile-grand small { font-size: 15px; color: var(--muted); }
+.ile-grand-bilan { display: flex; flex-wrap: wrap; gap: 8px; font-size: 19px; margin: 6px 0; } .ile-grand-bilan span { padding: 6px 12px; border-radius: 12px; background: rgba(127,127,127,.14); } p.ile-risque { color: #B5531F; font-weight: 600; }
 .ile-plus { width: 100%; margin-top: 10px; font-size: 17px; }
 .duo-panneau { margin-top: 10px; } .duo-panneau .ile-objectif { margin: 0; }
 .ile-besoin p { margin: 2px 0 6px; font-size: 16px; color: var(--muted); }
@@ -5133,6 +5135,7 @@ function demarrerJeu() {
     h += '<button type="button" class="btn large" data-a="construire" style="margin-top:10px">' + __("Construire un aménagement") + "</button>";
     var b = el("<div>" + h + "</div></div>");
     b.querySelector('[data-a="construire"]').onclick = ouvrirChantierIle;
+    b.querySelectorAll("[data-chantier]").forEach(function (bt) { bt.onclick = function () { ouvrirGrandChantier(bt.getAttribute("data-chantier")); }; });
     b.querySelectorAll("[data-effort]").forEach(function (bt) { bt.onclick = function () {
       var id = bt.getAttribute("data-effort"), cur = R.effort[id] == null ? 1 : R.effort[id];
       M.reglerEffort(C, P, id, cur + (bt.getAttribute("data-d") === "+" ? 0.25 : -0.25), maintenant()); sauver(); rendre(); }; });
@@ -5151,6 +5154,18 @@ function demarrerJeu() {
       { voir: function () { fermerFeuille(); vue = "ile"; lieuVu = null; quartierVu = camp ? null : idq; rendre(); window.scrollTo(0, 0); } }, __("Construire autre chose"));
     // « Construire autre chose » rouvre le chantier.
     feuille.querySelector('[data-a="fermer"]').addEventListener("click", function () { setTimeout(ouvrirChantierIle, 0); });
+  }
+  // La feuille d'un chantier exceptionnel : ce qu'il rapporte, ce qu'il laisse, et l'avis des deux IA avant de trancher.
+  function ouvrirGrandChantier(id) {
+    var I = M.ile(C, P, maintenant()), n = (I.ressources.nature || []).filter(function (x) { return x.id === id; })[0], ch = n && n.chantier; if (!ch || !ch.possible) return;
+    var res = (C.ile.ressources || []).filter(function (r) { return r.id === ch.donne; })[0], avant = Math.round(100 * n.part), apres = Math.round(100 * ch.apres);
+    var risque = ch.vide ? __("Il n'en restera rien. Une ressource épuisée met très longtemps à revenir, et la cueillette qui en dépend s'arrête.") : ch.apres < 0.25 ? __("Elle tombera au plus bas : elle repoussera très lentement et la cueillette en souffrira.") : ch.apres < 0.5 ? __("Elle passera sous la moitié : elle repoussera moins vite qu'aujourd'hui.") : __("Elle s'en remettra, si tu n'y reviens pas trop souvent.");
+    feuilleSimple('<div class="eyebrow">' + __("Chantier exceptionnel") + "</div><h2>" + esc(tx(ch.nom)) + '</h2><p style="font-size:17px">' + esc(tx(ch.texte || { fr: "" })) + '</p><div class="ile-grand-bilan"><span><b>+' + nb(ch.gain) + "</b> " + res.icone + " " + esc(tx(res.nom)).toLowerCase() + "</span><span>" + n.icone + " " + avant + " % → <b>" + apres + " %</b></span></div>" +
+      (ch.perdu ? '<p class="ile-vie-note alerte">' + __("Les greniers sont presque pleins : ") + nb(ch.perdu) + __(" rations seraient perdues.") + "</p>" : "") +
+      '<p class="ile-risque" style="font-size:17px">' + risque + '</p><div class="bulle-p"></div><button type="button" class="btn large" data-a="oui">' + __("Lancer : ") + esc(tx(ch.nom)) + "</button>", tx(ch.nom),
+      { oui: function () { var r = M.chantierExceptionnel(C, P, id, maintenant()); if (!r || !r.ok) return; sauver(); fermerFeuille(); rendre(); toast("+" + nb(r.gain) + " " + res.icone + (r.vide ? " · " + tx(n.nom) + __(" : épuisé") : "")); } }, __("Renoncer"));
+    var bu = comite({ id: "ile_grand_" + id, texte: ch.vide ? __("Vous allez prendre tout ce qui reste. Je note l'heure, pour le jour où vous me demanderez pourquoi il n'y a plus rien.") : ch.apres < 0.25 ? __("Un bon coup aujourd'hui, la disette dans un mois. C'est un choix. Faites-le en le sachant.") : __("Un coup de collier ne tue pas une forêt. Deux par semaine, si."), contexte: "accueil", aparte: false });
+    if (bu) feuille.querySelector(".bulle-p").appendChild(bu);
   }
   function ouvrirChantierIle() {
     var t = maintenant(), I = M.ile(C, P, t), R = I.ressources; if (!R) return;
@@ -5328,6 +5343,10 @@ function demarrerJeu() {
           h += '<div class="ile-effort"><span>' + esc(tx(a.nom)) + (R.batis[a.id] > 1 ? " ×" + R.batis[a.id] : "") + " : " + __("effort") + '</span><button type="button" data-effort="' + esc(a.id) + '" data-d="-"' + (e <= 0 ? " disabled" : "") + ' aria-label="' + __("Moins d'effort") + '">−</button><b>' + Math.round(e * 100) + ' %</b><button type="button" data-effort="' + esc(a.id) + '" data-d="+"' + (e >= 1 ? " disabled" : "") + ' aria-label="' + __("Plus d'effort") + '">+</button><small>' + po.pourvus + " / " + po.postes + __(" ouvriers") + "</small></div>";
         });
       }
+      // Victor (2026-11-13) : chantier exceptionnel, une fois par jour, au risque d'épuiser la ressource.
+      var ch = sait && n.chantier, resC = ch && (C.ile.ressources || []).filter(function (r) { return r.id === ch.donne; })[0];
+      if (ch && resC) h += '<div class="ile-grand"><button type="button" class="btn sec" data-chantier="' + esc(n.id) + '"' + (ch.possible ? "" : " disabled") + ">⚒ " + esc(tx(ch.nom)) + " : +" + nb(ch.gain) + " " + resC.icone + "</button><small>" +
+        (ch.fait ? __("Déjà fait aujourd'hui. Les bras se reposent jusqu'à demain.") : !ch.pris ? __("Il ne reste rien à prendre.") : __("Une fois par jour. Prend d'un coup ") + nb(ch.pris) + __(" sur ") + nb(n.stock) + (ch.vide ? " : " + __("il n'en restera rien.") : ch.apres < 0.25 ? " : " + __("il en restera très peu.") : ".")) + "</small></div>";
       h += "</div>";
     });
     if (R.effondrement) h += '<p class="ile-vie-note alerte" style="margin-top:10px"><b>' + __("L'île s'est vidée.") + "</b> " + __("La faim a emporté ses derniers habitants ; ") + R.effondrement.perdus + __(" aménagements sont tombés en ruine. Tes savoirs restent : rebâtis en ménageant ce que l'île donne.") + "</p>";
