@@ -1240,7 +1240,8 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-quete-sac { display: flex; justify-content: space-between; gap: 6px; margin: 4px 0 10px; } .ile-quete-sac span { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 6px 2px; border-radius: 10px; border: 2px dashed var(--line); } .ile-quete-sac span svg { opacity: .28; filter: grayscale(1); }
 .ile-quete-sac span.ok { border-style: solid; border-color: var(--good); } .ile-quete-sac span.ok svg { opacity: 1; filter: none; } .ile-quete-sac small { font-size: 12px; line-height: 1.2; }
 .explorer { position: fixed; inset: 0; z-index: 57; background: #2F7FB0; display: flex; flex-direction: column; }
-.ex-vue { position: relative; flex: 1; min-height: 0; overflow: hidden; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; } .ex-vue svg { display: block; width: 100%; height: 100%; }
+.ex-vue { position: relative; flex: 1; min-height: 0; overflow: hidden; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; } .ex-vue > svg { display: block; width: 100%; height: 100%; } .ex-sc text { font-family: var(--f-body); }
+.explorer .ile-etiquette { transform-box: fill-box; transform-origin: 50% 50%; transform: scale(var(--ek, 1)); } .explorer.pres .ile-pastille, .explorer.dedans .ile-etiquette { display: none; } .explorer .ile-parcelle { pointer-events: none; outline: none; } .explorer .ile-hm { transition: opacity .4s; } .explorer.dedans .ile-hm { opacity: 0; pointer-events: none; }
 .ex-haut { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; padding: calc(8px + env(safe-area-inset-top, 0px)) 8px 8px 16px; color: #fff; font-size: 17px; text-shadow: 0 1px 3px rgba(0,0,0,.5); pointer-events: none; }
 .ex-x, .ex-zoom button { pointer-events: auto; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--surface); color: var(--text); font-size: 26px; font-weight: 700; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.3); cursor: pointer; }
 .explorer .ex-x { color: #20222E; background: #fff; text-shadow: none; font-family: system-ui, sans-serif; } .ex-zoom { position: absolute; right: 8px; top: calc(70px + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: 8px; }
@@ -1250,6 +1251,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ex-liste b { display: block; font-size: 15px; } .ex-liste small { display: block; font-size: 13px; color: var(--muted); line-height: 1.25; } .ex-quete { margin: 0 0 8px; } .ex-bas .btn { width: 100%; }
 .ex-details { opacity: 0; transition: opacity .3s; } .explorer.pres .ex-details { opacity: 1; }
 .ex-objets .ile-quete, .ex-objets .ex-brille { display: none; } .explorer.pres:not(.tout-pres) .ex-brille { display: inline; } .explorer.tout-pres .ex-objets .ile-quete { display: inline; }
+.ex-scene { opacity: 0; transition: opacity .4s; pointer-events: none; } .explorer.dedans .ex-scene { opacity: 1; }
 .ile-explorer { width: 100%; margin: 8px 0 4px; }
 .ile-flamme.froid { filter: grayscale(1) brightness(.55); }
 .ile-flamme.ep-allume { transform-box: fill-box; transform-origin: 50% 100%; animation: ep-allume 1.6s cubic-bezier(.2,1.4,.4,1) both; }
@@ -2364,15 +2366,23 @@ function demarrerJeu() {
       '<div class="ex-zoom"><button type="button" data-z="1" aria-label="' + __("Zoomer") + '">+</button><button type="button" data-z="-1" aria-label="' + __("Dézoomer") + '">−</button></div><div class="ex-bas"></div></div>');
     var vueE = z.querySelector(".ex-vue"), svg = vueE.querySelector("svg"), bas = z.querySelector(".ex-bas");
     svg.removeAttribute("width"); svg.removeAttribute("height"); svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
-    svg.insertAdjacentHTML("beforeend", detailsIle() + '<g class="ex-objets"></g>');
-    var S = { x: ILE_W / 2, y: ILE_H / 2, k: 1 }, KMAX = 7, message = "";
+    // Victor (2026-11-13) : en zoomant fort, on doit voir autant qu'en entrant dans le quartier. La scène de chaque
+    // quartier fondé (bâtiments, habitants qui vont et viennent) se pose sur son hameau et apparaît de tout près.
+    var scenes = '<defs><filter id="ex-flou" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="1.6"/></filter></defs>' + I.quartiers.map(function (q, i) {
+      if (!(q.fonde || q.camp) || !q.position) return "";
+      var sq = svgQuartier(q), m = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(sq); if (!m) return "";
+      var w = 48, h = w * m[2] / m[1], x = q.position[0] * ILE_W - w / 2, y = q.position[1] * ILE_H - h / 2;
+      return '<mask id="exm' + i + '"><rect x="' + (x + 2).toFixed(1) + '" y="' + (y + 2).toFixed(1) + '" width="' + (w - 4) + '" height="' + (h - 4).toFixed(1) + '" rx="5" fill="#fff" filter="url(#ex-flou)"/></mask>' +
+        '<g class="ex-scene" data-scene="' + esc(q.id) + '" mask="url(#exm' + i + ')">' + sq.replace(/^<svg /, '<svg x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w + '" height="' + h.toFixed(1) + '" ') + "</g>"; }).join("").replace(/class="ile-scene"/g, 'class="ex-sc"');
+    svg.insertAdjacentHTML("beforeend", detailsIle() + scenes + '<g class="ex-objets"></g>');
+    var S = { x: ILE_W / 2, y: ILE_H / 2, k: 1 }, KMAX = 12, message = "";
     function base() { var r = vueE.getBoundingClientRect(), ar = r.width / Math.max(1, r.height), bw = Math.max(ILE_W, ILE_H * ar); return { w: bw, h: bw / ar, r: r }; }
     function borne(v, lo, hi) { return lo > hi ? (lo + hi) / 2 : Math.max(lo, Math.min(hi, v)); }
     function appliquer() {
       var b = base(), w = b.w / S.k, h = b.h / S.k;
       S.x = borne(S.x, w / 2, ILE_W - w / 2); S.y = borne(S.y, h / 2, ILE_H - h / 2);
       svg.setAttribute("viewBox", (S.x - w / 2).toFixed(2) + " " + (S.y - h / 2).toFixed(2) + " " + w.toFixed(2) + " " + h.toFixed(2));
-      z.classList.toggle("pres", S.k >= 2); z.classList.toggle("tout-pres", S.k >= 3.2);
+      z.classList.toggle("pres", S.k >= 2); z.classList.toggle("tout-pres", S.k >= 3.2); z.classList.toggle("dedans", S.k >= 4.5); svg.style.setProperty("--ek", Math.min(1, 1.3 / S.k).toFixed(3));
     }
     function zoomer(f, cx, cy) {
       var b = base(), k2 = Math.max(1, Math.min(KMAX, S.k * f)); if (cx == null) { cx = b.r.left + b.r.width / 2; cy = b.r.top + b.r.height / 2; }
@@ -4894,7 +4904,7 @@ function demarrerJeu() {
     // installations du quartier. Le plan garde tout ce qui est debout, pour le dessiner du fond vers l'avant.
     I.quartiers.forEach(function (q, i) {
       if (!q.fonde) return;
-      var x = lieux[i][0], y = lieux[i][1], gr = graine(q.id), g = "";
+      var x = lieux[i][0], y = lieux[i][1], gr = graine(q.id), g = "", p0 = plan.length;
       // Une image de hameau fournie : elle remplace les maisons dessinées (sur une carte fournie elle aussi, ou non).
       sol += '<path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + (q.posees || q.fonde ? "#C4E8A6" : "#B2DE98") + '"/>';
       if (q.posees || q.fonde) sol += '<path d="' + tache(x, y + 6, 17, 8, "pl" + q.id) + '" fill="#EFE0B4" opacity=".9"/><path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + q.couleur + '" opacity=".1"/>';
@@ -4937,9 +4947,11 @@ function demarrerJeu() {
         (q.ouvert ? "" : '<text x="' + fx(lx) + '" y="' + fx(ly + 11) + '" font-size="9.5" font-weight="700" fill="#6A7075">' + esc(__("dans la brume")) + "</text>") + "</g>";
       // Une pastille par option du quartier, pleine quand elle est ouverte ; un voyant s'il faut s'en occuper.
       if (q.ouvert && !q.aOuvrir) q.options.forEach(function (_, k) { var ex = lx + (k - (q.options.length - 1) / 2) * 9;
-        g += '<circle cx="' + fx(ex) + '" cy="' + fx(ly + 8) + '" r="3" fill="' + (k < faites ? q.couleur : "#FFFDF4") + '" stroke="' + (k < faites ? "#FFFDF4" : q.couleur) + '" stroke-width="1.3"/>'; });
+        g += '<circle class="ile-pastille" cx="' + fx(ex) + '" cy="' + fx(ly + 8) + '" r="3" fill="' + (k < faites ? q.couleur : "#FFFDF4") + '" stroke="' + (k < faites ? "#FFFDF4" : q.couleur) + '" stroke-width="1.3"/>'; });
       if (soucis) g += '<g><circle cx="' + fx(x + 27) + '" cy="' + fx(y - 22) + '" r="8" fill="#E8873A" stroke="#FFFDF4" stroke-width="2"/><text x="' + fx(x + 27) + '" y="' + fx(y - 18.4) + '" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">' + soucis + "</text></g>";
       dessus += '<g pointer-events="none">' + g + "</g>";
+      // Tout ce qui est debout dans le hameau porte une classe : l'explorateur l'efface quand la scène du quartier prend sa place.
+      for (var pp = p0; pp < plan.length; pp++) plan[pp][1] = '<g class="ile-hm">' + plan[pp][1] + "</g>";
       zones += '<ellipse class="ile-parcelle" data-q="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + nom + '" cx="' + fx(x) + '" cy="' + fx(y + 6) + '" rx="44" ry="38" fill="transparent"/>';
     });
     // Les lieux des collections (Victor, 2026-11-10 : « dans les quartiers existants, pour donner plus de vie ») : sur la
@@ -4949,14 +4961,14 @@ function demarrerJeu() {
       var qi = I.quartiers.map(function (q) { return q.id; }).indexOf(l.quartier); if (qi < 0 || !I.quartiers[qi].fonde || I.quartiers[qi].camp) return;
       var k = parQ[l.quartier] = (parQ[l.quartier] || 0) + 1, x = lieux[qi][0] + (k % 2 ? -34 : 34), y = lieux[qi][1] + (k > 2 ? 20 : -4), t = l.image === "tour" ? 14 + l.etages * 2.5 : 17;
       var larg = l.image === "tour" ? t * 28 / (14 + (l.ouvert ? l.etages : 1) * 9) : t;
-      plan.push([y + 1, '<ellipse cx="' + fx(x) + '" cy="' + fx(y) + '" rx="9" ry="2.4" fill="rgba(30,45,30,.2)"/><g transform="translate(' + fx(x - larg / 2) + " " + fx(y - t + 1) + ')"' + (l.ouvert ? "" : ' opacity=".7"') + ">" + (l.image === "tour" ? svgTourIle(l.ouvert ? l.etages : 1, t) : svgSprite(l.image, t, null, !l.ouvert)) + "</g>"]);
+      plan.push([y + 1, '<g class="ile-hm"><ellipse cx="' + fx(x) + '" cy="' + fx(y) + '" rx="9" ry="2.4" fill="rgba(30,45,30,.2)"/></g><g class="ile-hm" transform="translate(' + fx(x - larg / 2) + " " + fx(y - t + 1) + ')"' + (l.ouvert ? "" : ' opacity=".7"') + ">" + (l.image === "tour" ? svgTourIle(l.ouvert ? l.etages : 1, t) : svgSprite(l.image, t, null, !l.ouvert)) + "</g>"]);
     });
     // Les visiteurs du jour (Victor, 2026-11-12) : en toge dorée, au bord de leur hameau ; on les touche par-dessus tout.
     var visites = "";
     VIS_ILE.forEach(function (vv, k) {
       var qi = I.quartiers.map(function (q) { return q.id; }).indexOf(vv.quartier); if (qi < 0 || !I.quartiers[qi].fonde) return;
       var n = VIS_ILE.slice(0, k).filter(function (w) { return w.quartier === vv.quartier; }).length;
-      visites += svgVisiteur(vv, Math.round(lieux[qi][0] - 10 + (n % 2 ? 18 : -18)), Math.round(lieux[qi][1] + 2 + n * 8), 2.6);
+      visites += '<g class="ile-hm">' + svgVisiteur(vv, Math.round(lieux[qi][0] - 10 + (n % 2 ? 18 : -18)), Math.round(lieux[qi][1] + 2 + n * 8), 2.6) + "</g>";
     });
     // Ce qui vit (maisons, installations, habitants) se pose aussi sur une carte fournie ; le décor dessiné, non.
     vivant = plan.slice().sort(function (a, b) { return a[0] - b[0]; });
