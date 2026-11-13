@@ -8,7 +8,9 @@ M.nouvellePartie = function (t) { const P = nouvellePartieTiree(t); P.plateau.ro
 // v19 : 4 succès au plus par épreuve ; les suivants tombent aux vérifications d'après.
 const vider = (C, P, t) => { for (let i = 1; i <= 12; i++) M.verifierRecompenses(C, P, t + i); };
 const succesPuis = (r, C, P, t) => r.nouveauxSucces.map(s => s.id).concat(...[1, 2, 3, 4, 5].map(i => M.verifierRecompenses(C, P, t + i).succes.map(s => s.id)));
-const dBrut = n => JSON.parse(fs.readFileSync(path.join(__dirname, "../data", n), "utf8"));
+// Chaque appel rend une copie neuve (les tests modifient le contenu) ; le fichier, lui, n'est lu qu'une fois.
+const TEXTES = {};
+const dBrut = n => JSON.parse(TEXTES[n] || (TEXTES[n] = fs.readFileSync(path.join(__dirname, "../data", n), "utf8")));
 // Les savoirs propres à l'île (arbres « en chantier » du pack ile : le feu, Ressources, Météo) n'existent qu'en mode Île.
 // Les tests historiques jouent sans eux, comme le mode Parcours ; les tests des âges les chargent avec dBrut.
 const CHANTIER = dBrut("regles.json").stats.filter(x => x.chantier).map(x => x.id);

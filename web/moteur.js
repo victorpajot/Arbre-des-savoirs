@@ -4183,9 +4183,11 @@
 
   function conditionRemplie(contenu, partie, cond, t) {
     var c = partie.compteurs;
-    var maitrisees = contenu.competences.filter(function (k) { return estMaitrisee(partie, k.id); });
+    // Seules trois conditions comptent les compétences maîtrisées : la liste n'est faite que pour elles (cette fonction
+    // tourne des milliers de fois à chaque vérification des récompenses).
+    function maitrisees() { return contenu.competences.filter(function (k) { return estMaitrisee(partie, k.id); }); }
     switch (cond.type) {
-      case "competences_maitrisees": return maitrisees.length >= cond.n;
+      case "competences_maitrisees": return maitrisees().length >= cond.n;
       case "competence_maitrisee": return estMaitrisee(partie, cond.id);
       // Donjons : plusieurs conditions à la fois (par exemple deux arbres réussis).
       case "toutes": return (cond.conditions || []).every(function (x) { return conditionRemplie(contenu, partie, x, t); });
@@ -4210,11 +4212,11 @@
       case "branche_complete": return contenu.parStat[cond.stat].every(function (k) { return (cond.rang_max && k.rang > cond.rang_max) || estMaitrisee(partie, k.id); });
       // Un arbre en chantier (un seul savoir écrit) n'est ni « complet » ni exigé (Victor, 2026-11-12 : le feu donnait « Cultiver son jardin »).
       case "branches_completes": return contenu.stats.filter(function (s) { return !s.chantier && contenu.parStat[s.id].every(function (k) { return estMaitrisee(partie, k.id); }); }).length >= cond.n;
-      case "rang_maitrise": return maitrisees.some(function (k) { return k.rang >= cond.rang; });
+      case "rang_maitrise": return maitrisees().some(function (k) { return k.rang >= cond.rang; });
       case "toutes_branches": return contenu.stats.every(function (s) { return s.chantier || contenu.parStat[s.id].some(function (k) { return estMaitrisee(partie, k.id); }); });
       case "rappels_reussis": return c.rappelsReussis >= cond.n;
       case "serie_rappels": return c.serieRappels >= cond.n;
-      case "duree_maitrise": return maitrisees.some(function (k) { return joursEntre(partie.competences[k.id].maitriseDepuis, t) >= cond.jours; });
+      case "duree_maitrise": return maitrisees().some(function (k) { return joursEntre(partie.competences[k.id].maitriseDepuis, t) >= cond.jours; });
       case "niveau_stat":
         var xp = xpParStat(contenu, partie);
         return contenu.stats.some(function (s) { return niveau(contenu, xp[s.id]).niveau >= cond.niveau; });
