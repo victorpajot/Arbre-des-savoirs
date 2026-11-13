@@ -5185,7 +5185,7 @@ function demarrerJeu() {
   // Chacune regarde le même état et en tire l'avis contraire. Renvoie { alyca: {texte, bouton, action}, ananke: {texte} }.
   function conseilsIle(I) {
     if (!M.modeIle(P) || !I || !I.ages || !I.ressources) return null;
-    var L = I.limites, R = I.ressources, N = I.habitants, G = I.ages, age = G.ages[G.courant], nomAge = tx(age.nom).toLowerCase(), plein = L && N >= L.places - 2;
+    var L = I.limites, R = I.ressources, N = I.habitants, G = I.ages, age = G.ages[G.courant], nomAge = tx(age.nom).toLowerCase(), plein = L && N >= Math.min(L.places - 2, Math.floor(L.places * 0.9));  // Victor (2026-11-12) : 85 pour 88, c'est déjà plein
     var regles = C.ile.regles.ressources || {}, bouches = regles.cueillette_bouches || 0, deficit = R.net < -0.05, village = G.courant >= 2;
     var chantier = function () { ouvrirChantierIle(); }, jouer = function () { ouvrirJouer(); }, cultive = M.estMaitrisee(P, "res.cultiver");
     var surex = (R.nature || []).filter(function (n) { return !n.soutenable; })[0];
