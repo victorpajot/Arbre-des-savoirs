@@ -1640,6 +1640,7 @@ svg.grille .interro { transition: opacity .3s; }
 .conseil-etapes { margin: 8px 0 0; padding-left: 26px; font-size: 17px; line-height: 1.45; } .conseil-etapes li { margin: 4px 0; color: var(--muted); } .conseil-etapes li.premier { color: inherit; font-weight: 700; }
 .ile-grand { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; } .ile-grand .btn { align-self: flex-start; font-size: 17px; } .ile-grand small { font-size: 15px; color: var(--muted); }
 .ile-grand-bilan { display: flex; flex-wrap: wrap; gap: 8px; font-size: 19px; margin: 6px 0; } .ile-grand-bilan span { padding: 6px 12px; border-radius: 12px; background: rgba(127,127,127,.14); } p.ile-risque { color: #B5531F; font-weight: 600; }
+.ile-b-titre { margin: 16px 0 0; font-size: 16px; color: var(--muted); }
 .ile-plus { width: 100%; margin-top: 10px; font-size: 17px; }
 .duo-panneau { margin-top: 10px; } .duo-panneau .ile-objectif { margin: 0; }
 .ile-besoin p { margin: 2px 0 6px; font-size: 16px; color: var(--muted); }
@@ -5291,19 +5292,23 @@ function demarrerJeu() {
     if (liste.length) h += '<div class="ile-age-tete"><h3>' + esc(tx((montre || a).nom)) + __(" a besoin de") + "</h3><span>" + faits + " / " + liste.length + (faits > 1 ? __(" couverts") : __(" couvert")) + '</span></div><div class="ile-age-barre"><b style="width:' + Math.round(100 * faits / liste.length) + '%"></b></div>' +
       '<p class="ile-vie-note">' + __("Un savoir maîtrisé couvre un besoin. Touche un besoin pour voir les savoirs qui y répondent.") + "</p>";
     // Victor (2026-11-12) : trois besoins à l'écran (ceux qui restent à couvrir d'abord), les autres derrière un bouton.
-    liste = liste.filter(function (b) { return !b.couvert && !b.optionnel; }).concat(liste.filter(function (b) { return !b.couvert && b.optionnel; }), liste.filter(function (b) { return b.couvert; }));
-    liste.forEach(function (b, n) {
-      if (n === 3) h += '<button type="button" class="btn sec ile-plus" data-a="plus">' + __("Voir les {n} autres besoins", { n: liste.length - 3 }).replace("les 1 autres besoins", "l'autre besoin") + '</button><div class="ile-reste" hidden>';
+    // Victor (2026-11-13) : les besoins optionnels pas encore couverts restent toujours affichés, hors du repli.
+    var ligneBesoin = function (b) {
       var amen = b.amenagements.map(function (id) { var x = C.ile.amenagements.filter(function (y) { return y.id === id; })[0]; return x ? esc(tx(x.nom)).toLowerCase() : ""; }).filter(Boolean);
       var acquis = b.savoirs.filter(function (id) { var st = M.statut(C, P, id, t).etat; return st === "maitrisee" || st === "a_reviser"; });
       var resume = b.couvert && acquis.length ? esc(tx(C.parId[acquis[0]].nom)) : b.savoirs.length > 1 ? b.savoirs.length + __(" savoirs au choix") : b.savoirs.length ? esc(tx(C.parId[b.savoirs[0]].nom)) : "";
-      h += '<details class="ile-besoin' + (b.couvert ? " ok" : "") + '"' + (!replie && !b.couvert ? " open" : "") + '><summary><i class="ile-b-etat" aria-hidden="true">' + (b.couvert ? "✓" : "") + '</i><span class="ile-b-nom"><b>' + esc(tx(b.nom)) + "</b>" + (b.optionnel ? ' <span class="ile-opt">' + __("optionnel") + "</span>" : "") + "<small>" + (b.couvert ? __("Couvert par : ") : __("À couvrir : ")) + resume + '</small></span><span class="ile-b-fleche" aria-hidden="true">›</span></summary>' +
+      return '<details class="ile-besoin' + (b.couvert ? " ok" : "") + '"' + (!replie && !b.couvert ? " open" : "") + '><summary><i class="ile-b-etat" aria-hidden="true">' + (b.couvert ? "✓" : "") + '</i><span class="ile-b-nom"><b>' + esc(tx(b.nom)) + "</b>" + (b.optionnel ? ' <span class="ile-opt">' + __("optionnel") + "</span>" : "") + "<small>" + (b.couvert ? __("Couvert par : ") : __("À couvrir : ")) + resume + '</small></span><span class="ile-b-fleche" aria-hidden="true">›</span></summary>' +
         (b.texte ? "<p>" + esc(tx(b.texte)) + (amen.length ? " " + __("Débloque : ") + amen.join(", ") + "." : "") + "</p>" : "") +
         (b.optionnel && !b.couvert && b.alerte ? '<p class="ile-risque">' + (passe(b) ? "⚠ " + __("Négligé : ") : __("Si tu passes sans lui : ")) + esc(tx(b.alerte)) + "</p>" : "") + '<div class="ile-savoirs">' +
         b.savoirs.map(function (id) { var k = C.parId[id], st = M.statut(C, P, id, t).etat, ok = st === "maitrisee" || st === "a_reviser";
           return '<button type="button" class="ile-savoir' + (ok ? " ok" : "") + '" style="--c:' + couleur(k.stat) + '" data-savoir="' + esc(id) + '">' + badgeComp(k, 64) + "<span>" + esc(tx(k.nom)) + "<small>" + esc(tx(stat(k.stat).nom)) + " · " + (st === "a_reviser" ? __("rappel à faire") : ok ? __("maîtrisé") : st === "disponible" ? __("à apprendre") : __("verrouillé")) + "</small></span>" + (ok ? '<span class="ile-coche" aria-hidden="true">✓</span>' : "") + "</button>"; }).join("") + "</div></details>";
-    });
-    if (liste.length > 3) h += "</div>";
+    };
+    var aFaire = liste.filter(function (b) { return !b.couvert && !b.optionnel; }), options = liste.filter(function (b) { return !b.couvert && b.optionnel; }), faitsB = liste.filter(function (b) { return b.couvert; });
+    var devant = aFaire.slice(0, 3), resteB = aFaire.slice(3).concat(faitsB);
+    if (!devant.length && !options.length) { devant = resteB.slice(0, 3); resteB = resteB.slice(3); }
+    h += devant.map(ligneBesoin).join("");
+    if (options.length) h += '<h4 class="ile-b-titre">' + __("En option, pas encore débloqués") + "</h4>" + options.map(ligneBesoin).join("");
+    if (resteB.length) h += '<button type="button" class="btn sec ile-plus" data-a="plus">' + (resteB.length > 1 ? __("Voir les {n} autres besoins", { n: resteB.length }) : __("Voir l'autre besoin")) + '</button><div class="ile-reste" hidden>' + resteB.map(ligneBesoin).join("") + "</div>";
     // La suite, en conclusion de la liste : ce qui ouvre l'âge suivant, ou le choix de passer sans les besoins optionnels.
     if (a.pret && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("Tout l'indispensable est couvert. Il reste en option : ") + a.negliges.map(function (b) { return "<b>" + esc(tx(b.nom)).toLowerCase() + "</b>"; }).join(__(" et ")) + ". " + __("Tu peux les apprendre d'abord, ou passer tout de suite et en payer le prix.") + '</p><button type="button" class="btn large" data-a="passer">' + __("Passer à : ") + esc(tx(G.suivant.nom)) + "</button></div>";
     else if (G.suivant && !a.avenir) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("S'ouvre quand tous les besoins sans la mention « optionnel » sont couverts.") + "</p></div>";
