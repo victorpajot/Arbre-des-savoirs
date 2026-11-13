@@ -1973,11 +1973,22 @@ function demarrerJeu() {
   }
 
   // --- Pixel art ------------------------------------------------------------
-  // Une image = des lignes de caractères. Les pixels voisins de même couleur sont fusionnés en un rectangle.
+  // Une image = des lignes de caractères. Les pixels voisins de même couleur sont fusionnés en un rectangle, et tous
+  // les rectangles d'une couleur forment un seul tracé : une dizaine de nœuds par dessin au lieu de centaines (la
+  // frise de Collections passait de 44 000 nœuds à quelques milliers ; c'est ce qui ralentissait la WebView Android).
+  // Le résultat est mis en cache : les mêmes dessins reviennent à chaque rendu.
+  var CACHE_PIXELS = typeof WeakMap === "function" ? new WeakMap() : null;
   function pixels(grille, palette, couleurs, ox, oy, e, silhouette) {
-    var out = "";
     // v35 : un dessin d'un pack éteint n'est plus là : la case reste vide plutôt que de casser l'écran.
-    if (!grille) return out;
+    if (!grille) return "";
+    var parGrille = CACHE_PIXELS && CACHE_PIXELS.get(grille), cle = null;
+    if (CACHE_PIXELS && palette && typeof palette === "object") {
+      cle = ox + "," + oy + "," + e + "," + (silhouette ? 1 : 0) + "," + (couleurs ? JSON.stringify(couleurs) : "");
+      if (!parGrille) CACHE_PIXELS.set(grille, parGrille = { palette: palette, sorties: {} });
+      if (parGrille.palette !== palette) parGrille.palette = palette, parGrille.sorties = {};
+      var deja = parGrille.sorties[cle]; if (deja != null) return deja;
+    }
+    var traces = {}, ordre = [];
     grille.forEach(function (ligne, y) {
       var x = 0;
       while (x < ligne.length) {
@@ -1985,10 +1996,15 @@ function demarrerJeu() {
         if (ch === ".") { x++; continue; }
         var fin = x; while (fin + 1 < ligne.length && ligne[fin + 1] === ch) fin++;
         var col = silhouette ? "currentColor" : ((couleurs && couleurs[ch]) || palette[ch]);
-        if (col) out += '<rect x="' + (ox + x * e) + '" y="' + (oy + y * e) + '" width="' + ((fin - x + 1) * e) + '" height="' + e + '" fill="' + col + '"/>';
+        if (col) {
+          if (!traces[col]) { traces[col] = ""; ordre.push(col); }
+          traces[col] += "M" + (ox + x * e) + " " + (oy + y * e) + "h" + ((fin - x + 1) * e) + "v" + e + "h" + (-(fin - x + 1) * e) + "z";
+        }
         x = fin + 1;
       }
     });
+    var out = ordre.map(function (col) { return '<path d="' + traces[col] + '" fill="' + col + '"/>'; }).join("");
+    if (cle) parGrille.sorties[cle] = out;
     return out;
   }
   // Une grille rognée à ses pixels peints, centrée dans un carré.
@@ -2935,6 +2951,9 @@ function demarrerJeu() {
   function signature(t) { var h = 0; for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
   var CLE_VUS = "arbre-competences.avatars-vus", VUS = {};
   try { VUS = JSON.parse(localStorage.getItem(CLE_VUS)) || {}; } catch (e) { VUS = {}; }
+  // Les signatures se calculent sur le dessin : quand sa forme écrite change (tracés au lieu de rectangles), les
+  // anciennes ne valent plus rien. On repart de zéro sans faire muer l'avatar pour autant.
+  if (VUS.format !== 2) VUS = { format: 2 };
   var ROLES_MUE = [["joueur", ".avatar-cadre svg[data-sig], .perso svg[data-sig]"], ["ia", ".comite .masque svg[data-sig], .ia-tete svg[data-sig]"]];
   function muer() {
     var change = false;
@@ -8583,7 +8602,7 @@ function demarrerJeu() {
   // Adam Smith, même en début de phrase (Victor, 2026-11-10). Seuls ces petits mots à majuscule peuvent le précéder.
   var MOTS_DEBUT = "Le|La|Les|Et|Mais|Pour|Selon|Chez|Avec|Puis|Quand|Car|Or|Donc|Comme|Si|Que|Dans|Sur|Sans|Sous|Après|Avant|Depuis|Contre|Entre|Vers|Ainsi|Alors|Pourtant|Aussi|Même|Ni|Ou|Où|De|Du|Des|En|Par|Ce|Cet|Mon|Son|Notre|Un|Une|Quant|Dès|Lorsque|Ensuite|Enfin|Seul|" +
     "The|And|But|For|With|When|As|In|On|By|After|Before|Then|So|If|Yet|Both|Like|To|Of|From|At|Since|While|Only|Even|Later|Here";
-  var indexPersonnes = null;
+  var indexPersonnes = null, PREMIERS_MOTS = null, TOUJOURS = [];
   function personnesConnues() {
     if (indexPersonnes) return indexPersonnes;
     var L = [], vus = {}, parNom = {};
@@ -8602,6 +8621,18 @@ function demarrerJeu() {
       // Ni suivi d'un nom (« James Joule » n'est pas William James), ni dans « prix Nobel » ou « le Nobel ».
       if (e.fam && parNom[e.fam] === 1) re += "|(?<![\\p{L}'’-])(?:(?<=(?:^|[^\\p{L}])(?:" + MOTS_DEBUT + ") )|(?<!\\p{Lu}\\p{Ll}+ ))(?<![Pp]rix |le |du |au |un )" + alt([e.fam]) + "(?![\\p{L}])(?! \\p{Lu}\\p{Ll})";
       e.re = new RegExp(re, "u");
+    });
+    // Le regard rapide : chaque expression exige qu'un de ses noms commence là où commence un mot (rien de lettre
+    // avant) et que son premier mot finisse là où finit un mot du texte (rien de lettre après). Le premier mot d'un des
+    // noms doit donc figurer tel quel parmi les mots du texte : on ne lance que les expressions qui passent ce filtre.
+    PREMIERS_MOTS = Object.create(null); TOUJOURS = [];
+    L.forEach(function (e, i) {
+      e.cles = e.fam && parNom[e.fam] === 1 ? e.noms.concat([e.fam]) : e.noms;
+      e.cles.forEach(function (n) {
+        var m = /^\p{L}+/u.exec(n);
+        if (!m) { if (TOUJOURS.indexOf(i) < 0) TOUJOURS.push(i); }
+        else (PREMIERS_MOTS[m[0]] || (PREMIERS_MOTS[m[0]] = [])).push(i);
+      });
     });
     return (indexPersonnes = L);
   }
@@ -8682,7 +8713,17 @@ function demarrerJeu() {
   function initCroises() { if (!P.croisesVus) { P.croisesVus = {}; for (var x in croises()) P.croisesVus[x] = 1; } }
   function personnesDans(texte) {
     var tr = [];
-    personnesConnues().forEach(function (e) { var m = e.re.exec(texte); if (m) tr.push({ e: e, i: m.index, j: m.index + m[0].length }); });
+    var L = personnesConnues(), vus = {}, candidats = TOUJOURS.slice();
+    candidats.forEach(function (i) { vus[i] = 1; });
+    (texte.match(/\p{L}+/gu) || []).forEach(function (mot) {
+      var l = PREMIERS_MOTS[mot]; if (l) for (var i = 0; i < l.length; i++) if (!vus[l[i]]) { vus[l[i]] = 1; candidats.push(l[i]); }
+    });
+    // Dans l'ordre de la liste des personnes, comme avant le filtre.
+    // Puis l'un de ses noms en entier (« d'Arezzo », pas n'importe quel « d' »), et enfin l'expression elle-même.
+    candidats.sort(function (a, b) { return a - b; }).forEach(function (i) {
+      var e = L[i]; if (!e.cles.some(function (n) { return texte.indexOf(n) >= 0; })) return;
+      var m = e.re.exec(texte); if (m) tr.push({ e: e, i: m.index, j: m.index + m[0].length });
+    });
     return tr.filter(function (x) { return !tr.some(function (y) { return y !== x && y.i <= x.i && y.j >= x.j && y.j - y.i > x.j - x.i; }); })
       .sort(function (a, b) { return a.i - b.i; });
   }
