@@ -1736,7 +1736,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-camp { margin: 12px 0; } .ile-camp p { font-size: 17px; line-height: 1.5; margin: 0 0 10px; } .ile-camp .extrait { margin: 0; } .ile-camp blockquote { font-size: 17px; }
 @keyframes ile-danse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 .ile-danse { animation: ile-danse .6s ease-in-out infinite; }
-body:has(#couche .voile) .app .ile-scene * { animation-play-state: paused !important; } .android .ile-danse { animation: none; } .ile-flamme { cursor: pointer; }
+body:has(#couche .voile) .app .ile-scene *, body:has(.explorer) .app .ile-scene * { animation-play-state: paused !important; } .android .ile-danse { animation: none; } .ile-flamme { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .ile-danse { animation: none; } }
 .ile-nouveau { margin: 18px 0 8px; padding: 12px; border: 2px dashed var(--accent); border-radius: 16px; display: flex; flex-direction: column; gap: 10px; } .ile-nouveau .btn { align-self: flex-end; }
 .ile-effort { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 16px; flex-wrap: wrap; } .ile-effort > span { flex-basis: 100%; } .ile-effort button { font: inherit; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(127,127,127,.5); background: transparent; color: inherit; font-size: 20px; cursor: pointer; } .ile-effort button:disabled { opacity: .35; }
@@ -2496,20 +2496,34 @@ function demarrerJeu() {
     var LOUP = '<ellipse cy="4.6" rx="5.5" ry="1.4" fill="rgba(0,0,0,.25)"/><path d="M-5 1 L-4 -2 L3 -2.5 L4.6 -5 L5.6 -2.6 L7.4 -.4 L5 1 L4 4.4 L2.8 4.4 L2.4 1.6 L-2 1.6 L-2.8 4.4 L-4 4.4 Z" fill="#2E313B"/><path d="M-4.6 0 L-7.6 -1.6" stroke="#2E313B" stroke-width="1.3" stroke-linecap="round"/><circle cx="5" cy="-1.8" r=".7" fill="#FF4D3D"/>';
     // Victor (2026-11-13) : on passe derrière les arbres. L'explorateur et les prédateurs sont rangés parmi les éléments
     // debout de la carte, selon le y de leurs pieds.
-    var plans = [].slice.call(svg.querySelectorAll("g.ile-pl")), plansY = plans.map(function (g) { return +g.getAttribute("data-y"); }), apresPlans = plans.length ? plans[plans.length - 1].nextSibling : acteurs;
-    function ranger(e, y) {
-      var lo = 0, hi = plans.length; while (lo < hi) { var mi = (lo + hi) >> 1; if (plansY[mi] <= y) lo = mi + 1; else hi = mi; }
-      if (e._rang === lo && e.parentNode === svg) return; e._rang = lo; svg.insertBefore(e, lo < plans.length ? plans[lo] : apresPlans);
+    // Sans jamais déplacer un nœud (sur Android, réordonner le dessin en continu faisait tout clignoter) : une copie de
+    // chaque arbre attend, cachée, au-dessus des personnages ; elle ne se montre que si l'un d'eux se tient derrière.
+    var devant = null, statiques = [];
+    function preparerDevant() {
+      if (devant) return;
+      acteurs.insertAdjacentHTML("afterend", '<g class="ex-devant" pointer-events="none"></g>'); devant = svg.querySelector(".ex-devant");
+      [].forEach.call(svg.querySelectorAll("g.ile-pl"), function (g) {
+        var b; try { b = g.getBBox(); } catch (x) { return; } if (!b.width || b.width > 40 || b.height > 40) return;
+        var c = g.cloneNode(true); c.removeAttribute("class"); c.style.display = "none"; devant.appendChild(c);
+        statiques.push({ y: +g.getAttribute("data-y"), x0: b.x - 2, x1: b.x + b.width + 2, y0: b.y - 1, c: c, on: false });
+      });
+    }
+    function masquer() {
+      var A = X ? X.betes.concat([X]) : [];
+      statiques.forEach(function (s) {
+        var on = A.some(function (a) { return a.y < s.y && a.y > s.y0 && a.x > s.x0 && a.x < s.x1; });
+        if (on !== s.on) { s.on = on; s.c.style.display = on ? "" : "none"; }
+      });
     }
     function habiller() { X.graine = 1 + Math.floor(Math.random() * 1e6); X.ee.setAttribute("class", "ex-explo"); X.ee.querySelector(".ex-corps").innerHTML = svgHabitant(0, 0, X.graine, 1.15); }
-    function finExpe() { cancelAnimationFrame(raf); if (X) { [].forEach.call(X.eb, function (e) { e.remove(); }); X.ee.remove(); } X = null; z.classList.remove("expe"); acteurs.innerHTML = ""; var pe = z.querySelector(".ex-perdu"); if (pe) pe.remove(); }
+    function finExpe() { cancelAnimationFrame(raf); X = null; masquer(); z.classList.remove("expe"); acteurs.innerHTML = ""; var pe = z.querySelector(".ex-perdu"); if (pe) pe.remove(); }
     function partir() {
       if (!foyer || X) return;
       X = { x: FX, y: FY, tx: FX, ty: FY, sac: [], vus: [], baies: [], t: performance.now(), sens: 1, betes: [], gel: 0 };
       for (var n = 0; n < EXP.betes; n++) { var p = pointLibre(); X.betes.push({ x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1 }); }
       acteurs.innerHTML = '<circle class="ex-cible" r="2.4"/>' + X.betes.map(function () { return '<g class="ex-bete"><g class="ex-corps">' + LOUP + '</g><text class="ex-alerte" y="-7" text-anchor="middle" font-size="7" font-weight="800" fill="#D92B2B">!</text></g>'; }).join("") +
         '<g class="ex-explo"><g class="ex-corps"></g></g>';
-      X.eb = [].slice.call(acteurs.querySelectorAll(".ex-bete")); X.ee = acteurs.querySelector(".ex-explo"); X.ec = acteurs.querySelector(".ex-cible"); habiller();
+      X.eb = [].slice.call(acteurs.querySelectorAll(".ex-bete")); X.ee = acteurs.querySelector(".ex-explo"); X.ec = acteurs.querySelector(".ex-cible"); habiller(); preparerDevant();
       z.classList.add("expe"); S.k = Math.max(S.k, 3.4); S.x = FX; S.y = FY;
       message = __("Touche la carte : l'explorateur y va. Rapporte au village ce qu'il trouve, et fuis ce qui a les yeux rouges.");
       objets(); panneau(); dessiner(); appliquer(); raf = requestAnimationFrame(tour);
@@ -2518,8 +2532,8 @@ function demarrerJeu() {
       if (!X) { trous.forEach(function (c) { c.setAttribute("r", 0); }); return; }
       X.ee.setAttribute("transform", "translate(" + X.x.toFixed(1) + "," + X.y.toFixed(1) + ")"); X.ee.querySelector(".ex-corps").setAttribute("transform", "scale(" + X.sens + ",1)");
       X.ec.setAttribute("cx", X.tx.toFixed(1)); X.ec.setAttribute("cy", X.ty.toFixed(1)); X.ec.style.display = Math.hypot(X.tx - X.x, X.ty - X.y) > 2 ? "" : "none";
-      ranger(X.ee, X.y);
-      X.betes.forEach(function (b, i) { var e = X.eb[i]; ranger(e, b.y); e.setAttribute("transform", "translate(" + b.x.toFixed(1) + "," + b.y.toFixed(1) + ")"); e.querySelector(".ex-corps").setAttribute("transform", "scale(" + b.sens + ",1)"); e.setAttribute("class", "ex-bete" + (b.chasse ? " chasse" : "")); });
+      masquer();
+      X.betes.forEach(function (b, i) { var e = X.eb[i]; e.setAttribute("transform", "translate(" + b.x.toFixed(1) + "," + b.y.toFixed(1) + ")"); e.querySelector(".ex-corps").setAttribute("transform", "scale(" + b.sens + ",1)"); e.setAttribute("class", "ex-bete" + (b.chasse ? " chasse" : "")); });
       trous.forEach(function (c) { c.setAttribute("cx", X.x.toFixed(1)); c.setAttribute("cy", (X.y - 4).toFixed(1)); c.setAttribute("r", (EXP.vue * 1.9).toFixed(0)); });
     }
     // Pris : une courte scène (le prédateur bondit, l'explorateur tombe, le bandeau le dit), puis un autre habitant,
@@ -5086,7 +5100,8 @@ function demarrerJeu() {
   // Victor (2026-11-13) : le brouillard couvre l'île partout où il n'y a ni quartier ni habitants. Un masque : blanc
   // partout, troué d'un disque aux bords fondus sur chaque quartier ; le dernier disque suit l'explorateur (Explorer).
   // Chaque élément debout garde sa profondeur (le y de son pied) : l'explorateur se glisse entre eux (Explorer).
-  function enPlan(p) { return '<g class="ile-pl" data-y="' + (+p[0]).toFixed(1) + '">' + p[1] + "</g>"; }
+  // Seuls les éléments immobiles (arbres, maisons) sont enveloppés : ce qui s'anime reste tel quel.
+  function enPlan(p) { return p[1].indexOf("class=") < 0 ? '<g class="ile-pl" data-y="' + (+p[0]).toFixed(1) + '">' + p[1] + "</g>" : p[1]; }
   function brouillardIle(I, lieux) {
     if (!M.modeIle(P)) return "";
     // Victor (2026-11-13) : brouillard plus sombre, et en dégradé : autour de ce qu'on voit, une première couronne de
