@@ -2329,7 +2329,7 @@ function demarrerJeu() {
     var W = 360, H = 200, s = '<rect width="' + W + '" height="' + H + '" fill="#A3D98A"/>', plan = [];
     for (var p = 0; p < 7; p++) { var gp = graine("age" + rang + "p" + p); s += '<path d="' + tache(gp % W, (gp >>> 9) % H, 40 + (gp >>> 4) % 40, 20 + (gp >>> 6) % 20, "ag" + rang + p) + '" fill="' + (p % 2 ? "#B4E39A" : "#96CF80") + '" opacity=".6"/>'; }
     function gens(n, pres) { for (var i = 0; i < n; i++) { var g = graine("ageh" + rang + i), a = Math.PI * 2 * i / n + 0.4, x = pres ? 180 + Math.cos(a) * 78 : 30 + (g % 300), y = pres ? 128 + Math.sin(a) * 30 : 70 + (g >>> 9) % 110, peau = PEAUX[(g >>> 3) % PEAUX.length], bete = rang < 2 ? ["#8A5A2B", "#A67444", "#6E4A26"][g % 3] : null;
-      plan.push([y, '<g' + (pres && rang === 1 ? ' class="ile-danse" style="animation-delay:-' + ((g % 9) / 10).toFixed(1) + 's"' : "") + ' shape-rendering="crispEdges">' + (bete ? pixels(HABITANT2, { h: CHEVEUX[g % 3], s: peau, v: bete, w: ombre(bete), k: "#2B2B33", j: peau }, null, Math.round(x - 10), Math.round(y - 32), 2) : '<g transform="translate(' + Math.round(x - 6) + " " + Math.round(y - 20) + ') scale(2.4)">' + svgHabitant(0, 0, g) + "</g>") + "</g>"]); } }
+      plan.push([y, '<g' + (pres && rang === 1 ? ' class="ile-danse" style="animation-delay:-' + ((g % 9) / 10).toFixed(1) + 's"' : "") + ' shape-rendering="crispEdges">' + (bete ? pixels(femme(g) ? HABITANTE2 : HABITANT2, { h: CHEVEUX[g % 3], s: peau, v: bete, w: ombre(bete), k: "#2B2B33", j: peau }, null, Math.round(x - 10), Math.round(y - 32), 2) : '<g transform="translate(' + Math.round(x - 6) + " " + Math.round(y - 20) + ') scale(2.4)">' + svgHabitant(0, 0, g) + "</g>") + "</g>"]); } }
     if (rang === 0) gens(5, false);
     else {
       s += '<ellipse cx="180" cy="128" rx="62" ry="24" fill="#D9C590" opacity=".75"/>';
@@ -5077,6 +5077,21 @@ function demarrerJeu() {
   // Victor (2026-11-11, « Tout d'un coup ») : le bonhomme est redessiné deux fois plus fin (10 × 16 au lieu de 5 × 8) pour
   // porter ce que les savoirs lui apportent. Chaque évolution tient à une compétence maîtrisée et pas en panne.
   var HABITANT2 = ["...hhhh...", "..hhhhhh..", "..hssssh..", "..skssks..", "..ssssss..", "...ssss...", "..vvvvvv..", ".vvvvvvvv.", ".vvvvvvvv.", "svvvvvvvvs", "svvwvvvvvs", "..vvwvvv..", "..vvwvvv..", "..vvvvvv..", "..jj..jj..", "..jj..jj.."];
+  // Victor (2026-11-14) : des femmes et des filles, une sur deux. Cheveux longs sur la nuque, robe évasée.
+  var HABITANTE2 = ["...hhhh...", "..hhhhhh..", ".hhsssshh.", ".hskssksh.", ".hssssssh.", ".hhsssshh.", ".hvvvvvvh.", ".vvvvvvvv.", ".vvvvvvvv.", "svvvvvvvvs", "svvwvvvvvs", "..vvwvvv..", ".vvvwvvvv.", ".vvvvvvvv.", "..jj..jj..", "..jj..jj.."];
+  var HABITANTE_PROFIL = ["...hhhh...", "..hhhhhh..", ".hhhhsss..", ".hhhssks..", ".hhhssss..", ".hh.ssss..", ".hhvvvv...", ".hvvvvvv..", "..vvvvvv..", "..vvvsvv..", "..vwvsvv..", ".vvvwvvv..", ".vvvwvvvv.", "vvvvvvvvv."];
+  function femme(g) { return ((Math.imul(g ^ (g >>> 5), 40503) >>> 13) & 1) === 1; }
+  // Victor (2026-11-14) : on voit autant de personnages qu'il y a d'habitants. Un pour un jusqu'à 20 ; au-delà, un de
+  // plus par dizaine, et jamais plus de 45 à l'écran (le téléphone ne suivrait pas).
+  var VISIBLES = { exact: 20, par: 10, max: 45 };
+  function nbVisibles(n) { n = Math.max(0, Math.round(n || 0)); return n <= VISIBLES.exact ? n : Math.min(VISIBLES.max, VISIBLES.exact + Math.round((n - VISIBLES.exact) / VISIBLES.par)); }
+  // Répartit n personnages entre des parts (plus forts restes), sans en perdre ni en inventer.
+  function repartir(n, parts) {
+    var tot = parts.reduce(function (a, b) { return a + b; }, 0), out = parts.map(function () { return 0; }); if (!tot || n <= 0) return out;
+    var r = parts.map(function (v, i) { var x = n * v / tot; out[i] = Math.floor(x); return [x - out[i], i]; }).sort(function (a, b) { return b[0] - a[0] || a[1] - b[1]; });
+    var reste = n - out.reduce(function (a, b) { return a + b; }, 0); for (var i = 0; i < reste; i++) out[r[i % r.length][1]]++;
+    return out;
+  }
   var LIEU_HAB = null;
   function savoirsHabitants() {
     var t = maintenant(), h = new Date(t).getHours();
@@ -5094,7 +5109,8 @@ function demarrerJeu() {
     var age = ageHabitant(g), toge = togeHabitant(g), pal = { h: age === "ancien" ? "#E8E8EE" : CHEVEUX[g % CHEVEUX.length], s: PEAUX[(Math.imul(g ^ (g >>> 7), 2654435761) >>> 16) % PEAUX.length], v: toge, w: ombre(toge), k: "#2B2B33", j: "#2B2B33" };
     e = e || 2;
     var u = e / 2;
-    if (nu) return pixels(HABITANT2, pal, null, x, y, u);
+    var F = femme(g);
+    if (nu) return pixels(F ? HABITANTE2 : HABITANT2, pal, null, x, y, u);
     var S = savoirsHabitants();
     if (age === "enfant") { x += e; y += e * 8 * 0.35; u *= 0.65; }
     // Le pendule de Huygens : la nuit, deux habitants sur trois sont rentrés à l'heure.
@@ -5104,7 +5120,7 @@ function demarrerJeu() {
     function alt(a, b) { return '<g class="ile-j1">' + a + '</g><g class="ile-j2">' + b + "</g>"; }
     function px(cx, cy, w, h, c) { return '<rect x="' + (x + cx * u) + '" y="' + (y + cy * u) + '" width="' + w * u + '" height="' + h * u + '" fill="' + c + '"/>'; }
     var pas = ((g >>> 4) % 5) / 10;
-    var out = pixels(HABITANT_PROFIL, pal, null, x, y, u) +
+    var out = pixels(F ? HABITANTE_PROFIL : HABITANT_PROFIL, pal, null, x, y, u) +
       '<g class="ile-j1" style="animation-delay:-' + pas + 's">' + px(3, 14, 2, 2, pal.j) + px(6, 14, 2, 1, pal.j) + px(7, 15, 2, 1, pal.j) + "</g>" +
       '<g class="ile-j2" style="animation-delay:-' + pas + 's">' + px(4, 14, 3, 2, pal.j) + px(7, 15, 1, 1, pal.j) + "</g>";
     if (age === "ancien") {
@@ -5461,6 +5477,8 @@ function demarrerJeu() {
     routes.forEach(function (d) { sol += '<path d="' + d + '" stroke="#D9C590" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/><path d="' + d + '" stroke="#F1E3B8" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'; });
     // Les hameaux : une clairière, des maisons qui se multiplient avec les installations en marche, et les plus belles
     // installations du quartier. Le plan garde tout ce qui est debout, pour le dessiner du fond vers l'avant.
+    // Sur la carte aussi, autant de personnages que d'habitants, répartis entre les quartiers.
+    var vusCarte = repartir(nbVisibles(I.habitants), I.quartiers.map(function (q) { return (q.posees || q.fonde) && !q.camp && !q.aOuvrir ? q.habitants || 0 : 0; }));
     I.quartiers.forEach(function (q, i) {
       if (!q.fonde) return;
       var x = lieux[i][0], y = lieux[i][1], gr = graine(q.id), g = "", p0 = plan.length;
@@ -5488,12 +5506,17 @@ function demarrerJeu() {
         var montre = q.installations.filter(function (z) { return z.etat !== "friche"; }).sort(function (u, v) { return v.rang - u.rang; }).slice(0, 3);
         [[0, -2, 24], [-11, 9, 20], [11, 10, 20]].slice(0, montre.length).forEach(function (pl, j) {
           plan.push([y + pl[1] + 0.5, '<g shape-rendering="crispEdges">' + svgInstallation(montre[j], Math.round(x + pl[0]), Math.round(y + pl[1]), pl[2]).replace(' class="ile-inst" data-comp="' + esc(montre[j].comp) + '" role="button" tabindex="0"', "").replace(/<g class="ile-voyant">.*?<\/g>/, "") + "</g>"]); });
-        var hab = Math.min(6, Math.round(q.habitants / 55));
-        for (var h = 0; h < hab; h++) { var hx = x - 24 + ((gr >>> (h * 4)) % 48), hy = y + 14 + ((gr >>> (h * 3 + 2)) % 8); plan.push([hy + 9, marcheur(gr + h * 31, 9, 3) + svgHabitant(Math.round(hx), Math.round(hy), gr + h * 31, 1.1) + "</g></g>"]); }
+        var hab = vusCarte[i];
+        for (var h = 0; h < hab; h++) { var gh2 = graine(q.id + "hab" + h), hx = x - 26 + (gh2 % 52), hy = y + 12 + ((gh2 >>> 8) % 12); plan.push([hy + 9, marcheur(gh2, 9, 3) + svgHabitant(Math.round(hx), Math.round(hy), gh2, 1.1) + "</g></g>"]); }
       } else if (q.ouvert || q.camp) {
         // Rien encore : un campement, sa tente et son feu, en attendant le premier savoir.
         plan.push([y + 6, '<ellipse cx="' + fx(x) + '" cy="' + fx(y + 6) + '" rx="9" ry="2.6" fill="rgba(30,45,30,.2)"/><path d="M' + fx(x - 8) + " " + fx(y + 6) + "L" + fx(x) + " " + fx(y - 7) + "L" + fx(x + 8) + " " + fx(y + 6) + 'Z" fill="#F3E3C0"/><path d="M' + fx(x - 2.4) + " " + fx(y + 6) + "L" + fx(x) + " " + fx(y - 2) + "L" + fx(x + 2.4) + " " + fx(y + 6) + 'Z" fill="#8A6240"/>' +
           '<circle cx="' + fx(x + 13) + '" cy="' + fx(y + 6) + '" r="2" fill="#F2793A"/><circle cx="' + fx(x + 13) + '" cy="' + fx(y + 5.4) + '" r="1" fill="#FFD27A"/>']);
+        // Victor (2026-11-14) : les survivants se voient aussi sur la carte, autant qu'ils sont, vêtus de peaux.
+        if (q.camp) for (var hc = 0, nc = Math.min(VISIBLES.exact, nbVisibles(q.habitants)); hc < nc; hc++) {
+          var gc = graine(q.id + "danse" + hc), ac = Math.PI * 2 * hc / nc + 0.3, rc = nc > 10 && hc % 2 ? 30 : 20, xc = x + Math.cos(ac) * rc, yc = y + 8 + Math.sin(ac) * rc * 0.45, bc = ["#8A5A2B", "#A67444", "#6E4A26", "#9C7A52"][gc % 4], pc = PEAUX[(gc >>> 3) % PEAUX.length];
+          plan.push([yc + 9, marcheur(gc, 9, 3) + pixels(femme(gc) ? HABITANTE2 : HABITANT2, { h: CHEVEUX[gc % 3], s: pc, v: bc, w: ombre(bc), k: "#2B2B33", j: pc }, null, Math.round(xc - 3), Math.round(yc), 0.55) + "</g></g>"]);
+        }
       } else {
         for (var u = 0; u < 8; u++) { var gu = graine(q.id + "b" + u); brume += '<ellipse cx="' + fx(x - 30 + gu % 60) + '" cy="' + fx(y - 16 + (gu >>> 7) % 34) + '" rx="' + (15 + (gu >>> 8) % 9) + '" ry="' + (8 + (gu >>> 12) % 5) + '" fill="#F3F7F7" opacity=".85"/>'; }
       }
@@ -5591,7 +5614,8 @@ function demarrerJeu() {
     function danseur(i, n) {
       var a = Math.PI * 2 * i / n + 0.3, x = 180 + Math.cos(a) * 92, y = 150 + Math.sin(a) * 40, g = graine(q.id + "danse" + i), peau = PEAUX[(g >>> 3) % PEAUX.length], bete = PEAU_BETE[g % PEAU_BETE.length];
       // Victor (2026-11-13) : au campement aussi, les habitants vont et viennent (la danse sur place était figée sur Android).
-      return [y, marcheur(g, 34, 9) + pixels(HABITANT2, { h: CHEVEUX[g % 3], s: peau, v: bete, w: ombre(bete), k: "#2B2B33", j: peau }, null, Math.round(x - 10), Math.round(y - 32), 2) + "</g></g>"];
+      if (n > 12) { var ext = i % 2; x = 180 + Math.cos(a) * (ext ? 128 : 84); y = 150 + Math.sin(a) * (ext ? 58 : 34); }
+      return [y, marcheur(g, 34, 9) + pixels(femme(g) ? HABITANTE2 : HABITANT2, { h: CHEVEUX[g % 3], s: peau, v: bete, w: ombre(bete), k: "#2B2B33", j: peau }, null, Math.round(x - 10), Math.round(y - 32), 2) + "</g></g>"];
     }
     // Une installation sans dessin propre : le poteau de la réserve, le rocher du guetteur, sinon un cairn.
     function secours(inst, x, y) {
@@ -5602,7 +5626,7 @@ function demarrerJeu() {
       else d += '<rect x="' + (x - 14) + '" y="' + (y - 10) + '" width="28" height="10" fill="#8E9299"/><rect x="' + (x - 9) + '" y="' + (y - 20) + '" width="18" height="10" fill="#A3A7AE"/><rect x="' + (x - 5) + '" y="' + (y - 28) + '" width="10" height="8" fill="#B9BDC4"/>';
       return '<g class="ile-inst" data-comp="' + esc(inst.comp) + '" role="button" tabindex="0" aria-label="' + esc(tx(inst.nom)) + '"><rect x="' + (x - 28) + '" y="' + (y - 56) + '" width="56" height="62" fill="transparent"/>' + d + "</g>";
     }
-    var nd = Math.min(10, 5 + q.posees), plan = []; for (var i = 0; i < nd; i++) plan.push(danseur(i, nd));
+    var nd = nbVisibles(q.habitants), plan = []; for (var i = 0; i < nd; i++) plan.push(danseur(i, nd));
     // Ce que le campement a bâti se voit derrière le feu : abris, hutte, poste de guet.
     var faits = [], pq = {};
     (q.fondus || [q.id]).forEach(function (id) { var o = (AMEN_ILE && AMEN_ILE.parQuartier[id]) || {}; Object.keys(o).forEach(function (a) { pq[a] = (pq[a] || 0) + o[a]; }); });
@@ -5650,6 +5674,12 @@ function demarrerJeu() {
     if (q.decor === "champs") for (var f = 0; f < rangees.length; f++) { var fx0 = f % 2 ? 6 : 318, fy = haut + f * PAS + 24;
       sol += '<rect x="' + fx0 + '" y="' + fy + '" width="36" height="30" rx="3" fill="#E8CF7A"/>' + [0, 1, 2, 3, 4].map(function (l) { return '<rect x="' + (fx0 + 2) + '" y="' + (fy + 3 + l * 5.4) + '" width="32" height="2.4" rx="1" fill="#7DB85A"/>'; }).join(""); }
     var postes = [], gens = [];
+    // Autant de personnages que d'habitants (nbVisibles) : les ouvriers des aménagements d'abord, le reste réparti
+    // entre les installations selon ce que chacune loge.
+    var resteOuv = nbVisibles(q.habitants), ouvriers = {};
+    aq.forEach(function (a) { var po = AMEN_ILE.postes[a.id], k = po && po.pourvus ? Math.min(3, Math.ceil(po.pourvus / Math.max(1, a.ouvriers)), resteOuv) : 0; ouvriers[a.id] = k; resteOuv -= k; });
+    var logees = [].concat.apply([], rangees).filter(function (x) { return x.etat !== "friche" && x.habitants > 0; }), partsHab = repartir(resteOuv, logees.map(function (x) { return x.habitants; })), parInst = {};
+    logees.forEach(function (x, i) { parInst[x.comp] = partsHab[i]; });
     rangees.forEach(function (ligne, i) {
       var n = ligne.length;
       ligne.forEach(function (inst, j) {
@@ -5660,9 +5690,10 @@ function demarrerJeu() {
         plan.push([y, '<g shape-rendering="crispEdges">' + svgInstallation(inst, cx, y, 50) + "</g>"]);
         // Autour d'une installation qui tourne : une maison, et ses habitants.
         if (inst.habitants > 0 && g % 2) plan.push([y - 20, svgMaison(cx + 33, y - 20, 15, q.couleur, g)]);
-        var k = Math.min(3, Math.round(inst.habitants / 14));
+        var k = parInst[inst.comp] || 0;
         var po = postes.length; postes.push({ x: cx, y: y, rang: i });
-        for (var h = 0; h < k; h++) gens.push({ g: g + h * 97, x: Math.round(cx - 30 + ((g >>> (h * 5)) % 18) + h * 20), y: y - 3 + (g >>> (h * 2 + 9)) % 7, z: y + 9 + h, rang: i, poste: po });
+        for (var h = 0; h < k; h++) { var gh = h < 3 ? g + h * 97 : graine(inst.comp + "h" + h), col = h % 4, lig = Math.floor(h / 4);
+          gens.push({ g: gh, x: Math.max(6, Math.min(W - 26, Math.round(cx - 34 + ((gh >>> 5) % 14) + col * 19 + (lig % 2) * 9))), y: y - 3 + (gh >>> 9) % 7 + lig * 7, z: y + 9 + h, rang: i, poste: po }); }
       });
     });
     // Victor (2026-11-11) : la majorité des habitants se déplacent pour faire quelque chose d'utile. Au port, on pêche ;
@@ -5726,7 +5757,7 @@ function demarrerJeu() {
       var x = Math.round(W * (i + 1) / (aq.length + 1)), n = AMEN_ILE.parQuartier[q.id][a.id], po = AMEN_ILE.postes[a.id];
       plan.push([ya, '<g class="ile-inst" data-amen="' + esc(a.id) + '" role="button" tabindex="0" aria-label="' + esc(tx(a.nom)) + '"><rect x="' + (x - 26) + '" y="' + (ya - 48) + '" width="52" height="56" fill="transparent"/>' + svgAmenagement(a, x, ya, 44) + "</g>"]);
       etiq += '<text x="' + x + '" y="' + (ya + 13) + '" text-anchor="middle" font-size="10.5" font-weight="800" fill="#3A2E22" style="paint-order:stroke" stroke="rgba(255,253,244,.94)" stroke-width="3" stroke-linejoin="round" pointer-events="none">' + esc(tx(a.nom)) + (n > 1 ? " ×" + n : "") + "</text>";
-      var res = Object.keys(a.produit || {})[0], ch = res ? ressourceDe(res).couleur : null, k = po && po.pourvus ? Math.min(3, Math.ceil(po.pourvus / Math.max(1, a.ouvriers))) : 0;
+      var res = Object.keys(a.produit || {})[0], ch = res ? ressourceDe(res).couleur : null, k = ouvriers[a.id] || 0;
       for (var h = 0; h < k; h++) { var gw = graine(a.id + h + q.id), px0 = x + (h % 2 ? 22 : -26) + (gw % 7), py0 = ya + 22 + (gw >>> 5) % 8;
         var job = { genre: "porte", x: 180 + (gw >>> 7) % 40 - 20, y: H - bas - 4, charge: ch || "#B5814A" }, dx = job.x - px0, dy = job.y - py0;
         job.d = Math.max(10, Math.min(45, Math.round(Math.hypot(dx, dy) / 3.6))); job.delai = ((gw >>> 9) % (job.d * 10)) / 10; job.sens = dx >= 0 ? 1 : -1;
