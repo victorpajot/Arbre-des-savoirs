@@ -2354,6 +2354,8 @@ function demarrerJeu() {
   }
   function allerQuete() { if (queteActive()) ouvrirExplorer(); }
   var DESSINS_QUETE = {
+    polypore: '<path d="M-3 -10 h6 v20 h-6 z" fill="#E9E4D8"/><path d="M-3 -6 h2 M1 0 h2 M-3 5 h2" stroke="#3A3A3A" stroke-width="1.2"/><path d="M3 -3 a8 6 0 0 1 9 5 l-9 0 z" fill="#B99B78"/><path d="M3 2 l9 0 l-1 2.4 l-8 0 z" fill="#F3EBDD"/>',
+    peuplier: '<path d="M-9 8 L-7 -8 L1 -10 L3 6 Z" fill="#9A8F7A"/><path d="M-7 -8 L1 -10 L1.4 -6 L-6.6 -4 Z" fill="#B9AE98"/><path d="M-5 0 L0 -1 M-5.4 4 L1 3" stroke="#6E6553" stroke-width="1.1" stroke-linecap="round"/><path d="M6 6 C4 0 8 -6 10 -8 C12 -3 11 3 6 6 Z" fill="#6FA04F"/><path d="M6 6 L9.4 -5" stroke="#3F6E2C" stroke-width=".8"/>',
     pierre_fine: '<path d="M-10 6 L-8 -4 L2 -8 L10 -2 L8 6 Z" fill="#6E7780"/><path d="M-8 -4 L2 -8 L10 -2 L0 0 Z" fill="#8E98A2"/><path d="M-7 2 L7 0 M-6 4.5 L8 3" stroke="#535B63" stroke-width="1" stroke-linecap="round"/>',
     perches: '<path d="M-10 9 L6 -10 M-5 10 L10 -8 M-11 3 L1 -10" stroke="#7A5230" stroke-width="2.4" stroke-linecap="round"/><path d="M-10 9 L6 -10" stroke="#A37446" stroke-width="1" stroke-linecap="round"/>',
     ecorce: '<path d="M-9 -6 L6 -9 L10 3 L-5 8 Z" fill="#8A6240"/><path d="M-9 -6 L6 -9 L7 -6 L-8 -3 Z" fill="#A9794C"/><path d="M-5 -1 L5 -4 M-4 3 L7 0" stroke="#5E3F20" stroke-width="1.2" stroke-linecap="round"/>',
@@ -2794,6 +2796,7 @@ function demarrerJeu() {
     coin2: { fixe: "M60 30 H180 L196 140 H44 Z", points: [[92, 44], [150, 44], [142, 84], [122, 132], [112, 132], [98, 84], [106, 60]] },
     muret: { fixe: "M104 96 a16 10 0 1 0 32 0 a16 10 0 1 0 -32 0 M112 96 L120 80 L128 96", points: [[52, 120], [44, 88], [58, 58], [88, 40], [124, 36], [158, 44]] },
     charpente: { fixe: "M20 150 H220 M104 138 a16 8 0 1 0 32 0 a16 8 0 1 0 -32 0", points: [[40, 150], [98, 44], [80, 150], [120, 28], [160, 150], [142, 44], [200, 150]] },
+    enfiler: { fixe: "M40 60 a14 12 0 1 0 28 0 a14 12 0 1 0 -28 0 M92 104 a14 12 0 1 0 28 0 a14 12 0 1 0 -28 0 M146 60 a14 12 0 1 0 28 0 a14 12 0 1 0 -28 0 M190 112 a12 10 0 1 0 24 0 a12 10 0 1 0 -24 0", points: [[20, 28], [54, 60], [106, 104], [160, 60], [202, 112], [226, 146]] },
     plat: { fixe: "M14 60 H120 C150 60 150 112 120 112 H14", points: [[224, 44], [164, 44], [112, 60], [90, 86], [112, 112], [164, 128], [224, 128]] }
   };
   // La paroi qu'on fend : deux coins dans le joint, n coups portés sur total ; la faille s'élargit, puis le pilier se détache.
@@ -2902,7 +2905,7 @@ function demarrerJeu() {
       // Frotter : glisser d'avant en arrière ; c'est la distance parcourue qui polit (un toucher compte un peu aussi).
       frotter: function (e, i) {
         var total = e.course || 4000, fait = 0, fini = false, bas = false, px = 0, py = 0;
-        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : e.dessin === "broyer" ? svgBroyer() : e.dessin === "moisson" ? svgMoisson() : e.dessin === "levier" ? svgLevier() : e.dessin === "peaux" ? svgPeaux() : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
+        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : e.dessin === "broyer" ? svgBroyer() : e.dessin === "moisson" ? svgMoisson() : e.dessin === "levier" ? svgLevier() : e.dessin === "peaux" ? svgPeaux() : e.dessin === "ecorce" ? svgBroyer().replace(/#F1E3CF/g, "#9A8F7A").replace(/#C9B08E/g, "#6E6553").replace(/#F6EEDF/g, "#B7C08A").replace(/#D9C7A8/g, "#8E9A5E") : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
         var barre = plus('<div class="ep-compte"><span class="ep-barre"><i></i></span><b></b></div>'); plus('<p class="ep-msg" aria-live="polite"></p>');
         var rempl = barre.querySelector("i"), lib = barre.querySelector("b"), lame = zone.querySelector(".ep-lame"), poli = zone.querySelector(".ep-poli");
         function peindre() { var p = Math.min(1, fait / total); rempl.style.width = (p * 100).toFixed(0) + "%"; lib.textContent = e.compte ? tx(e.compte).replace("{n}", Math.round(p * 100)) : __("Poli : {n} %", { n: Math.round(p * 100) }); poli.style.opacity = p.toFixed(2); var ble = zone.querySelector(".ep-ble"); if (ble) ble.style.opacity = (1 - p).toFixed(2); }
@@ -3086,7 +3089,7 @@ function demarrerJeu() {
     }
     // L'entrée : les deux pierres, et Alyca qui annonce le programme.
     marquer(-1);
-    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : E.dessin === "carriere" ? svgFendre(0, 8) : E.dessin === "abri" ? svgPeaux().replace('class="ep-lame"', 'opacity="0"') : E.dessin === "ferme" ? svgMoisson().replace('class="ep-poli"', 'opacity="0"') : svgPierres(E.dessin)) + "</div>");
+    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : E.dessin === "carriere" ? svgFendre(0, 8) : E.dessin === "remede" ? '<svg class="ep-pierres" viewBox="-60 -42 120 84" aria-hidden="true"><g transform="translate(-24,0) scale(2.6)">' + DESSINS_QUETE.polypore + '</g><g transform="translate(28,4) scale(2.6)">' + DESSINS_QUETE.peuplier + "</g></svg>" : E.dessin === "abri" ? svgPeaux().replace('class="ep-lame"', 'opacity="0"') : E.dessin === "ferme" ? svgMoisson().replace('class="ep-poli"', 'opacity="0"') : svgPierres(E.dessin)) + "</div>");
     if (E.accroche) dire(tx(E.accroche), "intro");
     var srcE = sourcesEpreuve(E); if (srcE) plus(srcE);
     plus('<button type="button" class="btn large">' + __("Commencer") + "</button>").onclick = function () { etape(0); };

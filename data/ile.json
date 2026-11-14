@@ -5746,6 +5746,172 @@
    }
   },
   {
+   "id": "remede",
+   "nom": {
+    "fr": "Garnir la hutte"
+   },
+   "amenagement": "hutte",
+   "dessin": "remede",
+   "accroche": {
+    "fr": "Soigner, ce n'est pas réciter une formule au-dessus du malade. C'est savoir quoi cueillir, et comment le garder. Deux gestes."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi soigner"
+    },
+    "texte": {
+     "fr": "Pas de soigneur sans remèdes. Il te faut un champignon qui pousse sur les bouleaux, et de l'écorce de peuplier. Les lanières de cuir, tu les as déjà au camp : explore l'île."
+    },
+    "objets": [
+     {
+      "id": "polypore",
+      "nom": {
+       "fr": "Un champignon du bouleau"
+      },
+      "position": [
+       0.222,
+       0.393
+      ],
+      "trouve": {
+       "fr": "Un champignon en console, accroché au tronc d'un bouleau."
+      },
+      "zone": {
+       "fr": "dans le bois, à l'ouest"
+      }
+     },
+     {
+      "id": "peuplier",
+      "nom": {
+       "fr": "De l'écorce de peuplier"
+      },
+      "position": [
+       0.278,
+       0.685
+      ],
+      "trouve": {
+       "fr": "De l'écorce de peuplier, amère sous la dent."
+      },
+      "zone": {
+       "fr": "près du lac, au sud-ouest"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "remede-enfiler",
+     "type": "tracer",
+     "titre": {
+      "fr": "Les lanières"
+     },
+     "consigne": {
+      "fr": "Coupe le champignon en morceaux et enfile-les sur une lanière de cuir : pose le doigt sur le 1 et passe par chaque morceau, dans l'ordre."
+     },
+     "appel": {
+      "fr": "Suis les points du doigt, sans le lever"
+     },
+     "compte": {
+      "fr": "Lanières garnies : {n} sur {t}"
+     },
+     "gagne": {
+      "fr": "Les morceaux tiennent sur la lanière : ils sécheront sans se perdre."
+     },
+     "noeuds": [
+      {
+       "id": "enfiler",
+       "nom": {
+        "fr": "La lanière de cuir"
+       },
+       "pose": {
+        "fr": "Une lanière garnie."
+       }
+      }
+     ],
+     "savoir": [
+      {
+       "id": "remede-otzi",
+       "texte": {
+        "fr": "En 1991, des randonneurs ont trouvé Ötzi dans un glacier alpin, à la frontière entre l'Autriche et l'Italie. L'homme, vieux de 5 300 ans, gardait dans son sac des morceaux de champignon attachés à des lanières de cuir."
+       },
+       "source": "The Conversation, « Nature's first aid kit: a fungus growing on the side of birch trees »"
+      },
+      {
+       "id": "remede-polypore",
+       "texte": {
+        "fr": "C'était du polypore du bouleau. Les scientifiques qui l'ont identifié les premiers ont supposé qu'il pouvait s'en servir pour se soigner."
+       },
+       "source": "The Conversation, « Nature's first aid kit: a fungus growing on the side of birch trees »"
+      }
+     ]
+    },
+    {
+     "id": "remede-ecraser",
+     "type": "frotter",
+     "dessin": "ecorce",
+     "titre": {
+      "fr": "Le remède"
+     },
+     "consigne": {
+      "fr": "Écrase l'écorce de peuplier sous la pierre, d'avant en arrière, jusqu'à en faire une pâte."
+     },
+     "course": 3600,
+     "appel": {
+      "fr": "Glisse le doigt d'avant en arrière pour écraser"
+     },
+     "compte": {
+      "fr": "Écrasé : {n} %"
+     },
+     "gagne": {
+      "fr": "Une pâte amère. Celui qui a mal aux dents te dira merci, plus tard."
+     },
+     "savoir": [
+      {
+       "id": "remede-peuplier",
+       "texte": {
+        "fr": "Dans la plaque dentaire d'un Néandertalien qui souffrait d'un abcès dentaire, on a trouvé des traces de peuplier, une plante qui contient un antidouleur naturel, l'acide salicylique."
+       },
+       "source": "Cosmos Magazine, « Neanderthals used aspirin's ancestor » (étude parue dans Nature)"
+      },
+      {
+       "id": "remede-penicillium",
+       "texte": {
+        "fr": "Les chercheurs y ont aussi trouvé des traces de Penicillium, le champignon qui produit un antibiotique, la pénicilline. Ces restes ont entre 42 000 et 50 000 ans."
+       },
+       "source": "Cosmos Magazine, « Neanderthals used aspirin's ancestor » (étude parue dans Nature)"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "remede-usages",
+    "titre": {
+     "fr": "La réserve du soigneur"
+    },
+    "texte": {
+     "fr": "On prête au polypore du bouleau bien des usages : soulager la douleur, panser les plaies, désinfecter."
+    },
+    "source": "The Conversation, « Nature's first aid kit: a fungus growing on the side of birch trees »",
+    "appel": {
+     "fr": "Ranger les remèdes"
+    },
+    "bouton": {
+     "fr": "Les faire sécher près du feu"
+    },
+    "alyca": {
+     "fr": "Un champignon sur une ficelle et de l'écorce écrasée. Ne ris pas : pendant cinquante mille ans, c'était la meilleure pharmacie du monde."
+    },
+    "alyca_deja": {
+     "fr": "Encore des remèdes. Quelqu'un tousse, ou tu t'ennuies ?"
+    },
+    "fin": {
+     "fr": "Ouvrir la hutte du soigneur"
+    },
+    "ouvert": {
+     "fr": "La hutte du soigneur peut maintenant être bâtie."
+    }
+   }
+  },
+  {
    "id": "hache",
    "nom": {
     "fr": "Former une hache"
