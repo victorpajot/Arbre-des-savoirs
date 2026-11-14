@@ -3493,6 +3493,216 @@
      "fr": "Le four du potier peut maintenant être bâti."
     }
    }
+  },
+  {
+   "id": "carriere",
+   "nom": {
+    "fr": "Ouvrir la carrière"
+   },
+   "amenagement": "carriere",
+   "dessin": "carriere",
+   "accroche": {
+    "fr": "La roche ne se donne pas. Mais elle a des failles, et il suffit d'y glisser quelque chose de plus têtu qu'elle. Trois gestes."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi fendre la roche"
+    },
+    "texte": {
+     "fr": "Pas de carrière sans coins ni leviers. Il te faut une pierre à grain fin, pour y tailler les coins, et de longues perches pour faire levier. Le maillet de bois, tu l'as déjà au camp : explore l'île."
+    },
+    "objets": [
+     {
+      "id": "pierre_fine",
+      "nom": {
+       "fr": "Une pierre à grain fin"
+      },
+      "position": [
+       0.64,
+       0.59
+      ],
+      "trouve": {
+       "fr": "Une pierre à grain fin, qui se débite en lames : de quoi tailler des coins."
+      },
+      "zone": {
+       "fr": "au pied du volcan, au sud-est"
+      }
+     },
+     {
+      "id": "perches",
+      "nom": {
+       "fr": "De longues perches"
+      },
+      "position": [
+       0.264,
+       0.467
+      ],
+      "trouve": {
+       "fr": "De longues perches, droites et solides : les leviers."
+      },
+      "zone": {
+       "fr": "à la lisière du bois, à l'ouest"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "carriere-coins",
+     "type": "tracer",
+     "titre": {
+      "fr": "Les coins"
+     },
+     "consigne": {
+      "fr": "Dessine le coin dans la pierre : pose le doigt sur le 1 et suis les points dans l'ordre. Large en haut, pour recevoir les coups ; mince en bas, pour entrer dans la faille."
+     },
+     "appel": {
+      "fr": "Suis les points du doigt, sans le lever"
+     },
+     "compte": {
+      "fr": "Coins taillés : {n} sur {t}"
+     },
+     "gagne": {
+      "fr": "Deux coins de pierre, prêts à entrer dans la roche."
+     },
+     "noeuds": [
+      {
+       "id": "coin",
+       "nom": {
+        "fr": "Le premier coin"
+       },
+       "pose": {
+        "fr": "Un coin. Il en faut un autre."
+       }
+      },
+      {
+       "id": "coin2",
+       "nom": {
+        "fr": "Le second coin"
+       },
+       "pose": {
+        "fr": "Deux coins."
+       }
+      }
+     ],
+     "savoir": [
+      {
+       "id": "carriere-mudstone",
+       "texte": {
+        "fr": "À Carn Goedog, au pays de Galles, les fouilles ont livré neuf coins de pierre. La plupart sont en mudstone, une roche à grain fin, apportée d'ailleurs sur cet affleurement de dolérite."
+       },
+       "source": "M. Parker Pearson et al., « Reconstructing extraction techniques at Stonehenge's bluestone megalith quarries in the Preseli hills of west Wales » (dépôt de l'université de Bournemouth)"
+      }
+     ]
+    },
+    {
+     "id": "carriere-fendre",
+     "type": "frappes",
+     "dessin": "fendre",
+     "titre": {
+      "fr": "La faille"
+     },
+     "consigne": {
+      "fr": "Les coins sont dans le joint de la roche. Frappe-les au maillet, sans t'arrêter : à chaque coup, la faille s'ouvre un peu plus."
+     },
+     "coups": 8,
+     "delai": 950,
+     "appel": {
+      "fr": "Touche ici pour frapper les coins"
+     },
+     "compte": {
+      "fr": "Coups portés : {n} sur {t}"
+     },
+     "rate": {
+      "fr": "Trop lent : la roche se referme. Garde le rythme."
+     },
+     "gagne": {
+      "fr": "Le pilier s'est détaché de la paroi."
+     },
+     "savoir": [
+      {
+       "id": "carriere-joints",
+       "texte": {
+        "fr": "À Craig Rhos-y-felin, trois coins de pierre étaient encore en place dans les joints de la roche. Deux d'entre eux se trouvaient dans les joints d'un pilier voisin du creux laissé par un pilier enlevé."
+       },
+       "source": "M. Parker Pearson et al., « Reconstructing extraction techniques at Stonehenge's bluestone megalith quarries in the Preseli hills of west Wales » (dépôt de l'université de Bournemouth)"
+      },
+      {
+       "id": "carriere-maillet",
+       "texte": {
+        "fr": "Deux de ces coins portent des traces de percussion sur le dessus. Les éclats ont dû être détachés avec un marteau tendre, en bois ou en bois de cerf."
+       },
+       "source": "M. Parker Pearson et al., « Reconstructing extraction techniques at Stonehenge's bluestone megalith quarries in the Preseli hills of west Wales » (dépôt de l'université de Bournemouth)"
+      }
+     ]
+    },
+    {
+     "id": "carriere-levier",
+     "type": "frotter",
+     "dessin": "levier",
+     "titre": {
+      "fr": "Le levier"
+     },
+     "consigne": {
+      "fr": "Le pilier tient encore debout. Glisse la perche dessous et pèse dessus, encore et encore, jusqu'à le coucher."
+     },
+     "course": 3800,
+     "appel": {
+      "fr": "Glisse le doigt d'avant en arrière pour peser sur la perche"
+     },
+     "compte": {
+      "fr": "Couché : {n} %"
+     },
+     "gagne": {
+      "fr": "Le pilier est couché sur la plate-forme."
+     },
+     "savoir": [
+      {
+       "id": "carriere-perches",
+       "texte": {
+        "fr": "Les piliers détachés étaient déplacés avec de longues perches servant de leviers, pendant qu'une équipe laissait filer des cordes en les gardant tendues."
+       },
+       "source": "M. Parker Pearson et al., « Reconstructing extraction techniques at Stonehenge's bluestone megalith quarries in the Preseli hills of west Wales » (dépôt de l'université de Bournemouth)"
+      },
+      {
+       "id": "carriere-stonehenge",
+       "texte": {
+        "fr": "Ces carrières des collines de Preseli sont celles des « pierres bleues » de Stonehenge. La plate-forme de Carn Goedog date de 3350 à 3100 avant notre ère."
+       },
+       "source": "M. Parker Pearson et al., « Reconstructing extraction techniques at Stonehenge's bluestone megalith quarries in the Preseli hills of west Wales » (dépôt de l'université de Bournemouth)"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "carriere-plateforme",
+    "titre": {
+     "fr": "La plate-forme"
+    },
+    "scene": "carriere",
+    "texte": {
+     "fr": "À Carn Goedog, de grands piliers naturels se dressent côte à côte, presque à la verticale. À leur pied s'étendait une plate-forme grossière et plane."
+    },
+    "source": "M. Parker Pearson et al., « Reconstructing extraction techniques at Stonehenge's bluestone megalith quarries in the Preseli hills of west Wales » (dépôt de l'université de Bournemouth)",
+    "appel": {
+     "fr": "Dégager le bloc"
+    },
+    "bouton": {
+     "fr": "Tirer le bloc"
+    },
+    "alyca": {
+     "fr": "Un bloc de pierre. Ceux de Preseli ont traîné les leurs jusqu'à Stonehenge. Toi, tu vas le porter à cinquante pas : chacun son ambition."
+    },
+    "alyca_deja": {
+     "fr": "Encore un bloc. La montagne commence à se sentir observée."
+    },
+    "fin": {
+     "fr": "Ouvrir la carrière"
+    },
+    "ouvert": {
+     "fr": "La carrière peut maintenant être bâtie."
+    }
+   }
   }
  ]
 }

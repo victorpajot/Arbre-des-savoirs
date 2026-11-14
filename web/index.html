@@ -1310,6 +1310,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ep-ferrer.mord { border-style: solid; border-color: #E0A800; } .ep-ferrer.mord .ep-fil-peche { animation: ep-tend .18s linear infinite; } .ep-flotteur { transition: transform .12s; } .ep-ferrer.mord .ep-flotteur { transform: translate(-3px, 14px); }
 .ep-sources { font-size: 13px; line-height: 1.35; color: var(--muted); margin: 6px 0 8px; } .ile-passage .ep-sources { margin: 0 0 8px; }
 .ep-trace { touch-action: none; cursor: crosshair; } .ep-trace .ep-pt { fill: var(--surface); stroke: #8A9A3C; stroke-width: 2; } .ep-trace .ep-pt.fait { fill: #8A9A3C; } .ep-trace .ep-pt.ici { stroke: #E0A800; stroke-width: 3; animation: ep-noeud .8s ease-in-out infinite; } .ep-trace text { font: 800 11px var(--f-body); fill: var(--text); pointer-events: none; } .ep-trace .ep-pt.fait + text { fill: #fff; } @keyframes ep-tend { 50% { transform: translate(-2px, 3px); } }
+.ep-bloc .ep-traine { transform: translateX(-40px); transition: transform 1.4s ease-out; } .ep-bloc.pris .ep-traine { transform: translateX(20px); }
 .ep-champ .ep-pousse { opacity: 0; transition: opacity 1.2s; } .ep-champ.pris .ep-pousse { opacity: 1; }
 .ep-peche .ep-poisson { opacity: 0; } .ep-peche .ep-nappe { transform: translateY(46px); transition: transform 1s ease-out; } .ep-peche.pris .ep-nappe { transform: none; } .ep-peche.pris .ep-poisson { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .ep-noeud, .ep-ferrer.mord .ep-fil-peche { animation: none; } }
@@ -2353,6 +2354,8 @@ function demarrerJeu() {
   }
   function allerQuete() { if (queteActive()) ouvrirExplorer(); }
   var DESSINS_QUETE = {
+    pierre_fine: '<path d="M-10 6 L-8 -4 L2 -8 L10 -2 L8 6 Z" fill="#6E7780"/><path d="M-8 -4 L2 -8 L10 -2 L0 0 Z" fill="#8E98A2"/><path d="M-7 2 L7 0 M-6 4.5 L8 3" stroke="#535B63" stroke-width="1" stroke-linecap="round"/>',
+    perches: '<path d="M-10 9 L6 -10 M-5 10 L10 -8 M-11 3 L1 -10" stroke="#7A5230" stroke-width="2.4" stroke-linecap="round"/><path d="M-10 9 L6 -10" stroke="#A37446" stroke-width="1" stroke-linecap="round"/>',
     ecorce: '<path d="M-9 -6 L6 -9 L10 3 L-5 8 Z" fill="#8A6240"/><path d="M-9 -6 L6 -9 L7 -6 L-8 -3 Z" fill="#A9794C"/><path d="M-5 -1 L5 -4 M-4 3 L7 0" stroke="#5E3F20" stroke-width="1.2" stroke-linecap="round"/>',
     epis: '<path d="M-5 10 C-5 2 -4 -3 -3 -8 M2 10 C2 3 3 -2 5 -7" stroke="#B8962E" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M-3 -10 l-2.4 3 l2.4 1 l-2.4 3 l2.4 1 l2.4 -1 l-2.4 -3 l2.4 -1 Z M5 -9 l-2.4 3 l2.4 1 l-2.4 3 l2.4 1 l2.4 -1 l-2.4 -3 l2.4 -1 Z" fill="#E3B92E" stroke="#B8962E" stroke-width=".6"/>',
     aubepine: '<path d="M-10 8 C-4 6 4 0 8 -9" stroke="#5E3F20" stroke-width="3.4" fill="none" stroke-linecap="round"/><path d="M-3 4 l-3 -4 M3 -1 l4 2 M6 -5 l-4 -2" stroke="#5E3F20" stroke-width="1.4" stroke-linecap="round"/><circle cx="-6" cy="0" r="1.6" fill="#C2274B"/><circle cx="7" cy="1" r="1.6" fill="#C2274B"/><circle cx="2" cy="-7" r="1.6" fill="#C2274B"/>',
@@ -2786,8 +2789,25 @@ function demarrerJeu() {
   // Les nœuds qu'on dessine : le brin fixe (une boucle venue de la gauche) et les points par où passe l'autre brin.
   var NOEUDS = {
     ecoute: { fixe: "M14 60 H120 C150 60 150 112 120 112 H14", points: [[224, 86], [160, 86], [108, 86], [84, 40], [48, 86], [84, 134], [128, 104], [176, 52]] },
+    coin: { fixe: "M60 30 H180 L196 140 H44 Z", points: [[84, 46], [156, 46], [150, 80], [124, 130], [116, 130], [90, 80], [100, 62]] },
+    coin2: { fixe: "M60 30 H180 L196 140 H44 Z", points: [[92, 44], [150, 44], [142, 84], [122, 132], [112, 132], [98, 84], [106, 60]] },
     plat: { fixe: "M14 60 H120 C150 60 150 112 120 112 H14", points: [[224, 44], [164, 44], [112, 60], [90, 86], [112, 112], [164, 128], [224, 128]] }
   };
+  // La paroi qu'on fend : deux coins dans le joint, n coups portés sur total ; la faille s'élargit, puis le pilier se détache.
+  function svgFendre(n, total) {
+    var p = Math.min(1, n / (total || 1)), e = 2 + p * 16, bas = 48 + p * 18;
+    function coin(y) { return '<path d="M' + (118 - 7) + " " + (y - 12 + p * 8) + " H" + (118 + e + 7) + " L" + (118 + e / 2 + 1.5) + " " + (y + 20 + p * 8) + " H" + (118 + e / 2 - 1.5) + ' Z" fill="#6E7780" stroke="#3E454C" stroke-width="1.2"/>'; }
+    return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="156" rx="100" ry="8" fill="rgba(0,0,0,.14)"/><path d="M14 156 L22 20 L118 14 L118 156 Z" fill="#8D8377"/><path d="M22 20 L118 14 L118 30 L30 36 Z" fill="#A79D90"/>' +
+      '<g transform="translate(' + e.toFixed(1) + ',0) rotate(' + (p >= 1 ? 4 : p * 1.5).toFixed(1) + ' 170 156)"><path d="M118 156 L118 14 L176 18 L186 156 Z" fill="#9A9085"/><path d="M118 14 L176 18 L174 32 L118 30 Z" fill="#B9B0A3"/><path d="M134 60 L166 64 M130 104 L170 108" stroke="#7D7468" stroke-width="2" stroke-linecap="round"/></g>' +
+      '<path d="M118 14 V156" stroke="#2E2A25" stroke-width="' + (1.5 + p * 2).toFixed(1) + '"/>' + coin(bas) + coin(bas + 54) + "</svg>";
+  }
+  // Le pilier qu'on couche : la perche (.ep-lame) va et vient, le pilier debout (.ep-ble) laisse place au pilier couché (.ep-poli).
+  function svgLevier() {
+    return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="156" rx="104" ry="8" fill="rgba(0,0,0,.14)"/><path d="M10 156 L16 30 L70 26 L74 156 Z" fill="#8D8377"/><path d="M74 150 H232 L226 160 H74 Z" fill="#A79D90"/>' +
+      '<g class="ep-ble"><path d="M84 150 L92 22 L138 26 L142 150 Z" fill="#9A9085"/><path d="M92 22 L138 26 L137 40 L91 37 Z" fill="#B9B0A3"/></g>' +
+      '<g class="ep-poli"><path d="M92 150 L98 112 L226 108 L228 150 Z" fill="#9A9085"/><path d="M98 112 L226 108 L226 120 L97 124 Z" fill="#B9B0A3"/></g>' +
+      '<g class="ep-lame"><path d="M84 152 L196 84" stroke="#7A5230" stroke-width="6" stroke-linecap="round"/><path d="M84 152 L196 84" stroke="#A37446" stroke-width="2" stroke-linecap="round"/><ellipse cx="112" cy="150" rx="9" ry="6" fill="#6E7780"/></g></svg>';
+  }
   // Le filet qu'on noue : n nœuds serrés sur total ; fini, il reçoit ses galets.
   function svgFilet(n, total) {
     var haut = [30, 90, 150, 210], K = [[60, 78], [120, 78], [180, 78], [30, 122], [90, 122], [150, 122], [210, 122]], h = "";
@@ -2848,7 +2868,7 @@ function demarrerJeu() {
       // 1. Frapper vite : un coup ne compte que s'il suit le précédent d'assez près.
       frappes: function (e, i) {
         var n = 0, dernier = 0, fini = false, total = e.coups || 6, delai = e.delai || 900;
-        var filet = { filet: svgFilet, colombin: svgPot }[e.dessin];
+        var filet = { filet: svgFilet, colombin: svgPot, fendre: svgFendre }[e.dessin];
         var zone = plus('<button type="button" class="ep-zone">' + (filet ? '<span class="ep-dessin">' + filet(0, total) + "</span>" : svgPierres(e.dessin || E.dessin)) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Touche ici pour frapper")) + "</span></button>");
         var jauge = plus('<div class="ep-compte"><span class="ep-pips">' + new Array(total + 1).join("<i></i>") + "</span><b></b></div>"); plus('<p class="ep-msg" aria-live="polite"></p>');
         var pips = corps.querySelectorAll(".ep-pips i"), lib = corps.querySelector(".ep-compte b"), msg = corps.querySelector(".ep-msg"), ecl = zone.querySelector(".ep-eclats");
@@ -2871,7 +2891,7 @@ function demarrerJeu() {
       // Frotter : glisser d'avant en arrière ; c'est la distance parcourue qui polit (un toucher compte un peu aussi).
       frotter: function (e, i) {
         var total = e.course || 4000, fait = 0, fini = false, bas = false, px = 0, py = 0;
-        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : e.dessin === "broyer" ? svgBroyer() : e.dessin === "moisson" ? svgMoisson() : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
+        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : e.dessin === "broyer" ? svgBroyer() : e.dessin === "moisson" ? svgMoisson() : e.dessin === "levier" ? svgLevier() : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
         var barre = plus('<div class="ep-compte"><span class="ep-barre"><i></i></span><b></b></div>'); plus('<p class="ep-msg" aria-live="polite"></p>');
         var rempl = barre.querySelector("i"), lib = barre.querySelector("b"), lame = zone.querySelector(".ep-lame"), poli = zone.querySelector(".ep-poli");
         function peindre() { var p = Math.min(1, fait / total); rempl.style.width = (p * 100).toFixed(0) + "%"; lib.textContent = e.compte ? tx(e.compte).replace("{n}", Math.round(p * 100)) : __("Poli : {n} %", { n: Math.round(p * 100) }); poli.style.opacity = p.toFixed(2); var ble = zone.querySelector(".ep-ble"); if (ble) ble.style.opacity = (1 - p).toFixed(2); }
@@ -2913,7 +2933,7 @@ function demarrerJeu() {
         function chemin(P2) { return P2.map(function (q, n) { return (n ? "L" : "M") + q[0].toFixed(0) + " " + q[1].toFixed(0); }).join(" "); }
         function peindre() {
           pips.forEach(function (p, n) { p.className = n < k ? "ok" : ""; }); lib.textContent = e.compte ? tx(e.compte).replace("{n}", k).replace("{t}", L.length) : k + " / " + L.length;
-          if (k >= L.length) { des.innerHTML = svgFilet(7, 7); return; }
+          if (k >= L.length) { if (L[0].id === "ecoute") des.innerHTML = svgFilet(7, 7); return; }
           var N = NOEUDS[L[k].id], fait = N.points.slice(0, j); if (vif && j && j < N.points.length) fait = fait.concat([vif]);
           des.innerHTML = '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><path d="' + chemin(N.points) + '" fill="none" stroke="var(--line)" stroke-width="3" stroke-dasharray="5 6" stroke-linejoin="round"/>' +
             '<path d="' + N.fixe + '" fill="none" stroke="#6E7A2E" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>' +
@@ -3012,7 +3032,9 @@ function demarrerJeu() {
       vider(); marquer(N);
       var c = E.chute;
       plus('<div class="ep-titre"><span>★</span><h3>' + esc(tx(c.titre)) + "</h3></div>");
-      var sc = c.scene === "champ" ? plus('<div class="ep-foyer ep-champ"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 60 H240 V170 H0 Z" fill="#9A7848"/>' +
+      var sc = c.scene === "carriere" ? plus('<div class="ep-foyer ep-bloc"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 120 H240 V170 H0 Z" fill="#A79D90"/><path d="M0 120 H240" stroke="#7D7468" stroke-width="3"/><path d="M6 120 L12 20 L60 16 L66 120 Z" fill="#8D8377"/>' +
+        '<g class="ep-traine"><path d="M70 116 L76 80 L196 76 L198 116 Z" fill="#9A9085"/><path d="M76 80 L196 76 L196 88 L75 92 Z" fill="#B9B0A3"/><path d="M198 96 C214 92 224 96 236 90" stroke="#C9B37A" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="92" cy="122" r="6" fill="#7A5230"/><circle cx="136" cy="122" r="6" fill="#7A5230"/><circle cx="180" cy="122" r="6" fill="#7A5230"/></g></svg></div>') :
+        c.scene === "champ" ? plus('<div class="ep-foyer ep-champ"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 60 H240 V170 H0 Z" fill="#9A7848"/>' +
         [84, 112, 140].map(function (y) { var h = '<path d="M14 ' + y + " H226" + '" stroke="#7A5E36" stroke-width="6" stroke-linecap="round"/>'; for (var x = 30; x <= 210; x += 30) h += '<g class="ep-pousse"><path d="M' + x + " " + y + " V" + (y - 14) + '" stroke="#4E8A3C" stroke-width="2.4" stroke-linecap="round"/><path d="M' + x + " " + (y - 12) + " l-6 -5 M" + x + " " + (y - 9) + ' l6 -5" stroke="#6FB04F" stroke-width="2.4" stroke-linecap="round"/></g>'; return h; }).join("") + "</svg></div>") :
         c.scene === "peche" ? plus('<div class="ep-foyer ep-peche"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 70 H240 V170 H0 Z" fill="#5E9DB8"/><path d="M0 70 H240 V80 H0 Z" fill="#8CC3D8"/>' +
         '<g class="ep-nappe"><path d="M30 64 H210" stroke="#6E7A2E" stroke-width="5" stroke-linecap="round"/><path d="M30 64 L60 100 L90 64 L120 100 L150 64 L180 100 L210 64 M60 100 L90 136 L120 100 L150 136 L180 100 M30 64 V136 M210 64 V136 M30 136 L60 100 M210 136 L180 100" stroke="#8A9A3C" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
@@ -3053,7 +3075,7 @@ function demarrerJeu() {
     }
     // L'entrée : les deux pierres, et Alyca qui annonce le programme.
     marquer(-1);
-    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : E.dessin === "ferme" ? svgMoisson().replace('class="ep-poli"', 'opacity="0"') : svgPierres(E.dessin)) + "</div>");
+    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : E.dessin === "carriere" ? svgFendre(0, 8) : E.dessin === "ferme" ? svgMoisson().replace('class="ep-poli"', 'opacity="0"') : svgPierres(E.dessin)) + "</div>");
     if (E.accroche) dire(tx(E.accroche), "intro");
     var srcE = sourcesEpreuve(E); if (srcE) plus(srcE);
     plus('<button type="button" class="btn large">' + __("Commencer") + "</button>").onclick = function () { etape(0); };
