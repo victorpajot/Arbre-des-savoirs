@@ -1242,6 +1242,7 @@ svg.grille .interro { transition: opacity .3s; }
 .explorer { position: fixed; inset: 0; z-index: 57; background: #2F7FB0; display: flex; flex-direction: column; }
 .ex-vue { position: relative; flex: 1; min-height: 0; overflow: hidden; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; } .ex-vue > svg { display: block; width: 100%; height: 100%; } .ex-sc text { font-family: var(--f-body); }
 .explorer .ile-etiquette { transform-box: fill-box; transform-origin: 50% 50%; transform: scale(var(--ek, 1)); } .explorer.pres .ile-pastille, .explorer.dedans .ile-etiquette { display: none; } .explorer .ile-parcelle { pointer-events: none; outline: none; } .explorer .ile-hm { transition: opacity .4s, visibility 0s; } .explorer.dedans .ile-hm { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .4s, visibility 0s .4s; }
+.explorer .ex-vue .hc { display: none !important; }
 .explorer.bouge .ex-vue > svg > :not(.ex-acteurs), .explorer.bouge .ex-vue > svg > :not(.ex-acteurs) * { animation-play-state: paused !important; }
 .ex-haut { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; padding: calc(8px + env(safe-area-inset-top, 0px)) 8px 8px 16px; color: #fff; font-size: 17px; text-shadow: 0 1px 3px rgba(0,0,0,.5); pointer-events: none; }
 .ex-x, .ex-zoom button { pointer-events: auto; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--surface); color: var(--text); font-size: 26px; font-weight: 700; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.3); cursor: pointer; }
@@ -2489,13 +2490,29 @@ function demarrerJeu() {
       peindreBrouillard(toile.getContext("2d"), w, h, T);
     }
     var S = { x: ILE_W / 2, y: ILE_H / 2, k: 1 }, KMAX = 12, message = "";
+    // Victor (2026-11-14, soir) : « pourquoi tu ne redessines pas que ce qui est visible ? ». Le navigateur ne peint pas
+    // le hors-champ, mais il le garde vivant (styles, animations, masques). Chaque morceau de la carte (hameau, arbre,
+    // rocher, scène de quartier, petit détail) connaît donc son cadre ; hors de la vue (avec une marge pour ce qui
+    // marche), il est retiré de l'affichage, et il revient quand la vue l'atteint. Rien n'est réordonné.
+    var champ = [];
+    function recenser() {
+      [].forEach.call(svg.querySelectorAll(":scope > g.ile-hm, :scope > g.ile-pl, :scope > g.ile-grotte, :scope > g.ex-scene, .ex-details > g"), function (g) {
+        var b; try { b = g.getBBox(); } catch (x) { return; } if (!b.width && !b.height) return;
+        champ.push({ g: g, x0: b.x, y0: b.y, x1: b.x + b.width, y1: b.y + b.height, hors: false });
+      });
+    }
+    function elaguer(x0, y0, w, h) {
+      var m = 30;
+      for (var i = 0; i < champ.length; i++) { var c = champ[i], hors = c.x1 < x0 - m || c.x0 > x0 + w + m || c.y1 < y0 - m || c.y0 > y0 + h + m; if (hors !== c.hors) { c.hors = hors; c.g.classList.toggle("hc", hors); } }
+    }
     function base() { var r = vueE.getBoundingClientRect(), ar = r.width / Math.max(1, r.height), bw = Math.max(ILE_W, ILE_H * ar); return { w: bw, h: bw / ar, r: r }; }
     function borne(v, lo, hi) { return lo > hi ? (lo + hi) / 2 : Math.max(lo, Math.min(hi, v)); }
     function appliquer() {
       var b = base(), w = b.w / S.k, h = b.h / S.k;
       S.x = borne(S.x, w / 2, ILE_W - w / 2); S.y = borne(S.y, h / 2, ILE_H - h / 2);
       svg.setAttribute("viewBox", (S.x - w / 2).toFixed(2) + " " + (S.y - h / 2).toFixed(2) + " " + w.toFixed(2) + " " + h.toFixed(2));
-      z.classList.toggle("pres", S.k >= 2); z.classList.toggle("tout-pres", S.k >= 3.2); z.classList.toggle("dedans", S.k >= 4.5); var ek = Math.min(1, 1.3 / S.k).toFixed(3); if (ek !== S.ek) { S.ek = ek; svg.style.setProperty("--ek", ek); }
+      z.classList.toggle("pres", S.k >= 2); z.classList.toggle("tout-pres", S.k >= 3.2); z.classList.toggle("dedans", S.k >= 4.5); elaguer(S.x - w / 2, S.y - h / 2, w, h);
+      var ek = Math.min(1, 1.3 / S.k).toFixed(3); if (ek !== S.ek) { S.ek = ek; svg.style.setProperty("--ek", ek); }
       peindreFog();
     }
     function zoomer(f, cx, cy) {
@@ -2793,6 +2810,8 @@ function demarrerJeu() {
       var m = /translate\(([\d.]+),([\d.]+)\)/.exec(g.getAttribute("transform")); if (!m) return; var x = +m[1], y = +m[2];
       if (debout.some(function (b) { return x > b.x - 2 && x < b.x + b.width + 2 && y > b.y - 2 && y < b.y + b.height + 2; })) g.remove();
     });
+    // Les copies « devant » se préparent tant que tout est affiché, puis la carte apprend ses cadres.
+    preparerDevant(); recenser();
     objets(); panneau(); appliquer();
     if (explorerDirect && foyer) partir();
   }
