@@ -4295,6 +4295,549 @@
      "fr": "La mine et la fonderie peuvent maintenant être bâties."
     }
    }
+  },
+  {
+   "id": "mouture",
+   "nom": {
+    "fr": "Tailler la meule"
+   },
+   "amenagement": "moulin",
+   "dessin": "moulin",
+   "accroche": {
+    "fr": "Le grain entier ne nourrit que les oiseaux. Il faut l'écraser, et pour ça une pierre qui ne bouge pas et une autre qui ne s'arrête pas. Deux gestes."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi moudre"
+    },
+    "texte": {
+     "fr": "Pas de moulin sans meule. Il te faut une grosse pierre plate, qui ne bougera plus, et une petite pierre ronde qui tienne dans la main. Le grain, tes fermes te le donnent déjà : explore l'île."
+    },
+    "objets": [
+     {
+      "id": "dormante",
+      "nom": {
+       "fr": "Une grosse pierre plate"
+      },
+      "position": [
+       0.5,
+       0.8
+      ],
+      "trouve": {
+       "fr": "Une grosse pierre plate, trop lourde pour un seul : la meule qui ne bouge pas."
+      },
+      "zone": {
+       "fr": "au sud de l'île, entre le lac et le marais"
+      }
+     },
+     {
+      "id": "molette",
+      "nom": {
+       "fr": "Une pierre ronde"
+      },
+      "position": [
+       0.135,
+       0.557
+      ],
+      "trouve": {
+       "fr": "Une pierre ronde, qui tient à pleine main : la molette."
+      },
+      "zone": {
+       "fr": "sur la côte ouest"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "mouture-meule",
+     "type": "tracer",
+     "titre": {
+      "fr": "La meule"
+     },
+     "consigne": {
+      "fr": "Dessine le creux de la meule : pose le doigt sur le 1 et suis les points dans l'ordre, pour que le grain n'en tombe pas."
+     },
+     "appel": {
+      "fr": "Suis les points du doigt, sans le lever"
+     },
+     "compte": {
+      "fr": "Meules creusées : {n} sur {t}"
+     },
+     "gagne": {
+      "fr": "La meule est prête, la molette posée dessus."
+     },
+     "noeuds": [
+      {
+       "id": "meule",
+       "nom": {
+        "fr": "Le creux de la meule"
+       },
+       "pose": {
+        "fr": "Une meule dormante."
+       }
+      }
+     ],
+     "savoir": [
+      {
+       "id": "mouture-dormante",
+       "texte": {
+        "fr": "Le grain est écrasé sur une grosse meule fixe, la meule dormante, avec une petite pierre ronde tenue à pleine main : la molette."
+       },
+       "source": "Alimentarium (Vevey), « Meunerie »"
+      },
+      {
+       "id": "mouture-gres",
+       "texte": {
+        "fr": "Avec l'agriculture se développent des outils entièrement voués à écraser les graines, comme la meule et sa molette en grès."
+       },
+       "source": "Hominidés.com, « Outils et techniques du Néolithique »"
+      }
+     ]
+    },
+    {
+     "id": "mouture-moudre",
+     "type": "frotter",
+     "dessin": "moudre",
+     "titre": {
+      "fr": "La mouture"
+     },
+     "consigne": {
+      "fr": "Écrase le grain : pousse la molette d'avant en arrière, sans t'arrêter, jusqu'à ce qu'il n'en reste que de la farine."
+     },
+     "course": 4400,
+     "appel": {
+      "fr": "Glisse le doigt d'avant en arrière pour moudre"
+     },
+     "compte": {
+      "fr": "Moulu : {n} %"
+     },
+     "gagne": {
+      "fr": "De la farine. Tes bras s'en souviendront demain."
+     },
+     "savoir": [
+      {
+       "id": "mouture-repas",
+       "texte": {
+        "fr": "Dans les foyers du Néolithique, la farine est préparée pour chaque repas, à l'aide d'un mortier et d'un pilon."
+       },
+       "source": "Alimentarium (Vevey), « Meunerie »"
+      },
+      {
+       "id": "mouture-effort",
+       "texte": {
+        "fr": "La mouture exige beaucoup d'énergie et de temps."
+       },
+       "source": "Alimentarium (Vevey), « Meunerie »"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "mouture-eau",
+    "titre": {
+     "fr": "L'eau à la place des bras"
+    },
+    "scene": "roue",
+    "texte": {
+     "fr": "Les Romains ont été les premiers à utiliser la force hydraulique, avec les moulins à aubes."
+    },
+    "source": "Alimentarium (Vevey), « Meunerie »",
+    "appel": {
+     "fr": "Porter la meule à la rivière"
+    },
+    "bouton": {
+     "fr": "Ouvrir la vanne"
+    },
+    "alyca": {
+     "fr": "Tu viens de passer dix minutes à faire ce qu'une roue fera toute seule pendant deux mille ans. Retiens la leçon : l'effort est une étape, pas une vertu."
+    },
+    "alyca_deja": {
+     "fr": "Encore de la farine. La rivière, elle, ne se plaint pas."
+    },
+    "fin": {
+     "fr": "Ouvrir le moulin"
+    },
+    "ouvert": {
+     "fr": "Le moulin peut maintenant être bâti."
+    }
+   }
+  },
+  {
+   "id": "forgeage",
+   "nom": {
+    "fr": "Battre le fer"
+   },
+   "amenagement": "forge",
+   "dessin": "forge",
+   "accroche": {
+    "fr": "Le métal sort du four en lingot, pas en outil. Il faut le tenir, le chauffer et le battre tant qu'il est chaud. Trois gestes."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi forger"
+    },
+    "texte": {
+     "fr": "Pas de forge sans enclume, et pas d'enclume sans un billot pour la porter. Il te faut une souche large et dure. Le métal, ta fonderie te le donne déjà : explore l'île."
+    },
+    "objets": [
+     {
+      "id": "billot",
+      "nom": {
+       "fr": "Un billot de bois"
+      },
+      "position": [
+       0.222,
+       0.393
+      ],
+      "trouve": {
+       "fr": "Une souche large et dure : le billot qui portera l'enclume."
+      },
+      "zone": {
+       "fr": "dans le bois, à l'ouest"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "forgeage-tenaille",
+     "type": "tracer",
+     "titre": {
+      "fr": "La tenaille"
+     },
+     "consigne": {
+      "fr": "Dessine la tenaille : deux branches qui se croisent, pour tenir le fer rouge loin des doigts. Suis les points dans l'ordre."
+     },
+     "appel": {
+      "fr": "Suis les points du doigt, sans le lever"
+     },
+     "compte": {
+      "fr": "Branches forgées : {n} sur {t}"
+     },
+     "gagne": {
+      "fr": "La tenaille serre. L'enclume est sur son billot."
+     },
+     "noeuds": [
+      {
+       "id": "tenaille",
+       "nom": {
+        "fr": "La première branche"
+       },
+       "pose": {
+        "fr": "Une branche. Il en faut deux."
+       }
+      },
+      {
+       "id": "tenaille2",
+       "nom": {
+        "fr": "La seconde branche"
+       },
+       "pose": {
+        "fr": "Une tenaille."
+       }
+      }
+     ],
+     "savoir": [
+      {
+       "id": "forgeage-tenir",
+       "texte": {
+        "fr": "Le forgeron se sert d'une tenaille pour tenir la pièce qu'il travaille sans se brûler."
+       },
+       "source": "Vikidia, « Forgeron »"
+      },
+      {
+       "id": "forgeage-enclume",
+       "texte": {
+        "fr": "Il utilise une enclume, le plus souvent attachée à un billot de bois."
+       },
+       "source": "Vikidia, « Forgeron »"
+      }
+     ]
+    },
+    {
+     "id": "forgeage-chauffer",
+     "type": "jauge",
+     "dessin": "fer",
+     "titre": {
+      "fr": "La chauffe"
+     },
+     "consigne": {
+      "fr": "Le feu monte et retombe. Sors le fer quand il est au plus chaud : trop tiède, il casse sous le marteau."
+     },
+     "seuil": 0.74,
+     "periode": 1250,
+     "seuil_nom": {
+      "fr": "chauffé à blanc"
+     },
+     "objet": {
+      "fr": "le fer dans le feu"
+     },
+     "bouton": {
+      "fr": "Sortir le fer !"
+     },
+     "reussi": {
+      "fr": "Le fer est blanc de chaleur."
+     },
+     "rate": {
+      "fr": "Pas assez chaud : remets-le au feu."
+     },
+     "savoir": [
+      {
+       "id": "forgeage-feu",
+       "texte": {
+        "fr": "Le forgeron fabrique des outils et des objets en plongeant le fer dans un feu dont la température va de 550 à 1 400 °C."
+       },
+       "source": "Vikidia, « Forgeron »"
+      },
+      {
+       "id": "forgeage-blanc",
+       "texte": {
+        "fr": "Pour souder, il chauffe à blanc les différentes pièces de métal."
+       },
+       "source": "Vikidia, « Forgeron »"
+      }
+     ]
+    },
+    {
+     "id": "forgeage-marteler",
+     "type": "frappes",
+     "dessin": "forger",
+     "titre": {
+      "fr": "Le marteau"
+     },
+     "consigne": {
+      "fr": "Bats le fer tant qu'il est chaud : frappe fort et vite, sans t'arrêter, la barre devient lame."
+     },
+     "coups": 9,
+     "delai": 850,
+     "appel": {
+      "fr": "Touche ici pour frapper"
+     },
+     "compte": {
+      "fr": "Coups : {n} sur {t}"
+     },
+     "rate": {
+      "fr": "Trop lent : le fer a refroidi. Garde le rythme."
+     },
+     "gagne": {
+      "fr": "La barre est devenue une lame."
+     },
+     "savoir": [
+      {
+       "id": "forgeage-vite",
+       "texte": {
+        "fr": "Il réunit les différentes parties en les martelant fortement et rapidement. Pour marteler, il dispose de toute une gamme de marteaux."
+       },
+       "source": "Vikidia, « Forgeron »"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "forgeage-trempe",
+    "titre": {
+     "fr": "La trempe"
+    },
+    "texte": {
+     "fr": "Tremper le fer, c'est le refroidir rapidement en le plongeant dans de l'eau ou de l'huile. Le trempage est essentiel dans la fabrication des outils tranchants : haches, couteaux, faucilles, faux."
+    },
+    "source": "Vikidia, « Forgeron »",
+    "appel": {
+     "fr": "Porter la lame au baquet"
+    },
+    "bouton": {
+     "fr": "Raviver la forge"
+    },
+    "alyca": {
+     "fr": "Une lame. Tout le village va venir te demander un soc, une hache, un pic. Bienvenue dans le seul métier où l'on te réveille parce qu'une charrue a cassé."
+    },
+    "alyca_deja": {
+     "fr": "Encore une lame. Tes voisins dorment mal, à force."
+    },
+    "fin": {
+     "fr": "Ouvrir la forge"
+    },
+    "ouvert": {
+     "fr": "La forge peut maintenant être bâtie."
+    }
+   }
+  },
+  {
+   "id": "gnomon",
+   "nom": {
+    "fr": "Dresser le cadran"
+   },
+   "amenagement": "cadran",
+   "dessin": "cadran",
+   "accroche": {
+    "fr": "Le soleil donne l'heure et la saison à qui sait lire une ombre. Il suffit d'un bâton, à condition de le planter droit. Deux gestes."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi lire le ciel"
+    },
+    "texte": {
+     "fr": "Pas de cadran sans style. Il te faut un long bâton bien droit, et des cailloux clairs pour marquer l'ombre. Le sol plat, ta place du village te le donne déjà : explore l'île."
+    },
+    "objets": [
+     {
+      "id": "baton",
+      "nom": {
+       "fr": "Un bâton bien droit"
+      },
+      "position": [
+       0.6,
+       0.245
+      ],
+      "trouve": {
+       "fr": "Un bâton long et parfaitement droit : le style du cadran."
+      },
+      "zone": {
+       "fr": "vers le nord de l'île"
+      }
+     },
+     {
+      "id": "cailloux",
+      "nom": {
+       "fr": "Des cailloux clairs"
+      },
+      "position": [
+       0.82,
+       0.648
+      ],
+      "trouve": {
+       "fr": "Des cailloux clairs, faciles à voir sur le sol : les marques de l'ombre."
+      },
+      "zone": {
+       "fr": "sur la côte est"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "gnomon-planter",
+     "type": "tracer",
+     "titre": {
+      "fr": "Le style"
+     },
+     "consigne": {
+      "fr": "Plante le bâton bien droit : dessine-le du sol jusqu'en haut, sans dévier. Un bâton penché ment sur l'heure."
+     },
+     "appel": {
+      "fr": "Suis les points du doigt, sans le lever"
+     },
+     "compte": {
+      "fr": "Styles plantés : {n} sur {t}"
+     },
+     "gagne": {
+      "fr": "Le bâton est planté, droit comme un fil."
+     },
+     "noeuds": [
+      {
+       "id": "style",
+       "nom": {
+        "fr": "Le bâton vertical"
+       },
+       "pose": {
+        "fr": "Un gnomon."
+       }
+      }
+     ],
+     "savoir": [
+      {
+       "id": "gnomon-def",
+       "texte": {
+        "fr": "Le gnomon est un ancien instrument astronomique, composé d'une tige verticale, le style, qui fait ombre sur une surface plane."
+       },
+       "source": "iCalendrier, « Les instruments de mesure du temps : observation des ombres »"
+      },
+      {
+       "id": "gnomon-age",
+       "texte": {
+        "fr": "De tels gnomons existent au moins depuis 2 000 ans avant notre ère. On en trouve en Chine dès 2 600 av. J.-C."
+       },
+       "source": "iCalendrier, « Les instruments de mesure du temps : observation des ombres »"
+      }
+     ]
+    },
+    {
+     "id": "gnomon-ombres",
+     "type": "tracer",
+     "titre": {
+      "fr": "L'ombre"
+     },
+     "consigne": {
+      "fr": "Du matin au soir, pose un caillou au bout de l'ombre : suis les points dans l'ordre et regarde où elle est la plus courte."
+     },
+     "appel": {
+      "fr": "Suis les points du doigt, sans le lever"
+     },
+     "compte": {
+      "fr": "Journées marquées : {n} sur {t}"
+     },
+     "gagne": {
+      "fr": "La marque la plus proche du bâton, c'est midi."
+     },
+     "noeuds": [
+      {
+       "id": "ombres",
+       "nom": {
+        "fr": "Le bout de l'ombre, heure après heure"
+       },
+       "pose": {
+        "fr": "Une journée d'ombres."
+       }
+      }
+     ],
+     "savoir": [
+      {
+       "id": "gnomon-midi",
+       "texte": {
+        "fr": "Lorsque l'ombre est la plus courte, il est midi, et le soleil indique le sud dans l'hémisphère nord."
+       },
+       "source": "iCalendrier, « Les instruments de mesure du temps : observation des ombres »"
+      },
+      {
+       "id": "gnomon-equinoxe",
+       "texte": {
+        "fr": "Aux équinoxes, l'ombre de la pointe du gnomon dessine une ligne droite durant une même journée."
+       },
+       "source": "iCalendrier, « Les instruments de mesure du temps : observation des ombres »"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "gnomon-calendrier",
+    "titre": {
+     "fr": "Le compte des jours"
+    },
+    "scene": "champ",
+    "texte": {
+     "fr": "Le gnomon est un instrument astronomique antique formé d'un simple bâton vertical projetant une ombre au sol."
+    },
+    "source": "Herodote.net, « Gnomon »",
+    "appel": {
+     "fr": "Compter les jours"
+    },
+    "bouton": {
+     "fr": "Semer au bon moment"
+    },
+    "alyca": {
+     "fr": "Un bâton et des cailloux. Avec ça, tu sais quand semer, et tes fermes te remercieront. Les prêtres, eux, vont te détester : tu viens de leur prendre leur travail."
+    },
+    "alyca_deja": {
+     "fr": "Encore une ombre. Le soleil, lui, n'a pas changé d'avis."
+    },
+    "fin": {
+     "fr": "Ouvrir le cadran"
+    },
+    "ouvert": {
+     "fr": "Le cadran et le calendrier peuvent maintenant être bâtis."
+    }
+   }
   }
  ]
 }

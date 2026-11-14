@@ -1310,6 +1310,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ep-ferrer.mord { border-style: solid; border-color: #E0A800; } .ep-ferrer.mord .ep-fil-peche { animation: ep-tend .18s linear infinite; } .ep-flotteur { transition: transform .12s; } .ep-ferrer.mord .ep-flotteur { transform: translate(-3px, 14px); }
 .ep-sources { font-size: 13px; line-height: 1.35; color: var(--muted); margin: 6px 0 8px; } .ile-passage .ep-sources { margin: 0 0 8px; }
 .ep-trace { touch-action: none; cursor: crosshair; } .ep-trace .ep-pt { fill: var(--surface); stroke: #8A9A3C; stroke-width: 2; } .ep-trace .ep-pt.fait { fill: #8A9A3C; } .ep-trace .ep-pt.ici { stroke: #E0A800; stroke-width: 3; animation: ep-noeud .8s ease-in-out infinite; } .ep-trace text { font: 800 11px var(--f-body); fill: var(--text); pointer-events: none; } .ep-trace .ep-pt.fait + text { fill: #fff; } @keyframes ep-tend { 50% { transform: translate(-2px, 3px); } }
+.ep-roue { transform-box: fill-box; transform-origin: center; } .ep-moulin.pris .ep-roue { animation: ep-roue 3s linear infinite; } @keyframes ep-roue { to { transform: rotate(360deg); } } @media (prefers-reduced-motion: reduce) { .ep-moulin.pris .ep-roue { animation: none; } }
 .ep-bloc .ep-traine { transform: translateX(-40px); transition: transform 1.4s ease-out; } .ep-bloc.pris .ep-traine { transform: translateX(20px); }
 .ep-champ .ep-pousse { opacity: 0; transition: opacity 1.2s; } .ep-champ.pris .ep-pousse { opacity: 1; }
 .ep-peche .ep-poisson { opacity: 0; } .ep-peche .ep-nappe { transform: translateY(46px); transition: transform 1s ease-out; } .ep-peche.pris .ep-nappe { transform: none; } .ep-peche.pris .ep-poisson { opacity: 1; }
@@ -2354,6 +2355,11 @@ function demarrerJeu() {
   }
   function allerQuete() { if (queteActive()) ouvrirExplorer(); }
   var DESSINS_QUETE = {
+    dormante: '<path d="M-11 4 C-11 -2 -6 -5 0 -5 C6 -5 11 -2 11 4 C8 8 -8 8 -11 4 Z" fill="#B58B52"/><path d="M-8 1 C-5 -2 5 -2 8 1 C5 3 -5 3 -8 1 Z" fill="#E3C594"/>',
+    molette: '<ellipse rx="8" ry="6" fill="#8E969E"/><ellipse cx="-2" cy="-2" rx="4.4" ry="2.2" fill="#BCC3C9"/>',
+    billot: '<path d="M-9 -4 V7 C-9 10 9 10 9 7 V-4 Z" fill="#7A5230"/><ellipse cy="-4" rx="9" ry="4" fill="#C9A26B"/><ellipse cy="-4" rx="5" ry="2.2" fill="none" stroke="#9A7848" stroke-width="1"/><ellipse cy="-4" rx="2" ry=".9" fill="#9A7848"/>',
+    baton: '<path d="M-9 10 L9 -10" stroke="#5E3F20" stroke-width="3.4" stroke-linecap="round"/><path d="M-9 10 L9 -10" stroke="#A37446" stroke-width="1.2" stroke-linecap="round"/>',
+    cailloux: '<ellipse cx="-5" cy="3" rx="5" ry="3.6" fill="#EFEAE0"/><ellipse cx="5" cy="4" rx="4.4" ry="3" fill="#DDD6C8"/><ellipse cx="1" cy="-4" rx="5" ry="3.6" fill="#F6F2EA"/><ellipse cx="0" cy="-5" rx="2.6" ry="1.2" fill="#fff"/>',
     minerai: '<path d="M-10 6 L-8 -4 L0 -9 L9 -4 L10 5 L2 9 Z" fill="#6B6257"/><path d="M-8 -4 L0 -9 L9 -4 L1 0 Z" fill="#8D8377"/><path d="M-6 2 L-1 -2 L3 3 L-2 6 Z M4 -3 L8 -1 L7 3 Z" fill="#3FA37A"/><path d="M-4 1 L-1 -1" stroke="#8EE0BC" stroke-width="1.2" stroke-linecap="round"/>',
     polypore: '<path d="M-3 -10 h6 v20 h-6 z" fill="#E9E4D8"/><path d="M-3 -6 h2 M1 0 h2 M-3 5 h2" stroke="#3A3A3A" stroke-width="1.2"/><path d="M3 -3 a8 6 0 0 1 9 5 l-9 0 z" fill="#B99B78"/><path d="M3 2 l9 0 l-1 2.4 l-8 0 z" fill="#F3EBDD"/>',
     peuplier: '<path d="M-9 8 L-7 -8 L1 -10 L3 6 Z" fill="#9A8F7A"/><path d="M-7 -8 L1 -10 L1.4 -6 L-6.6 -4 Z" fill="#B9AE98"/><path d="M-5 0 L0 -1 M-5.4 4 L1 3" stroke="#6E6553" stroke-width="1.1" stroke-linecap="round"/><path d="M6 6 C4 0 8 -6 10 -8 C12 -3 11 3 6 6 Z" fill="#6FA04F"/><path d="M6 6 L9.4 -5" stroke="#3F6E2C" stroke-width=".8"/>',
@@ -2799,6 +2805,11 @@ function demarrerJeu() {
     charpente: { fixe: "M20 150 H220 M104 138 a16 8 0 1 0 32 0 a16 8 0 1 0 -32 0", points: [[40, 150], [98, 44], [80, 150], [120, 28], [160, 150], [142, 44], [200, 150]] },
     enfiler: { fixe: "M40 60 a14 12 0 1 0 28 0 a14 12 0 1 0 -28 0 M92 104 a14 12 0 1 0 28 0 a14 12 0 1 0 -28 0 M146 60 a14 12 0 1 0 28 0 a14 12 0 1 0 -28 0 M190 112 a12 10 0 1 0 24 0 a12 10 0 1 0 -24 0", points: [[20, 28], [54, 60], [106, 104], [160, 60], [202, 112], [226, 146]] },
     four: { fixe: "M96 118 a24 12 0 1 0 48 0 a24 12 0 1 0 -48 0 M108 118 L120 96 L132 118", points: [[70, 142], [52, 112], [62, 80], [92, 62], [128, 60], [162, 72], [182, 100], [174, 138]] },
+    meule: { fixe: "M30 110 C30 70 70 52 120 52 C170 52 210 70 210 110 C190 142 50 142 30 110 Z", points: [[62, 98], [84, 78], [120, 70], [156, 78], [178, 98], [156, 114], [120, 120], [84, 114]] },
+    tenaille: { fixe: "M112 84 a8 8 0 1 0 16 0 a8 8 0 1 0 -16 0", points: [[40, 30], [84, 58], [120, 84], [160, 116], [206, 146]] },
+    tenaille2: { fixe: "M40 30 L206 146 M112 84 a8 8 0 1 0 16 0 a8 8 0 1 0 -16 0", points: [[40, 142], [84, 110], [120, 84], [160, 54], [206, 26]] },
+    style: { fixe: "M20 150 H220 M96 150 a24 7 0 1 0 48 0", points: [[120, 150], [120, 118], [120, 86], [120, 54], [120, 22]] },
+    ombres: { fixe: "M120 150 V40 M112 150 H128", points: [[26, 96], [58, 116], [90, 128], [120, 132], [150, 128], [182, 116], [214, 96]] },
     plat: { fixe: "M14 60 H120 C150 60 150 112 120 112 H14", points: [[224, 44], [164, 44], [112, 60], [90, 86], [112, 112], [164, 128], [224, 128]] }
   };
   // La paroi qu'on fend : deux coins dans le joint, n coups portés sur total ; la faille s'élargit, puis le pilier se détache.
@@ -2823,6 +2834,14 @@ function demarrerJeu() {
       '<g class="ep-poli"><path d="M36 150 L110 44 L130 44 L204 150 Z" fill="#B98A5A"/><path d="M110 44 L96 150 M130 44 L144 150 M73 97 L167 97" stroke="#8E6238" stroke-width="2" stroke-dasharray="6 5"/><path d="M104 150 L112 112 L128 112 L136 150 Z" fill="#3A2A1C"/></g>' +
       '<path d="M112 34 L108 22 M120 30 V16 M128 34 L132 22" stroke="#7A5230" stroke-width="5" stroke-linecap="round"/>' +
       '<g class="ep-lame"><path d="M96 70 C108 62 132 62 144 70 L140 96 C128 90 112 90 100 96 Z" fill="#D2A878" stroke="#8E6238" stroke-width="1.6"/></g></svg>';
+  }
+  // La barre qu'on bat sur l'enclume : n coups sur total ; elle s'allonge et s'aplatit en lame.
+  function svgForger(n, total) {
+    var p = Math.min(1, n / (total || 1)), L = 50 + p * 60, h = 14 - p * 8, c = p >= 1 ? "#C9CED6" : "rgb(" + [255, Math.round(120 + (1 - p) * 110), Math.round(40 + (1 - p) * 120)].join(",") + ")";
+    return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="156" rx="90" ry="8" fill="rgba(0,0,0,.14)"/><path d="M92 156 V124 H148 V156 Z" fill="#7A5230"/><path d="M92 124 H148" stroke="#C9A26B" stroke-width="4"/>' +
+      '<path d="M60 96 H170 L196 104 L170 112 H150 L142 124 H98 L90 112 H60 Z" fill="#4A4F58"/><path d="M60 96 H170 L196 104 H60 Z" fill="#6B717C"/>' +
+      '<path d="M' + (120 - L / 2).toFixed(0) + " " + (94 - h).toFixed(0) + " H" + (120 + L / 2).toFixed(0) + (p > 0.5 ? " L" + (120 + L / 2 + 14).toFixed(0) + " " + (94 - h / 2).toFixed(0) : "") + " L" + (120 + L / 2).toFixed(0) + " 94 H" + (120 - L / 2).toFixed(0) + ' Z" fill="' + c + '"/>' +
+      '<g class="ep-silex"><path d="M150 22 L196 10 L204 34 L158 46 Z" fill="#5A6069"/><path d="M178 34 L216 96" stroke="#7A5230" stroke-width="7" stroke-linecap="round"/></g></svg>';
   }
   // Le filet qu'on noue : n nœuds serrés sur total ; fini, il reçoit ses galets.
   function svgFilet(n, total) {
@@ -2884,7 +2903,7 @@ function demarrerJeu() {
       // 1. Frapper vite : un coup ne compte que s'il suit le précédent d'assez près.
       frappes: function (e, i) {
         var n = 0, dernier = 0, fini = false, total = e.coups || 6, delai = e.delai || 900;
-        var filet = { filet: svgFilet, colombin: svgPot, fendre: svgFendre }[e.dessin];
+        var filet = { filet: svgFilet, colombin: svgPot, fendre: svgFendre, forger: svgForger }[e.dessin];
         var zone = plus('<button type="button" class="ep-zone">' + (filet ? '<span class="ep-dessin">' + filet(0, total) + "</span>" : svgPierres(e.dessin || E.dessin)) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Touche ici pour frapper")) + "</span></button>");
         var jauge = plus('<div class="ep-compte"><span class="ep-pips">' + new Array(total + 1).join("<i></i>") + "</span><b></b></div>"); plus('<p class="ep-msg" aria-live="polite"></p>');
         var pips = corps.querySelectorAll(".ep-pips i"), lib = corps.querySelector(".ep-compte b"), msg = corps.querySelector(".ep-msg"), ecl = zone.querySelector(".ep-eclats");
@@ -2907,7 +2926,7 @@ function demarrerJeu() {
       // Frotter : glisser d'avant en arrière ; c'est la distance parcourue qui polit (un toucher compte un peu aussi).
       frotter: function (e, i) {
         var total = e.course || 4000, fait = 0, fini = false, bas = false, px = 0, py = 0;
-        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : e.dessin === "broyer" ? svgBroyer() : e.dessin === "moisson" ? svgMoisson() : e.dessin === "levier" ? svgLevier() : e.dessin === "peaux" ? svgPeaux() : e.dessin === "ecorce" ? svgBroyer().replace(/#F1E3CF/g, "#9A8F7A").replace(/#C9B08E/g, "#6E6553").replace(/#F6EEDF/g, "#B7C08A").replace(/#D9C7A8/g, "#8E9A5E") : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
+        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : e.dessin === "broyer" ? svgBroyer() : e.dessin === "moisson" ? svgMoisson() : e.dessin === "levier" ? svgLevier() : e.dessin === "peaux" ? svgPeaux() : e.dessin === "moudre" ? svgBroyer().replace(/#F1E3CF/g, "#E3B92E").replace(/#C9B08E/g, "#B8962E").replace(/#D9C7A8/g, "#E8DCC0") : e.dessin === "ecorce" ? svgBroyer().replace(/#F1E3CF/g, "#9A8F7A").replace(/#C9B08E/g, "#6E6553").replace(/#F6EEDF/g, "#B7C08A").replace(/#D9C7A8/g, "#8E9A5E") : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
         var barre = plus('<div class="ep-compte"><span class="ep-barre"><i></i></span><b></b></div>'); plus('<p class="ep-msg" aria-live="polite"></p>');
         var rempl = barre.querySelector("i"), lib = barre.querySelector("b"), lame = zone.querySelector(".ep-lame"), poli = zone.querySelector(".ep-poli");
         function peindre() { var p = Math.min(1, fait / total); rempl.style.width = (p * 100).toFixed(0) + "%"; lib.textContent = e.compte ? tx(e.compte).replace("{n}", Math.round(p * 100)) : __("Poli : {n} %", { n: Math.round(p * 100) }); poli.style.opacity = p.toFixed(2); var ble = zone.querySelector(".ep-ble"); if (ble) ble.style.opacity = (1 - p).toFixed(2); }
@@ -2998,7 +3017,7 @@ function demarrerJeu() {
         var seuil = e.seuil || 0.7, ech = e.echelle || null, per = e.periode || 1500, t0 = performance.now(), gele = false, fini = false, raf = 0, p = 0;
         var bloc = plus('<div class="ep-jauge"><div class="ep-tube"><div class="ep-zone-ok" style="height:' + ((1 - seuil) * 100).toFixed(0) + '%"></div><div class="ep-seuil" style="bottom:' + (seuil * 100).toFixed(0) + '%"><span>' + (e.seuil_nom ? esc(tx(e.seuil_nom)) : __("énergie d'activation")) + (ech ? "<small>" + chiffre(Math.round(seuil * ech.max)) + " " + esc(ech.unite) + "</small>" : "") + '</span></div>' +
           (ech ? [0, 0.25, 0.5, 0.75, 1].map(function (g) { return '<i class="ep-grad" style="bottom:' + g * 100 + '%">' + chiffre(Math.round(g * ech.max)) + "</i>"; }).join("") : "") + '<div class="ep-curseur"></div></div>' +
-          '<div class="ep-grain"><svg viewBox="0 0 80 80" aria-hidden="true"><circle class="ep-halo" cx="40" cy="40" r="30"/>' + (e.dessin === "pot" ? '<path d="M26 30 C20 44 24 58 32 62 H48 C56 58 60 44 54 30 Z" class="ep-g"/><ellipse cx="40" cy="30" rx="14" ry="3.4" fill="#8E4C28"/>' : '<path d="M28 46 L32 30 L46 26 L54 38 L48 52 L34 54 Z" class="ep-g"/>') + "</svg><span>" + (e.objet ? esc(tx(e.objet)) : __("le grain de pyrite")) + "</span>" + (ech ? '<b class="ep-lu"></b><small>' + (e.lu ? esc(tx(e.lu)) : __("énergie du coup")) + "</small>" : "") + "</div></div>");
+          '<div class="ep-grain"><svg viewBox="0 0 80 80" aria-hidden="true"><circle class="ep-halo" cx="40" cy="40" r="30"/>' + (e.dessin === "fer" ? '<path d="M14 44 L56 36 L66 38 L58 46 L16 52 Z" class="ep-g"/><path d="M4 50 L16 46 L17 51 L5 55 Z" fill="#5E3F20"/>' : e.dessin === "pot" ? '<path d="M26 30 C20 44 24 58 32 62 H48 C56 58 60 44 54 30 Z" class="ep-g"/><ellipse cx="40" cy="30" rx="14" ry="3.4" fill="#8E4C28"/>' : '<path d="M28 46 L32 30 L46 26 L54 38 L48 52 L34 54 Z" class="ep-g"/>') + "</svg><span>" + (e.objet ? esc(tx(e.objet)) : __("le grain de pyrite")) + "</span>" + (ech ? '<b class="ep-lu"></b><small>' + (e.lu ? esc(tx(e.lu)) : __("énergie du coup")) + "</small>" : "") + "</div></div>");
         var bt = plus('<button type="button" class="btn large ep-frappe">' + (e.bouton ? esc(tx(e.bouton)) : __("Frapper !")) + "</button>"), msg = plus('<p class="ep-msg" aria-live="polite"></p>');
         var cur = bloc.querySelector(".ep-curseur"); var lu = bloc.querySelector(".ep-lu");
         function tour(t) { if (!gele) { var x = ((t - t0) / per) % 2; p = x < 1 ? x : 2 - x; cur.style.bottom = (p * 100).toFixed(1) + "%"; if (lu) lu.textContent = Math.round(p * ech.max) + " " + ech.unite; } raf = requestAnimationFrame(tour); }
@@ -3048,7 +3067,9 @@ function demarrerJeu() {
       vider(); marquer(N);
       var c = E.chute;
       plus('<div class="ep-titre"><span>★</span><h3>' + esc(tx(c.titre)) + "</h3></div>");
-      var sc = c.scene === "carriere" ? plus('<div class="ep-foyer ep-bloc"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 120 H240 V170 H0 Z" fill="#A79D90"/><path d="M0 120 H240" stroke="#7D7468" stroke-width="3"/><path d="M6 120 L12 20 L60 16 L66 120 Z" fill="#8D8377"/>' +
+      var sc = c.scene === "roue" ? plus('<div class="ep-foyer ep-moulin"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 132 H240 V170 H0 Z" fill="#5E9DB8"/><path d="M0 132 H240 V140 H0 Z" fill="#8CC3D8"/><path d="M150 40 H226 V132 H150 Z" fill="#B58B52"/><path d="M144 44 L188 14 L232 44 Z" fill="#7A5230"/>' +
+        '<g class="ep-roue"><circle cx="110" cy="96" r="44" fill="none" stroke="#7A5230" stroke-width="7"/>' + [0, 45, 90, 135].map(function (a) { return '<path d="M66 96 H154" stroke="#7A5230" stroke-width="5" transform="rotate(' + a + ' 110 96)"/>'; }).join("") + [0, 45, 90, 135, 180, 225, 270, 315].map(function (a) { return '<path d="M150 88 h12 v16 h-12 z" fill="#A37446" transform="rotate(' + a + ' 110 96)"/>'; }).join("") + '<circle cx="110" cy="96" r="7" fill="#4A2F16"/></g></svg></div>') :
+        c.scene === "carriere" ? plus('<div class="ep-foyer ep-bloc"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 120 H240 V170 H0 Z" fill="#A79D90"/><path d="M0 120 H240" stroke="#7D7468" stroke-width="3"/><path d="M6 120 L12 20 L60 16 L66 120 Z" fill="#8D8377"/>' +
         '<g class="ep-traine"><path d="M70 116 L76 80 L196 76 L198 116 Z" fill="#9A9085"/><path d="M76 80 L196 76 L196 88 L75 92 Z" fill="#B9B0A3"/><path d="M198 96 C214 92 224 96 236 90" stroke="#C9B37A" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="92" cy="122" r="6" fill="#7A5230"/><circle cx="136" cy="122" r="6" fill="#7A5230"/><circle cx="180" cy="122" r="6" fill="#7A5230"/></g></svg></div>') :
         c.scene === "champ" ? plus('<div class="ep-foyer ep-champ"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 60 H240 V170 H0 Z" fill="#9A7848"/>' +
         [84, 112, 140].map(function (y) { var h = '<path d="M14 ' + y + " H226" + '" stroke="#7A5E36" stroke-width="6" stroke-linecap="round"/>'; for (var x = 30; x <= 210; x += 30) h += '<g class="ep-pousse"><path d="M' + x + " " + y + " V" + (y - 14) + '" stroke="#4E8A3C" stroke-width="2.4" stroke-linecap="round"/><path d="M' + x + " " + (y - 12) + " l-6 -5 M" + x + " " + (y - 9) + ' l6 -5" stroke="#6FB04F" stroke-width="2.4" stroke-linecap="round"/></g>'; return h; }).join("") + "</svg></div>") :
@@ -3091,7 +3112,7 @@ function demarrerJeu() {
     }
     // L'entrée : les deux pierres, et Alyca qui annonce le programme.
     marquer(-1);
-    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : E.dessin === "carriere" ? svgFendre(0, 8) : E.dessin === "fonderie" ? '<svg class="ep-pierres" viewBox="-60 -42 120 84" aria-hidden="true"><g transform="scale(3.4)">' + DESSINS_QUETE.minerai + "</g></svg>" : E.dessin === "remede" ? '<svg class="ep-pierres" viewBox="-60 -42 120 84" aria-hidden="true"><g transform="translate(-24,0) scale(2.6)">' + DESSINS_QUETE.polypore + '</g><g transform="translate(28,4) scale(2.6)">' + DESSINS_QUETE.peuplier + "</g></svg>" : E.dessin === "abri" ? svgPeaux().replace('class="ep-lame"', 'opacity="0"') : E.dessin === "ferme" ? svgMoisson().replace('class="ep-poli"', 'opacity="0"') : svgPierres(E.dessin)) + "</div>");
+    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : E.dessin === "carriere" ? svgFendre(0, 8) : E.dessin === "moulin" ? svgBroyer().replace(/#F1E3CF/g, "#E3B92E").replace(/#C9B08E/g, "#B8962E").replace('class="ep-poli"', 'opacity="0"') : E.dessin === "forge" ? svgForger(0, 9) : E.dessin === "cadran" ? '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="140" rx="96" ry="22" fill="#E3C594"/><path d="M120 140 L176 122" stroke="rgba(0,0,0,.35)" stroke-width="6" stroke-linecap="round"/><path d="M120 140 V40" stroke="#5E3F20" stroke-width="7" stroke-linecap="round"/><circle cx="196" cy="34" r="16" fill="#F2B632"/>' + [[60, 132], [84, 146], [120, 152], [156, 146], [180, 132]].map(function (q) { return '<ellipse cx="' + q[0] + '" cy="' + q[1] + '" rx="5" ry="3" fill="#F6F2EA"/>'; }).join("") + "</svg>" : E.dessin === "fonderie" ? '<svg class="ep-pierres" viewBox="-60 -42 120 84" aria-hidden="true"><g transform="scale(3.4)">' + DESSINS_QUETE.minerai + "</g></svg>" : E.dessin === "remede" ? '<svg class="ep-pierres" viewBox="-60 -42 120 84" aria-hidden="true"><g transform="translate(-24,0) scale(2.6)">' + DESSINS_QUETE.polypore + '</g><g transform="translate(28,4) scale(2.6)">' + DESSINS_QUETE.peuplier + "</g></svg>" : E.dessin === "abri" ? svgPeaux().replace('class="ep-lame"', 'opacity="0"') : E.dessin === "ferme" ? svgMoisson().replace('class="ep-poli"', 'opacity="0"') : svgPierres(E.dessin)) + "</div>");
     if (E.accroche) dire(tx(E.accroche), "intro");
     var srcE = sourcesEpreuve(E); if (srcE) plus(srcE);
     plus('<button type="button" class="btn large">' + __("Commencer") + "</button>").onclick = function () { etape(0); };
