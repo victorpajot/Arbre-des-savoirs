@@ -1329,6 +1329,13 @@ svg.grille .interro { transition: opacity .3s; }
 .gr-nom { animation: gr-nom .6s .5s ease-out both; } @keyframes gr-nom { from { opacity: 0; transform: translateY(6px); } }
 .gr-prix { display: flex; gap: 12px; align-items: flex-start; margin: 8px 0; padding: 10px; border: 2px solid #C9952A; border-radius: 14px; } .gr-prix-img { flex: none; animation: gr-parait 1.1s ease-out both; } .gr-prix-img .illus-s { width: 80px; height: 80px; }
 @media (prefers-reduced-motion: reduce) { .gr-dieu, .gr-dieu *, .gr-nom, .gr-prix-img, .gr-torche { animation: none !important; stroke-dashoffset: 0; } }
+.sursis { position: fixed; z-index: 90; left: 50%; top: calc(6px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); pointer-events: none; background: #16203F; color: #fff; border: 2px solid #5B7FD9; border-radius: 999px; padding: 3px 12px; font-size: 14px; font-weight: 700; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+.sursis[hidden] { display: none; } .sursis span { text-transform: uppercase; letter-spacing: .04em; font-size: 12px; opacity: .85; } .sursis-t { font-variant-numeric: tabular-nums; } .sursis b { font-size: 17px; }
+.sursis.presse { background: #7A1414; border-color: #FF6B5E; animation: sursis-presse 1s steps(2) infinite; } @keyframes sursis-presse { 50% { background: #B32020; } }
+.sursis-gain { position: absolute; left: 100%; top: 2px; margin-left: 6px; font-style: normal; color: #2E9E5B; background: var(--bg); border-radius: 999px; padding: 1px 8px; font-size: 15px; opacity: 0; } .sursis-gain.on { animation: sursis-gain 2.4s ease-out; } @keyframes sursis-gain { 0% { opacity: 0; transform: translateY(8px); } 15%, 75% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+.sursis-ligne { font-size: 20px; font-weight: 800; color: #5B7FD9; margin: 6px 0; } .conseil .sursis-t, .sursis-ligne .sursis-t { font-variant-numeric: tabular-nums; }
+.gameover { position: fixed; inset: 0; z-index: 200; background: #0B0F1E; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; text-align: center; } .gameover h2 { font-size: 44px; letter-spacing: .08em; margin: 8px 0; color: #FF6B5E; } .gameover p { font-size: 18px; line-height: 1.45; margin: 0; max-width: 30em; } .gameover .btn { margin-top: 18px; max-width: 340px; }
+@media (prefers-reduced-motion: reduce) { .sursis.presse, .sursis-gain.on { animation: none; } .sursis-gain.on { opacity: 1; } }
 .ile-amen.vise { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 14px; }
 .ep-sources { font-size: 13px; line-height: 1.35; color: var(--muted); margin: 6px 0 8px; } .ile-passage .ep-sources { margin: 0 0 8px; }
 .ep-trace { touch-action: none; cursor: crosshair; } .ep-trace .ep-pt { fill: var(--surface); stroke: #8A9A3C; stroke-width: 2; } .ep-trace .ep-pt.fait { fill: #8A9A3C; } .ep-trace .ep-pt.ici { stroke: #E0A800; stroke-width: 3; animation: ep-noeud .8s ease-in-out infinite; } .ep-trace text { font: 800 11px var(--f-body); fill: var(--text); pointer-events: none; } .ep-trace .ep-pt.fait + text { fill: #fff; } @keyframes ep-tend { 50% { transform: translate(-2px, 3px); } }
@@ -2369,7 +2376,8 @@ function demarrerJeu() {
   // Victor (2026-11-13) : avant l'épreuve, une quête. Les objets sont cachés sur la carte de l'île : on les touche pour
   // les ramasser. Tous trouvés, l'épreuve s'ouvre.
   // Les épreuves en attente : celle de l'âge, puis celles qui gardent un aménagement (la hache des bûcherons).
-  function epreuvesAttente() { return M.modeIle(P) && C.ile && C.ile.ages ? M.epreuvesEnAttente(C, P) : []; }
+  // Victor (2026-11-14) : pas de quête tant qu'il n'y a personne à envoyer. C'est le feu maîtrisé qui pose le campement, d'où partent les explorateurs.
+  function epreuvesAttente() { return M.modeIle(P) && C.ile && C.ile.ages && (!C.parId["ile.feu"] || M.estMaitrisee(P, "ile.feu")) ? M.epreuvesEnAttente(C, P) : []; }
   function queteActive() {
     var L = epreuvesAttente();
     for (var i = 0; i < L.length; i++) { var q = M.queteIle(C, P, L[i]); if (q && !q.complete) return q; }
@@ -2448,6 +2456,9 @@ function demarrerJeu() {
   }
   // Victor (2026-11-13) : « Explorer en plein écran ». Un doigt déplace, deux doigts zooment, + et − aussi. Les détails
   // n'apparaissent qu'à mi-chemin, les objets de quête que de tout près ; avant, un éclat signale qu'il y a quelque chose.
+  // Victor (2026-11-14) : depuis la vue du campement, un bouton envoie tout de suite un explorateur.
+  var explorerDirect = false;
+  function envoyerExplorateur() { explorerDirect = true; ouvrirExplorer(); explorerDirect = false; }
   function ouvrirExplorer() {
     if (document.querySelector(".explorer")) return;
     fermerFeuille();
@@ -2545,7 +2556,7 @@ function demarrerJeu() {
       var B = foyer ? M.baiesIle(C, P, maintenant()) : null; if (!B) return [];
       return B.buissons.filter(function (b) { return !b.prise; }).map(function (b) {
         for (var k = 0; k < 60; k++) { var g1 = graine("bx" + b.graine + "|" + k), g2 = graine("by" + b.graine + "|" + k), x = 34 + g1 % (ILE_W - 68), y = 50 + g2 % (ILE_H - 100);
-          if (praticable(x, y) && surTerre(x, y, 0.86) && !abri(x, y, 100) && !dansOvale(x, y, MARAIS) && !dansOvale(x, y, [ILE_CX, ILE_CY + 2, 34, 40])) return { id: b.id, x: x, y: y }; }
+          if (praticable(x, y) && surTerre(x, y, 0.86) && !abri(x, y, 100) && !dansOvale(x, y, MARAIS) && !dansOvale(x, y, [ILE_CX, ILE_CY + 2, 34, 40]) && !(C.ile.grotte && Math.hypot(x - C.ile.grotte.position[0] * ILE_W, y - C.ile.grotte.position[1] * ILE_H) < 24)) return { id: b.id, x: x, y: y }; }
         return null; }).filter(Boolean);
     }
     // Le dépôt : un panier au centre du village. C'est lui qu'on vise pour rendre ce qu'on rapporte.
@@ -2716,7 +2727,7 @@ function demarrerJeu() {
         // La grotte des mythologies : on y entre en marchant sur sa bouche. L'expédition attend dehors, puis reprend.
         var Ge = C.ile.grotte && M.grotteIle(C, P);
         if (Ge && Math.hypot(C.ile.grotte.position[0] * ILE_W - X.x, C.ile.grotte.position[1] * ILE_H + 4 - X.y) < 7) {
-          if (!Ge.ouverte) { if (!X.noir) { X.noir = true; message = tx(C.ile.grotte.noir || { fr: "Il fait noir là-dedans." }); panneau(); } }
+          if (!Ge.ouverte) { if (!X.noir) { X.noir = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.vue = "dos"; message = __("Une grotte ! ") + tx(C.ile.grotte.noir || { fr: "Il fait noir là-dedans." }); panneau(); } }
           else if (!X.sorti) {
             M.trouverGrotte(C, P, maintenant()); sauver(); X.tx = X.x; X.ty = X.y; dessiner(); appliquer();
             ouvrirGrotte(function () { if (!X) return; X.sorti = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.t = performance.now(); message = __("De retour à l'air libre."); panneau(); raf = requestAnimationFrame(tour); });
@@ -2774,12 +2785,13 @@ function demarrerJeu() {
     document.body.appendChild(z);
     // Victor (2026-11-14) : des cailloux se dessinaient sur les arbres. Les petits détails, tirés au hasard, se posent
     // après la carte : ceux qui tombent sur un élément debout (arbre, rocher, cabane) sont retirés.
-    var debout = [].map.call(svg.querySelectorAll("g.ile-pl"), function (g) { try { return g.getBBox(); } catch (x) { return null; } }).filter(function (b) { return b && b.width && b.width <= 40 && b.height <= 40; });
+    var debout = [].map.call(svg.querySelectorAll("g.ile-pl, g.ile-grotte"), function (g) { try { return g.getBBox(); } catch (x) { return null; } }).filter(function (b) { return b && b.width && b.width <= 40 && b.height <= 40; });
     [].forEach.call(svg.querySelectorAll(".ex-details > g"), function (g) {
       var m = /translate\(([\d.]+),([\d.]+)\)/.exec(g.getAttribute("transform")); if (!m) return; var x = +m[1], y = +m[2];
       if (debout.some(function (b) { return x > b.x - 2 && x < b.x + b.width + 2 && y > b.y - 2 && y < b.y + b.height + 2; })) g.remove();
     });
     objets(); panneau(); appliquer();
+    if (explorerDirect && foyer) partir();
   }
   // La hache en trois pièces : la lame de pierre, la gaine en bois de cerf, le manche. `poses` dit lesquelles sont en place.
   function piecesHache(poses) {
@@ -3368,7 +3380,7 @@ function demarrerJeu() {
 
   // --- Sauvegarde -----------------------------------------------------------
   function lireLocal() {
-    try { var s = localStorage.getItem(CLE_LOCALE); return s ? M.migrer(JSON.parse(s), C) : null; } catch (e) { return null; }
+    try { var s = localStorage.getItem(CLE_LOCALE), p = s ? M.migrer(JSON.parse(s), C) : null; return p && p.fini ? null : p; } catch (e) { return null; }
   }
   function sauver() {
     // Sur l'écran titre sans partie enregistrée, le brouillon ne s'écrit nulle part.
@@ -3397,6 +3409,11 @@ function demarrerJeu() {
         return ref.get().then(function (snap) {
           var distante = identifier(snap.exists ? M.migrer(snap.data(), C) : null);
           stockage.ref = ref; stockage.etat = __("Ton compte Claude + ce navigateur");
+          // Une partie finie par game over ne revient pas ; finie ailleurs, elle l'est ici aussi.
+          if (distante && distante.fini) {
+            if (!provisoire && distante.id === P.id) { P.fini = distante.fini; try { localStorage.removeItem(CLE_LOCALE); oublier(P.id); sessionStorage.removeItem(CLE_REPRISE); } catch (x) {} location.reload(); return; }
+            distante = null;
+          }
           // v53 : le compte garde la partie en cours ; une autre partie qu'on y trouve rejoint « Charger une partie ».
           if (distante && !provisoire && distante.id !== P.id) {
             var deja = indexParties().parties[distante.id];
@@ -4202,6 +4219,46 @@ function demarrerJeu() {
     sauver(); ouvrirHonte(); toast(__("Enfermé au mur de la honte : encore ") + dureePeine(P.punition.restant) + ".");
     return true;
   }
+  // --- Le sursis d'Ananké (Victor, 2026-11-14) : « game over dans 5 minutes ». Le temps file jeu ouvert et page visible,
+  // sauf devant une leçon ou au mur de la honte (lire n'est jamais puni : choix de Claude). Chaque savoir, chaque action le rallonge.
+  function texteSursis(n) { n = Math.max(0, Math.ceil(n)); var h = Math.floor(n / 3600), m = Math.floor(n % 3600 / 60), x = n % 60; return (h ? h + " h " + (m < 10 ? "0" : "") : "") + m + ":" + (x < 10 ? "0" : "") + x; }
+  function htmlSursis() { var S = C && P ? M.sursisIle(C, P) : null; return S ? __("Game over dans ") + '<b class="sursis-t">' + texteSursis(S.reste) + "</b>" : ""; }
+  var puceSursis = null, finSursis = false, ticsSursis = 0;
+  function majSursis(S) {
+    if (!puceSursis) { puceSursis = el('<div class="sursis" hidden><span>' + __("Game over") + '</span> <b class="sursis-t"></b><i class="sursis-gain" aria-hidden="true"></i></div>'); document.body.appendChild(puceSursis); }
+    puceSursis.hidden = !S; if (!S) return;
+    var t = texteSursis(S.reste);
+    [].forEach.call(document.querySelectorAll(".sursis-t"), function (e) { if (e.textContent !== t) e.textContent = t; });
+    puceSursis.classList.toggle("presse", S.reste <= 60);
+    if (S.gain) { var g = puceSursis.querySelector(".sursis-gain"); g.textContent = "+" + texteSursis(S.gain); g.classList.remove("on"); void g.offsetWidth; g.classList.add("on"); }
+  }
+  // Victor (2026-11-14, « Partie effacée, tout recommence ») : à zéro, la partie est finie pour de bon. Elle est
+  // marquée « fini » (une partie finie ne se recharge plus, même depuis le compte), retirée de l'appareil, puis le jeu
+  // revient à l'écran titre.
+  function effacerPartieFinie() {
+    try { localStorage.removeItem(CLE_LOCALE); } catch (x) {}
+    try { oublier(P.id); } catch (x) {}
+    clearTimeout(stockage.minuteur);
+    if (stockage.ref) stockage.ref.set(JSON.parse(JSON.stringify(P))).catch(function () {});
+  }
+  function gameOverSursis() {
+    finSursis = true;
+    M.gameOverIle(C, P, maintenant()); effacerPartieFinie(); if (puceSursis) puceSursis.hidden = true;
+    var z = el('<div class="gameover" role="alertdialog" aria-modal="true" aria-label="Game over"><div class="go-tete">' + svgEconome("coupe", 96) + "</div><h2>GAME OVER</h2><p>" +
+      __("Le temps est écoulé. Les survivants n'ont pas tenu.") + "</p><p>" + __("La partie est effacée : savoirs, île, succès, objets. Tout recommence.") + "</p>" +
+      '<button type="button" class="btn large">' + __("Retour à l'écran titre") + "</button></div>");
+    z.querySelector("button").onclick = function () { try { sessionStorage.removeItem(CLE_REPRISE); sessionStorage.removeItem(CLE_ASSISTANT); } catch (x) {} location.reload(); };
+    document.body.appendChild(z);
+  }
+  setInterval(function () {
+    if (!C || !P || titre || provisoire || finSursis) { if (puceSursis && !finSursis) puceSursis.hidden = true; return; }
+    var lit = (feuille && feuille.querySelector(".fiche-d, .masterclass, .lecon")) || document.querySelector(".peine");
+    var S = document.hidden || lit ? M.sursisIle(C, P) : M.ecoulerSursis(C, P, 1);
+    majSursis(S); if (!S) return;
+    if (S.fini) { gameOverSursis(); return; }
+    if (S.gain || ++ticsSursis % 10 === 0) sauver();
+  }, 1000);
+  document.addEventListener("visibilitychange", function () { if (document.hidden && C && P && !titre && !provisoire && !finSursis && M.sursisIle(C, P)) sauver(); });
   function dureePeine(ms) { var s = Math.ceil(ms / 1000), m = Math.floor(s / 60); s %= 60; return m + ":" + (s < 10 ? "0" : "") + s; }
   // Le temps ne s'écoule que mur affiché, page visible, sans quiz par-dessus. Victor (2026-11-08) : une masterclass
   // ouverte depuis le mur laisse tourner le décompte.
@@ -4847,7 +4904,7 @@ function demarrerJeu() {
       var bjO = boi.querySelector('[data-a="obj"]'); if (bjO) bjO.remove();
       var fhD = C.ia && C.ia.faveur ? M.faveurIA(C, P, t) : null, obT = boi.querySelector("h3");
       var rang = el('<div class="duo-ia"><button type="button" data-qui="alyca" style="--c:' + (fhD ? COULEUR_PALIER[fhD.palier.id] : "var(--accent)") + '"><span class="tete">' + mot.querySelector(".masque").innerHTML + '</span><span class="txt"><b>' + esc(tx(C.narrateur) || __("L'IA")) + "</b><small>" + (fhD ? esc(tx(fhD.palier.nom)) : __("Son mot du jour")) + '</small></span></button>' +
-        '<button type="button" data-qui="ananke" style="--c:' + (boi.classList.contains("tenu") ? "#2E9E5B" : "#5B7FD9") + '"><span class="tete">' + boi.querySelector(".ile-econome").innerHTML + '</span><span class="txt"><b>' + __("Ananké") + (boi.classList.contains("tenu") ? "" : '<i class="pastille" aria-hidden="true"></i>') + "</b><small>" + (boi.classList.contains("tenu") ? __("Objectif tenu") : __("Son objectif")) + "</small></span></button></div>");
+        '<button type="button" data-qui="ananke" style="--c:' + (boi.classList.contains("tenu") ? "#2E9E5B" : "#5B7FD9") + '"><span class="tete">' + boi.querySelector(".ile-econome").innerHTML + '</span><span class="txt"><b>' + __("Ananké") + (boi.classList.contains("tenu") ? "" : '<i class="pastille" aria-hidden="true"></i>') + "</b><small>" + ((htmlSursis() && __("Fin dans ") + '<b class="sursis-t">' + texteSursis(M.sursisIle(C, P).reste) + "</b>") || (boi.classList.contains("tenu") ? __("Objectif tenu") : __("Son objectif"))) + "</small></span></button></div>");
       var panneau = el('<div class="duo-panneau" hidden></div>');
       var montrerDuo = function () {
         rang.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-expanded", x.getAttribute("data-qui") === duoIA ? "true" : "false"); });
@@ -5843,6 +5900,7 @@ function demarrerJeu() {
       v.appendChild(sc);
       // Victor (2026-11-12) : on joue aussi depuis un quartier, sans repasser par la vue d'ensemble.
       if (M.modeIle(P)) { var bj = el('<button type="button" class="btn large" style="margin:10px 0 4px">' + __("Jouer") + "</button>"); bj.onclick = function () { ouvrirJouer(); }; v.appendChild(bj); }
+      if (M.modeIle(P) && q.camp) { var bxp = el('<button type="button" class="btn sec large ile-explorer">🔍 ' + __("Envoyer un explorateur") + "</button>"); bxp.onclick = envoyerExplorateur; v.appendChild(bxp); }
       if (campFeu(q)) {
         var cit = ((C.ile.ages || []).filter(function (a) { return a.citation; })[0] || {}).citation;
         v.appendChild(el('<div class="carte ile-camp"><p>' + (q.posees > 1 ? __("Le campement grandit autour du feu. Chaque savoir appris y amène du monde ; quand tous ses besoins seront couverts, il deviendra un village.") : __("Le feu a rassemblé les survivants. Autour de lui on se réchauffe, on cuit, on veille : le campement est né.")) + "</p>" +
@@ -6501,6 +6559,9 @@ function demarrerJeu() {
     else if (plein) k = { texte: __("L'île est pleine. C'est très bien ainsi : pas un toit de plus, et ses besoins cessent de grandir avec elle.") };
     else if (L && L.frein === "toits") k = { texte: __("Chaque abri de plus, ce sont dix bouches de plus. Tant que vous n'en bâtissez pas, l'île reste à {n} et se suffit.", { n: L.places }) };
     else k = { texte: __("Rien ne vous oblige à grandir. Chaque habitant de plus mange une ration, réclame un toit et un savoir à entretenir.") };
+    // Victor (2026-11-14) : Ananké ne conseille plus, elle compte. Son avis garde un mot du problème du moment, s'il y en a un.
+    var SU = M.sursisIle(C, P), RS = C.ile.regles.sursis;
+    if (SU && RS) k = { sursis: true, texte: (deficit || surex ? k.texte + " " : "") + __("Un savoir maîtrisé : {a} minutes de plus. Une chose bâtie ou une épreuve passée : {b}. Le reste ne m'intéresse pas.", { a: Math.round(RS.savoir / 60), b: Math.round(RS.action / 60) }) };
     return { alyca: a, ananke: k };
   }
   // Victor (2026-11-12) : conseiller une rangée de maisons sans dire qu'il faut d'abord du bois ne sert à rien. Les
@@ -6534,6 +6595,7 @@ function demarrerJeu() {
   function carteConseil(qui, c) {
     var b = el('<div class="conseil ' + qui + '"><div class="eyebrow">' + (qui === "alyca" ? __("Son conseil pour grandir") : __("Son conseil pour freiner")) + '</div><p></p></div>');
     b.querySelector("p").textContent = (qui === "alyca" ? "« " : "« ") + nommerIA(c.texte) + " »";
+    if (c.sursis) { b.querySelector(".eyebrow").textContent = __("Son ultimatum"); b.querySelector("p").innerHTML = "« " + htmlSursis() + ". " + esc(nommerIA(c.texte)) + " »"; }
     if (c.etapes && c.etapes.length > 1) {
       var ol = el('<ol class="conseil-etapes"></ol>');
       c.etapes.forEach(function (x, i) { var li = el("<li" + (i ? "" : ' class="premier"') + "></li>"); li.textContent = nommerIA(x.texte); ol.appendChild(li); });
@@ -6564,7 +6626,7 @@ function demarrerJeu() {
     G.ages.forEach(function (x, i) { if (i < G.courant && x !== montre) x.negliges.forEach(function (b) { liste.push(b); }); });
     var passe = function (b) { return G.ages.some(function (x, i) { return i < G.courant && x.negliges.indexOf(b) >= 0; }); };
     var faits = liste.filter(function (b) { return b.couvert; }).length;
-    if (liste.length) h += '<div class="ile-age-tete"><h3>' + esc(tx((montre || a).nom)) + __(" a besoin de") + "</h3><span>" + faits + " / " + liste.length + (faits > 1 ? __(" couverts") : __(" couvert")) + '</span></div><div class="ile-age-barre"><b style="width:' + Math.round(100 * faits / liste.length) + '%"></b></div>' +
+    if (liste.length) h += '<div class="ile-age-tete"><h3>' + esc(tx((montre || a).nom)) + (/^(les|des) /i.test(tx((montre || a).nom)) ? __(" ont besoin de") : __(" a besoin de")) + "</h3><span>" + faits + " / " + liste.length + (faits > 1 ? __(" couverts") : __(" couvert")) + '</span></div><div class="ile-age-barre"><b style="width:' + Math.round(100 * faits / liste.length) + '%"></b></div>' +
       '<p class="ile-vie-note">' + __("Un savoir maîtrisé couvre un besoin. Touche un besoin pour voir les savoirs qui y répondent.") + "</p>";
     // Victor (2026-11-12) : trois besoins à l'écran (ceux qui restent à couvrir d'abord), les autres derrière un bouton.
     // Victor (2026-11-13) : les besoins optionnels pas encore couverts restent toujours affichés, hors du repli.
@@ -7011,7 +7073,7 @@ function demarrerJeu() {
         '<p class="ile-obj-compte">' + (ob.reussi ? "+" + ob.credits + __(" crédits") : ob.credits + __(" crédits à gagner")) + "</p>" + veille +
         (k ? '<button type="button" class="btn large" data-a="obj">' + __("Jouer") + "</button>" : "");
     }
-    var b = el('<div class="carte ile-objectif' + (ob.reussi ? " tenu" : "") + '" style="--c:' + (ob.couleur || "var(--accent)") + '"><div class="ile-obj-tete"><span class="ile-econome">' + svgEconome(ob.reussi ? "soit" : ob.veille ? "coupe" : "neutre", 46) + '</span><div class="eyebrow">' + __("Objectif du jour · Ananké") + "</div></div>" + corps + "</div>");
+    var b = el('<div class="carte ile-objectif' + (ob.reussi ? " tenu" : "") + '" style="--c:' + (ob.couleur || "var(--accent)") + '"><div class="ile-obj-tete"><span class="ile-econome">' + svgEconome(ob.reussi ? "soit" : ob.veille ? "coupe" : "neutre", 46) + '</span><div class="eyebrow">' + __("Objectif du jour · Ananké") + "</div></div>" + (htmlSursis() ? '<p class="sursis-ligne">' + htmlSursis() + "</p>" : "") + corps + "</div>");
     var bt = b.querySelector('[data-a="obj"]'); if (bt) bt.onclick = function () { ouvrirJouer(); };
     return b;
   }

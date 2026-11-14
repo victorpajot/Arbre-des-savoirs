@@ -2657,6 +2657,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     // Une partie d'avant les dieux à trouver : le passage déjà gravé vaut tous les récits, et le prix arrive au retour.
     const Qv = JSON.parse(JSON.stringify(Qg)); delete Qv.grotte.recits; delete Qv.succes["grotte-egypte"]; delete Qv.objets["totem-thot"];
     assert.equal(M.grotteIle(CA, Qv).zones[0].manquants.length, 0); const rv = M.visiterGrotte(CA, Qv, "egypte", t0); assert.ok(!rv.premiere && rv.succes && rv.objet);
-    assert.equal(M.grotteIle(CA, PP), null, "le mode Parcours n'a pas de grotte"); }
+    assert.equal(M.grotteIle(CA, PP), null, "le mode Parcours n'a pas de grotte");
+    // Le sursis d'Ananké : 5 minutes au départ, du temps gagné à chaque savoir et chaque action, game over à zéro.
+    const Qs = M.nouvellePartie(t0); Qs.mode = "ile"; const RS = CA.ile.regles.sursis;
+    assert.equal(M.sursisIle(CA, PP), null, "pas de sursis en mode Parcours"); assert.equal(M.sursisIle(CA, Qs).reste, RS.depart);
+    assert.deepEqual(M.ecoulerSursis(CA, Qs, 100), { reste: RS.depart - 100, gain: 0, fini: false });
+    Qs.epreuves = { feu: t0 }; assert.equal(M.sursisIle(CA, Qs).gain, RS.action); assert.equal(M.sursisIle(CA, Qs).gain, 0); assert.equal(Qs.sursis.reste, RS.depart - 100 + RS.action);
+    Qs.quetes = { feu: { silex: t0, pyrite: t0 } }; assert.equal(M.sursisIle(CA, Qs).gain, 2 * RS.objet);
+    delete Qs.quetes; assert.equal(M.sursisIle(CA, Qs).gain, 0, "ce qui est perdu ne retire pas de temps"); Qs.quetes = { feu: { silex: t0 } }; assert.equal(M.sursisIle(CA, Qs).gain, RS.objet);
+    assert.ok(M.ecoulerSursis(CA, Qs, 99999).fini && Qs.sursis.reste === 0);
+    assert.deepEqual(M.gameOverIle(CA, Qs, t0), { fini: t0 }); assert.equal(Qs.fini, t0); assert.equal(M.gameOverIle(CA, PP, t0), null);
+    // Une partie d'avant le sursis part avec ce qu'elle a déjà mérité.
+    const Qa = M.nouvellePartie(t0); Qa.mode = "ile"; Qa.epreuves = { feu: t0, hache: t0 }; assert.equal(M.sursisIle(CA, Qa).reste, RS.depart + 2 * RS.action); }
   console.log("OK : île par âges (feu, besoins, savoirs requis), monde fini (bancs, effort, effondrement), aléas annoncés");
 }

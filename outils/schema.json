@@ -4534,6 +4534,7 @@
         "min": { "type": "integer", "minimum": 0 }
        }
       },
+      "sursis": { "type": "object", "additionalProperties": false, "required": ["depart", "savoir", "action", "objet"], "description": "Le compte à rebours d'Ananké avant le game over (Victor, 2026-11-14), en secondes : au départ, puis ce que rapporte un savoir maîtrisé, une action débloquée, un objet de quête.", "properties": { "depart": { "type": "integer", "minimum": 30 }, "savoir": { "type": "integer", "minimum": 0 }, "action": { "type": "integer", "minimum": 0 }, "objet": { "type": "integer", "minimum": 0 } } },
       "baies": { "type": "object", "additionalProperties": false, "required": ["par_jour", "nourriture"], "description": "Les buissons de baies cachés chaque jour dans le brouillard (Victor, 2026-11-13) : un explorateur les cueille et les rapporte au village.", "properties": { "par_jour": { "type": "integer", "minimum": 0 }, "nourriture": { "type": "number", "minimum": 0 } } },
       "quartier": {
        "type": "object",
