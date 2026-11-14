@@ -2636,7 +2636,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // La grotte des mythologies : il faut du feu pour y entrer ; un savoir égyptien attend le passage par son arbre.
   { const Qg = M.nouvellePartie(t0); Qg.mode = "ile";
     assert.equal(M.grotteIle(CA, Qg).ouverte, false, "sans feu, la grotte reste noire"); assert.equal(M.visiterGrotte(CA, Qg, "egypte", t0), null);
-    Qg.epreuves = { feu: t0 }; assert.ok(M.grotteIle(CA, Qg).ouverte);
+    assert.equal(M.trouverGrotte(CA, Qg, t0), null, "pas de torche, pas de découverte");
+    Qg.epreuves = { feu: t0 }; assert.ok(M.grotteIle(CA, Qg).ouverte); assert.equal(M.grotteIle(CA, Qg).trouvee, null);
+    assert.equal(M.trouverGrotte(CA, Qg, t0).trouvee, t0); assert.equal(M.grotteIle(CA, Qg).trouvee, t0);
     assert.equal(M.grotteRequise(CA, Qg, "math.egypte").id, "egypte"); assert.equal(M.grotteRequise(CA, Qg, "math.babylone"), null);
     Qg.options = { tousArbres: true }; assert.equal(M.grotteRequise(CA, Qg, "math.egypte"), null); delete Qg.options;
     const rg = M.visiterGrotte(CA, Qg, "egypte", t0); assert.ok(rg.premiere && rg.ouvre.includes("sci.egypte"));
