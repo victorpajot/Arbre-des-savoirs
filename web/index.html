@@ -2968,13 +2968,14 @@ function demarrerJeu() {
         function chemin(P2) { return P2.map(function (q, n) { return (n ? "L" : "M") + q[0].toFixed(0) + " " + q[1].toFixed(0); }).join(" "); }
         function peindre() {
           pips.forEach(function (p, n) { p.className = n < k ? "ok" : ""; }); lib.textContent = e.compte ? tx(e.compte).replace("{n}", k).replace("{t}", L.length) : k + " / " + L.length;
-          if (k >= L.length) { if (L[0].id === "ecoute") des.innerHTML = svgFilet(7, 7); return; }
-          var N = NOEUDS[L[k].id], fait = N.points.slice(0, j); if (vif && j && j < N.points.length) fait = fait.concat([vif]);
+          if (k >= L.length && L[0].id === "ecoute") { des.innerHTML = svgFilet(7, 7); return; }
+          // Fini : le dernier tracé reste affiché en entier, tous ses points atteints (Victor, 2026-11-14).
+          var tout = k >= L.length, N = NOEUDS[L[tout ? L.length - 1 : k].id], jj = tout ? N.points.length : j, fait = N.points.slice(0, jj); if (vif && jj && jj < N.points.length) fait = fait.concat([vif]);
           des.innerHTML = '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><path d="' + chemin(N.points) + '" fill="none" stroke="var(--line)" stroke-width="3" stroke-dasharray="5 6" stroke-linejoin="round"/>' +
             '<path d="' + N.fixe + '" fill="none" stroke="#6E7A2E" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>' +
             (fait.length > 1 ? '<path d="' + chemin(fait) + '" fill="none" stroke="#B8A04A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>' : "") +
-            N.points.map(function (q, n) { return '<circle class="ep-pt' + (n < j ? " fait" : n === j ? " ici" : "") + '" cx="' + q[0] + '" cy="' + q[1] + '" r="9"/><text x="' + q[0] + '" y="' + (q[1] + 4) + '" text-anchor="middle">' + (n + 1) + "</text>"; }).join("") + "</svg>";
-          appel.textContent = tx(L[k].nom) + " · " + (e.appel ? tx(e.appel) : "");
+            N.points.map(function (q, n) { return '<circle class="ep-pt' + (n < jj ? " fait" : n === jj ? " ici" : "") + '" cx="' + q[0] + '" cy="' + q[1] + '" r="9"/><text x="' + q[0] + '" y="' + (q[1] + 4) + '" text-anchor="middle">' + (n + 1) + "</text>"; }).join("") + "</svg>";
+          if (!tout) appel.textContent = tx(L[k].nom) + " · " + (e.appel ? tx(e.appel) : "");
         }
         function viser(ev) {
           if (fini || k >= L.length) return;
