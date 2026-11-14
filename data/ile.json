@@ -5773,6 +5773,168 @@
    }
   },
   {
+   "id": "moisson",
+   "nom": {
+    "fr": "Armer la ferme"
+   },
+   "amenagement": "ferme",
+   "dessin": "ferme",
+   "accroche": {
+    "fr": "Le blé ne se cueille pas à la main, pas si tu veux nourrir vingt personnes. Il faut une faucille, et le bras pour s'en servir. Deux gestes."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi moissonner"
+    },
+    "texte": {
+     "fr": "Pas de ferme sans faucille ni semence. Il te faut des épis sauvages, pour le grain, et une branche d'aubépine pour le manche. Le silex, tu l'as déjà au camp : explore l'île."
+    },
+    "objets": [
+     {
+      "id": "epis",
+      "nom": {
+       "fr": "Des épis sauvages"
+      },
+      "position": [
+       0.417,
+       0.77
+      ],
+      "trouve": {
+       "fr": "Des épis sauvages, lourds de grains : la première semence."
+      },
+      "zone": {
+       "fr": "dans les herbes, au sud du lac"
+      }
+     },
+     {
+      "id": "aubepine",
+      "nom": {
+       "fr": "Une branche d'aubépine"
+      },
+      "position": [
+       0.6,
+       0.245
+      ],
+      "trouve": {
+       "fr": "Une branche d'aubépine, dure et courbe : le manche de la faucille."
+      },
+      "zone": {
+       "fr": "vers le nord de l'île"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "moisson-faucille",
+     "type": "frappes",
+     "dessin": "taille",
+     "titre": {
+      "fr": "La faucille"
+     },
+     "consigne": {
+      "fr": "Frappe le silex, vite et sans t'arrêter : chaque coup détache un petit éclat tranchant. Il en faut une rangée pour garnir le manche."
+     },
+     "coups": 8,
+     "delai": 900,
+     "appel": {
+      "fr": "Touche ici pour détacher un éclat"
+     },
+     "compte": {
+      "fr": "Éclats détachés : {n} sur {t}"
+     },
+     "rate": {
+      "fr": "Trop lent : garde le rythme."
+     },
+     "gagne": {
+      "fr": "Huit éclats, fixés en rang sur le manche : la faucille coupe."
+     },
+     "savoir": [
+      {
+       "id": "moisson-machoire",
+       "texte": {
+        "fr": "Les cultivateurs du Néolithique utilisaient des faucilles formées par une mâchoire de vache ou de bœuf, où les dents avaient été remplacées par de petits éclats de silex."
+       },
+       "source": "Vikidia, « Faucille »"
+      },
+      {
+       "id": "moisson-aubepine",
+       "texte": {
+        "fr": "D'autres ont un manche de bois : une faucille néolithique reconstituée porte des microlithes en silex du Grand-Pressigny sur un manche en aubépine."
+       },
+       "source": "Hominidés.com, « Outils et techniques du Néolithique »"
+      }
+     ]
+    },
+    {
+     "id": "moisson-faucher",
+     "type": "frotter",
+     "dessin": "moisson",
+     "titre": {
+      "fr": "La moisson"
+     },
+     "consigne": {
+      "fr": "Fauche les épis : passe la faucille d'un côté à l'autre, sans t'arrêter, jusqu'au bout du champ."
+     },
+     "course": 4200,
+     "appel": {
+      "fr": "Glisse le doigt d'un côté à l'autre pour faucher"
+     },
+     "compte": {
+      "fr": "Fauché : {n} %"
+     },
+     "gagne": {
+      "fr": "Le champ est fauché, les gerbes sont liées."
+     },
+     "savoir": [
+      {
+       "id": "moisson-ohalo",
+       "texte": {
+        "fr": "À Ohalo II, un campement vieux de 23 000 ans en Galilée, des lames de faucille comptent parmi les plus anciennes jamais trouvées. Elles servaient à moissonner des céréales juste avant leur pleine maturité."
+       },
+       "source": "Université Bar-Ilan, « Researchers identify plant cultivation in a 23,000-year-old site in the Galilee », 2015"
+      },
+      {
+       "id": "moisson-farine",
+       "texte": {
+        "fr": "Sur un outil de pierre du même site, on a retrouvé des grains d'amidon de céréales : le grain était apporté dans la hutte et transformé en farine."
+       },
+       "source": "Université Bar-Ilan, « Researchers identify plant cultivation in a 23,000-year-old site in the Galilee », 2015"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "moisson-semailles",
+    "titre": {
+     "fr": "Les semailles"
+    },
+    "scene": "champ",
+    "texte": {
+     "fr": "Avec l'apparition de l'agriculture, les populations néolithiques ont tendance à se fixer."
+    },
+    "source": "Hominidés.com, « Outils et techniques du Néolithique »",
+    "appel": {
+     "fr": "Garder du grain pour semer"
+    },
+    "bouton": {
+     "fr": "Semer"
+    },
+    "alyca": {
+     "fr": "Tu viens de t'attacher à un champ pour les dix mille prochaines années. Félicitations : tu ne partiras plus jamais en vacances."
+    },
+    "alyca_deja": {
+     "fr": "Encore une moisson. Le champ, lui, ne te remercie toujours pas."
+    },
+    "fin": {
+     "fr": "Ouvrir la ferme"
+    },
+    "ouvert": {
+     "fr": "La ferme peut maintenant être bâtie."
+    }
+   }
+  },
+  {
    "id": "peche",
    "nom": {
     "fr": "Armer la pêcherie"

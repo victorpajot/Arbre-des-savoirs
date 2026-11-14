@@ -2417,7 +2417,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const CA = M.indexerContenu(dBrut("regles.json"), dBrut("skills.json"), dBrut("questions.json"), d("succes.json"),
     { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ile: d("ile.json") });
   const J = 86400000, t0 = new Date(2026, 10, 12, 9, 0).getTime();
-  const sait = (P, id, t) => { P.competences[id] = { maitrise: true, maitriseDepuis: t || t0, prochainRappel: (t || t0) + 400 * J, palier: 1, xp: 5 }; if (id === "ile.feu") P.epreuves = { feu: t || t0, hache: t || t0, peche: t || t0, poterie: t || t0 }; };
+  const sait = (P, id, t) => { P.competences[id] = { maitrise: true, maitriseDepuis: t || t0, prochainRappel: (t || t0) + 400 * J, palier: 1, xp: 5 }; if (id === "ile.feu") P.epreuves = { feu: t || t0, hache: t || t0, peche: t || t0, poterie: t || t0, moisson: t || t0 }; };
   const P = M.nouvellePartie(t0); P.mode = "ile"; P.credits.solde = 2000;
   // Le campement : seul le feu est proposé.
   let G = M.agesIle(CA, P);
