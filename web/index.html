@@ -2375,6 +2375,7 @@ function demarrerJeu() {
     lame: '<path d="M-10 0 C-6 -6 4 -8 9 -5 C12 -2 12 2 9 5 C4 8 -6 6 -10 0 Z" fill="#7F988A"/><path d="M9 -5 C12 -2 12 2 9 5 L6 0 Z" fill="#C9D8CF"/><path d="M-5 -2 C0 -5 4 -5 6 -4" stroke="#fff" stroke-opacity=".5" stroke-width="1.2" fill="none"/>',
     gaine: '<path d="M-9 -3 C-9 -6 -6 -7 -3 -6.5 L7 -4 C10 -3 11 1 9 4 C8 6 6 7 3 6.5 L-6 4 C-9 3 -9 0 -9 -3 Z" fill="#E6D9BC" stroke="#8E7C52" stroke-width="1.4"/><ellipse cx="-5.5" cy="-1" rx="2.2" ry="3" fill="#8E7C52"/>'
   };
+  DESSINS_QUETE.pierres = DESSINS_QUETE.lests;
   function svgObjetQuete(o, x, y, t) { return '<g class="ile-quete" data-quete="' + esc(o.id) + '" transform="translate(' + x + "," + y + ') scale(' + (t || 1) + ')"><circle r="17" fill="transparent"/>' + (DESSINS_QUETE[o.id] || '<circle r="6" fill="#E3B92E"/>') + "</g>"; }
   // Victor (2026-11-14) : « mets à chaque fois les sources ». Celles d'une étape, ou de toute l'épreuve, sans doublon.
   function sourcesEpreuve(E, e) {
@@ -2791,6 +2792,8 @@ function demarrerJeu() {
     ecoute: { fixe: "M14 60 H120 C150 60 150 112 120 112 H14", points: [[224, 86], [160, 86], [108, 86], [84, 40], [48, 86], [84, 134], [128, 104], [176, 52]] },
     coin: { fixe: "M60 30 H180 L196 140 H44 Z", points: [[84, 46], [156, 46], [150, 80], [124, 130], [116, 130], [90, 80], [100, 62]] },
     coin2: { fixe: "M60 30 H180 L196 140 H44 Z", points: [[92, 44], [150, 44], [142, 84], [122, 132], [112, 132], [98, 84], [106, 60]] },
+    muret: { fixe: "M104 96 a16 10 0 1 0 32 0 a16 10 0 1 0 -32 0 M112 96 L120 80 L128 96", points: [[52, 120], [44, 88], [58, 58], [88, 40], [124, 36], [158, 44]] },
+    charpente: { fixe: "M20 150 H220 M104 138 a16 8 0 1 0 32 0 a16 8 0 1 0 -32 0", points: [[40, 150], [98, 44], [80, 150], [120, 28], [160, 150], [142, 44], [200, 150]] },
     plat: { fixe: "M14 60 H120 C150 60 150 112 120 112 H14", points: [[224, 44], [164, 44], [112, 60], [90, 86], [112, 112], [164, 128], [224, 128]] }
   };
   // La paroi qu'on fend : deux coins dans le joint, n coups portés sur total ; la faille s'élargit, puis le pilier se détache.
@@ -2807,6 +2810,14 @@ function demarrerJeu() {
       '<g class="ep-ble"><path d="M84 150 L92 22 L138 26 L142 150 Z" fill="#9A9085"/><path d="M92 22 L138 26 L137 40 L91 37 Z" fill="#B9B0A3"/></g>' +
       '<g class="ep-poli"><path d="M92 150 L98 112 L226 108 L228 150 Z" fill="#9A9085"/><path d="M98 112 L226 108 L226 120 L97 124 Z" fill="#B9B0A3"/></g>' +
       '<g class="ep-lame"><path d="M84 152 L196 84" stroke="#7A5230" stroke-width="6" stroke-linecap="round"/><path d="M84 152 L196 84" stroke="#A37446" stroke-width="2" stroke-linecap="round"/><ellipse cx="112" cy="150" rx="9" ry="6" fill="#6E7780"/></g></svg>';
+  }
+  // L'abri qu'on couvre : la peau qu'on tire (.ep-lame) va et vient, la couverture (.ep-poli) apparaît sur les perches.
+  function svgPeaux() {
+    return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="152" rx="100" ry="9" fill="rgba(0,0,0,.14)"/>' +
+      '<path d="M40 150 L112 34 M80 150 L120 30 M160 150 L120 30 M200 150 L128 34" stroke="#7A5230" stroke-width="5" stroke-linecap="round"/>' +
+      '<g class="ep-poli"><path d="M36 150 L110 44 L130 44 L204 150 Z" fill="#B98A5A"/><path d="M110 44 L96 150 M130 44 L144 150 M73 97 L167 97" stroke="#8E6238" stroke-width="2" stroke-dasharray="6 5"/><path d="M104 150 L112 112 L128 112 L136 150 Z" fill="#3A2A1C"/></g>' +
+      '<path d="M112 34 L108 22 M120 30 V16 M128 34 L132 22" stroke="#7A5230" stroke-width="5" stroke-linecap="round"/>' +
+      '<g class="ep-lame"><path d="M96 70 C108 62 132 62 144 70 L140 96 C128 90 112 90 100 96 Z" fill="#D2A878" stroke="#8E6238" stroke-width="1.6"/></g></svg>';
   }
   // Le filet qu'on noue : n nœuds serrés sur total ; fini, il reçoit ses galets.
   function svgFilet(n, total) {
@@ -2891,7 +2902,7 @@ function demarrerJeu() {
       // Frotter : glisser d'avant en arrière ; c'est la distance parcourue qui polit (un toucher compte un peu aussi).
       frotter: function (e, i) {
         var total = e.course || 4000, fait = 0, fini = false, bas = false, px = 0, py = 0;
-        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : e.dessin === "broyer" ? svgBroyer() : e.dessin === "moisson" ? svgMoisson() : e.dessin === "levier" ? svgLevier() : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
+        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : e.dessin === "broyer" ? svgBroyer() : e.dessin === "moisson" ? svgMoisson() : e.dessin === "levier" ? svgLevier() : e.dessin === "peaux" ? svgPeaux() : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
         var barre = plus('<div class="ep-compte"><span class="ep-barre"><i></i></span><b></b></div>'); plus('<p class="ep-msg" aria-live="polite"></p>');
         var rempl = barre.querySelector("i"), lib = barre.querySelector("b"), lame = zone.querySelector(".ep-lame"), poli = zone.querySelector(".ep-poli");
         function peindre() { var p = Math.min(1, fait / total); rempl.style.width = (p * 100).toFixed(0) + "%"; lib.textContent = e.compte ? tx(e.compte).replace("{n}", Math.round(p * 100)) : __("Poli : {n} %", { n: Math.round(p * 100) }); poli.style.opacity = p.toFixed(2); var ble = zone.querySelector(".ep-ble"); if (ble) ble.style.opacity = (1 - p).toFixed(2); }
@@ -3075,7 +3086,7 @@ function demarrerJeu() {
     }
     // L'entrée : les deux pierres, et Alyca qui annonce le programme.
     marquer(-1);
-    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : E.dessin === "carriere" ? svgFendre(0, 8) : E.dessin === "ferme" ? svgMoisson().replace('class="ep-poli"', 'opacity="0"') : svgPierres(E.dessin)) + "</div>");
+    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : E.dessin === "carriere" ? svgFendre(0, 8) : E.dessin === "abri" ? svgPeaux().replace('class="ep-lame"', 'opacity="0"') : E.dessin === "ferme" ? svgMoisson().replace('class="ep-poli"', 'opacity="0"') : svgPierres(E.dessin)) + "</div>");
     if (E.accroche) dire(tx(E.accroche), "intro");
     var srcE = sourcesEpreuve(E); if (srcE) plus(srcE);
     plus('<button type="button" class="btn large">' + __("Commencer") + "</button>").onclick = function () { etape(0); };

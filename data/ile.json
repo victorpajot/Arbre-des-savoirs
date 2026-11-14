@@ -5534,6 +5534,218 @@
    }
   },
   {
+   "id": "abri",
+   "nom": {
+    "fr": "Monter l'abri"
+   },
+   "amenagement": "foyer",
+   "dessin": "abri",
+   "accroche": {
+    "fr": "Le feu réchauffe, il ne protège pas de la pluie. Il faut un mur contre le vent, des perches et des peaux par-dessus. Trois gestes."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi s'abriter"
+    },
+    "texte": {
+     "fr": "Pas d'abri sans charpente. Il te faut de longues perches, et des pierres pour le muret. Les peaux, la chasse te les a déjà données : explore l'île."
+    },
+    "objets": [
+     {
+      "id": "perches",
+      "nom": {
+       "fr": "De longues perches"
+      },
+      "position": [
+       0.264,
+       0.467
+      ],
+      "trouve": {
+       "fr": "De longues perches, droites et solides : la charpente de l'abri."
+      },
+      "zone": {
+       "fr": "à la lisière du bois, à l'ouest"
+      }
+     },
+     {
+      "id": "pierres",
+      "nom": {
+       "fr": "Des pierres et des galets"
+      },
+      "position": [
+       0.135,
+       0.557
+      ],
+      "trouve": {
+       "fr": "Des pierres et des galets de plage : de quoi monter un muret."
+      },
+      "zone": {
+       "fr": "sur la côte ouest"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "abri-muret",
+     "type": "tracer",
+     "titre": {
+      "fr": "Le muret"
+     },
+     "consigne": {
+      "fr": "Dessine le muret autour du foyer : pose le doigt sur le 1 et suis les points dans l'ordre, pierre après pierre."
+     },
+     "appel": {
+      "fr": "Suis les points du doigt, sans le lever"
+     },
+     "compte": {
+      "fr": "Murets posés : {n} sur {t}"
+     },
+     "gagne": {
+      "fr": "Le muret est monté, du côté du vent."
+     },
+     "noeuds": [
+      {
+       "id": "muret",
+       "nom": {
+        "fr": "Le muret de pierres"
+       },
+       "pose": {
+        "fr": "Un muret de pierres et de galets."
+       }
+      }
+     ],
+     "savoir": [
+      {
+       "id": "abri-pierres",
+       "texte": {
+        "fr": "À Terra Amata, à Nice, les fouilles ont livré des murets de pierres et de galets de plage, placés au nord-ouest des foyers."
+       },
+       "source": "Wikipédia en anglais, « Terra Amata (archaeological site) »"
+      },
+      {
+       "id": "abri-foyer",
+       "texte": {
+        "fr": "Au centre de chaque hutte se trouvait un foyer, dont les cendres montrent que ses habitants maîtrisaient le feu."
+       },
+       "source": "Wikipédia en anglais, « Terra Amata (archaeological site) »"
+      }
+     ]
+    },
+    {
+     "id": "abri-perches",
+     "type": "tracer",
+     "titre": {
+      "fr": "Les perches"
+     },
+     "consigne": {
+      "fr": "Dresse les perches : dessine-les du sol jusqu'au sommet, l'une après l'autre, en laissant un trou en haut pour la fumée."
+     },
+     "appel": {
+      "fr": "Suis les points du doigt, sans le lever"
+     },
+     "compte": {
+      "fr": "Charpentes dressées : {n} sur {t}"
+     },
+     "gagne": {
+      "fr": "Les perches tiennent, liées au sommet."
+     },
+     "noeuds": [
+      {
+       "id": "charpente",
+       "nom": {
+        "fr": "La charpente de perches"
+       },
+       "pose": {
+        "fr": "Les perches sont dressées."
+       }
+      }
+     ],
+     "savoir": [
+      {
+       "id": "abri-lumley",
+       "texte": {
+        "fr": "Pour Henry de Lumley, qui a fouillé le site, ses habitants bâtissaient des huttes de peaux de bêtes soutenues par des perches, avec un trou au centre pour laisser sortir la fumée."
+       },
+       "source": "Wikipédia en anglais, « Terra Amata (archaeological site) »"
+      },
+      {
+       "id": "abri-villa",
+       "texte": {
+        "fr": "Une autre archéologue, Paola Villa, a jugé ces conclusions plus conjecturales que convaincantes."
+       },
+       "source": "Wikipédia en anglais, « Terra Amata (archaeological site) »"
+      }
+     ]
+    },
+    {
+     "id": "abri-peaux",
+     "type": "frotter",
+     "dessin": "peaux",
+     "titre": {
+      "fr": "Les peaux"
+     },
+     "consigne": {
+      "fr": "Tends les peaux sur les perches : tire-les d'un côté à l'autre, jusqu'à couvrir tout l'abri."
+     },
+     "course": 3600,
+     "appel": {
+      "fr": "Glisse le doigt d'un côté à l'autre pour tendre les peaux"
+     },
+     "compte": {
+      "fr": "Couvert : {n} %"
+     },
+     "gagne": {
+      "fr": "L'abri est couvert. Dix personnes y dormiront au sec."
+     },
+     "savoir": [
+      {
+       "id": "abri-date",
+       "texte": {
+        "fr": "Les « cabanes » de Terra Amata, les plus vieilles connues, sont datées de 400 000 ans. C'est Homo erectus qui les a construites."
+       },
+       "source": "Hominidés.com, « L'habitat au Paléolithique »"
+      },
+      {
+       "id": "abri-mammouth",
+       "texte": {
+        "fr": "Faute de bois, d'autres se sont servis de ce qu'ils avaient : à Mezhirich, en Ukraine, des os de mammouths, plus de vingt tonnes pour un seul abri."
+       },
+       "source": "Hominidés.com, « L'habitat au Paléolithique »"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "abri-au-sec",
+    "titre": {
+     "fr": "Au sec"
+    },
+    "texte": {
+     "fr": "Chacune de ces cabanes pouvait abriter entre quinze et vingt hominidés. On retrouve généralement un foyer installé en son centre."
+    },
+    "source": "Hominidés.com, « L'habitat au Paléolithique »",
+    "appel": {
+     "fr": "Entrer dans l'abri"
+    },
+    "bouton": {
+     "fr": "Rallumer le feu au centre"
+    },
+    "alyca": {
+     "fr": "Un toit. Quatre cent mille ans après Homo erectus, tu viens de réinventer l'intérieur. Ne refais pas la décoration tout de suite."
+    },
+    "alyca_deja": {
+     "fr": "Encore un abri. Bientôt tu vas réclamer une porte."
+    },
+    "fin": {
+     "fr": "Ouvrir l'abri de branches"
+    },
+    "ouvert": {
+     "fr": "L'abri de branches peut maintenant être bâti."
+    }
+   }
+  },
+  {
    "id": "hache",
    "nom": {
     "fr": "Former une hache"

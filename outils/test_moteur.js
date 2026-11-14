@@ -2417,7 +2417,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const CA = M.indexerContenu(dBrut("regles.json"), dBrut("skills.json"), dBrut("questions.json"), d("succes.json"),
     { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ile: d("ile.json") });
   const J = 86400000, t0 = new Date(2026, 10, 12, 9, 0).getTime();
-  const sait = (P, id, t) => { P.competences[id] = { maitrise: true, maitriseDepuis: t || t0, prochainRappel: (t || t0) + 400 * J, palier: 1, xp: 5 }; if (id === "ile.feu") P.epreuves = { feu: t || t0, hache: t || t0, peche: t || t0, poterie: t || t0, moisson: t || t0, carriere: t || t0 }; };
+  const sait = (P, id, t) => { P.competences[id] = { maitrise: true, maitriseDepuis: t || t0, prochainRappel: (t || t0) + 400 * J, palier: 1, xp: 5 }; if (id === "ile.feu") P.epreuves = { feu: t || t0, hache: t || t0, peche: t || t0, poterie: t || t0, moisson: t || t0, carriere: t || t0, abri: t || t0 }; };
   const P = M.nouvellePartie(t0); P.mode = "ile"; P.credits.solde = 2000;
   // Le campement : seul le feu est proposé.
   let G = M.agesIle(CA, P);
@@ -2480,6 +2480,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Un aménagement demande son savoir : pas de rangée de maisons sans les machines simples.
   M.ile(CA, P, t0);
   assert.equal(M.etatAmenagement(CA, P, "maisons", t0).savoir, "phys.machines");
+  // Victor (2026-11-14) : chaque aménagement a son épreuve ; l'abri de branches attend la sienne.
+  assert.equal(M.etatAmenagement(CA, P, "foyer", t0).epreuve, "abri", "pas d'abri sans son épreuve");
+  P.epreuves = Object.assign({}, P.epreuves, { abri: t0, hache: t0, moisson: t0, peche: t0, poterie: t0, carriere: t0 });
   assert.ok(M.construireIle(CA, P, "foyer", t0).ok, "le feu permet le foyer");
   sait(P, "res.cultiver"); sait(P, "phys.machines");
   assert.equal(M.etatAmenagement(CA, P, "ferme", t0).savoir, null);
@@ -2534,7 +2537,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   }
   // Victor (2026-11-12) : trois freins à la population, le plus bas l'emporte (savoirs, toits, plafond de l'âge).
   {
-    const Ql = M.nouvellePartie(t0); Ql.mode = "ile"; sait(Ql, "ile.feu"); Ql.epreuves = { feu: t0 }; Ql.credits.solde = 1000;
+    const Ql = M.nouvellePartie(t0); Ql.mode = "ile"; sait(Ql, "ile.feu"); Ql.epreuves = { feu: t0, abri: t0 }; Ql.credits.solde = 1000;
     let Il = M.ile(CA, Ql, t0); assert.ok(Il.limites && Il.limites.toits === 15 && Il.limites.plafond === 40, "campement : 15 dormeurs sans toit, 40 au plus");
     assert.equal(Il.places, Math.min(Il.limites.savoirs, 15)); 
     Ql.ressources.stocks.bois = 100; for (let i = 0; i < 4; i++) assert.ok(M.construireIle(CA, Ql, "foyer", t0).ok);
