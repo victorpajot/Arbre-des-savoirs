@@ -2103,7 +2103,10 @@
   // Le sursis d'Ananké (Victor, 2026-11-14) : un compte à rebours avant le game over, 5 minutes au départ. Chaque
   // savoir maîtrisé et chaque action débloquée (aménagement bâti, épreuve unique, objet de quête, quartier, âge) le
   // rallonge. Le temps ne file que jeu ouvert (c'est l'interface qui l'écoule). partie.sursis = { reste (s), vu, fins }.
-  function reglesSursis(contenu, partie) { return modeIle(partie) && contenu.ile && contenu.ile.regles && contenu.ile.regles.sursis || null; }
+  // Victor (2026-11-14, soir) : le compte à rebours s'arrête dès qu'on a le feu, pour apprendre au calme ensuite.
+  // « Avoir le feu » = l'épreuve du feu réussie (à défaut d'épreuve, le savoir maîtrisé) : lecture de Claude.
+  function feuAcquis(contenu, partie) { return epreuveIle(contenu, "feu") ? epreuveFaite(partie, "feu") : estMaitrisee(partie, "ile.feu"); }
+  function reglesSursis(contenu, partie) { return modeIle(partie) && contenu.ile && contenu.ile.regles && !feuAcquis(contenu, partie) && contenu.ile.regles.sursis || null; }
   function acquisSursis(contenu, partie, R) {
     var n = function (o) { return Object.keys(o || {}).length; };
     var savoirs = Object.keys(partie.competences || {}).filter(function (id) { return estMaitrisee(partie, id); }).length;

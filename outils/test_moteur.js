@@ -2662,12 +2662,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const Qs = M.nouvellePartie(t0); Qs.mode = "ile"; const RS = CA.ile.regles.sursis;
     assert.equal(M.sursisIle(CA, PP), null, "pas de sursis en mode Parcours"); assert.equal(M.sursisIle(CA, Qs).reste, RS.depart);
     assert.deepEqual(M.ecoulerSursis(CA, Qs, 100), { reste: RS.depart - 100, gain: 0, fini: false });
-    Qs.epreuves = { feu: t0 }; assert.equal(M.sursisIle(CA, Qs).gain, RS.action); assert.equal(M.sursisIle(CA, Qs).gain, 0); assert.equal(Qs.sursis.reste, RS.depart - 100 + RS.action);
+    Qs.epreuves = { hache: t0 }; assert.equal(M.sursisIle(CA, Qs).gain, RS.action); assert.equal(M.sursisIle(CA, Qs).gain, 0); assert.equal(Qs.sursis.reste, RS.depart - 100 + RS.action);
     Qs.quetes = { feu: { silex: t0, pyrite: t0 } }; assert.equal(M.sursisIle(CA, Qs).gain, 2 * RS.objet);
     delete Qs.quetes; assert.equal(M.sursisIle(CA, Qs).gain, 0, "ce qui est perdu ne retire pas de temps"); Qs.quetes = { feu: { silex: t0 } }; assert.equal(M.sursisIle(CA, Qs).gain, RS.objet);
     assert.ok(M.ecoulerSursis(CA, Qs, 99999).fini && Qs.sursis.reste === 0);
     assert.deepEqual(M.gameOverIle(CA, Qs, t0), { fini: t0 }); assert.equal(Qs.fini, t0); assert.equal(M.gameOverIle(CA, PP, t0), null);
     // Une partie d'avant le sursis part avec ce qu'elle a déjà mérité.
-    const Qa = M.nouvellePartie(t0); Qa.mode = "ile"; Qa.epreuves = { feu: t0, hache: t0 }; assert.equal(M.sursisIle(CA, Qa).reste, RS.depart + 2 * RS.action); }
+    const Qa = M.nouvellePartie(t0); Qa.mode = "ile"; Qa.epreuves = { hache: t0 }; assert.equal(M.sursisIle(CA, Qa).reste, RS.depart + RS.action);
+    // Dès qu'on a le feu, plus de compte à rebours : on apprend au calme.
+    Qa.epreuves.feu = t0; assert.equal(M.sursisIle(CA, Qa), null); assert.equal(M.ecoulerSursis(CA, Qa, 9999), null); assert.equal(M.gameOverIle(CA, Qa, t0), null); }
   console.log("OK : île par âges (feu, besoins, savoirs requis), monde fini (bancs, effort, effondrement), aléas annoncés");
 }
