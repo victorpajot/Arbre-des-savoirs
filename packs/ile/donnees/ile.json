@@ -3041,14 +3041,14 @@
    "amenagement": "pecherie",
    "dessin": "peche",
    "accroche": {
-    "fr": "Le poisson ne saute pas dans la marmite. Il faut un hameçon, un filet, et la patience de s'en servir. Trois gestes."
+    "fr": "Le poisson ne saute pas dans la marmite. Il faut un hameçon, un filet avec ses nœuds, et la patience de s'en servir. Trois gestes."
    },
    "quete": {
     "nom": {
      "fr": "De quoi pêcher"
     },
     "texte": {
-     "fr": "Pas de pêcherie sans de quoi pêcher. Il te faut un os plat pour l'hameçon, des rameaux de saule pour le filet et des galets pour le lester. Le silex pour percer, tu l'as déjà au camp : explore l'île."
+     "fr": "Pas de pêcherie sans de quoi pêcher. Il te faut un os plat pour l'hameçon, des rameaux de saule pour le filet, de l'écorce pour le faire flotter et des galets pour le lester. Le silex pour percer, tu l'as déjà au camp : explore l'île."
     },
     "objets": [
      {
@@ -3081,6 +3081,22 @@
       },
       "zone": {
        "fr": "au bord du marais, au sud"
+      }
+     },
+     {
+      "id": "ecorce",
+      "nom": {
+       "fr": "De l'écorce"
+      },
+      "position": [
+       0.195,
+       0.443
+      ],
+      "trouve": {
+       "fr": "Des plaques d'écorce, légères : elles tiendront le haut du filet à la surface."
+      },
+      "zone": {
+       "fr": "dans le bois, à l'ouest"
       }
      },
      {
@@ -3141,29 +3157,50 @@
     },
     {
      "id": "peche-filet",
-     "type": "frappes",
-     "dessin": "filet",
+     "type": "tracer",
      "titre": {
       "fr": "Le filet"
      },
      "consigne": {
-      "fr": "Noue les mailles une à une, sans perdre le rythme : un nœud lâché trop tard, et la maille se défait."
+      "fr": "Un filet, ce sont des nœuds, des centaines de nœuds. Dessine-les : pose le doigt sur le 1 et fais passer le brin par chaque point, dans l'ordre."
      },
-     "coups": 7,
-     "delai": 1000,
      "appel": {
-      "fr": "Touche ici pour serrer un nœud"
+      "fr": "Suis les points du doigt, sans le lever"
      },
      "compte": {
-      "fr": "Nœuds serrés : {n} sur {t}"
-     },
-     "rate": {
-      "fr": "Trop lent : le brin a glissé. Reprends le rythme."
+      "fr": "Nœuds faits : {n} sur {t}"
      },
      "gagne": {
-      "fr": "Le filet est noué, lesté de galets."
+      "fr": "Le filet est noué, avec ses flotteurs d'écorce et ses galets."
      },
+     "noeuds": [
+      {
+       "id": "ecoute",
+       "nom": {
+        "fr": "Le nœud d'écoute, dit nœud de filet"
+       },
+       "pose": {
+        "fr": "Un nœud d'écoute. Il en faut un par maille."
+       }
+      },
+      {
+       "id": "plat",
+       "nom": {
+        "fr": "Le nœud plat"
+       },
+       "pose": {
+        "fr": "Un nœud plat. Celui-là aussi tient les mailles."
+       }
+      }
+     ],
      "savoir": [
+      {
+       "id": "peche-ligatures",
+       "texte": {
+        "fr": "Il existe trois types de ligatures pour les filets de pêche : le nœud d'écoute, qu'on appelle aussi nœud de filet, le nœud plat, et le filet sans nœud."
+       },
+       "source": "A. Percier, « Les spécifications des engins de pêche », Revue des travaux de l'Institut des pêches maritimes, 1958"
+      },
       {
        "id": "peche-antrea",
        "texte": {
@@ -3174,16 +3211,16 @@
       {
        "id": "peche-mesures",
        "texte": {
-        "fr": "Il mesurait 27 à 30 mètres de long sur 1,3 à 1,5 mètre de large, avec des mailles de 6 centimètres. Les fouilles ont livré avec lui 18 flotteurs et 31 poids de filet."
+        "fr": "Il mesurait 27 à 30 mètres de long sur 1,3 à 1,5 mètre de large, avec des mailles de 6 centimètres."
        },
        "source": "Wikipédia en anglais, « Antrea Net »"
       },
       {
-       "id": "peche-lest",
+       "id": "peche-flotteurs",
        "texte": {
-        "fr": "Le bas d'un filet peut se lester à l'aide de cailloux."
+        "fr": "Avec lui, 18 flotteurs en écorce et 31 poids en pierre. Ses nœuds, qu'on appelle aujourd'hui nœuds russes, sont encore utilisés par les pêcheurs."
        },
-       "source": "G. Deschamps (coord.), « Les filets maillants », Éditions Quæ, 2009"
+       "source": "Karen Hardy, « Archive : Antrea Net », carnet STRING / LINES, 2022"
       }
      ]
     },
@@ -3194,7 +3231,7 @@
       "fr": "La pêche"
      },
      "consigne": {
-      "fr": "Lance la ligne et attends. Quand le poisson mord, la ligne se tend : tire à ce moment-là, ni avant, ni après."
+      "fr": "Lance la ligne et attends. Quand le poisson mord, le flotteur plonge : tire à ce moment-là, ni avant, ni après."
      },
      "prises": 3,
      "fenetre": 850,
