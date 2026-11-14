@@ -1305,6 +1305,11 @@ svg.grille .interro { transition: opacity .3s; }
 .ep-at.tete { background: none; font-size: 13px; color: var(--muted); padding-top: 0; padding-bottom: 0; } .ep-at.vise { box-shadow: inset 0 0 0 2px var(--accent); } .ep-at.ok { background: color-mix(in srgb, var(--good) 18%, var(--surface)); } .ep-at em { position: absolute; right: 9px; color: var(--good); font-style: normal; font-weight: 800; }
 .ep-bulle .comite p { font-size: 17px; } .ep-choix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; } .ep-c { font-size: 17px; font-weight: 700; padding: 12px 4px; } .ep-c.faux { opacity: .45; text-decoration: line-through; }
 .ep-savoir { border-left: 4px solid #E0A800; background: color-mix(in srgb, #E0A800 12%, var(--surface)); border-radius: 8px; padding: 10px 12px; } .ep-savoir p { font-size: 17px; line-height: 1.5; margin: 6px 0 10px; } .ep-savoir cite { display: block; font-size: 12px; font-style: normal; color: var(--muted); margin-top: 3px; } .ep-savoir .btn { width: 100%; } .ep-savoir.nu p { margin: 0; }
+.ep-dessin { display: block; } .ep-noeud { animation: ep-noeud .8s ease-in-out infinite; } @keyframes ep-noeud { 50% { opacity: .25; } }
+.ep-ferrer .ep-poisson { transform: translate(40px, 132px); transition: transform 1.2s ease-in-out; } .ep-ferrer.mord .ep-poisson { transform: translate(150px, 124px); transition: transform .12s; }
+.ep-ferrer.mord { border-style: solid; border-color: #E0A800; } .ep-ferrer.mord .ep-fil-peche { animation: ep-tend .18s linear infinite; } @keyframes ep-tend { 50% { transform: translate(-2px, 3px); } }
+.ep-peche .ep-poisson { opacity: 0; } .ep-peche .ep-nappe { transform: translateY(46px); transition: transform 1s ease-out; } .ep-peche.pris .ep-nappe { transform: none; } .ep-peche.pris .ep-poisson { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .ep-noeud, .ep-ferrer.mord .ep-fil-peche { animation: none; } }
 .ep-frotte { touch-action: none; cursor: grab; } .ep-lame { transition: transform .08s linear; } .ep-poli { opacity: 0; }
 .ep-barre { flex: 1; height: 14px; border-radius: 7px; background: var(--line); overflow: hidden; } .ep-barre i { display: block; height: 100%; width: 0; background: #E3B92E; border-radius: 7px; } .ep-compte b { white-space: nowrap; }
 .ep-pc.absente { opacity: .13; } .ep-pieces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -2345,6 +2350,9 @@ function demarrerJeu() {
   }
   function allerQuete() { if (queteActive()) ouvrirExplorer(); }
   var DESSINS_QUETE = {
+    os: '<path d="M-9 4 C-11 1 -9 -3 -5 -3 L5 -6 C8 -8 11 -5 9 -2 C11 1 9 4 6 3 L-4 6 C-6 9 -10 7 -9 4 Z" fill="#EFE6D2" stroke="#B9AC8E" stroke-width="1"/><path d="M-4 0 L5 -3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>',
+    saule: '<path d="M-9 9 C-6 0 -2 -5 2 -10 M-4 9 C-2 2 3 -3 8 -8 M1 9 C2 4 6 0 10 -3" stroke="#8A9A3C" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M-5 -1 l-4 -2 M-1 -6 l-4 -1 M3 -2 l4 -3 M6 -6 l1 -4 M5 2 l5 0" stroke="#5E8A3C" stroke-width="1.6" stroke-linecap="round"/>',
+    lests: '<ellipse cx="-4" cy="3" rx="6" ry="4" fill="#7E8791"/><ellipse cx="-5" cy="2" rx="3.4" ry="1.6" fill="#A9B1B9"/><ellipse cx="5" cy="4" rx="5" ry="3.4" fill="#676F78"/><ellipse cx="2" cy="-4" rx="5.4" ry="3.8" fill="#8E969E"/><ellipse cx="1" cy="-5" rx="3" ry="1.4" fill="#BCC3C9"/>',
     silex: '<path d="M-8 4 L-5 -6 L4 -8 L9 -1 L5 7 L-3 8 Z" fill="#6B6257"/><path d="M-5 -6 L4 -8 L2 -1 L-4 1 Z" fill="#9A9085"/><path d="M-8 4 L-3 8 L-5 5 Z" fill="#D9D2C5"/>',
     pyrite: '<path d="M-8 5 L-9 -3 L-2 -8 L7 -6 L9 3 L3 8 Z" fill="#B8962E"/><path d="M-9 -3 L-2 -8 L7 -6 L1 -1 Z" fill="#F0D560"/><path d="M-4 1 h4 v3 h-4 z" fill="#FFF0A0"/>',
     amadou: '<path d="M-3 -10 h6 v20 h-6 z" fill="#6A4A2E"/><path d="M3 -4 a8 7 0 0 1 9 6 l-9 0 z" fill="#A9764A"/><path d="M3 2 l9 0 l-1 2 l-8 0 z" fill="#E6D2B0"/><path d="M-3 2 a6 5 0 0 0 -7 5 l7 0 z" fill="#8F6238"/>',
@@ -2727,6 +2735,36 @@ function demarrerJeu() {
       '<g class="ep-lame"><path d="' + forme + '" fill="#5E7468"/><path d="M84 78 L104 70 L112 84 L92 90 Z M120 68 L146 64 L150 80 L126 84 Z M150 84 L168 80 L164 98 L146 98 Z" fill="#46594F"/><path d="M104 70 L120 68 L126 84 L112 84 Z" fill="#74897D"/>' +
       '<g class="ep-poli"><path d="' + forme + '" fill="#7F988A"/><path d="M166 64 C178 74 178 92 166 102 L158 83 Z" fill="#C9D8CF"/><path d="M90 76 C110 68 136 66 156 68" stroke="#fff" stroke-opacity=".55" stroke-width="3" fill="none" stroke-linecap="round"/></g></g></svg>';
   }
+  // L'archet qui perce l'os : la baguette (.ep-lame) va et vient, le trou (.ep-poli) se creuse.
+  function svgArchet() {
+    return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="150" rx="92" ry="9" fill="rgba(0,0,0,.14)"/>' +
+      '<path d="M40 150 L34 128 L206 124 L212 148 Z" fill="#8A6240"/><path d="M34 128 L206 124 L198 116 L46 119 Z" fill="#A9794C"/>' +
+      '<path d="M70 124 C66 112 76 106 88 108 L156 104 C170 102 178 112 172 122 L84 128 C78 129 72 128 70 124 Z" fill="#EFE6D2" stroke="#B9AC8E" stroke-width="1.6"/>' +
+      '<g class="ep-poli"><ellipse cx="121" cy="115" rx="9" ry="4.6" fill="#5A4A36"/><ellipse cx="121" cy="114" rx="5" ry="2.4" fill="#2E251B"/></g>' +
+      '<path d="M118 22 L124 22 L123 104 L121 114 L119 104 Z" fill="#7A5230"/><path d="M119 104 L123 104 L121 116 Z" fill="#4E473F"/><path d="M108 14 h26 v9 h-26 z" fill="#8D8377"/>' +
+      '<g class="ep-lame"><path d="M44 78 C80 40 160 40 198 74" stroke="#5E3F20" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M44 78 L116 66 M126 65 L198 74" stroke="#E8DCC0" stroke-width="1.8"/><path d="M116 62 h10 v8 h-10 z" fill="#E8DCC0"/></g></svg>';
+  }
+  // Le filet qu'on noue : n nœuds serrés sur total ; fini, il reçoit ses galets.
+  function svgFilet(n, total) {
+    var haut = [30, 90, 150, 210], K = [[60, 78], [120, 78], [180, 78], [30, 122], [90, 122], [150, 122], [210, 122]], h = "";
+    K.forEach(function (k, j) {
+      if (j >= n) return;
+      var d = j < 3 ? [[k[0] - 30, 34], [k[0] + 30, 34]] : [[k[0] - 30, 78], [k[0] + 30, 78]].filter(function (q) { return q[0] > 0 && q[0] < 240; });
+      if (j >= 3) d.push([k[0], 34 + (k[0] === 30 || k[0] === 210 ? 0 : 999)]);
+      d.forEach(function (q) { if (q[1] < 500) h += '<path d="M' + q[0] + " " + q[1] + " L" + k[0] + " " + k[1] + '" stroke="#8A9A3C" stroke-width="2.6" stroke-linecap="round"/>'; });
+      h += '<circle cx="' + k[0] + '" cy="' + k[1] + '" r="4.6" fill="#5E7A2C"/>';
+    });
+    var prochain = n < K.length ? '<circle class="ep-noeud" cx="' + K[n][0] + '" cy="' + K[n][1] + '" r="7" fill="none" stroke="#E0A800" stroke-width="2" stroke-dasharray="3 3"/>' : "";
+    var galets = n >= total ? [30, 90, 150, 210].map(function (x) { return '<path d="M' + x + ' 122 V140" stroke="#8A9A3C" stroke-width="2"/><ellipse cx="' + x + '" cy="146" rx="9" ry="6" fill="#7E8791"/><ellipse cx="' + (x - 2) + '" cy="144" rx="4.6" ry="2" fill="#A9B1B9"/>'; }).join("") : "";
+    return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><path d="M14 34 H226" stroke="#6E7A2E" stroke-width="5" stroke-linecap="round"/>' + haut.map(function (x) { return '<circle cx="' + x + '" cy="34" r="4" fill="#5E7A2C"/>'; }).join("") + h + prochain + galets + "</svg>";
+  }
+  // La ligne à l'eau : le poisson (.ep-poisson) rôde ; quand il mord, la zone prend la classe « mord ».
+  function svgLigne(prises) {
+    var tas = ""; for (var j = 0; j < prises; j++) tas += '<g transform="translate(' + (24 + j * 26) + ',30)"><path d="M-9 0 C-4 -6 5 -6 9 0 C5 6 -4 6 -9 0 Z M9 0 L15 -5 L15 5 Z" fill="#8FB4C4"/><circle cx="-5" cy="-1" r="1.1" fill="#20303A"/></g>';
+    return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><path d="M0 62 H240 V170 H0 Z" fill="#5E9DB8"/><path d="M0 62 H240 V72 H0 Z" fill="#8CC3D8"/><path d="M20 90 h30 M150 100 h40 M70 140 h36 M180 136 h30" stroke="#8CC3D8" stroke-width="3" stroke-linecap="round" opacity=".7"/>' +
+      '<path d="M236 8 L150 30" stroke="#6B4423" stroke-width="5" stroke-linecap="round"/><g class="ep-fil-peche"><path d="M150 30 L128 118" stroke="#E8DCC0" stroke-width="1.6"/><path d="M128 118 c0 8 8 9 9 2" stroke="#EFE6D2" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>' +
+      '<g class="ep-poisson" transform="translate(40,132)"><path d="M-16 0 C-8 -9 8 -9 16 0 C8 9 -8 9 -16 0 Z M16 0 L26 -8 L26 8 Z" fill="#274B5C"/><circle cx="-9" cy="-2" r="1.6" fill="#D8EEF5"/></g>' + tas + "</svg>";
+  }
   function svgPierres(v) {
     if (v === "taille") return svgPierres().replace(/#B8962E/g, "#5E7468").replace(/#E3C356/g, "#74897D").replace(/#9A7A1F/g, "#46594F").replace(/#F4E08A/g, "#9DB3A6").replace(/#6B6257/g, "#8C7A63").replace(/#8D8377/g, "#AD9A80").replace(/#4E473F/g, "#6B5C49").replace(/#D9D2C5/g, "#C9B79B");
     return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="150" rx="86" ry="10" fill="rgba(0,0,0,.14)"/>' +
@@ -2765,10 +2803,11 @@ function demarrerJeu() {
       // 1. Frapper vite : un coup ne compte que s'il suit le précédent d'assez près.
       frappes: function (e, i) {
         var n = 0, dernier = 0, fini = false, total = e.coups || 6, delai = e.delai || 900;
-        var zone = plus('<button type="button" class="ep-zone">' + svgPierres(E.dessin) + '<span class="ep-appel">' + __("Touche ici pour frapper") + "</span></button>");
+        var filet = e.dessin === "filet";
+        var zone = plus('<button type="button" class="ep-zone">' + (filet ? '<span class="ep-dessin">' + svgFilet(0, total) + "</span>" : svgPierres(E.dessin)) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Touche ici pour frapper")) + "</span></button>");
         var jauge = plus('<div class="ep-compte"><span class="ep-pips">' + new Array(total + 1).join("<i></i>") + "</span><b></b></div>"); plus('<p class="ep-msg" aria-live="polite"></p>');
         var pips = corps.querySelectorAll(".ep-pips i"), lib = corps.querySelector(".ep-compte b"), msg = corps.querySelector(".ep-msg"), ecl = zone.querySelector(".ep-eclats");
-        function peindre() { pips.forEach(function (p, j) { p.className = j < n ? "ok" : ""; }); lib.textContent = __("Éclats arrachés : {n} sur {t}", { n: n, t: total }); }
+        function peindre() { pips.forEach(function (p, j) { p.className = j < n ? "ok" : ""; }); lib.textContent = e.compte ? tx(e.compte).replace("{n}", n).replace("{t}", total) : __("Éclats arrachés : {n} sur {t}", { n: n, t: total }); if (filet) zone.querySelector(".ep-dessin").innerHTML = svgFilet(n, total); }
         peindre();
         zone.onpointerdown = function (ev) {
           ev.preventDefault(); if (fini) return;
@@ -2777,7 +2816,7 @@ function demarrerJeu() {
           if (vif) {
             n++; msg.textContent = "";
             var a = -2.4 + (n * 0.83) % 1.6, dx = Math.cos(a) * (46 + (n * 13) % 30), dy = Math.sin(a) * (40 + (n * 7) % 26);
-            ecl.insertAdjacentHTML("beforeend", '<rect class="ep-eclat" x="141" y="84" width="6" height="6" fill="' + (E.dessin === "taille" ? "#9DB3A6" : "#F4E08A") + '" style="--dx:' + dx.toFixed(0) + "px;--dy:" + dy.toFixed(0) + 'px"/>');
+            if (ecl) ecl.insertAdjacentHTML("beforeend", '<rect class="ep-eclat" x="141" y="84" width="6" height="6" fill="' + (E.dessin === "taille" ? "#9DB3A6" : "#F4E08A") + '" style="--dx:' + dx.toFixed(0) + "px;--dy:" + dy.toFixed(0) + 'px"/>');
           } else msg.textContent = tx(e.rate || { fr: "" });
           peindre();
           if (n >= total) { fini = true; zone.classList.add("gagne"); zone.querySelector(".ep-appel").textContent = e.gagne ? tx(e.gagne) : __("La pyrite a cédé."); msg.textContent = ""; setTimeout(function () { savoir(e, i); }, 650); }
@@ -2787,10 +2826,10 @@ function demarrerJeu() {
       // Frotter : glisser d'avant en arrière ; c'est la distance parcourue qui polit (un toucher compte un peu aussi).
       frotter: function (e, i) {
         var total = e.course || 4000, fait = 0, fini = false, bas = false, px = 0, py = 0;
-        var zone = plus('<div class="ep-zone ep-frotte">' + svgPolissage() + '<span class="ep-appel">' + __("Glisse le doigt d'avant en arrière sur la pierre") + "</span></div>");
+        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
         var barre = plus('<div class="ep-compte"><span class="ep-barre"><i></i></span><b></b></div>'); plus('<p class="ep-msg" aria-live="polite"></p>');
         var rempl = barre.querySelector("i"), lib = barre.querySelector("b"), lame = zone.querySelector(".ep-lame"), poli = zone.querySelector(".ep-poli");
-        function peindre() { var p = Math.min(1, fait / total); rempl.style.width = (p * 100).toFixed(0) + "%"; lib.textContent = __("Poli : {n} %", { n: Math.round(p * 100) }); poli.style.opacity = p.toFixed(2); }
+        function peindre() { var p = Math.min(1, fait / total); rempl.style.width = (p * 100).toFixed(0) + "%"; lib.textContent = e.compte ? tx(e.compte).replace("{n}", Math.round(p * 100)) : __("Poli : {n} %", { n: Math.round(p * 100) }); poli.style.opacity = p.toFixed(2); }
         function user(d, ev) {
           if (fini) return; fait += d;
           var r = zone.getBoundingClientRect(), rx = r.width ? (ev.clientX - r.left) / r.width : 0.5; lame.style.transform = "translateX(" + (Math.max(0, Math.min(1, rx)) * 90 - 45).toFixed(0) + "px)";
@@ -2819,6 +2858,26 @@ function demarrerJeu() {
           });
         }
         peindre();
+      },
+      // Ferrer : la ligne est à l'eau ; on tire quand ça mord, ni avant, ni après. (Victor, 2026-11-14 : après l'outil,
+      // une étape où l'on s'en sert.)
+      ferrer: function (e, i) {
+        var total = e.prises || 3, fen = e.fenetre || 850, n = 0, mord = false, fini = false, T = 0;
+        var zone = plus('<button type="button" class="ep-zone ep-ferrer"><span class="ep-dessin">' + svgLigne(0) + '</span><span class="ep-appel">' + __("Attends… puis touche quand la ligne se tend") + "</span></button>");
+        var jauge = plus('<div class="ep-compte"><span class="ep-pips">' + new Array(total + 1).join("<i></i>") + "</span><b></b></div>"), msg = plus('<p class="ep-msg" aria-live="polite"></p>');
+        var pips = jauge.querySelectorAll("i"), lib = jauge.querySelector("b");
+        function peindre() { pips.forEach(function (p, j) { p.className = j < n ? "ok" : ""; }); lib.textContent = __("Poissons : {n} sur {t}", { n: n, t: total }); zone.querySelector(".ep-dessin").innerHTML = svgLigne(n); }
+        function attendre() { mord = false; zone.classList.remove("mord"); clearTimeout(T); T = setTimeout(function () { mord = true; zone.classList.add("mord"); T = setTimeout(function () { if (fini) return; msg.className = "ep-msg"; msg.textContent = tx(e.rate || { fr: "" }); attendre(); }, fen); }, 1100 + Math.random() * 1900); }
+        arrets.push(function () { clearTimeout(T); });
+        zone.onpointerdown = function (ev) {
+          ev.preventDefault(); if (fini) return;
+          if (!mord) { msg.className = "ep-msg"; msg.textContent = __("Trop tôt : tu lui as fait peur. Attends que la ligne se tende."); attendre(); return; }
+          n++; msg.className = "ep-msg ok"; msg.textContent = n < total ? __("Ferré ! Remets la ligne à l'eau.") : ""; peindre();
+          if (n >= total) { fini = true; clearTimeout(T); zone.classList.remove("mord"); zone.classList.add("gagne"); zone.querySelector(".ep-appel").textContent = e.gagne ? tx(e.gagne) : ""; setTimeout(function () { savoir(e, i); }, 750); }
+          else attendre();
+        };
+        zone.onclick = function (ev) { ev.preventDefault(); };
+        peindre(); attendre();
       },
       // 2. La jauge : s'arrêter au-dessus de la barrière.
       jauge: function (e, i) {
@@ -2875,7 +2934,10 @@ function demarrerJeu() {
       vider(); marquer(N);
       var c = E.chute;
       plus('<div class="ep-titre"><span>★</span><h3>' + esc(tx(c.titre)) + "</h3></div>");
-      var sc = c.scene === "hache" ? plus('<div class="ep-foyer ep-abattre"><svg viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="130" cy="156" rx="96" ry="9" fill="rgba(0,0,0,.14)"/>' +
+      var sc = c.scene === "peche" ? plus('<div class="ep-foyer ep-peche"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 70 H240 V170 H0 Z" fill="#5E9DB8"/><path d="M0 70 H240 V80 H0 Z" fill="#8CC3D8"/>' +
+        '<g class="ep-nappe"><path d="M30 64 H210" stroke="#6E7A2E" stroke-width="5" stroke-linecap="round"/><path d="M30 64 L60 100 L90 64 L120 100 L150 64 L180 100 L210 64 M60 100 L90 136 L120 100 L150 136 L180 100 M30 64 V136 M210 64 V136 M30 136 L60 100 M210 136 L180 100" stroke="#8A9A3C" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+        [[75, 96, 1], [128, 118, -1], [165, 92, 1]].map(function (f) { return '<g class="ep-poisson" transform="translate(' + f[0] + "," + f[1] + ") scale(" + f[2] + ',1)"><path d="M-14 0 C-7 -8 7 -8 14 0 C7 8 -7 8 -14 0 Z M14 0 L23 -7 L23 7 Z" fill="#C9DEE6"/><circle cx="-8" cy="-2" r="1.5" fill="#20303A"/></g>'; }).join("") + "</g></svg></div>") :
+        c.scene === "hache" ? plus('<div class="ep-foyer ep-abattre"><svg viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="130" cy="156" rx="96" ry="9" fill="rgba(0,0,0,.14)"/>' +
         '<path d="M170 156 L174 40 L196 40 L202 156 Z" fill="#6A4A2E"/><path d="M178 44 L180 152" stroke="#8A6540" stroke-width="4" stroke-linecap="round"/><circle cx="186" cy="26" r="30" fill="#2F7D46"/><circle cx="160" cy="36" r="20" fill="#3C9156"/><circle cx="212" cy="38" r="20" fill="#27693A"/><circle cx="182" cy="14" r="16" fill="#49A565"/>' +
         '<path class="ep-entaille" d="M171 92 L186 100 L171 110 Z" fill="#E8CFA0"/><g class="ep-copeaux"><rect x="160" y="96" width="5" height="5" fill="#E8CFA0" style="--dx:-34px;--dy:-26px"/><rect x="162" y="102" width="4" height="4" fill="#D9B77C" style="--dx:-44px;--dy:8px"/><rect x="164" y="98" width="4" height="4" fill="#E8CFA0" style="--dx:-20px;--dy:-40px"/></g>' +
         '<g class="ep-hache"><g transform="translate(205,42) scale(-0.78,0.78)">' + piecesHache(null) + "</g></g></svg></div>") :
@@ -2911,7 +2973,7 @@ function demarrerJeu() {
     }
     // L'entrée : les deux pierres, et Alyca qui annonce le programme.
     marquer(-1);
-    plus('<div class="ep-zone fixe">' + svgPierres(E.dessin) + "</div>");
+    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : svgPierres(E.dessin)) + "</div>");
     if (E.accroche) dire(tx(E.accroche), "intro");
     plus('<button type="button" class="btn large">' + __("Commencer") + "</button>").onclick = function () { etape(0); };
     document.body.appendChild(z);

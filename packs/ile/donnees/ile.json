@@ -2870,6 +2870,225 @@
      "fr": "Le camp de bûcherons peut maintenant être bâti."
     }
    }
+  },
+  {
+   "id": "peche",
+   "nom": {
+    "fr": "Armer la pêcherie"
+   },
+   "amenagement": "pecherie",
+   "dessin": "peche",
+   "accroche": {
+    "fr": "Le poisson ne saute pas dans la marmite. Il faut un hameçon, un filet, et la patience de s'en servir. Trois gestes."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi pêcher"
+    },
+    "texte": {
+     "fr": "Pas de pêcherie sans de quoi pêcher. Il te faut un os plat pour l'hameçon, des rameaux de saule pour le filet et des galets pour le lester. Le silex pour percer, tu l'as déjà au camp : explore l'île."
+    },
+    "objets": [
+     {
+      "id": "os",
+      "nom": {
+       "fr": "Un os plat"
+      },
+      "position": [
+       0.36,
+       0.33
+      ],
+      "trouve": {
+       "fr": "Un os plat, blanchi par le temps : de quoi y découper un hameçon."
+      },
+      "zone": {
+       "fr": "à la lisière du bois, au nord-ouest"
+      }
+     },
+     {
+      "id": "saule",
+      "nom": {
+       "fr": "Des rameaux de saule"
+      },
+      "position": [
+       0.57,
+       0.885
+      ],
+      "trouve": {
+       "fr": "Des rameaux de saule, souples et longs : le filet en sortira."
+      },
+      "zone": {
+       "fr": "au bord du marais, au sud"
+      }
+     },
+     {
+      "id": "lests",
+      "nom": {
+       "fr": "Des galets pour lester"
+      },
+      "position": [
+       0.135,
+       0.557
+      ],
+      "trouve": {
+       "fr": "Des galets lourds, roulés par la mer : ils tiendront le bas du filet au fond."
+      },
+      "zone": {
+       "fr": "sur la côte ouest"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "peche-hamecon",
+     "type": "frotter",
+     "dessin": "archet",
+     "titre": {
+      "fr": "L'hameçon"
+     },
+     "consigne": {
+      "fr": "Perce la plaquette d'os : fais aller et venir l'archet, d'avant en arrière, sans t'arrêter. La pointe de silex fait le reste."
+     },
+     "course": 3800,
+     "appel": {
+      "fr": "Glisse le doigt d'avant en arrière pour faire tourner la pointe"
+     },
+     "compte": {
+      "fr": "Percé : {n} %"
+     },
+     "gagne": {
+      "fr": "L'os est percé. Un coup de racloir, et c'est un hameçon."
+     },
+     "savoir": [
+      {
+       "id": "peche-rainurage",
+       "texte": {
+        "fr": "À Zamostje 2, en Russie, les ébauches d'hameçons sont extraites par rainurage dans des plaquettes d'os."
+       },
+       "source": "Y. Maigrot et al., « Des hameçons en os aux techniques de pêche : le cas de Zamostje 2 », 2014"
+      },
+      {
+       "id": "peche-archet",
+       "texte": {
+        "fr": "Les perforations, circulaires, sont faites par pression et rotation, très probablement à l'aide d'un archet équipé d'une pointe de pierre. La mise en forme se finit par raclage."
+       },
+       "source": "Y. Maigrot et al., « Des hameçons en os aux techniques de pêche : le cas de Zamostje 2 », 2014"
+      }
+     ]
+    },
+    {
+     "id": "peche-filet",
+     "type": "frappes",
+     "dessin": "filet",
+     "titre": {
+      "fr": "Le filet"
+     },
+     "consigne": {
+      "fr": "Noue les mailles une à une, sans perdre le rythme : un nœud lâché trop tard, et la maille se défait."
+     },
+     "coups": 7,
+     "delai": 1000,
+     "appel": {
+      "fr": "Touche ici pour serrer un nœud"
+     },
+     "compte": {
+      "fr": "Nœuds serrés : {n} sur {t}"
+     },
+     "rate": {
+      "fr": "Trop lent : le brin a glissé. Reprends le rythme."
+     },
+     "gagne": {
+      "fr": "Le filet est noué, lesté de galets."
+     },
+     "savoir": [
+      {
+       "id": "peche-antrea",
+       "texte": {
+        "fr": "Le plus ancien filet de pêche connu a été trouvé en 1913 à Antrea, alors en Finlande, par un fermier qui creusait un fossé. Il est en saule et date d'environ 8 500 ans avant notre ère."
+       },
+       "source": "Wikipédia en anglais, « Antrea Net »"
+      },
+      {
+       "id": "peche-mesures",
+       "texte": {
+        "fr": "Il mesurait 27 à 30 mètres de long sur 1,3 à 1,5 mètre de large, avec des mailles de 6 centimètres. Les fouilles ont livré avec lui 18 flotteurs et 31 poids de filet."
+       },
+       "source": "Wikipédia en anglais, « Antrea Net »"
+      },
+      {
+       "id": "peche-lest",
+       "texte": {
+        "fr": "Le bas d'un filet peut se lester à l'aide de cailloux."
+       },
+       "source": "G. Deschamps (coord.), « Les filets maillants », Éditions Quæ, 2009"
+      }
+     ]
+    },
+    {
+     "id": "peche-ferrer",
+     "type": "ferrer",
+     "titre": {
+      "fr": "La pêche"
+     },
+     "consigne": {
+      "fr": "Lance la ligne et attends. Quand le poisson mord, la ligne se tend : tire à ce moment-là, ni avant, ni après."
+     },
+     "prises": 3,
+     "fenetre": 850,
+     "rate": {
+      "fr": "Trop tard : il a recraché l'hameçon."
+     },
+     "gagne": {
+      "fr": "Trois poissons au bout de la ligne."
+     },
+     "savoir": [
+      {
+       "id": "peche-magdalenien",
+       "texte": {
+        "fr": "Des hameçons ont été retrouvés dans de nombreux sites magdaléniens datant de -18 000 ans."
+       },
+       "source": "Hominidés.com, « Pêche à la Préhistoire »"
+      },
+      {
+       "id": "peche-conservation",
+       "texte": {
+        "fr": "Les filets, les lignes et les nasses, eux, ne se conservent plusieurs milliers d'années que dans de rares conditions."
+       },
+       "source": "Hominidés.com, « Pêche à la Préhistoire »"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "peche-filet-eau",
+    "titre": {
+     "fr": "Le filet à l'eau"
+    },
+    "scene": "peche",
+    "texte": {
+     "fr": "Dès le Néolithique, les premiers témoignages de l'utilisation de filets sont attestés. Le filet est d'abord fabriqué en écorce, à la manière d'une vannerie, puis confectionné avec des fibres de lin."
+    },
+    "source": "G. Deschamps (coord.), « Les filets maillants », Éditions Quæ, 2009",
+    "appel": {
+     "fr": "Porter le filet au rivage"
+    },
+    "bouton": {
+     "fr": "Relever le filet"
+    },
+    "alyca": {
+     "fr": "Du poisson. Les pêcheurs d'Antrea, eux, ont laissé trente mètres de filet au fond d'un lac. Le tien est encore à toi : profites-en tant que ça dure."
+    },
+    "alyca_deja": {
+     "fr": "Encore un filet. Les poissons de l'île commencent à te connaître."
+    },
+    "fin": {
+     "fr": "Ouvrir la pêcherie"
+    },
+    "ouvert": {
+     "fr": "La pêcherie peut maintenant être bâtie."
+    }
+   }
   }
  ]
 }
