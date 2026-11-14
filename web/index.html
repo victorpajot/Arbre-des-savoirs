@@ -2354,6 +2354,7 @@ function demarrerJeu() {
   }
   function allerQuete() { if (queteActive()) ouvrirExplorer(); }
   var DESSINS_QUETE = {
+    minerai: '<path d="M-10 6 L-8 -4 L0 -9 L9 -4 L10 5 L2 9 Z" fill="#6B6257"/><path d="M-8 -4 L0 -9 L9 -4 L1 0 Z" fill="#8D8377"/><path d="M-6 2 L-1 -2 L3 3 L-2 6 Z M4 -3 L8 -1 L7 3 Z" fill="#3FA37A"/><path d="M-4 1 L-1 -1" stroke="#8EE0BC" stroke-width="1.2" stroke-linecap="round"/>',
     polypore: '<path d="M-3 -10 h6 v20 h-6 z" fill="#E9E4D8"/><path d="M-3 -6 h2 M1 0 h2 M-3 5 h2" stroke="#3A3A3A" stroke-width="1.2"/><path d="M3 -3 a8 6 0 0 1 9 5 l-9 0 z" fill="#B99B78"/><path d="M3 2 l9 0 l-1 2.4 l-8 0 z" fill="#F3EBDD"/>',
     peuplier: '<path d="M-9 8 L-7 -8 L1 -10 L3 6 Z" fill="#9A8F7A"/><path d="M-7 -8 L1 -10 L1.4 -6 L-6.6 -4 Z" fill="#B9AE98"/><path d="M-5 0 L0 -1 M-5.4 4 L1 3" stroke="#6E6553" stroke-width="1.1" stroke-linecap="round"/><path d="M6 6 C4 0 8 -6 10 -8 C12 -3 11 3 6 6 Z" fill="#6FA04F"/><path d="M6 6 L9.4 -5" stroke="#3F6E2C" stroke-width=".8"/>',
     pierre_fine: '<path d="M-10 6 L-8 -4 L2 -8 L10 -2 L8 6 Z" fill="#6E7780"/><path d="M-8 -4 L2 -8 L10 -2 L0 0 Z" fill="#8E98A2"/><path d="M-7 2 L7 0 M-6 4.5 L8 3" stroke="#535B63" stroke-width="1" stroke-linecap="round"/>',
@@ -2797,6 +2798,7 @@ function demarrerJeu() {
     muret: { fixe: "M104 96 a16 10 0 1 0 32 0 a16 10 0 1 0 -32 0 M112 96 L120 80 L128 96", points: [[52, 120], [44, 88], [58, 58], [88, 40], [124, 36], [158, 44]] },
     charpente: { fixe: "M20 150 H220 M104 138 a16 8 0 1 0 32 0 a16 8 0 1 0 -32 0", points: [[40, 150], [98, 44], [80, 150], [120, 28], [160, 150], [142, 44], [200, 150]] },
     enfiler: { fixe: "M40 60 a14 12 0 1 0 28 0 a14 12 0 1 0 -28 0 M92 104 a14 12 0 1 0 28 0 a14 12 0 1 0 -28 0 M146 60 a14 12 0 1 0 28 0 a14 12 0 1 0 -28 0 M190 112 a12 10 0 1 0 24 0 a12 10 0 1 0 -24 0", points: [[20, 28], [54, 60], [106, 104], [160, 60], [202, 112], [226, 146]] },
+    four: { fixe: "M96 118 a24 12 0 1 0 48 0 a24 12 0 1 0 -48 0 M108 118 L120 96 L132 118", points: [[70, 142], [52, 112], [62, 80], [92, 62], [128, 60], [162, 72], [182, 100], [174, 138]] },
     plat: { fixe: "M14 60 H120 C150 60 150 112 120 112 H14", points: [[224, 44], [164, 44], [112, 60], [90, 86], [112, 112], [164, 128], [224, 128]] }
   };
   // La paroi qu'on fend : deux coins dans le joint, n coups portés sur total ; la faille s'élargit, puis le pilier se détache.
@@ -2996,7 +2998,7 @@ function demarrerJeu() {
         var seuil = e.seuil || 0.7, ech = e.echelle || null, per = e.periode || 1500, t0 = performance.now(), gele = false, fini = false, raf = 0, p = 0;
         var bloc = plus('<div class="ep-jauge"><div class="ep-tube"><div class="ep-zone-ok" style="height:' + ((1 - seuil) * 100).toFixed(0) + '%"></div><div class="ep-seuil" style="bottom:' + (seuil * 100).toFixed(0) + '%"><span>' + (e.seuil_nom ? esc(tx(e.seuil_nom)) : __("énergie d'activation")) + (ech ? "<small>" + chiffre(Math.round(seuil * ech.max)) + " " + esc(ech.unite) + "</small>" : "") + '</span></div>' +
           (ech ? [0, 0.25, 0.5, 0.75, 1].map(function (g) { return '<i class="ep-grad" style="bottom:' + g * 100 + '%">' + chiffre(Math.round(g * ech.max)) + "</i>"; }).join("") : "") + '<div class="ep-curseur"></div></div>' +
-          '<div class="ep-grain"><svg viewBox="0 0 80 80" aria-hidden="true"><circle class="ep-halo" cx="40" cy="40" r="30"/>' + (e.dessin === "pot" ? '<path d="M26 30 C20 44 24 58 32 62 H48 C56 58 60 44 54 30 Z" class="ep-g"/><ellipse cx="40" cy="30" rx="14" ry="3.4" fill="#8E4C28"/>' : '<path d="M28 46 L32 30 L46 26 L54 38 L48 52 L34 54 Z" class="ep-g"/>') + "</svg><span>" + (e.objet ? esc(tx(e.objet)) : __("le grain de pyrite")) + "</span>" + (ech ? '<b class="ep-lu"></b><small>' + __("énergie du coup") + "</small>" : "") + "</div></div>");
+          '<div class="ep-grain"><svg viewBox="0 0 80 80" aria-hidden="true"><circle class="ep-halo" cx="40" cy="40" r="30"/>' + (e.dessin === "pot" ? '<path d="M26 30 C20 44 24 58 32 62 H48 C56 58 60 44 54 30 Z" class="ep-g"/><ellipse cx="40" cy="30" rx="14" ry="3.4" fill="#8E4C28"/>' : '<path d="M28 46 L32 30 L46 26 L54 38 L48 52 L34 54 Z" class="ep-g"/>') + "</svg><span>" + (e.objet ? esc(tx(e.objet)) : __("le grain de pyrite")) + "</span>" + (ech ? '<b class="ep-lu"></b><small>' + (e.lu ? esc(tx(e.lu)) : __("énergie du coup")) + "</small>" : "") + "</div></div>");
         var bt = plus('<button type="button" class="btn large ep-frappe">' + (e.bouton ? esc(tx(e.bouton)) : __("Frapper !")) + "</button>"), msg = plus('<p class="ep-msg" aria-live="polite"></p>');
         var cur = bloc.querySelector(".ep-curseur"); var lu = bloc.querySelector(".ep-lu");
         function tour(t) { if (!gele) { var x = ((t - t0) / per) % 2; p = x < 1 ? x : 2 - x; cur.style.bottom = (p * 100).toFixed(1) + "%"; if (lu) lu.textContent = Math.round(p * ech.max) + " " + ech.unite; } raf = requestAnimationFrame(tour); }
@@ -3089,7 +3091,7 @@ function demarrerJeu() {
     }
     // L'entrée : les deux pierres, et Alyca qui annonce le programme.
     marquer(-1);
-    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : E.dessin === "carriere" ? svgFendre(0, 8) : E.dessin === "remede" ? '<svg class="ep-pierres" viewBox="-60 -42 120 84" aria-hidden="true"><g transform="translate(-24,0) scale(2.6)">' + DESSINS_QUETE.polypore + '</g><g transform="translate(28,4) scale(2.6)">' + DESSINS_QUETE.peuplier + "</g></svg>" : E.dessin === "abri" ? svgPeaux().replace('class="ep-lame"', 'opacity="0"') : E.dessin === "ferme" ? svgMoisson().replace('class="ep-poli"', 'opacity="0"') : svgPierres(E.dessin)) + "</div>");
+    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : E.dessin === "carriere" ? svgFendre(0, 8) : E.dessin === "fonderie" ? '<svg class="ep-pierres" viewBox="-60 -42 120 84" aria-hidden="true"><g transform="scale(3.4)">' + DESSINS_QUETE.minerai + "</g></svg>" : E.dessin === "remede" ? '<svg class="ep-pierres" viewBox="-60 -42 120 84" aria-hidden="true"><g transform="translate(-24,0) scale(2.6)">' + DESSINS_QUETE.polypore + '</g><g transform="translate(28,4) scale(2.6)">' + DESSINS_QUETE.peuplier + "</g></svg>" : E.dessin === "abri" ? svgPeaux().replace('class="ep-lame"', 'opacity="0"') : E.dessin === "ferme" ? svgMoisson().replace('class="ep-poli"', 'opacity="0"') : svgPierres(E.dessin)) + "</div>");
     if (E.accroche) dire(tx(E.accroche), "intro");
     var srcE = sourcesEpreuve(E); if (srcE) plus(srcE);
     plus('<button type="button" class="btn large">' + __("Commencer") + "</button>").onclick = function () { etape(0); };

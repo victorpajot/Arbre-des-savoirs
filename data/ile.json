@@ -6982,6 +6982,220 @@
      "fr": "La carrière peut maintenant être bâtie."
     }
    }
+  },
+  {
+   "id": "fonderie",
+   "nom": {
+    "fr": "Allumer la fonderie"
+   },
+   "amenagement": "mine",
+   "dessin": "fonderie",
+   "accroche": {
+    "fr": "Une pierre verte, du feu, du souffle : il en sort du métal. Personne ne te croira avant de l'avoir vu. Trois gestes."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi fondre"
+    },
+    "texte": {
+     "fr": "Pas de fonderie sans minerai ni four. Il te faut des pierres vertes, chargées de cuivre, et de l'argile pour sceller le four. La pierre, le charbon de bois et les peaux, tu les as déjà au village : explore l'île."
+    },
+    "objets": [
+     {
+      "id": "minerai",
+      "nom": {
+       "fr": "Du minerai de cuivre"
+      },
+      "position": [
+       0.6,
+       0.418
+      ],
+      "trouve": {
+       "fr": "Des pierres veinées de vert : du minerai de cuivre."
+      },
+      "zone": {
+       "fr": "sur le flanc du volcan, à l'est"
+      }
+     },
+     {
+      "id": "argile",
+      "nom": {
+       "fr": "De l'argile"
+      },
+      "position": [
+       0.31,
+       0.69
+      ],
+      "trouve": {
+       "fr": "De l'argile grasse : elle scellera les pierres du four."
+      },
+      "zone": {
+       "fr": "sur la berge du lac, au sud-ouest"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "fonderie-four",
+     "type": "tracer",
+     "titre": {
+      "fr": "Le four"
+     },
+     "consigne": {
+      "fr": "Monte le four : dessine sa paroi basse, bloc après bloc, en suivant les points dans l'ordre. L'argile bouchera les joints."
+     },
+     "appel": {
+      "fr": "Suis les points du doigt, sans le lever"
+     },
+     "compte": {
+      "fr": "Parois montées : {n} sur {t}"
+     },
+     "gagne": {
+      "fr": "Le four est monté, les joints sont scellés."
+     },
+     "noeuds": [
+      {
+       "id": "four",
+       "nom": {
+        "fr": "La paroi du four"
+       },
+       "pose": {
+        "fr": "Une paroi basse, scellée à l'argile."
+       }
+      }
+     ],
+     "savoir": [
+      {
+       "id": "fonderie-parois",
+       "texte": {
+        "fr": "Le four reconstitué pour retrouver les gestes de Cabrières a des parois de faible hauteur, environ 40 centimètres, faites de blocs de dolomie scellés par de l'argile."
+       },
+       "source": "D. Bourgarit et B. Mille, « La métallurgie chalcolithique de Cabrières : confrontation des données expérimentales et archéologiques en laboratoire », Archéologie en Languedoc, n° 21, 1997"
+      }
+     ]
+    },
+    {
+     "id": "fonderie-concasser",
+     "type": "frappes",
+     "dessin": "taille",
+     "titre": {
+      "fr": "Le minerai"
+     },
+     "consigne": {
+      "fr": "Trie le minerai et concasse-le : frappe vite, sans t'arrêter, pour ne garder que ce qui est riche en cuivre."
+     },
+     "coups": 8,
+     "delai": 900,
+     "appel": {
+      "fr": "Touche ici pour concasser"
+     },
+     "compte": {
+      "fr": "Blocs concassés : {n} sur {t}"
+     },
+     "rate": {
+      "fr": "Trop lent : garde le rythme."
+     },
+     "gagne": {
+      "fr": "Le minerai est trié et concassé."
+     },
+     "savoir": [
+      {
+       "id": "fonderie-tri",
+       "texte": {
+        "fr": "Un tri est effectué pour ne garder que les fragments de roche riches en minerai, qui est ensuite concassé."
+       },
+       "source": "D. Bourgarit et B. Mille, « La métallurgie chalcolithique de Cabrières : confrontation des données expérimentales et archéologiques en laboratoire », Archéologie en Languedoc, n° 21, 1997"
+      },
+      {
+       "id": "fonderie-melange",
+       "texte": {
+        "fr": "Ce minerai est à chaque fois un mélange de sulfures de plusieurs métaux et de carbonates de cuivre."
+       },
+       "source": "D. Bourgarit et B. Mille, « La métallurgie chalcolithique de Cabrières : confrontation des données expérimentales et archéologiques en laboratoire », Archéologie en Languedoc, n° 21, 1997"
+      }
+     ]
+    },
+    {
+     "id": "fonderie-souffler",
+     "type": "jauge",
+     "dessin": "pot",
+     "titre": {
+      "fr": "Le souffle"
+     },
+     "consigne": {
+      "fr": "Le feu monte et retombe avec le soufflet. Lâche ton souffle quand il est au plus chaud : en dessous, le cuivre reste dans la pierre."
+     },
+     "seuil": 0.75,
+     "periode": 1300,
+     "echelle": {
+      "max": 1400,
+      "unite": "°C"
+     },
+     "seuil_nom": {
+      "fr": "assez chaud pour le cuivre"
+     },
+     "objet": {
+      "fr": "le four chargé"
+     },
+     "lu": {
+      "fr": "chaleur du four"
+     },
+     "bouton": {
+      "fr": "Souffler !"
+     },
+     "reussi": {
+      "fr": "Le minerai a rendu son cuivre."
+     },
+     "rate": {
+      "fr": "Pas assez chaud : attends que le feu remonte."
+     },
+     "savoir": [
+      {
+       "id": "fonderie-temperature",
+       "texte": {
+        "fr": "Les températures atteintes dans les scories de Cabrières sont supérieures à 1 050 °C."
+       },
+       "source": "D. Bourgarit et B. Mille, « La métallurgie chalcolithique de Cabrières : confrontation des données expérimentales et archéologiques en laboratoire », Archéologie en Languedoc, n° 21, 1997"
+      },
+      {
+       "id": "fonderie-soufflet",
+       "texte": {
+        "fr": "Pour y arriver, les expérimentateurs ont ajouté au four un soufflet en peau, qui assure une ventilation forcée."
+       },
+       "source": "D. Bourgarit et B. Mille, « La métallurgie chalcolithique de Cabrières : confrontation des données expérimentales et archéologiques en laboratoire », Archéologie en Languedoc, n° 21, 1997"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "fonderie-cabrieres",
+    "titre": {
+     "fr": "La première coulée"
+    },
+    "texte": {
+     "fr": "À Cabrières, on réduisait des minerais de cuivre sulfurés dès le troisième millénaire avant notre ère."
+    },
+    "source": "D. Bourgarit et B. Mille, « La métallurgie chalcolithique de Cabrières : confrontation des données expérimentales et archéologiques en laboratoire », Archéologie en Languedoc, n° 21, 1997",
+    "appel": {
+     "fr": "Ouvrir le four"
+    },
+    "bouton": {
+     "fr": "Raviver les braises"
+    },
+    "alyca": {
+     "fr": "Du métal. Sorti d'un caillou vert, avec du feu et un sac en peau. Si tu racontes ça aux autres, précise bien que ce n'est pas de la magie : ils vont vouloir te brûler."
+    },
+    "alyca_deja": {
+     "fr": "Encore une coulée. Tu commences à sentir le soufre."
+    },
+    "fin": {
+     "fr": "Ouvrir la mine et la fonderie"
+    },
+    "ouvert": {
+     "fr": "La mine et la fonderie peuvent maintenant être bâties."
+    }
+   }
   }
  ]
 }
