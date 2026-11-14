@@ -1308,6 +1308,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ep-dessin { display: block; } .ep-noeud { animation: ep-noeud .8s ease-in-out infinite; } @keyframes ep-noeud { 50% { opacity: .25; } }
 .ep-ferrer .ep-poisson { transform: translate(40px, 132px); transition: transform 1.2s ease-in-out; } .ep-ferrer.mord .ep-poisson { transform: translate(150px, 124px); transition: transform .12s; }
 .ep-ferrer.mord { border-style: solid; border-color: #E0A800; } .ep-ferrer.mord .ep-fil-peche { animation: ep-tend .18s linear infinite; } .ep-flotteur { transition: transform .12s; } .ep-ferrer.mord .ep-flotteur { transform: translate(-3px, 14px); }
+.ile-amen.vise { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 14px; }
 .ep-sources { font-size: 13px; line-height: 1.35; color: var(--muted); margin: 6px 0 8px; } .ile-passage .ep-sources { margin: 0 0 8px; }
 .ep-trace { touch-action: none; cursor: crosshair; } .ep-trace .ep-pt { fill: var(--surface); stroke: #8A9A3C; stroke-width: 2; } .ep-trace .ep-pt.fait { fill: #8A9A3C; } .ep-trace .ep-pt.ici { stroke: #E0A800; stroke-width: 3; animation: ep-noeud .8s ease-in-out infinite; } .ep-trace text { font: 800 11px var(--f-body); fill: var(--text); pointer-events: none; } .ep-trace .ep-pt.fait + text { fill: #fff; } @keyframes ep-tend { 50% { transform: translate(-2px, 3px); } }
 .ep-roue { transform-box: fill-box; transform-origin: center; } .ep-moulin.pris .ep-roue { animation: ep-roue 3s linear infinite; } @keyframes ep-roue { to { transform: rotate(360deg); } } @media (prefers-reduced-motion: reduce) { .ep-moulin.pris .ep-roue { animation: none; } }
@@ -2586,12 +2587,13 @@ function demarrerJeu() {
     function svgExplo(g) {
       var toge = togeHabitant(g), pal = { h: CHEVEUX[g % CHEVEUX.length], s: PEAUX[(Math.imul(g ^ (g >>> 7), 2654435761) >>> 16) % PEAUX.length], v: toge, w: ombre(toge), k: "#2B2B33", j: "#2B2B33" }, u = 0.62, x = -5 * u, y = -16 * u;
       function px(cx, cy, w, h, c) { return '<rect x="' + (x + cx * u).toFixed(2) + '" y="' + (y + cy * u).toFixed(2) + '" width="' + (w * u).toFixed(2) + '" height="' + (h * u).toFixed(2) + '" fill="' + c + '"/>'; }
-      var corps = HABITANT2.slice(0, 14), dos = corps.map(function (l, i) { return i >= 2 && i <= 4 ? "..hhhhhh.." : l; });
+      // Victor (2026-11-14) : l'explorateur peut être une exploratrice, une fois sur deux.
+      var F = femme(g), corps = (F ? HABITANTE2 : HABITANT2).slice(0, 14), dos = corps.map(function (l, i) { return F ? (i >= 2 && i <= 6 ? ".hhhhhhhh." : l) : i >= 2 && i <= 4 ? "..hhhhhh.." : l; });
       var jambes = '<g class="ile-j1">' + px(2, 14, 2, 2, pal.j) + px(6, 14, 2, 1, pal.j) + '</g><g class="ile-j2">' + px(2, 14, 2, 1, pal.j) + px(6, 14, 2, 2, pal.j) + "</g>";
       // Son bâton (Victor, 2026-11-14) : tenu devant lui, il tourne autour de la main quand il frappe.
       function baton(bx) { return '<g class="ex-baton" data-x="' + bx + '"><path d="M' + bx + " -8.6 L" + bx + ' .2" stroke="#6B4423" stroke-width=".62" stroke-linecap="round"/><path d="M' + bx + " -8.6 L" + bx + ' -7.6" stroke="#8C5E34" stroke-width=".9" stroke-linecap="round"/></g>'; }
       return '<ellipse cy="0" rx="3.4" ry="1" fill="rgba(0,0,0,.22)"/>' +
-        '<g class="ex-v" data-v="profil">' + pixels(HABITANT_PROFIL, pal, null, x, y, u) + '<g class="ile-j1">' + px(3, 14, 2, 2, pal.j) + px(6, 14, 2, 1, pal.j) + px(7, 15, 2, 1, pal.j) + '</g><g class="ile-j2">' + px(4, 14, 3, 2, pal.j) + px(7, 15, 1, 1, pal.j) + "</g>" + baton(2.9) + "</g>" +
+        '<g class="ex-v" data-v="profil">' + pixels(F ? HABITANTE_PROFIL : HABITANT_PROFIL, pal, null, x, y, u) + '<g class="ile-j1">' + px(3, 14, 2, 2, pal.j) + px(6, 14, 2, 1, pal.j) + px(7, 15, 2, 1, pal.j) + '</g><g class="ile-j2">' + px(4, 14, 3, 2, pal.j) + px(7, 15, 1, 1, pal.j) + "</g>" + baton(2.9) + "</g>" +
         '<g class="ex-v" data-v="face" style="display:none">' + pixels(corps, pal, null, x, y, u) + jambes + baton(3.3) + "</g>" +
         '<g class="ex-v" data-v="dos" style="display:none">' + baton(-3.3) + pixels(dos, pal, null, x, y, u) + jambes + "</g>";
     }
@@ -3094,7 +3096,7 @@ function demarrerJeu() {
           if (deja) { quitter(); return; }
           // Une épreuve qui garde un aménagement rouvre le chantier, sur le quartier où il se bâtit.
           var am = E.amenagement && C.ile.amenagements.filter(function (x) { return x.id === E.amenagement; })[0];
-          if (am) { quitter(); chantierOuvert = am.quartier; ouvrirChantierIle(); if (c.ouvert) toast(tx(c.ouvert)); return; }
+          if (am) { quitter(); chantierOuvert = am.quartier; ouvrirChantierIle(am.id); if (c.ouvert) toast(tx(c.ouvert)); return; }
           // Victor (2026-11-13) : « Allumer le campement » montre le foyer du campement qui prend, puis la fête du nouvel âge.
           var Ic = campIle(M.ile(C, P, maintenant())), qc = Ic.quartiers.filter(function (x) { return x.camp; })[0];
           if (!qc) { quitter(); return; }
@@ -6102,7 +6104,9 @@ function demarrerJeu() {
     var bu = comite({ id: "ile_grand_" + id, texte: ch.vide ? __("Vous allez prendre tout ce qui reste. Je note l'heure, pour le jour où vous me demanderez pourquoi il n'y a plus rien.") : ch.apres < 0.25 ? __("Un bon coup aujourd'hui, la disette dans un mois. C'est un choix. Faites-le en le sachant.") : __("Un coup de collier ne tue pas une forêt. Deux par semaine, si."), contexte: "accueil", aparte: false });
     if (bu) feuille.querySelector(".bulle-p").appendChild(bu);
   }
-  function ouvrirChantierIle() {
+  // vise : l'aménagement qu'une épreuve vient de débloquer (Victor, 2026-11-14) : sa fiche passe en tête, encadrée.
+  function ouvrirChantierIle(vise) {
+    if (typeof vise !== "string") vise = null;
     var t = maintenant(), I = M.ile(C, P, t), R = I.ressources; if (!R) return;
     var stock = '<p class="ile-chantier-stock"><span class="ile-cout"><b>' + P.credits.solde + "</b> " + __("crédits") + "</span>" + (C.ile.ressources || []).filter(function (r) { return r.id !== "nourriture"; }).map(function (r) { return '<span class="ile-cout">' + r.icone + " <b>" + nb(R.stocks[r.id] || 0) + "</b> " + esc(tx(r.nom)).toLowerCase() + "</span>"; }).join("") + "</p>";
     // Ce qui attend un âge prochain ne se montre pas encore (île épurée).
@@ -6115,7 +6119,7 @@ function demarrerJeu() {
       var qe = e.epreuve && M.queteIle(C, P, e.epreuve), rej = !e.epreuve && (C.ile.epreuves || []).filter(function (x) { return x.amenagement === a.id && M.epreuveFaite(P, x.id); })[0];
       var ou = rangAge < 2 ? "" : e.quartier ? __("Emplacement : ") + esc(tx(I.quartiers.filter(function (x) { return x.id === e.quartier; })[0].nom)) + (e.chezSoi || !q ? "" : " (" + esc(tx(q.nomFinal)) + __(" n'est pas encore habitable)")) + "." : "";
       if (parQ) ou = "";
-      return { q: a.quartier, html: '<div class="ile-amen' + (e.possible ? "" : " ferme") + '"><svg class="ile-amen-img" viewBox="-14 -26 28 28" width="56" height="56" aria-hidden="true">' + svgAmenagement(a, 0, 0, 24) + '</svg><div><b>' + esc(tx(a.nom)) + (R.batis[a.id] ? ' <span class="ile-amen-n">×' + R.batis[a.id] + "</span>" : "") + "</b><p>" + esc(tx(a.usage)) + '</p><p class="ile-amen-effet">' + effetAmenagement(a) + "</p>" +
+      return { q: a.quartier, id: a.id, html: '<div class="ile-amen' + (e.possible ? "" : " ferme") + (a.id === vise ? " vise" : "") + '" data-fiche="' + esc(a.id) + '"><svg class="ile-amen-img" viewBox="-14 -26 28 28" width="56" height="56" aria-hidden="true">' + svgAmenagement(a, 0, 0, 24) + '</svg><div><b>' + esc(tx(a.nom)) + (R.batis[a.id] ? ' <span class="ile-amen-n">×' + R.batis[a.id] + "</span>" : "") + "</b><p>" + esc(tx(a.usage)) + '</p><p class="ile-amen-effet">' + effetAmenagement(a) + "</p>" +
         '<p class="ile-couts">' + htmlCout(a.cout, e.manque) + "</p>" + (raison ? '<p class="ile-amen-raison">' + raison + "</p>" : '<p class="ile-amen-ou">' + ou + "</p>") +
         (!parQ && e.ferme && e.ferme.aOuvrir && !e.savoir && e.age == null ? '<button type="button" class="btn" data-a="q-' + esc(e.ferme.id) + '">🔒 ' + __("Ouvrir : ") + esc(tx(q.nomFinal)) + "</button>" :
         e.epreuve && e.age == null ? '<button type="button" class="btn" data-a="e-' + esc(e.epreuve) + '">🔒 ' + (qe && !qe.complete ? __("Quête : ") + esc(tx(qe.nom)) : __("Épreuve unique : ") + esc(tx(M.epreuveIle(C, e.epreuve).nom))) + "</button>" :
@@ -6124,6 +6128,7 @@ function demarrerJeu() {
     // Victor (2026-11-13) : le menu était trop rempli. À partir du village, une section repliable par quartier : son
     // nom, ce qu'on peut y bâtir tout de suite, et un seul bouton pour l'ouvrir s'il est encore fermé.
     var cartes;
+    if (vise) fiches.sort(function (a, b) { return (b.id === vise) - (a.id === vise); });
     if (!parQ) cartes = fiches.map(function (f) { return f.html; }).join("");
     else {
       var qs = I.quartiers.filter(function (x) { return fiches.some(function (f) { return f.q === x.id; }); });
@@ -6145,6 +6150,7 @@ function demarrerJeu() {
     I.quartiers.forEach(function (x) { actions["q-" + x.id] = function () { ouvrirVerrouQuartier(x.id); }; });
     (C.ile.epreuves || []).forEach(function (x) { actions["e-" + x.id] = function () { fermerFeuille(); ouvrirEpreuveIle(x.id); }; });
     feuilleSimple('<div class="eyebrow">' + __("L'île") + "</div><h2>" + __("Construire") + '</h2><p class="note">' + __("Les crédits paient les bâtisseurs ; le bois, la pierre et le métal viennent des aménagements eux-mêmes. Ce qui se bâtit aujourd'hui travaille dès demain.") + "</p>" + stock + (parQ ? '<div class="ile-amen-qs">' + cartes + "</div>" : '<div class="ile-amens">' + cartes + "</div>"), __("Construire"), actions);
+    var fv = vise && feuille.querySelector('[data-fiche="' + vise + '"]'); if (fv) setTimeout(function () { try { fv.scrollIntoView({ block: "center" }); } catch (x) {} }, 60);
     feuille.querySelectorAll("details.ile-amen-q").forEach(function (d) { d.addEventListener("toggle", function () { if (d.open) { chantierOuvert = d.getAttribute("data-q"); feuille.querySelectorAll("details.ile-amen-q").forEach(function (o) { if (o !== d) o.open = false; }); } }); });
   }
 
