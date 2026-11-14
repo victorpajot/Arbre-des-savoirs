@@ -5922,7 +5922,8 @@ function demarrerJeu() {
       quartierVu = idq; rendre(); window.scrollTo(0, 0); };
     ancreCarte.after(carte);
     // Victor (2026-11-13) : la carte s'explore en plein écran ; de près, on y trouve ce que la vue d'ensemble ne montre pas.
-    if (M.modeIle(P)) { var bex = el('<button type="button" class="btn sec large ile-explorer">🔍 ' + (queteActive() ? __("Explorer l'île : {n} à trouver", { n: queteActive().reste }) : __("Explorer l'île de près")) + "</button>"); bex.onclick = ouvrirExplorer; carte.after(bex);
+    // Victor (2026-11-14) : au tout début, pas de campement d'où envoyer un explorateur, et la carte n'est que brouillard : pas de bouton.
+    if (M.modeIle(P) && I.quartiers.some(function (q) { return (q.fonde || q.camp) && q.position; })) { var bex = el('<button type="button" class="btn sec large ile-explorer">🔍 ' + (queteActive() ? __("Explorer l'île : {n} à trouver", { n: queteActive().reste }) : __("Explorer l'île de près")) + "</button>"); bex.onclick = ouvrirExplorer; carte.after(bex);
       var Gb = M.grotteIle(C, P); if (Gb && Gb.ouverte && Gb.trouvee) { var bg = el('<button type="button" class="btn sec large ile-explorer">🔦 ' + esc(tx(C.ile.grotte.nom)) + (Gb.zones.some(function (x) { return !x.vue; }) ? "" : " ✓") + "</button>"); bg.onclick = ouvrirGrotte; bex.after(bg); } }
     // Victor (2026-11-12) : un nouveau quartier se mérite. Tant qu'il n'est pas ouvert, sa carte attend sous l'île.
     var ancreV = carte;
