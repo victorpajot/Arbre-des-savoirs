@@ -827,6 +827,7 @@
       "dates_niveau",
       "dates_rapides",
       "dates_fausses",
+      "grotte",
       "toutes",
       "composants_poses",
       "bugs_chasses",
@@ -5218,7 +5219,7 @@
       "id": { "type": "string" }, "nom": { "$ref": "#/$defs/texte" }, "description": { "$ref": "#/$defs/texte" }, "noir": { "$ref": "#/$defs/texte" }, "alyca": { "$ref": "#/$defs/texte" },
       "position": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
       "zones": { "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "required": ["id", "nom", "ouvre", "recits"],
-       "properties": { "id": { "type": "string" }, "nom": { "$ref": "#/$defs/texte" }, "court": { "$ref": "#/$defs/texte" }, "dessin": { "enum": ["egypte"] }, "seuil": { "type": "integer", "minimum": 1, "description": "Bonnes réponses exigées au quiz pour graver le passage." }, "rate": { "$ref": "#/$defs/texte" }, "accroche": { "$ref": "#/$defs/texte" }, "alyca": { "$ref": "#/$defs/texte" }, "ouvert": { "$ref": "#/$defs/texte" },
+       "properties": { "succes": { "type": "string", "description": "Le succès donné quand le quiz de la zone est réussi." }, "objet": { "type": "string", "description": "L'objet donné avec ce succès." }, "id": { "type": "string" }, "nom": { "$ref": "#/$defs/texte" }, "court": { "$ref": "#/$defs/texte" }, "dessin": { "enum": ["egypte"] }, "seuil": { "type": "integer", "minimum": 1, "description": "Bonnes réponses exigées au quiz pour graver le passage." }, "rate": { "$ref": "#/$defs/texte" }, "accroche": { "$ref": "#/$defs/texte" }, "alyca": { "$ref": "#/$defs/texte" }, "ouvert": { "$ref": "#/$defs/texte" },
         "ouvre": { "type": "array", "items": { "type": "string" } },
         "recits": { "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "required": ["id", "titre", "texte", "source"],
          "properties": { "id": { "type": "string" }, "dessin": { "enum": ["re", "osiris", "pesee", "thot", "sekhmet"] }, "question": { "type": "object", "additionalProperties": false, "required": ["enonce", "choix", "bonne"], "description": "Une question sur ce récit, sans fait nouveau : la bonne réponse est dans le texte vérifié.", "properties": { "enonce": { "$ref": "#/$defs/texte" }, "choix": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/texte" } }, "bonne": { "type": "integer", "minimum": 0 } } }, "titre": { "$ref": "#/$defs/texte" }, "texte": { "$ref": "#/$defs/texte" }, "source": { "type": "string" } } } } } } }

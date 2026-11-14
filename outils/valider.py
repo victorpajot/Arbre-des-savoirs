@@ -140,10 +140,12 @@ def main():
             erreurs.append(f"{ou} : succès inconnu {cond.get('id')}")
         if cond["type"] in ("case_atteinte", "case_visitee", "epoque_atteinte") and cond.get("n") not in nums_cases and not 1 <= cond.get("n", 0) <= nb_cases:
             erreurs.append(f"{ou} : case hors du plateau {cond.get('n')}")
+        if cond["type"] == "grotte" and cond.get("id") not in {z["id"] for z in ((contenu.get("ile") or {}).get("grotte") or {}).get("zones", [])}:
+            erreurs.append(f"{ou} : zone de grotte inconnue {cond.get('id')}")
         if cond["type"] == "donjon_fini" and cond.get("id") not in {d["id"] for d in (contenu.get("donjons") or {}).get("donjons", [])}:
             erreurs.append(f"{ou} : donjon inconnu {cond.get('id')}")
         besoin = {"competence_maitrisee": "id", "succes": "id", "ennemi_vaincu": "id", "famille_capturee": "famille", "branche_complete": "stat", "quiz_parfaits_stat": "stat",
-                  "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None, "toutes": "conditions", "donjon_fini": "id", "proces_gagne": "id"}.get(cond["type"], "n")
+                  "duree_maitrise": "jours", "niveau_stat": "niveau", "rang_maitrise": "rang", "toutes_branches": None, "toutes": "conditions", "donjon_fini": "id", "proces_gagne": "id", "grotte": "id"}.get(cond["type"], "n")
         if besoin and besoin not in cond:
             erreurs.append(f"{ou} : la condition {cond['type']} demande « {besoin} »")
 

@@ -2641,8 +2641,22 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(M.trouverGrotte(CA, Qg, t0).trouvee, t0); assert.equal(M.grotteIle(CA, Qg).trouvee, t0);
     assert.equal(M.grotteRequise(CA, Qg, "math.egypte").id, "egypte"); assert.equal(M.grotteRequise(CA, Qg, "math.babylone"), null);
     Qg.options = { tousArbres: true }; assert.equal(M.grotteRequise(CA, Qg, "math.egypte"), null); delete Qg.options;
-    const rg = M.visiterGrotte(CA, Qg, "egypte", t0); assert.ok(rg.premiere && rg.ouvre.includes("sci.egypte"));
-    assert.equal(M.grotteRequise(CA, Qg, "math.egypte"), null, "le passage ouvre les savoirs égyptiens"); assert.equal(M.visiterGrotte(CA, Qg, "egypte", t0).premiere, false);
+    // Les dieux se trouvent un par un : tant qu'il en manque, l'arbre ne grave rien.
+    assert.equal(M.visiterGrotte(CA, Qg, "egypte", t0), null, "sans les dieux, pas de passage"); assert.equal(M.grotteIle(CA, Qg).zones[0].manquants.length, 5);
+    assert.equal(M.entendreGrotte(CA, Qg, "egypte", "anubis", t0), null, "un récit inconnu ne compte pas");
+    assert.deepEqual(M.entendreGrotte(CA, Qg, "egypte", "thot", t0), { premiere: true, reste: 4 }); assert.equal(M.entendreGrotte(CA, Qg, "egypte", "thot", t0).premiere, false);
+    assert.equal(M.visiterGrotte(CA, Qg, "egypte", t0), null);
+    ["re", "osiris", "pesee", "sekhmet"].forEach((r) => M.entendreGrotte(CA, Qg, "egypte", r, t0)); assert.equal(M.grotteIle(CA, Qg).zones[0].manquants.length, 0);
+    assert.equal(M.conditionRemplie(CA, Qg, { type: "grotte", id: "egypte" }, t0), false);
+    const soldeG = Qg.credits.solde, rg = M.visiterGrotte(CA, Qg, "egypte", t0); assert.ok(rg.premiere && rg.ouvre.includes("sci.egypte"));
+    // Le quiz réussi donne tout de suite le succès et le totem de Thot.
+    assert.equal(rg.succes.id, "grotte-egypte"); assert.equal(rg.objet.id, "totem-thot"); assert.ok(Qg.succes["grotte-egypte"] && Qg.objets["totem-thot"]);
+    assert.ok(rg.credits.n > 0 && Qg.credits.solde === soldeG + rg.credits.n); assert.ok(M.conditionRemplie(CA, Qg, { type: "grotte", id: "egypte" }, t0));
+    assert.equal(M.grotteRequise(CA, Qg, "math.egypte"), null, "le passage ouvre les savoirs égyptiens");
+    const rg2 = M.visiterGrotte(CA, Qg, "egypte", t0); assert.ok(!rg2.premiere && !rg2.succes && !rg2.objet, "le prix ne se donne qu'une fois");
+    // Une partie d'avant les dieux à trouver : le passage déjà gravé vaut tous les récits, et le prix arrive au retour.
+    const Qv = JSON.parse(JSON.stringify(Qg)); delete Qv.grotte.recits; delete Qv.succes["grotte-egypte"]; delete Qv.objets["totem-thot"];
+    assert.equal(M.grotteIle(CA, Qv).zones[0].manquants.length, 0); const rv = M.visiterGrotte(CA, Qv, "egypte", t0); assert.ok(!rv.premiere && rv.succes && rv.objet);
     assert.equal(M.grotteIle(CA, PP), null, "le mode Parcours n'a pas de grotte"); }
   console.log("OK : île par âges (feu, besoins, savoirs requis), monde fini (bancs, effort, effondrement), aléas annoncés");
 }

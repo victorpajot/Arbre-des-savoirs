@@ -124,9 +124,9 @@ for (const id of packs) {
   const tn = complet.avatar.creation.tenues.filter(x => x.condition && x.condition.type === "succes" && generaux.indexOf(x.condition.id) >= 0)[0];
   if (tn) { const P3 = M.nouvellePartie(t0); assert.ok(M.tenueDebloquee(CS, P3, tn) && !M.tenueDebloquee(complet, P3, tn), "tenue gardée par un succès absent : libre"); }
 
-  // CP seul : le jeu le plus simple. Ni faveur, ni succès généraux, ni ennemis, ni atomes ; les succès du CP restent.
+  // CP seul : le jeu le plus simple. Ni faveur, ni succès généraux, ni ennemis, ni atomes ; les succès du CP restent, avec celui de la grotte de l'île (pack de jeu, toujours là).
   const CP = S.contenu(brut, cpSeul);
-  assert.ok(!M.dramaturgie(CP) && !CP.ennemis.length && !CP.atomes && CP.succes.length && CP.succes.every(s => index.proprietaires["succes.json/succes"][s.id] === "cp"));
+  assert.ok(!M.dramaturgie(CP) && !CP.ennemis.length && !CP.atomes && CP.succes.length && CP.succes.every(s => ["cp", "ile"].includes(index.proprietaires["succes.json/succes"][s.id])));
   const P4 = M.nouvellePartie(t0); P4.options = { packsOff: cpSeul, reglages: M.reglagesDesPacks(index, off) };
   assert.equal(M.tonDe(CP, P4), "enfant");
   S.jouer(CP, P4, 80, t0, S.graine(7));

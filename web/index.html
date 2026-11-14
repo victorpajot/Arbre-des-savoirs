@@ -1241,7 +1241,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-quete-sac span.ok { border-style: solid; border-color: var(--good); } .ile-quete-sac span.ok svg { opacity: 1; filter: none; } .ile-quete-sac small { font-size: 12px; line-height: 1.2; }
 .explorer { position: fixed; inset: 0; z-index: 57; background: #2F7FB0; display: flex; flex-direction: column; }
 .ex-vue { position: relative; flex: 1; min-height: 0; overflow: hidden; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; } .ex-vue > svg { display: block; width: 100%; height: 100%; } .ex-sc text { font-family: var(--f-body); }
-.explorer .ile-etiquette { transform-box: fill-box; transform-origin: 50% 50%; transform: scale(var(--ek, 1)); } .explorer.pres .ile-pastille, .explorer.dedans .ile-etiquette { display: none; } .explorer .ile-parcelle { pointer-events: none; outline: none; } .explorer .ile-hm { transition: opacity .4s; } .explorer.dedans .ile-hm { opacity: 0; pointer-events: none; }
+.explorer .ile-etiquette { transform-box: fill-box; transform-origin: 50% 50%; transform: scale(var(--ek, 1)); } .explorer.pres .ile-pastille, .explorer.dedans .ile-etiquette { display: none; } .explorer .ile-parcelle { pointer-events: none; outline: none; } .explorer .ile-hm { transition: opacity .4s, visibility 0s; } .explorer.dedans .ile-hm { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .4s, visibility 0s .4s; }
 .ex-haut { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; padding: calc(8px + env(safe-area-inset-top, 0px)) 8px 8px 16px; color: #fff; font-size: 17px; text-shadow: 0 1px 3px rgba(0,0,0,.5); pointer-events: none; }
 .ex-x, .ex-zoom button { pointer-events: auto; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--surface); color: var(--text); font-size: 26px; font-weight: 700; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.3); cursor: pointer; }
 .explorer .ex-x { color: #20222E; background: #fff; text-shadow: none; font-family: system-ui, sans-serif; } .ex-zoom { position: absolute; right: 8px; top: calc(70px + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: 8px; }
@@ -1262,7 +1262,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ex-fog { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .ex-alerte { display: none; } .ex-bete.chasse .ex-alerte { display: inline; } .ex-liste li.sac { border-style: solid; border-color: #E0A800; } .ex-liste li.sac svg { filter: none !important; opacity: 1 !important; }
 .explorer.mordu .ex-vue::after { content: ""; position: absolute; inset: 0; background: rgba(200, 30, 30, .4); pointer-events: none; }
-.ex-scene { opacity: 0; transition: opacity .4s; pointer-events: none; } .explorer.dedans .ex-scene { opacity: 1; }
+.ex-scene { opacity: 0; visibility: hidden; transition: opacity .4s, visibility 0s .4s; pointer-events: none; } .explorer.dedans .ex-scene { opacity: 1; visibility: visible; transition: opacity .4s, visibility 0s; }
 .ile-explorer { width: 100%; margin: 8px 0 4px; }
 .ile-flamme.froid path { display: none; }
 .ile-flamme.ep-allume { transform-box: fill-box; transform-origin: 50% 100%; animation: ep-allume 1.6s cubic-bezier(.2,1.4,.4,1) both; }
@@ -1313,6 +1313,22 @@ svg.grille .interro { transition: opacity .3s; }
 .gr-croix { display: flex; gap: 8px; justify-content: center; margin-top: 8px; } .gr-croix .btn { flex: 0 0 58px; width: 58px; min-width: 0; font-size: 20px; padding: 8px 0; }
 .gr-choix { display: grid; gap: 8px; margin: 8px 0; } .gr-choix .btn { font-size: 17px; } .gr-choix .btn.juste { border-color: var(--good); background: color-mix(in srgb, var(--good) 18%, var(--surface)); opacity: 1; } .gr-choix .btn.faux { border-color: var(--bad, #C0392B); background: color-mix(in srgb, var(--bad, #C0392B) 16%, var(--surface)); opacity: 1; }
 .gr-titre { font-size: 19px; margin: 2px 0 6px; } .gr-texte { font-size: 17px; line-height: 1.45; margin: 0 0 8px; } .gr-recit { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; } .gr-recit svg { flex: none; background: #1E1B22; border-radius: 12px; }
+.gr-zone { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 17px; margin: 6px 0; } .gr-dieux { display: flex; gap: 4px; } .gr-dieux i { display: block; background: #1E1B22; border-radius: 8px; line-height: 0; opacity: .55; } .gr-dieux i.ok { opacity: 1; outline: 2px solid #C9952A; }
+.gr-torche { margin-bottom: 8px; animation: gr-alerte .7s ease-in-out infinite alternate; } @keyframes gr-alerte { to { box-shadow: 0 0 0 5px rgba(242,121,58,.45); } } .gr-croix + .btn { margin-top: 8px; } .gr-note { font-size: 17px; color: var(--muted); margin: 8px 0 0; text-align: center; }
+.gr-scene { background: radial-gradient(circle at 50% 60%, #4A3B2A, #1E1B22 72%); border-radius: 14px; margin-bottom: 10px; overflow: hidden; display: flex; justify-content: center; } .gr-dieu { width: min(100%, 300px); height: auto; display: block; animation: gr-parait 1.1s ease-out both; }
+@keyframes gr-parait { 0% { opacity: 0; transform: translateY(18px) scale(.82); filter: brightness(3); } 60% { opacity: 1; filter: brightness(1.6); } 100% { opacity: 1; transform: none; filter: none; } }
+.gr-dieu [class^="gr-v-"], .gr-dieu [class*=" gr-v-"] { transform-box: fill-box; transform-origin: 50% 50%; }
+.gr-v-flot { animation: gr-flot 2.6s ease-in-out infinite alternate; } @keyframes gr-flot { from { transform: translate(-5px, 1px) rotate(-2deg); } to { transform: translate(5px, -1px) rotate(2deg); } }
+.gr-v-pouls { animation: gr-pouls 1.6s ease-in-out infinite alternate; } @keyframes gr-pouls { to { transform: scale(1.12); } }
+.gr-v-vague { animation: gr-vague 1.8s linear infinite; } @keyframes gr-vague { to { transform: translateX(20px); } }
+.gr-v-croise { animation: gr-croise 2.2s ease-in-out infinite alternate; } @keyframes gr-croise { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+.gr-v-fleau { transform-origin: 50% 0 !important; animation: gr-fleau 2.4s ease-in-out infinite alternate; } @keyframes gr-fleau { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+.gr-v-salue { transform-origin: 30% 80% !important; animation: gr-salue 2s ease-in-out infinite alternate; } @keyframes gr-salue { from { transform: rotate(-5deg); } to { transform: rotate(7deg); } }
+.gr-v-ecrit { stroke-dasharray: 14; stroke-dashoffset: 14; animation: gr-ecrit 2.6s ease-out infinite; } .gr-v-apres { animation-delay: .7s; } @keyframes gr-ecrit { 40%, 100% { stroke-dashoffset: 0; } }
+.gr-v-cligne { animation: gr-cligne 3.2s infinite; } @keyframes gr-cligne { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+.gr-nom { animation: gr-nom .6s .5s ease-out both; } @keyframes gr-nom { from { opacity: 0; transform: translateY(6px); } }
+.gr-prix { display: flex; gap: 12px; align-items: flex-start; margin: 8px 0; padding: 10px; border: 2px solid #C9952A; border-radius: 14px; } .gr-prix-img { flex: none; animation: gr-parait 1.1s ease-out both; } .gr-prix-img .illus-s { width: 80px; height: 80px; }
+@media (prefers-reduced-motion: reduce) { .gr-dieu, .gr-dieu *, .gr-nom, .gr-prix-img, .gr-torche { animation: none !important; stroke-dashoffset: 0; } }
 .ile-amen.vise { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 14px; }
 .ep-sources { font-size: 13px; line-height: 1.35; color: var(--muted); margin: 6px 0 8px; } .ile-passage .ep-sources { margin: 0 0 8px; }
 .ep-trace { touch-action: none; cursor: crosshair; } .ep-trace .ep-pt { fill: var(--surface); stroke: #8A9A3C; stroke-width: 2; } .ep-trace .ep-pt.fait { fill: #8A9A3C; } .ep-trace .ep-pt.ici { stroke: #E0A800; stroke-width: 3; animation: ep-noeud .8s ease-in-out infinite; } .ep-trace text { font: 800 11px var(--f-body); fill: var(--text); pointer-events: none; } .ep-trace .ep-pt.fait + text { fill: #fff; } @keyframes ep-tend { 50% { transform: translate(-2px, 3px); } }
@@ -5559,7 +5575,7 @@ function demarrerJeu() {
     // brouillard : seul un explorateur qui passe près d'elle la voit, et il y entre en marchant dessus.
     var Gr = C.ile && C.ile.grotte && M.grotteIle(C, P);
     if (Gr) { var gx = C.ile.grotte.position[0] * W, gy = C.ile.grotte.position[1] * H;
-      plan.push([gy + 7, '<g><ellipse cx="' + fx(gx) + '" cy="' + fx(gy + 7) + '" rx="15" ry="4" fill="rgba(20,15,10,.35)"/><path d="M' + fx(gx - 15) + " " + fx(gy + 7) + " Q" + fx(gx - 16) + " " + fx(gy - 14) + " " + fx(gx) + " " + fx(gy - 15) + " Q" + fx(gx + 16) + " " + fx(gy - 14) + " " + fx(gx + 15) + " " + fx(gy + 7) + 'Z" fill="#6E5A4A" stroke="#4A3B30" stroke-width="1.6"/><path d="M' + fx(gx - 8) + " " + fx(gy + 7) + " Q" + fx(gx - 9) + " " + fx(gy - 7) + " " + fx(gx) + " " + fx(gy - 8) + " Q" + fx(gx + 9) + " " + fx(gy - 7) + " " + fx(gx + 8) + " " + fx(gy + 7) + 'Z" fill="#15121A"/></g>']); }
+      plan.push([gy + 7, '<g class="ile-grotte"><ellipse cx="' + fx(gx) + '" cy="' + fx(gy + 7) + '" rx="15" ry="4" fill="rgba(20,15,10,.35)"/><path d="M' + fx(gx - 15) + " " + fx(gy + 7) + " Q" + fx(gx - 16) + " " + fx(gy - 14) + " " + fx(gx) + " " + fx(gy - 15) + " Q" + fx(gx + 16) + " " + fx(gy - 14) + " " + fx(gx + 15) + " " + fx(gy + 7) + 'Z" fill="#6E5A4A" stroke="#4A3B30" stroke-width="1.6"/><path d="M' + fx(gx - 8) + " " + fx(gy + 7) + " Q" + fx(gx - 9) + " " + fx(gy - 7) + " " + fx(gx) + " " + fx(gy - 8) + " Q" + fx(gx + 9) + " " + fx(gy - 7) + " " + fx(gx + 8) + " " + fx(gy + 7) + 'Z" fill="#15121A"/></g>']); }
     // Les lieux des collections (Victor, 2026-11-10 : « dans les quartiers existants, pour donner plus de vie ») : sur la
     // carte, le bâtiment se pose au bord du hameau de son quartier, une fois celui-ci fondé ; on y entre par le quartier.
     var parQ = {};
@@ -6130,7 +6146,7 @@ function demarrerJeu() {
   // Une grotte sur la carte, où l'on entre : un labyrinthe, toujours le même, qu'on éclaire à la torche. Ce qu'on a vu
   // reste dessiné. Atteindre une zone (l'arbre d'une mythologie) fait entendre ses récits, sourcés ; ce passage ouvre
   // des savoirs (M.grotteRequise). Tout est peint sur un canevas : ni masque SVG, ni nœuds déplacés (Android).
-  var GROTTE = { cols: 11, rangs: 15, torche: 3, pres: 20 };
+  var GROTTE = { cols: 11, rangs: 15, torche: 3, ecart: 3, loin: 15, betes: 3, flair: 4, fuite: 0.85, calme: 20000, pas: 650 };
   var LABY = null;
   function labyGrotte() {
     if (LABY) return LABY;
@@ -6148,18 +6164,29 @@ function demarrerJeu() {
     }
     function voisins(c) { var x = c % W, o = []; if (x < W - 1 && murs[c] & 1) o.push(c + 1); if (x > 0 && murs[c - 1] & 1) o.push(c - 1); if (c + W < n && murs[c] & 2) o.push(c + W); if (c - W >= 0 && murs[c - W] & 2) o.push(c - W); return o; }
     function distances(de, parmi) { var D = {}, f = [de]; D[de] = 0; while (f.length) { var a = f.shift(); voisins(a).forEach(function (b) { if (D[b] == null && (!parmi || parmi[b])) { D[b] = D[a] + 1; f.push(b); } }); } return D; }
-    // Les zones : des culs-de-sac à bonne distance de l'entrée (les plus proches d'abord), loin les uns des autres.
+    // Les culs-de-sac, du plus proche de l'entrée au plus lointain : les arbres et les dieux s'y posent.
     var D0 = distances(depart), culs = []; for (i = 0; i < n; i++) if (i !== depart && voisins(i).length === 1) culs.push(i);
-    culs = culs.filter(function (c) { return D0[c] >= GROTTE.pres; }).sort(function (a, b) { return D0[a] - D0[b]; });
-    var places = []; culs.forEach(function (c) { if (places.every(function (p) { return Math.abs(p % W - c % W) + Math.abs(Math.floor(p / W) - Math.floor(c / W)) >= 5; })) places.push(c); });
-    return (LABY = { W: W, H: H, n: n, murs: murs, depart: depart, voisins: voisins, distances: distances, places: places });
+    culs.sort(function (a, b) { return D0[a] - D0[b]; });
+    return (LABY = { W: W, H: H, n: n, murs: murs, depart: depart, voisins: voisins, distances: distances, culs: culs, D0: D0 });
   }
+  // Où se posent l'arbre de chaque mythologie (près de l'entrée : on y revient pour le quiz) et ses dieux (plus loin,
+  // à l'écart les uns des autres). Toujours les mêmes places : le labyrinthe s'apprend.
+  function placesGrotte(def) {
+    var L = labyGrotte(), pris = [], libre = L.culs.slice();
+    function ecart(a, b) { return Math.abs(a % L.W - b % L.W) + Math.abs(Math.floor(a / L.W) - Math.floor(b / L.W)); }
+    function prendre(ok) { for (var i = 0; i < libre.length; i++) { var c = libre[i]; if (ok(c) && pris.every(function (p) { return ecart(p, c) >= GROTTE.ecart; })) { libre.splice(i, 1); pris.push(c); return c; } } var r = libre.shift(); pris.push(r); return r; }
+    return def.zones.map(function (z) {
+      var arbre = prendre(function () { return true; });
+      return { def: z, c: arbre, dieux: z.recits.map(function (r) { return { r: r, c: prendre(function (c) { return L.D0[c] >= GROTTE.loin; }) }; }) };
+    });
+  }
+  // Chaque dieu se présente par une petite animation (Victor, 2026-11-14) : il paraît, puis un détail du dessin vit.
   var DESSINS_MYTHE = {
-    re: '<path d="M14 62 Q60 86 106 62 L96 74 H24 Z" fill="#8A5A33"/><path d="M14 62 Q8 50 16 44 M106 62 Q112 50 104 44" stroke="#8A5A33" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="60" cy="36" r="20" fill="#F2B632"/><circle cx="60" cy="36" r="12" fill="#FFD86B"/><path d="M0 84 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0" stroke="#5E9DB8" stroke-width="4" fill="none"/>',
-    osiris: '<path d="M46 86 V44 Q46 30 60 30 Q74 30 74 44 V86 Z" fill="#F2EFE4"/><circle cx="60" cy="32" r="12" fill="#5FA060"/><path d="M52 22 Q60 -6 68 22 Z" fill="#F2EFE4"/><path d="M48 20 q-6 -10 0 -16 M72 20 q6 -10 0 -16" stroke="#F2B632" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M52 52 L80 40 M68 52 L40 40" stroke="#C9952A" stroke-width="4" stroke-linecap="round"/><path d="M80 40 q6 -6 2 -12" stroke="#C9952A" stroke-width="4" fill="none" stroke-linecap="round"/>',
-    pesee: '<path d="M60 14 V78 M40 82 H80" stroke="#8A5A33" stroke-width="5" stroke-linecap="round"/><path d="M22 30 L98 22" stroke="#C9952A" stroke-width="4" stroke-linecap="round"/><path d="M22 30 L12 56 H32 Z M98 22 L88 48 H108 Z" fill="none" stroke="#C9952A" stroke-width="2"/><path d="M10 56 Q22 68 34 56 Z M86 48 Q98 60 110 48 Z" fill="#C9952A"/><path d="M22 54 c-8 -8 -4 -14 0 -9 c4 -5 8 1 0 9 Z" fill="#C0392B"/><path d="M98 46 q-6 -12 2 -22 q6 10 -2 22 Z" fill="#F6F2EA" stroke="#8E8A80" stroke-width="1"/>',
-    thot: '<path d="M44 88 V56 Q44 46 60 46 Q76 46 76 56 V88 Z" fill="#F2EFE4"/><circle cx="60" cy="34" r="11" fill="#2E3440"/><path d="M68 30 Q92 34 98 56" stroke="#2E3440" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="63" cy="32" r="2" fill="#F2B632"/><path d="M50 26 Q60 8 70 26" fill="none" stroke="#C9D6E2" stroke-width="4" stroke-linecap="round"/><rect x="78" y="62" width="22" height="16" rx="2" fill="#E8D9A8"/><path d="M82 68 h14 M82 73 h10" stroke="#5E3F20" stroke-width="2"/>',
-    sekhmet: '<path d="M44 88 V58 Q44 48 60 48 Q76 48 76 58 V88 Z" fill="#B23A3A"/><circle cx="60" cy="36" r="14" fill="#D9A441"/><path d="M48 28 L46 18 L54 24 M72 28 L74 18 L66 24" fill="#D9A441" stroke="#D9A441" stroke-width="3" stroke-linejoin="round"/><circle cx="55" cy="34" r="2" fill="#2B2B33"/><circle cx="65" cy="34" r="2" fill="#2B2B33"/><path d="M57 40 h6 l-3 4 Z" fill="#2B2B33"/><circle cx="60" cy="10" r="9" fill="#E0483A"/><circle cx="60" cy="10" r="5" fill="#F2793A"/>'
+    re: '<g class="gr-v-flot"><path d="M14 62 Q60 86 106 62 L96 74 H24 Z" fill="#8A5A33"/><path d="M14 62 Q8 50 16 44 M106 62 Q112 50 104 44" stroke="#8A5A33" stroke-width="5" fill="none" stroke-linecap="round"/><g class="gr-v-pouls"><circle cx="60" cy="36" r="20" fill="#F2B632"/><circle cx="60" cy="36" r="12" fill="#FFD86B"/></g></g><path class="gr-v-vague" d="M-20 84 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0" stroke="#5E9DB8" stroke-width="4" fill="none"/>',
+    osiris: '<path d="M46 86 V44 Q46 30 60 30 Q74 30 74 44 V86 Z" fill="#F2EFE4"/><circle cx="60" cy="32" r="12" fill="#5FA060"/><path d="M52 22 Q60 -6 68 22 Z" fill="#F2EFE4"/><path d="M48 20 q-6 -10 0 -16 M72 20 q6 -10 0 -16" stroke="#F2B632" stroke-width="3" fill="none" stroke-linecap="round"/><g class="gr-v-croise"><path d="M52 52 L80 40 M68 52 L40 40" stroke="#C9952A" stroke-width="4" stroke-linecap="round"/><path d="M80 40 q6 -6 2 -12" stroke="#C9952A" stroke-width="4" fill="none" stroke-linecap="round"/></g>',
+    pesee: '<path d="M60 14 V78 M40 82 H80" stroke="#8A5A33" stroke-width="5" stroke-linecap="round"/><g class="gr-v-fleau"><path d="M22 26 L98 26" stroke="#C9952A" stroke-width="4" stroke-linecap="round"/><path d="M22 26 L12 52 H32 Z M98 26 L88 52 H108 Z" fill="none" stroke="#C9952A" stroke-width="2"/><path d="M10 52 Q22 64 34 52 Z M86 52 Q98 64 110 52 Z" fill="#C9952A"/><path d="M22 50 c-8 -8 -4 -14 0 -9 c4 -5 8 1 0 9 Z" fill="#C0392B"/><path d="M98 50 q-6 -12 2 -22 q6 10 -2 22 Z" fill="#F6F2EA" stroke="#8E8A80" stroke-width="1"/></g>',
+    thot: '<path d="M44 88 V56 Q44 46 60 46 Q76 46 76 56 V88 Z" fill="#F2EFE4"/><g class="gr-v-salue"><circle cx="60" cy="34" r="11" fill="#2E3440"/><path d="M68 30 Q92 34 98 56" stroke="#2E3440" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="63" cy="32" r="2" fill="#F2B632"/><path d="M50 26 Q60 8 70 26" fill="none" stroke="#C9D6E2" stroke-width="4" stroke-linecap="round"/></g><rect x="78" y="62" width="22" height="16" rx="2" fill="#E8D9A8"/><path class="gr-v-ecrit" d="M82 68 h14" stroke="#5E3F20" stroke-width="2"/><path class="gr-v-ecrit gr-v-apres" d="M82 73 h10" stroke="#5E3F20" stroke-width="2"/>',
+    sekhmet: '<path d="M44 88 V58 Q44 48 60 48 Q76 48 76 58 V88 Z" fill="#B23A3A"/><circle cx="60" cy="36" r="14" fill="#D9A441"/><path d="M48 28 L46 18 L54 24 M72 28 L74 18 L66 24" fill="#D9A441" stroke="#D9A441" stroke-width="3" stroke-linejoin="round"/><g class="gr-v-cligne"><circle cx="55" cy="34" r="2" fill="#2B2B33"/><circle cx="65" cy="34" r="2" fill="#2B2B33"/></g><path d="M57 40 h6 l-3 4 Z" fill="#2B2B33"/><g class="gr-v-pouls"><circle cx="60" cy="10" r="9" fill="#E0483A"/><circle cx="60" cy="10" r="5" fill="#F2793A"/></g>'
   };
   function ouvrirGrotte(retour) {
     if (typeof retour !== "function") retour = null;
@@ -6167,15 +6194,22 @@ function demarrerJeu() {
     if (!G.ouverte) { toast(tx(def.noir || { fr: "Il fait noir là-dedans." })); return; }
     if (!retour) fermerFeuille();
     var L = labyGrotte(), premiere = !(P.grotte && P.grotte.carte);
-    P.grotte = P.grotte || {}; P.grotte.zones = P.grotte.zones || {};
+    P.grotte = P.grotte || {}; P.grotte.zones = P.grotte.zones || {}; P.grotte.recits = P.grotte.recits || {};
     var carte = (P.grotte.carte || "").split("").map(function (c) { return c === "1"; }); if (carte.length !== L.n) { carte = []; for (var i = 0; i < L.n; i++) carte.push(false); }
-    var zones = def.zones.map(function (z, i) { return { def: z, c: L.places[i % L.places.length] }; });
+    var zones = placesGrotte(def);
+    function entendu(zn, d) { return !!(P.grotte.zones[zn.def.id] || P.grotte.recits[zn.def.id + "/" + d.r.id]); }
+    function manquants(zn) { return zn.dieux.filter(function (d) { return !entendu(zn, d); }); }
     var z = el('<div class="explorer grotte" role="dialog" aria-modal="true" aria-label="' + esc(tx(def.nom)) + '"><div class="gr-vue"><canvas></canvas><div class="gr-moi"><svg viewBox="0 0 12 18" shape-rendering="crispEdges" aria-hidden="true"></svg></div></div>' +
-      '<div class="ex-haut"><b>' + esc(tx(def.nom)) + '</b><button type="button" class="ex-x" aria-label="' + __("Sortir de la grotte") + '">✕</button></div><div class="ex-bas"></div></div>');
+      '<div class="ex-haut"><b>' + esc(tx(def.nom)) + '</b></div><div class="ex-bas"></div></div>');
     var vue = z.querySelector(".gr-vue"), cv = vue.querySelector("canvas"), moi = vue.querySelector(".gr-moi"), bas = z.querySelector(".ex-bas"), ctx = cv.getContext("2d");
     var gm = 1 + Math.floor(Math.random() * 1e6);
     moi.querySelector("svg").innerHTML = svgHabitant(1, 2, gm, 2, true) + '<rect x="10.4" y="6" width="1" height="7" fill="#6B4423"/><rect x="9.9" y="3.6" width="2" height="2.6" fill="#F2793A"/><rect x="10.4" y="2.8" width="1" height="1.6" fill="#FFD27A"/>';
-    var ici = L.depart, file = [], horloge = 0, T = 0, ox = 0, oy = 0, lecture = null, message = "";
+    var ici = L.depart, file = [], horloge = 0, ronde = 0, T = 0, ox = 0, oy = 0, lecture = null, message = "", parti = false, clos = false;
+    // Les prédateurs (Victor, 2026-11-14) : ils rôdent dans les galeries et viennent sur qui passe près d'eux. La torche
+    // les fait fuir assez facilement. Pris, on lâche prise et on se retrouve à l'entrée : on ne perd rien d'autre.
+    var occupees = {}; zones.forEach(function (zn) { occupees[zn.c] = 1; zn.dieux.forEach(function (d) { occupees[d.c] = 1; }); });
+    var betes = []; (function () { var libres = []; for (var c = 0; c < L.n; c++) if (L.D0[c] >= 10 && !occupees[c]) libres.push(c);
+      for (var b = 0; b < GROTTE.betes && libres.length; b++) betes.push({ c: libres.splice(Math.floor(Math.random() * libres.length), 1)[0], fuit: 0 }); })();
     function eclairer() { var D = L.distances(ici), ch = false; for (var c in D) if (D[c] <= GROTTE.torche && !carte[c]) { carte[c] = true; ch = true; } if (ch) P.grotte.carte = carte.map(function (b) { return b ? "1" : "0"; }).join(""); return D; }
     function mesurer() {
       var r = vue.getBoundingClientRect(), k = window.devicePixelRatio || 1; if (!r.width) return;
@@ -6190,8 +6224,18 @@ function demarrerJeu() {
       ctx.fillStyle = fait ? "#F2D36B" : "#5DB078"; ctx.beginPath(); ctx.arc(x - T * 0.08, y - T * 0.2, T * 0.14, 0, 7); ctx.fill();
       ctx.fillStyle = "#F2B632"; ctx.beginPath(); ctx.arc(x + T * 0.12, y - T * 0.24, T * 0.08, 0, 7); ctx.fill();
     }
+    // Un dieu à trouver : une niche dorée dans la paroi ; une fois entendu, elle s'éteint.
+    function niche(x, y, fait) {
+      ctx.fillStyle = fait ? "#6E6553" : "#F2B632"; ctx.beginPath(); ctx.moveTo(x - T * 0.2, y + T * 0.26); ctx.lineTo(x - T * 0.2, y - T * 0.06); ctx.arc(x, y - T * 0.06, T * 0.2, Math.PI, 0); ctx.lineTo(x + T * 0.2, y + T * 0.26); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = fait ? "#4A4338" : "#FFE79A"; ctx.beginPath(); ctx.arc(x, y - T * 0.02, T * 0.09, 0, 7); ctx.fill(); ctx.fillRect(x - T * 0.05, y + T * 0.06, T * 0.1, T * 0.16);
+    }
+    function bete(x, y, b, eclairee) {
+      if (eclairee) { ctx.fillStyle = "#23202B"; ctx.beginPath(); ctx.ellipse(x, y + T * 0.08, T * 0.3, T * 0.2, 0, 0, 7); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(x - T * 0.24, y - T * 0.02); ctx.lineTo(x - T * 0.18, y - T * 0.26); ctx.lineTo(x - T * 0.06, y - T * 0.06); ctx.lineTo(x + T * 0.06, y - T * 0.06); ctx.lineTo(x + T * 0.18, y - T * 0.26); ctx.lineTo(x + T * 0.24, y - T * 0.02); ctx.closePath(); ctx.fill(); }
+      ctx.fillStyle = b.fuit ? "#F2B632" : "#FF4D3D"; ctx.beginPath(); ctx.arc(x - T * 0.1, y + T * 0.04, T * 0.05, 0, 7); ctx.arc(x + T * 0.1, y + T * 0.04, T * 0.05, 0, 7); ctx.fill();
+    }
     function peindre(saut) {
-      if (!T) return;
+      if (!T || clos) return;
       var r = vue.getBoundingClientRect(), D = eclairer();
       ctx.fillStyle = "#121117"; ctx.fillRect(0, 0, r.width, r.height);
       for (var c = 0; c < L.n; c++) {
@@ -6211,9 +6255,13 @@ function demarrerJeu() {
         if (v.indexOf(c - L.W) < 0) { ctx.moveTo(cx0, cy0); ctx.lineTo(cx0 + T, cy0); }
       }
       ctx.stroke();
-      // L'entrée : le jour qui tombe par le bas.
-      var e = centre(L.depart); ctx.fillStyle = "rgba(255,244,200,.55)"; ctx.fillRect(e[0] - T * 0.42, e[1] + T * 0.3, T * 0.84, T * 0.2);
-      zones.forEach(function (zn) { if (carte[zn.c]) { var p = centre(zn.c); arbreMythe(p[0], p[1] + T * 0.08, !!P.grotte.zones[zn.def.id]); } });
+      // L'entrée : le jour qui tombe par le bas. C'est aussi la sortie.
+      var e = centre(L.depart); ctx.fillStyle = "rgba(255,244,200,.75)"; ctx.fillRect(e[0] - T * 0.42, e[1] + T * 0.28, T * 0.84, T * 0.22);
+      zones.forEach(function (zn) {
+        if (carte[zn.c]) { var p = centre(zn.c); arbreMythe(p[0], p[1] + T * 0.08, !!P.grotte.zones[zn.def.id]); }
+        zn.dieux.forEach(function (d) { if (carte[d.c]) { var q = centre(d.c); niche(q[0], q[1], entendu(zn, d)); } });
+      });
+      betes.forEach(function (b) { var lum = D[b.c] != null && D[b.c] <= GROTTE.torche; if (lum || carte[b.c]) { var p = centre(b.c); bete(p[0], p[1], b, lum); } });
       var m = centre(ici); moi.style.transition = saut === false ? "none" : ""; moi.style.transform = "translate(" + (m[0] - T * 0.31) + "px," + (m[1] - T * 0.56) + "px)";
     }
     function chemin(vers) {
@@ -6221,41 +6269,105 @@ function demarrerJeu() {
       var out = [], c = ici; while (c !== vers) { c = L.voisins(c).filter(function (b) { return D[b] === D[c] - 1; })[0]; out.push(c); }
       return out;
     }
+    function proches() { var D = L.distances(ici); return betes.filter(function (b) { return !b.fuit && D[b.c] <= GROTTE.torche; }); }
+    function pris() {
+      file = []; clearTimeout(horloge); ici = L.depart; parti = false;
+      betes.forEach(function (b) { if (L.D0[b.c] < 6) b.fuit = performance.now() + GROTTE.calme; });
+      message = __("Un prédateur t'a sauté dessus ! Tu as couru jusqu'à l'entrée sans te retourner. Reprends ton souffle, et la prochaine fois, brandis ta torche."); sauver(); peindre(false); panneau();
+    }
+    function brandir() {
+      var P2 = proches(); if (!P2.length) return;
+      var fuis = 0; P2.forEach(function (b) { if (Math.random() < GROTTE.fuite) { b.fuit = performance.now() + GROTTE.calme; fuis++; } });
+      message = fuis === P2.length ? __("Tu brandis la torche : il recule en grondant et file dans le noir.") : __("Tu brandis la torche, mais il ne recule pas. Recommence, ou cours !");
+      peindre(); panneau();
+    }
+    // La ronde des prédateurs : un pas à la fois. Qui fuit s'éloigne ; qui flaire le joueur vient ; les autres errent.
+    function roder() {
+      if (clos) return;
+      ronde = setTimeout(roder, GROTTE.pas); if (lecture || !T) return;
+      var D = L.distances(ici), t = performance.now(), avant = proches().length;
+      betes.forEach(function (b) {
+        if (b.fuit && t > b.fuit) b.fuit = 0;
+        var v = L.voisins(b.c).filter(function (c) { return L.D0[c] >= 2; }); if (!v.length) return;
+        if (b.fuit) v.sort(function (a, c) { return D[c] - D[a]; });
+        else if (D[b.c] <= GROTTE.flair) v.sort(function (a, c) { return D[a] - D[c]; });
+        else { if (Math.random() < 0.4) return; v.sort(function () { return Math.random() - 0.5; }); }
+        b.c = v[0];
+      });
+      if (betes.some(function (b) { return !b.fuit && b.c === ici; }) && ici !== L.depart) { pris(); return; }
+      peindre(); if (proches().length !== avant) panneau();
+    }
     function avancer() {
       clearTimeout(horloge); if (!file.length || lecture) return;
-      ici = file.shift(); peindre();
-      var zn = zones.filter(function (q) { return q.c === ici; })[0];
-      if (zn) { file = []; sauver(); setTimeout(function () { lire(zn); }, 260); return; }
+      ici = file.shift(); if (ici !== L.depart) parti = true;
+      if (betes.some(function (b) { return !b.fuit && b.c === ici; })) { pris(); return; }
+      peindre();
+      if (ici === L.depart && parti) { fermer(); return; }
+      var zn = zones.filter(function (q) { return q.c === ici; })[0], dz = null, dd = null;
+      zones.forEach(function (q) { q.dieux.forEach(function (d) { if (d.c === ici) { dz = q; dd = d; } }); });
+      if (dd) { file = []; setTimeout(function () { dieu(dz, dd); }, 260); return; }
+      if (zn) { file = []; sauver(); setTimeout(function () { arbre(zn); }, 260); return; }
       if (file.length) horloge = setTimeout(avancer, 150); else { sauver(); panneau(); }
     }
     function aller(vers) { if (lecture || vers === ici) return; var ch = chemin(vers); if (!ch) return; file = ch; avancer(); }
     cv.addEventListener("pointerdown", function (ev) {
       if (lecture || !T) return; var r = cv.getBoundingClientRect(), x = Math.floor((ev.clientX - r.left - ox) / T), y = Math.floor((ev.clientY - r.top - oy) / T);
       if (x < 0 || y < 0 || x >= L.W || y >= L.H) return; var c = y * L.W + x;
+      if (proches().some(function (b) { return b.c === c; })) { brandir(); return; }
       if (!carte[c]) { message = __("Trop sombre par là. Approche-toi : ta torche n'éclaire que trois pas."); panneau(); return; }
       message = ""; aller(c);
     });
     function pas(d) { var v = L.voisins(ici), c = d === "h" ? ici - L.W : d === "b" ? ici + L.W : d === "g" ? ici - 1 : ici + 1; if (v.indexOf(c) >= 0) { message = ""; file = [c]; avancer(); } }
     function panneau() {
-      var reste = zones.filter(function (q) { return !P.grotte.zones[q.def.id]; });
-      bas.innerHTML = '<div class="ex-msg">' + esc(message || (reste.length ? __("Touche une galerie éclairée pour y aller. Cherche : ") + reste.map(function (q) { return tx(q.def.nom); }).join(", ") + "." : __("Tu as entendu tous les récits de la grotte. D'autres galeries s'ouvriront."))) + "</div>" +
-        '<ul class="ex-liste">' + zones.map(function (q) { var f = P.grotte.zones[q.def.id]; return '<li class="' + (f ? "ok" : "") + '"><span><b>' + esc(tx(q.def.court || q.def.nom)) + (f ? " ✓" : "") + "</b><small>" + (f ? __("récits entendus") : carte[q.c] ? __("en vue : vas-y") : __("quelque part dans le noir")) + "</small></span></li>"; }).join("") + "</ul>" +
-        '<div class="gr-croix"><button type="button" class="btn sec" data-d="g" aria-label="' + __("Gauche") + '">←</button><button type="button" class="btn sec" data-d="h" aria-label="' + __("Haut") + '">↑</button><button type="button" class="btn sec" data-d="b" aria-label="' + __("Bas") + '">↓</button><button type="button" class="btn sec" data-d="d" aria-label="' + __("Droite") + '">→</button></div>';
+      if (clos) return;
+      var menace = proches().length, aLentree = ici === L.depart;
+      var cherche = zones.filter(function (q) { return !P.grotte.zones[q.def.id]; }).map(function (q) { var m = manquants(q).length; return m ? (m > 1 ? __("{n} dieux à trouver", { n: m }) : __("1 dieu à trouver")) + " (" + tx(q.def.court || q.def.nom) + ")" : __("retourne à ") + tx(q.def.nom); });
+      bas.innerHTML = '<div class="ex-msg">' + esc(message || (cherche.length ? __("Touche une galerie éclairée pour y aller. Il te reste : ") + cherche.join(", ") + "." : __("Tu as entendu tous les récits de la grotte. D'autres galeries s'ouvriront."))) + "</div>" +
+        (menace ? '<button type="button" class="btn large gr-torche" data-a="torche">🔥 ' + __("Brandir la torche") + "</button>" : "") +
+        zones.map(function (q) { var f = P.grotte.zones[q.def.id];
+          return '<div class="gr-zone' + (f ? " ok" : "") + '"><b>' + esc(tx(q.def.court || q.def.nom)) + (f ? " ✓" : "") + '</b><span class="gr-dieux">' + q.dieux.map(function (d) { var e = entendu(q, d); return '<i class="' + (e ? "ok" : "") + '" title="' + esc(e ? tx(d.r.titre) : "?") + '"><svg viewBox="0 0 120 92" width="34" height="26" aria-hidden="true">' + (e ? DESSINS_MYTHE[d.r.dessin] || "" : '<text x="60" y="64" text-anchor="middle" font-size="56" font-weight="800" fill="#8E8A80">?</text>') + "</svg></i>"; }).join("") + "</span></div>"; }).join("") +
+        '<div class="gr-croix"><button type="button" class="btn sec" data-d="g" aria-label="' + __("Gauche") + '">←</button><button type="button" class="btn sec" data-d="h" aria-label="' + __("Haut") + '">↑</button><button type="button" class="btn sec" data-d="b" aria-label="' + __("Bas") + '">↓</button><button type="button" class="btn sec" data-d="d" aria-label="' + __("Droite") + '">→</button></div>' +
+        (aLentree ? '<button type="button" class="btn sec large" data-a="sortir">' + __("Sortir de la grotte") + "</button>" : '<p class="gr-note">' + __("Pour sortir, reviens sur l'entrée, en bas.") + "</p>");
       [].forEach.call(bas.querySelectorAll("[data-d]"), function (b) { b.onclick = function () { pas(b.getAttribute("data-d")); }; });
+      var bt = bas.querySelector('[data-a="torche"]'); if (bt) bt.onclick = brandir;
+      var bs = bas.querySelector('[data-a="sortir"]'); if (bs) bs.onclick = fermer;
     }
-    // Une zone atteinte : ses récits, un par un, chacun avec sa source ; puis le passage est gravé.
-    function lire(zn) {
-      var d = zn.def, k = -1, deja = !!P.grotte.zones[d.id]; lecture = zn;
+    function scene(r) { return '<div class="gr-scene"><svg class="gr-dieu" viewBox="0 0 120 92" aria-hidden="true">' + (DESSINS_MYTHE[r.dessin] || "") + "</svg></div>"; }
+    function recit(r, pied) { return scene(r) + '<h3 class="gr-titre gr-nom">' + esc(tx(r.titre)) + '</h3><p class="gr-texte">' + esc(tx(r.texte)) + '</p><p class="ep-sources"><b>' + __("Source") + "</b> : " + esc(r.source) + "</p>" + pied; }
+    // Un dieu trouvé (Victor, 2026-11-14 : on les récupère un par un) : il paraît, on écoute son récit, il est gardé.
+    function dieu(zn, d) {
+      lecture = zn; var deja = entendu(zn, d), n = zn.dieux.length - manquants(zn).length + (deja ? 0 : 1);
+      bas.innerHTML = '<div class="eyebrow">' + (deja ? __("Déjà entendu") : __("Un dieu dans la paroi")) + " · " + esc(tx(zn.def.court || zn.def.nom)) + "</div>" + recit(d.r, '<button type="button" class="btn large" data-a="ok">' + (deja ? __("Reprendre la torche") : __("Garder ce récit ({n} sur {t})", { n: n, t: zn.dieux.length })) + "</button>");
+      bas.scrollTop = 0;
+      bas.querySelector('[data-a="ok"]').onclick = function () {
+        M.entendreGrotte(C, P, zn.def.id, d.r.id, maintenant()); sauver(); lecture = null;
+        message = deja ? "" : manquants(zn).length ? __("Récit gardé. Il en reste {n} à trouver.", { n: manquants(zn).length }) : __("Tu les as tous. Retourne à l'arbre, près de l'entrée : il va t'interroger.");
+        peindre(); panneau();
+      };
+    }
+    // L'arbre : il n'interroge que celui qui a trouvé tous ses dieux. Réussi, le passage est gravé.
+    function arbre(zn) {
+      var d = zn.def, k = 0, deja = !!P.grotte.zones[d.id], reste = manquants(zn).length;
+      // Passage gravé avant que l'arbre ait un prix à donner : il le donne au retour.
+      if (deja && d.succes && !P.succes[d.succes]) { lecture = zn; fin(); return; }
+      if (reste) { message = tx(d.accroche || { fr: "" }) + " " + (reste > 1 ? __("Il te manque {n} dieux.", { n: reste }) : __("Il te manque un dieu.")); panneau(); return; }
+      lecture = zn;
+      var Qz = d.recits.filter(function (r) { return r.question; });
+      function accueil() {
+        bas.innerHTML = '<div class="eyebrow">' + (deja ? __("Passage gravé") : __("Tu les as tous")) + '</div><h3 class="gr-titre">' + esc(tx(d.nom)) + '</h3><p class="gr-texte">' + (deja ? __("Les récits sont peints dans ses branches. Tu peux les relire.") : __("Les dieux que tu as trouvés sont peints dans ses branches. L'arbre t'interroge : il en faut {n} justes sur {t}.", { n: Math.min(Qz.length, d.seuil || Qz.length), t: Qz.length })) + "</p>" +
+          (deja || !Qz.length ? "" : '<button type="button" class="btn large" data-a="quiz">' + __("Répondre aux questions") + "</button>") + '<button type="button" class="btn sec large" data-a="lire">' + __("Relire les récits") + '</button><button type="button" class="btn sec large" data-a="non">' + __("Reprendre la torche") + "</button>";
+        bas.scrollTop = 0;
+        var bq = bas.querySelector('[data-a="quiz"]'); if (bq) bq.onclick = quiz;
+        bas.querySelector('[data-a="lire"]').onclick = function () { k = 0; page(); };
+        bas.querySelector('[data-a="non"]').onclick = function () { lecture = null; if (!deja && !Qz.length) fin(); else panneau(); };
+      }
       function page() {
         var r = d.recits[k];
-        bas.innerHTML = k < 0 ? '<div class="eyebrow">' + __("Tu y es") + '</div><h3 class="gr-titre">' + esc(tx(d.nom)) + '</h3><p class="gr-texte">' + esc(tx(d.accroche || { fr: "" })) + '</p><button type="button" class="btn large" data-a="suite">' + __("Écouter") + "</button>" :
-          '<div class="eyebrow">' + (k + 1) + " / " + d.recits.length + " · " + esc(tx(d.court || d.nom)) + '</div><div class="gr-recit"><svg viewBox="0 0 120 92" width="96" height="74" aria-hidden="true">' + (DESSINS_MYTHE[r.dessin] || "") + '</svg><div><h3 class="gr-titre">' + esc(tx(r.titre)) + '</h3><p class="gr-texte">' + esc(tx(r.texte)) + '</p><p class="ep-sources"><b>' + __("Source") + "</b> : " + esc(r.source) + '</p></div></div><button type="button" class="btn large" data-a="suite">' + (k < d.recits.length - 1 ? __("Récit suivant") : deja ? __("Reprendre la torche") : Qz.length ? __("Répondre aux questions") : __("Graver ce passage")) + "</button>";
+        bas.innerHTML = '<div class="eyebrow">' + (k + 1) + " / " + d.recits.length + " · " + esc(tx(d.court || d.nom)) + "</div>" + recit(r, '<button type="button" class="btn large" data-a="suite">' + (k < d.recits.length - 1 ? __("Récit suivant") : __("Revenir à l'arbre")) + "</button>");
         bas.scrollTop = 0;
-        bas.querySelector('[data-a="suite"]').onclick = function () { if (k < d.recits.length - 1) { k++; page(); } else if (!deja && Qz.length) quiz(); else fin(); };
+        bas.querySelector('[data-a="suite"]').onclick = function () { if (k < d.recits.length - 1) { k++; page(); } else accueil(); };
       }
-      // Victor (2026-11-14, « Récits puis petit quiz ») : une question par récit, sans fait nouveau. Il faut en réussir
-      // assez (zone.seuil) pour graver le passage ; sinon on réécoute.
-      var Qz = d.recits.filter(function (r) { return r.question; });
+      // Victor (2026-11-14, « Récits puis petit quiz ») : une question par récit, sans fait nouveau.
       function quiz() {
         var n = 0, justes = 0, seuil = Math.min(Qz.length, d.seuil || Qz.length);
         function poser() {
@@ -6273,30 +6385,32 @@ function demarrerJeu() {
         }
         function bilan() {
           if (justes >= seuil) { fin(justes + " / " + Qz.length); return; }
-          bas.innerHTML = '<div class="eyebrow">' + justes + " / " + Qz.length + " · " + __("il en faut ") + seuil + '</div><h3 class="gr-titre">' + __("Le passage ne se grave pas") + '</h3><p class="gr-texte">' + esc(tx(d.rate || { fr: "Réécoute les récits, puis réessaie." })) + '</p><button type="button" class="btn large" data-a="re">' + __("Réécouter les récits") + '</button><button type="button" class="btn sec large" data-a="non">' + __("Plus tard") + "</button>";
+          bas.innerHTML = '<div class="eyebrow">' + justes + " / " + Qz.length + " · " + __("il en faut ") + seuil + '</div><h3 class="gr-titre">' + __("Le passage ne se grave pas") + '</h3><p class="gr-texte">' + esc(tx(d.rate || { fr: "Relis les récits, puis réessaie." })) + '</p><button type="button" class="btn large" data-a="re">' + __("Relire les récits") + '</button><button type="button" class="btn sec large" data-a="non">' + __("Plus tard") + "</button>";
           bas.querySelector('[data-a="re"]').onclick = function () { k = 0; page(); };
           bas.querySelector('[data-a="non"]').onclick = function () { lecture = null; panneau(); };
         }
         poser();
       }
+      // Le passage gravé : les savoirs s'ouvrent, et l'arbre donne son succès avec son totem.
       function fin(score) {
-        var r = M.visiterGrotte(C, P, d.id, maintenant()); sauver(); lecture = null; peindre();
-        if (deja || !r) { panneau(); return; }
-        var noms = r.ouvre.map(function (c) { return tx(C.parId[c].nom); });
-        bas.innerHTML = '<div class="eyebrow">' + __("Passage gravé") + (score ? " · " + score : "") + '</div><div class="gr-alyca"></div>' + (noms.length ? '<p class="gr-texte"><b>' + __("Savoirs ouverts") + "</b> : " + esc(noms.join(", ")) + ".</p>" : "") + '<button type="button" class="btn large" data-a="ok">' + __("Reprendre la torche") + "</button>";
+        var r = M.visiterGrotte(C, P, d.id, maintenant()); sauver(); peindre();
+        if (!r || !(r.premiere || r.succes || r.objet)) { lecture = null; panneau(); return; }
+        var noms = r.ouvre.map(function (c) { return tx(C.parId[c].nom); }), h = '<div class="eyebrow">' + __("Passage gravé") + (score ? " · " + score : "") + '</div><div class="gr-alyca"></div>';
+        if (r.succes) h += '<div class="gr-prix"><div class="gr-prix-img">' + illustrationSucces(r.succes, 68, false) + '</div><div><div class="eyebrow">' + __("Succès") + (r.objet ? " · " + __("objet gagné") : "") + '</div><h3 class="gr-titre">' + esc(tx(r.succes.nom)) + '</h3><p class="gr-texte">' + esc(tx(r.succes.description)) + "</p>" + (r.objet ? '<p class="gr-texte"><b>' + esc(tx(r.objet.nom)) + "</b> : " + esc(tx(r.objet.notice)) + '</p><p class="ep-sources"><b>' + __("Source") + "</b> : " + esc(r.objet.source) + "</p>" : "") + (r.credits ? '<p class="gr-texte">+' + r.credits.n + " " + __("crédits") + "</p>" : "") + "</div></div>";
+        h += (noms.length ? '<p class="gr-texte"><b>' + __("Savoirs ouverts") + "</b> : " + esc(noms.join(", ")) + ".</p>" : "") + '<button type="button" class="btn large" data-a="ok">' + __("Reprendre la torche") + "</button>";
+        bas.innerHTML = h; bas.scrollTop = 0;
         var bu = d.alyca && comite({ id: "grotte_" + d.id, texte: d.alyca, contexte: "accueil", aparte: false }); if (bu) bas.querySelector(".gr-alyca").appendChild(bu);
-        bas.querySelector('[data-a="ok"]').onclick = function () { message = d.ouvert ? tx(d.ouvert) : ""; panneau(); };
+        bas.querySelector('[data-a="ok"]').onclick = function () { lecture = null; message = d.ouvert ? tx(d.ouvert) : ""; panneau(); };
       }
-      page();
+      accueil();
     }
-    function fermer() { clearTimeout(horloge); window.removeEventListener("resize", mesurer); if (obs) obs.disconnect(); sauver(); z.remove(); if (retour) retour(); else rendre(); }
-    z.querySelector(".ex-x").onclick = fermer;
+    function fermer() { if (clos) return; clos = true; clearTimeout(horloge); clearTimeout(ronde); window.removeEventListener("resize", mesurer); if (obs) obs.disconnect(); sauver(); z.remove(); if (retour) retour(); else rendre(); }
     window.addEventListener("resize", mesurer);
     document.body.appendChild(z);
     // Le panneau du bas change de hauteur selon ce qu'il dit : le labyrinthe se recale.
     var obs = null; try { obs = new ResizeObserver(function () { mesurer(); }); obs.observe(vue); } catch (x) {}
     if (premiere && def.alyca) message = tx(def.alyca);
-    panneau(); setTimeout(mesurer, 0);
+    panneau(); setTimeout(mesurer, 0); ronde = setTimeout(roder, GROTTE.pas);
   }
   // vise : l'aménagement qu'une épreuve vient de débloquer (Victor, 2026-11-14) : sa fiche passe en tête, encadrée.
   function ouvrirChantierIle(vise) {
