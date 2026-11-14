@@ -2350,6 +2350,8 @@ function demarrerJeu() {
   }
   function allerQuete() { if (queteActive()) ouvrirExplorer(); }
   var DESSINS_QUETE = {
+    argile: '<path d="M-10 6 C-11 0 -6 -6 0 -6 C7 -7 11 -1 10 6 Z" fill="#B5673A"/><path d="M-6 0 C-4 -4 2 -5 5 -3 C3 -1 -2 0 -6 0 Z" fill="#D08A5A"/><path d="M-10 6 H10" stroke="#8E4C28" stroke-width="1.6" stroke-linecap="round"/>',
+    coquilles: '<path d="M-10 4 C-10 -4 -2 -6 0 2 Z M0 2 C2 -6 10 -4 10 4 Z" fill="#F1E3CF" stroke="#C9B08E" stroke-width="1"/><path d="M-7 2 L-4 -2 M-4 3 L-2 -1 M7 2 L4 -2 M4 3 L2 -1" stroke="#C9B08E" stroke-width=".8"/><path d="M-3 9 C-3 5 3 5 3 9 Z" fill="#E8D5BA" stroke="#C9B08E" stroke-width="1"/>',
     os: '<path d="M-9 4 C-11 1 -9 -3 -5 -3 L5 -6 C8 -8 11 -5 9 -2 C11 1 9 4 6 3 L-4 6 C-6 9 -10 7 -9 4 Z" fill="#EFE6D2" stroke="#B9AC8E" stroke-width="1"/><path d="M-4 0 L5 -3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>',
     saule: '<path d="M-9 9 C-6 0 -2 -5 2 -10 M-4 9 C-2 2 3 -3 8 -8 M1 9 C2 4 6 0 10 -3" stroke="#8A9A3C" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M-5 -1 l-4 -2 M-1 -6 l-4 -1 M3 -2 l4 -3 M6 -6 l1 -4 M5 2 l5 0" stroke="#5E8A3C" stroke-width="1.6" stroke-linecap="round"/>',
     lests: '<ellipse cx="-4" cy="3" rx="6" ry="4" fill="#7E8791"/><ellipse cx="-5" cy="2" rx="3.4" ry="1.6" fill="#A9B1B9"/><ellipse cx="5" cy="4" rx="5" ry="3.4" fill="#676F78"/><ellipse cx="2" cy="-4" rx="5.4" ry="3.8" fill="#8E969E"/><ellipse cx="1" cy="-5" rx="3" ry="1.4" fill="#BCC3C9"/>',
@@ -2744,6 +2746,22 @@ function demarrerJeu() {
       '<path d="M118 22 L124 22 L123 104 L121 114 L119 104 Z" fill="#7A5230"/><path d="M119 104 L123 104 L121 116 Z" fill="#4E473F"/><path d="M108 14 h26 v9 h-26 z" fill="#8D8377"/>' +
       '<g class="ep-lame"><path d="M44 78 C80 40 160 40 198 74" stroke="#5E3F20" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M44 78 L116 66 M126 65 L198 74" stroke="#E8DCC0" stroke-width="1.8"/><path d="M116 62 h10 v8 h-10 z" fill="#E8DCC0"/></g></svg>';
   }
+  // Les coquilles qu'on broie : la pierre (.ep-lame) va et vient, la poudre (.ep-poli) apparaît.
+  function svgBroyer() {
+    return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="152" rx="96" ry="10" fill="rgba(0,0,0,.14)"/>' +
+      '<path d="M26 150 L18 122 L46 104 L198 100 L224 118 L214 150 Z" fill="#8D8377"/><path d="M46 104 L198 100 L212 114 L34 120 Z" fill="#B3A99C"/>' +
+      '<path d="M84 110 C84 102 96 102 98 110 Z M104 108 C106 100 118 100 118 108 Z M128 110 C128 102 140 101 142 109 Z M150 108 C152 101 162 101 164 108 Z" fill="#F1E3CF" stroke="#C9B08E" stroke-width="1"/>' +
+      '<g class="ep-poli"><path d="M70 112 C90 100 160 98 178 108 C168 116 86 120 70 112 Z" fill="#F6EEDF"/><path d="M84 110 h6 M110 106 h8 M140 110 h7 M124 113 h5" stroke="#D9C7A8" stroke-width="2" stroke-linecap="round"/></g>' +
+      '<g class="ep-lame"><path d="M92 96 C92 70 150 68 152 94 C150 106 96 108 92 96 Z" fill="#5E6670"/><path d="M100 84 C108 72 134 72 142 82" stroke="#8E969E" stroke-width="5" fill="none" stroke-linecap="round"/></g></svg>';
+  }
+  // Le pot qu'on monte au colombin : n rouleaux posés sur total ; fini, il est lissé.
+  function svgPot(n, total) {
+    var h = "", L = [34, 44, 52, 56, 54, 46, 38];
+    for (var j = 0; j < Math.min(n, total); j++) h += '<rect x="' + (120 - L[j % L.length]) + '" y="' + (132 - j * 14) + '" width="' + L[j % L.length] * 2 + '" height="14" rx="7" fill="' + (n >= total ? "#B5673A" : j % 2 ? "#C27A4A" : "#B5673A") + '"' + (n >= total ? "" : ' stroke="#8E4C28" stroke-width="1.2"') + "/>";
+    if (n < total) h += '<rect class="ep-noeud" x="' + (120 - L[n % L.length]) + '" y="' + (132 - n * 14) + '" width="' + L[n % L.length] * 2 + '" height="14" rx="7" fill="none" stroke="#E0A800" stroke-width="2" stroke-dasharray="4 4"/>';
+    else h += '<path d="M92 60 C80 90 80 120 96 140" stroke="#D99A6E" stroke-width="5" fill="none" stroke-linecap="round" opacity=".8"/><ellipse cx="120" cy="49" rx="36" ry="6" fill="#8E4C28"/>';
+    return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="152" rx="80" ry="9" fill="rgba(0,0,0,.14)"/><path d="M70 146 H170 L164 154 H76 Z" fill="#8A6240"/>' + h + "</svg>";
+  }
   // Le filet qu'on noue : n nœuds serrés sur total ; fini, il reçoit ses galets.
   function svgFilet(n, total) {
     var haut = [30, 90, 150, 210], K = [[60, 78], [120, 78], [180, 78], [30, 122], [90, 122], [150, 122], [210, 122]], h = "";
@@ -2803,11 +2821,11 @@ function demarrerJeu() {
       // 1. Frapper vite : un coup ne compte que s'il suit le précédent d'assez près.
       frappes: function (e, i) {
         var n = 0, dernier = 0, fini = false, total = e.coups || 6, delai = e.delai || 900;
-        var filet = e.dessin === "filet";
-        var zone = plus('<button type="button" class="ep-zone">' + (filet ? '<span class="ep-dessin">' + svgFilet(0, total) + "</span>" : svgPierres(E.dessin)) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Touche ici pour frapper")) + "</span></button>");
+        var filet = { filet: svgFilet, colombin: svgPot }[e.dessin];
+        var zone = plus('<button type="button" class="ep-zone">' + (filet ? '<span class="ep-dessin">' + filet(0, total) + "</span>" : svgPierres(E.dessin)) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Touche ici pour frapper")) + "</span></button>");
         var jauge = plus('<div class="ep-compte"><span class="ep-pips">' + new Array(total + 1).join("<i></i>") + "</span><b></b></div>"); plus('<p class="ep-msg" aria-live="polite"></p>');
         var pips = corps.querySelectorAll(".ep-pips i"), lib = corps.querySelector(".ep-compte b"), msg = corps.querySelector(".ep-msg"), ecl = zone.querySelector(".ep-eclats");
-        function peindre() { pips.forEach(function (p, j) { p.className = j < n ? "ok" : ""; }); lib.textContent = e.compte ? tx(e.compte).replace("{n}", n).replace("{t}", total) : __("Éclats arrachés : {n} sur {t}", { n: n, t: total }); if (filet) zone.querySelector(".ep-dessin").innerHTML = svgFilet(n, total); }
+        function peindre() { pips.forEach(function (p, j) { p.className = j < n ? "ok" : ""; }); lib.textContent = e.compte ? tx(e.compte).replace("{n}", n).replace("{t}", total) : __("Éclats arrachés : {n} sur {t}", { n: n, t: total }); if (filet) zone.querySelector(".ep-dessin").innerHTML = filet(n, total); }
         peindre();
         zone.onpointerdown = function (ev) {
           ev.preventDefault(); if (fini) return;
@@ -2826,7 +2844,7 @@ function demarrerJeu() {
       // Frotter : glisser d'avant en arrière ; c'est la distance parcourue qui polit (un toucher compte un peu aussi).
       frotter: function (e, i) {
         var total = e.course || 4000, fait = 0, fini = false, bas = false, px = 0, py = 0;
-        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
+        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : e.dessin === "broyer" ? svgBroyer() : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
         var barre = plus('<div class="ep-compte"><span class="ep-barre"><i></i></span><b></b></div>'); plus('<p class="ep-msg" aria-live="polite"></p>');
         var rempl = barre.querySelector("i"), lib = barre.querySelector("b"), lame = zone.querySelector(".ep-lame"), poli = zone.querySelector(".ep-poli");
         function peindre() { var p = Math.min(1, fait / total); rempl.style.width = (p * 100).toFixed(0) + "%"; lib.textContent = e.compte ? tx(e.compte).replace("{n}", Math.round(p * 100)) : __("Poli : {n} %", { n: Math.round(p * 100) }); poli.style.opacity = p.toFixed(2); }
@@ -2882,16 +2900,16 @@ function demarrerJeu() {
       // 2. La jauge : s'arrêter au-dessus de la barrière.
       jauge: function (e, i) {
         var seuil = e.seuil || 0.7, ech = e.echelle || null, per = e.periode || 1500, t0 = performance.now(), gele = false, fini = false, raf = 0, p = 0;
-        var bloc = plus('<div class="ep-jauge"><div class="ep-tube"><div class="ep-zone-ok" style="height:' + ((1 - seuil) * 100).toFixed(0) + '%"></div><div class="ep-seuil" style="bottom:' + (seuil * 100).toFixed(0) + '%"><span>' + __("énergie d'activation") + (ech ? "<small>" + chiffre(Math.round(seuil * ech.max)) + " " + esc(ech.unite) + "</small>" : "") + '</span></div>' +
+        var bloc = plus('<div class="ep-jauge"><div class="ep-tube"><div class="ep-zone-ok" style="height:' + ((1 - seuil) * 100).toFixed(0) + '%"></div><div class="ep-seuil" style="bottom:' + (seuil * 100).toFixed(0) + '%"><span>' + (e.seuil_nom ? esc(tx(e.seuil_nom)) : __("énergie d'activation")) + (ech ? "<small>" + chiffre(Math.round(seuil * ech.max)) + " " + esc(ech.unite) + "</small>" : "") + '</span></div>' +
           (ech ? [0, 0.25, 0.5, 0.75, 1].map(function (g) { return '<i class="ep-grad" style="bottom:' + g * 100 + '%">' + chiffre(Math.round(g * ech.max)) + "</i>"; }).join("") : "") + '<div class="ep-curseur"></div></div>' +
-          '<div class="ep-grain"><svg viewBox="0 0 80 80" aria-hidden="true"><circle class="ep-halo" cx="40" cy="40" r="30"/><path d="M28 46 L32 30 L46 26 L54 38 L48 52 L34 54 Z" class="ep-g"/></svg><span>' + __("le grain de pyrite") + "</span>" + (ech ? '<b class="ep-lu"></b><small>' + __("énergie du coup") + "</small>" : "") + "</div></div>");
-        var bt = plus('<button type="button" class="btn large ep-frappe">' + __("Frapper !") + "</button>"), msg = plus('<p class="ep-msg" aria-live="polite"></p>');
+          '<div class="ep-grain"><svg viewBox="0 0 80 80" aria-hidden="true"><circle class="ep-halo" cx="40" cy="40" r="30"/>' + (e.dessin === "pot" ? '<path d="M26 30 C20 44 24 58 32 62 H48 C56 58 60 44 54 30 Z" class="ep-g"/><ellipse cx="40" cy="30" rx="14" ry="3.4" fill="#8E4C28"/>' : '<path d="M28 46 L32 30 L46 26 L54 38 L48 52 L34 54 Z" class="ep-g"/>') + "</svg><span>" + (e.objet ? esc(tx(e.objet)) : __("le grain de pyrite")) + "</span>" + (ech ? '<b class="ep-lu"></b><small>' + __("énergie du coup") + "</small>" : "") + "</div></div>");
+        var bt = plus('<button type="button" class="btn large ep-frappe">' + (e.bouton ? esc(tx(e.bouton)) : __("Frapper !")) + "</button>"), msg = plus('<p class="ep-msg" aria-live="polite"></p>');
         var cur = bloc.querySelector(".ep-curseur"); var lu = bloc.querySelector(".ep-lu");
         function tour(t) { if (!gele) { var x = ((t - t0) / per) % 2; p = x < 1 ? x : 2 - x; cur.style.bottom = (p * 100).toFixed(1) + "%"; if (lu) lu.textContent = Math.round(p * ech.max) + " " + ech.unite; } raf = requestAnimationFrame(tour); }
         raf = requestAnimationFrame(tour); arrets.push(function () { cancelAnimationFrame(raf); });
         bt.onclick = function () {
           if (fini || gele) return; gele = true;
-          if (p >= seuil) { fini = true; bloc.classList.add("gagne"); bt.disabled = true; msg.classList.add("ok"); msg.textContent = __("Barrière franchie : le grain s'embrase."); setTimeout(function () { savoir(e, i); }, 700); }
+          if (p >= seuil) { fini = true; bloc.classList.add("gagne"); bt.disabled = true; msg.classList.add("ok"); msg.textContent = e.reussi ? tx(e.reussi) : __("Barrière franchie : le grain s'embrase."); setTimeout(function () { savoir(e, i); }, 700); }
           else { bloc.classList.add("rate"); msg.textContent = tx(e.rate || { fr: "" }); setTimeout(function () { bloc.classList.remove("rate"); t0 = performance.now() - p * per; gele = false; }, 800); }
         };
       },
@@ -2973,7 +2991,7 @@ function demarrerJeu() {
     }
     // L'entrée : les deux pierres, et Alyca qui annonce le programme.
     marquer(-1);
-    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : svgPierres(E.dessin)) + "</div>");
+    plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : svgPierres(E.dessin)) + "</div>");
     if (E.accroche) dire(tx(E.accroche), "intro");
     plus('<button type="button" class="btn large">' + __("Commencer") + "</button>").onclick = function () { etape(0); };
     document.body.appendChild(z);

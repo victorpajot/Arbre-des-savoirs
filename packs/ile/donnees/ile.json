@@ -3089,6 +3089,211 @@
      "fr": "La pêcherie peut maintenant être bâtie."
     }
    }
+  },
+  {
+   "id": "poterie",
+   "nom": {
+    "fr": "Cuire un pot"
+   },
+   "amenagement": "four",
+   "dessin": "poterie",
+   "accroche": {
+    "fr": "Un tas de terre mouillée n'a jamais rien gardé au sec. Il faut la préparer, la monter et la cuire. Trois gestes, et pas de droit à la fissure."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi faire un pot"
+    },
+    "texte": {
+     "fr": "Pas de four de potier sans pot à cuire. Il te faut de l'argile, et des coquilles à broyer pour l'empêcher de se fendre. Le bois pour le feu, tu l'as déjà au camp : explore l'île."
+    },
+    "objets": [
+     {
+      "id": "argile",
+      "nom": {
+       "fr": "De l'argile"
+      },
+      "position": [
+       0.31,
+       0.69
+      ],
+      "trouve": {
+       "fr": "Une terre fine et grasse, qui colle aux doigts : de l'argile."
+      },
+      "zone": {
+       "fr": "sur la berge du lac, au sud-ouest"
+      }
+     },
+     {
+      "id": "coquilles",
+      "nom": {
+       "fr": "Des coquilles"
+      },
+      "position": [
+       0.82,
+       0.648
+      ],
+      "trouve": {
+       "fr": "Des coquilles vides, laissées par la marée : broyées, elles tiendront la pâte."
+      },
+      "zone": {
+       "fr": "sur la côte est"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "poterie-pate",
+     "type": "frotter",
+     "dessin": "broyer",
+     "titre": {
+      "fr": "La pâte"
+     },
+     "consigne": {
+      "fr": "Broie les coquilles sous la pierre, d'avant en arrière, jusqu'à en faire une poudre : tu la mêleras à l'argile."
+     },
+     "course": 3600,
+     "appel": {
+      "fr": "Glisse le doigt d'avant en arrière pour broyer"
+     },
+     "compte": {
+      "fr": "Broyé : {n} %"
+     },
+     "gagne": {
+      "fr": "La poudre est fine. Mêlée à l'argile, elle fait une bonne pâte."
+     },
+     "savoir": [
+      {
+       "id": "poterie-degraissant",
+       "texte": {
+        "fr": "Pour qu'il n'y ait pas de fissures au séchage et à la cuisson, on ajoute à l'argile un « dégraissant »."
+       },
+       "source": "Académie de Grenoble, circonscription de Pont-de-Chéruy, « Les débuts de la céramique » (pièces du musée de Hières-sur-Amby)"
+      },
+      {
+       "id": "poterie-types",
+       "texte": {
+        "fr": "Il peut être minéral (de fins gravillons), animal (des os ou des coquilles broyés) ou végétal."
+       },
+       "source": "Académie de Grenoble, circonscription de Pont-de-Chéruy, « Les débuts de la céramique » (pièces du musée de Hières-sur-Amby)"
+      }
+     ]
+    },
+    {
+     "id": "poterie-colombin",
+     "type": "frappes",
+     "dessin": "colombin",
+     "titre": {
+      "fr": "Le pot"
+     },
+     "consigne": {
+      "fr": "Monte le pot rouleau après rouleau, sans traîner : l'argile qui attend sèche et ne colle plus."
+     },
+     "coups": 7,
+     "delai": 1000,
+     "appel": {
+      "fr": "Touche ici pour poser un colombin"
+     },
+     "compte": {
+      "fr": "Colombins posés : {n} sur {t}"
+     },
+     "rate": {
+      "fr": "Trop lent : le bord a séché. Reprends le rythme."
+     },
+     "gagne": {
+      "fr": "Le pot est monté et lissé."
+     },
+     "savoir": [
+      {
+       "id": "poterie-montage",
+       "texte": {
+        "fr": "Le montage au colombin consiste en une succession de rouleaux d'argile superposés et lissés."
+       },
+       "source": "Académie de Grenoble, circonscription de Pont-de-Chéruy, « Les débuts de la céramique » (pièces du musée de Hières-sur-Amby)"
+      },
+      {
+       "id": "poterie-soleil",
+       "texte": {
+        "fr": "Les premières poteries sont au départ juste mises au soleil pour sécher."
+       },
+       "source": "Hominidés.com, « Outils et techniques du Néolithique »"
+      }
+     ]
+    },
+    {
+     "id": "poterie-cuire",
+     "type": "jauge",
+     "dessin": "pot",
+     "titre": {
+      "fr": "La cuisson"
+     },
+     "consigne": {
+      "fr": "Le feu monte et retombe. Enfourne quand il est au plus chaud : trop tiède, la terre reste friable."
+     },
+     "seuil": 0.72,
+     "periode": 1400,
+     "seuil_nom": {
+      "fr": "assez chaud pour cuire"
+     },
+     "objet": {
+      "fr": "le pot, encore cru"
+     },
+     "bouton": {
+      "fr": "Enfourner !"
+     },
+     "reussi": {
+      "fr": "La terre a cuit : elle sonne clair."
+     },
+     "rate": {
+      "fr": "Pas assez chaud : attends que le feu remonte."
+     },
+     "savoir": [
+      {
+       "id": "poterie-foyer",
+       "texte": {
+        "fr": "Cuite directement sur un foyer au sol, la terre ne monte pas aussi haut en température qu'avec un four : les céramiques obtenues sont plus fragiles."
+       },
+       "source": "Hominidés.com, « Outils et techniques du Néolithique »"
+      },
+      {
+       "id": "poterie-dates",
+       "texte": {
+        "fr": "On trouve des poteries en Sibérie orientale il y a 16 000 ans, au Japon il y a 13 000 ans. Au Proche-Orient, il faut attendre 9 000 ans avant le présent."
+       },
+       "source": "Hominidés.com, « Outils et techniques du Néolithique »"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "poterie-four",
+    "titre": {
+     "fr": "Le four"
+    },
+    "texte": {
+     "fr": "Le four ne viendra que plus tard et permettra de fabriquer des récipients plus résistants : des vases pour stocker des graines, de la nourriture ou des liquides, des marmites pour cuire ou chauffer des aliments."
+    },
+    "source": "Hominidés.com, « Outils et techniques du Néolithique »",
+    "appel": {
+     "fr": "Porter le pot au feu"
+    },
+    "bouton": {
+     "fr": "Attiser le feu"
+    },
+    "alyca": {
+     "fr": "Un pot. Il ne fuit pas, il ne s'est pas fendu : pour une première cuisson, c'est presque vexant. Les rats, eux, vont détester."
+    },
+    "alyca_deja": {
+     "fr": "Encore un pot. À ce rythme, il te faudra des étagères."
+    },
+    "fin": {
+     "fr": "Ouvrir le four du potier"
+    },
+    "ouvert": {
+     "fr": "Le four du potier peut maintenant être bâti."
+    }
+   }
   }
  ]
 }
