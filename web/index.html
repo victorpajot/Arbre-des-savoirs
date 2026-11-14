@@ -1311,6 +1311,7 @@ svg.grille .interro { transition: opacity .3s; }
 .grotte { background: #121117; } .gr-vue { position: relative; flex: 1; min-height: 0; overflow: hidden; margin-top: calc(58px + env(safe-area-inset-top, 0px)); } .gr-vue canvas { display: block; touch-action: none; }
 .gr-moi { position: absolute; left: 0; top: 0; pointer-events: none; transition: transform .15s linear; } .gr-moi svg { display: block; width: 100%; height: auto; overflow: visible; }
 .gr-croix { display: flex; gap: 8px; justify-content: center; margin-top: 8px; } .gr-croix .btn { flex: 0 0 58px; width: 58px; min-width: 0; font-size: 20px; padding: 8px 0; }
+.gr-choix { display: grid; gap: 8px; margin: 8px 0; } .gr-choix .btn { font-size: 17px; } .gr-choix .btn.juste { border-color: var(--good); background: color-mix(in srgb, var(--good) 18%, var(--surface)); opacity: 1; } .gr-choix .btn.faux { border-color: var(--bad, #C0392B); background: color-mix(in srgb, var(--bad, #C0392B) 16%, var(--surface)); opacity: 1; }
 .gr-titre { font-size: 19px; margin: 2px 0 6px; } .gr-texte { font-size: 17px; line-height: 1.45; margin: 0 0 8px; } .gr-recit { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; } .gr-recit svg { flex: none; background: #1E1B22; border-radius: 12px; }
 .ile-amen.vise { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 14px; }
 .ep-sources { font-size: 13px; line-height: 1.35; color: var(--muted); margin: 6px 0 8px; } .ile-passage .ep-sources { margin: 0 0 8px; }
@@ -6239,15 +6240,41 @@ function demarrerJeu() {
       function page() {
         var r = d.recits[k];
         bas.innerHTML = k < 0 ? '<div class="eyebrow">' + __("Tu y es") + '</div><h3 class="gr-titre">' + esc(tx(d.nom)) + '</h3><p class="gr-texte">' + esc(tx(d.accroche || { fr: "" })) + '</p><button type="button" class="btn large" data-a="suite">' + __("Écouter") + "</button>" :
-          '<div class="eyebrow">' + (k + 1) + " / " + d.recits.length + " · " + esc(tx(d.court || d.nom)) + '</div><div class="gr-recit"><svg viewBox="0 0 120 92" width="96" height="74" aria-hidden="true">' + (DESSINS_MYTHE[r.dessin] || "") + '</svg><div><h3 class="gr-titre">' + esc(tx(r.titre)) + '</h3><p class="gr-texte">' + esc(tx(r.texte)) + '</p><p class="ep-sources"><b>' + __("Source") + "</b> : " + esc(r.source) + '</p></div></div><button type="button" class="btn large" data-a="suite">' + (k < d.recits.length - 1 ? __("Récit suivant") : deja ? __("Reprendre la torche") : __("Graver ce passage")) + "</button>";
+          '<div class="eyebrow">' + (k + 1) + " / " + d.recits.length + " · " + esc(tx(d.court || d.nom)) + '</div><div class="gr-recit"><svg viewBox="0 0 120 92" width="96" height="74" aria-hidden="true">' + (DESSINS_MYTHE[r.dessin] || "") + '</svg><div><h3 class="gr-titre">' + esc(tx(r.titre)) + '</h3><p class="gr-texte">' + esc(tx(r.texte)) + '</p><p class="ep-sources"><b>' + __("Source") + "</b> : " + esc(r.source) + '</p></div></div><button type="button" class="btn large" data-a="suite">' + (k < d.recits.length - 1 ? __("Récit suivant") : deja ? __("Reprendre la torche") : Qz.length ? __("Répondre aux questions") : __("Graver ce passage")) + "</button>";
         bas.scrollTop = 0;
-        bas.querySelector('[data-a="suite"]').onclick = function () { if (k < d.recits.length - 1) { k++; page(); } else fin(); };
+        bas.querySelector('[data-a="suite"]').onclick = function () { if (k < d.recits.length - 1) { k++; page(); } else if (!deja && Qz.length) quiz(); else fin(); };
       }
-      function fin() {
+      // Victor (2026-11-14, « Récits puis petit quiz ») : une question par récit, sans fait nouveau. Il faut en réussir
+      // assez (zone.seuil) pour graver le passage ; sinon on réécoute.
+      var Qz = d.recits.filter(function (r) { return r.question; });
+      function quiz() {
+        var n = 0, justes = 0, seuil = Math.min(Qz.length, d.seuil || Qz.length);
+        function poser() {
+          var r = Qz[n], q = r.question, ordre = q.choix.map(function (_, i) { return i; }).sort(function () { return Math.random() - 0.5; });
+          bas.innerHTML = '<div class="eyebrow">' + __("Question") + " " + (n + 1) + " / " + Qz.length + '</div><h3 class="gr-titre">' + esc(tx(q.enonce)) + '</h3><div class="gr-choix">' + ordre.map(function (i) { return '<button type="button" class="btn sec large" data-c="' + i + '">' + esc(tx(q.choix[i])) + "</button>"; }).join("") + '</div><div class="gr-suite"></div>';
+          bas.scrollTop = 0;
+          [].forEach.call(bas.querySelectorAll("[data-c]"), function (b) { b.onclick = function () {
+            var c = +b.getAttribute("data-c"), ok = c === q.bonne; if (ok) justes++;
+            [].forEach.call(bas.querySelectorAll("[data-c]"), function (x) { x.disabled = true; var i = +x.getAttribute("data-c"); if (i === q.bonne) x.classList.add("juste"); else if (x === b) x.classList.add("faux"); });
+            var su = bas.querySelector(".gr-suite");
+            su.innerHTML = '<p class="gr-texte"><b>' + (ok ? __("Juste.") : __("Raté.")) + "</b> " + esc(tx(r.texte)) + '</p><p class="ep-sources"><b>' + __("Source") + "</b> : " + esc(r.source) + '</p><button type="button" class="btn large">' + (n < Qz.length - 1 ? __("Question suivante") : __("Voir le résultat")) + "</button>";
+            su.querySelector("button").onclick = function () { n++; if (n < Qz.length) poser(); else bilan(); };
+            su.scrollIntoView({ block: "nearest" });
+          }; });
+        }
+        function bilan() {
+          if (justes >= seuil) { fin(justes + " / " + Qz.length); return; }
+          bas.innerHTML = '<div class="eyebrow">' + justes + " / " + Qz.length + " · " + __("il en faut ") + seuil + '</div><h3 class="gr-titre">' + __("Le passage ne se grave pas") + '</h3><p class="gr-texte">' + esc(tx(d.rate || { fr: "Réécoute les récits, puis réessaie." })) + '</p><button type="button" class="btn large" data-a="re">' + __("Réécouter les récits") + '</button><button type="button" class="btn sec large" data-a="non">' + __("Plus tard") + "</button>";
+          bas.querySelector('[data-a="re"]').onclick = function () { k = 0; page(); };
+          bas.querySelector('[data-a="non"]').onclick = function () { lecture = null; panneau(); };
+        }
+        poser();
+      }
+      function fin(score) {
         var r = M.visiterGrotte(C, P, d.id, maintenant()); sauver(); lecture = null; peindre();
         if (deja || !r) { panneau(); return; }
         var noms = r.ouvre.map(function (c) { return tx(C.parId[c].nom); });
-        bas.innerHTML = '<div class="eyebrow">' + __("Passage gravé") + '</div><div class="gr-alyca"></div>' + (noms.length ? '<p class="gr-texte"><b>' + __("Savoirs ouverts") + "</b> : " + esc(noms.join(", ")) + ".</p>" : "") + '<button type="button" class="btn large" data-a="ok">' + __("Reprendre la torche") + "</button>";
+        bas.innerHTML = '<div class="eyebrow">' + __("Passage gravé") + (score ? " · " + score : "") + '</div><div class="gr-alyca"></div>' + (noms.length ? '<p class="gr-texte"><b>' + __("Savoirs ouverts") + "</b> : " + esc(noms.join(", ")) + ".</p>" : "") + '<button type="button" class="btn large" data-a="ok">' + __("Reprendre la torche") + "</button>";
         var bu = d.alyca && comite({ id: "grotte_" + d.id, texte: d.alyca, contexte: "accueil", aparte: false }); if (bu) bas.querySelector(".gr-alyca").appendChild(bu);
         bas.querySelector('[data-a="ok"]').onclick = function () { message = d.ouvert ? tx(d.ouvert) : ""; panneau(); };
       }
