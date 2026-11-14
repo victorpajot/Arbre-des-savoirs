@@ -2633,5 +2633,14 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   M.ile(CA, Q5, t0 + 5 * J); assert.equal(Q5.ressources.batis.filter(b => b.id === "pecherie").length, 1, "pas d'aléa pendant une absence");
   // Le mode Parcours ne connaît pas les âges.
   const PP = M.nouvellePartie(t0); assert.notEqual(M.statut(CA, PP, "math.babylone", t0).age, 2);
+  // La grotte des mythologies : il faut du feu pour y entrer ; un savoir égyptien attend le passage par son arbre.
+  { const Qg = M.nouvellePartie(t0); Qg.mode = "ile";
+    assert.equal(M.grotteIle(CA, Qg).ouverte, false, "sans feu, la grotte reste noire"); assert.equal(M.visiterGrotte(CA, Qg, "egypte", t0), null);
+    Qg.epreuves = { feu: t0 }; assert.ok(M.grotteIle(CA, Qg).ouverte);
+    assert.equal(M.grotteRequise(CA, Qg, "math.egypte").id, "egypte"); assert.equal(M.grotteRequise(CA, Qg, "math.babylone"), null);
+    Qg.options = { tousArbres: true }; assert.equal(M.grotteRequise(CA, Qg, "math.egypte"), null); delete Qg.options;
+    const rg = M.visiterGrotte(CA, Qg, "egypte", t0); assert.ok(rg.premiere && rg.ouvre.includes("sci.egypte"));
+    assert.equal(M.grotteRequise(CA, Qg, "math.egypte"), null, "le passage ouvre les savoirs égyptiens"); assert.equal(M.visiterGrotte(CA, Qg, "egypte", t0).premiere, false);
+    assert.equal(M.grotteIle(CA, PP), null, "le mode Parcours n'a pas de grotte"); }
   console.log("OK : île par âges (feu, besoins, savoirs requis), monde fini (bancs, effort, effondrement), aléas annoncés");
 }
