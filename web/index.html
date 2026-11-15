@@ -2666,7 +2666,9 @@ function demarrerJeu() {
       X.cible = null; X.coup = performance.now(); X.recharge = X.coup + 1300; X.tx = X.x; X.ty = X.y;
       X.sens = b.x < X.x ? -1 : 1; X.vue = allure(b.x - X.x, b.y - X.y);
       var repere = b.chasse;
-      if (Math.random() < (repere ? EXP.repere : EXP.surprise)) { b.ko = true; b.chasse = false; message = repere ? __("En plein museau ! Le prédateur détale. Tu as eu de la chance.") : __("Il n'a rien vu venir : un coup de bâton, et le prédateur détale."); }
+      // Torche en main, on se défend mieux (Victor, 2026-11-15) : le coup porte bien plus souvent.
+      var arme = X.torche && TORCHE ? TORCHE : null;
+      if (Math.random() < (repere ? Math.max(EXP.repere, arme ? arme.repere : 0) : Math.max(EXP.surprise, arme ? arme.surprise : 0))) { b.ko = true; b.chasse = false; message = repere ? __("En plein museau ! Le prédateur détale. Tu as eu de la chance.") : __("Il n'a rien vu venir : un coup de bâton, et le prédateur détale."); }
       else { b.chasse = true; b.alerte = performance.now() + 1500; message = repere ? __("Raté ! Il esquive et revient sur toi. Cours !") : __("Raté ! Maintenant il t'a vu. Cours !"); }
       panneau();
     }
@@ -2699,7 +2701,7 @@ function demarrerJeu() {
         '<g class="ex-explo"><g class="ex-corps"></g></g>';
       X.eb = [].slice.call(acteurs.querySelectorAll(".ex-bete")); X.ee = acteurs.querySelector(".ex-explo"); X.ec = acteurs.querySelector(".ex-cible"); habiller(); preparerDevant();
       z.classList.add("expe"); S.k = Math.max(S.k, 4.6); S.x = FX; S.y = FY;
-      message = __("Touche la carte : l'explorateur y va. Ce qu'il trouve se rapporte au panier, au centre du village. Fuis ce qui a les yeux rouges.") + (torche ? " " + __("Ta torche éclaire plus loin et fait reculer les bêtes.") : "");
+      message = __("Touche la carte : l'explorateur y va. Ce qu'il trouve se rapporte au panier, au centre du village. Fuis ce qui a les yeux rouges.") + (torche ? " " + __("Ta torche éclaire plus loin, fait reculer les bêtes, et tes coups portent mieux.") : "");
       objets(); panneau(); dessiner(); appliquer(); raf = requestAnimationFrame(tour);
     }
     function dessiner() {

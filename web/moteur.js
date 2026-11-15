@@ -2142,7 +2142,7 @@
   function torcheIle(contenu, partie) {
     var R = modeIle(partie) && contenu.ile && contenu.ile.regles && contenu.ile.regles.torche; if (!R) return null;
     var feu = epreuveIle(contenu, "feu") ? epreuveFaite(partie, "feu") : estMaitrisee(partie, "ile.feu"), solde = partie.credits ? partie.credits.solde : 0;
-    return { prix: R.prix, feu: feu, possible: feu && solde >= R.prix, vue: R.vue || 1, fuite: R.fuite || 0, calme: R.calme || 0 };
+    return { prix: R.prix, feu: feu, possible: feu && solde >= R.prix, vue: R.vue || 1, fuite: R.fuite || 0, calme: R.calme || 0, surprise: R.surprise || 0, repere: R.repere || 0 };
   }
   function prendreTorche(contenu, partie, t) {
     var T = torcheIle(contenu, partie); if (!T || !T.possible) return null;
