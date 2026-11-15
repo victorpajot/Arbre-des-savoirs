@@ -1311,7 +1311,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ep-ferrer .ep-poisson { transform: translate(40px, 132px); transition: transform 1.2s ease-in-out; } .ep-ferrer.mord .ep-poisson { transform: translate(150px, 124px); transition: transform .12s; }
 .ep-ferrer.mord { border-style: solid; border-color: #E0A800; } .ep-ferrer.mord .ep-fil-peche { animation: ep-tend .18s linear infinite; } .ep-flotteur { transition: transform .12s; } .ep-ferrer.mord .ep-flotteur { transform: translate(-3px, 14px); }
 .grotte { background: #121117; } .gr-vue { position: relative; flex: 1; min-height: 0; overflow: hidden; margin-top: calc(58px + env(safe-area-inset-top, 0px)); } .gr-vue canvas { display: block; touch-action: none; }
-.gr-moi { position: absolute; left: 0; top: 0; pointer-events: none; transition: transform .15s linear; } .gr-moi svg { display: block; width: 100%; height: auto; overflow: visible; }
+.gr-moi { position: absolute; left: 0; top: 0; pointer-events: none; } .gr-moi svg { display: block; width: 100%; height: auto; overflow: visible; }
 .gr-croix { display: flex; gap: 8px; justify-content: center; margin-top: 8px; } .gr-croix .btn { flex: 0 0 58px; width: 58px; min-width: 0; font-size: 20px; padding: 8px 0; }
 .gr-choix { display: grid; gap: 8px; margin: 8px 0; } .gr-choix .btn { font-size: 17px; } .gr-choix .btn.juste { border-color: var(--good); background: color-mix(in srgb, var(--good) 18%, var(--surface)); opacity: 1; } .gr-choix .btn.faux { border-color: var(--bad, #C0392B); background: color-mix(in srgb, var(--bad, #C0392B) 16%, var(--surface)); opacity: 1; }
 .gr-titre { font-size: 19px; margin: 2px 0 6px; } .gr-texte { font-size: 17px; line-height: 1.45; margin: 0 0 8px; } .gr-recit { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; } .gr-recit svg { flex: none; background: #1E1B22; border-radius: 12px; }
@@ -2686,7 +2686,7 @@ function demarrerJeu() {
     // Victor (2026-11-15) : en partant, on peut prendre une torche contre des crédits. Elle éclaire plus loin dans le
     // brouillard et fait reculer les prédateurs qui chargent (effets choisis par Claude, chiffres dans regles.torche).
     var TORCHE = null;
-    function vueExp() { return EXP.vue * (X && X.torche && TORCHE ? TORCHE.vue : 1); }
+    function vueExp() { return EXP.vue; }  // Victor (2026-11-15) : la torche n'éclaire pas plus loin dans le brouillard.
     function partirTorche() {
       if (!foyer || X) return;
       var r = M.prendreTorche(C, P, maintenant()); if (!r) { message = __("Pas de torche : il faut savoir faire du feu et avoir de quoi la payer."); panneau(); return; }
@@ -2701,7 +2701,7 @@ function demarrerJeu() {
         '<g class="ex-explo"><g class="ex-corps"></g></g>';
       X.eb = [].slice.call(acteurs.querySelectorAll(".ex-bete")); X.ee = acteurs.querySelector(".ex-explo"); X.ec = acteurs.querySelector(".ex-cible"); habiller(); preparerDevant();
       z.classList.add("expe"); S.k = Math.max(S.k, 4.6); S.x = FX; S.y = FY;
-      message = __("Touche la carte : l'explorateur y va. Ce qu'il trouve se rapporte au panier, au centre du village. Fuis ce qui a les yeux rouges.") + (torche ? " " + __("Ta torche éclaire plus loin, fait reculer les bêtes, et tes coups portent mieux.") : "");
+      message = __("Touche la carte : l'explorateur y va. Ce qu'il trouve se rapporte au panier, au centre du village. Fuis ce qui a les yeux rouges.") + (torche ? " " + __("Ta torche fait reculer les bêtes, tes coups portent mieux, et elle ouvre la grotte.") : "");
       objets(); panneau(); dessiner(); appliquer(); raf = requestAnimationFrame(tour);
     }
     function dessiner() {
@@ -2771,6 +2771,7 @@ function demarrerJeu() {
         var Ge = C.ile.grotte && M.grotteIle(C, P);
         if (Ge && Math.hypot(C.ile.grotte.position[0] * ILE_W - X.x, C.ile.grotte.position[1] * ILE_H + 4 - X.y) < 7) {
           if (!Ge.ouverte) { if (!X.noir) { X.noir = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.vue = "dos"; message = __("Une grotte ! ") + tx(C.ile.grotte.noir || { fr: "Il fait noir là-dedans." }); panneau(); } }
+          else if (!X.torche) { if (!X.noir) { X.noir = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.vue = "dos"; M.trouverGrotte(C, P, maintenant()); sauver(); message = __("Une grotte ! ") + tx(C.ile.grotte.sans_torche || C.ile.grotte.noir || { fr: "Il fait noir là-dedans." }); panneau(); } }
           else if (!X.sorti) {
             M.trouverGrotte(C, P, maintenant()); sauver(); X.tx = X.x; X.ty = X.y; dessiner(); appliquer();
             ouvrirGrotte(function () { if (!X) return; X.sorti = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.t = performance.now(); message = __("De retour à l'air libre."); panneau(); raf = requestAnimationFrame(tour); });
@@ -6028,7 +6029,8 @@ function demarrerJeu() {
     // Victor (2026-11-13) : la carte s'explore en plein écran ; de près, on y trouve ce que la vue d'ensemble ne montre pas.
     // Victor (2026-11-14) : au tout début, pas de campement d'où envoyer un explorateur, et la carte n'est que brouillard : pas de bouton.
     if (M.modeIle(P) && I.quartiers.some(function (q) { return (q.fonde || q.camp) && q.position; })) { var bex = el('<button type="button" class="btn sec large ile-explorer">🔍 ' + (queteActive() ? __("Explorer l'île : {n} à trouver", { n: queteActive().reste }) : __("Explorer l'île de près")) + "</button>"); bex.onclick = ouvrirExplorer; carte.after(bex);
-      var Gb = M.grotteIle(C, P); if (Gb && Gb.ouverte && Gb.trouvee) { var bg = el('<button type="button" class="btn sec large ile-explorer">🔦 ' + esc(tx(C.ile.grotte.nom)) + (Gb.zones.some(function (x) { return !x.vue; }) ? "" : " ✓") + "</button>"); bg.onclick = ouvrirGrotte; bex.after(bg); } }
+      // Victor (2026-11-15) : la grotte demande une torche, donc un explorateur : plus de raccourci sous la carte.
+      var Gb = M.grotteIle(C, P); if (Gb && Gb.ouverte && Gb.trouvee) bex.after(el('<p class="note" style="font-size:17px;margin:4px 0">🔦 ' + esc(tx(C.ile.grotte.nom)) + (Gb.zones.some(function (x) { return !x.vue; }) ? "" : " ✓") + " : " + __("envoie un explorateur avec une torche.") + "</p>")); }
     // Victor (2026-11-12) : un nouveau quartier se mérite. Tant qu'il n'est pas ouvert, sa carte attend sous l'île.
     var ancreV = carte;
     I.quartiers.filter(function (x) { return x.aOuvrir; }).forEach(function (x) {
@@ -6251,7 +6253,7 @@ function demarrerJeu() {
   // Une grotte sur la carte, où l'on entre : un labyrinthe, toujours le même, qu'on éclaire à la torche. Ce qu'on a vu
   // reste dessiné. Atteindre une zone (l'arbre d'une mythologie) fait entendre ses récits, sourcés ; ce passage ouvre
   // des savoirs (M.grotteRequise). Tout est peint sur un canevas : ni masque SVG, ni nœuds déplacés (Android).
-  var GROTTE = { cols: 11, rangs: 15, torche: 3, ecart: 3, loin: 15, betes: 3, flair: 4, fuite: 0.85, calme: 20000, pas: 650 };
+  var GROTTE = { cols: 11, rangs: 15, large: 6.4, torche: 3, ecart: 3, loin: 15, betes: 3, flair: 4, fuite: 0.85, calme: 20000, pas: 650 };
   var LABY = null;
   function labyGrotte() {
     if (LABY) return LABY;
@@ -6318,11 +6320,24 @@ function demarrerJeu() {
     function eclairer() { var D = L.distances(ici), ch = false; for (var c in D) if (D[c] <= GROTTE.torche && !carte[c]) { carte[c] = true; ch = true; } if (ch) P.grotte.carte = carte.map(function (b) { return b ? "1" : "0"; }).join(""); return D; }
     function mesurer() {
       var r = vue.getBoundingClientRect(), k = window.devicePixelRatio || 1; if (!r.width) return;
-      T = Math.floor(Math.min(r.width / L.W, r.height / L.H)); ox = Math.round((r.width - T * L.W) / 2); oy = Math.round((r.height - T * L.H) / 2);
+      // Victor (2026-11-15) : « les couloirs sont trop étroits ». Le labyrinthe ne tient plus en entier à l'écran : une
+      // galerie fait un sixième de la largeur, et la vue suit le marcheur.
+      T = Math.floor(Math.min(r.width / GROTTE.large, r.height / 4.2)); VW = r.width; VH = r.height; cadrer(true);
       cv.width = Math.round(r.width * k); cv.height = Math.round(r.height * k); cv.style.width = r.width + "px"; cv.style.height = r.height + "px"; ctx.setTransform(k, 0, 0, k, 0, 0);
       moi.style.width = T * 0.62 + "px"; peindre(false);
     }
     function centre(c) { return [ox + (c % L.W + 0.5) * T, oy + (Math.floor(c / L.W) + 0.5) * T]; }
+    // Le marcheur glisse d'une case à l'autre (px, py : sa place dans le labyrinthe, en pixels) et la vue le suit.
+    var VW = 0, VH = 0, px = 0, py = 0, cx = 0, cy = 0, glisse = 0;
+    function borneVue(v, vue, laby) { return laby <= vue ? (vue - laby) / 2 : Math.max(vue - laby, Math.min(0, v)); }
+    function cadrer(net) {
+      var bx = (ici % L.W + 0.5) * T, by = (Math.floor(ici / L.W) + 0.5) * T, k = net ? 1 : 0.3;
+      px += (bx - px) * k; py += (by - py) * k;
+      var vx = borneVue(VW / 2 - px, VW, T * L.W), vy = borneVue(VH / 2 - py, VH, T * L.H);
+      cx += (vx - cx) * (net ? 1 : 0.22); cy += (vy - cy) * (net ? 1 : 0.22); ox = Math.round(cx); oy = Math.round(cy);
+      return Math.abs(bx - px) + Math.abs(by - py) + Math.abs(vx - cx) + Math.abs(vy - cy) > 0.6;
+    }
+    function glisser() { cancelAnimationFrame(glisse); if (clos || !T) return; var encore = cadrer(false); peindre(); if (encore) glisse = requestAnimationFrame(glisser); else { cadrer(true); peindre(); } }
     function arbreMythe(x, y, fait) {
       ctx.fillStyle = "#6B4423"; ctx.fillRect(x - T * 0.06, y - T * 0.05, T * 0.12, T * 0.38);
       ctx.fillStyle = fait ? "#C9952A" : "#3F8F5A"; ctx.beginPath(); ctx.arc(x, y - T * 0.14, T * 0.3, 0, 7); ctx.fill();
@@ -6367,7 +6382,7 @@ function demarrerJeu() {
         zn.dieux.forEach(function (d) { if (carte[d.c]) { var q = centre(d.c); niche(q[0], q[1], entendu(zn, d)); } });
       });
       betes.forEach(function (b) { var lum = D[b.c] != null && D[b.c] <= GROTTE.torche; if (lum || carte[b.c]) { var p = centre(b.c); bete(p[0], p[1], b, lum); } });
-      var m = centre(ici); moi.style.transition = saut === false ? "none" : ""; moi.style.transform = "translate(" + (m[0] - T * 0.31) + "px," + (m[1] - T * 0.56) + "px)";
+      moi.style.transform = "translate(" + (ox + px - T * 0.31).toFixed(1) + "px," + (oy + py - T * 0.56).toFixed(1) + "px)";
     }
     function chemin(vers) {
       var D = L.distances(vers, carte); if (D[ici] == null) return null;
@@ -6378,7 +6393,7 @@ function demarrerJeu() {
     function pris() {
       file = []; clearTimeout(horloge); ici = L.depart; parti = false;
       betes.forEach(function (b) { if (L.D0[b.c] < 6) b.fuit = performance.now() + GROTTE.calme; });
-      message = __("Un prédateur t'a sauté dessus ! Tu as couru jusqu'à l'entrée sans te retourner. Reprends ton souffle, et la prochaine fois, brandis ta torche."); sauver(); peindre(false); panneau();
+      message = __("Un prédateur t'a sauté dessus ! Tu as couru jusqu'à l'entrée sans te retourner. Reprends ton souffle, et la prochaine fois, brandis ta torche."); sauver(); cancelAnimationFrame(glisse); cadrer(true); peindre(false); panneau();
     }
     function brandir() {
       var P2 = proches(); if (!P2.length) return;
@@ -6406,7 +6421,7 @@ function demarrerJeu() {
       clearTimeout(horloge); if (!file.length || lecture) return;
       ici = file.shift(); if (ici !== L.depart) parti = true;
       if (betes.some(function (b) { return !b.fuit && b.c === ici; })) { pris(); return; }
-      peindre();
+      glisser();
       if (ici === L.depart && parti) { fermer(); return; }
       var zn = zones.filter(function (q) { return q.c === ici; })[0], dz = null, dd = null;
       zones.forEach(function (q) { q.dieux.forEach(function (d) { if (d.c === ici) { dz = q; dd = d; } }); });
@@ -6509,7 +6524,7 @@ function demarrerJeu() {
       }
       accueil();
     }
-    function fermer() { if (clos) return; clos = true; clearTimeout(horloge); clearTimeout(ronde); window.removeEventListener("resize", mesurer); if (obs) obs.disconnect(); sauver(); z.remove(); if (retour) retour(); else rendre(); }
+    function fermer() { if (clos) return; clos = true; cancelAnimationFrame(glisse); clearTimeout(horloge); clearTimeout(ronde); window.removeEventListener("resize", mesurer); if (obs) obs.disconnect(); sauver(); z.remove(); if (retour) retour(); else rendre(); }
     window.addEventListener("resize", mesurer);
     document.body.appendChild(z);
     // Le panneau du bas change de hauteur selon ce qu'il dit : le labyrinthe se recale.
