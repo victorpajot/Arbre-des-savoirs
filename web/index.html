@@ -10705,7 +10705,12 @@ function demarrerJeu() {
     var r = s.recompense;
     var html = '<div class="succes' + (obtenu ? "" : " verrou") + '"><div class="tete-s">' + illustrationSucces(s, 44, !obtenu) + "<div><h3>" + esc(tx(s.nom)) + "</h3>" + pastilleTheme(themeSucces(s)) + '<p class="desc">' + esc(tx(s.description)) + (obtenu ? __(" · obtenu le ") + dateCourte(P.succes[s.id]) : "") + "</p></div></div>";
     if (obtenu) html += "<details><summary>" + (r.type === "citation" ? __("Lire la citation") : __("Lire l'anecdote")) + "</summary>" + citationSucces(r) + "</details>";
-    return el(html + "</div>");
+    // Victor (2026-11-15) : un succès peut expliquer un menu et y mener.
+    var rac = obtenu && s.raccourci === "ressources" && M.modeIle(P);
+    if (rac) html += '<button type="button" class="btn sec" data-rac style="margin-top:8px;font-size:17px">📊 ' + __("Ouvrir Statistiques › Ressources") + "</button>";
+    var carteS = el(html + "</div>");
+    if (rac) carteS.querySelector("[data-rac]").onclick = function () { vue = "succes"; ongletSucces = "ressources"; rendre(); window.scrollTo(0, 0); };
+    return carteS;
   }
 
   // --- Quiz -----------------------------------------------------------------
