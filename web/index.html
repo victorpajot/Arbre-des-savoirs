@@ -1775,6 +1775,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-savoir.ok { border-style: solid; background: var(--c, #888); color: #fff; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,.18); } .ile-savoir small { display: block; font-size: 14px; color: var(--muted); font-weight: 400; } .ile-savoir.ok small { color: rgba(255,255,255,.9); }
 .ile-savoir .ile-coche { flex: none; width: 30px; height: 30px; border-radius: 50%; background: #fff; color: #2E8B57; font-size: 19px; font-weight: 800; display: grid; place-items: center; }
 .ile-nat { margin: 10px 0 0; font-size: 16px; } .ile-nat-tete { display: flex; justify-content: space-between; gap: 8px; } .ile-nat i { display: block; height: 10px; border-radius: 5px; background: rgba(127,127,127,.25); overflow: hidden; margin: 4px 0; } .ile-nat i b { display: block; height: 100%; }
+.ile-mil-barre { display: flex; height: 14px; border-radius: 7px; overflow: hidden; margin: 6px 0; } .ile-mil-barre b { display: block; height: 100%; } .ile-mil-l { display: block; margin: 2px 0; } .ile-mil-l i { display: inline-block !important; width: 10px; height: 10px !important; border-radius: 3px !important; margin: 0 6px 0 0 !important; vertical-align: baseline; }
 .ile-nat.orange .ile-nat-etat { color: #C98A1E; } .ile-nat.rouge .ile-nat-etat, .ile-nat.epuise .ile-nat-etat { color: #C8553D; } .ile-nat small { color: var(--muted); font-size: 15px; }
 .ile-opt { font-size: 13px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: rgba(127,127,127,.2); color: var(--muted); vertical-align: middle; }
 .ile-besoin p.ile-risque { color: #B5531F; font-weight: 600; } .ile-passage { border: 2px solid var(--accent); border-radius: 12px; padding: 10px 12px; margin: 10px 0; } .ile-passage p { font-size: 17px; margin: 0 0 8px; }
@@ -6891,8 +6892,17 @@ function demarrerJeu() {
     if (!sait) return "";
     var h = '<h3 class="ile-h2" style="margin:14px 0 0">' + __("Ce que l'île peut donner") + "</h3>";
     if (!sait) h += '<p class="ile-vie-note">' + __("La forêt et les poissons ne sont pas sans fin, mais personne ici ne sait encore les compter. Apprends « ") + esc(tx(C.parId[SAVOIR_ILE].nom)) + __(" » pour voir ce qu'il en reste et régler ce qu'on y prend.") + "</p>";
+    // Victor (2026-11-15) : forêt, prairie et buissons se partagent l'île, et le partage bouge avec ce qu'on y fait.
+    var Mi = R.milieux;
+    if (Mi) {
+      var MIL = [["foret", "🌲", __("Forêt"), "#3F7A45", __("le bois, et les sangliers")], ["prairie", "🌾", __("Prairie"), "#A9C96A", __("les bisons")], ["buissons", "🫐", __("Buissons"), "#7A5C9A", __("les baies, et l'abri des jeunes arbres")]];
+      function tend(k) { var d = k === "foret" ? 0 : (k === "buissons" ? 1 : -1) * (Mi.cible - Mi.b); return d > 0.02 ? " ↗" : d < -0.02 ? " ↘" : ""; }
+      h += '<div class="ile-nat ile-milieux"><div class="ile-nat-tete"><b>' + __("Les milieux de l'île") + '</b></div><div class="ile-mil-barre">' + MIL.map(function (m) { return '<b style="width:' + (100 * Mi[m[0]]).toFixed(1) + "%;background:" + m[3] + '"></b>'; }).join("") + "</div><small>" +
+        MIL.map(function (m) { var pcm = Math.round(100 * Mi[m[0]]), ecart = Mi[m[0]] / Mi.ref[m[0]]; return '<span class="ile-mil-l"><i style="background:' + m[3] + '"></i>' + m[1] + " <b>" + m[2] + " " + pcm + " %" + tend(m[0]) + "</b> · " + m[4] + (ecart > 1.2 ? " (" + __("en avance") + ")" : ecart < 0.8 ? " (" + __("en recul") + ")" : "") + "</span>"; }).join("") +
+        __("Rien n'est bon ou mauvais en soi : couper la forêt ouvre de la prairie, donc plus de bisons et moins de sangliers ; chasser les bisons laisse les buissons gagner, donc plus de baies et une forêt qui repousse mieux, mais moins de prairie.") + "</small></div>";
+    }
     R.nature.forEach(function (n) {
-      var pc = Math.round(100 * n.part), mot = n.gibier ? (n.eteint ? __("Disparus pour toujours") : n.prolifere ? __("Prolifèrent") : n.affame ? __("Meurent de faim") : n.betes < 3 ? __("Au bord de l'extinction") : __("En équilibre")) : n.etat === "epuise" ? __("Épuisé") : n.etat === "rouge" ? __("Au plus bas") : n.etat === "orange" ? __("On prend trop") : __("Se renouvelle");
+      var pc = Math.round(100 * n.part), mot = n.gibier ? (n.eteint ? __("Disparus pour toujours") : n.prolifere ? (n.plafond < n.max ? __("À l'étroit, ils débordent") : __("Prolifèrent")) : n.affame ? __("Meurent de faim") : n.betes < 3 ? __("Au bord de l'extinction") : __("En équilibre")) : n.etat === "epuise" ? __("Épuisé") : n.etat === "rouge" ? __("Au plus bas") : n.etat === "orange" ? __("On prend trop") : __("Se renouvelle");
       h += '<div class="ile-nat ' + n.etat + '"><div class="ile-nat-tete"><b>' + n.icone + " " + esc(tx(n.nom)) + '</b><span class="ile-nat-etat">' + (sait ? (n.gibier ? (n.eteint ? "" : n.betes + " · ") : pc + " % · ") + mot : "?") + "</span></div>";
       if (sait) {
         h += '<i><b style="width:' + pc + "%;background:" + (n.etat === "vert" ? (n.couleur || "#3F8F5A") : n.etat === "orange" ? "#C98A1E" : "#C8553D") + '"></b></i><small>' +
@@ -6907,7 +6917,7 @@ function demarrerJeu() {
       // Victor (2026-11-13) : chantier exceptionnel, une fois par jour, au risque d'épuiser la ressource.
       var ch = sait && n.chantier, resC = ch && (C.ile.ressources || []).filter(function (r) { return r.id === ch.donne; })[0];
       if (ch && resC) h += '<div class="ile-grand"><button type="button" class="btn sec" data-chantier="' + esc(n.id) + '"' + (ch.possible ? "" : " disabled") + ">⚒ " + esc(tx(ch.nom)) + " : +" + nb(ch.gain) + " " + resC.icone + "</button><small>" +
-        (ch.fait ? __("Déjà fait aujourd'hui. Les bras se reposent jusqu'à demain.") : !ch.pris ? __("Il ne reste rien à prendre.") : __("Une fois par jour. Prend d'un coup ") + nb(ch.pris) + __(" sur ") + nb(n.stock) + (ch.vide ? " : " + __("il n'en restera rien.") : ch.apres < 0.25 ? " : " + __("il en restera très peu.") : ".")) + "</small></div>";
+        (ch.fait ? __("Déjà fait aujourd'hui. Les bras se reposent jusqu'à demain.") : !ch.pris ? __("Il ne reste rien à prendre.") : __("Une fois par jour. Prend d'un coup ") + nb(ch.pris) + __(" sur ") + nb(Math.round(n.stock)) + (ch.vide ? " : " + __("il n'en restera rien.") : ch.apres < 0.25 ? " : " + __("il en restera très peu.") : ".")) + "</small></div>";
       h += "</div>";
     });
     if (R.effondrement) h += '<p class="ile-vie-note alerte" style="margin-top:10px"><b>' + __("L'île s'est vidée.") + "</b> " + __("La faim a emporté ses derniers habitants ; ") + R.effondrement.perdus + __(" aménagements sont tombés en ruine. Tes savoirs restent : rebâtis en ménageant ce que l'île donne.") + "</p>";

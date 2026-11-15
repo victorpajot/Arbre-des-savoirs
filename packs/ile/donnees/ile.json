@@ -132,8 +132,16 @@
    "famine": 0.08,
    "prolifere": 2,
    "seuil": 1.15,
-   "baies": 0.5,
    "fermes": 0.75
+  },
+  "milieux": {
+   "foret": 0.5,
+   "buissons": 0.3,
+   "friche": 0.6,
+   "broute": 0.4,
+   "pas": 0.05,
+   "plancher": 0.05,
+   "refuge": 0.25
   }
  },
  "quartiers": [
@@ -2216,7 +2224,7 @@
     "fr": "La forêt"
    },
    "usage": {
-    "fr": "Elle donne le bois et une part de la cueillette. Elle repousse d'autant mieux qu'il en reste la moitié ; rasée, elle met très longtemps à revenir."
+    "fr": "Elle donne le bois et une part de la cueillette. Elle repousse d'autant mieux qu'il en reste la moitié, et qu'il y a des buissons pour abriter les jeunes arbres ; rasée, elle met très longtemps à revenir."
    },
    "chantier": {
     "nom": {
@@ -2261,7 +2269,6 @@
    "gibier": true,
    "role": "proie",
    "viande": 20,
-   "ravage": "baies",
    "icone": "🦬",
    "couleur": "#7A4B2A",
    "max": 12,
@@ -2274,8 +2281,10 @@
     "fr": "bison"
    },
    "usage": {
-    "fr": "Un bison abattu, c'est de la viande et une peau, et un bison de moins. Les prédateurs en mangent aussi. S'ils prolifèrent, ils broutent les buissons de baies."
-   }
+    "fr": "Un bison abattu, c'est de la viande et une peau, et un bison de moins. Les prédateurs en mangent aussi. Ils vivent de la prairie et l'entretiennent en broutant : nombreux, ils font reculer les buissons ; rares, ils laissent la friche gagner."
+   },
+   "habitat": "prairie",
+   "broute": true
   },
   {
    "id": "sangliers",
@@ -2295,8 +2304,9 @@
     "fr": "sanglier"
    },
    "usage": {
-    "fr": "Moins de viande que le bison, mais ils se reproduisent plus vite. S'ils prolifèrent, ils retournent les champs et les fermes donnent moins."
-   }
+    "fr": "Moins de viande que le bison, mais ils se reproduisent plus vite. Ils vivent de la forêt : moins de forêt, moins de sangliers. S'ils prolifèrent, ils retournent les champs et les fermes donnent moins."
+   },
+   "habitat": "foret"
   },
   {
    "id": "predateurs",

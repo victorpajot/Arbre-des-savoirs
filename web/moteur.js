@@ -1818,7 +1818,7 @@
     var cueilli = (R.cueillette_bouches != null && partie.mode === "ile" ? R.cueillette_bouches : (R.cueillette || 0) * (K || 0)) * (R.mange || 0.1) * vit;
     prod.nourriture = (prod.nourriture || 0) + cueilli;
     // Des sangliers qui prolifèrent retournent les champs (Victor, 2026-11-15).
-    var RGib = reglesGibier(contenu), ravages = nat ? etatGibier(contenu, nat).ravages : {};
+    var RGib = reglesGibier(contenu), ravages = nat ? etatGibier(contenu, S).ravages : {};
     // Les bonus (moulin, forge) : chacun sert un nombre d'aménagements, pourvu que ses propres postes le soient.
     var bonus = {};
     A.forEach(function (a) {
@@ -1879,11 +1879,12 @@
     if (f >= 1 && faim > 0 && S.stocks.nourriture >= faim * (R.abondance_jours || 7)) f = 1 + (R.abondance || 0.25);
     // La nature : ce qu'on y a pris en sort, puis elle repousse (Verhulst : au mieux à mi-hauteur, nulle à zéro, avec
     // un mince retour venu d'ailleurs pour qu'une ressource rasée finisse par revenir).
+    var Mi = S.nature ? milieuxIle(contenu, S) : null;
     if (S.nature) pasGibier(contenu, S);
     if (S.nature) natureIle(contenu).forEach(function (x) {
       if (x.gibier) return;
       var st = Math.max(0, (S.nature[x.id] || 0) - (E.pris[x.id] || 0));
-      var r = x.repousse * (1 + (E.effets.repousse[x.id] || 0)), pousse = r * st * (1 - st / x.max) + (st < x.max ? (x.retour || 0) : 0);
+      var r = x.repousse * (1 + (E.effets.repousse[x.id] || 0)) * (x.id === "foret" && Mi ? Mi.repousse : 1), pousse = r * st * (1 - st / x.max) + (st < x.max ? (x.retour || 0) : 0);
       S.nature[x.id] = Math.min(x.max, st + pousse);
       if (J.nature) { var jn = J.nature[x.id] = J.nature[x.id] || { pris: 0, pousse: 0 }; jn.pris += E.pris[x.id] || 0; jn.pousse += pousse; }
     });
@@ -1893,16 +1894,33 @@
   // Le gibier (Victor, 2026-11-15) : « une espèce disparue ne peut pas revenir », « les bisons sont mangés de temps en
   // temps par les prédateurs », « s'il n'y a plus de prédateurs ça pose des problèmes de prolifération, et l'inverse :
   // s'il n'y a plus de gibier les prédateurs meurent ». Proies et prédateurs à la Lotka-Volterra, bornés par Verhulst.
+  // Les milieux (Victor, 2026-11-15) : « gérer la végétation de la même façon. Que tout soit lié et qu'un déséquilibre
+  // modifie la répartition. Ça n'a pas forcément vocation à être pire, mais du moins ça change. » La forêt couvre une
+  // part de l'île selon ce qu'il en reste ; le terrain ouvert se partage entre prairie et buissons (S.milieux.b = part
+  // des buissons), et ce partage glisse chaque jour selon ce qui broute. En retour : la prairie porte les bisons, la
+  // forêt les sangliers, les buissons donnent les baies et abritent la repousse de la forêt.
+  function reglesMilieux(contenu) { return (ilePresente(contenu) && contenu.ile.regles.milieux) || null; }
+  function milieuxIle(contenu, S) {
+    var RM = reglesMilieux(contenu); if (!RM || !S || !S.nature) return null;
+    var b0 = RM.buissons, b = S.milieux && S.milieux.b != null ? S.milieux.b : b0, f = RM.foret * partNature(contenu, S.nature, "foret"), ouvert = 1 - f;
+    var ref = { foret: RM.foret, prairie: (1 - RM.foret) * (1 - b0), buissons: (1 - RM.foret) * b0 };
+    // Ce vers quoi le partage glisse : moins ça broute, plus la friche gagne.
+    var br = 0, n = 0; natureIle(contenu).forEach(function (x) { if (x.gibier && x.broute) { var st = Math.max(0, S.nature[x.id] == null ? x.depart : S.nature[x.id]); br += (st < 1 ? 0 : st) / x.max; n++; } });
+    var cible = Math.max(RM.plancher || 0, Math.min(0.9, RM.friche - RM.broute * (n ? br / n : 0.75)));
+    return { foret: f, prairie: ouvert * (1 - b), buissons: ouvert * b, b: b, cible: cible, ref: ref,
+      habitat: { prairie: ouvert * (1 - b) / ref.prairie, foret: f / ref.foret }, baies: ouvert * b / ref.buissons, repousse: Math.min(1.5, 0.5 + 0.5 * b / b0) };
+  }
+  function habitatGibier(contenu, x, M0) { var RM = reglesMilieux(contenu); return M0 && x.habitat && RM ? Math.max(RM.refuge == null ? 0.25 : RM.refuge, M0.habitat[x.habitat]) : 1; }
   function reglesGibier(contenu) { return (ilePresente(contenu) && contenu.ile.regles.gibier) || { faim: 0, besoin: 0, famine: 0, prolifere: 1 }; }
-  function etatGibier(contenu, nat) {
-    var L = natureIle(contenu).filter(function (x) { return x.gibier; }), RG = reglesGibier(contenu), out = { proies: 0, predateurs: 0, par: {}, ravages: {} };
-    L.forEach(function (x) { var st = Math.max(0, nat[x.id] == null ? x.depart : nat[x.id]); if (st < 1) st = 0; out.par[x.id] = st; if (x.role === "predateur") out.predateurs += st; else out.proies += st; });
-    L.forEach(function (x) { if (x.role !== "predateur" && x.ravage && out.par[x.id] > x.max * (RG.seuil || 1.15)) out.ravages[x.ravage] = x.id; });
+  function etatGibier(contenu, S) {
+    var nat = S.nature, L = natureIle(contenu).filter(function (x) { return x.gibier; }), RG = reglesGibier(contenu), M0 = milieuxIle(contenu, S), out = { proies: 0, predateurs: 0, par: {}, plafond: {}, ravages: {}, milieux: M0 };
+    L.forEach(function (x) { var st = Math.max(0, nat[x.id] == null ? x.depart : nat[x.id]); if (st < 1) st = 0; out.par[x.id] = st; out.plafond[x.id] = x.max * habitatGibier(contenu, x, M0); if (x.role === "predateur") out.predateurs += st; else out.proies += st; });
+    L.forEach(function (x) { if (x.role !== "predateur" && x.ravage && out.par[x.id] > out.plafond[x.id] * (RG.seuil || 1.15)) out.ravages[x.ravage] = x.id; });
     return out;
   }
   function pasGibier(contenu, S) {
     var L = natureIle(contenu).filter(function (x) { return x.gibier; }); if (!L.length) return;
-    var RG = reglesGibier(contenu), G = etatGibier(contenu, S.nature), P = G.predateurs, N = G.proies;
+    var RG = reglesGibier(contenu), G = etatGibier(contenu, S), P = G.predateurs, N = G.proies, RM = reglesMilieux(contenu);
     L.forEach(function (x) {
       var st = G.par[x.id];
       if (st < 1) { S.nature[x.id] = 0; return; }                       // disparue : pour toujours
@@ -1910,12 +1928,14 @@
         var assez = RG.besoin > 0 ? Math.min(1, N / (st * RG.besoin)) : 1;
         st += assez >= 1 ? (st >= 2 ? x.repousse * st * (1 - st / x.max) : 0) : -RG.famine * st * (1 - assez);
       } else {
-        var K = x.max * (P < 1 ? RG.prolifere || 1 : 1);
+        var K = G.plafond[x.id] * (P < 1 ? RG.prolifere || 1 : 1);
         // Il faut être deux pour faire des petits ; les prédateurs prennent leur part, d'autant plus que le gibier abonde.
         st += (st >= 2 ? x.repousse * st * (1 - st / K) : 0) - RG.faim * P * st / x.max;
       }
       S.nature[x.id] = st < 1 ? 0 : st;
     });
+    // Le partage prairie / buissons glisse vers ce que les brouteurs d'aujourd'hui dessinent.
+    if (RM && G.milieux) { S.milieux = S.milieux || {}; S.milieux.b = G.milieux.b + (G.milieux.cible - G.milieux.b) * (RM.pas || 0); }
   }
   function initRessources(contenu, partie, pop) {
     var R = reglesRessources(contenu); if (!R) return null;
@@ -1976,7 +1996,7 @@
     var faim = E.conso.nourriture, net = (E.prod.nourriture || 0) - faim;
     return { stocks: S.stocks, prod: E.prod, conso: E.conso, postes: E.postes, actifs: E.actifs, total: E.total, pourvus: E.pourvus, batis: n, parQuartier: parQ, grenier: capaciteGrenier(contenu, partie),
       journal: S.journal, net: net, jours: net < 0 ? Math.floor((S.stocks.nourriture || 0) / -net) : null, famine: net < 0 && !(S.stocks.nourriture > 0), places: placesAmenagements(contenu, partie),
-      effets: E.effets, effort: S.effort || {}, effondrement: S.effondrement || null, nature: etatNature(contenu, partie, E) };
+      effets: E.effets, effort: S.effort || {}, effondrement: S.effondrement || null, nature: etatNature(contenu, partie, E), milieux: milieuxIle(contenu, S) };
   }
   function placesAmenagements(contenu, partie) {
     var out = { total: 0, parQuartier: {} };
@@ -2064,8 +2084,8 @@
   function baiesIle(contenu, partie, t) {
     var R = ilePresente(contenu) && reglesRessources(contenu) && contenu.ile.regles.baies; if (!R || !modeIle(partie)) return null;
     var jour = cleJour(t), prises = partie.baies && partie.baies.jour === jour ? partie.baies.prises : [], out = [];
-    var nat = partie.ressources && partie.ressources.nature, RGb = reglesGibier(contenu), sansPred = !!(nat && etatGibier(contenu, nat).ravages.baies);
-    var parJour = sansPred ? Math.ceil(R.par_jour * (RGb.baies == null ? 0.5 : RGb.baies)) : R.par_jour;
+    var nat = partie.ressources && partie.ressources.nature, Mb = nat ? milieuxIle(contenu, partie.ressources) : null, sansPred = !!(Mb && Mb.baies < 0.6);
+    var parJour = Mb ? Math.max(1, Math.min(2 * R.par_jour, Math.round(R.par_jour * Mb.baies))) : R.par_jour;
     for (var i = 0; i < parJour; i++) out.push({ id: i, graine: hacher("baies|" + jour + "|" + (partie.cree || 0) + "|" + i), prise: prises.indexOf(i) >= 0 });
     return { jour: jour, nourriture: R.nourriture, broutees: sansPred, buissons: out, reste: out.filter(function (b) { return !b.prise; }).length };
   }
@@ -2261,12 +2281,12 @@
     var S = partie.ressources; if (!S || !S.nature) return [];
     return natureIle(contenu).map(function (x) {
       var st = S.nature[x.id] || 0, pris = E.pris[x.id] || 0, apres = Math.max(0, st - pris);
-      var r = x.repousse * (1 + (E.effets.repousse[x.id] || 0)), pousse = r * apres * (1 - apres / x.max) + (apres < x.max ? (x.retour || 0) : 0);
+      var Mx = x.id === "foret" ? milieuxIle(contenu, S) : null, r = x.repousse * (1 + (E.effets.repousse[x.id] || 0)) * (Mx ? Mx.repousse : 1), pousse = r * apres * (1 - apres / x.max) + (apres < x.max ? (x.retour || 0) : 0);
       var net = pousse - pris;
       // Le plus qu'on puisse prendre chaque jour sans fin : la repousse à mi-hauteur. Au-delà, le stock finira par tomber.
       var durable = r * x.max / 4 + (x.retour || 0), soutenable = pris <= durable + 1e-9;
-      if (x.gibier) { var Gg = etatGibier(contenu, S.nature), RGg = reglesGibier(contenu), sg = Gg.par[x.id], prol = x.role !== "predateur" && sg > x.max * (RGg.seuil || 1.15), faimP = x.role === "predateur" && sg >= 1 && RGg.besoin > 0 && Gg.proies < sg * RGg.besoin;
-        return { id: x.id, gibier: true, role: x.role || "proie", nom: x.nom, usage: x.usage || null, icone: x.icone || "", couleur: x.couleur || null, stock: sg, betes: Math.floor(sg + 1e-9), max: x.max, part: Math.min(1, sg / x.max), pris: 0, pousse: 0, net: 0, durable: 0, soutenable: true, jours: null,
+      if (x.gibier) { var Gg = etatGibier(contenu, S), RGg = reglesGibier(contenu), sg = Gg.par[x.id], prol = x.role !== "predateur" && sg > Gg.plafond[x.id] * (RGg.seuil || 1.15), faimP = x.role === "predateur" && sg >= 1 && RGg.besoin > 0 && Gg.proies < sg * RGg.besoin;
+        return { id: x.id, gibier: true, role: x.role || "proie", nom: x.nom, usage: x.usage || null, icone: x.icone || "", couleur: x.couleur || null, stock: sg, betes: Math.floor(sg + 1e-9), max: x.max, plafond: Gg.plafond[x.id], habitat: x.habitat || null, part: Math.min(1, sg / Math.max(x.max, Gg.plafond[x.id])), pris: 0, pousse: 0, net: 0, durable: 0, soutenable: true, jours: null,
           eteint: sg < 1, prolifere: prol, affame: faimP, viande: x.viande || 0, ravage: x.ravage || null, etat: sg < 1 ? "epuise" : sg < 3 || faimP ? "rouge" : prol ? "orange" : "vert", chantier: null }; }
       return { id: x.id, gibier: !!x.gibier, nom: x.nom, usage: x.usage || null, icone: x.icone || "", couleur: x.couleur || null, stock: st, max: x.max, part: st / x.max, pris: pris, pousse: pousse, net: net,
         durable: durable, soutenable: soutenable, jours: soutenable ? null : Math.floor(st / (pris - durable)),

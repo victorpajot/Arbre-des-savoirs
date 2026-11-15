@@ -2569,12 +2569,16 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       const g = M.gibierIle(CA, Qh, t0); assert.ok(g && g.bisons === 9 && g.sangliers === 14 && g.predateurs === 6, "gibier présent dans une partie en cours");
       const ab = M.abattreIle(CA, Qh, "bisons", t0); assert.equal(ab.reste, 8); assert.equal(ab.viande, 20);
       const n0 = Qh.ressources.stocks.nourriture; M.rapporterViande(CA, Qh, 20, t0); assert.equal(Qh.ressources.stocks.nourriture, n0 + 20);
-      const nb0 = M.baiesIle(CA, Qh, t0).buissons.length; Qh.ressources.nature.bisons = 20;
-      assert.equal(M.baiesIle(CA, Qh, t0).buissons.length, Math.ceil(nb0 / 2), "des bisons qui prolifèrent broutent les baies");
+      // Forêt, prairie, buissons : le partage suit ce qui broute, et les baies suivent les buissons.
+      const nb0 = M.baiesIle(CA, Qh, t0).buissons.length; Qh.ressources.milieux = { b: 0.05 };
+      assert.ok(M.baiesIle(CA, Qh, t0).buissons.length < nb0, "peu de buissons, peu de baies"); Qh.ressources.milieux = { b: 0.6 };
+      assert.ok(M.baiesIle(CA, Qh, t0).buissons.length > nb0, "la friche donne plus de baies"); delete Qh.ressources.milieux;
+      const mi = M.ile(CA, Qh, t0).ressources.milieux; assert.ok(Math.abs(mi.foret + mi.prairie + mi.buissons - 1) < 1e-9 && Math.abs(mi.foret - 0.5) < 1e-9, "forêt pleine : la moitié de l'île");
       // L'équilibre tient tout seul ; une espèce disparue ne revient pas ; sans gibier, les prédateurs meurent ; sans eux, le gibier prolifère.
-      const sim = (nat, jours) => { const Q = JSON.parse(JSON.stringify(Qh)); Object.assign(Q.ressources.nature, nat); const d0 = Q.population.t || t0; M.ile(CA, Q, d0); for (let k = 1; k <= jours; k++) M.ile(CA, Q, d0 + k * J); return Q.ressources.nature; };
+      const sim = (nat, jours) => { const Q = JSON.parse(JSON.stringify(Qh)); Object.assign(Q.ressources.nature, nat); const d0 = Q.population.t || t0; M.ile(CA, Q, d0); for (let k = 1; k <= jours; k++) M.ile(CA, Q, d0 + k * J); return Object.assign({ b: (Q.ressources.milieux || {}).b }, Q.ressources.nature); };
       const eq = sim({ bisons: 9, sangliers: 14, predateurs: 6 }, 60); assert.ok(eq.bisons > 7 && eq.bisons < 11 && eq.sangliers > 12 && eq.predateurs > 5, "équilibre stable : " + JSON.stringify(eq));
-      const ext = sim({ bisons: 0.4, sangliers: 14, predateurs: 6 }, 60); assert.equal(ext.bisons, 0, "disparu pour toujours");
+      const ext = sim({ bisons: 0.4, sangliers: 14, predateurs: 6 }, 60); assert.equal(ext.bisons, 0, "disparu pour toujours"); assert.ok(ext.b > 0.5, "sans bisons, la friche gagne : " + ext.b); assert.ok(Math.abs(eq.b - 0.3) < 0.08, "partage stable à l'équilibre : " + eq.b);
+      const coupe = sim({ foret: 150, bisons: 9, sangliers: 14, predateurs: 6 }, 60); assert.ok(coupe.sangliers < eq.sangliers - 2 && coupe.bisons > eq.bisons, "forêt coupée : moins de sangliers, plus de bisons : " + JSON.stringify(coupe));
       const fam = sim({ bisons: 0, sangliers: 0, predateurs: 6 }, 60); assert.equal(fam.predateurs, 0, "sans gibier, plus de prédateurs");
       const pro = sim({ bisons: 9, sangliers: 14, predateurs: 0 }, 120); assert.ok(pro.bisons > 12 * 1.15 && pro.sangliers > 16 * 1.15, "sans prédateurs, le gibier prolifère : " + JSON.stringify(pro));
       Qh.ressources.nature.bisons = 9; }
