@@ -1763,6 +1763,7 @@
       "selon_faveur"
      ],
      "properties": {
+      "debut": { "type": "object", "additionalProperties": false, "required": ["jours", "tient"], "description": "Victor (2026-11-15) : au début du jeu, l'IA changeait trop de masques. Pendant `jours` jours joués, un seul masque par jour, gardé `tient` jours joués de suite.", "properties": { "jours": { "type": "integer", "minimum": 0 }, "tient": { "type": "integer", "minimum": 1 } } },
       "max": {
        "type": "integer",
        "minimum": 1
@@ -4851,6 +4852,7 @@
        "usage"
       ],
       "properties": {
+       "debut": { "type": "object", "additionalProperties": false, "required": ["avant", "nom", "usage"], "description": "Le nom et l'usage du lieu tant que l'île n'a pas atteint l'âge de rang `avant`.", "properties": { "avant": { "type": "integer" }, "nom": { "$ref": "#/$defs/texte" }, "usage": { "$ref": "#/$defs/texte" } } },
        "id": {
         "type": "string"
        },
@@ -5091,6 +5093,7 @@
        "besoins"
       ],
       "properties": {
+       "jusqua": { "type": "integer", "description": "Dernière année admise à cet âge pour les visiteurs et les achats de l'IA : rien d'anachronique sur l'île (Victor, 2026-11-15)." },
        "id": {
         "type": "string"
        },

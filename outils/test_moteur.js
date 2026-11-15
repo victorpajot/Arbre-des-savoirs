@@ -941,6 +941,19 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(X.objets.objets.every(o => o.citation && o.citation.texte && o.citation.source && o.bonus));
   let P = M.nouvellePartie(t0);
   X.ia.masques.forEach(m => { P.masques[m.id] = t0; });
+  // Début de partie : un seul masque, gardé plusieurs jours joués de suite.
+  {
+    const DB = X.ia.masques_jour.debut; assert.ok(DB && DB.jours > 0 && DB.tient > 1);
+    const ids = [];
+    for (let k = 0; k < DB.jours; k++) {
+      const t = t0 + k * J; P.faveur = { valeur: 90, maj: t };
+      const ms = M.masquesDuJour(CM, P, t); assert.equal(ms.length, 1, "au début, un seul masque");
+      ids.push(ms[0].id); P.jours.push(M.cleJour(t));
+    }
+    for (let k = 1; k < DB.tient; k++) assert.equal(ids[k], ids[0], "au début, le masque tient plusieurs jours");
+    assert.ok(new Set(ids).size <= Math.ceil(DB.jours / DB.tient), "au début, les changements de masque sont rares");
+    P.masquesJour = null;
+  }
   // 1 à 3 masques par jour, stables dans la journée, tirés parmi les caractères que permet la faveur.
   const vus = new Set();
   for (let k = 0; k < 30; k++) {
@@ -2424,6 +2437,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Le campement : seul le feu est proposé.
   let G = M.agesIle(CA, P);
   assert.equal(G.age.id, "survivants"); assert.equal(G.age.besoins[0].savoirs[0], "ile.feu");
+  // Pas d'anachronisme : l'âge de l'île donne l'année limite des visiteurs et des achats d'Alyca.
+  assert.equal(M.anneeIle(CA, P), CA.ile.ages[0].jusqua); assert.ok(M.anneeIle(CA, P) < 0);
   assert.equal(M.statut(CA, P, "ile.feu", t0).etat, "disponible", "le feu est le premier savoir");
   assert.equal(M.statut(CA, P, "math.origines", t0).etat, "verrouillee", "rien d'autre avant le feu");
   assert.deepEqual(M.disponibles(CA, P, t0).map(k => k.id), ["ile.feu"]);
