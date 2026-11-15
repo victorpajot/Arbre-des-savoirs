@@ -6195,7 +6195,7 @@ function demarrerJeu() {
         (netR < -0.05 ? "<b>" + __("L'île mange plus qu'elle ne produit.") + "</b>" + (Rr.jours != null ? " " + __("Réserves pour ") + Rr.jours + (Rr.jours > 1 ? __(" jours") : __(" jour")) + "." : "") : __("L'île mange à sa faim.")) + '</p><button type="button" class="btn sec ile-plus">' + __("Voir les ressources en détail") + "</button></div></div>");
       res.querySelector("button").onclick = function () { vue = "succes"; ongletSucces = "ressources"; rendre(); window.scrollTo(0, 0); };
     }
-    poser("nature", res, epure && C.parId[SAVOIR_ILE] && M.estMaitrisee(P, SAVOIR_ILE) ? __("Tu sais maintenant compter ce que l'île donne. La forêt et les poissons repoussent, mais à leur rythme. Règle l'effort de tes bûcherons et de tes pêcheurs avant qu'il ne reste rien : je ne replanterai pas à ta place.") : null);
+    poser("nature2", res, epure && C.parId[SAVOIR_ILE] && M.estMaitrisee(P, SAVOIR_ILE) ? texteMenuNature() : null);
     // Victor (2026-11-12) : les statistiques de l'île vivent dans l'onglet Statistiques ; ici, un résumé et le lien.
     var vie = !epure || I.habitants > 0 ? blocVieIle(I) : null;
     if (vie && M.modeIle(P)) {
@@ -6908,10 +6908,13 @@ function demarrerJeu() {
   }
   // La forêt et les poissons : ce qu'il en reste, ce qu'on y prend, ce qu'ils peuvent rendre. Les chiffres et le réglage
   // de l'effort ne viennent qu'avec le savoir « Vivre de ce que l'île donne ».
+  // Victor (2026-11-15) : « lorsqu'on débloque la compétence, Alyca doit présenter le menu ».
+  function texteMenuNature() { return __("Tu sais maintenant compter ce que l'île donne, alors je t'ouvre le registre : Statistiques, rubrique Ressources. Tu y trouveras la forêt, la prairie et les buissons qui se partagent l'île, les poissons, les bisons, les sangliers et les prédateurs. Tout se tient : coupe trop, chasse trop, et le reste bouge avec. Une espèce disparue ne revient pas. Règle l'effort de tes bûcherons et de tes pêcheurs avant qu'il ne reste rien : je ne replanterai pas à ta place."); }
   function htmlNatureIle(R) {
     if (!R.nature || !R.nature.length) return "";
     var sait = !C.parId[SAVOIR_ILE] || M.estMaitrisee(P, SAVOIR_ILE);
-    // Victor (2026-11-15) : « je ne vois pas les ressources ». Elles se montrent toujours ; les chiffres et les réglages viennent avec le savoir.
+    // Victor (2026-11-15) : cachées tant qu'on ne sait pas les compter (« c'était intelligent comme décision ») ; Alyca présente le menu au déblocage.
+    if (!sait) return "";
     var h = '<h3 class="ile-h2" style="margin:14px 0 0">' + __("Ce que l'île peut donner") + "</h3>";
     if (!sait) h += '<p class="ile-vie-note">' + __("La forêt et les poissons ne sont pas sans fin, mais personne ici ne sait encore les compter. Apprends « ") + esc(tx(C.parId[SAVOIR_ILE].nom)) + __(" » pour voir ce qu'il en reste et régler ce qu'on y prend.") + "</p>";
     // Victor (2026-11-15) : forêt, prairie et buissons se partagent l'île, et le partage bouge avec ce qu'on y fait.
@@ -10622,7 +10625,15 @@ function demarrerJeu() {
       if (!bv && !ba) v.appendChild(el('<div class="bloc"><p class="vide">' + __("Rien à compter encore : l'île attend son premier feu.") + "</p></div>"));
       return v;
     }
-    if (ongletSucces === "ressources") { v.appendChild(blocRessourcesIle(Is)); return v; }
+    if (ongletSucces === "ressources") {
+      P.ileVus = P.ileVus || {};
+      if (C.parId[SAVOIR_ILE] && M.estMaitrisee(P, SAVOIR_ILE) && !P.ileVus.nature2) {
+        var prn = el('<div class="ile-nouveau"><div class="eyebrow">' + __("Nouveau sur l'île") + '</div><div class="ile-nouveau-b"></div><button type="button" class="btn sec">' + __("Compris") + "</button></div>");
+        var bun = comite({ id: "ile_menu_nature2", texte: texteMenuNature(), contexte: "accueil", aparte: false }); if (bun) prn.querySelector(".ile-nouveau-b").appendChild(bun);
+        prn.querySelector("button").onclick = function () { P.ileVus.nature2 = maintenant(); sauver(); rendre(); };
+        v.appendChild(prn);
+      }
+      v.appendChild(blocRessourcesIle(Is)); return v; }
     if (ongletSucces === "jeu") { v.appendChild(blocCombats()); if (C.plateau && C.plateau.regles.chrono) v.appendChild(blocChronoStats()); v.appendChild(blocStats()); return v; }
     var obtenus = C.succes.filter(function (s) { return P.succes[s.id]; }).sort(function (a, b) { return P.succes[b.id] - P.succes[a.id]; });
     var autres = C.succes.filter(function (s) { return !P.succes[s.id]; });
