@@ -10572,6 +10572,13 @@ function demarrerJeu() {
       j.onclick = function () { fermer(); ouvrirJouer(); };
       wrap.appendChild(j);
     }
+    // Victor (2026-11-15) : à la fin d'une épreuve, proposer aussi la quête en cours.
+    var qa = queteActive();
+    if (qa) {
+      var bq = el('<button type="button" class="btn sec large">🔍 ' + __("Partir en quête : ") + esc(tx(qa.nom)) + "</button>");
+      bq.onclick = function () { fermer(); ouvrirExplorer(); };
+      wrap.appendChild(bq);
+    }
     var b = el('<button type="button" class="btn ' + (c ? "sec " : "") + __('large">Retour à l\'accueil</button>'));
     b.onclick = fermer;
     wrap.appendChild(b);
