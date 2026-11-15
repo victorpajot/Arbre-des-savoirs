@@ -2138,15 +2138,17 @@
     return { fini: t };
   }
   // La torche de l'explorateur (Victor, 2026-11-15) : au départ d'une expédition, on peut en prendre une contre des
-  // crédits. Il faut savoir faire du feu. Elle ne sert qu'à cette expédition.
+  // crédits. Il faut savoir faire du feu. Elle ne sert qu'à cette expédition. La première est offerte (Victor,
+  // 2026-11-15) : la grotte l'exige et on n'a pas toujours de quoi la payer à ce moment-là.
   function torcheIle(contenu, partie) {
     var R = modeIle(partie) && contenu.ile && contenu.ile.regles && contenu.ile.regles.torche; if (!R) return null;
     var feu = epreuveIle(contenu, "feu") ? epreuveFaite(partie, "feu") : estMaitrisee(partie, "ile.feu"), solde = partie.credits ? partie.credits.solde : 0;
-    return { prix: R.prix, feu: feu, possible: feu && solde >= R.prix, vue: R.vue || 1, fuite: R.fuite || 0, calme: R.calme || 0, surprise: R.surprise || 0, repere: R.repere || 0 };
+    var offerte = !partie.torche, prix = offerte ? 0 : R.prix;
+    return { prix: prix, offerte: offerte, feu: feu, possible: feu && solde >= prix, fuite: R.fuite || 0, calme: R.calme || 0, surprise: R.surprise || 0, repere: R.repere || 0 };
   }
   function prendreTorche(contenu, partie, t) {
     var T = torcheIle(contenu, partie); if (!T || !T.possible) return null;
-    partie.credits.solde -= T.prix; partie.maj = t;
+    if (T.prix) partie.credits.solde -= T.prix; partie.torche = (partie.torche || 0) + 1; partie.maj = t;
     return { ok: true, prix: T.prix, solde: partie.credits.solde };
   }
   function reussirEpreuve(contenu, partie, id, t) {

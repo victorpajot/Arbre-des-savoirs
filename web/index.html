@@ -2464,7 +2464,7 @@ function demarrerJeu() {
   // Le bouton de la torche : absent tant qu'on ne sait pas faire de feu, grisé si les crédits manquent.
   function boutonTorche() {
     var T = M.torcheIle(C, P); if (!T || !T.feu) return "";
-    return '<button type="button" class="btn sec large ile-explorer" data-a="torche"' + (T.possible ? "" : " disabled") + ">🔥 " + __("Partir avec une torche ({n} crédits)", { n: T.prix }) + "</button>";
+    return '<button type="button" class="btn sec large ile-explorer" data-a="torche"' + (T.possible ? "" : " disabled") + ">🔥 " + (T.offerte ? __("Partir avec une torche (la première est offerte)") : __("Partir avec une torche ({n} crédits)", { n: T.prix })) + "</button>";
   }
   function ouvrirExplorer() {
     if (document.querySelector(".explorer")) return;

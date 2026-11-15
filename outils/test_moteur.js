@@ -2661,7 +2661,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     // La torche de l'explorateur : 60 crédits, seulement quand on sait faire du feu.
     const Qt = M.nouvellePartie(t0); Qt.mode = "ile"; Qt.credits.solde = 100; assert.equal(M.torcheIle(CA, PP), null);
     assert.ok(!M.torcheIle(CA, Qt).possible && !M.torcheIle(CA, Qt).feu); assert.equal(M.prendreTorche(CA, Qt, t0), null, "pas de torche sans feu");
-    Qt.epreuves = { feu: t0 }; assert.equal(M.torcheIle(CA, Qt).prix, 60); assert.deepEqual(M.prendreTorche(CA, Qt, t0), { ok: true, prix: 60, solde: 40 });
+    Qt.epreuves = { feu: t0 }; assert.ok(M.torcheIle(CA, Qt).offerte); assert.deepEqual(M.prendreTorche(CA, Qt, t0), { ok: true, prix: 0, solde: 100 }, "la première torche est offerte");
+    assert.equal(M.torcheIle(CA, Qt).prix, 60); assert.deepEqual(M.prendreTorche(CA, Qt, t0), { ok: true, prix: 60, solde: 40 });
     assert.equal(M.prendreTorche(CA, Qt, t0), null, "pas assez de crédits pour une seconde"); assert.equal(Qt.credits.solde, 40);
     // Le sursis d'Ananké : 5 minutes au départ, du temps gagné à chaque savoir et chaque action, game over à zéro.
     const Qs = M.nouvellePartie(t0); Qs.mode = "ile"; const RS = CA.ile.regles.sursis;
