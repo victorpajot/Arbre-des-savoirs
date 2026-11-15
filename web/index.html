@@ -1243,7 +1243,6 @@ svg.grille .interro { transition: opacity .3s; }
 .ex-vue { position: relative; flex: 1; min-height: 0; overflow: hidden; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; } .ex-vue > svg { display: block; width: 100%; height: 100%; } .ex-sc text { font-family: var(--f-body); }
 .explorer .ile-etiquette { transform-box: fill-box; transform-origin: 50% 50%; transform: scale(var(--ek, 1)); } .explorer.pres .ile-pastille, .explorer.dedans .ile-etiquette { display: none; } .explorer .ile-parcelle { pointer-events: none; outline: none; } .explorer .ile-hm { transition: opacity .4s, visibility 0s; } .explorer.dedans .ile-hm { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .4s, visibility 0s .4s; }
 .explorer .ex-vue .hc { display: none !important; }
-.explorer.bouge .ex-vue > svg > :not(.ex-acteurs), .explorer.bouge .ex-vue > svg > :not(.ex-acteurs) * { animation-play-state: paused !important; }
 .ex-haut { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; padding: calc(8px + env(safe-area-inset-top, 0px)) 8px 8px 16px; color: #fff; font-size: 17px; text-shadow: 0 1px 3px rgba(0,0,0,.5); pointer-events: none; }
 .ex-x, .ex-zoom button { pointer-events: auto; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--surface); color: var(--text); font-size: 26px; font-weight: 700; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.3); cursor: pointer; }
 .explorer .ex-x { color: #20222E; background: #fff; text-shadow: none; font-family: system-ui, sans-serif; } .ex-zoom { position: absolute; right: 8px; top: calc(70px + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: 8px; }
@@ -2665,7 +2664,7 @@ function demarrerJeu() {
       panneau();
     }
     function habiller() { X.graine = 1 + Math.floor(Math.random() * 1e6); X.ee.setAttribute("class", "ex-explo"); X.ee.querySelector(".ex-corps").innerHTML = svgExplo(X.graine); X.vue = "face"; X.vueMontree = null; X.marche = false; X.ev = [].slice.call(X.ee.querySelectorAll(".ex-v")); X.bt = [].slice.call(X.ee.querySelectorAll(".ex-baton")); X.coup = 0; X.cible = null; }
-    function finExpe() { cancelAnimationFrame(raf); X = null; masquer(); z.classList.remove("expe"); z.classList.remove("bouge"); acteurs.innerHTML = ""; var pe = z.querySelector(".ex-perdu"); if (pe) pe.remove(); }
+    function finExpe() { cancelAnimationFrame(raf); X = null; masquer(); z.classList.remove("expe"); acteurs.innerHTML = ""; var pe = z.querySelector(".ex-perdu"); if (pe) pe.remove(); }
     // Les prédateurs ont aussi trois allures : de profil, de face (ils descendent), de dos (ils montent).
     var LOUP_FACE = '<ellipse cy="4.6" rx="3.8" ry="1.2" fill="rgba(0,0,0,.25)"/><path d="M-3 4.4 L-3.2 -1 L-3.8 -5.2 L-1.6 -3.6 L1.6 -3.6 L3.8 -5.2 L3.2 -1 L3 4.4 L1.3 4.4 L1.3 2.2 L-1.3 2.2 L-1.3 4.4 Z" fill="#2E313B"/><circle cx="-1.4" cy="-1.3" r=".7" fill="#FF4D3D"/><circle cx="1.4" cy="-1.3" r=".7" fill="#FF4D3D"/><path d="M-.7 .5 L.7 .5 L0 1.4 Z" fill="#14151A"/>',
       LOUP_DOS = '<ellipse cy="4.6" rx="3.8" ry="1.2" fill="rgba(0,0,0,.25)"/><path d="M-3 4.4 L-3.2 -1 L-3.8 -5.2 L-1.6 -3.6 L1.6 -3.6 L3.8 -5.2 L3.2 -1 L3 4.4 L1.3 4.4 L1.3 2.2 L-1.3 2.2 L-1.3 4.4 Z" fill="#2E313B"/><path d="M-1.8 -2.4 L1.8 -2.4 L2.2 1 L-2.2 1 Z" fill="#3D414E"/><path d="M0 .6 C1.6 1.6 1.4 3.4 .2 4.6" stroke="#4A4E5C" stroke-width="1.4" stroke-linecap="round" fill="none"/>';
@@ -2690,9 +2689,8 @@ function demarrerJeu() {
       if (!X) { peindreFog(); return; }
       X.ee.setAttribute("transform", "translate(" + X.x.toFixed(1) + "," + X.y.toFixed(1) + ")"); var f = taille(); X.ee.querySelector(".ex-corps").setAttribute("transform", "scale(" + ((X.vue === "profil" ? X.sens : 1) * f).toFixed(3) + "," + f.toFixed(3) + ")");
       if (X.vueMontree !== X.vue) { X.vueMontree = X.vue; X.ev.forEach(function (g) { g.style.display = g.getAttribute("data-v") === X.vue ? "" : "none"; }); }
-      // Victor (2026-11-14, soir) : « quand je déplace le personnage, tous les éléments clignotent ». Pendant la marche,
-      // la vue se redessine à chaque image : les animations du décor (marcheurs, flammes, scènes) se figent le temps du pas.
-      if (X.arret !== !X.marche) { X.arret = !X.marche; X.ee.classList.toggle("arret", X.arret); z.classList.toggle("bouge", !X.arret); }
+      // Victor (2026-11-15) : le hors-champ masqué suffit contre les clignotements ; le décor reste animé pendant la marche.
+      if (X.arret !== !X.marche) { X.arret = !X.marche; X.ee.classList.toggle("arret", X.arret); }
       var vise = X.cible, cx = vise ? vise.x : X.tx, cy = vise ? vise.y : X.ty;
       X.ec.setAttribute("cx", cx.toFixed(1)); X.ec.setAttribute("cy", cy.toFixed(1)); X.ec.setAttribute("r", vise ? "4.2" : "2.4"); X.ec.style.display = vise || Math.hypot(X.tx - X.x, X.ty - X.y) > 2 ? "" : "none";
       if (X.visee !== !!vise) { X.visee = !!vise; X.ec.setAttribute("class", "ex-cible" + (vise ? " attaque" : "")); }
@@ -11028,7 +11026,9 @@ function demarrerJeu() {
     // Victor (2026-11-01) : en fin de bilan, la leçon n'est proposée que si l'épreuve est ratée (elle revient au « Rejouer ») ;
     // réussie, le pion est déjà ailleurs : la leçon reste au verdict seulement.
     var rateeQ = quiz.mode === "quiz" ? r.issue !== "maitrisee" : r.issue !== "reussi";
-    if ((nom === "verdict" || (!suite && rateeQ)) && aMasterclass(k) && !(!suite && M.masterclassImposee(C, P))) {
+    // Victor (2026-11-15) : sans faute, plus de masterclass en fin de quiz ou de rappel ; le bouton du début reste.
+    var sansFauteQ = quiz.res.length > 0 && quiz.res.every(function (x) { return x.correct; });
+    if (!sansFauteQ && (nom === "verdict" || (!suite && rateeQ)) && aMasterclass(k) && !(!suite && M.masterclassImposee(C, P))) {
       var mc = el('<button type="button" class="btn large sc-mc">' + __("Masterclass : ") + esc(tx(k.nom)) + "</button>");
       mc.onclick = function () { ouvrirMasterclass(quiz.id, quiz.res.filter(function (x) { return !x.correct; }).map(function (x) { return { id: x.id, rep: x.rep }; })); };
       wrap.appendChild(mc);
