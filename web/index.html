@@ -6924,7 +6924,8 @@ function demarrerJeu() {
     if (qAge) {}
     else if (epr && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(epr.nom)) + "</h3><p>" + esc(tx(epr.accroche || { fr: "" })) + " " + __("Elle ouvre : ") + "<b>" + esc(tx(G.suivant.nom)).toLowerCase() + '</b>.</p><button type="button" class="btn large" data-a="epreuve">' + esc(tx(epr.nom)) + "</button></div>";
     else if (a.pret && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("Tout l'indispensable est couvert. Il reste en option : ") + a.negliges.map(function (b) { return "<b>" + esc(tx(b.nom)).toLowerCase() + "</b>"; }).join(__(" et ")) + ". " + __("Tu peux les apprendre d'abord, ou passer tout de suite et en payer le prix.") + '</p><button type="button" class="btn large" data-a="passer">' + __("Passer à : ") + esc(tx(G.suivant.nom)) + "</button></div>";
-    else if (G.suivant && !a.avenir) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("S'ouvre quand tous les besoins sans la mention « optionnel » sont couverts.") + "</p></div>";
+    else if (G.suivant && !a.avenir && a.savoirsTenus && a.peuple && a.peuple.manque > 0) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + '</h3><p style="font-size:17px">' + __("Les savoirs y sont, mais l'île est trop peu peuplée : <b>{n} habitants sur {b}</b>. Il en manque {m}.", { n: nb(a.peuple.habitants), b: nb(a.peuple.besoin), m: nb(a.peuple.manque) }) + " " + __("Bâtis des toits, garde les greniers pleins et réussis des épreuves : chacune fait venir du monde.") + "</p></div>";
+    else if (G.suivant && !a.avenir) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("S'ouvre quand tous les besoins sans la mention « optionnel » sont couverts.") + (a.peuple && a.peuple.besoin ? " " + __("Il faut aussi {b} habitants : l'île en compte {n}.", { b: nb(a.peuple.besoin), n: nb(a.peuple.habitants) }) : "") + "</p></div>";
     var bloc = el("<div>" + h + "</div></div>");
     var bpl = bloc.querySelector('[data-a="plus"]');
     if (bpl) bpl.onclick = function () { bloc.querySelector(".ile-reste").hidden = false; bpl.remove(); };
@@ -7103,7 +7104,9 @@ function demarrerJeu() {
     function fete() { fermerFeuille(); toast(esc(tx(e.nom)) + __(" : le quartier est ouvert !")); quartierVu = id; vue = "ile"; rendre(); window.scrollTo(0, 0); }
     function payer() {
       var e2 = M.questionQuartier(C, P, id, maintenant()); zc.innerHTML = ""; if (!e2) return;
-      var bp = el('<button type="button" class="btn large"' + (e2.payable ? "" : " disabled") + ">" + __("Ouvrir pour ") + e2.credits + __(" crédits") + (e2.credits < e2.plein ? " (" + __("au lieu de ") + e2.plein + ")" : "") + "</button>");
+      var manqueH = e2.habitants && e2.habitants.manque > 0;
+      if (manqueH) zc.appendChild(el('<p class="ile-vie-note" style="font-size:17px">👥 ' + __("Un quartier de plus demande du monde : <b>{b} habitants</b>. L'île en compte {n}, il en manque {m}.", { b: nb(e2.habitants.besoin), n: nb(e2.habitants.a), m: nb(e2.habitants.manque) }) + " " + __("Bâtis des toits, nourris tout le monde et réussis des épreuves.") + "</p>"));
+      var bp = el('<button type="button" class="btn large"' + (e2.payable && !manqueH ? "" : " disabled") + ">" + __("Ouvrir pour ") + e2.credits + __(" crédits") + (e2.credits < e2.plein ? " (" + __("au lieu de ") + e2.plein + ")" : "") + "</button>");
       bp.onclick = function () { var r = M.ouvrirQuartier(C, P, id, "credits", null, maintenant()); if (r && r.ouvert) { sauver(); fete(); } };
       zc.appendChild(bp);
       if (!e2.payable) zc.appendChild(el('<p class="ile-vie-note" style="font-size:17px">' + __("Tu as ") + P.credits.solde + __(" crédits : il en manque ") + (e2.credits - P.credits.solde) + ". " + __("Chaque épreuve réussie en rapporte.") + "</p>"));

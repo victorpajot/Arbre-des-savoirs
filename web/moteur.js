@@ -2020,6 +2020,7 @@
   function agesIle(contenu, partie) {
     var A = agesPresents(contenu); if (!A) return null;
     var courant = 0, ouvert = true, amen = contenu.ile.amenagements || [];
+    var popA = contenu.ile.regles.demographie && partie.population, nPop = popA ? popA.e + popA.a + popA.v : 0;
     var ages = A.map(function (a, i) {
       var besoins = (a.besoins || []).map(function (b) {
         var savoirs = (b.savoirs || []).filter(function (id) { return contenu.parId[id]; });
@@ -2035,9 +2036,13 @@
       // Victor (2026-11-13) : une épreuve unique peut garder la porte de l'âge suivant (« Faire du feu » avant le
       // campement). Une partie qui a déjà dépassé cet âge ne la doit pas.
       var ep = a.epreuve && !(partie.epreuves || {})[a.epreuve] && !((partie.ageIle || 0) > i) ? a.epreuve : null;
+      // Victor (2026-11-16, carte « Seuils et habitants par épreuve ») : on ne change pas d'âge à sept. En plus des
+      // savoirs, l'île doit compter assez d'habitants. Un âge déjà atteint reste acquis.
+      var besoinP = popA && a.peuple && !((partie.ageIle || 0) > i) ? a.peuple : 0, peuple = { besoin: besoinP, habitants: nPop, manque: Math.max(0, besoinP - nPop) };
+      var savoirsTenus = tenu; tenu = tenu && !peuple.manque;
       var complet = tenu && !ep && (!negliges.length || !!(partie.agesPasses || {})[a.id]);
       if (ouvert) courant = i;
-      var o = { id: a.id, epreuve: tenu ? ep : null, rang: a.rang, plafond: a.plafond == null ? null : a.plafond, nom: a.nom, description: a.description || null, besoins: besoins, requis: requis.length, couverts: requis.filter(function (b) { return b.couvert; }).length, complet: complet, pret: tenu && !complet && !ep, negliges: negliges, avenir: avenir, ouvert: ouvert };
+      var o = { id: a.id, peuple: peuple, savoirsTenus: savoirsTenus, epreuve: savoirsTenus ? ep : null, rang: a.rang, plafond: a.plafond == null ? null : a.plafond, nom: a.nom, description: a.description || null, besoins: besoins, requis: requis.length, couverts: requis.filter(function (b) { return b.couvert; }).length, complet: complet, pret: tenu && !complet && !ep, negliges: negliges, avenir: avenir, ouvert: ouvert };
       ouvert = ouvert && complet;
       return o;
     });
@@ -2050,6 +2055,8 @@
   function passerAge(contenu, partie, t) {
     var G = agesIle(contenu, partie); if (!G || !G.age.pret) return null;
     partie.agesPasses = partie.agesPasses || {}; partie.agesPasses[G.age.id] = t; partie.maj = t;
+    // L'âge atteint le reste, même si la population retombe ensuite sous le seuil.
+    var G2 = agesIle(contenu, partie); if (G2.courant > (partie.ageIle || 0)) partie.ageIle = G2.courant;
     return agesIle(contenu, partie);
   }
   // Les épreuves uniques de l'île : jouées une fois, elles ouvrent une porte (partie.epreuves[id] = date). Rejouables
@@ -2425,7 +2432,9 @@
     q.installations.forEach(function (x) { if (x.etat !== "friche") qs = qs.concat(contenu.questionsPar[x.comp] || []); });
     // Quartier encore vide, ouvert pour y bâtir : la question vient des savoirs qui permettent ses aménagements.
     if (!qs.length) (contenu.ile.amenagements || []).forEach(function (am) { if (am.quartier === id) (am.savoirs || []).forEach(function (x) { if (estMaitrisee(partie, x)) qs = qs.concat(contenu.questionsPar[x] || []); }); });
-    return { quartier: id, nom: q.nomFinal, couleur: q.couleur, aExplorer: !!q.aExplorer, question: !essai && qs.length ? qs[hacher("quartier|" + id) % qs.length] : null, essai: essai, plein: plein, credits: prix, payable: partie.credits.solde >= prix };
+    // Victor (2026-11-16) : un quartier de plus demande du monde. Tant d'habitants par quartier déjà ouvert.
+    var pq = partie.population, nq = pq ? pq.e + pq.a + pq.v : 0, nF = ile(contenu, partie, t).quartiers.filter(function (x) { return x.fonde; }).length, besoinQ = pq && nF > 0 ? (R.habitants_premier == null ? R.habitants || 0 : R.habitants_premier) + (R.habitants || 0) * (nF - 1) : 0;
+    return { habitants: { besoin: besoinQ, a: nq, manque: Math.max(0, besoinQ - nq) }, quartier: id, nom: q.nomFinal, couleur: q.couleur, aExplorer: !!q.aExplorer, question: !essai && qs.length ? qs[hacher("quartier|" + id) % qs.length] : null, essai: essai, plein: plein, credits: prix, payable: partie.credits.solde >= prix };
   }
   // Victor (2026-11-13, carte « Explorer, puis verrou actuel ») : avant d'ouvrir un quartier, un explorateur doit en
   // repérer le site dans le brouillard et revenir le dire au village (partie.sites[id] = date).
@@ -2450,6 +2459,7 @@
     var e = questionQuartier(contenu, partie, id, t); if (!e) return null;
     if (e.aExplorer) return { ouvert: false, refus: "site" };
     if (moyen === "credits") {
+      if (e.habitants.manque > 0) return { ouvert: false, refus: "habitants", manque: e.habitants.manque };
       if (!e.payable) return { ouvert: false, refus: "credits" };
       partie.quartiers = partie.quartiers || {};
       partie.credits.solde -= e.credits; partie.quartiers[id] = t; partie.maj = t;
@@ -2551,6 +2561,8 @@
     if (D && pop && reussi) {
       var libres = placesIle(contenu, partie, t).places - (pop.e + pop.a + pop.v);
       attires = Math.max(0, Math.min(libres, Math.round((placesIle(contenu, partie, t).places - avant.places) * D.attrait)));
+      // Victor (2026-11-16) : chaque épreuve réussie fait venir quelques habitants, tant qu'il reste des places.
+      attires += Math.max(0, Math.min(libres - attires, D.par_epreuve || 0));
       if (attires > 0) accueillir(pop, attires, D);
     }
     // Une installation perdue, ce sont des places en moins : une partie de ceux qui y vivaient s'en va aussitôt.

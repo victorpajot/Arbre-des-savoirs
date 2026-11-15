@@ -4366,6 +4366,7 @@
          "type": "number",
          "description": "Part des places d'une installation neuve remplie aussitôt."
         },
+        "par_epreuve": { "type": "integer", "minimum": 0, "description": "Habitants qui arrivent à chaque épreuve réussie, s'il reste des places (Victor, 2026-11-16)." },
         "rattrapage": {
          "type": "integer",
          "description": "Jours d'absence rattrapés au plus."
@@ -4555,6 +4556,8 @@
          "minimum": 0,
          "maximum": 1
         },
+        "habitants": { "type": "integer", "minimum": 0, "description": "Habitants de plus demandés à chaque nouveau quartier, après le deuxième (Victor, 2026-11-16)." },
+        "habitants_premier": { "type": "integer", "minimum": 0, "description": "Habitants demandés pour ouvrir le deuxième quartier." },
         "age_min": {
          "type": "integer",
          "minimum": 0
@@ -5093,6 +5096,7 @@
        "besoins"
       ],
       "properties": {
+       "peuple": { "type": "integer", "minimum": 0, "description": "Habitants qu'il faut sur l'île pour quitter cet âge, en plus des savoirs (Victor, 2026-11-16)." },
        "jusqua": { "type": "integer", "description": "Dernière année admise à cet âge pour les visiteurs et les achats de l'IA : rien d'anachronique sur l'île (Victor, 2026-11-15)." },
        "id": {
         "type": "string"

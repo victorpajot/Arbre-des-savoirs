@@ -2272,7 +2272,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(I1.habitants, I1.population.enfants + I1.population.adultes + I1.population.anciens);
     const id = CI.competences[0].id, exilAvant = PX.exil;
     const rr = M.terminerRappel(CI, PX, id, M.tirerQuestions(CI, PX, id, 3).map(q => ({ id: q.id, correct: true })), ti);
-    assert.equal(PX.exil, exilAvant - RP.retour); assert.equal(rr.ile.revenus, RP.retour); assert.equal(M.ile(CI, PX, ti).habitants, plein - ex.partis + RP.retour); }
+    assert.equal(PX.exil, exilAvant - RP.retour); assert.equal(rr.ile.revenus, RP.retour); assert.equal(M.ile(CI, PX, ti).habitants, plein - ex.partis + RP.retour + CI.ile.regles.demographie.par_epreuve, "les revenus, plus ceux que l'épreuve réussie attire"); }
   // Démographie (Victor, 2026-11-10) : Leslie, Verhulst, Lotka-Volterra, liés aux aménagements.
   // La famine mortelle et les aléas (2026-11-12) ont leur propre test, plus bas : ici, la démographie seule.
   const FAMINE = CI.ile.regles.ressources.famine_mort, ALEAS = CI.ile.regles.aleas.chance; CI.ile.regles.ressources.famine_mort = 0; CI.ile.regles.aleas.chance = 0;
@@ -2511,8 +2511,13 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   {
     const P2 = JSON.parse(JSON.stringify(P)); ["math.origines", "chim.feu"].forEach(id => sait(P2, id));
     let g = M.agesIle(CA, P2); assert.equal(g.age.id, "village"); assert.equal(g.age.requis, 4); assert.equal(g.age.couverts, 4);
+    // Victor (2026-11-16) : les savoirs ne suffisent pas, il faut aussi du monde. Un âge déjà atteint reste acquis.
+    assert.ok(g.age.savoirsTenus && !g.age.pret && g.age.peuple.manque > 0, "trop peu d'habitants : le passage attend");
+    assert.equal(g.age.peuple.besoin, CA.ile.ages.filter(a => a.id === "village")[0].peuple); assert.equal(M.passerAge(CA, P2, t0), null);
+    P2.population.a += g.age.peuple.manque; g = M.agesIle(CA, P2); assert.equal(g.age.peuple.manque, 0);
     assert.ok(g.age.pret, "les besoins requis sont couverts : le passage attend la décision"); assert.deepEqual(g.age.negliges.map(b => b.id), ["transmettre", "decider"]);
     M.ile(CA, P2, t0); for (let d = 1; d <= 20; d++) assert.equal(M.ile(CA, P2, t0 + d * J).troubles.length, 0, "au village, pas encore de troubles");
+    P2.population.a += M.agesIle(CA, P2).age.peuple.manque;
     assert.equal(M.passerAge(CA, P2, t0 + 20 * J).age.id, "cite"); assert.equal(M.passerAge(CA, P2, t0 + 20 * J), null);
     let oublis = 0, emeutes = 0, morts = 0;
     for (let d = 21; d <= 80; d++) M.ile(CA, P2, t0 + d * J).troubles.forEach(f => { if (f.type === "oubli") { oublis++; assert.ok(P2.competences[f.comp].prochainRappel <= t0 + d * J, "le rappel du savoir oublié est dû"); } else { emeutes++; morts += f.morts; } });
@@ -2522,6 +2527,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   }
   // Tous les besoins couverts : la cité s'ouvre (et reste ouverte si un savoir se perd).
   ["math.origines", "chim.feu", "rhet.origines", "coll.ruche"].forEach(id => sait(P, id));
+  G = M.ile(CA, P, t0).ages; assert.equal(G.age.id, "village", "tous les savoirs, mais pas assez de monde : la cité attend"); assert.ok(G.age.peuple.manque > 0);
+  P.population.a += G.age.peuple.manque;
   G = M.ile(CA, P, t0).ages; assert.equal(G.age.id, "cite"); assert.equal(P.ageIle, 3);
   delete P.competences["coll.ruche"]; assert.equal(M.agesIle(CA, P).age.id, "cite", "un âge atteint le reste");
   assert.ok(!M.agesIle(CA, P).ages[2].complet, "mais le besoin est à rétablir");
@@ -2548,6 +2555,10 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     // Une bonne réponse divise le prix par deux.
     M.ile(CA, P, t0).quartiers.filter(q => q.aOuvrir).forEach(q => {
       assert.equal(M.ouvrirQuartier(CA, P, q.id, "question", true, t0).credits, 30);
+      // Victor (2026-11-16) : un quartier de plus demande du monde, tant d'habitants par quartier déjà ouvert.
+      const eq = M.questionQuartier(CA, P, q.id, t0), nF = M.ile(CA, P, t0).quartiers.filter(x => x.fonde).length;
+      assert.equal(eq.habitants.besoin, CA.ile.regles.quartier.habitants_premier + CA.ile.regles.quartier.habitants * (nF - 1));
+      if (eq.habitants.manque > 0) { assert.equal(M.ouvrirQuartier(CA, P, q.id, "credits", null, t0).refus, "habitants"); P.population.a += eq.habitants.manque; }
       solde = P.credits.solde; assert.ok(M.ouvrirQuartier(CA, P, q.id, "credits", null, t0).ouvert); assert.equal(P.credits.solde, solde - 30); });
     P.credits.solde = 0; delete P.quartiers[ferme.id]; assert.equal(M.ouvrirQuartier(CA, P, ferme.id, "credits", null, t0).refus, "credits"); P.quartiers[ferme.id] = t0; P.credits.solde = 2000;
     assert.ok(!M.ile(CA, P, t0).quartiers.some(q => q.aOuvrir));
@@ -2560,6 +2571,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     Ql.ressources.stocks.bois = 100; for (let i = 0; i < 4; i++) assert.ok(M.construireIle(CA, Ql, "foyer", t0).ok);
     Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.toits, 55); assert.ok(Il.places <= 40, "le campement plafonne à 40");
     CA.competences.filter(k => k.rang === 1).forEach(k => sait(Ql, k.id));
+    Il = M.ile(CA, Ql, t0); assert.ok(Il.limites.plafond < 400, "sans assez d'habitants, les savoirs seuls ne font pas une cité");
+    Ql.population.a = 35; M.ile(CA, Ql, t0);
     Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.plafond, 400, "la cité plafonne à 400"); assert.equal(Il.limites.frein, "toits"); assert.equal(Il.places, 55, "sans maisons, les savoirs n'attirent personne de plus");
   }
   // La cueillette est risquée : un campement qui ne vit que d'elle y perd des adultes, jour après jour.
