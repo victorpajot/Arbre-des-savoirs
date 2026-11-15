@@ -1311,6 +1311,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ep-ferrer .ep-poisson { transform: translate(40px, 132px); transition: transform 1.2s ease-in-out; } .ep-ferrer.mord .ep-poisson { transform: translate(150px, 124px); transition: transform .12s; }
 .ep-ferrer.mord { border-style: solid; border-color: #E0A800; } .ep-ferrer.mord .ep-fil-peche { animation: ep-tend .18s linear infinite; } .ep-flotteur { transition: transform .12s; } .ep-ferrer.mord .ep-flotteur { transform: translate(-3px, 14px); }
 .grotte { background: #121117; } .gr-vue { position: relative; flex: 1; min-height: 0; overflow: hidden; margin-top: calc(58px + env(safe-area-inset-top, 0px)); } .gr-vue canvas { display: block; touch-action: none; }
+.grotte.lit .gr-vue { display: none; } .grotte.lit .ex-bas { flex: 1; max-height: none; margin-top: calc(58px + env(safe-area-inset-top, 0px)); padding-top: 16px; } .grotte.lit .gr-dieu { width: min(100%, 460px); } .grotte.lit .gr-scene { margin-bottom: 16px; } .grotte.lit .ex-bas .btn + .btn { margin-top: 8px; }
 .gr-moi { position: absolute; left: 0; top: 0; pointer-events: none; } .gr-moi svg { display: block; width: 100%; height: auto; overflow: visible; }
 .gr-croix { display: flex; gap: 8px; justify-content: center; margin-top: 8px; } .gr-croix .btn { flex: 0 0 58px; width: 58px; min-width: 0; font-size: 20px; padding: 8px 0; }
 .gr-choix { display: grid; gap: 8px; margin: 8px 0; } .gr-choix .btn { font-size: 17px; } .gr-choix .btn.juste { border-color: var(--good); background: color-mix(in srgb, var(--good) 18%, var(--surface)); opacity: 1; } .gr-choix .btn.faux { border-color: var(--bad, #C0392B); background: color-mix(in srgb, var(--bad, #C0392B) 16%, var(--surface)); opacity: 1; }
@@ -6249,28 +6250,38 @@ function demarrerJeu() {
   // Une grotte sur la carte, où l'on entre : un labyrinthe, toujours le même, qu'on éclaire à la torche. Ce qu'on a vu
   // reste dessiné. Atteindre une zone (l'arbre d'une mythologie) fait entendre ses récits, sourcés ; ce passage ouvre
   // des savoirs (M.grotteRequise). Tout est peint sur un canevas : ni masque SVG, ni nœuds déplacés (Android).
-  var GROTTE = { cols: 11, rangs: 15, large: 6.4, torche: 3, ecart: 3, loin: 15, betes: 3, flair: 4, fuite: 0.85, calme: 20000, pas: 650 };
+  var GROTTE = { cols: 11, rangs: 15, salles: 7, large: 6.4, torche: 3, ecart: 3, loin: 15, betes: 3, flair: 4, fuite: 0.85, calme: 20000, pas: 650 };
   var LABY = null;
   function labyGrotte() {
     if (LABY) return LABY;
     var W = GROTTE.cols, H = GROTTE.rangs, n = W * H, murs = [], vu = [], s = graine("grotte-mythologies"), i;
     function alea(k) { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s % k; }
     // murs[c] : bit 1 = passage vers la droite, bit 2 = passage vers le bas.
-    for (i = 0; i < n; i++) { murs.push(0); vu.push(false); }
-    var depart = (H - 1) * W + (W >> 1), pile = [depart]; vu[depart] = true;
-    while (pile.length) {
-      var c = pile[pile.length - 1], x = c % W, y = (c - x) / W, v = [];
-      if (x > 0 && !vu[c - 1]) v.push(c - 1); if (x < W - 1 && !vu[c + 1]) v.push(c + 1); if (y > 0 && !vu[c - W]) v.push(c - W); if (y < H - 1 && !vu[c + W]) v.push(c + W);
-      if (!v.length) { pile.pop(); continue; }
-      var d = v[alea(v.length)]; vu[d] = true; pile.push(d);
-      if (d === c + 1) murs[c] |= 1; else if (d === c - 1) murs[d] |= 1; else if (d === c + W) murs[c] |= 2; else murs[d] |= 2;
+    for (i = 0; i < n; i++) { murs.push(0); vu.push(i); }
+    var depart = (H - 1) * W + (W >> 1);
+    // Victor (2026-11-15) : « des cavités, et pas que des couloirs ». Les salles sont creusées d'abord (une grande près
+    // de l'entrée pour l'arbre, des petites ailleurs), puis les galeries les relient sans jamais faire de raccourci :
+    // on n'abat une cloison que si elle sépare deux parties encore disjointes.
+    function chef(a) { while (vu[a] !== a) { vu[a] = vu[vu[a]]; a = vu[a]; } return a; }
+    function percer(a, b) { var ca = chef(a), cb = chef(b); if (ca === cb) return false; vu[ca] = cb; if (b === a + 1) murs[a] |= 1; else murs[a] |= 2; return true; }
+    var salles = [], prises = {};
+    function salle(x0, y0, w, h, grande) {
+      var x, y, cs = [];
+      for (y = y0 - 1; y <= y0 + h; y++) for (x = x0 - 1; x <= x0 + w; x++) if (prises[y * W + x] && x >= 0 && x < W) return false;
+      for (y = y0; y < y0 + h; y++) for (x = x0; x < x0 + w; x++) { var c = y * W + x; cs.push(c); prises[c] = 1; if (x < x0 + w - 1) { murs[c] |= 1; vu[chef(c)] = chef(c + 1); } if (y < y0 + h - 1) { murs[c] |= 2; vu[chef(c)] = chef(c + W); } }
+      salles.push({ cases: cs, grande: !!grande, centre: (y0 + (h >> 1)) * W + x0 + (w >> 1) }); return true;
     }
+    salle((W >> 1) - 1, H - 5, 3, 3, true);
+    for (i = 0; i < 300 && salles.length < 1 + GROTTE.salles; i++) { var sx = alea(W - 1), sy = alea(H - 3), sw = sx < W - 2 && alea(3) === 0 ? 3 : 2; salle(sx, sy, sw, 2, false); }
+    var aretes = []; for (i = 0; i < n; i++) { if (i % W < W - 1) aretes.push([i, i + 1]); if (i + W < n) aretes.push([i, i + W]); }
+    for (i = aretes.length - 1; i > 0; i--) { var k = alea(i + 1), tmp = aretes[i]; aretes[i] = aretes[k]; aretes[k] = tmp; }
+    aretes.forEach(function (a) { percer(a[0], a[1]); });
     function voisins(c) { var x = c % W, o = []; if (x < W - 1 && murs[c] & 1) o.push(c + 1); if (x > 0 && murs[c - 1] & 1) o.push(c - 1); if (c + W < n && murs[c] & 2) o.push(c + W); if (c - W >= 0 && murs[c - W] & 2) o.push(c - W); return o; }
     function distances(de, parmi) { var D = {}, f = [de]; D[de] = 0; while (f.length) { var a = f.shift(); voisins(a).forEach(function (b) { if (D[b] == null && (!parmi || parmi[b])) { D[b] = D[a] + 1; f.push(b); } }); } return D; }
     // Les culs-de-sac, du plus proche de l'entrée au plus lointain : les arbres et les dieux s'y posent.
-    var D0 = distances(depart), culs = []; for (i = 0; i < n; i++) if (i !== depart && voisins(i).length === 1) culs.push(i);
+    var D0 = distances(depart), culs = []; for (i = 0; i < n; i++) if (i !== depart && !prises[i] && voisins(i).length === 1) culs.push(i);
     culs.sort(function (a, b) { return D0[a] - D0[b]; });
-    return (LABY = { W: W, H: H, n: n, murs: murs, depart: depart, voisins: voisins, distances: distances, culs: culs, D0: D0 });
+    return (LABY = { W: W, H: H, n: n, murs: murs, depart: depart, voisins: voisins, distances: distances, culs: culs, D0: D0, salles: salles });
   }
   // Où se posent l'arbre de chaque mythologie (près de l'entrée : on y revient pour le quiz) et ses dieux (plus loin,
   // à l'écart les uns des autres). Toujours les mêmes places : le labyrinthe s'apprend.
@@ -6278,10 +6289,14 @@ function demarrerJeu() {
     var L = labyGrotte(), pris = [], libre = L.culs.slice();
     function ecart(a, b) { return Math.abs(a % L.W - b % L.W) + Math.abs(Math.floor(a / L.W) - Math.floor(b / L.W)); }
     function prendre(ok) { for (var i = 0; i < libre.length; i++) { var c = libre[i]; if (ok(c) && pris.every(function (p) { return ecart(p, c) >= GROTTE.ecart; })) { libre.splice(i, 1); pris.push(c); return c; } } var r = libre.shift(); pris.push(r); return r; }
-    return def.zones.map(function (z) {
-      var arbre = prendre(function () { return true; });
-      return { def: z, c: arbre, dieux: z.recits.map(function (r) { return { r: r, c: prendre(function (c) { return L.D0[c] >= GROTTE.loin; }) }; }) };
+    if (L.places) return L.places;
+    // L'arbre tient le centre de la grande salle ; chaque dieu, le fond d'une cavité, des plus lointaines d'abord.
+    var grandes = L.salles.filter(function (x) { return x.grande; }), petites = L.salles.filter(function (x) { return !x.grande; }).map(function (x) { return x.cases.slice().sort(function (a, b) { return L.D0[b] - L.D0[a]; })[0]; }).sort(function (a, b) { return L.D0[b] - L.D0[a]; });
+    L.places = def.zones.map(function (z) {
+      var g = grandes.shift(), arbre = g ? g.centre : prendre(function () { return true; }); if (g) pris.push(arbre);
+      return { def: z, c: arbre, dieux: z.recits.map(function (r) { var c = petites.length ? petites.shift() : prendre(function (c) { return L.D0[c] >= GROTTE.loin; }); if (pris.indexOf(c) < 0) pris.push(c); return { r: r, c: c }; }) };
     });
+    return L.places;
   }
   // Chaque dieu se présente par une petite animation (Victor, 2026-11-14) : il paraît, puis un détail du dessin vit.
   var DESSINS_MYTHE = {
@@ -6317,14 +6332,14 @@ function demarrerJeu() {
     function mesurer() {
       var r = vue.getBoundingClientRect(), k = window.devicePixelRatio || 1; if (!r.width) return;
       // Victor (2026-11-15) : « les couloirs sont trop étroits ». Le labyrinthe ne tient plus en entier à l'écran : une
-      // galerie fait un sixième de la largeur, et la vue suit le marcheur.
+      // galerie fait un sixième de la largeur, la vue suit le marcheur, et lui garde sa taille (c'est la galerie qui grandit).
       T = Math.floor(Math.min(r.width / GROTTE.large, r.height / 4.2)); VW = r.width; VH = r.height; cadrer(true);
       cv.width = Math.round(r.width * k); cv.height = Math.round(r.height * k); cv.style.width = r.width + "px"; cv.style.height = r.height + "px"; ctx.setTransform(k, 0, 0, k, 0, 0);
-      moi.style.width = T * 0.62 + "px"; peindre(false);
+      U = T * 0.6; moi.style.width = T * 0.34 + "px"; peindre(false);
     }
     function centre(c) { return [ox + (c % L.W + 0.5) * T, oy + (Math.floor(c / L.W) + 0.5) * T]; }
     // Le marcheur glisse d'une case à l'autre (px, py : sa place dans le labyrinthe, en pixels) et la vue le suit.
-    var VW = 0, VH = 0, px = 0, py = 0, cx = 0, cy = 0, glisse = 0;
+    var U = 0, VW = 0, VH = 0, px = 0, py = 0, cx = 0, cy = 0, glisse = 0;
     function borneVue(v, vue, laby) { return laby <= vue ? (vue - laby) / 2 : Math.max(vue - laby, Math.min(0, v)); }
     function cadrer(net) {
       var bx = (ici % L.W + 0.5) * T, by = (Math.floor(ici / L.W) + 0.5) * T, k = net ? 1 : 0.3;
@@ -6335,20 +6350,20 @@ function demarrerJeu() {
     }
     function glisser() { cancelAnimationFrame(glisse); if (clos || !T) return; var encore = cadrer(false); peindre(); if (encore) glisse = requestAnimationFrame(glisser); else { cadrer(true); peindre(); } }
     function arbreMythe(x, y, fait) {
-      ctx.fillStyle = "#6B4423"; ctx.fillRect(x - T * 0.06, y - T * 0.05, T * 0.12, T * 0.38);
-      ctx.fillStyle = fait ? "#C9952A" : "#3F8F5A"; ctx.beginPath(); ctx.arc(x, y - T * 0.14, T * 0.3, 0, 7); ctx.fill();
-      ctx.fillStyle = fait ? "#F2D36B" : "#5DB078"; ctx.beginPath(); ctx.arc(x - T * 0.08, y - T * 0.2, T * 0.14, 0, 7); ctx.fill();
-      ctx.fillStyle = "#F2B632"; ctx.beginPath(); ctx.arc(x + T * 0.12, y - T * 0.24, T * 0.08, 0, 7); ctx.fill();
+      ctx.fillStyle = "#6B4423"; ctx.fillRect(x - U * 0.06, y - U * 0.05, U * 0.12, U * 0.38);
+      ctx.fillStyle = fait ? "#C9952A" : "#3F8F5A"; ctx.beginPath(); ctx.arc(x, y - U * 0.14, U * 0.3, 0, 7); ctx.fill();
+      ctx.fillStyle = fait ? "#F2D36B" : "#5DB078"; ctx.beginPath(); ctx.arc(x - U * 0.08, y - U * 0.2, U * 0.14, 0, 7); ctx.fill();
+      ctx.fillStyle = "#F2B632"; ctx.beginPath(); ctx.arc(x + U * 0.12, y - U * 0.24, U * 0.08, 0, 7); ctx.fill();
     }
     // Un dieu à trouver : une niche dorée dans la paroi ; une fois entendu, elle s'éteint.
     function niche(x, y, fait) {
-      ctx.fillStyle = fait ? "#6E6553" : "#F2B632"; ctx.beginPath(); ctx.moveTo(x - T * 0.2, y + T * 0.26); ctx.lineTo(x - T * 0.2, y - T * 0.06); ctx.arc(x, y - T * 0.06, T * 0.2, Math.PI, 0); ctx.lineTo(x + T * 0.2, y + T * 0.26); ctx.closePath(); ctx.fill();
-      ctx.fillStyle = fait ? "#4A4338" : "#FFE79A"; ctx.beginPath(); ctx.arc(x, y - T * 0.02, T * 0.09, 0, 7); ctx.fill(); ctx.fillRect(x - T * 0.05, y + T * 0.06, T * 0.1, T * 0.16);
+      ctx.fillStyle = fait ? "#6E6553" : "#F2B632"; ctx.beginPath(); ctx.moveTo(x - U * 0.2, y + U * 0.26); ctx.lineTo(x - U * 0.2, y - U * 0.06); ctx.arc(x, y - U * 0.06, U * 0.2, Math.PI, 0); ctx.lineTo(x + U * 0.2, y + U * 0.26); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = fait ? "#4A4338" : "#FFE79A"; ctx.beginPath(); ctx.arc(x, y - U * 0.02, U * 0.09, 0, 7); ctx.fill(); ctx.fillRect(x - U * 0.05, y + U * 0.06, U * 0.1, U * 0.16);
     }
     function bete(x, y, b, eclairee) {
-      if (eclairee) { ctx.fillStyle = "#23202B"; ctx.beginPath(); ctx.ellipse(x, y + T * 0.08, T * 0.3, T * 0.2, 0, 0, 7); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(x - T * 0.24, y - T * 0.02); ctx.lineTo(x - T * 0.18, y - T * 0.26); ctx.lineTo(x - T * 0.06, y - T * 0.06); ctx.lineTo(x + T * 0.06, y - T * 0.06); ctx.lineTo(x + T * 0.18, y - T * 0.26); ctx.lineTo(x + T * 0.24, y - T * 0.02); ctx.closePath(); ctx.fill(); }
-      ctx.fillStyle = b.fuit ? "#F2B632" : "#FF4D3D"; ctx.beginPath(); ctx.arc(x - T * 0.1, y + T * 0.04, T * 0.05, 0, 7); ctx.arc(x + T * 0.1, y + T * 0.04, T * 0.05, 0, 7); ctx.fill();
+      if (eclairee) { ctx.fillStyle = "#23202B"; ctx.beginPath(); ctx.ellipse(x, y + U * 0.08, U * 0.3, U * 0.2, 0, 0, 7); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(x - U * 0.24, y - U * 0.02); ctx.lineTo(x - U * 0.18, y - U * 0.26); ctx.lineTo(x - U * 0.06, y - U * 0.06); ctx.lineTo(x + U * 0.06, y - U * 0.06); ctx.lineTo(x + U * 0.18, y - U * 0.26); ctx.lineTo(x + U * 0.24, y - U * 0.02); ctx.closePath(); ctx.fill(); }
+      ctx.fillStyle = b.fuit ? "#F2B632" : "#FF4D3D"; ctx.beginPath(); ctx.arc(x - U * 0.1, y + U * 0.04, U * 0.05, 0, 7); ctx.arc(x + U * 0.1, y + U * 0.04, U * 0.05, 0, 7); ctx.fill();
     }
     function peindre(saut) {
       if (!T || clos) return;
@@ -6361,7 +6376,7 @@ function demarrerJeu() {
         var gc = graine("gr" + c); ctx.fillStyle = "rgba(0,0,0,.12)"; ctx.fillRect(x + (gc % 60) / 100 * T, y + ((gc >>> 7) % 60) / 100 * T, T * 0.16, T * 0.1);
       }
       // Les parois : un trait épais partout où deux cases ne communiquent pas.
-      ctx.strokeStyle = "#1E1B22"; ctx.lineWidth = Math.max(3, T * 0.16); ctx.lineCap = "round"; ctx.beginPath();
+      ctx.strokeStyle = "#1E1B22"; ctx.lineWidth = Math.max(3, T * 0.1); ctx.lineCap = "round"; ctx.beginPath();
       for (c = 0; c < L.n; c++) {
         if (!carte[c]) continue;
         var cx0 = ox + (c % L.W) * T, cy0 = oy + Math.floor(c / L.W) * T, col = c % L.W, v = L.voisins(c);
@@ -6374,11 +6389,11 @@ function demarrerJeu() {
       // L'entrée : le jour qui tombe par le bas. C'est aussi la sortie.
       var e = centre(L.depart); ctx.fillStyle = "rgba(255,244,200,.75)"; ctx.fillRect(e[0] - T * 0.42, e[1] + T * 0.28, T * 0.84, T * 0.22);
       zones.forEach(function (zn) {
-        if (carte[zn.c]) { var p = centre(zn.c); arbreMythe(p[0], p[1] + T * 0.08, !!P.grotte.zones[zn.def.id]); }
+        if (carte[zn.c]) { var p = centre(zn.c); arbreMythe(p[0], p[1] + U * 0.08, !!P.grotte.zones[zn.def.id]); }
         zn.dieux.forEach(function (d) { if (carte[d.c]) { var q = centre(d.c); niche(q[0], q[1], entendu(zn, d)); } });
       });
       betes.forEach(function (b) { var lum = D[b.c] != null && D[b.c] <= GROTTE.torche; if (lum || carte[b.c]) { var p = centre(b.c); bete(p[0], p[1], b, lum); } });
-      moi.style.transform = "translate(" + (ox + px - T * 0.31).toFixed(1) + "px," + (oy + py - T * 0.56).toFixed(1) + "px)";
+      moi.style.transform = "translate(" + (ox + px - T * 0.17).toFixed(1) + "px," + (oy + py - T * 0.3).toFixed(1) + "px)";
     }
     function chemin(vers) {
       var D = L.distances(vers, carte); if (D[ici] == null) return null;
@@ -6421,8 +6436,10 @@ function demarrerJeu() {
       if (ici === L.depart && parti) { fermer(); return; }
       var zn = zones.filter(function (q) { return q.c === ici; })[0], dz = null, dd = null;
       zones.forEach(function (q) { q.dieux.forEach(function (d) { if (d.c === ici) { dz = q; dd = d; } }); });
-      if (dd) { file = []; setTimeout(function () { dieu(dz, dd); }, 260); return; }
-      if (zn) { file = []; sauver(); setTimeout(function () { arbre(zn); }, 260); return; }
+      // Dans une salle, on peut passer à côté : un dieu déjà entendu et l'arbre n'arrêtent que celui qui s'y rend.
+      var arrive = !file.length;
+      if (dd && (arrive || !entendu(dz, dd))) { file = []; setTimeout(function () { dieu(dz, dd); }, 260); return; }
+      if (zn && arrive) { file = []; sauver(); setTimeout(function () { arbre(zn); }, 260); return; }
       if (file.length) horloge = setTimeout(avancer, 150); else { sauver(); panneau(); }
     }
     function aller(vers) { if (lecture || vers === ici) return; var ch = chemin(vers); if (!ch) return; file = ch; avancer(); }
@@ -6436,6 +6453,7 @@ function demarrerJeu() {
     function pas(d) { var v = L.voisins(ici), c = d === "h" ? ici - L.W : d === "b" ? ici + L.W : d === "g" ? ici - 1 : ici + 1; if (v.indexOf(c) >= 0) { message = ""; file = [c]; avancer(); } }
     function panneau() {
       if (clos) return;
+      z.classList.remove("lit");  // Victor (2026-11-15) : les récits se lisent en plein écran, le labyrinthe revient ensuite
       var menace = proches().length, aLentree = ici === L.depart;
       var cherche = zones.filter(function (q) { return !P.grotte.zones[q.def.id]; }).map(function (q) { var m = manquants(q).length; return m ? (m > 1 ? __("{n} dieux à trouver", { n: m }) : __("1 dieu à trouver")) + " (" + tx(q.def.court || q.def.nom) + ")" : __("retourne à ") + tx(q.def.nom); });
       bas.innerHTML = '<div class="ex-msg">' + esc(message || (cherche.length ? __("Touche une galerie éclairée pour y aller. Il te reste : ") + cherche.join(", ") + "." : __("Tu as entendu tous les récits de la grotte. D'autres galeries s'ouvriront."))) + "</div>" +
@@ -6453,7 +6471,7 @@ function demarrerJeu() {
     // Un dieu trouvé (Victor, 2026-11-14 : on les récupère un par un) : il paraît, on écoute son récit, il est gardé.
     function dieu(zn, d) {
       lecture = zn; var deja = entendu(zn, d), n = zn.dieux.length - manquants(zn).length + (deja ? 0 : 1);
-      bas.innerHTML = '<div class="eyebrow">' + (deja ? __("Déjà entendu") : __("Un dieu dans la paroi")) + " · " + esc(tx(zn.def.court || zn.def.nom)) + "</div>" + recit(d.r, '<button type="button" class="btn large" data-a="ok">' + (deja ? __("Reprendre la torche") : __("Garder ce récit ({n} sur {t})", { n: n, t: zn.dieux.length })) + "</button>");
+      z.classList.add("lit"); bas.innerHTML = '<div class="eyebrow">' + (deja ? __("Déjà entendu") : __("Un dieu dans la paroi")) + " · " + esc(tx(zn.def.court || zn.def.nom)) + "</div>" + recit(d.r, '<button type="button" class="btn large" data-a="ok">' + (deja ? __("Reprendre la torche") : __("Garder ce récit ({n} sur {t})", { n: n, t: zn.dieux.length })) + "</button>");
       bas.scrollTop = 0;
       bas.querySelector('[data-a="ok"]').onclick = function () {
         M.entendreGrotte(C, P, zn.def.id, d.r.id, maintenant()); sauver(); lecture = null;
@@ -6470,7 +6488,7 @@ function demarrerJeu() {
       lecture = zn;
       var Qz = d.recits.filter(function (r) { return r.question; });
       function accueil() {
-        bas.innerHTML = '<div class="eyebrow">' + (deja ? __("Passage gravé") : __("Tu les as tous")) + '</div><h3 class="gr-titre">' + esc(tx(d.nom)) + '</h3><p class="gr-texte">' + (deja ? __("Les récits sont peints dans ses branches. Tu peux les relire.") : __("Les dieux que tu as trouvés sont peints dans ses branches. L'arbre t'interroge : il en faut {n} justes sur {t}.", { n: Math.min(Qz.length, d.seuil || Qz.length), t: Qz.length })) + "</p>" +
+        z.classList.add("lit"); bas.innerHTML = '<div class="eyebrow">' + (deja ? __("Passage gravé") : __("Tu les as tous")) + '</div><h3 class="gr-titre">' + esc(tx(d.nom)) + '</h3><p class="gr-texte">' + (deja ? __("Les récits sont peints dans ses branches. Tu peux les relire.") : __("Les dieux que tu as trouvés sont peints dans ses branches. L'arbre t'interroge : il en faut {n} justes sur {t}.", { n: Math.min(Qz.length, d.seuil || Qz.length), t: Qz.length })) + "</p>" +
           (deja || !Qz.length ? "" : '<button type="button" class="btn large" data-a="quiz">' + __("Répondre aux questions") + "</button>") + '<button type="button" class="btn sec large" data-a="lire">' + __("Relire les récits") + '</button><button type="button" class="btn sec large" data-a="non">' + __("Reprendre la torche") + "</button>";
         bas.scrollTop = 0;
         var bq = bas.querySelector('[data-a="quiz"]'); if (bq) bq.onclick = quiz;
@@ -6479,7 +6497,7 @@ function demarrerJeu() {
       }
       function page() {
         var r = d.recits[k];
-        bas.innerHTML = '<div class="eyebrow">' + (k + 1) + " / " + d.recits.length + " · " + esc(tx(d.court || d.nom)) + "</div>" + recit(r, '<button type="button" class="btn large" data-a="suite">' + (k < d.recits.length - 1 ? __("Récit suivant") : __("Revenir à l'arbre")) + "</button>");
+        z.classList.add("lit"); bas.innerHTML = '<div class="eyebrow">' + (k + 1) + " / " + d.recits.length + " · " + esc(tx(d.court || d.nom)) + "</div>" + recit(r, '<button type="button" class="btn large" data-a="suite">' + (k < d.recits.length - 1 ? __("Récit suivant") : __("Revenir à l'arbre")) + "</button>");
         bas.scrollTop = 0;
         bas.querySelector('[data-a="suite"]').onclick = function () { if (k < d.recits.length - 1) { k++; page(); } else accueil(); };
       }
@@ -6488,7 +6506,7 @@ function demarrerJeu() {
         var n = 0, justes = 0, seuil = Math.min(Qz.length, d.seuil || Qz.length);
         function poser() {
           var r = Qz[n], q = r.question, ordre = q.choix.map(function (_, i) { return i; }).sort(function () { return Math.random() - 0.5; });
-          bas.innerHTML = '<div class="eyebrow">' + __("Question") + " " + (n + 1) + " / " + Qz.length + '</div><h3 class="gr-titre">' + esc(tx(q.enonce)) + '</h3><div class="gr-choix">' + ordre.map(function (i) { return '<button type="button" class="btn sec large" data-c="' + i + '">' + esc(tx(q.choix[i])) + "</button>"; }).join("") + '</div><div class="gr-suite"></div>';
+          z.classList.add("lit"); bas.innerHTML = '<div class="eyebrow">' + __("Question") + " " + (n + 1) + " / " + Qz.length + '</div><h3 class="gr-titre">' + esc(tx(q.enonce)) + '</h3><div class="gr-choix">' + ordre.map(function (i) { return '<button type="button" class="btn sec large" data-c="' + i + '">' + esc(tx(q.choix[i])) + "</button>"; }).join("") + '</div><div class="gr-suite"></div>';
           bas.scrollTop = 0;
           [].forEach.call(bas.querySelectorAll("[data-c]"), function (b) { b.onclick = function () {
             var c = +b.getAttribute("data-c"), ok = c === q.bonne; if (ok) justes++;
@@ -6501,7 +6519,7 @@ function demarrerJeu() {
         }
         function bilan() {
           if (justes >= seuil) { fin(justes + " / " + Qz.length); return; }
-          bas.innerHTML = '<div class="eyebrow">' + justes + " / " + Qz.length + " · " + __("il en faut ") + seuil + '</div><h3 class="gr-titre">' + __("Le passage ne se grave pas") + '</h3><p class="gr-texte">' + esc(tx(d.rate || { fr: "Relis les récits, puis réessaie." })) + '</p><button type="button" class="btn large" data-a="re">' + __("Relire les récits") + '</button><button type="button" class="btn sec large" data-a="non">' + __("Plus tard") + "</button>";
+          z.classList.add("lit"); bas.innerHTML = '<div class="eyebrow">' + justes + " / " + Qz.length + " · " + __("il en faut ") + seuil + '</div><h3 class="gr-titre">' + __("Le passage ne se grave pas") + '</h3><p class="gr-texte">' + esc(tx(d.rate || { fr: "Relis les récits, puis réessaie." })) + '</p><button type="button" class="btn large" data-a="re">' + __("Relire les récits") + '</button><button type="button" class="btn sec large" data-a="non">' + __("Plus tard") + "</button>";
           bas.querySelector('[data-a="re"]').onclick = function () { k = 0; page(); };
           bas.querySelector('[data-a="non"]').onclick = function () { lecture = null; panneau(); };
         }
@@ -6514,7 +6532,7 @@ function demarrerJeu() {
         var noms = r.ouvre.map(function (c) { return tx(C.parId[c].nom); }), h = '<div class="eyebrow">' + __("Passage gravé") + (score ? " · " + score : "") + '</div><div class="gr-alyca"></div>';
         if (r.succes) h += '<div class="gr-prix"><div class="gr-prix-img">' + illustrationSucces(r.succes, 68, false) + '</div><div><div class="eyebrow">' + __("Succès") + (r.objet ? " · " + __("objet gagné") : "") + '</div><h3 class="gr-titre">' + esc(tx(r.succes.nom)) + '</h3><p class="gr-texte">' + esc(tx(r.succes.description)) + "</p>" + (r.objet ? '<p class="gr-texte"><b>' + esc(tx(r.objet.nom)) + "</b> : " + esc(tx(r.objet.notice)) + '</p><p class="ep-sources"><b>' + __("Source") + "</b> : " + esc(r.objet.source) + "</p>" : "") + (r.credits ? '<p class="gr-texte">+' + r.credits.n + " " + __("crédits") + "</p>" : "") + "</div></div>";
         h += (noms.length ? '<p class="gr-texte"><b>' + __("Savoirs ouverts") + "</b> : " + esc(noms.join(", ")) + ".</p>" : "") + '<button type="button" class="btn large" data-a="ok">' + __("Reprendre la torche") + "</button>";
-        bas.innerHTML = h; bas.scrollTop = 0;
+        z.classList.add("lit"); bas.innerHTML = h; bas.scrollTop = 0;
         var bu = d.alyca && comite({ id: "grotte_" + d.id, texte: d.alyca, contexte: "accueil", aparte: false }); if (bu) bas.querySelector(".gr-alyca").appendChild(bu);
         bas.querySelector('[data-a="ok"]').onclick = function () { lecture = null; message = d.ouvert ? tx(d.ouvert) : ""; panneau(); };
       }
