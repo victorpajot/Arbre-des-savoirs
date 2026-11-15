@@ -1764,6 +1764,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-grand-bilan { display: flex; flex-wrap: wrap; gap: 8px; font-size: 19px; margin: 6px 0; } .ile-grand-bilan span { padding: 6px 12px; border-radius: 12px; background: rgba(127,127,127,.14); } p.ile-risque { color: #B5531F; font-weight: 600; }
 .ile-b-titre { margin: 16px 0 0; font-size: 16px; color: var(--muted); }
 .ile-amen-qs { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; } .ile-amen-q { border: 1px solid var(--line); border-left: 6px solid var(--c, #888); border-radius: 12px; padding: 0 12px; } .ile-amen-q[open] { padding-bottom: 12px; }
+.ile-quetes { margin-top: 10px; --c: #2E8B57; } .ile-quetes .ile-passage { margin: 0 0 10px; }
 .ile-amen-q summary { display: flex; align-items: center; gap: 10px; padding: 12px 0; cursor: pointer; list-style: none; } .ile-amen-q summary::-webkit-details-marker { display: none; }
 .ile-amen-q summary b { font-size: 17px; flex: 1; min-width: 0; } .ile-amen-q summary span { font-size: 15px; color: var(--muted); text-align: right; } .ile-amen-q.pret summary span { color: #2E8B57; font-weight: 700; }
 .ile-amen-q summary i { font-style: normal; font-size: 22px; color: var(--muted); transition: transform .15s; } .ile-amen-q[open] summary i { transform: rotate(90deg); } .ile-amen-q .ile-amens { margin: 8px 0 0; } .ile-amen-q > .btn { margin-bottom: 4px; }
@@ -6865,20 +6866,23 @@ function demarrerJeu() {
     var epr = a.epreuve && M.epreuveIle(C, a.epreuve);
     var qAge = a.epreuve ? queteActive() : null;
     // Les épreuves qui gardent un aménagement (la hache des bûcherons) : leur quête, puis l'épreuve.
+    // Victor (2026-11-15) : « regroupe les quêtes dans un onglet fermé ». Un seul bloc replié, qui dit combien sont ouvertes.
+    var hq = "", nOuv = 0;
     epreuvesAttente().filter(function (x) { return x !== a.epreuve; }).forEach(function (x) {
       var ex = M.epreuveIle(C, x), qx = M.queteIle(C, P, x), amx = C.ile.amenagements.filter(function (y) { return y.id === ex.amenagement; })[0];
-      if (qx && !qx.complete) h += blocQuete(qx, true);
-      else h += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(ex.nom)) + "</h3><p>" + esc(tx(ex.accroche || { fr: "" })) + (amx ? " " + __("Elle ouvre : ") + "<b>" + esc(tx(amx.nom)).toLowerCase() + "</b>." : "") + '</p><button type="button" class="btn large" data-ep="' + esc(x) + '">' + esc(tx(ex.nom)) + "</button></div>";
+      nOuv++; if (qx && !qx.complete) hq += blocQuete(qx, true);
+      else hq += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(ex.nom)) + "</h3><p>" + esc(tx(ex.accroche || { fr: "" })) + (amx ? " " + __("Elle ouvre : ") + "<b>" + esc(tx(amx.nom)).toLowerCase() + "</b>." : "") + '</p><button type="button" class="btn large" data-ep="' + esc(x) + '">' + esc(tx(ex.nom)) + "</button></div>";
     });
     var fermees = M.epreuvesBloquees(C, P, maintenant());
-    fermees.slice(0, 2).forEach(function (b) {
+    fermees.forEach(function (b) {
       var ex = M.epreuveIle(C, b.id), amx = C.ile.amenagements.filter(function (y) { return y.id === b.amenagement; })[0]; if (!ex || !amx) return;
       var pq = b.manque.length ? __("Il manque : ") + b.manque.map(function (m) { var rs = (C.ile.ressources || []).filter(function (r) { return r.id === m.r; })[0]; return "<b>" + nb(Math.ceil(m.il_faut - m.a)) + " " + (m.r === "credits" ? __("crédits") : rs ? esc(tx(rs.nom)).toLowerCase() : esc(m.r)) + "</b>"; }).join(", ") + "."
         : b.savoir ? __("Il faut d'abord maîtriser « ") + esc(tx(C.parId[b.savoir].nom)) + " »." : __("Son quartier n'est pas encore ouvert.");
-      h += '<div class="ile-passage attend"><div class="eyebrow">🔒 ' + __("Quête fermée") + "</div><h3>" + esc(tx(ex.nom)) + "</h3><p>" + __("Elle s'ouvrira quand l'île aura de quoi bâtir : ") + "<b>" + esc(tx(amx.nom)).toLowerCase() + "</b>. " + pq + " " + __("L'épreuve réussie, le chantier démarre aussitôt.") + "</p></div>";
+      hq += '<div class="ile-passage attend"><div class="eyebrow">🔒 ' + __("Quête fermée") + "</div><h3>" + esc(tx(ex.nom)) + "</h3><p>" + __("Elle s'ouvrira quand l'île aura de quoi bâtir : ") + "<b>" + esc(tx(amx.nom)).toLowerCase() + "</b>. " + pq + " " + __("L'épreuve réussie, le chantier démarre aussitôt.") + "</p></div>";
     });
-    if (fermees.length > 2) h += '<p class="ile-vie-note">🔒 ' + __("Fermées aussi, faute de quoi bâtir : ") + fermees.slice(2).map(function (b) { return esc(tx(M.epreuveIle(C, b.id).nom)).toLowerCase(); }).join(", ") + ".</p>";
-    if (qAge) h += blocQuete(qAge, true);
+    if (qAge) { nOuv++; hq += blocQuete(qAge, true); }
+    if (hq) h += '<details class="ile-amen-q ile-quetes' + (nOuv ? " pret" : "") + '"><summary><b>🔍 ' + __("Quêtes") + "</b><span>" + (nOuv ? nOuv + (nOuv > 1 ? __(" ouvertes") : __(" ouverte")) : __("aucune ouverte")) + (fermees.length ? " · " + fermees.length + (fermees.length > 1 ? __(" fermées") : __(" fermée")) : "") + '</span><i aria-hidden="true">›</i></summary>' + hq + "</details>";
+    if (qAge) {}
     else if (epr && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(epr.nom)) + "</h3><p>" + esc(tx(epr.accroche || { fr: "" })) + " " + __("Elle ouvre : ") + "<b>" + esc(tx(G.suivant.nom)).toLowerCase() + '</b>.</p><button type="button" class="btn large" data-a="epreuve">' + esc(tx(epr.nom)) + "</button></div>";
     else if (a.pret && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("Tout l'indispensable est couvert. Il reste en option : ") + a.negliges.map(function (b) { return "<b>" + esc(tx(b.nom)).toLowerCase() + "</b>"; }).join(__(" et ")) + ". " + __("Tu peux les apprendre d'abord, ou passer tout de suite et en payer le prix.") + '</p><button type="button" class="btn large" data-a="passer">' + __("Passer à : ") + esc(tx(G.suivant.nom)) + "</button></div>";
     else if (G.suivant && !a.avenir) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("S'ouvre quand tous les besoins sans la mention « optionnel » sont couverts.") + "</p></div>";
@@ -6907,7 +6911,7 @@ function demarrerJeu() {
   function htmlNatureIle(R) {
     if (!R.nature || !R.nature.length) return "";
     var sait = !C.parId[SAVOIR_ILE] || M.estMaitrisee(P, SAVOIR_ILE);
-    if (!sait) return "";
+    // Victor (2026-11-15) : « je ne vois pas les ressources ». Elles se montrent toujours ; les chiffres et les réglages viennent avec le savoir.
     var h = '<h3 class="ile-h2" style="margin:14px 0 0">' + __("Ce que l'île peut donner") + "</h3>";
     if (!sait) h += '<p class="ile-vie-note">' + __("La forêt et les poissons ne sont pas sans fin, mais personne ici ne sait encore les compter. Apprends « ") + esc(tx(C.parId[SAVOIR_ILE].nom)) + __(" » pour voir ce qu'il en reste et régler ce qu'on y prend.") + "</p>";
     // Victor (2026-11-15) : forêt, prairie et buissons se partagent l'île, et le partage bouge avec ce qu'on y fait.
@@ -6916,12 +6920,13 @@ function demarrerJeu() {
       var MIL = [["foret", "🌲", __("Forêt"), "#3F7A45", __("le bois, et les sangliers")], ["prairie", "🌾", __("Prairie"), "#A9C96A", __("les bisons")], ["buissons", "🫐", __("Buissons"), "#7A5C9A", __("les baies, et l'abri des jeunes arbres")]];
       function tend(k) { var d = k === "foret" ? 0 : (k === "buissons" ? 1 : -1) * (Mi.cible - Mi.b); return d > 0.02 ? " ↗" : d < -0.02 ? " ↘" : ""; }
       h += '<div class="ile-nat ile-milieux"><div class="ile-nat-tete"><b>' + __("Les milieux de l'île") + '</b></div><div class="ile-mil-barre">' + MIL.map(function (m) { return '<b style="width:' + (100 * Mi[m[0]]).toFixed(1) + "%;background:" + m[3] + '"></b>'; }).join("") + "</div><small>" +
-        MIL.map(function (m) { var pcm = Math.round(100 * Mi[m[0]]), ecart = Mi[m[0]] / Mi.ref[m[0]]; return '<span class="ile-mil-l"><i style="background:' + m[3] + '"></i>' + m[1] + " <b>" + m[2] + " " + pcm + " %" + tend(m[0]) + "</b> · " + m[4] + (ecart > 1.2 ? " (" + __("en avance") + ")" : ecart < 0.8 ? " (" + __("en recul") + ")" : "") + "</span>"; }).join("") +
+        MIL.map(function (m) { var pcm = Math.round(100 * Mi[m[0]]), ecart = Mi[m[0]] / Mi.ref[m[0]]; return '<span class="ile-mil-l"><i style="background:' + m[3] + '"></i>' + m[1] + " <b>" + m[2] + (sait ? " " + pcm + " %" : "") + tend(m[0]) + "</b> · " + m[4] + (ecart > 1.2 ? " (" + __("en avance") + ")" : ecart < 0.8 ? " (" + __("en recul") + ")" : "") + "</span>"; }).join("") +
         __("Rien n'est bon ou mauvais en soi : couper la forêt ouvre de la prairie, donc plus de bisons et moins de sangliers ; chasser les bisons laisse les buissons gagner, donc plus de baies et une forêt qui repousse mieux, mais moins de prairie.") + "</small></div>";
     }
     R.nature.forEach(function (n) {
       var pc = Math.round(100 * n.part), mot = n.gibier ? (n.eteint ? __("Disparus pour toujours") : n.prolifere ? (n.plafond < n.max ? __("À l'étroit, ils débordent") : __("Prolifèrent")) : n.affame ? __("Meurent de faim") : n.betes < 3 ? __("Au bord de l'extinction") : __("En équilibre")) : n.etat === "epuise" ? __("Épuisé") : n.etat === "rouge" ? __("Au plus bas") : n.etat === "orange" ? __("On prend trop") : __("Se renouvelle");
-      h += '<div class="ile-nat ' + n.etat + '"><div class="ile-nat-tete"><b>' + n.icone + " " + esc(tx(n.nom)) + '</b><span class="ile-nat-etat">' + (sait ? (n.gibier ? (n.eteint ? "" : n.betes + " · ") : pc + " % · ") + mot : "?") + "</span></div>";
+      if (!sait && n.gibier) { h += '<div class="ile-nat ' + n.etat + '"><div class="ile-nat-tete"><b>' + n.icone + " " + esc(tx(n.nom)) + '</b><span class="ile-nat-etat">' + mot + "</span></div><small>" + esc(tx(n.usage || { fr: "" })) + "</small></div>"; return; }
+      h += '<div class="ile-nat ' + n.etat + '"><div class="ile-nat-tete"><b>' + n.icone + " " + esc(tx(n.nom)) + '</b><span class="ile-nat-etat">' + (sait ? (n.gibier ? (n.eteint ? "" : n.betes + " · ") : pc + " % · ") + mot : n.gibier || n.etat !== "vert" ? mot : "?") + "</span></div>";
       if (sait) {
         h += '<i><b style="width:' + pc + "%;background:" + (n.etat === "vert" ? (n.couleur || "#3F8F5A") : n.etat === "orange" ? "#C98A1E" : "#C8553D") + '"></b></i><small>' +
           (n.gibier ? (n.eteint ? __("Il n'en reste aucun. Une espèce disparue ne revient pas.") + " " : "") + esc(tx(n.usage || { fr: "" })) + (n.viande && !n.eteint ? " " + __("Viande : +{n} de nourriture par bête.", { n: n.viande }) : "") :
