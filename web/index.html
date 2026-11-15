@@ -2424,6 +2424,7 @@ function demarrerJeu() {
     p_lissoir: '<path d="M-11 8 C-12 5 -9 3 -7 3 L6 -8 C9 -11 13 -7 10 -4 L-4 8 C-5 11 -10 11 -11 8 Z" fill="#EFE6D2" stroke="#B9AC8E" stroke-width="1"/><path d="M-5 4 L7 -6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>',
     p_percoir: '<path d="M-10 4 L-6 -3 L1 -2 L11 -9 L4 3 L-2 8 L-8 9 Z" fill="#6B6257"/><path d="M-6 -3 L1 -2 L11 -9 L1 1 Z" fill="#9A9085"/>',
     p_aiguille: '<path d="M-11 10 L9 -9" stroke="#B9AC8E" stroke-width="3.4" stroke-linecap="round"/><path d="M-11 10 L9 -9" stroke="#EFE6D2" stroke-width="2" stroke-linecap="round"/><ellipse cx="7.4" cy="-7.4" rx="1.5" ry=".8" transform="rotate(-44 7.4 -7.4)" fill="#3A3226"/><path d="M8 -8 C13 -6 12 2 6 6" stroke="#8A5E34" stroke-width="1" fill="none"/>',
+    peaux: '<path d="M-9 -8 L-4 -6 L0 -8 L4 -6 L9 -8 L8 -1 L10 6 L5 5 L3 9 L-3 9 L-5 5 L-10 6 L-8 -1 Z" fill="#8A5A2B"/><path d="M-5 -4 L0 -5 L5 -4 L5 3 L0 5 L-5 3 Z" fill="#A67444"/><path d="M-3 -1 h2 M1 1 h2 M-2 2 h1" stroke="#6E4A26" stroke-width="1" stroke-linecap="round"/>',
     gaine: '<path d="M-9 -3 C-9 -6 -6 -7 -3 -6.5 L7 -4 C10 -3 11 1 9 4 C8 6 6 7 3 6.5 L-6 4 C-9 3 -9 0 -9 -3 Z" fill="#E6D9BC" stroke="#8E7C52" stroke-width="1.4"/><ellipse cx="-5.5" cy="-1" rx="2.2" ry="3" fill="#8E7C52"/>'
   };
   DESSINS_QUETE.pierres = DESSINS_QUETE.lests;
@@ -2533,7 +2534,7 @@ function demarrerJeu() {
     }
     function objets() {
       var q = queteActive();
-      svg.querySelector(".ex-objets").innerHTML = (X ? '<g transform="translate(' + FX.toFixed(1) + "," + FY.toFixed(1) + ') scale(.45)">' + PANIER + "</g>" : "") + baiesVues().filter(function (b) { return !(X && X.baies.indexOf(b.id) >= 0); }).map(function (b) { return '<g class="ex-baie" transform="translate(' + b.x + "," + b.y + ')">' + BUISSON + "</g>"; }).join("") + (X ? X.vus.map(function (v) { return '<g transform="translate(' + v.x.toFixed(1) + "," + v.y.toFixed(1) + ')"><path d="M0 1 V-9" stroke="#5A3B1E" stroke-width="1.3" stroke-linecap="round"/><path d="M0 -9 L7 -7 L0 -4.6 Z" fill="#D94141"/></g>'; }).join("") : "") + (q ? q.objets.filter(function (o) { return !o.pris && !(X && X.sac.indexOf(o.id) >= 0); }).map(function (o) {
+      svg.querySelector(".ex-objets").innerHTML = (X ? '<g transform="translate(' + FX.toFixed(1) + "," + FY.toFixed(1) + ') scale(.45)">' + PANIER + "</g>" : "") + baiesVues().filter(function (b) { return !(X && X.baies.indexOf(b.id) >= 0); }).map(function (b) { return '<g class="ex-baie" transform="translate(' + b.x + "," + b.y + ')">' + BUISSON + "</g>"; }).join("") + (X ? X.vus.map(function (v) { return '<g transform="translate(' + v.x.toFixed(1) + "," + v.y.toFixed(1) + ')"><path d="M0 1 V-9" stroke="#5A3B1E" stroke-width="1.3" stroke-linecap="round"/><path d="M0 -9 L7 -7 L0 -4.6 Z" fill="#D94141"/></g>'; }).join("") : "") + (q ? q.objets.filter(function (o) { return !o.chasse && !o.pris && !(X && X.sac.indexOf(o.id) >= 0); }).map(function (o) {
         var x = Math.round(o.position[0] * ILE_W), y = Math.round(o.position[1] * ILE_H);
         return '<path class="ex-brille" transform="translate(' + x + "," + y + ')" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z" fill="#FFF3B0" stroke="#E0A800" stroke-width=".5" pointer-events="none"/>' + svgObjetQuete(o, x, y, 0.42); }).join("") : "");
     }
@@ -2564,7 +2565,7 @@ function demarrerJeu() {
     // Victor (2026-11-13) : l'expédition. Un habitant part du village ; on touche la carte, il y va. Il ne voit qu'autour
     // de lui, le brouillard se referme derrière. Ce qu'il ramasse ne compte qu'une fois rapporté au village. Des
     // prédateurs rôdent dans le brouillard : s'ils le rattrapent, il est perdu (un habitant de moins), son sac aussi.
-    var X = null, raf = 0, acteurs = svg.querySelector(".ex-acteurs"), EXP = { vue: 34, vite: 21, rode: 8, chasse: 15, flair: 22, lache: 40, betes: 3, portee: 9, dos: 6, surprise: 1 / 3, repere: 1 / 6 };
+    var X = null, raf = 0, acteurs = svg.querySelector(".ex-acteurs"), EXP = { vue: 34, vite: 21, rode: 8, chasse: 15, flair: 22, lache: 40, betes: 3, portee: 9, dos: 6, surprise: 1 / 3, repere: 1 / 6, bisons: 3, broute: 4, detale: 19, craint: 40, voit: 16, coup: 0.6 };
     var fondes = I.quartiers.filter(function (q) { return (q.fonde || q.camp) && q.position; });
     var foyer = fondes.slice().sort(function (a, b) { return (b.habitants || 0) - (a.habitants || 0); })[0] || null;
     var FX = foyer ? foyer.position[0] * ILE_W : 0, FY = foyer ? foyer.position[1] * ILE_H + 8 : 0;
@@ -2670,13 +2671,26 @@ function demarrerJeu() {
     function frapper(b) {
       X.cible = null; X.coup = performance.now(); X.recharge = X.coup + 1300; X.tx = X.x; X.ty = X.y;
       X.sens = b.x < X.x ? -1 : 1; X.vue = allure(b.x - X.x, b.y - X.y);
+      // Victor (2026-11-15) : les peaux de l'abri se prennent sur une bête abattue, bison ou prédateur.
+      if (b.bison) {
+        if (Math.random() < EXP.coup) { b.ko = true; message = prendrePeau() ? __("Le bison s'effondre. Tu as sa peau : reste à la rapporter au village.") : __("Le bison s'effondre. Tu n'as pas besoin de sa peau pour l'instant."); }
+        else { b.fuite = performance.now() + 5000; message = __("Raté ! Le bison détale."); }
+        panneau(); return;
+      }
       var repere = b.chasse;
       // Torche en main, on se défend mieux (Victor, 2026-11-15) : le coup porte bien plus souvent.
       var arme = X.torche && TORCHE ? TORCHE : null;
-      if (Math.random() < (repere ? Math.max(EXP.repere, arme ? arme.repere : 0) : Math.max(EXP.surprise, arme ? arme.surprise : 0))) { b.ko = true; b.chasse = false; message = repere ? __("En plein museau ! Le prédateur détale. Tu as eu de la chance.") : __("Il n'a rien vu venir : un coup de bâton, et le prédateur détale."); }
+      if (Math.random() < (repere ? Math.max(EXP.repere, arme ? arme.repere : 0) : Math.max(EXP.surprise, arme ? arme.surprise : 0))) { b.ko = true; b.chasse = false; message = prendrePeau() ? __("Le prédateur s'effondre. Tu as sa peau : reste à la rapporter au village.") : repere ? __("En plein museau ! Le prédateur détale. Tu as eu de la chance.") : __("Il n'a rien vu venir : un coup de bâton, et le prédateur détale."); }
       else { b.chasse = true; b.alerte = performance.now() + 1500; message = repere ? __("Raté ! Il esquive et revient sur toi. Cours !") : __("Raté ! Maintenant il t'a vu. Cours !"); }
       panneau();
     }
+    function prendrePeau() {
+      var q = queteActive(), o = q && q.objets.filter(function (x) { return x.chasse && !x.pris && X.sac.indexOf(x.id) < 0; })[0];
+      if (!o) return false; X.sac.push(o.id); objets(); return true;
+    }
+    // Le bison : de profil seulement, il se retourne selon son sens de marche.
+    var BISON = '<ellipse cy="4.6" rx="6.4" ry="1.5" fill="rgba(0,0,0,.25)"/><path d="M-6.6 4.4 L-6.8 -1 Q-6 -4.4 -1 -5.2 Q3.4 -6.4 5.6 -3.4 L7.6 -1.4 L7.2 1.4 L5.4 2 L4.8 4.4 L3.4 4.4 L3.2 1.8 L-3 2 L-3.4 4.4 L-4.8 4.4 L-5 1.6 Z" fill="#6E4A26"/><path d="M-1 -5.2 Q3.4 -6.4 5.6 -3.4 L5 .6 L1 1 Z" fill="#4A3018"/><path d="M6 -3.4 Q7.2 -5 6.2 -5.8" stroke="#EFE6D2" stroke-width=".8" fill="none" stroke-linecap="round"/><circle cx="6" cy="-1.6" r=".5" fill="#14151A"/><path d="M-6.8 -1 L-8 1.4" stroke="#4A3018" stroke-width=".9" stroke-linecap="round"/>';
+    function svgBison() { return '<g class="ex-v" data-v="profil">' + BISON + "</g>"; }
     function habiller() { X.graine = 1 + Math.floor(Math.random() * 1e6); X.ee.setAttribute("class", "ex-explo"); X.ee.querySelector(".ex-corps").innerHTML = svgExplo(X.graine, X.torche); X.vue = "face"; X.vueMontree = null; X.marche = false; X.ev = [].slice.call(X.ee.querySelectorAll(".ex-v")); X.bt = [].slice.call(X.ee.querySelectorAll(".ex-baton")); X.coup = 0; X.cible = null; }
     function finExpe() { cancelAnimationFrame(raf); X = null; masquer(); z.classList.remove("expe"); acteurs.innerHTML = ""; var pe = z.querySelector(".ex-perdu"); if (pe) pe.remove(); }
     // Les prédateurs ont aussi trois allures : de profil, de face (ils descendent), de dos (ils montent).
@@ -2702,11 +2716,13 @@ function demarrerJeu() {
       torche = torche === true;
       X = { torche: torche, x: FX, y: FY, tx: FX, ty: FY, sac: [], vus: [], baies: [], t: performance.now(), sens: 1, betes: [], gel: 0 };
       for (var n = 0; n < EXP.betes; n++) { var p = pointLibre(); X.betes.push({ x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1, vue: "profil" }); }
-      acteurs.innerHTML = '<circle class="ex-cible" r="2.4"/>' + X.betes.map(function () { return '<g class="ex-bete"><g class="ex-corps">' + svgLoup() + '</g><text class="ex-alerte" y="-7" text-anchor="middle" font-size="7" font-weight="800" fill="#D92B2B">!</text></g>'; }).join("") +
+      // Victor (2026-11-15) : des bisons se baladent aussi. Ils ne chassent personne et évitent les prédateurs.
+      for (n = 0; n < EXP.bisons; n++) { p = pointLibre(); X.betes.push({ bison: true, x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1, vue: "profil" }); }
+      acteurs.innerHTML = '<circle class="ex-cible" r="2.4"/>' + X.betes.map(function (b) { return '<g class="ex-bete' + (b.bison ? " ex-bison" : "") + '"><g class="ex-corps">' + (b.bison ? svgBison() : svgLoup()) + '</g><text class="ex-alerte" y="-7" text-anchor="middle" font-size="7" font-weight="800" fill="#D92B2B">!</text></g>'; }).join("") +
         '<g class="ex-explo"><g class="ex-corps"></g></g>';
       X.eb = [].slice.call(acteurs.querySelectorAll(".ex-bete")); X.ee = acteurs.querySelector(".ex-explo"); X.ec = acteurs.querySelector(".ex-cible"); habiller(); preparerDevant();
       z.classList.add("expe"); S.k = Math.max(S.k, 4.6); S.x = FX; S.y = FY;
-      message = __("Touche la carte : l'explorateur y va. Ce qu'il trouve se rapporte au panier, au centre du village. Fuis ce qui a les yeux rouges.") + (torche ? " " + __("Ta torche fait reculer les bêtes, tes coups portent mieux, et elle ouvre la grotte.") : "");
+      message = __("Touche la carte : l'explorateur y va. Ce qu'il trouve se rapporte au panier, au centre du village. Fuis ce qui a les yeux rouges.") + (queteActive() && queteActive().objets.some(function (o) { return o.chasse && !o.pris; }) ? " " + __("Pour une peau, touche un bison : approche-le par-derrière.") : "") + (torche ? " " + __("Ta torche fait reculer les bêtes, tes coups portent mieux, et elle ouvre la grotte.") : "");
       objets(); panneau(); dessiner(); appliquer(); raf = requestAnimationFrame(tour);
     }
     function dessiner() {
@@ -2719,7 +2735,7 @@ function demarrerJeu() {
       X.ec.setAttribute("cx", cx.toFixed(1)); X.ec.setAttribute("cy", cy.toFixed(1)); X.ec.setAttribute("r", vise ? "4.2" : "2.4"); X.ec.style.display = vise || Math.hypot(X.tx - X.x, X.ty - X.y) > 2 ? "" : "none";
       if (X.visee !== !!vise) { X.visee = !!vise; X.ec.setAttribute("class", "ex-cible" + (vise ? " attaque" : "")); }
       batonner(); masquer();
-      X.betes.forEach(function (b, i) { var e = X.eb[i], cl = "ex-bete" + (b.ko ? " ko" : b.chasse ? " chasse" : ""); if (b.cl !== cl) { b.cl = cl; e.setAttribute("class", cl); } if (b.ko) return; e.setAttribute("transform", "translate(" + b.x.toFixed(1) + "," + b.y.toFixed(1) + ")"); e.querySelector(".ex-corps").setAttribute("transform", "scale(" + ((b.vue === "profil" ? b.sens : 1) * f).toFixed(3) + "," + f.toFixed(3) + ")"); montrer(e, b); });
+      X.betes.forEach(function (b, i) { var e = X.eb[i], cl = "ex-bete" + (b.bison ? " ex-bison" : "") + (b.ko ? " ko" : b.chasse ? " chasse" : ""); if (b.cl !== cl) { b.cl = cl; e.setAttribute("class", cl); } if (b.ko) return; e.setAttribute("transform", "translate(" + b.x.toFixed(1) + "," + b.y.toFixed(1) + ")"); e.querySelector(".ex-corps").setAttribute("transform", "scale(" + ((b.vue === "profil" ? b.sens : 1) * f).toFixed(3) + "," + f.toFixed(3) + ")"); montrer(e, b); });
 
     }
     // Pris : une courte scène (le prédateur bondit, l'explorateur tombe, le bandeau le dit), puis un autre habitant,
@@ -2735,7 +2751,7 @@ function demarrerJeu() {
     }
     function relever() {
       X.gel = 0; X.x = X.tx = FX; X.y = X.ty = FY; habiller();
-      X.betes.forEach(function (b) { b.chasse = false; b.alerte = 0; if (Math.hypot(b.x - FX, b.y - FY) < 110) { var p = pointLibre(); b.x = b.wx = p[0]; b.y = b.wy = p[1]; } });
+      X.betes.forEach(function (b) { b.chasse = false; b.alerte = 0; if (!b.bison && Math.hypot(b.x - FX, b.y - FY) < 110) { var p = pointLibre(); b.x = b.wx = p[0]; b.y = b.wy = p[1]; } });
       S.x = FX; S.y = FY;
     }
     function tour(t) {
@@ -2751,6 +2767,17 @@ function demarrerJeu() {
       X.betes.forEach(function (b) {
         if (b.ko) return;
         var d = Math.hypot(b.x - X.x, b.y - X.y), ax = b.x, ay = b.y;
+        if (b.bison) {
+          // Il broute et va d'un pré à l'autre ; un prédateur proche, ou l'explorateur vu de face, et il détale à l'opposé.
+          var danger = null, dm = EXP.craint;
+          X.betes.forEach(function (o) { if (o.bison || o.ko) return; var dd = Math.hypot(o.x - b.x, o.y - b.y); if (dd < dm) { dm = dd; danger = o; } });
+          if (!danger && (performance.now() < (b.fuite || 0) || (d < EXP.voit && (X.x - b.x) * (b.dx || 0) + (X.y - b.y) * (b.dy || 0) > 0))) danger = X;
+          if (danger) { var af = Math.atan2(b.y - danger.y, b.x - danger.x), fx = b.x + Math.cos(af) * 30, fy = b.y + Math.sin(af) * 30; if (!praticable(fx, fy)) { var pb = pointLibre(); fx = pb[0]; fy = pb[1]; } b.wx = fx; b.wy = fy; pas(b, fx, fy, EXP.detale * dt); }
+          else if (!pas(b, b.wx, b.wy, EXP.broute * dt)) { var pw = pointLibre(); b.wx = pw[0]; b.wy = pw[1]; }
+          if (abri(b.x, b.y, 46)) { b.x = ax; b.y = ay; var pv = pointLibre(); b.wx = pv[0]; b.wy = pv[1]; }
+          if (Math.abs(b.x - ax) + Math.abs(b.y - ay) > 0.01) { b.dx = b.x - ax; b.dy = b.y - ay; }
+          return;
+        }
         // Un prédateur qui rôde ne voit que devant lui : dans son dos, on peut l'approcher à portée de bâton.
         var face = (X.x - b.x) * (b.dx || 0) + (X.y - b.y) * (b.dy || 0) > 0;
         var nowT = performance.now(), effraye = (b.peur || 0) > nowT;
@@ -2769,7 +2796,7 @@ function demarrerJeu() {
       else {
         var q = queteActive();
         if (q) q.objets.forEach(function (o) {
-          if (o.pris || X.sac.indexOf(o.id) >= 0 || Math.hypot(o.position[0] * ILE_W - X.x, o.position[1] * ILE_H - X.y) > 7) return;
+          if (o.chasse || o.pris || X.sac.indexOf(o.id) >= 0 || Math.hypot(o.position[0] * ILE_W - X.x, o.position[1] * ILE_H - X.y) > 7) return;
           X.sac.push(o.id); message = tx(o.trouve || o.nom) + " " + __("Reste à le rapporter au village."); objets(); panneau();
         });
         // La grotte des mythologies : on y entre en marchant sur sa bouche. L'expédition attend dehors, puis reprend.
@@ -5826,6 +5853,17 @@ function demarrerJeu() {
       else d += '<rect x="' + (x - 14) + '" y="' + (y - 10) + '" width="28" height="10" fill="#8E9299"/><rect x="' + (x - 9) + '" y="' + (y - 20) + '" width="18" height="10" fill="#A3A7AE"/><rect x="' + (x - 5) + '" y="' + (y - 28) + '" width="10" height="8" fill="#B9BDC4"/>';
       return '<g class="ile-inst" data-comp="' + esc(inst.comp) + '" role="button" tabindex="0" aria-label="' + esc(tx(inst.nom)) + '"><rect x="' + (x - 28) + '" y="' + (y - 56) + '" width="56" height="62" fill="transparent"/>' + d + "</g>";
     }
+    // Victor (2026-11-15) : le cercle des saisons n'est plus un logo posé dans l'herbe. Des pierres dressées en cercle,
+    // un dolmen au milieu, et le logo en petit entre ses deux montants.
+    function dolmen(inst, x, y) {
+      function R(dx, dy, w, h, c) { return '<rect x="' + (x + dx) + '" y="' + (y + dy) + '" width="' + w + '" height="' + h + '" fill="' + c + '"/>'; }
+      var d = '<ellipse cx="' + x + '" cy="' + (y - 1) + '" rx="40" ry="9" fill="rgba(20,30,20,.28)"/>' +
+        R(-36, -30, 7, 18, "#9EA3AB") + R(-36, -30, 3, 18, "#B9BDC4") + R(29, -30, 7, 18, "#9EA3AB") + R(29, -30, 3, 18, "#B9BDC4") + R(-8, -52, 6, 12, "#A9AEB6") + R(6, -50, 5, 10, "#A9AEB6") +
+        R(-21, -36, 9, 34, "#8E9299") + R(-21, -36, 3, 34, "#A9AEB6") + R(12, -36, 9, 34, "#8E9299") + R(12, -36, 3, 34, "#A9AEB6") + R(-26, -44, 52, 9, "#7C8088") + R(-26, -44, 52, 3, "#A3A7AE") + R(-26, -36, 52, 1, "#5E626A");
+      var logo = svgInstallation(inst, x, y - 3, 20) || "";
+      d += logo.replace(/<ellipse[^>]*\/>/, "") + R(-44, -14, 8, 14, "#8E9299") + R(-44, -14, 3, 14, "#B9BDC4") + R(36, -14, 8, 14, "#8E9299") + R(36, -14, 3, 14, "#B9BDC4") + R(-30, -8, 6, 8, "#7C8088") + R(24, -8, 6, 8, "#7C8088");
+      return '<g class="ile-inst" data-comp="' + esc(inst.comp) + '" role="button" tabindex="0" aria-label="' + esc(tx(inst.nom)) + '"><rect x="' + (x - 46) + '" y="' + (y - 56) + '" width="92" height="62" fill="transparent"/>' + d + "</g>";
+    }
     var nd = nbVisibles(q.habitants), plan = []; for (var i = 0; i < nd; i++) plan.push(danseur(i, nd));
     // Ce que le campement a bâti se voit derrière le feu : abris, hutte, poste de guet.
     var faits = [], pq = {};
@@ -5835,7 +5873,7 @@ function demarrerJeu() {
       plan.push([y - 40, '<g data-amen="' + esc(a.id) + '" shape-rendering="crispEdges">' + svgAmenagement(a, Math.round(x), Math.round(y), 40) + "</g>"]); });
     poses.forEach(function (inst, i) {
       var l = Math.floor(i / PARL), n = Math.min(PARL, poses.length - l * PARL), x = Math.round(W * ((i % PARL) + 0.5) / n), y = 286 + l * 84;
-      plan.push([y, '<g shape-rendering="crispEdges">' + (svgInstallation(inst, x, y, 50) || secours(inst, x, y)) + "</g>"]);
+      plan.push([y, '<g shape-rendering="crispEdges">' + (inst.comp === "astro.nebra" ? dolmen(inst, x, y) : svgInstallation(inst, x, y, 50) || secours(inst, x, y)) + "</g>"]);
       etiq += '<text x="' + x + '" y="' + (y + 15) + '" text-anchor="middle" font-size="11" font-weight="800" fill="#3A2E22" style="paint-order:stroke" stroke="rgba(255,253,244,.94)" stroke-width="3" stroke-linejoin="round" pointer-events="none">' + esc(tx(inst.nom)) + "</text>"; });
     plan.push([150, '<g data-comp="ile.feu" class="ile-flamme' + ((M.agesIle(C, P) || { age: {} }).age.epreuve ? " froid" : "") + '" shape-rendering="crispEdges">' + svgAmenagement({ id: "feu", dessin: "foyer" }, 180, 158, 70) + "</g>"]);
     plan.sort(function (u, v) { return u[0] - v[0]; });
@@ -6363,7 +6401,15 @@ function demarrerJeu() {
     re: '<g class="gr-v-flot"><path d="M14 62 Q60 86 106 62 L96 74 H24 Z" fill="#8A5A33"/><path d="M14 62 Q8 50 16 44 M106 62 Q112 50 104 44" stroke="#8A5A33" stroke-width="5" fill="none" stroke-linecap="round"/><g class="gr-v-pouls"><circle cx="60" cy="36" r="20" fill="#F2B632"/><circle cx="60" cy="36" r="12" fill="#FFD86B"/></g></g><path class="gr-v-vague" d="M-20 84 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0" stroke="#5E9DB8" stroke-width="4" fill="none"/>',
     osiris: '<path d="M46 86 V44 Q46 30 60 30 Q74 30 74 44 V86 Z" fill="#F2EFE4"/><circle cx="60" cy="32" r="12" fill="#5FA060"/><path d="M52 22 Q60 -6 68 22 Z" fill="#F2EFE4"/><path d="M48 20 q-6 -10 0 -16 M72 20 q6 -10 0 -16" stroke="#F2B632" stroke-width="3" fill="none" stroke-linecap="round"/><g class="gr-v-croise"><path d="M52 52 L80 40 M68 52 L40 40" stroke="#C9952A" stroke-width="4" stroke-linecap="round"/><path d="M80 40 q6 -6 2 -12" stroke="#C9952A" stroke-width="4" fill="none" stroke-linecap="round"/></g>',
     pesee: '<path d="M60 14 V78 M40 82 H80" stroke="#8A5A33" stroke-width="5" stroke-linecap="round"/><g class="gr-v-fleau"><path d="M22 26 L98 26" stroke="#C9952A" stroke-width="4" stroke-linecap="round"/><path d="M22 26 L12 52 H32 Z M98 26 L88 52 H108 Z" fill="none" stroke="#C9952A" stroke-width="2"/><path d="M10 52 Q22 64 34 52 Z M86 52 Q98 64 110 52 Z" fill="#C9952A"/><path d="M22 50 c-8 -8 -4 -14 0 -9 c4 -5 8 1 0 9 Z" fill="#C0392B"/><path d="M98 50 q-6 -12 2 -22 q6 10 -2 22 Z" fill="#F6F2EA" stroke="#8E8A80" stroke-width="1"/></g>',
-    thot: '<path d="M44 88 V56 Q44 46 60 46 Q76 46 76 56 V88 Z" fill="#F2EFE4"/><g class="gr-v-salue"><circle cx="60" cy="34" r="11" fill="#2E3440"/><path d="M68 30 Q92 34 98 56" stroke="#2E3440" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="63" cy="32" r="2" fill="#F2B632"/><path d="M50 26 Q60 8 70 26" fill="none" stroke="#C9D6E2" stroke-width="4" stroke-linecap="round"/></g><rect x="78" y="62" width="22" height="16" rx="2" fill="#E8D9A8"/><path class="gr-v-ecrit" d="M82 68 h14" stroke="#5E3F20" stroke-width="2"/><path class="gr-v-ecrit gr-v-apres" d="M82 73 h10" stroke="#5E3F20" stroke-width="2"/>',
+    thot: '<rect width="120" height="92" fill="#E9D9A6"/><path d="M0 5 H120 M0 87 H120" stroke="#B58B52" stroke-width="2"/>' +
+      '<path d="M40 79 H66 L70 92 H36 Z" fill="#F7F3E6"/><path d="M40 79 H66" stroke="#C9952A" stroke-width="3"/><path d="M36 54 L70 54 L65 80 L41 80 Z" fill="#B5673A"/><rect x="48" y="40" width="9" height="13" fill="#B5673A"/>' +
+      '<path d="M36 54 L48 70 L80 64" stroke="#B5673A" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="78" y="56" width="30" height="24" fill="#FBF6E6" stroke="#B58B52" stroke-width="1.5"/>' +
+      '<path class="gr-v-ecrit" d="M83 63 h20" stroke="#1E1B22" stroke-width="2"/><path class="gr-v-ecrit gr-v-apres" d="M83 69 h15" stroke="#1E1B22" stroke-width="2"/><path d="M83 75 h8" stroke="#B5472A" stroke-width="2"/>' +
+      '<path d="M70 54 L80 46 L92 56" stroke="#B5673A" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M95 51 L89 62" stroke="#5E3F20" stroke-width="2" stroke-linecap="round"/>' +
+      '<path d="M38 55 Q53 66 69 55 L67 49 Q53 58 40 49 Z" fill="#2F8F8A"/><path d="M39 52 Q53 62 68 52" stroke="#F2B632" stroke-width="1.6" fill="none"/>' +
+      '<g class="gr-v-salue"><path d="M41 28 Q37 42 38 56 L47 56 L47 30 Z M56 36 L63 36 L63 57 L56 57 Z" fill="#243B6B"/><path d="M41 30 Q43 15 57 15 Q65 16 66 25 L47 32 Z" fill="#243B6B"/><path d="M42 33 h5 M41 39 h6 M40 45 h7 M56 42 h7 M56 48 h7" stroke="#F2B632" stroke-width="1.2"/>' +
+      '<circle cx="58" cy="27" r="8" fill="#1F2A30"/><path d="M62 21 Q86 20 97 45 Q82 31 62 32 Z" fill="#1F2A30"/><ellipse cx="59.5" cy="25" rx="2.8" ry="1.7" fill="#fff"/><circle cx="60" cy="25" r="1.1" fill="#1E1B22"/><path d="M56 25 L50 26" stroke="#1E1B22" stroke-width="1.2" stroke-linecap="round"/>' +
+      '<path d="M45 13 Q57 25 69 13 Q57 18 45 13 Z" fill="#F2B632" stroke="#C9952A" stroke-width=".8"/><circle cx="57" cy="9" r="5.5" fill="#F7F3E3" stroke="#C9952A" stroke-width="1.2"/></g>',
     sekhmet: '<path d="M44 88 V58 Q44 48 60 48 Q76 48 76 58 V88 Z" fill="#B23A3A"/><circle cx="60" cy="36" r="14" fill="#D9A441"/><path d="M48 28 L46 18 L54 24 M72 28 L74 18 L66 24" fill="#D9A441" stroke="#D9A441" stroke-width="3" stroke-linejoin="round"/><g class="gr-v-cligne"><circle cx="55" cy="34" r="2" fill="#2B2B33"/><circle cx="65" cy="34" r="2" fill="#2B2B33"/></g><path d="M57 40 h6 l-3 4 Z" fill="#2B2B33"/><g class="gr-v-pouls"><circle cx="60" cy="10" r="9" fill="#E0483A"/><circle cx="60" cy="10" r="5" fill="#F2793A"/></g>'
   };
   function ouvrirGrotte(retour) {
