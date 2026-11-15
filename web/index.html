@@ -5682,7 +5682,8 @@ function demarrerJeu() {
     // Des prés plus clairs ou plus sombres, sans aucune régularité.
     for (var pr = 0; pr < 14; pr++) { var gp = graine("pre" + pr), px = 40 + gp % 280, py = 70 + (gp >>> 9) % 470; if (surTerre(px, py, 0.78)) sol += '<path d="' + tache(px, py, 26 + (gp >>> 4) % 22, 16 + (gp >>> 6) % 14, "p" + pr) + '" fill="' + (pr % 2 ? "#B4E39A" : "#96CF80") + '" opacity=".6"/>'; }
     // Le bois, le marais, le lac.
-    sol += '<path d="' + tache(BOIS[0], BOIS[1], BOIS[2] + 6, BOIS[3] + 6, "bois") + '" fill="#7FBF72"/><path d="' + tache(BOIS[0], BOIS[1], BOIS[2] - 6, BOIS[3] - 6, "bois2") + '" fill="#6FB067" opacity=".8"/>';
+    var Mil0 = I.ressources && I.ressources.milieux, kb = Mil0 ? Math.sqrt(Math.max(0.08, Math.min(1, Mil0.foret / Mil0.ref.foret))) : 1;
+    sol += '<path d="' + tache(BOIS[0], BOIS[1], BOIS[2] + 6, BOIS[3] + 6, "bois") + '" fill="#7FBF72" opacity="' + (0.35 + 0.65 * kb).toFixed(2) + '"/><path d="' + tache(BOIS[0], BOIS[1], (BOIS[2] - 6) * kb, (BOIS[3] - 6) * kb, "bois2") + '" fill="#6FB067" opacity=".8"/>';
     sol += '<path d="' + tache(MARAIS[0], MARAIS[1], MARAIS[2] + 5, MARAIS[3] + 5, "marais") + '" fill="#9BBF78"/><path d="' + tache(MARAIS[0], MARAIS[1], MARAIS[2] - 4, MARAIS[3] - 4, "marais2") + '" fill="#8CB06E"/>';
     [[-16, -6, 10, 5], [10, 4, 13, 6], [-4, 12, 8, 4], [20, -10, 7, 3.5]].forEach(function (e, i) {
       sol += '<path d="' + tache(MARAIS[0] + e[0], MARAIS[1] + e[1], e[2], e[3], "mare" + i) + '" fill="#6FAFA8"/><ellipse cx="' + (MARAIS[0] + e[0] - 2) + '" cy="' + (MARAIS[1] + e[1] - 1) + '" rx="' + (e[2] * 0.4) + '" ry="' + (e[3] * 0.3) + '" fill="#A9D9CF" opacity=".7"/>'; });
@@ -5799,11 +5800,28 @@ function demarrerJeu() {
       if (!surTerre(x, y, 0.9) || dansOvale(x, y, [LAC[0], LAC[1], LAC[2] + 6, LAC[3] + 6]) || dansOvale(x, y, [ILE_CX, ILE_CY + 2, 62, 66])) return false;
       return !lieux.some(function (l, i) { return I.quartiers[i].fonde && dansOvale(x, y, [l[0], l[1] + 6, 38 + m, 28 + m]); });
     }
+    // Victor (2026-11-15) : « il faut absolument que ça se voie sur la carte ». La part de forêt qui reste décide du
+    // nombre d'arbres debout (les autres laissent une souche) ; la prairie se couvre de touffes d'herbe, les buissons
+    // de fourrés. Souches, touffes et fourrés sont peints au sol : ils ne gênent pas l'explorateur.
+    var Mil = I.ressources && I.ressources.milieux, kf = Mil ? Math.max(0, Math.min(1, Mil.foret / Mil.ref.foret)) : 1;
+    function debout(g) { return (g >>> 14) % 100 < kf * 100; }
+    function souche(x, y) { return '<ellipse cx="' + fx(x + 0.6) + '" cy="' + fx(y + 0.6) + '" rx="2.4" ry="1" fill="rgba(30,45,30,.2)"/><rect x="' + fx(x - 1.4) + '" y="' + fx(y - 1.8) + '" width="2.8" height="2.2" fill="#8A6240"/><ellipse cx="' + fx(x) + '" cy="' + fx(y - 1.8) + '" rx="1.4" ry=".6" fill="#D9B98A"/>'; }
+    if (Mil) {
+      var nbF = Math.round(50 * Math.min(2.2, Mil.buissons / Mil.ref.buissons)), nbT = Math.round(150 * Math.min(1.6, Mil.prairie / Mil.ref.prairie) / 1.6);
+      for (var ft = 0; ft < 150; ft++) { var gt = graine("touffe" + ft), hx0 = 24 + gt % 312, hy0 = 50 + (gt >>> 9) % 510;
+        if (ft >= nbT || !libre(hx0, hy0, 2) || dansOvale(hx0, hy0, MARAIS) || (kf > 0.5 && dansOvale(hx0, hy0, BOIS))) continue;
+        sol += '<path d="M' + fx(hx0 - 2) + " " + fx(hy0) + "l-.8 -3.4M" + fx(hx0) + " " + fx(hy0) + "v-4.4M" + fx(hx0 + 2) + " " + fx(hy0) + 'l.9 -3.2" stroke="' + (ft % 3 ? "#D7EE9A" : "#E8E29A") + '" stroke-width="1" stroke-linecap="round" fill="none"/>'; }
+      for (var fb = 0; fb < 110; fb++) { var gf = graine("fourre" + fb), bx0 = 24 + gf % 312, by0 = 50 + (gf >>> 9) % 510;
+        if (fb >= nbF || !libre(bx0, by0, 2) || dansOvale(bx0, by0, MARAIS)) continue;
+        sol += '<g transform="translate(' + fx(bx0) + " " + fx(by0) + ") scale(1.35) translate(" + fx(-bx0) + " " + fx(-by0) + ')">' + '<ellipse cx="' + fx(bx0 + 0.8) + '" cy="' + fx(by0 + 1.6) + '" rx="4.4" ry="1.3" fill="rgba(30,45,30,.2)"/><path d="M' + fx(bx0 - 4.2) + " " + fx(by0 + 1.4) + "c-1.2 -3.4 1.6 -5.6 4 -5c2.6 -.9 5.4 1.8 4.4 5z" + '" fill="' + (fb % 2 ? "#4E9A5A" : "#5A8F4A") + '"/><circle cx="' + fx(bx0 - 1.2) + '" cy="' + fx(by0 - 1) + '" r="1.5" fill="#74B878" opacity=".8"/>' + (fb % 3 === 0 ? '<circle cx="' + fx(bx0 + 1.4) + '" cy="' + fx(by0 - .6) + '" r=".7" fill="#6B5BB5"/>' : "") + "</g>"; }
+    }
     for (var t = 0; t < 70; t++) { var gb = graine("bois" + t), tx0 = BOIS[0] - BOIS[2] + gb % (BOIS[2] * 2), ty0 = BOIS[1] - BOIS[3] + (gb >>> 9) % (BOIS[3] * 2);
+      if (dansOvale(tx0, ty0, BOIS) && libre(tx0, ty0, -6) && !debout(gb)) { sol += souche(tx0, ty0); continue; }
       if (dansOvale(tx0, ty0, BOIS) && libre(tx0, ty0, -6)) plan.push([ty0, gb % 5 < 2 ? svgSapin(tx0, ty0, 11 + gb % 4, gb) : svgFeuillu(tx0, ty0 - 4, 4.6 + (gb >>> 4) % 2, gb)]); }
     for (var s = 0; s < 120; s++) { var gs = graine("arb" + s), sx = 24 + gs % 312, sy = 50 + (gs >>> 9) % 510;
       if (!libre(sx, sy, 2) || dansOvale(sx, sy, MARAIS)) continue;
       if (s % 4 === 0) { sol += svgFleurs(sx, sy, gs); continue; }
+      if (!debout(gs)) { if (s % 2) sol += souche(sx, sy); continue; }
       plan.push([sy, gs % 7 === 0 ? svgSapin(sx, sy, 10 + gs % 3, gs) : svgFeuillu(sx, sy - 4, 4 + (gs >>> 4) % 2.4, gs)]); }
     for (var z = 0; z < 16; z++) { var gz = graine("ros" + z), zx = MARAIS[0] - MARAIS[2] + gz % (MARAIS[2] * 2), zy = MARAIS[1] - MARAIS[3] + (gz >>> 9) % (MARAIS[3] * 2);
       if (dansOvale(zx, zy, MARAIS) && surTerre(zx, zy, 0.93)) plan.push([zy, z % 5 === 4 ? svgFeuillu(zx, zy - 4, 4, 2) : svgRoseaux(zx, zy, gz)]); }
