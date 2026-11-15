@@ -6616,7 +6616,7 @@ function demarrerJeu() {
     else k = { texte: __("Rien ne vous oblige à grandir. Chaque habitant de plus mange une ration, réclame un toit et un savoir à entretenir.") };
     // Victor (2026-11-14) : Ananké ne conseille plus, elle compte. Son avis garde un mot du problème du moment, s'il y en a un.
     var SU = M.sursisIle(C, P), RS = C.ile.regles.sursis;
-    if (SU && RS) k = { sursis: true, texte: (deficit || surex ? k.texte + " " : "") + __("Un savoir maîtrisé : {a} minutes de plus. Une chose bâtie ou une épreuve passée : {b}. Le reste ne m'intéresse pas.", { a: Math.round(RS.savoir / 60), b: Math.round(RS.action / 60) }) };
+    if (SU && RS) k = { sursis: true, texte: (deficit || surex ? k.texte + " " : "") + __("Chaque savoir maîtrisé : {a} minutes de plus. Allume un feu, et j'arrête de compter. Le reste ne m'intéresse pas.", { a: Math.round(RS.savoir / 60) }) };
     return { alyca: a, ananke: k };
   }
   // Victor (2026-11-12) : conseiller une rangée de maisons sans dire qu'il faut d'abord du bois ne sert à rien. Les
