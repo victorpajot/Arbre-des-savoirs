@@ -3828,7 +3828,9 @@
     if (partie.humeurRang == null || rang < partie.humeurRang) partie.humeurRang = rang;
     else if (rang > partie.humeurRang) { enfermer(contenu, partie, rang, t); partie.humeurRang = rang; }
     // v25 : comblée pour la première fois, elle donne son nom. Pour de bon : fâchée, elle le reproche sans le reprendre.
-    if (palier.id === "comblee" && !partie.alyca && contenu.ia.alyca) partie.alyca = { depuis: t, vu: false };
+    // Victor (2026-11-15) : « elle dit trop vite son nom, attendre quelques jours de jeu ». Il faut aussi avoir joué
+    // cinq jours différents (chiffre de Claude, `ia.alyca.jours` pour le changer).
+    if (palier.id === "comblee" && !partie.alyca && contenu.ia.alyca && (partie.jours || []).length >= (contenu.ia.alyca.jours || 5)) partie.alyca = { depuis: t, vu: false };
     return { valeur: valeur, palier: palier, fermee: valeur <= 0, demain: valeur <= 0 ? (F.remontee || 25) : Math.max(1, valeur - F.baisse_par_jour),
       cadeauDuJour: partie.cadeaux.jour === cleJour(t) };
   }

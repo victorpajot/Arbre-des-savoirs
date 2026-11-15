@@ -1355,6 +1355,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const P = M.nouvellePartie(T);
   M.faveurIA(C, P, T); assert.equal(M.nomIA(C, P), null, "pas de nom au départ");
   P.faveur = { valeur: 90, maj: T }; M.faveurIA(C, P, T);
+  assert.ok(!P.alyca, "comblée dès les premiers jours, elle garde encore son nom");
+  P.jours = ["2026-09-27", "2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01"]; M.faveurIA(C, P, T);
   assert.equal(P.alyca.vu, false); assert.equal(M.nomIA(C, P), null, "pas de nom avant la scène de révélation"); P.alyca.vu = T; assert.equal(M.nomIA(C, P), "Alyca");
   P.faveur = { valeur: 5, maj: T + J }; M.faveurIA(C, P, T + 2 * J);
   assert.equal(M.nomIA(C, P), "Alyca", "fâchée, elle garde son nom donné");
