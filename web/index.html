@@ -10565,10 +10565,10 @@ function demarrerJeu() {
       wrap.appendChild(ch);
     }
     if (c) {
-      // Victor (2026-11-01) : épreuve ratée et la même revient (le pion n'a pas bougé) : « Rejouer » ; sinon « Ouvrir » :
+      // Victor (2026-11-01) : épreuve ratée et la même revient (le pion n'a pas bougé) : « Rejouer » ; sinon « Savoir suivant » (Victor, 2026-11-15 : « Ouvrir : … » n'était pas clair) :
       // le bouton ouvre la présentation de l'épreuve suivante, pas encore le quiz.
       var rate = quiz && quiz.fin && quiz.id === c.comp.id && (quiz.mode === "quiz" ? quiz.fin.issue !== "maitrisee" : quiz.fin.issue !== "reussi");
-      var j = el('<button type="button" class="btn large">' + (rate ? __("Rejouer : ") : c.type === "rappel" ? __("Prochain rappel : ") : __("Ouvrir : ")) + esc(tx(c.comp.nom)) + "</button>");
+      var j = el('<button type="button" class="btn large">' + (rate ? __("Rejouer : ") : c.type === "rappel" ? __("Prochain rappel : ") : M.modeIle(P) ? __("Savoir suivant : ") : __("Épreuve suivante : ")) + esc(tx(c.comp.nom)) + "</button>");
       j.onclick = function () { fermer(); ouvrirJouer(); };
       wrap.appendChild(j);
     }
