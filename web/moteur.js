@@ -1776,6 +1776,8 @@
     I.alea = { annonce: annonceAlea(contenu, partie, t), dernier: (partie.aleas && partie.aleas.dernier) || null };
     I.troubles = partie.troubles && partie.troubles.jour === cleJour(t) ? partie.troubles.faits : [];
     I.population = { enfants: pop.e, adultes: pop.a, anciens: pop.v, parasites: Math.round(pop.p), journal: pop.journal, niveaux: niv, seuilParasites: seuilParasites(D, niv),
+      // Victor (2026-11-15) : les naissances attendues par jour, si l'île mange à sa faim (la même formule que pasDemographie, sans le tirage).
+      naissancesPrevues: I.places > 0 && N < I.places ? (1 + ((I.ressources && I.ressources.effets && I.ressources.effets.attrait) || 0)) * D.fecondite * (1 + niv.naissances) * pop.a * (1 - N / I.places) : 0,
       mortalite: { enfants: D.mortalite.enfants * (1 - D.protection * niv.enfants), adultes: D.mortalite.adultes * (1 - D.protection * niv.adultes), anciens: D.mortalite.anciens * (1 - D.protection * niv.anciens) } };
     return I;
   }

@@ -6975,6 +6975,9 @@ function demarrerJeu() {
       '<p class="ile-vie-tete"><b>' + esc(texteHabitants(I.habitants)) + "</b> " + __("pour") + " " + nb(I.places) + (I.places > 1 ? __(" places") : __(" place")) + "</p>" + htmlLimitesIle(I) +
       '<div class="ile-jauge"><b style="width:' + Math.min(100, Math.round(100 * I.habitants / Math.max(1, I.places))) + '%"></b></div>' +
       barre(__("Enfants"), p.enfants, "#F2A541") + barre(__("Adultes"), p.adultes, "#3D7DD9") + barre(__("Anciens"), p.anciens, "#8E7CC3");
+    // Victor (2026-11-15) : le nombre de naissances prévues par jour.
+    var np = p.naissancesPrevues || 0, pleine = I.habitants >= I.places;
+    h += '<p class="ile-vie-note"><b>' + __("Naissances prévues") + "</b> : " + (np >= 0.05 ? __("environ {n} par jour", { n: (Math.round(np * 10) / 10).toString().replace(".", ",") }) + (np < 0.5 ? " (" + __("une tous les {j} jours", { j: Math.round(1 / np) }) + ")" : "") + ", " + __("si l'île mange à sa faim") + "." : np > 0 ? __("moins d'une tous les vingt jours.") : pleine ? __("aucune, l'île est pleine.") : p.adultes ? __("aucune.") : __("aucune, il n'y a pas d'adultes.")) + "</p>";
     if (j) {
       var deces = j.enfants + j.adultes + j.anciens, detail = [j.enfants ? j.enfants + (j.enfants > 1 ? __(" enfants") : __(" enfant")) : "", j.adultes ? j.adultes + (j.adultes > 1 ? __(" adultes") : __(" adulte")) : "", j.anciens ? j.anciens + (j.anciens > 1 ? __(" anciens") : __(" ancien")) : ""].filter(Boolean).join(", ");
       // Le coefficient le plus faible parmi ceux qui ont coûté des vies dit où construire.
