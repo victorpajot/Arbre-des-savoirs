@@ -1689,6 +1689,8 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-obj-tete { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
 .ile-econome { flex: none; width: 52px; height: 60px; border-radius: 10px; background: var(--parchemin); display: grid; place-items: center; overflow: hidden; }
 .ile-econome:empty { display: none; }
+.absente .ile-econome, .duo-ia button.absente .tete { filter: grayscale(1); opacity: .55; } .conseil.absente { border-left-color: #8A8F98; } .conseil.absente p { color: var(--muted); }
+.hors-ligne { display: inline-block; width: 9px; height: 9px; border-radius: 50%; border: 2px solid #8A8F98; margin-right: 6px; vertical-align: baseline; }
 .ile-intro .ile-econome { float: right; margin: 0 0 6px 10px; }
 .ile-obj-jauge { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden; margin: 0 0 8px; }
 .ile-obj-jauge span { display: block; height: 100%; background: var(--c); border-radius: 999px; }
@@ -4944,7 +4946,7 @@ function demarrerJeu() {
       var bjO = boi.querySelector('[data-a="obj"]'); if (bjO) bjO.remove();
       var fhD = C.ia && C.ia.faveur ? M.faveurIA(C, P, t) : null, obT = boi.querySelector("h3");
       var rang = el('<div class="duo-ia"><button type="button" data-qui="alyca" style="--c:' + (fhD ? COULEUR_PALIER[fhD.palier.id] : "var(--accent)") + '"><span class="tete">' + mot.querySelector(".masque").innerHTML + '</span><span class="txt"><b>' + esc(tx(C.narrateur) || __("L'IA")) + "</b><small>" + (fhD ? esc(tx(fhD.palier.nom)) : __("Son mot du jour")) + '</small></span></button>' +
-        '<button type="button" data-qui="ananke" style="--c:' + (boi.classList.contains("tenu") ? "#2E9E5B" : "#5B7FD9") + '"><span class="tete">' + boi.querySelector(".ile-econome").innerHTML + '</span><span class="txt"><b>' + __("Ananké") + (boi.classList.contains("tenu") ? "" : '<i class="pastille" aria-hidden="true"></i>') + "</b><small>" + ((htmlSursis() && __("Fin dans ") + '<b class="sursis-t">' + texteSursis(M.sursisIle(C, P).reste) + "</b>") || (boi.classList.contains("tenu") ? __("Objectif tenu") : __("Son objectif"))) + "</small></span></button></div>");
+        '<button type="button" data-qui="ananke"' + (anankeAbsente() ? ' class="absente"' : "") + ' style="--c:' + (boi.classList.contains("tenu") ? "#2E9E5B" : anankeAbsente() ? "#8A8F98" : "#5B7FD9") + '"><span class="tete">' + boi.querySelector(".ile-econome").innerHTML + '</span><span class="txt"><b>' + __("Ananké") + (boi.classList.contains("tenu") ? "" : '<i class="pastille" aria-hidden="true"></i>') + "</b><small>" + ((htmlSursis() && __("Fin dans ") + '<b class="sursis-t">' + texteSursis(M.sursisIle(C, P).reste) + "</b>") || (anankeReveil() ? (anankeReveil() > 1 ? __("{n} rappels dus", { n: anankeReveil() }) : __("1 rappel dû")) : anankeAbsente() ? '<i class="hors-ligne" aria-hidden="true"></i>' + __("Hors ligne") : boi.classList.contains("tenu") ? __("Objectif tenu") : __("Son objectif"))) + "</small></span></button></div>");
       var panneau = el('<div class="duo-panneau" hidden></div>');
       var montrerDuo = function () {
         rang.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-expanded", x.getAttribute("data-qui") === duoIA ? "true" : "false"); });
@@ -6617,6 +6619,8 @@ function demarrerJeu() {
     // Victor (2026-11-14) : Ananké ne conseille plus, elle compte. Son avis garde un mot du problème du moment, s'il y en a un.
     var SU = M.sursisIle(C, P), RS = C.ile.regles.sursis;
     if (SU && RS) k = { sursis: true, texte: (deficit || surex ? k.texte + " " : "") + __("Chaque savoir maîtrisé : {a} minutes de plus. Allume un feu, et j'arrête de compter. Le reste ne m'intéresse pas.", { a: Math.round(RS.savoir / 60) }) };
+    if (anankeAbsente()) k = { absente: true, texte: __("Réponse automatique : Ananké est hors ligne. Vous avez du feu, vous n'êtes plus son problème. Vos messages ne seront pas lus.") };
+    else if (anankeReveil()) k = { texte: texteReveil(anankeReveil()).replace(/^« | »$/g, "") + " " + k.texte };
     return { alyca: a, ananke: k };
   }
   // Victor (2026-11-12) : conseiller une rangée de maisons sans dire qu'il faut d'abord du bois ne sert à rien. Les
@@ -6650,6 +6654,7 @@ function demarrerJeu() {
   function carteConseil(qui, c) {
     var b = el('<div class="conseil ' + qui + '"><div class="eyebrow">' + (qui === "alyca" ? __("Son conseil pour grandir") : __("Son conseil pour freiner")) + '</div><p></p></div>');
     b.querySelector("p").textContent = (qui === "alyca" ? "« " : "« ") + nommerIA(c.texte) + " »";
+    if (c.absente) { b.classList.add("absente"); b.querySelector(".eyebrow").innerHTML = '<i class="hors-ligne" aria-hidden="true"></i>' + __("Hors ligne"); }
     if (c.sursis) { b.querySelector(".eyebrow").textContent = __("Son ultimatum"); b.querySelector("p").innerHTML = "« " + htmlSursis() + ". " + esc(nommerIA(c.texte)) + " »"; }
     if (c.etapes && c.etapes.length > 1) {
       var ol = el('<ol class="conseil-etapes"></ol>');
@@ -7099,6 +7104,13 @@ function demarrerJeu() {
     montrer();
     return b;
   }
+  // Victor (2026-11-15) : une fois le feu allumé, Ananké ne s'intéresse plus à nous. Elle passe « hors ligne » : portrait
+  // éteint, réponses automatiques. Ses règles (objectif du jour, coupures) continuent de tourner sans elle.
+  // Même jour : « elle doit se réveiller avec les rappels, pour mettre un peu de pression ». Un rappel dû la ramène.
+  function anankeApresFeu() { var T = C && P && M.modeIle(P) ? M.torcheIle(C, P) : null; return !!(T && T.feu); }
+  function anankeReveil() { return anankeApresFeu() ? M.rappelsDus(C, P, maintenant()).length : 0; }
+  function anankeAbsente() { return anankeApresFeu() && !anankeReveil(); }
+  function texteReveil(n) { return n > 1 ? __("« Tiens, {n} rappels en attente. Ça, ça m'intéresse. Laisse-les traîner, et je reprends ce que tu as bâti. »", { n: n }) : __("« Tiens, un rappel en attente. Ça, ça m'intéresse. Laisse-le traîner, et je reprends ce que tu as bâti. »"); }
   function blocObjectifIle() {
     if (!M.ilePresente(C)) return null;
     if (!P.ileIntro) P.ileIntro = maintenant();
@@ -7122,13 +7134,13 @@ function demarrerJeu() {
       var qi = inst && I.quartiers.filter(function (q) { return q.installations.indexOf(inst) >= 0; })[0];
       var effet = !inst || !qi.fonde ? "" : (inst.etat === "friche" || inst.etat === "abandon" ? __("Elle construit : ") : inst.etat === "marche" ? __("Elle entretient : ") : __("Elle remet en marche : ")) + "<b>" + esc(tx(inst.nom)) + "</b>" + (tot ? "" : " (" + esc(tx(qi.nom)) + ")") + ".";
       corps = "<h3>" + (ob.reussi ? (tot ? __("Objectif tenu : le feu brûle encore") : ob.fonde ? __("Objectif tenu : ") + nom + __(" garde son courant") : __("Objectif tenu")) : ob.fonde && tot ? __("Un feu à entretenir") : ob.fonde ? __("Délestage prévu ce soir : ") + nom : (camp ? __("Un feu à allumer") : tot ? __("Un besoin à couvrir") : __("Un quartier à fonder"))) + "</h3>" +
-        '<p class="ile-obj-texte">' + (camp && !ob.reussi ? __("Rien ne tient sur cette île sans feu. Apprends à le maîtriser : le campement pourra s'installer.") : tot && !ob.fonde && !ob.reussi ? __("Le campement manque de tout. Réussis ton épreuve aujourd'hui : c'est un besoin de moins.") : !ob.fonde && !ob.reussi ? __("Réussis ton épreuve aujourd'hui : elle pose la première installation d'un nouveau quartier de l'île.") : ob.reussi ? (tot ? __("« Tiens. Il semble y avoir de l'activité ici. Je repasserai demain voir si ça dure. »") : __("« Soit. Cette île sert encore à quelqu'un. Je reviendrai demain. »")) :
+        '<p class="ile-obj-texte">' + (camp && !ob.reussi ? __("Rien ne tient sur cette île sans feu. Apprends à le maîtriser : le campement pourra s'installer.") : tot && !ob.fonde && !ob.reussi ? __("Le campement manque de tout. Réussis ton épreuve aujourd'hui : c'est un besoin de moins.") : !ob.fonde && !ob.reussi ? __("Réussis ton épreuve aujourd'hui : elle pose la première installation d'un nouveau quartier de l'île.") : ob.reussi && anankeAbsente() ? __("« Réponse automatique : Ananké est hors ligne. Votre objectif du jour a bien été enregistré. Elle ne le lira pas. »") : !ob.reussi && anankeAbsente() ? __("« Réponse automatique : Ananké est hors ligne. Ses coupures restent programmées pour minuit. » Réussis une épreuve avant minuit pour y échapper.") : ob.reussi ? (tot ? __("« Tiens. Il semble y avoir de l'activité ici. Je repasserai demain voir si ça dure. »") : __("« Soit. Cette île sert encore à quelqu'un. Je reviendrai demain. »")) :
           tot ? __("« Un feu qu'on n'entretient pas s'éteint. Je repasse ce soir, et je compte. » Réussis une épreuve avant minuit pour lui donner tort.") : __("« Un savoir que personne n'entretient est un serveur qui tourne pour rien. Ce soir, je coupe. » Réussis une épreuve avant minuit pour l'en dissuader.")) + "</p>" +
         (k && !ob.reussi ? '<p class="ile-obj-texte">' + __("Ta prochaine épreuve : ") + "<b>" + esc(tx(k.nom)) + "</b>. " + effet + "</p>" : "") +
         '<p class="ile-obj-compte">' + (ob.reussi ? "+" + ob.credits + __(" crédits") : ob.credits + __(" crédits à gagner")) + "</p>" + veille +
         (k ? '<button type="button" class="btn large" data-a="obj">' + __("Jouer") + "</button>" : "");
     }
-    var b = el('<div class="carte ile-objectif' + (ob.reussi ? " tenu" : "") + '" style="--c:' + (ob.couleur || "var(--accent)") + '"><div class="ile-obj-tete"><span class="ile-econome">' + svgEconome(ob.reussi ? "soit" : ob.veille ? "coupe" : "neutre", 46) + '</span><div class="eyebrow">' + __("Objectif du jour · Ananké") + "</div></div>" + (htmlSursis() ? '<p class="sursis-ligne">' + htmlSursis() + "</p>" : "") + corps + "</div>");
+    var b = el('<div class="carte ile-objectif' + (ob.reussi ? " tenu" : "") + (anankeAbsente() ? " absente" : "") + '" style="--c:' + (ob.couleur || "var(--accent)") + '"><div class="ile-obj-tete"><span class="ile-econome">' + svgEconome(ob.reussi ? "soit" : ob.veille ? "coupe" : "neutre", 46) + '</span><div class="eyebrow">' + (anankeAbsente() ? __("Objectif du jour · Ananké, hors ligne") : __("Objectif du jour · Ananké")) + "</div></div>" + (htmlSursis() ? '<p class="sursis-ligne">' + htmlSursis() + "</p>" : "") + (anankeReveil() ? '<p class="ile-obj-texte reveil"><b>' + esc(texteReveil(anankeReveil())) + "</b></p>" : "") + corps + "</div>");
     var bt = b.querySelector('[data-a="obj"]'); if (bt) bt.onclick = function () { ouvrirJouer(); };
     return b;
   }
