@@ -2418,15 +2418,10 @@ function demarrerJeu() {
   };
   DESSINS_QUETE.pierres = DESSINS_QUETE.lests;
   function svgObjetQuete(o, x, y, t) { return '<g class="ile-quete" data-quete="' + esc(o.id) + '" transform="translate(' + x + "," + y + ') scale(' + (t || 1) + ')"><circle r="17" fill="transparent"/>' + (DESSINS_QUETE[o.id] || '<circle r="6" fill="#E3B92E"/>') + "</g>"; }
-  // Victor (2026-11-14) : « mets à chaque fois les sources ». Celles d'une étape, ou de toute l'épreuve, sans doublon.
-  function sourcesEpreuve(E, e) {
-    var L = []; function noter(x) { if (x && L.indexOf(x) < 0) L.push(x); }
-    (e ? [e] : E.etapes).forEach(function (x) { (x.savoir || []).forEach(function (v) { noter(v.source); }); }); if (!e && E.chute) noter(E.chute.source);
-    return L.length ? '<p class="ep-sources"><b>' + (L.length > 1 ? __("Sources") : __("Source")) + "</b> : " + L.map(esc).join(" ; ") + "</p>" : "";
-  }
+  // Victor (2026-11-15) : les sources ne s'affichent qu'avec la réponse (« Ce que tu viens de faire »), plus avec la consigne.
   function blocQuete(q, bouton) {
-    var Eq = M.epreuveIle(C, q.id);
-    return '<div class="ile-passage"><div class="eyebrow">' + __("Quête") + "</div><h3>" + esc(tx(q.nom)) + "</h3><p>" + esc(tx(q.texte)) + "</p>" + (Eq ? sourcesEpreuve(Eq) : "") + '<div class="ile-quete-sac">' + q.objets.map(function (o) {
+
+    return '<div class="ile-passage"><div class="eyebrow">' + __("Quête") + "</div><h3>" + esc(tx(q.nom)) + "</h3><p>" + esc(tx(q.texte)) + "</p>" + '<div class="ile-quete-sac">' + q.objets.map(function (o) {
       return '<span class="' + (o.pris ? "ok" : "") + '"><svg viewBox="-14 -14 28 28" width="40" height="40" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><small>" + esc(tx(o.nom)) + (o.pris ? " ✓" : "") + "</small></span>"; }).join("") + "</div>" +
       (bouton ? '<button type="button" class="btn large" data-a="quete">' + __("Explorer l'île") + "</button>" : "") + "</div>";
   }
@@ -2988,7 +2983,7 @@ function demarrerJeu() {
     }
     function entete(e, i) {
       vider(); marquer(i);
-      plus('<div class="ep-titre"><span>' + (i + 1) + "</span><h3>" + esc(tx(e.titre)) + "</h3></div>"); plus('<p class="ep-consigne">' + esc(tx(e.consigne)) + "</p>"); var src = sourcesEpreuve(E, e); if (src) plus(src);
+      plus('<div class="ep-titre"><span>' + (i + 1) + "</span><h3>" + esc(tx(e.titre)) + "</h3></div>"); plus('<p class="ep-consigne">' + esc(tx(e.consigne)) + "</p>");
     }
     var JEUX = {
       // 1. Frapper vite : un coup ne compte que s'il suit le précédent d'assez près.
@@ -3206,7 +3201,6 @@ function demarrerJeu() {
     marquer(-1);
     plus('<div class="ep-zone fixe">' + (E.dessin === "peche" ? svgLigne(0) : E.dessin === "poterie" ? svgPot(7, 7) : E.dessin === "carriere" ? svgFendre(0, 8) : E.dessin === "moulin" ? svgBroyer().replace(/#F1E3CF/g, "#E3B92E").replace(/#C9B08E/g, "#B8962E").replace('class="ep-poli"', 'opacity="0"') : E.dessin === "forge" ? svgForger(0, 9) : E.dessin === "cadran" ? '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="140" rx="96" ry="22" fill="#E3C594"/><path d="M120 140 L176 122" stroke="rgba(0,0,0,.35)" stroke-width="6" stroke-linecap="round"/><path d="M120 140 V40" stroke="#5E3F20" stroke-width="7" stroke-linecap="round"/><circle cx="196" cy="34" r="16" fill="#F2B632"/>' + [[60, 132], [84, 146], [120, 152], [156, 146], [180, 132]].map(function (q) { return '<ellipse cx="' + q[0] + '" cy="' + q[1] + '" rx="5" ry="3" fill="#F6F2EA"/>'; }).join("") + "</svg>" : E.dessin === "fonderie" ? '<svg class="ep-pierres" viewBox="-60 -42 120 84" aria-hidden="true"><g transform="scale(3.4)">' + DESSINS_QUETE.minerai + "</g></svg>" : E.dessin === "remede" ? '<svg class="ep-pierres" viewBox="-60 -42 120 84" aria-hidden="true"><g transform="translate(-24,0) scale(2.6)">' + DESSINS_QUETE.polypore + '</g><g transform="translate(28,4) scale(2.6)">' + DESSINS_QUETE.peuplier + "</g></svg>" : E.dessin === "abri" ? svgPeaux().replace('class="ep-lame"', 'opacity="0"') : E.dessin === "ferme" ? svgMoisson().replace('class="ep-poli"', 'opacity="0"') : svgPierres(E.dessin)) + "</div>");
     if (E.accroche) dire(tx(E.accroche), "intro");
-    var srcE = sourcesEpreuve(E); if (srcE) plus(srcE);
     plus('<button type="button" class="btn large">' + __("Commencer") + "</button>").onclick = function () { etape(0); };
     document.body.appendChild(z);
   }
