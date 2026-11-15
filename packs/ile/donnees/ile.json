@@ -125,6 +125,15 @@
    "calme": 20,
    "surprise": 0.67,
    "repere": 0.5
+  },
+  "gibier": {
+   "faim": 0.04,
+   "besoin": 2,
+   "famine": 0.08,
+   "prolifere": 2,
+   "seuil": 1.15,
+   "baies": 0.5,
+   "fermes": 0.75
   }
  },
  "quartiers": [
@@ -2250,33 +2259,62 @@
   {
    "id": "bisons",
    "gibier": true,
+   "role": "proie",
+   "viande": 20,
+   "ravage": "baies",
    "icone": "🦬",
    "couleur": "#7A4B2A",
    "max": 12,
-   "depart": 12,
+   "depart": 9,
    "repousse": 0.08,
-   "retour": 0.02,
    "nom": {
     "fr": "Les bisons"
    },
+   "singulier": {
+    "fr": "bison"
+   },
    "usage": {
-    "fr": "Chaque bison abattu par un explorateur en fait un de moins sur l'île. Le troupeau se refait lentement tant qu'il en reste ; sans bison, plus de peaux."
+    "fr": "Un bison abattu, c'est de la viande et une peau, et un bison de moins. Les prédateurs en mangent aussi. S'ils prolifèrent, ils broutent les buissons de baies."
+   }
+  },
+  {
+   "id": "sangliers",
+   "gibier": true,
+   "role": "proie",
+   "viande": 10,
+   "ravage": "ferme",
+   "icone": "🐗",
+   "couleur": "#5A4636",
+   "max": 16,
+   "depart": 14,
+   "repousse": 0.12,
+   "nom": {
+    "fr": "Les sangliers"
+   },
+   "singulier": {
+    "fr": "sanglier"
+   },
+   "usage": {
+    "fr": "Moins de viande que le bison, mais ils se reproduisent plus vite. S'ils prolifèrent, ils retournent les champs et les fermes donnent moins."
    }
   },
   {
    "id": "predateurs",
    "gibier": true,
+   "role": "predateur",
    "icone": "🐺",
    "couleur": "#5B5F6B",
    "max": 6,
    "depart": 6,
    "repousse": 0.05,
-   "retour": 0.01,
    "nom": {
     "fr": "Les prédateurs"
    },
+   "singulier": {
+    "fr": "prédateur"
+   },
    "usage": {
-    "fr": "Ils tiennent les bisons loin des buissons. S'il n'en reste aucun, le troupeau broute tout et les baies se font deux fois plus rares."
+    "fr": "Ils mangent des bisons et des sangliers, et les empêchent de proliférer. Sans gibier, ils meurent de faim."
    }
   }
  ],

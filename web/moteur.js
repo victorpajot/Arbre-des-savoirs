@@ -1817,6 +1817,8 @@
     // Victor (2026-11-12, « durcir ») : en mode Île, la cueillette nourrit un nombre fixe de bouches, pas une part de l'île.
     var cueilli = (R.cueillette_bouches != null && partie.mode === "ile" ? R.cueillette_bouches : (R.cueillette || 0) * (K || 0)) * (R.mange || 0.1) * vit;
     prod.nourriture = (prod.nourriture || 0) + cueilli;
+    // Des sangliers qui prolifèrent retournent les champs (Victor, 2026-11-15).
+    var RGib = reglesGibier(contenu), ravages = nat ? etatGibier(contenu, nat).ravages : {};
     // Les bonus (moulin, forge) : chacun sert un nombre d'aménagements, pourvu que ses propres postes le soient.
     var bonus = {};
     A.forEach(function (a) {
@@ -1833,6 +1835,7 @@
         var base = q * a.produit[r], plus = 0;
         (bonus[a.id] || []).forEach(function (b) { plus += base * b.part * Math.min(1, n[a.id] ? b.sert / n[a.id] : 0); });
         var sorti = base + plus;
+        if (ravages.ferme && a.id === "ferme") sorti *= RGib.fermes == null ? 1 : RGib.fermes;
         // Ce que l'aménagement puise dans la nature ne peut pas dépasser ce qu'il en reste.
         if (a.preleve && a.preleve in reste) { sorti = Math.min(sorti, reste[a.preleve]); reste[a.preleve] -= sorti; pris[a.preleve] += sorti; }
         prod[r] = (prod[r] || 0) + sorti;
@@ -1876,7 +1879,9 @@
     if (f >= 1 && faim > 0 && S.stocks.nourriture >= faim * (R.abondance_jours || 7)) f = 1 + (R.abondance || 0.25);
     // La nature : ce qu'on y a pris en sort, puis elle repousse (Verhulst : au mieux à mi-hauteur, nulle à zéro, avec
     // un mince retour venu d'ailleurs pour qu'une ressource rasée finisse par revenir).
+    if (S.nature) pasGibier(contenu, S);
     if (S.nature) natureIle(contenu).forEach(function (x) {
+      if (x.gibier) return;
       var st = Math.max(0, (S.nature[x.id] || 0) - (E.pris[x.id] || 0));
       var r = x.repousse * (1 + (E.effets.repousse[x.id] || 0)), pousse = r * st * (1 - st / x.max) + (st < x.max ? (x.retour || 0) : 0);
       S.nature[x.id] = Math.min(x.max, st + pousse);
@@ -1884,6 +1889,33 @@
     });
     S.effets = E.effets;
     return f;
+  }
+  // Le gibier (Victor, 2026-11-15) : « une espèce disparue ne peut pas revenir », « les bisons sont mangés de temps en
+  // temps par les prédateurs », « s'il n'y a plus de prédateurs ça pose des problèmes de prolifération, et l'inverse :
+  // s'il n'y a plus de gibier les prédateurs meurent ». Proies et prédateurs à la Lotka-Volterra, bornés par Verhulst.
+  function reglesGibier(contenu) { return (ilePresente(contenu) && contenu.ile.regles.gibier) || { faim: 0, besoin: 0, famine: 0, prolifere: 1 }; }
+  function etatGibier(contenu, nat) {
+    var L = natureIle(contenu).filter(function (x) { return x.gibier; }), RG = reglesGibier(contenu), out = { proies: 0, predateurs: 0, par: {}, ravages: {} };
+    L.forEach(function (x) { var st = Math.max(0, nat[x.id] == null ? x.depart : nat[x.id]); if (st < 1) st = 0; out.par[x.id] = st; if (x.role === "predateur") out.predateurs += st; else out.proies += st; });
+    L.forEach(function (x) { if (x.role !== "predateur" && x.ravage && out.par[x.id] > x.max * (RG.seuil || 1.15)) out.ravages[x.ravage] = x.id; });
+    return out;
+  }
+  function pasGibier(contenu, S) {
+    var L = natureIle(contenu).filter(function (x) { return x.gibier; }); if (!L.length) return;
+    var RG = reglesGibier(contenu), G = etatGibier(contenu, S.nature), P = G.predateurs, N = G.proies;
+    L.forEach(function (x) {
+      var st = G.par[x.id];
+      if (st < 1) { S.nature[x.id] = 0; return; }                       // disparue : pour toujours
+      if (x.role === "predateur") {
+        var assez = RG.besoin > 0 ? Math.min(1, N / (st * RG.besoin)) : 1;
+        st += assez >= 1 ? (st >= 2 ? x.repousse * st * (1 - st / x.max) : 0) : -RG.famine * st * (1 - assez);
+      } else {
+        var K = x.max * (P < 1 ? RG.prolifere || 1 : 1);
+        // Il faut être deux pour faire des petits ; les prédateurs prennent leur part, d'autant plus que le gibier abonde.
+        st += (st >= 2 ? x.repousse * st * (1 - st / K) : 0) - RG.faim * P * st / x.max;
+      }
+      S.nature[x.id] = st < 1 ? 0 : st;
+    });
   }
   function initRessources(contenu, partie, pop) {
     var R = reglesRessources(contenu); if (!R) return null;
@@ -2032,8 +2064,8 @@
   function baiesIle(contenu, partie, t) {
     var R = ilePresente(contenu) && reglesRessources(contenu) && contenu.ile.regles.baies; if (!R || !modeIle(partie)) return null;
     var jour = cleJour(t), prises = partie.baies && partie.baies.jour === jour ? partie.baies.prises : [], out = [];
-    var nat = partie.ressources && partie.ressources.nature, sansPred = !!(nat && natureIle(contenu).some(function (x) { return x.id === "predateurs"; }) && nat.predateurs != null && nat.predateurs < 1);
-    var parJour = sansPred ? Math.ceil(R.par_jour / 2) : R.par_jour;
+    var nat = partie.ressources && partie.ressources.nature, RGb = reglesGibier(contenu), sansPred = !!(nat && etatGibier(contenu, nat).ravages.baies);
+    var parJour = sansPred ? Math.ceil(R.par_jour * (RGb.baies == null ? 0.5 : RGb.baies)) : R.par_jour;
     for (var i = 0; i < parJour; i++) out.push({ id: i, graine: hacher("baies|" + jour + "|" + (partie.cree || 0) + "|" + i), prise: prises.indexOf(i) >= 0 });
     return { jour: jour, nourriture: R.nourriture, broutees: sansPred, buissons: out, reste: out.filter(function (b) { return !b.prise; }).length };
   }
@@ -2233,6 +2265,9 @@
       var net = pousse - pris;
       // Le plus qu'on puisse prendre chaque jour sans fin : la repousse à mi-hauteur. Au-delà, le stock finira par tomber.
       var durable = r * x.max / 4 + (x.retour || 0), soutenable = pris <= durable + 1e-9;
+      if (x.gibier) { var Gg = etatGibier(contenu, S.nature), RGg = reglesGibier(contenu), sg = Gg.par[x.id], prol = x.role !== "predateur" && sg > x.max * (RGg.seuil || 1.15), faimP = x.role === "predateur" && sg >= 1 && RGg.besoin > 0 && Gg.proies < sg * RGg.besoin;
+        return { id: x.id, gibier: true, role: x.role || "proie", nom: x.nom, usage: x.usage || null, icone: x.icone || "", couleur: x.couleur || null, stock: sg, betes: Math.floor(sg + 1e-9), max: x.max, part: Math.min(1, sg / x.max), pris: 0, pousse: 0, net: 0, durable: 0, soutenable: true, jours: null,
+          eteint: sg < 1, prolifere: prol, affame: faimP, viande: x.viande || 0, ravage: x.ravage || null, etat: sg < 1 ? "epuise" : sg < 3 || faimP ? "rouge" : prol ? "orange" : "vert", chantier: null }; }
       return { id: x.id, gibier: !!x.gibier, nom: x.nom, usage: x.usage || null, icone: x.icone || "", couleur: x.couleur || null, stock: st, max: x.max, part: st / x.max, pris: pris, pousse: pousse, net: net,
         durable: durable, soutenable: soutenable, jours: soutenable ? null : Math.floor(st / (pris - durable)),
         etat: st <= 0 ? "epuise" : st / x.max < 0.25 ? "rouge" : !soutenable ? "orange" : "vert", chantier: etatChantier(contenu, partie, x) };
@@ -2243,13 +2278,21 @@
   function gibierIle(contenu, partie, t) {
     var L = natureIle(contenu).filter(function (x) { return x.gibier; }); if (!L.length || !modeIle(partie)) return null;
     ile(contenu, partie, t); var S = partie.ressources; if (!S || !S.nature) return null;
-    var out = {}; L.forEach(function (x) { out[x.id] = Math.floor(Math.max(0, S.nature[x.id] == null ? x.depart : S.nature[x.id]) + 1e-9); });
+    var out = {}; L.forEach(function (x) { var v = Math.max(0, S.nature[x.id] == null ? x.depart : S.nature[x.id]); out[x.id] = v < 1 ? 0 : Math.floor(v + 1e-9); });
     return out;
   }
   function abattreIle(contenu, partie, id, t) {
-    var g = gibierIle(contenu, partie, t); if (!g || g[id] == null) return null;
-    var S = partie.ressources; S.nature[id] = Math.max(0, (S.nature[id] || 0) - 1); partie.maj = t;
-    return { id: id, reste: Math.floor(S.nature[id] + 1e-9) };
+    var g = gibierIle(contenu, partie, t); if (!g || g[id] == null || g[id] < 1) return null;
+    var S = partie.ressources, x = natureIle(contenu).filter(function (n) { return n.id === id; })[0];
+    S.nature[id] = Math.max(0, (S.nature[id] == null ? x.depart : S.nature[id]) - 1); if (S.nature[id] < 1) S.nature[id] = 0; partie.maj = t;
+    return { id: id, reste: Math.floor(S.nature[id] + 1e-9), viande: x.viande || 0, eteint: S.nature[id] < 1 };
+  }
+  // La viande rapportée au village par l'explorateur.
+  function rapporterViande(contenu, partie, n, t) {
+    if (!(n > 0) || !reglesRessources(contenu)) return null;
+    ile(contenu, partie, t); var S = partie.ressources; if (!S) return null;
+    S.stocks.nourriture = (S.stocks.nourriture || 0) + n; partie.maj = t;
+    return { nourriture: n };
   }
   // Régler l'effort d'un aménagement (0 à 1) : moins de bras, moins de prélèvement.
   // Chantier exceptionnel (Victor, 2026-11-13) : une fois par jour et par ressource naturelle, toute l'île s'y met et
@@ -5272,7 +5315,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     gloiresIle: gloiresIle, suivreGloire: suivreGloire, choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieReprenable: serieReprenable, reprendreSerie: reprendreSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    gibierIle: gibierIle, abattreIle: abattreIle, epreuvesBloquees: epreuvesBloquees, atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, exodeIle: exodeIle, placesIle: placesIle, modeIle: modeIle, chercherMateriau: chercherMateriau, defiIle: defiIle, construireIle: construireIle, etatAmenagement: etatAmenagement, agesIle: agesIle, conditionRemplie: conditionRemplie, savoirOuvertIle: savoirOuvertIle, reglerEffort: reglerEffort, chantierExceptionnel: chantierExceptionnel, annonceAlea: annonceAlea, preparerAlea: preparerAlea, forcerAlea: forcerAlea, ressourcesIle: ressourcesIle, visitesIle: visitesIle, repondreVisiteur: repondreVisiteur, passerAge: passerAge, epreuveIle: epreuveIle, epreuveFaite: epreuveFaite, perdreExplorateur: perdreExplorateur, baiesIle: baiesIle, cueillirBaies: cueillirBaies, repererSite: repererSite, siteRefuse: siteRefuse, epreuvesEnAttente: epreuvesEnAttente, queteIle: queteIle, ramasserIle: ramasserIle, reussirEpreuve: reussirEpreuve, grotteIle: grotteIle, trouverGrotte: trouverGrotte, grotteRequise: grotteRequise, visiterGrotte: visiterGrotte, torcheIle: torcheIle, prendreTorche: prendreTorche, sursisIle: sursisIle, ecoulerSursis: ecoulerSursis, gameOverIle: gameOverIle, entendreGrotte: entendreGrotte, troublesIle: troublesIle, questionQuartier: questionQuartier, ouvrirQuartier: ouvrirQuartier, niveauxIle: niveauxIle, chasserParasites: chasserParasites, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    gibierIle: gibierIle, abattreIle: abattreIle, rapporterViande: rapporterViande, epreuvesBloquees: epreuvesBloquees, atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, exodeIle: exodeIle, placesIle: placesIle, modeIle: modeIle, chercherMateriau: chercherMateriau, defiIle: defiIle, construireIle: construireIle, etatAmenagement: etatAmenagement, agesIle: agesIle, conditionRemplie: conditionRemplie, savoirOuvertIle: savoirOuvertIle, reglerEffort: reglerEffort, chantierExceptionnel: chantierExceptionnel, annonceAlea: annonceAlea, preparerAlea: preparerAlea, forcerAlea: forcerAlea, ressourcesIle: ressourcesIle, visitesIle: visitesIle, repondreVisiteur: repondreVisiteur, passerAge: passerAge, epreuveIle: epreuveIle, epreuveFaite: epreuveFaite, perdreExplorateur: perdreExplorateur, baiesIle: baiesIle, cueillirBaies: cueillirBaies, repererSite: repererSite, siteRefuse: siteRefuse, epreuvesEnAttente: epreuvesEnAttente, queteIle: queteIle, ramasserIle: ramasserIle, reussirEpreuve: reussirEpreuve, grotteIle: grotteIle, trouverGrotte: trouverGrotte, grotteRequise: grotteRequise, visiterGrotte: visiterGrotte, torcheIle: torcheIle, prendreTorche: prendreTorche, sursisIle: sursisIle, ecoulerSursis: ecoulerSursis, gameOverIle: gameOverIle, entendreGrotte: entendreGrotte, troublesIle: troublesIle, questionQuartier: questionQuartier, ouvrirQuartier: ouvrirQuartier, niveauxIle: niveauxIle, chasserParasites: chasserParasites, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,

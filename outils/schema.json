@@ -4536,6 +4536,7 @@
       },
       "sursis": { "type": "object", "additionalProperties": false, "required": ["depart", "savoir", "action", "objet"], "description": "Le compte à rebours d'Ananké avant le game over (Victor, 2026-11-14), en secondes : au départ, puis ce que rapporte un savoir maîtrisé, une action débloquée, un objet de quête.", "properties": { "depart": { "type": "integer", "minimum": 30 }, "savoir": { "type": "integer", "minimum": 0 }, "action": { "type": "integer", "minimum": 0 }, "objet": { "type": "integer", "minimum": 0 } } },
       "torche": { "type": "object", "additionalProperties": false, "required": ["prix"], "description": "La torche qu'un explorateur peut emporter (Victor, 2026-11-15) : prix en crédits, vue élargie (facteur), chance de faire reculer un prédateur, secondes de calme ensuite.", "properties": { "prix": { "type": "integer", "minimum": 0 }, "vue": { "type": "number", "minimum": 1 }, "fuite": { "type": "number", "minimum": 0, "maximum": 1 }, "calme": { "type": "number", "minimum": 0 }, "surprise": { "type": "number", "minimum": 0, "maximum": 1, "description": "Chance de toucher un prédateur qui n'a rien vu, torche en main." }, "repere": { "type": "number", "minimum": 0, "maximum": 1, "description": "Chance de toucher un prédateur qui charge, torche en main." } } },
+      "gibier": { "type": "object", "additionalProperties": false, "required": ["faim", "besoin", "famine", "prolifere"], "description": "L'équilibre du gibier (Victor, 2026-11-15) : proies mangées par prédateur et par jour, proies nécessaires par prédateur, part des prédateurs affamés qui meurt chaque jour, plafond des proies multiplié sans prédateurs, seuil de prolifération, ce qu'il reste des baies et des fermes quand une espèce prolifère. Une espèce tombée sous une bête a disparu pour toujours.", "properties": { "faim": { "type": "number", "minimum": 0 }, "besoin": { "type": "number", "minimum": 0 }, "famine": { "type": "number", "minimum": 0, "maximum": 1 }, "prolifere": { "type": "number", "minimum": 1 }, "seuil": { "type": "number", "minimum": 1 }, "baies": { "type": "number", "minimum": 0, "maximum": 1 }, "fermes": { "type": "number", "minimum": 0, "maximum": 1 } } },
       "baies": { "type": "object", "additionalProperties": false, "required": ["par_jour", "nourriture"], "description": "Les buissons de baies cachés chaque jour dans le brouillard (Victor, 2026-11-13) : un explorateur les cueille et les rapporte au village.", "properties": { "par_jour": { "type": "integer", "minimum": 0 }, "nourriture": { "type": "number", "minimum": 0 } } },
       "quartier": {
        "type": "object",
@@ -5174,6 +5175,10 @@
       ],
       "properties": {
        "gibier": { "const": true, "description": "Du gibier (Victor, 2026-11-15) : rien ne le prélève chaque jour, ce sont les explorateurs qui l'abattent, bête par bête." },
+       "role": { "enum": ["proie", "predateur"], "description": "Gibier : les prédateurs mangent les proies et meurent sans elles ; sans prédateurs, les proies prolifèrent." },
+       "viande": { "type": "number", "minimum": 0, "description": "Nourriture rapportée au village par bête abattue." },
+       "ravage": { "enum": ["baies", "ferme"], "description": "Ce que l'espèce abîme quand elle prolifère." },
+       "singulier": { "$ref": "#/$defs/texte" },
        "id": {
         "type": "string"
        },

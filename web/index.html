@@ -2549,6 +2549,7 @@ function demarrerJeu() {
         if (q) h += '<ul class="ex-liste">' + q.objets.map(function (o) {
           if (X && X.sac.indexOf(o.id) >= 0) return '<li class="sac"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + "</b><small>" + __("dans le sac : à ramener") + "</small></span></li>";
           return '<li class="' + (o.pris ? "ok" : "") + '"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + (o.pris ? " ✓" : "") + "</b>" + (o.pris || !o.zone ? "" : "<small>" + esc(tx(o.zone)) + "</small>") + "</span></li>"; }).join("") + "</ul>";
+        if (X && X.viande) h += '<div class="ex-site ok">🥩 ' + __("Viande dans le sac : +{n} de nourriture, à rapporter", { n: X.viande }) + "</div>";
         if (BA && (nba || (X && X.baies.length))) h += '<div class="ex-site' + (X && X.baies.length ? " ok" : "") + '">🫐 ' + (X && X.baies.length ? __("Baies dans le sac : {n}, à rapporter", { n: X.baies.length }) + (nba ? " · " : "") : "") + (nba ? (nba > 1 ? __("{n} buissons de baies à trouver", { n: nba }) : __("1 buisson de baies à trouver")) + " (+" + chiffre(BA.nourriture) + " " + __("de nourriture chacun") + ")" : "") + "</div>";
         if (sites.length || prets.length) h += '<div class="ex-sites">' + sites.map(function (x) {
           var vu = X && X.vus.some(function (v) { return v.id === x.id; });
@@ -2673,8 +2674,10 @@ function demarrerJeu() {
       X.sens = b.x < X.x ? -1 : 1; X.vue = allure(b.x - X.x, b.y - X.y);
       // Victor (2026-11-15) : les peaux de l'abri se prennent sur une bête abattue, bison ou prédateur.
       if (b.bison) {
-        if (Math.random() < EXP.coup) { b.ko = true; var ab = M.abattreIle(C, P, "bisons", maintenant()); sauver(); message = (prendrePeau() ? __("Le bison s'effondre. Tu as sa peau : reste à la rapporter au village.") : __("Le bison s'effondre. Tu n'avais pas besoin de sa peau : une bête de moins pour rien.")) + resteGibier(ab, __("bison"), __("bisons")); }
-        else { b.fuite = performance.now() + 5000; message = __("Raté ! Le bison détale."); }
+        var esp = b.esp || "bisons", Le = esp === "sangliers" ? __("Le sanglier") : __("Le bison");
+        if (Math.random() < EXP.coup) { b.ko = true; var ab = M.abattreIle(C, P, esp, maintenant()), peau = prendrePeau(); if (ab && ab.viande) X.viande += ab.viande; sauver();
+          message = Le + " " + __("s'effondre.") + " " + (ab && ab.viande ? __("De la viande pour le village : +{n} de nourriture", { n: ab.viande }) + (peau ? __(", et sa peau") : "") + __(". Reste à rapporter le tout.") : peau ? __("Tu as sa peau : reste à la rapporter au village.") : "") + resteGibier(ab, esp === "sangliers" ? __("sanglier") : __("bison"), esp === "sangliers" ? __("sangliers") : __("bisons")); }
+        else { b.fuite = performance.now() + 5000; message = __("Raté ! ") + Le + " " + __("détale."); }
         panneau(); return;
       }
       var repere = b.chasse;
@@ -2684,13 +2687,14 @@ function demarrerJeu() {
       else { b.chasse = true; b.alerte = performance.now() + 1500; message = repere ? __("Raté ! Il esquive et revient sur toi. Cours !") : __("Raté ! Maintenant il t'a vu. Cours !"); }
       panneau();
     }
-    function resteGibier(r, un, des) { return !r ? "" : " " + (r.reste <= 0 ? __("C'était le dernier {n} de l'île.", { n: un }) : r.reste === 1 ? __("Il ne reste qu'un {n} sur l'île.", { n: un }) : __("Il reste {k} {n} sur l'île.", { k: r.reste, n: des })); }
+    function resteGibier(r, un, des) { return !r ? "" : " " + (r.reste <= 0 ? __("C'était le dernier {n} de l'île : l'espèce a disparu, pour toujours.", { n: un }) : r.reste === 1 ? __("Il ne reste qu'un {n} sur l'île.", { n: un }) : __("Il reste {k} {n} sur l'île.", { k: r.reste, n: des })); }
     function prendrePeau() {
       var q = queteActive(), o = q && q.objets.filter(function (x) { return x.chasse && !x.pris && X.sac.indexOf(x.id) < 0; })[0];
       if (!o) return false; X.sac.push(o.id); objets(); return true;
     }
     // Le bison : de profil seulement, il se retourne selon son sens de marche.
     var BISON = '<ellipse cy="4.6" rx="6.4" ry="1.5" fill="rgba(0,0,0,.25)"/><path d="M-6.6 4.4 L-6.8 -1 Q-6 -4.4 -1 -5.2 Q3.4 -6.4 5.6 -3.4 L7.6 -1.4 L7.2 1.4 L5.4 2 L4.8 4.4 L3.4 4.4 L3.2 1.8 L-3 2 L-3.4 4.4 L-4.8 4.4 L-5 1.6 Z" fill="#6E4A26"/><path d="M-1 -5.2 Q3.4 -6.4 5.6 -3.4 L5 .6 L1 1 Z" fill="#4A3018"/><path d="M6 -3.4 Q7.2 -5 6.2 -5.8" stroke="#EFE6D2" stroke-width=".8" fill="none" stroke-linecap="round"/><circle cx="6" cy="-1.6" r=".5" fill="#14151A"/><path d="M-6.8 -1 L-8 1.4" stroke="#4A3018" stroke-width=".9" stroke-linecap="round"/>';
+    var SANGLIER = '<ellipse cy="3.4" rx="4.8" ry="1.2" fill="rgba(0,0,0,.25)"/><path d="M-4.8 3.2 L-5 -.6 Q-4 -3.4 0 -3.6 Q3.4 -3.8 4.8 -1.6 L6.6 .2 L6.2 1.4 L4.2 1.6 L3.8 3.2 L2.8 3.2 L2.6 1.6 L-2.4 1.6 L-2.8 3.2 L-3.8 3.2 Z" fill="#4E4038"/><path d="M-3.6 -2.8 L-2.6 -4.4 L-1.4 -3.4 L-.4 -4.6 L.8 -3.6" stroke="#2E2420" stroke-width=".9" fill="none" stroke-linecap="round"/><path d="M5.2 .8 L5.8 -.8" stroke="#F4EEDD" stroke-width=".7" stroke-linecap="round"/><circle cx="4.2" cy="-1" r=".45" fill="#14151A"/><path d="M-5 -.4 L-6 .4" stroke="#2E2420" stroke-width=".7" stroke-linecap="round"/>';
     function svgBison() { return '<g class="ex-v" data-v="profil">' + BISON + "</g>"; }
     function habiller() { X.graine = 1 + Math.floor(Math.random() * 1e6); X.ee.setAttribute("class", "ex-explo"); X.ee.querySelector(".ex-corps").innerHTML = svgExplo(X.graine, X.torche); X.vue = "face"; X.vueMontree = null; X.marche = false; X.ev = [].slice.call(X.ee.querySelectorAll(".ex-v")); X.bt = [].slice.call(X.ee.querySelectorAll(".ex-baton")); X.coup = 0; X.cible = null; }
     function finExpe() { cancelAnimationFrame(raf); X = null; masquer(); z.classList.remove("expe"); acteurs.innerHTML = ""; var pe = z.querySelector(".ex-perdu"); if (pe) pe.remove(); }
@@ -2715,16 +2719,18 @@ function demarrerJeu() {
     function partir(torche) {
       if (!foyer || X) return;
       torche = torche === true;
-      X = { torche: torche, x: FX, y: FY, tx: FX, ty: FY, sac: [], vus: [], baies: [], t: performance.now(), sens: 1, betes: [], gel: 0 };
+      X = { torche: torche, x: FX, y: FY, tx: FX, ty: FY, sac: [], vus: [], baies: [], viande: 0, t: performance.now(), sens: 1, betes: [], gel: 0 };
       var GIB = M.gibierIle(C, P, maintenant()), nbP = GIB && GIB.predateurs != null ? Math.min(EXP.betes, GIB.predateurs) : EXP.betes, nbB = GIB && GIB.bisons != null ? Math.min(EXP.bisons, GIB.bisons) : EXP.bisons;
       for (var n = 0; n < nbP; n++) { var p = pointLibre(); X.betes.push({ x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1, vue: "profil" }); }
       // Victor (2026-11-15) : des bisons se baladent aussi. Ils ne chassent personne et évitent les prédateurs.
-      for (n = 0; n < nbB; n++) { p = pointLibre(); X.betes.push({ bison: true, x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1, vue: "profil" }); }
-      acteurs.innerHTML = '<circle class="ex-cible" r="2.4"/>' + X.betes.map(function (b) { return '<g class="ex-bete' + (b.bison ? " ex-bison" : "") + '"><g class="ex-corps">' + (b.bison ? svgBison() : svgLoup()) + '</g><text class="ex-alerte" y="-7" text-anchor="middle" font-size="7" font-weight="800" fill="#D92B2B">!</text></g>'; }).join("") +
+      var nbS = GIB && GIB.sangliers != null ? Math.min(EXP.bisons, GIB.sangliers) : 0;
+      for (n = 0; n < nbS; n++) { p = pointLibre(); X.betes.push({ bison: true, esp: "sangliers", x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1, vue: "profil" }); }
+      for (n = 0; n < nbB; n++) { p = pointLibre(); X.betes.push({ bison: true, esp: "bisons", x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1, vue: "profil" }); }
+      acteurs.innerHTML = '<circle class="ex-cible" r="2.4"/>' + X.betes.map(function (b) { return '<g class="ex-bete' + (b.bison ? " ex-bison" : "") + '"><g class="ex-corps">' + (b.esp === "sangliers" ? '<g class="ex-v" data-v="profil">' + SANGLIER + "</g>" : b.bison ? svgBison() : svgLoup()) + '</g><text class="ex-alerte" y="-7" text-anchor="middle" font-size="7" font-weight="800" fill="#D92B2B">!</text></g>'; }).join("") +
         '<g class="ex-explo"><g class="ex-corps"></g></g>';
       X.eb = [].slice.call(acteurs.querySelectorAll(".ex-bete")); X.ee = acteurs.querySelector(".ex-explo"); X.ec = acteurs.querySelector(".ex-cible"); habiller(); preparerDevant();
       z.classList.add("expe"); S.k = Math.max(S.k, 4.6); S.x = FX; S.y = FY;
-      message = __("Touche la carte : l'explorateur y va. Ce qu'il trouve se rapporte au panier, au centre du village. Fuis ce qui a les yeux rouges.") + (queteActive() && queteActive().objets.some(function (o) { return o.chasse && !o.pris; }) ? " " + __("Pour une peau, touche un bison : approche-le par-derrière.") : "") + (torche ? " " + __("Ta torche fait reculer les bêtes, tes coups portent mieux, et elle ouvre la grotte.") : "");
+      message = __("Touche la carte : l'explorateur y va. Ce qu'il trouve se rapporte au panier, au centre du village. Fuis ce qui a les yeux rouges.") + (nbB + nbS ? " " + __("Bisons et sangliers donnent de la viande et des peaux : touche-en un, en l'approchant par-derrière. Chaque bête abattue est une bête de moins sur l'île.") : "") + (torche ? " " + __("Ta torche fait reculer les bêtes, tes coups portent mieux, et elle ouvre la grotte.") : "");
       objets(); panneau(); dessiner(); appliquer(); raf = requestAnimationFrame(tour);
     }
     function dessiner() {
@@ -2743,7 +2749,7 @@ function demarrerJeu() {
     // Pris : une courte scène (le prédateur bondit, l'explorateur tombe, le bandeau le dit), puis un autre habitant,
     // d'une autre allure, repart du village.
     function attrape() {
-      var r = M.perdreExplorateur(C, P, maintenant()), avait = X.sac.length + X.vus.length + X.baies.length; X.vus = []; X.sac = []; X.baies = []; sauver();
+      var r = M.perdreExplorateur(C, P, maintenant()), avait = X.sac.length + X.vus.length + X.baies.length + X.viande; X.vus = []; X.sac = []; X.baies = []; X.viande = 0; sauver();
       message = (r && r.perdu ? __("Un prédateur a surpris ton explorateur : il ne reviendra pas. Un habitant de moins.") : __("Un prédateur a surpris ton explorateur. Il s'en tire de justesse.")) + (avait ? " " + __("Ce qu'il portait et ce qu'il avait repéré sont perdus.") : "") + " " + __("Un autre repart du village.");
       X.tx = X.x; X.ty = X.y; X.gel = performance.now() + 2100; X.ee.setAttribute("class", "ex-explo tombe");
       z.classList.add("mordu"); setTimeout(function () { z.classList.remove("mordu"); }, 700);
@@ -2813,11 +2819,12 @@ function demarrerJeu() {
           }
         } else if (X.sorti || X.noir) { X.sorti = false; X.noir = false; }
         baiesVues().forEach(function (b) { if (X.baies.indexOf(b.id) >= 0 || Math.hypot(b.x - X.x, b.y - X.y) > 7) return; X.baies.push(b.id); message = __("Des baies mûres. Dans le sac : reste à les rapporter au village."); objets(); panneau(); });
-        if ((X.sac.length || X.vus.length || X.baies.length) && Math.hypot(X.x - FX, X.y - FY) < 9) {
+        if ((X.sac.length || X.vus.length || X.baies.length || X.viande) && Math.hypot(X.x - FX, X.y - FY) < 9) {
           var der = null, n = X.sac.length, noms = [], cb = X.baies.length ? M.cueillirBaies(C, P, X.baies, maintenant()) : null; X.baies = [];
+          var cv = X.viande ? M.rapporterViande(C, P, X.viande, maintenant()) : null; X.viande = 0;
           if (q) X.sac.forEach(function (id) { der = M.ramasserIle(C, P, q.id, id, maintenant()) || der; }); X.sac = [];
           X.vus.forEach(function (v) { var rs = M.repererSite(C, P, v.id, [v.x / ILE_W, v.y / ILE_H], maintenant()); if (rs && rs.ok) noms.push(tx(rs.nom)); }); X.vus = []; sauver();
-          message = (n > 1 ? __("{n} trouvailles rapportées au village.", { n: n }) : n ? __("Rapporté au village.") : "") + (noms.length ? " " + __("Emplacement retenu : {q}. Il reste à l'ouvrir.", { q: noms.join(", ") }) : "") + (cb && cb.n ? " " + __("Baies rapportées : +{n} de nourriture.", { n: chiffre(cb.nourriture) }) : ""); message = message.trim();
+          message = (n > 1 ? __("{n} trouvailles rapportées au village.", { n: n }) : n ? __("Rapporté au village.") : "") + (noms.length ? " " + __("Emplacement retenu : {q}. Il reste à l'ouvrir.", { q: noms.join(", ") }) : "") + (cb && cb.n ? " " + __("Baies rapportées : +{n} de nourriture.", { n: chiffre(cb.nourriture) }) : "") + (cv ? " " + __("Viande rapportée : +{n} de nourriture.", { n: chiffre(cv.nourriture) }) : ""); message = message.trim();
           if (der && der.quete.complete) { message += " " + __("Tout y est."); finExpe(); dessiner(); objets(); panneau(der.quete); return; }
           objets(); panneau();
         }
@@ -6885,11 +6892,11 @@ function demarrerJeu() {
     var h = '<h3 class="ile-h2" style="margin:14px 0 0">' + __("Ce que l'île peut donner") + "</h3>";
     if (!sait) h += '<p class="ile-vie-note">' + __("La forêt et les poissons ne sont pas sans fin, mais personne ici ne sait encore les compter. Apprends « ") + esc(tx(C.parId[SAVOIR_ILE].nom)) + __(" » pour voir ce qu'il en reste et régler ce qu'on y prend.") + "</p>";
     R.nature.forEach(function (n) {
-      var pc = Math.round(100 * n.part), mot = n.etat === "epuise" ? __("Épuisé") : n.etat === "rouge" ? __("Au plus bas") : n.etat === "orange" ? __("On prend trop") : __("Se renouvelle");
-      h += '<div class="ile-nat ' + n.etat + '"><div class="ile-nat-tete"><b>' + n.icone + " " + esc(tx(n.nom)) + '</b><span class="ile-nat-etat">' + (sait ? pc + " % · " + mot : "?") + "</span></div>";
+      var pc = Math.round(100 * n.part), mot = n.gibier ? (n.eteint ? __("Disparus pour toujours") : n.prolifere ? __("Prolifèrent") : n.affame ? __("Meurent de faim") : n.betes < 3 ? __("Au bord de l'extinction") : __("En équilibre")) : n.etat === "epuise" ? __("Épuisé") : n.etat === "rouge" ? __("Au plus bas") : n.etat === "orange" ? __("On prend trop") : __("Se renouvelle");
+      h += '<div class="ile-nat ' + n.etat + '"><div class="ile-nat-tete"><b>' + n.icone + " " + esc(tx(n.nom)) + '</b><span class="ile-nat-etat">' + (sait ? (n.gibier ? (n.eteint ? "" : n.betes + " · ") : pc + " % · ") + mot : "?") + "</span></div>";
       if (sait) {
         h += '<i><b style="width:' + pc + "%;background:" + (n.etat === "vert" ? (n.couleur || "#3F8F5A") : n.etat === "orange" ? "#C98A1E" : "#C8553D") + '"></b></i><small>' +
-          (n.gibier ? __("Il en reste ") + "<b>" + Math.floor(n.stock + 1e-9) + "</b>" + __(" sur ") + n.max + ". " + esc(tx(n.usage || { fr: "" })) :
+          (n.gibier ? (n.eteint ? __("Il n'en reste aucun. Une espèce disparue ne revient pas.") + " " : "") + esc(tx(n.usage || { fr: "" })) + (n.viande && !n.eteint ? " " + __("Viande : +{n} de nourriture par bête.", { n: n.viande }) : "") :
           __("On y prend ") + "<b>" + chiffre(n.pris) + "</b>" + __(" par jour ; au mieux, l'île peut en rendre ") + "<b>" + chiffre(n.durable) + "</b>.") +
           (n.jours != null && n.stock > 0 ? " " + __("À ce rythme, il n'en restera plus dans ") + "<b>" + n.jours + (n.jours > 1 ? __(" jours") : __(" jour")) + "</b>." : "") + "</small>";
         C.ile.amenagements.filter(function (a) { return a.preleve === n.id && R.batis[a.id]; }).forEach(function (a) {

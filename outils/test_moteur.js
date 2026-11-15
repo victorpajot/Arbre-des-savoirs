@@ -2566,10 +2566,18 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       assert.deepEqual(M.epreuvesEnAttente(CA, Qh, t0), [], "sans crédits, la quête de la hache reste fermée");
       const bl = M.epreuvesBloquees(CA, Qh, t0).filter(x => x.id === "hache")[0]; assert.ok(bl && bl.manque[0].r === "credits", "et on sait ce qui manque");
       Qh.credits.solde = solde; assert.ok(M.epreuvesEnAttente(CA, Qh, t0).indexOf("hache") >= 0);
-      const g = M.gibierIle(CA, Qh, t0); assert.ok(g && g.bisons === 12 && g.predateurs === 6, "gibier plein dans une partie en cours");
-      assert.equal(M.abattreIle(CA, Qh, "bisons", t0).reste, 11);
-      const nb0 = M.baiesIle(CA, Qh, t0).buissons.length; Qh.ressources.nature.predateurs = 0;
-      assert.equal(M.baiesIle(CA, Qh, t0).buissons.length, Math.ceil(nb0 / 2), "sans prédateurs, moitié moins de baies"); Qh.ressources.nature.predateurs = 6; Qh.ressources.nature.bisons = 12; }
+      const g = M.gibierIle(CA, Qh, t0); assert.ok(g && g.bisons === 9 && g.sangliers === 14 && g.predateurs === 6, "gibier présent dans une partie en cours");
+      const ab = M.abattreIle(CA, Qh, "bisons", t0); assert.equal(ab.reste, 8); assert.equal(ab.viande, 20);
+      const n0 = Qh.ressources.stocks.nourriture; M.rapporterViande(CA, Qh, 20, t0); assert.equal(Qh.ressources.stocks.nourriture, n0 + 20);
+      const nb0 = M.baiesIle(CA, Qh, t0).buissons.length; Qh.ressources.nature.bisons = 20;
+      assert.equal(M.baiesIle(CA, Qh, t0).buissons.length, Math.ceil(nb0 / 2), "des bisons qui prolifèrent broutent les baies");
+      // L'équilibre tient tout seul ; une espèce disparue ne revient pas ; sans gibier, les prédateurs meurent ; sans eux, le gibier prolifère.
+      const sim = (nat, jours) => { const Q = JSON.parse(JSON.stringify(Qh)); Object.assign(Q.ressources.nature, nat); const d0 = Q.population.t || t0; M.ile(CA, Q, d0); for (let k = 1; k <= jours; k++) M.ile(CA, Q, d0 + k * J); return Q.ressources.nature; };
+      const eq = sim({ bisons: 9, sangliers: 14, predateurs: 6 }, 60); assert.ok(eq.bisons > 7 && eq.bisons < 11 && eq.sangliers > 12 && eq.predateurs > 5, "équilibre stable : " + JSON.stringify(eq));
+      const ext = sim({ bisons: 0.4, sangliers: 14, predateurs: 6 }, 60); assert.equal(ext.bisons, 0, "disparu pour toujours");
+      const fam = sim({ bisons: 0, sangliers: 0, predateurs: 6 }, 60); assert.equal(fam.predateurs, 0, "sans gibier, plus de prédateurs");
+      const pro = sim({ bisons: 9, sangliers: 14, predateurs: 0 }, 120); assert.ok(pro.bisons > 12 * 1.15 && pro.sangliers > 16 * 1.15, "sans prédateurs, le gibier prolifère : " + JSON.stringify(pro));
+      Qh.ressources.nature.bisons = 9; }
     const eh = M.etatAmenagement(CA, Qh, "bucheron", t0); assert.ok(!eh.possible && eh.epreuve === "hache", "pas de bûcherons sans hache");
     const rh = M.construireIle(CA, Qh, "bucheron", t0); assert.ok(!rh || !rh.ok, "le chantier refuse le camp de bûcherons");
     const qh = M.queteIle(CA, Qh, "hache"); assert.equal(qh.reste, 4); qh.objets.forEach(o => M.ramasserIle(CA, Qh, "hache", o.id, t0));
