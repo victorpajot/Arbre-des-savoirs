@@ -5554,7 +5554,7 @@
    "amenagement": "foyer",
    "dessin": "abri",
    "accroche": {
-    "fr": "Le feu réchauffe, il ne protège pas de la pluie. Il faut un mur contre le vent, des perches et des peaux par-dessus. Trois gestes."
+    "fr": "Le feu réchauffe, il ne protège pas de la pluie. Il faut une charpente qui tienne au vent, des peaux prêtes à servir, et de quoi les retenir. Trois étapes, et à chacune c'est toi qui décides."
    },
    "quete": {
     "nom": {
@@ -5600,32 +5600,134 @@
    },
    "etapes": [
     {
-     "id": "abri-muret",
-     "type": "tracer",
+     "id": "abri-charpente",
+     "type": "choix",
+     "dessin": "coupe",
      "titre": {
-      "fr": "Le muret"
+      "fr": "La charpente"
      },
      "consigne": {
-      "fr": "Dessine le muret autour du foyer : pose le doigt sur le 1 et suis les points dans l'ordre, pierre après pierre."
-     },
-     "appel": {
-      "fr": "Suis les points du doigt, sans le lever"
-     },
-     "compte": {
-      "fr": "Murets posés : {n} sur {t}"
+      "fr": "L'abri se monte ici en coupe, pièce après pièce. À chaque pièce, choisis : un mauvais choix ne tient pas, et tu sauras pourquoi."
      },
      "gagne": {
-      "fr": "Le muret est monté, du côté du vent."
+      "fr": "La charpente tient : muret au vent, perches en cône, sommet ouvert, entrée à l'abri."
      },
-     "noeuds": [
+     "decisions": [
       {
        "id": "muret",
-       "nom": {
-        "fr": "Le muret de pierres"
+       "question": {
+        "fr": "Le vent vient de la gauche. Où montes-tu le muret de pierres ?"
        },
-       "pose": {
-        "fr": "Un muret de pierres et de galets."
-       }
+       "bon": 0,
+       "choix": [
+        {
+         "texte": {
+          "fr": "Du côté du vent"
+         },
+         "effet": {
+          "fr": "Le muret coupe le vent : le foyer est à l'abri derrière lui."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Du côté opposé au vent"
+         },
+         "effet": {
+          "fr": "Le vent arrive droit sur le foyer : rien ne l'arrête."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Nulle part, les peaux suffiront"
+         },
+         "effet": {
+          "fr": "Sans rien pour le couper, le vent passe sous les peaux et souffle sur le feu."
+         }
+        }
+       ]
+      },
+      {
+       "id": "perches",
+       "question": {
+        "fr": "Par quoi commence la charpente ?"
+       },
+       "bon": 1,
+       "choix": [
+        {
+         "texte": {
+          "fr": "Une perche plantée au milieu"
+         },
+         "effet": {
+          "fr": "Elle prend la place du foyer, et une perche seule ne porte rien."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Trois perches penchées qui se rejoignent en haut"
+         },
+         "effet": {
+          "fr": "Trois perches qui se rejoignent forment un cône : les autres viendront s'y appuyer."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Des perches bien droites, en cercle"
+         },
+         "effet": {
+          "fr": "Droites, elles ne se rejoignent jamais : il n'y a rien pour porter le toit."
+         }
+        }
+       ]
+      },
+      {
+       "id": "sommet",
+       "question": {
+        "fr": "Le feu brûle au milieu. Que fais-tu du sommet ?"
+       },
+       "bon": 1,
+       "choix": [
+        {
+         "texte": {
+          "fr": "Je le ferme bien, contre la pluie"
+         },
+         "effet": {
+          "fr": "La fumée n'a plus d'issue : elle remplit l'abri."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Je laisse une ouverture"
+         },
+         "effet": {
+          "fr": "La fumée monte et sort par le haut."
+         }
+        }
+       ]
+      },
+      {
+       "id": "entree",
+       "question": {
+        "fr": "Où ouvres-tu l'entrée ?"
+       },
+       "bon": 0,
+       "choix": [
+        {
+         "texte": {
+          "fr": "À l'opposé du vent"
+         },
+         "effet": {
+          "fr": "L'entrée tourne le dos au vent : on entre sans le faire entrer."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Face au vent"
+         },
+         "effet": {
+          "fr": "Le vent s'engouffre par l'entrée et couche les flammes."
+         }
+        }
+       ]
       }
      ],
      "savoir": [
@@ -5636,45 +5738,6 @@
        },
        "source": "Wikipédia en anglais, « Terra Amata (archaeological site) »"
       },
-      {
-       "id": "abri-foyer",
-       "texte": {
-        "fr": "Au centre de chaque hutte se trouvait un foyer, dont les cendres montrent que ses habitants maîtrisaient le feu."
-       },
-       "source": "Wikipédia en anglais, « Terra Amata (archaeological site) »"
-      }
-     ]
-    },
-    {
-     "id": "abri-perches",
-     "type": "tracer",
-     "titre": {
-      "fr": "Les perches"
-     },
-     "consigne": {
-      "fr": "Dresse les perches : dessine-les du sol jusqu'au sommet, l'une après l'autre, en laissant un trou en haut pour la fumée."
-     },
-     "appel": {
-      "fr": "Suis les points du doigt, sans le lever"
-     },
-     "compte": {
-      "fr": "Charpentes dressées : {n} sur {t}"
-     },
-     "gagne": {
-      "fr": "Les perches tiennent, liées au sommet."
-     },
-     "noeuds": [
-      {
-       "id": "charpente",
-       "nom": {
-        "fr": "La charpente de perches"
-       },
-       "pose": {
-        "fr": "Les perches sont dressées."
-       }
-      }
-     ],
-     "savoir": [
       {
        "id": "abri-lumley",
        "texte": {
@@ -5688,30 +5751,204 @@
         "fr": "Une autre archéologue, Paola Villa, a jugé ces conclusions plus conjecturales que convaincantes."
        },
        "source": "Wikipédia en anglais, « Terra Amata (archaeological site) »"
+      },
+      {
+       "id": "abri-cone",
+       "texte": {
+        "fr": "Le principe se retrouve bien plus tard dans le tipi des peuples des Plaines : un abri de forme conique, monté sur trois ou quatre poteaux selon les peuples, aminci vers le haut pour laisser sortir la fumée."
+       },
+       "source": "L'Encyclopédie canadienne, « Tipi »"
+      },
+      {
+       "id": "abri-entree",
+       "texte": {
+        "fr": "Son entrée s'ouvre en général vers l'est : c'est la direction du soleil levant, et le côté opposé aux vents dominants."
+       },
+       "source": "L'Encyclopédie canadienne, « Tipi »"
       }
      ]
     },
     {
      "id": "abri-peaux",
-     "type": "frotter",
-     "dessin": "peaux",
+     "type": "assemblage",
+     "dessin": "peau",
      "titre": {
       "fr": "Les peaux"
      },
      "consigne": {
-      "fr": "Tends les peaux sur les perches : tire-les d'un côté à l'autre, jusqu'à couvrir tout l'abri."
+      "fr": "Une peau ne devient pas une couverture toute seule. Touche les outils dans l'ordre où ils servent, de la bête à la couture."
      },
-     "course": 3600,
-     "appel": {
-      "fr": "Glisse le doigt d'un côté à l'autre pour tendre les peaux"
-     },
-     "compte": {
-      "fr": "Couvert : {n} %"
+     "rate": {
+      "fr": "Pas encore celui-là. Regarde où en est la peau : est-elle détachée, tannée, assouplie, percée ?"
      },
      "gagne": {
-      "fr": "L'abri est couvert. Dix personnes y dormiront au sec."
+      "fr": "Les peaux sont souples, percées et cousues."
      },
+     "pieces": [
+      {
+       "id": "p_aiguille",
+       "nom": {
+        "fr": "L'aiguille à chas"
+       },
+       "pose": {
+        "fr": "L'aiguille passe de trou en trou : les peaux sont cousues ensemble."
+       }
+      },
+      {
+       "id": "p_ocre",
+       "nom": {
+        "fr": "L'ocre"
+       },
+       "pose": {
+        "fr": "On prépare la peau : c'est le tannage, avec des substances comme l'ocre."
+       }
+      },
+      {
+       "id": "p_lame",
+       "nom": {
+        "fr": "La lame de silex"
+       },
+       "pose": {
+        "fr": "D'abord dépouiller l'animal, à la lame."
+       }
+      },
+      {
+       "id": "p_percoir",
+       "nom": {
+        "fr": "Le perçoir"
+       },
+       "pose": {
+        "fr": "Avant de coudre, il faut percer des trous dans le cuir, au perçoir."
+       }
+      },
+      {
+       "id": "p_lissoir",
+       "nom": {
+        "fr": "Le lissoir en os"
+       },
+       "pose": {
+        "fr": "Frotté contre la peau, le lissoir l'assouplit, la polit et rend le cuir plus résistant à l'eau."
+       }
+      }
+     ],
+     "ordre": [
+      "p_lame",
+      "p_ocre",
+      "p_lissoir",
+      "p_percoir",
+      "p_aiguille"
+     ],
      "savoir": [
+      {
+       "id": "peaux-travail",
+       "texte": {
+        "fr": "Il fallait dépouiller l'animal à la lame, puis préparer la peau : la tanner, avec des substances comme l'ocre, et l'assouplir avec des outils, lissoirs, spatules ou grattoirs."
+       },
+       "source": "Hominidés.com, « Les vêtements à la préhistoire »"
+      },
+      {
+       "id": "peaux-percer",
+       "texte": {
+        "fr": "Pour coudre, on perçait des trous dans le cuir, un perçoir dans une main, une « planche à perforer » dans l'autre. Les perçoirs sont nombreux dans les sites paléolithiques."
+       },
+       "source": "Hominidés.com, « Les vêtements à la préhistoire »"
+      },
+      {
+       "id": "peaux-aiguille",
+       "texte": {
+        "fr": "Les aiguilles à chas sont taillées dans des matières dures, ivoire, os ou bois de cervidé. Les plus anciennes ont plus de 30 000 ans : la couture est bien plus jeune que les premières cabanes."
+       },
+       "source": "Hominidés.com, « Les vêtements à la préhistoire »"
+      },
+      {
+       "id": "peaux-perdues",
+       "texte": {
+        "fr": "Les vêtements étaient faits de matières périssables : ils ont disparu depuis longtemps. Restent les outils."
+       },
+       "source": "Hominidés.com, « Les vêtements à la préhistoire »"
+      }
+     ]
+    },
+    {
+     "id": "abri-couvrir",
+     "type": "choix",
+     "dessin": "couverture",
+     "titre": {
+      "fr": "La couverture"
+     },
+     "consigne": {
+      "fr": "La charpente est debout, les peaux sont prêtes. Reste à couvrir, et à faire tenir la couverture."
+     },
+     "gagne": {
+      "fr": "L'abri est couvert, et la couverture tient au vent."
+     },
+     "decisions": [
+      {
+       "id": "coudre",
+       "question": {
+        "fr": "Aucune peau n'est assez grande pour couvrir l'abri. Que fais-tu ?"
+       },
+       "bon": 1,
+       "choix": [
+        {
+         "texte": {
+          "fr": "Je les pose côte à côte"
+         },
+         "effet": {
+          "fr": "Le vent et la pluie passent entre deux peaux."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Je les couds ensemble"
+         },
+         "effet": {
+          "fr": "Cousues, les peaux ne font plus qu'une seule couverture."
+         }
+        }
+       ]
+      },
+      {
+       "id": "lester",
+       "question": {
+        "fr": "Le vent soulève le bas de la couverture. Comment la retenir ?"
+       },
+       "bon": 0,
+       "choix": [
+        {
+         "texte": {
+          "fr": "Avec des pierres posées sur le bord"
+         },
+         "effet": {
+          "fr": "Les pierres retiennent le bord : la couverture ne bouge plus."
+         }
+        },
+        {
+         "texte": {
+          "fr": "Je la laisse pendre"
+         },
+         "effet": {
+          "fr": "Au premier coup de vent, elle se soulève et claque."
+         }
+        }
+       ]
+      }
+     ],
+     "savoir": [
+      {
+       "id": "abri-bord",
+       "texte": {
+        "fr": "Un tipi est recouvert de peaux de bison cousues ensemble, et des pierres retiennent souvent le bord inférieur de la couverture."
+       },
+       "source": "L'Encyclopédie canadienne, « Tipi »"
+      },
+      {
+       "id": "abri-magdalenien",
+       "texte": {
+        "fr": "Bien avant, les Magdaléniens dressaient en plein air de petites tentes ou huttes rondes, recouvertes de peaux calées au sol par des blocs de pierre. À Gönnersdorf, en Allemagne, on a retrouvé les trous de calage d'une charpente légère, probablement en bois."
+       },
+       "source": "Ministère de la Culture, « Les abris sculptés de la Préhistoire : habitat »"
+      },
       {
        "id": "abri-date",
        "texte": {

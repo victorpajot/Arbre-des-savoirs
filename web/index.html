@@ -1349,6 +1349,8 @@ svg.grille .interro { transition: opacity .3s; }
 @media (prefers-reduced-motion: reduce) { .ep-noeud, .ep-ferrer.mord .ep-fil-peche { animation: none; } }
 .ep-frotte { touch-action: none; cursor: grab; } .ep-lame { transition: transform .08s linear; } .ep-poli { opacity: 0; }
 .ep-barre { flex: 1; height: 14px; border-radius: 7px; background: var(--line); overflow: hidden; } .ep-barre i { display: block; height: 100%; width: 0; background: #E3B92E; border-radius: 7px; } .ep-compte b { white-space: nowrap; }
+.ep-question { font-size: 18px; line-height: 1.35; margin: 10px 0 8px; } .ep-decisions { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 8px; } .ep-decisions .btn { font-size: 17px; width: 100%; }
+.ep-decisions .btn.juste { border-color: var(--good); background: color-mix(in srgb, var(--good) 18%, var(--surface)); opacity: 1; } .ep-decisions .btn.faux { border-color: var(--bad, #C0392B); background: color-mix(in srgb, var(--bad, #C0392B) 14%, var(--surface)); opacity: 1; }
 .ep-pc.absente { opacity: .13; } .ep-pieces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .ep-piece { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; font-size: 15px; font-weight: 700; line-height: 1.2; } .ep-piece.faux { border-color: var(--bad); } .ep-piece.posee { opacity: .55; border-color: var(--good); }
 .ep-hache { transform-origin: 88px 164px; transform: rotate(-30deg); } .ep-abattre.pris .ep-hache { animation: ep-hacher .55s ease-in 3; } @keyframes ep-hacher { 0%, 100% { transform: rotate(-30deg); } 55%, 70% { transform: rotate(0deg); } }
@@ -2417,6 +2419,11 @@ function demarrerJeu() {
     ramure: '<path d="M-7 10 C-6 2 -2 -3 3 -10 M-4 2 L-10 -3 M-1 -3 L-7 -9 M1 -6 L9 -7" stroke="#5E4E30" stroke-width="4.4" stroke-linecap="round" fill="none"/><path d="M-7 10 C-6 2 -2 -3 3 -10 M-4 2 L-10 -3 M-1 -3 L-7 -9 M1 -6 L9 -7" stroke="#EDE2C6" stroke-width="2.4" stroke-linecap="round" fill="none"/>',
     manche: '<path d="M-10 8 L9 -8" stroke="#4A2F16" stroke-width="5" stroke-linecap="round"/><path d="M-10 8 L9 -8 M1 -1 L7 1" stroke="#8A5E34" stroke-width="2.8" stroke-linecap="round" fill="none"/>',
     lame: '<path d="M-10 0 C-6 -6 4 -8 9 -5 C12 -2 12 2 9 5 C4 8 -6 6 -10 0 Z" fill="#7F988A"/><path d="M9 -5 C12 -2 12 2 9 5 L6 0 Z" fill="#C9D8CF"/><path d="M-5 -2 C0 -5 4 -5 6 -4" stroke="#fff" stroke-opacity=".5" stroke-width="1.2" fill="none"/>',
+    p_lame: '<path d="M-11 6 L-6 -2 L6 -10 L10 -8 L4 2 L-7 9 Z" fill="#6B6257"/><path d="M-6 -2 L6 -10 L5 -5 L-5 3 Z" fill="#9A9085"/><path d="M-11 6 L-7 9 L4 2" stroke="#D9D2C5" stroke-width="1" fill="none"/>',
+    p_ocre: '<path d="M-9 4 L-7 -5 L1 -8 L8 -3 L9 5 L1 8 Z" fill="#B5472A"/><path d="M-7 -5 L1 -8 L8 -3 L0 -1 Z" fill="#D9683A"/><circle cx="-9" cy="9" r="1.2" fill="#B5472A"/><circle cx="-5" cy="10.5" r="1" fill="#D9683A"/><circle cx="8" cy="9.5" r="1.1" fill="#B5472A"/>',
+    p_lissoir: '<path d="M-11 8 C-12 5 -9 3 -7 3 L6 -8 C9 -11 13 -7 10 -4 L-4 8 C-5 11 -10 11 -11 8 Z" fill="#EFE6D2" stroke="#B9AC8E" stroke-width="1"/><path d="M-5 4 L7 -6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>',
+    p_percoir: '<path d="M-10 4 L-6 -3 L1 -2 L11 -9 L4 3 L-2 8 L-8 9 Z" fill="#6B6257"/><path d="M-6 -3 L1 -2 L11 -9 L1 1 Z" fill="#9A9085"/>',
+    p_aiguille: '<path d="M-11 10 L9 -9" stroke="#B9AC8E" stroke-width="3.4" stroke-linecap="round"/><path d="M-11 10 L9 -9" stroke="#EFE6D2" stroke-width="2" stroke-linecap="round"/><ellipse cx="7.4" cy="-7.4" rx="1.5" ry=".8" transform="rotate(-44 7.4 -7.4)" fill="#3A3226"/><path d="M8 -8 C13 -6 12 2 6 6" stroke="#8A5E34" stroke-width="1" fill="none"/>',
     gaine: '<path d="M-9 -3 C-9 -6 -6 -7 -3 -6.5 L7 -4 C10 -3 11 1 9 4 C8 6 6 7 3 6.5 L-6 4 C-9 3 -9 0 -9 -3 Z" fill="#E6D9BC" stroke="#8E7C52" stroke-width="1.4"/><ellipse cx="-5.5" cy="-1" rx="2.2" ry="3" fill="#8E7C52"/>'
   };
   DESSINS_QUETE.pierres = DESSINS_QUETE.lests;
@@ -2844,6 +2851,37 @@ function demarrerJeu() {
       p("gaine", '<path d="M84 38 C84 32 90 30 96 31 L138 36 C144 37 146 44 144 50 C142 56 138 58 132 57 L92 54 C86 53 84 46 84 38 Z" fill="#E6D9BC" stroke="#8E7C52" stroke-width="1.6"/><path d="M98 37 L134 42" stroke="#fff" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/>') +
       p("lame", '<path d="M95 33 C74 27 52 29 40 40 C35 46 37 55 44 59 C58 61 78 59 95 53 Z" fill="#7F988A"/><path d="M40 40 C35 46 37 55 44 59 L52 49 Z" fill="#C9D8CF"/><path d="M52 36 C64 32 78 32 90 35" stroke="#fff" stroke-opacity=".45" stroke-width="2" fill="none" stroke-linecap="round"/>');
   }
+  // L'abri en coupe (Victor, 2026-11-15 : « comprendre la structure de la charpente ») : il se monte pièce après pièce,
+  // à mesure des décisions. mode « coupe » : muret, perches, sommet, entrée ; « couverture » : peaux cousues, pierres.
+  function svgCoupeAbri(mode, k) {
+    var c = mode === "couverture", ch = c ? 4 : k, cv = c ? k : 0, T = function (x, y, t, a) { return '<text x="' + x + '" y="' + y + '" font-size="11" font-weight="700" text-anchor="' + (a || "middle") + '" fill="#5E5A52">' + esc(t) + "</text>"; };
+    var h = '<svg class="ep-pierres" viewBox="0 0 320 196" role="img" aria-label="' + esc(__("L'abri en coupe")) + '"><rect x="0" y="162" width="320" height="34" fill="#CDBE96"/><path d="M0 162 H320" stroke="#9A8A62" stroke-width="2"/>' +
+      '<path d="M8 96 h30 m-7 -5 l7 5 l-7 5 M8 122 h24 m-7 -5 l7 5 l-7 5" stroke="#5B7FD9" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' + T(22, 84, __("vent"));
+    if (ch >= 2) h += '<path d="M152 162 L164 40" stroke="#5E3F20" stroke-width="4" stroke-linecap="round" opacity=".55"/>';
+    if (ch >= 3) h += '<path d="M120 162 L160 44 M196 162 L160 44" stroke="#5E3F20" stroke-width="3.4" stroke-linecap="round" opacity=".4"/>';
+    h += '<ellipse cx="160" cy="163" rx="17" ry="4.5" fill="#3A3226"/><path d="M150 162 C149 150 156 149 157 140 C162 147 167 148 166 154 C170 153 171 158 170 162 Z" fill="#F2793A"/><path d="M156 162 C156 155 160 153 160 149 C164 153 165 157 164 162 Z" fill="#FFD27A"/>';
+    if (ch >= 3) h += '<path d="M160 136 C152 122 168 108 160 92 C153 78 167 64 160 46 C155 34 166 24 162 10" stroke="#8E8A80" stroke-width="5" fill="none" stroke-linecap="round" opacity=".5"/>' + (c ? "" : T(176, 16, __("la fumée sort"), "start"));
+    if (ch >= 1) h += '<g fill="#8E969E" stroke="#676F78" stroke-width="1"><ellipse cx="62" cy="156" rx="10" ry="7"/><ellipse cx="80" cy="157" rx="10" ry="6"/><ellipse cx="70" cy="145" rx="9" ry="6"/><ellipse cx="52" cy="158" rx="6" ry="4.5"/></g>' + (c ? "" : T(68, 182, __("muret")));
+    if (ch >= 2) h += '<path d="M94 162 L170 36 M228 162 L150 36" stroke="#7A5230" stroke-width="6" stroke-linecap="round"/><path d="M94 162 L170 36 M228 162 L150 36" stroke="#A37446" stroke-width="2" stroke-linecap="round"/><path d="M152 54 h16 M153 59 h14" stroke="#E6D2B0" stroke-width="2.6" stroke-linecap="round"/>';
+    if (ch >= 4 && !cv) h += '<path d="M206 162 L196 132 L222 152" stroke="#2E9E5B" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="5 4"/>' + T(262, 150, __("entrée"));
+    if (cv >= 1) h += '<path d="M90 162 L156 62 L164 62 L232 162 L212 162 L196 128 L190 162 Z" fill="#B98A5A" opacity=".94"/><path d="M90 162 L156 62 L164 62 L232 162" stroke="#7A5230" stroke-width="2" fill="none"/><path d="M196 128 L190 162 M196 128 L212 162" stroke="#3A3226" stroke-width="2" fill="none"/><path d="M193 160 L196 132 L209 160 Z" fill="#3A3226" opacity=".8"/>' +
+      '<path d="M128 104 L118 162 M160 64 L156 162 M178 88 L184 150" stroke="#F3EBDD" stroke-width="2" stroke-dasharray="3 5" fill="none" stroke-linecap="round"/>' + T(118, 92, __("coutures"), "end");
+    else if (c) h += '<g fill="#B98A5A" stroke="#7A5230" stroke-width="1.4"><path d="M250 150 l22 -8 l20 6 l-4 12 h-34 Z"/><path d="M258 138 l18 -6 l16 6 l-6 8 l-24 0 Z"/></g>' + T(272, 182, __("peaux"));
+    if (cv >= 2) h += '<g fill="#8E969E" stroke="#676F78" stroke-width="1"><ellipse cx="98" cy="160" rx="8" ry="5"/><ellipse cx="116" cy="161" rx="7" ry="4.5"/><ellipse cx="136" cy="161" rx="8" ry="5"/><ellipse cx="172" cy="161" rx="7" ry="4.5"/><ellipse cx="222" cy="161" rx="8" ry="5"/></g>' + T(150, 184, __("pierres sur le bord"));
+    return h + "</svg>";
+  }
+  // La peau qu'on travaille : détachée à la lame, rougie par l'ocre, lustrée au lissoir, percée, puis cousue à une autre.
+  function svgPeau(poses) {
+    var forme = "M54 44 C70 36 84 46 100 40 C116 34 132 44 150 40 L166 30 L170 48 C176 66 176 96 170 114 L168 134 L150 122 C132 118 116 128 100 122 C84 116 70 126 54 118 L40 132 L40 110 C34 92 34 68 40 52 L38 32 Z";
+    var h = '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="150" rx="92" ry="9" fill="rgba(0,0,0,.12)"/>';
+    if (!poses.p_lame) return h + '<path d="' + forme + '" fill="none" stroke="#9A8A62" stroke-width="2.4" stroke-dasharray="6 6"/><text x="105" y="88" font-size="13" font-weight="700" text-anchor="middle" fill="#7A735F">' + esc(__("la bête est encore dedans")) + "</text></svg>";
+    h += '<path d="' + forme + '" fill="' + (poses.p_ocre ? "#B5673A" : "#D9C2A0") + '" stroke="' + (poses.p_ocre ? "#8E4C28" : "#A89270") + '" stroke-width="2.4"/>';
+    if (!poses.p_ocre) h += '<path d="M70 62 C84 56 96 66 110 60 M76 96 C92 90 108 100 126 94 M120 70 C134 66 146 72 156 68" stroke="#C98A7A" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>';
+    if (poses.p_lissoir) h += '<path d="M60 58 C86 48 120 52 150 50 M58 78 C84 70 116 74 146 70" stroke="#fff" stroke-opacity=".45" stroke-width="5" fill="none" stroke-linecap="round"/>';
+    if (poses.p_percoir) { for (var y = 50; y <= 112; y += 12) h += '<circle cx="164" cy="' + y + '" r="2.2" fill="#3A3226"/>'; }
+    if (poses.p_aiguille) h += '<path d="M176 40 C192 34 208 44 222 38 L226 122 C210 118 194 126 178 120 Z" fill="#B5673A" stroke="#8E4C28" stroke-width="2.4"/><path d="M164 50 L178 56 L164 62 L178 68 L164 74 L178 80 L164 86 L178 92 L164 98 L178 104 L164 110" stroke="#F3EBDD" stroke-width="2" fill="none" stroke-linejoin="round"/>';
+    return h + "</svg>";
+  }
   function svgHache(poses) { return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="158" rx="80" ry="8" fill="rgba(0,0,0,.14)"/>' + piecesHache(poses) + "</svg>"; }
   function svgPolissage() {
     var forme = "M70 82 C86 70 138 60 166 64 C178 74 178 92 166 102 C138 104 86 96 70 82 Z";
@@ -3030,12 +3068,34 @@ function demarrerJeu() {
         zone.addEventListener("pointermove", function (ev) { if (!bas) return; var d = Math.abs(ev.clientX - px) + Math.abs(ev.clientY - py); px = ev.clientX; py = ev.clientY; if (d) user(Math.min(d, 160), ev); });
         ["pointerup", "pointercancel"].forEach(function (n) { zone.addEventListener(n, function () { bas = false; }); });
       },
+      // Choisir (Victor, 2026-11-15 : « c'est interactif mais je n'apprends rien ») : une décision de construction à la
+      // fois. Un mauvais choix dit ce qui ne tient pas ; le bon fait avancer le dessin, puis on continue.
+      choix: function (e, i) {
+        var k = 0, D = e.decisions || [];
+        var zone = plus('<div class="ep-zone fixe ep-montage"></div>'), q = plus('<h4 class="ep-question"></h4>'), liste = plus('<div class="ep-decisions"></div>'), msg = plus('<p class="ep-msg" aria-live="polite"></p>');
+        function poser() {
+          zone.innerHTML = svgCoupeAbri(e.dessin, k); liste.innerHTML = ""; msg.textContent = "";
+          if (k >= D.length) { q.textContent = ""; zone.classList.add("gagne"); msg.className = "ep-msg ok"; msg.textContent = tx(e.gagne || { fr: "" }); setTimeout(function () { savoir(e, i); }, 900); return; }
+          var d = D[k]; q.textContent = (k + 1) + " / " + D.length + " · " + tx(d.question);
+          d.choix.forEach(function (c, j) {
+            var bt = el('<button type="button" class="btn sec large"></button>'); bt.textContent = tx(c.texte);
+            bt.onclick = function () {
+              if (j !== d.bon) { bt.classList.add("faux"); bt.disabled = true; msg.className = "ep-msg"; msg.textContent = tx(c.effet); return; }
+              [].forEach.call(liste.querySelectorAll("button"), function (x) { x.disabled = true; }); bt.classList.add("juste");
+              k++; zone.innerHTML = svgCoupeAbri(e.dessin, k); msg.className = "ep-msg ok"; msg.textContent = tx(c.effet);
+              var su = el('<button type="button" class="btn large">' + (k < D.length ? __("Continuer") : __("Voir l'abri")) + "</button>"); su.onclick = poser; liste.appendChild(su);
+            };
+            liste.appendChild(bt);
+          });
+        }
+        poser();
+      },
       // Assembler : toucher les pièces dans l'ordre où elles s'emboîtent.
       assemblage: function (e, i) {
         var k = 0, ordre = e.ordre || e.pieces.map(function (x) { return x.id; }), poses = {};
         var zone = plus('<div class="ep-zone fixe ep-montage"></div>'), choix = plus('<div class="ep-pieces"></div>'), msg = plus('<p class="ep-msg" aria-live="polite"></p>');
         function peindre() {
-          zone.innerHTML = svgHache(poses); choix.innerHTML = "";
+          zone.innerHTML = e.dessin === "peau" ? svgPeau(poses) : svgHache(poses); choix.innerHTML = "";
           e.pieces.forEach(function (p) {
             var bt = el('<button type="button" class="btn sec ep-piece' + (poses[p.id] ? " posee" : "") + '"' + (poses[p.id] ? " disabled" : "") + '><svg viewBox="-14 -14 28 28" width="46" height="46" aria-hidden="true">' + (DESSINS_QUETE[p.id] || "") + "</svg><span>" + esc(tx(p.nom)) + (poses[p.id] ? " ✓" : "") + "</span></button>");
             bt.onclick = function () {
