@@ -2384,7 +2384,7 @@ function demarrerJeu() {
   // les ramasser. Tous trouvés, l'épreuve s'ouvre.
   // Les épreuves en attente : celle de l'âge, puis celles qui gardent un aménagement (la hache des bûcherons).
   // Victor (2026-11-14) : pas de quête tant qu'il n'y a personne à envoyer. C'est le feu maîtrisé qui pose le campement, d'où partent les explorateurs.
-  function epreuvesAttente() { return M.modeIle(P) && C.ile && C.ile.ages && (!C.parId["ile.feu"] || M.estMaitrisee(P, "ile.feu")) ? M.epreuvesEnAttente(C, P) : []; }
+  function epreuvesAttente() { return M.modeIle(P) && C.ile && C.ile.ages && (!C.parId["ile.feu"] || M.estMaitrisee(P, "ile.feu")) ? M.epreuvesEnAttente(C, P, maintenant()) : []; }
   function queteActive() {
     var L = epreuvesAttente();
     for (var i = 0; i < L.length; i++) { var q = M.queteIle(C, P, L[i]); if (q && !q.complete) return q; }
@@ -2673,17 +2673,18 @@ function demarrerJeu() {
       X.sens = b.x < X.x ? -1 : 1; X.vue = allure(b.x - X.x, b.y - X.y);
       // Victor (2026-11-15) : les peaux de l'abri se prennent sur une bête abattue, bison ou prédateur.
       if (b.bison) {
-        if (Math.random() < EXP.coup) { b.ko = true; message = prendrePeau() ? __("Le bison s'effondre. Tu as sa peau : reste à la rapporter au village.") : __("Le bison s'effondre. Tu n'as pas besoin de sa peau pour l'instant."); }
+        if (Math.random() < EXP.coup) { b.ko = true; var ab = M.abattreIle(C, P, "bisons", maintenant()); sauver(); message = (prendrePeau() ? __("Le bison s'effondre. Tu as sa peau : reste à la rapporter au village.") : __("Le bison s'effondre. Tu n'avais pas besoin de sa peau : une bête de moins pour rien.")) + resteGibier(ab, __("bison"), __("bisons")); }
         else { b.fuite = performance.now() + 5000; message = __("Raté ! Le bison détale."); }
         panneau(); return;
       }
       var repere = b.chasse;
       // Torche en main, on se défend mieux (Victor, 2026-11-15) : le coup porte bien plus souvent.
       var arme = X.torche && TORCHE ? TORCHE : null;
-      if (Math.random() < (repere ? Math.max(EXP.repere, arme ? arme.repere : 0) : Math.max(EXP.surprise, arme ? arme.surprise : 0))) { b.ko = true; b.chasse = false; message = prendrePeau() ? __("Le prédateur s'effondre. Tu as sa peau : reste à la rapporter au village.") : repere ? __("En plein museau ! Le prédateur détale. Tu as eu de la chance.") : __("Il n'a rien vu venir : un coup de bâton, et le prédateur détale."); }
+      if (Math.random() < (repere ? Math.max(EXP.repere, arme ? arme.repere : 0) : Math.max(EXP.surprise, arme ? arme.surprise : 0))) { b.ko = true; b.chasse = false; var peauP = prendrePeau(), ap = peauP ? M.abattreIle(C, P, "predateurs", maintenant()) : null; if (ap) sauver(); message = peauP ? __("Le prédateur s'effondre. Tu as sa peau : reste à la rapporter au village.") + resteGibier(ap, __("prédateur"), __("prédateurs")) : repere ? __("En plein museau ! Le prédateur détale. Tu as eu de la chance.") : __("Il n'a rien vu venir : un coup de bâton, et le prédateur détale."); }
       else { b.chasse = true; b.alerte = performance.now() + 1500; message = repere ? __("Raté ! Il esquive et revient sur toi. Cours !") : __("Raté ! Maintenant il t'a vu. Cours !"); }
       panneau();
     }
+    function resteGibier(r, un, des) { return !r ? "" : " " + (r.reste <= 0 ? __("C'était le dernier {n} de l'île.", { n: un }) : r.reste === 1 ? __("Il ne reste qu'un {n} sur l'île.", { n: un }) : __("Il reste {k} {n} sur l'île.", { k: r.reste, n: des })); }
     function prendrePeau() {
       var q = queteActive(), o = q && q.objets.filter(function (x) { return x.chasse && !x.pris && X.sac.indexOf(x.id) < 0; })[0];
       if (!o) return false; X.sac.push(o.id); objets(); return true;
@@ -2715,9 +2716,10 @@ function demarrerJeu() {
       if (!foyer || X) return;
       torche = torche === true;
       X = { torche: torche, x: FX, y: FY, tx: FX, ty: FY, sac: [], vus: [], baies: [], t: performance.now(), sens: 1, betes: [], gel: 0 };
-      for (var n = 0; n < EXP.betes; n++) { var p = pointLibre(); X.betes.push({ x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1, vue: "profil" }); }
+      var GIB = M.gibierIle(C, P, maintenant()), nbP = GIB && GIB.predateurs != null ? Math.min(EXP.betes, GIB.predateurs) : EXP.betes, nbB = GIB && GIB.bisons != null ? Math.min(EXP.bisons, GIB.bisons) : EXP.bisons;
+      for (var n = 0; n < nbP; n++) { var p = pointLibre(); X.betes.push({ x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1, vue: "profil" }); }
       // Victor (2026-11-15) : des bisons se baladent aussi. Ils ne chassent personne et évitent les prédateurs.
-      for (n = 0; n < EXP.bisons; n++) { p = pointLibre(); X.betes.push({ bison: true, x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1, vue: "profil" }); }
+      for (n = 0; n < nbB; n++) { p = pointLibre(); X.betes.push({ bison: true, x: p[0], y: p[1], wx: p[0], wy: p[1], chasse: false, sens: 1, vue: "profil" }); }
       acteurs.innerHTML = '<circle class="ex-cible" r="2.4"/>' + X.betes.map(function (b) { return '<g class="ex-bete' + (b.bison ? " ex-bison" : "") + '"><g class="ex-corps">' + (b.bison ? svgBison() : svgLoup()) + '</g><text class="ex-alerte" y="-7" text-anchor="middle" font-size="7" font-weight="800" fill="#D92B2B">!</text></g>'; }).join("") +
         '<g class="ex-explo"><g class="ex-corps"></g></g>';
       X.eb = [].slice.call(acteurs.querySelectorAll(".ex-bete")); X.ee = acteurs.querySelector(".ex-explo"); X.ec = acteurs.querySelector(".ex-cible"); habiller(); preparerDevant();
@@ -3270,7 +3272,10 @@ function demarrerJeu() {
           if (deja) { quitter(); return; }
           // Une épreuve qui garde un aménagement rouvre le chantier, sur le quartier où il se bâtit.
           var am = E.amenagement && C.ile.amenagements.filter(function (x) { return x.id === E.amenagement; })[0];
-          if (am) { quitter(); chantierOuvert = am.quartier; ouvrirChantierIle(am.id); if (c.ouvert) toast(tx(c.ouvert)); return; }
+          // Victor (2026-11-15) : la quête ne s'ouvre que si l'aménagement est payable ; l'épreuve réussie le bâtit donc aussitôt.
+          if (am) { quitter(); var rb = M.construireIle(C, P, am.id, maintenant());
+            if (rb && rb.ok) { sauver(); rendre(); animerChantier(am, rb.quartier); } else { chantierOuvert = am.quartier; ouvrirChantierIle(am.id); }
+            if (c.ouvert) toast(tx(c.ouvert)); return; }
           // Victor (2026-11-13) : « Allumer le campement » montre le foyer du campement qui prend, puis la fête du nouvel âge.
           var Ic = campIle(M.ile(C, P, maintenant())), qc = Ic.quartiers.filter(function (x) { return x.camp; })[0];
           if (!qc) { quitter(); return; }
@@ -6663,14 +6668,14 @@ function demarrerJeu() {
     var fiches = C.ile.amenagements.filter(function (a) { return (a.age || 0) <= rangAge; }).map(function (a) {
       var e = M.etatAmenagement(C, P, a.id, t), q = I.quartiers.filter(function (x) { return x.id === a.quartier; })[0];
       if (e.possible) possibles[a.quartier] = (possibles[a.quartier] || 0) + 1;
-      var raison = e.ferme && q && parQ ? "" : e.ferme && q ? __("Se bâtit dans : ") + esc(tx(q.nomFinal)) + ". " + (e.ferme.aOuvrir ? __("Ouvre d'abord ce quartier.") : __("Ce quartier n'existe pas encore.")) : !e.quartier ? __("Il faut d'abord un quartier habitable.") : e.savoir ? __("Il faut maîtriser « ") + e.savoirs.map(function (x) { return esc(tx(C.parId[x].nom)); }).join(__(" » ou « ")) + " »." : e.epreuve ? __("Il faut d'abord réussir l'épreuve unique « ") + esc(tx(M.epreuveIle(C, e.epreuve).nom)) + " »." : e.manque.length ? __("Il manque des ressources.") : "";
+      var raison = e.ferme && q && parQ ? "" : e.ferme && q ? __("Se bâtit dans : ") + esc(tx(q.nomFinal)) + ". " + (e.ferme.aOuvrir ? __("Ouvre d'abord ce quartier.") : __("Ce quartier n'existe pas encore.")) : !e.quartier ? __("Il faut d'abord un quartier habitable.") : e.savoir ? __("Il faut maîtriser « ") + e.savoirs.map(function (x) { return esc(tx(C.parId[x].nom)); }).join(__(" » ou « ")) + " »." : e.epreuve && e.manque.length ? __("Réunis d'abord de quoi le bâtir : la quête s'ouvrira aussitôt, et l'épreuve réussie lancera le chantier.") : e.epreuve ? __("Il faut d'abord réussir l'épreuve unique « ") + esc(tx(M.epreuveIle(C, e.epreuve).nom)) + " »." : e.manque.length ? __("Il manque des ressources.") : "";
       var qe = e.epreuve && M.queteIle(C, P, e.epreuve), rej = !e.epreuve && (C.ile.epreuves || []).filter(function (x) { return x.amenagement === a.id && M.epreuveFaite(P, x.id); })[0];
       var ou = rangAge < 2 ? "" : e.quartier ? __("Emplacement : ") + esc(tx(I.quartiers.filter(function (x) { return x.id === e.quartier; })[0].nom)) + (e.chezSoi || !q ? "" : " (" + esc(tx(q.nomFinal)) + __(" n'est pas encore habitable)")) + "." : "";
       if (parQ) ou = "";
       return { q: a.quartier, id: a.id, html: '<div class="ile-amen' + (e.possible ? "" : " ferme") + (a.id === vise ? " vise" : "") + '" data-fiche="' + esc(a.id) + '"><svg class="ile-amen-img" viewBox="-14 -26 28 28" width="56" height="56" aria-hidden="true">' + svgAmenagement(a, 0, 0, 24) + '</svg><div><b>' + esc(tx(a.nom)) + (R.batis[a.id] ? ' <span class="ile-amen-n">×' + R.batis[a.id] + "</span>" : "") + "</b><p>" + esc(tx(a.usage)) + '</p><p class="ile-amen-effet">' + effetAmenagement(a) + "</p>" +
         '<p class="ile-couts">' + htmlCout(a.cout, e.manque) + "</p>" + (raison ? '<p class="ile-amen-raison">' + raison + "</p>" : '<p class="ile-amen-ou">' + ou + "</p>") +
         (!parQ && e.ferme && e.ferme.aOuvrir && !e.savoir && e.age == null ? '<button type="button" class="btn" data-a="q-' + esc(e.ferme.id) + '">🔒 ' + __("Ouvrir : ") + esc(tx(q.nomFinal)) + "</button>" :
-        e.epreuve && e.age == null ? '<button type="button" class="btn" data-a="e-' + esc(e.epreuve) + '">🔒 ' + (qe && !qe.complete ? __("Quête : ") + esc(tx(qe.nom)) : __("Épreuve unique : ") + esc(tx(M.epreuveIle(C, e.epreuve).nom))) + "</button>" :
+        e.epreuve && e.age == null ? '<button type="button" class="btn" data-a="e-' + esc(e.epreuve) + '"' + (e.manque.length || e.savoir || !e.quartier ? " disabled" : "") + '>🔒 ' + (qe && !qe.complete ? __("Quête : ") + esc(tx(qe.nom)) : __("Épreuve unique : ") + esc(tx(M.epreuveIle(C, e.epreuve).nom))) + "</button>" :
         '<button type="button" class="btn" data-a="b-' + esc(a.id) + '"' + (e.possible ? "" : " disabled") + ">" + __("Construire") + "</button>" + (rej ? ' <button type="button" class="btn sec" data-a="e-' + esc(rej.id) + '">' + __("Rejouer : ") + esc(tx(rej.nom)) + "</button>" : "")) + "</div></div>" };
     });
     // Victor (2026-11-13) : le menu était trop rempli. À partir du village, une section repliable par quartier : son
@@ -6839,6 +6844,14 @@ function demarrerJeu() {
       if (qx && !qx.complete) h += blocQuete(qx, true);
       else h += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(ex.nom)) + "</h3><p>" + esc(tx(ex.accroche || { fr: "" })) + (amx ? " " + __("Elle ouvre : ") + "<b>" + esc(tx(amx.nom)).toLowerCase() + "</b>." : "") + '</p><button type="button" class="btn large" data-ep="' + esc(x) + '">' + esc(tx(ex.nom)) + "</button></div>";
     });
+    var fermees = M.epreuvesBloquees(C, P, maintenant());
+    fermees.slice(0, 2).forEach(function (b) {
+      var ex = M.epreuveIle(C, b.id), amx = C.ile.amenagements.filter(function (y) { return y.id === b.amenagement; })[0]; if (!ex || !amx) return;
+      var pq = b.manque.length ? __("Il manque : ") + b.manque.map(function (m) { var rs = (C.ile.ressources || []).filter(function (r) { return r.id === m.r; })[0]; return "<b>" + nb(Math.ceil(m.il_faut - m.a)) + " " + (m.r === "credits" ? __("crédits") : rs ? esc(tx(rs.nom)).toLowerCase() : esc(m.r)) + "</b>"; }).join(", ") + "."
+        : b.savoir ? __("Il faut d'abord maîtriser « ") + esc(tx(C.parId[b.savoir].nom)) + " »." : __("Son quartier n'est pas encore ouvert.");
+      h += '<div class="ile-passage attend"><div class="eyebrow">🔒 ' + __("Quête fermée") + "</div><h3>" + esc(tx(ex.nom)) + "</h3><p>" + __("Elle s'ouvrira quand l'île aura de quoi bâtir : ") + "<b>" + esc(tx(amx.nom)).toLowerCase() + "</b>. " + pq + " " + __("L'épreuve réussie, le chantier démarre aussitôt.") + "</p></div>";
+    });
+    if (fermees.length > 2) h += '<p class="ile-vie-note">🔒 ' + __("Fermées aussi, faute de quoi bâtir : ") + fermees.slice(2).map(function (b) { return esc(tx(M.epreuveIle(C, b.id).nom)).toLowerCase(); }).join(", ") + ".</p>";
     if (qAge) h += blocQuete(qAge, true);
     else if (epr && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(epr.nom)) + "</h3><p>" + esc(tx(epr.accroche || { fr: "" })) + " " + __("Elle ouvre : ") + "<b>" + esc(tx(G.suivant.nom)).toLowerCase() + '</b>.</p><button type="button" class="btn large" data-a="epreuve">' + esc(tx(epr.nom)) + "</button></div>";
     else if (a.pret && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("Tout l'indispensable est couvert. Il reste en option : ") + a.negliges.map(function (b) { return "<b>" + esc(tx(b.nom)).toLowerCase() + "</b>"; }).join(__(" et ")) + ". " + __("Tu peux les apprendre d'abord, ou passer tout de suite et en payer le prix.") + '</p><button type="button" class="btn large" data-a="passer">' + __("Passer à : ") + esc(tx(G.suivant.nom)) + "</button></div>";
@@ -6876,7 +6889,8 @@ function demarrerJeu() {
       h += '<div class="ile-nat ' + n.etat + '"><div class="ile-nat-tete"><b>' + n.icone + " " + esc(tx(n.nom)) + '</b><span class="ile-nat-etat">' + (sait ? pc + " % · " + mot : "?") + "</span></div>";
       if (sait) {
         h += '<i><b style="width:' + pc + "%;background:" + (n.etat === "vert" ? (n.couleur || "#3F8F5A") : n.etat === "orange" ? "#C98A1E" : "#C8553D") + '"></b></i><small>' +
-          __("On y prend ") + "<b>" + chiffre(n.pris) + "</b>" + __(" par jour ; au mieux, l'île peut en rendre ") + "<b>" + chiffre(n.durable) + "</b>." +
+          (n.gibier ? __("Il en reste ") + "<b>" + Math.floor(n.stock + 1e-9) + "</b>" + __(" sur ") + n.max + ". " + esc(tx(n.usage || { fr: "" })) :
+          __("On y prend ") + "<b>" + chiffre(n.pris) + "</b>" + __(" par jour ; au mieux, l'île peut en rendre ") + "<b>" + chiffre(n.durable) + "</b>.") +
           (n.jours != null && n.stock > 0 ? " " + __("À ce rythme, il n'en restera plus dans ") + "<b>" + n.jours + (n.jours > 1 ? __(" jours") : __(" jour")) + "</b>." : "") + "</small>";
         C.ile.amenagements.filter(function (a) { return a.preleve === n.id && R.batis[a.id]; }).forEach(function (a) {
           var e = R.effort[a.id] == null ? 1 : R.effort[a.id], po = R.postes[a.id];

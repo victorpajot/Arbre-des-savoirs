@@ -2561,6 +2561,15 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Victor (2026-11-13) : le camp de bûcherons attend l'épreuve « Former une hache », elle-même précédée d'une quête.
   { const Qh = peche(); delete Qh.epreuves.hache;
     assert.deepEqual(M.epreuvesEnAttente(CA, Qh), ["hache"], "la hache attend dès le village");
+    // Victor (2026-11-15) : la quête ne s'ouvre que si l'aménagement est payable ; le gibier est une ressource finie.
+    { const solde = Qh.credits.solde; Qh.credits.solde = 0;
+      assert.deepEqual(M.epreuvesEnAttente(CA, Qh, t0), [], "sans crédits, la quête de la hache reste fermée");
+      const bl = M.epreuvesBloquees(CA, Qh, t0).filter(x => x.id === "hache")[0]; assert.ok(bl && bl.manque[0].r === "credits", "et on sait ce qui manque");
+      Qh.credits.solde = solde; assert.ok(M.epreuvesEnAttente(CA, Qh, t0).indexOf("hache") >= 0);
+      const g = M.gibierIle(CA, Qh, t0); assert.ok(g && g.bisons === 12 && g.predateurs === 6, "gibier plein dans une partie en cours");
+      assert.equal(M.abattreIle(CA, Qh, "bisons", t0).reste, 11);
+      const nb0 = M.baiesIle(CA, Qh, t0).buissons.length; Qh.ressources.nature.predateurs = 0;
+      assert.equal(M.baiesIle(CA, Qh, t0).buissons.length, Math.ceil(nb0 / 2), "sans prédateurs, moitié moins de baies"); Qh.ressources.nature.predateurs = 6; Qh.ressources.nature.bisons = 12; }
     const eh = M.etatAmenagement(CA, Qh, "bucheron", t0); assert.ok(!eh.possible && eh.epreuve === "hache", "pas de bûcherons sans hache");
     const rh = M.construireIle(CA, Qh, "bucheron", t0); assert.ok(!rh || !rh.ok, "le chantier refuse le camp de bûcherons");
     const qh = M.queteIle(CA, Qh, "hache"); assert.equal(qh.reste, 4); qh.objets.forEach(o => M.ramasserIle(CA, Qh, "hache", o.id, t0));
