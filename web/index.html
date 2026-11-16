@@ -9609,6 +9609,7 @@ function demarrerJeu() {
     if (f.classList.contains("mc-puce")) {
       var p = f.closest("p"), suiv = p && p.nextElementSibling, deja = suiv && suiv.classList.contains("mc-fiche-p") && suiv.getAttribute("data-id") === e.p.id;
       if (suiv && suiv.classList.contains("mc-fiche-p")) suiv.remove();
+      if (!deja && p && M.rencontrer(P, e.p.id)) { sauver(); rencontresAMontrer.push(e.p.id); }
       if (!deja && p) p.insertAdjacentHTML("afterend", '<div class="mc-fiche-p" data-id="' + e.p.id + '">' + htmlPersonnage(e).replace(' data-perso="' + e.p.id + '"', "") + '<p class="bio-p">' + escD(tx(e.famille === "savant" ? e.p.notice : e.p.bio)) + "</p></div>");
       return;
     }
@@ -9629,8 +9630,11 @@ function demarrerJeu() {
   }
   function croises() {
     var ids = Object.keys(P.competences || {}).filter(function (k) { return P.competences[k] && P.competences[k].maitrise && C.parId[k]; }).sort(), cle = ids.join(",");
+    // Victor (2026-11-16) : « on ne le croise que s'il a été affiché à l'écran ». Il faut donc les deux : une compétence
+    // maîtrisée qui parle de lui, et son portrait vraiment montré dans un quiz ou une page de masterclass (P.personnes).
+    var vusP = P.personnes || {}; cle += "|" + Object.keys(vusP).length;
     if (cle === croisesCle) return croisesSet;
-    croisesSet = {}; ids.forEach(function (k) { var o = personnesDeComp(k); for (var x in o) croisesSet[x] = 1; });
+    croisesSet = {}; ids.forEach(function (k) { var o = personnesDeComp(k); for (var x in o) if (vusP[x] != null) croisesSet[x] = 1; });
     croisesCle = cle; return croisesSet;
   }
   function croise(id) { return !!croises()[id]; }

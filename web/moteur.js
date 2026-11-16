@@ -884,8 +884,9 @@
   // case) ; un savant débloqué par un succès compte aussi. Renvoie vrai la première fois.
   function rencontrer(partie, id, t) {
     if (!partie.personnes) partie.personnes = {};
-    if (partie.personnes[id] != null || (partie.savants && partie.savants[id] != null)) return false;
-    partie.personnes[id] = t == null ? Date.now() : t; return true;
+    if (partie.personnes[id] != null) return false;
+    // Victor (2026-11-16) : on note toujours qu'il a été affiché, même si un succès avait déjà donné ce savant.
+    partie.personnes[id] = t == null ? Date.now() : t; return !(partie.savants && partie.savants[id] != null);
   }
   function rencontre(partie, id) { return (partie.personnes && partie.personnes[id] != null) || (partie.savants && partie.savants[id] != null); }
   function masterclassImposee(contenu, partie) {
