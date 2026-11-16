@@ -2575,6 +2575,22 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     Ql.population.a = 35; M.ile(CA, Ql, t0);
     Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.plafond, 400, "la cité plafonne à 400"); assert.equal(Il.limites.frein, "toits"); assert.equal(Il.places, 55, "sans maisons, les savoirs n'attirent personne de plus");
   }
+  // Victor (2026-11-16) : l'ordre des besoins suit ce qui freine l'île, et les arrivants qu'on ne peut pas loger se voient.
+  {
+    const Pu = M.nouvellePartie(t0); Pu.mode = "ile"; sait(Pu, "ile.feu"); Pu.epreuves = { feu: t0, abri: t0 }; Pu.credits.solde = 1000;
+    ["sci.soigner", "res.cueillir", "meteo.ciel", "mnemo.sansecrire", "mus.instruments", "astro.nebra"].forEach(id => sait(Pu, id));
+    let Iu = M.ile(CA, Pu, t0); assert.equal(Iu.ages.age.id, "village");
+    Pu.population.e = 0; Pu.population.v = 0; Pu.population.a = 6;
+    assert.equal(M.choixIA(CA, Pu, t0).besoin, "nourrir", "île pas encore pleine : l'ordre du pack");
+    Pu.population.e = 0; Pu.population.v = 0; Pu.population.a = 15; Iu = M.ile(CA, Pu, t0);
+    assert.equal(Iu.limites.frein, "toits"); const U = M.urgencesIle(CA, Pu, t0);
+    assert.ok(U.toits && U.besoins.batir.score > U.besoins.nourrir.score, "plus de toits : bâtir passe devant");
+    assert.equal(M.trierBesoins(U, Iu.ages.age.besoins.filter(b => !b.couvert))[0].id, "batir");
+    assert.equal(M.choixIA(CA, Pu, t0).besoin, "batir", "l'épreuve proposée suit l'urgence");
+    const ru = M.terminerQuiz(CA, Pu, "phys.machines", M.tirerQuestions(CA, Pu, "phys.machines", 5).map(q => ({ id: q.id, correct: true })), t0, { jouer: true });
+    assert.ok(ru.ile && ru.ile.refoules && ru.ile.refoules.n > 0 && ru.ile.refoules.frein === "toits", "des arrivants sans toit : c'est dit");
+    assert.equal(M.ile(CA, Pu, t0).habitants, 15, "personne ne s'installe sans couchage");
+  }
   // La cueillette est risquée : un campement qui ne vit que d'elle y perd des adultes, jour après jour.
   { const Qc = M.nouvellePartie(t0); Qc.mode = "ile"; sait(Qc, "ile.feu"); Qc.epreuves = { feu: t0 }; M.ile(CA, Qc, t0);
     assert.equal(M.ile(CA, Qc, t0).ressources.effets.cueillette, 1, "tout vient de la cueillette");

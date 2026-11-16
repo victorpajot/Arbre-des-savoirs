@@ -2259,14 +2259,42 @@
     var i = ageDuSavoir(contenu, id); if (i == null) return false;
     return i <= agesIle(contenu, partie).courant;
   }
+  // Victor (2026-11-16) : « l'ordre des besoins devrait être lié à ce dont l'île a le plus besoin pour grandir ».
+  // On regarde ce qui la freine (vivres en déficit, toits pleins) et on classe devant les besoins dont les aménagements
+  // y répondent. À égalité, l'ordre écrit dans le pack reste.
+  var enUrgence = false;
+  function urgencesIle(contenu, partie, t) {
+    if (enUrgence || !modeIle(partie) || !ilePresente(contenu) || !agesPresents(contenu)) return null;
+    enUrgence = true; var I; try { I = ile(contenu, partie, t); } finally { enUrgence = false; }
+    if (!I) return null;
+    var L = I.limites, Rr = I.ressources, N = I.habitants;
+    var plein = !!L && N >= Math.min(L.places - 2, Math.floor(L.places * 0.9));
+    var U = { vivres: !!Rr && Rr.net < -0.05, toits: plein && L.frein === "toits", besoins: {} };
+    var parIdA = {}; (contenu.ile.amenagements || []).forEach(function (x) { parIdA[x.id] = x; });
+    I.ages.ages.forEach(function (a) { a.besoins.forEach(function (b) {
+      var s = 0, motif = null;
+      b.amenagements.forEach(function (id) {
+        var x = parIdA[id]; if (!x) return;
+        if (U.vivres && x.produit && x.produit.nourriture) { s = Math.max(s, 4); motif = "vivres"; }
+        if (U.toits && x.places && s < 3) { s = 3; motif = "toits"; }
+        if (U.toits && x.produit && (x.produit.bois || x.produit.pierre) && s < 1) { s = 1; motif = "toits"; }
+      });
+      U.besoins[b.id] = { score: s, motif: motif };
+    }); });
+    return U;
+  }
+  function trierBesoins(U, besoins) {
+    if (!U) return besoins.slice();
+    return besoins.map(function (b, i) { return [b, i]; }).sort(function (x, y) { return ((U.besoins[y[0].id] || {}).score || 0) - ((U.besoins[x[0].id] || {}).score || 0) || x[1] - y[1]; }).map(function (x) { return x[0]; });
+  }
   // L'épreuve que l'île propose : un rappel dû d'abord, sinon le premier savoir libre d'un besoin encore à couvrir.
   function choixIle(contenu, partie, t) {
     var dus = rappelsDus(contenu, partie, t);
     if (dus.length) return { comp: dus[0], type: "rappel", raison: "rappel", stat: null, kase: null };
-    var G = agesIle(contenu, partie), trouve = null;
+    var G = agesIle(contenu, partie), trouve = null, U = urgencesIle(contenu, partie, t);
     G.ages.forEach(function (a) {
       if (!a.ouvert || trouve) return;
-      a.besoins.forEach(function (b) {
+      trierBesoins(U, a.besoins).forEach(function (b) {
         if (trouve || b.couvert) return;
         var id = b.savoirs.filter(function (x) { return statut(contenu, partie, x, t).etat === "disponible"; })[0];
         if (id) trouve = { comp: contenu.parId[id], type: "quiz", raison: "besoin", besoin: b.id, stat: contenu.parId[id].stat, kase: null };
@@ -2557,13 +2585,16 @@
     var tenu = reussi ? tenirObjectif(contenu, partie, t) : false;
     // Une installation de plus, ce sont des places : une partie se remplit tout de suite, attirée par la nouveauté ; le
     // reste viendra par les naissances et les bateaux, jour après jour.
-    var attires = 0;
+    var attires = 0, refoules = null;
     if (D && pop && reussi) {
       var libres = placesIle(contenu, partie, t).places - (pop.e + pop.a + pop.v);
       attires = Math.max(0, Math.min(libres, Math.round((placesIle(contenu, partie, t).places - avant.places) * D.attrait)));
       // Victor (2026-11-16) : chaque épreuve réussie fait venir quelques habitants, tant qu'il reste des places.
       attires += Math.max(0, Math.min(libres - attires, D.par_epreuve || 0));
       if (attires > 0) accueillir(pop, attires, D);
+      // Victor (2026-11-16) : ceux qui voulaient venir et qu'on n'a pas pu loger, il faut que ça se sache.
+      var Lr = placesIle(contenu, partie, t).limites, voulus = Math.max(0, Math.round((placesIle(contenu, partie, t).places - avant.places) * D.attrait)) + (D.par_epreuve || 0);
+      if (Lr && voulus > attires && Lr.frein !== "savoirs") refoules = { n: voulus - attires, frein: Lr.frein, toits: Lr.toits, plafond: Lr.plafond };
     }
     // Une installation perdue, ce sont des places en moins : une partie de ceux qui y vivaient s'en va aussitôt.
     if (D && pop && !reussi) {
@@ -2571,12 +2602,13 @@
       if (trop > 0 && placesIle(contenu, partie, t).places < avant.places) retirer(pop, Math.max(1, Math.round(trop * D.attrait)), cleJour(t) + "|perte|" + id);
     }
     var apres = photoIle(contenu, partie, id, t);
-    if (!tenu && apres.etat === avant.etat && apres.habitants === avant.habitants) return null;
+    if (!tenu && !refoules && apres.etat === avant.etat && apres.habitants === avant.habitants) return null;
     var q = quartierIle(contenu, partie, id, t);
-    var inst = q.installations.filter(function (x) { return x.comp === id; })[0];
+    var inst = q && q.installations.filter(function (x) { return x.comp === id; })[0];
+    if (!q || !inst) return null;
     // L'option que l'épreuve vient d'ouvrir (ou de fermer) dans le quartier.
     var option = apres.options > avant.options ? q.options[apres.options - 1] : apres.options < avant.options ? q.options[avant.options - 1] : null;
-    return { comp: id, quartier: q.id, objectif: tenu ? objectifIle(contenu, partie, t) : null, fondation: avant.posees === 0 && q.posees > 0, stadeAvant: avant.nom, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, revenus: revenus, attires: attires, exil: partie.exil || 0, habitants: apres.habitants };
+    return { comp: id, quartier: q.id, objectif: tenu ? objectifIle(contenu, partie, t) : null, fondation: avant.posees === 0 && q.posees > 0, stadeAvant: avant.nom, option: option, optionOuverte: apres.options > avant.options, installation: inst, avant: avant.etat, apres: apres.etat, habitantsAvant: avant.habitants, revenus: revenus, attires: attires, refoules: refoules, exil: partie.exil || 0, habitants: apres.habitants };
   }
   function listeDonjons(contenu) { return (contenu.donjons && contenu.donjons.donjons) || []; }
   function donjonDe(contenu, id) { return listeDonjons(contenu).filter(function (d) { return d.id === id; })[0] || null; }
@@ -5364,7 +5396,7 @@
     masqueActuel: masqueActuel, masqueDebloque: masqueDebloque, masquePourTon: masquePourTon, aparte: aparte,
     gloiresIle: gloiresIle, suivreGloire: suivreGloire, choixIA: choixIA, serieProposable: serieProposable, lancerSerie: lancerSerie, abandonnerSerie: abandonnerSerie, serieReprenable: serieReprenable, reprendreSerie: reprendreSerie, serieEnCours: serieEnCours, casesParTour: casesParTour, derniereCase: derniereCase, arbreFini: arbreFini, tirerEvenement: tirerEvenement, choixArbre: choixArbre, tarifSucces: tarifSucces, tenterUltimatum: tenterUltimatum, repondreUltimatum: repondreUltimatum, exigence: exigence, retirerNiveaux: retirerNiveaux, agacerIA: agacerIA, potPossible: potPossible, corrompre: corrompre, dateAtteinte: dateAtteinte, humeur: humeur, revisionEnCours: revisionEnCours, compARevisier: compARevisier, arbreOuvert: arbreOuvert, specialDe: specialDe, ennemisPlateau: ennemisPlateau, tirerDuel: tirerDuel, terminerDuel: terminerDuel,
     faveurIA: faveurIA, radoucirIA: radoucirIA, jeuFerme: jeuFerme, purger: purger, questionRattrapage: questionRattrapage, repondreRattrapage: repondreRattrapage, themesCorvee: themesCorvee, fichesImposees: fichesImposees, piegeIA: piegeIA, masquesDuJour: masquesDuJour, reglesDuJour: reglesDuJour, questionsQuiz: questionsQuiz, seuilAtome: seuilAtome,
-    anneeIle: anneeIle, gibierIle: gibierIle, abattreIle: abattreIle, rapporterViande: rapporterViande, epreuvesBloquees: epreuvesBloquees, atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, exodeIle: exodeIle, placesIle: placesIle, modeIle: modeIle, chercherMateriau: chercherMateriau, defiIle: defiIle, construireIle: construireIle, etatAmenagement: etatAmenagement, agesIle: agesIle, conditionRemplie: conditionRemplie, savoirOuvertIle: savoirOuvertIle, reglerEffort: reglerEffort, chantierExceptionnel: chantierExceptionnel, annonceAlea: annonceAlea, preparerAlea: preparerAlea, forcerAlea: forcerAlea, ressourcesIle: ressourcesIle, visitesIle: visitesIle, repondreVisiteur: repondreVisiteur, passerAge: passerAge, epreuveIle: epreuveIle, epreuveFaite: epreuveFaite, perdreExplorateur: perdreExplorateur, baiesIle: baiesIle, cueillirBaies: cueillirBaies, repererSite: repererSite, siteRefuse: siteRefuse, epreuvesEnAttente: epreuvesEnAttente, queteIle: queteIle, ramasserIle: ramasserIle, reussirEpreuve: reussirEpreuve, grotteIle: grotteIle, trouverGrotte: trouverGrotte, grotteRequise: grotteRequise, visiterGrotte: visiterGrotte, torcheIle: torcheIle, prendreTorche: prendreTorche, sursisIle: sursisIle, ecoulerSursis: ecoulerSursis, gameOverIle: gameOverIle, entendreGrotte: entendreGrotte, troublesIle: troublesIle, questionQuartier: questionQuartier, ouvrirQuartier: ouvrirQuartier, niveauxIle: niveauxIle, chasserParasites: chasserParasites, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
+    anneeIle: anneeIle, urgencesIle: urgencesIle, trierBesoins: trierBesoins, gibierIle: gibierIle, abattreIle: abattreIle, rapporterViande: rapporterViande, epreuvesBloquees: epreuvesBloquees, atomeSauvage: atomeSauvage, tirerCombat: tirerCombat, astuceNumero: astuceNumero, atomeDit: atomeDit, lectureCouches: lectureCouches, dessinCouches: dessinCouches, COULEURS_COUCHES: COULEURS_COUCHES, terminerCombat: terminerCombat, laisserPartir: laisserPartir, acheter: acheter, duelBloquant: duelBloquant, piegeEnAttente: piegeEnAttente, masterclassImposee: masterclassImposee, masterclassLue: masterclassLue, questionPiege: questionPiege, repondrePiege: repondrePiege, choisirSuite: choisirSuite, ilePresente: ilePresente, exodeIle: exodeIle, placesIle: placesIle, modeIle: modeIle, chercherMateriau: chercherMateriau, defiIle: defiIle, construireIle: construireIle, etatAmenagement: etatAmenagement, agesIle: agesIle, conditionRemplie: conditionRemplie, savoirOuvertIle: savoirOuvertIle, reglerEffort: reglerEffort, chantierExceptionnel: chantierExceptionnel, annonceAlea: annonceAlea, preparerAlea: preparerAlea, forcerAlea: forcerAlea, ressourcesIle: ressourcesIle, visitesIle: visitesIle, repondreVisiteur: repondreVisiteur, passerAge: passerAge, epreuveIle: epreuveIle, epreuveFaite: epreuveFaite, perdreExplorateur: perdreExplorateur, baiesIle: baiesIle, cueillirBaies: cueillirBaies, repererSite: repererSite, siteRefuse: siteRefuse, epreuvesEnAttente: epreuvesEnAttente, queteIle: queteIle, ramasserIle: ramasserIle, reussirEpreuve: reussirEpreuve, grotteIle: grotteIle, trouverGrotte: trouverGrotte, grotteRequise: grotteRequise, visiterGrotte: visiterGrotte, torcheIle: torcheIle, prendreTorche: prendreTorche, sursisIle: sursisIle, ecoulerSursis: ecoulerSursis, gameOverIle: gameOverIle, entendreGrotte: entendreGrotte, troublesIle: troublesIle, questionQuartier: questionQuartier, ouvrirQuartier: ouvrirQuartier, niveauxIle: niveauxIle, chasserParasites: chasserParasites, objectifIle: objectifIle, ile: ile, etatInstallation: etatInstallation, listeDonjons: listeDonjons, donjonDe: donjonDe, donjonOuvert: donjonOuvert, donjonsOuverts: donjonsOuverts, arbreReussi: arbreReussi, etatDonjon: etatDonjon, bilanDonjon: bilanDonjon, atelierCourant: atelierCourant, piecesEnPanne: piecesEnPanne, entrerDonjon: entrerDonjon, epreuveAtelier: epreuveAtelier, verifierEpreuve: verifierEpreuve, questionsAtelier: questionsAtelier, finirAtelier: finirAtelier, questionBug: questionBug, chasserBug: chasserBug, allumer: allumer, repliqueDonjon: repliqueDonjon, listeProces: listeProces, procesDe: procesDe, procesOuvert: procesOuvert, etatProces: etatProces, maxSalle: maxSalle, itemsSalle: itemsSalle, optionsEchange: optionsEchange, votesJury: votesJury, salleProces: salleProces, entrerProces: entrerProces, repondreSalle: repondreSalle, scoreProces: scoreProces, verdictProces: verdictProces, repliqueProces: repliqueProces, entreesDonjons: entreesDonjons, dessinerParcours: dessinerParcours, formeParcours: formeParcours, bornesBonusJouer: bornesBonusJouer, emplettesIA: emplettesIA, empletteAVoir: empletteAVoir, utiliser: utiliser, enPoche: enPoche, joker: joker, relancerAtome: relancerAtome, enRayon: enRayon, boutique: boutique, articleDe: articleDe, arbreAchete: arbreAchete, estCapture: estCapture, texteMasse: texteMasse,
     ficheBestiaire: ficheBestiaire, cadeauPossible: cadeauPossible, donnerObjet: donnerObjet, surnom: surnom, tirerButin: tirerButin, butinOuvert: butinOuvert, chanceButin: chanceButin, savantActuel: savantActuel, rencontrer: rencontrer, rencontre: rencontre, tenterFarce: tenterFarce, farceActive: farceActive, rendreVisage: rendreVisage, nomIA: nomIA,
     expression: expression,
     bonusDuJour: bonusDuJour,
