@@ -32,6 +32,10 @@ def main():
     ressources = {r["id"]: fr(r["nom"]).lower() for r in ile.get("ressources", [])}
     quartiers = {q["id"]: fr(q.get("nomFinal") or q["nom"]) for q in ile.get("quartiers", [])}
     R = ile["regles"]
+    g = ile.get("grotte")
+    grottes = ile.get("grottes") or ([g] if g else [])
+    # zone de grotte → nom de sa grotte (un âge peut exiger un passage : ages[].grotte)
+    grotte_de = {z["id"]: fr(g["nom"]).lower() for g in grottes for z in g.get("zones", [])}
     out = []
     w = out.append
 
@@ -66,6 +70,8 @@ def main():
             cond.append(f"{len(requis)} besoin{'s' if len(requis) > 1 else ''} couvert{'s' if len(requis) > 1 else ''}")
         if a.get("peuple"):
             cond.append(f"{a['peuple']} habitants")
+        if a.get("grotte"):
+            cond.append(f"passage par {grotte_de.get(a['grotte'], a['grotte'])}")
         if a.get("epreuve"):
             cond.append(f"épreuve « {fr(epreuves[a['epreuve']]['nom'])} »")
         w(f"| {fr(a['nom'])} | {' + '.join(cond) if suivant and cond else 'âge à écrire' if not a.get('besoins') else 'dernier âge'} | {a.get('plafond', 'sans limite')} | {a.get('jusqua', '')} |")
@@ -115,6 +121,8 @@ def main():
             w(f"- Gestes : {', '.join(fr(s['titre']).lower() for s in e['etapes'])}.")
             if a.get("peuple"):
                 w(f"- Il faut aussi {a['peuple']} habitants sur l'île.")
+            if a.get("grotte"):
+                w(f"- Avant l'épreuve, il faut être passé par {grotte_de.get(a['grotte'], a['grotte'])} : trouver tout ce qu'elle garde, puis réussir son quiz.")
             w(f"- Ce qu'on en retient : {fr(e['chute']['texte'])} (source : {e['chute']['source']})")
             w("")
         elif a.get("peuple"):
@@ -138,20 +146,21 @@ def main():
                 w(f"| {nom} | {quartiers.get(x.get('quartier'), '')} | {' ; '.join(savoir(s) for s in sav)} | {cout(x)} | {('« ' + fr(e['nom']) + ' » : ' + quete(e)) if e else 'aucune'} |")
             w("")
 
-    g = ile.get("grotte")
-    grottes = ile.get("grottes") or ([g] if g else [])
     if grottes:
         w("## Les grottes")
         w("")
+        w("Chaque grotte se trouve en envoyant un explorateur avec une torche. On y cherche des peintures ou des dieux dans un labyrinthe, puis on répond à un quiz pour graver le passage.")
+        w("")
+        w("| Grotte | Apparaît à l'âge | Ce qu'on y trouve | Ce que le passage ouvre |")
+        w("|---|---|---|---|")
         for g in grottes:
-            w(f"### {fr(g['nom'])}")
-            w("")
-            w(fr(g.get("description")))
-            w("")
+            age = fr(ages[g["age"]]["nom"]).lower() if g.get("age") is not None and g["age"] < len(ages) else "dès le feu"
             for z in g.get("zones", []):
-                req = ", ".join(savoir(s) for s in z.get("ouvre", []))
-                w(f"- {fr(z['nom'])} : {len(z.get('recits', []))} récits" + (f" ; passage obligé avant : {req}" if req else "") + (f" ; ouverte à partir de l'âge {z['age'] + 1}" if z.get("age") is not None else "") + ".")
-            w("")
+                req = " ; ".join(savoir(x) for x in z.get("ouvre", []))
+                portes = [fr(a["nom"]).lower() for a in ages if a.get("grotte") == z["id"]]
+                ouvre = " ; ".join(([req] if req else []) + [f"l'épreuve qui fait quitter {x}" for x in portes]) or "rien"
+                w(f"| {fr(g['nom'])} | {age} | {' ; '.join(fr(r['titre']) for r in z.get('recits', []))} | {ouvre} |")
+        w("")
     sys.stdout.write("\n".join(out) + "\n")
 
 

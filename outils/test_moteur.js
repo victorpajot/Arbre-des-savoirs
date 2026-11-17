@@ -2432,7 +2432,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const CA = M.indexerContenu(dBrut("regles.json"), dBrut("skills.json"), dBrut("questions.json"), d("succes.json"),
     { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ile: d("ile.json") });
   const J = 86400000, t0 = new Date(2026, 10, 12, 9, 0).getTime();
-  const sait = (P, id, t) => { P.competences[id] = { maitrise: true, maitriseDepuis: t || t0, prochainRappel: (t || t0) + 400 * J, palier: 1, xp: 5 }; if (id === "ile.feu") P.epreuves = { feu: t || t0, hache: t || t0, peche: t || t0, poterie: t || t0, moisson: t || t0, carriere: t || t0, abri: t || t0, remede: t || t0, fonderie: t || t0, mouture: t || t0, forgeage: t || t0, gnomon: t || t0 }; };
+  const sait = (P, id, t) => { P.competences[id] = { maitrise: true, maitriseDepuis: t || t0, prochainRappel: (t || t0) + 400 * J, palier: 1, xp: 5 }; if (id === "ile.feu") P.epreuves = { feu: t || t0, hache: t || t0, peche: t || t0, poterie: t || t0, moisson: t || t0, carriere: t || t0, abri: t || t0, remede: t || t0, fonderie: t || t0, mouture: t || t0, forgeage: t || t0, gnomon: t || t0 }; if (id === "ile.feu") { P.grotte = P.grotte || {}; P.grotte.zones = Object.assign({ ornee: t || t0 }, P.grotte.zones); } };
   const P = M.nouvellePartie(t0); P.mode = "ile"; P.credits.solde = 2000;
   // Le campement : seul le feu est proposé.
   let G = M.agesIle(CA, P);
@@ -2486,6 +2486,9 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   M.ile(CA, P, t0);
   // Victor (2026-11-17) : le campement ne devient pas un village en cochant des savoirs. C'est le sanctuaire, chantier
   // commun, qui rassemble tout le monde ; il attend les savoirs et assez d'habitants.
+  // Le mythe d'abord (2026-11-17) : sans les peintures de la grotte ornée, pas de sanctuaire.
+  delete P.grotte; G = M.agesIle(CA, P); assert.equal(G.age.epreuve, null, "pas de sanctuaire avant la grotte ornée"); assert.equal(G.age.grotte.zone, "ornee"); assert.ok(G.age.savoirsTenus);
+  P.grotte = { zones: { ornee: t0 } };
   G = M.agesIle(CA, P); assert.equal(G.age.id, "campement"); assert.equal(G.age.epreuve, "sanctuaire", "tous les besoins couverts : reste le sanctuaire");
   assert.ok(M.epreuvesEnAttente(CA, P, t0).indexOf("sanctuaire") >= 0); assert.ok(M.queteIle(CA, P, "sanctuaire").objets.length === 3);
   { const Pp = JSON.parse(JSON.stringify(P)); Pp.population.e = 0; Pp.population.v = 0; Pp.population.a = 4;
@@ -2708,19 +2711,19 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Le mode Parcours ne connaît pas les âges.
   const PP = M.nouvellePartie(t0); assert.notEqual(M.statut(CA, PP, "math.babylone", t0).age, 2);
   // La grotte des mythologies : il faut du feu pour y entrer ; un savoir égyptien attend le passage par son arbre.
-  { const Qg = M.nouvellePartie(t0); Qg.mode = "ile";
-    assert.equal(M.grotteIle(CA, Qg).ouverte, false, "sans feu, la grotte reste noire"); assert.equal(M.visiterGrotte(CA, Qg, "egypte", t0), null);
-    assert.equal(M.trouverGrotte(CA, Qg, t0), null, "pas de torche, pas de découverte");
-    Qg.epreuves = { feu: t0 }; assert.ok(M.grotteIle(CA, Qg).ouverte); assert.equal(M.grotteIle(CA, Qg).trouvee, null);
-    assert.equal(M.trouverGrotte(CA, Qg, t0).trouvee, t0); assert.equal(M.grotteIle(CA, Qg).trouvee, t0);
-    assert.equal(M.grotteRequise(CA, Qg, "math.egypte").id, "egypte"); assert.equal(M.grotteRequise(CA, Qg, "math.babylone"), null);
+  { const Qg = M.nouvellePartie(t0); Qg.mode = "ile"; Qg.ageIle = 3;
+    assert.equal(M.grotteIle(CA, Qg, "mythologies").ouverte, false, "sans feu, la grotte reste noire"); assert.equal(M.visiterGrotte(CA, Qg, "egypte", t0), null);
+    assert.equal(M.trouverGrotte(CA, Qg, "mythologies", t0), null, "pas de torche, pas de découverte");
+    Qg.epreuves = { feu: t0 }; assert.ok(M.grotteIle(CA, Qg, "mythologies").ouverte); assert.equal(M.grotteIle(CA, Qg, "mythologies").trouvee, null);
+    assert.equal(M.trouverGrotte(CA, Qg, "mythologies", t0).trouvee, t0); assert.equal(M.grotteIle(CA, Qg, "mythologies").trouvee, t0);
+    assert.equal(M.grotteRequise(CA, Qg, "math.egypte").id, "egypte"); assert.equal(M.grotteRequise(CA, Qg, "math.babylone").grotte, "mesopotamie");
     Qg.options = { tousArbres: true }; assert.equal(M.grotteRequise(CA, Qg, "math.egypte"), null); delete Qg.options;
     // Les dieux se trouvent un par un : tant qu'il en manque, l'arbre ne grave rien.
-    assert.equal(M.visiterGrotte(CA, Qg, "egypte", t0), null, "sans les dieux, pas de passage"); assert.equal(M.grotteIle(CA, Qg).zones[0].manquants.length, 5);
+    assert.equal(M.visiterGrotte(CA, Qg, "egypte", t0), null, "sans les dieux, pas de passage"); assert.equal(M.grotteIle(CA, Qg, "mythologies").zones[0].manquants.length, 5);
     assert.equal(M.entendreGrotte(CA, Qg, "egypte", "anubis", t0), null, "un récit inconnu ne compte pas");
     assert.deepEqual(M.entendreGrotte(CA, Qg, "egypte", "thot", t0), { premiere: true, reste: 4 }); assert.equal(M.entendreGrotte(CA, Qg, "egypte", "thot", t0).premiere, false);
     assert.equal(M.visiterGrotte(CA, Qg, "egypte", t0), null);
-    ["re", "osiris", "pesee", "sekhmet"].forEach((r) => M.entendreGrotte(CA, Qg, "egypte", r, t0)); assert.equal(M.grotteIle(CA, Qg).zones[0].manquants.length, 0);
+    ["re", "osiris", "pesee", "sekhmet"].forEach((r) => M.entendreGrotte(CA, Qg, "egypte", r, t0)); assert.equal(M.grotteIle(CA, Qg, "mythologies").zones[0].manquants.length, 0);
     assert.equal(M.conditionRemplie(CA, Qg, { type: "grotte", id: "egypte" }, t0), false);
     const soldeG = Qg.credits.solde, rg = M.visiterGrotte(CA, Qg, "egypte", t0); assert.ok(rg.premiere && rg.ouvre.includes("sci.egypte"));
     // Le quiz réussi donne tout de suite le succès et le totem de Thot.
@@ -2730,8 +2733,29 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const rg2 = M.visiterGrotte(CA, Qg, "egypte", t0); assert.ok(!rg2.premiere && !rg2.succes && !rg2.objet, "le prix ne se donne qu'une fois");
     // Une partie d'avant les dieux à trouver : le passage déjà gravé vaut tous les récits, et le prix arrive au retour.
     const Qv = JSON.parse(JSON.stringify(Qg)); delete Qv.grotte.recits; delete Qv.succes["grotte-egypte"]; delete Qv.objets["totem-thot"];
-    assert.equal(M.grotteIle(CA, Qv).zones[0].manquants.length, 0); const rv = M.visiterGrotte(CA, Qv, "egypte", t0); assert.ok(!rv.premiere && rv.succes && rv.objet);
-    assert.equal(M.grotteIle(CA, PP), null, "le mode Parcours n'a pas de grotte");
+    assert.equal(M.grotteIle(CA, Qv, "mythologies").zones[0].manquants.length, 0); const rv = M.visiterGrotte(CA, Qv, "egypte", t0); assert.ok(!rv.premiere && rv.succes && rv.objet);
+    assert.equal(M.grotteIle(CA, PP, "mythologies"), null, "le mode Parcours n'a pas de grotte"); assert.equal(M.grottesIle(CA, PP).length, 0);
+    // Victor (2026-11-17) : plusieurs grottes. La grotte ornée vient au campement, la Mésopotamie et l'Égypte à la cité.
+    { const Qm = M.nouvellePartie(t0); Qm.mode = "ile"; Qm.epreuves = { feu: t0 }; Qm.ageIle = 1;
+      const etat = () => Object.fromEntries(M.grottesIle(CA, Qm).map((g) => [g.id, g.presente]));
+      assert.deepEqual(etat(), { ornee: true, mesopotamie: false, mythologies: false });
+      assert.equal(M.trouverGrotte(CA, Qm, "mythologies", t0), null, "l'Égypte n'existe pas encore au campement");
+      assert.equal(M.entendreGrotte(CA, Qm, "egypte", "thot", t0), null);
+      // Le campement exige les peintures avant le sanctuaire.
+      const camp = () => M.agesIle(CA, Qm).ages[1];
+      assert.equal(camp().grotte.zone, "ornee"); assert.equal(camp().grotte.id, "ornee");
+      assert.equal(M.trouverGrotte(CA, Qm, "ornee", t0).trouvee, t0);
+      CA.ile.grottes[0].zones[0].recits.forEach((r) => assert.ok(M.entendreGrotte(CA, Qm, "ornee", r.id, t0)));
+      assert.ok(M.visiterGrotte(CA, Qm, "ornee", t0).premiere); assert.equal(camp().grotte, null, "le passage gravé lève l'exigence");
+      // Une partie d'avant, qui avait trouvé la grotte égyptienne trop tôt, la garde ; sa carte aussi.
+      const Qa = M.nouvellePartie(t0); Qa.mode = "ile"; Qa.epreuves = { feu: t0 }; Qa.ageIle = 1; Qa.grotte = { trouvee: t0, carte: "101" };
+      const ga = M.grotteIle(CA, Qa, "mythologies"); assert.ok(ga.presente && ga.trouvee === t0); assert.ok(M.entendreGrotte(CA, Qa, "egypte", "thot", t0));
+      // À la cité, tout est là. Les ids de zones et de récits ne se marchent pas dessus.
+      Qm.ageIle = 3; assert.deepEqual(etat(), { ornee: true, mesopotamie: true, mythologies: true });
+      const zs = CA.ile.grottes.flatMap((g) => g.zones.map((z) => z.id)); assert.equal(new Set(zs).size, zs.length);
+      assert.ok(M.entendreGrotte(CA, Qm, "mesopotamie", "nisaba", t0)); assert.equal(M.statut(CA, Qm, "math.babylone", t0).passage.grotte, "mesopotamie");
+      // Un âge déjà dépassé ne doit pas les peintures.
+      const Qd = M.nouvellePartie(t0); Qd.mode = "ile"; Qd.epreuves = { feu: t0 }; Qd.ageIle = 2; assert.equal(M.agesIle(CA, Qd).ages[1].grotte, null); }
     // La torche de l'explorateur : 60 crédits, seulement quand on sait faire du feu.
     const Qt = M.nouvellePartie(t0); Qt.mode = "ile"; Qt.credits.solde = 100; assert.equal(M.torcheIle(CA, PP), null);
     assert.ok(!M.torcheIle(CA, Qt).possible && !M.torcheIle(CA, Qt).feu); assert.equal(M.prendreTorche(CA, Qt, t0), null, "pas de torche sans feu");

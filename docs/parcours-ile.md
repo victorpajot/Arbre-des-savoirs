@@ -7,7 +7,7 @@ Ce document est généré depuis les données du jeu par `outils/parcours_ile.py
 | Âge | Pour le quitter | Habitants au plus | Rien d'après |
 |---|---|---|---|
 | Les survivants | 1 besoin couvert + épreuve « Faire du feu » | 15 | -3000 |
-| Le campement | 6 besoins couverts + 10 habitants + épreuve « Dresser le sanctuaire » | 40 | -3000 |
+| Le campement | 6 besoins couverts + 10 habitants + passage par la grotte ornée + épreuve « Dresser le sanctuaire » | 40 | -3000 |
 | Le village | 4 besoins couverts + 30 habitants | 160 | -3000 |
 | La cité | 6 besoins couverts + 80 habitants | 400 | 500 |
 | Le royaume | âge à écrire | sans limite | 1500 |
@@ -61,6 +61,7 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 - Quête avant l'épreuve : des pics de silex, de longues perches, un banc de calcaire.
 - Gestes : le pilier, le renard, debout.
 - Il faut aussi 10 habitants sur l'île.
+- Avant l'épreuve, il faut être passé par la grotte ornée : trouver tout ce qu'elle garde, puis réussir son quiz.
 - Ce qu'on en retient : Pour Klaus Schmidt, qui a fouillé Göbekli Tepe, des nomades s'y retrouvaient pour bâtir, attirés par des festins, et c'est ce travail en commun qui les aurait poussés à domestiquer plantes et animaux : « D'abord le temple, ensuite la ville. » Depuis, les fouilles ont livré des foyers, des habitations et plus de 8 000 outils de mouture. Le lieu était sans doute habité, et la question reste débattue. (source : Andrew Curry, « Last Stand of the Hunter-Gatherers? », Archaeology Magazine, mai-juin 2021)
 
 ### Aménagements qui deviennent possibles
@@ -153,9 +154,11 @@ Cet âge reste à écrire : pas encore de besoins.
 
 ## Les grottes
 
-### La grotte des mythologies
+Chaque grotte se trouve en envoyant un explorateur avec une torche. On y cherche des peintures ou des dieux dans un labyrinthe, puis on répond à un quiz pour graver le passage.
 
-Un labyrinthe sous le volcan. Dans ses galeries, des dieux peints attendent qu'on les trouve, et des bêtes rôdent.
-
-- L'arbre de la mythologie égyptienne : 5 récits ; passage obligé avant : La médecine égyptienne (Savoir), L'Égypte et le papyrus Rhind (Logique).
+| Grotte | Apparaît à l'âge | Ce qu'on y trouve | Ce que le passage ouvre |
+|---|---|---|---|
+| La grotte ornée | le campement | Les chevaux de Chauvet ; La roche raclée ; La main en négatif ; Le crâne de l'ours ; Les taureaux de Lascaux ; Peindre à la lampe | l'épreuve qui fait quitter le campement |
+| La grotte des deux fleuves | la cité | Enki, le plus sage ; Inanna aux Enfers ; Gilgamesh, roi d'Uruk ; Nisaba, scribe des dieux ; Nanna, la lune ; Marduk contre Tiamat | Babylone et la base 60 (Logique) ; Les astronomes de Babylone (Cosmos) |
+| La grotte du Nil | la cité | Rê, le soleil en barque ; Osiris, roi des morts ; La pesée du cœur ; Thot, le dieu des scribes ; Sekhmet, la lionne qui guérit | La médecine égyptienne (Savoir) ; L'Égypte et le papyrus Rhind (Logique) |
 

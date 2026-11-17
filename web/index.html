@@ -2596,7 +2596,7 @@ function demarrerJeu() {
       var B = foyer ? M.baiesIle(C, P, maintenant()) : null; if (!B) return [];
       return B.buissons.filter(function (b) { return !b.prise; }).map(function (b) {
         for (var k = 0; k < 60; k++) { var g1 = graine("bx" + b.graine + "|" + k), g2 = graine("by" + b.graine + "|" + k), x = 34 + g1 % (ILE_W - 68), y = 50 + g2 % (ILE_H - 100);
-          if (praticable(x, y) && surTerre(x, y, 0.86) && !abri(x, y, 100) && !dansOvale(x, y, MARAIS) && !dansOvale(x, y, [ILE_CX, ILE_CY + 2, 34, 40]) && !(C.ile.grotte && Math.hypot(x - C.ile.grotte.position[0] * ILE_W, y - C.ile.grotte.position[1] * ILE_H) < 24)) return { id: b.id, x: x, y: y }; }
+          if (praticable(x, y) && surTerre(x, y, 0.86) && !abri(x, y, 100) && !dansOvale(x, y, MARAIS) && !dansOvale(x, y, [ILE_CX, ILE_CY + 2, 34, 40]) && !(C.ile.grottes || []).some(function (g) { return Math.hypot(x - g.position[0] * ILE_W, y - g.position[1] * ILE_H) < 24; })) return { id: b.id, x: x, y: y }; }
         return null; }).filter(Boolean);
     }
     // Le dépôt : un panier au centre du village. C'est lui qu'on vise pour rendre ce qu'on rapporte.
@@ -2846,14 +2846,16 @@ function demarrerJeu() {
           if (o.chasse || o.pris || X.sac.indexOf(o.id) >= 0 || Math.hypot(o.position[0] * ILE_W - X.x, o.position[1] * ILE_H - X.y) > 7) return;
           X.sac.push(o.id); message = tx(o.trouve || o.nom) + " " + __("Reste à le rapporter au village."); objets(); panneau();
         });
-        // La grotte des mythologies : on y entre en marchant sur sa bouche. L'expédition attend dehors, puis reprend.
-        var Ge = C.ile.grotte && M.grotteIle(C, P);
-        if (Ge && Math.hypot(C.ile.grotte.position[0] * ILE_W - X.x, C.ile.grotte.position[1] * ILE_H + 4 - X.y) < 7) {
-          if (!Ge.ouverte) { if (!X.noir) { X.noir = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.vue = "dos"; message = __("Une grotte ! ") + tx(C.ile.grotte.noir || { fr: "Il fait noir là-dedans." }); panneau(); } }
-          else if (!X.torche) { if (!X.noir) { X.noir = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.vue = "dos"; M.trouverGrotte(C, P, maintenant()); sauver(); message = __("Une grotte ! ") + tx(C.ile.grotte.sans_torche || C.ile.grotte.noir || { fr: "Il fait noir là-dedans." }); panneau(); } }
+        // Les grottes : on y entre en marchant sur leur bouche. L'expédition attend dehors, puis reprend. Victor
+        // (2026-11-17) : plusieurs grottes, chacune n'existe qu'à partir de son âge (lu une fois par expédition).
+        X.grottes = X.grottes || M.grottesIle(C, P).filter(function (g) { return g.presente; });
+        var Ge = X.grottes.filter(function (g) { return Math.hypot(g.position[0] * ILE_W - X.x, g.position[1] * ILE_H + 4 - X.y) < 7; })[0], Gd = Ge && C.ile.grottes.filter(function (g) { return g.id === Ge.id; })[0];
+        if (Ge) {
+          if (!Ge.ouverte) { if (!X.noir) { X.noir = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.vue = "dos"; message = __("Une grotte ! ") + tx(Gd.noir || { fr: "Il fait noir là-dedans." }); panneau(); } }
+          else if (!X.torche) { if (!X.noir) { X.noir = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.vue = "dos"; M.trouverGrotte(C, P, Ge.id, maintenant()); sauver(); message = __("Une grotte ! ") + tx(Gd.sans_torche || Gd.noir || { fr: "Il fait noir là-dedans." }); panneau(); } }
           else if (!X.sorti) {
-            M.trouverGrotte(C, P, maintenant()); sauver(); X.tx = X.x; X.ty = X.y; dessiner(); appliquer();
-            ouvrirGrotte(function () { if (!X) return; X.sorti = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.t = performance.now(); message = __("De retour à l'air libre."); panneau(); raf = requestAnimationFrame(tour); });
+            M.trouverGrotte(C, P, Ge.id, maintenant()); sauver(); X.tx = X.x; X.ty = X.y; dessiner(); appliquer();
+            ouvrirGrotte(Ge.id, function () { if (!X) return; X.sorti = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.t = performance.now(); message = __("De retour à l'air libre."); panneau(); raf = requestAnimationFrame(tour); });
             return;
           }
         } else if (X.sorti || X.noir) { X.sorti = false; X.noir = false; }
@@ -5276,7 +5278,8 @@ function demarrerJeu() {
       lignes.push(__("L'arbre ") + tx(s.nom) + __(" est encore fermé.") + __(" Il s'ouvre sur le parcours : réussis l'épreuve d'une case de cet arbre."));
     }
     if (st.etat === "verrouillee" && st.age !== undefined) lignes.push(st.age == null ? __("Ce savoir n'a pas encore sa place sur l'île : il viendra avec un âge prochain.") : __("Ce savoir s'ouvre à l'âge : ") + tx(C.ile.ages[st.age].nom) + ".");
-    else if (st.etat === "verrouillee" && st.grotte) lignes.push(__("Il faut d'abord passer par la grotte des mythologies : ") + tx(C.ile.grotte.zones.filter(function (x) { return x.id === st.grotte; })[0].nom) + ".");
+    else if (st.etat === "verrouillee" && st.grotte) { var pg = st.passage, rgA = M.agesIle(C, P), agG = pg && rgA && rgA.courant < pg.age && C.ile.ages.filter(function (x) { return x.rang === pg.age; })[0];
+      lignes.push(__("Il faut d'abord passer par {g} : {z}.", { g: tx(pg.nomGrotte), z: tx(pg.nom) }) + (agG ? " " + __("Cette grotte n'apparaît qu'à l'âge suivant : {a}.", { a: tx(agG.nom) }) : "")); }
     else if (st.etat === "verrouillee") lignes.push(__("Il faut d'abord maîtriser : ") + k.prerequis.filter(function (p) { return !M.debloque(C, P, p); }).map(function (p) { return tx(C.parId[p].nom); }).join(", ") + ".");
     if (st.etat === "disponible") lignes.push(__("Quiz de ") + nbQuiz() + __(" questions. Il en faut ") + Math.ceil(nbQuiz() * C.regles.quiz.seuil_maitrise) + __(" justes pour la maîtriser."));
     if (st.etat === "maitrisee" || st.etat === "a_reviser") {
@@ -5825,9 +5828,8 @@ function demarrerJeu() {
     });
     // La grotte des mythologies (Victor, 2026-11-14) : une bouche sombre au flanc du volcan. Elle reste sous le
     // brouillard : seul un explorateur qui passe près d'elle la voit, et il y entre en marchant dessus.
-    var Gr = C.ile && C.ile.grotte && M.grotteIle(C, P);
-    if (Gr) { var gx = C.ile.grotte.position[0] * W, gy = C.ile.grotte.position[1] * H;
-      plan.push([gy + 7, '<g class="ile-grotte"><ellipse cx="' + fx(gx) + '" cy="' + fx(gy + 7) + '" rx="15" ry="4" fill="rgba(20,15,10,.35)"/><path d="M' + fx(gx - 15) + " " + fx(gy + 7) + " Q" + fx(gx - 16) + " " + fx(gy - 14) + " " + fx(gx) + " " + fx(gy - 15) + " Q" + fx(gx + 16) + " " + fx(gy - 14) + " " + fx(gx + 15) + " " + fx(gy + 7) + 'Z" fill="#6E5A4A" stroke="#4A3B30" stroke-width="1.6"/><path d="M' + fx(gx - 8) + " " + fx(gy + 7) + " Q" + fx(gx - 9) + " " + fx(gy - 7) + " " + fx(gx) + " " + fx(gy - 8) + " Q" + fx(gx + 9) + " " + fx(gy - 7) + " " + fx(gx + 8) + " " + fx(gy + 7) + 'Z" fill="#15121A"/></g>']); }
+    (C.ile && C.ile.grottes ? M.grottesIle(C, P) : []).forEach(function (Gr) { if (!Gr.presente) return; var gx = Gr.position[0] * W, gy = Gr.position[1] * H;
+      plan.push([gy + 7, '<g class="ile-grotte"><ellipse cx="' + fx(gx) + '" cy="' + fx(gy + 7) + '" rx="15" ry="4" fill="rgba(20,15,10,.35)"/><path d="M' + fx(gx - 15) + " " + fx(gy + 7) + " Q" + fx(gx - 16) + " " + fx(gy - 14) + " " + fx(gx) + " " + fx(gy - 15) + " Q" + fx(gx + 16) + " " + fx(gy - 14) + " " + fx(gx + 15) + " " + fx(gy + 7) + 'Z" fill="#6E5A4A" stroke="#4A3B30" stroke-width="1.6"/><path d="M' + fx(gx - 8) + " " + fx(gy + 7) + " Q" + fx(gx - 9) + " " + fx(gy - 7) + " " + fx(gx) + " " + fx(gy - 8) + " Q" + fx(gx + 9) + " " + fx(gy - 7) + " " + fx(gx + 8) + " " + fx(gy + 7) + 'Z" fill="#15121A"/></g>']); });
     // Les lieux des collections (Victor, 2026-11-10 : « dans les quartiers existants, pour donner plus de vie ») : sur la
     // carte, le bâtiment se pose au bord du hameau de son quartier, une fois celui-ci fondé ; on y entre par le quartier.
     var parQ = {};
@@ -6207,7 +6209,7 @@ function demarrerJeu() {
     // Victor (2026-11-14) : au tout début, pas de campement d'où envoyer un explorateur, et la carte n'est que brouillard : pas de bouton.
     if (M.modeIle(P) && I.quartiers.some(function (q) { return (q.fonde || q.camp) && q.position; })) { var bex = el('<button type="button" class="btn sec large ile-explorer">🔍 ' + (queteActive() ? __("Explorer l'île : {n} à trouver", { n: queteActive().reste }) : __("Explorer l'île de près")) + "</button>"); bex.onclick = ouvrirExplorer; carte.after(bex);
       // Victor (2026-11-15) : la grotte demande une torche, donc un explorateur : plus de raccourci sous la carte.
-      var Gb = M.grotteIle(C, P); if (Gb && Gb.ouverte && Gb.trouvee) bex.after(el('<p class="note" style="font-size:17px;margin:4px 0">🔦 ' + esc(tx(C.ile.grotte.nom)) + (Gb.zones.some(function (x) { return !x.vue; }) ? "" : " ✓") + " : " + __("envoie un explorateur avec une torche.") + "</p>")); }
+      M.grottesIle(C, P).slice().reverse().forEach(function (Gb) { if (Gb.ouverte && Gb.trouvee) bex.after(el('<p class="note" style="font-size:17px;margin:4px 0">🔦 ' + esc(tx(Gb.nom)) + (Gb.zones.some(function (x) { return !x.vue; }) ? " : " + __("envoie un explorateur avec une torche.") : " ✓") + "</p>")); }); }
     // Victor (2026-11-12) : un nouveau quartier se mérite. Tant qu'il n'est pas ouvert, sa carte attend sous l'île.
     var ancreV = carte;
     I.quartiers.filter(function (x) { return x.aOuvrir; }).forEach(function (x) {
@@ -6432,10 +6434,10 @@ function demarrerJeu() {
   // reste dessiné. Atteindre une zone (l'arbre d'une mythologie) fait entendre ses récits, sourcés ; ce passage ouvre
   // des savoirs (M.grotteRequise). Tout est peint sur un canevas : ni masque SVG, ni nœuds déplacés (Android).
   var GROTTE = { cols: 11, rangs: 15, salles: 7, large: 6.4, torche: 3, ecart: 3, loin: 15, betes: 3, flair: 4, fuite: 0.85, calme: 20000, pas: 650 };
-  var LABY = null;
-  function labyGrotte() {
-    if (LABY) return LABY;
-    var W = GROTTE.cols, H = GROTTE.rangs, n = W * H, murs = [], vu = [], s = graine("grotte-mythologies"), i;
+  var LABYS = {};
+  function labyGrotte(id) {
+    if (LABYS[id]) return LABYS[id];
+    var W = GROTTE.cols, H = GROTTE.rangs, n = W * H, murs = [], vu = [], s = graine("grotte-" + id), i;
     function alea(k) { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s % k; }
     // murs[c] : bit 1 = passage vers la droite, bit 2 = passage vers le bas.
     for (i = 0; i < n; i++) { murs.push(0); vu.push(i); }
@@ -6462,12 +6464,12 @@ function demarrerJeu() {
     // Les culs-de-sac, du plus proche de l'entrée au plus lointain : les arbres et les dieux s'y posent.
     var D0 = distances(depart), culs = []; for (i = 0; i < n; i++) if (i !== depart && !prises[i] && voisins(i).length === 1) culs.push(i);
     culs.sort(function (a, b) { return D0[a] - D0[b]; });
-    return (LABY = { W: W, H: H, n: n, murs: murs, depart: depart, voisins: voisins, distances: distances, culs: culs, D0: D0, salles: salles });
+    return (LABYS[id] = { W: W, H: H, n: n, murs: murs, depart: depart, voisins: voisins, distances: distances, culs: culs, D0: D0, salles: salles });
   }
   // Où se posent l'arbre de chaque mythologie (près de l'entrée : on y revient pour le quiz) et ses dieux (plus loin,
   // à l'écart les uns des autres). Toujours les mêmes places : le labyrinthe s'apprend.
   function placesGrotte(def) {
-    var L = labyGrotte(), pris = [], libre = L.culs.slice();
+    var L = labyGrotte(def.id), pris = [], libre = L.culs.slice();
     function ecart(a, b) { return Math.abs(a % L.W - b % L.W) + Math.abs(Math.floor(a / L.W) - Math.floor(b / L.W)); }
     function prendre(ok) { for (var i = 0; i < libre.length; i++) { var c = libre[i]; if (ok(c) && pris.every(function (p) { return ecart(p, c) >= GROTTE.ecart; })) { libre.splice(i, 1); pris.push(c); return c; } } var r = libre.shift(); pris.push(r); return r; }
     if (L.places) return L.places;
@@ -6493,16 +6495,32 @@ function demarrerJeu() {
       '<g class="gr-v-salue"><path d="M41 28 Q37 42 38 56 L47 56 L47 30 Z M56 36 L63 36 L63 57 L56 57 Z" fill="#243B6B"/><path d="M41 30 Q43 15 57 15 Q65 16 66 25 L47 32 Z" fill="#243B6B"/><path d="M42 33 h5 M41 39 h6 M40 45 h7 M56 42 h7 M56 48 h7" stroke="#F2B632" stroke-width="1.2"/>' +
       '<circle cx="58" cy="27" r="8" fill="#1F2A30"/><path d="M62 21 Q86 20 97 45 Q82 31 62 32 Z" fill="#1F2A30"/><ellipse cx="59.5" cy="25" rx="2.8" ry="1.7" fill="#fff"/><circle cx="60" cy="25" r="1.1" fill="#1E1B22"/><path d="M56 25 L50 26" stroke="#1E1B22" stroke-width="1.2" stroke-linecap="round"/>' +
       '<path d="M45 13 Q57 25 69 13 Q57 18 45 13 Z" fill="#F2B632" stroke="#C9952A" stroke-width=".8"/><circle cx="57" cy="9" r="5.5" fill="#F7F3E3" stroke="#C9952A" stroke-width="1.2"/></g>',
-    sekhmet: '<path d="M44 88 V58 Q44 48 60 48 Q76 48 76 58 V88 Z" fill="#B23A3A"/><circle cx="60" cy="36" r="14" fill="#D9A441"/><path d="M48 28 L46 18 L54 24 M72 28 L74 18 L66 24" fill="#D9A441" stroke="#D9A441" stroke-width="3" stroke-linejoin="round"/><g class="gr-v-cligne"><circle cx="55" cy="34" r="2" fill="#2B2B33"/><circle cx="65" cy="34" r="2" fill="#2B2B33"/></g><path d="M57 40 h6 l-3 4 Z" fill="#2B2B33"/><g class="gr-v-pouls"><circle cx="60" cy="10" r="9" fill="#E0483A"/><circle cx="60" cy="10" r="5" fill="#F2793A"/></g>'
+    sekhmet: '<path d="M44 88 V58 Q44 48 60 48 Q76 48 76 58 V88 Z" fill="#B23A3A"/><circle cx="60" cy="36" r="14" fill="#D9A441"/><path d="M48 28 L46 18 L54 24 M72 28 L74 18 L66 24" fill="#D9A441" stroke="#D9A441" stroke-width="3" stroke-linejoin="round"/><g class="gr-v-cligne"><circle cx="55" cy="34" r="2" fill="#2B2B33"/><circle cx="65" cy="34" r="2" fill="#2B2B33"/></g><path d="M57 40 h6 l-3 4 Z" fill="#2B2B33"/><g class="gr-v-pouls"><circle cx="60" cy="10" r="9" fill="#E0483A"/><circle cx="60" cy="10" r="5" fill="#F2793A"/></g>',
+    chevaux: '<rect width="120" height="92" fill="#B89A6A"/><path d="M0 70 Q30 62 60 72 T120 66 V92 H0 Z" fill="#A08458"/><g transform="translate(14 40) scale(.8)" opacity=".75"><path d="M0 44 Q3 16 22 7 L25 0 L29 8 Q41 13 47 27 Q48 33 42 32 Q35 25 27 25 Q21 34 19 46 Z" fill="#2B2520"/><path d="M4 30 Q8 14 21 8" stroke="#5E5046" stroke-width="2.5" fill="none"/></g><g transform="translate(34 28) scale(.95)" opacity=".88"><path d="M0 44 Q3 16 22 7 L25 0 L29 8 Q41 13 47 27 Q48 33 42 32 Q35 25 27 25 Q21 34 19 46 Z" fill="#2B2520"/><path d="M4 30 Q8 14 21 8" stroke="#5E5046" stroke-width="2.5" fill="none"/></g><g class="gr-v-croise" transform="translate(58 14) scale(1.15)"><path d="M0 44 Q3 16 22 7 L25 0 L29 8 Q41 13 47 27 Q48 33 42 32 Q35 25 27 25 Q21 34 19 46 Z" fill="#2B2520"/><path d="M4 30 Q8 14 21 8" stroke="#5E5046" stroke-width="2.5" fill="none"/></g>',
+    lions: '<rect width="120" height="92" fill="#B89A6A"/><path d="M0 70 Q30 62 60 72 T120 66 V92 H0 Z" fill="#A08458"/><g fill="none" stroke="#2B2520" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 34 Q34 22 62 26 Q78 16 96 22 Q108 26 110 34 Q104 40 92 38 Q80 40 72 42"/><path d="M12 62 Q38 48 64 52 Q80 42 98 48 Q110 52 112 60 Q106 66 94 64 Q82 66 74 68"/></g><path d="M8 34 Q34 22 62 26 Q78 16 96 22 Q108 26 110 34 Q104 40 92 38 Q60 46 8 34Z" fill="rgba(43,37,32,.28)"/><circle cx="96" cy="27" r="2" fill="#2B2520"/><circle cx="98" cy="53" r="2" fill="#2B2520"/><path d="M84 18 l3 -6 l4 6 M86 44 l3 -6 l4 6" stroke="#2B2520" stroke-width="3" fill="none" stroke-linejoin="round"/>',
+    main: '<rect width="120" height="92" fill="#B89A6A"/><path d="M0 70 Q30 62 60 72 T120 66 V92 H0 Z" fill="#A08458"/><g class="gr-v-pouls"><circle cx="60" cy="46" r="36" fill="#A8432A" opacity=".55"/><circle cx="60" cy="46" r="27" fill="#A8432A" opacity=".8"/></g><g stroke="#C9AE80" stroke-width="7.5" stroke-linecap="round"><path d="M60 54 L40 44"/><path d="M56 50 L48 24"/><path d="M60 48 L60 18"/><path d="M64 50 L72 23"/><path d="M66 54 L82 34"/></g><path d="M48 46 Q60 40 72 46 L70 70 Q60 76 50 70 Z" fill="#C9AE80"/><g fill="#A8432A"><circle cx="16" cy="20" r="4"/><circle cx="104" cy="74" r="4"/><circle cx="100" cy="16" r="3"/><circle cx="20" cy="78" r="3"/></g>',
+    ours: '<path d="M14 92 L22 58 L98 54 L108 92 Z" fill="#6E655A"/><path d="M22 58 L98 54 L92 64 L28 67 Z" fill="#8A8073"/><g class="gr-v-flot"><path d="M36 50 Q34 28 54 26 Q70 24 78 34 L96 40 Q100 46 96 52 L74 54 Q60 58 44 56 Z" fill="#EDE3CC"/><ellipse cx="62" cy="38" rx="6" ry="5" fill="#2B2520"/><path d="M92 44 l3 2" stroke="#2B2520" stroke-width="2.5" stroke-linecap="round"/><path d="M72 54 v5 M78 54 v5 M84 53 v5 M90 53 v4" stroke="#EDE3CC" stroke-width="3" stroke-linecap="round"/><path d="M40 30 q-6 -6 0 -10 q6 2 6 8" fill="#EDE3CC"/></g>',
+    taureaux: '<rect width="120" height="92" fill="#B89A6A"/><path d="M0 70 Q30 62 60 72 T120 66 V92 H0 Z" fill="#A08458"/><path d="M12 60 Q10 38 28 34 Q48 24 74 30 Q86 28 94 20 L98 28 Q106 32 104 42 L96 44 Q92 50 84 50 L82 74 H76 L74 54 Q54 60 36 56 L34 74 H28 L26 56 Q18 58 12 60Z" fill="#D9C39A" stroke="#2B2520" stroke-width="3" stroke-linejoin="round"/><path d="M94 20 Q96 6 108 4 M90 22 Q86 8 96 2" stroke="#2B2520" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="97" cy="33" r="1.8" fill="#2B2520"/><g fill="#2B2520"><circle cx="40" cy="42" r="2.2"/><circle cx="50" cy="38" r="2.2"/><circle cx="60" cy="44" r="2.2"/><circle cx="48" cy="48" r="2.2"/></g><g class="gr-v-flot"><path d="M40 84 Q42 76 52 76 Q60 74 64 70 L67 74 Q70 76 68 80 L64 80 L63 88 H60 L59 82 Q52 84 47 82 L46 88 H43 L43 82 Z" fill="#A8432A"/></g>',
+    lampe: '<path d="M24 60 Q24 50 44 48 L92 46 Q108 46 108 58 Q108 72 88 76 Q60 80 40 72 L16 70 Q8 68 10 62 Z" fill="#C98B7A"/><ellipse cx="78" cy="58" rx="22" ry="10" fill="#8E5A4C"/><ellipse cx="78" cy="59" rx="16" ry="6" fill="#E8D9A0"/><path d="M16 62 h20 M20 66 h12" stroke="#8E5A4C" stroke-width="2"/><g class="gr-v-pouls"><path d="M78 56 Q66 40 78 18 Q90 40 78 56 Z" fill="#F2793A"/><path d="M78 54 Q72 42 78 30 Q84 42 78 54 Z" fill="#FFD86B"/></g>',
+    enki: '<path d="M44 90 V52 Q44 42 60 42 Q76 42 76 52 V90 Z" fill="#7A4F8A"/><path d="M44 62 H76 M44 72 H76 M44 82 H76" stroke="#C9952A" stroke-width="2"/><circle cx="60" cy="30" r="12" fill="#C68A5A"/><path d="M50 32 Q60 56 70 32 Z" fill="#2B2520"/><path d="M48 22 Q60 6 72 22 Z" fill="#F2B632"/><path d="M46 20 q-4 -8 4 -10 M74 20 q4 -8 -4 -10" stroke="#F2B632" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="56" cy="28" r="1.6" fill="#1E1B22"/><circle cx="64" cy="28" r="1.6" fill="#1E1B22"/><g class="gr-v-flot" fill="none" stroke="#5E9DB8" stroke-width="4" stroke-linecap="round"><path d="M44 50 Q26 52 24 66 T12 88"/><path d="M76 50 Q94 52 96 66 T108 88"/></g><g fill="#F2EFE4"><path d="M18 70 q5 -4 9 0 q-4 4 -9 0 l-3 -3 v6 Z"/><path d="M102 74 q-5 -4 -9 0 q4 4 9 0 l3 -3 v6 Z"/></g>',
+    inanna: '<g class="gr-v-pouls"><path d="M60 4 L64 16 L76 10 L70 22 L82 26 L70 30 L76 42 L64 36 L60 48 L56 36 L44 42 L50 30 L38 26 L50 22 L44 10 L56 16 Z" fill="#F2B632"/><circle cx="60" cy="26" r="5" fill="#FFE79A"/></g><path d="M0 60 H30 V68 H48 V76 H66 V84 H84 V92 H0 Z" fill="#5E4B3A"/><path d="M0 60 H30 V68 H48 V76 H66 V84 H84" stroke="#8A7256" stroke-width="2" fill="none"/><path d="M92 92 V58 Q104 44 116 58 V92 Z" fill="#0B0A0F" stroke="#3A5E8A" stroke-width="3"/><g class="gr-v-flot"><path d="M52 76 V62 Q52 56 57 56 Q62 56 62 62 V76 Z" fill="#B23A3A"/><circle cx="57" cy="51" r="5" fill="#C68A5A"/><path d="M52 49 Q57 42 62 49" stroke="#F2B632" stroke-width="2.5" fill="none"/></g>',
+    gilgamesh: '<path d="M0 92 V58 H10 V50 H20 V58 H32 V50 H42 V58 H78 V50 H88 V58 H100 V50 H110 V58 H120 V92 Z" fill="#B58B52"/><path d="M0 70 H120 M0 82 H120 M16 58 V70 M50 70 V82 M84 58 V70 M30 82 V92 M100 70 V82" stroke="#8A6A3A" stroke-width="1.5"/><path d="M42 92 V56 Q42 46 60 46 Q78 46 78 56 V92 Z" fill="#8E2F2F"/><circle cx="60" cy="30" r="14" fill="#C68A5A"/><path d="M47 32 H73 V52 Q60 60 47 52 Z" fill="#2B2520"/><path d="M50 38 h20 M50 44 h20 M52 50 h16" stroke="#5E5046" stroke-width="1.5"/><path d="M46 22 H74 V14 L68 18 L60 10 L52 18 L46 14 Z" fill="#F2B632"/><g class="gr-v-cligne"><circle cx="55" cy="28" r="1.8" fill="#1E1B22"/><circle cx="65" cy="28" r="1.8" fill="#1E1B22"/></g>',
+    nisaba: '<path d="M20 12 Q54 6 88 12 Q94 46 88 82 Q54 88 20 82 Q14 46 20 12 Z" fill="#C9A26B" stroke="#8A6A3A" stroke-width="2"/><g stroke="#4A3620" stroke-width="2.6" stroke-linecap="round" fill="none"><path class="gr-v-ecrit" d="M28 26 h12"/><path d="M28 26 l-3 -4 M28 26 l-3 4 M46 22 v10 M46 22 l-3 -3 M46 22 l3 -3 M54 26 h10 M54 26 l-3 -4 M54 26 l-3 4"/><path class="gr-v-ecrit gr-v-apres" d="M28 44 h14"/><path d="M28 44 l-3 -4 M28 44 l-3 4 M48 40 v10 M48 40 l-3 -3 M48 40 l3 -3 M58 40 v10 M58 40 l-3 -3 M58 40 l3 -3"/><path d="M28 62 h10 M28 62 l-3 -4 M28 62 l-3 4 M44 58 v10 M44 58 l-3 -3 M44 58 l3 -3 M52 62 h12 M52 62 l-3 -4 M52 62 l-3 4"/></g><g class="gr-v-croise"><path d="M100 88 V40" stroke="#C9952A" stroke-width="3" stroke-linecap="round"/><g fill="#F2B632"><ellipse cx="100" cy="34" rx="4" ry="7"/><ellipse cx="93" cy="42" rx="3.5" ry="6" transform="rotate(-28 93 42)"/><ellipse cx="107" cy="42" rx="3.5" ry="6" transform="rotate(28 107 42)"/><ellipse cx="93" cy="54" rx="3.5" ry="6" transform="rotate(-28 93 54)"/><ellipse cx="107" cy="54" rx="3.5" ry="6" transform="rotate(28 107 54)"/></g></g>',
+    nanna: '<g fill="#F7F3E3"><circle cx="16" cy="14" r="1.5"/><circle cx="34" cy="30" r="1.2"/><circle cx="52" cy="10" r="1.3"/><circle cx="108" cy="50" r="1.4"/><circle cx="22" cy="54" r="1.2"/></g><g class="gr-v-pouls"><path d="M22 34 Q44 66 66 34 Q44 50 22 34 Z" fill="#F7F3E3"/></g><path d="M44 52 V86 M34 86 H54" stroke="#C9952A" stroke-width="4" stroke-linecap="round"/><g class="gr-v-croise"><circle cx="94" cy="24" r="11" fill="#F2B632"/><path d="M94 6 v6 M94 36 v6 M76 24 h6 M106 24 h6 M81 11 l4 4 M103 33 l4 4 M107 11 l-4 4 M85 33 l-4 4" stroke="#F2B632" stroke-width="3" stroke-linecap="round"/></g>',
+    marduk: '<path d="M4 70 Q18 44 34 62 T62 58 T86 40" stroke="#2F8F8A" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M4 70 Q18 44 34 62 T62 58 T86 40" stroke="#4FB5AE" stroke-width="3" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/><g class="gr-v-croise"><path d="M80 44 L96 22 L116 26 L104 36 L116 44 L96 48 Z" fill="#2F8F8A"/><circle cx="98" cy="31" r="2.6" fill="#FF4D3D"/><path d="M104 36 l5 -2 M104 37 l5 3" stroke="#F7F3E3" stroke-width="2" stroke-linecap="round"/><path d="M92 22 l-2 -8 l7 5" fill="#2F8F8A"/></g><g class="gr-v-flot"><path d="M10 20 L50 34" stroke="#F2B632" stroke-width="3.5" stroke-linecap="round"/><path d="M50 34 l-9 -1 l4 -7 Z" fill="#F2B632"/><path d="M10 20 l-4 -6 M10 20 l-7 1" stroke="#F2B632" stroke-width="2.5" stroke-linecap="round"/></g><path d="M0 84 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0" stroke="#3A5E8A" stroke-width="4" fill="none"/>'
   };
-  function ouvrirGrotte(retour) {
+  function ouvrirGrotte(id, retour) {
     if (typeof retour !== "function") retour = null;
-    var G = M.grotteIle(C, P), def = C.ile && C.ile.grotte; if (!G || !def) return;
+    var G = M.grotteIle(C, P, id), def = C.ile && (C.ile.grottes || []).filter(function (g) { return g.id === id; })[0]; if (!G || !def) return;
     if (!G.ouverte) { toast(tx(def.noir || { fr: "Il fait noir là-dedans." })); return; }
     if (!retour) fermerFeuille();
-    var L = labyGrotte(), premiere = !(P.grotte && P.grotte.carte);
-    P.grotte = P.grotte || {}; P.grotte.zones = P.grotte.zones || {}; P.grotte.recits = P.grotte.recits || {};
-    var carte = (P.grotte.carte || "").split("").map(function (c) { return c === "1"; }); if (carte.length !== L.n) { carte = []; for (var i = 0; i < L.n; i++) carte.push(false); }
+    P.grotte = P.grotte || {}; P.grotte.zones = P.grotte.zones || {}; P.grotte.recits = P.grotte.recits || {}; P.grotte.cartes = P.grotte.cartes || {};
+    // La carte éclairée de l'ancienne grotte unique (P.grotte.carte) était celle des mythologies.
+    var carteLue = P.grotte.cartes[id] || (id === "mythologies" && P.grotte.carte) || "";
+    var L = labyGrotte(id), premiere = !carteLue;
+    // Victor (2026-11-17) : dans la grotte ornée on ne cherche pas des dieux mais des peintures (zone.genre).
+    function peint(zn) { return (zn.def || zn).genre === "peintures"; }
+    var carte = carteLue.split("").map(function (c) { return c === "1"; }); if (carte.length !== L.n) { carte = []; for (var i = 0; i < L.n; i++) carte.push(false); }
     var zones = placesGrotte(def);
     function entendu(zn, d) { return !!(P.grotte.zones[zn.def.id] || P.grotte.recits[zn.def.id + "/" + d.r.id]); }
     function manquants(zn) { return zn.dieux.filter(function (d) { return !entendu(zn, d); }); }
@@ -6517,7 +6535,7 @@ function demarrerJeu() {
     var occupees = {}; zones.forEach(function (zn) { occupees[zn.c] = 1; zn.dieux.forEach(function (d) { occupees[d.c] = 1; }); });
     var betes = []; (function () { var libres = []; for (var c = 0; c < L.n; c++) if (L.D0[c] >= 10 && !occupees[c]) libres.push(c);
       for (var b = 0; b < GROTTE.betes && libres.length; b++) betes.push({ c: libres.splice(Math.floor(Math.random() * libres.length), 1)[0], fuit: 0 }); })();
-    function eclairer() { var D = L.distances(ici), ch = false; for (var c in D) if (D[c] <= GROTTE.torche && !carte[c]) { carte[c] = true; ch = true; } if (ch) P.grotte.carte = carte.map(function (b) { return b ? "1" : "0"; }).join(""); return D; }
+    function eclairer() { var D = L.distances(ici), ch = false; for (var c in D) if (D[c] <= GROTTE.torche && !carte[c]) { carte[c] = true; ch = true; } if (ch) P.grotte.cartes[id] = carte.map(function (b) { return b ? "1" : "0"; }).join(""); return D; }
     function mesurer() {
       var r = vue.getBoundingClientRect(), k = window.devicePixelRatio || 1; if (!r.width) return;
       // Victor (2026-11-15) : « les couloirs sont trop étroits ». Le labyrinthe ne tient plus en entier à l'écran : une
@@ -6549,6 +6567,17 @@ function demarrerJeu() {
       ctx.fillStyle = fait ? "#6E6553" : "#F2B632"; ctx.beginPath(); ctx.moveTo(x - U * 0.2, y + U * 0.26); ctx.lineTo(x - U * 0.2, y - U * 0.06); ctx.arc(x, y - U * 0.06, U * 0.2, Math.PI, 0); ctx.lineTo(x + U * 0.2, y + U * 0.26); ctx.closePath(); ctx.fill();
       ctx.fillStyle = fait ? "#4A4338" : "#FFE79A"; ctx.beginPath(); ctx.arc(x, y - U * 0.02, U * 0.09, 0, 7); ctx.fill(); ctx.fillRect(x - U * 0.05, y + U * 0.06, U * 0.1, U * 0.16);
     }
+    // Grotte ornée : la grande salle porte une main rouge, chaque peinture une bête à l'ocre sur un pan de roche clair.
+    function mainPeinte(x, y, fait) {
+      ctx.fillStyle = fait ? "#C9952A" : "#A8432A"; ctx.beginPath(); ctx.arc(x, y + U * 0.08, U * 0.2, 0, 7); ctx.fill();
+      ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = Math.max(2, U * 0.085); ctx.lineCap = "round"; ctx.beginPath();
+      [[-0.3, -0.06], [-0.15, -0.3], [0, -0.36], [0.15, -0.3], [0.3, -0.02]].forEach(function (d) { ctx.moveTo(x, y + U * 0.06); ctx.lineTo(x + U * d[0], y + U * d[1]); }); ctx.stroke();
+    }
+    function panneauPeint(x, y, fait) {
+      ctx.fillStyle = fait ? "#6E6553" : "#D9C39A"; ctx.beginPath(); ctx.ellipse(x, y + U * 0.04, U * 0.34, U * 0.26, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = fait ? "#4A4338" : "#A8432A"; ctx.beginPath(); ctx.ellipse(x - U * 0.02, y, U * 0.17, U * 0.09, 0, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(x + U * 0.17, y - U * 0.08, U * 0.06, 0, 7); ctx.fill();
+      ctx.fillRect(x - U * 0.14, y + U * 0.04, U * 0.045, U * 0.14); ctx.fillRect(x + U * 0.07, y + U * 0.04, U * 0.045, U * 0.14);
+    }
     function bete(x, y, b, eclairee) {
       if (eclairee) { ctx.fillStyle = "#23202B"; ctx.beginPath(); ctx.ellipse(x, y + U * 0.08, U * 0.3, U * 0.2, 0, 0, 7); ctx.fill();
         ctx.beginPath(); ctx.moveTo(x - U * 0.24, y - U * 0.02); ctx.lineTo(x - U * 0.18, y - U * 0.26); ctx.lineTo(x - U * 0.06, y - U * 0.06); ctx.lineTo(x + U * 0.06, y - U * 0.06); ctx.lineTo(x + U * 0.18, y - U * 0.26); ctx.lineTo(x + U * 0.24, y - U * 0.02); ctx.closePath(); ctx.fill(); }
@@ -6578,8 +6607,8 @@ function demarrerJeu() {
       // L'entrée : le jour qui tombe par le bas. C'est aussi la sortie.
       var e = centre(L.depart); ctx.fillStyle = "rgba(255,244,200,.75)"; ctx.fillRect(e[0] - T * 0.42, e[1] + T * 0.28, T * 0.84, T * 0.22);
       zones.forEach(function (zn) {
-        if (carte[zn.c]) { var p = centre(zn.c); arbreMythe(p[0], p[1] + U * 0.08, !!P.grotte.zones[zn.def.id]); }
-        zn.dieux.forEach(function (d) { if (carte[d.c]) { var q = centre(d.c); niche(q[0], q[1], entendu(zn, d)); } });
+        if (carte[zn.c]) { var p = centre(zn.c); (peint(zn) ? mainPeinte : arbreMythe)(p[0], p[1] + U * 0.08, !!P.grotte.zones[zn.def.id]); }
+        zn.dieux.forEach(function (d) { if (carte[d.c]) { var q = centre(d.c); (peint(zn) ? panneauPeint : niche)(q[0], q[1], entendu(zn, d)); } });
       });
       betes.forEach(function (b) { var lum = D[b.c] != null && D[b.c] <= GROTTE.torche; if (lum || carte[b.c]) { var p = centre(b.c); bete(p[0], p[1], b, lum); } });
       moi.style.transform = "translate(" + (ox + px - T * 0.17).toFixed(1) + "px," + (oy + py - T * 0.3).toFixed(1) + "px)";
@@ -6644,8 +6673,8 @@ function demarrerJeu() {
       if (clos) return;
       z.classList.remove("lit");  // Victor (2026-11-15) : les récits se lisent en plein écran, le labyrinthe revient ensuite
       var menace = proches().length, aLentree = ici === L.depart;
-      var cherche = zones.filter(function (q) { return !P.grotte.zones[q.def.id]; }).map(function (q) { var m = manquants(q).length; return m ? (m > 1 ? __("{n} dieux à trouver", { n: m }) : __("1 dieu à trouver")) + " (" + tx(q.def.court || q.def.nom) + ")" : __("retourne à ") + tx(q.def.nom); });
-      bas.innerHTML = '<div class="ex-msg">' + esc(message || (cherche.length ? __("Touche une galerie éclairée pour y aller. Il te reste : ") + cherche.join(", ") + "." : __("Tu as entendu tous les récits de la grotte. D'autres galeries s'ouvriront."))) + "</div>" +
+      var cherche = zones.filter(function (q) { return !P.grotte.zones[q.def.id]; }).map(function (q) { var m = manquants(q).length; return m ? (peint(q) ? (m > 1 ? __("{n} peintures à trouver", { n: m }) : __("1 peinture à trouver")) : (m > 1 ? __("{n} dieux à trouver", { n: m }) : __("1 dieu à trouver"))) + " (" + tx(q.def.court || q.def.nom) + ")" : __("retourne à ") + tx(q.def.nom); });
+      bas.innerHTML = '<div class="ex-msg">' + esc(message || (cherche.length ? __("Touche une galerie éclairée pour y aller. Il te reste : ") + cherche.join(", ") + "." : (zones.every(peint) ? __("Tu as vu toutes les peintures de la grotte.") : __("Tu as entendu tous les récits de la grotte.")))) + "</div>" +
         (menace ? '<button type="button" class="btn large gr-torche" data-a="torche">🔥 ' + __("Brandir la torche") + "</button>" : "") +
         zones.map(function (q) { var f = P.grotte.zones[q.def.id];
           return '<div class="gr-zone' + (f ? " ok" : "") + '"><b>' + esc(tx(q.def.court || q.def.nom)) + (f ? " ✓" : "") + '</b><span class="gr-dieux">' + q.dieux.map(function (d) { var e = entendu(q, d); return '<i class="' + (e ? "ok" : "") + '" title="' + esc(e ? tx(d.r.titre) : "?") + '"><svg viewBox="0 0 120 92" width="34" height="26" aria-hidden="true">' + (e ? DESSINS_MYTHE[d.r.dessin] || "" : '<text x="60" y="64" text-anchor="middle" font-size="56" font-weight="800" fill="#8E8A80">?</text>') + "</svg></i>"; }).join("") + "</span></div>"; }).join("") +
@@ -6660,11 +6689,11 @@ function demarrerJeu() {
     // Un dieu trouvé (Victor, 2026-11-14 : on les récupère un par un) : il paraît, on écoute son récit, il est gardé.
     function dieu(zn, d) {
       lecture = zn; var deja = entendu(zn, d), n = zn.dieux.length - manquants(zn).length + (deja ? 0 : 1);
-      z.classList.add("lit"); bas.innerHTML = '<div class="eyebrow">' + (deja ? __("Déjà entendu") : __("Un dieu dans la paroi")) + " · " + esc(tx(zn.def.court || zn.def.nom)) + "</div>" + recit(d.r, '<button type="button" class="btn large" data-a="ok">' + (deja ? __("Reprendre la torche") : __("Garder ce récit ({n} sur {t})", { n: n, t: zn.dieux.length })) + "</button>");
+      z.classList.add("lit"); bas.innerHTML = '<div class="eyebrow">' + (peint(zn) ? (deja ? __("Déjà vue") : __("Une peinture sur la paroi")) : (deja ? __("Déjà entendu") : __("Un dieu dans la paroi"))) + " · " + esc(tx(zn.def.court || zn.def.nom)) + "</div>" + recit(d.r, '<button type="button" class="btn large" data-a="ok">' + (deja ? __("Reprendre la torche") : peint(zn) ? __("Garder cette image ({n} sur {t})", { n: n, t: zn.dieux.length }) : __("Garder ce récit ({n} sur {t})", { n: n, t: zn.dieux.length })) + "</button>");
       bas.scrollTop = 0;
       bas.querySelector('[data-a="ok"]').onclick = function () {
         M.entendreGrotte(C, P, zn.def.id, d.r.id, maintenant()); sauver(); lecture = null;
-        message = deja ? "" : manquants(zn).length ? __("Récit gardé. Il en reste {n} à trouver.", { n: manquants(zn).length }) : __("Tu les as tous. Retourne à l'arbre, près de l'entrée : il va t'interroger.");
+        message = deja ? "" : manquants(zn).length ? (peint(zn) ? __("Image gardée. Il en reste {n} à trouver.", { n: manquants(zn).length }) : __("Récit gardé. Il en reste {n} à trouver.", { n: manquants(zn).length })) : (peint(zn) ? __("Tu les as toutes vues. Retourne dans la grande salle, près de l'entrée : on va voir ce que tu en retiens.") : __("Tu les as tous. Retourne à l'arbre, près de l'entrée : il va t'interroger."));
         peindre(); panneau();
       };
     }
@@ -6673,11 +6702,11 @@ function demarrerJeu() {
       var d = zn.def, k = 0, deja = !!P.grotte.zones[d.id], reste = manquants(zn).length;
       // Passage gravé avant que l'arbre ait un prix à donner : il le donne au retour.
       if (deja && d.succes && !P.succes[d.succes]) { lecture = zn; fin(); return; }
-      if (reste) { message = tx(d.accroche || { fr: "" }) + " " + (reste > 1 ? __("Il te manque {n} dieux.", { n: reste }) : __("Il te manque un dieu.")); panneau(); return; }
+      if (reste) { message = tx(d.accroche || { fr: "" }) + " " + (peint(zn) ? (reste > 1 ? __("Il te manque {n} peintures.", { n: reste }) : __("Il te manque une peinture.")) : (reste > 1 ? __("Il te manque {n} dieux.", { n: reste }) : __("Il te manque un dieu."))); panneau(); return; }
       lecture = zn;
       var Qz = d.recits.filter(function (r) { return r.question; });
       function accueil() {
-        z.classList.add("lit"); bas.innerHTML = '<div class="eyebrow">' + (deja ? __("Passage gravé") : __("Tu les as tous")) + '</div><h3 class="gr-titre">' + esc(tx(d.nom)) + '</h3><p class="gr-texte">' + (deja ? __("Les récits sont peints dans ses branches. Tu peux les relire.") : __("Les dieux que tu as trouvés sont peints dans ses branches. L'arbre t'interroge : il en faut {n} justes sur {t}.", { n: Math.min(Qz.length, d.seuil || Qz.length), t: Qz.length })) + "</p>" +
+        z.classList.add("lit"); bas.innerHTML = '<div class="eyebrow">' + (deja ? __("Passage gravé") : peint(zn) ? __("Tu les as toutes vues") : __("Tu les as tous")) + '</div><h3 class="gr-titre">' + esc(tx(d.nom)) + '</h3><p class="gr-texte">' + (peint(zn) ? (deja ? __("Tu as tout vu ici. Tu peux relire ce que tu as appris devant chaque peinture.") : __("Tu as vu toutes les peintures. Qu'en retiens-tu ? Il faut {n} réponses justes sur {t}.", { n: Math.min(Qz.length, d.seuil || Qz.length), t: Qz.length })) : deja ? __("Les récits sont peints dans ses branches. Tu peux les relire.") : __("Les dieux que tu as trouvés sont peints dans ses branches. L'arbre t'interroge : il en faut {n} justes sur {t}.", { n: Math.min(Qz.length, d.seuil || Qz.length), t: Qz.length })) + "</p>" +
           (deja || !Qz.length ? "" : '<button type="button" class="btn large" data-a="quiz">' + __("Répondre aux questions") + "</button>") + '<button type="button" class="btn sec large" data-a="lire">' + __("Relire les récits") + '</button><button type="button" class="btn sec large" data-a="non">' + __("Reprendre la torche") + "</button>";
         bas.scrollTop = 0;
         var bq = bas.querySelector('[data-a="quiz"]'); if (bq) bq.onclick = quiz;
@@ -6686,7 +6715,7 @@ function demarrerJeu() {
       }
       function page() {
         var r = d.recits[k];
-        z.classList.add("lit"); bas.innerHTML = '<div class="eyebrow">' + (k + 1) + " / " + d.recits.length + " · " + esc(tx(d.court || d.nom)) + "</div>" + recit(r, '<button type="button" class="btn large" data-a="suite">' + (k < d.recits.length - 1 ? __("Récit suivant") : __("Revenir à l'arbre")) + "</button>");
+        z.classList.add("lit"); bas.innerHTML = '<div class="eyebrow">' + (k + 1) + " / " + d.recits.length + " · " + esc(tx(d.court || d.nom)) + "</div>" + recit(r, '<button type="button" class="btn large" data-a="suite">' + (k < d.recits.length - 1 ? __("Récit suivant") : peint(zn) ? __("Revenir à la grande salle") : __("Revenir à l'arbre")) + "</button>");
         bas.scrollTop = 0;
         bas.querySelector('[data-a="suite"]').onclick = function () { if (k < d.recits.length - 1) { k++; page(); } else accueil(); };
       }
@@ -6951,8 +6980,9 @@ function demarrerJeu() {
     if (qAge) {}
     else if (epr && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(epr.nom)) + "</h3><p>" + esc(tx(epr.accroche || { fr: "" })) + " " + __("Elle ouvre : ") + "<b>" + esc(tx(G.suivant.nom)).toLowerCase() + '</b>.</p><button type="button" class="btn large" data-a="epreuve">' + esc(tx(epr.nom)) + "</button></div>";
     else if (a.pret && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("Tout l'indispensable est couvert. Il reste en option : ") + a.negliges.map(function (b) { return "<b>" + esc(tx(b.nom)).toLowerCase() + "</b>"; }).join(__(" et ")) + ". " + __("Tu peux les apprendre d'abord, ou passer tout de suite et en payer le prix.") + '</p><button type="button" class="btn large" data-a="passer">' + __("Passer à : ") + esc(tx(G.suivant.nom)) + "</button></div>";
-    else if (G.suivant && !a.avenir && a.savoirsTenus && a.peuple && a.peuple.manque > 0) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + '</h3><p style="font-size:17px">' + __("Les savoirs y sont, mais l'île est trop peu peuplée : <b>{n} habitants sur {b}</b>. Il en manque {m}.", { n: nb(a.peuple.habitants), b: nb(a.peuple.besoin), m: nb(a.peuple.manque) }) + " " + __("Bâtis des toits, garde les greniers pleins et réussis des épreuves : chacune fait venir du monde.") + "</p></div>";
-    else if (G.suivant && !a.avenir) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("S'ouvre quand tous les besoins sans la mention « optionnel » sont couverts.") + (a.peuple && a.peuple.manque > 0 ? " " + __("Il faut aussi {b} habitants : l'île en compte {n}.", { b: nb(a.peuple.besoin), n: nb(a.peuple.habitants) }) : "") + "</p></div>";
+    else if (G.suivant && !a.avenir && a.savoirsTenus && a.grotte && !(a.peuple && a.peuple.manque > 0)) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + '</h3><p style="font-size:17px">' + __("Les savoirs y sont et l'île est assez peuplée. Il reste à passer par <b>{g}</b>.", { g: esc(tx(a.grotte.nom)).toLowerCase() }) + " " + __("Elle se cache quelque part sur l'île : envoie un explorateur avec une torche, trouve ce qu'elle garde et réponds à ses questions.") + "</p></div>";
+    else if (G.suivant && !a.avenir && a.savoirsTenus && a.peuple && a.peuple.manque > 0) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + '</h3><p style="font-size:17px">' + __("Les savoirs y sont, mais l'île est trop peu peuplée : <b>{n} habitants sur {b}</b>. Il en manque {m}.", { n: nb(a.peuple.habitants), b: nb(a.peuple.besoin), m: nb(a.peuple.manque) }) + " " + __("Bâtis des toits, garde les greniers pleins et réussis des épreuves : chacune fait venir du monde.") + (a.grotte ? " " + __("Il faudra aussi passer par {g}.", { g: esc(tx(a.grotte.nom)).toLowerCase() }) : "") + "</p></div>";
+    else if (G.suivant && !a.avenir) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("S'ouvre quand tous les besoins sans la mention « optionnel » sont couverts.") + (a.peuple && a.peuple.manque > 0 ? " " + __("Il faut aussi {b} habitants : l'île en compte {n}.", { b: nb(a.peuple.besoin), n: nb(a.peuple.habitants) }) : "") + (a.grotte ? " " + __("Il faut aussi passer par {g} : un explorateur avec une torche la trouvera sur l'île.", { g: esc(tx(a.grotte.nom)).toLowerCase() }) : "") + "</p></div>";
     var bloc = el("<div>" + h + "</div></div>");
     var bpl = bloc.querySelector('[data-a="plus"]');
     if (bpl) bpl.onclick = function () { bloc.querySelector(".ile-reste").hidden = false; bpl.remove(); };

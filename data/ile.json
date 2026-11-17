@@ -4884,7 +4884,8 @@
    "plafond": 40,
    "jusqua": -3000,
    "peuple": 10,
-   "epreuve": "sanctuaire"
+   "epreuve": "sanctuaire",
+   "grotte": "ornee"
   },
   {
    "id": "village",
@@ -8327,214 +8328,693 @@
    }
   }
  ],
- "grotte": {
-  "id": "mythologies",
-  "nom": {
-   "fr": "La grotte des mythologies"
-  },
-  "position": [
-   0.49,
-   0.385
-  ],
-  "description": {
-   "fr": "Un labyrinthe sous le volcan. Dans ses galeries, des dieux peints attendent qu'on les trouve, et des bêtes rôdent."
-  },
-  "noir": {
-   "fr": "Il fait noir là-dedans. Il te faut du feu pour y entrer."
-  },
-  "alyca": {
-   "fr": "Une grotte, des galeries, et toi avec une torche. Avant d'expliquer le monde, ils l'ont raconté. Va écouter, et évite de te perdre : je ne viendrai pas te chercher."
-  },
-  "zones": [
-   {
-    "id": "egypte",
-    "nom": {
-     "fr": "L'arbre de la mythologie égyptienne"
-    },
-    "court": {
-     "fr": "Mythologie égyptienne"
-    },
-    "dessin": "egypte",
-    "ouvre": [
-     "sci.egypte",
-     "math.egypte"
-    ],
-    "accroche": {
-     "fr": "Un arbre peint sur la roche. Ses branches sont vides : les dieux de l'Égypte sont cachés dans les galeries. Trouve-les, puis reviens."
-    },
-    "recits": [
-     {
-      "id": "re",
-      "dessin": "re",
-      "titre": {
-       "fr": "Rê, le soleil en barque"
-      },
-      "texte": {
-       "fr": "Rê est le dieu du soleil, l'un des plus anciens dieux égyptiens. Il traverse le ciel à bord d'une barque, et chaque nuit un serpent monstrueux l'affronte."
-      },
-      "source": "Vikidia, « Rê »",
-      "question": {
-       "enonce": {
-        "fr": "Comment Rê traverse-t-il le ciel ?"
-       },
-       "choix": [
-        {
-         "fr": "À bord d'une barque"
-        },
-        {
-         "fr": "Sur un char"
-        },
-        {
-         "fr": "À dos de faucon"
-        },
-        {
-         "fr": "À pied"
-        }
-       ],
-       "bonne": 0
-      }
+ "grottes": [
+  {
+   "id": "ornee",
+   "nom": {
+    "fr": "La grotte ornée"
+   },
+   "position": [
+    0.35,
+    0.535
+   ],
+   "age": 1,
+   "description": {
+    "fr": "Une grotte aux parois peintes. Des gens sont venus ici bien avant toi, une flamme à la main, pour dessiner des bêtes dans le noir."
+   },
+   "noir": {
+    "fr": "Il fait noir là-dedans. Il te faut du feu pour y entrer."
+   },
+   "sans_torche": {
+    "fr": "Il fait noir là-dedans. Reviens avec une torche : on en prend une en partant du village."
+   },
+   "alyca": {
+    "fr": "Des gens sont descendus ici pour peindre des bêtes que personne ne verrait en plein jour. Ça ne nourrit personne, ça ne réchauffe personne, et ils l'ont fait quand même. Va voir. Et surveille tes arrières : tu n'es pas la seule bête ici."
+   },
+   "zones": [
+    {
+     "id": "ornee",
+     "genre": "peintures",
+     "nom": {
+      "fr": "La grande salle"
      },
-     {
-      "id": "osiris",
-      "dessin": "osiris",
-      "titre": {
-       "fr": "Osiris, roi des morts"
-      },
-      "texte": {
-       "fr": "Osiris régnait sur l'Égypte. Son frère Seth, jaloux, le tue. Isis reconstitue son corps, le momifie et le ressuscite : Osiris devient le souverain du royaume des morts."
-      },
-      "source": "Vikidia, « Osiris »",
-      "question": {
-       "enonce": {
-        "fr": "Qui tue Osiris ?"
-       },
-       "choix": [
-        {
-         "fr": "Seth"
-        },
-        {
-         "fr": "Isis"
-        },
-        {
-         "fr": "Horus"
-        },
-        {
-         "fr": "Anubis"
-        }
-       ],
-       "bonne": 0
-      }
+     "court": {
+      "fr": "Peintures des cavernes"
      },
-     {
-      "id": "pesee",
-      "dessin": "pesee",
-      "titre": {
-       "fr": "La pesée du cœur"
-      },
-      "texte": {
-       "fr": "Devant Osiris, le cœur du mort est posé sur une balance, face à la plume de Maât, la justice. Thot note le résultat. S'il est défavorable, un monstre dévore le défunt."
-      },
-      "source": "Vikidia, « Jugement du mort par Osiris »",
-      "question": {
-       "enonce": {
-        "fr": "Contre quoi le cœur du mort est-il pesé ?"
-       },
-       "choix": [
-        {
-         "fr": "La plume de Maât"
-        },
-        {
-         "fr": "Une pièce d'or"
-        },
-        {
-         "fr": "Une pierre du Nil"
-        },
-        {
-         "fr": "Le cœur d'un lion"
-        }
-       ],
-       "bonne": 0
-      }
+     "ouvre": [],
+     "accroche": {
+      "fr": "Une grande salle aux parois nues. Les peintures sont plus loin, au fond des galeries. Trouve-les, puis reviens ici."
      },
-     {
-      "id": "thot",
-      "dessin": "thot",
-      "titre": {
-       "fr": "Thot, le dieu des scribes"
-      },
-      "texte": {
-       "fr": "Thot est le dieu de la science, de la sagesse et de l'écriture, et le dieu des scribes. On le représente souvent en ibis ou en babouin. On disait qu'il avait inventé les hiéroglyphes."
-      },
-      "source": "Vikidia, « Thot »",
-      "question": {
-       "enonce": {
-        "fr": "De qui Thot est-il le dieu ?"
+     "recits": [
+      {
+       "id": "chevaux",
+       "dessin": "chevaux",
+       "titre": {
+        "fr": "Les chevaux de Chauvet"
        },
-       "choix": [
-        {
-         "fr": "Des scribes"
+       "texte": {
+        "fr": "Dans la grotte Chauvet, le panneau des Chevaux montre des chevaux et des rhinocéros. Ces peintures ont 36 000 ans, soit 18 000 de plus que celles de Lascaux. On dessinait au charbon de bois ou à l'ocre rouge, et on estompait le trait."
+       },
+       "source": "Ministère de la Culture, « Grotte Chauvet : retour sur la découverte du premier chef-d'œuvre de l'humanité »",
+       "question": {
+        "enonce": {
+         "fr": "Quel âge ont les peintures de la grotte Chauvet ?"
         },
-        {
-         "fr": "Des guerriers"
+        "choix": [
+         {
+          "fr": "36 000 ans"
+         },
+         {
+          "fr": "3 600 ans"
+         },
+         {
+          "fr": "18 000 ans"
+         },
+         {
+          "fr": "360 000 ans"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "lions",
+       "dessin": "lions",
+       "titre": {
+        "fr": "La roche raclée"
+       },
+       "texte": {
+        "fr": "À Chauvet, avant de dessiner, on raclait la paroi pour faire ressortir l'animal. Puis on estompait la couleur, ce qui donne du relief. Parmi les bêtes peintes : le rhinocéros, le lion, la panthère et le hibou."
+       },
+       "source": "Hominidés.com, « La grotte Chauvet »",
+       "question": {
+        "enonce": {
+         "fr": "Que faisait-on à la paroi avant de dessiner ?"
         },
-        {
-         "fr": "Des marins"
+        "choix": [
+         {
+          "fr": "On la raclait"
+         },
+         {
+          "fr": "On la mouillait"
+         },
+         {
+          "fr": "On la chauffait"
+         },
+         {
+          "fr": "On la couvrait d'argile"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "main",
+       "dessin": "main",
+       "titre": {
+        "fr": "La main en négatif"
+       },
+       "texte": {
+        "fr": "La grotte Chauvet garde une main négative : elle a été faite par projection de couleur. On y voit aussi des points rouges, tamponnés avec la paume de la main."
+       },
+       "source": "Hominidés.com, « La grotte Chauvet »",
+       "question": {
+        "enonce": {
+         "fr": "Comment la main négative a-t-elle été faite ?"
         },
-        {
-         "fr": "Des forgerons"
-        }
-       ],
-       "bonne": 0
+        "choix": [
+         {
+          "fr": "Par projection de couleur"
+         },
+         {
+          "fr": "En gravant la roche"
+         },
+         {
+          "fr": "En modelant de l'argile"
+         },
+         {
+          "fr": "Avec un charbon taillé"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "ours",
+       "dessin": "ours",
+       "titre": {
+        "fr": "Le crâne de l'ours"
+       },
+       "texte": {
+        "fr": "Plus de 3 800 ossements d'ours ont été retrouvés dans la grotte Chauvet. On y a aussi retrouvé un crâne d'ours posé sur un rebord rocheux. Un hommage ? On peut le supposer, sans preuve."
+       },
+       "source": "Hominidés.com, « La grotte Chauvet »",
+       "question": {
+        "enonce": {
+         "fr": "Qu'a-t-on retrouvé posé sur un rebord rocheux ?"
+        },
+        "choix": [
+         {
+          "fr": "Un crâne d'ours"
+         },
+         {
+          "fr": "Une lampe"
+         },
+         {
+          "fr": "Une flûte"
+         },
+         {
+          "fr": "Une statuette"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "taureaux",
+       "dessin": "taureaux",
+       "titre": {
+        "fr": "Les taureaux de Lascaux"
+       },
+       "texte": {
+        "fr": "Le 12 septembre 1940, quatre garçons explorent un trou de renard : c'est la grotte de Lascaux. Sa salle des Taureaux montre surtout des aurochs, un gros bovin aujourd'hui disparu. Le sens exact de ces peintures est encore discuté ; le plus souvent, on leur prête une part de rite ou de croyance."
+       },
+       "source": "World History Encyclopedia, « La grotte de Lascaux »",
+       "question": {
+        "enonce": {
+         "fr": "Qu'est-ce qu'un aurochs ?"
+        },
+        "choix": [
+         {
+          "fr": "Un gros bovin aujourd'hui disparu"
+         },
+         {
+          "fr": "Un cheval sauvage"
+         },
+         {
+          "fr": "Un cerf géant"
+         },
+         {
+          "fr": "Un ours des cavernes"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "lampe",
+       "dessin": "lampe",
+       "titre": {
+        "fr": "Peindre à la lampe"
+       },
+       "texte": {
+        "fr": "Au fond de Lascaux, on s'éclairait avec des lampes en grès qui brûlaient de la graisse animale. Le rouge venait de l'hématite, le noir du charbon de bois ou d'oxydes de manganèse. On posait la couleur avec des pinceaux, ou on la soufflait sur un pochoir."
+       },
+       "source": "World History Encyclopedia, « La grotte de Lascaux »",
+       "question": {
+        "enonce": {
+         "fr": "Que brûlaient les lampes de Lascaux ?"
+        },
+        "choix": [
+         {
+          "fr": "De la graisse animale"
+         },
+         {
+          "fr": "De l'huile d'olive"
+         },
+         {
+          "fr": "De la cire d'abeille"
+         },
+         {
+          "fr": "De la résine de pin"
+         }
+        ],
+        "bonne": 0
+       }
       }
+     ],
+     "alyca": {
+      "fr": "Des images que tout un groupe reconnaît, dans un lieu où l'on revient. Ce qu'elles racontaient, personne ne le sait plus, et je ne vais pas l'inventer. Mais des gens qui partagent des images savent où se retrouver. Tu as de quoi rassembler les bandes."
      },
-     {
-      "id": "sekhmet",
-      "dessin": "sekhmet",
-      "titre": {
-       "fr": "Sekhmet, la lionne qui guérit"
-      },
-      "texte": {
-       "fr": "Sekhmet est une femme à tête de lionne, coiffée du disque solaire. Elle envoie les maladies et les épidémies, et c'est aussi elle qui peut les guérir : elle est la déesse de la médecine."
-      },
-      "source": "Vikidia, « Sekhmet »",
-      "question": {
-       "enonce": {
-        "fr": "Quelle tête porte Sekhmet ?"
-       },
-       "choix": [
-        {
-         "fr": "Une tête de lionne"
-        },
-        {
-         "fr": "Une tête d'ibis"
-        },
-        {
-         "fr": "Une tête de chacal"
-        },
-        {
-         "fr": "Une tête de crocodile"
-        }
-       ],
-       "bonne": 0
-      }
+     "ouvert": {
+      "fr": "Tu as vu ce que les anciens ont peint. Le sanctuaire peut se dresser."
+     },
+     "seuil": 4,
+     "rate": {
+      "fr": "Tu as regardé sans voir. Elles n'ont pas bougé depuis des millénaires : retournes-y."
      }
-    ],
-    "alyca": {
-     "fr": "Un dieu des scribes et une déesse des médecins. Maintenant tu sais à qui les Égyptiens pensaient en comptant leurs pains et en soignant leurs malades. Leurs savoirs te sont ouverts."
-    },
-    "ouvert": {
-     "fr": "Les savoirs de l'Égypte te sont ouverts."
-    },
-    "seuil": 4,
-    "rate": {
-     "fr": "Tu as écouté d'une oreille. Les dieux ont l'éternité, recommence."
-    },
-    "succes": "grotte-egypte",
-    "objet": "totem-thot"
-   }
-  ],
-  "sans_torche": {
-   "fr": "Il fait noir là-dedans. Reviens avec une torche : on en prend une en partant du village."
+    }
+   ]
+  },
+  {
+   "id": "mesopotamie",
+   "nom": {
+    "fr": "La grotte des deux fleuves"
+   },
+   "position": [
+    0.54,
+    0.72
+   ],
+   "age": 3,
+   "description": {
+    "fr": "Des galeries où attendent les dieux de Sumer et d'Akkad. Leurs histoires ont fini sur des tablettes d'argile."
+   },
+   "noir": {
+    "fr": "Il fait noir là-dedans. Il te faut du feu pour y entrer."
+   },
+   "sans_torche": {
+    "fr": "Il fait noir là-dedans. Reviens avec une torche : on en prend une en partant du village."
+   },
+   "alyca": {
+    "fr": "Encore une grotte. Ceux-là ont écrit leurs histoires, ce qui m'arrange : je n'ai pas à te croire sur parole. Des dieux, un roi qui ne veut pas mourir, un déluge. Va les trouver."
+   },
+   "zones": [
+    {
+     "id": "mesopotamie",
+     "nom": {
+      "fr": "L'arbre des mythes de Sumer et d'Akkad"
+     },
+     "court": {
+      "fr": "Mythes de Sumer et d'Akkad"
+     },
+     "ouvre": [
+      "math.babylone",
+      "astro.babylone"
+     ],
+     "accroche": {
+      "fr": "Un arbre peint sur la roche, aux branches vides. Les dieux de Sumer et d'Akkad sont cachés dans les galeries. Trouve-les, puis reviens."
+     },
+     "recits": [
+      {
+       "id": "enki",
+       "dessin": "enki",
+       "titre": {
+        "fr": "Enki, le plus sage"
+       },
+       "texte": {
+        "fr": "Enki, aussi appelé Ea, est le plus sage des dieux et le patron des artisans. Il est l'allié des humains : il sauve l'humanité en conseillant au brave Atrahasis de construire une arche avant le déluge."
+       },
+       "source": "World History Encyclopedia, « Panthéon mésopotamien »",
+       "question": {
+        "enonce": {
+         "fr": "Que conseille Enki à Atrahasis avant le déluge ?"
+        },
+        "choix": [
+         {
+          "fr": "De construire une arche"
+         },
+         {
+          "fr": "De bâtir une tour"
+         },
+         {
+          "fr": "De fuir dans la montagne"
+         },
+         {
+          "fr": "D'offrir un taureau"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "inanna",
+       "dessin": "inanna",
+       "titre": {
+        "fr": "Inanna aux Enfers"
+       },
+       "texte": {
+        "fr": "Inanna, aussi appelée Ishtar, est la plus populaire et la plus aimée de tout le panthéon sumérien. Un poème raconte sa descente aux Enfers : sa sœur aînée Ereshkigal, reine des morts, l'y fait mourir. Grâce à l'ingéniosité d'Enki, Ereshkigal est contrainte de la rendre au pays des vivants."
+       },
+       "source": "World History Encyclopedia, « Panthéon mésopotamien »",
+       "question": {
+        "enonce": {
+         "fr": "Qui est la reine des morts ?"
+        },
+        "choix": [
+         {
+          "fr": "Ereshkigal"
+         },
+         {
+          "fr": "Inanna"
+         },
+         {
+          "fr": "Tiamat"
+         },
+         {
+          "fr": "Nisaba"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "gilgamesh",
+       "dessin": "gilgamesh",
+       "titre": {
+        "fr": "Gilgamesh, roi d'Uruk"
+       },
+       "texte": {
+        "fr": "L'Épopée de Gilgamesh est un des plus vieux textes connus. Gilgamesh, roi d'Uruk, est un tyran : pour le punir, les dieux créent Enkidou. Plus tard, Gilgamesh se rend compte qu'il n'est pas immortel et part en quête de l'immortalité. Il y croise Utanapishti, dont le récit du Déluge a servi de modèle à celui de Noé."
+       },
+       "source": "Vikidia, « Épopée de Gilgamesh »",
+       "question": {
+        "enonce": {
+         "fr": "Que part chercher Gilgamesh ?"
+        },
+        "choix": [
+         {
+          "fr": "L'immortalité"
+         },
+         {
+          "fr": "Un trésor"
+         },
+         {
+          "fr": "Son père"
+         },
+         {
+          "fr": "Une épouse"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "nisaba",
+       "dessin": "nisaba",
+       "titre": {
+        "fr": "Nisaba, scribe des dieux"
+       },
+       "texte": {
+        "fr": "Nisaba est d'abord une déesse des grains. Elle prend de l'ampleur pour devenir la déesse de l'écriture et le scribe des dieux. À Babylone, le dieu de l'écriture et de la sagesse est Nabu, fils de Marduk."
+       },
+       "source": "World History Encyclopedia, « Panthéon mésopotamien »",
+       "question": {
+        "enonce": {
+         "fr": "De quoi Nisaba est-elle d'abord la déesse ?"
+        },
+        "choix": [
+         {
+          "fr": "Des grains"
+         },
+         {
+          "fr": "De la guerre"
+         },
+         {
+          "fr": "De la lune"
+         },
+         {
+          "fr": "Des fleuves"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "nanna",
+       "dessin": "nanna",
+       "titre": {
+        "fr": "Nanna, la lune"
+       },
+       "texte": {
+        "fr": "Nanna, aussi appelé Sîn, est le dieu sumérien de la pleine lune et de la sagesse. Son symbole est le croissant de lune. Utu, aussi appelé Shamash, est le dieu du soleil et de la justice."
+       },
+       "source": "World History Encyclopedia, « Panthéon mésopotamien »",
+       "question": {
+        "enonce": {
+         "fr": "Quel est le symbole de Nanna ?"
+        },
+        "choix": [
+         {
+          "fr": "Le croissant de lune"
+         },
+         {
+          "fr": "Le disque du soleil"
+         },
+         {
+          "fr": "Une étoile"
+         },
+         {
+          "fr": "Un épi de blé"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "marduk",
+       "dessin": "marduk",
+       "titre": {
+        "fr": "Marduk contre Tiamat"
+       },
+       "texte": {
+        "fr": "Marduk est le roi des dieux de Babylone. L'Enuma Elish raconte comment il a vaincu et tué Tiamat, dragon et déesse mère des origines, puis apporté l'ordre à l'univers."
+       },
+       "source": "World History Encyclopedia, « Panthéon mésopotamien »",
+       "question": {
+        "enonce": {
+         "fr": "Qui Marduk a-t-il vaincu ?"
+        },
+        "choix": [
+         {
+          "fr": "Tiamat"
+         },
+         {
+          "fr": "Enki"
+         },
+         {
+          "fr": "Gilgamesh"
+         },
+         {
+          "fr": "Ereshkigal"
+         }
+        ],
+        "bonne": 0
+       }
+      }
+     ],
+     "alyca": {
+      "fr": "Une déesse qui tient les écritures des dieux, un dieu pour la lune, un autre pour le soleil. Tu sais maintenant sous quel ciel les scribes de Babylone comptaient. Leurs savoirs te sont ouverts."
+     },
+     "ouvert": {
+      "fr": "Les savoirs de Babylone te sont ouverts."
+     },
+     "seuil": 4,
+     "rate": {
+      "fr": "Tu as écouté d'une oreille. Les dieux ont l'éternité, recommence."
+     }
+    }
+   ]
+  },
+  {
+   "id": "mythologies",
+   "nom": {
+    "fr": "La grotte du Nil"
+   },
+   "position": [
+    0.49,
+    0.385
+   ],
+   "description": {
+    "fr": "Un labyrinthe sous le volcan. Dans ses galeries, des dieux peints attendent qu'on les trouve, et des bêtes rôdent."
+   },
+   "noir": {
+    "fr": "Il fait noir là-dedans. Il te faut du feu pour y entrer."
+   },
+   "alyca": {
+    "fr": "Une grotte, des galeries, et toi avec une torche. Avant d'expliquer le monde, ils l'ont raconté. Va écouter, et évite de te perdre : je ne viendrai pas te chercher."
+   },
+   "zones": [
+    {
+     "id": "egypte",
+     "nom": {
+      "fr": "L'arbre de la mythologie égyptienne"
+     },
+     "court": {
+      "fr": "Mythologie égyptienne"
+     },
+     "dessin": "egypte",
+     "ouvre": [
+      "sci.egypte",
+      "math.egypte"
+     ],
+     "accroche": {
+      "fr": "Un arbre peint sur la roche. Ses branches sont vides : les dieux de l'Égypte sont cachés dans les galeries. Trouve-les, puis reviens."
+     },
+     "recits": [
+      {
+       "id": "re",
+       "dessin": "re",
+       "titre": {
+        "fr": "Rê, le soleil en barque"
+       },
+       "texte": {
+        "fr": "Rê est le dieu du soleil, l'un des plus anciens dieux égyptiens. Il traverse le ciel à bord d'une barque, et chaque nuit un serpent monstrueux l'affronte."
+       },
+       "source": "Vikidia, « Rê »",
+       "question": {
+        "enonce": {
+         "fr": "Comment Rê traverse-t-il le ciel ?"
+        },
+        "choix": [
+         {
+          "fr": "À bord d'une barque"
+         },
+         {
+          "fr": "Sur un char"
+         },
+         {
+          "fr": "À dos de faucon"
+         },
+         {
+          "fr": "À pied"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "osiris",
+       "dessin": "osiris",
+       "titre": {
+        "fr": "Osiris, roi des morts"
+       },
+       "texte": {
+        "fr": "Osiris régnait sur l'Égypte. Son frère Seth, jaloux, le tue. Isis reconstitue son corps, le momifie et le ressuscite : Osiris devient le souverain du royaume des morts."
+       },
+       "source": "Vikidia, « Osiris »",
+       "question": {
+        "enonce": {
+         "fr": "Qui tue Osiris ?"
+        },
+        "choix": [
+         {
+          "fr": "Seth"
+         },
+         {
+          "fr": "Isis"
+         },
+         {
+          "fr": "Horus"
+         },
+         {
+          "fr": "Anubis"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "pesee",
+       "dessin": "pesee",
+       "titre": {
+        "fr": "La pesée du cœur"
+       },
+       "texte": {
+        "fr": "Devant Osiris, le cœur du mort est posé sur une balance, face à la plume de Maât, la justice. Thot note le résultat. S'il est défavorable, un monstre dévore le défunt."
+       },
+       "source": "Vikidia, « Jugement du mort par Osiris »",
+       "question": {
+        "enonce": {
+         "fr": "Contre quoi le cœur du mort est-il pesé ?"
+        },
+        "choix": [
+         {
+          "fr": "La plume de Maât"
+         },
+         {
+          "fr": "Une pièce d'or"
+         },
+         {
+          "fr": "Une pierre du Nil"
+         },
+         {
+          "fr": "Le cœur d'un lion"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "thot",
+       "dessin": "thot",
+       "titre": {
+        "fr": "Thot, le dieu des scribes"
+       },
+       "texte": {
+        "fr": "Thot est le dieu de la science, de la sagesse et de l'écriture, et le dieu des scribes. On le représente souvent en ibis ou en babouin. On disait qu'il avait inventé les hiéroglyphes."
+       },
+       "source": "Vikidia, « Thot »",
+       "question": {
+        "enonce": {
+         "fr": "De qui Thot est-il le dieu ?"
+        },
+        "choix": [
+         {
+          "fr": "Des scribes"
+         },
+         {
+          "fr": "Des guerriers"
+         },
+         {
+          "fr": "Des marins"
+         },
+         {
+          "fr": "Des forgerons"
+         }
+        ],
+        "bonne": 0
+       }
+      },
+      {
+       "id": "sekhmet",
+       "dessin": "sekhmet",
+       "titre": {
+        "fr": "Sekhmet, la lionne qui guérit"
+       },
+       "texte": {
+        "fr": "Sekhmet est une femme à tête de lionne, coiffée du disque solaire. Elle envoie les maladies et les épidémies, et c'est aussi elle qui peut les guérir : elle est la déesse de la médecine."
+       },
+       "source": "Vikidia, « Sekhmet »",
+       "question": {
+        "enonce": {
+         "fr": "Quelle tête porte Sekhmet ?"
+        },
+        "choix": [
+         {
+          "fr": "Une tête de lionne"
+         },
+         {
+          "fr": "Une tête d'ibis"
+         },
+         {
+          "fr": "Une tête de chacal"
+         },
+         {
+          "fr": "Une tête de crocodile"
+         }
+        ],
+        "bonne": 0
+       }
+      }
+     ],
+     "alyca": {
+      "fr": "Un dieu des scribes et une déesse des médecins. Maintenant tu sais à qui les Égyptiens pensaient en comptant leurs pains et en soignant leurs malades. Leurs savoirs te sont ouverts."
+     },
+     "ouvert": {
+      "fr": "Les savoirs de l'Égypte te sont ouverts."
+     },
+     "seuil": 4,
+     "rate": {
+      "fr": "Tu as écouté d'une oreille. Les dieux ont l'éternité, recommence."
+     },
+     "succes": "grotte-egypte",
+     "objet": "totem-thot"
+    }
+   ],
+   "sans_torche": {
+    "fr": "Il fait noir là-dedans. Reviens avec une torche : on en prend une en partant du village."
+   },
+   "age": 3
   }
- }
+ ]
 }

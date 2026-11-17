@@ -140,7 +140,7 @@ def main():
             erreurs.append(f"{ou} : succès inconnu {cond.get('id')}")
         if cond["type"] in ("case_atteinte", "case_visitee", "epoque_atteinte") and cond.get("n") not in nums_cases and not 1 <= cond.get("n", 0) <= nb_cases:
             erreurs.append(f"{ou} : case hors du plateau {cond.get('n')}")
-        if cond["type"] == "grotte" and cond.get("id") not in {z["id"] for z in ((contenu.get("ile") or {}).get("grotte") or {}).get("zones", [])}:
+        if cond["type"] == "grotte" and cond.get("id") not in {z["id"] for g in ((contenu.get("ile") or {}).get("grottes") or []) for z in g.get("zones", [])}:
             erreurs.append(f"{ou} : zone de grotte inconnue {cond.get('id')}")
         if cond["type"] == "donjon_fini" and cond.get("id") not in {d["id"] for d in (contenu.get("donjons") or {}).get("donjons", [])}:
             erreurs.append(f"{ou} : donjon inconnu {cond.get('id')}")
