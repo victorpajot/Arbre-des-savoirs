@@ -9,7 +9,7 @@ Ce document est généré depuis les données du jeu par `outils/parcours_ile.py
 | Les survivants | 1 besoin couvert + épreuve « Faire du feu » | 15 | -40000 |
 | Le campement | 5 besoins couverts + 10 habitants + passage par la grotte ornée + épreuve « Dresser le sanctuaire » | 40 | -9000 |
 | Le village | 5 besoins couverts + 30 habitants | 160 | -3300 |
-| La cité | 6 besoins couverts + 80 habitants | 400 | 500 |
+| La cité | 8 besoins couverts + 80 habitants | 400 | 500 |
 | Le royaume | âge à écrire | sans limite | 1500 |
 
 « Rien d'après » : l'année limite des visiteurs et des achats d'Alyca à cet âge, pour éviter les anachronismes.
@@ -125,6 +125,8 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 | Guérir | La médecine égyptienne (Savoir) ; Hippocrate et les humeurs (Savoir) | Dispensaire |
 | Tenir le calendrier | Les astronomes de Babylone (Cosmos) ; Mesurer la Terre (Cosmos) | Cadran et calendrier |
 | Garder trace | Les premiers scribes (Cité) ; Écrire la musique (Harmonie) ; Simonide et le banquet (Mnémosyne) ; Platon contre l'écriture (Mnémosyne) | Maison des écrits |
+| Juger | La loi gravée (Cité) | aucun |
+| Échanger | Les premières pièces (Cité) | aucun |
 | Débattre et voter (optionnel) | Athènes tire au sort (Essaim) ; Le vote des tessons (Essaim) ; Les sophistes (Éloquence) ; Les orateurs d'Athènes (Éloquence) | Tribune |
 | Douter et comprendre (optionnel) | Présocratiques (Sagesse) ; Les historiens et la rumeur (Lucidité) ; Les émotions, d'Aristote à nous (Empathie) ; L'art de douter (Lucidité) ; L'éléphant et les aveugles (Lucidité) ; Socrate et Platon (Sagesse) ; Sagesses d'Asie (Sagesse) ; L'esprit selon le Bouddha (Empathie) ; Les Caractères de Théophraste (Empathie) | aucun |
 
