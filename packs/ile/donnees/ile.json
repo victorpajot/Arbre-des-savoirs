@@ -1659,8 +1659,7 @@
    "dessin": "veillee",
    "savoirs": [
     "mnemo.sansecrire",
-    "mus.instruments",
-    "psy.emotions"
+    "mus.instruments"
    ],
    "cout": {
     "credits": 20,
@@ -1894,7 +1893,7 @@
    ],
    "plafond": 15,
    "epreuve": "feu",
-   "jusqua": -3000
+   "jusqua": -40000
   },
   {
    "id": "campement",
@@ -1906,18 +1905,6 @@
     "fr": "Le feu a réuni quelques survivants. De petites bandes vivent de cueillette, de chasse et de pêche, sans rien bâtir de durable."
    },
    "besoins": [
-    {
-     "id": "ciel",
-     "nom": {
-      "fr": "Lire le ciel"
-     },
-     "texte": {
-      "fr": "Les saisons reviennent : qui suit le ciel sait quand cueillir, chasser ou partir."
-     },
-     "savoirs": [
-      "astro.nebra"
-     ]
-    },
     {
      "id": "soigner",
      "nom": {
@@ -1975,13 +1962,12 @@
       "fr": "Autour du feu, on chante, on rit, on apprend à se comprendre."
      },
      "savoirs": [
-      "mus.instruments",
-      "psy.emotions"
+      "mus.instruments"
      ]
     }
    ],
    "plafond": 40,
-   "jusqua": -3000,
+   "jusqua": -9000,
    "peuple": 10,
    "epreuve": "sanctuaire",
    "grotte": "ornee"
@@ -2006,6 +1992,18 @@
      },
      "savoirs": [
       "res.cultiver"
+     ]
+    },
+    {
+     "id": "ciel",
+     "nom": {
+      "fr": "Lire le ciel"
+     },
+     "texte": {
+      "fr": "Les saisons reviennent : qui suit le ciel sait quand elles tournent, et tout le village règle ses travaux et ses fêtes dessus."
+     },
+     "savoirs": [
+      "astro.nebra"
      ]
     },
     {
@@ -2058,9 +2056,7 @@
       "fr": "Ce que le village sait doit passer aux suivants."
      },
      "savoirs": [
-      "rhet.origines",
-      "biais.historiens",
-      "philo.presocratiques"
+      "rhet.origines"
      ]
     },
     {
@@ -2082,7 +2078,7 @@
     }
    ],
    "plafond": 160,
-   "jusqua": -3000,
+   "jusqua": -3300,
    "peuple": 30
   },
   {
@@ -2202,6 +2198,9 @@
       "fr": "Savoir se tromper, écouter l'autre, se connaître un peu."
      },
      "savoirs": [
+      "philo.presocratiques",
+      "biais.historiens",
+      "psy.emotions",
       "biais.doute",
       "biais.elephant",
       "philo.socrate",

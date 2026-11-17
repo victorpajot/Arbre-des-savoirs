@@ -2474,11 +2474,12 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(M.agesIle(CA, P2).age.id, "campement"); assert.equal(M.agesIle(CA, P2).ages[0].epreuve, null);
   }
   G = M.agesIle(CA, P);
-  assert.equal(G.age.id, "campement"); assert.equal(G.age.besoins.length, 6);
-  assert.equal(M.statut(CA, P, "astro.nebra", t0).etat, "disponible");
+  assert.equal(G.age.id, "campement"); assert.equal(G.age.besoins.length, 5);
+  assert.equal(M.statut(CA, P, "sci.soigner", t0).etat, "disponible");
+  assert.equal(M.statut(CA, P, "astro.nebra", t0).etat, "verrouillee", "le ciel des semailles attend le village");
   assert.equal(M.statut(CA, P, "math.origines", t0).etat, "verrouillee", "compter attend le village");
-  assert.equal(M.choixIA(CA, P, t0).besoin, "ciel");
-  M.ile(CA, P, t0); sait(P, "astro.nebra");
+  assert.equal(M.choixIA(CA, P, t0).besoin, "soigner");
+  M.ile(CA, P, t0);
   assert.equal(M.etatAmenagement(CA, P, "ferme", t0).age, 2, "pas de ferme au campement, même avec son savoir");
   assert.ok(!M.etatAmenagement(CA, P, "ferme", t0).possible);
   assert.equal(M.etatAmenagement(CA, P, "hutte", t0).age, null);
@@ -2496,7 +2497,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   P.epreuves.sanctuaire = t0; M.ile(CA, P, t0);
   // Le village : les savoirs de ses besoins s'ouvrent, pas le rang 2, ni un rang 1 sans besoin.
   G = M.agesIle(CA, P);
-  assert.equal(G.age.id, "village"); assert.equal(G.age.besoins.length, 6);
+  assert.equal(G.age.id, "village"); assert.equal(G.age.besoins.length, 7);
   assert.equal(M.statut(CA, P, "math.origines", t0).etat, "disponible");
   assert.equal(M.statut(CA, P, "math.babylone", t0).etat, "verrouillee", "le rang 2 attend la cité");
   assert.equal(M.statut(CA, P, "inf.pascaline", t0).etat, "verrouillee", "un savoir sans besoin attend son âge");
@@ -2519,8 +2520,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Victor (2026-11-12) : Transmettre et Décider ensemble sont optionnels. On les propose avant de passer ; négligés,
   // ils coûtent des savoirs oubliés et des émeutes.
   {
-    const P2 = JSON.parse(JSON.stringify(P)); ["math.origines", "chim.feu"].forEach(id => sait(P2, id));
-    let g = M.agesIle(CA, P2); assert.equal(g.age.id, "village"); assert.equal(g.age.requis, 4); assert.equal(g.age.couverts, 4);
+    const P2 = JSON.parse(JSON.stringify(P)); ["math.origines", "chim.feu", "astro.nebra"].forEach(id => sait(P2, id));
+    let g = M.agesIle(CA, P2); assert.equal(g.age.id, "village"); assert.equal(g.age.requis, 5); assert.equal(g.age.couverts, 5);
     // Victor (2026-11-16) : les savoirs ne suffisent pas, il faut aussi du monde. Un âge déjà atteint reste acquis.
     assert.ok(g.age.savoirsTenus && !g.age.pret && g.age.peuple.manque > 0, "trop peu d'habitants : le passage attend");
     assert.equal(g.age.peuple.besoin, CA.ile.ages.filter(a => a.id === "village")[0].peuple); assert.equal(M.passerAge(CA, P2, t0), null);
@@ -2536,7 +2537,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     M.ile(CA, P3, t0 + 80 * J); for (let d = 81; d <= 110; d++) assert.equal(M.ile(CA, P3, t0 + d * J).troubles.length, 0, "besoins couverts : plus de troubles");
   }
   // Tous les besoins couverts : la cité s'ouvre (et reste ouverte si un savoir se perd).
-  ["math.origines", "chim.feu", "rhet.origines", "coll.ruche"].forEach(id => sait(P, id));
+  ["math.origines", "chim.feu", "astro.nebra", "rhet.origines", "coll.ruche"].forEach(id => sait(P, id));
   G = M.ile(CA, P, t0).ages; assert.equal(G.age.id, "village", "tous les savoirs, mais pas assez de monde : la cité attend"); assert.ok(G.age.peuple.manque > 0);
   P.population.a += G.age.peuple.manque;
   G = M.ile(CA, P, t0).ages; assert.equal(G.age.id, "cite"); assert.equal(P.ageIle, 3);
@@ -2588,7 +2589,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Victor (2026-11-16) : l'ordre des besoins suit ce qui freine l'île, et les arrivants qu'on ne peut pas loger se voient.
   {
     const Pu = M.nouvellePartie(t0); Pu.mode = "ile"; sait(Pu, "ile.feu"); Pu.epreuves = { feu: t0, abri: t0, sanctuaire: t0 }; Pu.credits.solde = 1000;
-    ["sci.soigner", "res.cueillir", "meteo.ciel", "mnemo.sansecrire", "mus.instruments", "astro.nebra"].forEach(id => sait(Pu, id));
+    ["sci.soigner", "res.cueillir", "meteo.ciel", "mnemo.sansecrire", "mus.instruments"].forEach(id => sait(Pu, id));
     let Iu = M.ile(CA, Pu, t0); assert.equal(Iu.ages.age.id, "village");
     Pu.population.e = 0; Pu.population.v = 0; Pu.population.a = 6;
     assert.equal(M.choixIA(CA, Pu, t0).besoin, "nourrir", "île pas encore pleine : l'ordre du pack");
