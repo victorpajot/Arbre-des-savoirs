@@ -1,0 +1,167 @@
+<title>Parcours de l'île</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Une carte qu'on parcourt : le graphe prend l'écran, la fiche de la sélection reste à côté (dessous sur téléphone). */
+:root {
+  --fond: #EEF3F4; --toile: #F8FBFB; --encre: #14262D; --doux: #5A6F77; --trait: #C9D6DA; --carte: #FFFFFF; --bande: #E4ECEE;
+  --age: #14262D; --age-t: #FFFFFF; --besoin: #B7791F; --savoir: #2563A8; --amen: #2F7D4F; --epreuve: #C2452D; --grotte: #6B4BA3;
+  --titre: "Space Grotesk", "Segoe UI", system-ui, sans-serif; --texte: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --fond: #0F1A1F; --toile: #13222A; --encre: #E8F0F2; --doux: #9DB0B7; --trait: #2C4049; --carte: #1A2C35; --bande: #182830;
+  --age: #E8F0F2; --age-t: #0F1A1F; --besoin: #E0A94A; --savoir: #6FA8E6; --amen: #62B985; --epreuve: #F08468; --grotte: #A98BE0; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --fond: #0F1A1F; --toile: #13222A; --encre: #E8F0F2; --doux: #9DB0B7; --trait: #2C4049; --carte: #1A2C35; --bande: #182830;
+  --age: #E8F0F2; --age-t: #0F1A1F; --besoin: #E0A94A; --savoir: #6FA8E6; --amen: #62B985; --epreuve: #F08468; --grotte: #A98BE0; color-scheme: dark }
+html, body { height: 100%; }
+body { background: var(--fond); color: var(--encre); font-family: var(--texte); font-size: 15px; line-height: 1.5; display: flex; flex-direction: column;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 12px; box-sizing: border-box; gap: 10px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+h1 { font-family: var(--titre); font-size: 22px; margin: 0; text-wrap: balance; }
+header p { margin: 0; color: var(--doux); font-size: 14px; }
+.barre { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.barre button { font: 500 14px var(--texte); color: var(--encre); background: var(--carte); border: 1px solid var(--trait); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.barre button:hover { border-color: var(--doux); } .barre button:focus-visible, .fiche button:focus-visible { outline: 2px solid var(--savoir); outline-offset: 2px; }
+.barre .sep { width: 1px; height: 22px; background: var(--trait); margin: 0 4px; }
+.legende { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--doux); }
+.legende i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 12px; }
+.toile { position: relative; min-height: 0; background: var(--toile); border: 1px solid var(--trait); border-radius: 12px; overflow: hidden; }
+.toile svg { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+.toile svg.tire { cursor: grabbing; }
+.zoom { position: absolute; right: 10px; bottom: 10px; display: flex; gap: 6px; }
+.zoom button { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--trait); background: var(--carte); color: var(--encre); font: 600 18px var(--texte); cursor: pointer; }
+.fiche { min-height: 0; min-width: 0; overflow-y: auto; background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 16px; }
+.fiche .genre { font: 600 12px var(--texte); letter-spacing: .08em; text-transform: uppercase; }
+.fiche h2 { font-family: var(--titre); font-size: 21px; line-height: 1.2; margin: 4px 0 12px; text-wrap: balance; }
+.fiche h3 { font: 600 13px var(--texte); color: var(--doux); margin: 14px 0 3px; }
+.fiche p { margin: 0; } .fiche ul { margin: 0; padding-left: 18px; } .fiche li { margin: 2px 0; }
+.fiche .liens { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.fiche .liens button { text-align: left; font: 400 14px var(--texte); color: var(--encre); background: var(--toile); border: 1px solid var(--trait); border-left-width: 4px; border-radius: 8px; padding: 7px 10px; cursor: pointer; }
+.fiche .liens button small { display: block; color: var(--doux); font-size: 12px; }
+.bande { fill: var(--bande); } .bande-nom { font: 700 26px var(--titre); fill: var(--doux); opacity: .55; }
+.n rect { fill: var(--carte); stroke-width: 2; } .n text { font: 500 13px var(--texte); fill: var(--encre); pointer-events: none; }
+.n { cursor: pointer; } .n.age rect { fill: var(--age); stroke: var(--age); } .n.age text { fill: var(--age-t); font: 700 17px var(--titre); }
+.n.besoin rect { stroke: var(--besoin); } .n.savoir rect { stroke: var(--savoir); } .n.amen rect { stroke: var(--amen); } .n.epreuve rect { stroke: var(--epreuve); } .n.grotte rect { stroke: var(--grotte); }
+.n .pastille { stroke: none; } .n.besoin .pastille { fill: var(--besoin); } .n.savoir .pastille { fill: var(--savoir); } .n.amen .pastille { fill: var(--amen); } .n.epreuve .pastille { fill: var(--epreuve); } .n.grotte .pastille { fill: var(--grotte); }
+.l path.vu { fill: none; stroke: var(--doux); stroke-width: 1.6; opacity: .55; } .l path.prise { fill: none; stroke: transparent; stroke-width: 16; cursor: pointer; }
+.l.porte path.vu { stroke: var(--age); stroke-width: 3; opacity: .8; } .l.passage path.vu { stroke: var(--grotte); stroke-dasharray: 6 5; opacity: .85; } .l.garde path.vu { stroke: var(--epreuve); } .l.permet path.vu { stroke: var(--amen); } .l.couvre path.vu { stroke: var(--besoin); }
+.l:hover path.vu { opacity: 1; stroke-width: 3; }
+svg.choix .n, svg.choix .l { opacity: .22; } svg.choix .n.on, svg.choix .l.on { opacity: 1; }
+.n.sel rect { stroke-width: 4; } .l.sel path.vu { stroke-width: 4.5; opacity: 1; }
+@media (max-width: 800px) { main { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 54fr) minmax(0, 46fr); } h1 { font-size: 19px; } header p, .legende { display: none; } .barre button { padding: 5px 10px; font-size: 13px; } }
+@media (prefers-reduced-motion: no-preference) { .n, .l { transition: opacity .15s; } }
+</style>
+<header><h1>Le parcours de l'île</h1><p>Touche un nœud ou un lien pour lire sa fiche. Généré depuis les données du jeu.</p></header>
+<div class="barre" id="barre"></div>
+<div class="legende"><span><i style="background:var(--age)"></i>Âge</span><span><i style="background:var(--besoin)"></i>Besoin</span><span><i style="background:var(--savoir)"></i>Savoir</span><span><i style="background:var(--amen)"></i>Aménagement</span><span><i style="background:var(--epreuve)"></i>Épreuve et quête</span><span><i style="background:var(--grotte)"></i>Grotte</span></div>
+<main>
+  <div class="toile"><svg id="svg" role="img" aria-label="Graphe du parcours de l'île"><g id="vue"><g id="bandes"></g><g id="liens"></g><g id="noeuds"></g></g></svg>
+    <div class="zoom"><button type="button" id="moins" aria-label="Dézoomer">−</button><button type="button" id="plus" aria-label="Zoomer">+</button></div></div>
+  <aside class="fiche" id="fiche" aria-live="polite"></aside>
+</main>
+<script>
+(function () {
+  var G = /*GRAPHE*/null;
+  var NS = "http://www.w3.org/2000/svg", svg = document.getElementById("svg"), vue = document.getElementById("vue"), fiche = document.getElementById("fiche");
+  var GENRES = { age: "Âge", besoin: "Besoin", savoir: "Savoir", amen: "Aménagement", epreuve: "Épreuve unique", grotte: "Grotte" };
+  var COUL = { age: "--age", besoin: "--besoin", savoir: "--savoir", amen: "--amen", epreuve: "--epreuve", grotte: "--grotte", couvre: "--besoin", permet: "--amen", garde: "--epreuve", passage: "--grotte", porte: "--age" };
+  var parId = {}; G.noeuds.forEach(function (n) { parId[n.id] = n; });
+  function el(nom, attrs, parent) { var e = document.createElementNS(NS, nom); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  // Un nom tient sur deux lignes au plus dans son nœud.
+  function lignes(t, max) {
+    var mots = t.split(" "), out = [""]; mots.forEach(function (m) { var d = out[out.length - 1]; if ((d + " " + m).trim().length <= max || !d) out[out.length - 1] = (d + " " + m).trim(); else out.push(m); });
+    if (out.length > 2) { out = [out[0], out.slice(1).join(" ")]; if (out[1].length > max) out[1] = out[1].slice(0, max - 1).trim() + "…"; }
+    return out;
+  }
+  // Bandes des âges.
+  G.bandes.forEach(function (b) {
+    el("rect", { class: "bande", x: b.x, y: -70, width: b.l, height: b.h + 70, rx: 18 }, document.getElementById("bandes"));
+    el("text", { class: "bande-nom", x: b.x + 22, y: -30 }, document.getElementById("bandes")).textContent = b.rang + ". " + b.nom;
+  });
+  // Liens : une courbe visible, et une plus large, invisible, pour le doigt.
+  G.liens.forEach(function (l, i) {
+    var a = parId[l.de], b = parId[l.vers], x1 = a.x + a.l, y1 = a.y + a.h / 2, x2 = b.x, y2 = b.y + b.h / 2, d;
+    if (x2 < x1 + 8) { x1 = a.x + a.l / 2; y1 = a.y; x2 = b.x + b.l / 2; y2 = b.y + b.h; d = "M" + x1 + " " + y1 + " C" + x1 + " " + (y1 - 40) + " " + x2 + " " + (y2 + 40) + " " + x2 + " " + y2; }
+    else { var c = Math.max(30, (x2 - x1) * 0.5); d = "M" + x1 + " " + y1 + " C" + (x1 + c) + " " + y1 + " " + (x2 - c) + " " + y2 + " " + x2 + " " + y2; }
+    var g = el("g", { class: "l " + l.genre, tabindex: 0, role: "button", "aria-label": l.titre + " : " + a.nom + " vers " + b.nom }, document.getElementById("liens"));
+    el("path", { class: "vu", d: d }, g); el("path", { class: "prise", d: d }, g); l.g = g; l.i = i;
+    g.addEventListener("click", function (ev) { if (bouge) return; ev.stopPropagation(); choisir({ lien: l }); });
+    g.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); choisir({ lien: l }); } });
+  });
+  G.noeuds.forEach(function (n) {
+    var g = el("g", { class: "n " + n.genre, transform: "translate(" + n.x + " " + n.y + ")", tabindex: 0, role: "button", "aria-label": GENRES[n.genre] + " : " + n.nom }, document.getElementById("noeuds"));
+    el("rect", { width: n.l, height: n.h, rx: n.genre === "age" ? 12 : 9 }, g);
+    if (n.genre !== "age") el("rect", { class: "pastille", x: 0, y: 0, width: 7, height: n.h, rx: 3 }, g);
+    var L = lignes(n.nom, n.genre === "age" ? 34 : 23), x = n.genre === "age" ? 18 : 16;
+    L.forEach(function (t, k) { el("text", { x: x, y: n.h / 2 + (L.length === 1 ? 5 : k ? 13 : -3) }, g).textContent = t; });
+    n.g = g;
+    g.addEventListener("click", function (ev) { if (bouge) return; ev.stopPropagation(); choisir({ noeud: n }); });
+    g.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); choisir({ noeud: n }); } });
+  });
+  // --- Fiche ---
+  function bloc(titre, v) { if (v == null || v === "" || (Array.isArray(v) && !v.length)) return ""; return "<h3>" + esc(titre) + "</h3>" + (Array.isArray(v) ? "<ul>" + v.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "<p>" + esc(v) + "</p>"); }
+  function bouton(l, autre, sens) { return '<button type="button" data-l="' + l.i + '" style="border-left-color:var(' + COUL[l.genre] + ')"><small>' + esc(l.titre) + " " + sens + "</small>" + esc(autre.nom) + "</button>"; }
+  function accueil() {
+    fiche.innerHTML = '<div class="genre" style="color:var(--doux)">Mode d\'emploi</div><h2>Une carte du jeu, âge après âge</h2><p>Chaque colonne est un âge. On y lit, de gauche à droite : ses besoins, les savoirs qui y répondent, les aménagements que ces savoirs permettent de bâtir, et les épreuves avec leur quête. Les grottes sont sous les besoins.</p>' +
+      bloc("Pour lire", ["Touche un nœud : sa fiche s'affiche ici, et ses voisins restent allumés.", "Touche un lien : il dit ce qui relie les deux nœuds.", "Glisse pour te déplacer, pince ou utilise + et − pour zoomer.", "Les boutons du haut cadrent un âge."]) +
+      bloc("Règles générales", G.notes);
+  }
+  function choisir(c) {
+    G.noeuds.forEach(function (n) { n.g.classList.remove("on", "sel"); }); G.liens.forEach(function (l) { l.g.classList.remove("on", "sel"); });
+    if (!c) { svg.classList.remove("choix"); accueil(); return; }
+    svg.classList.add("choix");
+    if (c.noeud) {
+      var n = c.noeud; n.g.classList.add("on", "sel");
+      // Un âge allume toute sa colonne : ses besoins, savoirs, aménagements, épreuves et grottes.
+      if (n.genre === "age") { var bd = G.bandes.filter(function (b) { return b.id === n.id; })[0]; G.noeuds.forEach(function (m) { if (m.x >= bd.x && m.x < bd.x + bd.l) m.g.classList.add("on"); }); G.liens.forEach(function (l) { var p = parId[l.de]; if (p.x >= bd.x && p.x < bd.x + bd.l) l.g.classList.add("on"); }); }
+      var sort = G.liens.filter(function (l) { return l.de === n.id; }), entre = G.liens.filter(function (l) { return l.vers === n.id; });
+      sort.concat(entre).forEach(function (l) { l.g.classList.add("on"); parId[l.de].g.classList.add("on"); parId[l.vers].g.classList.add("on"); });
+      fiche.innerHTML = '<div class="genre" style="color:var(' + COUL[n.genre] + ')">' + GENRES[n.genre] + "</div><h2>" + esc(n.nom) + "</h2>" + n.fiche.map(function (f) { return bloc(f[0], f[1]); }).join("") +
+        (sort.length || entre.length ? "<h3>Ses liens</h3><div class=\"liens\">" + entre.map(function (l) { return bouton(l, parId[l.de], "(depuis)"); }).join("") + sort.map(function (l) { return bouton(l, parId[l.vers], "(vers)"); }).join("") + "</div>" : "");
+    } else {
+      var l = c.lien, a = parId[l.de], b = parId[l.vers]; l.g.classList.add("on", "sel"); a.g.classList.add("on"); b.g.classList.add("on");
+      fiche.innerHTML = '<div class="genre" style="color:var(' + COUL[l.genre] + ')">Lien</div><h2>' + esc(l.titre) + "</h2><p>" + esc(l.texte) + '</p><h3>Les deux bouts</h3><div class="liens">' +
+        [a, b].map(function (n) { return '<button type="button" data-n="' + esc(n.id) + '" style="border-left-color:var(' + COUL[n.genre] + ')"><small>' + GENRES[n.genre] + "</small>" + esc(n.nom) + "</button>"; }).join("") + "</div>";
+    }
+    fiche.scrollTop = 0;
+    [].forEach.call(fiche.querySelectorAll("[data-l]"), function (b) { b.onclick = function () { var l = G.liens[+b.getAttribute("data-l")], p = parId[l.de], q = parId[l.vers], x = Math.min(p.x, q.x), y = Math.min(p.y, q.y); choisir({ lien: l }); voir(x - 40, y - 60, Math.max(p.x + p.l, q.x + q.l) - x + 80, Math.max(p.y, q.y) + 46 - y + 120, true); }; });
+    [].forEach.call(fiche.querySelectorAll("[data-n]"), function (b) { b.onclick = function () { var n = parId[b.getAttribute("data-n")]; choisir({ noeud: n }); voir(n.x - 60, n.y - 80, n.l + 120, n.h + 160, true); }; });
+  }
+  // --- Vue : déplacement et zoom ---
+  var k = 1, tx = 0, ty = 0, bouge = false, doigts = {}, depart = null;
+  function poser() { vue.setAttribute("transform", "translate(" + tx.toFixed(1) + " " + ty.toFixed(1) + ") scale(" + k.toFixed(4) + ")"); }
+  function voir(x, y, l, h, doux) {
+    var r = svg.getBoundingClientRect(); if (!r.width) return;
+    var nk = Math.min(r.width / l, r.height / h); if (doux) nk = Math.min(nk, Math.max(k, 0.7), 1.3); nk = Math.max(0.12, Math.min(2.2, nk));
+    k = nk; tx = r.width / 2 - (x + l / 2) * k; ty = r.height / 2 - (y + h / 2) * k; poser();
+  }
+  function zoomer(f, cx, cy) { var r = svg.getBoundingClientRect(); cx = cx == null ? r.width / 2 : cx; cy = cy == null ? r.height / 2 : cy; var nk = Math.max(0.12, Math.min(2.2, k * f)); tx = cx - (cx - tx) * nk / k; ty = cy - (cy - ty) * nk / k; k = nk; poser(); }
+  function tout() { var b = G.bandes, d = b[b.length - 1]; voir(b[0].x, -70, d.x + d.l - b[0].x, d.h + 70); }
+  function cadrerAge(b) { var r = svg.getBoundingClientRect(); if (!r.width) return; k = Math.max(0.6, Math.min(1.05, r.width / (r.width < 600 ? 470 : b.l + 20))); tx = 12 - b.x * k; ty = 12 + 70 * k; poser(); }
+  svg.addEventListener("pointerdown", function (ev) { doigts[ev.pointerId] = [ev.clientX, ev.clientY]; bouge = false; var ids = Object.keys(doigts);
+    depart = { tx: tx, ty: ty, k: k, x: ev.clientX, y: ev.clientY, d: ids.length === 2 ? Math.hypot(doigts[ids[0]][0] - doigts[ids[1]][0], doigts[ids[0]][1] - doigts[ids[1]][1]) : 0 }; });
+  svg.addEventListener("pointermove", function (ev) {
+    if (!doigts[ev.pointerId] || !depart) return; doigts[ev.pointerId] = [ev.clientX, ev.clientY]; var ids = Object.keys(doigts), r = svg.getBoundingClientRect();
+    if (ids.length === 2 && depart.d) { var a = doigts[ids[0]], b = doigts[ids[1]], d = Math.hypot(a[0] - b[0], a[1] - b[1]), cx = (a[0] + b[0]) / 2 - r.left, cy = (a[1] + b[1]) / 2 - r.top, nk = Math.max(0.12, Math.min(2.2, depart.k * d / depart.d));
+      tx = cx - (cx - tx) * nk / k; ty = cy - (cy - ty) * nk / k; k = nk; bouge = true; poser(); return; }
+    var dx = ev.clientX - depart.x, dy = ev.clientY - depart.y; if (!bouge && Math.hypot(dx, dy) < 6) return;
+    if (!bouge) { try { svg.setPointerCapture(ev.pointerId); } catch (x) {} svg.classList.add("tire"); }
+    bouge = true; tx = depart.tx + dx; ty = depart.ty + dy; poser();
+  });
+  function lacher(ev) { delete doigts[ev.pointerId]; svg.classList.remove("tire"); depart = null; setTimeout(function () { bouge = false; }, 0); }
+  svg.addEventListener("pointerup", lacher); svg.addEventListener("pointercancel", lacher);
+  svg.addEventListener("wheel", function (ev) { ev.preventDefault(); var r = svg.getBoundingClientRect(); zoomer(ev.deltaY < 0 ? 1.15 : 1 / 1.15, ev.clientX - r.left, ev.clientY - r.top); }, { passive: false });
+  svg.addEventListener("click", function () { if (!bouge) choisir(null); });
+  document.getElementById("plus").onclick = function () { zoomer(1.3); }; document.getElementById("moins").onclick = function () { zoomer(1 / 1.3); };
+  var barre = document.getElementById("barre"), bt = document.createElement("button"); bt.type = "button"; bt.textContent = "Tout voir"; bt.onclick = tout; barre.appendChild(bt);
+  var sep = document.createElement("span"); sep.className = "sep"; barre.appendChild(sep);
+  G.bandes.forEach(function (b) { var x = document.createElement("button"); x.type = "button"; x.textContent = b.nom; x.onclick = function () { cadrerAge(b); choisir({ noeud: parId[b.id] }); }; barre.appendChild(x); });
+  accueil();
+  // Au départ : le premier âge, à une taille lisible.
+  function debut() { var r = svg.getBoundingClientRect(); if (!r.width) { setTimeout(debut, 60); return; } cadrerAge(G.bandes[0]); }
+  debut();
+})();
+</script>

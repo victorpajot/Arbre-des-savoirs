@@ -6,6 +6,8 @@ les besoins avec leurs savoirs, les aménagements avec leur épreuve et leur qu�
 on relance le script après chaque changement des packs.
 
     python3 outils/packs.py assembler && python3 outils/parcours_ile.py > docs/parcours-ile.md
+
+La vue nodale du même parcours : python3 outils/parcours_graphe.py > docs/parcours-ile-graphe.html
 """
 import json, os, sys
 
