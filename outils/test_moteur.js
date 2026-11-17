@@ -2755,6 +2755,10 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       Qm.ageIle = 3; assert.deepEqual(etat(), { ornee: true, mesopotamie: true, mythologies: true, celtes: true, grecque: true, vedique: true, nordique: false, mesoamerique: false });
       const zs = CA.ile.grottes.flatMap((g) => g.zones.map((z) => z.id)); assert.equal(new Set(zs).size, zs.length);
       assert.ok(M.entendreGrotte(CA, Qm, "mesopotamie", "nisaba", t0)); assert.equal(M.statut(CA, Qm, "math.babylone", t0).passage.grotte, "mesopotamie");
+      // Victor (2026-11-17) : l'écriture manquait. Les premiers scribes couvrent « écrire », à la cité seulement.
+      assert.equal(M.statut(CA, Qm, "cite.ecrire", t0).etat, "disponible");
+      { const Qv = M.nouvellePartie(t0); Qv.mode = "ile"; Qv.epreuves = { feu: t0 }; Qv.ageIle = 2; assert.equal(M.statut(CA, Qv, "cite.ecrire", t0).etat, "verrouillee", "l'écriture attend la cité"); }
+      assert.ok(CA.ile.ages[3].besoins.filter((b) => b.id === "ecrire")[0].savoirs.includes("cite.ecrire"));
       // Victor (2026-11-17) : l'arbre des mythologies rassemble toutes les zones, par familles.
       { const Am = M.arbreMythes(CA, Qm); assert.equal(Am.racine.id, "ornee"); assert.ok(Am.racine.vue);
         assert.deepEqual(Am.branches.map((b) => b.id), ["fleuves", "indo", "ameriques"]);

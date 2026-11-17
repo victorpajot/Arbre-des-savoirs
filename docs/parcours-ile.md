@@ -124,7 +124,7 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 | Lever et moudre | Archimède, leviers et flotteurs (Mécanique) ; Le mouvement selon Aristote (Mécanique) | Moulin |
 | Guérir | La médecine égyptienne (Savoir) ; Hippocrate et les humeurs (Savoir) | Dispensaire |
 | Tenir le calendrier | Les astronomes de Babylone (Cosmos) ; Mesurer la Terre (Cosmos) | Cadran et calendrier |
-| Garder trace | Écrire la musique (Harmonie) ; Simonide et le banquet (Mnémosyne) ; Platon contre l'écriture (Mnémosyne) | Maison des écrits |
+| Garder trace | Les premiers scribes (Cité) ; Écrire la musique (Harmonie) ; Simonide et le banquet (Mnémosyne) ; Platon contre l'écriture (Mnémosyne) | Maison des écrits |
 | Débattre et voter (optionnel) | Athènes tire au sort (Essaim) ; Le vote des tessons (Essaim) ; Les sophistes (Éloquence) ; Les orateurs d'Athènes (Éloquence) | Tribune |
 | Douter et comprendre (optionnel) | Présocratiques (Sagesse) ; Les historiens et la rumeur (Lucidité) ; Les émotions, d'Aristote à nous (Empathie) ; L'art de douter (Lucidité) ; L'éléphant et les aveugles (Lucidité) ; Socrate et Platon (Sagesse) ; Sagesses d'Asie (Sagesse) ; L'esprit selon le Bouddha (Empathie) ; Les Caractères de Théophraste (Empathie) | aucun |
 
@@ -143,7 +143,7 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 | Grand entrepôt | Le port | Babylone et la base 60 (Logique) ; L'Égypte et le papyrus Rhind (Logique) | 60 crédits, 40 bois, 30 pierre | aucune |
 | Dispensaire | La ville | La médecine égyptienne (Savoir) ; Hippocrate et les humeurs (Savoir) | 60 crédits, 20 bois, 20 pierre | aucune |
 | Cadran et calendrier | Le campus | Les astronomes de Babylone (Cosmos) ; Mesurer la Terre (Cosmos) | 50 crédits, 30 pierre | « Dresser le cadran » : un bâton bien droit, des cailloux clairs |
-| Maison des écrits | Le campus | Écrire la musique (Harmonie) ; Simonide et le banquet (Mnémosyne) ; Platon contre l'écriture (Mnémosyne) | 60 crédits, 30 bois, 20 pierre | aucune |
+| Maison des écrits | Le campus | Les premiers scribes (Cité) ; Écrire la musique (Harmonie) ; Simonide et le banquet (Mnémosyne) ; Platon contre l'écriture (Mnémosyne) | 60 crédits, 30 bois, 20 pierre | aucune |
 | Tribune | L'agora | Athènes tire au sort (Essaim) ; Le vote des tessons (Essaim) ; Les sophistes (Éloquence) ; Les orateurs d'Athènes (Éloquence) | 50 crédits, 30 pierre | aucune |
 
 ## 5. Le royaume
