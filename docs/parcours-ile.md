@@ -161,4 +161,5 @@ Chaque grotte se trouve en envoyant un explorateur avec une torche. On y cherche
 | La grotte ornée | le campement | Les chevaux de Chauvet ; La roche raclée ; La main en négatif ; Le crâne de l'ours ; Les taureaux de Lascaux ; Peindre à la lampe | l'épreuve qui fait quitter le campement |
 | La grotte des deux fleuves | la cité | Enki, le plus sage ; Inanna aux Enfers ; Gilgamesh, roi d'Uruk ; Nisaba, scribe des dieux ; Nanna, la lune ; Marduk contre Tiamat | Babylone et la base 60 (Logique) ; Les astronomes de Babylone (Cosmos) |
 | La grotte du Nil | la cité | Rê, le soleil en barque ; Osiris, roi des morts ; La pesée du cœur ; Thot, le dieu des scribes ; Sekhmet, la lionne qui guérit | La médecine égyptienne (Savoir) ; L'Égypte et le papyrus Rhind (Logique) |
+| La grotte du chêne | la cité | Les druides, vingt ans par cœur ; Le bosquet sacré ; Cernunnos, le dieu cornu ; Épona et Belenos ; Taranis et Toutatis ; Le chaudron du Dagda | rien |
 

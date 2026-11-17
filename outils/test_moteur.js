@@ -2738,7 +2738,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     // Victor (2026-11-17) : plusieurs grottes. La grotte ornée vient au campement, la Mésopotamie et l'Égypte à la cité.
     { const Qm = M.nouvellePartie(t0); Qm.mode = "ile"; Qm.epreuves = { feu: t0 }; Qm.ageIle = 1;
       const etat = () => Object.fromEntries(M.grottesIle(CA, Qm).map((g) => [g.id, g.presente]));
-      assert.deepEqual(etat(), { ornee: true, mesopotamie: false, mythologies: false });
+      assert.deepEqual(etat(), { ornee: true, mesopotamie: false, mythologies: false, celtes: false });
       assert.equal(M.trouverGrotte(CA, Qm, "mythologies", t0), null, "l'Égypte n'existe pas encore au campement");
       assert.equal(M.entendreGrotte(CA, Qm, "egypte", "thot", t0), null);
       // Le campement exige les peintures avant le sanctuaire.
@@ -2751,7 +2751,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       const Qa = M.nouvellePartie(t0); Qa.mode = "ile"; Qa.epreuves = { feu: t0 }; Qa.ageIle = 1; Qa.grotte = { trouvee: t0, carte: "101" };
       const ga = M.grotteIle(CA, Qa, "mythologies"); assert.ok(ga.presente && ga.trouvee === t0); assert.ok(M.entendreGrotte(CA, Qa, "egypte", "thot", t0));
       // À la cité, tout est là. Les ids de zones et de récits ne se marchent pas dessus.
-      Qm.ageIle = 3; assert.deepEqual(etat(), { ornee: true, mesopotamie: true, mythologies: true });
+      Qm.ageIle = 3; assert.deepEqual(etat(), { ornee: true, mesopotamie: true, mythologies: true, celtes: true });
       const zs = CA.ile.grottes.flatMap((g) => g.zones.map((z) => z.id)); assert.equal(new Set(zs).size, zs.length);
       assert.ok(M.entendreGrotte(CA, Qm, "mesopotamie", "nisaba", t0)); assert.equal(M.statut(CA, Qm, "math.babylone", t0).passage.grotte, "mesopotamie");
       // Un âge déjà dépassé ne doit pas les peintures.
