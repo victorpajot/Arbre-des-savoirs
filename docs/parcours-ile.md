@@ -8,7 +8,7 @@ Ce document est généré depuis les données du jeu par `outils/parcours_ile.py
 |---|---|---|---|
 | Les survivants | 1 besoin couvert + épreuve « Faire du feu » | 15 | -40000 |
 | Le campement | 5 besoins couverts + 10 habitants + passage par la grotte ornée + épreuve « Dresser le sanctuaire » | 40 | -9000 |
-| Le village | 5 besoins couverts + 30 habitants | 160 | -3300 |
+| Le village | 7 besoins couverts + 30 habitants | 160 | -3300 |
 | La cité | 8 besoins couverts + 80 habitants | 400 | 500 |
 | Le royaume | âge à écrire | sans limite | 1500 |
 
@@ -88,6 +88,8 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 | Compter et stocker | Compter avant d'écrire (Logique) | Grenier |
 | Bâtir | Machines simples (Mécanique) | Camp de bûcherons, Carrière, Rangée de maisons |
 | Fabriquer | Les premiers ateliers (Alchimie) | Four du potier |
+| Filer et tresser | Les premiers fils (Ressources) | aucun |
+| Prendre la mer | Prendre la mer (Ressources) | aucun |
 | Transmettre (optionnel) | Parler avant la rhétorique (Éloquence) | aucun |
 | Décider ensemble (optionnel) | La ruche et l'essaim (Essaim) | Place du village |
 

@@ -2497,7 +2497,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   P.epreuves.sanctuaire = t0; M.ile(CA, P, t0);
   // Le village : les savoirs de ses besoins s'ouvrent, pas le rang 2, ni un rang 1 sans besoin.
   G = M.agesIle(CA, P);
-  assert.equal(G.age.id, "village"); assert.equal(G.age.besoins.length, 7);
+  assert.equal(G.age.id, "village"); assert.equal(G.age.besoins.length, 9);
   assert.equal(M.statut(CA, P, "math.origines", t0).etat, "disponible");
   assert.equal(M.statut(CA, P, "math.babylone", t0).etat, "verrouillee", "le rang 2 attend la cité");
   assert.equal(M.statut(CA, P, "inf.pascaline", t0).etat, "verrouillee", "un savoir sans besoin attend son âge");
@@ -2520,8 +2520,8 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Victor (2026-11-12) : Transmettre et Décider ensemble sont optionnels. On les propose avant de passer ; négligés,
   // ils coûtent des savoirs oubliés et des émeutes.
   {
-    const P2 = JSON.parse(JSON.stringify(P)); ["math.origines", "chim.feu", "astro.nebra"].forEach(id => sait(P2, id));
-    let g = M.agesIle(CA, P2); assert.equal(g.age.id, "village"); assert.equal(g.age.requis, 5); assert.equal(g.age.couverts, 5);
+    const P2 = JSON.parse(JSON.stringify(P)); ["math.origines", "chim.feu", "astro.nebra", "res.tisser", "res.naviguer"].forEach(id => sait(P2, id));
+    let g = M.agesIle(CA, P2); assert.equal(g.age.id, "village"); assert.equal(g.age.requis, 7); assert.equal(g.age.couverts, 7);
     // Victor (2026-11-16) : les savoirs ne suffisent pas, il faut aussi du monde. Un âge déjà atteint reste acquis.
     assert.ok(g.age.savoirsTenus && !g.age.pret && g.age.peuple.manque > 0, "trop peu d'habitants : le passage attend");
     assert.equal(g.age.peuple.besoin, CA.ile.ages.filter(a => a.id === "village")[0].peuple); assert.equal(M.passerAge(CA, P2, t0), null);
@@ -2537,7 +2537,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     M.ile(CA, P3, t0 + 80 * J); for (let d = 81; d <= 110; d++) assert.equal(M.ile(CA, P3, t0 + d * J).troubles.length, 0, "besoins couverts : plus de troubles");
   }
   // Tous les besoins couverts : la cité s'ouvre (et reste ouverte si un savoir se perd).
-  ["math.origines", "chim.feu", "astro.nebra", "rhet.origines", "coll.ruche"].forEach(id => sait(P, id));
+  ["math.origines", "chim.feu", "astro.nebra", "res.tisser", "res.naviguer", "rhet.origines", "coll.ruche"].forEach(id => sait(P, id));
   G = M.ile(CA, P, t0).ages; assert.equal(G.age.id, "village", "tous les savoirs, mais pas assez de monde : la cité attend"); assert.ok(G.age.peuple.manque > 0);
   P.population.a += G.age.peuple.manque;
   G = M.ile(CA, P, t0).ages; assert.equal(G.age.id, "cite"); assert.equal(P.ageIle, 3);
