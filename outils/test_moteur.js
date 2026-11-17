@@ -2739,7 +2739,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     // Victor (2026-11-17) : plusieurs grottes. La grotte ornée vient au campement, la Mésopotamie et l'Égypte à la cité.
     { const Qm = M.nouvellePartie(t0); Qm.mode = "ile"; Qm.epreuves = { feu: t0 }; Qm.ageIle = 1;
       const etat = () => Object.fromEntries(M.grottesIle(CA, Qm).map((g) => [g.id, g.presente]));
-      assert.deepEqual(etat(), { ornee: true, mesopotamie: false, mythologies: false, celtes: false });
+      assert.deepEqual(etat(), { ornee: true, mesopotamie: false, mythologies: false, celtes: false, grecque: false, vedique: false, nordique: false, mesoamerique: false });
       assert.equal(M.trouverGrotte(CA, Qm, "mythologies", t0), null, "l'Égypte n'existe pas encore au campement");
       assert.equal(M.entendreGrotte(CA, Qm, "egypte", "thot", t0), null);
       // Le campement exige les peintures avant le sanctuaire.
@@ -2752,9 +2752,18 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       const Qa = M.nouvellePartie(t0); Qa.mode = "ile"; Qa.epreuves = { feu: t0 }; Qa.ageIle = 1; Qa.grotte = { trouvee: t0, carte: "101" };
       const ga = M.grotteIle(CA, Qa, "mythologies"); assert.ok(ga.presente && ga.trouvee === t0); assert.ok(M.entendreGrotte(CA, Qa, "egypte", "thot", t0));
       // À la cité, tout est là. Les ids de zones et de récits ne se marchent pas dessus.
-      Qm.ageIle = 3; assert.deepEqual(etat(), { ornee: true, mesopotamie: true, mythologies: true, celtes: true });
+      Qm.ageIle = 3; assert.deepEqual(etat(), { ornee: true, mesopotamie: true, mythologies: true, celtes: true, grecque: true, vedique: true, nordique: false, mesoamerique: false });
       const zs = CA.ile.grottes.flatMap((g) => g.zones.map((z) => z.id)); assert.equal(new Set(zs).size, zs.length);
       assert.ok(M.entendreGrotte(CA, Qm, "mesopotamie", "nisaba", t0)); assert.equal(M.statut(CA, Qm, "math.babylone", t0).passage.grotte, "mesopotamie");
+      // Victor (2026-11-17) : l'arbre des mythologies rassemble toutes les zones, par familles.
+      { const Am = M.arbreMythes(CA, Qm); assert.equal(Am.racine.id, "ornee"); assert.ok(Am.racine.vue);
+        assert.deepEqual(Am.branches.map((b) => b.id), ["fleuves", "indo", "ameriques"]);
+        const toutes = [Am.racine].concat(Am.branches.flatMap((b) => b.zones)).map((z) => z.id).sort();
+        assert.deepEqual(toutes, zs.slice().sort(), "chaque zone de grotte est sur l'arbre, une seule fois");
+        assert.equal(Am.total, CA.ile.grottes.reduce((n, g) => n + g.zones.reduce((m, z) => m + z.recits.length, 0), 0));
+        assert.equal(Am.entendus, 6 + 1, "les six peintures et Nisaba");
+        const indo = Am.branches[1].zones; assert.ok(indo.filter((z) => z.id === "grecque")[0].presente); assert.ok(!indo.filter((z) => z.id === "nordique")[0].presente, "le Nord attend le royaume");
+        assert.equal(M.arbreMythes(CA, PP), null, "pas d'arbre des mythes hors de l'île"); }
       // Un âge déjà dépassé ne doit pas les peintures.
       const Qd = M.nouvellePartie(t0); Qd.mode = "ile"; Qd.epreuves = { feu: t0 }; Qd.ageIle = 2; assert.equal(M.agesIle(CA, Qd).ages[1].grotte, null); }
     // La torche de l'explorateur : 60 crédits, seulement quand on sait faire du feu.

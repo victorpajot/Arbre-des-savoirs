@@ -6,9 +6,9 @@ Ce document est généré depuis les données du jeu par `outils/parcours_ile.py
 
 | Âge | Pour le quitter | Habitants au plus | Rien d'après |
 |---|---|---|---|
-| Les survivants | 1 besoin couvert + épreuve « Faire du feu » | 15 | -3000 |
-| Le campement | 6 besoins couverts + 10 habitants + passage par la grotte ornée + épreuve « Dresser le sanctuaire » | 40 | -3000 |
-| Le village | 4 besoins couverts + 30 habitants | 160 | -3000 |
+| Les survivants | 1 besoin couvert + épreuve « Faire du feu » | 15 | -40000 |
+| Le campement | 5 besoins couverts + 10 habitants + passage par la grotte ornée + épreuve « Dresser le sanctuaire » | 40 | -9000 |
+| Le village | 5 besoins couverts + 30 habitants | 160 | -3300 |
 | La cité | 6 besoins couverts + 80 habitants | 400 | 500 |
 | Le royaume | âge à écrire | sans limite | 1500 |
 
@@ -47,12 +47,11 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 
 | Besoin | Savoirs qui y répondent | Aménagements débloqués |
 |---|---|---|
-| Lire le ciel | Le ciel des premiers peuples (Cosmos) | aucun |
 | Soigner | Soigner avant la science (Savoir) | Hutte du soigneur |
 | Vivre de l'île | Vivre de ce que l'île donne (Ressources) | Réserve de pêche |
 | Voir venir le temps | Lire le ciel (Météo) | Poste de guet |
 | Se souvenir | Retenir sans écrire (Mnémosyne) | Cercle de la veillée |
-| Veiller ensemble | Les premiers instruments (Harmonie) ; Les émotions, d'Aristote à nous (Empathie) | Cercle de la veillée |
+| Veiller ensemble | Les premiers instruments (Harmonie) | Cercle de la veillée |
 
 ### La porte vers l'âge suivant
 
@@ -70,7 +69,7 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 |---|---|---|---|---|
 | Abri de branches (10 places) | La ville | Maîtriser le feu (Le foyer) | 5 bois | « Monter l'abri » : de longues perches, des pierres et des galets, des peaux de bêtes (sur une bête) |
 | Hutte du soigneur | Les champs et jardins | Soigner avant la science (Savoir) | 30 crédits, 5 bois | « Garnir la hutte » : un champignon du bouleau, de l'écorce de peuplier |
-| Cercle de la veillée | L'agora | Retenir sans écrire (Mnémosyne) ; Les premiers instruments (Harmonie) ; Les émotions, d'Aristote à nous (Empathie) | 20 crédits, 5 bois | aucune |
+| Cercle de la veillée | L'agora | Retenir sans écrire (Mnémosyne) ; Les premiers instruments (Harmonie) | 20 crédits, 5 bois | aucune |
 | Réserve de pêche | Le port | Vivre de ce que l'île donne (Ressources) | 25 crédits | aucune |
 | Poste de guet | Le port | Lire le ciel (Météo) | 25 crédits, 5 bois | aucune |
 
@@ -85,10 +84,11 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 | Besoin | Savoirs qui y répondent | Aménagements débloqués |
 |---|---|---|
 | Se nourrir | Les premières récoltes (Ressources) | Ferme, Pêcherie |
+| Lire le ciel | Le ciel des premiers peuples (Cosmos) | aucun |
 | Compter et stocker | Compter avant d'écrire (Logique) | Grenier |
 | Bâtir | Machines simples (Mécanique) | Camp de bûcherons, Carrière, Rangée de maisons |
 | Fabriquer | Les premiers ateliers (Alchimie) | Four du potier |
-| Transmettre (optionnel) | Parler avant la rhétorique (Éloquence) ; Les historiens et la rumeur (Lucidité) ; Présocratiques (Sagesse) | aucun |
+| Transmettre (optionnel) | Parler avant la rhétorique (Éloquence) | aucun |
 | Décider ensemble (optionnel) | La ruche et l'essaim (Essaim) | Place du village |
 
 - Négliger « Transmettre » : Sans personne pour transmettre, chaque génération oublie un peu de ce que savait la précédente.
@@ -126,7 +126,7 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 | Tenir le calendrier | Les astronomes de Babylone (Cosmos) ; Mesurer la Terre (Cosmos) | Cadran et calendrier |
 | Garder trace | Écrire la musique (Harmonie) ; Simonide et le banquet (Mnémosyne) ; Platon contre l'écriture (Mnémosyne) | Maison des écrits |
 | Débattre et voter (optionnel) | Athènes tire au sort (Essaim) ; Le vote des tessons (Essaim) ; Les sophistes (Éloquence) ; Les orateurs d'Athènes (Éloquence) | Tribune |
-| Douter et comprendre (optionnel) | L'art de douter (Lucidité) ; L'éléphant et les aveugles (Lucidité) ; Socrate et Platon (Sagesse) ; Sagesses d'Asie (Sagesse) ; L'esprit selon le Bouddha (Empathie) ; Les Caractères de Théophraste (Empathie) | aucun |
+| Douter et comprendre (optionnel) | Présocratiques (Sagesse) ; Les historiens et la rumeur (Lucidité) ; Les émotions, d'Aristote à nous (Empathie) ; L'art de douter (Lucidité) ; L'éléphant et les aveugles (Lucidité) ; Socrate et Platon (Sagesse) ; Sagesses d'Asie (Sagesse) ; L'esprit selon le Bouddha (Empathie) ; Les Caractères de Théophraste (Empathie) | aucun |
 
 - Négliger « Débattre et voter » : Sans lieu pour débattre, les désaccords d'une cité se règlent dans la rue, et quelques-uns n'en reviennent pas.
 - Négliger « Douter et comprendre » : Une cité qui ne doute de rien cesse de vérifier ce qu'elle sait, et le perd par morceaux.
@@ -162,4 +162,8 @@ Chaque grotte se trouve en envoyant un explorateur avec une torche. On y cherche
 | La grotte des deux fleuves | la cité | Enki, le plus sage ; Inanna aux Enfers ; Gilgamesh, roi d'Uruk ; Nisaba, scribe des dieux ; Nanna, la lune ; Marduk contre Tiamat | Babylone et la base 60 (Logique) ; Les astronomes de Babylone (Cosmos) |
 | La grotte du Nil | la cité | Rê, le soleil en barque ; Osiris, roi des morts ; La pesée du cœur ; Thot, le dieu des scribes ; Sekhmet, la lionne qui guérit | La médecine égyptienne (Savoir) ; L'Égypte et le papyrus Rhind (Logique) |
 | La grotte du chêne | la cité | Les druides, vingt ans par cœur ; Le bosquet sacré ; Cernunnos, le dieu cornu ; Épona et Belenos ; Taranis et Toutatis ; Le chaudron du Dagda | rien |
+| La grotte de l'Olympe | la cité | Du Chaos à Cronos ; Zeus contre les Titans ; Les douze de l'Olympe ; Prométhée, le voleur de feu ; La jarre de Pandore ; Déméter et les saisons | rien |
+| La grotte des hymnes | la cité | Ce qui est entendu ; Les quatre Védas ; Indra et le serpent Vritra ; Agni, le feu qui porte ; Surya, le char du Soleil ; L'ordre du monde | rien |
+| La grotte des glaces | le royaume | Deux livres pour tout un panthéon ; Le monde taillé dans un géant ; Yggdrasil et les neuf royaumes ; Odin, le dieu borgne ; Loki et le cheval à huit pattes ; Le Ragnarök | rien |
+| La grotte du maïs | le royaume | Le Popol Vuh ; Des humains faits de maïs ; Les jumeaux et les seigneurs de la mort ; Quetzalcoatl, le serpent à plumes ; Le cinquième soleil ; La Pierre du Soleil | rien |
 

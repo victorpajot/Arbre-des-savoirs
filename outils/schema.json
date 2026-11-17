@@ -5232,6 +5232,14 @@
       }
      }
     },
+    "arbre_mythes": {
+     "type": "object", "additionalProperties": false, "required": ["nom", "branches"],
+     "description": "Victor (2026-11-17) : un arbre qui rassemble les mythologies des grottes. La racine et les branches citent des zones de grottes ; une feuille par récit entendu.",
+     "properties": { "nom": { "$ref": "#/$defs/texte" }, "accroche": { "$ref": "#/$defs/texte" }, "nue": { "$ref": "#/$defs/texte" },
+      "racine": { "type": "object", "additionalProperties": false, "required": ["zone"], "properties": { "zone": { "type": "string" }, "nom": { "$ref": "#/$defs/texte" }, "texte": { "$ref": "#/$defs/texte" } } },
+      "branches": { "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "required": ["id", "nom", "zones"],
+       "properties": { "id": { "type": "string" }, "nom": { "$ref": "#/$defs/texte" }, "texte": { "$ref": "#/$defs/texte" }, "source": { "type": "string" }, "zones": { "type": "array", "minItems": 1, "items": { "type": "string" } } } } } }
+    },
     "grottes": {
      "type": "array", "minItems": 1, "description": "Victor (2026-11-17) : plusieurs grottes sur la carte, chacune avec son âge d'apparition. Les ids des zones sont uniques d'une grotte à l'autre.",
      "items": {
@@ -5245,7 +5253,7 @@
        "properties": { "succes": { "type": "string", "description": "Le succès donné quand le quiz de la zone est réussi." }, "objet": { "type": "string", "description": "L'objet donné avec ce succès." }, "id": { "type": "string" }, "nom": { "$ref": "#/$defs/texte" }, "court": { "$ref": "#/$defs/texte" }, "dessin": { "enum": ["egypte"] }, "genre": { "enum": ["peintures"], "description": "Ce qu'on cherche dans les galeries quand ce ne sont pas des dieux : l'interface adapte ses mots et son dessin." }, "seuil": { "type": "integer", "minimum": 1, "description": "Bonnes réponses exigées au quiz pour graver le passage." }, "rate": { "$ref": "#/$defs/texte" }, "accroche": { "$ref": "#/$defs/texte" }, "alyca": { "$ref": "#/$defs/texte" }, "ouvert": { "$ref": "#/$defs/texte" },
         "ouvre": { "type": "array", "items": { "type": "string" } },
         "recits": { "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "required": ["id", "titre", "texte", "source"],
-         "properties": { "id": { "type": "string" }, "dessin": { "enum": ["re", "osiris", "pesee", "thot", "sekhmet", "chevaux", "lions", "main", "ours", "taureaux", "lampe", "enki", "inanna", "gilgamesh", "nisaba", "nanna", "marduk", "druides", "nemeton", "cernunnos", "epona", "taranis", "dagda"] }, "question": { "type": "object", "additionalProperties": false, "required": ["enonce", "choix", "bonne"], "description": "Une question sur ce récit, sans fait nouveau : la bonne réponse est dans le texte vérifié.", "properties": { "enonce": { "$ref": "#/$defs/texte" }, "choix": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/texte" } }, "bonne": { "type": "integer", "minimum": 0 } } }, "titre": { "$ref": "#/$defs/texte" }, "texte": { "$ref": "#/$defs/texte" }, "source": { "type": "string" } } } } } } }
+         "properties": { "id": { "type": "string" }, "dessin": { "enum": ["re", "osiris", "pesee", "thot", "sekhmet", "chevaux", "lions", "main", "ours", "taureaux", "lampe", "enki", "inanna", "gilgamesh", "nisaba", "nanna", "marduk", "druides", "nemeton", "cernunnos", "epona", "taranis", "dagda", "chaos", "zeus", "olympiens", "promethee", "pandore", "demeter", "veda", "quatre", "indra", "agni", "surya", "rita", "edda", "ymir", "yggdrasil", "odin", "sleipnir", "ragnarok", "popolvuh", "mais", "jumeaux", "quetzalcoatl", "soleil", "pierre"] }, "question": { "type": "object", "additionalProperties": false, "required": ["enonce", "choix", "bonne"], "description": "Une question sur ce récit, sans fait nouveau : la bonne réponse est dans le texte vérifié.", "properties": { "enonce": { "$ref": "#/$defs/texte" }, "choix": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/texte" } }, "bonne": { "type": "integer", "minimum": 0 } } }, "titre": { "$ref": "#/$defs/texte" }, "texte": { "$ref": "#/$defs/texte" }, "source": { "type": "string" } } } } } } }
      }
      }
     },
