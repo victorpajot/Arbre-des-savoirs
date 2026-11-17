@@ -2043,7 +2043,7 @@
       var savoirsTenus = tenu; tenu = tenu && !peuple.manque;
       var complet = tenu && !ep && (!negliges.length || !!(partie.agesPasses || {})[a.id]);
       if (ouvert) courant = i;
-      var o = { id: a.id, peuple: peuple, savoirsTenus: savoirsTenus, epreuve: savoirsTenus ? ep : null, rang: a.rang, plafond: a.plafond == null ? null : a.plafond, nom: a.nom, description: a.description || null, besoins: besoins, requis: requis.length, couverts: requis.filter(function (b) { return b.couvert; }).length, complet: complet, pret: tenu && !complet && !ep, negliges: negliges, avenir: avenir, ouvert: ouvert };
+      var o = { id: a.id, peuple: peuple, savoirsTenus: savoirsTenus, epreuve: tenu ? ep : null, rang: a.rang, plafond: a.plafond == null ? null : a.plafond, nom: a.nom, description: a.description || null, besoins: besoins, requis: requis.length, couverts: requis.filter(function (b) { return b.couvert; }).length, complet: complet, pret: tenu && !complet && !ep, negliges: negliges, avenir: avenir, ouvert: ouvert };
       ouvert = ouvert && complet;
       return o;
     });

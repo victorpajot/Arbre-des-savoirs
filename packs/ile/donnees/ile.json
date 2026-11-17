@@ -1903,7 +1903,7 @@
     "fr": "Le campement"
    },
    "description": {
-    "fr": "Le feu a rassemblé les survivants. On vit de cueillette, de chasse et de pêche, sans rien bâtir de durable."
+    "fr": "Le feu a réuni quelques survivants. De petites bandes vivent de cueillette, de chasse et de pêche, sans rien bâtir de durable."
    },
    "besoins": [
     {
@@ -1982,7 +1982,8 @@
    ],
    "plafond": 40,
    "jusqua": -3000,
-   "peuple": 10
+   "peuple": 10,
+   "epreuve": "sanctuaire"
   },
   {
    "id": "village",
@@ -1991,7 +1992,7 @@
     "fr": "Le village"
    },
    "description": {
-    "fr": "Le campement se fixe : il faut nourrir, loger et organiser tout ce monde."
+    "fr": "Le sanctuaire a rassemblé les bandes au même endroit : il faut maintenant nourrir, loger et organiser tout ce monde."
    },
    "besoins": [
     {
@@ -2743,6 +2744,228 @@
       }
      }
     ]
+   }
+  },
+  {
+   "id": "sanctuaire",
+   "nom": {
+    "fr": "Dresser le sanctuaire"
+   },
+   "dessin": "taille",
+   "accroche": {
+    "fr": "Une histoire court d'un feu à l'autre, et tout le monde veut la voir dans la pierre. Tailler, graver, dresser : trois gestes, et beaucoup de bras."
+   },
+   "quete": {
+    "nom": {
+     "fr": "De quoi dresser un sanctuaire"
+    },
+    "texte": {
+     "fr": "Les bandes de l'île se racontent la même histoire, et veulent un lieu pour elle. Il te faut des pics de silex pour tailler la pierre, de longues perches pour la lever, et un banc de calcaire assez grand : explore l'île de près."
+    },
+    "objets": [
+     {
+      "id": "silex",
+      "nom": {
+       "fr": "Des pics de silex"
+      },
+      "position": [
+       0.46,
+       0.775
+      ],
+      "trouve": {
+       "fr": "Des silex, au bord de l'eau : de quoi entamer le calcaire."
+      },
+      "zone": {
+       "fr": "au bord de la rivière, vers le sud"
+      }
+     },
+     {
+      "id": "perches",
+      "nom": {
+       "fr": "De longues perches"
+      },
+      "position": [
+       0.264,
+       0.467
+      ],
+      "trouve": {
+       "fr": "De longues perches : à plusieurs, on lève une pierre avec ça."
+      },
+      "zone": {
+       "fr": "à la lisière du bois, à l'ouest"
+      }
+     },
+     {
+      "id": "calcaire",
+      "nom": {
+       "fr": "Un banc de calcaire"
+      },
+      "position": [
+       0.76,
+       0.66
+      ],
+      "trouve": {
+       "fr": "Un banc de calcaire, large et sain : il y a un pilier là-dedans."
+      },
+      "zone": {
+       "fr": "sur la côte est, au sud du camp"
+      }
+     }
+    ]
+   },
+   "etapes": [
+    {
+     "id": "sanctuaire-tailler",
+     "type": "frappes",
+     "titre": {
+      "fr": "Le pilier"
+     },
+     "consigne": {
+      "fr": "Dégage le pilier du banc de calcaire : frappe au pic de silex, vite et sans t'arrêter."
+     },
+     "coups": 9,
+     "delai": 900,
+     "appel": {
+      "fr": "Touche ici pour frapper le calcaire"
+     },
+     "compte": {
+      "fr": "Éclats détachés : {n} sur {t}"
+     },
+     "rate": {
+      "fr": "Trop lent : garde le rythme."
+     },
+     "gagne": {
+      "fr": "Un long bloc en forme de T se détache du banc."
+     },
+     "savoir": [
+      {
+       "id": "sanctuaire-calcaire",
+       "texte": {
+        "fr": "À Göbekli Tepe, dans le sud-est de la Turquie, les piliers en forme de T ont été taillés d'un seul bloc dans le plateau calcaire voisin. Certains mesurent jusqu'à 5,50 mètres."
+       },
+       "source": "UNESCO, Centre du patrimoine mondial, « Göbekli Tepe »"
+      },
+      {
+       "id": "sanctuaire-poids",
+       "texte": {
+        "fr": "Les grands piliers du centre pèsent environ huit tonnes chacun."
+       },
+       "source": "Andrew Curry, « Last Stand of the Hunter-Gatherers? », Archaeology Magazine, mai-juin 2021"
+      }
+     ]
+    },
+    {
+     "id": "sanctuaire-graver",
+     "type": "tracer",
+     "titre": {
+      "fr": "Le renard"
+     },
+     "consigne": {
+      "fr": "Grave l'animal de l'histoire sur le pilier : pose le doigt sur le 1 et suis les points dans l'ordre, du museau à la queue."
+     },
+     "appel": {
+      "fr": "Suis les points du doigt, sans le lever"
+     },
+     "compte": {
+      "fr": "Animaux gravés : {n} sur {t}"
+     },
+     "gagne": {
+      "fr": "Le renard est dans la pierre. Il y restera plus longtemps que toi."
+     },
+     "noeuds": [
+      {
+       "id": "renard",
+       "nom": {
+        "fr": "Le renard"
+       },
+       "pose": {
+        "fr": "Un renard."
+       }
+      }
+     ],
+     "savoir": [
+      {
+       "id": "sanctuaire-animaux",
+       "texte": {
+        "fr": "Les piliers portent des animaux sauvages sculptés. Serpents, oiseaux et renards dominent, accompagnés de gazelles, de canards et d'aurochs."
+       },
+       "source": "Andrew Curry, « Last Stand of the Hunter-Gatherers? », Archaeology Magazine, mai-juin 2021"
+      },
+      {
+       "id": "sanctuaire-humains",
+       "texte": {
+        "fr": "Certains piliers sont des figures humaines très stylisées : on y voit, en bas-relief, des ceintures et des pagnes."
+       },
+       "source": "UNESCO, Centre du patrimoine mondial, « Göbekli Tepe »"
+      }
+     ]
+    },
+    {
+     "id": "sanctuaire-dresser",
+     "type": "frotter",
+     "dessin": "dresser",
+     "titre": {
+      "fr": "Debout"
+     },
+     "consigne": {
+      "fr": "Le pilier est couché. Glisse les perches dessous et pèse dessus, encore et encore, tous ensemble, jusqu'à le mettre debout."
+     },
+     "course": 4200,
+     "appel": {
+      "fr": "Glisse le doigt d'avant en arrière pour peser sur les perches"
+     },
+     "compte": {
+      "fr": "Dressé : {n} %"
+     },
+     "gagne": {
+      "fr": "Le pilier est debout."
+     },
+     "savoir": [
+      {
+       "id": "sanctuaire-chasseurs",
+       "texte": {
+        "fr": "Ces monuments ont été élevés par des groupes de chasseurs-cueilleurs, entre 9600 et 8200 avant notre ère, au Néolithique précéramique."
+       },
+       "source": "UNESCO, Centre du patrimoine mondial, « Göbekli Tepe »"
+      },
+      {
+       "id": "sanctuaire-rites",
+       "texte": {
+        "fr": "Ils ont probablement servi à des rassemblements et à des rites."
+       },
+       "source": "UNESCO, Centre du patrimoine mondial, « Göbekli Tepe »"
+      }
+     ]
+    }
+   ],
+   "chute": {
+    "id": "sanctuaire-rassemblement",
+    "titre": {
+     "fr": "Le rassemblement"
+    },
+    "scene": "sanctuaire",
+    "texte": {
+     "fr": "Pour Klaus Schmidt, qui a fouillé Göbekli Tepe, des nomades s'y retrouvaient pour bâtir, attirés par des festins, et c'est ce travail en commun qui les aurait poussés à domestiquer plantes et animaux : « D'abord le temple, ensuite la ville. » Depuis, les fouilles ont livré des foyers, des habitations et plus de 8 000 outils de mouture. Le lieu était sans doute habité, et la question reste débattue."
+    },
+    "source": "Andrew Curry, « Last Stand of the Hunter-Gatherers? », Archaeology Magazine, mai-juin 2021",
+    "appel": {
+     "fr": "Voir le sanctuaire"
+    },
+    "bouton": {
+     "fr": "Appeler les autres bandes"
+    },
+    "alyca": {
+     "fr": "Huit tonnes de calcaire, traînées et dressées pour y graver un renard. Personne ne vous y obligeait : c'est bien ce qui m'intrigue. Maintenant ils viennent tous, et ils ont faim. La cueillette ne suffira pas."
+    },
+    "alyca_deja": {
+     "fr": "Encore un pilier. À ce rythme, il faudra bientôt nourrir les pierres aussi."
+    },
+    "fin": {
+     "fr": "Fonder le village"
+    },
+    "ouvert": {
+     "fr": "Tout le monde est rassemblé : il faut maintenant nourrir et loger cette foule. Le village s'ouvre."
+    }
    }
   },
   {

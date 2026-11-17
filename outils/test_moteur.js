@@ -2484,6 +2484,13 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.equal(M.etatAmenagement(CA, P, "hutte", t0).age, null);
   ["sci.soigner", "res.cueillir", "meteo.ciel", "mnemo.sansecrire", "mus.instruments"].forEach(id => sait(P, id));
   M.ile(CA, P, t0);
+  // Victor (2026-11-17) : le campement ne devient pas un village en cochant des savoirs. C'est le sanctuaire, chantier
+  // commun, qui rassemble tout le monde ; il attend les savoirs et assez d'habitants.
+  G = M.agesIle(CA, P); assert.equal(G.age.id, "campement"); assert.equal(G.age.epreuve, "sanctuaire", "tous les besoins couverts : reste le sanctuaire");
+  assert.ok(M.epreuvesEnAttente(CA, P, t0).indexOf("sanctuaire") >= 0); assert.ok(M.queteIle(CA, P, "sanctuaire").objets.length === 3);
+  { const Pp = JSON.parse(JSON.stringify(P)); Pp.population.e = 0; Pp.population.v = 0; Pp.population.a = 4;
+    assert.equal(M.agesIle(CA, Pp).age.epreuve, null, "trop peu de monde pour dresser un pilier"); assert.ok(M.agesIle(CA, Pp).age.peuple.manque > 0); }
+  P.epreuves.sanctuaire = t0; M.ile(CA, P, t0);
   // Le village : les savoirs de ses besoins s'ouvrent, pas le rang 2, ni un rang 1 sans besoin.
   G = M.agesIle(CA, P);
   assert.equal(G.age.id, "village"); assert.equal(G.age.besoins.length, 6);
@@ -2565,19 +2572,19 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   }
   // Victor (2026-11-12) : trois freins à la population, le plus bas l'emporte (savoirs, toits, plafond de l'âge).
   {
-    const Ql = M.nouvellePartie(t0); Ql.mode = "ile"; sait(Ql, "ile.feu"); Ql.epreuves = { feu: t0, abri: t0 }; Ql.credits.solde = 1000;
+    const Ql = M.nouvellePartie(t0); Ql.mode = "ile"; sait(Ql, "ile.feu"); Ql.epreuves = { feu: t0, abri: t0, sanctuaire: t0 }; Ql.credits.solde = 1000;
     let Il = M.ile(CA, Ql, t0); assert.ok(Il.limites && Il.limites.toits === 15 && Il.limites.plafond === 40, "campement : 15 dormeurs sans toit, 40 au plus");
     assert.equal(Il.places, Math.min(Il.limites.savoirs, 15)); 
     Ql.ressources.stocks.bois = 100; for (let i = 0; i < 4; i++) assert.ok(M.construireIle(CA, Ql, "foyer", t0).ok);
     Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.toits, 55); assert.ok(Il.places <= 40, "le campement plafonne à 40");
-    CA.competences.filter(k => k.rang === 1).forEach(k => sait(Ql, k.id));
+    CA.competences.filter(k => k.rang === 1).forEach(k => sait(Ql, k.id)); Ql.epreuves.sanctuaire = t0;
     Il = M.ile(CA, Ql, t0); assert.ok(Il.limites.plafond < 400, "sans assez d'habitants, les savoirs seuls ne font pas une cité");
     Ql.population.a = 35; M.ile(CA, Ql, t0);
     Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.plafond, 400, "la cité plafonne à 400"); assert.equal(Il.limites.frein, "toits"); assert.equal(Il.places, 55, "sans maisons, les savoirs n'attirent personne de plus");
   }
   // Victor (2026-11-16) : l'ordre des besoins suit ce qui freine l'île, et les arrivants qu'on ne peut pas loger se voient.
   {
-    const Pu = M.nouvellePartie(t0); Pu.mode = "ile"; sait(Pu, "ile.feu"); Pu.epreuves = { feu: t0, abri: t0 }; Pu.credits.solde = 1000;
+    const Pu = M.nouvellePartie(t0); Pu.mode = "ile"; sait(Pu, "ile.feu"); Pu.epreuves = { feu: t0, abri: t0, sanctuaire: t0 }; Pu.credits.solde = 1000;
     ["sci.soigner", "res.cueillir", "meteo.ciel", "mnemo.sansecrire", "mus.instruments", "astro.nebra"].forEach(id => sait(Pu, id));
     let Iu = M.ile(CA, Pu, t0); assert.equal(Iu.ages.age.id, "village");
     Pu.population.e = 0; Pu.population.v = 0; Pu.population.a = 6;
@@ -2599,7 +2606,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   delete CA.ile.regles.limites;
   // Un monde fini : la pêche puise dans les bancs, qui repoussent ; trop de pêcheries les vident, l'effort les ménage.
   const peche = () => { const Q = M.nouvellePartie(t0); Q.mode = "ile"; Q.credits.solde = 5000;
-    CA.competences.filter(k => k.rang === 1).forEach(k => sait(Q, k.id)); M.ile(CA, Q, t0);
+    CA.competences.filter(k => k.rang === 1).forEach(k => sait(Q, k.id)); Q.epreuves.sanctuaire = t0; M.ile(CA, Q, t0);
     Q.population.a = 300; Q.ressources.stocks.bois = 1000; Q.ressources.stocks.nourriture = 5000; Q.quartiers = {}; CA.ile.quartiers.forEach(q => { Q.quartiers[q.id] = t0; }); return Q; };
   CA.ile.regles.aleas.chance = 0;
   // Victor (2026-11-13) : le camp de bûcherons attend l'épreuve « Former une hache », elle-même précédée d'une quête.

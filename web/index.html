@@ -1638,6 +1638,8 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-rec.perte .ile-socle { background: #B9BFB4; }
 .ile-rec .eyebrow { margin-top: 4px; }
 .ile-rec .desc { font-size: 17px; line-height: 1.5; }
+.ep-sanct .ep-foule g { opacity: 0; transition: opacity .5s ease; transition-delay: calc(var(--i) * 120ms); }
+.ep-sanct.pris .ep-foule g { opacity: 1; }
 .ile-rec .ile-refoules { font-size: 17px; line-height: 1.5; font-weight: 700; color: #D92B2B; margin: 8px 0; }
 .ile-delta { font-family: var(--f-mono); font-size: 22px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 0; }
 .ile-materiau { display: flex; align-items: center; gap: 8px; font-size: 15px; margin: 6px 0 0; color: var(--muted); }
@@ -2416,6 +2418,7 @@ function demarrerJeu() {
     os: '<path d="M-9 4 C-11 1 -9 -3 -5 -3 L5 -6 C8 -8 11 -5 9 -2 C11 1 9 4 6 3 L-4 6 C-6 9 -10 7 -9 4 Z" fill="#EFE6D2" stroke="#B9AC8E" stroke-width="1"/><path d="M-4 0 L5 -3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>',
     saule: '<path d="M-9 9 C-6 0 -2 -5 2 -10 M-4 9 C-2 2 3 -3 8 -8 M1 9 C2 4 6 0 10 -3" stroke="#8A9A3C" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M-5 -1 l-4 -2 M-1 -6 l-4 -1 M3 -2 l4 -3 M6 -6 l1 -4 M5 2 l5 0" stroke="#5E8A3C" stroke-width="1.6" stroke-linecap="round"/>',
     lests: '<ellipse cx="-4" cy="3" rx="6" ry="4" fill="#7E8791"/><ellipse cx="-5" cy="2" rx="3.4" ry="1.6" fill="#A9B1B9"/><ellipse cx="5" cy="4" rx="5" ry="3.4" fill="#676F78"/><ellipse cx="2" cy="-4" rx="5.4" ry="3.8" fill="#8E969E"/><ellipse cx="1" cy="-5" rx="3" ry="1.4" fill="#BCC3C9"/>',
+    calcaire: '<path d="M-11 7 L-9 -3 L-2 -8 L8 -7 L11 1 L9 7 Z" fill="#CFC4AC"/><path d="M-9 -3 L-2 -8 L8 -7 L4 -2 L-5 -1 Z" fill="#E4DCC8"/><path d="M-6 3 H7 M-3 5 H4" stroke="#A8997C" stroke-width="1"/>',
     silex: '<path d="M-8 4 L-5 -6 L4 -8 L9 -1 L5 7 L-3 8 Z" fill="#6B6257"/><path d="M-5 -6 L4 -8 L2 -1 L-4 1 Z" fill="#9A9085"/><path d="M-8 4 L-3 8 L-5 5 Z" fill="#D9D2C5"/>',
     pyrite: '<path d="M-8 5 L-9 -3 L-2 -8 L7 -6 L9 3 L3 8 Z" fill="#B8962E"/><path d="M-9 -3 L-2 -8 L7 -6 L1 -1 Z" fill="#F0D560"/><path d="M-4 1 h4 v3 h-4 z" fill="#FFF0A0"/>',
     amadou: '<path d="M-3 -10 h6 v20 h-6 z" fill="#6A4A2E"/><path d="M3 -4 a8 7 0 0 1 9 6 l-9 0 z" fill="#A9764A"/><path d="M3 2 l9 0 l-1 2 l-8 0 z" fill="#E6D2B0"/><path d="M-3 2 a6 5 0 0 0 -7 5 l7 0 z" fill="#8F6238"/>',
@@ -2998,6 +3001,7 @@ function demarrerJeu() {
   // Les nœuds qu'on dessine : le brin fixe (une boucle venue de la gauche) et les points par où passe l'autre brin.
   var NOEUDS = {
     ecoute: { fixe: "M14 60 H120 C150 60 150 112 120 112 H14", points: [[224, 86], [160, 86], [108, 86], [84, 40], [48, 86], [84, 134], [128, 104], [176, 52]] },
+    renard: { fixe: "M70 14 H170 V40 H146 V160 H94 V40 H70 Z", points: [[104, 60], [124, 50], [138, 66], [126, 84], [136, 104], [116, 120], [132, 140], [106, 150]] },
     coin: { fixe: "M60 30 H180 L196 140 H44 Z", points: [[84, 46], [156, 46], [150, 80], [124, 130], [116, 130], [90, 80], [100, 62]] },
     coin2: { fixe: "M60 30 H180 L196 140 H44 Z", points: [[92, 44], [150, 44], [142, 84], [122, 132], [112, 132], [98, 84], [106, 60]] },
     muret: { fixe: "M104 96 a16 10 0 1 0 32 0 a16 10 0 1 0 -32 0 M112 96 L120 80 L128 96", points: [[52, 120], [44, 88], [58, 58], [88, 40], [124, 36], [158, 44]] },
@@ -3020,6 +3024,13 @@ function demarrerJeu() {
       '<path d="M118 14 V156" stroke="#2E2A25" stroke-width="' + (1.5 + p * 2).toFixed(1) + '"/>' + coin(bas) + coin(bas + 54) + "</svg>";
   }
   // Le pilier qu'on couche : la perche (.ep-lame) va et vient, le pilier debout (.ep-ble) laisse place au pilier couché (.ep-poli).
+  // Dresser un pilier (Victor, 2026-11-17, le sanctuaire) : couché (.ep-ble) il s'efface, debout (.ep-poli) il apparaît.
+  function svgDresser() {
+    return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="156" rx="104" ry="8" fill="rgba(0,0,0,.14)"/><path d="M8 156 H232 L226 164 H14 Z" fill="#B7A98C"/>' +
+      '<g class="ep-ble"><path d="M40 150 V132 H52 V138 H190 V150 Z" fill="#CFC4AC"/><path d="M40 132 H52 V138 H190 V142 H40 Z" fill="#E4DCC8"/></g>' +
+      '<g class="ep-poli"><path d="M98 34 H150 V52 H134 V154 H114 V52 H98 Z" fill="#CFC4AC"/><path d="M98 34 H150 V40 H98 Z M114 52 H120 V154 H114 Z" fill="#E4DCC8"/><path d="M121 96 l5 -6 l5 3 l6 -1 l-2 5 l-7 2 l-3 6 Z" fill="#A8997C"/></g>' +
+      '<g class="ep-lame"><path d="M60 154 L176 92" stroke="#7A5230" stroke-width="6" stroke-linecap="round"/><path d="M60 154 L176 92" stroke="#A37446" stroke-width="2" stroke-linecap="round"/><ellipse cx="92" cy="150" rx="9" ry="6" fill="#6E7780"/></g></svg>';
+  }
   function svgLevier() {
     return '<svg class="ep-pierres" viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="156" rx="104" ry="8" fill="rgba(0,0,0,.14)"/><path d="M10 156 L16 30 L70 26 L74 156 Z" fill="#8D8377"/><path d="M74 150 H232 L226 160 H74 Z" fill="#A79D90"/>' +
       '<g class="ep-ble"><path d="M84 150 L92 22 L138 26 L142 150 Z" fill="#9A9085"/><path d="M92 22 L138 26 L137 40 L91 37 Z" fill="#B9B0A3"/></g>' +
@@ -3125,7 +3136,7 @@ function demarrerJeu() {
       // Frotter : glisser d'avant en arrière ; c'est la distance parcourue qui polit (un toucher compte un peu aussi).
       frotter: function (e, i) {
         var total = e.course || 4000, fait = 0, fini = false, bas = false, px = 0, py = 0;
-        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : e.dessin === "broyer" ? svgBroyer() : e.dessin === "moisson" ? svgMoisson() : e.dessin === "levier" ? svgLevier() : e.dessin === "peaux" ? svgPeaux() : e.dessin === "moudre" ? svgBroyer().replace(/#F1E3CF/g, "#E3B92E").replace(/#C9B08E/g, "#B8962E").replace(/#D9C7A8/g, "#E8DCC0") : e.dessin === "ecorce" ? svgBroyer().replace(/#F1E3CF/g, "#9A8F7A").replace(/#C9B08E/g, "#6E6553").replace(/#F6EEDF/g, "#B7C08A").replace(/#D9C7A8/g, "#8E9A5E") : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
+        var zone = plus('<div class="ep-zone ep-frotte">' + (e.dessin === "archet" ? svgArchet() : e.dessin === "broyer" ? svgBroyer() : e.dessin === "moisson" ? svgMoisson() : e.dessin === "levier" ? svgLevier() : e.dessin === "dresser" ? svgDresser() : e.dessin === "peaux" ? svgPeaux() : e.dessin === "moudre" ? svgBroyer().replace(/#F1E3CF/g, "#E3B92E").replace(/#C9B08E/g, "#B8962E").replace(/#D9C7A8/g, "#E8DCC0") : e.dessin === "ecorce" ? svgBroyer().replace(/#F1E3CF/g, "#9A8F7A").replace(/#C9B08E/g, "#6E6553").replace(/#F6EEDF/g, "#B7C08A").replace(/#D9C7A8/g, "#8E9A5E") : svgPolissage()) + '<span class="ep-appel">' + (e.appel ? esc(tx(e.appel)) : __("Glisse le doigt d'avant en arrière sur la pierre")) + "</span></div>");
         var barre = plus('<div class="ep-compte"><span class="ep-barre"><i></i></span><b></b></div>'); plus('<p class="ep-msg" aria-live="polite"></p>');
         var rempl = barre.querySelector("i"), lib = barre.querySelector("b"), lame = zone.querySelector(".ep-lame"), poli = zone.querySelector(".ep-poli");
         function peindre() { var p = Math.min(1, fait / total); rempl.style.width = (p * 100).toFixed(0) + "%"; lib.textContent = e.compte ? tx(e.compte).replace("{n}", Math.round(p * 100)) : __("Poli : {n} %", { n: Math.round(p * 100) }); poli.style.opacity = p.toFixed(2); var ble = zone.querySelector(".ep-ble"); if (ble) ble.style.opacity = (1 - p).toFixed(2); }
@@ -3289,7 +3300,11 @@ function demarrerJeu() {
       vider(); marquer(N);
       var c = E.chute;
       plus('<div class="ep-titre"><span>★</span><h3>' + esc(tx(c.titre)) + "</h3></div>");
-      var sc = c.scene === "roue" ? plus('<div class="ep-foyer ep-moulin"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 132 H240 V170 H0 Z" fill="#5E9DB8"/><path d="M0 132 H240 V140 H0 Z" fill="#8CC3D8"/><path d="M150 40 H226 V132 H150 Z" fill="#B58B52"/><path d="M144 44 L188 14 L232 44 Z" fill="#7A5230"/>' +
+      var sc = c.scene === "sanctuaire" ? plus('<div class="ep-foyer ep-sanct"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 118 H240 V170 H0 Z" fill="#B7A98C"/><ellipse cx="120" cy="132" rx="96" ry="26" fill="#A8997C"/><ellipse cx="120" cy="132" rx="78" ry="19" fill="#C4B79C"/>' +
+        [[38, 124, .6], [70, 112, .7], [170, 112, .7], [202, 124, .6], [60, 144, .8], [180, 144, .8]].map(function (q) { return '<g transform="translate(' + q[0] + "," + q[1] + ") scale(" + q[2] + ')"><path d="M-12 -40 H12 V-30 H5 V8 H-5 V-30 H-12 Z" fill="#CFC4AC"/><path d="M-12 -40 H12 V-36 H-12 Z" fill="#E4DCC8"/></g>'; }).join("") +
+        '<g transform="translate(100,132)"><path d="M-14 -66 H14 V-52 H6 V8 H-6 V-52 H-14 Z" fill="#D8CEB8"/><path d="M-14 -66 H14 V-61 H-14 Z" fill="#EDE6D4"/></g><g transform="translate(140,132)"><path d="M-14 -66 H14 V-52 H6 V8 H-6 V-52 H-14 Z" fill="#D8CEB8"/><path d="M-14 -66 H14 V-61 H-14 Z" fill="#EDE6D4"/><path d="M-3 -34 l4 -5 l4 2 l5 -1 l-2 4 l-6 2 l-2 5 Z" fill="#A8997C"/></g>' +
+        '<g class="ep-foule">' + [[24, 152], [44, 158], [86, 160], [120, 156], [156, 160], [198, 157], [218, 151], [70, 153], [174, 152]].map(function (q, n) { return '<g transform="translate(' + q[0] + "," + q[1] + ')" style="--i:' + n + '"><circle cy="-9" r="3" fill="#E0B48A"/><path d="M-3 -6 H3 L4 4 H-4 Z" fill="' + ["#8A5A33", "#6E7A2E", "#9A6B3F"][n % 3] + '"/></g>'; }).join("") + "</g></svg></div>") :
+        c.scene === "roue" ? plus('<div class="ep-foyer ep-moulin"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 132 H240 V170 H0 Z" fill="#5E9DB8"/><path d="M0 132 H240 V140 H0 Z" fill="#8CC3D8"/><path d="M150 40 H226 V132 H150 Z" fill="#B58B52"/><path d="M144 44 L188 14 L232 44 Z" fill="#7A5230"/>' +
         '<g class="ep-roue"><circle cx="110" cy="96" r="44" fill="none" stroke="#7A5230" stroke-width="7"/>' + [0, 45, 90, 135].map(function (a) { return '<path d="M66 96 H154" stroke="#7A5230" stroke-width="5" transform="rotate(' + a + ' 110 96)"/>'; }).join("") + [0, 45, 90, 135, 180, 225, 270, 315].map(function (a) { return '<path d="M150 88 h12 v16 h-12 z" fill="#A37446" transform="rotate(' + a + ' 110 96)"/>'; }).join("") + '<circle cx="110" cy="96" r="7" fill="#4A2F16"/></g></svg></div>') :
         c.scene === "carriere" ? plus('<div class="ep-foyer ep-bloc"><svg viewBox="0 0 240 170" aria-hidden="true"><path d="M0 120 H240 V170 H0 Z" fill="#A79D90"/><path d="M0 120 H240" stroke="#7D7468" stroke-width="3"/><path d="M6 120 L12 20 L60 16 L66 120 Z" fill="#8D8377"/>' +
         '<g class="ep-traine"><path d="M70 116 L76 80 L196 76 L198 116 Z" fill="#9A9085"/><path d="M76 80 L196 76 L196 88 L75 92 Z" fill="#B9B0A3"/><path d="M198 96 C214 92 224 96 236 90" stroke="#C9B37A" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="92" cy="122" r="6" fill="#7A5230"/><circle cx="136" cy="122" r="6" fill="#7A5230"/><circle cx="180" cy="122" r="6" fill="#7A5230"/></g></svg></div>') :
@@ -3320,6 +3335,7 @@ function demarrerJeu() {
             if (rb && rb.ok) { sauver(); rendre(); animerChantier(am, rb.quartier); } else { chantierOuvert = am.quartier; ouvrirChantierIle(am.id); }
             if (c.ouvert) toast(tx(c.ouvert)); return; }
           // Victor (2026-11-13) : « Allumer le campement » montre le foyer du campement qui prend, puis la fête du nouvel âge.
+          if (id !== "feu") { quitter(); if (c.ouvert) toast(tx(c.ouvert)); return; }
           var Ic = campIle(M.ile(C, P, maintenant())), qc = Ic.quartiers.filter(function (x) { return x.camp; })[0];
           if (!qc) { quitter(); return; }
           vider(); z.querySelector(".ep-fil").hidden = true;
@@ -5281,7 +5297,7 @@ function demarrerJeu() {
       lignes.map(function (l) { return '<p class="meta">' + esc(l) + "</p>"; }).join("") +
       (k.fiche && st.etat !== "fermee" && st.etat !== "verrouillee" ? __('<details class="fiche-d"><summary>Fiche de révision</summary>') + htmlFiche(k) + "</details>" : "") +
       (aMasterclass(k) ? '<button type="button" class="btn large sc-mc" data-a="masterclass">' + __("Masterclass : ") + esc(tx(k.nom)) + "</button>" : "") + bouton +
-      (id === "ile.feu" && M.epreuveIle(C, "feu") && st.etat !== "disponible" && st.etat !== "fermee" && st.etat !== "verrouillee" ? '<button type="button" class="btn sec large" data-a="epreuve">' + (M.agesIle(C, P) && M.agesIle(C, P).age.epreuve ? "" : __("Rejouer : ")) + esc(tx(M.epreuveIle(C, "feu").nom)) + "</button>" : "") +
+      (id === "ile.feu" && M.epreuveIle(C, "feu") && st.etat !== "disponible" && st.etat !== "fermee" && st.etat !== "verrouillee" ? '<button type="button" class="btn sec large" data-a="epreuve">' + (M.agesIle(C, P) && M.agesIle(C, P).age.epreuve === "feu" ? "" : __("Rejouer : ")) + esc(tx(M.epreuveIle(C, "feu").nom)) + "</button>" : "") +
       __('<button type="button" class="btn sec large" data-a="fermer">Fermer</button></div></div>'));
     f.onclick = function (ev) {
       var a = ev.target.getAttribute && ev.target.getAttribute("data-a");
@@ -5889,7 +5905,7 @@ function demarrerJeu() {
     if (!feu) return I;
     var c = {}, J = {}, k; for (k in feu) c[k] = feu[k]; for (k in I) J[k] = I[k];
     var fondes = I.quartiers.filter(function (q) { return q.fonde; });
-    c.camp = true; c.nom = I.ages.age.epreuve ? I.ages.age.nom : { fr: __("Le campement") }; c.nomFinal = c.nom; c.decor = null; c.role = null; c.options = []; c.monuments = []; c.gloires = [];
+    c.camp = true; c.nom = I.ages.age.epreuve === "feu" ? I.ages.age.nom : { fr: __("Le campement") }; c.nomFinal = c.nom; c.decor = null; c.role = null; c.options = []; c.monuments = []; c.gloires = [];
     c.installations = [].concat.apply([], fondes.map(function (q) { return q.installations.filter(function (x) { return x.etat !== "friche"; }); }));
     ["posees", "marche"].forEach(function (n) { c[n] = fondes.reduce(function (t, q) { return t + (q[n] || 0); }, 0); });
     c.habitants = I.habitants; c.fondus = fondes.map(function (q) { return q.id; });
@@ -5941,7 +5957,7 @@ function demarrerJeu() {
       var l = Math.floor(i / PARL), n = Math.min(PARL, poses.length - l * PARL), x = Math.round(W * ((i % PARL) + 0.5) / n), y = 286 + l * 84;
       plan.push([y, '<g shape-rendering="crispEdges">' + (inst.comp === "astro.nebra" ? dolmen(inst, x, y) : svgInstallation(inst, x, y, 50) || secours(inst, x, y)) + "</g>"]);
       etiq += '<text x="' + x + '" y="' + (y + 15) + '" text-anchor="middle" font-size="11" font-weight="800" fill="#3A2E22" style="paint-order:stroke" stroke="rgba(255,253,244,.94)" stroke-width="3" stroke-linejoin="round" pointer-events="none">' + esc(tx(inst.nom)) + "</text>"; });
-    plan.push([150, '<g data-comp="ile.feu" class="ile-flamme' + ((M.agesIle(C, P) || { age: {} }).age.epreuve ? " froid" : "") + '" shape-rendering="crispEdges">' + svgAmenagement({ id: "feu", dessin: "foyer" }, 180, 158, 70) + "</g>"]);
+    plan.push([150, '<g data-comp="ile.feu" class="ile-flamme' + ((M.agesIle(C, P) || { age: {} }).age.epreuve === "feu" ? " froid" : "") + '" shape-rendering="crispEdges">' + svgAmenagement({ id: "feu", dessin: "foyer" }, 180, 158, 70) + "</g>"]);
     plan.sort(function (u, v) { return u[0] - v[0]; });
     return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(__("Un feu, et quelques habitants vêtus de peaux qui dansent autour")) + '">' + s + plan.map(function (x) { return x[1]; }).join("") + etiq + "</svg>";
   }
@@ -6161,7 +6177,7 @@ function demarrerJeu() {
     v.appendChild(el('<div class="entete"><div><div class="eyebrow">' + __("Ce que tu sais encore") + "</div><h1>" + __("L'île") + "</h1></div>" + compteur + "</div>"));
     var vierge = !I.quartiers.some(function (x) { return x.fonde; });
     v.appendChild(el('<p class="note">' + (vierge ? (M.modeIle(P) ? (I.ages ? __("L'île est vierge, et tout y commence par le feu. Touche « Maîtriser le feu » ci-dessous pour lire sa leçon, puis passe le quiz : c'est lui qui pose le campement.") : __("L'île est vierge. Touche Jouer : Alyca te donne un premier savoir à apprendre, et sa réussite pose la première installation.")) : __("L'île est vierge. Réussis l'épreuve de ta case sur le parcours : elle y posera la première installation et fondera ton premier quartier.")) :
-      (M.modeIle(P) && I.ages && I.ages.age.epreuve ? (queteActive() ? __("Tu sais comment naît le feu. Trouve sur la carte de quoi le faire : un silex, de la pyrite, de l'amadou et des branchages.") : __("Tu sais comment naît le feu. Il reste à l'allumer : l'épreuve t'attend plus bas.")) : M.modeIle(P) && I.ages && I.ages.courant < 2 ? __("Le campement a des besoins. Touche un savoir pour lire sa leçon et passer son quiz : tous les besoins couverts, le campement deviendra un village.") : M.modeIle(P) ? __("Touche un quartier, puis un terrain « ? » : réussis son quiz et l'installation se bâtit. Un rappel en retard la met en panne. Le bouton Jouer laisse Alyca choisir pour toi.") : __("Chaque épreuve réussie sur le parcours construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter."))) + "</p>"));
+      (M.modeIle(P) && I.ages && I.ages.age.epreuve && I.ages.age.epreuve !== "feu" ? __("Les bandes de l'île se racontent la même histoire et veulent un lieu pour elle. Dresse le sanctuaire : il rassemblera tout le monde, et il faudra bien nourrir cette foule.") : M.modeIle(P) && I.ages && I.ages.age.epreuve ? (queteActive() ? __("Tu sais comment naît le feu. Trouve sur la carte de quoi le faire : un silex, de la pyrite, de l'amadou et des branchages.") : __("Tu sais comment naît le feu. Il reste à l'allumer : l'épreuve t'attend plus bas.")) : M.modeIle(P) && I.ages && I.ages.courant < 2 ? __("Le campement a des besoins. Touche un savoir pour lire sa leçon et passer son quiz : tous les besoins couverts, le campement deviendra un village.") : M.modeIle(P) ? __("Touche un quartier, puis un terrain « ? » : réussis son quiz et l'installation se bâtit. Un rappel en retard la met en panne. Le bouton Jouer laisse Alyca choisir pour toi.") : __("Chaque épreuve réussie sur le parcours construit quelque chose ici, et des habitants s'installent. Un rappel en retard met l'installation en panne. Touche un quartier pour le visiter."))) + "</p>"));
     // Victor (2026-11-13) : plus de présentation de l'île par l'IA pour l'instant ; l'île s'ouvre directement.
     if (!P.ileIntro) { P.ileIntro = maintenant(); sauver(); }
     // Victor (2026-11-12) : dans l'onglet, l'île d'abord ; l'âge, l'objectif et les alertes viennent dessous.
@@ -6200,7 +6216,7 @@ function demarrerJeu() {
       ancreV.after(bv); ancreV = bv; });
     // Victor (2026-11-12) : « comment acheter des aménagements ? » Le chantier s'ouvre dès la carte, avec les stocks.
     // Victor (2026-11-12) : l'île n'affiche un bloc que lorsqu'il sert, et l'IA le présente la première fois.
-    var epure = !!I.ages, feu = !epure || I.ages.courant >= 1 || (M.estMaitrisee(P, "ile.feu") && !I.ages.age.epreuve);
+    var epure = !!I.ages, feu = !epure || I.ages.courant >= 1 || (M.estMaitrisee(P, "ile.feu") && I.ages.age.epreuve !== "feu");
     var poses = I.quartiers.reduce(function (n, q) { return n + q.installations.filter(function (x) { return x.etat !== "friche"; }).length; }, 0);
     function poser(cle, bloc, texte) {
       if (!bloc) return;
@@ -6789,6 +6805,8 @@ function demarrerJeu() {
     var surex = (R.nature || []).filter(function (n) { return !n.soutenable; })[0];
     var a, k;
     if (G.courant === 0 && !M.estMaitrisee(P, "ile.feu")) a = { texte: __("Sans feu, personne ne reste. Apprenez à le maîtriser : tout le reste en découle."), bouton: __("Jouer"), action: jouer };
+    else if (age.epreuve && age.epreuve !== "feu") { var EA = M.epreuveIle(C, age.epreuve) || {}, QA = M.queteIle(C, P, age.epreuve), aChercher = QA && !QA.complete;
+      a = { texte: aChercher ? __("Vos bandes se croisent, se racontent la même histoire, et repartent. Donnez-lui un lieu : un sanctuaire de pierre les fera toutes revenir. Il faut d'abord de quoi le bâtir, cherchez sur l'île.") : __("Vous avez la pierre, les pics et les perches. Dressez ce sanctuaire : le jour où ils seront tous là, il faudra les nourrir, et plus rien ne sera comme avant."), bouton: aChercher ? __("Chercher sur l'île") : tx(EA.nom || { fr: "Jouer" }), action: aChercher ? allerQuete : function () { ouvrirEpreuveIle(age.epreuve); } }; }
     else if (age.epreuve && queteActive()) a = { texte: __("Vous savez comment naît une étincelle, mais vous n'avez rien pour la faire. Un silex, de la pyrite, de l'amadou, des branchages : tout est sur l'île, il suffit d'ouvrir les yeux."), bouton: __("Chercher sur l'île"), action: allerQuete };
     else if (age.epreuve) a = { texte: __("Vous savez comment naît une étincelle. Reste à la faire jaillir : un silex, une pyrite, et vos deux mains."), bouton: tx((M.epreuveIle(C, age.epreuve) || {}).nom || { fr: "Jouer" }), action: function () { ouvrirEpreuveIle(age.epreuve); } };
     else if (deficit && !village) a = { texte: __("La cueillette nourrit {n} personnes, pas une de plus. Pour en nourrir davantage il faut cultiver, et on ne cultive pas dans un campement : couvrez ses besoins pour en faire un village.", { n: bouches }), bouton: __("Jouer"), action: jouer };
@@ -6912,7 +6930,7 @@ function demarrerJeu() {
     if (resteB.length) h += '<button type="button" class="btn sec ile-plus" data-a="plus">' + (resteB.length > 1 ? __("Voir les {n} autres besoins", { n: resteB.length }) : __("Voir l'autre besoin")) + '</button><div class="ile-reste" hidden>' + resteB.map(ligneBesoin).join("") + "</div>";
     // La suite, en conclusion de la liste : ce qui ouvre l'âge suivant, ou le choix de passer sans les besoins optionnels.
     var epr = a.epreuve && M.epreuveIle(C, a.epreuve);
-    var qAge = a.epreuve ? queteActive() : null;
+    var qAge0 = a.epreuve ? M.queteIle(C, P, a.epreuve) : null, qAge = qAge0 && !qAge0.complete ? qAge0 : null;
     // Les épreuves qui gardent un aménagement (la hache des bûcherons) : leur quête, puis l'épreuve.
     // Victor (2026-11-15) : « regroupe les quêtes dans un onglet fermé ». Un seul bloc replié, qui dit combien sont ouvertes.
     var hq = "", nOuv = 0;
