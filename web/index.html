@@ -3356,7 +3356,8 @@ function demarrerJeu() {
           var scene = plus('<div class="ile-scene-bilan"><div class="ile-scene-titre"><b>' + esc(tx(qc.nom)) + "</b><span>" + esc(texteHabitants(Ic.habitants)) + __(" sur l'île") + '</span></div><div class="ile-cadre">' + svgQuartier(qc) + "</div></div>");
           var fl = scene.querySelector('[data-comp="ile.feu"]'); if (fl) fl.classList.add("froid");
           var mot = plus('<p class="ep-msg ok" aria-live="polite"></p>'), suite = plus('<button type="button" class="btn large" hidden>' + __("Continuer") + "</button>");
-          suite.onclick = quitter;
+          // Victor (2026-11-18) : le feu allumé, on revient à la page d'accueil.
+          suite.onclick = function () { vue = "aujourdhui"; quartierVu = null; quitter(); window.scrollTo(0, 0); };
           var t1 = setTimeout(function () { if (fl) { fl.classList.remove("froid"); fl.classList.add("ep-allume"); } mot.textContent = __("Le feu prend. Les survivants se rassemblent."); }, 900);
           var t2 = setTimeout(function () { if (fl) fl.classList.add("ile-neuve"); suite.hidden = false; }, 2600);
           arrets.push(function () { clearTimeout(t1); clearTimeout(t2); });
@@ -6220,7 +6221,7 @@ function demarrerJeu() {
     ancreCarte.after(carte);
     // Victor (2026-11-13) : la carte s'explore en plein écran ; de près, on y trouve ce que la vue d'ensemble ne montre pas.
     // Victor (2026-11-14) : au tout début, pas de campement d'où envoyer un explorateur, et la carte n'est que brouillard : pas de bouton.
-    if (M.modeIle(P) && I.quartiers.some(function (q) { return (q.fonde || q.camp) && q.position; })) { var bex = el('<button type="button" class="btn sec large ile-explorer">🔍 ' + (queteActive() ? __("Explorer l'île : {n} à trouver", { n: queteActive().reste }) : __("Explorer l'île de près")) + "</button>"); bex.onclick = ouvrirExplorer; carte.after(bex);
+    if (M.modeIle(P) && I.quartiers.some(function (q) { return (q.fonde || q.camp) && q.position; })) { var bex = el('<button type="button" class="btn sec large ile-explorer">🔍 ' + (queteActive() ? __("Quête « {q} » : {n} à trouver sur l'île", { q: tx(queteActive().nom), n: queteActive().reste }) : __("Explorer l'île de près")) + "</button>"); bex.onclick = ouvrirExplorer; carte.after(bex);
       // Victor (2026-11-15) : la grotte demande une torche, donc un explorateur : plus de raccourci sous la carte.
       var Sam = C.ile.arbre_mythes ? M.arbreMythes(C, P) : null;
       if (Sam && (Sam.entendus || M.grottesIle(C, P).some(function (g) { return g.trouvee; }))) { var bam = el('<button type="button" class="btn sec large ile-arbre-mythes">🌳 ' + esc(tx(C.ile.arbre_mythes.nom)) + " (" + Sam.entendus + " / " + Sam.total + ")</button>"); bam.onclick = ouvrirArbreMythes; bex.after(bam); }
