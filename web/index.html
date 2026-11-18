@@ -2462,14 +2462,14 @@ function demarrerJeu() {
     var dx = (x - ILE_CX) / ILE_RX, dy = (y - ILE_CY) / ILE_RY, r = Math.sqrt(dx * dx + dy * dy);
     if (r > 0.8 * coteIle(Math.atan2(dy, dx))) return false;
     if (Math.pow((x - LAC[0]) / (LAC[2] + 4), 2) + Math.pow((y - LAC[1]) / (LAC[3] + 4), 2) < 1) return false;
-    if (Math.pow((x - 181) / 46, 2) + Math.pow((y - 296) / 60, 2) < 1) return false;
+    if (Math.pow((x - ILE_CX - 2) / 69, 2) + Math.pow((y - ILE_CY + 24) / 90, 2) < 1) return false;
     return true;
   }
   function detailsIle() {
     if (DETAILS_ILE) return DETAILS_ILE;
     var h = "";
-    for (var i = 0; i < 520; i++) {
-      var g = graine("detail" + i), x = 14 + g % 332, y = 30 + (g >>> 9) % 550, t = (g >>> 20) % 7, a = (g >>> 5) % 360;
+    for (var i = 0; i < 1700; i++) {
+      var g = graine("detail" + i), x = 28 + g % (ILE_W - 56), y = 60 + (g >>> 9) % (ILE_H - 120), t = (g >>> 20) % 7, a = (g >>> 5) % 360;
       if (!terreIle(x, y)) continue;
       h += '<g transform="translate(' + x + "," + y + ")" + (t < 2 ? " rotate(" + a + ")" : "") + '">' + (
         t === 0 ? '<path d="M-2 1 L-1.4 -1.4 L1 -1.8 L2.2 .4 L.6 1.8 Z" fill="#8E8A82"/><path d="M-1.4 -1.4 L1 -1.8 L.2 -.2 Z" fill="#B9B4AA"/>' :
@@ -2504,7 +2504,7 @@ function demarrerJeu() {
     // quartier fondé (bâtiments, habitants qui vont et viennent) se pose sur son hameau et apparaît de tout près.
     var scenes = '<defs><filter id="ex-flou" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="1.6"/></filter></defs>' + I.quartiers.map(function (q, i) {
       if (!(q.fonde || q.camp) || !q.position) return "";
-      var sq = svgQuartier(q), m = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(sq); if (!m) return "";
+      var sq = svgQuartier(q, true), m = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(sq); if (!m) return "";
       var w = 48, h = w * m[2] / m[1], x = q.position[0] * ILE_W - w / 2, y = q.position[1] * ILE_H - h / 2;
       return '<mask id="exm' + i + '"><rect x="' + (x + 2).toFixed(1) + '" y="' + (y + 2).toFixed(1) + '" width="' + (w - 4) + '" height="' + (h - 4).toFixed(1) + '" rx="5" fill="#fff" filter="url(#ex-flou)"/></mask>' +
         '<g class="ex-scene" data-scene="' + esc(q.id) + '" mask="url(#exm' + i + ')">' + sq.replace(/^<svg /, '<svg x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w + '" height="' + h.toFixed(1) + '" ') + "</g>"; }).join("").replace(/class="ile-scene"/g, 'class="ex-sc"');
@@ -2516,11 +2516,11 @@ function demarrerJeu() {
       if (!brume) return;
       var b = base(), w = Math.max(1, Math.round(b.r.width)), h = Math.max(1, Math.round(b.r.height)), e = b.r.width / (b.w / S.k), x0 = S.x - b.w / S.k / 2, y0 = S.y - b.h / S.k / 2;
       if (toile.width !== w || toile.height !== h) { toile.width = w; toile.height = h; }
-      var T = I.quartiers.filter(function (q) { return (q.fonde || q.camp) && q.position; }).map(function (q) { return [(q.position[0] * ILE_W - x0) * e, (q.position[1] * ILE_H + 4 - y0) * e, 84 * e]; });
+      var T = I.quartiers.filter(function (q) { return (q.fonde || q.camp) && q.position; }).map(function (q) { return [(q.position[0] * ILE_W - x0) * e, (q.position[1] * ILE_H + 4 - y0) * e, 96 * e]; });
       if (X) T.push([(X.x - x0) * e, (X.y - 4 - y0) * e, vueExp() * 1.9 * e]);
       peindreBrouillard(toile.getContext("2d"), w, h, T);
     }
-    var S = { x: ILE_W / 2, y: ILE_H / 2, k: 1 }, KMAX = 12, message = "";
+    var S = { x: ILE_W / 2, y: ILE_H / 2, k: 1 / ILE_K }, KMAX = 12, message = "";
     // Victor (2026-11-14, soir) : « pourquoi tu ne redessines pas que ce qui est visible ? ». Le navigateur ne peint pas
     // le hors-champ, mais il le garde vivant (styles, animations, masques). Chaque morceau de la carte (hameau, arbre,
     // rocher, scène de quartier, petit détail) connaît donc son cadre ; hors de la vue (avec une marge pour ce qui
@@ -2536,18 +2536,18 @@ function demarrerJeu() {
       var m = 30;
       for (var i = 0; i < champ.length; i++) { var c = champ[i], hors = c.x1 < x0 - m || c.x0 > x0 + w + m || c.y1 < y0 - m || c.y0 > y0 + h + m; if (hors !== c.hors) { c.hors = hors; c.g.classList.toggle("hc", hors); } }
     }
-    function base() { var r = vueE.getBoundingClientRect(), ar = r.width / Math.max(1, r.height), bw = Math.max(ILE_W, ILE_H * ar); return { w: bw, h: bw / ar, r: r }; }
+    function base() { var r = vueE.getBoundingClientRect(), ar = r.width / Math.max(1, r.height), bw = Math.max(ILE_W, ILE_H * ar) / ILE_K; return { w: bw, h: bw / ar, r: r }; }
     function borne(v, lo, hi) { return lo > hi ? (lo + hi) / 2 : Math.max(lo, Math.min(hi, v)); }
     function appliquer() {
       var b = base(), w = b.w / S.k, h = b.h / S.k;
       S.x = borne(S.x, w / 2, ILE_W - w / 2); S.y = borne(S.y, h / 2, ILE_H - h / 2);
       svg.setAttribute("viewBox", (S.x - w / 2).toFixed(2) + " " + (S.y - h / 2).toFixed(2) + " " + w.toFixed(2) + " " + h.toFixed(2));
       z.classList.toggle("pres", S.k >= 2); z.classList.toggle("tout-pres", S.k >= 3.2); z.classList.toggle("dedans", S.k >= 4.5); elaguer(S.x - w / 2, S.y - h / 2, w, h);
-      var ek = Math.min(1, 1.3 / S.k).toFixed(3); if (ek !== S.ek) { S.ek = ek; svg.style.setProperty("--ek", ek); }
+      var ek = Math.min(1, 1.3 / (S.k * ILE_K)).toFixed(3); if (ek !== S.ek) { S.ek = ek; svg.style.setProperty("--ek", ek); }
       peindreFog();
     }
     function zoomer(f, cx, cy) {
-      var b = base(), k2 = Math.max(1, Math.min(KMAX, S.k * f)); if (cx == null) { cx = b.r.left + b.r.width / 2; cy = b.r.top + b.r.height / 2; }
+      var b = base(), k2 = Math.max(1 / ILE_K, Math.min(KMAX, S.k * f)); if (cx == null) { cx = b.r.left + b.r.width / 2; cy = b.r.top + b.r.height / 2; }
       var ox = (cx - b.r.left - b.r.width / 2) / b.r.width, oy = (cy - b.r.top - b.r.height / 2) / b.r.height;
       var mx = S.x + ox * b.w / S.k, my = S.y + oy * b.h / S.k;
       S.k = k2; S.x = mx - ox * b.w / S.k; S.y = my - oy * b.h / S.k; appliquer();
@@ -2586,13 +2586,13 @@ function demarrerJeu() {
     // Victor (2026-11-13) : l'expédition. Un habitant part du village ; on touche la carte, il y va. Il ne voit qu'autour
     // de lui, le brouillard se referme derrière. Ce qu'il ramasse ne compte qu'une fois rapporté au village. Des
     // prédateurs rôdent dans le brouillard : s'ils le rattrapent, il est perdu (un habitant de moins), son sac aussi.
-    var X = null, raf = 0, acteurs = svg.querySelector(".ex-acteurs"), EXP = { vue: 34, vite: 21, rode: 8, chasse: 15, flair: 22, lache: 40, betes: 3, portee: 9, dos: 6, surprise: 1 / 3, repere: 1 / 6, bisons: 3, broute: 4, detale: 19, craint: 40, voit: 16, coup: 0.6 };
+    var X = null, raf = 0, acteurs = svg.querySelector(".ex-acteurs"), EXP = { vue: 34, vite: 30, rode: 10, chasse: 21, flair: 22, lache: 40, betes: 6, portee: 9, dos: 6, surprise: 1 / 3, repere: 1 / 6, bisons: 6, broute: 4, detale: 27, craint: 40, voit: 16, coup: 0.6 };
     var fondes = I.quartiers.filter(function (q) { return (q.fonde || q.camp) && q.position; });
     var foyer = fondes.slice().sort(function (a, b) { return (b.habitants || 0) - (a.habitants || 0); })[0] || null;
     var FX = foyer ? foyer.position[0] * ILE_W : 0, FY = foyer ? foyer.position[1] * ILE_H + 8 : 0;
     function abri(x, y, m) { return fondes.some(function (q) { return Math.hypot(x - q.position[0] * ILE_W, y - q.position[1] * ILE_H) < m; }); }
     function praticable(x, y) { return surTerre(x, y, 0.95) && !dansOvale(x, y, LAC); }
-    function pointLibre() { for (var n = 0; n < 300; n++) { var x = 30 + Math.random() * (ILE_W - 60), y = 40 + Math.random() * (ILE_H - 80); if (praticable(x, y) && !abri(x, y, 75)) return [x, y]; } return [ILE_CX, 70]; }
+    function pointLibre() { for (var n = 0; n < 300; n++) { var x = 30 + Math.random() * (ILE_W - 60), y = 40 + Math.random() * (ILE_H - 80); if (praticable(x, y) && !abri(x, y, 75)) return [x, y]; } return [ILE_CX, 140]; }
     function pas(o, tx, ty, d) {
       var dx = tx - o.x, dy = ty - o.y, L = Math.hypot(dx, dy); if (L < 0.6) return false;
       var k = Math.min(1, d / L), nx = o.x + dx * k, ny = o.y + dy * k; o.sens = dx < 0 ? -1 : 1;
@@ -2607,7 +2607,7 @@ function demarrerJeu() {
       var B = foyer ? M.baiesIle(C, P, maintenant()) : null; if (!B) return [];
       return B.buissons.filter(function (b) { return !b.prise; }).map(function (b) {
         for (var k = 0; k < 60; k++) { var g1 = graine("bx" + b.graine + "|" + k), g2 = graine("by" + b.graine + "|" + k), x = 34 + g1 % (ILE_W - 68), y = 50 + g2 % (ILE_H - 100);
-          if (praticable(x, y) && surTerre(x, y, 0.86) && !abri(x, y, 100) && !dansOvale(x, y, MARAIS) && !dansOvale(x, y, [ILE_CX, ILE_CY + 2, 34, 40]) && !(C.ile.grottes || []).some(function (g) { return Math.hypot(x - g.position[0] * ILE_W, y - g.position[1] * ILE_H) < 24; })) return { id: b.id, x: x, y: y }; }
+          if (praticable(x, y) && surTerre(x, y, 0.86) && !abri(x, y, 100) && !dansOvale(x, y, MARAIS) && !dansOvale(x, y, [ILE_CX, ILE_CY + 3, 51, 60]) && !(C.ile.grottes || []).some(function (g) { return Math.hypot(x - g.position[0] * ILE_W, y - g.position[1] * ILE_H) < 24; })) return { id: b.id, x: x, y: y }; }
         return null; }).filter(Boolean);
     }
     // Le dépôt : un panier au centre du village. C'est lui qu'on vise pour rendre ce qu'on rapporte.
@@ -2620,7 +2620,7 @@ function demarrerJeu() {
       if (r === "proche" || X.vus.some(function (v) { return v.id !== q.id && Math.hypot(v.x - x, v.y - y) < 70; })) return __("Trop près d'un autre quartier : il faut de la place autour.");
       if (r) return __("Trop près du bord de la carte.");
       var port = q.decor === "quai", ray = port ? 16 : 30, ok = true;
-      for (var a = 0; a < 8; a++) { var ax = x + Math.cos(a * 0.785) * ray, ay = y + Math.sin(a * 0.785) * ray; if (!praticable(ax, ay) || dansOvale(ax, ay, MARAIS) || dansOvale(ax, ay, [ILE_CX, ILE_CY + 2, 50, 56])) ok = false; }
+      for (var a = 0; a < 8; a++) { var ax = x + Math.cos(a * 0.785) * ray, ay = y + Math.sin(a * 0.785) * ray; if (!praticable(ax, ay) || dansOvale(ax, ay, MARAIS) || dansOvale(ax, ay, [ILE_CX, ILE_CY + 3, 75, 84])) ok = false; }
       if (!ok) return __("Pas assez de place ici : la mer, l'eau ou le volcan sont trop près.");
       if (port) { var dx = x - ILE_CX, dy = y - ILE_CY, L = Math.hypot(dx, dy) || 1; if (surTerre(x + dx / L * 60, y + dy / L * 60, 0.98)) return __("Un port se fonde près de la mer : approche-toi de la côte."); }
       return null;
@@ -2635,7 +2635,7 @@ function demarrerJeu() {
       X.site = q; var Xp = X;
       // Le calcul parcourt toute l'île : on le fait juste après l'affichage, pour ne pas retarder le départ.
       setTimeout(function () {
-        if (X !== Xp || X.site !== q) return; var pas0 = 10, d = "";
+        if (X !== Xp || X.site !== q) return; var pas0 = 14, d = "";
         for (var y = 40; y < ILE_H - 30; y += pas0) for (var x = 20; x < ILE_W - 20; x += pas0) if (surTerre(x, y, 0.97) && lieuRefuse(q, x, y)) d += "M" + (x - pas0 / 2) + " " + (y - pas0 / 2) + "h" + pas0 + "v" + pas0 + "h-" + pas0 + "z";
         g.innerHTML = '<path d="' + d + '" fill="#D92B2B" opacity=".3"/>';
       }, 80);
@@ -5618,7 +5618,9 @@ function demarrerJeu() {
   // La carte de l'île (Victor, 2026-11-10 : « une île réaliste, un volcan au centre, pas de cases carrées »).
   // Une côte découpée, des plages, un volcan au milieu ; les quartiers sont des territoires qui rayonnent du volcan
   // vers la mer, de surface égale. Ceux des arbres fermés restent sous la brume.
-  var ILE_W = 360, ILE_H = 610, ILE_CX = 180, ILE_CY = 312, ILE_RX = 156, ILE_RY = 268;
+  // Victor (2026-11-18) : « agrandir l'île, quatre fois la taille actuelle ». Les deux côtés doublent (ILE_K) : le relief
+  // suit, les hameaux, les arbres et les grottes gardent leur taille, donc quatre fois plus de place entre eux.
+  var ILE_K = 2, ILE_W = 720, ILE_H = 1220, ILE_CX = 360, ILE_CY = 624, ILE_RX = 312, ILE_RY = 536;
   function coteIle(a) { return 1 + 0.075 * Math.sin(3 * a + 1.1) + 0.05 * Math.sin(5 * a + 0.4) + 0.034 * Math.sin(9 * a + 2.3) + 0.018 * Math.sin(14 * a + 0.9); }
   function pointIle(a, s) { var k = coteIle(a) * s; return [ILE_CX + ILE_RX * k * Math.cos(a), ILE_CY + ILE_RY * k * Math.sin(a)]; }
   function contourIle(s, pas) {
@@ -5628,7 +5630,8 @@ function demarrerJeu() {
   }
   function svgVolcan() {
     var x = ILE_CX, y = ILE_CY, o = "";
-    o += '<path d="' + contourIle(0.33) + '" fill="#A3A47A"/><path d="' + contourIle(0.26) + '" fill="#9A8468"/>';
+    o += '<path d="' + contourIle(0.25) + '" fill="#A3A47A"/><path d="' + contourIle(0.2) + '" fill="#9A8468"/>';
+    o += '<g transform="translate(' + x + " " + y + ") scale(1.5) translate(" + (-x) + " " + (-y) + ')">';
     o += '<ellipse cx="' + x + '" cy="' + (y + 26) + '" rx="52" ry="13" fill="rgba(40,30,20,.25)"/>';
     o += '<path d="M' + (x - 50) + " " + (y + 24) + " Q" + (x - 30) + " " + (y - 6) + " " + (x - 13) + " " + (y - 46) + " L" + (x + 13) + " " + (y - 46) + " Q" + (x + 30) + " " + (y - 6) + " " + (x + 50) + " " + (y + 24) + " Q" + x + " " + (y + 38) + " " + (x - 50) + " " + (y + 24) + 'Z" fill="#7C6350"/>';
     o += '<path d="M' + (x + 2) + " " + (y - 46) + " L" + (x + 13) + " " + (y - 46) + " Q" + (x + 30) + " " + (y - 6) + " " + (x + 50) + " " + (y + 24) + " Q" + (x + 28) + " " + (y + 31) + " " + (x + 8) + " " + (y + 31) + " Q" + (x + 12) + " " + (y - 10) + " " + (x + 2) + " " + (y - 46) + 'Z" fill="#5C4638"/>';
@@ -5640,7 +5643,7 @@ function demarrerJeu() {
     o += '<ellipse cx="' + x + '" cy="' + (y - 46) + '" rx="14" ry="5" fill="#3A2A22"/><ellipse cx="' + x + '" cy="' + (y - 45.5) + '" rx="10" ry="3" fill="#F2793A"/><ellipse cx="' + (x - 1) + '" cy="' + (y - 45.5) + '" rx="5" ry="1.5" fill="#FFD27A"/>';
     [[2, -57, 7, .85], [7, -67, 8.5, .7], [3, -79, 10, .5], [10, -92, 11, .3]].forEach(function (f) {
       o += '<circle cx="' + (x + f[0]) + '" cy="' + (y + f[1]) + '" r="' + f[2] + '" fill="#F4F1EA" opacity="' + f[3] + '"/>'; });
-    return o;
+    return o + "</g>";
   }
   // --- Le paysage (Victor, 2026-11-10 : « pousser le réalisme : une forêt, un marais, un lac ; un petit monde
   // chaleureux qu'on a envie de faire grandir, rien d'artificiel »). Tout est dessiné à la main, en formes rondes.
@@ -5702,7 +5705,7 @@ function demarrerJeu() {
   }
   function dansOvale(x, y, z) { return Math.pow((x - z[0]) / z[2], 2) + Math.pow((y - z[1]) / z[3], 2) < 1; }
   // Le relief qui ne change pas : un bois à l'ouest, un lac au sud-ouest, un marais au sud-est.
-  var BOIS = [78, 250, 38, 50], LAC = [98, 446, 30, 19], MARAIS = [226, 508, 38, 25];
+  var BOIS = [156, 500, 76, 100], LAC = [196, 892, 60, 38], MARAIS = [452, 1016, 76, 50];
   // Victor (2026-11-13) : le brouillard couvre l'île partout où il n'y a ni quartier ni habitants. Un masque : blanc
   // partout, troué d'un disque aux bords fondus sur chaque quartier ; le dernier disque suit l'explorateur (Explorer).
   // Chaque élément debout garde sa profondeur (le y de son pied) : l'explorateur se glisse entre eux (Explorer).
@@ -5722,12 +5725,12 @@ function demarrerJeu() {
     });
     ctx.globalCompositeOperation = "source-over";
   }
-  function trousQuartiers(I, lieux) { var out = []; I.quartiers.forEach(function (q, i) { if (q.fonde || q.camp) out.push([lieux[i][0], lieux[i][1] + 4, 84]); }); return out; }
+  function trousQuartiers(I, lieux) { var out = []; I.quartiers.forEach(function (q, i) { if (q.fonde || q.camp) out.push([lieux[i][0], lieux[i][1] + 4, 96]); }); return out; }
   // Sur la carte de l'onglet, rien ne bouge : le brouillard est une image fixe, peinte une fois par disposition.
   function brouillardIle(I, lieux) {
     if (!M.modeIle(P)) return "";
     var trous = trousQuartiers(I, lieux), cle = trous.map(function (t) { return Math.round(t[0]) + "," + Math.round(t[1]); }).join(";"), url = FOG_CACHE[cle];
-    if (!url) { try { var c = document.createElement("canvas"), k = 1.5; c.width = ILE_W * k; c.height = ILE_H * k; var ctx = c.getContext("2d"); ctx.scale(k, k); peindreBrouillard(ctx, ILE_W, ILE_H, trous); url = FOG_CACHE[cle] = c.toDataURL("image/png"); } catch (x) { return ""; } }
+    if (!url) { try { var c = document.createElement("canvas"), k = 1; c.width = ILE_W * k; c.height = ILE_H * k; var ctx = c.getContext("2d"); ctx.scale(k, k); peindreBrouillard(ctx, ILE_W, ILE_H, trous); url = FOG_CACHE[cle] = c.toDataURL("image/png"); } catch (x) { return ""; } }
     return '<image class="ile-brouillard" href="' + url + '" width="' + ILE_W + '" height="' + ILE_H + '" preserveAspectRatio="none" pointer-events="none"/>';
   }
   function svgCarteIle(I) {
@@ -5740,24 +5743,24 @@ function demarrerJeu() {
     // La mer, les hauts-fonds, la plage, la terre.
     o += '<defs><radialGradient id="ile-mer" cx="50%" cy="51%" r="62%"><stop offset="0" stop-color="#63B8D6"/><stop offset=".62" stop-color="#4A9EC4"/><stop offset="1" stop-color="#3B86AE"/></radialGradient></defs>' + DEFS_ILE;
     o += '<rect width="' + W + '" height="' + H + '" fill="url(#ile-mer)"/>';
-    for (var r = 0; r < 22; r++) { var gx = (graine("v" + r) % 340) + 6, gy = (graine("w" + r) % (H - 20)) + 8; if (!surTerre(gx + 8, gy, 1.14)) o += '<path d="M' + gx + " " + gy + 'q4 -3 8 0t8 0" stroke="#D5F0F8" stroke-width="1.3" fill="none" opacity=".5" stroke-linecap="round"/>'; }
+    for (var r = 0; r < 80; r++) { var gx = (graine("v" + r) % (W - 20)) + 6, gy = (graine("w" + r) % (H - 20)) + 8; if (!surTerre(gx + 8, gy, 1.14)) o += '<path d="M' + gx + " " + gy + 'q4 -3 8 0t8 0" stroke="#D5F0F8" stroke-width="1.3" fill="none" opacity=".5" stroke-linecap="round"/>'; }
     o += '<path d="' + contourIle(1.1) + '" fill="#7CC8E0" opacity=".55"/><path d="' + contourIle(1.055) + '" fill="#A5DDEB" opacity=".75"/>';
     o += '<path d="' + contourIle(1.012) + '" fill="#FBF0CC"/><path d="' + contourIle(0.985) + '" fill="#F0DFAE"/>';
     o += '<path d="' + contourIle(0.945) + '" fill="#A3D98A"/>';
     // Des prés plus clairs ou plus sombres, sans aucune régularité.
-    for (var pr = 0; pr < 14; pr++) { var gp = graine("pre" + pr), px = 40 + gp % 280, py = 70 + (gp >>> 9) % 470; if (surTerre(px, py, 0.78)) sol += '<path d="' + tache(px, py, 26 + (gp >>> 4) % 22, 16 + (gp >>> 6) % 14, "p" + pr) + '" fill="' + (pr % 2 ? "#B4E39A" : "#96CF80") + '" opacity=".6"/>'; }
+    for (var pr = 0; pr < 56; pr++) { var gp = graine("pre" + pr), px = 80 + gp % (W - 160), py = 140 + (gp >>> 9) % (H - 280); if (surTerre(px, py, 0.78)) sol += '<path d="' + tache(px, py, 32 + (gp >>> 4) % 34, 20 + (gp >>> 6) % 20, "p" + pr) + '" fill="' + (pr % 2 ? "#B4E39A" : "#96CF80") + '" opacity=".6"/>'; }
     // Le bois, le marais, le lac.
     var Mil0 = I.ressources && I.ressources.milieux, kb = Mil0 ? Math.sqrt(Math.max(0.08, Math.min(1, Mil0.foret / Mil0.ref.foret))) : 1;
-    sol += '<path d="' + tache(BOIS[0], BOIS[1], BOIS[2] + 6, BOIS[3] + 6, "bois") + '" fill="#7FBF72" opacity="' + (0.35 + 0.65 * kb).toFixed(2) + '"/><path d="' + tache(BOIS[0], BOIS[1], (BOIS[2] - 6) * kb, (BOIS[3] - 6) * kb, "bois2") + '" fill="#6FB067" opacity=".8"/>';
-    sol += '<path d="' + tache(MARAIS[0], MARAIS[1], MARAIS[2] + 5, MARAIS[3] + 5, "marais") + '" fill="#9BBF78"/><path d="' + tache(MARAIS[0], MARAIS[1], MARAIS[2] - 4, MARAIS[3] - 4, "marais2") + '" fill="#8CB06E"/>';
-    [[-16, -6, 10, 5], [10, 4, 13, 6], [-4, 12, 8, 4], [20, -10, 7, 3.5]].forEach(function (e, i) {
-      sol += '<path d="' + tache(MARAIS[0] + e[0], MARAIS[1] + e[1], e[2], e[3], "mare" + i) + '" fill="#6FAFA8"/><ellipse cx="' + (MARAIS[0] + e[0] - 2) + '" cy="' + (MARAIS[1] + e[1] - 1) + '" rx="' + (e[2] * 0.4) + '" ry="' + (e[3] * 0.3) + '" fill="#A9D9CF" opacity=".7"/>'; });
+    sol += '<path d="' + tache(BOIS[0], BOIS[1], BOIS[2] + 12, BOIS[3] + 12, "bois") + '" fill="#7FBF72" opacity="' + (0.35 + 0.65 * kb).toFixed(2) + '"/><path d="' + tache(BOIS[0], BOIS[1], (BOIS[2] - 12) * kb, (BOIS[3] - 12) * kb, "bois2") + '" fill="#6FB067" opacity=".8"/>';
+    sol += '<path d="' + tache(MARAIS[0], MARAIS[1], MARAIS[2] + 10, MARAIS[3] + 10, "marais") + '" fill="#9BBF78"/><path d="' + tache(MARAIS[0], MARAIS[1], MARAIS[2] - 8, MARAIS[3] - 8, "marais2") + '" fill="#8CB06E"/>';
+    [[-32, -12, 20, 10], [20, 8, 26, 12], [-8, 24, 16, 8], [40, -20, 14, 7], [-50, 14, 11, 5], [4, -26, 12, 5]].forEach(function (e, i) {
+      sol += '<path d="' + tache(MARAIS[0] + e[0], MARAIS[1] + e[1], e[2], e[3], "mare" + i) + '" fill="#6FAFA8"/><ellipse cx="' + (MARAIS[0] + e[0] - 4) + '" cy="' + (MARAIS[1] + e[1] - 2) + '" rx="' + (e[2] * 0.4) + '" ry="' + (e[3] * 0.3) + '" fill="#A9D9CF" opacity=".7"/>'; });
     // Les rivières : du volcan au lac puis à la mer, et du volcan au marais.
     var mer1 = pointIle(2.5, 1.02), mer2 = pointIle(1.02, 1.02);
-    [[[150, 345], [128, 372], [134, 405], [108, 428], [LAC[0], LAC[1]]], [[LAC[0] - 14, LAC[1] + 8], [70, 470], [64, 492], mer1],
-     [[214, 352], [226, 392], [208, 430], [228, 462], [MARAIS[0], MARAIS[1] - 8]], [[MARAIS[0] + 16, MARAIS[1] + 10], [258, 528], mer2]].forEach(function (riv) {
-      sol += '<path d="' + courbe(riv) + '" stroke="#8FCFE3" stroke-width="5" fill="none" stroke-linecap="round" opacity=".55"/><path d="' + courbe(riv) + '" stroke="#5DB3D6" stroke-width="2.6" fill="none" stroke-linecap="round"/>'; });
-    sol += '<path d="' + tache(LAC[0], LAC[1], LAC[2] + 3, LAC[3] + 3, "lac") + '" fill="#F0DFAE"/><path d="' + tache(LAC[0], LAC[1], LAC[2], LAC[3], "lac") + '" fill="#5DB3D6"/><path d="' + tache(LAC[0] - 5, LAC[1] - 3, LAC[2] * 0.55, LAC[3] * 0.45, "lac3") + '" fill="#8FD3E8" opacity=".7"/>';
+    [[[318, 668], [286, 706], [246, 748], [262, 782], [272, 814], [240, 836], [212, 858], [LAC[0], LAC[1]]], [[LAC[0] - 28, LAC[1] + 16], [158, 918], [136, 942], [140, 964], [126, 986], mer1],
+     [[406, 672], [440, 730], [456, 786], [436, 822], [414, 862], [440, 894], [458, 926], [MARAIS[0], MARAIS[1] - 16]], [[MARAIS[0] + 32, MARAIS[1] + 20], [496, 1040], [520, 1058], mer2]].forEach(function (riv) {
+      sol += '<path d="' + courbe(riv) + '" stroke="#8FCFE3" stroke-width="7" fill="none" stroke-linecap="round" opacity=".55"/><path d="' + courbe(riv) + '" stroke="#5DB3D6" stroke-width="3.8" fill="none" stroke-linecap="round"/>'; });
+    sol += '<path d="' + tache(LAC[0], LAC[1], LAC[2] + 5, LAC[3] + 5, "lac") + '" fill="#F0DFAE"/><path d="' + tache(LAC[0], LAC[1], LAC[2], LAC[3], "lac") + '" fill="#5DB3D6"/><path d="' + tache(LAC[0] - 10, LAC[1] - 6, LAC[2] * 0.55, LAC[3] * 0.45, "lac3") + '" fill="#8FD3E8" opacity=".7"/>';
     // Les chemins de terre : une boucle qui passe par tous les hameaux, et la route qui descend au quartier du centre.
     var tour = [], centre = -1;
     I.quartiers.forEach(function (q, i) { if (q.centre) centre = i; else tour.push(i); });
@@ -5770,7 +5773,7 @@ function demarrerJeu() {
       boucle.push([a[0], a[1] + 6]);
       // Entre deux hameaux, le chemin fait un écart, et s'éloigne du lac et du marais.
       var mx = (a[0] + b[0]) / 2 + (g % 17) - 8, my = (a[1] + b[1]) / 2 + ((g >>> 5) % 17) - 8;
-      [LAC, MARAIS].forEach(function (z) { if (dansOvale(mx, my, [z[0], z[1], z[2] + 14, z[3] + 14])) { mx += (mx < z[0] ? -1 : 1) * 0 + (ILE_CX - z[0]) * 0.45; my += (ILE_CY - z[1]) * 0.3; } });
+      [LAC, MARAIS].forEach(function (z) { if (dansOvale(mx, my, [z[0], z[1], z[2] + 20, z[3] + 20])) { mx += (mx < z[0] ? -1 : 1) * 0 + (ILE_CX - z[0]) * 0.45; my += (ILE_CY - z[1]) * 0.3; } });
       boucle.push([mx, my]); });
     var routes = tour.length > 2 ? [courbe(boucle, true)] : tour.length === 2 ? [courbe(boucle.slice(0, 3))] : [];
     if (centre >= 0 && tour.length) { var c = lieux[centre], pres = tour.slice().sort(function (a, b) { return Math.hypot(lieux[a][0] - c[0], lieux[a][1] - c[1]) - Math.hypot(lieux[b][0] - c[0], lieux[b][1] - c[1]); })[0];
@@ -5787,12 +5790,10 @@ function demarrerJeu() {
       sol += '<path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + (q.posees || q.fonde ? "#C4E8A6" : "#B2DE98") + '"/>';
       if (q.posees || q.fonde) sol += '<path d="' + tache(x, y + 6, 17, 8, "pl" + q.id) + '" fill="#EFE0B4" opacity=".9"/><path d="' + tache(x, y + 2, 36, 24, "cl" + q.id) + '" fill="' + q.couleur + '" opacity=".1"/>';
       if (q.decor === "quai") {
-        // Le ponton part vers le large, avec ses barques : une de plus à chaque option du quartier.
+        // Le ponton part vers le large (Victor, 2026-11-18 : plus de bateaux dessinés sur la carte).
         var dx = x - ILE_CX, dy = y - ILE_CY, dl = Math.hypot(dx, dy), ux = dx / dl, uy = dy / dl, bx = x, by = y;
         while (surTerre(bx, by, 1.0)) { bx += ux * 3; by += uy * 3; }
         plan.push([0, '<path d="M' + fx(bx - ux * 10) + " " + fx(by - uy * 10) + "L" + fx(bx + ux * 22) + " " + fx(by + uy * 22) + '" stroke="#8A6240" stroke-width="5" stroke-linecap="round"/><path d="M' + fx(bx - ux * 10) + " " + fx(by - uy * 10) + "L" + fx(bx + ux * 22) + " " + fx(by + uy * 22) + '" stroke="#C99A6B" stroke-width="3" stroke-dasharray="2.4 1.2"/>']);
-        var nbq = (q.posees || q.fonde ? 1 : 0) + q.options.filter(function (x) { return x.ouverte; }).length;
-        for (var bq = 0; bq < nbq; bq++) plan.push([by + uy * 14, svgBarque(bx + ux * (12 + bq * 9) - uy * (bq % 2 ? -12 : 12), by + uy * (12 + bq * 9) + ux * (bq % 2 ? -12 : 12), ["#B5744A", "#D9644A", "#4A7FB5", "#E8B84A"][bq % 4])]);
       }
       if (q.decor === "champs") [[-30, -16], [22, -20], [28, 12]].forEach(function (c, k) {
         var faits = q.marche > k * 2;
@@ -5823,19 +5824,19 @@ function demarrerJeu() {
       }
       var soucis = q.installations.filter(function (z) { return z.etat === "alerte" || z.etat === "panne" || z.etat === "abandon"; }).length;
       var faites = q.options.filter(function (z) { return z.ouverte; }).length, nom = esc(tx(q.nom));
-      var demi = tx(q.nom).length * 3.3 + 6, lx = Math.max(demi, Math.min(W - demi, x)), ly = y + 39;
-      g += '<g class="ile-etiquette" text-anchor="middle" style="paint-order:stroke" stroke="rgba(255,253,244,.94)" stroke-width="3.4" stroke-linejoin="round">' +
-        '<text x="' + fx(lx) + '" y="' + fx(ly) + '" font-size="12" font-weight="800" fill="' + (q.ouvert ? "#3A2E22" : "#6A7075") + '">' + nom + "</text>" +
-        (q.aOuvrir ? '<text x="' + fx(lx) + '" y="' + fx(ly + 12) + '" font-size="10.5" font-weight="800" fill="#B5531F">' + esc(__("🔒 à ouvrir")) + "</text>" : "") +
-        (q.ouvert ? "" : '<text x="' + fx(lx) + '" y="' + fx(ly + 11) + '" font-size="9.5" font-weight="700" fill="#6A7075">' + esc(__("dans la brume")) + "</text>") + "</g>";
+      var demi = tx(q.nom).length * 6.6 + 12, lx = Math.max(demi, Math.min(W - demi, x)), ly = y + 52;
+      g += '<g class="ile-etiquette" text-anchor="middle" style="paint-order:stroke" stroke="rgba(255,253,244,.94)" stroke-width="6.8" stroke-linejoin="round">' +
+        '<text x="' + fx(lx) + '" y="' + fx(ly) + '" font-size="24" font-weight="800" fill="' + (q.ouvert ? "#3A2E22" : "#6A7075") + '">' + nom + "</text>" +
+        (q.aOuvrir ? '<text x="' + fx(lx) + '" y="' + fx(ly + 24) + '" font-size="21" font-weight="800" fill="#B5531F">' + esc(__("🔒 à ouvrir")) + "</text>" : "") +
+        (q.ouvert ? "" : '<text x="' + fx(lx) + '" y="' + fx(ly + 22) + '" font-size="19" font-weight="700" fill="#6A7075">' + esc(__("dans la brume")) + "</text>") + "</g>";
       // Une pastille par option du quartier, pleine quand elle est ouverte ; un voyant s'il faut s'en occuper.
-      if (q.ouvert && !q.aOuvrir) q.options.forEach(function (_, k) { var ex = lx + (k - (q.options.length - 1) / 2) * 9;
-        g += '<circle class="ile-pastille" cx="' + fx(ex) + '" cy="' + fx(ly + 8) + '" r="3" fill="' + (k < faites ? q.couleur : "#FFFDF4") + '" stroke="' + (k < faites ? "#FFFDF4" : q.couleur) + '" stroke-width="1.3"/>'; });
-      if (soucis) g += '<g><circle cx="' + fx(x + 27) + '" cy="' + fx(y - 22) + '" r="8" fill="#E8873A" stroke="#FFFDF4" stroke-width="2"/><text x="' + fx(x + 27) + '" y="' + fx(y - 18.4) + '" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">' + soucis + "</text></g>";
+      if (q.ouvert && !q.aOuvrir) q.options.forEach(function (_, k) { var ex = lx + (k - (q.options.length - 1) / 2) * 18;
+        g += '<circle class="ile-pastille" cx="' + fx(ex) + '" cy="' + fx(ly + 16) + '" r="6" fill="' + (k < faites ? q.couleur : "#FFFDF4") + '" stroke="' + (k < faites ? "#FFFDF4" : q.couleur) + '" stroke-width="2.6"/>'; });
+      if (soucis) g += '<g><circle cx="' + fx(x + 34) + '" cy="' + fx(y - 30) + '" r="15" fill="#E8873A" stroke="#FFFDF4" stroke-width="3.4"/><text x="' + fx(x + 34) + '" y="' + fx(y - 23) + '" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">' + soucis + "</text></g>";
       dessus += '<g pointer-events="none">' + g + "</g>";
       // Tout ce qui est debout dans le hameau porte une classe : l'explorateur l'efface quand la scène du quartier prend sa place.
       for (var pp = p0; pp < plan.length; pp++) plan[pp][1] = '<g class="ile-hm">' + plan[pp][1] + "</g>";
-      zones += '<ellipse class="ile-parcelle" data-q="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + nom + '" cx="' + fx(x) + '" cy="' + fx(y + 6) + '" rx="44" ry="38" fill="transparent"/>';
+      zones += '<ellipse class="ile-parcelle" data-q="' + esc(q.id) + '" role="button" tabindex="0" aria-label="' + nom + '" cx="' + fx(x) + '" cy="' + fx(y + 14) + '" rx="62" ry="58" fill="transparent"/>';
     });
     // La grotte des mythologies (Victor, 2026-11-14) : une bouche sombre au flanc du volcan. Elle reste sous le
     // brouillard : seul un explorateur qui passe près d'elle la voit, et il y entre en marchant dessus.
@@ -5861,7 +5862,7 @@ function demarrerJeu() {
     vivant = plan.slice().sort(function (a, b) { return a[0] - b[0]; });
     // Les arbres : serrés dans le bois (avec des sapins), épars ailleurs ; aucun sur l'eau, le volcan ou un hameau.
     function libre(x, y, m) {
-      if (!surTerre(x, y, 0.9) || dansOvale(x, y, [LAC[0], LAC[1], LAC[2] + 6, LAC[3] + 6]) || dansOvale(x, y, [ILE_CX, ILE_CY + 2, 62, 66])) return false;
+      if (!surTerre(x, y, 0.9) || dansOvale(x, y, [LAC[0], LAC[1], LAC[2] + 9, LAC[3] + 9]) || dansOvale(x, y, [ILE_CX, ILE_CY + 3, 93, 99])) return false;
       return !lieux.some(function (l, i) { return I.quartiers[i].fonde && dansOvale(x, y, [l[0], l[1] + 6, 38 + m, 28 + m]); });
     }
     // Victor (2026-11-15) : « il faut absolument que ça se voie sur la carte ». La part de forêt qui reste décide du
@@ -5871,26 +5872,26 @@ function demarrerJeu() {
     function debout(g) { return (g >>> 14) % 100 < kf * 100; }
     function souche(x, y) { return '<ellipse cx="' + fx(x + 0.6) + '" cy="' + fx(y + 0.6) + '" rx="2.4" ry="1" fill="rgba(30,45,30,.2)"/><rect x="' + fx(x - 1.4) + '" y="' + fx(y - 1.8) + '" width="2.8" height="2.2" fill="#8A6240"/><ellipse cx="' + fx(x) + '" cy="' + fx(y - 1.8) + '" rx="1.4" ry=".6" fill="#D9B98A"/>'; }
     if (Mil) {
-      var nbF = Math.round(50 * Math.min(2.2, Mil.buissons / Mil.ref.buissons)), nbT = Math.round(150 * Math.min(1.6, Mil.prairie / Mil.ref.prairie) / 1.6);
-      for (var ft = 0; ft < 150; ft++) { var gt = graine("touffe" + ft), hx0 = 24 + gt % 312, hy0 = 50 + (gt >>> 9) % 510;
+      var nbF = Math.round(180 * Math.min(2.2, Mil.buissons / Mil.ref.buissons)), nbT = Math.round(520 * Math.min(1.6, Mil.prairie / Mil.ref.prairie) / 1.6);
+      for (var ft = 0; ft < 520; ft++) { var gt = graine("touffe" + ft), hx0 = 48 + gt % (W - 96), hy0 = 100 + (gt >>> 9) % (H - 200);
         if (ft >= nbT || !libre(hx0, hy0, 2) || dansOvale(hx0, hy0, MARAIS) || (kf > 0.5 && dansOvale(hx0, hy0, BOIS))) continue;
         sol += '<path d="M' + fx(hx0 - 2) + " " + fx(hy0) + "l-.8 -3.4M" + fx(hx0) + " " + fx(hy0) + "v-4.4M" + fx(hx0 + 2) + " " + fx(hy0) + 'l.9 -3.2" stroke="' + (ft % 3 ? "#D7EE9A" : "#E8E29A") + '" stroke-width="1" stroke-linecap="round" fill="none"/>'; }
-      for (var fb = 0; fb < 110; fb++) { var gf = graine("fourre" + fb), bx0 = 24 + gf % 312, by0 = 50 + (gf >>> 9) % 510;
+      for (var fb = 0; fb < 396; fb++) { var gf = graine("fourre" + fb), bx0 = 48 + gf % (W - 96), by0 = 100 + (gf >>> 9) % (H - 200);
         if (fb >= nbF || !libre(bx0, by0, 2) || dansOvale(bx0, by0, MARAIS)) continue;
         sol += '<g transform="translate(' + fx(bx0) + " " + fx(by0) + ") scale(1.35) translate(" + fx(-bx0) + " " + fx(-by0) + ')">' + '<ellipse cx="' + fx(bx0 + 0.8) + '" cy="' + fx(by0 + 1.6) + '" rx="4.4" ry="1.3" fill="rgba(30,45,30,.2)"/><path d="M' + fx(bx0 - 4.2) + " " + fx(by0 + 1.4) + "c-1.2 -3.4 1.6 -5.6 4 -5c2.6 -.9 5.4 1.8 4.4 5z" + '" fill="' + (fb % 2 ? "#4E9A5A" : "#5A8F4A") + '"/><circle cx="' + fx(bx0 - 1.2) + '" cy="' + fx(by0 - 1) + '" r="1.5" fill="#74B878" opacity=".8"/>' + (fb % 3 === 0 ? '<circle cx="' + fx(bx0 + 1.4) + '" cy="' + fx(by0 - .6) + '" r=".7" fill="#6B5BB5"/>' : "") + "</g>"; }
     }
-    for (var t = 0; t < 70; t++) { var gb = graine("bois" + t), tx0 = BOIS[0] - BOIS[2] + gb % (BOIS[2] * 2), ty0 = BOIS[1] - BOIS[3] + (gb >>> 9) % (BOIS[3] * 2);
+    for (var t = 0; t < 250; t++) { var gb = graine("bois" + t), tx0 = BOIS[0] - BOIS[2] + gb % (BOIS[2] * 2), ty0 = BOIS[1] - BOIS[3] + (gb >>> 9) % (BOIS[3] * 2);
       if (dansOvale(tx0, ty0, BOIS) && libre(tx0, ty0, -6) && !debout(gb)) { sol += souche(tx0, ty0); continue; }
       if (dansOvale(tx0, ty0, BOIS) && libre(tx0, ty0, -6)) plan.push([ty0, gb % 5 < 2 ? svgSapin(tx0, ty0, 11 + gb % 4, gb) : svgFeuillu(tx0, ty0 - 4, 4.6 + (gb >>> 4) % 2, gb)]); }
-    for (var s = 0; s < 120; s++) { var gs = graine("arb" + s), sx = 24 + gs % 312, sy = 50 + (gs >>> 9) % 510;
+    for (var s = 0; s < 440; s++) { var gs = graine("arb" + s), sx = 48 + gs % (W - 96), sy = 100 + (gs >>> 9) % (H - 200);
       if (!libre(sx, sy, 2) || dansOvale(sx, sy, MARAIS)) continue;
       if (s % 4 === 0) { sol += svgFleurs(sx, sy, gs); continue; }
       if (!debout(gs)) { if (s % 2) sol += souche(sx, sy); continue; }
       plan.push([sy, gs % 7 === 0 ? svgSapin(sx, sy, 10 + gs % 3, gs) : svgFeuillu(sx, sy - 4, 4 + (gs >>> 4) % 2.4, gs)]); }
-    for (var z = 0; z < 16; z++) { var gz = graine("ros" + z), zx = MARAIS[0] - MARAIS[2] + gz % (MARAIS[2] * 2), zy = MARAIS[1] - MARAIS[3] + (gz >>> 9) % (MARAIS[3] * 2);
+    for (var z = 0; z < 56; z++) { var gz = graine("ros" + z), zx = MARAIS[0] - MARAIS[2] + gz % (MARAIS[2] * 2), zy = MARAIS[1] - MARAIS[3] + (gz >>> 9) % (MARAIS[3] * 2);
       if (dansOvale(zx, zy, MARAIS) && surTerre(zx, zy, 0.93)) plan.push([zy, z % 5 === 4 ? svgFeuillu(zx, zy - 4, 4, 2) : svgRoseaux(zx, zy, gz)]); }
-    // Sur le lac : un ponton et une barque ; quelques roseaux sur la rive.
-    plan.push([LAC[1] + 2, '<path d="M' + (LAC[0] + 24) + " " + (LAC[1] - 9) + 'l-12 5" stroke="#8A6240" stroke-width="3.2" stroke-linecap="round"/>' + svgBarque(LAC[0] - 6, LAC[1] + 4, "#D9644A") + svgRoseaux(LAC[0] - 26, LAC[1] + 9, 5) + svgRoseaux(LAC[0] + 20, LAC[1] + 13, 9)]);
+    // Sur le lac : un ponton ; quelques roseaux sur la rive.
+    plan.push([LAC[1] + 2, '<path d="M' + (LAC[0] + 50) + " " + (LAC[1] - 20) + 'l-14 6" stroke="#8A6240" stroke-width="3.2" stroke-linecap="round"/>' + svgRoseaux(LAC[0] - 52, LAC[1] + 18, 5) + svgRoseaux(LAC[0] + 40, LAC[1] + 26, 9) + svgRoseaux(LAC[0] - 14, LAC[1] + 34, 3)]);
     plan.sort(function (a, b) { return a[0] - b[0]; });
     return '<svg class="ile-scene ile-carte" viewBox="0 0 ' + W + " " + H + '" role="group" aria-label="' + esc(__("Carte de l'île")) + '">' +
       '<defs><filter id="ile-brume" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3.5"/></filter></defs>' +
@@ -5974,7 +5975,7 @@ function demarrerJeu() {
     plan.sort(function (u, v) { return u[0] - v[0]; });
     return '<svg class="ile-scene" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(__("Un feu, et quelques habitants vêtus de peaux qui dansent autour")) + '">' + s + plan.map(function (x) { return x[1]; }).join("") + etiq + "</svg>";
   }
-  function svgQuartier(q) {
+  function svgQuartier(q, surCarte) {
     if (campFeu(q)) return svgCampFeu(q);
     // Le village grandit avec ce qu'on y construit (Victor, 2026-11-10 : « pas besoin de voir tous les emplacements
     // vides ») : on ne montre que les installations posées, et deux terrains à bâtir, ceux qu'on peut gagner d'abord.
@@ -5995,7 +5996,8 @@ function demarrerJeu() {
       var ym = H - 62;
       sol += '<path d="M0 ' + (ym - 8) + "Q90 " + (ym - 20) + " 180 " + (ym - 8) + "T360 " + (ym - 10) + "V" + H + 'H0Z" fill="#FBF0CC"/><path d="M0 ' + (ym + 6) + "Q90 " + (ym - 6) + " 180 " + (ym + 6) + "T360 " + (ym + 4) + "V" + H + 'H0Z" fill="#A5DDEB"/><path d="M0 ' + (ym + 16) + "Q90 " + (ym + 4) + " 180 " + (ym + 16) + "T360 " + (ym + 14) + "V" + H + 'H0Z" fill="#63B8D6"/>';
       sol += '<rect x="170" y="' + (ym - 12) + '" width="20" height="58" rx="2" fill="#8A6240"/>' + [0, 1, 2, 3, 4, 5, 6, 7].map(function (k) { return '<rect x="171.5" y="' + (ym - 10 + k * 7) + '" width="17" height="5" rx="1" fill="#C99A6B"/>'; }).join("");
-      var nbq = (q.posees || q.fonde ? 1 : 0) + q.options.filter(function (x) { return x.ouverte; }).length;
+      // Posée sur la carte (Explorer), la scène n'a pas de barques (Victor, 2026-11-18).
+      var nbq = surCarte ? 0 : (q.posees || q.fonde ? 1 : 0) + q.options.filter(function (x) { return x.ouverte; }).length;
       for (var b = 0; b < nbq; b++) sol += '<g transform="translate(' + (b % 2 ? 212 + b * 16 : 148 - b * 16) + " " + (ym + 28 + (b % 3) * 8) + ') scale(1.8)">' + svgBarque(0, 0, ["#B5744A", "#D9644A", "#4A7FB5", "#E8B84A"][b % 4]) + "</g>";
     }
     // Le chemin : il monte en flânant d'un bord à l'autre.

@@ -2507,7 +2507,7 @@
   // repérer le site dans le brouillard et revenir le dire au village (partie.sites[id] = date).
   // Victor (2026-11-13) : l'emplacement se choisit, si la place est assez grande : pas à moins de `ecart` d'un autre
   // quartier (en unités de la carte, 360 × 610). L'écran vérifie le reste (mer, lac, côte pour le port).
-  var CARTE_ILE = [360, 610];
+  var CARTE_ILE = [720, 1220];
   function siteRefuse(contenu, partie, id, position, t) {
     if (!position || position.length !== 2 || !position.every(function (v) { return typeof v === "number" && v > 0.04 && v < 0.96; })) return "hors";
     var ecart = (contenu.ile.regles.quartier || {}).ecart || 70;
