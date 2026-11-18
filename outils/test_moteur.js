@@ -2584,7 +2584,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     CA.competences.filter(k => k.rang === 1).forEach(k => sait(Ql, k.id)); Ql.epreuves.sanctuaire = t0;
     Il = M.ile(CA, Ql, t0); assert.ok(Il.limites.plafond < 400, "sans assez d'habitants, les savoirs seuls ne font pas une cité");
     Ql.population.a = 35; M.ile(CA, Ql, t0);
-    Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.plafond, 400, "la cité plafonne à 400"); assert.equal(Il.limites.frein, "toits"); assert.equal(Il.places, 55, "sans maisons, les savoirs n'attirent personne de plus");
+    Il = M.ile(CA, Ql, t0); assert.equal(Il.limites.plafond, 250, "la cité des scribes plafonne à 250"); assert.equal(Il.limites.frein, "toits"); assert.equal(Il.places, 55, "sans maisons, les savoirs n'attirent personne de plus");
   }
   // Victor (2026-11-16) : l'ordre des besoins suit ce qui freine l'île, et les arrivants qu'on ne peut pas loger se voient.
   {
@@ -2752,7 +2752,15 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       const Qa = M.nouvellePartie(t0); Qa.mode = "ile"; Qa.epreuves = { feu: t0 }; Qa.ageIle = 1; Qa.grotte = { trouvee: t0, carte: "101" };
       const ga = M.grotteIle(CA, Qa, "mythologies"); assert.ok(ga.presente && ga.trouvee === t0); assert.ok(M.entendreGrotte(CA, Qa, "egypte", "thot", t0));
       // À la cité, tout est là. Les ids de zones et de récits ne se marchent pas dessus.
-      Qm.ageIle = 3; assert.deepEqual(etat(), { ornee: true, mesopotamie: true, mythologies: true, celtes: true, grecque: true, vedique: true, nordique: false, mesoamerique: false });
+      Qm.ageIle = 3; assert.deepEqual(etat(), { ornee: true, mesopotamie: true, mythologies: true, celtes: false, grecque: false, vedique: true, nordique: false, mesoamerique: false });
+      // Victor (2026-11-18, carte « Couper la cité en deux âges ») : les scribes, puis les philosophes, puis le royaume.
+      assert.deepEqual(CA.ile.ages.map((a) => a.id), ["survivants", "campement", "village", "cite", "polis", "royaume"]); CA.ile.ages.forEach((a, i) => assert.equal(a.rang, i));
+      assert.equal(M.statut(CA, Qm, "cite.loi", t0).etat, "disponible"); assert.equal(M.statut(CA, Qm, "cite.monnaie", t0).etat, "verrouillee", "la monnaie attend les philosophes");
+      assert.equal(M.statut(CA, Qm, "phys.archimede", t0).etat, "verrouillee"); assert.equal(CA.ile.amenagements.filter((x) => x.id === "tribune")[0].age, 4);
+      { const Qp = JSON.parse(JSON.stringify(Qm)); Qp.ageIle = 4; const ep = Object.fromEntries(M.grottesIle(CA, Qp).map((g) => [g.id, g.presente]));
+        assert.ok(ep.grecque && ep.celtes && !ep.nordique, "l'Olympe et le chêne aux philosophes, le Nord au royaume");
+        assert.equal(M.agesIle(CA, Qp).age.id, "polis"); assert.equal(M.statut(CA, Qp, "cite.monnaie", t0).etat, "disponible"); assert.equal(M.agesIle(CA, Qp).age.besoins.length, 7);
+        Qp.ageIle = 5; assert.ok(M.grottesIle(CA, Qp).every((g) => g.presente)); }
       const zs = CA.ile.grottes.flatMap((g) => g.zones.map((z) => z.id)); assert.equal(new Set(zs).size, zs.length);
       assert.ok(M.entendreGrotte(CA, Qm, "mesopotamie", "nisaba", t0)); assert.equal(M.statut(CA, Qm, "math.babylone", t0).passage.grotte, "mesopotamie");
       // Victor (2026-11-17) : l'écriture manquait. Les premiers scribes couvrent « écrire », à la cité seulement.
@@ -2766,7 +2774,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
         assert.deepEqual(toutes, zs.slice().sort(), "chaque zone de grotte est sur l'arbre, une seule fois");
         assert.equal(Am.total, CA.ile.grottes.reduce((n, g) => n + g.zones.reduce((m, z) => m + z.recits.length, 0), 0));
         assert.equal(Am.entendus, 6 + 1, "les six peintures et Nisaba");
-        const indo = Am.branches[1].zones; assert.ok(indo.filter((z) => z.id === "grecque")[0].presente); assert.ok(!indo.filter((z) => z.id === "nordique")[0].presente, "le Nord attend le royaume");
+        const indo = Am.branches[1].zones; assert.ok(indo.filter((z) => z.id === "vedique")[0].presente); assert.ok(!indo.filter((z) => z.id === "grecque")[0].presente, "l'Olympe attend les philosophes"); assert.ok(!indo.filter((z) => z.id === "nordique")[0].presente, "le Nord attend le royaume");
         assert.equal(M.arbreMythes(CA, PP), null, "pas d'arbre des mythes hors de l'île"); }
       // Un âge déjà dépassé ne doit pas les peintures.
       const Qd = M.nouvellePartie(t0); Qd.mode = "ile"; Qd.epreuves = { feu: t0 }; Qd.ageIle = 2; assert.equal(M.agesIle(CA, Qd).ages[1].grotte, null); }

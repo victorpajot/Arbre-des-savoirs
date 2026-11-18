@@ -1751,6 +1751,9 @@ svg.grille .interro { transition: opacity .3s; }
 .ile-frise li i { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 16px; background: var(--line); color: var(--muted); position: relative; z-index: 1; }
 .ile-frise li + li::before { content: ""; position: absolute; top: 16px; right: 50%; width: 100%; height: 3px; background: var(--line); } .ile-frise li.fait + li::before { background: #2E8B57; }
 .ile-frise li.fait i { background: #2E8B57; color: #fff; } .ile-frise li.ici i { background: var(--accent); color: #fff; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 30%, transparent); }
+/* Victor (2026-11-18) : six âges. La frise ne nomme plus que l'âge en cours, sinon les noms se chevauchent. */
+.ile-frise li { min-width: 0; } .ile-frise.serre { margin-bottom: 60px; } .ile-frise.serre li span { display: none; } .ile-frise.serre li.ici span { display: block; position: absolute; top: 42px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 17px; }
+.ile-frise.serre li.ici:first-child span { left: 0; transform: none; text-align: left; } .ile-frise.serre li.ici:last-child span { left: auto; right: 0; transform: none; text-align: right; }
 .ile-frise li.ici { color: inherit; font-weight: 800; } .ile-frise small { display: block; font-size: 13px; font-weight: 400; color: var(--muted); }
 .ile-passage h3 { margin: 2px 0 6px; font-size: 19px; } .ile-passage .btn { width: 100%; } .ile-passage.attend { border-style: dashed; border-color: rgba(127,127,127,.5); } .ile-passage.attend p { margin: 0; color: var(--muted); }
 .duo-ia { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 0; }
@@ -6994,9 +6997,9 @@ function demarrerJeu() {
     var a = G.age, t = maintenant(), montre = a.avenir ? G.ages[G.courant - 1] : a;
     // Victor (2026-11-12) : « L'âge de l'île » puis « Le village » ne se lisait pas. Une frise dit où en est l'île
     // (campement, village, cité), puis une seule question : de quoi a-t-elle besoin, et qu'est-ce qui est fait.
-    var h = '<h2 class="ile-h2">' + __("Où en est l'île") + '</h2><div class="carte ile-vie"><ol class="ile-frise">' + G.ages.map(function (x, i) {
+    var h = '<h2 class="ile-h2">' + __("Où en est l'île") + '</h2><div class="carte ile-vie"><ol class="ile-frise' + (G.ages.length > 5 ? " serre" : "") + '">' + G.ages.map(function (x, i) {
       var ici = i === G.courant, fait = i < G.courant;
-      return '<li class="' + (ici ? "ici" : fait ? "fait" : "apres") + '"><i>' + (fait ? "✓" : i + 1) + "</i><span>" + esc(tx(x.nom)) + (ici ? "<small>" + __("tu es ici") + "</small>" : "") + "</span></li>"; }).join("") + "</ol>";
+      return '<li class="' + (ici ? "ici" : fait ? "fait" : "apres") + '" title="' + esc(tx(x.nom)) + '"><i>' + (fait ? "✓" : i + 1) + "</i><span>" + esc(tx(x.nom)) + (ici ? "<small>" + __("tu es ici") + "</small>" : "") + "</span></li>"; }).join("") + "</ol>";
     if (a.avenir) h += '<p class="ile-vie-note">' + __("Cet âge reste à écrire. En attendant, fais durer l'île : ménage la forêt et les poissons, et tiens tes rappels.") + "</p>";
     // Les besoins laissés de côté dans les âges d'avant restent à l'affiche : on peut toujours les rattraper.
     var liste = (montre ? montre.besoins : []).slice();

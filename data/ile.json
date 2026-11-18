@@ -4418,7 +4418,7 @@
     "phys.archimede",
     "phys.aristote"
    ],
-   "age": 3
+   "age": 4
   },
   {
    "id": "grenier",
@@ -4799,7 +4799,7 @@
     "pierre": 30
    },
    "attrait": 0.2,
-   "age": 3,
+   "age": 4,
    "nom": {
     "fr": "Tribune"
    },
@@ -5061,10 +5061,10 @@
    "id": "cite",
    "rang": 3,
    "nom": {
-    "fr": "La cité"
+    "fr": "La cité des scribes"
    },
    "description": {
-    "fr": "Le village est devenu trop grand pour tenir dans une seule tête : il faut des métaux, des mesures, des écrits et des règles."
+    "fr": "Le village est devenu trop grand pour tenir dans une seule tête : il faut des métaux, des mesures, des écrits et des lois."
    },
    "besoins": [
     {
@@ -5093,57 +5093,16 @@
      ]
     },
     {
-     "id": "lever",
-     "nom": {
-      "fr": "Lever et moudre"
-     },
-     "texte": {
-      "fr": "Faire travailler le levier, la roue et l'eau à la place des bras."
-     },
-     "savoirs": [
-      "phys.archimede",
-      "phys.aristote"
-     ]
-    },
-    {
-     "id": "guerir",
-     "nom": {
-      "fr": "Guérir"
-     },
-     "texte": {
-      "fr": "Plus on vit serrés, plus les maladies circulent : il faut des gens dont c'est le métier."
-     },
-     "savoirs": [
-      "sci.egypte",
-      "sci.hippocrate"
-     ]
-    },
-    {
-     "id": "calendrier",
-     "nom": {
-      "fr": "Tenir le calendrier"
-     },
-     "texte": {
-      "fr": "Semer, récolter et se réunir au bon moment, d'une année sur l'autre."
-     },
-     "savoirs": [
-      "astro.babylone",
-      "astro.mesurer"
-     ]
-    },
-    {
      "id": "ecrire",
      "nom": {
       "fr": "Garder trace"
      },
      "texte": {
-      "fr": "Ce que la cité sait ne tient plus dans les mémoires : il faut l'écrire, ou s'entraîner à retenir."
+      "fr": "Ce que la cité sait ne tient plus dans les mémoires : il faut l'écrire."
      },
      "savoirs": [
       "cite.ecrire",
-      "mus.ecriture",
-      "mnemo.simonide",
-      "mnemo.platon"
+      "mus.ecriture"
      ]
     },
     {
@@ -5159,6 +5118,45 @@
      ]
     },
     {
+     "id": "guerir",
+     "nom": {
+      "fr": "Guérir"
+     },
+     "texte": {
+      "fr": "Plus on vit serrés, plus les maladies circulent : il faut des gens dont c'est le métier."
+     },
+     "savoirs": [
+      "sci.egypte"
+     ]
+    },
+    {
+     "id": "calendrier",
+     "nom": {
+      "fr": "Tenir le calendrier"
+     },
+     "texte": {
+      "fr": "Semer, récolter et se réunir au bon moment, d'une année sur l'autre."
+     },
+     "savoirs": [
+      "astro.babylone"
+     ]
+    }
+   ],
+   "plafond": 250,
+   "jusqua": -800,
+   "peuple": 80
+  },
+  {
+   "id": "polis",
+   "rang": 4,
+   "nom": {
+    "fr": "La cité des philosophes"
+   },
+   "description": {
+    "fr": "La cité frappe monnaie, débat sur la place et cherche des causes là où l'on voyait des dieux."
+   },
+   "besoins": [
+    {
      "id": "echanger",
      "nom": {
       "fr": "Échanger"
@@ -5168,6 +5166,56 @@
      },
      "savoirs": [
       "cite.monnaie"
+     ]
+    },
+    {
+     "id": "lever",
+     "nom": {
+      "fr": "Lever et moudre"
+     },
+     "texte": {
+      "fr": "Faire travailler le levier, la roue et l'eau à la place des bras."
+     },
+     "savoirs": [
+      "phys.archimede",
+      "phys.aristote"
+     ]
+    },
+    {
+     "id": "causes",
+     "nom": {
+      "fr": "Chercher les causes"
+     },
+     "texte": {
+      "fr": "La maladie n'est plus une punition : on observe, on compare, on cherche d'où elle vient."
+     },
+     "savoirs": [
+      "sci.hippocrate"
+     ]
+    },
+    {
+     "id": "arpenter",
+     "nom": {
+      "fr": "Mesurer le monde"
+     },
+     "texte": {
+      "fr": "La cité veut connaître la taille de ce qui l'entoure, jusqu'au ciel."
+     },
+     "savoirs": [
+      "astro.mesurer"
+     ]
+    },
+    {
+     "id": "retenir",
+     "nom": {
+      "fr": "Exercer la mémoire"
+     },
+     "texte": {
+      "fr": "Tout ne s'écrit pas : sur la place, on parle sans notes."
+     },
+     "savoirs": [
+      "mnemo.simonide",
+      "mnemo.platon"
      ]
     },
     {
@@ -5218,11 +5266,11 @@
    ],
    "plafond": 400,
    "jusqua": 500,
-   "peuple": 80
+   "peuple": 150
   },
   {
    "id": "royaume",
-   "rang": 4,
+   "rang": 5,
    "nom": {
     "fr": "Le royaume"
    },
@@ -9124,7 +9172,7 @@
     0.2,
     0.4
    ],
-   "age": 3,
+   "age": 4,
    "description": {
     "fr": "Sous la forêt, des galeries où attendent les dieux des Celtes. Eux n'ont rien écrit : il a fallu que d'autres racontent à leur place."
    },
@@ -9360,7 +9408,7 @@
     0.63,
     0.37
    ],
-   "age": 3,
+   "age": 4,
    "description": {
     "fr": "Une faille sous la montagne, où attendent les dieux des Grecs : ceux qu'Hésiode a mis en vers il y a vingt-sept siècles."
    },
@@ -9832,7 +9880,7 @@
     0.38,
     0.12
    ],
-   "age": 4,
+   "age": 5,
    "description": {
     "fr": "Tout au nord de l'île, une grotte où le givre ne fond pas. Les dieux des gens du Nord y attendent, tels qu'on les a couchés par écrit bien après eux."
    },
@@ -10068,7 +10116,7 @@
     0.25,
     0.84
    ],
-   "age": 4,
+   "age": 5,
    "description": {
     "fr": "Une grotte au bord de l'eau, de l'autre côté de l'île. Les Mayas disaient qu'on entre par là dans le monde d'en bas. Leurs dieux y attendent, avec ceux des Aztèques."
    },

@@ -9,7 +9,8 @@ Ce document est généré depuis les données du jeu par `outils/parcours_ile.py
 | Les survivants | 1 besoin couvert + épreuve « Faire du feu » | 15 | -40000 |
 | Le campement | 5 besoins couverts + 10 habitants + passage par la grotte ornée + épreuve « Dresser le sanctuaire » | 40 | -9000 |
 | Le village | 7 besoins couverts + 30 habitants | 160 | -3300 |
-| La cité | 8 besoins couverts + 80 habitants | 400 | 500 |
+| La cité des scribes | 6 besoins couverts + 80 habitants | 250 | -800 |
+| La cité des philosophes | 5 besoins couverts + 150 habitants | 400 | 500 |
 | Le royaume | âge à écrire | sans limite | 1500 |
 
 « Rien d'après » : l'année limite des visiteurs et des achats d'Alyca à cet âge, pour éviter les anachronismes.
@@ -111,9 +112,9 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 | Four du potier | La zone industrielle | Les premiers ateliers (Alchimie) | 30 crédits, 15 bois | « Cuire un pot » : de l'argile, des coquilles |
 | Place du village | La ville | La ruche et l'essaim (Essaim) | 40 crédits, 10 bois, 10 pierre | aucune |
 
-## 4. La cité
+## 4. La cité des scribes
 
-**Ce que vit le joueur.** Le village est devenu trop grand pour tenir dans une seule tête : il faut des métaux, des mesures, des écrits et des règles.
+**Ce que vit le joueur.** Le village est devenu trop grand pour tenir dans une seule tête : il faut des métaux, des mesures, des écrits et des lois.
 
 ### Besoins et savoirs
 
@@ -123,17 +124,10 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 |---|---|---|
 | Travailler les métaux | Les métaux (Alchimie) | Mine et fonderie, Forge |
 | Mesurer et répartir | Babylone et la base 60 (Logique) ; L'Égypte et le papyrus Rhind (Logique) | Grand entrepôt |
-| Lever et moudre | Archimède, leviers et flotteurs (Mécanique) ; Le mouvement selon Aristote (Mécanique) | Moulin |
-| Guérir | La médecine égyptienne (Savoir) ; Hippocrate et les humeurs (Savoir) | Dispensaire |
-| Tenir le calendrier | Les astronomes de Babylone (Cosmos) ; Mesurer la Terre (Cosmos) | Cadran et calendrier |
-| Garder trace | Les premiers scribes (Cité) ; Écrire la musique (Harmonie) ; Simonide et le banquet (Mnémosyne) ; Platon contre l'écriture (Mnémosyne) | Maison des écrits |
+| Garder trace | Les premiers scribes (Cité) ; Écrire la musique (Harmonie) | Maison des écrits |
 | Juger | La loi gravée (Cité) | aucun |
-| Échanger | Les premières pièces (Cité) | aucun |
-| Débattre et voter (optionnel) | Athènes tire au sort (Essaim) ; Le vote des tessons (Essaim) ; Les sophistes (Éloquence) ; Les orateurs d'Athènes (Éloquence) | Tribune |
-| Douter et comprendre (optionnel) | Présocratiques (Sagesse) ; Les historiens et la rumeur (Lucidité) ; Les émotions, d'Aristote à nous (Empathie) ; L'art de douter (Lucidité) ; L'éléphant et les aveugles (Lucidité) ; Socrate et Platon (Sagesse) ; Sagesses d'Asie (Sagesse) ; L'esprit selon le Bouddha (Empathie) ; Les Caractères de Théophraste (Empathie) | aucun |
-
-- Négliger « Débattre et voter » : Sans lieu pour débattre, les désaccords d'une cité se règlent dans la rue, et quelques-uns n'en reviennent pas.
-- Négliger « Douter et comprendre » : Une cité qui ne doute de rien cesse de vérifier ce qu'elle sait, et le perd par morceaux.
+| Guérir | La médecine égyptienne (Savoir) | Dispensaire |
+| Tenir le calendrier | Les astronomes de Babylone (Cosmos) | Cadran et calendrier |
 
 **Pour passer à l'âge suivant** : tous les besoins non optionnels couverts et 80 habitants.
 
@@ -141,16 +135,44 @@ Un savoir maîtrisé suffit à couvrir un besoin.
 
 | Aménagement | Quartier | Savoir requis (un au choix) | Coût | Épreuve et quête |
 |---|---|---|---|---|
-| Moulin | Les champs et jardins | Archimède, leviers et flotteurs (Mécanique) ; Le mouvement selon Aristote (Mécanique) | 50 crédits, 30 bois, 20 pierre | « Tailler la meule » : une grosse pierre plate, une pierre ronde |
 | Mine et fonderie (produit métal) | La zone industrielle | Les métaux (Alchimie) | 60 crédits, 30 bois, 20 pierre | « Allumer la fonderie » : du minerai de cuivre, de l'argile |
 | Forge | La zone artisanale | Les métaux (Alchimie) | 60 crédits, 20 pierre, 10 métal | « Battre le fer » : un billot de bois |
 | Grand entrepôt | Le port | Babylone et la base 60 (Logique) ; L'Égypte et le papyrus Rhind (Logique) | 60 crédits, 40 bois, 30 pierre | aucune |
 | Dispensaire | La ville | La médecine égyptienne (Savoir) ; Hippocrate et les humeurs (Savoir) | 60 crédits, 20 bois, 20 pierre | aucune |
 | Cadran et calendrier | Le campus | Les astronomes de Babylone (Cosmos) ; Mesurer la Terre (Cosmos) | 50 crédits, 30 pierre | « Dresser le cadran » : un bâton bien droit, des cailloux clairs |
 | Maison des écrits | Le campus | Les premiers scribes (Cité) ; Écrire la musique (Harmonie) ; Simonide et le banquet (Mnémosyne) ; Platon contre l'écriture (Mnémosyne) | 60 crédits, 30 bois, 20 pierre | aucune |
+
+## 5. La cité des philosophes
+
+**Ce que vit le joueur.** La cité frappe monnaie, débat sur la place et cherche des causes là où l'on voyait des dieux.
+
+### Besoins et savoirs
+
+Un savoir maîtrisé suffit à couvrir un besoin.
+
+| Besoin | Savoirs qui y répondent | Aménagements débloqués |
+|---|---|---|
+| Échanger | Les premières pièces (Cité) | aucun |
+| Lever et moudre | Archimède, leviers et flotteurs (Mécanique) ; Le mouvement selon Aristote (Mécanique) | Moulin |
+| Chercher les causes | Hippocrate et les humeurs (Savoir) | Dispensaire |
+| Mesurer le monde | Mesurer la Terre (Cosmos) | Cadran et calendrier |
+| Exercer la mémoire | Simonide et le banquet (Mnémosyne) ; Platon contre l'écriture (Mnémosyne) | Maison des écrits |
+| Débattre et voter (optionnel) | Athènes tire au sort (Essaim) ; Le vote des tessons (Essaim) ; Les sophistes (Éloquence) ; Les orateurs d'Athènes (Éloquence) | Tribune |
+| Douter et comprendre (optionnel) | Présocratiques (Sagesse) ; Les historiens et la rumeur (Lucidité) ; Les émotions, d'Aristote à nous (Empathie) ; L'art de douter (Lucidité) ; L'éléphant et les aveugles (Lucidité) ; Socrate et Platon (Sagesse) ; Sagesses d'Asie (Sagesse) ; L'esprit selon le Bouddha (Empathie) ; Les Caractères de Théophraste (Empathie) | aucun |
+
+- Négliger « Débattre et voter » : Sans lieu pour débattre, les désaccords d'une cité se règlent dans la rue, et quelques-uns n'en reviennent pas.
+- Négliger « Douter et comprendre » : Une cité qui ne doute de rien cesse de vérifier ce qu'elle sait, et le perd par morceaux.
+
+**Pour passer à l'âge suivant** : tous les besoins non optionnels couverts et 150 habitants.
+
+### Aménagements qui deviennent possibles
+
+| Aménagement | Quartier | Savoir requis (un au choix) | Coût | Épreuve et quête |
+|---|---|---|---|---|
+| Moulin | Les champs et jardins | Archimède, leviers et flotteurs (Mécanique) ; Le mouvement selon Aristote (Mécanique) | 50 crédits, 30 bois, 20 pierre | « Tailler la meule » : une grosse pierre plate, une pierre ronde |
 | Tribune | L'agora | Athènes tire au sort (Essaim) ; Le vote des tessons (Essaim) ; Les sophistes (Éloquence) ; Les orateurs d'Athènes (Éloquence) | 50 crédits, 30 pierre | aucune |
 
-## 5. Le royaume
+## 6. Le royaume
 
 **Ce que vit le joueur.** Des routes, des écoles, des machines et des cartes : cet âge arrive bientôt.
 
@@ -163,11 +185,11 @@ Chaque grotte se trouve en envoyant un explorateur avec une torche. On y cherche
 | Grotte | Apparaît à l'âge | Ce qu'on y trouve | Ce que le passage ouvre |
 |---|---|---|---|
 | La grotte ornée | le campement | Les chevaux de Chauvet ; La roche raclée ; La main en négatif ; Le crâne de l'ours ; Les taureaux de Lascaux ; Peindre à la lampe | l'épreuve qui fait quitter le campement |
-| La grotte des deux fleuves | la cité | Enki, le plus sage ; Inanna aux Enfers ; Gilgamesh, roi d'Uruk ; Nisaba, scribe des dieux ; Nanna, la lune ; Marduk contre Tiamat | Babylone et la base 60 (Logique) ; Les astronomes de Babylone (Cosmos) |
-| La grotte du Nil | la cité | Rê, le soleil en barque ; Osiris, roi des morts ; La pesée du cœur ; Thot, le dieu des scribes ; Sekhmet, la lionne qui guérit | La médecine égyptienne (Savoir) ; L'Égypte et le papyrus Rhind (Logique) |
-| La grotte du chêne | la cité | Les druides, vingt ans par cœur ; Le bosquet sacré ; Cernunnos, le dieu cornu ; Épona et Belenos ; Taranis et Toutatis ; Le chaudron du Dagda | rien |
-| La grotte de l'Olympe | la cité | Du Chaos à Cronos ; Zeus contre les Titans ; Les douze de l'Olympe ; Prométhée, le voleur de feu ; La jarre de Pandore ; Déméter et les saisons | rien |
-| La grotte des hymnes | la cité | Ce qui est entendu ; Les quatre Védas ; Indra et le serpent Vritra ; Agni, le feu qui porte ; Surya, le char du Soleil ; L'ordre du monde | rien |
+| La grotte des deux fleuves | la cité des scribes | Enki, le plus sage ; Inanna aux Enfers ; Gilgamesh, roi d'Uruk ; Nisaba, scribe des dieux ; Nanna, la lune ; Marduk contre Tiamat | Babylone et la base 60 (Logique) ; Les astronomes de Babylone (Cosmos) |
+| La grotte du Nil | la cité des scribes | Rê, le soleil en barque ; Osiris, roi des morts ; La pesée du cœur ; Thot, le dieu des scribes ; Sekhmet, la lionne qui guérit | La médecine égyptienne (Savoir) ; L'Égypte et le papyrus Rhind (Logique) |
+| La grotte du chêne | la cité des philosophes | Les druides, vingt ans par cœur ; Le bosquet sacré ; Cernunnos, le dieu cornu ; Épona et Belenos ; Taranis et Toutatis ; Le chaudron du Dagda | rien |
+| La grotte de l'Olympe | la cité des philosophes | Du Chaos à Cronos ; Zeus contre les Titans ; Les douze de l'Olympe ; Prométhée, le voleur de feu ; La jarre de Pandore ; Déméter et les saisons | rien |
+| La grotte des hymnes | la cité des scribes | Ce qui est entendu ; Les quatre Védas ; Indra et le serpent Vritra ; Agni, le feu qui porte ; Surya, le char du Soleil ; L'ordre du monde | rien |
 | La grotte des glaces | le royaume | Deux livres pour tout un panthéon ; Le monde taillé dans un géant ; Yggdrasil et les neuf royaumes ; Odin, le dieu borgne ; Loki et le cheval à huit pattes ; Le Ragnarök | rien |
 | La grotte du maïs | le royaume | Le Popol Vuh ; Des humains faits de maïs ; Les jumeaux et les seigneurs de la mort ; Quetzalcoatl, le serpent à plumes ; Le cinquième soleil ; La Pierre du Soleil | rien |
 
