@@ -1248,7 +1248,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ex-x, .ex-zoom button { pointer-events: auto; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--surface); color: var(--text); font-size: 26px; font-weight: 700; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.3); cursor: pointer; }
 .explorer .ex-x { color: #20222E; background: #fff; text-shadow: none; font-family: system-ui, sans-serif; } .ex-zoom { position: absolute; right: 8px; top: calc(70px + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: 8px; }
 .ex-bas { flex: none; background: var(--bg); padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px)); max-height: 46vh; overflow-y: auto; box-shadow: 0 -4px 14px rgba(0,0,0,.25); }
-.ex-msg { font-size: 17px; line-height: 1.4; margin-bottom: 8px; } .ex-liste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.ex-msg { font-size: 17px; line-height: 1.4; margin-bottom: 8px; } .ex-avis { position: absolute; left: 16px; right: 16px; top: 34%; z-index: 6; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #1B1D2A; color: #fff; border: 2px solid #F2B632; box-shadow: 0 8px 28px rgba(0,0,0,.45); } .ex-avis span { font-size: 30px; line-height: 1; } .ex-avis p { margin: 0; font-size: 19px; line-height: 1.4; font-weight: 700; } .ex-liste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .ex-liste li { display: flex; align-items: center; gap: 6px; padding: 5px 6px; border-radius: 10px; border: 2px dashed var(--line); } .ex-liste li svg { flex: none; } .ex-liste li.ok { border-style: solid; border-color: var(--good); } .ex-liste li:not(.ok) svg { filter: grayscale(1); opacity: .45; }
 .ex-liste b { display: block; font-size: 15px; } .ex-liste small { display: block; font-size: 13px; color: var(--muted); line-height: 1.25; } .ex-quete { margin: 0 0 8px; } .ex-bas .btn { width: 100%; }
 .ex-gz-sol { fill: #2E9E5B; opacity: .22; } .ex-gz-bord { fill: none; stroke: #2E9E5B; stroke-width: 1.4; stroke-dasharray: 4 3; } .ex-gz-fanion { fill: #2E9E5B; }
@@ -2655,6 +2655,12 @@ function demarrerJeu() {
       else { X.vus = X.vus.filter(function (v) { return v.id !== idq; }); X.vus.push({ id: idq, x: X.x, y: X.y }); message = __("Repère planté pour : {q}. Reste à revenir le dire au village.", { q: tx(q.nomFinal) }); }
       peindreInterdit(); X.gz = null; objets(); panneau();
     }
+    // Victor (2026-11-18) : une grotte où l'on ne peut pas entrer le dit en grand, au milieu de la vue, quelques secondes.
+    function alerter(txt) {
+      var a = z.querySelector(".ex-avis"); if (a) a.remove();
+      a = el('<div class="ex-avis" role="alert"><span aria-hidden="true">🕳️</span><p></p></div>'); a.querySelector("p").textContent = txt;
+      a.addEventListener("pointerdown", function (ev) { ev.stopPropagation(); a.remove(); }); vueE.appendChild(a); setTimeout(function () { if (a.parentNode) a.remove(); }, 7000);
+    }
     function versCarte(cx, cy) { var b = base(); return [S.x + (cx - b.r.left - b.r.width / 2) / b.r.width * b.w / S.k, S.y + (cy - b.r.top - b.r.height / 2) / b.r.height * b.h / S.k]; }
     var LOUP = '<ellipse cy="4.6" rx="5.5" ry="1.4" fill="rgba(0,0,0,.25)"/><path d="M-5 1 L-4 -2 L3 -2.5 L4.6 -5 L5.6 -2.6 L7.4 -.4 L5 1 L4 4.4 L2.8 4.4 L2.4 1.6 L-2 1.6 L-2.8 4.4 L-4 4.4 Z" fill="#2E313B"/><path d="M-4.6 0 L-7.6 -1.6" stroke="#2E313B" stroke-width="1.3" stroke-linecap="round"/><circle cx="5" cy="-1.8" r=".7" fill="#FF4D3D"/>';
     // Victor (2026-11-13) : on passe derrière les arbres. L'explorateur et les prédateurs sont rangés parmi les éléments
@@ -2862,8 +2868,8 @@ function demarrerJeu() {
         X.grottes = X.grottes || M.grottesIle(C, P).filter(function (g) { return g.presente; });
         var Ge = X.grottes.filter(function (g) { return Math.hypot(g.position[0] * ILE_W - X.x, g.position[1] * ILE_H + 4 - X.y) < 7; })[0], Gd = Ge && C.ile.grottes.filter(function (g) { return g.id === Ge.id; })[0];
         if (Ge) {
-          if (!Ge.ouverte) { if (!X.noir) { X.noir = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.vue = "dos"; message = __("Une grotte ! ") + tx(Gd.noir || { fr: "Il fait noir là-dedans." }); panneau(); } }
-          else if (!X.torche) { if (!X.noir) { X.noir = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.vue = "dos"; M.trouverGrotte(C, P, Ge.id, maintenant()); sauver(); message = __("Une grotte ! ") + tx(Gd.sans_torche || Gd.noir || { fr: "Il fait noir là-dedans." }); panneau(); } }
+          if (!Ge.ouverte) { if (!X.noir) { X.noir = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.vue = "dos"; message = __("Une grotte ! ") + tx(Gd.noir || { fr: "Il fait noir là-dedans." }); panneau(); alerter(message); } }
+          else if (!X.torche) { if (!X.noir) { X.noir = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.vue = "dos"; M.trouverGrotte(C, P, Ge.id, maintenant()); sauver(); message = __("Une grotte ! ") + tx(Gd.sans_torche || Gd.noir || { fr: "Il fait noir là-dedans." }); panneau(); alerter(message); } }
           else if (!X.sorti) {
             M.trouverGrotte(C, P, Ge.id, maintenant()); sauver(); X.tx = X.x; X.ty = X.y; dessiner(); appliquer();
             ouvrirGrotte(Ge.id, function () { if (!X) return; X.sorti = true; X.y += 9; X.tx = X.x; X.ty = X.y; X.t = performance.now(); message = __("De retour à l'air libre."); panneau(); raf = requestAnimationFrame(tour); });
@@ -2942,7 +2948,7 @@ function demarrerJeu() {
   // L'abri en coupe (Victor, 2026-11-15 : « comprendre la structure de la charpente ») : il se monte pièce après pièce,
   // à mesure des décisions. mode « coupe » : muret, perches, sommet, entrée ; « couverture » : peaux cousues, pierres.
   function svgCoupeAbri(mode, k) {
-    var c = mode === "couverture", ch = c ? 4 : k, cv = c ? k : 0, T = function (x, y, t, a) { return '<text x="' + x + '" y="' + y + '" font-size="11" font-weight="700" text-anchor="' + (a || "middle") + '" fill="#5E5A52">' + esc(t) + "</text>"; };
+    var c = mode === "couverture", ch = c ? 4 : k, cv = c ? k + 1 : 0, T = function (x, y, t, a) { return '<text x="' + x + '" y="' + y + '" font-size="11" font-weight="700" text-anchor="' + (a || "middle") + '" fill="#5E5A52">' + esc(t) + "</text>"; };
     var h = '<svg class="ep-pierres" viewBox="0 0 320 196" role="img" aria-label="' + esc(__("L'abri en coupe")) + '"><rect x="0" y="162" width="320" height="34" fill="#CDBE96"/><path d="M0 162 H320" stroke="#9A8A62" stroke-width="2"/>' +
       '<path d="M8 96 h30 m-7 -5 l7 5 l-7 5 M8 122 h24 m-7 -5 l7 5 l-7 5" stroke="#5B7FD9" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' + T(22, 84, __("vent"));
     if (ch >= 2) h += '<path d="M152 162 L164 40" stroke="#5E3F20" stroke-width="4" stroke-linecap="round" opacity=".55"/>';
@@ -5497,7 +5503,9 @@ function demarrerJeu() {
     } else {
       out += '<ellipse cx="' + cx + '" cy="' + (sol - 1) + '" rx="' + (taille * 0.42) + '" ry="' + (taille * 0.1) + '" fill="rgba(20,30,20,.28)"/>';
       var filtre = inst.etat === "panne" || inst.etat === "veille" ? ' filter="url(#ile-terne)"' : inst.etat === "abandon" ? ' filter="url(#ile-ruine)" opacity=".75"' : "";
-      out += "<g" + filtre + ">" + pixels(g, C.cabinet.palette, null, x, y, e) + "</g>";
+      // Victor (2026-11-18) : la hutte du soigneur montre une hutte, le crâne trépané posé devant elle.
+      if (inst.comp === "sci.soigner") out += "<g" + filtre + ">" + svgAmenagement({ id: "hutte", dessin: "hutte" }, cx, sol - taille * 0.06, taille * 0.94) + pixels(g, C.cabinet.palette, null, cx + taille * 0.04, sol - taille * 0.47, e * 0.5) + "</g>";
+      else out += "<g" + filtre + ">" + pixels(g, C.cabinet.palette, null, x, y, e) + "</g>";
       if (inst.etat === "abandon") {
         // Les herbes folles gagnent le pied de l'installation.
         var gr = graine(inst.comp);
@@ -11528,7 +11536,7 @@ function demarrerJeu() {
       if (cr && cr.mot) {
         // Le compte en clair : tarif du succès, décision de l'IA, total.
         var ecart = cr.n - cr.base, pl = function (n) { return n + __(" crédit") + (Math.abs(n) > 1 ? "s" : ""); };
-        var calcul = ecart ? "+" + pl(cr.base) + ' <span class="' + (ecart > 0 ? "plus" : "moins") + '">' + (ecart > 0 ? "+" : "−") + Math.abs(ecart) + __("</span> (décision de l'IA) = <b>") + pl(cr.n) + "</b>" : "<b>+" + pl(cr.n) + __("</b> (l'IA s'en tient au tarif)");
+        var calcul = ecart ? "+" + pl(cr.base) + ' <span class="' + (ecart > 0 ? "plus" : "moins") + '">' + (ecart > 0 ? "+" : "−") + Math.abs(ecart) + __("</span> (décision de l'IA) = <b>") + pl(cr.n) + "</b>" : "<b>+" + pl(cr.n) + "</b>";
         carte.appendChild(el('<div class="gain-credits"><div class="ligne-bourse">' + svgBourse(44) + '<div class="calcul">' + calcul + "</div></div><p>" + gu(esc(tx(cr.mot))) + "</p></div>"));
       } else if (cr && cr.n) {
         // Sans dramaturgie : le tarif du succès, sans commentaire.
