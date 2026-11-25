@@ -2813,3 +2813,20 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   pi.ecrans.forEach(e => e.texte.forEach(x => assert.ok(x.fr && x.fr.length < 320, "écran court : " + e.id)));
   console.log("OK : matricule du candidat et écrans d'ouverture");
 }
+
+// Victor (2026-11-25) : payer pour ne pas explorer. Les objets manquants d'une quête, contre des crédits.
+{
+  const CI = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), ile: d("ile.json") });
+  const PQ = M.nouvellePartie(1795000000000); PQ.mode = "ile";
+  const ep = CI.ile.epreuves.find(e => e.quete && e.quete.objets.length >= 2), prix = CI.ile.regles.coursier.objet;
+  M.ramasserIle(CI, PQ, ep.id, ep.quete.objets[0].id, 1);
+  const n = ep.quete.objets.length - 1;
+  PQ.credits.solde = n * prix - 1;
+  assert.ok(!M.coursierIle(CI, PQ, ep.id).possible); assert.equal(M.payerCoursier(CI, PQ, ep.id, 2), null, "pas assez de crédits");
+  PQ.credits.solde = n * prix + 7;
+  assert.deepEqual(M.coursierIle(CI, PQ, ep.id), { id: ep.id, reste: n, prix: n * prix, possible: true });
+  const rc = M.payerCoursier(CI, PQ, ep.id, 2);
+  assert.ok(rc.quete.complete && PQ.credits.solde === 7); assert.equal(M.coursierIle(CI, PQ, ep.id), null, "quête complète : plus rien à payer");
+  PQ.mode = "parcours"; delete PQ.quetes; assert.equal(M.coursierIle(CI, PQ, ep.id), null);
+  console.log("OK : coursier des quêtes (objets manquants contre crédits)");
+}

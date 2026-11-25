@@ -2580,6 +2580,10 @@ function demarrerJeu() {
         h = '<div class="ex-msg">' + esc(message || (!foyer ? (q ? __("Zoome : ce que tu cherches ne se voit que de près.") : __("Rien à chercher pour l'instant. Zoome pour voir ton île de près.")) : q ? __("Le brouillard cache l'île. Envoie un explorateur : il ne voit qu'autour de lui, et il n'est pas seul là-dedans.") :
           sites.length ? __("Un quartier attend son emplacement. Envoie un explorateur, choisis l'endroit, puis reviens le dire au village.") : nba ? __("Des baies ont mûri quelque part dans le brouillard. Un explorateur peut aller les cueillir.") : __("Rien à chercher pour l'instant. Le brouillard garde le reste de l'île."))) + "</div>" +
           (foyer && !X && (q || sites.length || nba) ? '<button type="button" class="btn large" data-a="partir">' + __("Envoyer un explorateur") + "</button>" + boutonTorche() : "");
+        // Victor (2026-11-25) : un moyen de ne pas explorer. Contre des crédits, les habitants rapportent ce qui manque.
+        var KO = q && !X ? M.coursierIle(C, P, q.id) : null;
+        if (KO) h += '<button type="button" class="btn sec large ile-explorer" data-a="coursier"' + (KO.possible ? "" : " disabled") + ">🧺 " + (KO.reste > 1 ? __("Faire rapporter les {n} objets ({p} crédits)", { n: KO.reste, p: KO.prix }) : __("Faire rapporter l'objet manquant ({p} crédits)", { p: KO.prix })) + "</button>" +
+          (KO.possible ? "" : '<p class="note" style="font-size:15px;margin:6px 0 0">' + __("Il te manque {n} crédits pour ça.", { n: KO.prix - P.credits.solde }) + "</p>");
         if (q) h += '<ul class="ex-liste">' + q.objets.map(function (o) {
           if (X && X.sac.indexOf(o.id) >= 0) return '<li class="sac"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + "</b><small>" + __("dans le sac : à ramener") + "</small></span></li>";
           return '<li class="' + (o.pris ? "ok" : "") + '"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + (o.pris ? " ✓" : "") + "</b>" + (o.pris || !o.zone ? "" : "<small>" + esc(tx(o.zone)) + "</small>") + "</span></li>"; }).join("") + "</ul>";
@@ -2594,6 +2598,10 @@ function demarrerJeu() {
       var go = bas.querySelector('[data-a="go"]'); if (go) go.onclick = function () { fermer(); ouvrirEpreuveIle(fini.id); };
       var bp = bas.querySelector('[data-a="partir"]'); if (bp) bp.onclick = partir;
       var bto = bas.querySelector('[data-a="torche"]'); if (bto) bto.onclick = partirTorche;
+      var bco = bas.querySelector('[data-a="coursier"]'); if (bco) bco.onclick = function () {
+        var rc = M.payerCoursier(C, P, q.id, maintenant()); if (!rc) return;
+        sauver(); message = __("Les habitants ont tout rapporté au village. Tout y est."); objets(); panneau(rc.quete);
+      };
       bas.querySelectorAll("[data-site]").forEach(function (b2) { b2.onclick = function () { planter(b2.getAttribute("data-site")); }; });
       bas.querySelectorAll("[data-ouvrir]").forEach(function (b2) { b2.onclick = function () { var idq = b2.getAttribute("data-ouvrir"); fermer(); ouvrirVerrouQuartier(idq); }; });
     }
