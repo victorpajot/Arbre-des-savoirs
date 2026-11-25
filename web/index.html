@@ -11733,7 +11733,10 @@ function demarrerJeu() {
       v.appendChild(lg);
     }
     var np = el('<button type="button" class="btn large' + (provisoire ? "" : " sec") + '">' + __("Nouvelle partie") + "</button>");
-    np.onclick = function () { assistant = { etape: 1, nom: nomLibre(__("Ma partie")), off: provisoire ? [] : packsDemandes(P).slice(), routine: { active: false, heure: "07:30" } }; allerTitre("nouvelle"); };
+    np.onclick = function () { assistant = { etape: 1, nom: nomLibre(__("Ma partie")), off: provisoire ? [] : packsDemandes(P).slice(), routine: { active: false, heure: "07:30" } };
+      // Victor (2026-11-25) : une nouvelle partie propose l'île par défaut.
+      if (BRUT && BRUT["ile.json"]) assistant.mode = "ile";
+      allerTitre("nouvelle"); };
     var ch = el('<button type="button" class="btn sec large">' + __("Charger une partie") + "</button>");
     ch.onclick = function () { allerTitre("charger"); };
     v.appendChild(np); v.appendChild(ch);
@@ -11814,8 +11817,8 @@ function demarrerJeu() {
   }
   function choixMode(mode, changer, intro) {
     var b = el('<div class="bloc"><h2>' + __("Façon de jouer") + "</h2>" + (intro ? '<p class="note">' + intro + "</p>" : "") + '<div class="modes"></div></div>'), z = b.querySelector(".modes");
-    [["parcours", "🎲", __("Le parcours"), __("Un plateau à travers l'histoire des sciences. Chaque épreuve fait avancer ton pion : ennemis, atomes sauvages, pièges, Chrono sur les cases.")],
-     ["ile", "🏝️", __("L'île"), __("Pas de plateau : tu bâtis une île. Chaque savoir y construit une installation, les habitants arrivent, travaillent et se nourrissent. Faux savoirs, matériaux et monuments se jouent depuis l'île.")]].forEach(function (m) {
+    [["ile", "🏝️", __("L'île"), __("Pas de plateau : tu bâtis une île. Chaque savoir y construit une installation, les habitants arrivent, travaillent et se nourrissent. Faux savoirs, matériaux et monuments se jouent depuis l'île.")],
+     ["parcours", "🎲", __("Le parcours"), __("Un plateau à travers l'histoire des sciences. Chaque épreuve fait avancer ton pion : ennemis, atomes sauvages, pièges, Chrono sur les cases.")]].forEach(function (m) {
       var bt = el('<button type="button" class="mode' + (mode === m[0] ? " pris" : "") + '" aria-pressed="' + (mode === m[0]) + '"><span class="mode-i">' + m[1] + "</span><span><b>" + m[2] + "</b><small>" + m[3] + "</small></span></button>");
       bt.onclick = function () { if (mode !== m[0]) changer(m[0]); };
       z.appendChild(bt);
