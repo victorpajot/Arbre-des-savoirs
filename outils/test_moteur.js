@@ -2808,7 +2808,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   assert.ok(/^[A-Z][0-9]{4}[A-Z]$/.test(m), "matricule : une lettre, quatre chiffres, une lettre");
   assert.equal(M.matricule(PP), m, "le matricule ne change plus");
   PP.mode = "ile"; const pi = M.prologue(CP, PP); PP.mode = "parcours"; const pp = M.prologue(CP, PP);
-  assert.ok(pi && pi.ecrans.length >= 5 && pi.ecrans.length === pp.ecrans.length && pi.matricule === m);
+  assert.ok(pi && pi.ecrans.length >= 4 && pi.ecrans[0].id === "toi" && pi.ecrans.length === pp.ecrans.length && pi.matricule === m);
   assert.ok(pi.ecrans.some(e => e.id === "alyca-ile") && !pi.ecrans.some(e => e.id === "alyca-parcours"));
   pi.ecrans.forEach(e => e.texte.forEach(x => assert.ok(x.fr && x.fr.length < 320, "écran court : " + e.id)));
   console.log("OK : matricule du candidat et écrans d'ouverture");
