@@ -407,7 +407,7 @@
   //   ultimatum : false = Alyca ne lance pas d'ultimatum
   //   vol       : false = un ennemi vainqueur ne vole pas de crédits
   //   mur       : le nom du mur de la honte (« revisions »)
-  var REGLAGES = ["ton", "voix", "texte", "ultimatum", "vol", "mur"];
+  var REGLAGES = ["ton", "voix", "texte", "ultimatum", "vol", "mur", "variantes"];
   function reglage(partie, cle) { var r = partie && partie.options && partie.options.reglages; return r ? r[cle] : undefined; }
   // Le ton du narrateur : celui que la partie a choisi ; sinon, sans dramaturgie (pas de faveur), un ton sobre, qui dit
   // les choses sans se moquer. Avec la dramaturgie, null : c'est Alyca qui parle, sur son ton à elle.
@@ -760,6 +760,102 @@
     var fraiches = toutes.filter(function (q) { return recentes.indexOf(q.id) < 0; });
     var vues = toutes.filter(function (q) { return recentes.indexOf(q.id) >= 0; });
     return fraiches.concat(vues).slice(0, n);
+  }
+
+  // --- Variantes de QCM (Victor, 2026-11-25) -----------------------------------
+  // « J'ai tendance à retenir la réponse en reconnaissant le motif. » Une question à choix se présente donc sous
+  // plusieurs visages, tirés au hasard à chaque passage : autre formulation (`formulations`), leurres renouvelés et de
+  // même longueur que la bonne réponse (`leurres` en réserve), réponse à taper quand les choix sont des nombres,
+  // question à l'envers (la réponse est donnée, on retrouve la question parmi celles de la compétence), et « Aucune de
+  // ces réponses » (juste une fois sur deux). Après une bonne réponse, `pourquoi` demande la raison : une mauvaise
+  // raison et la réponse ne compte pas. Réglages : regles.quiz.variantes ; réglage de pack `variantes: false` = QCM simples.
+  // Un énoncé qui renvoie aux choix (le plus…, lequel, parmi, l'intrus) ne se pose ni à l'envers, ni sans ses choix.
+  var RE_RENVOI = /\b(lequel|laquelle|lesquel(?:le)?s|parmi|ci-dessous|ci-dessus|suivante?s?|intrus|ces (?:réponses|propositions|choix|termes|mots|nombres|exemples))\b|\b(?:le|la|les) (?:plus|moins)\b|sch[ée]ma|\bfigure\b|\bdessin\b|\bimage\b/i;
+  // Un choix qui parle des autres choix (« Tous », « Aucun », « Les deux », « Oui »…) : pas d'« Aucune de ces réponses » à côté.
+  var RE_GLOBAL = /^\s*(aucun|aucune|tous|toutes|tout|rien|ni|oui|non|vrai|faux|personne|les deux|les trois|les quatre)\b|\b(les deux|les trois|toutes ces|aucune de)\b/i;
+  var RE_CHOIX_NOMBRE = /^\s*([-−]?\d{1,3}(?:[\s  ]\d{3})*(?:[.,]\d+)?|[-−]?\d+(?:[.,]\d+)?)\s*([^\d\s].*?)?\s*$/;
+  var AUCUNE = { fr: "Aucune de ces réponses", en: "None of these answers" };
+  function texteFr(o) { return (o && (o.fr != null ? o.fr : o)) || ""; }
+  function motsLongs(s) { return (String(s).toLowerCase().match(/[a-zà-ÿ]{5,}/g) || []); }
+  function seRecoupent(a, b) { var mb = motsLongs(b); return motsLongs(a).some(function (m) { return mb.indexOf(m) >= 0; }); }
+  function sansDecor(q) { return !q.illustration && !q.dessin && !q.figure; }
+  // Les nombres d'un QCM dont tous les choix sont des nombres, avec la même unité : { valeurs, unite } ; sinon null.
+  function choixNombres(q) {
+    var unite = null, vals = [];
+    for (var i = 0; i < q.choix.length; i++) {
+      var m = RE_CHOIX_NOMBRE.exec(texteFr(q.choix[i])); if (!m) return null;
+      var u = (m[2] || "").trim(); if (i && u !== unite) return null; unite = u;
+      var v = lireNombre(m[1].replace("−", "-")); if (isNaN(v)) return null; vals.push(v);
+    }
+    return { valeurs: vals, unite: unite };
+  }
+  // Les leurres d'un passage : parmi ceux du QCM et sa réserve, les plus proches de la bonne réponse par la longueur,
+  // avec une part de hasard pour qu'ils changent d'une fois sur l'autre.
+  function choisirLeurres(q, n, alea) {
+    var pool = q.choix.filter(function (_, i) { return i !== q.reponse; }).concat(q.leurres || []);
+    if (pool.length <= n) return melanger(pool, alea);
+    var L = Math.max(1, texteFr(q.choix[q.reponse]).length);
+    return pool.map(function (c) { return { c: c, s: Math.abs(texteFr(c).length - L) / L + alea() * 0.35 }; })
+      .sort(function (a, b) { return a.s - b.s; }).slice(0, n).map(function (x) { return x.c; });
+  }
+  // Les questions sœurs qui peuvent servir de leurres à l'envers : même compétence, autre réponse, sans mot commun.
+  function soeursEnvers(contenu, q) {
+    var bonne = texteFr(q.choix[q.reponse]), vues = {};
+    vues[texteFr(q.enonce)] = true;
+    return (contenu.questionsPar[q.competence] || []).filter(function (x) {
+      if (x === q || x.type !== "qcm" || !sansDecor(x) || RE_RENVOI.test(texteFr(x.enonce)) || vues[texteFr(x.enonce)]) return false;
+      var b = texteFr(x.choix[x.reponse]);
+      if (b === bonne || seRecoupent(b, bonne) || seRecoupent(texteFr(x.enonce), bonne)) return false;
+      vues[texteFr(x.enonce)] = true; return true;
+    });
+  }
+  function variantesQcm(contenu, partie) {
+    var V = (contenu.regles.quiz && contenu.regles.quiz.variantes) || null;
+    return V && reglage(partie, "variantes") !== false ? V : null;
+  }
+  // Une question telle qu'elle se pose cette fois-ci. Hors QCM, ou sans variantes, la question telle quelle.
+  // La variante garde l'id de la question ; `variante` dit laquelle, `origine` pointe vers la question d'origine.
+  function varierQuestion(contenu, partie, q, alea) {
+    alea = alea || Math.random;
+    var V = variantesQcm(contenu, partie);
+    if (!V || q.type !== "qcm" || q.choix.length < 3) return q;
+    var v = Object.assign({}, q, { origine: q, variante: null });
+    if (q.formulations && q.formulations.length) { var k = Math.floor(alea() * (q.formulations.length + 1)); if (k) { v.enonce = q.formulations[k - 1]; v.variante = "formulation"; } }
+    var n = q.choix.length - 1, leurres = choisirLeurres(q, n, alea);
+    v.choix = [q.choix[q.reponse]].concat(leurres); v.reponse = 0;
+    if (q.leurres && q.leurres.length && !v.variante) v.variante = "leurres";
+    var renvoie = RE_RENVOI.test(texteFr(q.enonce)), globaux = q.choix.concat(q.leurres || []).some(function (c) { return RE_GLOBAL.test(texteFr(c)); });
+    var nb = !renvoie && choixNombres(q), soeurs = !renvoie && sansDecor(q) && texteFr(q.choix[q.reponse]).length >= 2 ? soeursEnvers(contenu, q) : [];
+    var modes = [];
+    if (nb && V.libre) modes.push(["libre", V.libre]);
+    if (soeurs.length >= n && V.envers) modes.push(["envers", V.envers]);
+    if (!renvoie && !globaux && q.aucune !== false && V.aucune) modes.push(["aucune", V.aucune]);
+    var r = alea(), mode = null;
+    for (var i = 0; i < modes.length; i++) { if (r < modes[i][1]) { mode = modes[i][0]; break; } r -= modes[i][1]; }
+    if (mode === "libre") {
+      v.type = "numerique"; v.reponse = nb.valeurs[q.reponse]; delete v.choix;
+      if (nb.unite) v.unite = nb.unite; else delete v.unite;
+      if (estQuestionAnnee(v)) { v.annee = true; v.tolerance = Math.max(contenu.regles.quiz.tolerance_annees || 0, 0); } else v.tolerance = 0;
+    } else if (mode === "envers") {
+      var bonne = q.choix[q.reponse];
+      v.enonce = { fr: "Voici la réponse : « " + texteFr(bonne) + " ». Quelle était la question ?", en: "Here is the answer: “" + TX(bonne) + "”. What was the question?" };
+      v.choix = [q.enonce].concat(melanger(soeurs, alea).slice(0, n).map(function (x) { return x.enonce; }));
+      v.bonneTexte = bonne;
+    } else if (mode === "aucune") {
+      v.bonneTexte = q.choix[q.reponse];
+      if (alea() < (V.aucune_juste == null ? 0.5 : V.aucune_juste)) { v.choix = [AUCUNE].concat(leurres); v.absente = true; }
+      else v.choix = [q.choix[q.reponse]].concat(leurres.slice(0, n - 1), [AUCUNE]);
+    }
+    if (mode) v.variante = mode;
+    // Le pourquoi ne suit qu'une question posée à l'endroit.
+    if (q.pourquoi && mode !== "envers" && alea() < (V.pourquoi == null ? 1 : V.pourquoi)) v.pourquoiPose = true;
+    // L'index de la bonne réponse se mélange à l'affichage ; ici, elle reste en tête.
+    return v;
+  }
+  // La réponse à garder (mur de la honte, bilan) : le texte affiché, puisque les choix d'une variante ne sont pas ceux d'origine.
+  function reponseVariante(q, valeur) {
+    if (!q.origine || q.type !== "qcm") return valeur;
+    var c = q.choix[valeur]; return c ? TX(c) : valeur;
   }
 
   function lireNombre(texte) {
@@ -5438,6 +5534,7 @@
     niveauGlobal: niveauGlobal,
     melanger: melanger,
     tirerQuestions: tirerQuestions,
+    varierQuestion: varierQuestion, reponseVariante: reponseVariante, choixNombres: choixNombres,
     lireNombre: lireNombre,
     corriger: corriger,
     terminerQuiz: terminerQuiz,

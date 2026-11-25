@@ -207,6 +207,9 @@ body.texte-grand .retour p, body.texte-grand .comite p { font-size: 19px; }
 .choix button.faux { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--surface)); }
 .choix button:disabled { cursor: default; color: var(--ink); }
 .choix button.efface { opacity: .28; text-decoration: line-through; }
+.quiz .pourquoi { margin-top: 14px; padding-top: 12px; border-top: 2px dashed var(--line); }
+.quiz .pourquoi .enonce { margin-top: 0; }
+.retour .en-clair { font-size: 17px; line-height: 1.5; margin: 6px 0 0; }
 .poche-quiz { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 0; }
 /* v28 : le joker est une case de plus, sous les réponses, en pointillés dorés. */
 .poche-quiz .joker-case { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; font-size: 17px; font-weight: 700; border: 2px dashed #E08A00; border-radius: 14px; background: color-mix(in srgb, #E08A00 10%, var(--surface)); color: var(--ink); cursor: pointer; }
@@ -1971,6 +1974,7 @@ function demarrerJeu() {
     ultimatum: ["Ultimatums", "L'IA peut exiger des crédits sous peine de sanction."],
     vol: ["Vol de crédits", "Un ennemi qui gagne un duel te prend des crédits."],
     mur: ["Nom du mur", "« Révisions » au lieu de « mur de la honte » (le chrono reste)."],
+    variantes: ["QCM qui changent de visage", "À l'envers, réponse à taper, « Aucune de ces réponses », pourquoi : pour retrouver la réponse au lieu de la reconnaître."],
   };
   function blocReglagesPartie(b) {
     P.options = P.options || {};
@@ -1994,7 +1998,7 @@ function demarrerJeu() {
         l.querySelector("select").onchange = function (e) { changer(k, e.target.value || undefined); };
       } else {
         // Une case cochée = le jeu tel qu'il est pour voix et texte quand ils sont allumés ; ultimatum et vol sont allumés par défaut.
-        var defaut = k === "ultimatum" || k === "vol", actif = R[k] === undefined ? defaut : k === "texte" ? R[k] === "grand" : !!R[k];
+        var defaut = k === "ultimatum" || k === "vol" || k === "variantes", actif = R[k] === undefined ? defaut : k === "texte" ? R[k] === "grand" : !!R[k];
         l = el('<label class="interrupteur" style="border-top:1px solid var(--line);padding-top:12px;margin-top:12px">' + ligne + '<input type="checkbox"></label>');
         var cb = l.querySelector("input"); cb.checked = actif;
         cb.onchange = function () { changer(k, cb.checked === defaut ? undefined : k === "texte" ? (cb.checked ? "grand" : undefined) : cb.checked); };
@@ -10947,7 +10951,9 @@ function demarrerJeu() {
     // v34 : la case Chrono du pion se joue avant toute autre épreuve.
     if (M.chronoEnAttente(P)) { ouvrirChrono("case"); return; }
     var n = mode === "rappel" ? C.regles.rappels.questions_par_rappel : nbQuiz();
-    var qs = M.tirerQuestions(C, P, id, n).map(function (q) {
+    // Victor (2026-11-25) : chaque passage présente la question autrement (M.varierQuestion), pour qu'on la retrouve sans la reconnaître.
+    var qs = M.tirerQuestions(C, P, id, n).map(function (q0) {
+      var q = M.varierQuestion(C, P, q0, Math.random);
       var ordre = q.type === "qcm" ? M.melanger(q.choix.map(function (_, i) { return i; }), Math.random) : null;
       return { q: q, ordre: ordre };
     });
@@ -11085,20 +11091,45 @@ function demarrerJeu() {
     function repondre(valeur, bouton) {
       if (quiz.repondu) return;
       var ok = M.corriger(q, valeur);
+      // Victor (2026-11-25) : bonne réponse, puis « Pourquoi ? ». Une mauvaise raison et la réponse ne compte pas.
+      if (ok && q.pourquoiPose && !quiz.tempsEcoule && !cur.raison) { demanderPourquoi(valeur, bouton); return; }
+      if (cur.raison === "faux") ok = false;
       // v20 : le droit à l'erreur acheté à la boutique. Proposé avant de dévoiler la bonne réponse.
-      if (!ok && !quiz.tempsEcoule && !cur.reessai && q.type !== "vrai_faux" && M.enPoche(P, "erreur")) { proposerReessai(valeur, bouton); return; }
+      if (!ok && !quiz.tempsEcoule && !cur.reessai && !cur.raison && q.type !== "vrai_faux" && M.enPoche(P, "erreur")) { proposerReessai(valeur, bouton); return; }
       clearInterval(quiz.minuteur);
       var pq0 = document.querySelector(".quiz .poche-quiz .joker-case"); if (pq0) pq0.remove();
       document.querySelectorAll(".quiz .pouvoir-case, .quiz .pascaline").forEach(function (x) { x.remove(); });
-      quiz.repondu = true; quiz.res.push({ id: q.id, correct: ok, chrono: quiz.chrono && !cur.erreur, ms: Date.now() - quiz.debutQuestion, rep: valeur, erreur: !!cur.erreur });
+      quiz.repondu = true; quiz.res.push({ id: q.id, correct: ok, chrono: quiz.chrono && !cur.erreur, ms: Date.now() - quiz.debutQuestion, rep: M.reponseVariante(q, valeur), erreur: !!cur.erreur, variante: q.variante || undefined, raison: cur.raison || undefined });
       zoneRep.querySelectorAll("button").forEach(function (b) {
         b.disabled = true;
         var v = b.getAttribute("data-v");
         if (v !== null && String(attendu()) === v) b.classList.add("bon");
       });
-      if (bouton && !ok) bouton.classList.add("faux");
+      if (bouton && !ok && cur.raison !== "faux") bouton.classList.add("faux");
       var inp = zoneRep.querySelector("input"); if (inp) inp.disabled = true;
       montrerRetour(ok);
+    }
+    // Le pourquoi : la réponse est juste, reste à dire pourquoi. Les raisons se mélangent ; la bonne est la première du contenu.
+    function demanderPourquoi(valeur, bouton) {
+      quiz.repondu = true; clearInterval(quiz.minuteur);
+      zoneRep.querySelectorAll("button, input").forEach(function (b) { b.disabled = true; });
+      if (bouton) bouton.classList.add("bon");
+      if (barreP) barreP.remove();
+      var pq = q.origine.pourquoi, box = el('<div class="pourquoi"><p class="enonce">' + esc(tx(pq.enonce) || __("Juste. Et pourquoi ?")) + '</p><div class="choix"></div></div>');
+      var zc = box.querySelector(".choix");
+      M.melanger(pq.choix.map(function (_, i) { return i; }), Math.random).forEach(function (i) {
+        var b = el('<button type="button">' + esc(tx(pq.choix[i])) + "</button>");
+        b.onclick = function () {
+          zc.querySelectorAll("button").forEach(function (x, k) { x.disabled = true; });
+          b.classList.add(i === 0 ? "bon" : "faux");
+          if (i !== 0) zc.querySelectorAll("button").forEach(function (x) { if (x.textContent === tx(pq.choix[0])) x.classList.add("bon"); });
+          cur.raison = i === 0 ? "juste" : "faux"; quiz.repondu = false; repondre(valeur, bouton);
+        };
+        zc.appendChild(b);
+      });
+      zoneRep.parentNode.insertBefore(box, zoneRep.nextSibling);
+      box.scrollIntoView({ block: "start", behavior: "smooth" });
+      var b0 = zc.querySelector("button"); if (b0) b0.focus({ preventScroll: true });
     }
     function proposerReessai(valeur, bouton) {
       quiz.repondu = true; clearInterval(quiz.minuteur);
@@ -11172,7 +11203,11 @@ function demarrerJeu() {
     function montrerRetour(ok) {
       var rep = q.type === "qcm" ? tx(q.choix[q.reponse]) : (q.type === "vrai_faux" ? libVF(q.reponse) : String(q.reponse).replace(".", ",") + (q.unite ? " " + q.unite : ""));
       var tempsEcoule = quiz.tempsEcoule; quiz.tempsEcoule = false;
-      zoneRetour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (ok ? __("Juste.") + (quiz.chrono ? " +" + C.regles.chrono.bonus_xp_par_bonne_reponse + __(" XP de bonus chrono.") : "") : (tempsEcoule ? __("Temps écoulé. ") : __("Raté. ")) + __("Réponse : ") + esc(rep) + ".") + "</b><p>" + escD(tx(q.explication)) + "</p>" + htmlRepere(q) +
+      // Variantes : la bonne réponse absente des choix, ou la réponse donnée à l'envers, se redit en clair ; la mauvaise raison s'explique.
+      var enClair = q.bonneTexte ? '<p class="en-clair">' + (q.variante === "envers" ? __("La réponse « {r} » allait avec cette question.", { r: esc(tx(q.bonneTexte)) }) : q.absente ? __("La bonne réponse n'était pas dans la liste : {r}.", { r: "<b>" + esc(tx(q.bonneTexte)) + "</b>" }) : "") + "</p>" : "";
+      if (enClair === '<p class="en-clair"></p>') enClair = "";
+      var raison = cur.raison === "faux" ? '<p class="en-clair">' + __("Bonne réponse, mauvaise raison : ça ressemble à un coup de chance, elle ne compte pas. La raison : {r}", { r: "<b>" + esc(tx(q.origine.pourquoi.choix[0])) + "</b>" }) + "</p>" : "";
+      zoneRetour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (cur.raison === "faux" ? __("Raté au pourquoi.") : ok ? __("Juste.") + (quiz.chrono ? " +" + C.regles.chrono.bonus_xp_par_bonne_reponse + __(" XP de bonus chrono.") : "") : (tempsEcoule ? __("Temps écoulé. ") : __("Raté. ")) + (q.variante === "envers" ? "" : __("Réponse : ") + esc(rep) + ".")) + "</b>" + enClair + raison + "<p>" + escD(tx(q.explication)) + "</p>" + htmlRepere(q) +
         (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + htmlFigure(q.figure) + "</div>"));
       if (voixP()) { var rt = zoneRetour.lastChild; rt.appendChild(boutonEcouter(tx(q.explication))); parler((ok ? __("Bravo !") : __("Raté.")) + " " + tx(q.explication)); }
       var pq = portraitQuestion(q);

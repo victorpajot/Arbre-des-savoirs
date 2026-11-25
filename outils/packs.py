@@ -369,7 +369,7 @@ CHAMPS_MANIFESTE = {"format": int, "id": str, "sorte": str, "version": str, "nom
                     "auteurs": list, "licence": str, "langue_source": str}
 
 
-REGLAGES = {"allume", "ton", "voix", "texte", "ultimatum", "vol", "mur", "sans"}
+REGLAGES = {"allume", "ton", "voix", "texte", "ultimatum", "vol", "mur", "sans", "variantes"}
 
 
 def verifier(packs=None, cibles=None):
