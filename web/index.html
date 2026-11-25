@@ -11993,7 +11993,7 @@ function demarrerJeu() {
       var qui = e.qui === "mentor" ? esc(pr.mentor) : e.qui === "ia" ? "Alpha Lyca" : e.qui === "toi" ? __("Dossier d'inscription") : "";
       v.innerHTML = '<div class="pr-haut"><span class="pr-pts" aria-hidden="true">' + pr.ecrans.map(function (_, i) { return '<i class="' + (i <= n ? "on" : "") + '"></i>'; }).join("") + "</span>" +
         (dernier ? "" : '<button type="button" class="pr-passer">' + __("Passer") + "</button>") + '</div><div class="pr-corps prol-' + e.qui + '">' + (qui ? '<div class="pr-qui ' + e.qui + '">' + qui + "</div>" : "") +
-        e.texte.map(function (t) { var x = esc(tx(t).replace(/\{matricule\}/g, pr.matricule)); return "<p>" + (dit ? "« " + x + " »" : x) + "</p>"; }).join("") +
+        e.texte.map(function (t) { var x = esc(tx(t).replace(/\{matricule\}/g, pr.matricule)); return "<p>" + (dit ? "«\u00a0" + x + "\u00a0»" : x) + "</p>"; }).join("") +
         '</div><button type="button" class="btn large">' + (dernier ? (M.modeIle(P) ? __("Entrer sur l'île") : __("Commencer le parcours")) : __("Suite")) + "</button>";
       v.querySelector(".btn").onclick = function () { if (dernier) clore(); else { n++; montrer(); v.scrollTop = 0; } };
       var ps = v.querySelector(".pr-passer"); if (ps) ps.onclick = clore;
