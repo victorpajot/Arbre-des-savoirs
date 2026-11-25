@@ -495,7 +495,7 @@
   function prologue(contenu, partie) {
     var pr = contenu.ia && contenu.ia.prologue; if (!pr) return null;
     var mode = partie.mode === "ile" ? "ile" : "parcours";
-    return { mentor: pr.mentor, matricule: matricule(partie), ecrans: (pr.ecrans || []).filter(function (e) { return !e.mode || e.mode === mode; }) };
+    return { mentor: pr.mentor, portrait: pr.portrait || null, matricule: matricule(partie), ecrans: (pr.ecrans || []).filter(function (e) { return !e.mode || e.mode === mode; }) };
   }
   function nouvellePartie(t) {
     return {

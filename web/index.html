@@ -1733,6 +1733,7 @@ svg.grille .interro { transition: opacity .3s; }
 .prologue .pr-passer { background: none; border: 0; color: #A9ACC8; font: inherit; font-size: 15px; padding: 10px 0 10px 16px; }
 .prologue .pr-corps { flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 560px; width: 100%; margin: 0 auto; animation: pr-entree .5s ease-out; }
 .prologue .pr-qui { font-size: 14px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; color: #F2C94C; margin: 0 0 14px; }
+.prologue .pr-portrait { width: 126px; padding: 8px; margin: 0 0 16px; border-radius: 16px; background: #1B1E38; border: 2px solid #3A3D5C; line-height: 0; }
 .prologue .pr-qui.ia { color: #8FD3FF; }
 .prologue p { font-size: 19px; line-height: 1.55; margin: 0 0 18px; }
 .prologue .prol-toi p:first-of-type { font-size: 30px; font-weight: 800; letter-spacing: .04em; font-variant-numeric: tabular-nums; }
@@ -12000,7 +12001,7 @@ function demarrerJeu() {
       var e = pr.ecrans[n], dernier = n === pr.ecrans.length - 1, dit = e.qui === "mentor" || e.qui === "ia";
       var qui = e.qui === "mentor" ? esc(pr.mentor) : e.qui === "ia" ? "Alpha Lyca" : e.qui === "toi" ? __("Dossier d'inscription") : "";
       v.innerHTML = '<div class="pr-haut"><span class="pr-pts" aria-hidden="true">' + pr.ecrans.map(function (_, i) { return '<i class="' + (i <= n ? "on" : "") + '"></i>'; }).join("") + "</span>" +
-        (dernier ? "" : '<button type="button" class="pr-passer">' + __("Passer") + "</button>") + '</div><div class="pr-corps prol-' + e.qui + '">' + (qui ? '<div class="pr-qui ' + e.qui + '">' + qui + "</div>" : "") +
+        (dernier ? "" : '<button type="button" class="pr-passer">' + __("Passer") + "</button>") + '</div><div class="pr-corps prol-' + e.qui + '">' + (e.qui === "mentor" && pr.portrait && C.avatar ? '<div class="pr-portrait">' + svgSavant(pr.portrait, 110) + "</div>" : "") + (qui ? '<div class="pr-qui ' + e.qui + '">' + qui + "</div>" : "") +
         e.texte.map(function (t) { var x = esc(tx(t).replace(/\{matricule\}/g, pr.matricule)); return "<p>" + (dit ? "«\u00a0" + x + "\u00a0»" : x) + "</p>"; }).join("") +
         '</div><button type="button" class="btn large">' + (dernier ? (M.modeIle(P) ? __("Entrer sur l'île") : __("Commencer le parcours")) : __("Suite")) + "</button>";
       v.querySelector(".btn").onclick = function () { if (dernier) clore(); else { n++; montrer(); v.scrollTop = 0; } };
