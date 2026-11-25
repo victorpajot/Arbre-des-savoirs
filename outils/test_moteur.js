@@ -2799,3 +2799,17 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     Qa.epreuves.feu = t0; assert.equal(M.sursisIle(CA, Qa), null); assert.equal(M.ecoulerSursis(CA, Qa, 9999), null); assert.equal(M.gameOverIle(CA, Qa, t0), null); }
   console.log("OK : île par âges (feu, besoins, savoirs requis), monde fini (bancs, effort, effondrement), aléas annoncés");
 }
+
+// Victor (2026-11-25) : le candidat a un matricule, et la partie s'ouvre sur des écrans de texte.
+{
+  const CP = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), { commentaires: d("commentaires.json"), ia: d("ia.json") });
+  const PP = M.nouvellePartie(1795000000000); PP.id = "p1";
+  const m = M.matricule(PP);
+  assert.ok(/^[A-Z][0-9]{4}[A-Z]$/.test(m), "matricule : une lettre, quatre chiffres, une lettre");
+  assert.equal(M.matricule(PP), m, "le matricule ne change plus");
+  PP.mode = "ile"; const pi = M.prologue(CP, PP); PP.mode = "parcours"; const pp = M.prologue(CP, PP);
+  assert.ok(pi && pi.ecrans.length >= 5 && pi.ecrans.length === pp.ecrans.length && pi.matricule === m);
+  assert.ok(pi.ecrans.some(e => e.id === "alyca-ile") && !pi.ecrans.some(e => e.id === "alyca-parcours"));
+  pi.ecrans.forEach(e => e.texte.forEach(x => assert.ok(x.fr && x.fr.length < 320, "écran court : " + e.id)));
+  console.log("OK : matricule du candidat et écrans d'ouverture");
+}
