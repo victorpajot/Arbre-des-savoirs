@@ -1368,7 +1368,10 @@ svg.grille .interro { transition: opacity .3s; }
 .ep-piece { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; font-size: 15px; font-weight: 700; line-height: 1.2; } .ep-piece.faux { border-color: var(--bad); } .ep-piece.posee { opacity: .55; border-color: var(--good); }
 .ep-hache { transform-origin: 88px 164px; transform: rotate(-30deg); } .ep-abattre.pris .ep-hache { animation: ep-hacher .55s ease-in 3; } @keyframes ep-hacher { 0%, 100% { transform: rotate(-30deg); } 55%, 70% { transform: rotate(0deg); } }
 .ep-entaille, .ep-copeaux { opacity: 0; } .ep-abattre.pris .ep-entaille { opacity: 1; transition: opacity .2s .3s; } .ep-abattre.pris .ep-copeaux { opacity: 1; } .ep-abattre.pris .ep-copeaux rect { animation: ep-vol .7s ease-out .3s 3 both; }
-.ep-foyer svg { display: block; width: 100%; max-width: 300px; margin: 0 auto; } .ep-braise { fill: #E2551D; } .ep-flamme { opacity: 0; transition: opacity .9s; } .ep-foyer.pris .ep-flamme { opacity: 1; } .ep-foyer.pris .ep-braise { opacity: 0; }
+.ep-foyer svg { display: block; width: 100%; max-width: 300px; margin: 0 auto; } .ep-braise { fill: #E2551D; transform-box: fill-box; transform-origin: center; animation: ep-rougeoie 1.8s ease-in-out infinite; } .ep-flamme { opacity: 0; transition: opacity 1s 1.1s; } .ep-foyer.pris .ep-flamme { opacity: 1; } .ep-foyer.pris .ep-braise { animation: ep-embrase 1.6s ease-in both; animation-delay: 0s !important; }
+@keyframes ep-rougeoie { 0%, 100% { fill: #9C3A18; } 50% { fill: #E2551D; } }
+@keyframes ep-embrase { 0% { fill: #E2551D; transform: scale(1); } 35% { fill: #FF9A2E; transform: scale(1.5); filter: drop-shadow(0 0 4px #FFB347); } 70% { fill: #FFE08A; transform: scale(2.3); filter: drop-shadow(0 0 9px #FFB347); opacity: 1; } 100% { fill: #FFE08A; transform: scale(2.6); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ep-braise, .ep-foyer.pris .ep-braise { animation: none; } .ep-foyer.pris .ep-braise { opacity: 0; } }
 .fete { position: fixed; inset: 0; z-index: 60; background: color-mix(in srgb, var(--bg) 97%, transparent); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
 .fete .in { position: relative; z-index: 1; max-width: 460px; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .fete h2 { margin: 0; }
@@ -3371,7 +3374,7 @@ function demarrerJeu() {
         '<path d="M170 156 L174 40 L196 40 L202 156 Z" fill="#6A4A2E"/><path d="M178 44 L180 152" stroke="#8A6540" stroke-width="4" stroke-linecap="round"/><circle cx="186" cy="26" r="30" fill="#2F7D46"/><circle cx="160" cy="36" r="20" fill="#3C9156"/><circle cx="212" cy="38" r="20" fill="#27693A"/><circle cx="182" cy="14" r="16" fill="#49A565"/>' +
         '<path class="ep-entaille" d="M171 92 L186 100 L171 110 Z" fill="#E8CFA0"/><g class="ep-copeaux"><rect x="160" y="96" width="5" height="5" fill="#E8CFA0" style="--dx:-34px;--dy:-26px"/><rect x="162" y="102" width="4" height="4" fill="#D9B77C" style="--dx:-44px;--dy:8px"/><rect x="164" y="98" width="4" height="4" fill="#E8CFA0" style="--dx:-20px;--dy:-40px"/></g>' +
         '<g class="ep-hache"><g transform="translate(205,42) scale(-0.78,0.78)">' + piecesHache(null) + "</g></g></svg></div>") :
-        plus('<div class="ep-foyer"><svg viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="150" rx="86" ry="10" fill="rgba(0,0,0,.14)"/><path d="M78 148 L70 128 L96 112 L140 110 L168 126 L164 148 Z" fill="#8A5A33"/><path d="M96 112 L140 110 L150 122 L104 126 Z" fill="#B07A48"/><circle class="ep-braise" cx="122" cy="118" r="6"/>' +
+        plus('<div class="ep-foyer"><svg viewBox="0 0 240 170" aria-hidden="true"><ellipse cx="120" cy="150" rx="86" ry="10" fill="rgba(0,0,0,.14)"/><path d="M78 148 L70 128 L96 112 L140 110 L168 126 L164 148 Z" fill="#8A5A33"/><path d="M96 112 L140 110 L150 122 L104 126 Z" fill="#B07A48"/><g class="ep-braises">' + [[122, 118, 6], [108, 121, 4], [136, 119, 4.5], [115, 113, 3], [129, 113, 3.5], [100, 117, 2.5], [143, 115, 2.5]].map(function (b, i) { return '<circle class="ep-braise" cx="' + b[0] + '" cy="' + b[1] + '" r="' + b[2] + '" style="animation-delay:-' + (i * 0.37).toFixed(2) + 's"/>'; }).join("") + "</g>" +
         '<g class="ep-flamme" shape-rendering="crispEdges">' + svgAmenagement({ id: "feu", dessin: "foyer" }, 120, 128, 96) + "</g></svg></div>");
       plus('<div class="ep-savoir nu"><p>' + esc(tx(c.texte)) + "<cite>" + esc(c.source) + "</cite></p></div>");
       var bt = plus('<button type="button" class="btn large">' + esc(tx(c.bouton || { fr: "Souffler" })) + "</button>");
@@ -3388,20 +3391,11 @@ function demarrerJeu() {
           if (am) { quitter(); var rb = M.construireIle(C, P, am.id, maintenant());
             if (rb && rb.ok) { sauver(); rendre(); animerChantier(am, rb.quartier); } else { chantierOuvert = am.quartier; ouvrirChantierIle(am.id); }
             if (c.ouvert) toast(tx(c.ouvert)); return; }
-          // Victor (2026-11-13) : « Allumer le campement » montre le foyer du campement qui prend, puis la fête du nouvel âge.
+          // « Allumer le campement » mène à la fête du nouvel âge.
           if (id !== "feu") { quitter(); if (c.ouvert) toast(tx(c.ouvert)); return; }
-          var Ic = campIle(M.ile(C, P, maintenant())), qc = Ic.quartiers.filter(function (x) { return x.camp; })[0];
-          if (!qc) { quitter(); return; }
-          vider(); z.querySelector(".ep-fil").hidden = true;
-          AGES_ILE = Ic.population && Ic.habitants ? { enfants: Ic.population.enfants / Ic.habitants, anciens: Ic.population.anciens / Ic.habitants } : null;
-          var scene = plus('<div class="ile-scene-bilan"><div class="ile-scene-titre"><b>' + esc(tx(qc.nom)) + "</b><span>" + esc(texteHabitants(Ic.habitants)) + __(" sur l'île") + '</span></div><div class="ile-cadre">' + svgQuartier(qc) + "</div></div>");
-          var fl = scene.querySelector('[data-comp="ile.feu"]'); if (fl) fl.classList.add("froid");
-          var mot = plus('<p class="ep-msg ok" aria-live="polite"></p>'), suite = plus('<button type="button" class="btn large" hidden>' + __("Continuer") + "</button>");
-          // Victor (2026-11-18) : le feu allumé, on revient à la page d'accueil.
-          suite.onclick = function () { vue = "aujourdhui"; quartierVu = null; quitter(); window.scrollTo(0, 0); };
-          var t1 = setTimeout(function () { if (fl) { fl.classList.remove("froid"); fl.classList.add("ep-allume"); } mot.textContent = __("Le feu prend. Les survivants se rassemblent."); }, 900);
-          var t2 = setTimeout(function () { if (fl) fl.classList.add("ile-neuve"); suite.hidden = false; }, 2600);
-          arrets.push(function () { clearTimeout(t1); clearTimeout(t2); });
+          // Victor (2026-11-25) : plus de scène du campement ici, elle doublait la fête du nouvel âge. Les braises ont pris
+          // sous le souffle ; on revient à l'accueil, où la fête du campement se joue.
+          vue = "aujourdhui"; quartierVu = null; quitter(); window.scrollTo(0, 0);
         };
         setTimeout(function () { if (fin.scrollIntoView) fin.scrollIntoView({ behavior: "smooth", block: "end" }); }, 60);
       };
