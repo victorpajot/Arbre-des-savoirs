@@ -1251,7 +1251,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ex-x, .ex-zoom button { pointer-events: auto; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--surface); color: var(--text); font-size: 26px; font-weight: 700; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.3); cursor: pointer; }
 .explorer .ex-x { color: #20222E; background: #fff; text-shadow: none; font-family: system-ui, sans-serif; } .ex-zoom { position: absolute; right: 8px; top: calc(70px + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: 8px; }
 .ex-bas { flex: none; background: var(--bg); padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px)); max-height: 46vh; overflow-y: auto; box-shadow: 0 -4px 14px rgba(0,0,0,.25); }
-.ex-msg { font-size: 17px; line-height: 1.4; margin-bottom: 8px; } .ex-liste li.perdu { border-style: dashed; border-color: #B5531F; } .ex-liste li.perdu small { color: #B5531F; font-weight: 700; } .ex-avis { position: absolute; left: 16px; right: 16px; top: 34%; z-index: 6; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #1B1D2A; color: #fff; border: 2px solid #F2B632; box-shadow: 0 8px 28px rgba(0,0,0,.45); } .ex-avis span { font-size: 30px; line-height: 1; } .ex-avis p { margin: 0; font-size: 19px; line-height: 1.4; font-weight: 700; } .ex-liste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.ex-msg { font-size: 17px; line-height: 1.4; margin-bottom: 8px; } .ex-liste li.perdu { border-style: dashed; border-color: #B5531F; } .ex-liste li.perdu small { color: #B5531F; font-weight: 700; } .explorer.pose .ile-marcheur, .explorer.pose .ex-scene { display: none !important; } .ex-avis { position: absolute; left: 16px; right: 16px; top: 34%; z-index: 6; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #1B1D2A; color: #fff; border: 2px solid #F2B632; box-shadow: 0 8px 28px rgba(0,0,0,.45); } .ex-avis span { font-size: 30px; line-height: 1; } .ex-avis p { margin: 0; font-size: 19px; line-height: 1.4; font-weight: 700; } .ex-liste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .ex-liste li { display: flex; align-items: center; gap: 6px; padding: 5px 6px; border-radius: 10px; border: 2px dashed var(--line); } .ex-liste li svg { flex: none; } .ex-liste li.ok { border-style: solid; border-color: var(--good); } .ex-liste li:not(.ok) svg { filter: grayscale(1); opacity: .45; }
 .ex-liste b { display: block; font-size: 15px; } .ex-liste small { display: block; font-size: 13px; color: var(--muted); line-height: 1.25; } .ex-quete { margin: 0 0 8px; } .ex-bas .btn { width: 100%; }
 .ex-gz-sol { fill: #2E9E5B; opacity: .22; } .ex-gz-bord { fill: none; stroke: #2E9E5B; stroke-width: 1.4; stroke-dasharray: 4 3; } .ex-gz-fanion { fill: #2E9E5B; }
@@ -2674,21 +2674,28 @@ function demarrerJeu() {
       var port = q.decor === "quai", ray = port ? 16 : 30, ok = true;
       for (var a = 0; a < 8; a++) { var ax = x + Math.cos(a * 0.785) * ray, ay = y + Math.sin(a * 0.785) * ray; if (!praticable(ax, ay) || dansOvale(ax, ay, MARAIS) || dansOvale(ax, ay, [ILE_CX, ILE_CY + 3, 75, 84])) ok = false; }
       if (!ok) return __("Pas assez de place ici : la mer, l'eau ou le volcan sont trop près.");
-      if (port) { var dx = x - ILE_CX, dy = y - ILE_CY, L = Math.hypot(dx, dy) || 1; if (surTerre(x + dx / L * 60, y + dy / L * 60, 0.98)) return __("Un port se fonde près de la mer : approche-toi de la côte."); }
+      if (port) { var dx = x - ILE_CX, dy = y - ILE_CY, L = Math.hypot(dx, dy) || 1; if (surTerre(x + dx / L * 60 * ILE_K, y + dy / L * 60 * ILE_K, 0.98)) return __("Un port se fonde près de la mer : approche-toi de la côte."); }
       return null;
     }
     // Victor (2026-11-15) : « quand on souhaite poser une nouvelle zone, qu'on voie son gizmo et qu'il y ait du rouge
     // sur les endroits où l'on ne peut pas construire ». Le rouge est peint une fois au départ (grille), le repère suit
     // l'explorateur : vert s'il peut fonder là, rouge sinon.
+    // Victor (2026-11-26) : « presque tout est rouge alors qu'on peut construire ». Le rouge ne valait que pour le premier
+    // quartier en attente (souvent le port, qui veut la mer) : il ne couvre plus que les endroits où aucun des quartiers
+    // en attente ne peut se fonder, et le repère est vert dès que l'un d'eux le peut.
+    function sitesLibres() { return X ? sitesAFaire().filter(function (q) { return !X.vus.some(function (v) { return v.id === q.id; }); }) : []; }
+    function toutRefuse(x, y) { return X.sitesL.every(function (q) { return lieuRefuse(q, x, y); }); }
     function zoneSite() { return X ? sitesAFaire().filter(function (q) { return !X.vus.some(function (v) { return v.id === q.id; }); })[0] || null : null; }
     function peindreInterdit() {
       var g = svg.querySelector(".ex-interdit"), q = zoneSite(); if (!g) return;
+      // Victor (2026-11-26) : pendant qu'on choisit un emplacement, les habitants animés faisaient ramer : on les cache.
+      z.classList.toggle("pose", !!q);
       if (!q) { g.innerHTML = ""; X.site = null; return; }
-      X.site = q; var Xp = X;
+      X.site = q; X.sitesL = sitesLibres(); var Xp = X;
       // Le calcul parcourt toute l'île : on le fait juste après l'affichage, pour ne pas retarder le départ.
       setTimeout(function () {
         if (X !== Xp || X.site !== q) return; var pas0 = 14, d = "";
-        for (var y = 40; y < ILE_H - 30; y += pas0) for (var x = 20; x < ILE_W - 20; x += pas0) if (surTerre(x, y, 0.97) && lieuRefuse(q, x, y)) d += "M" + (x - pas0 / 2) + " " + (y - pas0 / 2) + "h" + pas0 + "v" + pas0 + "h-" + pas0 + "z";
+        for (var y = 40; y < ILE_H - 30; y += pas0) for (var x = 20; x < ILE_W - 20; x += pas0) if (surTerre(x, y, 0.97) && toutRefuse(x, y)) d += "M" + (x - pas0 / 2) + " " + (y - pas0 / 2) + "h" + pas0 + "v" + pas0 + "h-" + pas0 + "z";
         g.innerHTML = '<path d="' + d + '" fill="#D92B2B" opacity=".3"/>';
       }, 80);
     }
@@ -2697,7 +2704,7 @@ function demarrerJeu() {
       if (!X.site) { if (X.gz !== "non") { X.gz = "non"; g.style.display = "none"; } return; }
       g.setAttribute("transform", "translate(" + X.x.toFixed(1) + "," + X.y.toFixed(1) + ")");
       var now = performance.now(); if (now < (X.gzT || 0)) return; X.gzT = now + 250;
-      var etat = lieuRefuse(X.site, X.x, X.y) ? "rouge" : "vert";
+      var etat = toutRefuse(X.x, X.y) ? "rouge" : "vert";
       if (X.gz !== etat) { X.gz = etat; g.style.display = ""; g.setAttribute("class", "ex-gizmo " + etat); }
     }
     function planter(idq) {
@@ -10973,8 +10980,28 @@ function demarrerJeu() {
 
   // --- Quiz -----------------------------------------------------------------
   // `opts.jouer` : lancé par le bouton « Jouer », l'IA a choisi l'épreuve (bonus de cases si réussie).
+  // Victor (2026-11-26) : prévenir avant le quiz quand l'île ne peut pas loger ceux qu'une épreuve réussie ferait venir.
+  // Pour un rappel (obligatoire), une seule fois par session. Rend true si la feuille d'avis a pris la main.
+  var AVIS_LOGE_RAPPEL = false;
+  function avisLogement(id, mode, opts) {
+    if (!M.modeIle(P) || !C.ile || (opts && (opts.donjon || opts.sansAvis))) return false;
+    var I = M.ile(C, P, maintenant()), L = I && I.limites, D = ((C.ile.regles || {}).demographie || {}).par_epreuve || 0;
+    if (!L || !D) return false;
+    var parToits = L.plafond == null || L.toits <= L.plafond, cap = parToits ? L.toits : L.plafond, libres = cap - I.habitants;
+    if (libres >= D) return false;
+    if (mode === "rappel") { if (AVIS_LOGE_RAPPEL) return false; AVIS_LOGE_RAPPEL = true; }
+    var suite = Object.assign({}, opts || {}, { sansAvis: true });
+    feuilleSimple('<div class="eyebrow">' + __("Avant de jouer") + "</div><h2>" + (libres > 0 ? __("Presque plus de place sur l'île") : __("Plus de place sur l'île")) + '</h2><p style="font-size:17px;line-height:1.5">' +
+      (parToits ? __("L'île a {t} couchages pour {n}. Une épreuve réussie fait venir {d} habitants : ils ne pourront pas tous s'installer.", { t: nb(L.toits), n: texteHabitants(I.habitants), d: D }) + " " + __("Bâtis un toit d'abord si tu veux les garder.")
+        : __("À cet âge, l'île ne peut pas porter plus de {p} habitants, et elle en compte {n}. Une épreuve réussie en fait venir {d} : ils ne pourront pas tous s'installer.", { p: nb(L.plafond), n: nb(I.habitants), d: D }) + " " + __("Il faut faire passer l'île à l'âge suivant pour les accueillir.")) + "</p>" +
+      (parToits ? '<button type="button" class="btn large" data-a="toit">🏗️ ' + __("Bâtir un toit d'abord") + "</button>" : "") +
+      '<button type="button" class="btn ' + (parToits ? "sec " : "") + 'large" data-a="jouer">' + __("Jouer quand même") + "</button>", __("Plus de place sur l'île"),
+      { jouer: function () { fermerFeuille(); lancerQuiz(id, mode, suite); }, toit: function () { fermerFeuille(); ouvrirChantierIle(); } }, __("Annuler"));
+    return true;
+  }
   function lancerQuiz(id, mode, opts) {
     if (bloqueParUltimatum() || bloqueParMasterclass() || bloqueParDuel()) return;
+    if (avisLogement(id, mode, opts)) return;
     initCroises();
     if (M.piegeEnAttente(P)) { ouvrirPiege(); return; }
     // v34 : la case Chrono du pion se joue avant toute autre épreuve.
