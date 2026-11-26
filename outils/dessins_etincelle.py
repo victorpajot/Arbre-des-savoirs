@@ -71,7 +71,7 @@ def bouteille_leyde():
 
 
 def balance_torsion():
-    """La balance de torsion de Coulomb (elec.coulomb/ingenieur) : un fil d'argent fin, une aiguille et deux petites boules chargées, dans une cage de verre."""
+    """La balance de torsion de Coulomb (elec.coulomb/ingenieur) : un fil de métal fin, une aiguille et deux petites boules chargées, dans une cage de verre."""
     t = Toile(48, 48)
     t.peindre(rect(20, 2, 27, 6), "or", "biseau", base=2)
     t.peindre(rect(22, 6, 25, 18), "cyan", "cyl_v", base=0)
