@@ -146,6 +146,38 @@
        "type": "number",
        "exclusiveMinimum": 0,
        "maximum": 1
+      },
+      "variantes": {
+       "type": "object",
+       "additionalProperties": false,
+       "description": "Victor (2026-11-25) : les visages d'un QCM, pour qu'on ne le reconnaisse pas au motif. Probabilités à chaque passage (M.varierQuestion).",
+       "properties": {
+        "libre": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "envers": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "aucune": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "aucune_juste": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        },
+        "pourquoi": {
+         "type": "number",
+         "minimum": 0,
+         "maximum": 1
+        }
+       }
       }
      }
     },
@@ -518,6 +550,46 @@
         "type": "string",
         "minLength": 5,
         "description": "Référence de l'attribution citée dans l'explication (questions de calcul) ; vérifiée par verifier_sources.py."
+       },
+       "formulations": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/texte"
+        },
+        "minItems": 1,
+        "description": "Victor (2026-11-25) : d'autres façons de poser la même question (mêmes choix, même réponse), tirées au hasard."
+       },
+       "leurres": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/texte"
+        },
+        "minItems": 1,
+        "description": "Victor (2026-11-25) : leurres en réserve. À chaque passage, le jeu prend parmi les choix et la réserve ceux qui ressemblent le plus à la bonne réponse par la longueur."
+       },
+       "aucune": {
+        "const": false,
+        "description": "Jamais « Aucune de ces réponses » sur cette question."
+       },
+       "pourquoi": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "choix"
+        ],
+        "description": "Victor (2026-11-25) : après une bonne réponse, la raison à choisir (la bonne en premier). Sans fait nouveau : la raison vient de l'explication.",
+        "properties": {
+         "enonce": {
+          "$ref": "#/$defs/texte"
+         },
+         "choix": {
+          "type": "array",
+          "items": {
+           "$ref": "#/$defs/texte"
+          },
+          "minItems": 2
+         }
+        }
        },
        "etymologie": {
         "type": "object",
@@ -3507,6 +3579,10 @@
           "enum": [
            "revisions"
           ]
+         },
+         "variantes": {
+          "type": "boolean",
+          "description": "false : QCM simples, sans variantes (pas d'envers, pas d'« Aucune de ces réponses », pas de pourquoi)."
          }
         },
         "additionalProperties": false

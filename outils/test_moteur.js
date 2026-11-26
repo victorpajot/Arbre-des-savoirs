@@ -2832,3 +2832,43 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   PQ.mode = "parcours"; delete PQ.quetes; assert.equal(M.coursierIle(CI, PQ, ep.id), null);
   console.log("OK : coursier des quêtes (objets manquants contre crédits)");
 }
+
+// Victor (2026-11-25) : un QCM change de visage d'un passage à l'autre, pour qu'on retrouve la réponse au lieu de la reconnaître.
+{
+  const CV = M.indexerContenu(d("regles.json"), d("skills.json"), d("questions.json"), d("succes.json"), {});
+  const PV = M.nouvellePartie(1795000000000);
+  const suite = xs => { let i = 0; return () => xs[i++ % xs.length]; };
+  const q = { id: "t.q1", competence: "math.origines", type: "qcm", enonce: { fr: "Qui ?" }, choix: [{ fr: "Une bonne réponse longue" }, { fr: "Court" }, { fr: "Bref" }, { fr: "Mini" }],
+    reponse: 0, explication: { fr: "…" }, leurres: [{ fr: "Un leurre aussi long qu'elle" }, { fr: "Un second leurre bien long" }],
+    formulations: [{ fr: "Qui donc ?" }], pourquoi: { choix: [{ fr: "Parce que." }, { fr: "Pour rien." }] } };
+  // Leurres : les plus proches de la bonne réponse par la longueur ; la réserve sert.
+  const v = M.varierQuestion(CV, PV, q, suite([0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.99, 0.99]));
+  assert.equal(M.TX(v.choix[v.reponse]), "Une bonne réponse longue");
+  assert.ok(v.choix.some(c => c.fr === "Un leurre aussi long qu'elle") && v.choix.some(c => c.fr === "Un second leurre bien long"), "la réserve de leurres sert");
+  assert.equal(v.choix.length, 4); assert.ok(M.corriger(v, v.reponse) && !M.corriger(v, 1));
+  // « Aucune de ces réponses » : bonne réponse absente, et la question d'origine reste intacte.
+  let w = null;
+  for (let k = 0; k < 400 && !(w && w.absente); k++) w = M.varierQuestion(CV, PV, q);
+  assert.ok(w.absente && w.variante === "aucune" && M.TX(w.choix[w.reponse]) === "Aucune de ces réponses");
+  assert.ok(!w.choix.some(c => c.fr === "Une bonne réponse longue") && q.choix.length === 4 && q.reponse === 0);
+  assert.equal(M.reponseVariante(w, w.reponse), "Aucune de ces réponses", "le mur garde le texte affiché");
+  // Réponse à taper : seulement quand tous les choix sont des nombres de même unité.
+  const qn = CV.questions.find(x => x.type === "qcm" && M.choixNombres(x) && /quelle ann[ée]e/i.test(x.enonce.fr) && !/plus|moins|lequel|parmi/i.test(x.enonce.fr));
+  let l = null;
+  for (let k = 0; k < 400 && !(l && l.variante === "libre"); k++) l = M.varierQuestion(CV, PV, qn);
+  assert.equal(l.type, "numerique"); assert.ok(l.annee && l.tolerance === CV.regles.quiz.tolerance_annees);
+  assert.ok(M.corriger(l, String(M.choixNombres(qn).valeurs[qn.reponse])));
+  assert.equal(M.choixNombres({ choix: [{ fr: "230 V" }, { fr: "1 000 V" }, { fr: "12 V" }] }).unite, "V");
+  assert.equal(M.choixNombres({ choix: [{ fr: "230 V" }, { fr: "12 A" }] }), null);
+  // À l'envers : la réponse est donnée, la bonne question est la sienne, les autres viennent de la même compétence.
+  const qe = CV.questionsPar["math.origines"].find(x => x.type === "qcm" && !/plus|moins|lequel|parmi/i.test(x.enonce.fr));
+  let e = null;
+  for (let k = 0; k < 600 && !(e && e.variante === "envers"); k++) e = M.varierQuestion(CV, PV, qe);
+  assert.equal(e.choix[e.reponse], qe.enonce);
+  assert.ok(e.choix.slice(1).every(c => CV.questionsPar["math.origines"].some(x => x.enonce === c)));
+  // Le pourquoi se pose, sauf à l'envers ; réglage de pack variantes: false = la question telle quelle.
+  assert.ok(Array.from({ length: 50 }, () => M.varierQuestion(CV, PV, q)).some(x => x.pourquoiPose));
+  PV.options = { reglages: { variantes: false } };
+  assert.equal(M.varierQuestion(CV, PV, q), q);
+  console.log("OK : variantes de QCM (leurres, aucune, réponse à taper, envers, pourquoi)");
+}
