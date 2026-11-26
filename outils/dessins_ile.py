@@ -4,18 +4,16 @@ Un dessin = une fonction qui rend une Toile. ILLUS dit sous quel paragraphe de q
 (champs `dessin` et `dessin_apres` du chapitre, voir packs/LISEZMOI-IA.md). Le dessin montre l'objet ou
 l'espèce dont parle le paragraphe, pas une autre.
 
-    python3 outils/dessins_ile.py            # écrit packs/ile/dessins.json et les champs des chapitres
-    python3 outils/dessins_ile.py --apercu   # planche PNG dans le dossier courant (dessins-ile.png)
+Mode d'emploi : outils/dessins_lecons.py.
 """
-import json
+import math
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from dessin import Toile, anneau, apercu, bande, courbe, disque, ellipse, poly, rect, trait  # noqa: E402
+from dessin import Toile, anneau, bande, courbe, disque, ellipse, poly, rect, trait  # noqa: E402
 
-RACINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PACK = os.path.join(RACINE, "packs", "ile")
+from dessins_lecons import executer  # noqa: E402
 
 
 def epi_orge():
@@ -385,7 +383,6 @@ def lin():
         for y in range(top + 10, 44, 6):
             xx = x0 + (x1 - x0) * (47 - y) / (47 - top - 4)
             t.peindre(trait(xx, y, xx + 3, y - 3, 1), "vert", "plat", base=2)
-        import math
         for ang in range(-90, 270, 72):
             px, py = x1 + 2.6 * math.cos(math.radians(ang)), top + 2.6 * math.sin(math.radians(ang))
             t.peindre(disque(px + 0.5, py + 0.5, 2.1), "bleu", "plat", base=3)
@@ -506,29 +503,5 @@ ILLUS = {
 COPIES = {"mc-tablette-cuneiforme": ("alchimie", "chim-tablette"), "mc-balance-argent": ("logique", "mc-balance")}
 
 
-def main():
-    images = {k: f().lignes() for k, f in DESSINS.items()}
-    for k, (pack, id_) in COPIES.items():
-        images[k] = json.load(open(os.path.join(RACINE, "packs", pack, "dessins.json"), encoding="utf-8"))[id_]
-    if "--apercu" in sys.argv:
-        apercu(images, "dessins-ile.png", colonnes=6, echelle=6)
-        return
-    chemin = os.path.join(PACK, "dessins.json")
-    dessins = json.load(open(chemin, encoding="utf-8"))
-    dessins.update(images)
-    json.dump(dessins, open(chemin, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    open(chemin, "a", encoding="utf-8").write("\n")
-    chemin = os.path.join(PACK, "competences.json")
-    comps = json.load(open(chemin, encoding="utf-8"))
-    for c in comps:
-        for ch in (c.get("masterclass") or {}).get("chapitres", []):
-            v = ILLUS.get((c["id"], ch.get("id")))
-            if v:
-                ch["dessin"], ch["dessin_apres"] = v
-    json.dump(comps, open(chemin, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    open(chemin, "a", encoding="utf-8").write("\n")
-    print(len(images), "dessins,", len(ILLUS), "chapitres illustrés")
-
-
 if __name__ == "__main__":
-    main()
+    executer("ile", DESSINS, ILLUS, COPIES)
