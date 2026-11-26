@@ -1251,7 +1251,7 @@ svg.grille .interro { transition: opacity .3s; }
 .ex-x, .ex-zoom button { pointer-events: auto; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--surface); color: var(--text); font-size: 26px; font-weight: 700; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,.3); cursor: pointer; }
 .explorer .ex-x { color: #20222E; background: #fff; text-shadow: none; font-family: system-ui, sans-serif; } .ex-zoom { position: absolute; right: 8px; top: calc(70px + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: 8px; }
 .ex-bas { flex: none; background: var(--bg); padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px)); max-height: 46vh; overflow-y: auto; box-shadow: 0 -4px 14px rgba(0,0,0,.25); }
-.ex-msg { font-size: 17px; line-height: 1.4; margin-bottom: 8px; } .ex-avis { position: absolute; left: 16px; right: 16px; top: 34%; z-index: 6; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #1B1D2A; color: #fff; border: 2px solid #F2B632; box-shadow: 0 8px 28px rgba(0,0,0,.45); } .ex-avis span { font-size: 30px; line-height: 1; } .ex-avis p { margin: 0; font-size: 19px; line-height: 1.4; font-weight: 700; } .ex-liste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.ex-msg { font-size: 17px; line-height: 1.4; margin-bottom: 8px; } .ex-liste li.perdu { border-style: dashed; border-color: #B5531F; } .ex-liste li.perdu small { color: #B5531F; font-weight: 700; } .ex-avis { position: absolute; left: 16px; right: 16px; top: 34%; z-index: 6; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: #1B1D2A; color: #fff; border: 2px solid #F2B632; box-shadow: 0 8px 28px rgba(0,0,0,.45); } .ex-avis span { font-size: 30px; line-height: 1; } .ex-avis p { margin: 0; font-size: 19px; line-height: 1.4; font-weight: 700; } .ex-liste { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .ex-liste li { display: flex; align-items: center; gap: 6px; padding: 5px 6px; border-radius: 10px; border: 2px dashed var(--line); } .ex-liste li svg { flex: none; } .ex-liste li.ok { border-style: solid; border-color: var(--good); } .ex-liste li:not(.ok) svg { filter: grayscale(1); opacity: .45; }
 .ex-liste b { display: block; font-size: 15px; } .ex-liste small { display: block; font-size: 13px; color: var(--muted); line-height: 1.25; } .ex-quete { margin: 0 0 8px; } .ex-bas .btn { width: 100%; }
 .ex-gz-sol { fill: #2E9E5B; opacity: .22; } .ex-gz-bord { fill: none; stroke: #2E9E5B; stroke-width: 1.4; stroke-dasharray: 4 3; } .ex-gz-fanion { fill: #2E9E5B; }
@@ -2582,9 +2582,20 @@ function demarrerJeu() {
       var mx = S.x + ox * b.w / S.k, my = S.y + oy * b.h / S.k;
       S.k = k2; S.x = mx - ox * b.w / S.k; S.y = my - oy * b.h / S.k; appliquer();
     }
+    // Victor (2026-11-26) : si un explorateur meurt, ce qu'il avait récolté reste là où il est tombé (P.sacsPerdus :
+    // position en fractions de la carte, objets de quête, baies, viande). Le suivant le ramasse en passant dessus.
+    function sacsPerdus() { return P.sacsPerdus || []; }
+    function auSol(id) { return sacsPerdus().some(function (k) { return k.objets.indexOf(id) >= 0; }); }
+    function baieAuSol(id) { return sacsPerdus().some(function (k) { return (k.baies || []).indexOf(id) >= 0; }); }
+    function versOu(k) {
+      var dx = k.x - 0.5, dy = k.y - ILE_CY / ILE_H, ns = dy < -0.11 ? "n" : dy > 0.11 ? "s" : "", eo = dx < -0.12 ? "o" : dx > 0.12 ? "e" : "";
+      return { n: __("au nord de l'île"), s: __("au sud de l'île"), e: __("à l'est de l'île"), o: __("à l'ouest de l'île"), ne: __("au nord-est de l'île"), no: __("au nord-ouest de l'île"), se: __("au sud-est de l'île"), so: __("au sud-ouest de l'île") }[ns + eo] || __("au centre de l'île, près du volcan");
+    }
+    var SAC_SOL = '<ellipse cy="3" rx="5" ry="1.4" fill="rgba(0,0,0,.25)"/><path d="M-4 3 C-5.4 -1 -3.4 -3.6 -1.6 -4 L1.6 -4 C3.4 -3.6 5.4 -1 4 3 Z" fill="#9A6B3F"/><path d="M-1.8 -4 L-2.6 -6 L2.6 -6 L1.8 -4 Z" fill="#7A5230"/><path d="M-2.2 -4 H2.2" stroke="#E6D2B0" stroke-width=".8"/><path d="M-2.4 -.6 C-1 .6 1 .6 2.4 -.6" stroke="#7A5230" stroke-width=".7" fill="none"/>';
     function objets() {
       var q = queteActive();
-      svg.querySelector(".ex-objets").innerHTML = (X ? '<g transform="translate(' + FX.toFixed(1) + "," + FY.toFixed(1) + ') scale(.45)">' + PANIER + "</g>" : "") + baiesVues().filter(function (b) { return !(X && X.baies.indexOf(b.id) >= 0); }).map(function (b) { return '<g class="ex-baie" transform="translate(' + b.x + "," + b.y + ')">' + BUISSON + "</g>"; }).join("") + (X ? X.vus.map(function (v) { return '<g transform="translate(' + v.x.toFixed(1) + "," + v.y.toFixed(1) + ')"><path d="M0 1 V-9" stroke="#5A3B1E" stroke-width="1.3" stroke-linecap="round"/><path d="M0 -9 L7 -7 L0 -4.6 Z" fill="#D94141"/></g>'; }).join("") : "") + (q ? q.objets.filter(function (o) { return !o.chasse && !o.pris && !(X && X.sac.indexOf(o.id) >= 0); }).map(function (o) {
+      svg.querySelector(".ex-objets").innerHTML = sacsPerdus().map(function (k) { var x = Math.round(k.x * ILE_W), y = Math.round(k.y * ILE_H);
+        return '<path class="ex-brille" transform="translate(' + x + "," + y + ')" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z" fill="#FFF3B0" stroke="#E0A800" stroke-width=".5" pointer-events="none"/><g transform="translate(' + x + "," + y + ') scale(.8)">' + SAC_SOL + "</g>"; }).join("") + (X ? '<g transform="translate(' + FX.toFixed(1) + "," + FY.toFixed(1) + ') scale(.45)">' + PANIER + "</g>" : "") + baiesVues().filter(function (b) { return !(X && X.baies.indexOf(b.id) >= 0) && !baieAuSol(b.id); }).map(function (b) { return '<g class="ex-baie" transform="translate(' + b.x + "," + b.y + ')">' + BUISSON + "</g>"; }).join("") + (X ? X.vus.map(function (v) { return '<g transform="translate(' + v.x.toFixed(1) + "," + v.y.toFixed(1) + ')"><path d="M0 1 V-9" stroke="#5A3B1E" stroke-width="1.3" stroke-linecap="round"/><path d="M0 -9 L7 -7 L0 -4.6 Z" fill="#D94141"/></g>'; }).join("") : "") + (q ? q.objets.filter(function (o) { return !o.chasse && !o.pris && !auSol(o.id) && !(X && X.sac.indexOf(o.id) >= 0); }).map(function (o) {
         var x = Math.round(o.position[0] * ILE_W), y = Math.round(o.position[1] * ILE_H);
         return '<path class="ex-brille" transform="translate(' + x + "," + y + ')" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2 Z" fill="#FFF3B0" stroke="#E0A800" stroke-width=".5" pointer-events="none"/>' + svgObjetQuete(o, x, y, 0.42); }).join("") : "");
     }
@@ -2602,7 +2613,10 @@ function demarrerJeu() {
           (KO.possible ? "" : '<p class="note" style="font-size:15px;margin:6px 0 0">' + __("Il te manque {n} crédits pour ça.", { n: KO.prix - P.credits.solde }) + "</p>");
         if (q) h += '<ul class="ex-liste">' + q.objets.map(function (o) {
           if (X && X.sac.indexOf(o.id) >= 0) return '<li class="sac"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + "</b><small>" + __("dans le sac : à ramener") + "</small></span></li>";
+          var ks = o.pris ? null : sacsPerdus().filter(function (k) { return k.objets.indexOf(o.id) >= 0; })[0];
+          if (ks) return '<li class="perdu"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + "</b><small>" + __("dans le sac de l'explorateur perdu, ") + esc(versOu(ks)) + "</small></span></li>";
           return '<li class="' + (o.pris ? "ok" : "") + '"><svg viewBox="-14 -14 28 28" width="30" height="30" aria-hidden="true">' + (DESSINS_QUETE[o.id] || "") + "</svg><span><b>" + esc(tx(o.nom)) + (o.pris ? " ✓" : "") + "</b>" + (o.pris || !o.zone ? "" : "<small>" + esc(tx(o.zone)) + "</small>") + "</span></li>"; }).join("") + "</ul>";
+        sacsPerdus().forEach(function (k) { if ((k.baies || []).length || k.viande) h += '<div class="ex-site">🎒 ' + __("Un sac est resté {ou} : ", { ou: versOu(k) }) + [k.viande ? __("de la viande") : "", (k.baies || []).length ? __("des baies") : ""].filter(Boolean).join(__(" et ")) + ".</div>"; });
         if (X && X.viande) h += '<div class="ex-site ok">🥩 ' + __("Viande dans le sac : +{n} de nourriture, à rapporter", { n: X.viande }) + "</div>";
         if (BA && (nba || (X && X.baies.length))) h += '<div class="ex-site' + (X && X.baies.length ? " ok" : "") + '">🫐 ' + (X && X.baies.length ? __("Baies dans le sac : {n}, à rapporter", { n: X.baies.length }) + (nba ? " · " : "") : "") + (nba ? (nba > 1 ? __("{n} buissons de baies à trouver", { n: nba }) : __("1 buisson de baies à trouver")) + " (+" + chiffre(BA.nourriture) + " " + __("de nourriture chacun") + ")" : "") + "</div>";
         if (sites.length || prets.length) h += '<div class="ex-sites">' + sites.map(function (x) {
@@ -2776,7 +2790,7 @@ function demarrerJeu() {
     }
     function resteGibier(r, un, des) { return !r ? "" : " " + (r.reste <= 0 ? __("C'était le dernier {n} de l'île : l'espèce a disparu, pour toujours.", { n: un }) : r.reste === 1 ? __("Il ne reste qu'un {n} sur l'île.", { n: un }) : __("Il reste {k} {n} sur l'île.", { k: r.reste, n: des })); }
     function prendrePeau() {
-      var q = queteActive(), o = q && q.objets.filter(function (x) { return x.chasse && !x.pris && X.sac.indexOf(x.id) < 0; })[0];
+      var q = queteActive(), o = q && q.objets.filter(function (x) { return x.chasse && !x.pris && !auSol(x.id) && X.sac.indexOf(x.id) < 0; })[0];
       if (!o) return false; X.sac.push(o.id); objets(); return true;
     }
     // Le bison : de profil seulement, il se retourne selon son sens de marche.
@@ -2843,8 +2857,10 @@ function demarrerJeu() {
     // Pris : une courte scène (le prédateur bondit, l'explorateur tombe, le bandeau le dit), puis un autre habitant,
     // d'une autre allure, repart du village.
     function attrape() {
-      var r = M.perdreExplorateur(C, P, maintenant()), avait = X.sac.length + X.vus.length + X.baies.length + X.viande; X.vus = []; X.sac = []; X.baies = []; X.viande = 0; sauver();
-      message = (r && r.perdu ? __("Un prédateur a surpris ton explorateur : il ne reviendra pas. Un habitant de moins.") : __("Un prédateur a surpris ton explorateur. Il s'en tire de justesse.")) + (avait ? " " + __("Ce qu'il portait et ce qu'il avait repéré sont perdus.") : "") + " " + __("Un autre repart du village.");
+      var r = M.perdreExplorateur(C, P, maintenant()), avait = X.sac.length + X.vus.length + X.baies.length + X.viande, pose = X.sac.length + X.baies.length + X.viande, reperes = X.vus.length;
+      if (pose) { P.sacsPerdus = sacsPerdus().concat([{ x: Math.round(X.x / ILE_W * 1000) / 1000, y: Math.round(X.y / ILE_H * 1000) / 1000, objets: X.sac.slice(), baies: X.baies.slice(), viande: X.viande, t: maintenant() }]); }
+      X.vus = []; X.sac = []; X.baies = []; X.viande = 0; sauver();
+      message = (r && r.perdu ? __("Un prédateur a surpris ton explorateur : il ne reviendra pas. Un habitant de moins.") : __("Un prédateur a surpris ton explorateur. Il s'en tire de justesse.")) + (pose ? " " + __("Son sac est resté là où il est tombé : il faudra aller le chercher.") : "") + (reperes ? " " + __("Les emplacements qu'il avait repérés sont perdus.") : "") + " " + __("Un autre repart du village.");
       X.tx = X.x; X.ty = X.y; X.gel = performance.now() + 2100; X.ee.setAttribute("class", "ex-explo tombe");
       z.classList.add("mordu"); setTimeout(function () { z.classList.remove("mordu"); }, 700);
       var pe = el('<div class="ex-perdu" role="status"><div><svg viewBox="-12 -10 24 18" width="120" height="90" aria-hidden="true">' + LOUP + "</svg><b>" + (r && r.perdu ? __("Explorateur perdu") : __("Rattrapé !")) + "</b><span>" + (r && r.perdu ? __("Un habitant de moins sur l'île") : __("Il s'en tire, cette fois")) + "</span></div></div>");
@@ -2899,8 +2915,17 @@ function demarrerJeu() {
         var q = queteActive();
         if (q) q.objets.forEach(function (o) {
           if (o.chasse || o.pris || X.sac.indexOf(o.id) >= 0 || Math.hypot(o.position[0] * ILE_W - X.x, o.position[1] * ILE_H - X.y) > 7) return;
+          if (auSol(o.id)) return;
           X.sac.push(o.id); message = tx(o.trouve || o.nom) + " " + __("Reste à le rapporter au village."); objets(); panneau();
         });
+        // Le sac d'un explorateur perdu : on reprend tout ce qu'il contenait (ce qui a été rapporté autrement est laissé).
+        var ksol = sacsPerdus().filter(function (k) { return Math.hypot(k.x * ILE_W - X.x, k.y * ILE_H - X.y) < 7; })[0];
+        if (ksol) {
+          P.sacsPerdus = sacsPerdus().filter(function (k) { return k !== ksol; });
+          if (q) q.objets.forEach(function (o) { if (ksol.objets.indexOf(o.id) >= 0 && !o.pris && X.sac.indexOf(o.id) < 0) X.sac.push(o.id); });
+          (ksol.baies || []).forEach(function (b) { if (X.baies.indexOf(b) < 0) X.baies.push(b); }); X.viande += ksol.viande || 0; sauver();
+          message = __("Le sac de l'explorateur perdu. Tu reprends ce qu'il portait : reste à le rapporter au village."); objets(); panneau();
+        }
         // Les grottes : on y entre en marchant sur leur bouche. L'expédition attend dehors, puis reprend. Victor
         // (2026-11-17) : plusieurs grottes, chacune n'existe qu'à partir de son âge (lu une fois par expédition).
         X.grottes = X.grottes || M.grottesIle(C, P).filter(function (g) { return g.presente; });
