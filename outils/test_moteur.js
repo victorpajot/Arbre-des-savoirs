@@ -2426,6 +2426,23 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   console.log("OK : mode Île (pion immobile, défis, matériaux)");
 }
 
+// Victor (2026-11-27) : le bouton Jouer propose rappels et quiz côte à côte. quizIle donne le savoir qu'Alyca ferait
+// apprendre, même quand un rappel dû passe d'abord dans choixIA.
+{
+  const CQ = M.indexerContenu(dBrut("regles.json"), dBrut("skills.json"), dBrut("questions.json"), d("succes.json"),
+    { commentaires: d("commentaires.json"), objets: d("objets.json"), avatar: d("avatar.json"), ia: d("ia.json"), plateau: d("plateau.json"), frise: d("frise.json"), bibliotheque: d("bibliotheque.json"), ile: d("ile.json") });
+  const J = 86400000, t0 = new Date(2026, 10, 12, 9, 0).getTime(), P = M.nouvellePartie(t0); P.mode = "ile";
+  const q0 = M.quizIle(CQ, P, t0), c0 = M.choixIA(CQ, P, t0);
+  assert.ok(q0 && q0.type === "quiz", "un savoir à apprendre");
+  assert.equal(c0.comp.id, q0.comp.id, "sans rappel dû, Jouer et l'option quiz donnent le même savoir");
+  P.competences["ile.feu"] = { maitrise: true, maitriseDepuis: t0 - 10 * J, prochainRappel: t0 - J, palier: 1, xp: 5 }; P.epreuves = { feu: t0 - 10 * J };
+  const c1 = M.choixIA(CQ, P, t0), q1 = M.quizIle(CQ, P, t0);
+  assert.equal(c1.type, "rappel", "le rappel dû passe d'abord");
+  assert.ok(q1 && q1.type === "quiz" && q1.comp.id !== "ile.feu", "l'option quiz reste proposée à côté");
+  P.mode = "parcours"; assert.equal(M.quizIle(CQ, P, t0), null, "pas en mode Parcours");
+  console.log("OK : options de Jouer en mode Île (rappel d'abord, quiz à côté)");
+}
+
 // Victor (2026-11-12) : l'île par âges. Le feu d'abord, puis les besoins du village ; un monde fini (forêt, poissons),
 // l'effondrement possible, et des aléas que les savoirs météo annoncent.
 {

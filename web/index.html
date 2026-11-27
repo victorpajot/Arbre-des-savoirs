@@ -518,8 +518,16 @@ body.plateau-plein { overflow: hidden; }
   background: var(--accent); color: var(--accent-ink); text-align: left; box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--accent) 70%, transparent); cursor: pointer; }
 .jouer .ico { width: 52px; height: 52px; border-radius: 50%; background: color-mix(in srgb, var(--accent-ink) 18%, transparent); display: grid; place-items: center; }
 .jouer b { display: block; font-family: var(--f-display); font-size: 22px; line-height: 1.1; }
-.jouer span.s { font-size: 13px; opacity: 0.85; }
+.jouer span.s { font-size: 15px; opacity: 0.85; }
 .jouer .pill { font-family: var(--f-mono); font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--accent-ink); color: var(--accent); font-size: 14px; }
+/* Victor (2026-11-27) : sous Jouer, les autres options du moment, dans l'ordre du jeu. */
+.jouer-menu { display: flex; flex-direction: column; gap: 8px; }
+.jouer-autres { display: flex; flex-direction: column; gap: 6px; }
+.jouer-alt { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; width: 100%; padding: 9px 12px; border-radius: 14px; border: 1.5px solid color-mix(in srgb, var(--accent) 45%, var(--line)); background: var(--surface); color: var(--ink); text-align: left; cursor: pointer; }
+.jouer-alt .ico { width: 40px; height: 40px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 14%, transparent); display: grid; place-items: center; font-size: 21px; }
+.jouer-alt b { display: block; font-family: var(--f-display); font-size: 18px; line-height: 1.15; }
+.jouer-alt span.s { display: block; font-size: 15px; opacity: 0.85; }
+.jouer-alt .pill { font-family: var(--f-mono); font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 15px; }
 .choix-ia { display: flex; flex-direction: column; gap: 12px; }
 .arbre-choisi, .epreuve-choisie { --c: var(--accent); display: grid; grid-template-columns: auto 1fr auto; gap: 6px 12px; align-items: center; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--c) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c) 35%, var(--line)); }
 .arbre-choisi .txt b, .epreuve-choisie .txt b { display: block; font-size: 19px; line-height: 1.2; color: var(--c); }
@@ -4487,15 +4495,81 @@ function demarrerJeu() {
     var e = M.grottesIle(C, P).filter(function (x) { return x.id === g.id; })[0];
     return { nom: g.nom, trouvee: !!(e && e.trouvee) };
   }
+  // Victor (2026-11-27) : le bouton Jouer propose les options du moment (rappels, quiz, quêtes, constructions),
+  // rangées dans l'ordre où le jeu les choisirait ; une option sans rien à jouer n'est pas montrée. La première est le
+  // grand bouton Jouer (celui que lancent aussi le plateau plein écran et l'objectif du jour), les autres viennent dessous.
+  // Ce qui ferme le jeu (mur de la honte, ultimatum, revanche, piège, masterclass imposée, Chrono) ne laisse qu'un bouton.
+  function nomMin(n) { var t = tx(n); return t.charAt(0).toLowerCase() + t.slice(1); }
+  function blocageJouer() {
+    var t = maintenant(), ile = M.modeIle(P), mi;
+    if (M.jeuFerme(C, P, t)) return __("Enfermé au mur de la honte : encore ") + dureePeine(P.punition.restant) + ".";
+    if (P.ultimatum) return __("Un ultimatum attend ta réponse.");
+    if (!ile && M.piegeEnAttente(P)) return __("Un piège t'attend sur ta case.");
+    if ((mi = M.masterclassImposee(C, P)) && C.parId[mi.id]) return __("Masterclass imposée : ") + esc(tx(C.parId[mi.id].nom)) + ".";
+    if (M.duelBloquant(P)) return esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + __(" te barre la route : revanche obligatoire.");
+    if (!ile && M.chronoEnAttente(P)) return __("Une partie de Chrono t'attend sur ta case.");
+    return null;
+  }
+  function amenagementsABatir() {
+    if (!C.ile || !C.ile.amenagements) return 0;
+    var t = maintenant(), I = M.ile(C, P, t); if (!I || !I.ressources) return 0;
+    var rang = I.ages ? I.ages.courant : 99;
+    return C.ile.amenagements.filter(function (a) { if ((a.age || 0) > rang) return false; var e = M.etatAmenagement(C, P, a.id, t); return e && e.possible; }).length;
+  }
+  function optionsJouer() {
+    var t = maintenant(), out = [], dus = M.rappelsDus(C, P, t), c = M.choixIA(C, P, t);
+    function rappels(k, revision) {
+      var n = dus.length;
+      out.push({ id: "rappel", ico: "🔁", titre: revision ? __("Révision forcée") : n > 1 ? __("{n} rappels", { n: n }) : __("Un rappel"),
+        sous: (revision ? __("Révision : ") : n > 1 ? __("D'abord : ") : __("Rappel : ")) + esc(tx(k.nom)) + ".",
+        resume: revision ? __("Révision forcée : ") + esc(tx(k.nom)) + "." : n > 1 ? __("{n} rappels t'attendent, d'abord : {k}.", { n: n, k: esc(tx(k.nom)) }) : __("Un rappel t'attend : ") + esc(tx(k.nom)) + ".",
+        action: function () { lancerQuiz(k.id, "rappel", { jouer: true }); } });
+    }
+    if (M.modeIle(P)) {
+      if (c && c.type === "rappel") rappels(c.comp, c.raison === "revision");
+      // Les quêtes et les épreuves uniques : celle de l'âge d'abord, puis celles qui gardent un aménagement.
+      var age = ((M.agesIle(C, P) || { age: {} }).age || {}), vus = {};
+      [age.epreuve].concat(epreuvesAttente()).forEach(function (id) {
+        var E = id && !vus[id] && M.epreuveIle(C, id); if (!E) return; vus[id] = 1;
+        var q = M.queteIle(C, P, id), enQuete = q && !q.complete;
+        out.push({ id: "quete-" + id, ico: enQuete ? "🧭" : "🔥", titre: enQuete ? __("Quête : ") + esc(nomMin(q.nom)) : __("Épreuve unique"),
+          resume: enQuete ? __("Quête : ") + esc(nomMin(q.nom)) + "." : __("Épreuve unique : ") + esc(tx(E.nom)) + ".",
+          sous: enQuete ? (q.reste > 1 ? __("Encore {n} choses à trouver sur l'île.", { n: q.reste }) : __("Encore une chose à trouver sur l'île.")) : esc(tx(E.nom)) + ".",
+          action: function () { ouvrirEpreuveIle(id); } });
+      });
+      var qz = M.quizIle(C, P, t) || (c && c.type === "quiz" ? c : null);
+      if (qz) out.push({ id: "quiz", ico: "📖", titre: __("Apprendre un savoir"), sous: esc(tx(qz.comp.nom)) + ".", resume: __("Savoir à apprendre : ") + esc(tx(qz.comp.nom)) + ".",
+        action: function () { if (aMasterclass(qz.comp)) ouvrirFeuille(qz.comp.id); else lancerQuiz(qz.comp.id, "quiz", { jouer: true }); } });
+    } else if (c) {
+      // Le parcours : l'épreuve de la case garde sa feuille ; un rappel dû reste proposé à côté quand la case donne un quiz.
+      out.push({ id: "case", ico: "", titre: "", sous: (c.raison === "revision" ? __("Révision forcée. ") : c.type === "rappel" ? __("Un rappel t'attend. ") : "") + (c.raison === "case" ? __("Case ") + esc(tx(stat(c.stat).nom)) + "." : c.raison === "ouvre_arbre" ? __("Case ") + esc(tx(stat(c.stat).nom)) + __(" : un arbre fermé à ouvrir.") : __("Une épreuve t'attend.")),
+        pill: C.plateau && bonusJouerMax() ? texteBonusJouer() : "", action: ouvrirJouer });
+      if (c.type !== "rappel" && dus.length) rappels(dus[0], false);
+    }
+    var nA = amenagementsABatir();
+    if (nA) out.push({ id: "construire", ico: "🔨", titre: __("Construire"), sous: nA > 1 ? __("{n} aménagements peuvent se bâtir.", { n: nA }) : __("Un aménagement peut se bâtir."), pill: String(nA), action: ouvrirChantierIle });
+    var gr = grotteAJouer();
+    if (gr) out.push({ id: "explorer", ico: "🔦", titre: __("Explorer l'île"), sous: gr.trouvee ? __("Retourner à {g} avec une torche.", { g: esc(nomMin(gr.nom)) }) : __("Trouver {g}.", { g: esc(nomMin(gr.nom)) }),
+      resume: gr.trouvee ? __("Retourner à {g} avec une torche.", { g: esc(nomMin(gr.nom)) }) : __("Explorer l'île pour trouver {g}.", { g: esc(nomMin(gr.nom)) }), action: ouvrirExplorer });
+    return out;
+  }
   function boutonJouer() {
-    var c = M.choixIA(C, P, maintenant()), bonus = C.plateau ? bonusJouerMax() : 0, enDuel = M.duelBloquant(P), ferme = M.jeuFerme(C, P, maintenant());
-    var epJ = M.modeIle(P) && M.epreuveIle(C, ((M.agesIle(C, P) || { age: {} }).age || {}).epreuve), grJ = !c && !epJ ? grotteAJouer() : null;
-    function nomMin(n) { var t = tx(n); return t.charAt(0).toLowerCase() + t.slice(1); }
+    var bl = blocageJouer(), L = bl ? [] : optionsJouer(), o = L[0];
+    function lancer(x) { return function () { if (bloqueParUltimatum() || bloqueParMasterclass() || bloqueParDuel()) return; x.action(); }; }
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + __('</span><span><b>Jouer</b><span class="s">') +
-      (ferme ? __("Enfermé au mur de la honte : encore ") + dureePeine(P.punition.restant) + "." : enDuel ? esc(tx(C.ennemiParId[P.duel.ennemi].nom)) + __(" te barre la route : revanche obligatoire.") : c ? (c.raison === "revision" ? __("Révision forcée. ") : c.type === "rappel" ? __("Un rappel t'attend. ") : "") + (c.raison === "case" ? __("Case ") + esc(tx(stat(c.stat).nom)) + "." : c.raison === "ouvre_arbre" ? __("Case ") + esc(tx(stat(c.stat).nom)) + __(" : un arbre fermé à ouvrir.") : __("Une épreuve t'attend.")) : epJ ? (queteActive() ? __("Quête : ") + esc(tx(queteActive().nom)).toLowerCase() + "." : __("Épreuve unique : ") + esc(tx(epJ.nom)) + ".") : grJ ? (grJ.trouvee ? __("Retourner à {g} avec une torche.", { g: esc(nomMin(grJ.nom)) }) : __("Explorer l'île pour trouver {g}.", { g: esc(nomMin(grJ.nom)) })) : __("Rien à jouer pour l'instant.")) + "</span></span>" + (c && bonus && !ferme ? '<span class="pill">' + texteBonusJouer() + "</span>" : "") + "</button>");
-    if (!c && !enDuel && !epJ && !grJ) b.disabled = true;
-    b.onclick = ouvrirJouer;
-    return b;
+      (bl || (o ? o.resume || o.sous : __("Rien à jouer pour l'instant."))) + "</span></span>" + (o && o.pill ? '<span class="pill">' + o.pill + "</span>" : "") + "</button>");
+    if (bl) { b.onclick = ouvrirJouer; return b; }
+    if (!o) { b.disabled = true; return b; }
+    b.onclick = lancer(o);
+    if (L.length < 2) return b;
+    var z = el('<div class="jouer-menu"></div>'); z.appendChild(b);
+    var autres = el('<div class="jouer-autres" role="group" aria-label="' + __("Autres choses à jouer") + '"></div>');
+    L.slice(1).forEach(function (x) {
+      var bt = el('<button type="button" class="jouer-alt" data-o="' + esc(x.id) + '"><span class="ico" aria-hidden="true">' + x.ico + "</span><span><b>" + x.titre + '</b><span class="s">' + x.sous + "</span></span>" + (x.pill ? '<span class="pill">' + x.pill + "</span>" : "") + "</button>");
+      bt.onclick = lancer(x); autres.appendChild(bt);
+    });
+    z.appendChild(autres);
+    return z;
   }
   // v28 : sa faveur a chuté sous un palier : elle t'enferme au mur de la honte. Rien d'autre ne se joue tant que la peine court.
   function bloqueParFureur() {
@@ -4594,16 +4668,9 @@ function demarrerJeu() {
     if (bloqueParMasterclass()) return;
     if (M.duelBloquant(P)) { lancerDuel(); return; }
     if (M.chronoEnAttente(P) && !M.modeIle(P)) { ouvrirChrono("case"); return; }
-    // Mode Île : Alyca choisit l'épreuve (rappel dû d'abord, sinon un savoir à apprendre) et elle se lance aussitôt.
-    if (M.modeIle(P)) {
-      var ci = M.choixIA(C, P, maintenant()), epj = (M.agesIle(C, P) || { age: {} }).age.epreuve;
-      if (epj && (!ci || ci.type !== "rappel")) { ouvrirEpreuveIle(epj); return; }
-      if (!ci && grotteAJouer()) { ouvrirExplorer(); return; }
-      if (!ci) { toast(__("Rien à jouer pour l'instant.")); return; }
-      // Victor (2026-11-12) : un savoir neuf s'ouvre sur sa feuille, pour choisir entre la masterclass et le quiz.
-      if (ci.type === "quiz" && aMasterclass(ci.comp)) { ouvrirFeuille(ci.comp.id); return; }
-      lancerQuiz(ci.comp.id, ci.type, { jouer: true }); return;
-    }
+    // Mode Île : la première des options de Jouer (rappel dû, quête ou épreuve unique, savoir à apprendre, construction,
+    // grotte à trouver) se lance aussitôt.
+    if (M.modeIle(P)) { var oi = optionsJouer()[0]; if (oi) oi.action(); else toast(__("Rien à jouer pour l'instant.")); return; }
     // Victor (2026-11-02) : le pion attend sur l'arrivée ; relancer une épreuve vaut « Refaire un tour ».
     if (P.plateau.parcoursSuivant && C.plateau.parcours) { M.choisirSuite(C, P, "tour", maintenant()); sauver(); }
     var t = maintenant(), c = M.choixIA(C, P, t); if (!c) { toast(__("Rien à jouer pour l'instant.")); return; }
