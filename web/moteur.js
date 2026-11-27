@@ -87,6 +87,8 @@
       stats: regles.stats,
       competences: skills.competences,
       figures: skills.figures || {},
+      lieux: (skills.lieux || []).reduce(function (m, l) { m[l.id] = l; return m; }, {}),
+      carte: skills.carte || null,
       questions: questions.questions,
       succes: succes.succes,
       dessinsSucces: succes.dessins || {},

@@ -33,6 +33,7 @@ EMPLACEMENTS = {
     "arbres.json": ("regles.json", ("stats",)),
     "competences.json": ("skills.json", ("competences",)),
     "figures.json": ("skills.json", ("figures",)),
+    "lieux.json": ("skills.json", ("lieux",)),
     "questions.json": ("questions.json", ("questions",)),
     "succes.json": ("succes.json", ("succes",)),
     "dessins.json": ("succes.json", ("dessins",)),

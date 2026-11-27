@@ -35,7 +35,8 @@ def textes(o):
             # `reperes` et `cles` (masterclass) ne font que recopier des phrases du texte vérifié (contrôlé par valider.py).
             # `repere` et `etymologie` (question) sont vérifiés pour eux-mêmes : ils ne remettent pas en cause la question.
             # `leurres` (QCM) : des réponses fausses exprès, sans fait à sourcer (Victor, 2026-11-25).
-            if k in ("lot", "verification", "extrait", "reperes", "repere", "etymologie", "cles", "dessin", "leurres"):
+            # `carte` (masterclass) renvoie à un lieu de lieux.json, vérifié pour lui-même.
+            if k in ("lot", "verification", "extrait", "reperes", "repere", "etymologie", "cles", "dessin", "leurres", "carte"):
                 continue
             yield from textes(o[k])
     elif isinstance(o, list):
