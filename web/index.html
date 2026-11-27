@@ -11057,7 +11057,7 @@ function demarrerJeu() {
   var AVIS_LOGE_RAPPEL = false;
   function avisLogement(id, mode, opts) {
     if (!M.modeIle(P) || !C.ile || (opts && (opts.donjon || opts.sansAvis))) return false;
-    var I = M.ile(C, P, maintenant()), L = I && I.limites, D = ((C.ile.regles || {}).demographie || {}).par_epreuve || 0;
+    var I = M.ile(C, P, maintenant()), L = I && I.limites, Dm = (C.ile.regles || {}).demographie || {}, D = (mode === "rappel" ? Dm.par_rappel : Dm.par_epreuve) || 0;
     if (!L || !D) return false;
     var parToits = L.plafond == null || L.toits <= L.plafond, cap = parToits ? L.toits : L.plafond, libres = cap - I.habitants;
     if (libres >= D) return false;

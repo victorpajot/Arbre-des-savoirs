@@ -2272,7 +2272,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     assert.equal(I1.habitants, I1.population.enfants + I1.population.adultes + I1.population.anciens);
     const id = CI.competences[0].id, exilAvant = PX.exil;
     const rr = M.terminerRappel(CI, PX, id, M.tirerQuestions(CI, PX, id, 3).map(q => ({ id: q.id, correct: true })), ti);
-    assert.equal(PX.exil, exilAvant - RP.retour); assert.equal(rr.ile.revenus, RP.retour); assert.equal(M.ile(CI, PX, ti).habitants, plein - ex.partis + RP.retour + CI.ile.regles.demographie.par_epreuve, "les revenus, plus ceux que l'épreuve réussie attire"); }
+    assert.equal(PX.exil, exilAvant - RP.retour); assert.equal(rr.ile.revenus, RP.retour); assert.equal(M.ile(CI, PX, ti).habitants, plein - ex.partis + RP.retour + (CI.ile.regles.demographie.par_rappel || 0), "les revenus, plus ceux que le rappel réussi attire (par_rappel)"); }
   // Démographie (Victor, 2026-11-10) : Leslie, Verhulst, Lotka-Volterra, liés aux aménagements.
   // La famine mortelle et les aléas (2026-11-12) ont leur propre test, plus bas : ici, la démographie seule.
   const FAMINE = CI.ile.regles.ressources.famine_mort, ALEAS = CI.ile.regles.aleas.chance; CI.ile.regles.ressources.famine_mort = 0; CI.ile.regles.aleas.chance = 0;

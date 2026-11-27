@@ -1172,7 +1172,7 @@
     return { revision: revision, issue: reussi ? "reussi" : revision ? "revision_ratee" : anticipe || palais ? "echec" : "perdue", anticipe: anticipe, palais: palais, horsCase: horsCase, serie: serie, bonnes: bonnes, total: total, xp: xp, xpPerdue: xpPerdue, prochainRappel: e.prochainRappel,
       retard: retard, nouveauxSucces: rec.succes, nouveauxObjets: rec.objets, nouveauxAccessoires: rec.accessoires, nouveauxSavants: rec.savants,
       nouveauxEvenements: rec.evenements, nouveauxLivres: rec.livres, masque: rec.masque, plateau: dep, contextes: contextes, farce: fa, jouer: jouer, agacement: ag, credits: rec.credits,
-      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo, reussi), gloire: suivreGloire(contenu, partie, id, t, reussi || revision || anticipe || palais ? null : "perdue", bonnes, total), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
+      avantPlateau: avant, apresPlateau: apres, ile: changementIle(contenu, partie, id, t, photo, reussi, true), gloire: suivreGloire(contenu, partie, id, t, reussi || revision || anticipe || palais ? null : "perdue", bonnes, total), theme: contenu.parId[id] ? contenu.parId[id].stat : null };
   }
 
   // À appeler à chaque ouverture de l'app : repère un retour après une longue absence.
@@ -2748,11 +2748,14 @@
     objectifIle(contenu, partie, t);
     return { posees: q.posees, nom: q.nom, etat: etatInstallation(contenu, partie, id, t), habitants: ile(contenu, partie, t).habitants, places: ile(contenu, partie, t).places, options: q.options.filter(function (o) { return o.ouverte; }).length };
   }
-  function changementIle(contenu, partie, id, t, avant, reussi) {
+  function changementIle(contenu, partie, id, t, avant, reussi, rappel) {
     if (!avant) return null;
     // Une épreuve réussie fait revenir une partie de ceux qu'un piège avait fait fuir.
     var revenus = 0;
     var D = contenu.ile.regles.demographie, pop = partie.population;
+    // Victor (2026-11-27) : « les rappels donnent trop d'habitants ». Un rappel réussi entretient l'île : il fait venir
+    // `par_rappel` habitants (0 par défaut), un savoir nouveau `par_epreuve`.
+    var venus = D ? (rappel ? D.par_rappel || 0 : D.par_epreuve || 0) : 0;
     if (reussi && partie.exil > 0) { revenus = Math.min(partie.exil, (contenu.ile.regles.piege || {}).retour || 8); partie.exil -= revenus; if (D && pop) accueillir(pop, revenus, D); }
     var tenu = reussi ? tenirObjectif(contenu, partie, t) : false;
     // Une installation de plus, ce sont des places : une partie se remplit tout de suite, attirée par la nouveauté ; le
@@ -2762,10 +2765,10 @@
       var libres = placesIle(contenu, partie, t).places - (pop.e + pop.a + pop.v);
       attires = Math.max(0, Math.min(libres, Math.round((placesIle(contenu, partie, t).places - avant.places) * D.attrait)));
       // Victor (2026-11-16) : chaque épreuve réussie fait venir quelques habitants, tant qu'il reste des places.
-      attires += Math.max(0, Math.min(libres - attires, D.par_epreuve || 0));
+      attires += Math.max(0, Math.min(libres - attires, venus));
       if (attires > 0) accueillir(pop, attires, D);
       // Victor (2026-11-16) : ceux qui voulaient venir et qu'on n'a pas pu loger, il faut que ça se sache.
-      var Lr = placesIle(contenu, partie, t).limites, voulus = Math.max(0, Math.round((placesIle(contenu, partie, t).places - avant.places) * D.attrait)) + (D.par_epreuve || 0);
+      var Lr = placesIle(contenu, partie, t).limites, voulus = Math.max(0, Math.round((placesIle(contenu, partie, t).places - avant.places) * D.attrait)) + venus;
       if (Lr && voulus > attires && Lr.frein !== "savoirs") refoules = { n: voulus - attires, frein: Lr.frein, toits: Lr.toits, plafond: Lr.plafond };
     }
     // Une installation perdue, ce sont des places en moins : une partie de ceux qui y vivaient s'en va aussitôt.
