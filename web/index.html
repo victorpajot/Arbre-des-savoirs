@@ -4522,6 +4522,13 @@ function demarrerJeu() {
   }
   function optionsJouer() {
     var t = maintenant(), out = [], dus = M.rappelsDus(C, P, t), c = M.choixIA(C, P, t);
+    // Victor (2026-11-27) : une masterclass lue jusqu'au bout met son quiz en tête, devant tout le reste.
+    var lu = P.mcLue && C.parId[P.mcLue.id], dejaLu = null;
+    if (lu && !(P.competences[lu.id] && P.competences[lu.id].maitrise) && M.disponibles(C, P, t).some(function (k) { return k.id === lu.id; })) {
+      dejaLu = lu.id;
+      out.push({ id: "quiz-lu", ico: "🎓", titre: __("Passer le quiz"), sous: __("Masterclass lue : ") + esc(tx(lu.nom)) + ".", resume: __("Masterclass lue : passe le quiz de ") + esc(tx(lu.nom)) + ".",
+        action: function () { lancerQuiz(lu.id, "quiz", { jouer: true }); } });
+    }
     function rappels(k, revision) {
       var n = dus.length;
       out.push({ id: "rappel", ico: "🔁", titre: revision ? __("Révision forcée") : n > 1 ? __("{n} rappels", { n: n }) : __("Un rappel"),
@@ -4545,7 +4552,7 @@ function demarrerJeu() {
           action: function () { ouvrirEpreuveIle(id); } });
       });
       var qz = M.quizIle(C, P, t) || (c && c.type === "quiz" ? c : null);
-      if (qz) out.push({ id: "quiz", ico: "📖", titre: __("Apprendre un savoir"), sous: esc(tx(qz.comp.nom)) + ".", resume: __("Savoir à apprendre : ") + esc(tx(qz.comp.nom)) + ".",
+      if (qz && qz.comp.id !== dejaLu) out.push({ id: "quiz", ico: "📖", titre: __("Apprendre un savoir"), sous: esc(tx(qz.comp.nom)) + ".", resume: __("Savoir à apprendre : ") + esc(tx(qz.comp.nom)) + ".",
         action: function () { if (aMasterclass(qz.comp)) ouvrirFeuille(qz.comp.id); else lancerQuiz(qz.comp.id, "quiz", { jouer: true }); } });
     } else if (c) {
       // Le parcours : l'épreuve de la case garde sa feuille ; un rappel dû reste proposé à côté quand la case donne un quiz.
@@ -10213,6 +10220,8 @@ function demarrerJeu() {
     function montrer() {
       var z = feuille.querySelector(".masterclass"), x = etapes[n];
       if (n > vuMax) vuMax = n;
+      // Victor (2026-11-27) : lue jusqu'au bout, son quiz passe en tête du menu Jouer (s'il n'est pas encore acquis).
+      if (n === etapes.length - 1 && !(P.competences[id] && P.competences[id].maitrise) && (!P.mcLue || P.mcLue.id !== id)) { P.mcLue = { id: id, t: maintenant() }; sauver(); }
       var plan = etapes.length > 1 ? (n === 0 ? '<div class="mc-plan"><span class="mc-plan-t">' + __("Le fil de la leçon") + "</span>" + fil() + "</div>" : barre()) : "";
       z.innerHTML = '<div class="eyebrow">' + esc(titre) + __(" · étape ") + (n + 1) + __(" sur ") + etapes.length + "</div>" + (n > 0 ? plan : "") + "<h2>" + esc(x.titre) + "</h2>" + (n === 0 ? plan : "") + x.html +
         '<div class="nav-guide"><button type="button" class="btn sec" data-a="prec"' + (n ? "" : " disabled") + __('>← Précédent</button><button type="button" class="btn" data-a="suiv"') + (n < etapes.length - 1 ? "" : " disabled") + __(">Suivant →</button></div>");
@@ -11115,6 +11124,8 @@ function demarrerJeu() {
       var ordre = q.type === "qcm" ? M.melanger(q.choix.map(function (_, i) { return i; }), Math.random) : null;
       return { q: q, ordre: ordre };
     });
+    // Victor (2026-11-27) : le quiz d'une masterclass lue n'est plus à proposer en tête de Jouer une fois lancé.
+    if (P.mcLue && P.mcLue.id === id && mode === "quiz") delete P.mcLue;
     quiz = { id: id, mode: mode, donjon: (opts && opts.donjon) || null, jouer: !!(opts && opts.jouer), uneCase: !!(opts && opts.uneCase), qs: qs, i: 0, res: [], repondu: false, fin: null, chrono: !!(P.options && P.options.chrono), minuteur: null, debut: Date.now(), debutQuestion: 0,
       arbreFerme: !M.arbreOuvert(C, P, C.parId[id].stat) };
     rendreQuiz();
