@@ -11357,6 +11357,8 @@ function demarrerJeu() {
     var qs = M.tirerQuestions(C, P, id, n).map(function (q0) {
       var q = M.varierQuestion(C, P, q0, Math.random);
       var ordre = q.type === "qcm" ? M.melanger(q.choix.map(function (_, i) { return i; }), Math.random) : null;
+      // Victor (2026-11-27) : « Aucune de ces réponses » toujours en dernier, comme sur une vraie copie : sa place ne dit rien.
+      if (ordre && q.variante === "aucune") { var ia = q.choix.indexOf(M.AUCUNE); if (ia >= 0) ordre = ordre.filter(function (i) { return i !== ia; }).concat([ia]); }
       return { q: q, ordre: ordre };
     });
     // Victor (2026-11-27) : le quiz d'une masterclass lue n'est plus à proposer en tête de Jouer une fois lancé.

@@ -5590,7 +5590,7 @@
     niveauGlobal: niveauGlobal,
     melanger: melanger,
     tirerQuestions: tirerQuestions,
-    varierQuestion: varierQuestion, reponseVariante: reponseVariante, choixNombres: choixNombres,
+    varierQuestion: varierQuestion, reponseVariante: reponseVariante, choixNombres: choixNombres, AUCUNE: AUCUNE,
     lireNombre: lireNombre,
     corriger: corriger,
     terminerQuiz: terminerQuiz,
