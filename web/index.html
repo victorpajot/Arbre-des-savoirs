@@ -520,13 +520,15 @@ body.plateau-plein { overflow: hidden; }
 .jouer b { display: block; font-family: var(--f-display); font-size: 22px; line-height: 1.1; }
 .jouer span.s { font-size: 15px; opacity: 0.85; }
 .jouer .pill { font-family: var(--f-mono); font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--accent-ink); color: var(--accent); font-size: 14px; }
-/* Victor (2026-11-27) : sous Jouer, les autres options du moment, dans l'ordre du jeu. */
-.jouer-menu { display: flex; flex-direction: column; gap: 8px; }
+/* Victor (2026-11-27) : le sous-menu de Jouer, les options du moment dans l'ordre du jeu, la première en avant. */
 .jouer-autres { display: flex; flex-direction: column; gap: 6px; }
 .jouer-alt { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; width: 100%; padding: 9px 12px; border-radius: 14px; border: 1.5px solid color-mix(in srgb, var(--accent) 45%, var(--line)); background: var(--surface); color: var(--ink); text-align: left; cursor: pointer; }
 .jouer-alt .ico { width: 40px; height: 40px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 14%, transparent); display: grid; place-items: center; font-size: 21px; }
 .jouer-alt b { display: block; font-family: var(--f-display); font-size: 18px; line-height: 1.15; }
 .jouer-alt span.s { display: block; font-size: 15px; opacity: 0.85; }
+.jouer-alt.prem { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.jouer-alt.prem .ico { background: color-mix(in srgb, var(--accent-ink) 18%, transparent); }
+.jouer-alt.prem .pill { background: var(--accent-ink); color: var(--accent); }
 .jouer-alt .pill { font-family: var(--f-mono); font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 15px; }
 .choix-ia { display: flex; flex-direction: column; gap: 12px; }
 .arbre-choisi, .epreuve-choisie { --c: var(--accent); display: grid; grid-template-columns: auto 1fr auto; gap: 6px 12px; align-items: center; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--c) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c) 35%, var(--line)); }
@@ -4542,7 +4544,7 @@ function demarrerJeu() {
         action: function () { if (aMasterclass(qz.comp)) ouvrirFeuille(qz.comp.id); else lancerQuiz(qz.comp.id, "quiz", { jouer: true }); } });
     } else if (c) {
       // Le parcours : l'épreuve de la case garde sa feuille ; un rappel dû reste proposé à côté quand la case donne un quiz.
-      out.push({ id: "case", ico: "", titre: "", sous: (c.raison === "revision" ? __("Révision forcée. ") : c.type === "rappel" ? __("Un rappel t'attend. ") : "") + (c.raison === "case" ? __("Case ") + esc(tx(stat(c.stat).nom)) + "." : c.raison === "ouvre_arbre" ? __("Case ") + esc(tx(stat(c.stat).nom)) + __(" : un arbre fermé à ouvrir.") : __("Une épreuve t'attend.")),
+      out.push({ id: "case", ico: "🎲", titre: c.type === "rappel" ? __("Rappel") : __("Ta case"), sous: (c.raison === "revision" ? __("Révision forcée. ") : c.type === "rappel" ? __("Un rappel t'attend. ") : "") + (c.raison === "case" ? __("Case ") + esc(tx(stat(c.stat).nom)) + "." : c.raison === "ouvre_arbre" ? __("Case ") + esc(tx(stat(c.stat).nom)) + __(" : un arbre fermé à ouvrir.") : __("Une épreuve t'attend.")),
         pill: C.plateau && bonusJouerMax() ? texteBonusJouer() : "", action: ouvrirJouer });
       if (c.type !== "rappel" && dus.length) rappels(dus[0], false);
     }
@@ -4553,23 +4555,26 @@ function demarrerJeu() {
       resume: gr.trouvee ? __("Retourner à {g} avec une torche.", { g: esc(nomMin(gr.nom)) }) : __("Explorer l'île pour trouver {g}.", { g: esc(nomMin(gr.nom)) }), action: ouvrirExplorer });
     return out;
   }
+  // Victor (2026-11-27, 2e retour) : Jouer est un bouton seul qui ouvre un sous-menu ; on y choisit l'option.
+  function lancerOption(x) { if (bloqueParUltimatum() || bloqueParMasterclass() || bloqueParDuel()) return; x.action(); }
+  function ouvrirMenuJouer() {
+    if (blocageJouer()) { ouvrirJouer(); return; }
+    var L = optionsJouer(); if (!L.length) { toast(__("Rien à jouer pour l'instant.")); return; }
+    var actions = {};
+    var html = '<div class="eyebrow">' + __("Jouer") + "</div><h2>" + __("Que veux-tu jouer ?") + '</h2><p class="note">' + __("Du plus pressé au moins pressé.") + '</p><div class="jouer-autres">' +
+      L.map(function (x, i) {
+        actions["o" + i] = function () { fermerFeuille(); lancerOption(x); };
+        return '<button type="button" class="jouer-alt' + (i ? "" : " prem") + '" data-a="o' + i + '" data-o="' + esc(x.id) + '"><span class="ico" aria-hidden="true">' + x.ico + "</span><span><b>" + x.titre + '</b><span class="s">' + x.sous + "</span></span>" + (x.pill ? '<span class="pill">' + x.pill + "</span>" : "") + "</button>";
+      }).join("") + "</div>";
+    feuilleSimple(html, __("Jouer"), actions);
+  }
   function boutonJouer() {
-    var bl = blocageJouer(), L = bl ? [] : optionsJouer(), o = L[0];
-    function lancer(x) { return function () { if (bloqueParUltimatum() || bloqueParMasterclass() || bloqueParDuel()) return; x.action(); }; }
+    var bl = blocageJouer(), L = bl ? [] : optionsJouer();
     var b = el('<button type="button" class="jouer"><span class="ico">' + ICONE_JOUER + __('</span><span><b>Jouer</b><span class="s">') +
-      (bl || (o ? o.resume || o.sous : __("Rien à jouer pour l'instant."))) + "</span></span>" + (o && o.pill ? '<span class="pill">' + o.pill + "</span>" : "") + "</button>");
-    if (bl) { b.onclick = ouvrirJouer; return b; }
-    if (!o) { b.disabled = true; return b; }
-    b.onclick = lancer(o);
-    if (L.length < 2) return b;
-    var z = el('<div class="jouer-menu"></div>'); z.appendChild(b);
-    var autres = el('<div class="jouer-autres" role="group" aria-label="' + __("Autres choses à jouer") + '"></div>');
-    L.slice(1).forEach(function (x) {
-      var bt = el('<button type="button" class="jouer-alt" data-o="' + esc(x.id) + '"><span class="ico" aria-hidden="true">' + x.ico + "</span><span><b>" + x.titre + '</b><span class="s">' + x.sous + "</span></span>" + (x.pill ? '<span class="pill">' + x.pill + "</span>" : "") + "</button>");
-      bt.onclick = lancer(x); autres.appendChild(bt);
-    });
-    z.appendChild(autres);
-    return z;
+      (bl || (L.length > 1 ? __("{n} choix possibles.", { n: L.length }) : L.length ? L[0].resume || L[0].sous : __("Rien à jouer pour l'instant."))) + "</span></span>" + (L.length > 1 ? '<span class="pill">' + L.length + "</span>" : "") + "</button>");
+    if (!bl && !L.length) b.disabled = true;
+    b.onclick = ouvrirMenuJouer;
+    return b;
   }
   // v28 : sa faveur a chuté sous un palier : elle t'enferme au mur de la honte. Rien d'autre ne se joue tant que la peine court.
   function bloqueParFureur() {
@@ -5005,7 +5010,7 @@ function demarrerJeu() {
         else if (a === "pion") { var p = centreCase(P.plateau.idx + 1); camera.w = 190; camera.cx = p[0]; camera.cy = p[1]; appliquer(); }
         else if (a === "fermer") basculerPlein(false);
         else if (a === "agrandir") basculerPlein(true);
-        else if (a === "jouer") { basculerPlein(false); ouvrirJouer(); }
+        else if (a === "jouer") { basculerPlein(false); ouvrirMenuJouer(); }
         return;
       }
       if (Date.now() - finGlisse < 350) return;
@@ -7645,7 +7650,7 @@ function demarrerJeu() {
         (k ? '<button type="button" class="btn large" data-a="obj">' + __("Jouer") + "</button>" : "");
     }
     var b = el('<div class="carte ile-objectif' + (ob.reussi ? " tenu" : "") + (anankeAbsente() ? " absente" : "") + '" style="--c:' + (ob.couleur || "var(--accent)") + '"><div class="ile-obj-tete"><span class="ile-econome">' + svgEconome(ob.reussi ? "soit" : ob.veille ? "coupe" : "neutre", 46) + '</span><div class="eyebrow">' + (anankeAbsente() ? __("Objectif du jour · Ananké, hors ligne") : __("Objectif du jour · Ananké")) + "</div></div>" + (htmlSursis() ? '<p class="sursis-ligne">' + htmlSursis() + "</p>" : "") + (anankeReveil() ? '<p class="ile-obj-texte reveil"><b>' + esc(texteReveil(anankeReveil())) + "</b></p>" : "") + corps + "</div>");
-    var bt = b.querySelector('[data-a="obj"]'); if (bt) bt.onclick = function () { ouvrirJouer(); };
+    var bt = b.querySelector('[data-a="obj"]'); if (bt) bt.onclick = function () { ouvrirMenuJouer(); };
     return b;
   }
   // Dans le bilan d'une épreuve : ce qu'elle vient de changer sur l'île.
