@@ -2250,18 +2250,19 @@ function demarrerJeu() {
   }
   // Une carte en pixels : W × H pixels de `pas` degrés, coin nord-ouest en (o, n). `pays` : numéros de pays à surligner.
   // Renvoie le contenu SVG (sans la balise) et `proj(lon, lat)` → [x, y] (ou null hors du cadre).
-  function dessinCarte(W, H, pas, o, n, pays) {
-    var K = carteMonde, sur = {};
+  // `px` : largeur d'un pixel en degrés de longitude (plus que `pas` loin de l'équateur, pour garder des pixels carrés en km).
+  function dessinCarte(W, H, pas, o, n, pays, px) {
+    var K = carteMonde, sur = {}; px = px || pas;
     (pays || []).forEach(function (i) { sur[i + 1] = 1; });
     // Plus large que la grille (gros plan d'un grand pays) : un pixel prend le sol majoritaire de ses k × k cases, et garde
     // une frontière ou un fleuve dès qu'il en touche un (sinon les traits fins tombent en pointillés).
-    var cache = [], kk = Math.max(1, Math.round(pas / K.pas)), sp = pas / kk;
+    var cache = [], kk = Math.max(1, Math.round(pas / K.pas)), sp = pas / kk, spx = px / kk;
     function sol(x, y) {
       if (x < 0 || y < 0 || x >= W || y >= H) return 1;
       var k = y * W + x;
       if (cache[k] === undefined) {
         var c = [0, 0, 0];
-        for (var j = 0; j < kk; j++) for (var i = 0; i < kk; i++) c[pointCarte("terrain", o + x * pas + (i + .5) * sp, n - y * pas - (j + .5) * sp)]++;
+        for (var j = 0; j < kk; j++) for (var i = 0; i < kk; i++) c[pointCarte("terrain", o + x * px + (i + .5) * spx, n - y * pas - (j + .5) * sp)]++;
         cache[k] = c[1] >= c[0] && c[1] >= c[2] ? 1 : c[2] > c[0] ? 2 : 0;
       }
       return cache[k];
@@ -2269,7 +2270,7 @@ function demarrerJeu() {
     function trait(x, y) {
       var r = 0;
       for (var j = 0; j < kk; j++) for (var i = 0; i < kk; i++) {
-        var v = pointCarte("traits", o + x * pas + (i + .5) * sp, n - y * pas - (j + .5) * sp); if (v === 1) return 1; if (v) r = v;
+        var v = pointCarte("traits", o + x * px + (i + .5) * spx, n - y * pas - (j + .5) * sp); if (v === 1) return 1; if (v) r = v;
       }
       return kk > 2 ? 0 : r;  // de très loin (un continent), les fleuves brouillent : seules les frontières restent
     }
@@ -2278,14 +2279,14 @@ function demarrerJeu() {
       var s = sol(x, y);
       if (s === 2) return 3;
       if (!s) return 0;
-      var lon = o + (x + .5) * pas, lat = n - (y + .5) * pas, tr = trait(x, y);
+      var lon = o + (x + .5) * px, lat = n - (y + .5) * pas, tr = trait(x, y);
       if (tr) return tr + 3;
       var cote = !(sol(x + 1, y) && sol(x - 1, y) && sol(x, y + 1) && sol(x, y - 1));
       if (pays && sur[pointCarte("etats", lon, lat)]) return cote ? 7 : 6;
       return cote ? 2 : 1;
     }, W, H, 8);
     function proj(lon, lat) {
-      var x = Math.floor((((lon - o) % 360) + 360) % 360 / pas), y = Math.floor((n - lat) / pas);
+      var x = Math.floor((((lon - o) % 360) + 360) % 360 / px), y = Math.floor((n - lat) / pas);
       return x >= 0 && x < W && y >= 0 && y < H ? [x, y] : null;
     }
     return { proj: proj, svg: '<rect width="' + W + '" height="' + H + '" fill="#8FD8F2"/><path d="' + t[1] + '" fill="#D8C49A"/><path d="' + t[2] + '" fill="#A8905E"/>' +
@@ -2330,16 +2331,18 @@ function demarrerJeu() {
     var nom = tx(L.nom);
     if (!carteMonde) { chargerCarte(); return '<figure class="illus carte-lieu" data-lieu="' + esc(id) + '"><div class="carte-attente"></div><figcaption>📍 ' + esc(nom) + "</figcaption></figure>"; }
     var K = carteMonde, pos = L.position.split(",").map(Number), W = 120, H = 75, FS = 4.6;
-    var cx = Math.floor((pos[1] + 180) / K.pas), cy = Math.floor((90 - pos[0]) / K.pas);
-    var x0 = cx - W / 2, y0 = Math.max(0, Math.min(K.hauteur - H, cy - Math.round(H * 0.55))), px = cx - x0, py = cy - y0;
-    var d = dessinCarte(W, H, K.pas, x0 * K.pas - 180, 90 - y0 * K.pas), ew = 36, eh = 18;
-    var encart = htmlEncart(W - ew - 1, 1, ew, eh, '<rect x="' + ((((x0 * K.pas) % 360) + 360) % 360) / 2 + '" y="' + (y0 * K.pas / 2) + '" width="' + Math.max(3, W * K.pas / 2) +
+    // Pixels carrés en kilomètres : loin de l'équateur, un pixel couvre plus de longitude (Islande, Scandinavie).
+    var pasX = K.pas / Math.max(0.4, Math.cos(pos[0] * Math.PI / 180));
+    var cy = Math.floor((90 - pos[0]) / K.pas), y0 = Math.max(0, Math.min(K.hauteur - H, cy - Math.round(H * 0.55))), px = W / 2, py = cy - y0;
+    var o = pos[1] - (px + .5) * pasX;
+    var d = dessinCarte(W, H, K.pas, o, 90 - y0 * K.pas, null, pasX), ew = 36, eh = 18;
+    var encart = htmlEncart(W - ew - 1, 1, ew, eh, '<rect x="' + ((((o + 180) % 360) + 360) % 360) / 2 + '" y="' + (y0 * K.pas / 2) + '" width="' + Math.max(3, W * pasX / 2) +
       '" height="' + Math.max(3, H * K.pas / 2) + '" fill="none" stroke="#D94141" stroke-width="2"/>');
     var noms = nomsCarte(W, H, d.proj, [[px - 6, py - 13, 13, 16], [W - ew - 3, 0, ew + 3, eh + 3], [0, H - 9, 40, 9]], FS, 3, 4);
     var pin = '<g transform="translate(' + px + " " + py + ') scale(1.6)"><path d="M-2 -7h5v5h-5z" fill="#1E1A2B"/><path d="M-1 -6h3v3h-3z" fill="#D94141"/>' +
       '<path d="M-1 -6h1v1h-1z" fill="#F28B82"/><path d="M0 -2h1v2h-1z" fill="#1E1A2B"/></g>';
     return '<figure class="illus carte-lieu"><svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(__("Carte : ") + nom) + '">' +
-      '<g shape-rendering="crispEdges">' + d.svg + encart + echelleCarte(H, K.pas, pos[0], FS) + pin + "</g>" + noms +
+      '<g shape-rendering="crispEdges">' + d.svg + encart + echelleCarte(H, pasX, pos[0], FS) + pin + "</g>" + noms +
       "</svg><figcaption>📍 " + esc(nom) + "</figcaption></figure>";
   }
   // Les pays qu'on peut toucher dans une leçon : leurs noms (et autres noms) dans la langue du jeu, les plus longs d'abord.
@@ -2361,14 +2364,15 @@ function demarrerJeu() {
     if (!carteMonde) return;
     var K = carteMonde, p = K.pays[i], en = M.langue() === "en" ? 1 : 0, nom = p[1 + en], sur = [i].concat(p[9]);
     var b = p[6], marge = Math.max(1.5, (b[2] - b[0]) * 0.12, (b[3] - b[1]) * 0.12), o = b[0] - marge, e = b[2] + marge, s = b[1] - marge, n = b[3] + marge;
-    if ((e - o) / (n - s) < 1.6) { var c = (o + e) / 2, dw = (n - s) * 1.6; o = c - dw / 2; e = c + dw / 2; } else { var cy = (s + n) / 2, dh = (e - o) / 1.6; s = cy - dh / 2; n = cy + dh / 2; }
-    var pas = Math.max(K.pas, Math.ceil((e - o) / K.pas / 160) * K.pas), W = Math.round((e - o) / pas), H = Math.round((n - s) / pas);
+    var cl = Math.max(0.4, Math.cos((b[1] + b[3]) / 2 * Math.PI / 180));  // pixels carrés en km, comme pour les lieux
+    if ((e - o) * cl / (n - s) < 1.6) { var c = (o + e) / 2, dw = (n - s) * 1.6 / cl; o = c - dw / 2; e = c + dw / 2; } else { var cy = (s + n) / 2, dh = (e - o) * cl / 1.6; s = cy - dh / 2; n = cy + dh / 2; }
+    var pas = Math.max(K.pas, Math.ceil((e - o) * cl / K.pas / 160) * K.pas), pasX = pas / cl, W = Math.round((e - o) / pasX), H = Math.round((n - s) / pas);
     n = Math.min(90, n); var FS = W * 0.045;
-    var g = dessinCarte(W, H, pas, o, n, sur);
+    var g = dessinCarte(W, H, pas, o, n, sur, pasX);
     var chez = {}; sur.forEach(function (k) { chez[k + 1] = 1; });
     var noms = nomsCarte(W, H, g.proj, [[0, H - 9 * FS / 4.6, 45 * FS / 4.6, 9 * FS / 4.6]], FS, 0, 5, chez);
     var zoom = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(__("Carte : ") + nom) + '"><g shape-rendering="crispEdges">' + g.svg +
-      echelleCarte(H, pas, (s + n) / 2, FS) + "</g>" + noms + "</svg>";
+      echelleCarte(H, pasX, (s + n) / 2, FS) + "</g>" + noms + "</svg>";
     // Le monde : le pays en couleur (un pixel dès qu'un bout du pays le touche), cerclé s'il est trop petit pour se voir.
     var set = {}; sur.forEach(function (k) { set[k + 1] = 1; });
     var m = tracesCarte(function (x, y) {
