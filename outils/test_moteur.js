@@ -2512,6 +2512,21 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   { const Pp = JSON.parse(JSON.stringify(P)); Pp.population.e = 0; Pp.population.v = 0; Pp.population.a = 4;
     assert.equal(M.agesIle(CA, Pp).age.epreuve, null, "trop peu de monde pour dresser un pilier"); assert.ok(M.agesIle(CA, Pp).age.peuple.manque > 0); }
   P.epreuves.sanctuaire = t0; M.ile(CA, P, t0);
+  // Victor (2026-11-27) : avant de changer d'âge, un Chrono sur les savoirs acquis. 3 justes sur 5, rejouable.
+  { const PC = CA.ile.regles.passage_chrono, RC = M.reglesChrono(CA);
+    G = M.agesIle(CA, P); assert.equal(G.age.id, "campement", "le village attend le Chrono du passage"); assert.ok(G.age.chrono && !G.age.pret && !G.age.complet);
+    assert.equal(G.age.chrono.questions, PC.evenements); assert.equal(G.age.chrono.reussite, PC.reussite);
+    const res = M.reservoirPassage(CA, P, 1); assert.ok(res.some(x => x.cle === "savoir:ile.feu") && res.some(x => x.cle === "savoir:res.cueillir"));
+    assert.ok(res.every(x => ["ile.feu", "sci.soigner", "res.cueillir", "meteo.ciel", "mnemo.sansecrire", "mus.instruments"].indexOf(x.lienComp) >= 0), "seulement les savoirs acquis jusqu'ici");
+    const jouer = (bon) => { const j = M.lancerChrono(CA, P, "age", t0); assert.equal(j.questions.length, PC.evenements);
+      j.questions.forEach((q, i) => { const juste = i < bon, r = M.repondreChrono(CA, P, juste ? q.debut : (q.debut < RC.prehistoire ? 1500 : -900000), 20000, t0); assert.equal(r.verdict === "juste", juste, q.cle + " " + r.choisi + " / " + r.vrai); });
+      return M.terminerChrono(CA, P, t0); };
+    const feu = M.lancerChrono(CA, P, "age", t0).questions.filter(q => q.cle === "savoir:ile.feu")[0]; assert.ok(feu && feu.tranches, "le feu est tiré, en tranches de préhistoire");
+    assert.equal(M.trancheChrono(PC.tranches, -1000000, RC.prehistoire), 0); assert.equal(M.trancheChrono(PC.tranches, -28000, RC.prehistoire), 2); assert.equal(M.trancheChrono(PC.tranches, -4600, RC.prehistoire), 3);
+    let f = jouer(PC.reussite - 1); assert.ok(f.age && !f.age.passe && !f.reussi); assert.equal(M.agesIle(CA, P).age.id, "campement", "raté : l'île reste au campement");
+    f = jouer(PC.reussite); assert.ok(f.age.passe && f.reussi); assert.ok(P.chronoAges.campement);
+    assert.equal(M.lancerChrono(CA, P, "age", t0), null, "réussi, il ne se redemande pas (le village n'est pas prêt)");
+    CA.ile.regles.passage_chrono = null; }
   // Le village : les savoirs de ses besoins s'ouvrent, pas le rang 2, ni un rang 1 sans besoin.
   G = M.agesIle(CA, P);
   assert.equal(G.age.id, "village"); assert.equal(G.age.besoins.length, 9);

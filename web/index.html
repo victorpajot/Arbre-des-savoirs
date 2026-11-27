@@ -1225,6 +1225,7 @@ svg.grille .interro { transition: opacity .3s; }
 .sc-boutons { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .sc-boutons:has(> button:nth-child(2):last-child) { grid-template-columns: 1fr 1fr; }
 .sc-boutons button { min-height: 44px; border: 2px solid var(--line); background: var(--surface-2); border-radius: 10px; font-family: var(--f-mono); font-size: 15px; color: var(--ink); padding: 4px; }
+.sc-tranches .sc-boutons { grid-template-columns: 1fr; } .sc-tranches .sc-boutons button { font-size: 17px; }
 .sc-boutons button.pris { border-color: #8A6A12; background: color-mix(in srgb, #8A6A12 20%, var(--surface)); font-weight: 700; }
 .sc-boutons button:disabled { opacity: .3; }
 .sc-retour { font-size: 17px; }
@@ -3472,6 +3473,7 @@ function demarrerJeu() {
   function scenesPersonnage() {
     if (titre || feuille || !C.avatar || document.querySelector(".quiz, .liberation, .alyca-scene, .fete")) return;
     if (P.ileIntro && feteAgeIle()) return;
+    if (P.ileIntro && M.modeIle(P) && C.ile && !siecles) { var GA = M.agesIle(C, P); if (GA && GA.age.chrono && !DEJA_OFFERT["chronoAge" + GA.age.id]) { DEJA_OFFERT["chronoAge" + GA.age.id] = 1; ouvrirChrono("age"); return; } }
     if (!P.apparence && C.avatar.creation && !(P.options && P.options.creationProposee)) { ouvrirCreation(!P.journal.length); return; }
     var tns = M.annoncerTenues(C, P, maintenant()).filter(function (tn) { return !DEJA_OFFERT["t" + tn.id] && (DEJA_OFFERT["t" + tn.id] = 1); });
     if (tns.length) {
@@ -4531,6 +4533,9 @@ function demarrerJeu() {
       if (c && c.type === "rappel") rappels(c.comp, c.raison === "revision");
       // Les quêtes et les épreuves uniques : celle de l'âge d'abord, puis celles qui gardent un aménagement.
       var age = ((M.agesIle(C, P) || { age: {} }).age || {}), vus = {};
+      if (age.chrono) { var suivA = M.agesIle(C, P).suivant;
+        out.push({ id: "chrono-age", ico: "⏳", titre: __("Chrono du passage"), resume: __("Chrono du passage : {n} dates avant {a}.", { n: age.chrono.questions, a: esc(tx(suivA.nom)).toLowerCase() }),
+          sous: __("{r} dates justes sur {n} ouvrent : {a}.", { r: age.chrono.reussite, n: age.chrono.questions, a: esc(tx(suivA.nom)).toLowerCase() }), action: function () { ouvrirChrono("age"); } }); }
       [age.epreuve].concat(epreuvesAttente()).forEach(function (id) {
         var E = id && !vus[id] && M.epreuveIle(C, id); if (!E) return; vus[id] = 1;
         var q = M.queteIle(C, P, id), enQuete = q && !q.complete;
@@ -7202,6 +7207,7 @@ function demarrerJeu() {
     if (qAge) { nOuv++; hq += blocQuete(qAge, true); }
     if (hq) h += '<details class="ile-amen-q ile-quetes' + (nOuv ? " pret" : "") + '"><summary><b>🔍 ' + __("Quêtes") + "</b><span>" + (nOuv ? nOuv + (nOuv > 1 ? __(" ouvertes") : __(" ouverte")) : __("aucune ouverte")) + (fermees.length ? " · " + fermees.length + (fermees.length > 1 ? __(" fermées") : __(" fermée")) : "") + '</span><i aria-hidden="true">›</i></summary>' + hq + "</details>";
     if (qAge) {}
+    else if (a.chrono && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + '</h3><p style="font-size:17px">' + __("Tout est prêt. Avant de changer d'âge, un Chrono : {n} dates tirées des savoirs acquis jusqu'ici. Il en faut {r} justes, et il se rejoue autant qu'il faut.", { n: a.chrono.questions, r: a.chrono.reussite }) + '</p><button type="button" class="btn large" data-a="chrono-age">' + __("Jouer le Chrono du passage") + "</button></div>";
     else if (epr && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Épreuve unique") + "</div><h3>" + esc(tx(epr.nom)) + "</h3><p>" + esc(tx(epr.accroche || { fr: "" })) + " " + __("Elle ouvre : ") + "<b>" + esc(tx(G.suivant.nom)).toLowerCase() + '</b>.</p><button type="button" class="btn large" data-a="epreuve">' + esc(tx(epr.nom)) + "</button></div>";
     else if (a.pret && G.suivant) h += '<div class="ile-passage"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + "</h3><p>" + __("Tout l'indispensable est couvert. Il reste en option : ") + a.negliges.map(function (b) { return "<b>" + esc(tx(b.nom)).toLowerCase() + "</b>"; }).join(__(" et ")) + ". " + __("Tu peux les apprendre d'abord, ou passer tout de suite et en payer le prix.") + '</p><button type="button" class="btn large" data-a="passer">' + __("Passer à : ") + esc(tx(G.suivant.nom)) + "</button></div>";
     else if (G.suivant && !a.avenir && a.savoirsTenus && a.grotte && !(a.peuple && a.peuple.manque > 0)) h += '<div class="ile-passage attend"><div class="eyebrow">' + __("Étape suivante") + "</div><h3>" + esc(tx(G.suivant.nom)) + '</h3><p style="font-size:17px">' + __("Les savoirs y sont et l'île est assez peuplée. Il reste à passer par <b>{g}</b>.", { g: esc(tx(a.grotte.nom)).toLowerCase() }) + " " + __("Elle se cache quelque part sur l'île : envoie un explorateur avec une torche, trouve ce qu'elle garde et réponds à ses questions.") + "</p></div>";
@@ -7210,6 +7216,7 @@ function demarrerJeu() {
     var bloc = el("<div>" + h + "</div></div>");
     var bpl = bloc.querySelector('[data-a="plus"]');
     if (bpl) bpl.onclick = function () { bloc.querySelector(".ile-reste").hidden = false; bpl.remove(); };
+    var bca = bloc.querySelector('[data-a="chrono-age"]'); if (bca) bca.onclick = function () { ouvrirChrono("age"); };
     var bep = bloc.querySelector('[data-a="epreuve"]');
     if (bep) bep.onclick = function () { ouvrirEpreuveIle(a.epreuve); };
     bloc.querySelectorAll('[data-a="quete"]').forEach(function (bqu) { bqu.onclick = allerQuete; });
@@ -8538,6 +8545,7 @@ function demarrerJeu() {
     if (q.sorte === "objet") { var o = parId(C.objets, q.id); if (o) return svgObjet(o, false, taille); }
     if (q.sorte === "savant") { var sv = parId(C.avatar.savants, q.id); if (sv) return svgSavant(sv, Math.round(taille * 0.84)); }
     if (q.sorte === "livre") { var l = parId(C.livres || [], q.id); if (l) return '<span class="vitrine" style="padding:8px;background:' + l.couleur + ';border-radius:12px">' + svgSprite(l.embleme, Math.round(taille * 0.8)) + "</span>"; }
+    if (q.sorte === "savoir" && C.parId[q.id]) return badgeComp(C.parId[q.id], taille);
     var k = q.case && M.caseN(C, q.case);
     if (k) return svgSprite(k.icone, taille, q.titre);
     // Victor (2026-11-02) : sans case, une date de la frise prend l'emblème de sa compétence (le dragon pour la Chine),
@@ -8547,7 +8555,7 @@ function demarrerJeu() {
     var ep = (C.plateau.epoques || []).filter(function (x) { return x.debut == null ? q.debut <= x.fin : q.debut >= x.debut && (x.fin == null || q.debut <= x.fin); })[0];
     return ep ? svgSprite(ep.icone, taille) : logoChrono(taille);
   }
-  var SORTE_CHRONO = { frise: __("Date de la frise"), livre: __("Livre"), savant: __("Savant"), objet: __("Objet du cabinet") };
+  var SORTE_CHRONO = { savoir: __("Savoir de l'île"), frise: __("Date de la frise"), livre: __("Livre"), savant: __("Savant"), objet: __("Objet du cabinet") };
   function questionChrono(q) {
     if (q.sorte === "livre") return q.auteur && q.auteur !== "Auteur inconnu" && q.auteur !== __("Auteur inconnu") ? __("Quand paraît « {titre} », de {auteur} ?", { titre: q.titre, auteur: q.auteur }) : __("Quand paraît « {titre} » ?", { titre: q.titre });
     var bas = q.titre.charAt(0).toLowerCase() + q.titre.slice(1);
@@ -9311,7 +9319,7 @@ function demarrerJeu() {
     if (!j) { sauver(); toast(__("Pas assez d'événements datés débloqués pour jouer à Chrono.")); rendre(); return; }
     var commence = j.reponses.length > 0;
     siecles = { mode: mode, phase: commence ? "q" : "intro", sel: null, debutQ: 0, rep: null, fin: null, etape: 0,
-      replique: M.replique(C, P, [mode === "case" ? "chrono_case" : "chrono_annonce"]) };
+      replique: mode === "age" ? null : M.replique(C, P, [mode === "case" ? "chrono_case" : "chrono_annonce"]) };
     sauver(); rendreChrono();
   }
   function fermerChrono() {
@@ -9331,6 +9339,7 @@ function demarrerJeu() {
   function texteCentaine(g) { return g >= 0 ? __("Années {a} à {b}", { a: g ? 100 * g : 1, b: 100 * g + 99 }) : __("De {a} à {b} av. J.-C.", { a: -100 * g, b: -100 * g - 99 }); }
   // L'année que désigne la sélection en cours.
   function anneeChrono(q, s) {
+    if (q.tranches && q.pas === 100 && s.k === bornesChrono(100)[0] && s.pr != null) return s.pr < q.tranches.length ? q.tranches[s.pr] - 1 : M.reglesChrono(C).prehistoire - 1;
     if (q.pas === 100) return M.anneeDuCreneau(s.k, 100);
     if (q.pas === 50) return M.anneeDuCreneau(2 * s.k + s.h, 50);
     var k10 = 10 * s.k + s.d;
@@ -9401,6 +9410,14 @@ function demarrerJeu() {
     }
     function dessiner() {
       fins.innerHTML = "";
+      // Passage d'âge : sur le cran « Préhistoire », on choisit une tranche.
+      if (q.tranches && q.pas === 100 && s.k === bornesChrono(100)[0]) {
+        if (s.pr == null) s.pr = q.tranches.length;
+        var tr = []; for (var ti = 0; ti <= q.tranches.length; ti++) tr.push({ v: ti, t: M.texteTranche(q.tranches, ti, R.prehistoire) });
+        ligne(__("Plus précisément ?"), tr, "pr"); fins.lastChild.classList.add("sc-tranches");
+        z.querySelector(".sc-choisi").innerHTML = "<b>" + esc(tr[s.pr].t) + "</b><small>" + esc(__("Préhistoire")) + "</small>";
+        return;
+      }
       var lib = q.pas === 100 ? M.texteCreneau(s.k, 100, R.prehistoire) : q.pas === 50 ? M.texteSiecle(s.k) : texteCentaine(s.k);
       if (q.pas === 50) ligne(__("Quelle moitié ?"), [{ v: 0, t: __("1re moitié") }, { v: 1, t: __("2de moitié") }], "h");
       if (q.pas <= 10) {
@@ -9451,10 +9468,11 @@ function demarrerJeu() {
     if (!j) { fermerChrono(); return; }
     var R = M.reglesChrono(C);
     if (siecles.phase === "intro") {
-      var sc = el('<div class="apparition"><div class="herbe sc-herbe">' + logoChrono(130) + '</div><div class="eyebrow">' + (siecles.mode === "case" ? __("Case ") + cn(j.case) + __(" · Chrono") : __("Partie offerte par l'IA")) + __('</div><h2>Chrono</h2>') +
-        __('<p class="sc-regle">Cinq événements que tu as déjà croisés. Dis quand ils se sont produits : au siècle d\'abord, plus finement quand tu les connais bien.</p>') +
+      var sc = el('<div class="apparition"><div class="herbe sc-herbe">' + logoChrono(130) + '</div><div class="eyebrow">' + (siecles.mode === "age" ? __("Avant de changer d'âge") : siecles.mode === "case" ? __("Case ") + cn(j.case) + __(" · Chrono") : __("Partie offerte par l'IA")) + (siecles.mode === "age" ? "</div><h2>" + __("Chrono du passage") + "</h2>" : __('</div><h2>Chrono</h2>')) +
+        (siecles.mode === "age" ? '<p class="sc-regle" style="font-size:17px">' + __("{n} dates tirées des savoirs que l'île a acquis jusqu'ici. Remets-les à leur place dans le temps : {r} justes, et l'île passe à : {a}. Raté, tu rejoues tout de suite.", { n: j.questions.length, r: j.reussite, a: "<b>" + esc(tx((M.agesIle(C, P).suivant || { nom: { fr: "" } }).nom)).toLowerCase() + "</b>" }) + "</p>" :
+        __('<p class="sc-regle">Cinq événements que tu as déjà croisés. Dis quand ils se sont produits : au siècle d\'abord, plus finement quand tu les connais bien.</p>')) +
         __('<p class="meta" style="margin:0">Juste : ') + R.points.juste + __(" crédits, ") + R.points.rapide + __(" de plus en moins de ") + Math.round(R.rapide_ms / 1000) + __(" s. Proche : ") + R.points.proche + __(". Sans faute : +") + R.points.parfait + "." +
-        (siecles.mode === "case" ? " " + R.reussite + __(" justes sur ") + j.questions.length + __(", et ton pion avance d'une case.") : __(" Ton pion ne bouge pas.")) + '</p><div class="arbitre" style="width:100%"></div></div>');
+        (siecles.mode === "age" ? "" : siecles.mode === "case" ? " " + R.reussite + __(" justes sur ") + j.questions.length + __(", et ton pion avance d'une case.") : __(" Ton pion ne bouge pas.")) + '</p><div class="arbitre" style="width:100%"></div></div>');
       var m = comite(siecles.replique, true); if (m) sc.querySelector(".arbitre").appendChild(m);
       inn.appendChild(sc);
       var go = el('<button type="button" class="btn large sc-go">' + __('Commencer</button>'));
@@ -9521,13 +9539,13 @@ function demarrerJeu() {
     if (etapes.length > 1) wrap.appendChild(el('<div class="etapes-bilan"><span class="pts">' + etapes.map(function (_, x) { return '<i class="' + (x <= i ? "vu" : "") + '"></i>'; }).join("") + "</span></div>"));
     var z = el('<div class="etape"></div>');
     if (nom === "verdict") {
-      var titre = r.parfait ? __("Sans faute !") : r.mode === "case" ? (r.reussi ? __("Case réussie") : __("Case ratée")) : __("Archives vérifiées");
+      var titre = r.age ? (r.age.passe ? (r.parfait ? __("Sans faute !") : __("Passage ouvert")) : __("Passage refusé")) : r.parfait ? __("Sans faute !") : r.mode === "case" ? (r.reussi ? __("Case réussie") : __("Case ratée")) : __("Archives vérifiées");
       var nJ = r.reponses.filter(function (x) { return x.verdict === "juste"; }).length, nP = r.proches, nR = r.reponses.filter(function (x) { return x.rapide; }).length;
       var calcul = nJ + (nJ > 1 ? __(" justes") : __(" juste")) + " × " + R.points.juste + (nR ? " + " + nR + (nR > 1 ? __(" éclairs") : __(" éclair")) : "") + (nP ? " + " + nP + (nP > 1 ? __(" proches") : __(" proche")) : "") + (r.parfait ? " + " + R.points.parfait + __(" sans faute") : "");
       // Sans multiplicateur d'humeur, pas de « = 6 = +6 » : le total une seule fois.
       var humeur = r.mult !== 1 ? " = " + r.points + " × " + String(r.mult).replace(".", ",") + __(" (humeur de l'IA)") : "";
-      z.appendChild(el('<div class="bilan"><div class="eyebrow" style="color:' + COULEUR_SPECIAL.chrono + __('">Chrono') + (r.mode === "case" ? "" : __(" · partie offerte")) + '</div><div class="grand">' + titre + '</div><div class="score">' + r.justes + " / " + r.total + "</div>" +
-        '<p>' + (r.mode === "case" ? (r.reussi ? __("Ton pion repart.") : __("Il en fallait ") + R.reussite + __(". Ton pion reste là, la case est jouée.")) : __("Ton pion ne bouge pas, mais tes crédits si.")) + (r.montees ? " " + r.montees + __(" événement") + (r.montees > 1 ? __("s passent") : __(" passe")) + __(" au niveau supérieur.") : "") + "</p></div>"));
+      z.appendChild(el('<div class="bilan"><div class="eyebrow" style="color:' + COULEUR_SPECIAL.chrono + __('">Chrono') + (r.age ? __(" du passage") : r.mode === "case" ? "" : __(" · partie offerte")) + '</div><div class="grand">' + titre + '</div><div class="score">' + r.justes + " / " + r.total + "</div>" +
+        '<p' + (r.age ? ' style="font-size:17px"' : "") + '>' + (r.age ? (r.age.passe ? __("L'île sait d'où elle vient. Le nouvel âge peut commencer.") : __("Il en fallait {n}. L'île reste où elle en est : rejoue, les dates ratées reviennent en premier.", { n: r.age.reussite })) : r.mode === "case" ? (r.reussi ? __("Ton pion repart.") : __("Il en fallait ") + R.reussite + __(". Ton pion reste là, la case est jouée.")) : __("Ton pion ne bouge pas, mais tes crédits si.")) + (r.montees ? " " + r.montees + __(" événement") + (r.montees > 1 ? __("s passent") : __(" passe")) + __(" au niveau supérieur.") : "") + "</p></div>"));
       z.appendChild(el('<div class="gain-credits"><div class="ligne-bourse">' + svgBourse(44) + '<div class="calcul">' + esc(calcul) + esc(humeur) + " = <b>+" + r.credits + (r.credits > 1 ? __(" crédits") : __(" crédit")) + "</b></div></div></div>"));
       var liste = el('<ol class="sc-recap"></ol>');
       r.questions.forEach(function (q, x) {
@@ -9553,7 +9571,13 @@ function demarrerJeu() {
     if (arretA) { boutonAtome(wrap, arretA, function () { siecles = null; var q = document.querySelector(".quiz.siecles"); if (q) q.remove(); }); return wrap; }
     if (!suite && M.piegeEnAttente(P)) { boutonPiege(wrap, fermerChrono); return wrap; }
     if (!suite && M.chronoEnAttente(P)) { boutonChrono(wrap, function () { siecles = null; var q = document.querySelector(".quiz.siecles"); if (q) q.remove(); }); return wrap; }
-    if (!suite) finEpreuve(wrap, fermerChrono, true);
+    if (!suite && r.age) {
+      var ba = el('<button type="button" class="btn large">' + (r.age.passe ? __("Continuer") : __("Rejouer le Chrono")) + "</button>");
+      ba.onclick = r.age.passe ? fermerChrono : function () { siecles = null; var q0 = document.querySelector(".quiz.siecles"); if (q0) q0.remove(); ouvrirChrono("age"); };
+      wrap.appendChild(ba);
+      if (!r.age.passe) { var bp = el('<button type="button" class="btn sec large">' + __("Plus tard") + "</button>"); bp.onclick = fermerChrono; wrap.appendChild(bp); }
+    }
+    else if (!suite) finEpreuve(wrap, fermerChrono, true);
     else {
       var bt = el('<button type="button" class="btn large">' + (suite === "libre" ? __("Libérer la case") : suite === "plateau" ? __("Voir le plateau") : suite === "suite" ? "Et maintenant ?" : __("Récompense")) + "</button>");
       bt.onclick = function () { siecles.etape = i + 1; rendreChrono(); };

@@ -4264,6 +4264,7 @@
     "installations"
    ],
    "properties": {
+    "chronologie": { "type": "array", "description": "La date de la plus ancienne trace d'un savoir d'âge, pour le Chrono du passage d'âge (Victor, 2026-11-27).", "items": { "type": "object", "additionalProperties": false, "required": ["id", "savoir", "annee", "titre", "source"], "properties": { "id": { "type": "string" }, "savoir": { "type": "string" }, "annee": { "type": "integer" }, "fin": { "type": "integer" }, "titre": { "$ref": "#/$defs/texte" }, "source": { "type": "string" } } } },
     "format": {
      "const": 1
     },
@@ -4364,6 +4365,7 @@
         }
        }
       },
+      "passage_chrono": { "type": "object", "description": "Le Chrono du passage d'âge (Victor, 2026-11-27) : dates tirées, justes exigées, minimum de dates pour le jouer, bornes des tranches de la préhistoire.", "additionalProperties": false, "required": ["evenements", "reussite", "min", "tranches"], "properties": { "evenements": { "type": "integer", "minimum": 1 }, "reussite": { "type": "integer", "minimum": 1 }, "min": { "type": "integer", "minimum": 1 }, "tranches": { "type": "array", "items": { "type": "integer" } } } },
       "demographie": {
        "type": "object",
        "additionalProperties": false,
