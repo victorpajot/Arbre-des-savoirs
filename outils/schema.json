@@ -404,6 +404,19 @@
              "minimum": 0,
              "description": "Le dessin s'affiche juste après ce paragraphe (0 = le premier) ; sans ce champ, après tout le texte."
             },
+            "carte": {
+             "type": "array",
+             "description": "Les lieux cités par l'étape, pointés sur une carte juste après le paragraphe qui les nomme.",
+             "items": {
+              "type": "object",
+              "required": ["lieu", "apres"],
+              "additionalProperties": false,
+              "properties": {
+               "lieu": {"type": "string"},
+               "apres": {"type": "integer", "minimum": 0}
+              }
+             }
+            },
             "schema_fiche": {
              "type": "boolean",
              "description": "Le schéma de la fiche de révision s'affiche dans ce chapitre (sinon dans le premier)."
@@ -450,6 +463,26 @@
        }
       }
      }
+    },
+    "lieux": {
+     "type": "array",
+     "description": "Les lieux cités par les masterclass (lieux.json des packs), chacun vérifié en ligne.",
+     "items": {
+      "type": "object",
+      "required": ["id", "nom", "position", "source"],
+      "additionalProperties": false,
+      "properties": {
+       "id": {"type": "string"},
+       "nom": {"$ref": "#/$defs/texte"},
+       "position": {"type": "string", "pattern": "^-?[0-9]+(\\.[0-9]+)?, -?[0-9]+(\\.[0-9]+)?$", "description": "latitude, longitude en degrés décimaux (sud et ouest négatifs)"},
+       "source": {"type": "string", "minLength": 3}
+      }
+     }
+    },
+    "carte": {
+     "type": "object",
+     "description": "Fond de carte du monde (outils/carte_monde.py, Natural Earth).",
+     "required": ["pas", "largeur", "hauteur", "lignes"]
     }
    }
   },

@@ -441,7 +441,10 @@ body.plateau-plein { overflow: hidden; }
 /* Schémas des questions */
 .illus { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
 .illus svg { display: block; width: 100%; height: auto; max-height: 320px; }
-.illus.dessin-q { background: #FFF8EC; } /* le pixel art est cerné de noir : toujours sur fond crème, même en sombre */
+.illus.dessin-q { background: #FFF8EC; }
+.illus.carte-lieu { margin: 12px 0; padding: 10px; background: #FFF8EC; text-align: center; } /* comme le pixel art : fond crème, même en sombre */
+.carte-lieu svg { display: block; width: min(100%, 384px); height: auto; margin: 0 auto; border: 2px solid #1E1A2B; border-radius: 4px; }
+.carte-lieu figcaption { margin-top: 8px; font-size: 17px; font-weight: 700; color: #3B3B3B; } /* le pixel art est cerné de noir : toujours sur fond crème, même en sombre */
 .illus .t { fill: var(--ink); font-family: var(--f-body); }
 .illus .tm { fill: var(--muted); font-family: var(--f-body); }
 .illus .l { stroke: var(--ink); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -2183,6 +2186,61 @@ function demarrerJeu() {
       html += '<div class="groupe" style="grid-template-columns:repeat(' + cols + ',44px)">' + (items || '<span class="op">0</span>') + "</div>";
     });
     return '<div class="illus dessin-q" aria-hidden="true">' + html + "</div>";
+  }
+  // Victor (2026-11-27) : un lieu cité dans une leçon est pointé sur une carte. Fond : Natural Earth, terres au 1:50m,
+  // en grille de 0,25° (outils/carte_monde.py) ; lieux vérifiés dans lieux.json des packs (champ `carte` du chapitre).
+  var grilleCarte = null, monde = null;
+  function terreCarte() {
+    if (grilleCarte || !C.carte) return grilleCarte;
+    grilleCarte = C.carte.lignes.map(function (l) {
+      var r = new Uint8Array(C.carte.largeur), x = 0, v = 0;
+      l.split(".").forEach(function (n) { n = parseInt(n, 36); if (v) r.fill(1, x, x + n); x += n; v = 1 - v; });
+      return r;
+    });
+    return grilleCarte;
+  }
+  // Une région en pixels : chaque ligne en plages (mer, terre, côte), une couleur par tracé.
+  function tracesCarte(terre, W, H) {
+    var t = ["", "", ""];
+    for (var y = 0; y < H; y++) {
+      var x = 0;
+      while (x < W) {
+        var k = terre(x, y) ? (terre(x + 1, y) && terre(x - 1, y) && terre(x, y + 1) && terre(x, y - 1) ? 1 : 2) : 0, x1 = x + 1;
+        while (x1 < W && (terre(x1, y) ? (terre(x1 + 1, y) && terre(x1 - 1, y) && terre(x1, y + 1) && terre(x1, y - 1) ? 1 : 2) : 0) === k) x1++;
+        if (k) t[k] += "M" + x + " " + y + "h" + (x1 - x) + "v1h-" + (x1 - x) + "z";
+        x = x1;
+      }
+    }
+    return t;
+  }
+  function htmlCarte(id) {
+    var L = C.lieux && C.lieux[id], g = terreCarte(); if (!L || !g) return "";
+    var K = C.carte, pos = L.position.split(",").map(Number), W = 64, H = 40;
+    var cx = Math.floor((pos[1] + 180) / K.pas), cy = Math.floor((90 - pos[0]) / K.pas);
+    var x0 = cx - W / 2, y0 = Math.max(0, Math.min(K.hauteur - H, cy - H / 2)), px = cx - x0, py = cy - y0;
+    function terre(x, y) {
+      y += y0; if (y < 0 || y >= K.hauteur) return 0;
+      x = (((x + x0) % K.largeur) + K.largeur) % K.largeur; return g[y][x];
+    }
+    var t = tracesCarte(terre, W, H);
+    if (!monde) {  // le monde entier, un pixel pour 4° : le petit encart qui situe la région
+      var f = Math.round(4 / K.pas);
+      monde = tracesCarte(function (x, y) {
+        if (x < 0 || y < 0 || x >= K.largeur / f || y >= K.hauteur / f) return 0;
+        var n = 0; for (var j = 0; j < f; j++) for (var i = 0; i < f; i++) n += g[y * f + j][x * f + i]; return n * 2 >= f * f ? 1 : 0;
+      }, K.largeur / f, K.hauteur / f);
+    }
+    var f4 = 4 / K.pas, mw = K.largeur / f4, mh = K.hauteur / f4;
+    var encart = '<svg x="' + (W - 23) + '" y="1" width="22" height="11" viewBox="-1 -1 ' + (mw + 2) + " " + (mh + 2) + '" preserveAspectRatio="none">' +
+      '<rect x="-1" y="-1" width="' + (mw + 2) + '" height="' + (mh + 2) + '" fill="#24408F"/>' +
+      '<path d="' + monde[1] + monde[2] + '" fill="#D8C49A"/>' +
+      '<rect x="' + (x0 / f4) + '" y="' + (y0 / f4) + '" width="' + (W / f4) + '" height="' + (H / f4) + '" fill="none" stroke="#D94141" stroke-width="1.6"/></svg>';
+    var pin = '<path d="M' + (px - 2) + " " + (py - 6) + 'h5v5h-5z" fill="#1E1A2B"/><path d="M' + (px - 1) + " " + (py - 5) + 'h3v3h-3z" fill="#D94141"/>' +
+      '<path d="M' + (px - 1) + " " + (py - 5) + 'h1v1h-1z" fill="#F28B82"/><path d="M' + px + " " + (py - 1) + 'h1v2h-1z" fill="#1E1A2B"/>';
+    var nom = tx(L.nom);
+    return '<figure class="illus carte-lieu"><svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(__("Carte : ") + nom) + '" shape-rendering="crispEdges">' +
+      '<rect width="' + W + '" height="' + H + '" fill="#8FD8F2"/><path d="' + t[1] + '" fill="#D8C49A"/><path d="' + t[2] + '" fill="#A8905E"/>' +
+      encart + pin + "</svg><figcaption>📍 " + esc(nom) + "</figcaption></figure>";
   }
   function htmlIllusQ(q) { return '<div>' + (q.illustration ? '<div class="illus">' + q.illustration + "</div>" : "") + htmlDessinQ(q.dessin) + "</div>"; }
   function voixP() { return M.reglage(P, "voix") === true; }
@@ -10142,7 +10200,8 @@ function demarrerJeu() {
       var dateEt = (dater(esc(ch.texte.map(tx).join(" "))).match(/<span class="date-ep[^>]*>[^<]*<\/span>/) || [""])[0];
       return { titre: tx(ch.titre), date: dateEt, html: (ch.id ? '<p class="code-q">' + esc(k.id + "/" + ch.id) + "</p>" : "") + (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x, ip) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux, livres), cles, etatCles) +
           // Victor (2026-11-10) : le dessin se place juste après le paragraphe qui en parle (champ dessin_apres).
-          (ch.dessin && ch.dessin_apres === ip ? htmlDessinQ({ id: ch.dessin }) : ""); }).join("") +
+          (ch.dessin && ch.dessin_apres === ip ? htmlDessinQ({ id: ch.dessin }) : "") +
+          (ch.carte || []).filter(function (l) { return l.apres === ip; }).map(function (l) { return htmlCarte(l.lieu); }).join(""); }).join("") +
         // Victor (2026-11-01) : un dessin en pixel art de l'instrument ou de l'objet dont parle l'étape (champ dessin).
         (ch.dessin && !(ch.dessin_apres >= 0 && ch.dessin_apres < ch.texte.length) ? htmlDessinQ({ id: ch.dessin }) : "") +
         (ch.figure ? htmlFigure(ch.figure, true) : i === iSchema && k.fiche ? '<div class="illus">' + k.fiche.schema + "</div>" : "") +

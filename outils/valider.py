@@ -66,6 +66,12 @@ def main():
                 erreurs.append(f"skills.json {c['id']} : figure de masterclass inconnue {ch['figure']}")
             if ch.get("dessin") and ch["dessin"] not in set(contenu["succes"].get("dessins", {})) | set(contenu["plateau"]["icones"]) | {o["id"] for o in contenu["objets"]["objets"]}:
                 erreurs.append(f"skills.json {c['id']} : dessin de masterclass inconnu {ch['dessin']}")
+            # Les lieux pointés sur la carte existent (lieux.json) et sont posés sous un paragraphe de l'étape.
+            for l in ch.get("carte", []):
+                if l["lieu"] not in {x["id"] for x in contenu["skills"].get("lieux", [])}:
+                    erreurs.append(f"skills.json {c['id']}/{ch['id']} : lieu inconnu {l['lieu']}")
+                if l["apres"] >= len(ch["texte"]):
+                    erreurs.append(f"skills.json {c['id']}/{ch['id']} : carte posée après un paragraphe qui n'existe pas")
             # Les repères d'histoire des quiz recopient mot pour mot une phrase vérifiée du chapitre.
             corps = " ".join(t["fr"] for t in ch["texte"])
             for h in ch.get("reperes", []):
