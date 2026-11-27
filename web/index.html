@@ -529,6 +529,7 @@ body.plateau-plein { overflow: hidden; }
 .jouer-alt.prem { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .jouer-alt.prem .ico { background: color-mix(in srgb, var(--accent-ink) 18%, transparent); }
 .jouer-alt.prem .pill { background: var(--accent-ink); color: var(--accent); }
+.masterclass .mc-quiz { width: 100%; margin-top: 14px; }
 .jouer-alt .pill { font-family: var(--f-mono); font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 15px; }
 .choix-ia { display: flex; flex-direction: column; gap: 12px; }
 .arbre-choisi, .epreuve-choisie { --c: var(--accent); display: grid; grid-template-columns: auto 1fr auto; gap: 6px 12px; align-items: center; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--c) 10%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c) 35%, var(--line)); }
@@ -10232,8 +10233,19 @@ function demarrerJeu() {
         if (ml) z.insertBefore(ml, z.querySelector(".nav-guide"));
         toast(__("Masterclass lue : le jeu est rouvert."));
       }
+      // Victor (2026-11-27) : au bout de la lecture, de quoi passer le quiz tout de suite, sans fermer puis rouvrir Jouer.
+      if (n === etapes.length - 1 && quizApresLecture()) {
+        var bq = el('<button type="button" class="btn large mc-quiz">' + __("Passer le quiz") + "</button>");
+        bq.onclick = function () { fermerFeuille(); lancerQuiz(id, "quiz", M.modeIle(P) ? { jouer: true } : undefined); };
+        z.appendChild(bq);
+      }
       feuille.querySelector(".feuille").scrollTop = 0;
-      var b = z.querySelector('[data-a="suiv"]:not([disabled])') || z.querySelector('[data-a="prec"]'); if (b) b.focus({ preventScroll: true });
+      var b = z.querySelector('.mc-quiz') || z.querySelector('[data-a="suiv"]:not([disabled])') || z.querySelector('[data-a="prec"]'); if (b) b.focus({ preventScroll: true });
+    }
+    // Le quiz se propose si le savoir n'est pas acquis, s'il est ouvert, hors d'un quiz en cours et quand rien ne ferme le jeu.
+    function quizApresLecture() {
+      return !(P.competences[id] && P.competences[id].maitrise) && !document.querySelector(".quiz") && !blocageJouer() &&
+        M.disponibles(C, P, maintenant()).some(function (c) { return c.id === id; });
     }
     if (imp) { imp.mot = M.replique(C, P, ["masterclass_imposee"]); sauver(); }
     montrer();
