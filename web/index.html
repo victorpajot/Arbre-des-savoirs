@@ -7545,6 +7545,7 @@ function demarrerJeu() {
         if (!ok) bt.classList.add("faux");
         c.appendChild(el('<p class="rep-h">' + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
         c.appendChild(el('<p class="expl-h">' + escD(tx(q.explication)) + "</p>"));
+        var asq = astuceQuestion(q, ok); if (asq) c.appendChild(asq);
         c.appendChild(el('<div class="piege-verdict ' + (ok ? "ok" : "ko") + '">' + (ok ? __("L'île est à l'abri") : __("Raté : l'aléa frappera demain")) + "</div>"));
         rendre();
       };
@@ -7644,6 +7645,7 @@ function demarrerJeu() {
       var donnee = ok ? null : texteReponse(q, val);
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
       c.appendChild(el('<p class="expl-h">' + escD(tx(q.explication)) + "</p>" + htmlRepere(q)));
+      var asq = astuceQuestion(q, ok); if (asq) c.appendChild(asq);
       c.appendChild(el('<div class="piege-verdict ' + (ok ? "ok" : "ko") + '">' + (ok ? __("Juste : le quartier passe à ") + r.credits + __(" crédits") : __("Raté : le quartier reste à ") + r.credits + __(" crédits")) + "</div>"));
       payer();
     }
@@ -7678,6 +7680,7 @@ function demarrerJeu() {
       var donnee = ok ? null : texteReponse(q, val);
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
       c.appendChild(el('<p class="expl-h">' + escD(tx(q.explication)) + "</p>" + htmlRepere(q)));
+      var asq = astuceQuestion(q, ok); if (asq) c.appendChild(asq);
       c.appendChild(el('<div class="piege-verdict ' + (ok ? "ok" : "ko") + '">' + (ok ? "+" + (r && r.credits || cr) + __(" crédits") : __("Raté : il repassera demain")) + "</div>"));
       rendre();
     }
@@ -8735,6 +8738,7 @@ function demarrerJeu() {
       var donnee = ok ? null : texteReponse(q, v);
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
       c.appendChild(el('<p class="expl-h">' + escD(tx(q.explication)) + "</p>" + htmlRepere(q)));
+      var asq = astuceQuestion(q, ok); if (asq) c.appendChild(asq);
       if (q.illustration_explication) c.appendChild(el('<div class="illus">' + q.illustration_explication + "</div>"));
       if (!r) return;
       c.appendChild(el('<div class="piege-verdict ' + (r.dejoue ? "ok" : "ko") + '">' + (r.dejoue ? __("Piège déjoué !") : __("Le piège se déclenche")) + "</div>"));
@@ -9756,7 +9760,7 @@ function demarrerJeu() {
       (r.verdict === "juste" ? "" : __("<p>Ta réponse : ") + esc(r.choisi) + (q.pas >= 50 && r.annee >= (q.limite != null ? q.limite : R.prehistoire) ? " (" + esc(anneesCreneau(M.creneau(r.annee, q.pas), q.pas)) + ")" : "") + "</p>") + "<p>" + (q.sorte === "savant" && !q.naissance ? __("A vécu : ") : __("C'était : ")) + "<b>" + esc(r.vrai) + "</b> (" + esc(dateChrono(q)) + ")</p>" +
       (niv ? '<p class="meta" style="margin:0">' + esc(niv) + "</p>" : "") + (q.source ? __("<cite>Source : ") + esc(q.source) + "</cite>" : "") + "</div>");
     inn.appendChild(rt);
-    var ba0 = blocAstuce(q); if (ba0) inn.appendChild(ba0);
+    var ba0 = blocAstuce(q, r.verdict !== "juste"); if (ba0) inn.appendChild(ba0);
     var mr = comite(siecles.repliqueQ, true); if (mr) inn.appendChild(mr);
     inn.appendChild(friseChrono(j, i));
     var dernier = j.reponses.length >= j.questions.length;
@@ -9881,10 +9885,12 @@ function demarrerJeu() {
     return b;
   }
   // Au verdict : l'astuce pour retenir la date (achetée), ou de quoi la débloquer.
-  function blocAstuce(q) {
+  // Victor (2026-11-28) : la leçon de Hoshi lue, chaque date ratée vient avec son astuce, sans payer ; une date réussie
+  // ne la montre que si on l'a achetée.
+  function blocAstuce(q, rate) {
     if (!M.memoireDates(C) || !M.hoshiVu(P)) return null;
     var prix = M.reglesMemoire(C).prix_indice;
-    if (!M.indiceAchete(P, q.cle)) {
+    if (!rate && !M.indiceAchete(P, q.cle)) {
       var manque = P.credits.solde < prix;
       var b = el('<button type="button" class="btn sec large"' + (manque ? " disabled" : "") + ">" + (manque ? __("Astuce pour la retenir : {p} crédits, il t'en manque", { p: prix }) : __("Astuce pour la retenir : {p} crédits", { p: prix })) + "</button>");
       b.onclick = function () { var r = M.acheterIndice(C, P, q.cle, maintenant()); if (!r.ok) { toast(__("Pas assez de crédits.")); return; } sauver(); rendreChrono(); };
@@ -9895,8 +9901,15 @@ function demarrerJeu() {
     if (mj.mot) z.appendChild(el("<p>" + esc(mj.milliers ? __("{n} mille ans", { n: Math.round(Math.abs(y) / 1000) }) : mj.paire.length > 1 ? __("Les deux derniers chiffres, {p}", { p: mj.paire }) : __("Le chiffre {p}", { p: mj.paire })) + " : " + esc(mj.paire.split("").map(function (c, x) { return c + " = " + mj.sons[x].replace(", ", __(" ou ")); }).join(", ")) + ' → <span class="mot">' + esc(mj.mot) + "</span></p>"));
     // Un début d'époque à des siècles de là n'aide pas : on ne le cite que s'il est proche.
     if (ind.ancre && ind.ancre.ecart && (ind.ancre.sorte === "date" || ind.ancre.ecart <= 200)) z.appendChild(el("<p>" + escD(ind.ancre.sens === "apres" ? __("{n} ans après {a}", { n: ind.ancre.ecart.toLocaleString(locale()), a: texteAncre(ind.ancre) }) : __("{n} ans avant {a}", { n: ind.ancre.ecart.toLocaleString(locale()), a: texteAncre(ind.ancre) })) + "</p>"));
-    if (mj.mot) z.appendChild(el('<p class="meta">' + esc(__("Ton image : « {t} » avec {m}. Plus c'est idiot, mieux ça tient.", { t: q.titre, m: mj.mot })) + "</p>"));
+    if (mj.mot) z.appendChild(el('<p class="meta">' + esc(q.titre ? __("Ton image : « {t} » avec {m}. Plus c'est idiot, mieux ça tient.", { t: q.titre, m: mj.mot }) : __("Ton image : l'événement avec {m}. Plus c'est idiot, mieux ça tient.", { m: mj.mot })) + "</p>"));
     return z;
+  }
+  // Une question de quiz dont la réponse est une année, ratée : son astuce (quiz, mur de la honte, île, piège, rattrapage).
+  function astuceQuestion(q, ok) {
+    if (ok || !q || !M.memoireDates(C) || !M.hoshiVu(P)) return null;
+    q = (q.id && C.questionParId[q.id]) || q;  // la question d'origine, pas sa variante (choix mélangés, « aucune »)
+    var y = M.anneeQuestion(q); if (y == null) return null;
+    return blocAstuce({ cle: "question:" + q.id, debut: y, titre: null }, true);
   }
   function blocChronoStats() {
     var s = M.statsChrono(C, P), R = M.reglesChrono(C);
@@ -10881,6 +10894,7 @@ function demarrerJeu() {
     function corrige() {
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
       c.appendChild(el('<p class="expl-h">' + escD(tx(q.explication)) + "</p>" + htmlRepere(q)));
+      var asq = astuceQuestion(q, c.classList.contains("efface")); if (asq) c.appendChild(asq);
       if (q.illustration_explication) c.appendChild(el('<div class="illus">' + q.illustration_explication + "</div>"));
       if (q.figure) c.appendChild(el(htmlFigure(q.figure)));
       if (q.atome && (q.type === "numerique" || q.type === "place") && C.atomes) c.appendChild(boutonGuide(C.atomes.elements[q.atome - 1]));
@@ -10959,6 +10973,7 @@ function demarrerJeu() {
       var donnee = ok ? null : texteReponse(q, v);
       c.appendChild(el('<p class="rep-h">' + (donnee ? __("Ta réponse : <s>") + esc(donnee) + "</s><br>" : "") + __("Bonne réponse : <b>") + esc(bonneReponse(q)) + "</b></p>"));
       c.appendChild(el('<p class="expl-h">' + escD(tx(q.explication)) + "</p>" + htmlRepere(q)));
+      var asq = astuceQuestion(q, ok); if (asq) c.appendChild(asq);
       if (!r) return;
       if (r.libere) { liberation(); return; }
       var m = comite(r.replique, true); if (m) c.appendChild(m);
@@ -11720,6 +11735,7 @@ function demarrerJeu() {
       var raison = cur.raison === "faux" ? '<p class="en-clair">' + __("Bonne réponse, mauvaise raison : ça ressemble à un coup de chance, elle ne compte pas. La raison : {r}", { r: "<b>" + esc(tx(q.origine.pourquoi.choix[0])) + "</b>" }) + "</p>" : "";
       zoneRetour.appendChild(el('<div class="retour' + (ok ? "" : " ko") + '"><b>' + (cur.raison === "faux" ? __("Raté au pourquoi.") : ok ? __("Juste.") + (quiz.chrono ? " +" + C.regles.chrono.bonus_xp_par_bonne_reponse + __(" XP de bonus chrono.") : "") : (tempsEcoule ? __("Temps écoulé. ") : __("Raté. ")) + (q.variante === "envers" ? "" : __("Réponse : ") + esc(rep) + ".")) + "</b>" + enClair + raison + "<p>" + escD(tx(q.explication)) + "</p>" + htmlRepere(q) +
         (q.illustration_explication ? '<div class="illus">' + q.illustration_explication + "</div>" : "") + htmlFigure(q.figure) + "</div>"));
+      var asq = astuceQuestion(q, ok && cur.raison !== "faux"); if (asq) zoneRetour.appendChild(asq);
       if (voixP()) { var rt = zoneRetour.lastChild; rt.appendChild(boutonEcouter(tx(q.explication))); parler((ok ? __("Bravo !") : __("Raté.")) + " " + tx(q.explication)); }
       var pq = portraitQuestion(q);
       if (pq) { zoneRetour.appendChild(pq); if (M.rencontrer(P, q.portrait.id)) { sauver(); rencontresAMontrer.push(q.portrait.id); } }

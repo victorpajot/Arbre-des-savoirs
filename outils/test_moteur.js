@@ -1777,7 +1777,15 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
     const niv0 = (sH.fiches[q0.cle] || { niveau: 1 }).niveau, serie0 = (sH.fiches[q0.cle] || { serie: 0 }).serie;
     const r0 = M.repondreChrono(C, H, q0.debut, 1000, T + 3);
     assert.ok(r0.verdict === "juste" && r0.points === 0 && r0.aide && !r0.rapide && sH.fiches[q0.cle].serie === serie0 && sH.fiches[q0.cle].niveau === niv0, "aidé : juste, mais ni crédit ni montée");
-    const r1 = M.repondreChrono(C, H, jh.questions[1].debut, 1000, T + 3); assert.ok(r1.points > 0 && !r1.aide, "la question suivante n'est pas aidée"); }
+    const r1 = M.repondreChrono(C, H, jh.questions[1].debut, 1000, T + 3); assert.ok(r1.points > 0 && !r1.aide, "la question suivante n'est pas aidée"); 
+    // Hors du Chrono : l'année demandée par une question de quiz (pour l'astuce d'une date ratée).
+    const an = (e, rep, extra) => M.anneeQuestion(Object.assign({ enonce: { fr: e }, type: "qcm", choix: [{ fr: rep }, { fr: "x" }], reponse: 0 }, extra || {}));
+    assert.equal(an("En quelle année Harvey publie-t-il De Motu Cordis ?", "1628"), 1628);
+    assert.equal(an("De quand date le cercle de Goseck ?", "Vers 4900 av. J.-C."), -4900);
+    assert.equal(an("En quelle année avant notre ère meurt Aristote ?", null, { type: "numerique", reponse: 322 }), -322);
+    assert.equal(an("Vers quelles fréquences l'oreille est-elle la plus sensible ?", "2 000 à 5 000 Hz"), null, "pas une date");
+    assert.equal(an("Quand a-t-on gardé des chèvres ?", "Il y a au moins 10 000 ans"), null, "un nombre d'années n'est pas une année");
+    assert.equal(an("Quel est le symbole du fer ?", "Fe"), null); }
 
   // Alyca : une offre par jour au plus ; partie bonus, le pion ne bouge pas.
   // Victor (2026-11-01) : Chrono revient d'abord sur les cases déjà passées.

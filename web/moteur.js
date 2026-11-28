@@ -4587,6 +4587,20 @@
     return { annee: annee, av: av, milliers: milliers, tete: tete, paire: paire, sons: sons, mot: mot,
       siecle: milliers ? null : texteSiecle(creneau(annee, 100, null)), centaines: milliers || y < 100 ? null : Math.floor(y / 100), rond: !milliers && y >= 100 && y % 100 === 0 };
   }
+  // Victor (2026-11-28) : l'année que demande une question de quiz (« En quelle année… », « Quand… »), lue dans sa bonne
+  // réponse ; null si la question ne demande pas une date ou si le nombre a une unité (km, Hz, ans, degrés…).
+  var Q_DATE = /quelle année|en quelle|quand|quelle date|à quelle époque|de quand|vers quelle année/i;
+  var R_ANNEE = /(?<![\d\/,.]|\d[ \u00a0\u202f])(\d{3,4})(?![\d \u00a0\u202f]*(?:\d|g\b|kg|km|m\b|m\/s|°|livres|%|\/|,\d|ans\b|Hz|hab))(\s*av\. J\.-C\.)?/;
+  function anneeQuestion(q) {
+    if (!q || !q.enonce) return null;
+    var e = TX(q.enonce) || "", u = q.unite ? String(q.unite) : "", avU = /av\. J\.-C\.|avant/.test(u);
+    if (!Q_DATE.test(e) || /température|combien/i.test(e) || (u && !avU)) return null;
+    var b = q.type === "qcm" ? TX(q.choix[q.reponse]) : q.type === "numerique" ? String(q.reponse) : null;
+    var m = b && String(b).match(R_ANNEE); if (!m) return null;
+    var y = Number(m[1]), av = !!m[2] || avU || /avant notre ère|av\. J\.-C\./.test(e) || Number(q.reponse) < 0;
+    if (!av && y > 2100) return null;
+    return av ? -y : y;
+  }
   function indiceChrono(contenu, partie, q, j) {
     if (!q) return null;
     var sauf = {}; sauf[q.cle] = 1; (j && j.questions || []).forEach(function (x) { sauf[x.cle] = 1; });
@@ -5700,7 +5714,7 @@
     murDeLaHonte: murDeLaHonte,
     reglesChrono: reglesChrono, etatChrono: etatChrono, creneau: creneau, anneeDuCreneau: anneeDuCreneau, texteCreneau: texteCreneau, texteSiecle: texteSiecle,
     reservoirChrono: reservoirChrono, reservoirPassage: reservoirPassage, texteTranche: texteTranche, trancheChrono: trancheChrono, chronoEnAttente: chronoEnAttente, offreChrono: offreChrono, chronoPossible: chronoPossible, chronoActif: chronoActif, chronoSpontane: chronoSpontane,
-    lancerChrono: lancerChrono, jeuChrono: jeuChrono, memoireDates: memoireDates, reglesMemoire: reglesMemoire, hoshiVu: hoshiVu, hoshiAttend: hoshiAttend, hoshiLu: hoshiLu, indiceAchete: indiceAchete, acheterIndice: acheterIndice, aiderChrono: aiderChrono, ancresChrono: ancresChrono, majeurAnnee: majeurAnnee, indiceChrono: indiceChrono, repondreChrono: repondreChrono, terminerChrono: terminerChrono, statsChrono: statsChrono,
+    lancerChrono: lancerChrono, jeuChrono: jeuChrono, memoireDates: memoireDates, reglesMemoire: reglesMemoire, hoshiVu: hoshiVu, hoshiAttend: hoshiAttend, hoshiLu: hoshiLu, indiceAchete: indiceAchete, acheterIndice: acheterIndice, aiderChrono: aiderChrono, ancresChrono: ancresChrono, majeurAnnee: majeurAnnee, indiceChrono: indiceChrono, anneeQuestion: anneeQuestion, repondreChrono: repondreChrono, terminerChrono: terminerChrono, statsChrono: statsChrono,
     retenterOubli: retenterOubli,
   };
 
