@@ -4412,6 +4412,9 @@
     // Trop peu d'éléments datés : la case ne retient pas le pion.
     if (!PC && pool.length < R.min_reservoir) { if (mode === "case") s.case = null; return null; }
     alea = alea || Math.random;
+    // Victor (2026-11-28) : au passage d'âge, tout ce qui précède `ancien` (1000 av. J.-C.) se donne par tranche
+    // (millénaires, puis préhistoire) : le siècle près était trop dur. Toutes les questions ont la même saisie.
+    var limT = PC ? (PC.ancien != null ? PC.ancien : R.prehistoire) : null;
     // Victor (2026-11-01) : l'arbre de la partie d'abord (celui de la case) ; les autres arbres ne font que compléter.
     // Victor (2026-11-01) : Chrono se joue avant la case ; il revient sur les cases déjà passées (leur date, leur compétence).
     var pl = partie.plateau || {}, cc = contenu.plateau && contenu.plateau.competences_cases || {}, passees = {}, compsPassees = {};
@@ -4433,15 +4436,15 @@
     // qu'ensuite (avant, la liste du thème se remplissait de doublons avant de regarder les autres).
     var listes = [tries.filter(passe), tries.filter(function (x) { return th && x.theme === th; }), tries];
     listes.forEach(function (liste) {
-      liste.forEach(function (x) { var k = PC && x.debut < R.prehistoire ? "t" + trancheChrono(PC.tranches, x.debut, R.prehistoire) : creneau(x.debut, 100, R.prehistoire); if (choix.length < nEv && !siecles[k] && choix.indexOf(x) < 0) { siecles[k] = 1; choix.push(x); } });
+      liste.forEach(function (x) { var k = PC && x.debut < limT ? "t" + trancheChrono(PC.tranches, x.debut, limT) : creneau(x.debut, 100, R.prehistoire); if (choix.length < nEv && !siecles[k] && choix.indexOf(x) < 0) { siecles[k] = 1; choix.push(x); } });
     });
     listes.forEach(function (liste) {
       liste.forEach(function (x) { if (choix.length < nEv && choix.indexOf(x) < 0) choix.push(x); });
     });
     s.jeu = { mode: mode, depuis: t, case: mode === "case" ? s.case : null, age: PC ? GA.age.id : null, reussite: PC ? GA.age.chrono.reussite : null, reponses: [], questions: choix.map(function (x) {
       var f = s.fiches[x.cle], n = Math.min(f ? f.niveau : 1, x.max), N = niveauChrono(R, n);
-      var enT = PC && x.debut < R.prehistoire;
-      return Object.assign({}, x, { tranches: enT ? PC.tranches : null, niveau: n, pas: N.pas, proche: N.proche, nomNiveau: enT ? __("La période") : TX(N.nom), naissance: x.sorte === "savant" && N.pas < 50 });
+      if (PC) { n = 1; N = niveauChrono(R, 1); }
+      return Object.assign({}, x, { tranches: PC ? PC.tranches : null, limite: limT, niveau: n, pas: N.pas, proche: N.proche, nomNiveau: PC ? __("La période") : TX(N.nom), naissance: x.sorte === "savant" && N.pas < 50 });
     }) };
     partie.maj = t;
     return s.jeu;
@@ -4455,7 +4458,8 @@
     var g = creneau(annee, pas, pre), a = creneau(q.debut, pas, pre), b = q.naissance ? a : creneau(q.fin, pas, pre);
     var d = g < a ? a - g : g > b ? g - b : 0;
     // Passage d'âge : la préhistoire se découpe en tranches, et c'est la tranche qui compte.
-    var T = q.tranches, tg = T ? trancheChrono(T, Number(annee), pre) : 0, ta = T ? trancheChrono(T, q.debut, pre) : 0, tb = T ? trancheChrono(T, q.fin, pre) : 0;
+    var lim = q.limite != null ? q.limite : pre, TQ = q.tranches, T = TQ && q.debut < lim ? TQ : null;
+    var tg = TQ ? trancheChrono(TQ, Number(annee), lim) : 0, ta = T ? trancheChrono(T, q.debut, lim) : 0, tb = T ? trancheChrono(T, q.fin, lim) : 0;
     if (T) d = tg < ta ? ta - tg : tg > tb ? tg - tb : 0;
     var verdict = d === 0 ? "juste" : d <= q.proche ? "proche" : "faux", rapide = verdict === "juste" && typeof ms === "number" && ms < R.rapide_ms;
     var P = R.points, points = verdict === "juste" ? P.juste + (rapide ? P.rapide : 0) : verdict === "proche" ? P.proche : 0;
@@ -4468,8 +4472,8 @@
       s.justes++; if (rapide) s.rapides++; if (pas === 1) s.exactes++;
     } else if (verdict === "proche") { f.serie = 0; f.rate = false; s.proches++; }
     else { f.serie = 0; f.rate = true; f.niveau = Math.max(1, f.niveau - 1); s.faux++; }
-    var r = { cle: q.cle, annee: Number(annee), choisi: T && tg <= T.length ? texteTranche(T, tg, pre) : texteCreneau(g, pas, pre), verdict: verdict, rapide: rapide, points: points, ecart: d,
-      vrai: T ? (ta === tb ? texteTranche(T, ta, pre) : texteTranche(T, ta, pre) + " → " + texteTranche(T, tb, pre)) : q.naissance || q.debut === q.fin ? texteCreneau(a, pas, pre) : texteCreneau(a, pas, pre) + " → " + texteCreneau(b, pas, pre),
+    var r = { cle: q.cle, annee: Number(annee), choisi: TQ && tg <= TQ.length ? texteTranche(TQ, tg, lim) : texteCreneau(g, pas, pre), verdict: verdict, rapide: rapide, points: points, ecart: d,
+      vrai: T ? (ta === tb ? texteTranche(T, ta, lim) : texteTranche(T, ta, lim) + " → " + texteTranche(T, tb, lim)) : q.naissance || q.debut === q.fin ? texteCreneau(a, pas, pre) : texteCreneau(a, pas, pre) + " → " + texteCreneau(b, pas, pre),
       niveauAvant: avant, niveauApres: f.niveau, ms: ms };
     j.reponses.push(r);
     partie.maj = t;

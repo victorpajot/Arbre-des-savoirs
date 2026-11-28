@@ -9565,8 +9565,10 @@ function demarrerJeu() {
     return a > 0 ? __("de {a} à {b}", { a: a, b: b }) : __("de {a} à {b} av. J.-C.", { a: -a, b: -b });
   }
   // L'année que désigne la sélection en cours.
+  // Passage d'âge : le cran le plus bas du curseur vaut « avant 1000 av. J.-C. », où l'on choisit une tranche.
+  function cranTranches(q) { return q.tranches && q.pas === 100 ? M.creneau(q.limite, 100, null) - 1 : null; }
   function anneeChrono(q, s) {
-    if (q.tranches && q.pas === 100 && s.k === bornesChrono(100)[0] && s.pr != null) return s.pr < q.tranches.length ? q.tranches[s.pr] - 1 : M.reglesChrono(C).prehistoire - 1;
+    if (cranTranches(q) != null && s.k === cranTranches(q)) return (s.pr != null && s.pr < q.tranches.length ? q.tranches[s.pr] : q.limite) - 1;
     if (q.pas === 100) return M.anneeDuCreneau(s.k, 100);
     if (q.pas === 50) return M.anneeDuCreneau(2 * s.k + s.h, 50);
     var k10 = 10 * s.k + s.d;
@@ -9579,6 +9581,7 @@ function demarrerJeu() {
   function bornesEpoque(q, ep) {
     var b = bornesChrono(q.pas), e = parId((C.plateau && C.plateau.epoques) || [], ep);
     if (!e) return b;
+    if (cranTranches(q) != null) b = [cranTranches(q), b[1]];
     return [e.debut == null ? b[0] : Math.max(b[0], uniteChrono(q.pas, e.debut)), e.fin == null ? b[1] : Math.min(b[1], uniteChrono(q.pas, e.fin))];
   }
   // L'époque voisine (sens -1 ou 1) qui a au moins un cran pour ce niveau de question.
@@ -9624,7 +9627,7 @@ function demarrerJeu() {
       if (b[0] === b[1]) z.querySelector(".sc-curseur").style.display = "none";
       else { rep.appendChild(el("<span>" + esc(libUnite(b[0])) + "</span>")); rep.appendChild(el("<span>" + esc(libUnite(b[1])) + "</span>")); }
     }
-    function libUnite(k) { return q.pas === 100 ? M.texteCreneau(k, 100, R.prehistoire) : q.pas === 50 ? M.texteSiecle(k) : texteCentaine(k); }
+    function libUnite(k) { return k === cranTranches(q) ? texteAvant() : q.pas === 100 ? M.texteCreneau(k, 100, R.prehistoire) : q.pas === 50 ? M.texteSiecle(k) : texteCentaine(k); }
     function ligne(lib, valeurs, cle, nom) {
       var w = el('<div class="sc-ligne"><span class="eyebrow">' + esc(lib) + '</span><div class="sc-boutons"></div></div>'), bt = w.querySelector(".sc-boutons");
       valeurs.forEach(function (v) {
@@ -9635,14 +9638,15 @@ function demarrerJeu() {
       if (nom) w.querySelector(".eyebrow").textContent = nom;
       fins.appendChild(w);
     }
+    function texteAvant() { return __("Avant {a} av. J.-C.", { a: (-q.limite).toLocaleString(locale()) }); }
     function dessiner() {
       fins.innerHTML = "";
       // Passage d'âge : sur le cran « Préhistoire », on choisit une tranche.
-      if (q.tranches && q.pas === 100 && s.k === bornesChrono(100)[0]) {
+      if (cranTranches(q) != null && s.k === cranTranches(q)) {
         if (s.pr == null) s.pr = q.tranches.length;
-        var tr = []; for (var ti = 0; ti <= q.tranches.length; ti++) tr.push({ v: ti, t: M.texteTranche(q.tranches, ti, R.prehistoire) });
+        var tr = []; for (var ti = 0; ti <= q.tranches.length; ti++) tr.push({ v: ti, t: M.texteTranche(q.tranches, ti, q.limite) });
         ligne(__("Plus précisément ?"), tr, "pr"); fins.lastChild.classList.add("sc-tranches");
-        z.querySelector(".sc-choisi").innerHTML = "<b>" + esc(tr[s.pr].t) + "</b><small>" + esc(__("Préhistoire")) + "</small>";
+        z.querySelector(".sc-choisi").innerHTML = "<b>" + esc(tr[s.pr].t) + "</b><small>" + esc(texteAvant()) + "</small>";
         return;
       }
       var lib = q.pas === 100 ? M.texteCreneau(s.k, 100, R.prehistoire) : q.pas === 50 ? M.texteSiecle(s.k) : texteCentaine(s.k);
@@ -9739,7 +9743,7 @@ function demarrerJeu() {
     var r = j.reponses[i], titre = r.verdict === "juste" ? __("Juste !") : r.verdict === "proche" ? __("Presque") : __("Raté");
     var niv = r.niveauApres > r.niveauAvant ? __("Tu le connais : la prochaine fois, ") + tx(M.reglesChrono(C).niveaux[r.niveauApres - 1].nom).toLowerCase() + "." : r.niveauApres < r.niveauAvant ? __("Il redescend d'un cran : ") + tx(M.reglesChrono(C).niveaux[r.niveauApres - 1].nom).toLowerCase() + "." : "";
     var rt = el('<div class="retour sc-retour ' + r.verdict + '"><b>' + titre + (r.points ? " +" + r.points + (r.points > 1 ? __(" crédits") : __(" crédit")) + (r.rapide ? __(" (éclair)") : "") : "") + "</b>" +
-      (r.verdict === "juste" ? "" : __("<p>Ta réponse : ") + esc(r.choisi) + (q.pas >= 50 && !(q.tranches && r.annee < R.prehistoire) && r.annee >= R.prehistoire ? " (" + esc(anneesCreneau(M.creneau(r.annee, q.pas), q.pas)) + ")" : "") + "</p>") + "<p>" + (q.sorte === "savant" && !q.naissance ? __("A vécu : ") : __("C'était : ")) + "<b>" + esc(r.vrai) + "</b> (" + esc(dateChrono(q)) + ")</p>" +
+      (r.verdict === "juste" ? "" : __("<p>Ta réponse : ") + esc(r.choisi) + (q.pas >= 50 && r.annee >= (q.limite != null ? q.limite : R.prehistoire) ? " (" + esc(anneesCreneau(M.creneau(r.annee, q.pas), q.pas)) + ")" : "") + "</p>") + "<p>" + (q.sorte === "savant" && !q.naissance ? __("A vécu : ") : __("C'était : ")) + "<b>" + esc(r.vrai) + "</b> (" + esc(dateChrono(q)) + ")</p>" +
       (niv ? '<p class="meta" style="margin:0">' + esc(niv) + "</p>" : "") + (q.source ? __("<cite>Source : ") + esc(q.source) + "</cite>" : "") + "</div>");
     inn.appendChild(rt);
     var mr = comite(siecles.repliqueQ, true); if (mr) inn.appendChild(mr);
