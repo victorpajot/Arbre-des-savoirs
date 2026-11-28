@@ -93,7 +93,11 @@
       "fr": "L'année exacte"
      }
     }
-   ]
+   ],
+   "memoire": {
+    "apres_rates": 2,
+    "prix_indice": 10
+   }
   },
   "textes": {
    "eureka": {
@@ -2866,5 +2870,304 @@
   "donjon": {
    "fr": "Le donjon ouvrira plus tard. Je le prépare. Il y fera noir."
   }
+ },
+ "memoire_dates": {
+  "mentor": "Hoshi",
+  "nom": {
+   "fr": "Retenir les dates"
+  },
+  "arrivee": [
+   {
+    "fr": "Deux Chronos ratés de suite. Je passais, j'ai vu."
+   },
+   {
+    "fr": "Ne fais pas cette tête. Ta mémoire n'est pas mauvaise : tu n'as pas de méthode, c'est tout. Moi non plus, je n'en avais pas. Mon IA s'est éteinte."
+   }
+  ],
+  "debut": {
+   "fr": "Assieds-toi. Cinq étapes, et après tu pourras acheter une aide pour chaque date. Oui, acheter. Ici rien n'est gratuit, tu as remarqué."
+  },
+  "fin": {
+   "fr": "Voilà. Les indices sont ouverts. N'en achète pas trop : une date que tu retrouves seul tient mieux qu'une date qu'on te souffle."
+  },
+  "masterclass": {
+   "chapitres": [
+    {
+     "id": "visage",
+     "titre": {
+      "fr": "Un nombre n'a pas de visage"
+     },
+     "texte": [
+      {
+       "fr": "Une date, ce sont quatre chiffres sans forme, sans odeur, sans histoire : rien où s'accrocher. En 1880, le psychologue allemand Hermann Ebbinghaus se met à apprendre des listes de syllabes sans sens, comme WID ou ZOF, pour que rien de ce qu'il sait déjà ne l'aide, puis se teste après des délais variés pour mesurer ce qu'il en oublie. Il y passe cinq ans, jusqu'en 1885. Une date apprise toute seule ressemble beaucoup à ses syllabes."
+      },
+      {
+       "fr": "Premier piège, avant même de retenir : le siècle. Il n'y a pas d'année zéro : l'an 1 avant Jésus-Christ est suivi directement de l'an 1 après. Le premier siècle va donc de 1 à 100, et le XVIIIe de 1701 à 1800. Pour trouver le siècle d'une année, on prend ses centaines et on ajoute un : 1789, c'est 17 plus 1, le XVIIIe. Seules les années rondes font exception : 1700 est la dernière année du XVIIe."
+      }
+     ],
+     "retenir": {
+      "fr": "Une date seule s'oublie comme une syllabe sans sens. Le siècle : les centaines plus un (1789, XVIIIe), sauf les années rondes (1700, XVIIe)."
+     },
+     "source": "Wikipédia (en), « Forgetting curve » et « Year zero » ; Wikipédia (simple), « 18th century »",
+     "figure": "hoshi_siecle",
+     "cles": [
+      {
+       "fr": "syllabes sans sens"
+      },
+      {
+       "fr": "pas d'année zéro"
+      },
+      {
+       "fr": "on ajoute un"
+      }
+     ]
+    },
+    {
+     "id": "ancres",
+     "titre": {
+      "fr": "Les dates ancres"
+     },
+     "texte": [
+      {
+       "fr": "En 1932, dans Remembering, Frederic Bartlett fait lire à des étudiants anglais « La Guerre des fantômes », un conte amérindien, puis le leur fait raconter de mémoire. Ce qui ne cadre pas avec ce qu'ils connaissent disparaît ou se transforme en plus familier : les canoës deviennent des bateaux. La mémoire range le nouveau dans ce qu'elle sait déjà, ce que Bartlett appelle des schémas."
+      },
+      {
+       "fr": "Autant s'en servir. Une date ancre est une date que tu sais sans réfléchir. La nouvelle ne s'apprend pas seule : on la mesure depuis l'ancre. Les Principia de Newton, 1687 : 54 ans après le procès de Galilée, en 1633. L'écart est un petit nombre, et l'histoire se raconte toute seule : Galilée condamné, et un demi-siècle plus tard Newton qui énonce la gravitation universelle."
+      },
+      {
+       "fr": "Dans le jeu, les époques du plateau sont tes premières ancres, chacune avec sa couleur : le Moyen Âge commence en 476, la Renaissance en 1450, l'Âge classique en 1600, et ainsi de suite. Ensuite, chaque date que tu réussis au Chrono devient une ancre pour les autres."
+      }
+     ],
+     "retenir": {
+      "fr": "Une date ne s'apprend pas seule : on la mesure depuis une date ancre déjà sue. Bartlett, Remembering, 1932 : la mémoire range le nouveau dans ce qu'elle connaît."
+     },
+     "source": "Wikipédia (en), « Frederic Bartlett », « Galileo affair » et « Philosophiæ Naturalis Principia Mathematica »",
+     "figure": "hoshi_ancres",
+     "cles": [
+      {
+       "fr": "canoës deviennent des bateaux"
+      },
+      {
+       "fr": "date ancre"
+      },
+      {
+       "fr": "54 ans"
+      }
+     ]
+    },
+    {
+     "id": "majeur",
+     "titre": {
+      "fr": "Les chiffres deviennent des mots"
+     },
+     "texte": [
+      {
+       "fr": "Le système majeur change chaque chiffre en un son de consonne : 0 s ou z, 1 t ou d, 2 n, 3 m, 4 r, 5 l, 6 j ou ch, 7 k ou g dur, 8 f ou v, 9 p ou b. Les voyelles sont libres. Le mathématicien Pierre Hérigone en publie la première version en 1634, et Aimé Paris lui donne sa forme moderne en 1825."
+      },
+      {
+       "fr": "Pour une date, le siècle se retrouve avec l'ancre ou l'époque ; ce qui glisse, ce sont les deux derniers chiffres. On leur donne un mot une fois pour toutes : 92, p et n, une panne ; 87, f et k, un phoque. Ce sont les sons qui comptent, pas les lettres : « chat » ne vaut pas 61, son t ne se prononce pas. Les cent mots de 00 à 99 sont ci-dessous, tout prêts."
+      }
+     ],
+     "retenir": {
+      "fr": "0 s/z, 1 t/d, 2 n, 3 m, 4 r, 5 l, 6 j/ch, 7 k/g, 8 f/v, 9 p/b. Un mot fixe par paire de chiffres : 92, une panne."
+     },
+     "source": "Wikipédia (en), « Mnemonic major system » et (fr) « Aimé Paris »",
+     "figure": "hoshi_cent_mots",
+     "cles": [
+      {
+       "fr": "son de consonne"
+      },
+      {
+       "fr": "deux derniers chiffres"
+      },
+      {
+       "fr": "sons qui comptent"
+      }
+     ]
+    },
+    {
+     "id": "grey",
+     "titre": {
+      "fr": "Richard Grey, 1730"
+     },
+     "texte": [
+      {
+       "fr": "Ces lettres pour les chiffres sont nées pour les dates. En 1730, le pasteur anglais Richard Grey, né à Newcastle en 1696, publie Memoria Technica, une nouvelle méthode de mémoire artificielle. Il l'applique aux dates et aux nombres de la chronologie, de la géographie, des poids et mesures et de l'astronomie."
+      },
+      {
+       "fr": "Sa recette : changer la dernière syllabe d'un nom en lettres qui valent des chiffres, d'après une table arbitraire, puis enchaîner ces mots étranges en vers, au rythme de l'hexamètre. Dans sa table, « az » vaut 10 et « tel » vaut 325. C'était lourd et compliqué, et pourtant le livre eut un grand succès."
+      }
+     ],
+     "retenir": {
+      "fr": "Richard Grey, Memoria Technica, 1730 : la fin des noms changée en lettres qui valent des chiffres, pour retenir la chronologie."
+     },
+     "source": "Wikipédia (en), « Richard Grey (priest) »",
+     "cles": [
+      {
+       "fr": "Memoria Technica"
+      },
+      {
+       "fr": "dernière syllabe"
+      },
+      {
+       "fr": "grand succès"
+      }
+     ]
+    },
+    {
+     "id": "image",
+     "titre": {
+      "fr": "Une image idiote, puis revenir"
+     },
+     "texte": [
+      {
+       "fr": "Un mot ne suffit pas : il faut une image. Vers 90 av. J.-C., la Rhétorique à Herennius le dit déjà : on retient l'insolite, le comique, le démesuré, bien mieux que le banal. Colomb qui tombe en panne au milieu de l'Atlantique, en 1492, s'oublie mal. Plus c'est idiot, mieux ça tient."
+      },
+      {
+       "fr": "Puis il faut revenir dessus. Le Chrono te ressert d'abord les dates que tu as ratées, et chaque date réussie deux fois de suite passe au cran plus fin. Une fois cette leçon lue, tu peux débloquer l'indice d'une date, contre quelques crédits : ses ancres pendant la question, son mot et son image au verdict."
+      }
+     ],
+     "retenir": {
+      "fr": "Un mot, une image absurde qui le lie à l'événement, puis revenir dessus. Indices : les ancres pendant la question, le mot au verdict."
+     },
+     "source": "Wikipédia (en), « Rhetorica ad Herennium », « Art of memory » et « Voyages of Christopher Columbus »",
+     "cles": [
+      {
+       "fr": "insolite"
+      },
+      {
+       "fr": "Plus c'est idiot"
+      },
+      {
+       "fr": "revenir dessus"
+      }
+     ]
+    }
+   ]
+  },
+  "mots": {
+   "0": "une scie",
+   "1": "du thé",
+   "2": "un nœud",
+   "3": "de la mie",
+   "4": "un roi",
+   "5": "un lit",
+   "6": "un chou",
+   "7": "un cou",
+   "8": "du feu",
+   "9": "un pou",
+   "00": "la Suisse",
+   "01": "un soda",
+   "02": "la Seine",
+   "03": "un sumo",
+   "04": "une souris",
+   "05": "du sel",
+   "06": "de la sauge",
+   "07": "un sac",
+   "08": "un sofa",
+   "09": "une soupe",
+   "10": "une tasse",
+   "11": "une tête",
+   "12": "une dune",
+   "13": "une dame",
+   "14": "une tour",
+   "15": "une toile",
+   "16": "une douche",
+   "17": "une dague",
+   "18": "un duvet",
+   "19": "une taupe",
+   "20": "une noce",
+   "21": "une note",
+   "22": "une nonne",
+   "23": "un nem",
+   "24": "le Nord",
+   "25": "le Nil",
+   "26": "une niche",
+   "27": "une nuque",
+   "28": "un navet",
+   "29": "une nappe",
+   "30": "de la mousse",
+   "31": "une moto",
+   "32": "une mine",
+   "33": "une momie",
+   "34": "un mur",
+   "35": "une mule",
+   "36": "une mouche",
+   "37": "un moka",
+   "38": "la mafia",
+   "39": "un myope",
+   "40": "une rose",
+   "41": "un rôti",
+   "42": "une reine",
+   "43": "une rame",
+   "44": "un rire",
+   "45": "un rouleau",
+   "46": "une ruche",
+   "47": "un roc",
+   "48": "un rêve",
+   "49": "une robe",
+   "50": "un lasso",
+   "51": "un loto",
+   "52": "de la laine",
+   "53": "une lime",
+   "54": "une lyre",
+   "55": "du lilas",
+   "56": "une louche",
+   "57": "un lac",
+   "58": "une louve",
+   "59": "une loupe",
+   "60": "une chaise",
+   "61": "un château",
+   "62": "une chaîne",
+   "63": "un chameau",
+   "64": "un char",
+   "65": "un châle",
+   "66": "un juge",
+   "67": "un jockey",
+   "68": "un chef",
+   "69": "une jupe",
+   "70": "une cuisse",
+   "71": "un gâteau",
+   "72": "une canne",
+   "73": "une gomme",
+   "74": "un cœur",
+   "75": "de la colle",
+   "76": "une cage",
+   "77": "un coq",
+   "78": "une cave",
+   "79": "une coupe",
+   "80": "une fusée",
+   "81": "une fête",
+   "82": "une vanne",
+   "83": "de la fumée",
+   "84": "un phare",
+   "85": "un fil",
+   "86": "une vache",
+   "87": "un phoque",
+   "88": "une fève",
+   "89": "une phobie",
+   "90": "une puce",
+   "91": "une botte",
+   "92": "une panne",
+   "93": "une pomme",
+   "94": "une poire",
+   "95": "une poule",
+   "96": "une pêche",
+   "97": "un bouc",
+   "98": "un bœuf",
+   "99": "un bébé"
+  },
+  "sons": [
+   "s, z",
+   "t, d",
+   "n",
+   "m",
+   "r",
+   "l",
+   "j, ch",
+   "k, g",
+   "f, v",
+   "p, b"
+  ]
  }
 }

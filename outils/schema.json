@@ -2657,6 +2657,16 @@
        "pattern": "^[a-z]+\\.[a-z_]+$"
       }
      }
+    },
+    "memoire_dates": {
+     "type": "object",
+     "description": "Victor (2026-11-28) : la masterclass de Hoshi sur les dates et les cent mots du système majeur (indices du Chrono).",
+     "required": ["mentor", "nom", "masterclass", "mots", "sons"],
+     "properties": {
+      "mentor": {"type": "string"},
+      "mots": {"type": "object", "additionalProperties": {"type": "string"}},
+      "sons": {"type": "array", "items": {"type": "string"}, "minItems": 10, "maxItems": 10}
+     }
     }
    }
   },

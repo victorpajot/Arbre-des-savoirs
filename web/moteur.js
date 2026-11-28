@@ -4461,20 +4461,23 @@
     var lim = q.limite != null ? q.limite : pre, TQ = q.tranches, T = TQ && q.debut < lim ? TQ : null;
     var tg = TQ ? trancheChrono(TQ, Number(annee), lim) : 0, ta = T ? trancheChrono(T, q.debut, lim) : 0, tb = T ? trancheChrono(T, q.fin, lim) : 0;
     if (T) d = tg < ta ? ta - tg : tg > tb ? tg - tb : 0;
-    var verdict = d === 0 ? "juste" : d <= q.proche ? "proche" : "faux", rapide = verdict === "juste" && typeof ms === "number" && ms < R.rapide_ms;
-    var P = R.points, points = verdict === "juste" ? P.juste + (rapide ? P.rapide : 0) : verdict === "proche" ? P.proche : 0;
+    var verdict = d === 0 ? "juste" : d <= q.proche ? "proche" : "faux", aide = !!(j.aides && j.aides[j.reponses.length]);
+    var rapide = !aide && verdict === "juste" && typeof ms === "number" && ms < R.rapide_ms;
+    // Victor (2026-11-28) : une question où l'on a regardé l'indice ne rapporte rien et ne fait pas monter la date d'un cran.
+    var P = R.points, points = aide ? 0 : verdict === "juste" ? P.juste + (rapide ? P.rapide : 0) : verdict === "proche" ? P.proche : 0;
     var f = s.fiches[q.cle] || (s.fiches[q.cle] = { niveau: 1, serie: 0, vus: 0, justes: 0, dernier: null, rate: false });
     var avant = f.niveau;
     f.vus++; f.dernier = t;
     if (verdict === "juste") {
-      f.justes++; f.serie++; f.rate = false;
+      f.justes++; f.rate = false;
+      if (!aide) f.serie++;
       if (f.serie >= R.monter && f.niveau < q.max) { f.niveau++; f.serie = 0; }
       s.justes++; if (rapide) s.rapides++; if (pas === 1) s.exactes++;
     } else if (verdict === "proche") { f.serie = 0; f.rate = false; s.proches++; }
     else { f.serie = 0; f.rate = true; f.niveau = Math.max(1, f.niveau - 1); s.faux++; }
     var r = { cle: q.cle, annee: Number(annee), choisi: TQ && tg <= TQ.length ? texteTranche(TQ, tg, lim) : texteCreneau(g, pas, pre), verdict: verdict, rapide: rapide, points: points, ecart: d,
       vrai: T ? (ta === tb ? texteTranche(T, ta, lim) : texteTranche(T, ta, lim) + " → " + texteTranche(T, tb, lim)) : q.naissance || q.debut === q.fin ? texteCreneau(a, pas, pre) : texteCreneau(a, pas, pre) + " → " + texteCreneau(b, pas, pre),
-      niveauAvant: avant, niveauApres: f.niveau, ms: ms };
+      niveauAvant: avant, niveauApres: f.niveau, ms: ms, aide: aide };
     j.reponses.push(r);
     partie.maj = t;
     return r;
@@ -4492,12 +4495,14 @@
     partie.credits.solde += credits; partie.credits.gagnes += credits;
     s.parties++; if (parfait) s.parfaits++; s.maxExactes = Math.max(s.maxExactes || 0, exactes);
     var reussi = justes >= (j.reussite || R.reussite), enCase = j.mode === "case" && s.case && partie.plateau.position === s.case;
+    // Victor (2026-11-28) : deux Chronos ratés de suite, quel qu'il soit, et Hoshi vient faire sa masterclass sur les dates.
+    s.ratesSuite = reussi ? 0 : (s.ratesSuite || 0) + 1;
     marquerJour(partie, t);
     noter(partie, t, { type: "chrono", bonnes: justes, total: total, xp: credits, source: j.mode });
     var out = { mode: j.mode, questions: j.questions, reponses: j.reponses, justes: justes, proches: proches, total: total, parfait: parfait, reussi: reussi,
       exactes: exactes, points: points, mult: mult, credits: credits, plateau: null, agacement: null,
       montees: j.reponses.filter(function (r) { return r.niveauApres > r.niveauAvant; }).length,
-      contextes: [parfait ? "chrono_parfait" : reussi ? "chrono_bilan_bon" : "chrono_bilan_rate"] };
+      contextes: [parfait ? "chrono_parfait" : reussi ? "chrono_bilan_bon" : "chrono_bilan_rate"], hoshi: hoshiAttend(contenu, partie) };
     if (enCase) {
       // La case est jouée, réussie ou non : on n'y revient pas. Victor (2026-11-01) : elle se libère, comme après un atome.
       var spC = partie.plateau.speciaux && partie.plateau.speciaux[s.case];
@@ -4535,6 +4540,63 @@
     }).filter(Boolean);
     partie.maj = t;
     return out;
+  }
+  // --- Retenir les dates : la masterclass de Hoshi et les indices (Victor, 2026-11-28) ---------------------------
+  // Deux Chronos ratés de suite : Hoshi, le mentor du prologue, vient expliquer comment on retient une date (siècle,
+  // dates ancres, système majeur, Richard Grey, l'image). Lue, elle ouvre les indices : chaque date se débloque contre
+  // quelques crédits. Pendant la question, l'indice donne les deux ancres qui l'encadrent (la question ne rapporte alors
+  // rien) ; au verdict, le mot du système majeur, l'écart avec l'ancre la plus proche et l'image à se faire.
+  function memoireDates(contenu) { var m = contenu.plateau && contenu.plateau.memoire_dates; return m && m.masterclass && reglesChrono(contenu) ? m : null; }
+  function reglesMemoire(contenu) { var R = reglesChrono(contenu); return Object.assign({ apres_rates: 2, prix_indice: 10 }, R && R.memoire || {}); }
+  function hoshiVu(partie) { return !!(partie.siecles && partie.siecles.hoshi); }
+  function hoshiAttend(contenu, partie) { var s = partie.siecles; return !!(memoireDates(contenu) && s && !s.hoshi && (s.ratesSuite || 0) >= reglesMemoire(contenu).apres_rates); }
+  function hoshiLu(partie, t) { var s = etatChrono(partie); if (!s.hoshi) { s.hoshi = t; partie.maj = t; return true; } return false; }
+  function indiceAchete(partie, cle) { var s = partie.siecles; return !!(s && s.indices && s.indices[cle]); }
+  function acheterIndice(contenu, partie, cle, t) {
+    var s = etatChrono(partie), prix = reglesMemoire(contenu).prix_indice;
+    if (!memoireDates(contenu) || !s.hoshi) return { ok: false, raison: "hoshi" };
+    if (indiceAchete(partie, cle)) return { ok: true, prix: 0, deja: true };
+    if (partie.credits.solde < prix) return { ok: false, raison: "solde", prix: prix };
+    partie.credits.solde -= prix; s.indices = s.indices || {}; s.indices[cle] = t; partie.maj = t;
+    return { ok: true, prix: prix };
+  }
+  // L'indice regardé pendant la question en cours : elle ne rapportera rien.
+  function aiderChrono(partie, t) {
+    var j = jeuChrono(partie); if (!j || j.reponses.length >= j.questions.length) return false;
+    var q = j.questions[j.reponses.length]; if (!indiceAchete(partie, q.cle)) return false;
+    j.aides = j.aides || {}; j.aides[j.reponses.length] = true; partie.maj = t; return true;
+  }
+  // Les ancres : les dates déjà réussies au Chrono, puis le début de chaque époque du plateau. `sauf` : clés à écarter
+  // (la question elle-même et les autres questions de la partie, pour ne rien souffler).
+  function ancresChrono(contenu, partie, sauf) {
+    var s = partie.siecles || { fiches: {} }, vu = {}, out = [];
+    reservoirChrono(contenu, partie).forEach(function (x) {
+      var f = s.fiches[x.cle]; if (!f || !f.justes || (sauf && sauf[x.cle]) || vu[x.cle]) return;
+      vu[x.cle] = 1; out.push({ cle: x.cle, titre: x.titre, annee: x.debut, sorte: "date" });
+    });
+    ((contenu.plateau && contenu.plateau.epoques) || []).forEach(function (e) { if (e.debut != null) out.push({ cle: "epoque:" + e.id, titre: TX(e.nom), annee: e.debut, sorte: "epoque", epoque: e.id }); });
+    return out.sort(function (a, b) { return a.annee - b.annee; });
+  }
+  // Une année en sons : son siècle, la paire de chiffres qui glisse, son mot. Les années très anciennes se comptent en milliers.
+  function majeurAnnee(contenu, annee) {
+    var m = memoireDates(contenu); if (!m) return null;
+    var y = Math.abs(Math.round(annee)), av = annee < 0, milliers = y >= 10000, n = milliers ? Math.round(y / 1000) : y;
+    var paire = n >= 10 ? ("0" + (n % 100)).slice(-2) : String(n), mot = m.mots[paire] || null;
+    var sons = paire.split("").map(function (c) { return m.sons[+c]; });
+    var tete = n >= 100 ? Math.floor(n / 100) : null;
+    return { annee: annee, av: av, milliers: milliers, tete: tete, paire: paire, sons: sons, mot: mot,
+      siecle: milliers ? null : texteSiecle(creneau(annee, 100, null)), centaines: milliers || y < 100 ? null : Math.floor(y / 100), rond: !milliers && y >= 100 && y % 100 === 0 };
+  }
+  function indiceChrono(contenu, partie, q, j) {
+    if (!q) return null;
+    var sauf = {}; sauf[q.cle] = 1; (j && j.questions || []).forEach(function (x) { sauf[x.cle] = 1; });
+    var A = ancresChrono(contenu, partie, sauf), y = q.debut, avant = null, apres = null;
+    A.forEach(function (a) { if (a.annee <= y) avant = a; else if (!apres) apres = a; });
+    // L'ancre la plus proche, de préférence une date réussie plutôt qu'un début d'époque.
+    var proche = null;
+    A.forEach(function (a) { var d = Math.abs(a.annee - y) + (a.sorte === "epoque" ? 0.5 : 0); if (a.annee !== y || a.sorte === "date") { if (!proche || d < proche.d) proche = { a: a, d: d }; } });
+    var ancre = proche ? { titre: proche.a.titre, annee: proche.a.annee, sorte: proche.a.sorte, ecart: Math.abs(y - proche.a.annee), sens: y >= proche.a.annee ? "apres" : "avant" } : null;
+    return { cle: q.cle, avant: avant, apres: apres, ancre: ancre, majeur: majeurAnnee(contenu, y) };
   }
   // Les événements vus, par niveau (pour les stats et les succès).
   function statsChrono(contenu, partie) {
@@ -5638,7 +5700,7 @@
     murDeLaHonte: murDeLaHonte,
     reglesChrono: reglesChrono, etatChrono: etatChrono, creneau: creneau, anneeDuCreneau: anneeDuCreneau, texteCreneau: texteCreneau, texteSiecle: texteSiecle,
     reservoirChrono: reservoirChrono, reservoirPassage: reservoirPassage, texteTranche: texteTranche, trancheChrono: trancheChrono, chronoEnAttente: chronoEnAttente, offreChrono: offreChrono, chronoPossible: chronoPossible, chronoActif: chronoActif, chronoSpontane: chronoSpontane,
-    lancerChrono: lancerChrono, jeuChrono: jeuChrono, repondreChrono: repondreChrono, terminerChrono: terminerChrono, statsChrono: statsChrono,
+    lancerChrono: lancerChrono, jeuChrono: jeuChrono, memoireDates: memoireDates, reglesMemoire: reglesMemoire, hoshiVu: hoshiVu, hoshiAttend: hoshiAttend, hoshiLu: hoshiLu, indiceAchete: indiceAchete, acheterIndice: acheterIndice, aiderChrono: aiderChrono, ancresChrono: ancresChrono, majeurAnnee: majeurAnnee, indiceChrono: indiceChrono, repondreChrono: repondreChrono, terminerChrono: terminerChrono, statsChrono: statsChrono,
     retenterOubli: retenterOubli,
   };
 

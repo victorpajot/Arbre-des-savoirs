@@ -1746,6 +1746,39 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   const ici = P.plateau.position; fin = M.terminerChrono(C, P, T);
   assert.ok(!fin.reussi && P.plateau.position === ici && !M.chronoEnAttente(P) && fin.agacement && fin.agacement.perte > 0);
 
+  // Victor (2026-11-28) : deux Chronos ratés de suite, Hoshi vient ; sa leçon lue, les indices s'achètent date par date.
+  { const H = prep(), sH = M.etatChrono(H), rater = (n) => { sH.offre = M.cleJour(T + n); sH.joueJour = null;
+      const jh = M.lancerChrono(C, H, "alyca", T + n, () => 0.3);
+      jh.questions.forEach(q => M.repondreChrono(C, H, M.anneeDuCreneau(M.creneau(q.debut, 100, R.prehistoire) + 9, 100), 20000, T + n));
+      return M.terminerChrono(C, H, T + n); };
+    assert.ok(M.memoireDates(C) && M.memoireDates(C).masterclass.chapitres.length >= 4, "la leçon de Hoshi existe");
+    assert.equal(Object.keys(M.memoireDates(C).mots).length, 110, "un mot par chiffre et par paire de 00 à 99");
+    assert.ok(!rater(0).hoshi, "un seul raté : pas encore Hoshi");
+    const f2h = rater(1); assert.ok(f2h.hoshi && M.hoshiAttend(C, H), "deux ratés de suite : Hoshi arrive");
+    assert.equal(M.acheterIndice(C, H, "frise:feu", T).ok, false, "pas d'indice avant sa leçon");
+    assert.ok(M.hoshiLu(H, T) && !M.hoshiAttend(C, H) && M.hoshiVu(H));
+    assert.ok(!rater(2).hoshi, "une fois la leçon lue, il ne revient plus");
+    // Le système majeur : 1687 → XVIIe, 87 = f, k → un phoque ; 585 av. J.-C. → VIe av. J.-C. ; 1700, année ronde.
+    const mj = M.majeurAnnee(C, 1687); assert.ok(mj.paire === "87" && mj.mot === "un phoque" && mj.centaines === 16 && /XVII/.test(mj.siecle));
+    const mb = M.majeurAnnee(C, -585); assert.ok(mb.av && mb.paire === "85" && /VI/.test(mb.siecle) && !mb.rond);
+    assert.ok(M.majeurAnnee(C, 1700).rond && /XVII/.test(M.majeurAnnee(C, 1700).siecle) && !/XVIII/.test(M.majeurAnnee(C, 1700).siecle));
+    assert.ok(M.majeurAnnee(C, -17000).milliers && M.majeurAnnee(C, -17000).paire === "17");
+    // Pendant la question : l'indice acheté encadre la date par des ancres, et la question ne rapporte rien.
+    sH.offre = M.cleJour(T + 3); sH.joueJour = null;
+    const jh = M.lancerChrono(C, H, "alyca", T + 3, () => 0.3), q0 = jh.questions[0];
+    H.credits.solde = 5; assert.equal(M.acheterIndice(C, H, q0.cle, T).raison, "solde");
+    H.credits.solde = 50; const ach = M.acheterIndice(C, H, q0.cle, T);
+    assert.ok(ach.ok && ach.prix === M.reglesMemoire(C).prix_indice && H.credits.solde === 50 - ach.prix && M.indiceAchete(H, q0.cle));
+    assert.ok(M.acheterIndice(C, H, q0.cle, T).deja && H.credits.solde === 50 - ach.prix, "une date ne se paie qu'une fois");
+    assert.ok(M.aiderChrono(H, T));
+    const ind = M.indiceChrono(C, H, q0, jh);
+    assert.ok(ind.avant || ind.apres, "au moins une ancre (les époques du plateau)");
+    assert.ok([ind.avant, ind.apres].filter(Boolean).every(a => a.annee <= q0.debut === (a === ind.avant)) && [ind.avant, ind.apres].filter(Boolean).every(a => !jh.questions.some(q => q.cle === a.cle)), "ancres de part et d'autre, jamais une autre question de la partie");
+    const niv0 = (sH.fiches[q0.cle] || { niveau: 1 }).niveau, serie0 = (sH.fiches[q0.cle] || { serie: 0 }).serie;
+    const r0 = M.repondreChrono(C, H, q0.debut, 1000, T + 3);
+    assert.ok(r0.verdict === "juste" && r0.points === 0 && r0.aide && !r0.rapide && sH.fiches[q0.cle].serie === serie0 && sH.fiches[q0.cle].niveau === niv0, "aidé : juste, mais ni crédit ni montée");
+    const r1 = M.repondreChrono(C, H, jh.questions[1].debut, 1000, T + 3); assert.ok(r1.points > 0 && !r1.aide, "la question suivante n'est pas aidée"); }
+
   // Alyca : une offre par jour au plus ; partie bonus, le pion ne bouge pas.
   // Victor (2026-11-01) : Chrono revient d'abord sur les cases déjà passées.
   { const V = prep(); V.plateau.idx = 6; const ev = C.evenements.slice(0, 12).filter(e => e.case && e.case !== V.plateau.position && e.id !== "feu").slice(0, 2);  // le feu et Ishango se disputent l'unique place de la Préhistoire

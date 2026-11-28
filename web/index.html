@@ -1565,6 +1565,14 @@ svg.grille .interro { transition: opacity .3s; }
 .pr-mentor .vitrine { flex: none; width: 46px; height: 54px; display: grid; place-items: center; }
 .pr-mentor .qui { font-size: 13px; font-weight: 700; color: var(--muted); }
 .pr-mentor p { font-size: 17px; line-height: 1.45; margin: 2px 0 0; }
+/* Victor (2026-11-28) : Hoshi et les indices de mémorisation du Chrono. */
+.hoshi-bloc { display: flex; flex-direction: column; gap: 8px; }
+.hoshi-bloc .btn { align-self: stretch; }
+.sc-indice { border: 2px dashed color-mix(in srgb, #8A6A12 55%, transparent); border-radius: 12px; padding: 10px 12px; font-size: 17px; line-height: 1.45; display: flex; flex-direction: column; gap: 6px; }
+.sc-indice .eyebrow { color: #8A6A12; }
+.sc-indice p { margin: 0; font-size: 17px; }
+.sc-indice .mot { font-weight: 700; }
+.sc-indice .meta { font-size: 15px; }
 .choix button.pr-sel { border-color: #8E5BA8; background: color-mix(in srgb, #8E5BA8 14%, var(--surface)); }
 .pr-ordre button { display: flex; gap: 12px; align-items: center; }
 .pr-ordre small { display: block; color: var(--muted); font-size: 15px; }
@@ -9707,6 +9715,7 @@ function demarrerJeu() {
         (siecles.mode === "age" ? "" : siecles.mode === "case" ? " " + R.reussite + __(" justes sur ") + j.questions.length + __(", et ton pion avance d'une case.") : __(" Ton pion ne bouge pas.")) + '</p><div class="arbitre" style="width:100%"></div></div>');
       var m = comite(siecles.replique, true); if (m) sc.querySelector(".arbitre").appendChild(m);
       inn.appendChild(sc);
+      if (M.hoshiAttend(C, P)) inn.appendChild(blocHoshi(function () { if (siecles) rendreChrono(); }));
       var go = el('<button type="button" class="btn large sc-go">' + __('Commencer</button>'));
       go.onclick = function () { siecles.phase = "q"; rendreChrono(); };
       inn.appendChild(go); go.focus();
@@ -9724,6 +9733,7 @@ function demarrerJeu() {
     carte.querySelector(".enonce").textContent = questionChrono(q);
     if (q.texte) carte.querySelector(".sc-texte").textContent = q.texte;
     inn.appendChild(carte);
+    if (siecles.phase === "q") { var bi = blocIndiceQuestion(q, j, i); if (bi) inn.appendChild(bi); }
     if (siecles.phase === "q") {
       // Sélection de départ : au milieu de la frise, pour ne rien souffler.
       if (!siecles.sel || siecles.sel.cle !== q.cle) { var b = bornesChrono(q.pas); siecles.sel = { cle: q.cle, ep: null, k: Math.round((b[0] + b[1]) / 2), h: 0, d: 0, y: 0 }; siecles.debutQ = Date.now(); }
@@ -9742,10 +9752,11 @@ function demarrerJeu() {
     // Retour : le verdict, la vraie date, la frise.
     var r = j.reponses[i], titre = r.verdict === "juste" ? __("Juste !") : r.verdict === "proche" ? __("Presque") : __("Raté");
     var niv = r.niveauApres > r.niveauAvant ? __("Tu le connais : la prochaine fois, ") + tx(M.reglesChrono(C).niveaux[r.niveauApres - 1].nom).toLowerCase() + "." : r.niveauApres < r.niveauAvant ? __("Il redescend d'un cran : ") + tx(M.reglesChrono(C).niveaux[r.niveauApres - 1].nom).toLowerCase() + "." : "";
-    var rt = el('<div class="retour sc-retour ' + r.verdict + '"><b>' + titre + (r.points ? " +" + r.points + (r.points > 1 ? __(" crédits") : __(" crédit")) + (r.rapide ? __(" (éclair)") : "") : "") + "</b>" +
+    var rt = el('<div class="retour sc-retour ' + r.verdict + '"><b>' + titre + (r.points ? " +" + r.points + (r.points > 1 ? __(" crédits") : __(" crédit")) + (r.rapide ? __(" (éclair)") : "") : "") + (r.aide ? __(" (avec l'indice, sans crédit)") : "") + "</b>" +
       (r.verdict === "juste" ? "" : __("<p>Ta réponse : ") + esc(r.choisi) + (q.pas >= 50 && r.annee >= (q.limite != null ? q.limite : R.prehistoire) ? " (" + esc(anneesCreneau(M.creneau(r.annee, q.pas), q.pas)) + ")" : "") + "</p>") + "<p>" + (q.sorte === "savant" && !q.naissance ? __("A vécu : ") : __("C'était : ")) + "<b>" + esc(r.vrai) + "</b> (" + esc(dateChrono(q)) + ")</p>" +
       (niv ? '<p class="meta" style="margin:0">' + esc(niv) + "</p>" : "") + (q.source ? __("<cite>Source : ") + esc(q.source) + "</cite>" : "") + "</div>");
     inn.appendChild(rt);
+    var ba0 = blocAstuce(q); if (ba0) inn.appendChild(ba0);
     var mr = comite(siecles.repliqueQ, true); if (mr) inn.appendChild(mr);
     inn.appendChild(friseChrono(j, i));
     var dernier = j.reponses.length >= j.questions.length;
@@ -9786,6 +9797,7 @@ function demarrerJeu() {
       });
       z.appendChild(liste);
       var m = comite(r.replique); if (m) z.appendChild(m);
+      if (r.hoshi && M.hoshiAttend(C, P)) z.appendChild(blocHoshi(function () { if (siecles) rendreChrono(); }));
       ligneAgacement(z, r.agacement);
       cartesMonuments(r.monuments).forEach(function (x) { z.appendChild(x); });
     } else if (nom === "libre") {
@@ -9817,10 +9829,79 @@ function demarrerJeu() {
     }
     return wrap;
   }
+  // --- Hoshi et les dates (Victor, 2026-11-28) : deux Chronos ratés de suite, il vient ; sa leçon lue, les indices s'ouvrent.
+  function paroleHoshi(texte) {
+    var m = M.memoireDates(C), pr = M.prologue(C, P);
+    var b = el('<div class="pr-mentor">' + (pr && pr.portrait && C.avatar ? '<span class="vitrine">' + svgSavant(pr.portrait, 40) + "</span>" : "") + '<div><div class="qui">' + esc(m ? m.mentor : "Hoshi") + __(" · ton mentor") + "</div><p></p></div></div>");
+    b.querySelector("p").textContent = texte;
+    return b;
+  }
+  function ouvrirHoshi(apres) {
+    var m = M.memoireDates(C); if (!m) return;
+    ouvrirMasterclass("hoshi.dates", null, document.querySelector(".quiz.siecles") ? __("← Retour au Chrono") : null, apres, {
+      id: "hoshi.dates", nom: m.nom, masterclass: m.masterclass, couleur: COULEUR_SPECIAL.chrono,
+      debut: function (z) { z.insertBefore(paroleHoshi(tx(m.debut)), z.querySelector("h2")); },
+      fin: function (z) {
+        if (M.hoshiLu(P, maintenant())) { sauver(); toast(__("Indices de mémorisation ouverts : {p} crédits la date.", { p: M.reglesMemoire(C).prix_indice })); }
+        z.insertBefore(paroleHoshi(tx(m.fin)), z.querySelector(".nav-guide"));
+      }
+    });
+  }
+  // Hoshi arrive : ses deux phrases, puis sa leçon.
+  function blocHoshi(apres) {
+    var m = M.memoireDates(C), b = el('<div class="hoshi-bloc"></div>');
+    (m.arrivee || []).forEach(function (x) { b.appendChild(paroleHoshi(tx(x))); });
+    var bt = el('<button type="button" class="btn large">' + esc(__("Écouter {nom}", { nom: m.mentor })) + "</button>");
+    bt.onclick = function () { ouvrirHoshi(apres); };
+    b.appendChild(bt);
+    return b;
+  }
+  function texteAncre(a) {
+    if (!a) return "";
+    return a.sorte === "epoque" ? __("le début de l'époque « {e} » ({a})", { e: a.titre, a: formatAnnee(a.annee) }) : a.titre + " (" + formatAnnee(a.annee) + ")";
+  }
+  // Pendant la question : le bouton de l'indice, ou l'encadrement par les ancres s'il est déjà regardé.
+  function blocIndiceQuestion(q, j, i) {
+    if (!M.memoireDates(C) || !M.hoshiVu(P)) return null;
+    var prix = M.reglesMemoire(C).prix_indice, achete = M.indiceAchete(P, q.cle), vu = !!(j.aides && j.aides[i]);
+    if (vu) {
+      var ind = M.indiceChrono(C, P, q, j), z = el('<div class="sc-indice"><div class="eyebrow">' + __("Indice : tes ancres") + "</div></div>");
+      if (ind.avant) z.appendChild(el("<p>" + __("Après ") + escD(texteAncre(ind.avant)) + "</p>"));
+      if (ind.apres) z.appendChild(el("<p>" + __("Avant ") + escD(texteAncre(ind.apres)) + "</p>"));
+      if (!ind.avant && !ind.apres) z.appendChild(el("<p>" + __("Aucune ancre encore : réussis quelques dates, elles serviront d'ancres aux autres.") + "</p>"));
+      z.appendChild(el('<p class="meta">' + __("Cette question ne rapportera pas de crédit.") + "</p>"));
+      return z;
+    }
+    var manque = !achete && P.credits.solde < prix;
+    var b = el('<button type="button" class="btn sec large"' + (manque ? " disabled" : "") + ">" + (achete ? __("Voir l'indice (sans crédit pour cette question)") : manque ? __("Indice : {p} crédits, il t'en manque", { p: prix }) : __("Indice : {p} crédits (sans crédit pour cette question)", { p: prix })) + "</button>");
+    b.onclick = function () {
+      var r = M.acheterIndice(C, P, q.cle, maintenant()); if (!r.ok) { toast(__("Pas assez de crédits.")); return; }
+      M.aiderChrono(P, maintenant()); sauver(); rendreChrono();
+    };
+    return b;
+  }
+  // Au verdict : l'astuce pour retenir la date (achetée), ou de quoi la débloquer.
+  function blocAstuce(q) {
+    if (!M.memoireDates(C) || !M.hoshiVu(P)) return null;
+    var prix = M.reglesMemoire(C).prix_indice;
+    if (!M.indiceAchete(P, q.cle)) {
+      var manque = P.credits.solde < prix;
+      var b = el('<button type="button" class="btn sec large"' + (manque ? " disabled" : "") + ">" + (manque ? __("Astuce pour la retenir : {p} crédits, il t'en manque", { p: prix }) : __("Astuce pour la retenir : {p} crédits", { p: prix })) + "</button>");
+      b.onclick = function () { var r = M.acheterIndice(C, P, q.cle, maintenant()); if (!r.ok) { toast(__("Pas assez de crédits.")); return; } sauver(); rendreChrono(); };
+      return b;
+    }
+    var ind = M.indiceChrono(C, P, q, null), mj = ind.majeur, y = q.debut, z = el('<div class="sc-indice"><div class="eyebrow">' + __("Pour la retenir") + "</div></div>");
+    if (mj.siecle && mj.centaines != null) z.appendChild(el("<p>" + escD(mj.rond ? (mj.av ? __("{a} : année ronde, la première du {s}.", { a: formatAnnee(y), s: mj.siecle }) : __("{a} : année ronde, la dernière du {s}.", { a: formatAnnee(y), s: mj.siecle })) : __("{a} : {c} centaines, plus un, le {s}.", { a: formatAnnee(y), c: mj.centaines, s: mj.siecle })) + "</p>"));
+    if (mj.mot) z.appendChild(el("<p>" + esc(mj.milliers ? __("{n} mille ans", { n: Math.round(Math.abs(y) / 1000) }) : mj.paire.length > 1 ? __("Les deux derniers chiffres, {p}", { p: mj.paire }) : __("Le chiffre {p}", { p: mj.paire })) + " : " + esc(mj.paire.split("").map(function (c, x) { return c + " = " + mj.sons[x].replace(", ", __(" ou ")); }).join(", ")) + ' → <span class="mot">' + esc(mj.mot) + "</span></p>"));
+    // Un début d'époque à des siècles de là n'aide pas : on ne le cite que s'il est proche.
+    if (ind.ancre && ind.ancre.ecart && (ind.ancre.sorte === "date" || ind.ancre.ecart <= 200)) z.appendChild(el("<p>" + escD(ind.ancre.sens === "apres" ? __("{n} ans après {a}", { n: ind.ancre.ecart.toLocaleString(locale()), a: texteAncre(ind.ancre) }) : __("{n} ans avant {a}", { n: ind.ancre.ecart.toLocaleString(locale()), a: texteAncre(ind.ancre) })) + "</p>"));
+    if (mj.mot) z.appendChild(el('<p class="meta">' + esc(__("Ton image : « {t} » avec {m}. Plus c'est idiot, mieux ça tient.", { t: q.titre, m: mj.mot })) + "</p>"));
+    return z;
+  }
   function blocChronoStats() {
     var s = M.statsChrono(C, P), R = M.reglesChrono(C);
     var niveaux = R.niveaux.map(function (n) { return "<span>" + esc(tx(n.nom)) + '</span><span class="num">' + (s.parNiveau[n.n] || 0) + "</span>"; }).join("");
-    return el(__('<div class="bloc"><h2>Chrono</h2><div class="bareme" style="font-size:16px">') +
+    var b = (__('<div class="bloc"><h2>Chrono</h2><div class="bareme" style="font-size:16px">') +
       __('<span>Parties jouées</span><span class="num">') + s.parties + "</span>" +
       __('<span>Sans faute</span><span class="num">') + s.parfaits + "</span>" +
       __('<span>Justes · proches · ratées</span><span class="num">') + s.justes + " · " + s.proches + " · " + s.faux + "</span>" +
@@ -9828,6 +9909,13 @@ function demarrerJeu() {
       __('<span>Années exactes</span><span class="num">') + s.exactes + "</span>" +
       __('<span>Événements datables</span><span class="num">') + s.reservoir + "</span></div>" +
       __('<p class="note">Où en sont les événements déjà vus (') + s.vus + ") :</p>" + '<div class="bareme" style="font-size:16px">' + niveaux + "</div></div>");
+    var bloc = el(b);
+    if (M.memoireDates(C) && M.hoshiVu(P)) {
+      var bh = el('<button type="button" class="btn sec large">' + esc(__("Revoir la leçon de {nom} : {t}", { nom: M.memoireDates(C).mentor, t: tx(M.memoireDates(C).nom) })) + "</button>");
+      bh.onclick = function () { ouvrirHoshi(); };
+      bloc.appendChild(bh);
+    }
+    return bloc;
   }
   // Mettre cet atome en tête de la file d'attente, puis lancer son combat.
   function combattreAtome(z) {
@@ -10365,10 +10453,12 @@ function demarrerJeu() {
       return '<div class="illus mc-frise guidee">' + c.outerHTML + "</div>";
     };
   }
-  function ouvrirMasterclass(id, rates, retour, apres) {
-    var k = C.parId[id]; if (!aMasterclass(k)) return;
+  // `lecon` (facultatif) : une masterclass qui n'est pas celle d'une compétence (celle de Hoshi sur les dates) :
+  // {id, nom, masterclass, couleur, debut(z), fin(z)} ; debut et fin ajoutent ce qu'il faut à la première et à la dernière étape.
+  function ouvrirMasterclass(id, rates, retour, apres, lecon) {
+    var k = lecon || C.parId[id]; if (!aMasterclass(k)) return;
     // Imposée par l'IA (deux épreuves ratées de suite) : sa réplique en tête, et la consigne tombe au dernier chapitre.
-    var imp = M.masterclassImposee(C, P); imp = imp && imp.id === id ? imp : null;
+    var imp = lecon ? null : M.masterclassImposee(C, P); imp = imp && imp.id === id ? imp : null;
     if (imp && !rates) rates = imp.rates;
     rates = (rates || []).filter(function (x) { return C.questionParId[x.id]; });
     function blocQ(q, rep) {
@@ -10429,7 +10519,7 @@ function demarrerJeu() {
       var q = C.questionParId[x.id]; return tx(q.enonce) + " " + (q.explication ? tx(q.explication) : ""); }).join(" ")) : "") + rates.map(function (x) { return blocQ(C.questionParId[x.id], x.rep); }).join("") +
       __('<p class="meta">Elles t\'attendent au mur de la honte : retente-les dès demain.</p>') });
     var n = 0, titre = __("Masterclass : ") + tx(k.nom);
-    feuilleSimple('<div class="guide-z masterclass" style="--c:' + couleur(k.stat) + '"></div>', titre, {
+    feuilleSimple('<div class="guide-z masterclass" style="--c:' + (lecon ? lecon.couleur : couleur(k.stat)) + '"></div>', titre, {
       prec: function () { if (n > 0) { n--; montrer(); } }, suiv: function () { if (n < etapes.length - 1) { n++; montrer(); } },
       apres: apres
     }, retour);
@@ -10458,12 +10548,14 @@ function demarrerJeu() {
       var z = feuille.querySelector(".masterclass"), x = etapes[n];
       if (n > vuMax) vuMax = n;
       // Victor (2026-11-27) : lue jusqu'au bout, son quiz passe en tête du menu Jouer (s'il n'est pas encore acquis).
-      if (n === etapes.length - 1 && !(P.competences[id] && P.competences[id].maitrise) && (!P.mcLue || P.mcLue.id !== id)) { P.mcLue = { id: id, t: maintenant() }; sauver(); }
+      if (!lecon && n === etapes.length - 1 && !(P.competences[id] && P.competences[id].maitrise) && (!P.mcLue || P.mcLue.id !== id)) { P.mcLue = { id: id, t: maintenant() }; sauver(); }
       var plan = etapes.length > 1 ? (n === 0 ? '<div class="mc-plan"><span class="mc-plan-t">' + __("Le fil de la leçon") + "</span>" + fil() + "</div>" : barre()) : "";
       z.innerHTML = '<div class="eyebrow">' + esc(titre) + __(" · étape ") + (n + 1) + __(" sur ") + etapes.length + "</div>" + (n > 0 ? plan : "") + "<h2>" + esc(x.titre) + "</h2>" + (n === 0 ? plan : "") + x.html +
         '<div class="nav-guide"><button type="button" class="btn sec" data-a="prec"' + (n ? "" : " disabled") + __('>← Précédent</button><button type="button" class="btn" data-a="suiv"') + (n < etapes.length - 1 ? "" : " disabled") + __(">Suivant →</button></div>");
       rencontrerDans(z);
       if (imp && n === 0 && imp.mot) { var mi = comite(imp.mot, true); if (mi) z.insertBefore(mi, z.querySelector("h2")); }
+      if (lecon && n === 0 && lecon.debut) lecon.debut(z);
+      if (lecon && n === etapes.length - 1 && lecon.fin) lecon.fin(z);
       if (imp && n === etapes.length - 1 && M.masterclassLue(P, id)) {
         var ml = comite(M.replique(C, P, ["masterclass_lue"]), true); sauver();
         if (ml) z.insertBefore(ml, z.querySelector(".nav-guide"));
@@ -10480,7 +10572,7 @@ function demarrerJeu() {
     }
     // Le quiz se propose si le savoir n'est pas acquis, s'il est ouvert, hors d'un quiz en cours et quand rien ne ferme le jeu.
     function quizApresLecture() {
-      return !(P.competences[id] && P.competences[id].maitrise) && !document.querySelector(".quiz") && !blocageJouer() &&
+      return !lecon && !(P.competences[id] && P.competences[id].maitrise) && !document.querySelector(".quiz") && !blocageJouer() &&
         M.disponibles(C, P, maintenant()).some(function (c) { return c.id === id; });
     }
     if (imp) { imp.mot = M.replique(C, P, ["masterclass_imposee"]); sauver(); }
