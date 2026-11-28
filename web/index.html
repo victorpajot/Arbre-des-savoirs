@@ -9671,7 +9671,8 @@ function demarrerJeu() {
   // La mini-frise : les événements de la partie déjà datés, et deux voisins déjà vus de part et d'autre de celui-ci.
   function friseChrono(j, iCourant) {
     var vus = j.questions.slice(0, j.reponses.length).map(function (q, i) { return { q: q, r: j.reponses[i], partie: true, ici: i === iCourant }; });
-    var cles = vus.map(function (x) { return x.q.cle; }), cur = j.questions[iCourant];
+    // Victor (2026-11-28) : pas les questions à venir de la partie, sinon la frise donne leur date d'avance.
+    var cles = j.questions.map(function (x) { return x.cle; }), cur = j.questions[iCourant];
     var anciens = M.reservoirChrono(C, P).filter(function (x) { var f = P.siecles.fiches[x.cle]; return f && f.vus > 0 && cles.indexOf(x.cle) < 0; });
     var avant = anciens.filter(function (x) { return x.debut <= cur.debut; }).sort(function (a, b) { return b.debut - a.debut; }).slice(0, 2);
     var apres = anciens.filter(function (x) { return x.debut > cur.debut; }).sort(function (a, b) { return a.debut - b.debut; }).slice(0, 2);

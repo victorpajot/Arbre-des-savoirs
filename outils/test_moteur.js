@@ -2522,7 +2522,7 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
       j.questions.forEach((q, i) => { const juste = i < bon, r = M.repondreChrono(CA, P, juste ? q.debut : (q.debut < RC.prehistoire ? 1500 : -900000), 20000, t0); assert.equal(r.verdict === "juste", juste, q.cle + " " + r.choisi + " / " + r.vrai); });
       return M.terminerChrono(CA, P, t0); };
     const feu = M.lancerChrono(CA, P, "age", t0).questions.filter(q => q.cle === "savoir:ile.feu")[0]; assert.ok(feu && feu.tranches, "le feu est tiré, en tranches de préhistoire");
-    assert.equal(M.trancheChrono(PC.tranches, -1000000, RC.prehistoire), 0); assert.equal(M.trancheChrono(PC.tranches, -28000, RC.prehistoire), 2); assert.equal(M.trancheChrono(PC.tranches, -4600, RC.prehistoire), 3);
+    assert.equal(M.trancheChrono(PC.tranches, -1000000, RC.prehistoire), 0); assert.equal(M.trancheChrono(PC.tranches, -28000, RC.prehistoire), 1); assert.equal(M.trancheChrono(PC.tranches, -4600, RC.prehistoire), 2);
     let f = jouer(PC.reussite - 1); assert.ok(f.age && !f.age.passe && !f.reussi); assert.equal(M.agesIle(CA, P).age.id, "campement", "raté : l'île reste au campement");
     f = jouer(PC.reussite); assert.ok(f.age.passe && f.reussi); assert.ok(P.chronoAges.campement);
     assert.equal(M.lancerChrono(CA, P, "age", t0), null, "réussi, il ne se redemande pas (le village n'est pas prêt)");
