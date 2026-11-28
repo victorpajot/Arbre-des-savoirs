@@ -4361,6 +4361,9 @@
         out.push({ cle: "frise:" + e.id, sorte: "frise", id: e.id, titre: TX(e.titre), texte: sansDate(e.phrase), debut: e.annee, fin: e.annee, max: e.annee < pre || e.date ? 1 : maxN, source: e.source, case: e.case || null, stat: e.stat, theme: e.stat || null, lienComp: c.id, lienCase: e.case || null });
     });
     reservoirChrono(contenu, partie).forEach(function (x) { if (x.sorte !== "frise" && x.lienComp && su[x.lienComp]) out.push(x); });
+    // Victor (2026-11-28) : pas de date contemporaine ici (la lukasa « étudiée » en 1978) : rien après `jusqua`.
+    var lim = contenu.ile.regles.passage_chrono && contenu.ile.regles.passage_chrono.jusqua;
+    if (lim != null) out = out.filter(function (x) { return x.debut <= lim; });
     return out;
   }
   // Tranche de la préhistoire d'une année (0 : la plus ancienne) ; au-delà de la préhistoire, hors tranches.

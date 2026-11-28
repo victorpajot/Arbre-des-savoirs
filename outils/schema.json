@@ -4406,7 +4406,7 @@
         }
        }
       },
-      "passage_chrono": { "type": "object", "description": "Le Chrono du passage d'âge (Victor, 2026-11-27) : dates tirées, justes exigées, minimum de dates pour le jouer, bornes des tranches de la préhistoire.", "additionalProperties": false, "required": ["evenements", "reussite", "min", "tranches"], "properties": { "evenements": { "type": "integer", "minimum": 1 }, "reussite": { "type": "integer", "minimum": 1 }, "min": { "type": "integer", "minimum": 1 }, "tranches": { "type": "array", "items": { "type": "integer" } } } },
+      "passage_chrono": { "type": "object", "description": "Le Chrono du passage d'âge (Victor, 2026-11-27) : dates tirées, justes exigées, minimum de dates pour le jouer, bornes des tranches de la préhistoire.", "additionalProperties": false, "required": ["evenements", "reussite", "min", "tranches"], "properties": { "evenements": { "type": "integer", "minimum": 1 }, "reussite": { "type": "integer", "minimum": 1 }, "min": { "type": "integer", "minimum": 1 }, "tranches": { "type": "array", "items": { "type": "integer" } }, "jusqua": { "type": "integer", "description": "Dernière année admise : les dates plus récentes (études, éditions modernes) ne sont pas tirées." } } },
       "demographie": {
        "type": "object",
        "additionalProperties": false,

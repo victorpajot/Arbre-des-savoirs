@@ -2515,10 +2515,10 @@ console.log("OK : cycle quiz → rappel → perte → regain, succès, gel, tira
   // Victor (2026-11-27) : avant de changer d'âge, un Chrono sur les savoirs acquis. 3 justes sur 5, rejouable.
   { const PC = CA.ile.regles.passage_chrono, RC = M.reglesChrono(CA);
     G = M.agesIle(CA, P); assert.equal(G.age.id, "campement", "le village attend le Chrono du passage"); assert.ok(G.age.chrono && !G.age.pret && !G.age.complet);
-    assert.equal(G.age.chrono.questions, PC.evenements); assert.equal(G.age.chrono.reussite, PC.reussite);
+    const NQ = G.age.chrono.questions; assert.ok(NQ >= PC.min && NQ <= PC.evenements); assert.equal(G.age.chrono.reussite, Math.min(PC.reussite, NQ));
     const res = M.reservoirPassage(CA, P, 1); assert.ok(res.some(x => x.cle === "savoir:ile.feu") && res.some(x => x.cle === "savoir:res.cueillir"));
     assert.ok(res.every(x => ["ile.feu", "sci.soigner", "res.cueillir", "meteo.ciel", "mnemo.sansecrire", "mus.instruments"].indexOf(x.lienComp) >= 0), "seulement les savoirs acquis jusqu'ici");
-    const jouer = (bon) => { const j = M.lancerChrono(CA, P, "age", t0); assert.equal(j.questions.length, PC.evenements);
+    const jouer = (bon) => { const j = M.lancerChrono(CA, P, "age", t0); assert.equal(j.questions.length, NQ); assert.ok(j.questions.every(q => q.debut <= PC.jusqua), "pas de date contemporaine");
       j.questions.forEach((q, i) => { const juste = i < bon, r = M.repondreChrono(CA, P, juste ? q.debut : (q.debut < RC.prehistoire ? 1500 : -900000), 20000, t0); assert.equal(r.verdict === "juste", juste, q.cle + " " + r.choisi + " / " + r.vrai); });
       return M.terminerChrono(CA, P, t0); };
     const feu = M.lancerChrono(CA, P, "age", t0).questions.filter(q => q.cle === "savoir:ile.feu")[0]; assert.ok(feu && feu.tranches, "le feu est tiré, en tranches de préhistoire");
