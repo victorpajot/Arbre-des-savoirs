@@ -1228,6 +1228,7 @@ svg.grille .interro { transition: opacity .3s; }
 .sc-choisi { text-align: center; display: flex; flex-direction: column; gap: 2px; }
 .sc-choisi b { font-family: var(--f-display); font-size: 26px; }
 .sc-choisi small { font-size: 15px; color: var(--muted); }
+.sc-choisi small.sc-annees { font-size: 17px; font-family: var(--f-mono); color: var(--ink); }
 .sc-curseur { display: flex; align-items: center; gap: 8px; }
 .sc-curseur input { flex: 1; min-width: 0; accent-color: #8A6A12; height: 32px; }
 .sc-pas { flex: none; width: 44px; height: 44px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface-2); font-size: 16px; color: var(--ink); }
@@ -9558,6 +9559,11 @@ function demarrerJeu() {
     return [Math.floor(M.creneau(pre, 10) / 10), Math.floor(M.creneau(2030, 10) / 10)];
   }
   function texteCentaine(g) { return g >= 0 ? __("Années {a} à {b}", { a: g ? 100 * g : 1, b: 100 * g + 99 }) : __("De {a} à {b} av. J.-C.", { a: -100 * g, b: -100 * g - 99 }); }
+  // Victor (2026-11-28) : les chiffres romains se lisent mal avant J.-C. Les années du créneau (siècle ou demi-siècle), en chiffres.
+  function anneesCreneau(k, pas) {
+    var a = M.anneeDuCreneau(k, pas), b = a + pas - 1;
+    return a > 0 ? __("de {a} à {b}", { a: a, b: b }) : __("de {a} à {b} av. J.-C.", { a: -a, b: -b });
+  }
   // L'année que désigne la sélection en cours.
   function anneeChrono(q, s) {
     if (q.tranches && q.pas === 100 && s.k === bornesChrono(100)[0] && s.pr != null) return s.pr < q.tranches.length ? q.tranches[s.pr] - 1 : M.reglesChrono(C).prehistoire - 1;
@@ -9650,7 +9656,7 @@ function demarrerJeu() {
         for (var y = 0; y < 10; y++) { var a = 10 * k + y; ans.push({ v: y, t: String(Math.abs(a)), off: a === 0 }); }
         ligne(__("Quelle année ?"), ans, "y");
       }
-      z.querySelector(".sc-choisi").innerHTML = "<b>" + esc(M.texteCreneau(M.creneau(anneeChrono(q, s), q.pas, R.prehistoire), q.pas, R.prehistoire)) + "</b>" + (q.pas < 100 ? "<small>" + esc(lib) + "</small>" : "");
+      z.querySelector(".sc-choisi").innerHTML = "<b>" + esc(M.texteCreneau(M.creneau(anneeChrono(q, s), q.pas, R.prehistoire), q.pas, R.prehistoire)) + "</b>" + (q.pas >= 50 && anneeChrono(q, s) >= R.prehistoire ? '<small class="sc-annees">' + esc(anneesCreneau(M.creneau(anneeChrono(q, s), q.pas), q.pas)) + "</small>" : q.pas < 100 ? "<small>" + esc(lib) + "</small>" : "");
     }
     curseur.oninput = function () { s.k = +curseur.value; if (q.pas === 1 && s.k === 0 && s.d === 0 && s.y === 0) s.y = 1; dessiner(); };
     z.querySelectorAll(".sc-curseur .sc-pas").forEach(function (x) { x.onclick = function () {
@@ -9732,7 +9738,7 @@ function demarrerJeu() {
     var r = j.reponses[i], titre = r.verdict === "juste" ? __("Juste !") : r.verdict === "proche" ? __("Presque") : __("Raté");
     var niv = r.niveauApres > r.niveauAvant ? __("Tu le connais : la prochaine fois, ") + tx(M.reglesChrono(C).niveaux[r.niveauApres - 1].nom).toLowerCase() + "." : r.niveauApres < r.niveauAvant ? __("Il redescend d'un cran : ") + tx(M.reglesChrono(C).niveaux[r.niveauApres - 1].nom).toLowerCase() + "." : "";
     var rt = el('<div class="retour sc-retour ' + r.verdict + '"><b>' + titre + (r.points ? " +" + r.points + (r.points > 1 ? __(" crédits") : __(" crédit")) + (r.rapide ? __(" (éclair)") : "") : "") + "</b>" +
-      (r.verdict === "juste" ? "" : __("<p>Ta réponse : ") + esc(r.choisi) + "</p>") + "<p>" + (q.sorte === "savant" && !q.naissance ? __("A vécu : ") : __("C'était : ")) + "<b>" + esc(r.vrai) + "</b> (" + esc(dateChrono(q)) + ")</p>" +
+      (r.verdict === "juste" ? "" : __("<p>Ta réponse : ") + esc(r.choisi) + (q.pas >= 50 && !(q.tranches && r.annee < R.prehistoire) && r.annee >= R.prehistoire ? " (" + esc(anneesCreneau(M.creneau(r.annee, q.pas), q.pas)) + ")" : "") + "</p>") + "<p>" + (q.sorte === "savant" && !q.naissance ? __("A vécu : ") : __("C'était : ")) + "<b>" + esc(r.vrai) + "</b> (" + esc(dateChrono(q)) + ")</p>" +
       (niv ? '<p class="meta" style="margin:0">' + esc(niv) + "</p>" : "") + (q.source ? __("<cite>Source : ") + esc(q.source) + "</cite>" : "") + "</div>");
     inn.appendChild(rt);
     var mr = comite(siecles.repliqueQ, true); if (mr) inn.appendChild(mr);
