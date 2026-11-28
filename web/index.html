@@ -10403,6 +10403,8 @@ function demarrerJeu() {
       return { titre: tx(ch.titre), date: dateEt, html: (ch.id ? '<p class="code-q">' + esc(k.id + "/" + ch.id) + "</p>" : "") + (frise ? frise(tout) : i === 0 ? intro : "") + tete + ch.texte.map(function (x, ip) { return surlignerCles(paragraphePersonnes(tx(x), vusPerso, 2, principaux, livres), cles, etatCles) +
           // Victor (2026-11-10) : le dessin se place juste après le paragraphe qui en parle (champ dessin_apres).
           (ch.dessin && ch.dessin_apres === ip ? htmlDessinQ({ id: ch.dessin }) : "") +
+          // Victor (2026-11-28) : un schéma explicatif juste après le paragraphe qu'il illustre (champ schemas).
+          (ch.schemas || []).filter(function (f) { return f.apres === ip; }).map(function (f) { return htmlFigure(f.figure, true); }).join("") +
           (ch.carte || []).filter(function (l) { return l.apres === ip; }).map(function (l) { return htmlCarte(l.lieu); }).join(""); }).join("") +
         // Victor (2026-11-01) : un dessin en pixel art de l'instrument ou de l'objet dont parle l'étape (champ dessin).
         (ch.dessin && !(ch.dessin_apres >= 0 && ch.dessin_apres < ch.texte.length) ? htmlDessinQ({ id: ch.dessin }) : "") +

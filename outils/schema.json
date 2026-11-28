@@ -417,6 +417,19 @@
               }
              }
             },
+            "schemas": {
+             "type": "array",
+             "description": "Schémas de figures.json posés juste après le paragraphe qu'ils expliquent (en plus du champ figure, affiché en fin d'étape).",
+             "items": {
+              "type": "object",
+              "required": ["figure", "apres"],
+              "additionalProperties": false,
+              "properties": {
+               "figure": {"type": "string"},
+               "apres": {"type": "integer", "minimum": 0}
+              }
+             }
+            },
             "schema_fiche": {
              "type": "boolean",
              "description": "Le schéma de la fiche de révision s'affiche dans ce chapitre (sinon dans le premier)."

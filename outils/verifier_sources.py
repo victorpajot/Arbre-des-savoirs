@@ -36,7 +36,7 @@ def textes(o):
             # `repere` et `etymologie` (question) sont vérifiés pour eux-mêmes : ils ne remettent pas en cause la question.
             # `leurres` (QCM) : des réponses fausses exprès, sans fait à sourcer (Victor, 2026-11-25).
             # `carte` (masterclass) renvoie à un lieu de lieux.json, vérifié pour lui-même.
-            if k in ("lot", "verification", "extrait", "reperes", "repere", "etymologie", "cles", "dessin", "leurres", "carte"):
+            if k in ("lot", "verification", "extrait", "reperes", "repere", "etymologie", "cles", "dessin", "leurres", "carte", "schemas"):
                 continue
             yield from textes(o[k])
     elif isinstance(o, list):
